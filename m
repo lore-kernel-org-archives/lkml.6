@@ -4,63 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F264EC282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69A8C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8BCA218A1
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:49:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74949217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:49:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbfBFItD (ORCPT
+        id S1728553AbfBFItH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 03:49:03 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20386 "EHLO
+        Wed, 6 Feb 2019 03:49:07 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41189 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727273AbfBFItC (ORCPT
+        by vger.kernel.org with ESMTP id S1727249AbfBFItD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 03:49:02 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x168f4Qp010305;
-        Wed, 6 Feb 2019 09:48:52 +0100
+        Wed, 6 Feb 2019 03:49:03 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x168fNlG019552;
+        Wed, 6 Feb 2019 09:48:49 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qfv9j812q-1
+        by mx07-00178001.pphosted.com with ESMTP id 2qfv9n8100-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 06 Feb 2019 09:48:52 +0100
+        Wed, 06 Feb 2019 09:48:49 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3191F222;
-        Wed,  6 Feb 2019 08:42:37 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4E6C7231;
+        Wed,  6 Feb 2019 08:42:50 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E19E1697;
-        Wed,  6 Feb 2019 08:42:36 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.46) by SFHDAG5NODE3.st.com
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0E711169B;
+        Wed,  6 Feb 2019 08:42:50 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.47) by SFHDAG5NODE3.st.com
  (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 6 Feb
- 2019 09:42:35 +0100
+ 2019 09:42:48 +0100
 Subject: Re: [PATCH 2/4] pwm: stm32-lp: Add power management support
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-CC:     <jic23@kernel.org>, <thierry.reding@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+CC:     <jic23@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
         <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
         <vilhelm.gray@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Tomasz Duszynski <tduszyns@gmail.com>
 References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
  <1549370429-19116-3-git-send-email-fabrice.gasnier@st.com>
- <20190205183005.GA13960@arch>
+ <20190205204732.zrbhgyxnvjbwfyw4@pengutronix.de>
+ <20190205222522.GB1372@mithrandir>
 From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <60d17322-b3b2-943f-779f-33c47412b7a1@st.com>
-Date:   Wed, 6 Feb 2019 09:42:34 +0100
+Message-ID: <6584a59b-657d-adc9-fab2-eb1a9baba05d@st.com>
+Date:   Wed, 6 Feb 2019 09:42:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190205183005.GA13960@arch>
+In-Reply-To: <20190205222522.GB1372@mithrandir>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG5NODE3.st.com
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE3.st.com
  (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_06:,,
  signatures=0
@@ -69,129 +71,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 7:30 PM, Tomasz Duszynski wrote:
-> On Tue, Feb 05, 2019 at 01:40:27PM +0100, Fabrice Gasnier wrote:
->> Add suspend/resume PM sleep ops. When going to low power, disable
->> active PWM channel. Active PWM channel is resumed, by calling
->> pwm_apply_state(). This is inspired by Thierry's comment in [1].
->> Don't touch inactive channels, as it may be used by other LPTimer MFD
->> child driver.
->> [1]https://lkml.org/lkml/2017/12/5/175
+On 2/5/19 11:25 PM, Thierry Reding wrote:
+> On Tue, Feb 05, 2019 at 09:47:32PM +0100, Uwe Kleine-König wrote:
+>> Hello,
 >>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->>  drivers/pwm/pwm-stm32-lp.c | 38 ++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 38 insertions(+)
+>> On Tue, Feb 05, 2019 at 01:40:27PM +0100, Fabrice Gasnier wrote:
+>>> Add suspend/resume PM sleep ops. When going to low power, disable
+>>> active PWM channel. Active PWM channel is resumed, by calling
+>>> pwm_apply_state(). This is inspired by Thierry's comment in [1].
+>>> Don't touch inactive channels, as it may be used by other LPTimer MFD
+>>> child driver.
+>>> [1]https://lkml.org/lkml/2017/12/5/175
+>>>
+>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>>> ---
+>>>  drivers/pwm/pwm-stm32-lp.c | 38 ++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 38 insertions(+)
+>>>
+>>> diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+>>> index 0059b24c..0c40d48 100644
+>>> --- a/drivers/pwm/pwm-stm32-lp.c
+>>> +++ b/drivers/pwm/pwm-stm32-lp.c
+>>> @@ -13,6 +13,7 @@
+>>>  #include <linux/mfd/stm32-lptimer.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/of.h>
+>>> +#include <linux/pinctrl/consumer.h>
+>>>  #include <linux/platform_device.h>
+>>>  #include <linux/pwm.h>
+>>>  
+>>> @@ -20,6 +21,8 @@ struct stm32_pwm_lp {
+>>>  	struct pwm_chip chip;
+>>>  	struct clk *clk;
+>>>  	struct regmap *regmap;
+>>> +	struct pwm_state suspend;
+>>> +	bool suspended;
+>>>  };
+>>>  
+>>>  static inline struct stm32_pwm_lp *to_stm32_pwm_lp(struct pwm_chip *chip)
+>>> @@ -223,6 +226,40 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
+>>>  	return pwmchip_remove(&priv->chip);
+>>>  }
+>>>  
+>>> +#ifdef CONFIG_PM_SLEEP
+>>> +static int stm32_pwm_lp_suspend(struct device *dev)
+>>> +{
+>>> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
+>>> +
+>>> +	pwm_get_state(&priv->chip.pwms[0], &priv->suspend);
+>>> +	priv->suspended = priv->suspend.enabled;
+>>> +
+>>> +	/* safe to call pwm_disable() for already disabled pwm */
+>>> +	pwm_disable(&priv->chip.pwms[0]);
+>>> +
+>>> +	return pinctrl_pm_select_sleep_state(dev);
 >>
->> diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
->> index 0059b24c..0c40d48 100644
->> --- a/drivers/pwm/pwm-stm32-lp.c
->> +++ b/drivers/pwm/pwm-stm32-lp.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/mfd/stm32-lptimer.h>
->>  #include <linux/module.h>
->>  #include <linux/of.h>
->> +#include <linux/pinctrl/consumer.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/pwm.h>
+>> IMHO a PWM should not stop if the PWM user didn't call pwm_disable() (or
+>> pwm_apply_state() with .enabled = false).
 >>
->> @@ -20,6 +21,8 @@ struct stm32_pwm_lp {
->>  	struct pwm_chip chip;
->>  	struct clk *clk;
->>  	struct regmap *regmap;
->> +	struct pwm_state suspend;
->> +	bool suspended;
->>  };
+>> I don't understand all the PM details, but I think there is no defined
+>> order in which devices are signalled to suspend. If so the PWM might be
+>> stopped before its consumer. Then the PWM changes state without the
+>> consumer being aware of that.
 >>
->>  static inline struct stm32_pwm_lp *to_stm32_pwm_lp(struct pwm_chip *chip)
->> @@ -223,6 +226,40 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
->>  	return pwmchip_remove(&priv->chip);
->>  }
->>
->> +#ifdef CONFIG_PM_SLEEP
+>> I understand Thierry's position in the link you provided in the commit
+>> log consistant with my position here.
 > 
-> You might consider dropping ifdefs and marking pm functions with
-> __maybe_unused instead. In case CONFIG_PM_SLEEP=n then these two guys
-> will be removed and pm ops structure will be empty.
-
-Hi Tomasz,
-
-Thanks for this suggestion. I can do this change. I'll wait for more
-feedback from Uwe and Thierry before sending a v2 with that.
-
+> Agreed, we should let users of the PWM take care of resuming the PWM in
+> the state and at the point in time that they require so. PWM users will
+> also likely do a pwm_disable() during their suspend implementation, so
+> doing this again in a PWM ->suspend() is not necessary, even if perhaps
+> harmless.
 > 
->> +static int stm32_pwm_lp_suspend(struct device *dev)
->> +{
->> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
->> +
-> 
-> I guess you first need to get platform_device from dev and eventually
-> stm32_pwm_lp. Wondering how this works now.
+> So this leaves only the pinctrl_pm_select_sleep_state() call. That seems
+> fine, but I'm not sure that that's currently guaranteed to work. I think
+> we may need to implement device link support in the PWM framework to
+> guarantee the proper suspend/resume sequencing. Otherwise you may end up
+> in a situation where the PWM is actually suspended before the user and
+> glitch the pins before the user has a chance to disable the PWM.
 
-This should be safe for now. This works because the probe routine calls:
-	platform_set_drvdata(pdev, priv);
+Hi Uwe, Thierry,
 
-And the underlying call is dev_set_drvdata()
-static inline void platform_set_drvdata(struct platform_device *pdev,
-					void *data)
-{
-	dev_set_drvdata(&pdev->dev, data);
-}
+I agree with both of you on the analysis.
 
 > 
->> +	pwm_get_state(&priv->chip.pwms[0], &priv->suspend);
->> +	priv->suspended = priv->suspend.enabled;
->> +
->> +	/* safe to call pwm_disable() for already disabled pwm */
->> +	pwm_disable(&priv->chip.pwms[0]);
->> +
->> +	return pinctrl_pm_select_sleep_state(dev);
->> +}
->> +
->> +static int stm32_pwm_lp_resume(struct device *dev)
->> +{
->> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
->> +	int ret;
->> +
->> +	ret = pinctrl_pm_select_default_state(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Only restore suspended pwm, not to disrupt other MFD child */
->> +	if (!priv->suspended)
->> +		return 0;
-> 
-> Would it make sense to use suspend.enabled directly?
+> I think it'd be fine to merge the driver change here first before we add
+> device link support if this works for you. Just mentioning the issue
+> here in case you ever run into it.
 
-I propose to keep priv->suspended. Using 'suspend.enabled' directly
-would simply not work as the pwm_disable() call in
-stm32_pwm_lp_suspend() routine marks the 'suspend' state.enabled = false.
-That's why it's saved in the suspend routine, to be restored upon resume.
+If you agree with the current approach, I can send a V2 with Tomasz's
+suggestion to remove the ifdefs and use __maybe_unused instead.
 
 Thanks for reviewing,
-Best regards,
+Best Regards,
 Fabrice
-
 > 
->> +
->> +	return pwm_apply_state(&priv->chip.pwms[0], &priv->suspend);
->> +}
->> +#endif
->> +
->> +static SIMPLE_DEV_PM_OPS(stm32_pwm_lp_pm_ops, stm32_pwm_lp_suspend,
->> +			 stm32_pwm_lp_resume);
->> +
->>  static const struct of_device_id stm32_pwm_lp_of_match[] = {
->>  	{ .compatible = "st,stm32-pwm-lp", },
->>  	{},
->> @@ -235,6 +272,7 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
->>  	.driver	= {
->>  		.name = "stm32-pwm-lp",
->>  		.of_match_table = of_match_ptr(stm32_pwm_lp_of_match),
->> +		.pm = &stm32_pwm_lp_pm_ops,
->>  	},
->>  };
->>  module_platform_driver(stm32_pwm_lp_driver);
->> --
->> 1.9.1
->>
+> Thierry
+> 
