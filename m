@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AD6C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE03C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A0B20823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD4DF20823
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549472314;
-	bh=XyR2VT6u5/742+AlB4D3wrPgaahPGdAlunifk8YSL/I=;
+	s=default; t=1549472317;
+	bh=KHKrdWOzblVRT03Cn6rPLhitQGj7kvN9vVB+RVqywh0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=cNS2i479stviqVJ6Rcw+DCyhlJFcAQtbdIBgvSlS98Q7rCS1IAv5hP/pP4aKQSbYs
-	 o50fc1vRMLXTTQF7EZDl+PgRXlKP/Pwojvyfbjv24mBTXNzp6L8aTeUo/CCPGjnPv1
-	 8e45Z4exn1mu+UZB12++3j5ZyDFTObzMol3ILiPk=
+	b=zHkXKfA5oeJPsl8Z63lu3KLtidD2tiJbrv5u4BUl2gyg4S/aeCItXVRSfTdK3FCrZ
+	 Ut1s+d3jaVu0wtibfLi0KQcwroB9WrBE/04b2M0uHbPVgHAQCJ3gbDNOadfJJlv/jd
+	 UDxmAZ4k2qFB5YYgihAMEUShyFF9xj+ItpS/fDQw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731482AbfBFQ6c (ORCPT
+        id S1731507AbfBFQ6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:58:32 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46116 "EHLO
+        Wed, 6 Feb 2019 11:58:36 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46176 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfBFQ6c (ORCPT
+        with ESMTP id S1726767AbfBFQ6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:58:32 -0500
+        Wed, 6 Feb 2019 11:58:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QkyojGIyc3+kML59kvmTuUzFaMjP73zXP8T5QUH2AR8=; b=b0FcuPXZduCM
-        g8wVBuM3Bv2YlEViI2AFwNYzaxOiF30iDDIuO7RL3srW+iG60H99FBTojEzdchyfNWsKlPzJrIBQN
-        ekSpElvC2LHeaHn45UkGENRHcPlgVt2zCC1XY3jwSD7hNdNj/YaWDE7sUX1Hbupk9elOzJuTcyp2K
-        a6NUw=;
+        List-Archive; bh=6zD0oA0UBAtceBusixhIew4AFD11c25AXqk4pr3Hm2I=; b=Bo1/1j2HxVXB
+        BmnzEj0ty044ujSDO8jFk8QdAP8zVylFYrkJSK1H+EKZFru4Tn4kkt7KL9LPMVMpGNwmEiFzOdXno
+        HiKlcD3uPC3Pd4l9RSZ7lNHM3vV60kiXU2WtKBg0mCxRccp7reFkchrxO/W3r856U9WzoCZtq+ifb
+        NC1/c=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1grQWq-00073T-Po; Wed, 06 Feb 2019 16:58:28 +0000
+        id 1grQWs-00073Z-EM; Wed, 06 Feb 2019 16:58:30 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 66A711127EA3; Wed,  6 Feb 2019 16:58:28 +0000 (GMT)
+        id 162561127EA3; Wed,  6 Feb 2019 16:58:30 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Only support passing enable GPIO descriptors" to the regulator tree
+Subject: Applied "regulator: gpio: Simplify probe path" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190206165828.66A711127EA3@debutante.sirena.org.uk>
-Date:   Wed,  6 Feb 2019 16:58:28 +0000 (GMT)
+Message-Id: <20190206165830.162561127EA3@debutante.sirena.org.uk>
+Date:   Wed,  6 Feb 2019 16:58:30 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Only support passing enable GPIO descriptors
+   regulator: gpio: Simplify probe path
 
 has been applied to the regulator tree at
 
@@ -85,134 +85,159 @@ to this mail.
 Thanks,
 Mark
 
-From 541d052d721506549774ab780a2709e4ff8ca79b Mon Sep 17 00:00:00 2001
+From d162d041033830b736921b5d3deffcde860cfc26 Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 29 Jan 2019 11:31:56 +0100
-Subject: [PATCH] regulator: core: Only support passing enable GPIO descriptors
+Date: Tue, 29 Jan 2019 11:31:55 +0100
+Subject: [PATCH] regulator: gpio: Simplify probe path
 
-Now that we changed all providers to pass descriptors into the core
-for enable GPIOs instead of a global GPIO number, delete the support
-for passing GPIO numbers in, and we get a cleanup and size reduction
-in the core, and from a GPIO point of view we use the modern, cleaner
-interface.
+Use devm_* managed device resources and create a local
+struct device *dev variable to simplify the code inside
+probe().
 
 Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c         | 32 ++++++--------------------------
- include/linux/regulator/driver.h | 12 +-----------
- 2 files changed, 7 insertions(+), 37 deletions(-)
+ drivers/regulator/gpio-regulator.c | 58 +++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 1778c5d1b2d0..4fb475a2e4f2 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -23,7 +23,6 @@
- #include <linux/mutex.h>
- #include <linux/suspend.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-@@ -2236,35 +2235,19 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index 07fb41abd4e8..6157001df0a4 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -228,37 +228,38 @@ static struct regulator_ops gpio_regulator_current_ops = {
+ 
+ static int gpio_regulator_probe(struct platform_device *pdev)
  {
- 	struct regulator_enable_gpio *pin;
- 	struct gpio_desc *gpiod;
--	int ret;
+-	struct gpio_regulator_config *config = dev_get_platdata(&pdev->dev);
+-	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct gpio_regulator_config *config = dev_get_platdata(dev);
++	struct device_node *np = dev->of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
+ 	enum gpiod_flags gflags;
+ 	int ptr, ret, state, i;
  
--	if (config->ena_gpiod)
--		gpiod = config->ena_gpiod;
--	else
--		gpiod = gpio_to_desc(config->ena_gpio);
-+	gpiod = config->ena_gpiod;
- 
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (pin->gpiod == gpiod) {
--			rdev_dbg(rdev, "GPIO %d is already used\n",
--				config->ena_gpio);
-+			rdev_dbg(rdev, "GPIO is already used\n");
- 			goto update_ena_gpio_to_rdev;
- 		}
- 	}
- 
--	if (!config->ena_gpiod) {
--		ret = gpio_request_one(config->ena_gpio,
--				       GPIOF_DIR_OUT | config->ena_gpio_flags,
--				       rdev_get_name(rdev));
--		if (ret)
--			return ret;
--	}
--
- 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
--	if (pin == NULL) {
--		if (!config->ena_gpiod)
--			gpio_free(config->ena_gpio);
-+	if (pin == NULL)
+-	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
++	drvdata = devm_kzalloc(dev, sizeof(struct gpio_regulator_data),
+ 			       GFP_KERNEL);
+ 	if (drvdata == NULL)
  		return -ENOMEM;
--	}
  
- 	pin->gpiod = gpiod;
- 	list_add(&pin->list, &regulator_ena_gpio_list);
-@@ -2287,7 +2270,6 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
- 		if (pin->gpiod == rdev->ena_pin->gpiod) {
- 			if (pin->request_count <= 1) {
- 				pin->request_count = 0;
--				gpiod_put(pin->gpiod);
- 				list_del(&pin->list);
- 				kfree(pin);
- 				rdev->ena_pin = NULL;
-@@ -4971,15 +4953,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 			goto clean;
+ 	if (np) {
+-		config = of_get_gpio_regulator_config(&pdev->dev, np,
++		config = of_get_gpio_regulator_config(dev, np,
+ 						      &drvdata->desc);
+ 		if (IS_ERR(config))
+ 			return PTR_ERR(config);
  	}
  
--	if (config->ena_gpiod ||
--	    ((config->ena_gpio || config->ena_gpio_initialized) &&
--	     gpio_is_valid(config->ena_gpio))) {
-+	if (config->ena_gpiod) {
- 		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		mutex_unlock(&regulator_list_mutex);
- 		if (ret != 0) {
--			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
--				 config->ena_gpio, ret);
-+			rdev_err(rdev, "Failed to request enable GPIO: %d\n",
-+				 ret);
- 			goto clean;
- 		}
- 		/* The regulator core took over the GPIO descriptor */
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 795b38a06b6c..7f8345bff4e1 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -401,13 +401,7 @@ struct regulator_desc {
-  *           NULL).
-  * @regmap: regmap to use for core regmap helpers if dev_get_regmap() is
-  *          insufficient.
-- * @ena_gpio_initialized: GPIO controlling regulator enable was properly
-- *                        initialized, meaning that >= 0 is a valid gpio
-- *                        identifier and < 0 is a non existent gpio.
-- * @ena_gpio: GPIO controlling regulator enable.
-- * @ena_gpiod: GPIO descriptor controlling regulator enable.
-- * @ena_gpio_invert: Sense for GPIO enable control.
-- * @ena_gpio_flags: Flags to use when calling gpio_request_one()
-+ * @ena_gpiod: GPIO controlling regulator enable.
-  */
- struct regulator_config {
- 	struct device *dev;
-@@ -416,11 +410,7 @@ struct regulator_config {
- 	struct device_node *of_node;
- 	struct regmap *regmap;
+-	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
++	drvdata->desc.name = devm_kstrdup(dev, config->supply_name, GFP_KERNEL);
+ 	if (drvdata->desc.name == NULL) {
+-		dev_err(&pdev->dev, "Failed to allocate supply name\n");
++		dev_err(dev, "Failed to allocate supply name\n");
+ 		return -ENOMEM;
+ 	}
  
--	bool ena_gpio_initialized;
--	int ena_gpio;
- 	struct gpio_desc *ena_gpiod;
--	unsigned int ena_gpio_invert:1;
--	unsigned int ena_gpio_flags;
- };
+-	drvdata->gpiods = devm_kzalloc(&pdev->dev, sizeof(struct gpio_desc *),
++	drvdata->gpiods = devm_kzalloc(dev, sizeof(struct gpio_desc *),
+ 				       GFP_KERNEL);
+ 	if (!drvdata->gpiods)
+ 		return -ENOMEM;
+ 	for (i = 0; i < config->ngpios; i++) {
+-		drvdata->gpiods[i] = devm_gpiod_get_index(&pdev->dev,
++		drvdata->gpiods[i] = devm_gpiod_get_index(dev,
+ 							  NULL,
+ 							  i,
+ 							  config->gflags[i]);
+@@ -269,14 +270,14 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	}
+ 	drvdata->nr_gpios = config->ngpios;
  
- /*
+-	drvdata->states = kmemdup(config->states,
+-				  config->nr_states *
+-					 sizeof(struct gpio_regulator_state),
+-				  GFP_KERNEL);
++	drvdata->states = devm_kmemdup(dev,
++				       config->states,
++				       config->nr_states *
++				       sizeof(struct gpio_regulator_state),
++				       GFP_KERNEL);
+ 	if (drvdata->states == NULL) {
+-		dev_err(&pdev->dev, "Failed to allocate state data\n");
+-		ret = -ENOMEM;
+-		goto err_name;
++		dev_err(dev, "Failed to allocate state data\n");
++		return -ENOMEM;
+ 	}
+ 	drvdata->nr_states = config->nr_states;
+ 
+@@ -295,9 +296,8 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 		drvdata->desc.ops = &gpio_regulator_current_ops;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev, "No regulator type set\n");
+-		ret = -EINVAL;
+-		goto err_memstate;
++		dev_err(dev, "No regulator type set\n");
++		return -EINVAL;
+ 	}
+ 
+ 	/* build initial state from gpio init data. */
+@@ -308,7 +308,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	}
+ 	drvdata->state = state;
+ 
+-	cfg.dev = &pdev->dev;
++	cfg.dev = dev;
+ 	cfg.init_data = config->init_data;
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+@@ -322,28 +322,20 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	else
+ 		gflags = GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE;
+ 
+-	cfg.ena_gpiod = gpiod_get_optional(&pdev->dev, "enable", gflags);
+-	if (IS_ERR(cfg.ena_gpiod)) {
+-		ret = PTR_ERR(cfg.ena_gpiod);
+-		goto err_memstate;
+-	}
++	cfg.ena_gpiod = gpiod_get_optional(dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod))
++		return PTR_ERR(cfg.ena_gpiod);
+ 
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+-		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_memstate;
++		dev_err(dev, "Failed to register regulator: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+ 
+ 	return 0;
+-
+-err_memstate:
+-	kfree(drvdata->states);
+-err_name:
+-	kfree(drvdata->desc.name);
+-	return ret;
+ }
+ 
+ static int gpio_regulator_remove(struct platform_device *pdev)
+@@ -351,8 +343,6 @@ static int gpio_regulator_remove(struct platform_device *pdev)
+ 	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
+ 
+ 	regulator_unregister(drvdata->dev);
+-	kfree(drvdata->states);
+-	kfree(drvdata->desc.name);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
