@@ -2,132 +2,164 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB99AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E04C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7261B2186A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:34:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TIxnOEO1"
+	by mail.kernel.org (Postfix) with ESMTP id D4BC420811
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:35:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731056AbfBFQer (ORCPT
+        id S1731203AbfBFQfw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:34:47 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:57604 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730520AbfBFQeq (ORCPT
+        Wed, 6 Feb 2019 11:35:52 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57671 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730678AbfBFQfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:34:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yaqrHMtkzU0QfS0XgeidGPWlqi4N+n6MDShva+367LA=; b=TIxnOEO1Xs8s96dWklBgmEcOd
-        G722pzE2uOrLogJBUCSYeZi7ZdL682QVAYxFRB9BB7brmIq+OYRzNFYWDpg1B3Pe4WLMVpGHpzbUI
-        dPYE5p/X7WYKhWg6pdAmNGV/Hwh5A5ag64BADhof0WweGrTv65PFTOq8eLHZdHV1fS4JPXoD+RDmY
-        GHYp6t2P9eibkf72gK3LlbM+2SxRuH4q63/h5Bq7HfY7Hb4EGb7kWd5ukB55RZUYd2WhSx2QbK2Wq
-        fnH0tv1HPPahErKkrPAipv6p4+Lm9Zku3k8y0Zj2IHzoewl4EhnLVtj4j4byuNQ3Ipgw/0eo9gRN3
-        d3kkatEyw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1grQ9Z-0003uP-4e; Wed, 06 Feb 2019 16:34:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 977382029F1D4; Wed,  6 Feb 2019 17:34:23 +0100 (CET)
-Date:   Wed, 6 Feb 2019 17:34:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, songliubraving@fb.com,
-        rkrcmar@redhat.com, zsm@chromium.org,
-        alexander.shishkin@linux.intel.com, konrad.wilk@oracle.com,
-        ak@linux.intel.com
-Subject: Re: [PATCH 2/3] perf/x86/intel/pt: Inject PMI for KVM guest
-Message-ID: <20190206163423.GI17564@hirez.programming.kicks-ass.net>
-References: <1547928284-2915-1-git-send-email-luwei.kang@intel.com>
- <1547928284-2915-3-git-send-email-luwei.kang@intel.com>
- <94fdce1b-9c42-e551-3099-ef7c4071a6ba@redhat.com>
+        Wed, 6 Feb 2019 11:35:52 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1grQAr-00058p-3Z; Wed, 06 Feb 2019 17:35:45 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1grQAq-0001bv-B4; Wed, 06 Feb 2019 17:35:44 +0100
+Date:   Wed, 6 Feb 2019 17:35:44 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Yash Shah <yash.shah@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sachin Ghadi <sachin.ghadi@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH v5 1/2] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller
+Message-ID: <20190206163544.rwzinr75cw262njv@pengutronix.de>
+References: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
+ <1548762199-7065-2-git-send-email-yash.shah@sifive.com>
+ <20190130081411.5rva7cpwoy2l5qjd@pengutronix.de>
+ <CAJ2_jOHiJ3X5VYZMCNk2bpvUdDOsrqHJna3HPvtdNQpJB9fxjg@mail.gmail.com>
+ <20190206110730.ogqxncrnblyazgjw@pengutronix.de>
+ <20190206124055.GF21676@ulmo>
+ <20190206153854.52bqbwf2ty2j7rvj@pengutronix.de>
+ <20190206161634.GB23805@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <94fdce1b-9c42-e551-3099-ef7c4071a6ba@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190206161634.GB23805@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 06:02:27PM +0100, Paolo Bonzini wrote:
-> On 19/01/19 21:04, Luwei Kang wrote:
-> >  static struct pt_pmu pt_pmu;
-> >  
-> > @@ -1260,6 +1262,14 @@ void intel_pt_interrupt(void)
-> >  	struct pt_buffer *buf;
-> >  	struct perf_event *event = pt->handle.event;
-> >  
-> > +	if (pt->vcpu) {
-> > +		/* Inject PMI to Guest */
-> > +		kvm_make_request(KVM_REQ_PMI, pt->vcpu);
-> > +		__set_bit(MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI_BIT,
-> > +			(unsigned long *)&pt->vcpu->arch.pmu.global_status);
-> > +		return;
-> > +	}
-> > +
+On Wed, Feb 06, 2019 at 05:16:34PM +0100, Thierry Reding wrote:
+> On Wed, Feb 06, 2019 at 04:38:54PM +0100, Uwe Kleine-König wrote:
+> > On Wed, Feb 06, 2019 at 01:40:55PM +0100, Thierry Reding wrote:
+> > > On Wed, Feb 06, 2019 at 12:07:30PM +0100, Uwe Kleine-König wrote:
+> > > > On Wed, Feb 06, 2019 at 04:18:47PM +0530, Yash Shah wrote:
+> > > > > On Wed, Jan 30, 2019 at 1:44 PM Uwe Kleine-König
+> > > > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > > > >
+> > > > > > On Tue, Jan 29, 2019 at 05:13:18PM +0530, Yash Shah wrote:
+> > > > > > > DT documentation for PWM controller added.
+> > > > > > >
+> > > > > > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> > > > > > > [Atish: Compatible string update]
+> > > > > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > > > > > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> > > > > > > ---
+> > > > > > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 ++++++++++++++++++++++
+> > > > > > >  1 file changed, 33 insertions(+)
+> > > > > > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > > > > >
+> > > > > > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > > > > > new file mode 100644
+> > > > > > > index 0000000..8dcb40d
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > > > > > @@ -0,0 +1,33 @@
+> > > > > > > +SiFive PWM controller
+> > > > > > > +
+> > > > > > > +Unlike most other PWM controllers, the SiFive PWM controller currently only
+> > > > > > > +supports one period for all channels in the PWM. This is set globally in DTS.
+> > > > > >
+> > > > > > You can simply drop this if the first user can set this using the usual
+> > > > > > interface. Don't you like this suggestion that I already made a few
+> > > > > > times now?
+> > > > > >
+> > > > > > Did you consider to make the driver support only a single output with a
+> > > > > > more flexible period setting?
+> > > > > 
+> > > > > We cannot consider supporting only single output since we have boards that
+> > > > > use the additional PWM channels to control individual LED brightness
+> > > > > of a tri-color LED.
+> > > > > If we go down to one channel, then we can't control the brightness of
+> > > > > the individual LEDs.
+> > > > > It will break the use case.
+> > > > 
+> > > > OK.
+> > > > 
+> > > > > I am considering the below approach, let me know if it's fine by you.
+> > > > > 
+> > > > > - Drop the global period property and allow the only first user to change period
+> > > > > using the usual interface.
+> > > > > - A note in the binding that all PWMs need to run at the same
+> > > > > period. If the driver already refuses to apply incompatible periods,
+> > > > > the users are going to notice that they've got the DT wrong.
+> > > > > - In driver code, count the users using the .request and .free callbacks.
+> > > > > Based on this, allow changes to period iff the user count is one.
+> > > > 
+> > > > Not sure you need to point this limitation in the binding doc. Other
+> > > > than that this is fine.
+> > > 
+> > > I think it's useful to point this out in the binding documentation since
+> > > it's something that device tree writers will want to know.
+> > 
+> > OK, we're talking about an FPGA implementation but I still think if the
+> > dt-author is the first to know about this limitation this is too late.
+> > The hardware designer must know about that, and they don't look into the
+> > bindind documentation. The binding documentation should IMHO only
+> > describe the binding and functional limitiations of the device are out
+> > of scope.
+> > 
+> > The binding for the Freescale network interface doesn't describe that it
+> > only supports 480 MBit/s in its GHz mode, and that's good. The binding
+> > for i2c devices doesn't describe that a reboot in the middle of a
+> > transfer might block the bus.
+> > 
+> > The target for the binding documentation is to document how a given
+> > device is described in a device tree. It's not there to duplicate
+> > information that belongs in the reference manual.
 > 
-> There is no need to touch struct pt and to know details of KVM in
-> arch/x86/events.  Please add a function pointer
-> 
-> 	void (*kvm_handle_pt_interrupt)(void);
-> 
-> to some header, and in handle_pmi_common do
-> 
-> 	if (unlikely(kvm_handle_intel_pt_interrupt))
-> 		kvm_handle_intel_pt_interrupt();
-> 	else
-> 		intel_pt_interrupt();
-> 
-> The function pointer can be assigned in
-> kvm_before_interrupt/kvm_after_interrupt just like you do now.
-> 
-> This should be a simpler patch too.
+> But the device tree bindings for PWM devices describe where and how to
+> describe the period for each PWM that you reference. That's entirely
+> different from the examples that you give above.
 
-I know we do this in other places too; but it really is a very bad
-pattern.
+Ah right, I had not on my radar that the binding also gives a suggestion
+for the period. Then yes, I agree that pointing out that all pwms
+belonging to the same provider should have matching periods is a good
+idea.
 
-Exported function pointers are a fscking disaster waiting to happen.
-There is nothing that limits access to kvm.o, any random module can try
-and poke at it.
+Is using this "typical" approach to specify the period in a pwm-list a
+bad idea for this device type for this reason? On the other hand
+diverting from the typical approach has its own cost. Not sure ...
 
-How about we extend perf_guest_info_callback with an arch section and
-add:
+Best regards
+Uwe
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 5aeb4c74fb99..76ce804e72c1 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5835,6 +5835,9 @@ struct perf_guest_info_callbacks *perf_guest_cbs;
- 
- int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
- {
-+	if (WARN_ON_ONCE(perf_guest_cbs))
-+		return -EBUSY;
-+
- 	perf_guest_cbs = cbs;
- 	return 0;
- }
-@@ -5842,6 +5845,9 @@ EXPORT_SYMBOL_GPL(perf_register_guest_info_callbacks);
- 
- int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
- {
-+	if (WARN_ON_ONCE(perf_guest_cbs != cbs))
-+		return -EINVAL;
-+
- 	perf_guest_cbs = NULL;
- 	return 0;
- }
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
