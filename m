@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD5FC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D3DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEA8218D2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD3CF218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:47:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qCNTPfsk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgMPgsW6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbfBFRqK (ORCPT
+        id S1730852AbfBFRrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:46:10 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37124 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfBFRqH (ORCPT
+        Wed, 6 Feb 2019 12:47:43 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39104 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730418AbfBFRqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:46:07 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so3412916pfb.4;
-        Wed, 06 Feb 2019 09:46:06 -0800 (PST)
+        Wed, 6 Feb 2019 12:46:10 -0500
+Received: by mail-pf1-f194.google.com with SMTP id f132so1124853pfa.6;
+        Wed, 06 Feb 2019 09:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/xG2VgCJYceqjpKAA79m25vhXVt1LVbRJ49th/AXfbo=;
-        b=qCNTPfskB86+zjoOms40Rtow/45qJ18ZWMuQNyrQEXu3XSjEPHKRz/kEV/AzgX2z0N
-         oCzPaa8vg4gBZSPz1rFGv/V4Btsym1/5DtabAHOFxpsL7qp0V34TfQIOCi/3mfCAJwCi
-         XHqtB58wZelYr10Sizhyu1xQK69gfLkH2z/CGfJo/thXvjqPMXHa5IIbZ3hv/dBDisiB
-         rSHHNHy51fyBeyj/6n8me+ZxJolq/UmcLb726hN+IU4md5XxViN9ElgGLQZRqsv+Ocna
-         UNVQIcfhiyj+tpkZ9UFk6RUi8oAevZJZZSJCCn402FoqirHea5RgTtqqUCvHJ661Kwnv
-         tyfA==
+        bh=G7Ci0rv3hQtOueYt0rcl1mxa1iU3dwEVnAYBxfPFBHI=;
+        b=mgMPgsW6nken4TlNO/Pv+4E7a+Sr8yIJ1qZyl9cBSzFTR9S5UnQVZ12g91qVCvRrHm
+         4x6foaJPEDs/7+XCIIykP7cQUArZ1Q/hn8EyXfQkleWO8dRiZ6pOLqK+n8JUkUfE3PDB
+         mP/1CfiT0q4eCL3R5Rl/Bwe3AYEFmcBpBPNqG50HMd7GNNNRZlipeSa0tajlrPzHRR7u
+         7hT52Bj6Xs250hrgy5zxc+Tda/zbHJHpzSBH/XKAsU4ox/L3xk19W+G3LPnLv4g1LJuu
+         OxnBTS6c8L39otzvyDRkrlq/xB4M9clouvqREV2l1r5lZnrlQgx4yl0HGa+appnbyy7U
+         5wMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/xG2VgCJYceqjpKAA79m25vhXVt1LVbRJ49th/AXfbo=;
-        b=NUN5IgGMTTpvB328CCw7VP13lPfgwDAMsxuuYtdyLEB5qrLIgEcnCIQNvMHkJwM0ZS
-         yJPegpIIIItomGANAzNIAo7WjToyRg2iCzebP7TF1dz+LUJGtDc/v1d0tCS1wTmDzzBm
-         6qhbmRX6W2zj8rAJbj3IXQVJvFWMYW4BEFfypGxdrN51PY8aNh9UJhdAKNTCA0f37Vkp
-         ByGaq+JxlE+ZTB0zktgYLBBC1oEwfY0dmunKDXHx1m1bCzB9eF7UbmYjCe3ii2F1Jspf
-         Coi3xoE6zr2ZqAweuNL4t7IJ/PiyqIED8xWzTYJ7iGHv/bg4zopCwd5Xa13+BMs5CmcZ
-         gOAQ==
-X-Gm-Message-State: AHQUAubr82znJ+gRopQ4EGasAlKczzo+y90JkzH9ozoXvuoHAQr0O0d3
-        OxyyYl0PpNZuuXwuazDNf4YfRFsR
-X-Google-Smtp-Source: AHgI3IYwyGqe+12+uZ0CctAMyI8rz1SqsidV84ea3mjnxwk1oH/uJyOrfSzNhtWdz/jDj/Cl0PjvPw==
-X-Received: by 2002:a65:63d3:: with SMTP id n19mr10795227pgv.179.1549475165332;
-        Wed, 06 Feb 2019 09:46:05 -0800 (PST)
+        bh=G7Ci0rv3hQtOueYt0rcl1mxa1iU3dwEVnAYBxfPFBHI=;
+        b=gy4lwrsVMASvKeHEPk7cWz530bQqdr8dE/UyXtAr8dqONqQcK26nSI9j9hS+ohIP+i
+         Y8hTlNab9Wj5ZY/6sDQtM5XLK7DkHDTtVQtnKLIcjxzzHTpGfpyO1kR2sh5zlCkLzK9d
+         WAPzIk/kizzuo6dam7dqiXqhIb6OpGhi0X8y23enoKb/bHDNi3SXp82BQ2pXr8sHPXAK
+         0WVwUzKgyPK7MiHdcJYoltWi6WF/0ZtTeULFCPsppv84vFjMGUgoA08akX/am2i92yto
+         D9V0B0Q8YGZ3JHsDg/KKJho00GY4EG+Zii/6Ut4j5b1XLKkJAUYBOn4ev19UlExRdyR7
+         Azaw==
+X-Gm-Message-State: AHQUAuYhLGYY6uXygK3J2Sro3xmMa8svxXnVJiiGFjfRuRJUMFNdb+bs
+        GZk2hDlYsKRX38ZijoD+BSSVm7ON
+X-Google-Smtp-Source: AHgI3IbRCyF8F7AV1XyLeKXNd6sYH8tPjuzkxIoHkr/uFlGPUwCYWqjbKH1Vlhqd8Tzdy2MlH6ktRg==
+X-Received: by 2002:a62:4618:: with SMTP id t24mr11606031pfa.139.1549475168668;
+        Wed, 06 Feb 2019 09:46:08 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 15sm10435313pfr.55.2019.02.06.09.46.03
+        by smtp.gmail.com with ESMTPSA id 15sm10435313pfr.55.2019.02.06.09.46.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 09:46:04 -0800 (PST)
+        Wed, 06 Feb 2019 09:46:07 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -66,9 +66,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v4 01/12] net: Introduce ndo_get_port_parent_id()
-Date:   Wed,  6 Feb 2019 09:45:35 -0800
-Message-Id: <20190206174546.23597-2-f.fainelli@gmail.com>
+Subject: [PATCH net-next v4 03/12] liquidio: Implement ndo_get_port_parent_id()
+Date:   Wed,  6 Feb 2019 09:45:37 -0800
+Message-Id: <20190206174546.23597-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190206174546.23597-1-f.fainelli@gmail.com>
 References: <20190206174546.23597-1-f.fainelli@gmail.com>
@@ -77,244 +77,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for getting rid of switchdev_ops, create a dedicated NDO
-operation for getting the port's parent identifier. There are
-essentially two classes of drivers that need to implement getting the
-port's parent ID which are VF/PF drivers with a built-in switch, and
-pure switchdev drivers such as mlxsw, ocelot, dsa etc.
-
-We introduce a helper function: dev_get_port_parent_id() which supports
-recursion into the lower devices to obtain the first port's parent ID.
-
-Convert the bridge, core and ipv4 multicast routing code to check for
-such ndo_get_port_parent_id() and call the helper function when valid
-before falling back to switchdev_port_attr_get(). This will allow us to
-convert all relevant drivers in one go instead of having to implement
-both switchdev_port_attr_get() and ndo_get_port_parent_id() operations,
-then get rid of switchdev_port_attr_get().
+Liquidio only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it
+a great candidate to be converted to use the ndo_get_port_parent_id()
+NDO instead of implementing switchdev_port_attr_get().
 
 Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- include/linux/netdevice.h |  9 +++++++
- net/bridge/br_switchdev.c |  9 +++++--
- net/core/dev.c            | 57 +++++++++++++++++++++++++++++++++++++++
- net/core/net-sysfs.c      |  7 ++++-
- net/core/rtnetlink.c      |  6 ++++-
- net/ipv4/ipmr.c           |  8 +++++-
- 6 files changed, 91 insertions(+), 5 deletions(-)
+ .../net/ethernet/cavium/liquidio/lio_main.c   | 22 ++++------------
+ .../net/ethernet/cavium/liquidio/lio_vf_rep.c | 25 ++++++-------------
+ 2 files changed, 12 insertions(+), 35 deletions(-)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index ba57d0ba425e..1d95e634f3fe 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1188,6 +1188,10 @@ struct dev_ifalias {
-  *	not implement this, it is assumed that the hw is not able to have
-  *	multiple net devices on single physical port.
-  *
-+ * int (*ndo_get_port_parent_id)(struct net_device *dev,
-+ *				 struct netdev_phys_item_id *ppid)
-+ *	Called to get the parent ID of the physical port of this device.
-+ *
-  * void (*ndo_udp_tunnel_add)(struct net_device *dev,
-  *			      struct udp_tunnel_info *ti);
-  *	Called by UDP tunnel to notify a driver about the UDP port and socket
-@@ -1412,6 +1416,8 @@ struct net_device_ops {
- 						      bool new_carrier);
- 	int			(*ndo_get_phys_port_id)(struct net_device *dev,
- 							struct netdev_phys_item_id *ppid);
-+	int			(*ndo_get_port_parent_id)(struct net_device *dev,
-+							  struct netdev_phys_item_id *ppid);
- 	int			(*ndo_get_phys_port_name)(struct net_device *dev,
- 							  char *name, size_t len);
- 	void			(*ndo_udp_tunnel_add)(struct net_device *dev,
-@@ -3651,6 +3657,9 @@ int dev_get_phys_port_id(struct net_device *dev,
- 			 struct netdev_phys_item_id *ppid);
- int dev_get_phys_port_name(struct net_device *dev,
- 			   char *name, size_t len);
-+int dev_get_port_parent_id(struct net_device *dev,
-+			   struct netdev_phys_item_id *ppid, bool recurse);
-+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b);
- int dev_change_proto_down(struct net_device *dev, bool proto_down);
- struct sk_buff *validate_xmit_skb_list(struct sk_buff *skb, struct net_device *dev, bool *again);
- struct sk_buff *dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index 4d2b9eb7604a..06b0ae44585f 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -14,7 +14,8 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+index 3d24133e5e49..e97e6754ee09 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+@@ -21,7 +21,6 @@
+ #include <linux/firmware.h>
+ #include <net/vxlan.h>
+ #include <linux/kthread.h>
+-#include <net/switchdev.h>
+ #include "liquidio_common.h"
+ #include "octeon_droq.h"
+ #include "octeon_iq.h"
+@@ -3184,7 +3183,8 @@ static const struct devlink_ops liquidio_devlink_ops = {
+ };
  
- 	/* dev is yet to be added to the port list. */
- 	list_for_each_entry(p, &br->port_list, list) {
--		if (switchdev_port_same_parent_id(dev, p->dev))
-+		if (netdev_port_same_parent_id(dev, p->dev) ||
-+		    switchdev_port_same_parent_id(dev, p->dev))
- 			return p->offload_fwd_mark;
- 	}
- 
-@@ -23,6 +24,7 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- int nbp_switchdev_mark_set(struct net_bridge_port *p)
+ static int
+-lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++liquidio_get_port_parent_id(struct net_device *dev,
++			    struct netdev_phys_item_id *ppid)
  {
-+	const struct net_device_ops *ops = p->dev->netdev_ops;
- 	struct switchdev_attr attr = {
- 		.orig_dev = p->dev,
- 		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
-@@ -31,7 +33,10 @@ int nbp_switchdev_mark_set(struct net_bridge_port *p)
+ 	struct lio *lio = GET_LIO(dev);
+ 	struct octeon_device *oct = lio->oct_dev;
+@@ -3192,24 +3192,12 @@ lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
+ 	if (oct->eswitch_mode != DEVLINK_ESWITCH_MODE_SWITCHDEV)
+ 		return -EOPNOTSUPP;
  
- 	ASSERT_RTNL();
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = ETH_ALEN;
+-		ether_addr_copy(attr->u.ppid.id,
+-				(void *)&lio->linfo.hw_addr + 2);
+-		break;
+-
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++	ppid->id_len = ETH_ALEN;
++	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
  
--	err = switchdev_port_attr_get(p->dev, &attr);
-+	if (ops->ndo_get_port_parent_id)
-+		err = dev_get_port_parent_id(p->dev, &attr.u.ppid, true);
-+	else
-+		err = switchdev_port_attr_get(p->dev, &attr);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/core/dev.c b/net/core/dev.c
-index bfa4be42afff..8c6d5cf8a308 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7877,6 +7877,63 @@ int dev_get_phys_port_name(struct net_device *dev,
+ 	return 0;
  }
- EXPORT_SYMBOL(dev_get_phys_port_name);
  
-+/**
-+ *	dev_get_port_parent_id - Get the device's port parent identifier
-+ *	@dev: network device
-+ *	@ppid: pointer to a storage for the port's parent identifier
-+ *	@recurse: allow/disallow recursion to lower devices
-+ *
-+ *	Get the devices's port parent identifier
-+ */
-+int dev_get_port_parent_id(struct net_device *dev,
-+			   struct netdev_phys_item_id *ppid,
-+			   bool recurse)
-+{
-+	const struct net_device_ops *ops = dev->netdev_ops;
-+	struct netdev_phys_item_id first = { };
-+	struct net_device *lower_dev;
-+	struct list_head *iter;
-+	int err = -EOPNOTSUPP;
-+
-+	if (ops->ndo_get_port_parent_id)
-+		return ops->ndo_get_port_parent_id(dev, ppid);
-+
-+	if (!recurse)
-+		return err;
-+
-+	netdev_for_each_lower_dev(dev, lower_dev, iter) {
-+		err = dev_get_port_parent_id(lower_dev, ppid, recurse);
-+		if (err)
-+			break;
-+		if (!first.id_len)
-+			first = *ppid;
-+		else if (memcmp(&first, ppid, sizeof(*ppid)))
-+			return -ENODATA;
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(dev_get_port_parent_id);
-+
-+/**
-+ *	netdev_port_same_parent_id - Indicate if two network devices have
-+ *	the same port parent identifier
-+ *	@a: first network device
-+ *	@b: second network device
-+ */
-+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b)
-+{
-+	struct netdev_phys_item_id a_id = { };
-+	struct netdev_phys_item_id b_id = { };
-+
-+	if (dev_get_port_parent_id(a, &a_id, true) ||
-+	    dev_get_port_parent_id(b, &b_id, true))
-+		return false;
-+
-+	return netdev_phys_item_id_same(&a_id, &b_id);
-+}
-+EXPORT_SYMBOL(netdev_port_same_parent_id);
-+
- /**
-  *	dev_change_proto_down - update protocol port state information
-  *	@dev: device
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index ff9fd2bb4ce4..4eace9f1dcf9 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -495,6 +495,7 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
+-static const struct switchdev_ops lio_pf_switchdev_ops = {
+-	.switchdev_port_attr_get = lio_pf_switchdev_attr_get,
+-};
+-
+ static int liquidio_get_vf_stats(struct net_device *netdev, int vfidx,
+ 				 struct ifla_vf_stats *vf_stats)
  {
- 	struct net_device *netdev = to_net_dev(dev);
-+	const struct net_device_ops *ops = netdev->netdev_ops;
- 	ssize_t ret = -EINVAL;
+@@ -3259,6 +3247,7 @@ static const struct net_device_ops lionetdevops = {
+ 	.ndo_set_vf_trust	= liquidio_set_vf_trust,
+ 	.ndo_set_vf_link_state  = liquidio_set_vf_link_state,
+ 	.ndo_get_vf_stats	= liquidio_get_vf_stats,
++	.ndo_get_port_parent_id	= liquidio_get_port_parent_id,
+ };
  
- 	if (!rtnl_trylock())
-@@ -507,7 +508,11 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 			.flags = SWITCHDEV_F_NO_RECURSE,
- 		};
+ /** \brief Entry point for the liquidio module
+@@ -3534,7 +3523,6 @@ static int setup_nic_devices(struct octeon_device *octeon_dev)
+ 		 * netdev tasks.
+ 		 */
+ 		netdev->netdev_ops = &lionetdevops;
+-		SWITCHDEV_SET_OPS(netdev, &lio_pf_switchdev_ops);
  
--		ret = switchdev_port_attr_get(netdev, &attr);
-+		if (ops->ndo_get_port_parent_id)
-+			ret = dev_get_port_parent_id(netdev, &attr.u.ppid,
-+						     false);
-+		else
-+			ret = switchdev_port_attr_get(netdev, &attr);
- 		if (!ret)
- 			ret = sprintf(buf, "%*phN\n", attr.u.ppid.id_len,
- 				      attr.u.ppid.id);
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index f5a98082ac7a..90dd02c1f561 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1146,6 +1146,7 @@ static int rtnl_phys_port_name_fill(struct sk_buff *skb, struct net_device *dev)
+ 		retval = netif_set_real_num_rx_queues(netdev, num_oqueues);
+ 		if (retval) {
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+index de61060721c4..f3f2e71431ac 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+@@ -25,7 +25,6 @@
+ #include "octeon_nic.h"
+ #include "octeon_main.h"
+ #include "octeon_network.h"
+-#include <net/switchdev.h>
+ #include "lio_vf_rep.h"
  
- static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
+ static int lio_vf_rep_open(struct net_device *ndev);
+@@ -38,6 +37,8 @@ static int lio_vf_rep_phys_port_name(struct net_device *dev,
+ static void lio_vf_rep_get_stats64(struct net_device *dev,
+ 				   struct rtnl_link_stats64 *stats64);
+ static int lio_vf_rep_change_mtu(struct net_device *ndev, int new_mtu);
++static int lio_vf_get_port_parent_id(struct net_device *dev,
++				     struct netdev_phys_item_id *ppid);
+ 
+ static const struct net_device_ops lio_vf_rep_ndev_ops = {
+ 	.ndo_open = lio_vf_rep_open,
+@@ -47,6 +48,7 @@ static const struct net_device_ops lio_vf_rep_ndev_ops = {
+ 	.ndo_get_phys_port_name = lio_vf_rep_phys_port_name,
+ 	.ndo_get_stats64 = lio_vf_rep_get_stats64,
+ 	.ndo_change_mtu = lio_vf_rep_change_mtu,
++	.ndo_get_port_parent_id = lio_vf_get_port_parent_id,
+ };
+ 
+ static int
+@@ -443,31 +445,19 @@ lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	return NETDEV_TX_OK;
+ }
+ 
+-static int
+-lio_vf_rep_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++static int lio_vf_get_port_parent_id(struct net_device *dev,
++				     struct netdev_phys_item_id *ppid)
  {
-+	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 	struct switchdev_attr attr = {
- 		.orig_dev = dev,
-@@ -1153,7 +1154,10 @@ static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
- 		.flags = SWITCHDEV_F_NO_RECURSE,
- 	};
+ 	struct lio_vf_rep_desc *vf_rep = netdev_priv(dev);
+ 	struct net_device *parent_ndev = vf_rep->parent_ndev;
+ 	struct lio *lio = GET_LIO(parent_ndev);
  
--	err = switchdev_port_attr_get(dev, &attr);
-+	if (ops->ndo_get_port_parent_id)
-+		err = dev_get_port_parent_id(dev, &attr.u.ppid, false);
-+	else
-+		err = switchdev_port_attr_get(dev, &attr);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index fb99002c3d4e..c71bcc42d66d 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -837,6 +837,7 @@ static void ipmr_update_thresholds(struct mr_table *mrt, struct mr_mfc *cache,
- static int vif_add(struct net *net, struct mr_table *mrt,
- 		   struct vifctl *vifc, int mrtsock)
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = ETH_ALEN;
+-		ether_addr_copy(attr->u.ppid.id,
+-				(void *)&lio->linfo.hw_addr + 2);
+-		break;
+-
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++	ppid->id_len = ETH_ALEN;
++	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
+ 
+ 	return 0;
+ }
+ 
+-static const struct switchdev_ops lio_vf_rep_switchdev_ops = {
+-	.switchdev_port_attr_get        = lio_vf_rep_attr_get,
+-};
+-
+ static void
+ lio_vf_rep_fetch_stats(struct work_struct *work)
  {
-+	const struct net_device_ops *ops;
- 	int vifi = vifc->vifc_vifi;
- 	struct switchdev_attr attr = {
- 		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
-@@ -920,7 +921,12 @@ static int vif_add(struct net *net, struct mr_table *mrt,
- 			(VIFF_TUNNEL | VIFF_REGISTER));
+@@ -524,7 +514,6 @@ lio_vf_rep_create(struct octeon_device *oct)
+ 		ndev->min_mtu = LIO_MIN_MTU_SIZE;
+ 		ndev->max_mtu = LIO_MAX_MTU_SIZE;
+ 		ndev->netdev_ops = &lio_vf_rep_ndev_ops;
+-		SWITCHDEV_SET_OPS(ndev, &lio_vf_rep_switchdev_ops);
  
- 	attr.orig_dev = dev;
--	if (!switchdev_port_attr_get(dev, &attr)) {
-+	ops = dev->netdev_ops;
-+	if (ops->ndo_get_port_parent_id &&
-+	    !dev_get_port_parent_id(dev, &attr.u.ppid, true)) {
-+		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
-+		v->dev_parent_id.id_len = attr.u.ppid.id_len;
-+	} else if (!switchdev_port_attr_get(dev, &attr)) {
- 		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
- 		v->dev_parent_id.id_len = attr.u.ppid.id_len;
- 	} else {
+ 		vf_rep = netdev_priv(ndev);
+ 		memset(vf_rep, 0, sizeof(*vf_rep));
 -- 
 2.17.1
 
