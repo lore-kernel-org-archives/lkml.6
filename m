@@ -2,87 +2,126 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B55FC282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA039C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A082175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90366217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfBFJWA (ORCPT
+        id S1728593AbfBFJ2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 04:22:00 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57044 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725897AbfBFJV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 04:21:59 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 906D96BC16970496FCFD;
-        Wed,  6 Feb 2019 17:21:57 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 6 Feb 2019
- 17:21:48 +0800
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-To:     Christoph Hellwig <hch@lst.de>
-References: <20190129172059.GC17132@localhost.localdomain>
- <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
- <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
- <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
- <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
- <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
- <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
- <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
- <20190205145244.GB28023@localhost.localdomain>
- <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
- <20190205182325.GA3302@lst.de>
-CC:     Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Hannes Reinecke" <hare@suse.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <3413b0b1-cb3f-3b09-106d-89cf8be30178@huawei.com>
-Date:   Wed, 6 Feb 2019 09:21:40 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190205182325.GA3302@lst.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        Wed, 6 Feb 2019 04:28:00 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40517 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfBFJ17 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 04:27:59 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1grJUq-0007kz-5c; Wed, 06 Feb 2019 10:27:56 +0100
+Message-ID: <1549445274.2544.57.camel@pengutronix.de>
+Subject: Re: [PATCH RESEND] PCI: Check for USB xHCI class for HAPS platform
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Thinh Nguyen <thinh.nguyen@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        "Lukas F. Hartmann" <lukas@mntmn.com>,
+        Trent Piepho <tpiepho@impinj.com>,
+        John Youn <john.youn@synopsys.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Date:   Wed, 06 Feb 2019 10:27:54 +0100
+In-Reply-To: <20190205233159.GC7268@google.com>
+References: <a28cfcee61f0842efe114c97b566bb3d967ba3d3.1549326366.git.thinhn@synopsys.com>
+         <20190205233159.GC7268@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2019 18:23, Christoph Hellwig wrote:
-> On Tue, Feb 05, 2019 at 03:09:28PM +0000, John Garry wrote:
->> For SCSI devices, unfortunately not all IO sent to the HW originates from
->> blk-mq or any other single entity.
->
-> Where else would SCSI I/O originate from?
+Hi Bjorn,
 
-Please note that I was referring to other management IO, like SAS SMP, 
-TMFs, and other proprietary commands which the driver may generate for 
-the HBA - https://marc.info/?l=linux-scsi&m=154831889001973&w=2 
-discusses some of them also.
+Am Dienstag, den 05.02.2019, 17:31 -0600 schrieb Bjorn Helgaas:
+> [+cc Richard, Lucas]
+> 
+> On Tue, Feb 05, 2019 at 01:04:28PM -0800, Thinh Nguyen wrote:
+> > The Synopsys HAPS USB controller has a VID PID (16c3,abcd) that
+> > matches
+> > to an existing PCIe controller. This quirk is intended for USB HAPS
+> > devices only. To fix this, check for the PCI class USB xHCI to
+> > prevent
+> > matching the PCIe controllers.
+> 
+> So there are at least three different parts with the same Vendor &
+> Device ID ([16c3:abcd]):
+> 
+>   1) Synopsys HAPS USB3 controller
+>   2) Synopsys PCIe IP in the NXP i.MX6QP (reported by Lukas)
 
-Thanks,
-John
+The first incorporation of this IP in a Freescale SoC (i.MX6Q) also
+uses the device ID 0xabcd.
 
->
-> .
->
+So this seems to be a major miscommunication between NXP/Freescale and
+Synopsys.
 
+Regards,
+Lucas
 
+>   3) Synopsys PCIe IP in the NXP i.MX7D (reported by Trent)
+> 
+> I don't know if Synopsys is to blame for 2 & 3, or if NXP was
+> expected
+> to change the Vendor ID when incorporating the Synopsys IP into the
+> i.MX designs.  But even leaving the default Device ID of the PCIe IP
+> the same as another Synopsys device was probably a bad idea.
+> 
+> dwc3-haps claims by Vendor & Device ID; it doesn't look at the Class
+> Code.  What happens when it tries to claim the PCIe IP in i.MX?
+> 
+> lspci also doesn't look at the Class Code when it looks up the text
+> name of devices, so it will print the same name for both.  Of course,
+> the Linux PCI ID database at https://pci-ids.ucw.cz/read/PC/16c3
+> shows
+> basically no information for the 0x16c3 Vendor ID, so it won't print
+> anything useful no matter what.  You could add some things there :)
+> 
+> > Fixes: 03e6742584af ("PCI: Override Synopsys USB 3.x HAPS device
+> > class")
+> > Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+> > ---
+> >  drivers/pci/quirks.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index b0a413f3f7ca..e2a879e93d86 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -639,8 +639,9 @@ static void quirk_synopsys_haps(struct pci_dev
+> > *pdev)
+> >  		break;
+> >  	}
+> >  }
+> > -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
+> > -			 quirk_synopsys_haps);
+> > +DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
+> > +			       PCI_CLASS_SERIAL_USB_XHCI, 0,
+> > +			       quirk_synopsys_haps);
+> >  
+> >  /*
+> >   * Let's make the southbridge information explicit instead of
+> > having to
+> > -- 
+> > 2.11.0
+> > 
