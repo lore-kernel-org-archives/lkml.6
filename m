@@ -2,66 +2,72 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B230C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478D3C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B8C120B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE93218C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:53:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbfBFMx1 (ORCPT
+        id S1730118AbfBFMxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:53:27 -0500
-Received: from ns.iliad.fr ([212.27.33.1]:39958 "EHLO ns.iliad.fr"
+        Wed, 6 Feb 2019 07:53:32 -0500
+Received: from mail.pantelija.rs ([3.17.35.93]:44290 "EHLO mail.pantelija.rs"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfBFMx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:53:27 -0500
-X-Greylist: delayed 513 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Feb 2019 07:53:26 EST
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 58D1720DB8;
-        Wed,  6 Feb 2019 13:44:52 +0100 (CET)
-Received: from [192.168.108.68] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 4049D21A39;
-        Wed,  6 Feb 2019 13:44:52 +0100 (CET)
-Subject: Re: [PATCH v3 4/5] phy: qcom-qmp: Add QMP UFS PHY support for msm8998
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
- <8315045c-471a-1ce3-7558-efaaf2cd5406@free.fr>
- <c6046efa-1a74-21d1-e110-0d1aa282d386@codeaurora.org>
- <1d876cdc-c6b5-e490-3e6a-b04c8f9ccc0c@ti.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <5f4f88d2-146b-1a35-ebed-11959c2d7761@free.fr>
-Date:   Wed, 6 Feb 2019 13:44:52 +0100
+        id S1726416AbfBFMx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 07:53:29 -0500
+X-Greylist: delayed 474 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Feb 2019 07:53:28 EST
+Received: from [192.168.7.11] (cable-178-148-85-173.dynamic.sbb.rs [178.148.85.173])
+        by mail.pantelija.rs (Postfix) with ESMTPS id 0D4F360324
+        for <linux-kernel@vger.kernel.org>; Wed,  6 Feb 2019 13:45:32 +0100 (CET)
+To:     linux-kernel@vger.kernel.org
+From:   Dragan Milenkovic <dragan.milenkovic@pantelija.rs>
+Subject: [BUG] Deadlock in block/blk-flush.c, with resolution
+Message-ID: <8a90744a-8e2d-21b9-c88a-818991b3b753@pantelija.rs>
+Date:   Wed, 6 Feb 2019 13:45:31 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1d876cdc-c6b5-e490-3e6a-b04c8f9ccc0c@ti.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Feb  6 13:44:52 2019 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/02/2019 13:39, Kishon Vijay Abraham I wrote:
+The bug manifests by mdX_raid1 and other related tasks being blocked.
 
-> I don't seem to have the dt-binding patch in my inbox. Can you resend them please?
+It is triggered by LVM RAID, but is not caused by it. I have also 
+triggered it by LVM + mdraid, but only once. It is more frequent by
+LVM RAID.
 
-Jeffrey pointed out a few deficiencies in the series.
+It does not occur in the master branch, but it does in 4.20.y, 4.19.y, 
+4.18.y. Here is a Debian bug report:
+     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=913119
 
-I'll CC you on the entire upcoming v4 series.
+I have tracked it to this commit:
 
-Regards.
+ 
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=344e9ffcbd1898e1dc04085564a6e05c30ea8199
+
+Specifically to this line:
+
+ 
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/block/blk-flush.c?id=344e9ffcbd1898e1dc04085564a6e05c30ea8199
+
+The commit log message makes it appear as if this is a refactoring 
+change, but the check for q->elevator was inverted.
+
+The line has not been changed between that commit and the current master 
+branch. Since I applied this change to my distribution's kernel (4.19), 
+my system has been completely stable.
+
+Let me know if you need me to do anything else, but this seems as a 
+straight-forward cherry-pick.
+
+Dragan
+
