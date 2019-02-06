@@ -2,140 +2,127 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0C4C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5184FC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 970A22083B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B0AA218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:38:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WF44oOck"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyUQX/T3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfBFUbv (ORCPT
+        id S1726568AbfBFUiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 15:31:51 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45273 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbfBFUbv (ORCPT
+        Wed, 6 Feb 2019 15:38:00 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33982 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbfBFUiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 15:31:51 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so3625054plm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 12:31:51 -0800 (PST)
+        Wed, 6 Feb 2019 15:38:00 -0500
+Received: by mail-qk1-f196.google.com with SMTP id a15so5174151qkc.1;
+        Wed, 06 Feb 2019 12:37:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=YbIyUkC8UsSdzZyVesr8tAiigZg7wCHaBbnulVXafGw=;
-        b=WF44oOckEfi+7lA1Db/d7VzHyHF8wSXAwVCN2sZnyLKGdSfzhu5QjxpXFLzdXS9quN
-         x3sQ0hdDNxoHrqKLRLDnbsI9uH6uIEvprHN2wrNdZAwEvD4D8RYtsYDw+BlJ76uToxuw
-         V2Bsyiy7yX6H3VkpWMcK7A8O61EhbZfmfCdo9MTAC14fUjdhr/0dku3dGYKHd8SImXmM
-         iS2Z7UtCllEOAonSZxwM5vvbaCI0tLjRY+pgTY8KGkFJamSTKSaIyb69VM/ohynBuRTG
-         nFJOGtmS4mCxTdT2ZofAwFIHN34JJtUBDw/aWpvImlDfGnexoZQqY14FsfLtfICF/D7n
-         ezoQ==
+        bh=CcZFjHbu7+gvUTWVxQ2fRRKBQKhhRo9fVmU7KgPkWxQ=;
+        b=lyUQX/T3x9gX76C0F4j0UyOuwVfAFcB6lxGLq8ZfeDgJshGb7xNVytl+KW2IMF3mdP
+         aUtP9iRsRX8T4SLhRwBT6UkuPYRjHkKv4/jMLyt2rsU6df6MfMUMlAhD2cvem5q7eVih
+         oy3vaNpooOp5AbL7u3LfqPNqcsBtqbHvQJ5HO4sv8vH9Y/3NSKW5HO2VnhHVpX4q13WT
+         h1Mq8ZkXoq7myF76ZL7wn+m4I57KPe4Cx8yBzpW/H3iSPoWiVETlwz6qI74Vwvm4AoWs
+         elu1Cyx7tREOOip3GDFLo2Xg3uUw/X9Jnc5Gw3w0wy/suAni4eT3BaQe36zaeduRMP2c
+         Crmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YbIyUkC8UsSdzZyVesr8tAiigZg7wCHaBbnulVXafGw=;
-        b=LHsQ0V5xCLOi73/Fzkpjtw/Fdqjf7xuih64QWETLaokUAx+7eV1GHRY+pVxhUO8WY2
-         fLx5vfxFdnAozDiMVtFXXZlLIAgGjAKoix3zF3fTLPgRm6fyF2w2PiWUkImGHkWKF8K9
-         JafeqxXq1os9lk9hqjC1JDer5LEFz2fOzp7W4Kp/RY4tqvy5WOzLbRV2MO+KYNKTk678
-         nZebmefUAcsq9WPCXQKwSpfKQ745EDeQnRv2WdD0Ammq8jGmsIwR7tN4iUnjvrlb8a1K
-         mVgxRU5AYvftIa1pODCfhA/+Nbg3mSLlv9TEzgepYh/jIT30vpm/obmC3CRFk3lihqfp
-         H61g==
-X-Gm-Message-State: AHQUAuaObXuoau0RcMsFuW+Tdww482VVSmlS7zpQgftxOOXirUOlauDX
-        jdMoIw7/chLm1JODXZn9ojfJDw==
-X-Google-Smtp-Source: AHgI3IYyYFHm1UB/lEJXyP4bIedLwSbk4vKppJGV+uLvM/DXyuamDSexcWkCjNfC7MybiGjQJRK3ZQ==
-X-Received: by 2002:a17:902:eb03:: with SMTP id cw3mr12588301plb.130.1549485110664;
-        Wed, 06 Feb 2019 12:31:50 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id v184sm11025630pfb.182.2019.02.06.12.31.49
+        bh=CcZFjHbu7+gvUTWVxQ2fRRKBQKhhRo9fVmU7KgPkWxQ=;
+        b=cYTVi1Nzt6Mh9zw4GfMYESn5MLYQu1UEI+JqEo5o9JYmJ3mr6fdYbxXrXzxF9ZRPl1
+         M6qrnxS1yCniRhmNi+6hThLhS7trqatkB5gZVPIqDiwEb+AJLq6L92J2LsncuCTgoPKG
+         zrpGLbFKMkdOAXpmj1dlkbiHAgYaUjnwUR+1PAFwgP+wLfWkGMYafPRzVtolrbJNqXZS
+         FdkI5GrpSYLwrWqdzQsUT1j+aMa7F5NW/qswtcWj/15UY7SwPNofFyQLzJUGBEfAJU8I
+         J7DUCdoansNIJweHfpJdbJ/118rUidESWV1vlvIc3kU8fR8Fq5N7UOu5gpQzwXJv0dSF
+         hbvw==
+X-Gm-Message-State: AHQUAuZVIkYnphPp92DvedI+8MgHSLN1miBt3SNvHKtgpG0mFsgW5liv
+        5IPGi4t2nULgUQEz+/wpxtg=
+X-Google-Smtp-Source: AHgI3IYs1fjSLTURPJg01gKPudVhclP42W8yJypq4EUk8yNFt1RcolRGrbtxm8yN7IRIICNMf04ZpQ==
+X-Received: by 2002:a37:4b07:: with SMTP id y7mr8631927qka.207.1549485478581;
+        Wed, 06 Feb 2019 12:37:58 -0800 (PST)
+Received: from localhost.localdomain ([168.181.50.206])
+        by smtp.gmail.com with ESMTPSA id j189sm12761295qkc.77.2019.02.06.12.37.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 12:31:50 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1grTrJ-0005Ww-5z; Wed, 06 Feb 2019 13:31:49 -0700
-Date:   Wed, 6 Feb 2019 13:31:49 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190206203149.GI12227@ziepe.ca>
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
- <20190206095000.GA12006@quack2.suse.cz>
- <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206194055.GP21860@bombadil.infradead.org>
- <a9df9be75966f34f55f843a3cd7e1ee7d497c7fa.camel@redhat.com>
- <20190206202021.GQ21860@bombadil.infradead.org>
+        Wed, 06 Feb 2019 12:37:57 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 3B9CA180C4F; Wed,  6 Feb 2019 18:37:54 -0200 (-02)
+Date:   Wed, 6 Feb 2019 18:37:54 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Julien Gomes <julien@arista.com>
+Cc:     netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net,
+        nhorman@tuxdriver.com, vyasevich@gmail.com, lucien.xin@gmail.com
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190206203754.GC13621@localhost.localdomain>
+References: <20190206201430.18830-1-julien@arista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190206202021.GQ21860@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190206201430.18830-1-julien@arista.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 12:20:21PM -0800, Matthew Wilcox wrote:
-> On Wed, Feb 06, 2019 at 03:16:02PM -0500, Doug Ledford wrote:
-> > On Wed, 2019-02-06 at 11:40 -0800, Matthew Wilcox wrote:
-> > > On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote:
-> > > > 
-> > > > though? If we only allow this use case then we may not have to worry about
-> > > > long term GUP because DAX mapped files will stay in the physical location
-> > > > regardless.
-> > > 
-> > > ... except for truncate.  And now that I think about it, there was a
-> > > desire to support hot-unplug which also needed revoke.
-> > 
-> > We already support hot unplug of RDMA devices.  But it is extreme.  How
-> > does hot unplug deal with a program running from the device (something
-> > that would have returned ETXTBSY)?
+On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> structures longer than the current definitions.
 > 
-> Not hot-unplugging the RDMA device but hot-unplugging an NV-DIMM.
+> This should prevent unjustified setsockopt() failures due to struct
+> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> binaries that should be compatible, but were built with later kernel
+> uapi headers.
+
+Not sure if we support backwards compatibility like this?
+
+My issue with this change is that by doing this, application will have
+no clue if the new bits were ignored or not and it may think that an
+event is enabled while it is not.
+
+A workaround would be to do a getsockopt and check the size that was
+returned. But then, it might as well use the right struct here in the
+first place.
+
+I'm seeing current implementation as an implicitly versioned argument:
+it will always accept setsockopt calls with an old struct (v4.11 or
+v4.12), but if the user tries to use v3 on a v1-only system, it will
+be rejected. Pretty much like using a newer setsockopt on an old
+system.
+
 > 
-> It's straightforward to migrate text pages from one DIMM to another;
-> you remove the PTEs from the CPU's page tables, copy the data over and
-> pagefaults put the new PTEs in place.  We don't have a way to do similar
-> things to an RDMA device, do we?
-
-I've long said it is reasonable to have an emergency hard revoke for
-exceptional error cases - like dis-orderly hot unplug and so forth.
-
-However, IHMO a orderly migration should rely on user space to
-co-ordinate the migration and the application usages, including some
-user space driven scheme to assure forward progress..
-
-.. and you are kind of touching on my fear here. revoke started out as
-only being for ftruncate. Now we need it for data migration - how soon
-before someone wants to do revoke just to re-balance
-usage/bandwidth/etc between NVDIMMS? 
-
-That is now way outside of what a RDMA using system can reasonably
-tolerate. How would a system designer prevent this?
-
-Again, nobody is going to want a design where RDMA applications are
-under some undefined threat of SIGKILL - which is where any lease
-revoke idea is going. :( 
-
-The priority of systems using RDMA is almost always to keep the RDMA
-working right as it is the often key service the box is providing.
-
-Jason
+> Signed-off-by: Julien Gomes <julien@arista.com>
+> ---
+>  net/sctp/socket.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> index 9644bdc8e85c..f9717e2789da 100644
+> --- a/net/sctp/socket.c
+> +++ b/net/sctp/socket.c
+> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
+>  	int i;
+>  
+>  	if (optlen > sizeof(struct sctp_event_subscribe))
+> -		return -EINVAL;
+> +		optlen = sizeof(struct sctp_event_subscribe);
+>  
+>  	if (copy_from_user(&subscribe, optval, optlen))
+>  		return -EFAULT;
+> -- 
+> 2.20.1
+> 
