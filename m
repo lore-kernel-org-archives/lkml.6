@@ -2,140 +2,110 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C79C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC955C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF85D218AF
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8703218AF
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:42:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="N2Tbyi0N"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Z3Z2lLvk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbfBFXlf (ORCPT
+        id S1726699AbfBFXmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 18:41:35 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34052 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfBFXlf (ORCPT
+        Wed, 6 Feb 2019 18:42:33 -0500
+Received: from mail-ot1-f48.google.com ([209.85.210.48]:45082 "EHLO
+        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbfBFXmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 18:41:35 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h3so3887417pfg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 15:41:34 -0800 (PST)
+        Wed, 6 Feb 2019 18:42:32 -0500
+Received: by mail-ot1-f48.google.com with SMTP id 32so15144676ota.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 15:42:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wtlvdaQ2RfnmKMMXLaG2vLlY5kmAjKB9ewwZ6+Q/zrE=;
-        b=N2Tbyi0NYtdj8kT2fMOgphDLJEkRu8Ve7ZbN85OU/bQbcY2ohxaRJxVu7xpTbHlXaz
-         r6FrDdc/NGokzSrOKPsEKte53jDC2z3GLhsH5X9tBP4JVBYg1jZ6Dgr8uP28kwHMgXNw
-         3I7uhRUVtBRYFLBAyOx+9VlYyWwzL18DlMjooUqe82Wc6lsJIDWYXqqY1twhdcd/jpR0
-         s+Ieocxx4JcXuueUFPNDNBXSo/9RN+165tVmt+tNrC37G8fgRpEXqB9X/w9ZGkgBpFMC
-         1S1KAtTAWGotwZ3Tw8vdQorheqAg3TpQm22oB6kKfD1QPYDsaDOO2aMfn+BYMgjnYfSj
-         qrXA==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mXx8poVQjV9HwQ463+J8Xh3rIF5Pas5UKY3iVculMOM=;
+        b=Z3Z2lLvknU+nXiktZsISNTZLCCnSxgLh9jbswTAZpFimWum7i8r4fiyXlbRXawiSFx
+         ubZthob+CbYbDMN5OCG6J2F9X3wECf+LBU+tTop4TVjaWjls++ZNfLtg+1JGYnPEcN37
+         EaNJwmPl89UKy8gR+WlqBXdJkRZg16QJ0BjDH4q+Sx6RPbFi1tr2TZb/EHnIeM4dOWHF
+         wHzB/rU13hd17CbU1+HNk9CJoObq4xDh7x4aC/CDMcamLw4e/S1MrwMzMk7bxycUqbgS
+         InxU0buRpVtfqCYuDLJanWPCzbVAjVkTWMWCnP0VW6BH5bVPjHYS4iqebcD180jVB1rC
+         q3Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wtlvdaQ2RfnmKMMXLaG2vLlY5kmAjKB9ewwZ6+Q/zrE=;
-        b=eF5Dm5Jd3J9nh8Ssk36v6wW6uwGLBJz89XG0tgQLg6YK5S3rlUNfbCe5Vidp4bC9qV
-         V74IjdGPTskGT9u/DZQNB6GMPHd6mFoM2icwuQ4K+DfkhmqbBGBi/DRiiywVIT0/kbqy
-         r2pLX7h/PYhojlFN2/DgpdxNilTncjth9Hp5ot7xscZuSkqx7Ei4chRctq0IElg0qyMy
-         mbICB/0TAfloKKeXvWi+2hshX53Pk31LOT0uRQvTiQdKcJ0NTOH7b1DjFJcpWydDCFKB
-         1BALJ0/Gy/QaDRQ8Z0d92ms0dF58ot81RL0Fmmpziylcp5+70c/oOX12va4rgYzhGIEn
-         BhRA==
-X-Gm-Message-State: AHQUAuZUkXeuDwo6BraNBvM2MyCtEIKdfJDv3UFCZ1VZRQmIFBxao3JC
-        PJHGib6VRE6WRgigWT+Qr6xSlA==
-X-Google-Smtp-Source: AHgI3IZOZlROKcj7vcS2xqLMIe3x5syV5VU7DSATGgwTxc0rzKS1U6azoHkiMfw1/uA8lDCseSvfzA==
-X-Received: by 2002:a62:1d4c:: with SMTP id d73mr13262967pfd.90.1549496493841;
-        Wed, 06 Feb 2019 15:41:33 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id u186sm10338671pfu.51.2019.02.06.15.41.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 15:41:33 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1grWou-0004D9-Hy; Wed, 06 Feb 2019 16:41:32 -0700
-Date:   Wed, 6 Feb 2019 16:41:32 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190206234132.GB15234@ziepe.ca>
-References: <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <20190206232130.GK12227@ziepe.ca>
- <CAPcyv4g2r=L3jfSDoRPt4VG7D_2CxCgv3s+JLu4FQRUSRWg+4Q@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mXx8poVQjV9HwQ463+J8Xh3rIF5Pas5UKY3iVculMOM=;
+        b=JRxSIZfS4MlooJ05F9U4V8n/qI5dHrFwt2NZq9EWctpUaVgCy2ZF4jKhTFgp+d7bIa
+         ay0+qmoOm/56wFETL4QTaxXf75fTKTjox3kLwHROGddt3uaH+FGIpJURPKDMREUHWDJo
+         /SAiQZzA7Q89/lLNHIe02Oo7xQu0B0ufdPU/UL9yFNLA4kw364h3UXLq4RuP1ZlRc9mp
+         Vk1u30UYDKY4X6/+POHcVr4FiH3o790vpVER8eSaUXzOuMFSYc+faYZM66RefeRdBgHF
+         bDpRwdiSov5aCgnc9BJ+sNPyTI3g5nInySKfe9tgHv8jKs3TSyBWXPYcyZpM/CB1ZtEm
+         yylA==
+X-Gm-Message-State: AHQUAuZwIy15d9XIrhtAfNS27mOrBpt0SpCON2YkHwC+M7cFmoTUdSjJ
+        vbeLwc/QXBQfYOE1mzJJyBsc5GBQxigaKh1QxwnfYQ==
+X-Google-Smtp-Source: AHgI3IYi1lYx53OeMuuIKEyrITbFju31q2tPP/t65m35wlLVFLatHOq9dRn/sh2Fw8NEo3ekoOOLnIYan2iyNMuAnBk=
+X-Received: by 2002:aca:240a:: with SMTP id n10mr956698oic.73.1549496551785;
+ Wed, 06 Feb 2019 15:42:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4g2r=L3jfSDoRPt4VG7D_2CxCgv3s+JLu4FQRUSRWg+4Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190206231706.GB23860@ubuette>
+In-Reply-To: <20190206231706.GB23860@ubuette>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 6 Feb 2019 15:42:17 -0800
+Message-ID: <CAPcyv4jhkkUd_rZ9PhZhOZDYYgMj28siVBUjhMMT4c4HJiaAHw@mail.gmail.com>
+Subject: Re: question about mmap MAP_PRIVATE on PMEM/DAX/fs files
+To:     Larry Bassel <larry.bassel@oracle.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 03:30:27PM -0800, Dan Williams wrote:
-> On Wed, Feb 6, 2019 at 3:21 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Wed, Feb 06, 2019 at 02:44:45PM -0800, Dan Williams wrote:
-> >
-> > > > Do they need to stick with xfs?
-> > >
-> > > Can you clarify the motivation for that question? This problem exists
-> > > for any filesystem that implements an mmap that where the physical
-> > > page backing the mapping is identical to the physical storage location
-> > > for the file data.
-> >
-> > .. and needs to dynamicaly change that mapping. Which is not really
-> > something inherent to the general idea of a filesystem. A file system
-> > that had *strictly static* block assignments would work fine.
-> >
-> > Not all filesystem even implement hole punch.
-> >
-> > Not all filesystem implement reflink.
-> >
-> > ftruncate doesn't *have* to instantly return the free blocks to
-> > allocation pool.
-> >
-> > ie this is not a DAX & RDMA issue but a XFS & RDMA issue.
-> >
-> > Replacing XFS is probably not be reasonable, but I wonder if a XFS--
-> > operating mode could exist that had enough features removed to be
-> > safe?
-> 
-> You're describing the current situation, i.e. Linux already implements
-> this, it's called Device-DAX and some users of RDMA find it
-> insufficient. The choices are to continue to tell them "no", or say
-> "yes, but you need to submit to lease coordination".
+On Wed, Feb 6, 2019 at 3:17 PM Larry Bassel <larry.bassel@oracle.com> wrote:
+>
+> Is mmaping a PMEM/DAX/fs file MAP_PRIVATE supported?
 
-Device-DAX is not what I'm imagining when I say XFS--.
+Yes.
 
-I mean more like XFS with all features that require rellocation of
-blocks disabled.
+> Is it something
+> that people are likely to want to do?
 
-Forbidding hold punch, reflink, cow, etc, doesn't devolve back to
-device-dax.
+MAP_PRIVATE for file backed mappings is useful for processes to read
+common data as input, but hide their writes to that data.
 
-Jason
+> If it is supported, suppose I open a file in PMEM/DAX/fs, mmap it
+> MAP_PRIVATE, read from the memory mapped file (with memory accesses,
+> not the read syscall) and take a page fault which the kernel satisfies.
+>
+> At this time do my page tables for the private mmaped page(s) point to the
+> PMEM corresponding to the file and the kernel will wait until
+> the page(s) is/are altered (either by me or someone else) to
+> copy on write and give me a different page/mapping?
+
+For this example let's assume the filesystem already allocated
+capacity for the file at the given offset, otherwise the kernel is
+free to map in a zero page to cover holes in the file.
+
+> Or does the kernel avoid this by always mapping a copy of the
+> page(s) involved in the private mmap in the first place?
+>
+
+At read-fault time the page tables point to the direct PMEM page for
+the file allocation, for a write fault a "System RAM" page is mapped
+in place of PMEM.
+
+> In either case, is my private copy going to come from PMEM or is it
+> an "ordinary" page, or is this "random"? Does the program have
+> any choice in this (i.e. suppose I want to make sure my copied
+> page is persistent)?
+
+No, the copied page will never be persisted. From the mmap() man page:
+
+"Updates to the mapping are not visible to other processes mapping the
+same file, and are not carried through to the underlying file."
