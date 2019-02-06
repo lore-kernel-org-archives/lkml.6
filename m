@@ -2,63 +2,69 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B693C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E71AC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F37F7218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C357218D2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549479028;
+	bh=yFzwU85Wp2pea7M0l1DKYbEgh3xwEQzw/mAvyvPsWRA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Gf/467THNhBM13E1nxKhfXFoPa6AtoequKfyN9S9aqFufE2uKva3rhpH2cz0feFui
+	 90wGEH7+vkQVBxWrRxlUE2uCBim+kHymj6YAS1JsVb3PLcRvrFJzfa8X/zqXtOevXS
+	 8+0h68tOji9nBJoP9yYGKUzE+GyHMA3lP+OFRZgc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfBFSuW (ORCPT
+        id S1727587AbfBFSu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:50:22 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34623 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfBFSuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:50:21 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d9so3301680pgl.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 10:50:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JQbxrapc2NPnl+P0Ls8p326l329nCPDkPd21a4zaEEI=;
-        b=uWDmKirEOJ7xSwgM4Z749YCN52ApoQozqjAEuK6PnZAbapQxRhUBRroCCinGzFUh9P
-         Z4fGB1xw08XKY+z0pRazskX5LD4+ORcxTD1td3shB2wKO0EtZNnpIDeR/vd86UYRlS2r
-         aSWeoRFxMdGl6iyTscmojod84VJLEpe6kabdGmcedtzFtzxx9AFpdNXA0uqsHPOD/5fb
-         O6QWW8XkoDrWnXwjKKVweuie41s1X+Amk1OcBUuyPspZhgg+RiA5TwV/6doFRsz+yOWb
-         o+R6fwbWOFTES0n/tpAkdb98lnwUB8uTY5CZG4eHFYSPKaZ2HWMVkfrluX5G0H5SsyUA
-         2CMA==
-X-Gm-Message-State: AHQUAuYVddFJE2/W96hMljRkgUdZ8S6SZSY0yOR9HytZHXv0jv9f/Fhh
-        WdWN/48ZQ1Y28np5nmDqgHa8wg==
-X-Google-Smtp-Source: AHgI3IafxK7A45j7DPk2dDGMnhfEgfmvvN1wJQ5fhQLgtS8AFXMRxB/QDJlbg44k6TcxL6vBpcS/KQ==
-X-Received: by 2002:a63:dc54:: with SMTP id f20mr694144pgj.410.1549479019745;
-        Wed, 06 Feb 2019 10:50:19 -0800 (PST)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id d21sm10393015pfo.162.2019.02.06.10.50.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 10:50:19 -0800 (PST)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Quentin Perret <quentin.perret@arm.com>,
-        Taniya Das <tdas@codeaurora.org>, CK Hu <ck.hu@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2] cpufreq: mediatek: Register an Energy Model
-Date:   Wed,  6 Feb 2019 10:50:04 -0800
-Message-Id: <20190206185004.54779-1-mka@chromium.org>
-X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
+        Wed, 6 Feb 2019 13:50:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbfBFSu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:50:26 -0500
+Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B968E206DD;
+        Wed,  6 Feb 2019 18:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549479025;
+        bh=yFzwU85Wp2pea7M0l1DKYbEgh3xwEQzw/mAvyvPsWRA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=r+thPVyB+wfKiedlQaZ/pVZ58HPIzT81507mHnqY79MJxofX3T8kkdcgpFYKdtsm7
+         BxqXh3PnigeKglazpCNONBc6SuBYKo38tEDBDCaAArt7bUSqM8WoIQ6IXEv5XZMK5O
+         XYlejuldXa9fkdPd2WF4JR9o+itVyWC72uUHByNQ=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulouse <suzuki.poulose@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 23/53] perf pmu: Move EVENT_SOURCE_DEVICE_PATH to PMU header file
+Date:   Wed,  6 Feb 2019 15:48:33 -0300
+Message-Id: <20190206184903.24054-24-acme@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
+References: <20190206184903.24054-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,31 +72,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Try and register an Energy Model from mediatek-cpufreq to allow
-interested subsystems like the task scheduler to use the provided
-information.
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v2:
-- register the EM after setting the cpumask
----
- drivers/cpufreq/mediatek-cpufreq.c | 2 ++
- 1 file changed, 2 insertions(+)
+Move definition of EVENT_SOURCE_DEVICE_PATH to pmu.h so that it can be
+used by other files than pmu.c
 
-diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-index eb8920d398181..5250df762814e 100644
---- a/drivers/cpufreq/mediatek-cpufreq.c
-+++ b/drivers/cpufreq/mediatek-cpufreq.c
-@@ -465,6 +465,8 @@ static int mtk_cpufreq_init(struct cpufreq_policy *policy)
- 	policy->driver_data = info;
- 	policy->clk = info->cpu_clk;
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Acked-by: Suzuki K Poulouse <suzuki.poulose@arm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-s390@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190131184714.20388-5-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/pmu.c | 2 --
+ tools/perf/util/pmu.h | 1 +
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 11a234740632..51d437f55d18 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -29,8 +29,6 @@ struct perf_pmu_format {
+ 	struct list_head list;
+ };
  
-+	dev_pm_opp_of_register_em(policy->cpus);
-+
- 	return 0;
- }
+-#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
+-
+ int perf_pmu_parse(struct list_head *list, char *name);
+ extern FILE *perf_pmu_in;
+ 
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index ffed23fb920a..1c12a61ed0dc 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -17,6 +17,7 @@ enum {
+ };
+ 
+ #define PERF_PMU_FORMAT_BITS 64
++#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
+ 
+ struct perf_event_attr;
  
 -- 
-2.20.1.611.gfbb209baf1-goog
+2.20.1
 
