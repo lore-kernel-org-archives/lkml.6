@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11290C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F70C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E64218D2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23501218D2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479030;
-	bh=n5KBIYMemx9H2alxQhj5L7GRj/D6p1TW4icz2O3hxUk=;
+	s=default; t=1549479035;
+	bh=pI53blAe3kiE+V6T5S4GLEI9yiUKCwBVRmFf0b6kdK4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BTfkBEnPGyStT68Jocsy2g5GgqiV8+wn+tk5UqfQQbRbRCKKVJ1RaAqq1QOeeTgtl
-	 VRZ4boH+ncMXRnSNkh5DcYs9EE2ikrLHyBbP/GBXGRJ+Gzgg51twiNYb8OtpiAb2gQ
-	 J6PmkRkLg6+ZqlwZtTELbvBAcyaAKAla6RZ8FSWo=
+	b=mL7gE/mFzaXrY43Kw1pJCMBnZDjy7bW0J83sZNjU42MajJIDiL955YAyPIuS9BNNm
+	 An5wQpUllsn4bXEfcXg8Qs7AgqlD0JbVNSe8Tpu6PqbgU9DRf8757DOZhthxj/IzTk
+	 hOmArdHSGdHPGz8tbJwhhGEAL7uD4gBVrHd9s/aY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfBFSu3 (ORCPT
+        id S1727654AbfBFSud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44638 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:50:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbfBFSuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:50:21 -0500
+        id S1727532AbfBFSub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:50:31 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEDAF218C3;
-        Wed,  6 Feb 2019 18:50:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAC23218B0;
+        Wed,  6 Feb 2019 18:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479020;
-        bh=n5KBIYMemx9H2alxQhj5L7GRj/D6p1TW4icz2O3hxUk=;
+        s=default; t=1549479030;
+        bh=pI53blAe3kiE+V6T5S4GLEI9yiUKCwBVRmFf0b6kdK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AYHxeYb8bTetfqU0BDct+l1dPyBbCFEE7lWjEf0uNEiC37jUCqckwlQvxSqbZgvgU
-         EkkFkJOp0okk+6XtGjpTw05P2ROccp9TY5i+rmihJVkfUUzSdej1gkp2X01vlZ07Nt
-         B0ytbA5ojqnOoX31WKlgM94jY52cCO65nwKJidws=
+        b=Ff4z7pC77EbgNPC7pQXf/QONfSIVjXsb5hpfN/t9jfo9sAlKLmSIHzc8hkXdRfClZ
+         uTfzX2KcPh/PoKca3THyI04Hgx2P/RdMTHx1l78ew0XrcgMo9DuASD7V16yMOE8eIG
+         LAxwenx+AF+2faiF5E/fKbdEX1Gb+Fgs8yx0PRhA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Suzuki K Poulouse <suzuki.poulose@arm.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Alexei Starovoitov <ast@kernel.org>,
@@ -55,13 +55,14 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Jiri Olsa <jolsa@redhat.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Will Deacon <will.deacon@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 22/53] coresight: Use event attributes for sink selection
-Date:   Wed,  6 Feb 2019 15:48:32 -0300
-Message-Id: <20190206184903.24054-23-acme@kernel.org>
+Subject: [PATCH 24/53] perf arm cs-etm: Use event attributes to send sink information to kernel
+Date:   Wed,  6 Feb 2019 15:48:34 -0300
+Message-Id: <20190206184903.24054-25-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -74,14 +75,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-This patch uses the information conveyed by perf_event::attr::config2
-to select a sink to use for the session.  That way a sink can easily be
-selected to be used by more than one source, something that isn't currently
-possible with the sysfs implementation.
+The communication of sink information for a trace session doesn't work
+when more than on CPU is involved in the scenario due to the static
+nature of sysfs.  As such communicate the sink information to each event
+by using the perf_event::attr:config2 attribute.  The information sent
+to the kernel is an hash of the sink's name, which is unique in a
+system.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Suzuki K Poulouse <suzuki.poulose@arm.com>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Alexei Starovoitov <ast@kernel.org>
@@ -97,140 +99,92 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-s390@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190131184714.20388-4-mathieu.poirier@linaro.org
+Link: http://lkml.kernel.org/r/20190131184714.20388-6-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../hwtracing/coresight/coresight-etm-perf.c  | 24 +++++------
- drivers/hwtracing/coresight/coresight-priv.h  |  1 +
- drivers/hwtracing/coresight/coresight.c       | 42 +++++++++++++++++++
- 3 files changed, 55 insertions(+), 12 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 44 +++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index cdbdb28dc175..8c88bf0a1e5f 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -31,11 +31,14 @@ static DEFINE_PER_CPU(struct coresight_device *, csdev_src);
- PMU_FORMAT_ATTR(cycacc,		"config:" __stringify(ETM_OPT_CYCACC));
- PMU_FORMAT_ATTR(timestamp,	"config:" __stringify(ETM_OPT_TS));
- PMU_FORMAT_ATTR(retstack,	"config:" __stringify(ETM_OPT_RETSTK));
-+/* Sink ID - same for all ETMs */
-+PMU_FORMAT_ATTR(sinkid,		"config2:0-31");
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 2f595cd73da6..4f31cf0d1e6d 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -5,6 +5,7 @@
+  */
  
- static struct attribute *etm_config_formats_attr[] = {
- 	&format_attr_cycacc.attr,
- 	&format_attr_timestamp.attr,
- 	&format_attr_retstack.attr,
-+	&format_attr_sinkid.attr,
- 	NULL,
- };
+ #include <api/fs/fs.h>
++#include <linux/bits.h>
+ #include <linux/bitops.h>
+ #include <linux/compiler.h>
+ #include <linux/coresight-pmu.h>
+@@ -22,6 +23,7 @@
+ #include "../../util/thread_map.h"
+ #include "../../util/cs-etm.h"
  
-@@ -191,6 +194,7 @@ static void etm_free_aux(void *data)
- static void *etm_setup_aux(struct perf_event *event, void **pages,
- 			   int nr_pages, bool overwrite)
- {
-+	u32 id;
- 	int cpu = event->cpu;
- 	cpumask_t *mask;
- 	struct coresight_device *sink;
-@@ -201,18 +205,14 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
- 		return NULL;
- 	INIT_WORK(&event_data->work, free_event_data);
++#include <errno.h>
+ #include <stdlib.h>
+ #include <sys/stat.h>
  
--	/*
--	 * In theory nothing prevent tracers in a trace session from being
--	 * associated with different sinks, nor having a sink per tracer.  But
--	 * until we have HW with this kind of topology we need to assume tracers
--	 * in a trace session are using the same sink.  Therefore go through
--	 * the coresight bus and pick the first enabled sink.
--	 *
--	 * When operated from sysFS users are responsible to enable the sink
--	 * while from perf, the perf tools will do it based on the choice made
--	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
--	 */
--	sink = coresight_get_enabled_sink(true);
-+	/* First get the selected sink from user space. */
-+	if (event->attr.config2) {
-+		id = (u32)event->attr.config2;
-+		sink = coresight_get_sink_by_id(id);
-+	} else {
-+		sink = coresight_get_enabled_sink(true);
-+	}
-+
- 	if (!sink || !sink_ops(sink)->alloc_buffer)
- 		goto err;
- 
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 579f34943bf1..b936c6d7e13f 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -147,6 +147,7 @@ void coresight_disable_path(struct list_head *path);
- int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
- struct coresight_device *coresight_get_sink(struct list_head *path);
- struct coresight_device *coresight_get_enabled_sink(bool reset);
-+struct coresight_device *coresight_get_sink_by_id(u32 id);
- struct list_head *coresight_build_path(struct coresight_device *csdev,
- 				       struct coresight_device *sink);
- void coresight_release_path(struct list_head *path);
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index d7fa90be6f42..29cef898afba 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -11,6 +11,7 @@
- #include <linux/err.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-+#include <linux/stringhash.h>
- #include <linux/mutex.h>
- #include <linux/clk.h>
- #include <linux/coresight.h>
-@@ -541,6 +542,47 @@ struct coresight_device *coresight_get_enabled_sink(bool deactivate)
- 	return dev ? to_coresight_device(dev) : NULL;
+@@ -60,10 +62,48 @@ static int cs_etm_parse_snapshot_options(struct auxtrace_record *itr,
+ 	return 0;
  }
  
-+static int coresight_sink_by_id(struct device *dev, void *data)
++static int cs_etm_set_sink_attr(struct perf_pmu *pmu,
++				struct perf_evsel *evsel)
 +{
-+	struct coresight_device *csdev = to_coresight_device(dev);
-+	unsigned long hash;
++	char msg[BUFSIZ], path[PATH_MAX], *sink;
++	struct perf_evsel_config_term *term;
++	int ret = -EINVAL;
++	u32 hash;
 +
-+	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
-+	     csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
++	if (evsel->attr.config2 & GENMASK(31, 0))
++		return 0;
 +
-+		if (!csdev->ea)
-+			return 0;
-+		/*
-+		 * See function etm_perf_add_symlink_sink() to know where
-+		 * this comes from.
-+		 */
-+		hash = (unsigned long)csdev->ea->var;
++	list_for_each_entry(term, &evsel->config_terms, list) {
++		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
++			continue;
 +
-+		if ((u32)hash == *(u32 *)data)
-+			return 1;
++		sink = term->val.drv_cfg;
++		snprintf(path, PATH_MAX, "sinks/%s", sink);
++
++		ret = perf_pmu__scan_file(pmu, path, "%x", &hash);
++		if (ret != 1) {
++			pr_err("failed to set sink \"%s\" on event %s with %d (%s)\n",
++			       sink, perf_evsel__name(evsel), errno,
++			       str_error_r(errno, msg, sizeof(msg)));
++			return ret;
++		}
++
++		evsel->attr.config2 |= hash;
++		return 0;
 +	}
 +
-+	return 0;
++	/*
++	 * No sink was provided on the command line - for _now_ treat
++	 * this as an error.
++	 */
++	return ret;
 +}
 +
-+/**
-+ * coresight_get_sink_by_id - returns the sink that matches the id
-+ * @id: Id of the sink to match
-+ *
-+ * The name of a sink is unique, whether it is found on the AMBA bus or
-+ * otherwise.  As such the hash of that name can easily be used to identify
-+ * a sink.
-+ */
-+struct coresight_device *coresight_get_sink_by_id(u32 id)
-+{
-+	struct device *dev = NULL;
+ static int cs_etm_recording_options(struct auxtrace_record *itr,
+ 				    struct perf_evlist *evlist,
+ 				    struct record_opts *opts)
+ {
++	int ret;
+ 	struct cs_etm_recording *ptr =
+ 				container_of(itr, struct cs_etm_recording, itr);
+ 	struct perf_pmu *cs_etm_pmu = ptr->cs_etm_pmu;
+@@ -92,6 +132,10 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
+ 	if (!cs_etm_evsel)
+ 		return 0;
+ 
++	ret = cs_etm_set_sink_attr(cs_etm_pmu, cs_etm_evsel);
++	if (ret)
++		return ret;
 +
-+	dev = bus_find_device(&coresight_bustype, NULL, &id,
-+			      coresight_sink_by_id);
-+
-+	return dev ? to_coresight_device(dev) : NULL;
-+}
-+
- /*
-  * coresight_grab_device - Power up this device and any of the helper
-  * devices connected to it for trace operation. Since the helper devices
+ 	if (opts->use_clockid) {
+ 		pr_err("Cannot use clockid (-k option) with %s\n",
+ 		       CORESIGHT_ETM_PMU_NAME);
 -- 
 2.20.1
 
