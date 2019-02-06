@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5535AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB69C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 245A1218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A9C2218C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549478989;
-	bh=HMYqZhuniqdwFejBdxjkiaqgqvE82YV09El7G2q5yWM=;
+	s=default; t=1549478993;
+	bh=/MC0Gzd0L5zRhLAMz3wCOA/bSygDjnJK+Arx+KrOghI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LViDWepaAVyDiv+QpqyK30ohsgTlHyjmSotEMW7oMSae397SfQx7iVr9h90OQ/2NZ
-	 MvNDZQ+PSCZub0ZSCRtDkOUS2OjhpHkrlEmpvlYEGbNYxCIWcXW9KF1SnziB90gC+Y
-	 OOrFk2hMImbG6WOZm1Yg3D+YxXruqOLdsjE14B84=
+	b=Zr7N/X5wXWxwhkZr/341p6gZJHLhoupGTD2R9clbUtEb/a94t067TXbN/7kX8+C+D
+	 dXmupzHIacawWEu9pQUyXvb/tg6+jd+IDR0aDA6gRRNOzBJJa0jv45FNnmbZSvv1eP
+	 PizJHkCGYgjsoPNkI93ptams+OE9Uoqy2hvovE+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfBFStr (ORCPT
+        id S1727290AbfBFStv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:49:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44088 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:49:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727230AbfBFStq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:49:46 -0500
+        id S1727259AbfBFSts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:49:48 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA325206DD;
-        Wed,  6 Feb 2019 18:49:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14B5B2083B;
+        Wed,  6 Feb 2019 18:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549478985;
-        bh=HMYqZhuniqdwFejBdxjkiaqgqvE82YV09El7G2q5yWM=;
+        s=default; t=1549478988;
+        bh=/MC0Gzd0L5zRhLAMz3wCOA/bSygDjnJK+Arx+KrOghI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=USR+zO0/7Cpa2lHPNLzrF2Roy3o3G0uzVNebECCIMi1Z6t4ErrOWdx1YqH8ep2Ezd
-         pY/VmhNtQbsCzhyn76wgqxsK/r9WHQs2wPjR1MAhdcyBQ/Fn/NejjeDp7ibO+MYyC1
-         PZadHYLQoRN/PwcBJM6tL0lQLVNqWAJVP9dckpVo=
+        b=hF91/PAqhlfQfA/7cV8bfQpWhKj+d1gXfxTN369eM7wiXoXqyU09QJeoSu2VOMRw4
+         hO4hsz41NsVD8cgf4u5Gufij7NpFqgwKSdPnNMfc5ucizlrNAIa+VS0wSqD7MylFFG
+         /YOFQ4Bzb0qDI+r7h+Jb/SoC5/VlXm4r8vzOzPbE=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 11/53] perf evsel: No need to include symbol.h in evsel.h, symbol_conf.h is enough
-Date:   Wed,  6 Feb 2019 15:48:21 -0300
-Message-Id: <20190206184903.24054-12-acme@kernel.org>
+Subject: [PATCH 12/53] perf thread: Don't include symbol.h, symbol_conf.h is enough
+Date:   Wed,  6 Feb 2019 15:48:22 -0300
+Message-Id: <20190206184903.24054-13-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -61,31 +61,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-To reduce the header dependency and avoid unnecessary rebuilds when
-things change in symbol.h.
+Also add stdio.h to get the FILE definition.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-6duflwliprh2tr47w5x4t260@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-8vx5396phynuxhdsxxfbdhsk@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/thread.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 29c5eb68c44b..cc578e02e08f 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -8,7 +8,7 @@
- #include <linux/perf_event.h>
- #include <linux/types.h>
- #include "xyarray.h"
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index 856cf1a9040a..8276ffeec556 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -5,14 +5,17 @@
+ #include <linux/refcount.h>
+ #include <linux/rbtree.h>
+ #include <linux/list.h>
++#include <stdio.h>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include "srccode.h"
 -#include "symbol.h"
 +#include "symbol_conf.h"
- #include "cpumap.h"
- #include "counts.h"
+ #include <strlist.h>
+ #include <intlist.h>
+ #include "rwsem.h"
  
++struct addr_location;
++struct map;
+ struct namespaces_event;
+ struct thread_stack;
+ struct unwind_libunwind_ops;
 -- 
 2.20.1
 
