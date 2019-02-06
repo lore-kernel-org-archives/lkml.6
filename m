@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 137AFC282CB
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55432C282CB
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D370B21852
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 199ED218C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="nyDpSfKM"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="nVR/+W7A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbfBFAL6 (ORCPT
+        id S1729821AbfBFAMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 19:11:58 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40249 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729545AbfBFALw (ORCPT
+        Tue, 5 Feb 2019 19:12:05 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39676 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729633AbfBFALy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 19:11:52 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so4471274edr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:50 -0800 (PST)
+        Tue, 5 Feb 2019 19:11:54 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b14so4467526edt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p6BmnRMTaCdrw1Lw8yJ4Z4epizq8SWVZSx6J4ZEuxXU=;
-        b=nyDpSfKMe8wYcWDH4nEIBXQ3k2ViHmeA7v8Bpet3m0rZZ4UUgZdZjp2O2w9Pxrkwd0
-         isB0PAfHioeaw3hsFQKcbu/NGJWpil8CO/dqvoLuhxL9CU5R8ZDx4ZA30HQi9VGOK8dZ
-         HsAUuxoudk6B+XjeZgGSkwUaL6LhSp+8ZpBp091EQDM6CoQk9mc2mukILOLShbIBNkev
-         dMWsyFYjRlO+oU9WVyZl/qbZ9mNrBT10l+jCmcw3D+CZHYC72/mIHBySW7MkkOmu/bmm
-         HytgTKuJhhFPxkZN4BiG8fYVFXU2NgrGnp1ZHM4GOQwoFhMHXMBi9AnBq7mRNkn1zoUC
-         rwzA==
+        bh=EO+RYEcmpOreznGDDZGCoO864712k1v0HTv9EOfb/gA=;
+        b=nVR/+W7APlED/5oXx5iqB73rglfVteAO0hCyxfqSpA0vLRvEFdE9MrkUcchQwhD3Ki
+         KCX1adhmwAiEIs/QDlTq6DAoeciNKFXs0m/zQuyhRYJGTMjhHVvLzzxQfcQYNZnLzFHX
+         yC0ErFLMt+qtbT79BhbIZZ/SWqpMbSfjBWuBsI3ONRRwSOIhAgosso/t84B5z2wrS3OH
+         NuSHedhQq4d8y/H1KMtEtc8w6axVhOb53OVYU+CXDsAiraqQplGpuHjuq8RJYzcd+B/Z
+         LqJ3Tlkc7IyNraKWHCeSeAHAJ6MK1OG8cusFQNYqElUP1vUPs3c/CaUXXRNQL3wLeOW5
+         TJMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p6BmnRMTaCdrw1Lw8yJ4Z4epizq8SWVZSx6J4ZEuxXU=;
-        b=lCRIEoqy/HWsw1d+tTmVd1RKHJp9lXmQnneoQokr7liIDFqMRRV1A/SJKOra5g63sP
-         vFmOlCa6Teh/HVh460o6IBc8y4/XBPYsF4n6q5z2jsfTJkTvLlu+AqmhboRC54AVezdl
-         ZGmig/aohJLF+4z65sT1mJ0rwP72LgS+ezkLMNXx4Ndy7XDVwbn8uP0xBe6tTcWGtFzr
-         ZIk1hzBB9/XNM8DM33HldUjlMdbgiYnc3dIjQR+twOiR6kr/rIMK+PGgX3IT1FSDiZSx
-         1+oKVlfqdtlPi8rMaSws4zCyAVhlQutKkNS19Cmwrk5adOIFvBy/cHFRBwkpu5R7WFe4
-         rt1Q==
-X-Gm-Message-State: AHQUAuY9BDste2UY5LBXbJUrUoaGe/6X1h8AWIp7W6Xoso8VJ2DoD9fU
-        4PvrDJI/x2SoKdJUIO3o+qXxLkSmoAY=
-X-Google-Smtp-Source: AHgI3IaQLZU/ityy40418rEonwOBkSpXjf/PCswBQ9QvGsWbCm+Dg84sVWsmvjASDwFFucVw62OpuA==
-X-Received: by 2002:a50:a741:: with SMTP id h59mr5706133edc.106.1549411909674;
-        Tue, 05 Feb 2019 16:11:49 -0800 (PST)
+        bh=EO+RYEcmpOreznGDDZGCoO864712k1v0HTv9EOfb/gA=;
+        b=ZtgrGFj9soFiCTMGT+XkD/VPhMgu8sIcvXPmJYVO1NiS//htfX4RkC7ZKv9Lz1WBuQ
+         cHRVgDHd2vlauugXt1xfxv2/J+WVa3PxRcW5A+rg5thw1rCh9tGBu/SjxMV2eSARRMmx
+         LcyaSgksVsW1BJWrj0QMPTjqijlyBqz1Qq9btt/UX/4v3M1TSSJX90jpTyJXdouJuhgn
+         AvmDRB1KiqVx5wFT9AG2ndQsMi6uBz3cxl4Ood+033q9H9Qv5laVGepdHYRwgqalN/bU
+         xy+2SylzAYwJgovPEFEWqrtJOMfzrPPxk8/xzGWpjvIJTdjlfT3rgpO0ZTBtLMZ+dpvI
+         2ZOA==
+X-Gm-Message-State: AHQUAuaZisg2UWqER7ZBgb0iF0k32BoJgkfzFh9FC7dig5K6J58IkmYT
+        UlXM0dWgv/AYucLZmUUe/sFB8+32xuA=
+X-Google-Smtp-Source: AHgI3IZd715GY7oV9JLOUm2wksZ4xWMmA+plHuBx//m/bbIEqQqD9QE3WYssK/bX0U2oxPG6vMR7iw==
+X-Received: by 2002:a50:ec19:: with SMTP id g25mr5907076edr.38.1549411912433;
+        Tue, 05 Feb 2019 16:11:52 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.48
+        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.51
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 05 Feb 2019 16:11:49 -0800 (PST)
+        Tue, 05 Feb 2019 16:11:51 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
-        Adrian Reber <adrian@lisas.de>,
+Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
         Andrei Vagin <avagin@openvz.org>,
+        Andrei Vagin <avagin@gmail.com>,
         Andy Lutomirski <luto@kernel.org>,
         Andy Tucker <agtucker@google.com>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -75,9 +75,9 @@ Cc:     Andrei Vagin <avagin@gmail.com>, Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 30/32] selftest/timens: Check that a right vdso is mapped after fork and exec
-Date:   Wed,  6 Feb 2019 00:11:04 +0000
-Message-Id: <20190206001107.16488-31-dima@arista.com>
+Subject: [PATCH 32/32] x86/vdso: Restrict splitting VVAR VMA
+Date:   Wed,  6 Feb 2019 00:11:06 +0000
+Message-Id: <20190206001107.16488-33-dima@arista.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206001107.16488-1-dima@arista.com>
 References: <20190206001107.16488-1-dima@arista.com>
@@ -88,134 +88,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
+Although, time namespace can work with VVAR VMA split, it seems worth
+to forbid splitting VVAR resulting in stricter ABI and reducing amount
+of corner-cases to consider while working further on VDSO.
 
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
+I don't think there is any use-case for partial mremap() of vvar,
+but it there is - this patch can be easily dropped.
+
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- tools/testing/selftests/timens/.gitignore |  1 +
- tools/testing/selftests/timens/Makefile   |  2 +-
- tools/testing/selftests/timens/exec.c     | 91 +++++++++++++++++++++++
- 3 files changed, 93 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/timens/exec.c
+ arch/x86/entry/vdso/vma.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/tools/testing/selftests/timens/.gitignore b/tools/testing/selftests/timens/.gitignore
-index 6bb90fdb4519..b08b4066f5ca 100644
---- a/tools/testing/selftests/timens/.gitignore
-+++ b/tools/testing/selftests/timens/.gitignore
-@@ -1,4 +1,5 @@
- clock_nanosleep
-+exec
- gettime_perf
- procfs
- timens
-diff --git a/tools/testing/selftests/timens/Makefile b/tools/testing/selftests/timens/Makefile
-index ef65bf96b55c..9e0edf354906 100644
---- a/tools/testing/selftests/timens/Makefile
-+++ b/tools/testing/selftests/timens/Makefile
-@@ -1,4 +1,4 @@
--TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs gettime_perf
-+TEST_GEN_PROGS := timens timerfd timer clock_nanosleep procfs gettime_perf exec
+diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+index 52c1e4c24455..dc1fca4d935a 100644
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -87,6 +87,18 @@ static int vdso_mremap(const struct vm_special_mapping *sm,
+ 	return 0;
+ }
  
- uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/i386/)
-diff --git a/tools/testing/selftests/timens/exec.c b/tools/testing/selftests/timens/exec.c
-new file mode 100644
-index 000000000000..b3a05c41e202
---- /dev/null
-+++ b/tools/testing/selftests/timens/exec.c
-@@ -0,0 +1,91 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdbool.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <time.h>
-+#include <unistd.h>
-+#include <time.h>
-+#include <string.h>
-+
-+#include "log.h"
-+#include "timens.h"
-+
-+#define OFFSET (36000)
-+
-+int main(int argc, char *argv[])
++static int vvar_mremap(const struct vm_special_mapping *sm,
++		struct vm_area_struct *new_vma)
 +{
-+	struct timespec now, tst;
-+	int status, i;
-+	pid_t pid;
++	unsigned long new_size = new_vma->vm_end - new_vma->vm_start;
++	const struct vdso_image *image = current->mm->context.vdso_image;
 +
-+	if (argc > 1) {
-+		if (sscanf(argv[1], "%ld", &now.tv_sec) != 1)
-+			return pr_perror("sscanf");
++	if (new_size != -image->sym_vvar_start)
++		return -EINVAL;
 +
-+		for (i = 0; i < 2; i++) {
-+			_gettime(CLOCK_MONOTONIC, &tst, i);
-+			if (abs(tst.tv_sec - now.tv_sec) > 5)
-+				return pr_fail("%ld %ld\n", now.tv_sec, tst.tv_sec);
-+		}
-+	}
-+
-+	nscheck();
-+
-+	clock_gettime(CLOCK_MONOTONIC, &now);
-+
-+	if (unshare(CLONE_NEWTIME))
-+		return pr_perror("Can't unshare() timens");
-+
-+	if (_settime(CLOCK_MONOTONIC, OFFSET))
-+		return 1;
-+
-+	for (i = 0; i < 2; i++) {
-+		_gettime(CLOCK_MONOTONIC, &tst, i);
-+		if (abs(tst.tv_sec - now.tv_sec) > 5)
-+			return pr_fail("%ld %ld\n",
-+					now.tv_sec, tst.tv_sec);
-+	}
-+
-+	if (argc > 1)
-+		return 0;
-+
-+	pid = fork();
-+	if (pid < 0)
-+		return pr_perror("fork");
-+
-+	if (pid == 0) {
-+		char now_str[64];
-+		char *cargv[] = {"exec", now_str, NULL};
-+		char *cenv[] = {NULL};
-+
-+		/* Check that a child process is in the new timens. */
-+		for (i = 0; i < 2; i++) {
-+			_gettime(CLOCK_MONOTONIC, &tst, i);
-+			if (abs(tst.tv_sec - now.tv_sec - OFFSET) > 5)
-+				return pr_fail("%ld %ld\n",
-+						now.tv_sec + OFFSET, tst.tv_sec);
-+		}
-+
-+		/* Check that a proper vdso will be mapped after execve. */
-+		snprintf(now_str, sizeof(now_str), "%ld", now.tv_sec + OFFSET);
-+		execve("/proc/self/exe", cargv, cenv);
-+		return pr_perror("execve");
-+	}
-+
-+	if (waitpid(pid, &status, 0) != pid)
-+		return pr_perror("waitpid");
-+
-+	if (status)
-+		ksft_exit_fail();
-+
-+	ksft_test_result_pass("exec\n");
-+	ksft_exit_pass();
 +	return 0;
 +}
++
+ static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
+ 		      struct vm_area_struct *vma, struct vm_fault *vmf)
+ {
+@@ -149,6 +161,7 @@ static const struct vm_special_mapping vdso_mapping = {
+ static const struct vm_special_mapping vvar_mapping = {
+ 	.name = "[vvar]",
+ 	.fault = vvar_fault,
++	.mremap = vvar_mremap,
+ };
+ 
+ #ifdef CONFIG_TIME_NS
 -- 
 2.20.1
 
