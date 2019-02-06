@@ -2,156 +2,172 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1DFC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB35EC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D44E2081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1192081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:23:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="TilB8SNv"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCvzvdVO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbfBFRWo (ORCPT
+        id S1730381AbfBFRX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:22:44 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:39480 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfBFRWm (ORCPT
+        Wed, 6 Feb 2019 12:23:27 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35441 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727467AbfBFRX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:22:42 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 1252724E01E4;
-        Wed,  6 Feb 2019 09:22:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549473762; bh=Y/iatXLwSHYSQr3Aro3fvmipnWzxbGhc11jlmvHQz/M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TilB8SNvVQ3f5sSylI9sINuJZYBDatCKoxKsGbOVFzxUE+wWldYLV/rfTu053CR8c
-         CdJ80WWCXsj3quADItwocQx8DaHOpakn6iP5ltDopC8352MuKhfkzCSJEiLb732KMT
-         xuEc7ZHi5D/72YojIT4MvBM9KHkYf/ZFwqIJmSzmPJC7l53DrNMMChxvEjjlD7mtsn
-         d1sgSdvR/J25Z5IRqoEhgMyQpK52ZyX1Eeo/At/50uYJwg6a3OjIW1gLJ9H1qvtGdm
-         xlNWi1vThLX+ojD4VZ90ZIuZHZd3cJbEU2NBDC5eAZsM9DdZwEhvGikGH75TAVr5XV
-         och84dR6Q9YqA==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 5B197A0090;
-        Wed,  6 Feb 2019 17:22:39 +0000 (UTC)
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Corentin Labbe <clabbe@baylibre.com>, khilman@baylibre.com,
-        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Subject: [RFC 2/2] ARC: U-boot: check magic number passed from u-boot
-Date:   Wed,  6 Feb 2019 20:22:28 +0300
-Message-Id: <20190206172228.9261-3-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20190206172228.9261-1-Eugeniy.Paltsev@synopsys.com>
-References: <20190206172228.9261-1-Eugeniy.Paltsev@synopsys.com>
+        Wed, 6 Feb 2019 12:23:27 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b17so2411413eds.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:23:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JvcKwIWlny3ttJZ1xLAWt497mnvC18dJy450P90yM2w=;
+        b=SCvzvdVOhvlAy67voL7FYAvyuejhJl4vSCGdpxJlOMsY+8wabGiSJZA1uUaEPZSzJz
+         6TsIIgrJRKv/aNHU8vW8J4FSe1X/Xw6iDZGBqG5c9rNEd3BJoQQdQNmcLBMKscJmUJ7b
+         4Z10Md+g3Fr53D5TOrI3G/vYYXS+OP3EFKsm48qVNtslHNlAiWabEvqagd43sg8AF2q3
+         L+kGfJBklnwUrC2dsnIJdEFK79ARloXzeMalaaUpT1yxSYeZtxYpLj6STdegY+D3w6wa
+         0AbFdVPqaCQaS+PpizEmsAudri2P7nzy7+k9j/2bfYw1FnGwmkdaoZAXYxcVWAk7nYqB
+         TLZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JvcKwIWlny3ttJZ1xLAWt497mnvC18dJy450P90yM2w=;
+        b=bCX+WmXJoh+2FXHOi76xZk2SbjPiyPuR/+fTlhSUc/qGVXawyHdLkpfeto3qZqkida
+         my8jbWHw/TWkP4JiYNn99pFV3gPrljHwL8/fnx/B0UX6viCG14A9sNIMtqwNUZ7vY53u
+         VUfSdpicE52nilZg09Zl6lvK8aDSegcc35pnR5UPpMmDQqG/naJ1TDcv7J2VUxOoFrFu
+         VgO8eqbJeFyrHmRyuPl5IZqUWHtvLCDMB6/oMR8GnGkiz5qbBqcKWX96yQOeetui03Ij
+         8jwe81YIJi7QWl/w2He8G8gOcmnWMnXv1RoPqmRZEyypKT8Zz100sXprvMhu2Yli+NnZ
+         uOoA==
+X-Gm-Message-State: AHQUAuaPNYYv89jzEaIBdJrNV3NS5Sfu8CcitJanVzMxVzMwxeFzfmdJ
+        56fvNQDOqOe/2iK60nVNyGMburHrBw3qpz+cYmI4Ew==
+X-Google-Smtp-Source: AHgI3IZ2bjGbksxVz6NccXNkBWqH4dgXoKknycBdJ4EIDM0+e5f+SVWZ2Q00jPjLBtxS5vmnti5hpj28QUnju70CS7U=
+X-Received: by 2002:a17:906:b38a:: with SMTP id o10mr3789264ejz.217.1549473804836;
+ Wed, 06 Feb 2019 09:23:24 -0800 (PST)
+MIME-Version: 1.0
+References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
+ <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com> <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
+ <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
+ <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
+ <961e758d-b0a0-8f6c-a8fa-c3047e058706@gmail.com> <CAKv+Gu_faPAf+0NBTNM03EUH4-_0vWbPfDQneshps5vbaU4R_Q@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_faPAf+0NBTNM03EUH4-_0vWbPfDQneshps5vbaU4R_Q@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 6 Feb 2019 17:23:13 +0000
+Message-ID: <CAKv+Gu-4=1r8X8BUvRjcTwgxj=sZpZLyY3ABBZyzh-RsSm1eXg@mail.gmail.com>
+Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
+To:     "Koenig, Christian" <christian.koenig@amd.com>
+Cc:     Alex Deucher <alexdeucher@gmail.com>,
+        "Daenzer, Michel" <Michel.Daenzer@amd.com>,
+        Carsten Haitzler <Carsten.Haitzler@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of devboards we really often disable bootloader and load
-Linux image in memory via JTAG. In case of using kernel with
-CONFIG_ARC_UBOOT_SUPPORT enabled we may crash as we will try to
-interpret some junk in a registers as a pointers to bootargs/etc
-which aren't set by anyone in case of JTAG using.
+On Fri, 25 Jan 2019 at 11:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wr=
+ote:
+>
+> On Fri, 25 Jan 2019 at 12:30, Christian K=C3=B6nig
+> <ckoenig.leichtzumerken@gmail.com> wrote:
+> >
+> > Am 25.01.19 um 09:43 schrieb Ard Biesheuvel:
+> > > On Thu, 24 Jan 2019 at 15:01, Alex Deucher <alexdeucher@gmail.com> wr=
+ote:
+> > >> On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
+> > >> <ard.biesheuvel@linaro.org> wrote:
+> > >>> On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
+> > >>> <Christian.Koenig@amd.com> wrote:
+> > >>>> Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
+> > >>>>> The DRM driver stack is designed to work with cache coherent devi=
+ces
+> > >>>>> only, but permits an optimization to be enabled in some cases, wh=
+ere
+> > >>>>> for some buffers, both the CPU and the GPU use uncached mappings,
+> > >>>>> removing the need for DMA snooping and allocation in the CPU cach=
+es.
+> > >>>>>
+> > >>>>> The use of uncached GPU mappings relies on the correct implementa=
+tion
+> > >>>>> of the PCIe NoSnoop TLP attribute by the platform, otherwise the =
+GPU
+> > >>>>> will use cached mappings nonetheless. On x86 platforms, this does=
+ not
+> > >>>>> seem to matter, as uncached CPU mappings will snoop the caches in=
+ any
+> > >>>>> case. However, on ARM and arm64, enabling this optimization on a
+> > >>>>> platform where NoSnoop is ignored results in loss of coherency, w=
+hich
+> > >>>>> breaks correct operation of the device. Since we have no way of
+> > >>>>> detecting whether NoSnoop works or not, just disable this
+> > >>>>> optimization entirely for ARM and arm64.
+> > >>>>>
+> > >>>>> Cc: Christian Koenig <christian.koenig@amd.com>
+> > >>>>> Cc: Alex Deucher <alexander.deucher@amd.com>
+> > >>>>> Cc: David Zhou <David1.Zhou@amd.com>
+> > >>>>> Cc: Huang Rui <ray.huang@amd.com>
+> > >>>>> Cc: Junwei Zhang <Jerry.Zhang@amd.com>
+> > >>>>> Cc: Michel Daenzer <michel.daenzer@amd.com>
+> > >>>>> Cc: David Airlie <airlied@linux.ie>
+> > >>>>> Cc: Daniel Vetter <daniel@ffwll.ch>
+> > >>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > >>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> > >>>>> Cc: Sean Paul <sean@poorly.run>
+> > >>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > >>>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > >>>>> Cc: Will Deacon <will.deacon@arm.com>
+> > >>>>> Cc: Christoph Hellwig <hch@infradead.org>
+> > >>>>> Cc: Robin Murphy <robin.murphy@arm.com>
+> > >>>>> Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
+> > >>>>> Cc: dri-devel <dri-devel@lists.freedesktop.org>
+> > >>>>> Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
+> > >>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > >>>> The subject line should probably read "disable uncached...".
+> > >>>>
+> > >>> Ugh, of course ...
+> > >>>
+> > >>>> With that fixed the patch is Reviewed-by: Christian K=C3=B6nig
+> > >>>> <christian.koenig@amd.com>.
+> > >>>>
+> > >> Same:
+> > >> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+> > >>
+> > > Thanks all
+> > >
+> > > Should I resend the patch with the subject corrected?
+> >
+> > I will update the subject line and push it upstream through
+> > drm-misc-next if nobody objects.
+> >
+>
+> Wonderful, thanks.
 
-Try to make it much less possible by check magic number and
-'U-boot - kernel' ABI revision number passed from U-boot.
-Ignore U-boot arguments if we got wrong magic number or unknown
-ABI revision.
+Hi Christian,
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/kernel/head.S  |  5 ++++-
- arch/arc/kernel/setup.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 1 deletion(-)
+Are you still planning to merge this for v5.1?
 
-diff --git a/arch/arc/kernel/head.S b/arch/arc/kernel/head.S
-index 7095055bb874..3fb88ec62bc7 100644
---- a/arch/arc/kernel/head.S
-+++ b/arch/arc/kernel/head.S
-@@ -92,10 +92,13 @@ ENTRY(stext)
- 
- #ifdef CONFIG_ARC_UBOOT_SUPPORT
- 	; Uboot - kernel ABI
-+	;    r1 = bits [31:8] magic number, bits [7:0] uboot-kernel ABI revision
-+	; ABI revision 0:
- 	;    r0 = [0] No uboot interaction, [1] cmdline in r2, [2] DTB in r2
--	;    r1 = magic number (board identity, unused as of now
- 	;    r2 = pointer to uboot provided cmdline or external DTB in mem
- 	; These are handled later in handle_uboot_args()
-+	st      r1, [@uboot_rev_magic]
-+	mov	r1, 0			; errase magic from the register
- 	st	r0, [@uboot_tag]
- 	st	r2, [@uboot_arg]
- #endif
-diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
-index 7edb35c26322..868dda3d4b43 100644
---- a/arch/arc/kernel/setup.c
-+++ b/arch/arc/kernel/setup.c
-@@ -36,6 +36,7 @@ unsigned int intr_to_DE_cnt;
- 
- /* Part of U-boot ABI: see head.S */
- int __initdata uboot_tag;
-+int __initdata uboot_rev_magic;
- char __initdata *uboot_arg;
- 
- const struct machine_desc *machine_desc;
-@@ -467,6 +468,10 @@ static inline bool is_kernel(unsigned long addr)
- 	return addr >= (unsigned long)_stext && addr <= (unsigned long)_end;
- }
- 
-+#define UBOOT_MAGIC_VALUE		0x567890
-+#define UBOOT_MAGIC_GET(x)		(((x) & GENMASK(31, 8)) >> 8)
-+#define UBOOT_REVISION_GET(x)		((x) & GENMASK(7, 0))
-+
- /* uboot_tag values for U-boot - kernel ABI revisions 0+; see head.S */
- #define UBOOT_REV0P_TAG_NONE		0
- #define UBOOT_REV0P_TAG_CMDLINE		1
-@@ -478,6 +483,25 @@ void __init handle_uboot_args(void)
- 	bool use_embedded_dtb = true;
- 
- #ifdef CONFIG_ARC_UBOOT_SUPPORT
-+	/* check that we got correct magic */
-+	if (UBOOT_MAGIC_GET(uboot_rev_magic) != UBOOT_MAGIC_VALUE) {
-+		pr_warn("Invalid magic '%06lx' is passed from uboot, uboot args ingnored\n",
-+			UBOOT_MAGIC_GET(uboot_rev_magic));
-+
-+		goto ignore_uboot_args;
-+	}
-+
-+	/*
-+	 * check that we know this U-boot args ABI revision.
-+	 * as for today we only have one revision - '0'.
-+	 */
-+	if (UBOOT_REVISION_GET(uboot_rev_magic) != 0) {
-+		pr_warn("Unknown args revision '%02lx' is passed from uboot, uboot args ingnored\n",
-+			UBOOT_REVISION_GET(uboot_rev_magic));
-+
-+		goto ignore_uboot_args;
-+	}
-+
- 	/* check that we know this tag */
- 	if (uboot_tag != UBOOT_REV0P_TAG_NONE &&
- 	    uboot_tag != UBOOT_REV0P_TAG_CMDLINE &&
-@@ -498,6 +522,8 @@ void __init handle_uboot_args(void)
- 
- 	if (uboot_tag == UBOOT_REV0P_TAG_CMDLINE)
- 		append_boot_cmdline = true;
-+
-+ignore_uboot_args:
- #endif
- 
- 	if (use_embedded_dtb) {
--- 
-2.14.5
-
+Thanks,
+Ard.
