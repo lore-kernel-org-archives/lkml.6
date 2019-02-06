@@ -2,146 +2,246 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF72EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558DFC282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F4EA20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:25:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWl15fXT"
+	by mail.kernel.org (Postfix) with ESMTP id 1E6CA20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbfBFOZA (ORCPT
+        id S1728672AbfBFO0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:25:00 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44444 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfBFOZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:25:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k19-v6so6163583lji.11;
-        Wed, 06 Feb 2019 06:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Hz0/b3JILtDxJm9OlFzH1vtwwX7c9oWWf4Lph2yBT7I=;
-        b=BWl15fXTj4xXnUyS+km5zXqd6MOzwvI3AmIAxUX9BceYZJUQoIpDSSFM9BmyRYgCHF
-         SJtWfnuOBjVtUFH5w7W6OJlhtw9r1MTlROMDWmZBjXZXSDiMt83jhgH+DYPLkcL3j0kK
-         UNO7fn98Ufm2FeNB4ULlQuWZUL3uRaEjfzYMSkAUlO6QtbrcrCmACDz1Nl6TkPY8HwDg
-         E9Kf5QDqtpKnld5qXQjt6MpXpPnJU6XH7EG3xS1SJUZt6e79NYRVWp2ydPhzaCPIoexD
-         t8jpC5GxCv3fT1INTgNEaFSdAs689oB8ndFQj3XhigVdcL+KpaLd6romLwuK+ApJ/tYr
-         Tznw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Hz0/b3JILtDxJm9OlFzH1vtwwX7c9oWWf4Lph2yBT7I=;
-        b=sNZESv2qP+HeTKIR/v2n2G35m24fN6HExNmD7L2m7yy2kcoAbG0EFBLZBPqjpo+pPL
-         grIghnjF9qBM2vjExySvsYcljckCSqeKUtqNtMZ3bvgbVNgqiATia+7GLoXtp7MoNFCJ
-         52DgXyAAGa/yd9+WCC+7rHaFSRGdsOY0hqN3JIAXb29wI8SaR8kRfdsVcUXs+k8d8xoa
-         SzaEXP9lSvWQihLiK3y84/xGeOwQdwl56ksRhE71IK6qXmfyKI5CJIG6wS7d0WSHTKO7
-         YxnNJtOyGznY2ccqJ4AzkvCthFGjUujCNY+2JaPPyu15topFW7M7thotMkY1guFyIjnz
-         qmUQ==
-X-Gm-Message-State: AHQUAubDYapqjvp47mDwH+XA79/kt3K2BWis/E8FFIqIo8WN38gZFjA+
-        vXjfcGHqa1pgreDMQOi8PjM88UQn
-X-Google-Smtp-Source: AHgI3IZdfxjrtFnqef1tNYEQz12VOmZriDaWI/8VST26cumgUrnqMF6apaV10rvD/j1CsBN482+bGA==
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr6544442ljt.159.1549463097074;
-        Wed, 06 Feb 2019 06:24:57 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id f3sm981886lfc.49.2019.02.06.06.24.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 06:24:56 -0800 (PST)
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
- <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
- <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
- <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
- <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
- <BYAPR12MB33983A0E93B17808DECFD0F2C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <6edef92d-66a7-0f70-e59e-7381b82516eb@gmail.com>
- <BYAPR12MB339826EB972C5DB7957E8A82C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <20190206140141.GO21676@ulmo>
- <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
- <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
-Date:   Wed, 6 Feb 2019 17:24:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 09:26:13 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32875 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725928AbfBFO0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 09:26:12 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id D1B90AA0F8A33B4598DB;
+        Wed,  6 Feb 2019 14:26:10 +0000 (GMT)
+Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 6 Feb
+ 2019 14:25:49 +0000
+Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
+ from TPM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190206105724.14495-1-roberto.sassu@huawei.com>
+ <20190206125725.GA9257@linux.intel.com>
+ <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
+ <20190206135450.GA20061@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <2dea31e3-0796-e21f-5625-1ddc78485c71@huawei.com>
+Date:   Wed, 6 Feb 2019 15:25:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190206135450.GA20061@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.155]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2019 17:19, Sowjanya Komatineni пишет:
->>>>> No, there are no timeout errors in PIO mode. I could post full log with the PIO-only mode if you want.
->>>>>
->>>> Yes please post full log of PIO only and DMA only Also, in above log, 
->>>> lots of DMA transfer went thru fine except this one transfer where 
->>>> DMA timed out.
->>>> DMA completion doesnt happen on DMA submit during this particular 
->>>> transaction timeframe for some reason.
+On 2/6/2019 2:54 PM, Jarkko Sakkinen wrote:
+> On Wed, Feb 06, 2019 at 02:07:04PM +0100, Roberto Sassu wrote:
+>> On 2/6/2019 1:57 PM, Jarkko Sakkinen wrote:
+>>> On Wed, Feb 06, 2019 at 11:57:18AM +0100, Roberto Sassu wrote:
+>>>> Update
+>>>>
+>>>> This version of the patch set includes three additional patches (5-7/7)
+>>>> that allow users of the TPM driver to provide a digest for each PCR bank to
+>>>> tpm_pcr_extend(). The new patches have been included to facilitate the
+>>>> review of all the changes to support TPM 2.0 crypto agility for reading and
+>>>> extending PCRs.
+>>>>
+>>>>
+>>>> Original patch set description
+>>>>
+>>>> The TPM driver currently relies on the crypto subsystem to determine the
+>>>> digest size of supported TPM algorithms. In the future, TPM vendors might
+>>>> implement new algorithms in their chips, and those algorithms might not
+>>>> be supported by the crypto subsystem.
+>>>>
+>>>> Usually, vendors provide patches for the new hardware, and likely
+>>>> the crypto subsystem will be updated before the new algorithm is
+>>>> introduced. However, old kernels might be updated later, after patches
+>>>> are included in the mainline kernel. This would leave the opportunity
+>>>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+>>>> are not extended.
+>>>>
+>>>> This patch set provides a long term solution for this issue. If a TPM
+>>>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
+>>>> the digest size from the TPM with a PCR read. All the PCR banks are
+>>>> extended, even if the algorithm is not yet supported by the crypto
+>>>> subsystem.
+>>>>
+>>>> PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+>>>> is stored in the tpm_chip structure and available for users of the TPM
+>>>> driver.
+>>>>
+>>>> Changelog
+>>>>
+>>>> v9:
+>>>> - add comment for ima_load_kexec_buffer() in ima_init()
+>>>> - move 'digests' and ima_init_digests() to ima_queue.c
+>>>> - remove comment for TPM_RETRY
+>>>>
+>>>> v8:
+>>>> - set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
+>>>> - replace enum tpm_const with #define
+>>>> - rename labels in init_trusted()
+>>>> - allocate tpm_digest array after retrieving random data in init_digests()
+>>>>
+>>>> v7:
+>>>> - use memchr_inv() in tpm2_get_pcr_allocation()
+>>>> - add patch to move tpm_chip to include/linux/tpm.h
+>>>> - add patch to set the tpm_chip argument in trusted.c to a pointer from
+>>>>     tpm_default_chip()
+>>>> - remove definition of tpm_extend_digest
+>>>> - remove code in tpm2_pcr_extend() to extend unused PCR banks with the
+>>>>     first digest passed by the caller of tpm_pcr_extend()
+>>>> - remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
+>>>> - remove padding of SHA1 digest in tpm_pcr_extend()
+>>>> - pre-allocate and initialize array of tpm_digest structures in
+>>>>     security/keys/trusted.c and security/integrity/ima/ima_init.c
+>>>>
+>>>> v6:
+>>>> - squash patches 4-6
+>>>> - rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+>>>>     members to size and data
+>>>> - add comment in tpm2_init_bank_info()
+>>>>
+>>>> v5:
+>>>> - rename digest_struct variable to digest
+>>>> - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+>>>> - rename digest_size member of tpm_bank_list to extend_size
+>>>> - change type of alg_id member of tpm_bank_list from u8 to u16
+>>>> - add missing semi-colon in pcrlock()
+>>>>
+>>>> v4:
+>>>> - rename active_banks to allocated_banks
+>>>> - replace kmalloc_array() with kcalloc()
+>>>> - increment nr_allocated_banks if at least one PCR in the bank is selected
+>>>> - pass multiple digests to tpm_pcr_extend()
+>>>>
+>>>> v3:
+>>>> - remove end marker change
+>>>> - replace active_banks static array with pointer to dynamic array
+>>>> - remove TPM2_ACTIVE_PCR_BANKS
+>>>>
+>>>> v2:
+>>>> - change the end marker of the active_banks array
+>>>> - check digest size from output of PCR read command
+>>>> - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+>>>>
+>>>> v1:
+>>>> - modify definition of tpm_pcr_read()
+>>>> - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+>>>>
+>>>>
+>>>> Roberto Sassu (6):
+>>>>     tpm: dynamically allocate the allocated_banks array
+>>>>     tpm: rename and export tpm2_digest and tpm2_algorithms
+>>>>     tpm: retrieve digest size of unknown algorithms with PCR read
+>>>>     tpm: move tpm_chip definition to include/linux/tpm.h
+>>>>     KEYS: trusted: explicitly use tpm_chip structure from
+>>>>       tpm_default_chip()
+>>>>     tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+>>>>
+>>>>    drivers/char/tpm/tpm-chip.c         |   1 +
+>>>>    drivers/char/tpm/tpm-interface.c    |  38 ++++----
+>>>>    drivers/char/tpm/tpm.h              | 117 ++---------------------
+>>>>    drivers/char/tpm/tpm1-cmd.c         |  12 +++
+>>>>    drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
+>>>>    include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
+>>>>    include/linux/tpm_eventlog.h        |   9 +-
+>>>>    security/integrity/ima/ima.h        |   1 +
+>>>>    security/integrity/ima/ima_crypto.c |  10 +-
+>>>>    security/integrity/ima/ima_init.c   |   4 +
+>>>>    security/integrity/ima/ima_queue.c  |  27 +++++-
+>>>>    security/keys/trusted.c             |  73 +++++++++++----
+>>>>    12 files changed, 349 insertions(+), 208 deletions(-)
+>>>>
+>>>> -- 
+>>>> 2.17.1
+>>>>
 >>>
->>> Dmitry, can you provide some background information on the setup that 
->>> you're using? I vaguely remember something about i2c@7000d000 being 
->>> special on older Tegra devices. Perhaps there's something additional 
->>> that we need to take into account?
+>>> Can you do two things:
 >>>
->>> Aha! Look at tegra_i2c_reg_addr() which special-cases I2C_TX_FIFO on 
->>> the DVC variant of the controller, which is exactly the one that you 
->>> are seeing the timeouts on and it's exactly the register that we use 
->>> as destination for the DMA transfer.
+>>> 1. Check the v3: https://patchwork.kernel.org/patch/10797181/. Needs
+>>> to be applied first.
+>>> 2. Check that this does not cause merge conflicts with the current
+>>>      imaster? If it does, fix them, and use --subject-prefix="RESEND,PATCH v10".
 >>>
->>> I think we need to do something like this:
->>>
->>> 	slv_config.dst_addr = i2c_dev->base_phys + 
->>> tegra_i2c_reg_addr(i2c_dev, I2C_TX_FIFO);
->>>
->>> to make sure we pass the right FIFO register address to DMA.
+>>> Thanks.
 >>
->> I'm running it on T20 at the moment. I don't know about the DVC quirks, but sounds plausible. Please let me know if you need any other info.
+>> I already applied the patch set on top of linux-tpmdd/next
+>> (41ac27d19b07) and your patch.
 >>
->> Here the full logs:
+>> Also, there are no conflicts with the current master.
 >>
->> PIO-only: http://dpaste.com/2MX3EAN.txt
->> DMA-only: http://dpaste.com/3VXZSSM.txt
->>
->> Note the "Failed to read T44 and T5 (-110)" error that happens in DMA-only. And it happens on i2c@7000c000, DVC is i2c@7000d000.
+>> Roberto
 > 
-> Yes this is due to same issue theirry mentioned.
-> Prior to transfer timeout for touch, tps6586x regulator probe failed due to i2c timeout which uses DVC (7000D000) and since DMA mode is enforced all DVC/PWR I2C transactions also go thru DMA and FIFO register for DVC offset is not accounted when configure to dma slave.
-> Will fix and send so you can see for repro with updated patch..
+> Before getting your new version, I applied:
 > 
+> https://patchwork.kernel.org/project/linux-integrity/list/?series=76223
 > 
-> [    0.925155] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-> [    0.925165] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-> [    1.028961] tegra-i2c 7000d000.i2c: i2c transfer timed out
-> [    1.028968] tegra-i2c 7000c000.i2c: DMA transfer timeout
-> [    1.028995] tps6586x 3-0034: Chip ID read failed: -110
-> [    1.029029] tps6586x: probe of 3-0034 failed with error -5
-> [    1.029045] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
-> [    1.029051] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
+> This causes some merge conflicts:
+> 
+> error: Failed to merge in the changes.
+> Patch failed at 0003 tpm: retrieve digest size of unknown algorithms with PCR read
+
+I fixed it and patch 4/6. But, I think there is a problem in your patch
+'tpm: move tpm_validate_commmand() to tpm2-space.c':
+
+---
+-int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, 
+u32 cc,
+-                      u8 *cmd)
++static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space 
+*space,
++                               const void *cmd, size_t len)
++{
++       const struct tpm_header *header = (const void *)cmd;
++       int i;
++       u32 cc;
++       u32 attrs;
++       unsigned int nr_handles;
++
++       if (len < TPM_HEADER_SIZE)
++               return -EINVAL;
++
++       if (chip->nr_commands) {
+
+[...]
+
++       }
++
++       return cc;
++
+---
+
+'cc' may be not initialized before returning the value.
+
+Roberto
+
+
+> /Jarkko
 > 
 
-I think tps6586x and atmel-touch should be independent issues, but will see. Thanks!
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
