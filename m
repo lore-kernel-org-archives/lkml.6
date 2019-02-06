@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468DFC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A476C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09006218D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57FAB218D2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549478969;
-	bh=l78sgM6WcvkXlUcCEjvhzjfjycvymzt3JLDlNU2q0+s=;
+	s=default; t=1549478971;
+	bh=nfg3y+FMh8aQk7KbyNjqliGpkpmghmtMYoeoolG5v7k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WOjEzUckrMNJ4+4w94YVBD9GVrBrzU2HYvYv+6r5BD6mCd6EquMrq3CTaSCPhCzJL
-	 R8JYnDESPpcIx9bK+s7LtZO1o8o5Agib1S0VYeFVMO9KECCH36CwGeZAts+I5OuBdQ
-	 xIprAuIHZbNQWy7/GOdaZ9ZoeHrOaKDjdUO4Ck6k=
+	b=Y2BwrxxMt73kptJ2I4iVQVxN1kcO6uE0YP73vK5fGsiShHxgxQ/YDVzuIQ/fphxR2
+	 sg2PoUzrQQc3TpNsnRhPciSHL1I3VkojJu8tHCwqW9Gavmud+mAfBWLV24iS65PTgy
+	 QVUbzUWcUyXVdy8oMthvIHIRw8wKZGr2X5RaouTA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfBFStZ (ORCPT
+        id S1727021AbfBFSt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:49:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43682 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:49:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfBFStY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:49:24 -0500
+        id S1726880AbfBFSt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:49:27 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D78A206DD;
-        Wed,  6 Feb 2019 18:49:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 684D72186A;
+        Wed,  6 Feb 2019 18:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549478964;
-        bh=l78sgM6WcvkXlUcCEjvhzjfjycvymzt3JLDlNU2q0+s=;
+        s=default; t=1549478966;
+        bh=nfg3y+FMh8aQk7KbyNjqliGpkpmghmtMYoeoolG5v7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IGsb2wTUXqiGEz8/aRFGPC9IDjIiYRqzruD4I/Ld3QvZ+DHFgjn31GjLBdpoWkgzP
-         v2COdWgOVThcaIrNAdxMlKoad9+Vng4HuBSbYpvF9amzAvlUgnpS2UVHXMB32QIsLe
-         TFoEvmoJqqCHaJ3t2R/98jDgZm3+ZePnsF7QFLQw=
+        b=TqsDpQDTE/65zyKANh/2hf5gRJSvkqG1wHzeKY2GMDp7fXd+pHFwiblPoEl3iwA26
+         f0qQzTy+Mw9xPDuS2m9ZLedi0S5ZYt3/pdNqWX7LrV6Z0pa436DQA/ICKDgSaUeyJh
+         JIwGaVatZN9zdPzIqAl+EzXDCNuLKCdaZt3vL+2g=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -46,14 +46,10 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Dongjiu Geng <gengdongjiu@huawei.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 02/53] perf arm pmu: Add missing linux/string.h header
-Date:   Wed,  6 Feb 2019 15:48:12 -0300
-Message-Id: <20190206184903.24054-3-acme@kernel.org>
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH 03/53] perf srccode: Move struct definition from map.h to srccode.h
+Date:   Wed,  6 Feb 2019 15:48:13 -0300
+Message-Id: <20190206184903.24054-4-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -66,35 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-It uses strstarts(), that is defined in linux/string.h but that was
-being including by sheer luck, indirectly, fix it.
+To reduce the header dependencies, since we already have a srccode.h
+header, then there is where the 'struct srccode_state' should be, and
+map.h, that is more widely used should have just a forward declaraion
+of 'struct srccode_state'.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dongjiu Geng <gengdongjiu@huawei.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/n/tip-vub5lp82wb7vy5wssfad0xu8@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-64lrkjjaa7wlo1zi2gr5u3es@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm/util/pmu.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/map.h     | 13 +------------
+ tools/perf/util/srccode.h | 13 +++++++++++++
+ tools/perf/util/thread.h  |  2 +-
+ 3 files changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
-index e047571e6080..64a677b518d0 100644
---- a/tools/perf/arch/arm/util/pmu.c
-+++ b/tools/perf/arch/arm/util/pmu.c
-@@ -7,6 +7,7 @@
- #include <string.h>
- #include <linux/coresight-pmu.h>
- #include <linux/perf_event.h>
-+#include <linux/string.h>
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 09282aa45c80..5a889db4fca5 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -174,18 +174,7 @@ char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
+ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
+ 			 FILE *fp);
  
- #include "cs-etm.h"
- #include "arm-spe.h"
+-struct srccode_state {
+-	char *srcfile;
+-	unsigned line;
+-};
+-
+-static inline void srccode_state_init(struct srccode_state *state)
+-{
+-	state->srcfile = NULL;
+-	state->line = 0;
+-}
+-
+-void srccode_state_free(struct srccode_state *state);
++struct srccode_state;
+ 
+ int map__fprintf_srccode(struct map *map, u64 addr,
+ 			 FILE *fp, struct srccode_state *state);
+diff --git a/tools/perf/util/srccode.h b/tools/perf/util/srccode.h
+index e500a746d5f1..1b5ed769779c 100644
+--- a/tools/perf/util/srccode.h
++++ b/tools/perf/util/srccode.h
+@@ -1,6 +1,19 @@
+ #ifndef SRCCODE_H
+ #define SRCCODE_H 1
+ 
++struct srccode_state {
++	char	 *srcfile;
++	unsigned line;
++};
++
++static inline void srccode_state_init(struct srccode_state *state)
++{
++	state->srcfile = NULL;
++	state->line    = 0;
++}
++
++void srccode_state_free(struct srccode_state *state);
++
+ /* Result is not 0 terminated */
+ char *find_sourceline(char *fn, unsigned line, int *lenp);
+ 
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index f3c939150f90..856cf1a9040a 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -7,8 +7,8 @@
+ #include <linux/list.h>
+ #include <unistd.h>
+ #include <sys/types.h>
++#include "srccode.h"
+ #include "symbol.h"
+-#include "map.h"
+ #include <strlist.h>
+ #include <intlist.h>
+ #include "rwsem.h"
 -- 
 2.20.1
 
