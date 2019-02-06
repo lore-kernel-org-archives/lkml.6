@@ -2,145 +2,148 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C9EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36775C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF09E2175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D2C2080A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:02:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="olzRszd1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729028AbfBFJ7D (ORCPT
+        id S1728978AbfBFKCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 04:59:03 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:47694 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726804AbfBFJ7D (ORCPT
+        Wed, 6 Feb 2019 05:02:24 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33993 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727314AbfBFKCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 04:59:03 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x169n1lk018182;
-        Wed, 6 Feb 2019 03:58:26 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2qfp5p8pj2-1;
-        Wed, 06 Feb 2019 03:58:25 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 2BFC8650F639;
-        Wed,  6 Feb 2019 03:58:49 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 6 Feb 2019
- 09:58:24 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x169wMLJ001675; Wed,
- 6 Feb 2019 09:58:22 GMT
-Date:   Wed, 6 Feb 2019 09:58:22 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [BUG BISECT] NULL pointer after commit "ASoC: dapm: Only power
- up active channels from a DAI"
-Message-ID: <20190206095822.GN3837@imbe.wolfsonmicro.main>
-References: <20190205211622.GA5891@kozik-lap>
+        Wed, 6 Feb 2019 05:02:22 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v14-v6so2684213ljv.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 02:02:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Arc/HoTcPxPIxIRz4p4ijVwmMuDAmNvH5INpp+lLdGg=;
+        b=olzRszd1DP/BcKdUngOzSntP7QUg1VfQaAjPgwzfWPQZPuu+nNAR9qxule7bJGEInB
+         4/m1PrB+o9USo474VZMHZjVyrv+m64q0JYftQC8gpF6jS+LeEGOTQMMeg5hIyGW15ck0
+         chRSkOJ330751kiVi4wzF6I5838zrIn/bJyWCOWANRxpvtaI3zd1KbP8mVWEy/VKI6ui
+         98ArApWg8CzSSF9CZau4rKPyvHrhKX+s4k9IZWG8WCoLKMByLxntU7oGiYPXbxB0t26f
+         7j8C8MMKIcrx9Tvr+Tdx+ieiVN/jJtzt4y+R0JrhAGTg0Ar6OZiPVEXgLEssCnNF8KOa
+         tF1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Arc/HoTcPxPIxIRz4p4ijVwmMuDAmNvH5INpp+lLdGg=;
+        b=NZZZb0ZI7760KDtcTr1MhXydd1ZFbflWyg5cLJAqvMbgddhrN0nKaC3OLVr7K1uKec
+         gFWgL/tthQKHTF5Hog87A1P3Ra4I7RO1/iMiVTDCEA+G8sN3pSvbzM8ZqI3ny6qDIBlc
+         7y1Vh/mepkfiXWl6KmKKPBQP1//zeP4g18Q5xMc/ZasmJT2OPOTon38Bi5eQnrQCTmIJ
+         Aoo8OMjIkh4SEVTYheSkkgMWuSK9bh6msmAfLjUyQNfkKc5ttT0nBMJGIGb1l7v8Ldxk
+         NmcP8S3ns+TA8oK1NGb4w+etzA7AFmjEaUsnQ8G3suyusL+l7NkCBM2XNiAFKI5xEl65
+         Ur6A==
+X-Gm-Message-State: AHQUAua/wzuJ1kwBQd8ZPAXEjTmYqz8w1casYdSDuWy45+MVJ+A3cvg0
+        /9z4OsCTj/bD8jQV0JZKYIM7BYIt9SnGzPNTB7d7GA==
+X-Google-Smtp-Source: AHgI3IY7BvWu/E8rMJArxMCWlKKc2qHO+mV/Mwr6UK/YLF6GYw5bj8DVDtEcHsHAFc0XcuCB5t/hPQkc3VvcKncOtus=
+X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr5888973ljh.135.1549447340203;
+ Wed, 06 Feb 2019 02:02:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190205211622.GA5891@kozik-lap>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=797 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902060078
+References: <20190125162302.14036-1-masneyb@onstation.org> <20190125162302.14036-4-masneyb@onstation.org>
+In-Reply-To: <20190125162302.14036-4-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 6 Feb 2019 11:02:08 +0100
+Message-ID: <CACRpkdYuH6QnumRnAUbzJCwrj58mog68FJu6Tvi_48bLzsBbZg@mail.gmail.com>
+Subject: Re: [PATCH 3/9] mfd: pm8xxx: convert to v2 irq interfaces to support
+ hierarchical IRQ chips
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 10:16:22PM +0100, Krzysztof Kozlowski wrote:
-> Bisect pointed to commit:
->     commit 078a85f2806f0ffd11289009462a6a390f9adb5c
->     Author: Charles Keepax <ckeepax@opensource.cirrus.com>
->     Date:   Thu Jan 31 13:30:18 2019 +0000
->         ASoC: dapm: Only power up active channels from a DAI
-> 
-> as a bad commit for NULL pointer on my Odroid XU3 and Odroid U3 board when
-> doing "aplay /usr/share/sounds/alsa/Front_Right.wav".
-> 
-> 1. Arch ARM Linux
-> 2. exynos_defconfig
-> 3. Odroid U3, XU3, Exynos SoC, ARMv7
-> 
-> Last address is in calltrace:
-> c079552c
-> dapm_update_dai_unlocked
-> sound/soc/soc-dapm.c:2586
-> 
+Hi Brian!
 
-Apologies for this one, is a little strange. I am assuming either
-we end up with a NULL widget or more likely given the line
-number a NULL path/widget on the path. Having some difficulty seeing
-how we get into that state though.
+Thanks for this patch!
 
-Could you confirm what machine driver/DT is being used here? I am
-assuming this is arch/arm/boot/dts/exynos4412-odroidu3.dts and
-sound/soc/samsung/odroid.c. So will investigate those see if I
-can find anything.
+On Fri, Jan 25, 2019 at 5:23 PM Brian Masney <masneyb@onstation.org> wrote:
 
-And could you try this diff and send through the output:
+> The IRQ handler was hardcoded as handle_level_irq and this patch
+> properly sets the handler to either handle_edge_irq or handle_level_irq
+> depending on the IRQ type.
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 482ddb825fb59..9ee44b0192874 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -2570,16 +2570,37 @@ static int dapm_update_dai_unlocked(struct snd_pcm_substream *substream,
-        else
-                w = dai->capture_widget;
+Done like so:
 
-+ if (!w) {
-+         pr_err("CK -- NULL widget on %s\n", dai->name);
-+         return 0;
-+ }
-+
-        dev_dbg(dai->dev, "Update DAI routes for %s %s\n", dai->name,
-                dir == SNDRV_PCM_STREAM_PLAYBACK ? "playback" : "capture");
+> +               flow_handler = handle_edge_irq;
 
-        snd_soc_dapm_widget_for_each_sink_path(w, p) {
-+         if (!p) {
-+                 pr_err("DEBUG -- NULL sink path on %s\n", w->name);
-+                 continue;
-+         }
-+         if (!p->sink) {
-+                 pr_err("DEBUG -- NULL wink widget on %s\n", w->name);
-+                 continue;
-+         }
-                ret = dapm_update_dai_chan(p, p->sink, channels);
-                if (ret < 0)
-                        return ret;
-        }
+This creates a problem and makes my kernel crash, because
+handle_edge_irq() *unconditionally* calls chip->irq_ack(),
+and since this chip does not implement .irq_ack(), it crashes.
 
-        snd_soc_dapm_widget_for_each_source_path(w, p) {
-+         if (!p) {
-+                 pr_err("DEBUG -- NULL source path on %s\n", w->name);
-+                 continue;
-+         }
-+         if (!p->source) {
-+                 pr_err("DEBUG -- NULL source widget on %s\n", w->name);
-+                 continue;
-+         }
-                ret = dapm_update_dai_chan(p, p->source, channels);
-                if (ret < 0)
-                        return ret;
+I tried to just add a void .irq_ack(). That instead made the
+kernel hang.
 
-Thanks,
-Charles
+If I just assign handle_level_irq() as before (just replaced
+all assignments of handle_edge_irq with handle_level_irq)
+it boots nicely, AND the interrupts are working fine on the
+ADC calibration path, and further readings of the ADC
+generates new IRQs, as expected!
+
+The handle_edge_irq and .irq_ack() call path is for hardware
+that require an explicit ACK (such as writing a bit in some
+register) when handling edge IRQs. This is necessary in some
+hardware because of the transient nature of edge IRQs.
+This is not necessary on some hardware that will simply
+clear the flag when something is reading the status register.
+I think this is the case with PM8xxx and you can safely use
+handle_level_irq with all IRQs. It looks counterintuitive and
+maybe the function handle_edge_irq() has a stupid name.
+Just drop this handle_edge_irq() business for now.
+
+This was tested on the APQ8060 DragonBoard.
+
+However this happens:
+
+[    3.007727] mmci-pl18x 12180000.sdcc: ignoring dependency for
+device, assuming no driver
+[    3.007970] mmci-pl18x 12200000.sdcc: ignoring dependency for
+device, assuming no driver
+[    3.014984] mpu3050-i2c 1-0068: ignoring dependency for device,
+assuming no driver
+[    3.023543] cm3605 cm3605: ignoring dependency for device, assuming no driver
+[    3.030532] ak8975 1-000c: ignoring dependency for device, assuming no driver
+[    3.037729] bmp280 1-0077: ignoring dependency for device, assuming no driver
+[    3.044789] reg-fixed-voltage regulators:xc622a331mrg: ignoring
+dependency for device, assuming no driver
+[    3.052485] smsc911x 1b800000.ethernet-ebi2: ignoring dependency
+for device, assuming no driver
+
+But I think that is because these all use ssbi-gpio interrupts and
+these are now handled properly so I will try to fix the device
+tree and send a separate patch that you can include.
+
+Yours,
+Linus Walleij
