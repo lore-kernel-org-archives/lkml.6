@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FB6C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF58DC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CD720823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB7D218D9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479069;
-	bh=JUOC/pQwfJcp4lm1AESFYNxh400PhosDoclyJdtt8U8=;
+	s=default; t=1549479072;
+	bh=WrfjRCGK8svepgJ/tL2+M3Iowuu+TnGf019cJH882VM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gO2v7ssO8y1bFNINc0q0sC1DQB5QMZ8bJluBU8rkTJWKgXiRLANNaWBp8wNwqFl8f
-	 /NA/nM5RCEhpAr0J4jZVV0/S8I+Dobbbobn5CWIyKTu0NFhhQlLxe95zUvIqMOoYse
-	 XxLIt42zjYnNeAdLES37f/LuSuuSnMfEsHWuFfcQ=
+	b=IF8lX+5OtUOSo8OsQYI+pblbtVD3PPL59of6RsCzXZoZ6d5y9hVp87XXOQDteN31P
+	 eepBU6xV23qzuAlL4xed7y7jxlA0tyXfy95CeONqU/xT7bBrxnGvI22GmL9eKVnRwk
+	 W/YHZgb7Q9ZGMRMpBUkefc5Sv4b5bYQlg7Aidv6g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfBFSvH (ORCPT
+        id S1727896AbfBFSvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:51:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45382 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:51:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfBFSvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:51:06 -0500
+        id S1727084AbfBFSvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:51:08 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BA36206DD;
-        Wed,  6 Feb 2019 18:51:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B59C218D4;
+        Wed,  6 Feb 2019 18:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479064;
-        bh=JUOC/pQwfJcp4lm1AESFYNxh400PhosDoclyJdtt8U8=;
+        s=default; t=1549479067;
+        bh=WrfjRCGK8svepgJ/tL2+M3Iowuu+TnGf019cJH882VM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w+j2JiT2dRIdRxWDVzLrIQkFjS37RdtOxD80dLHxJ1afCCwQQrrD7QL7rSy3M79J2
-         m4pTtsrQSVndJjamYo7AWw9hZBF5KNJ7vm6W2GWcYFewi2Wzc8Nlkh8UUD13a/XIPk
-         YC55nXVsM9vY3alnCdOt9LKtzOfZL1F4pSvRepGw=
+        b=k6ltzIwUcoLBroRjgU9whe8f3ad8DLxGeAx8TgUdhXQOwQ75mZn9C9Qy7iM6SuZCw
+         jvFJs0Pz4Uaefo9XG1du655hD5LnOBXAEgsOekqICAw2wC/Z3ELc9CcqidgKSk5uKX
+         Md8GCFWf5o9R1735L4M8aRchBb7NR2LP22kwVxGM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 34/53] perf report: Move symbol annotation to the resort phase
-Date:   Wed,  6 Feb 2019 15:48:44 -0300
-Message-Id: <20190206184903.24054-35-acme@kernel.org>
+Subject: [PATCH 35/53] perf tools: Add documentation for BPF event selection
+Date:   Wed,  6 Feb 2019 15:48:45 -0300
+Message-Id: <20190206184903.24054-36-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -62,92 +61,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Changbin Du <changbin.du@gmail.com>
 
-Currently we make the annotation for the IPC column during the entry
-display, already outside of the progress bar scope, so it appears like
-'perf report' is stuck.
+Add documentation for how to pass a BPF program as a perf event.
 
-Move the annotation retrieval to the resort phase, so that all the data
-are ready for display.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190204141808.23031-4-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190201134651.12373-1-changbin.du@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-report.c | 21 +++++++++++++++++++--
- tools/perf/util/sort.c      |  7 -------
- 2 files changed, 19 insertions(+), 9 deletions(-)
+ tools/perf/Documentation/perf-config.txt | 31 ++++++++++++++++++++++++
+ tools/perf/Documentation/perf-record.txt | 14 +++++++++++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index a007ea9a3874..2e8c74d6430c 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -616,6 +616,21 @@ static int report__collapse_hists(struct report *rep)
- 	return ret;
- }
+diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
+index 4ac7775fbc11..86f3dcc15f83 100644
+--- a/tools/perf/Documentation/perf-config.txt
++++ b/tools/perf/Documentation/perf-config.txt
+@@ -120,6 +120,10 @@ Given a $HOME/.perfconfig like this:
+ 		children = true
+ 		group = true
  
-+static int hists__resort_cb(struct hist_entry *he, void *arg)
-+{
-+	struct report *rep = arg;
-+	struct symbol *sym = he->ms.sym;
++	[llvm]
++		dump-obj = true
++		clang-opt = -g
 +
-+	if (rep->symbol_ipc && sym && !sym->annotate2) {
-+		struct perf_evsel *evsel = hists_to_evsel(he->hists);
+ You can hide source code of annotate feature setting the config to false with
+ 
+ 	% perf config annotate.hide_src_code=true
+@@ -553,6 +557,33 @@ trace.*::
+ 	trace.show_zeros::
+ 		Do not suppress syscall arguments that are equal to zero.
+ 
++llvm.*::
++	llvm.clang-path::
++		Path to clang. If omit, search it from $PATH.
 +
-+		symbol__annotate2(sym, he->ms.map, evsel,
-+				  &annotation__default_options, NULL);
-+	}
++	llvm.clang-bpf-cmd-template::
++		Cmdline template. Below lines show its default value. Environment
++		variable is used to pass options.
++		"$CLANG_EXEC -D__KERNEL__ $CLANG_OPTIONS $KERNEL_INC_OPTIONS \
++		-Wno-unused-value -Wno-pointer-sign -working-directory \
++		$WORKING_DIR  -c $CLANG_SOURCE -target bpf -O2 -o -"
 +
-+	return 0;
-+}
++	llvm.clang-opt::
++		Options passed to clang.
 +
- static void report__output_resort(struct report *rep)
- {
- 	struct ui_progress prog;
-@@ -623,8 +638,10 @@ static void report__output_resort(struct report *rep)
++	llvm.kbuild-dir::
++		kbuild directory. If not set, use /lib/modules/`uname -r`/build.
++		If set to "" deliberately, skip kernel header auto-detector.
++
++	llvm.kbuild-opts::
++		Options passed to 'make' when detecting kernel header options.
++
++	llvm.dump-obj::
++		Enable perf dump BPF object files compiled by LLVM.
++
++	llvm.opts::
++		Options passed to llc.
++
+ SEE ALSO
+ --------
+ linkperf:perf[1]
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index d232b13ea713..02b4aa2621e7 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -88,6 +88,20 @@ OPTIONS
+           If you want to profile write accesses in [0x1000~1008), just set
+           'mem:0x1000/8:w'.
  
- 	ui_progress__init(&prog, rep->nr_entries, "Sorting events for output...");
- 
--	evlist__for_each_entry(rep->session->evlist, pos)
--		perf_evsel__output_resort(pos, &prog);
-+	evlist__for_each_entry(rep->session->evlist, pos) {
-+		perf_evsel__output_resort_cb(pos, &prog,
-+					     hists__resort_cb, rep);
-+	}
- 
- 	ui_progress__finish();
- }
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 79e794406bef..2b6c1ccb878c 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -429,8 +429,6 @@ static int hist_entry__sym_ipc_snprintf(struct hist_entry *he, char *bf,
- {
- 
- 	struct symbol *sym = he->ms.sym;
--	struct map *map = he->ms.map;
--	struct perf_evsel *evsel = hists_to_evsel(he->hists);
- 	struct annotation *notes;
- 	double ipc = 0.0, coverage = 0.0;
- 	char tmp[64];
-@@ -438,11 +436,6 @@ static int hist_entry__sym_ipc_snprintf(struct hist_entry *he, char *bf,
- 	if (!sym)
- 		return repsep_snprintf(bf, size, "%-*s", width, "-");
- 
--	if (!sym->annotate2 && symbol__annotate2(sym, map, evsel,
--		&annotation__default_options, NULL) < 0) {
--		return 0;
--	}
--
- 	notes = symbol__annotation(sym);
- 
- 	if (notes->hit_cycles)
++        - a BPF source file (ending in .c) or a precompiled object file (ending
++          in .o) selects one or more BPF events.
++          The BPF program can attach to various perf events based on the ELF section
++          names.
++
++          When processing a '.c' file, perf searches an installed LLVM to compile it
++          into an object file first. Optional clang options can be passed via the
++          '--clang-opt' command line option, e.g.:
++
++            perf record --clang-opt "-DLINUX_VERSION_CODE=0x50000" \
++                        -e tests/bpf-script-example.c
++
++          Note: '--clang-opt' must be placed before '--event/-e'.
++
+ 	- a group of events surrounded by a pair of brace ("{event1,event2,...}").
+ 	  Each event is separated by commas and the group should be quoted to
+ 	  prevent the shell interpretation.  You also need to use --group on
 -- 
 2.20.1
 
