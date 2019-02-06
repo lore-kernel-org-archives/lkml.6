@@ -2,156 +2,147 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2591C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCA2C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74DD220823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC2320823
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lHtn4Iux"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zF47n9Cs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfBFU5n (ORCPT
+        id S1726850AbfBFU6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 15:57:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfBFU5m (ORCPT
+        Wed, 6 Feb 2019 15:58:23 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:45450 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbfBFU6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 15:57:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LaAAoEOE7jc7juGzKjfulVEaVqpDUXbt3XIRNzLGhwM=; b=lHtn4IuxC/u35lBEGZKEIq18e
-        lsfupS2+XRH/Y0FgQXp5N99i/XA6q4TjR3T2hAkgrb7g3ZOuRyzHMlygLy6hR6+Srqb5UjYog8onG
-        mlq69pXHUhtHGcdgnqPPvXFJFsHYswZFceNWyj056A+v0YDDG8zq+XiNLK7iEk4+unfxxsJLd9hAj
-        ZlGf69Xd+i4bZ9QMZ6r1WnfyFhiyIYPwEyvezO1VUSs1qlde4J8Me+oqERbqFgSVrqewG8i1ktsC9
-        24OJERA8d3x16/81ys9auPjeo1ZDmpsW73GEH8Unhztgon9YVUFc0JHF6eqW8IsSIgFqRqQ0WIwom
-        vxGl40b2Q==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1grUGL-0004XN-8X; Wed, 06 Feb 2019 20:57:41 +0000
-Subject: Re: Build regressions/improvements in v5.0-rc5
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org
-References: <20190204134234.13636-1-geert@linux-m68k.org>
- <33e58393-97f1-321e-5ee0-a1242c7c7a26@infradead.org>
- <5ccff302-3986-5892-d072-5c334484f990@infradead.org>
- <87zhr9kza2.fsf@concordia.ellerman.id.au>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fba03b4d-0086-21f9-d38c-3e22d44b5ce3@infradead.org>
-Date:   Wed, 6 Feb 2019 12:57:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 6 Feb 2019 15:58:22 -0500
+Received: by mail-ua1-f67.google.com with SMTP id e16so2736602uam.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 12:58:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W4ctc2JQ3t3vtf/g9zMb1HzjTFoyLHUHO4M9eqCT3fE=;
+        b=zF47n9CsELeXEx7d92ZdJ+DMNPUE0mUD4HfP7Z0qjPcQrBOI+vKJE+GmppaoLEb3qC
+         KZIbXwQaR1JXbnVyLCLogOr+qx/oy4ImLew5r8tzryI2S8F18FTc0TJ00Ig4ofj6Jnpg
+         Cf+d8nn9Kx5tOC+ZMNrF6q5aHvr3TtaQ+TZamwZM+WWz8tQ9Fgv5P20oUnOOitnanDye
+         r6ZVVKBwkVa4Qk4t4rsPBsWo1kHpQDw+6Xy20vYuaKlQk1eU51rpb31k2XW16Q6RnuJU
+         stygbpuf0wzaIA6n4c5lNjqm4at1R7a9Qoox48iWOGHXs7eX7LlUFJOuorHRNSozcRGt
+         dQOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W4ctc2JQ3t3vtf/g9zMb1HzjTFoyLHUHO4M9eqCT3fE=;
+        b=pfwhHQ/oow815+Ha7YeJOXuOjPXLUloamsY4nVz+75FBYedu4MPDyb1a3anCsL2ua9
+         vKdKi56HBng7boUl7i5+31IwwfUXMYnaY1eWfwzM/vXM4AdSi6Mvrsgu9ak3oKhcS2RI
+         R2KVvRVJDr/KoDDIQxgTl//GTtaH4z5IblC1MWJ/bCe+z720IoxXT1QL0kHoiac2Mx8e
+         vPTyZ7nxjWHMeJIGd2h0V5e4pmbA3fjQmFFteYjnyH7gyNEdx4SyA5RoTiDMosD1nC3P
+         nrw0UIS9gPi6eZvc22wfjvESJymDchsN4AzFQk1qvEG82hzh5m871SoojkhWj3ur6U1q
+         qkBQ==
+X-Gm-Message-State: AHQUAua0kE9dUTWs0AsznA03m7yPs86+WS0CTQN4PaQ+CfFvS4H8X20C
+        a7Fw9nMxCb01O1snRav2nXQURDwSSuCny8Vl6rEEvg==
+X-Google-Smtp-Source: AHgI3IZyFtdmeX+mhRloXEAd+DCkr+x8TK9qv/hXANRV35OX3ZjeWgXlSyW6eXCehiCZSzf7EWakPIAtCgRVMwRzW/M=
+X-Received: by 2002:ab0:7611:: with SMTP id o17mr4607883uap.22.1549486701252;
+ Wed, 06 Feb 2019 12:58:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87zhr9kza2.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190130234051.2294-1-mike.leach@linaro.org>
+In-Reply-To: <20190130234051.2294-1-mike.leach@linaro.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 6 Feb 2019 13:58:10 -0700
+Message-ID: <CANLsYkxrCpbzjjJ6=pDezsdC0eXyJ01NKu5jBU13Y8G0cc8etg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Update AMBA driver for enhanced component ID spec.
+To:     Mike Leach <mike.leach@linaro.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Coresight ML <coresight@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        "Suzuki K. Poulose" <suzuki.poulose@arm.com>, arm@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/19 2:05 AM, Michael Ellerman wrote:
-> Randy Dunlap <rdunlap@infradead.org> writes:
->> On 2/4/19 9:46 AM, Randy Dunlap wrote:
->>> On 2/4/19 5:42 AM, Geert Uytterhoeven wrote:
->>>> Below is the list of build error/warning regressions/improvements in
->>>> v5.0-rc5[1] compared to v4.20[2].
->>>>
->>>> Summarized:
->>>>   - build errors: +2/-4
->>>>   - build warnings: +113/-14843
->>>>
->>>> JFYI, when comparing v5.0-rc5[1] to v5.0-rc4[3], the summaries are:
->>>>   - build errors: +0/-0
->>>>   - build warnings: +56/-59
->>>>
->>>> Note that there may be false regressions, as some logs are incomplete.
->>>> Still, they're build errors/warnings.
->>>>
->>>> Happy fixing! ;-)
->>>>
->>>> Thanks to the linux-next team for providing the build service.
->>>>
->>>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/ (238 out of 240 configs)
->>>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8fe28cb58bcb235034b64cbbb7550a8a43fd88be/ (all 240 configs)
->>>> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/f17b5f06cb92ef2250513a1e154c47b78df07d40/ (238 out of 240 configs)
->>>>
->>>>
->>>>
->>>> *** WARNINGS ***
->>>>
->>>> 113 warning regressions:
->>>
->>>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS:  => N/A
->>>
->>> Hi Geert,
->>>
->>> I am trying to find the above warning (needle) in the haystack.
->>> Can you please direct me to which config/build it is in?
->>>
->>> Is there a good way for me to find it?
->>>
->>> thanks.
->>>
->>
->> Working backwards, it probably comes from this:
->>
->> config CURRITUCK
->> 	bool "IBM Currituck (476fpe) Support"
->> 	depends on PPC_47x
->> 	select SWIOTLB
->> 	select 476FPE
->> 	select PPC4xx_PCI_EXPRESS
->>
->> This is the only similar Kconfig segment that does not select FORCE_PCI
->> but PPC4xx_PCI_EXPRESS depends on PCI but
->> # CONFIG_PCI is not set
->>
->> This could be related to a recent series of patches that allows ACPI to
->> be built without having PCI enabled.
->>
->> Michael?
-> 
-> There isn't really an easy way to do it sorry.
-> 
-> If you download the page for the revision:
->   http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/
-> 
-> With a lot of grep/sed/awk you can get a list of the URLs for all the
-> builds eg. one would be:
-> 
->   http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/
-> 
-> And then you can just tack on "log/" to get:
-> 
->   http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/log/
-> 
-> Which you can wget and grep.
-> 
-> But that's all a bit of a pain.
-> 
-> I have on my todo list to add json formatted build results and revision
-> pages, which would make it quite a bit simpler. But of course I haven't
-> had time to do it yet :/
+On Wed, 30 Jan 2019 at 16:40, Mike Leach <mike.leach@linaro.org> wrote:
+>
+> The latest ARM CoreSight specification updates the component identification
+> requirements for all components attached to an AMBA bus. (ARM IHI 0029E)
+>
+> This specification defines bits 15:12 in the ComponentID (CID) value as the
+> device class. Identification requirements now depend on this class.
+> Class 0xF: Traditional components identified by Peripheral ID (PID) only.
+> Class 0x9: CoreSight components may be identified by a Universal Component
+> Identifier (UCI) consisting of the PID plus CoreSight DevType and DevArch
+> values.
+>
+> Current and future ARM CoreSight IP will now use the same PID for
+> components on the same function - e.g. the ETM, CTI, PMU and Debug elements
+> associated with a core. The first core to use this UCI method is the A35,
+> which currently has binding entries in the ETMv4 driver.
+>
+> This patchset prepares for the addition of the upcoming CTI driver, which
+> will need to correctly bind with A35, and reported new devices that share
+> PID for multiple components, while overcoming the limitation of binding by
+> PID alone, which cannot now work.
+>
+> Patch 0001: Adds new UCI data structure and uses it with existing drivers
+> that use private data field in amba_id. This fixes issue from prior set.
+> Patch 0002: Implements the UCI matching code in the AMBA core code.
+> Patch 0003: Update ETMv4 driver to use UCI as appropriate.
+>
+> Thanks
+> Mike
+>
+> Tested on DB410, Juno; kernel 5.0-rc4
+>
+> Changes since v3:
+> Fix UCI structure to allow CoreSight drivers to set private data. This
+> fixes bug where none-UCI private data would cause a driver binding
+> mismatch. (e.g. STM).
+>
+> Add CS_AMBA macros to simplify building AMBA ID tables, with and without
+> UCI settings.
+>
+> Changes since v2:
+> Simplification of amba_cs_uci_id_match().
+> Fix CID class bitfield comments.
+> Dropped RFC tag on patchset.
+>
+> Mike Leach (3):
+>   drivers: amba: Updates to component identification for driver
+>     matching.
+>   drivers: amba: Update component matching to use the CoreSight UCI
+>     values.
+>   coresight: etmv4: Update ID register table to add UCI support
+>
+>  drivers/amba/bus.c                            | 45 +++++++++++++++----
+>  drivers/hwtracing/coresight/coresight-etm3x.c | 44 ++++++------------
+>  drivers/hwtracing/coresight/coresight-etm4x.c | 21 +++++----
+>  drivers/hwtracing/coresight/coresight-priv.h  | 40 +++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-stm.c   | 14 ++----
+>  drivers/hwtracing/coresight/coresight-tmc.c   | 30 ++++---------
+>  include/linux/amba/bus.h                      | 39 ++++++++++++++++
+>  7 files changed, 153 insertions(+), 80 deletions(-)
 
-No problem.
+Reviewed-and-tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-However, I was trying to ask you about the kconfig problem above:
+I am looking for guidance on how to proceed here.  Russell, can pickup
+the AMBA bits in my coresight tree or perharps you'd prefer to see the
+whole set added to the patch tracker?  Please let me know.
 
->>>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS
-
-and not the "search the build results" problem.  ;)
+Thanks,
+Mathieu
 
 
--- 
-~Randy
+>
+> --
+> 2.19.1
+>
