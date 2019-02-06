@@ -2,92 +2,219 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9CCC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC320C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972CD20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:36:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="UeFfIuyG"
+	by mail.kernel.org (Postfix) with ESMTP id 7881620B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730783AbfBFNgV (ORCPT
+        id S1730250AbfBFNhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:36:21 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:32861 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729648AbfBFNgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:36:20 -0500
-Received: by mail-wm1-f65.google.com with SMTP id h22so1841784wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 05:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NEvHq8EuxGMgrB3WuwQcfqJfJGn5IKHVBYmtcFHCs3M=;
-        b=UeFfIuyGIV4VSmAPrHi7oZiS6fS/u/EU90th/rk5b6XzT++8wD+QxV+5hygyJo/7wG
-         PYF3+/YvDv1GhwwOOZMQbYxy9tV+k4f+SVnoxTedKS70TXee6ZjroH4U7w/fj71vFEWF
-         /RzQJdU2HjO2Xfgmg2c2cc/qtvUdx77EMp46h3Hc+TbDHTEIcg45eXuSMJsNXjQoI2P+
-         kDkB15e9UollLyoOgI6vK8LInQqdFYasCPVYG0u1PcII9yqwNH0J7vM7zXoQlxYOcXQ3
-         8e358NCQSJNiOMUdpMMaCSIodBLG8NICy960nIrk1gM86aJIjsAT7TDRttpz5BaUIJW4
-         UMBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NEvHq8EuxGMgrB3WuwQcfqJfJGn5IKHVBYmtcFHCs3M=;
-        b=TNUtYg6TB7OpVVvpzo5lTmMoGe6y8gdlG6xwrKdREhdhZWySO232vYAsg3JQaxCwdi
-         VncE0FFJzmRWrYD5/Huq93ijuY/GLo8vmqGPQ/4bJHVjcp1Sg00T/dMNV9gKQTUNy3tC
-         kcfVnoNdp0a9BBWRnTgcIzj4lGlAiXNwyth8F21TsQF0Xx1Ojt2ZpSD46L++bO1gH4x0
-         +ReHUfp+9n7p8sOKgQg7YtWl4WpeGmHuKBYwoijnxoPMqkdNDmDy65CZvujaOvr+DphY
-         M094kkFufV2P59GuHVvEDsqfQ5twcNXddfmrQvcf0VXUuC1dZc6G9veOdo80mmGOYNrq
-         ad3Q==
-X-Gm-Message-State: AHQUAuYKKWWgjn8FXiNgLNrkmjiazsFZEcIKOomWTmSg7thOasmaX3FZ
-        kr+bqX5UBvUdy8J8VbgQb7u5sQ==
-X-Google-Smtp-Source: AHgI3IYMMTQ7Rf8i9un310LpLVy2ocAHeQE7mWF4EKOxmdpkC2NbsTZyFpEY5fm20KhkfGmHv8IaJA==
-X-Received: by 2002:a7b:c7d7:: with SMTP id z23mr2464120wmk.70.1549460178876;
-        Wed, 06 Feb 2019 05:36:18 -0800 (PST)
-Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
-        by smtp.gmail.com with ESMTPSA id j124sm16951825wmb.48.2019.02.06.05.36.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 05:36:18 -0800 (PST)
-Date:   Wed, 6 Feb 2019 14:27:07 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MELLANOX MLX5 core VPI driver" 
-        <linux-rdma@vger.kernel.org>,
-        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>
-Subject: Re: [PATCH net-next v3 11/12] net: dsa: Implement
- ndo_get_port_parent_id()
-Message-ID: <20190206132707.GK2189@nanopsycho>
-References: <20190205235326.14600-1-f.fainelli@gmail.com>
- <20190205235326.14600-12-f.fainelli@gmail.com>
+        Wed, 6 Feb 2019 08:37:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41348 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727179AbfBFNhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:37:52 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A2298BDFA;
+        Wed,  6 Feb 2019 13:37:51 +0000 (UTC)
+Received: from doriath (ovpn-116-81.phx2.redhat.com [10.3.116.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D95FF426D;
+        Wed,  6 Feb 2019 13:37:40 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 08:29:42 -0500
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
+        riel@surriel.com, david@redhat.com, dodgen@google.com,
+        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
+Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor
+ to the host
+Message-ID: <20190206082942.29f52fe9@doriath>
+In-Reply-To: <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+        <20190204201854.2328-6-nitesh@redhat.com>
+        <20190205154545-mutt-send-email-mst@kernel.org>
+        <26a36489-2289-f970-3362-60547b268a76@redhat.com>
+        <20190206081533.336110a0@doriath>
+        <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205235326.14600-12-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 06 Feb 2019 13:37:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, Feb 06, 2019 at 12:53:25AM CET, f.fainelli@gmail.com wrote:
->DSA implements SWITCHDEV_ATTR_ID_PORT_PARENT_ID and we want to get rid
->of switchdev_ops eventually, ease that migration by implementing a
->ndo_get_port_parent_id() function which returns what
->switchdev_port_attr_get() would do.
->
->Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+On Wed, 6 Feb 2019 08:24:14 -0500
+Nitesh Narayan Lal <nitesh@redhat.com> wrote:
 
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+> On 2/6/19 8:15 AM, Luiz Capitulino wrote:
+> > On Wed, 6 Feb 2019 07:56:37 -0500
+> > Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+> >  
+> >> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote:  
+> >>> On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:    
+> >>>> This patch enables the caller to expose a single buffers to the
+> >>>> other end using vring descriptor. It also allows the caller to
+> >>>> perform this action in synchornous manner by using virtqueue_kick_sync.
+> >>>>
+> >>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>    
+> >>> I am not sure why do we need this API. Polling in guest
+> >>> until host runs isn't great either since these
+> >>> might be running on the same host CPU.    
+> >> True.
+> >>
+> >> However, my understanding is that the existing API such as
+> >> virtqueue_add_outbuf() requires an allocation which will be problematic
+> >> for my implementation.
+> >> Although I am not blocking the allocation path during normal Linux
+> >> kernel usage as even if one of the zone is locked the other zone could
+> >> be used to get free pages.
+> >> But during the initial boot time (device initialization), in certain
+> >> situations the allocation can only come from a single zone, acquiring a
+> >> lock on it may result in a deadlock situation.  
+> > I might be wrong, but if I remember correctly, this was true for
+> > your previous implementation where you'd report page hinting down
+> > from arch_free_page() so you couldn't allocate memory. But this
+> > is not the case anymore.  
+> 
+> With the earlier implementation, the allocation was blocked all the time
+> when freeing was going on.
+> With this implementation, the allocation is not blocked during normal
+> Linux kernel usage (after Linux boots up). For example, on a 64 bit
+> machine, if the Normal zone is locked and there is an allocation request
+> then it can be served by DMA32 zone as well. (This is not the case
+> during device initialization time)
+> Feel free to correct me if I am wrong.
+
+That's what I meant :) I have an impression that your virtio API
+was necessary because of your earlier design. I guess it's not needed
+anymore as Michael says.
+
+> 
+> >  
+> >>>
+> >>>    
+> >>>> ---
+> >>>>  drivers/virtio/virtio_ring.c | 72 ++++++++++++++++++++++++++++++++++++
+> >>>>  include/linux/virtio.h       |  4 ++
+> >>>>  2 files changed, 76 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> >>>> index cd7e755484e3..93c161ac6a28 100644
+> >>>> --- a/drivers/virtio/virtio_ring.c
+> >>>> +++ b/drivers/virtio/virtio_ring.c
+> >>>> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+> >>>>  					out_sgs, in_sgs, data, ctx, gfp);
+> >>>>  }
+> >>>>  
+> >>>> +/**
+> >>>> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
+> >>>> + * @vq: the struct virtqueue we're talking about.
+> >>>> + * @addr: address of the buffer to add.
+> >>>> + * @len: length of the buffer.
+> >>>> + * @in: set if the buffer is for the device to write.
+> >>>> + *
+> >>>> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
+> >>>> + */
+> >>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in)
+> >>>> +{
+> >>>> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> >>>> +	struct vring_desc *desc = vq->split.vring.desc;
+> >>>> +	u16 flags = in ? VRING_DESC_F_WRITE : 0;
+> >>>> +	unsigned int i;
+> >>>> +	void *data = (void *)addr;
+> >>>> +	int avail_idx;
+> >>>> +
+> >>>> +	/* Sanity check */
+> >>>> +	if (!_vq)
+> >>>> +		return -EINVAL;
+> >>>> +
+> >>>> +	START_USE(vq);
+> >>>> +	if (unlikely(vq->broken)) {
+> >>>> +		END_USE(vq);
+> >>>> +		return -EIO;
+> >>>> +	}
+> >>>> +
+> >>>> +	i = vq->free_head;
+> >>>> +	flags &= ~VRING_DESC_F_NEXT;
+> >>>> +	desc[i].flags = cpu_to_virtio16(_vq->vdev, flags);
+> >>>> +	desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> >>>> +	desc[i].len = cpu_to_virtio32(_vq->vdev, len);
+> >>>> +
+> >>>> +	vq->vq.num_free--;
+> >>>> +	vq->free_head = virtio16_to_cpu(_vq->vdev, desc[i].next);
+> >>>> +	vq->split.desc_state[i].data = data;
+> >>>> +	vq->split.avail_idx_shadow = 1;
+> >>>> +	avail_idx = vq->split.avail_idx_shadow;
+> >>>> +	vq->split.vring.avail->idx = cpu_to_virtio16(_vq->vdev, avail_idx);
+> >>>> +	vq->num_added = 1;
+> >>>> +	END_USE(vq);
+> >>>> +	return 0;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
+> >>>> +
+> >>>>  /**
+> >>>>   * virtqueue_add_sgs - expose buffers to other end
+> >>>>   * @vq: the struct virtqueue we're talking about.
+> >>>> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
+> >>>>  }
+> >>>>  EXPORT_SYMBOL_GPL(virtqueue_notify);
+> >>>>  
+> >>>> +/**
+> >>>> + * virtqueue_kick_sync - update after add_buf and busy wait till update is done
+> >>>> + * @vq: the struct virtqueue
+> >>>> + *
+> >>>> + * After one or more virtqueue_add_* calls, invoke this to kick
+> >>>> + * the other side. Busy wait till the other side is done with the update.
+> >>>> + *
+> >>>> + * Caller must ensure we don't call this with other virtqueue
+> >>>> + * operations at the same time (except where noted).
+> >>>> + *
+> >>>> + * Returns false if kick failed, otherwise true.
+> >>>> + */
+> >>>> +bool virtqueue_kick_sync(struct virtqueue *vq)
+> >>>> +{
+> >>>> +	u32 len;
+> >>>> +
+> >>>> +	if (likely(virtqueue_kick(vq))) {
+> >>>> +		while (!virtqueue_get_buf(vq, &len) &&
+> >>>> +		       !virtqueue_is_broken(vq))
+> >>>> +			cpu_relax();
+> >>>> +		return true;
+> >>>> +	}
+> >>>> +	return false;
+> >>>> +}
+> >>>> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
+> >>>> +
+> >>>>  /**
+> >>>>   * virtqueue_kick - update after add_buf
+> >>>>   * @vq: the struct virtqueue
+> >>>> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> >>>> index fa1b5da2804e..58943a3a0e8d 100644
+> >>>> --- a/include/linux/virtio.h
+> >>>> +++ b/include/linux/virtio.h
+> >>>> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
+> >>>>  		      unsigned int in_sgs,
+> >>>>  		      void *data,
+> >>>>  		      gfp_t gfp);
+> >>>> +/* A desc with this init id is treated as an invalid desc */
+> >>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in);
+> >>>> +
+> >>>> +bool virtqueue_kick_sync(struct virtqueue *vq);
+> >>>>  
+> >>>>  bool virtqueue_kick(struct virtqueue *vq);
+> >>>>  
+> >>>> -- 
+> >>>> 2.17.2    
+
