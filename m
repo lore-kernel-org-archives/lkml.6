@@ -2,182 +2,124 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1244CC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40552C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2A6218EA
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D1C218E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbfBFVbo (ORCPT
+        id S1726676AbfBFVcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:31:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41110 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726037AbfBFVbn (ORCPT
+        Wed, 6 Feb 2019 16:32:18 -0500
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:24220 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726037AbfBFVcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:31:43 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16LVTRK009478
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 16:31:42 -0500
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qg53y7bu5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 16:31:42 -0500
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 6 Feb 2019 21:31:41 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 21:31:38 -0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16LVWQn34013322
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 21:31:32 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9454F6E04E;
-        Wed,  6 Feb 2019 21:31:32 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5112E6E050;
-        Wed,  6 Feb 2019 21:31:30 +0000 (GMT)
-Received: from akrowiak-ThinkPad-P50.ibm.com (unknown [9.85.161.236])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed,  6 Feb 2019 21:31:30 +0000 (GMT)
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, akrowiak@linux.vnet.ibm.com,
-        oberpar@linux.ibm.com, sebott@linux.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v2] zcrypt: handle AP Info notification from CHSC SEI command
-Date:   Wed,  6 Feb 2019 16:31:26 -0500
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19020621-0036-0000-0000-00000A86769E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010549; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01157294; UDB=6.00603757; IPR=6.00937822;
- MB=3.00025469; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-06 21:31:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020621-0037-0000-0000-00004AA04951
-Message-Id: <1549488686-3746-1-git-send-email-akrowiak@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902060161
+        Wed, 6 Feb 2019 16:32:17 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 07 Feb 2019 08:01:49 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1grUnL-0003Lg-7s; Thu, 07 Feb 2019 08:31:47 +1100
+Date:   Thu, 7 Feb 2019 08:31:47 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206213147.GA6173@dastard>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190205180120.GC21617@iweiny-DESK2.sc.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205180120.GC21617@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current AP bus implementation periodically polls the AP configuration
-to detect changes. When the AP configuration is dynamically changed via the
-SE or an SCLP instruction, the changes will not be reflected to sysfs until
-the next time the AP configuration is polled. The CHSC architecture
-provides a Store Event Information (SEI) command to make notification of an
-AP configuration change. This patch introduces a handler to process
-notification from the CHSC SEI command by immediately kicking off an AP bus
-scan-after-event.
+On Tue, Feb 05, 2019 at 10:01:20AM -0800, Ira Weiny wrote:
+> I had an old invalid address for Jason Gunthorpe in my address book...  
+> 
+> Correcting his email in the thread.
 
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
----
- arch/s390/include/asm/ap.h   | 11 +++++++++++
- drivers/s390/cio/chsc.c      | 13 +++++++++++++
- drivers/s390/crypto/ap_bus.c | 11 +++++++++++
- 3 files changed, 35 insertions(+)
+Probably should have cc'd linux-fsdevel, too, but it's too late for
+that now....
 
-diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-index 1a6a7092d942..e94a0a28b5eb 100644
---- a/arch/s390/include/asm/ap.h
-+++ b/arch/s390/include/asm/ap.h
-@@ -360,4 +360,15 @@ static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
- 	return reg1;
- }
- 
-+/*
-+ * Interface to tell the AP bus code that a configuration
-+ * change has happened. The bus code should at least do
-+ * an ap bus resource rescan.
-+ */
-+#if IS_ENABLED(CONFIG_ZCRYPT)
-+void ap_bus_cfg_chg(void);
-+#else
-+static inline void ap_bus_cfg_chg(void){};
-+#endif
-+
- #endif /* _ASM_S390_AP_H_ */
-diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
-index a0baee25134c..eaf4699be2c5 100644
---- a/drivers/s390/cio/chsc.c
-+++ b/drivers/s390/cio/chsc.c
-@@ -24,6 +24,7 @@
- #include <asm/crw.h>
- #include <asm/isc.h>
- #include <asm/ebcdic.h>
-+#include <asm/ap.h>
- 
- #include "css.h"
- #include "cio.h"
-@@ -586,6 +587,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
- 			      " failed (rc=%d).\n", ret);
- }
- 
-+static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
-+{
-+	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
-+	if (sei_area->rs != 5)
-+		return;
-+
-+	ap_bus_cfg_chg();
-+}
-+
- static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
- {
- 	switch (sei_area->cc) {
-@@ -612,6 +622,9 @@ static void chsc_process_sei_nt0(struct chsc_sei_nt0_area *sei_area)
- 	case 2: /* i/o resource accessibility */
- 		chsc_process_sei_res_acc(sei_area);
- 		break;
-+	case 3: /* ap config changed */
-+		chsc_process_sei_ap_cfg_chg(sei_area);
-+		break;
- 	case 7: /* channel-path-availability information */
- 		chsc_process_sei_chp_avail(sei_area);
- 		break;
-diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-index 48ea0004a56d..015cd2ba8afe 100644
---- a/drivers/s390/crypto/ap_bus.c
-+++ b/drivers/s390/crypto/ap_bus.c
-@@ -860,6 +860,17 @@ void ap_bus_force_rescan(void)
- EXPORT_SYMBOL(ap_bus_force_rescan);
- 
- /*
-+* A config change has happened, force an ap bus rescan.
-+*/
-+void ap_bus_cfg_chg(void)
-+{
-+	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
-+
-+	ap_bus_force_rescan();
-+}
-+EXPORT_SYMBOL(ap_bus_cfg_chg);
-+
-+/*
-  * hex2bitmap() - parse hex mask string and set bitmap.
-  * Valid strings are "0x012345678" with at least one valid hex number.
-  * Rest of the bitmap to the right is padded with 0. No spaces allowed
+> On Tue, Feb 05, 2019 at 09:50:59AM -0800, 'Ira Weiny' wrote:
+> > 
+> > The problem: Once we have pages marked as GUP-pinned how should various
+> > subsystems work with those markings.
+> > 
+> > The current work for John Hubbards proposed solutions (part 1 and 2) is
+> > progressing.[1]  But the final part (3) of his solution is also going to take
+> > some work.
+> > 
+> > In Johns presentation he lists 3 alternatives for gup-pinned pages:
+> > 
+> > 1) Hold off try_to_unmap
+> > 2) Allow writeback while pinned (via bounce buffers)
+> > 	[Note this will not work for DAX]
+> > 3) Use a "revocable reservation" (or lease) on those pages
+> > 4) Pin the blocks as busy in the FS allocator
+> > 
+> > The problem with lease's on pages used by RDMA is that the references to
+> > these pages is not local to the machine.  Once the user has been given access
+> > to the page they, through the use of a remote tokens, give a reference to that
+> > page to remote nodes.  This is the core essence of RDMA, and like it or not,
+> > something which is increasingly used by major Linux users.
+> > 
+> > Therefore we need to discuss the extent by which leases are appropriate and
+> > what happens should a lease be revoked which a user does not respond to.
+> > 
+> > As John Hubbard put it:
+> > 
+> > "Other filesystem features that need to replace the page with a new one can
+> > be inhibited for pages that are GUP-pinned. This will, however, alter and
+> > limit some of those filesystem features. The only fix for that would be to
+> > require GUP users monitor and respond to CPU page table updates. Subsystems
+> > such as ODP and HMM do this, for example. This aspect of the problem is
+> > still under discussion."
+> > 
+> > 	-- John Hubbard[2]
+> > 
+> > The following people have been involved in previous conversations and would be key to
+> > the face to face discussion.
+> > 
+> > John Hubbard
+> > Jan Kara
+> > Dave Chinner
+
+Just FYI, I won't be at LSFMM.
+
+Puerto Rico is about as physically far away from me as you can get
+on this planet. There's 40 hours in transit from airport to airport,
+and that doesn't include the 5 hours of travel the day before (and
+hence overnight stay) to be able to get to the first airport in time
+for the first flight. I'm looking at a transit time - if all goes
+well - of over 60 hours just to get to the conference.
+
+And it's looks like it will be just as bad on the way back.
+
+6 days travel for a 2 day conference makes no sense at all.
+
+Cheers,
+
+Dave.
 -- 
-2.7.4
-
+Dave Chinner
+david@fromorbit.com
