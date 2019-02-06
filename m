@@ -2,319 +2,98 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E09C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D453BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054782184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD5292184E
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:02:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbfBFLC3 (ORCPT
+        id S1729489AbfBFLC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 06:02:29 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32871 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727144AbfBFLC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 06:02:29 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 819762FB98C9F7B53745;
-        Wed,  6 Feb 2019 11:02:27 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.34) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 6 Feb 2019 11:02:18 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
-        <david.safford@ge.com>, <monty.wiseman@ge.com>,
-        <matthewgarrett@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v10 4/6] tpm: move tpm_chip definition to include/linux/tpm.h
-Date:   Wed, 6 Feb 2019 11:57:22 +0100
-Message-ID: <20190206105724.14495-5-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190206105724.14495-1-roberto.sassu@huawei.com>
-References: <20190206105724.14495-1-roberto.sassu@huawei.com>
+        Wed, 6 Feb 2019 06:02:56 -0500
+Received: from smtprelay03.ispgateway.de ([80.67.31.30]:39171 "EHLO
+        smtprelay03.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729234AbfBFLCz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 06:02:55 -0500
+X-Greylist: delayed 5059 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Feb 2019 06:02:54 EST
+Received: from [85.16.233.76] (helo=localhost)
+        by smtprelay03.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <jochen@sprickerhof.de>)
+        id 1grJf4-00038V-VQ; Wed, 06 Feb 2019 10:38:31 +0100
+Date:   Wed, 6 Feb 2019 10:38:30 +0100
+From:   Jochen Sprickerhof <jochen@sprickerhof.de>
+To:     Roger Quadros <rogerq@ti.com>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivek Gautam <gautam.vivek@samsung.com>,
+        Andrzej Pietrasiewicz <andrzej.p@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] usb: dwc3: Enable GBit Ethernet on Odroid XU4
+Message-ID: <20190206093830.GS26157@vis>
+References: <20190121140204.GA2360@vis>
+ <5C5A9DCB.8040507@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BN1FuguMf1o6kBCi"
+Content-Disposition: inline
+In-Reply-To: <5C5A9DCB.8040507@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Df-Sender: NTc3MDAz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tpm_chip structure contains the list of PCR banks currently allocated
-in the TPM. When support for crypto agility will be added to the TPM
-driver, users of the driver have to provide a digest for each allocated
-bank to tpm_pcr_extend(). With this patch, they can obtain the PCR bank
-algorithms directly from chip->allocated_banks.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm.h | 100 ++---------------------------------------
- include/linux/tpm.h    |  90 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 94 insertions(+), 96 deletions(-)
+--BN1FuguMf1o6kBCi
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 64d93d26087f..f20433946ca5 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -25,30 +25,22 @@
- 
- #include <linux/module.h>
- #include <linux/delay.h>
--#include <linux/fs.h>
--#include <linux/hw_random.h>
- #include <linux/mutex.h>
- #include <linux/sched.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/tpm.h>
--#include <linux/acpi.h>
--#include <linux/cdev.h>
- #include <linux/highmem.h>
- #include <linux/tpm_eventlog.h>
--#include <crypto/hash_info.h>
- 
- #ifdef CONFIG_X86
- #include <asm/intel-family.h>
- #endif
- 
--enum tpm_const {
--	TPM_MINOR = 224,	/* officially assigned */
--	TPM_BUFSIZE = 4096,
--	TPM_NUM_DEVICES = 65536,
--	TPM_RETRY = 50,		/* 5 seconds */
--	TPM_NUM_EVENT_LOG_FILES = 3,
--};
-+#define TPM_MINOR		224	/* officially assigned */
-+#define TPM_BUFSIZE		4096
-+#define TPM_NUM_DEVICES		65536
-+#define TPM_RETRY		50
- 
- enum tpm_timeout {
- 	TPM_TIMEOUT = 5,	/* msecs */
-@@ -65,16 +57,6 @@ enum tpm_addr {
- 	TPM_ADDR = 0x4E,
- };
- 
--/* Indexes the duration array */
--enum tpm_duration {
--	TPM_SHORT = 0,
--	TPM_MEDIUM = 1,
--	TPM_LONG = 2,
--	TPM_LONG_LONG = 3,
--	TPM_UNDEFINED,
--	TPM_NUM_DURATIONS = TPM_UNDEFINED,
--};
--
- #define TPM_WARN_RETRY          0x800
- #define TPM_WARN_DOING_SELFTEST 0x802
- #define TPM_ERR_DEACTIVATED     0x6
-@@ -179,15 +161,6 @@ enum tpm2_cc_attrs {
- #define TPM_VID_WINBOND  0x1050
- #define TPM_VID_STM      0x104A
- 
--#define TPM_PPI_VERSION_LEN		3
--
--struct tpm_space {
--	u32 context_tbl[3];
--	u8 *context_buf;
--	u32 session_tbl[3];
--	u8 *session_buf;
--};
--
- enum tpm_chip_flags {
- 	TPM_CHIP_FLAG_TPM2		= BIT(1),
- 	TPM_CHIP_FLAG_IRQ		= BIT(2),
-@@ -196,71 +169,6 @@ enum tpm_chip_flags {
- 	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
- };
- 
--struct tpm_bios_log {
--	void *bios_event_log;
--	void *bios_event_log_end;
--};
--
--struct tpm_chip_seqops {
--	struct tpm_chip *chip;
--	const struct seq_operations *seqops;
--};
--
--struct tpm_chip {
--	struct device dev;
--	struct device devs;
--	struct cdev cdev;
--	struct cdev cdevs;
--
--	/* A driver callback under ops cannot be run unless ops_sem is held
--	 * (sometimes implicitly, eg for the sysfs code). ops becomes null
--	 * when the driver is unregistered, see tpm_try_get_ops.
--	 */
--	struct rw_semaphore ops_sem;
--	const struct tpm_class_ops *ops;
--
--	struct tpm_bios_log log;
--	struct tpm_chip_seqops bin_log_seqops;
--	struct tpm_chip_seqops ascii_log_seqops;
--
--	unsigned int flags;
--
--	int dev_num;		/* /dev/tpm# */
--	unsigned long is_open;	/* only one allowed */
--
--	char hwrng_name[64];
--	struct hwrng hwrng;
--
--	struct mutex tpm_mutex;	/* tpm is processing */
--
--	unsigned long timeout_a; /* jiffies */
--	unsigned long timeout_b; /* jiffies */
--	unsigned long timeout_c; /* jiffies */
--	unsigned long timeout_d; /* jiffies */
--	bool timeout_adjusted;
--	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
--	bool duration_adjusted;
--
--	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
--
--	const struct attribute_group *groups[3];
--	unsigned int groups_cnt;
--
--	u32 nr_allocated_banks;
--	struct tpm_bank_info *allocated_banks;
--#ifdef CONFIG_ACPI
--	acpi_handle acpi_dev_handle;
--	char ppi_version[TPM_PPI_VERSION_LEN + 1];
--#endif /* CONFIG_ACPI */
--
--	struct tpm_space work_space;
--	u32 nr_commands;
--	u32 *cc_attrs_tbl;
--
--	/* active locality */
--	int locality;
--};
--
- #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
- 
- struct tpm_input_header {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index afd022fc9d3d..f9fea1e4075e 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -22,6 +22,10 @@
- #ifndef __LINUX_TPM_H__
- #define __LINUX_TPM_H__
- 
-+#include <linux/hw_random.h>
-+#include <linux/acpi.h>
-+#include <linux/cdev.h>
-+#include <linux/fs.h>
- #include <crypto/hash_info.h>
- 
- #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
-@@ -75,6 +79,92 @@ struct tpm_class_ops {
- 	void (*clk_enable)(struct tpm_chip *chip, bool value);
- };
- 
-+#define TPM_NUM_EVENT_LOG_FILES		3
-+
-+/* Indexes the duration array */
-+enum tpm_duration {
-+	TPM_SHORT = 0,
-+	TPM_MEDIUM = 1,
-+	TPM_LONG = 2,
-+	TPM_LONG_LONG = 3,
-+	TPM_UNDEFINED,
-+	TPM_NUM_DURATIONS = TPM_UNDEFINED,
-+};
-+
-+#define TPM_PPI_VERSION_LEN		3
-+
-+struct tpm_space {
-+	u32 context_tbl[3];
-+	u8 *context_buf;
-+	u32 session_tbl[3];
-+	u8 *session_buf;
-+};
-+
-+struct tpm_bios_log {
-+	void *bios_event_log;
-+	void *bios_event_log_end;
-+};
-+
-+struct tpm_chip_seqops {
-+	struct tpm_chip *chip;
-+	const struct seq_operations *seqops;
-+};
-+
-+struct tpm_chip {
-+	struct device dev;
-+	struct device devs;
-+	struct cdev cdev;
-+	struct cdev cdevs;
-+
-+	/* A driver callback under ops cannot be run unless ops_sem is held
-+	 * (sometimes implicitly, eg for the sysfs code). ops becomes null
-+	 * when the driver is unregistered, see tpm_try_get_ops.
-+	 */
-+	struct rw_semaphore ops_sem;
-+	const struct tpm_class_ops *ops;
-+
-+	struct tpm_bios_log log;
-+	struct tpm_chip_seqops bin_log_seqops;
-+	struct tpm_chip_seqops ascii_log_seqops;
-+
-+	unsigned int flags;
-+
-+	int dev_num;		/* /dev/tpm# */
-+	unsigned long is_open;	/* only one allowed */
-+
-+	char hwrng_name[64];
-+	struct hwrng hwrng;
-+
-+	struct mutex tpm_mutex;	/* tpm is processing */
-+
-+	unsigned long timeout_a; /* jiffies */
-+	unsigned long timeout_b; /* jiffies */
-+	unsigned long timeout_c; /* jiffies */
-+	unsigned long timeout_d; /* jiffies */
-+	bool timeout_adjusted;
-+	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
-+	bool duration_adjusted;
-+
-+	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
-+
-+	const struct attribute_group *groups[3];
-+	unsigned int groups_cnt;
-+
-+	u32 nr_allocated_banks;
-+	struct tpm_bank_info *allocated_banks;
-+#ifdef CONFIG_ACPI
-+	acpi_handle acpi_dev_handle;
-+	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-+#endif /* CONFIG_ACPI */
-+
-+	struct tpm_space work_space;
-+	u32 nr_commands;
-+	u32 *cc_attrs_tbl;
-+
-+	/* active locality */
-+	int locality;
-+};
-+
- #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
- 
- extern int tpm_is_tpm2(struct tpm_chip *chip);
--- 
-2.17.1
+* Roger Quadros <rogerq@ti.com> [2019-02-06 10:41]:
+>Hi,
+>
+>On 21/01/19 16:02, Jochen Sprickerhof wrote:
+[..]
+>> I'm not sure why this it only works with the driver compiled into the
+>> kernel nor why it needs a hard reset or why it was the line was dropped
+>> when the patch was accepted. Would be great to get some feedback of the
+>> authors.
+>
+>When XHCI driver is compiled into the kernel are the relevant PHY drivers
+>compiled in as well?
 
+Only CONFIG_USB_PHY=3Dy (I took the config from the=20
+linux-image-4.19.0-1-armmp_4.19.13-1_armhf.deb Debian package as a=20
+basis where this is the default).
+
+Cheers Jochen
+
+--BN1FuguMf1o6kBCi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAlxaqxIACgkQW//cwljm
+lDNVOQ/8DtIeJF0w5mjVUE9y0rovtLANGiVn5BO/KbEqz6hyq6tH0a+wOs/F1a1F
+K1uW+lzFw/Vlu4mMaUe04RPDfbtkMw3jOdnFiKHxt794m4qaaRWzOFmlRpadXH1E
+5+R5inofs5aQnQUErpNyGWq0njfNc0G7PwxuOM9R5QzYgheXEOL/lM6X2AyI//5P
+kPLyA4fAuyjD4FW5C8jpTTQjw40stSY4TrHmMCUbJ96mdY6IcCBMKHIqMbSu9UnN
+sd/fndWw/mFskOLoVh1ejSGYVggSo9xWm2OFe3NRUo308zyeh3ZM7g08AgPKSOUL
+4UMYuxy1xY5oGCOYDAtMWh9voloqkcu99NQYk84UT29R7ITcitoWj5OY8qzDM5wl
+QweDex8iht4wtWg2Ky75FoQygnqPBOSHPc2yS9HyKfj/JqVayr2gm1Oi2YmTBWRQ
+qqnD9i/SqbB0/jNa1WlDTEsGulEeCiL9q2aoVJYmmc3vNzigxQJNB0Is9mHvDiy5
+hW3Paa2mTADFujhOWRTujyi7bvIsRb/s8jp6Yt0yJGy9pipZXvQ3OS43jjwv64Ll
+IjfsfhxGszHc1UxJURuLIIz6szhjE+zu8n44LBHffRRNFDeEP9/nwrUoZc8bZHtK
+Vy704fm+Ed5hIqHet4nuLV/DQVisixj68RhwoP1SmDrbDhsxFi0=
+=glJf
+-----END PGP SIGNATURE-----
+
+--BN1FuguMf1o6kBCi--
