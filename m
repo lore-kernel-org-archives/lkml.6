@@ -2,246 +2,180 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558DFC282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD44C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E6CA20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:26:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF911217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:29:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TfJ9vlNd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfBFO0N (ORCPT
+        id S1729184AbfBFO3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:26:13 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32875 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725928AbfBFO0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:26:12 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id D1B90AA0F8A33B4598DB;
-        Wed,  6 Feb 2019 14:26:10 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 6 Feb
- 2019 14:25:49 +0000
-Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
- from TPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190206105724.14495-1-roberto.sassu@huawei.com>
- <20190206125725.GA9257@linux.intel.com>
- <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
- <20190206135450.GA20061@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <2dea31e3-0796-e21f-5625-1ddc78485c71@huawei.com>
-Date:   Wed, 6 Feb 2019 15:25:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 6 Feb 2019 09:29:23 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:25600 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbfBFO3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 09:29:22 -0500
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.77]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5aef3d0001>; Wed, 06 Feb 2019 22:29:17 +0800
+Received: from HKMAIL104.nvidia.com ([10.18.16.13])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 06 Feb 2019 06:29:17 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Wed, 06 Feb 2019 06:29:17 -0800
+Received: from DRBGMAIL102.nvidia.com (10.18.16.21) by HKMAIL104.nvidia.com
+ (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 6 Feb
+ 2019 14:29:16 +0000
+Received: from HKMAIL103.nvidia.com (10.18.16.12) by DRBGMAIL102.nvidia.com
+ (10.18.16.21) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 6 Feb
+ 2019 14:29:15 +0000
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (104.47.50.59) by
+ HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Wed, 6 Feb 2019 14:29:15 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB3286.namprd12.prod.outlook.com (20.179.93.207) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.22; Wed, 6 Feb 2019 14:29:12 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Wed, 6 Feb 2019
+ 14:29:12 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Thread-Topic: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Thread-Index: AQHUvaSihB2vPasFV02HZ/JY13Td7aXSqkqAgAAUt4CAAAEfAIAAAXOAgAAAhsCAAAYqgIAAADAAgAACQDCAAAL7gIAAA0OAgAAA7+CAAAJMgIAAAK1A
+Date:   Wed, 6 Feb 2019 14:29:12 +0000
+Message-ID: <BYAPR12MB33988A49F8831BD8CAB575E5C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+ <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
+ <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
+ <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
+ <BYAPR12MB33983A0E93B17808DECFD0F2C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <6edef92d-66a7-0f70-e59e-7381b82516eb@gmail.com>
+ <BYAPR12MB339826EB972C5DB7957E8A82C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190206140141.GO21676@ulmo>
+ <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
+ <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
+In-Reply-To: <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [24.176.232.13]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3286;6:DLTtCOO+zyb58sVaJVGefQfFvK00W8uxPAwh+fxxtchLt4ih78tAJlIRPBpxC1kjLa4GA+05nfBqtL364zTAh5WxI/CV5BR62Nhj9NNl6GVyeS4YFrV/3Oe0HhdZjhpS62Uer2+Sp0nD+8WRwpSebF2yLFI1jxzVDwUqJzbjQc4K9lA/e5o8AjfP61eibw5uDojqm1IjrGFAAb7AAhTfWTfqi/sk2QQ558hkPSyXvVz7zWecVdkgMWJegDevN3+D75PPMLKdBNOOEHOotj8S7fZ0SIzEn+rvrd5Ede5JhkrI23+we2SKjgu7ISPnRNQjNi+vMWuQIdsW7ZEwaTCwLjKfUWA3MtwfxwIIP0w400m27Uj7oTpCGI5exE5a0SsGqEskLuChyVKub31zSDkXc7URAI/I5lIgofIHEq92j7Hp1JDnEaf8Nfv3fyYze3Hem1rxrM4UBLXjmwBNaPpISA==;5:u6OBfQN2BIMqNF4Vm19hqkMVO9sJlm1c44tmfG7r8EEPpiI/fOpQpRcdY4XW0mOskqzVWiBCZmQh7teqgcPlQk+HQ5pa6+tqrnBc4Dfi1qEO7IyX3Nusmjp+Ub6C+/DQuOFE2xpKGXZWshbM3I4T3gRpbNrta5aFptWfzO90m5Z5jWvRqPEVifBTtjNPdqF319Ux/A+rZntOKiwsUCyRZQ==;7:Iz5twI4dbhs3nKUo2jeyj1ES1pS3uAJZeJIwJMZbosA1tRHmp4cvexwHnePiPzJskQSdK4v7sfgRYNJg39/w6AFbnlCtm1fN3KEpKbQGCdXLvvOH/wpy0h1NeQwbZzxZ3JpnlTgTnRoU4va3ujTsgA==
+x-ms-office365-filtering-correlation-id: afd1aea7-04d1-4e30-3265-08d68c3f7700
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3286;
+x-ms-traffictypediagnostic: BYAPR12MB3286:
+x-microsoft-antispam-prvs: <BYAPR12MB32863D8103191773BBD35980C26F0@BYAPR12MB3286.namprd12.prod.outlook.com>
+x-forefront-prvs: 0940A19703
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(39860400002)(136003)(376002)(199004)(189003)(81166006)(81156014)(8936002)(106356001)(74316002)(25786009)(7696005)(76176011)(9686003)(54906003)(71190400001)(476003)(2906002)(86362001)(71200400001)(53376002)(102836004)(99286004)(6246003)(4326008)(55016002)(6506007)(14454004)(105586002)(966005)(6306002)(446003)(11346002)(68736007)(33656002)(6436002)(110136005)(316002)(256004)(478600001)(305945005)(3846002)(26005)(6116002)(14444005)(97736004)(486006)(53936002)(66066001)(186003)(93886005)(8676002)(229853002)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3286;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 6UFpuokzsgtHkzaClUEq8de16Kp8YkHRSvcAzsAD0TW5mi5EB6la9ek7As3eRZW9u/j2mm8ue1RIsLjEf2NXqKghYOkoIf1ih6w8EKu64S/alevEQDn0BD6ZjLXYooxWF3VRCFbXjnRioQv3jqxqaI+Ud5Navua4zapS+EsJI+9cCt9+72dS2SoeOG6XR7JO/+dpanOOe2pJ7X/rV5W95mqWfAaF9t1tTUSGI222hHf7KQs3yfmtR7VrbNprTesECzEbNnUemlUsN2v9VW/9lkdlg2z9Up1MYmtjhEakaOnSp1b/oSTR/88Ae3VOJoRubkZQwFYAMyNjh/OHV676KETcGFXSzrhwgBa0aHSnMlQyA9szecPVVVtWCp1mZLEm/jOBxpFE3cUnA5fsKKx5uhglCzuKZU/Rf+NLvNmpGTU=
 MIME-Version: 1.0
-In-Reply-To: <20190206135450.GA20061@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+X-MS-Exchange-CrossTenant-Network-Message-Id: afd1aea7-04d1-4e30-3265-08d68c3f7700
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 14:29:12.5733
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3286
+X-OriginatorOrg: Nvidia.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549463357; bh=4QWIh6S5I3pxd/AQM4L7RSIQuog9O4I+L1sTnW7u5es=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=TfJ9vlNdI09ezc4oWUMmm1sbgAVJ2wxsZihDrNuxdCEtVohdzZ+pIDEFjQkSR4oFM
+         kAZMoUfgER028zAqrS77aIveOgCYsEApVaor6JZ8H0exidAcDUYuiSXKDYiNxc2pEf
+         h8PsaqjKNu59n+y2BIKpXrf/WHa+K1wiH9F8WTsLf+WGS73xCRdVOtGo3SifhLpYfi
+         WfHx6P0M6OfmSE+Ci8PpJSi7957ygYksAiLHdHlDUGXQadrSnbMbP/WJMemnaeV/z9
+         qfSd1wzY5aK6vU/kJ8otYYWrFio5JI9T12PSAb39je4/5kjJpb4rBLhXMoK32OoAH0
+         6eq9XRuKxn/CQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/2019 2:54 PM, Jarkko Sakkinen wrote:
-> On Wed, Feb 06, 2019 at 02:07:04PM +0100, Roberto Sassu wrote:
->> On 2/6/2019 1:57 PM, Jarkko Sakkinen wrote:
->>> On Wed, Feb 06, 2019 at 11:57:18AM +0100, Roberto Sassu wrote:
->>>> Update
->>>>
->>>> This version of the patch set includes three additional patches (5-7/7)
->>>> that allow users of the TPM driver to provide a digest for each PCR bank to
->>>> tpm_pcr_extend(). The new patches have been included to facilitate the
->>>> review of all the changes to support TPM 2.0 crypto agility for reading and
->>>> extending PCRs.
->>>>
->>>>
->>>> Original patch set description
->>>>
->>>> The TPM driver currently relies on the crypto subsystem to determine the
->>>> digest size of supported TPM algorithms. In the future, TPM vendors might
->>>> implement new algorithms in their chips, and those algorithms might not
->>>> be supported by the crypto subsystem.
->>>>
->>>> Usually, vendors provide patches for the new hardware, and likely
->>>> the crypto subsystem will be updated before the new algorithm is
->>>> introduced. However, old kernels might be updated later, after patches
->>>> are included in the mainline kernel. This would leave the opportunity
->>>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
->>>> are not extended.
->>>>
->>>> This patch set provides a long term solution for this issue. If a TPM
->>>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
->>>> the digest size from the TPM with a PCR read. All the PCR banks are
->>>> extended, even if the algorithm is not yet supported by the crypto
->>>> subsystem.
->>>>
->>>> PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
->>>> is stored in the tpm_chip structure and available for users of the TPM
->>>> driver.
->>>>
->>>> Changelog
->>>>
->>>> v9:
->>>> - add comment for ima_load_kexec_buffer() in ima_init()
->>>> - move 'digests' and ima_init_digests() to ima_queue.c
->>>> - remove comment for TPM_RETRY
->>>>
->>>> v8:
->>>> - set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
->>>> - replace enum tpm_const with #define
->>>> - rename labels in init_trusted()
->>>> - allocate tpm_digest array after retrieving random data in init_digests()
->>>>
->>>> v7:
->>>> - use memchr_inv() in tpm2_get_pcr_allocation()
->>>> - add patch to move tpm_chip to include/linux/tpm.h
->>>> - add patch to set the tpm_chip argument in trusted.c to a pointer from
->>>>     tpm_default_chip()
->>>> - remove definition of tpm_extend_digest
->>>> - remove code in tpm2_pcr_extend() to extend unused PCR banks with the
->>>>     first digest passed by the caller of tpm_pcr_extend()
->>>> - remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
->>>> - remove padding of SHA1 digest in tpm_pcr_extend()
->>>> - pre-allocate and initialize array of tpm_digest structures in
->>>>     security/keys/trusted.c and security/integrity/ima/ima_init.c
->>>>
->>>> v6:
->>>> - squash patches 4-6
->>>> - rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
->>>>     members to size and data
->>>> - add comment in tpm2_init_bank_info()
->>>>
->>>> v5:
->>>> - rename digest_struct variable to digest
->>>> - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
->>>> - rename digest_size member of tpm_bank_list to extend_size
->>>> - change type of alg_id member of tpm_bank_list from u8 to u16
->>>> - add missing semi-colon in pcrlock()
->>>>
->>>> v4:
->>>> - rename active_banks to allocated_banks
->>>> - replace kmalloc_array() with kcalloc()
->>>> - increment nr_allocated_banks if at least one PCR in the bank is selected
->>>> - pass multiple digests to tpm_pcr_extend()
->>>>
->>>> v3:
->>>> - remove end marker change
->>>> - replace active_banks static array with pointer to dynamic array
->>>> - remove TPM2_ACTIVE_PCR_BANKS
->>>>
->>>> v2:
->>>> - change the end marker of the active_banks array
->>>> - check digest size from output of PCR read command
->>>> - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
->>>>
->>>> v1:
->>>> - modify definition of tpm_pcr_read()
->>>> - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
->>>>
->>>>
->>>> Roberto Sassu (6):
->>>>     tpm: dynamically allocate the allocated_banks array
->>>>     tpm: rename and export tpm2_digest and tpm2_algorithms
->>>>     tpm: retrieve digest size of unknown algorithms with PCR read
->>>>     tpm: move tpm_chip definition to include/linux/tpm.h
->>>>     KEYS: trusted: explicitly use tpm_chip structure from
->>>>       tpm_default_chip()
->>>>     tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
->>>>
->>>>    drivers/char/tpm/tpm-chip.c         |   1 +
->>>>    drivers/char/tpm/tpm-interface.c    |  38 ++++----
->>>>    drivers/char/tpm/tpm.h              | 117 ++---------------------
->>>>    drivers/char/tpm/tpm1-cmd.c         |  12 +++
->>>>    drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
->>>>    include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
->>>>    include/linux/tpm_eventlog.h        |   9 +-
->>>>    security/integrity/ima/ima.h        |   1 +
->>>>    security/integrity/ima/ima_crypto.c |  10 +-
->>>>    security/integrity/ima/ima_init.c   |   4 +
->>>>    security/integrity/ima/ima_queue.c  |  27 +++++-
->>>>    security/keys/trusted.c             |  73 +++++++++++----
->>>>    12 files changed, 349 insertions(+), 208 deletions(-)
->>>>
->>>> -- 
->>>> 2.17.1
->>>>
->>>
->>> Can you do two things:
->>>
->>> 1. Check the v3: https://patchwork.kernel.org/patch/10797181/. Needs
->>> to be applied first.
->>> 2. Check that this does not cause merge conflicts with the current
->>>      imaster? If it does, fix them, and use --subject-prefix="RESEND,PATCH v10".
->>>
->>> Thanks.
->>
->> I already applied the patch set on top of linux-tpmdd/next
->> (41ac27d19b07) and your patch.
->>
->> Also, there are no conflicts with the current master.
->>
->> Roberto
-> 
-> Before getting your new version, I applied:
-> 
-> https://patchwork.kernel.org/project/linux-integrity/list/?series=76223
-> 
-> This causes some merge conflicts:
-> 
-> error: Failed to merge in the changes.
-> Patch failed at 0003 tpm: retrieve digest size of unknown algorithms with PCR read
-
-I fixed it and patch 4/6. But, I think there is a problem in your patch
-'tpm: move tpm_validate_commmand() to tpm2-space.c':
-
----
--int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, 
-u32 cc,
--                      u8 *cmd)
-+static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space 
-*space,
-+                               const void *cmd, size_t len)
-+{
-+       const struct tpm_header *header = (const void *)cmd;
-+       int i;
-+       u32 cc;
-+       u32 attrs;
-+       unsigned int nr_handles;
-+
-+       if (len < TPM_HEADER_SIZE)
-+               return -EINVAL;
-+
-+       if (chip->nr_commands) {
-
-[...]
-
-+       }
-+
-+       return cc;
-+
----
-
-'cc' may be not initialized before returning the value.
-
-Roberto
-
-
-> /Jarkko
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+DQo+ID4+Pj4gWWVzIHBsZWFzZSBwb3N0IGZ1bGwgbG9nIG9mIFBJTyBvbmx5IGFuZCBETUEgb25s
+eSBBbHNvLCBpbiBhYm92ZSANCj4gPj4+PiBsb2csIGxvdHMgb2YgRE1BIHRyYW5zZmVyIHdlbnQg
+dGhydSBmaW5lIGV4Y2VwdCB0aGlzIG9uZSB0cmFuc2ZlciANCj4gPj4+PiB3aGVyZSBETUEgdGlt
+ZWQgb3V0Lg0KPiA+Pj4+IERNQSBjb21wbGV0aW9uIGRvZXNudCBoYXBwZW4gb24gRE1BIHN1Ym1p
+dCBkdXJpbmcgdGhpcyBwYXJ0aWN1bGFyIA0KPiA+Pj4+IHRyYW5zYWN0aW9uIHRpbWVmcmFtZSBm
+b3Igc29tZSByZWFzb24uDQo+ID4+Pg0KPiA+Pj4gRG1pdHJ5LCBjYW4geW91IHByb3ZpZGUgc29t
+ZSBiYWNrZ3JvdW5kIGluZm9ybWF0aW9uIG9uIHRoZSBzZXR1cCANCj4gPj4+IHRoYXQgeW91J3Jl
+IHVzaW5nPyBJIHZhZ3VlbHkgcmVtZW1iZXIgc29tZXRoaW5nIGFib3V0IGkyY0A3MDAwZDAwMCAN
+Cj4gPj4+IGJlaW5nIHNwZWNpYWwgb24gb2xkZXIgVGVncmEgZGV2aWNlcy4gUGVyaGFwcyB0aGVy
+ZSdzIHNvbWV0aGluZyANCj4gPj4+IGFkZGl0aW9uYWwgdGhhdCB3ZSBuZWVkIHRvIHRha2UgaW50
+byBhY2NvdW50Pw0KPiA+Pj4NCj4gPj4+IEFoYSEgTG9vayBhdCB0ZWdyYV9pMmNfcmVnX2FkZHIo
+KSB3aGljaCBzcGVjaWFsLWNhc2VzIEkyQ19UWF9GSUZPIG9uIA0KPiA+Pj4gdGhlIERWQyB2YXJp
+YW50IG9mIHRoZSBjb250cm9sbGVyLCB3aGljaCBpcyBleGFjdGx5IHRoZSBvbmUgdGhhdCB5b3Ug
+DQo+ID4+PiBhcmUgc2VlaW5nIHRoZSB0aW1lb3V0cyBvbiBhbmQgaXQncyBleGFjdGx5IHRoZSBy
+ZWdpc3RlciB0aGF0IHdlIHVzZSANCj4gPj4+IGFzIGRlc3RpbmF0aW9uIGZvciB0aGUgRE1BIHRy
+YW5zZmVyLg0KPiA+Pj4NCj4gPj4+IEkgdGhpbmsgd2UgbmVlZCB0byBkbyBzb21ldGhpbmcgbGlr
+ZSB0aGlzOg0KPiA+Pj4NCj4gPj4+IAlzbHZfY29uZmlnLmRzdF9hZGRyID0gaTJjX2Rldi0+YmFz
+ZV9waHlzICsgDQo+ID4+PiB0ZWdyYV9pMmNfcmVnX2FkZHIoaTJjX2RldiwgSTJDX1RYX0ZJRk8p
+Ow0KPiA+Pj4NCj4gPj4+IHRvIG1ha2Ugc3VyZSB3ZSBwYXNzIHRoZSByaWdodCBGSUZPIHJlZ2lz
+dGVyIGFkZHJlc3MgdG8gRE1BLg0KPiA+Pg0KPiA+PiBJJ20gcnVubmluZyBpdCBvbiBUMjAgYXQg
+dGhlIG1vbWVudC4gSSBkb24ndCBrbm93IGFib3V0IHRoZSBEVkMgcXVpcmtzLCBidXQgc291bmRz
+IHBsYXVzaWJsZS4gUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSBuZWVkIGFueSBvdGhlciBpbmZv
+Lg0KPiA+Pg0KPiA+PiBIZXJlIHRoZSBmdWxsIGxvZ3M6DQo+ID4+DQo+ID4+IFBJTy1vbmx5OiBo
+dHRwOi8vZHBhc3RlLmNvbS8yTVgzRUFOLnR4dA0KPiA+PiBETUEtb25seTogaHR0cDovL2RwYXN0
+ZS5jb20vM1ZYWlNTTS50eHQNCj4gPj4NCj4gPj4gTm90ZSB0aGUgIkZhaWxlZCB0byByZWFkIFQ0
+NCBhbmQgVDUgKC0xMTApIiBlcnJvciB0aGF0IGhhcHBlbnMgaW4gRE1BLW9ubHkuIEFuZCBpdCBo
+YXBwZW5zIG9uIGkyY0A3MDAwYzAwMCwgRFZDIGlzIGkyY0A3MDAwZDAwMC4NCj4gPiANCj4gPiBZ
+ZXMgdGhpcyBpcyBkdWUgdG8gc2FtZSBpc3N1ZSB0aGVpcnJ5IG1lbnRpb25lZC4NCj4gPiBQcmlv
+ciB0byB0cmFuc2ZlciB0aW1lb3V0IGZvciB0b3VjaCwgdHBzNjU4NnggcmVndWxhdG9yIHByb2Jl
+IGZhaWxlZCBkdWUgdG8gaTJjIHRpbWVvdXQgd2hpY2ggdXNlcyBEVkMgKDcwMDBEMDAwKSBhbmQg
+c2luY2UgRE1BIG1vZGUgaXMgZW5mb3JjZWQgYWxsIERWQy9QV1IgSTJDIHRyYW5zYWN0aW9ucyBh
+bHNvIGdvIHRocnUgRE1BIGFuZCBGSUZPIHJlZ2lzdGVyIGZvciBEVkMgb2Zmc2V0IGlzIG5vdCBh
+Y2NvdW50ZWQgd2hlbiBjb25maWd1cmUgdG8gZG1hIHNsYXZlLg0KPiA+IFdpbGwgZml4IGFuZCBz
+ZW5kIHNvIHlvdSBjYW4gc2VlIGZvciByZXBybyB3aXRoIHVwZGF0ZWQgcGF0Y2guLg0KPiA+IA0K
+PiA+IA0KPiA+IFsgICAgMC45MjUxNTVdIHRlZ3JhLWkyYyA3MDAwZDAwMC5pMmM6IHN0YXJ0aW5n
+IERNQSBmb3IgbGVuZ3RoOiAxNg0KPiA+IFsgICAgMC45MjUxNjVdIHRlZ3JhLWkyYyA3MDAwZDAw
+MC5pMmM6IHVubWFza2VkIGlycTogMGMNCj4gPiBbICAgIDEuMDI4OTYxXSB0ZWdyYS1pMmMgNzAw
+MGQwMDAuaTJjOiBpMmMgdHJhbnNmZXIgdGltZWQgb3V0DQo+ID4gWyAgICAxLjAyODk2OF0gdGVn
+cmEtaTJjIDcwMDBjMDAwLmkyYzogRE1BIHRyYW5zZmVyIHRpbWVvdXQNCj4gPiBbICAgIDEuMDI4
+OTk1XSB0cHM2NTg2eCAzLTAwMzQ6IENoaXAgSUQgcmVhZCBmYWlsZWQ6IC0xMTANCj4gPiBbICAg
+IDEuMDI5MDI5XSB0cHM2NTg2eDogcHJvYmUgb2YgMy0wMDM0IGZhaWxlZCB3aXRoIGVycm9yIC01
+DQo+ID4gWyAgICAxLjAyOTA0NV0gYXRtZWxfbXh0X3RzIDAtMDA0YzogX19teHRfcmVhZF9yZWc6
+IGkyYyB0cmFuc2ZlciBmYWlsZWQgKC0xMTApDQo+ID4gWyAgICAxLjAyOTA1MV0gYXRtZWxfbXh0
+X3RzIDAtMDA0YzogRmFpbGVkIHRvIHJlYWQgVDQ0IGFuZCBUNSAoLTExMCkNCj4gPiANCj4gDQo+
+IEkgdGhpbmsgdHBzNjU4NnggYW5kIGF0bWVsLXRvdWNoIHNob3VsZCBiZSBpbmRlcGVuZGVudCBp
+c3N1ZXMsIGJ1dCB3aWxsIHNlZS4gVGhhbmtzIQ0KV2hhdHMgeW91ciBwbGF0Zm9ybSBzZXR1cD8g
+SXMgYXRtZWwgdG91Y2ggcG93ZXIgT04gZGVmYXVsdCBvciBpdHMgcHJvZ3JhbW1lZCBkdXJpbmcg
+Ym9vdCBieSBTVyB3aGNpaCBuZWVkIHRvIHVzZSBEVkM/DQo=
