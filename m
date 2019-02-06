@@ -2,139 +2,138 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF57C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5F7C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC80420823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3038A20823
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:59:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfBFI5v convert rfc822-to-8bit (ORCPT
+        id S1728740AbfBFI7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 03:57:51 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37731 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbfBFI5u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 03:57:50 -0500
-X-Originating-IP: 90.88.22.177
-Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id C18C1E0009;
-        Wed,  6 Feb 2019 08:57:44 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 09:57:43 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>
-Subject: Re: [PATCH v5 0/7] Add Armada 3700 COMPHY support
-Message-ID: <20190206095743.5eed3584@xps13>
-In-Reply-To: <20190108163124.6409-1-miquel.raynal@bootlin.com>
-References: <20190108163124.6409-1-miquel.raynal@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 6 Feb 2019 03:59:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:49958 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727150AbfBFI7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 03:59:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C36EA78;
+        Wed,  6 Feb 2019 00:59:49 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FD463F719;
+        Wed,  6 Feb 2019 00:59:46 -0800 (PST)
+Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
+To:     Torsten Duwe <duwe@lst.de>, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+References: <20190118163736.6A99268CEB@newverein.lst.de>
+ <20190118163908.E338E68D93@newverein.lst.de>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <e206e229-7813-2d37-d5c6-7a9785e311c9@arm.com>
+Date:   Wed, 6 Feb 2019 08:59:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190118163908.E338E68D93@newverein.lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
+Hi Torsten,
 
-Miquel Raynal <miquel.raynal@bootlin.com> wrote on Tue,  8 Jan 2019
-17:31:17 +0100:
+On 18/01/2019 16:39, Torsten Duwe wrote:
+> Once gcc8 adds 2 NOPs at the beginning of each function, replace the
+> first NOP thus generated with a quick LR saver (move it to scratch reg
+> x9), so the 2nd replacement insn, the call to ftrace, does not clobber
+> the value. Ftrace will then generate the standard stack frames.
+> 
+> Note that patchable-function-entry in GCC disables IPA-RA, which means
+> ABI register calling conventions are obeyed *and* scratch registers
+> such as x9 are available.
+> 
+> Introduce and handle an ftrace_regs_trampoline for module PLTs, right
+> after ftrace_trampoline, and double the size of this special section.
+> 
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> 
+> ---
+> 
+> Mark, if you see your ftrace entry macro code being represented correctly
+> here, please add your sign-off, As I've initially copied it from your mail.
+> 
+> ---
+>  arch/arm64/include/asm/ftrace.h  |   17 ++++-
+>  arch/arm64/include/asm/module.h  |    3 
+>  arch/arm64/kernel/entry-ftrace.S |  125 +++++++++++++++++++++++++++++++++++++--
+>  arch/arm64/kernel/ftrace.c       |  114 ++++++++++++++++++++++++++---------
+>  arch/arm64/kernel/module-plts.c  |    3 
+>  arch/arm64/kernel/module.c       |    2 
+>  6 files changed, 227 insertions(+), 37 deletions(-)
 
-> Hello,
-> 
-> This series adds a new driver to support Armada 3700 COMPHY IP.
-> The series has been tested on an ESPRESSObin with SATA, PCIe
-> and USB3 host. For this purpose, patch 1 enumerates the SATA PHY
-> mode. The SGMII PHY mode that is supported by the IP has been written
-> (uses SMC calls anyway) but could not be tested on this platform.
-> 
-> Three series will follow to add PHY support (or at least a PHY nodes
-> in the A3700/ESPRESSObin device trees) to the MVEBU AHCI driver, the
-> Aardvark PCI controller driver and the MVEBU xHCI driver. All this is
-> needed in order to achieve suspend to RAM on this platform.
-> 
-> Thanks,
-> Miquèl
-> 
+[...]
 
-Any inputs on this series? It is important for me because it impacts
-SATA, PCIe and USB changes I plan to get merge.
+> --- a/arch/arm64/kernel/ftrace.c
+> +++ b/arch/arm64/kernel/ftrace.c
+> @@ -133,17 +163,45 @@ int ftrace_make_call(struct dyn_ftrace *
+>  	return ftrace_modify_code(pc, old, new, true);
+>  }
+>  
+> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
+> +			unsigned long addr)
+> +{
+> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+> +	u32 old, new;
+> +
+> +	old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
+> +	new = aarch64_insn_gen_branch_imm(pc, addr, true);
+> +
+> +	return ftrace_modify_code(pc, old, new, true);
+> +}
+> +#endif
+> +
+>  /*
+>   * Turn off the call to ftrace_caller() in instrumented function
+>   */
+>  int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+>  		    unsigned long addr)
+>  {
+> -	unsigned long pc = rec->ip;
+> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+
+Sorry to come back on this patch again, but I was looking at the ftrace
+code a bit, and I see that when processing the ftrace call locations,
+ftrace calls ftrace_call_adjust() on every ip registered as mcount
+caller (or in our case patchable entries). This ftrace_call_adjust() is
+arch specific, so I was thinking we could place the offset in here once
+and for all so we don't have to worry about it in the future.
+
+Also, I'm unsure whether it would be safe, but we could patch the "mov
+x9, lr" there as well. In theory, this would be called at init time
+(before secondary CPUs are brought up) and when loading a module (so I'd
+expect no-one is executing that code *yet*.
+
+If this is possible, I think it would make things a bit cleaner.
+
+Let me know if that would work.
 
 Thanks,
-Miquèl
 
-> 
-> Changes since v4:
-> =================
-> * Fixed error in the driver probe where PHY_INTERFACE_MODE_NA was
->   assigned to lane->mode instead of lane->submode.
-> * Compile-in the driver by default (depends on ARCH_MVEBU).
-> * Add dependency on HAVE_ARM_SMCC in Kconfig.
-> 
-> Changes since v3:
-> =================
-> * Added Rob's Reviewed-by tag on bindings.
-> * Rebased on top of phy -next as of the 12th of December, 2018.
-> * Adapted the driver to support SGMII/1000BASEX and
->   HS_SGMII/2500BASEX.
-> 
-> Changes since v2:
-> =================
-> * Remove redundant check on lane->port/args->arg[0] at the end of the
->   ->xlate() callback. Do it on both armada-cp110 and armada-a3700  
->   COMPHY drivers.
-> * Put my SoB as author of the patch first when a patch is co-developed.
-> 
-> Changes since v1:
-> =================
-> * Fix wrong check in ->xlate().
-> * Apply the same fix to the cp110 comphy driver from which the a3700
->   driver is based.
-> * Added credit to Gregorz Jaszczyk for his work.
-> * Added Suggested-by tag to the patch adding the COMPHY DT node.
-> 
-> 
-> Grzegorz Jaszczyk (1):
->   phy: enumerate SATA PHY mode
-> 
-> Miquel Raynal (6):
->   phy: mvebu-cp110-comphy: fix port check in ->xlate()
->   phy: add A3700 COMPHY support
->   dt-bindings: phy: mvebu-comphy: extend the file to describe a3700
->     bindings
->   MAINTAINERS: phy: add entry for Armada 3700 COMPHY driver
->   ARM64: dts: marvell: armada-37xx: fix SATA node scope
->   ARM64: dts: marvell: armada-37xx: declare the COMPHY node
-> 
->  .../bindings/phy/phy-mvebu-comphy.txt         |  65 +++-
->  MAINTAINERS                                   |   6 +
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  31 +-
->  drivers/phy/marvell/Kconfig                   |  12 +
->  drivers/phy/marvell/Makefile                  |   1 +
->  drivers/phy/marvell/phy-mvebu-a3700-comphy.c  | 318 ++++++++++++++++++
->  drivers/phy/marvell/phy-mvebu-cp110-comphy.c  |   2 -
->  include/linux/phy/phy.h                       |   1 +
->  8 files changed, 421 insertions(+), 15 deletions(-)
->  create mode 100644 drivers/phy/marvell/phy-mvebu-a3700-comphy.c
-> 
+-- 
+Julien Thierry
