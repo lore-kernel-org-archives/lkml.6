@@ -2,88 +2,107 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0347C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3470C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7799920821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6FB320821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbfBFSEp (ORCPT
+        id S1729741AbfBFSF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:04:45 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:39754 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfBFSEp (ORCPT
+        Wed, 6 Feb 2019 13:05:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57835 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfBFSF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:04:45 -0500
-X-IronPort-AV: E=Sophos;i="5.58,340,1544511600"; 
-   d="scan'208";a="23506335"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Feb 2019 11:04:44 -0700
-Received: from tenerife.corp.atmel.com (10.10.76.4) by
- chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 6 Feb 2019 11:04:44 -0700
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Nicolas Ferre" <nicolas.ferre@microchip.com>
-Subject: [RESEND PATCH] dt-bindings: arm: atmel: add new sam9x60 SFR binding
-Date:   Wed, 6 Feb 2019 19:04:25 +0100
-Message-ID: <20190206180425.27324-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 6 Feb 2019 13:05:26 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x16I4Dxv1387757
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 6 Feb 2019 10:04:13 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x16I4BnF1387753;
+        Wed, 6 Feb 2019 10:04:11 -0800
+Date:   Wed, 6 Feb 2019 10:04:11 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-45b13b424faafb81c8c44541f093a682fdabdefc@git.kernel.org>
+Cc:     kyle.d.pelton@intel.com, mingo@redhat.com, x86@kernel.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, bp@suse.de,
+        wei@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com
+Reply-To: kyle.d.pelton@intel.com, x86@kernel.org, hpa@zytor.com,
+          mingo@redhat.com, linux-kernel@vger.kernel.org, bp@suse.de,
+          wei@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+          kirill.shutemov@linux.intel.com
+In-Reply-To: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
+References: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/boot/compressed/64: Do not corrupt EDX on
+ EFER.LME=1 setting
+Git-Commit-ID: 45b13b424faafb81c8c44541f093a682fdabdefc
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add this SFR compatible definition for the sam9x60 SoC. Will be needed
-in OHCI driver: ohci-at91.c.
+Commit-ID:  45b13b424faafb81c8c44541f093a682fdabdefc
+Gitweb:     https://git.kernel.org/tip/45b13b424faafb81c8c44541f093a682fdabdefc
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Wed, 6 Feb 2019 14:52:53 +0300
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 6 Feb 2019 18:56:18 +0100
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+x86/boot/compressed/64: Do not corrupt EDX on EFER.LME=1 setting
+
+RDMSR in the trampoline code overwrites EDX but that register is used
+to indicate whether 5-level paging has to be enabled and if clobbered,
+leads to failure to boot on a 5-level paging machine.
+
+Preserve EDX on the stack while we are dealing with EFER.
+
+Fixes: b677dfae5aa1 ("x86/boot/compressed/64: Set EFER.LME=1 in 32-bit trampoline before returning to long mode")
+Reported-by: Kyle D Pelton <kyle.d.pelton@intel.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: dave.hansen@linux.intel.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wei Huang <wei@redhat.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190206115253.1907-1-kirill.shutemov@linux.intel.com
 ---
-Hi Rob,
-It seems that this patch was lost in my series "[PATCH 0/8] ARM: at91/dt:
-update to existing drivers for the sam9x60 SoC". I split it and resend it only
-for USB tree.
+ arch/x86/boot/compressed/head_64.S | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Hi Greg,
-
-This DT bindind goes with the patch already queued in your usb-next tree "USB:
-host: ohci-at91: add sam9x60-sfr definition for ohci".
-
-Once Rob added his tag, can you please queue it in your tree as I reviewed my
-first idea of adding it to the arm-soc tree?
-
-Best regards,
-  Nicolas
-
- Documentation/devicetree/bindings/arm/atmel-sysregs.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/atmel-sysregs.txt b/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
-index badce6ef3ab3..dfc91bc02b97 100644
---- a/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
-+++ b/Documentation/devicetree/bindings/arm/atmel-sysregs.txt
-@@ -148,6 +148,7 @@ required properties:
- - compatible: Should be "atmel,<chip>-sfr", "syscon" or
- 	"atmel,<chip>-sfrbu", "syscon"
-   <chip> can be "sama5d3", "sama5d4" or "sama5d2".
-+  It also can be "microchip,sam9x60-sfr", "syscon".
- - reg: Should contain registers location and length
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index f105ae8651c9..f62e347862cc 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -602,10 +602,12 @@ ENTRY(trampoline_32bit_src)
+ 3:
+ 	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
+ 	pushl	%ecx
++	pushl	%edx
+ 	movl	$MSR_EFER, %ecx
+ 	rdmsr
+ 	btsl	$_EFER_LME, %eax
+ 	wrmsr
++	popl	%edx
+ 	popl	%ecx
  
- 	sfr@f0038000 {
--- 
-2.17.1
-
+ 	/* Enable PAE and LA57 (if required) paging modes */
