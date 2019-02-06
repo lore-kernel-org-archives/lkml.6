@@ -2,123 +2,113 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1B7C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D25ADC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DD62073F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E9D92073F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:56:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AALbfhzb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbfBFOzP (ORCPT
+        id S1730934AbfBFO4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:55:15 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46938 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726767AbfBFOzP (ORCPT
+        Wed, 6 Feb 2019 09:56:07 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40439 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfBFO4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:55:15 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16EpNMb001272;
-        Wed, 6 Feb 2019 15:54:53 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qfv9j9k5a-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 06 Feb 2019 15:54:53 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 786D034;
-        Wed,  6 Feb 2019 14:54:52 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 488F52C3C;
-        Wed,  6 Feb 2019 14:54:52 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.45) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 6 Feb
- 2019 15:54:51 +0100
-Subject: Re: [PATCH 2/4] pwm: stm32-lp: Add power management support
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-CC:     <jic23@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <vilhelm.gray@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Tomasz Duszynski <tduszyns@gmail.com>
-References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
- <1549370429-19116-3-git-send-email-fabrice.gasnier@st.com>
- <20190205204732.zrbhgyxnvjbwfyw4@pengutronix.de>
- <20190205222522.GB1372@mithrandir>
- <6584a59b-657d-adc9-fab2-eb1a9baba05d@st.com>
- <20190206085405.pdiwd3c6wjog5hl7@pengutronix.de>
- <20190206125545.GI21676@ulmo>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <ddb93754-2734-e4c2-a209-517984c6d814@st.com>
-Date:   Wed, 6 Feb 2019 15:54:50 +0100
+        Wed, 6 Feb 2019 09:56:06 -0500
+Received: by mail-lj1-f196.google.com with SMTP id n18-v6so6302993lji.7;
+        Wed, 06 Feb 2019 06:56:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sYD+4x7D/riHr95LzbpFXFWdRHGv1pyolcQUSjsCBPI=;
+        b=AALbfhzbA7Bm3FnnlW4tiFdbFI9+h67aAUFoqWGb2P6qNC5D3DDinbPam+0DYXUnYR
+         V5Aby5srdZCtVOz5ca6BE1THoACjV8+7zoFH7HR+PfMMksd5D9IY8FPkeSNoTgQ3hNC4
+         vu1Ccwl2SFX9jFkhUw9twk4OIJCwdxT+HG+nYkOqTdRzPA4MAPlhlRg2w96e3zrzRPR9
+         W1x6vAllbk0k6DUIPU69Dyi9zkyzMJVFj+S93avxAf0ywMIHrRZgZJ+KlpXcMYfdjx+r
+         ZjGOWWA68S9+P+31H3IYEl7cQ49UuUTtsMarZhBadIN1gqelc5mi8A6Gxq5Hp4r7l/Rd
+         n4aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sYD+4x7D/riHr95LzbpFXFWdRHGv1pyolcQUSjsCBPI=;
+        b=HqqUI3fWGpMPQgbau6DnZo2zUJWkREModNrrkFAzEiXq2y7t4cgOV7HtIkEvxjaQHV
+         iBwX2D2Gs8l+Bdk4v47bfRwd8Vh8ygnZ9ICIs/XD7Ak8AUBvTWEXqrnaCAzCYpp9+hmF
+         U3K1ja451T/bziia66T2FsV0dZMNf8rikZTNGhTUMWn3AWpUZxwxw19tBXY9qebPUBoY
+         y4OKPWvL3O52/MhOavDPIpHfB2oPJO/Ioe9gcU7pY8fkpn2tBNccBgwX6cmg/Giw4fsL
+         SeSuH6fV3TgMDzlsEJQgEp1kAejMp3NeaFJEYgkkeDpq4P4IIrC0A7JFN0RgTleTB8Y2
+         GtRw==
+X-Gm-Message-State: AHQUAubVVjzJ6ybQKyd2VCKA7P1RJ7nxrsbhGR42KM5Qebo0gCOu3tyk
+        mGNMkNg32sVFkmYoSCA4lC3jBiM6
+X-Google-Smtp-Source: AHgI3IaJ0VWK2QRIZTAsd+MaOTUg08tt1VvEvd8EV8Dl5TXATDSctvhA4Km5ITewBL39QzmK3w2wbw==
+X-Received: by 2002:a2e:750a:: with SMTP id q10-v6mr6040094ljc.39.1549464963876;
+        Wed, 06 Feb 2019 06:56:03 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id y1-v6sm3759804ljh.39.2019.02.06.06.56.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 06:56:03 -0800 (PST)
+Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
+ <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
+ <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com> <20190206145343.GA3651@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5e66803c-b13b-cb00-e2ff-d096a1650612@gmail.com>
+Date:   Wed, 6 Feb 2019 17:56:02 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190206125545.GI21676@ulmo>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190206145343.GA3651@ulmo>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_09:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/19 1:55 PM, Thierry Reding wrote:
-> On Wed, Feb 06, 2019 at 09:54:05AM +0100, Uwe Kleine-König wrote:
->> On Wed, Feb 06, 2019 at 09:42:48AM +0100, Fabrice Gasnier wrote:
->>> If you agree with the current approach, I can send a V2 with Tomasz's
->>> suggestion to remove the ifdefs and use __maybe_unused instead.
->>
->> I think the suspend callback should have something like:
->>
->> 	if (is_still_enabled) {
->> 		/*
->> 		 * The consumer didn't stop us, so refuse to suspend.
->> 		 */
->> 		dev_err(dev, "The consumer didn't stop us, so refuse to suspend.\n");
->> 		return -EBUSY;
->> 	}
->>
->> This way there are no bad surprises if the pwm is suspended before its
->> consumer and it's obvious what is missing.
-
-Thierry, Uwe,
-
-When the pwm is suspended before its consumer, the bad surprise is the
-suspend request will fail... I'm not sure a new attempt may be better.
-So, it looks like the only way to have this clean is by implementing the
-device link e.g. via pwm_get() ?
-
+06.02.2019 17:53, Thierry Reding пишет:
+> On Tue, Feb 05, 2019 at 05:26:25PM +0300, Dmitry Osipenko wrote:
+> [...]
+>> Oh, another important moment is that physically contiguous dma_buf
+>> allocation isn't guaranteed by the DMA API. This may become a problem
+>> for T186+ that can transfer up to 64K. We need to enforce the
+>> contiguous-allocation requirement by using
+>> dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the
+>> dma_alloc_coherent(), please see my other comment below.
 > 
-> Something that just occurred to me: perhaps as part of pwm_get() we
-> should track where we were being requested from so that we could give
-> hints in situations like this as to where the consumer is that forgot
-> to suspend the PWM.
-
-The current approach handles the situation where the consumer forgot to
-suspend the PWM... I can add some warning about that in the suspend
-routine, incl the label.
-
-What do you think? What's the best approach ?
-
-Please advise,
-BR,
-Fabrice
+> Actually I don't think that's necessary here. DMA_ATTR_FORCE_CONTIGUOUS
+> only seems relevant if you've got an IOMMU attached to the device to
+> make sure the physical memory is also contiguous.
 > 
-> I suppose we already have pwm_device.label to help with this, but
-> perhaps we could improve things if we stored __builtin_return_address
-> during pwm_get() to help users pinpoint where they need to look.
+> See this extract from Documentation/DMA-attributes.txt:
 > 
-> Thierry
+> | DMA_ATTR_FORCE_CONTIGUOUS
+> | -------------------------
+> | 
+> | By default DMA-mapping subsystem is allowed to assemble the buffer
+> | allocated by dma_alloc_attrs() function from individual pages if it can
+> | be mapped as contiguous chunk into device dma address space. By
+> | specifying this attribute the allocated buffer is forced to be contiguous
+> | also in physical memory.
 > 
+> We don't have an IOMMU attached to I2C or APBDMA, so this can't happen
+> and even if we had an IOMMU attached, all we care about is the device's
+> DMA address space, which means IOVA space, and that would still be
+> guaranteed to be contiguous, according to the above.
+
+Yes, but doesn't T186+ have IOMMU support for the DMA controller?
