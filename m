@@ -2,213 +2,137 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2993C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F1CC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DAB820B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C3BF20B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730521AbfBFMbY (ORCPT
+        id S1730535AbfBFMbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:31:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3180 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728044AbfBFMbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:31:24 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3812BA6B04A7DDE2C50F;
-        Wed,  6 Feb 2019 20:31:22 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Wed, 6 Feb 2019
- 20:31:11 +0800
-Date:   Wed, 6 Feb 2019 12:31:00 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Keith Busch <keith.busch@intel.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dan Williams" <dan.j.williams@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCHv5 00/10] Heterogeneuos memory node attributes
-Message-ID: <20190206123100.0000094a@huawei.com>
-In-Reply-To: <20190124230724.10022-1-keith.busch@intel.com>
-References: <20190124230724.10022-1-keith.busch@intel.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+        Wed, 6 Feb 2019 07:31:49 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50610 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730295AbfBFMbs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 07:31:48 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16CTHTJ094663
+        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 07:31:47 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfxbqvqqp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:31:46 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 6 Feb 2019 12:31:44 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 6 Feb 2019 12:31:42 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16CVfxs9306546
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Feb 2019 12:31:41 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6325A48B3;
+        Wed,  6 Feb 2019 12:10:30 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 70F68A48AE;
+        Wed,  6 Feb 2019 12:10:29 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  6 Feb 2019 12:10:29 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 06 Feb 2019 14:10:28 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH 1/2] memblock: remove memblock_{set,clear}_region_flags
+Date:   Wed,  6 Feb 2019 14:10:24 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549455025-17706-1-git-send-email-rppt@linux.ibm.com>
+References: <1549455025-17706-1-git-send-email-rppt@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19020612-4275-0000-0000-0000030C2305
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020612-4276-0000-0000-0000381A283D
+Message-Id: <1549455025-17706-2-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=887 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902060099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 16:07:14 -0700
-Keith Busch <keith.busch@intel.com> wrote:
+The memblock API provides dedicated helpers to set or clear a flag on a
+memory region, e.g. memblock_{mark,clear}_hotplug().
 
-> == Changes since v4 ==
-> 
->   All public interfaces have kernel docs.
-> 
->   Renamed "class" to "access", docs and changed logs updated
->   accordingly. (Rafael)
-> 
->   The sysfs hierarchy is altered to put initiators and targets in their
->   own attribute group directories (Rafael).
-> 
->   The node lists are removed. This feedback is in conflict with v1
->   feedback, but consensus wants to remove multi-value sysfs attributes,
->   which includes lists. We only have symlinks now, just like v1 provided.
-> 
->   Documentation and code patches are combined such that the code
->   introducing new attributes and its documentation are in the same
->   patch. (Rafael and Dan).
-> 
->   The performance attributes, bandwidth and latency, are moved into the
->   initiators directory. This should make it obvious for which node
->   access the attributes apply, which was previously ambiguous.
->   (Jonathan Cameron).
-> 
->   The HMAT code selecting "local" initiators is substantially changed.
->   Only PXM's that have identical performance to the HMAT's processor PXM
->   in Address Range Structure are registered. This is to avoid considering
->   nodes identical when only one of several perf attributes are the same.
->   (Jonathan Cameron).
-> 
->   Verbose variable naming. Examples include "initiator" and "target"
->   instead of "i" and "t", "mem_pxm" and "cpu_pxm" instead of "m" and
->   "p". (Rafael)
-> 
->   Compile fixes for when HMEM_REPORTING is not set. This is not a user
->   selectable config option, default 'n', and will have to be selected
->   by other config options that require it (Greg KH and Rafael).
-> 
-> == Background ==
-> 
-> Platforms may provide multiple types of cpu attached system memory. The
-> memory ranges for each type may have different characteristics that
-> applications may wish to know about when considering what node they want
-> their memory allocated from. 
-> 
-> It had previously been difficult to describe these setups as memory
-> rangers were generally lumped into the NUMA node of the CPUs. New
-> platform attributes have been created and in use today that describe
-> the more complex memory hierarchies that can be created.
-> 
-> This series' objective is to provide the attributes from such systems
-> that are useful for applications to know about, and readily usable with
-> existing tools and libraries.
+The memblock_{set,clear}_region_flags() functions are used only by the
+memblock internal function that adjusts the region flags.
+Drop these functions and use open-coded implementation instead.
 
-Hi Keith,
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ include/linux/memblock.h | 12 ------------
+ mm/memblock.c            |  9 ++++++---
+ 2 files changed, 6 insertions(+), 15 deletions(-)
 
-Seems to be heading in the right direction to me... (though I personally
-want to see the whole of HMAT expose, but meh, that seems unpopular :)
-
-I've fired up a new test rig (someone pinched the fan on the previous one)
-that I can make present pretty much anything to this code.
-
-First up is a system with 4 nodes with cpu and local ddr [0-3] + 1 remote node
-with just memory [4]. All the figures as you might expect between the nodes with
-CPUs. The remote node has equal numbers from all the cpus.
-
-First some general comments on places this doesn't work as my gut feeling
-said it would...
-
-I'm going to keep this somewhat vague on certain points as ACPI 6.3 should
-be public any day now and I think it is fair to say we should take into
-account any changes in there...
-There is definitely one place the current patches won't work with 6.3, but
-I'll point it out in a few days.  There may be others.
-
-1) It seems this version added a hard dependence on having the memory node
-   listed in the Memory Proximity Domain attribute structures.  I'm not 100%
-   sure there is actually any requirement to have those structures. If you aren't
-   using the hint bit, they don't convey any information.  It could be argued
-   that they provide info on what is found in the other hmat entries, but there
-   is little purpose as those entries are explicit in what the provide.
-   (Given I didn't have any of these structures and things  worked fine with
-    v4 it seems this is a new check).
-
-   This is also somewhat inconsistent.
-   a) If a given entry isn't there, we still get for example
-      node4/access0/initiators/[read|write]_* but all values are 0.
-      If we want to do the check you have it needs to not create the files in
-      this case.  Whilst they have no meaning as there are no initiators, it
-      is inconsistent to my mind.
-
-   b) Having one "Memory Proximity Domain attribute structure" for node 4 linking
-      it to node0 is sufficient to allow
-      node4/access0/initiators/node0
-      node4/access0/initiators/node1
-      node4/access0/initiators/node2
-      node4/access0/initiators/node3
-      I think if we are going to enforce the presence of that structure then only
-      the node0 link should exist.
-
-2) Error handling could perhaps do to spit out some nasty warnings.
-   If we have an entry for nodes that don't exist we shouldn't just fail silently,
-   that's just one example I managed to trigger with minor table tweaking.
-
-Personally I would just get rid of enforcing anything based on the presence of
-that structure.
-
-I'll send more focused comments on some of the individual patches.
-
-Thanks,
-
-Jonathan
-   
-
-> 
-> Keith Busch (10):
->   acpi: Create subtable parsing infrastructure
->   acpi: Add HMAT to generic parsing tables
->   acpi/hmat: Parse and report heterogeneous memory
->   node: Link memory nodes to their compute nodes
->   acpi/hmat: Register processor domain to its memory
->   node: Add heterogenous memory access attributes
->   acpi/hmat: Register performance attributes
->   node: Add memory caching attributes
->   acpi/hmat: Register memory side cache attributes
->   doc/mm: New documentation for memory performance
-> 
->  Documentation/ABI/stable/sysfs-devices-node   |  87 ++++-
->  Documentation/admin-guide/mm/numaperf.rst     | 167 ++++++++
->  arch/arm64/kernel/acpi_numa.c                 |   2 +-
->  arch/arm64/kernel/smp.c                       |   4 +-
->  arch/ia64/kernel/acpi.c                       |  12 +-
->  arch/x86/kernel/acpi/boot.c                   |  36 +-
->  drivers/acpi/Kconfig                          |   1 +
->  drivers/acpi/Makefile                         |   1 +
->  drivers/acpi/hmat/Kconfig                     |   9 +
->  drivers/acpi/hmat/Makefile                    |   1 +
->  drivers/acpi/hmat/hmat.c                      | 537 ++++++++++++++++++++++++++
->  drivers/acpi/numa.c                           |  16 +-
->  drivers/acpi/scan.c                           |   4 +-
->  drivers/acpi/tables.c                         |  76 +++-
->  drivers/base/Kconfig                          |   8 +
->  drivers/base/node.c                           | 354 ++++++++++++++++-
->  drivers/irqchip/irq-gic-v2m.c                 |   2 +-
->  drivers/irqchip/irq-gic-v3-its-pci-msi.c      |   2 +-
->  drivers/irqchip/irq-gic-v3-its-platform-msi.c |   2 +-
->  drivers/irqchip/irq-gic-v3-its.c              |   6 +-
->  drivers/irqchip/irq-gic-v3.c                  |  10 +-
->  drivers/irqchip/irq-gic.c                     |   4 +-
->  drivers/mailbox/pcc.c                         |   2 +-
->  include/linux/acpi.h                          |   6 +-
->  include/linux/node.h                          |  60 ++-
->  25 files changed, 1344 insertions(+), 65 deletions(-)
->  create mode 100644 Documentation/admin-guide/mm/numaperf.rst
->  create mode 100644 drivers/acpi/hmat/Kconfig
->  create mode 100644 drivers/acpi/hmat/Makefile
->  create mode 100644 drivers/acpi/hmat/hmat.c
-> 
-
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index 71c9e32..32a9a6b 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -317,18 +317,6 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+ 	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
+ 			       nid, flags, p_start, p_end, p_nid)
+ 
+-static inline void memblock_set_region_flags(struct memblock_region *r,
+-					     enum memblock_flags flags)
+-{
+-	r->flags |= flags;
+-}
+-
+-static inline void memblock_clear_region_flags(struct memblock_region *r,
+-					       enum memblock_flags flags)
+-{
+-	r->flags &= ~flags;
+-}
+-
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ int memblock_set_node(phys_addr_t base, phys_addr_t size,
+ 		      struct memblock_type *type, int nid);
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 0151a5b..af5fe8e 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -851,11 +851,14 @@ static int __init_memblock memblock_setclr_flag(phys_addr_t base,
+ 	if (ret)
+ 		return ret;
+ 
+-	for (i = start_rgn; i < end_rgn; i++)
++	for (i = start_rgn; i < end_rgn; i++) {
++		struct memblock_region *r = &type->regions[i];
++
+ 		if (set)
+-			memblock_set_region_flags(&type->regions[i], flag);
++			r->flags |= flag;
+ 		else
+-			memblock_clear_region_flags(&type->regions[i], flag);
++			r->flags &= ~flag;
++	}
+ 
+ 	memblock_merge_regions(type);
+ 	return 0;
+-- 
+2.7.4
 
