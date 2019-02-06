@@ -2,178 +2,86 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539DCC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87874C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EC2420844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ED3A217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbfBFVXx (ORCPT
+        id S1726691AbfBFV0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:23:53 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:34258 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfBFVXw (ORCPT
+        Wed, 6 Feb 2019 16:26:24 -0500
+Received: from emh01.mail.saunalahti.fi ([62.142.5.107]:36914 "EHLO
+        emh01.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfBFV0Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:23:52 -0500
-Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1grUfY-0007KP-75; Wed, 06 Feb 2019 16:23:47 -0500
-Date:   Wed, 6 Feb 2019 16:23:16 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     Julien Gomes <julien@arista.com>, netdev@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, vyasevich@gmail.com, lucien.xin@gmail.com
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Message-ID: <20190206212316.GD16887@hmswarspite.think-freely.org>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206210723.GD13621@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 6 Feb 2019 16:26:24 -0500
+Received: from localhost.localdomain (85-76-102-43-nat.elisa-mobile.fi [85.76.102.43])
+        by emh01.mail.saunalahti.fi (Postfix) with ESMTP id 1C13E20055;
+        Wed,  6 Feb 2019 23:26:21 +0200 (EET)
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-kernel@vger.kernel.org, tomli@tomli.me,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: [PATCH] irqchip/i8259: fix shutdown order by moving syscore_ops registration
+Date:   Wed,  6 Feb 2019 23:26:08 +0200
+Message-Id: <20190206212608.27189-1-aaro.koskinen@iki.fi>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 07:07:23PM -0200, Marcelo Ricardo Leitner wrote:
-> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
-> > 
-> > 
-> > On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
-> > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
-> > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
-> > >> structures longer than the current definitions.
-> > >>
-> > >> This should prevent unjustified setsockopt() failures due to struct
-> > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
-> > >> binaries that should be compatible, but were built with later kernel
-> > >> uapi headers.
-> > > 
-> > > Not sure if we support backwards compatibility like this?
-> > > 
-> > > My issue with this change is that by doing this, application will have
-> > > no clue if the new bits were ignored or not and it may think that an
-> > > event is enabled while it is not.
-> > > 
-> > > A workaround would be to do a getsockopt and check the size that was
-> > > returned. But then, it might as well use the right struct here in the
-> > > first place.
-> > > 
-> > > I'm seeing current implementation as an implicitly versioned argument:
-> > > it will always accept setsockopt calls with an old struct (v4.11 or
-> > > v4.12), but if the user tries to use v3 on a v1-only system, it will
-> > > be rejected. Pretty much like using a newer setsockopt on an old
-> > > system.
-> > 
-> > With the current implementation, given sources that say are supposed to
-> > run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
-> > we can't rebuild the exact same sources on a 4.19 kernel and still run
-> > them on 4.9 without messing with structures re-definition.
-> 
-> Maybe what we want(ed) here then is explicit versioning, to have the 3
-> definitions available. Then the application is able to use, say struct
-> sctp_event_subscribe, and be happy with it, while there is struct
-> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
-> 
-> But it's too late for that now because that would break applications
-> already using the new fields in sctp_event_subscribe.
-> 
-Yeah, I'm not supportive of codifying that knoweldge in the kernel.  If we were
-to support bi-directional versioning, I would encode it into lksctp-tools rather
-than the kernel.
+When using cpufreq on Loongson 2F MIPS platform, "poweroff"
+command gets frequently stuck in syscore_shutdown(). The reason is
+that i8259A_shutdown() gets called before cpufreq_suspend(), and if we
+have pending work then irq_work_sync() in cpufreq_dbs_governor_stop()
+gets stuck forever as we have all interrupts masked already.
 
-> > 
-> > I understand your point, but this still looks like a sort of uapi
-> > breakage to me.
-> 
-> Not disagreeing. I really just don't know how supported that is.
-> Willing to know so I can pay more attention to this on future changes.
-> 
-> Btw, is this the only occurrence?
-> 
-No, I think there are a few others (maybe paddrparams?)
+irq-i8259 is registering syscore_ops using device_initcall(),
+while cpufreq uses core_initcall(). Fix the shutdown order simply
+by registering the irq syscore_ops during the early IRQ init instead
+of using a separate initcall at later stage.
 
-> > 
-> > 
-> > I also had another way to work-around this in mind, by copying optlen
-> > bytes and checking that any additional field (not included in the
-> > "current" kernel structure definition) is not set, returning EINVAL in
-> > such case to keep a similar to current behavior.
-> > The issue with this is that I didn't find a suitable (ie not totally
-> > arbitrary such as "twice the existing structure size") upper limit to
-> > optlen.
-> 
-> Seems interesting. Why would it need that upper limit to optlen?
-> 
-I think the thought was to differentiate between someone passing a legit larger
-structure from a newer UAPI, from someone just passing in a massive
-inappropriately sized buffer (even if the return on both is the same).
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+---
+ drivers/irqchip/irq-i8259.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-> Say struct v1 had 4 bytes, v3 now had 12. The user supplies 12 bytes
-> to the kernel that only knows about 4 bytes. It can check that (12-4)
-> bytes in the end, make sure no bit is on and use only the first 4.
-> 
-> The fact that it was 12 or 200 shouldn't matter, should it? As long as
-> the (200-4) bytes are 0'ed, only the first 4 will be used and it
-> should be ok, otherwise EINVAL. No need to know how big the current
-> current actually is because it wouldn't be validating that here: just
-> that it can safely use the first 4 bytes.
-> 
-I'm less than excited about making the kernel check an unbounded user space
-buffer, thats seems like a potential DOS attack from an unpriviledged user to
-me.  I'm also still hung up on the notion that, despite how we do this, this
-patch is going into the latest kernel, so it will only work on a kernel that
-already understands the most recent set of subscriptions.  It would work if we,
-again someday in the future extended this struct, someone built against that
-newer UAPI, and then tried to run it on a kernel that had this patch.
+diff --git a/drivers/irqchip/irq-i8259.c b/drivers/irqchip/irq-i8259.c
+index b0d4aab1a58c..d000870d9b6b 100644
+--- a/drivers/irqchip/irq-i8259.c
++++ b/drivers/irqchip/irq-i8259.c
+@@ -225,14 +225,6 @@ static struct syscore_ops i8259_syscore_ops = {
+ 	.shutdown = i8259A_shutdown,
+ };
+ 
+-static int __init i8259A_init_sysfs(void)
+-{
+-	register_syscore_ops(&i8259_syscore_ops);
+-	return 0;
+-}
+-
+-device_initcall(i8259A_init_sysfs);
+-
+ static void init_8259A(int auto_eoi)
+ {
+ 	unsigned long flags;
+@@ -332,6 +324,7 @@ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+ 		panic("Failed to add i8259 IRQ domain");
+ 
+ 	setup_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, &irq2);
++	register_syscore_ops(&i8259_syscore_ops);
+ 	return domain;
+ }
+ 
+-- 
+2.17.0
 
-FWIW, there is an existing implied method to determine the available
-subscription events. sctp_getsockopt_events does clamp the size of the output
-buffer, and returns that information in the optlen field via put_user.  An
-application that was build against UAPIs from 4.19 could pass in the 4.19
-sctp_event_subscribe struct to sctp_getsockopt_events, and read the output
-length, whcih would inform the application of the events that the kernel is
-capable of reporting, and limit itself to only using those events.  Its not a
-perfect solution, but its direct, understandable and portable.
-
-Neil
-
-> > 
-> > > 
-> > >>
-> > >> Signed-off-by: Julien Gomes <julien@arista.com>
-> > >> ---
-> > >>  net/sctp/socket.c | 2 +-
-> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> > >> index 9644bdc8e85c..f9717e2789da 100644
-> > >> --- a/net/sctp/socket.c
-> > >> +++ b/net/sctp/socket.c
-> > >> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
-> > >>  	int i;
-> > >>  
-> > >>  	if (optlen > sizeof(struct sctp_event_subscribe))
-> > >> -		return -EINVAL;
-> > >> +		optlen = sizeof(struct sctp_event_subscribe);
-> > >>  
-> > >>  	if (copy_from_user(&subscribe, optval, optlen))
-> > >>  		return -EFAULT;
-> > >> -- 
-> > >> 2.20.1
-> > >>
-> > 
-> 
