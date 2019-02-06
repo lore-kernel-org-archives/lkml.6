@@ -2,70 +2,169 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24280C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37B6C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A3820844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D8420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbfBFNUN (ORCPT
+        id S1730953AbfBFNTv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:20:13 -0500
-Received: from mga11.intel.com ([192.55.52.93]:7373 "EHLO mga11.intel.com"
+        Wed, 6 Feb 2019 08:19:51 -0500
+Received: from mga11.intel.com ([192.55.52.93]:7185 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730739AbfBFNUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:20:09 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1730602AbfBFNRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:17:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:20:06 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:46 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="144640551"
-Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.171])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Feb 2019 05:20:01 -0800
-Date:   Wed, 6 Feb 2019 15:20:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Message-ID: <20190206132000.GA16667@linux.intel.com>
-References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
- <20190205143541.GA18330@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA90C75@hasmsx108.ger.corp.intel.com>
- <20190205205719.GA13023@linux.intel.com>
- <20190206124324.GA8126@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA91AEE@hasmsx108.ger.corp.intel.com>
+   d="scan'208";a="115679569"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 06 Feb 2019 05:17:42 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id CDF8E40F; Wed,  6 Feb 2019 15:17:38 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH v2 07/28] thunderbolt: Set sleep bit when suspending switch
+Date:   Wed,  6 Feb 2019 16:17:17 +0300
+Message-Id: <20190206131738.43696-8-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA91AEE@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 12:55:55PM +0000, Winkler, Tomas wrote:
-> > Fixed comments and applied the patch, thank you. Do I amend your acked-by?
-> 
-> Please, do.
-> Thanks
-> Tomas
+Thunderbolt 2 devices and beyond link controller needs to be notified
+when a switch is going to be suspended by setting bit 31 in LC_SX_CTRL
+register. Add this functionality to the software connection manager.
 
-Great, thank you.
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/thunderbolt/lc.c      | 44 +++++++++++++++++++++++++++++++++++
+ drivers/thunderbolt/switch.c  |  6 ++---
+ drivers/thunderbolt/tb.h      |  1 +
+ drivers/thunderbolt/tb_regs.h |  2 ++
+ 4 files changed, 49 insertions(+), 4 deletions(-)
 
-/Jarkko
+diff --git a/drivers/thunderbolt/lc.c b/drivers/thunderbolt/lc.c
+index a5dddf176546..ae1e92611c3e 100644
+--- a/drivers/thunderbolt/lc.c
++++ b/drivers/thunderbolt/lc.c
+@@ -133,3 +133,47 @@ void tb_lc_unconfigure_link(struct tb_switch *sw)
+ 	tb_lc_configure_lane(up, false);
+ 	tb_lc_configure_lane(down, false);
+ }
++
++/**
++ * tb_lc_set_sleep() - Inform LC that the switch is going to sleep
++ * @sw: Switch to set sleep
++ *
++ * Let the switch link controllers know that the switch is going to
++ * sleep.
++ */
++int tb_lc_set_sleep(struct tb_switch *sw)
++{
++	int start, size, nlc, ret, i;
++	u32 desc;
++
++	if (sw->generation < 2)
++		return 0;
++
++	ret = read_lc_desc(sw, &desc);
++	if (ret)
++		return ret;
++
++	/* Figure out number of link controllers */
++	nlc = desc & TB_LC_DESC_NLC_MASK;
++	start = (desc & TB_LC_DESC_SIZE_MASK) >> TB_LC_DESC_SIZE_SHIFT;
++	size = (desc & TB_LC_DESC_PORT_SIZE_MASK) >> TB_LC_DESC_PORT_SIZE_SHIFT;
++
++	/* For each link controller set sleep bit */
++	for (i = 0; i < nlc; i++) {
++		unsigned int offset = sw->cap_lc + start + i * size;
++		u32 ctrl;
++
++		ret = tb_sw_read(sw, &ctrl, TB_CFG_SWITCH,
++				 offset + TB_LC_SX_CTRL, 1);
++		if (ret)
++			return ret;
++
++		ctrl |= TB_LC_SX_CTRL_SLP;
++		ret = tb_sw_write(sw, &ctrl, TB_CFG_SWITCH,
++				  offset + TB_LC_SX_CTRL, 1);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index 760332f57b5c..1eee2502b5ba 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1604,10 +1604,8 @@ void tb_switch_suspend(struct tb_switch *sw)
+ 		if (!tb_is_upstream_port(&sw->ports[i]) && sw->ports[i].remote)
+ 			tb_switch_suspend(sw->ports[i].remote->sw);
+ 	}
+-	/*
+-	 * TODO: invoke tb_cfg_prepare_to_sleep here? does not seem to have any
+-	 * effect?
+-	 */
++
++	tb_lc_set_sleep(sw);
+ }
+ 
+ struct tb_sw_lookup {
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index e61c2409021d..3160169389cc 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -453,6 +453,7 @@ int tb_drom_read_uid_only(struct tb_switch *sw, u64 *uid);
+ int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid);
+ int tb_lc_configure_link(struct tb_switch *sw);
+ void tb_lc_unconfigure_link(struct tb_switch *sw);
++int tb_lc_set_sleep(struct tb_switch *sw);
+ 
+ static inline int tb_route_length(u64 route)
+ {
+diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
+index e0f867dad5cf..1ab6e0fb31c0 100644
+--- a/drivers/thunderbolt/tb_regs.h
++++ b/drivers/thunderbolt/tb_regs.h
+@@ -239,6 +239,7 @@ struct tb_regs_hop {
+ 
+ /* Common link controller registers */
+ #define TB_LC_DESC			0x02
++#define TB_LC_DESC_NLC_MASK		GENMASK(3, 0)
+ #define TB_LC_DESC_SIZE_SHIFT		8
+ #define TB_LC_DESC_SIZE_MASK		GENMASK(15, 8)
+ #define TB_LC_DESC_PORT_SIZE_SHIFT	16
+@@ -250,5 +251,6 @@ struct tb_regs_hop {
+ #define TB_LC_SX_CTRL_L1C		BIT(16)
+ #define TB_LC_SX_CTRL_L2C		BIT(20)
+ #define TB_LC_SX_CTRL_UPSTREAM		BIT(30)
++#define TB_LC_SX_CTRL_SLP		BIT(31)
+ 
+ #endif
+-- 
+2.20.1
+
