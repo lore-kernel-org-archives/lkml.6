@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E81C282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 01:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E2EC282CB
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 01:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651E5217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 01:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79DBC217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 01:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="uaemarzY"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Az5UxMxE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfBFBdm (ORCPT
+        id S1729084AbfBFBd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 20:33:42 -0500
-Received: from onstation.org ([52.200.56.107]:57514 "EHLO onstation.org"
+        Tue, 5 Feb 2019 20:33:57 -0500
+Received: from onstation.org ([52.200.56.107]:57526 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728475AbfBFBdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 20:33:41 -0500
+        id S1728689AbfBFBdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 20:33:42 -0500
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 5FEF716D;
+        by onstation.org (Postfix) with ESMTPSA id C28E2195;
         Wed,  6 Feb 2019 01:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1549416820;
-        bh=sw/i34QmxDYqfCCnL7RYab+sbSITGFMKWEJ3JuU2+wU=;
+        s=default; t=1549416821;
+        bh=okNnDTMNuTxuHQ38DAXD3RugN4GY+t0bin5O/pB+JZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uaemarzYNG9DF5dqrur07yX4mULezbmpNUy8+wNOJ/e54enSZPbAit9DPh9I7zUP/
-         y4qhnYzXUDBn9f/yNc3sxGlnM5D330XuYcQD+vvDM3InoA8xNR7IYyhqPYk8YOnOHn
-         LTBnDVdNxZxt3nIfCGSoGfsjKVd6D3iRP6QJ6nPY=
+        b=Az5UxMxEvG3yXaOzA3sA9nEJkcTuHsOWreP00jZpEzaFfMrCqQfSkWTSAQvbWaRcy
+         kP79V67QwbeAxEVTwJweVnGqb5unsc1o8G48yL3X3oQYyYEauXTvNplp2CkMPugvCH
+         l2Ex3edbgruLJ926tArOWxGg9k5Hod/GEuEl5sTU=
 From:   Brian Masney <masneyb@onstation.org>
 To:     dmitry.torokhov@gmail.com, andy.gross@linaro.org
 Cc:     david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, jonathan@marek.ca
-Subject: [PATCH v4 1/3] dt-bindings: Input: new bindings for MSM vibrator
-Date:   Tue,  5 Feb 2019 20:33:27 -0500
-Message-Id: <20190206013329.18195-2-masneyb@onstation.org>
+Subject: [PATCH v4 2/3] Input: add new vibrator driver for various MSM SOCs
+Date:   Tue,  5 Feb 2019 20:33:28 -0500
+Message-Id: <20190206013329.18195-3-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190206013329.18195-1-masneyb@onstation.org>
 References: <20190206013329.18195-1-masneyb@onstation.org>
@@ -52,61 +52,347 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the device tree bindings for the vibrator found on
-various Qualcomm MSM SOCs.
+This patch adds a new vibrator driver that supports various Qualcomm
+MSM SOCs. Driver was tested on a LG Nexus 5 (hammerhead) phone.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes since v3:
-- None
+- Made msm_vibrator_write a function instead of a macro.
+- Check for -EPROBE_DEFER for gpio and clk for consistency with the
+  regulator.
+- Check for NULL return value from devm_ioremap() instead of using
+  IS_ERR()
+- Don't set dev.parent
+- Use platform_get_drvdata() in suspend and resume
 
- .../bindings/input/msm-vibrator.txt           | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/msm-vibrator.txt
+ drivers/input/misc/Kconfig        |  10 ++
+ drivers/input/misc/Makefile       |   1 +
+ drivers/input/misc/msm-vibrator.c | 282 ++++++++++++++++++++++++++++++
+ 3 files changed, 293 insertions(+)
+ create mode 100644 drivers/input/misc/msm-vibrator.c
 
-diff --git a/Documentation/devicetree/bindings/input/msm-vibrator.txt b/Documentation/devicetree/bindings/input/msm-vibrator.txt
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index ca59a2be9bc5..e39aef84f357 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -117,6 +117,16 @@ config INPUT_E3X0_BUTTON
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called e3x0_button.
+ 
++config INPUT_MSM_VIBRATOR
++	tristate "Qualcomm MSM vibrator driver"
++	select INPUT_FF_MEMLESS
++	help
++	  Support for the vibrator that is found on various Qualcomm MSM
++	  SOCs.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called msm_vibrator.
++
+ config INPUT_PCSPKR
+ 	tristate "PC Speaker support"
+ 	depends on PCSPKR_PLATFORM
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index 9d0f9d1ff68f..96a6419cb1f2 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -48,6 +48,7 @@ obj-$(CONFIG_INPUT_MAX8925_ONKEY)	+= max8925_onkey.o
+ obj-$(CONFIG_INPUT_MAX8997_HAPTIC)	+= max8997_haptic.o
+ obj-$(CONFIG_INPUT_MC13783_PWRBUTTON)	+= mc13783-pwrbutton.o
+ obj-$(CONFIG_INPUT_MMA8450)		+= mma8450.o
++obj-$(CONFIG_INPUT_MSM_VIBRATOR)	+= msm-vibrator.o
+ obj-$(CONFIG_INPUT_PALMAS_PWRBUTTON)	+= palmas-pwrbutton.o
+ obj-$(CONFIG_INPUT_PCAP)		+= pcap_keys.o
+ obj-$(CONFIG_INPUT_PCF50633_PMU)	+= pcf50633-input.o
+diff --git a/drivers/input/misc/msm-vibrator.c b/drivers/input/misc/msm-vibrator.c
 new file mode 100644
-index 000000000000..8dcf014ef2e5
+index 000000000000..c06941021447
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/input/msm-vibrator.txt
-@@ -0,0 +1,36 @@
-+* Device tree bindings for the Qualcomm MSM vibrator
++++ b/drivers/input/misc/msm-vibrator.c
+@@ -0,0 +1,282 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Qualcomm MSM vibrator driver
++ *
++ * Copyright (c) 2018 Brian Masney <masneyb@onstation.org>
++ *
++ * Based on qcom,pwm-vibrator.c from:
++ * Copyright (c) 2018 Jonathan Marek <jonathan@marek.ca>
++ *
++ * Based on msm_pwm_vibrator.c from downstream Android sources:
++ * Copyright (C) 2009-2014 LGE, Inc.
++ */
 +
-+Required properties:
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/gpio.h>
++#include <linux/input.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
 +
-+  - compatible: Should be one of
-+		"qcom,msm8226-vibrator"
-+		"qcom,msm8974-vibrator"
-+  - reg: the base address and length of the IO memory for the registers.
-+  - pinctrl-names: set to default.
-+  - pinctrl-0: phandles pointing to pin configuration nodes. See
-+               Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+  - clock-names: set to pwm
-+  - clocks: phandle of the clock. See
-+            Documentation/devicetree/bindings/clock/clock-bindings.txt
-+  - enable-gpios: GPIO that enables the vibrator.
++#define REG_CMD_RCGR           0x00
++#define REG_CFG_RCGR           0x04
++#define REG_M                  0x08
++#define REG_N                  0x0C
++#define REG_D                  0x10
++#define REG_CBCR               0x24
++#define MMSS_CC_M_DEFAULT      1
 +
-+Optional properties:
-+
-+  - vcc-supply: phandle to the regulator that provides power to the sensor.
-+
-+Example from a LG Nexus 5 (hammerhead) phone:
-+
-+vibrator@fd8c3450 {
-+	reg = <0xfd8c3450 0x400>;
-+	compatible = "qcom,msm8974-vibrator";
-+
-+	vcc-supply = <&pm8941_l19>;
-+
-+	clocks = <&mmcc CAMSS_GP1_CLK>;
-+	clock-names = "pwm";
-+
-+	enable-gpios = <&msmgpio 60 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vibrator_pin>;
++struct msm_vibrator {
++	struct input_dev *input;
++	struct mutex mutex;
++	struct work_struct worker;
++	void __iomem *base;
++	struct regulator *vcc;
++	struct clk *clk;
++	struct gpio_desc *enable_gpio;
++	u16 magnitude;
++	bool enabled;
 +};
++
++static void msm_vibrator_write(struct msm_vibrator *vibrator, int offset,
++			       u32 value)
++{
++	writel(value, vibrator->base + offset);
++}
++
++static int msm_vibrator_start(struct msm_vibrator *vibrator)
++{
++	int d_reg_val, ret = 0;
++
++	mutex_lock(&vibrator->mutex);
++
++	if (!vibrator->enabled) {
++		ret = clk_set_rate(vibrator->clk, 24000);
++		if (ret) {
++			dev_err(&vibrator->input->dev,
++				"Failed to set clock rate: %d\n", ret);
++			goto unlock;
++		}
++
++		ret = clk_prepare_enable(vibrator->clk);
++		if (ret) {
++			dev_err(&vibrator->input->dev,
++				"Failed to enable clock: %d\n", ret);
++			goto unlock;
++		}
++
++		ret = regulator_enable(vibrator->vcc);
++		if (ret) {
++			dev_err(&vibrator->input->dev,
++				"Failed to enable regulator: %d\n", ret);
++			clk_disable(vibrator->clk);
++			goto unlock;
++		}
++
++		gpiod_set_value_cansleep(vibrator->enable_gpio, 1);
++
++		vibrator->enabled = true;
++	}
++
++	d_reg_val = 127 - ((126 * vibrator->magnitude) / 0xffff);
++	msm_vibrator_write(vibrator, REG_CFG_RCGR,
++			   (2 << 12) | /* dual edge mode */
++			   (0 << 8) |  /* cxo */
++			   (7 << 0));
++	msm_vibrator_write(vibrator, REG_M, 1);
++	msm_vibrator_write(vibrator, REG_N, 128);
++	msm_vibrator_write(vibrator, REG_D, d_reg_val);
++	msm_vibrator_write(vibrator, REG_CMD_RCGR, 1);
++	msm_vibrator_write(vibrator, REG_CBCR, 1);
++
++unlock:
++	mutex_unlock(&vibrator->mutex);
++
++	return ret;
++}
++
++static void msm_vibrator_stop(struct msm_vibrator *vibrator)
++{
++	mutex_lock(&vibrator->mutex);
++
++	if (vibrator->enabled) {
++		gpiod_set_value_cansleep(vibrator->enable_gpio, 0);
++		regulator_disable(vibrator->vcc);
++		clk_disable(vibrator->clk);
++		vibrator->enabled = false;
++	}
++
++	mutex_unlock(&vibrator->mutex);
++}
++
++static void msm_vibrator_worker(struct work_struct *work)
++{
++	struct msm_vibrator *vibrator = container_of(work,
++						     struct msm_vibrator,
++						     worker);
++
++	if (vibrator->magnitude)
++		msm_vibrator_start(vibrator);
++	else
++		msm_vibrator_stop(vibrator);
++}
++
++static int msm_vibrator_play_effect(struct input_dev *dev, void *data,
++				    struct ff_effect *effect)
++{
++	struct msm_vibrator *vibrator = input_get_drvdata(dev);
++
++	mutex_lock(&vibrator->mutex);
++
++	if (effect->u.rumble.strong_magnitude > 0)
++		vibrator->magnitude = effect->u.rumble.strong_magnitude;
++	else
++		vibrator->magnitude = effect->u.rumble.weak_magnitude;
++
++	mutex_unlock(&vibrator->mutex);
++
++	schedule_work(&vibrator->worker);
++
++	return 0;
++}
++
++static void msm_vibrator_close(struct input_dev *input)
++{
++	struct msm_vibrator *vibrator = input_get_drvdata(input);
++
++	cancel_work_sync(&vibrator->worker);
++	msm_vibrator_stop(vibrator);
++}
++
++static int msm_vibrator_probe(struct platform_device *pdev)
++{
++	struct msm_vibrator *vibrator;
++	struct resource *res;
++	int ret;
++
++	vibrator = devm_kzalloc(&pdev->dev, sizeof(*vibrator), GFP_KERNEL);
++	if (!vibrator)
++		return -ENOMEM;
++
++	vibrator->input = devm_input_allocate_device(&pdev->dev);
++	if (!vibrator->input)
++		return -ENOMEM;
++
++	vibrator->vcc = devm_regulator_get(&pdev->dev, "vcc");
++	if (IS_ERR(vibrator->vcc)) {
++		if (PTR_ERR(vibrator->vcc) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Failed to get regulator: %ld\n",
++				PTR_ERR(vibrator->vcc));
++		return PTR_ERR(vibrator->vcc);
++	}
++
++	vibrator->enable_gpio = devm_gpiod_get(&pdev->dev, "enable",
++					       GPIOD_OUT_LOW);
++	if (IS_ERR(vibrator->enable_gpio)) {
++		if (PTR_ERR(vibrator->enable_gpio) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Failed to get enable gpio: %ld\n",
++				PTR_ERR(vibrator->enable_gpio));
++		return PTR_ERR(vibrator->enable_gpio);
++	}
++
++	vibrator->clk = devm_clk_get(&pdev->dev, "pwm");
++	if (IS_ERR(vibrator->clk)) {
++		if (PTR_ERR(vibrator->clk) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Failed to lookup pwm clock: %ld\n",
++				PTR_ERR(vibrator->clk));
++		return PTR_ERR(vibrator->clk);
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(&pdev->dev, "Failed to get platform resource\n");
++		return -ENODEV;
++	}
++
++	vibrator->base = devm_ioremap(&pdev->dev, res->start,
++				     resource_size(res));
++	if (!vibrator->base) {
++		dev_err(&pdev->dev, "Failed to iomap resource: %ld\n",
++			PTR_ERR(vibrator->base));
++		return -ENOMEM;
++	}
++
++	vibrator->enabled = false;
++	mutex_init(&vibrator->mutex);
++	INIT_WORK(&vibrator->worker, msm_vibrator_worker);
++
++	vibrator->input->name = "msm-vibrator";
++	vibrator->input->id.bustype = BUS_HOST;
++	vibrator->input->close = msm_vibrator_close;
++
++	input_set_drvdata(vibrator->input, vibrator);
++	input_set_capability(vibrator->input, EV_FF, FF_RUMBLE);
++
++	ret = input_ff_create_memless(vibrator->input, NULL,
++				      msm_vibrator_play_effect);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to create ff memless: %d", ret);
++		return ret;
++	}
++
++	ret = input_register_device(vibrator->input);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to register input device: %d", ret);
++		return ret;
++	}
++
++	platform_set_drvdata(pdev, vibrator);
++
++	return 0;
++}
++
++static int __maybe_unused msm_vibrator_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct msm_vibrator *vibrator = platform_get_drvdata(pdev);
++
++	cancel_work_sync(&vibrator->worker);
++
++	if (vibrator->enabled)
++		msm_vibrator_stop(vibrator);
++
++	return 0;
++}
++
++static int __maybe_unused msm_vibrator_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct msm_vibrator *vibrator = platform_get_drvdata(pdev);
++
++	if (vibrator->enabled)
++		msm_vibrator_start(vibrator);
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(msm_vibrator_pm_ops, msm_vibrator_suspend,
++			 msm_vibrator_resume);
++
++static const struct of_device_id msm_vibrator_of_match[] = {
++	{ .compatible = "qcom,msm8226-vibrator" },
++	{ .compatible = "qcom,msm8974-vibrator" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, msm_vibrator_of_match);
++
++static struct platform_driver msm_vibrator_driver = {
++	.probe	= msm_vibrator_probe,
++	.driver	= {
++		.name = "msm-vibrator",
++		.pm = &msm_vibrator_pm_ops,
++		.of_match_table = of_match_ptr(msm_vibrator_of_match),
++	},
++};
++module_platform_driver(msm_vibrator_driver);
++
++MODULE_AUTHOR("Brian Masney <masneyb@onstation.org>");
++MODULE_DESCRIPTION("Qualcomm MSM vibrator driver");
++MODULE_LICENSE("GPL");
 -- 
 2.17.2
 
