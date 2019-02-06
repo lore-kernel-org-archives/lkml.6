@@ -2,533 +2,312 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C88C282CB
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F104CC282CB
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02143217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9705B218A1
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pi3M0mUg"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="CGDIStLd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbfBFAE7 (ORCPT
+        id S1727039AbfBFALM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 19:04:59 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35658 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfBFAE6 (ORCPT
+        Tue, 5 Feb 2019 19:11:12 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45699 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbfBFALL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 19:04:58 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s198so2140087pgs.2;
-        Tue, 05 Feb 2019 16:04:57 -0800 (PST)
+        Tue, 5 Feb 2019 19:11:11 -0500
+Received: by mail-ed1-f68.google.com with SMTP id t6so3212549edw.12
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uOXx80fdt8q/5OUPcdKpfCUe3KPngQ0C559V1cV4WCI=;
-        b=pi3M0mUgkFURFTB1z8zkUF9vwenWnIp4HCxFCMIMnOklWqkCPFaaH91PpijAqZqjma
-         /fNYF+azWaMt7Dbefe3CGcLEdumoBDJumCJwEkripVyBS/gHCSvPM12xrVdByezKRpIo
-         0LZBnDVkQV8ww1uXjbC7w75R0AAS4okZSgleWgoFcxt6lx+iSgqFAJvND/JA5HH8r+40
-         YGykThx/i84jmyBceXa584siC5NNssVaXBP7r//F9E7o1nQo9nI4vjTmREu1yx+aBYFs
-         1jejz/RwgIITvUBpCuuf3XG5znPscf7uvkkjU4GeT16MAvILOGIri7tTE/LaQCZ8s9G2
-         RPdw==
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PveLu6VwOcmvUbk1BzXyZ4C45WLKLT2HijPu315z/hs=;
+        b=CGDIStLdZpna2pYBa6RAOSVweBkYRKZPNln9XXjT9Bpj2BFCHNpTBdj/q28UPSnDWt
+         tL5r6WqLixJTVEKu2hVeUCml8buqnuJlNRBpTt935HRcW4nFGY2U77Io1kltqw6FuTzR
+         BcyjaOKvMmwFg9YJgr7g47/KJG6Y27kQC/QiwC6ZcKehq0iqOdDVDbp+mNQz0grlQka+
+         N61JlmSH8Hziw2Tb6MKbVssvL2jJzkoQdGlrp6g4hvPf8/WacQ2k3bXCLLligmB9ixSO
+         6xOMcX0tdf+Jviefgp1xZRuv7sP0Bp9dU0FKdnwxpQkyd5auW4O4fTNDcJdRMu8ty5Ga
+         VOUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uOXx80fdt8q/5OUPcdKpfCUe3KPngQ0C559V1cV4WCI=;
-        b=JrkQbblec8of6Df7EUEbGq+x/dDajejG9qPUQENlcZEi1WbWffLTAp5yFitFTKxGel
-         JXNkKQmZ2vNy1gJxJIxMlN+PRdfPSHDRkuRSmKq813zwzW7KR9dhjQ7y7ceplHLoH3rT
-         rzxgMqsbzLxCTiGDW0fmpOxtmjsTCB5JepED/xAWsXQn0soKyqYG0ym4RRcVXRPEjvBP
-         92s6/Xx0s/4hWFBdmdGdoDFbSMn6MRg2hiLEu9ov9w5wsQRBuV71/3b/Qjcbt+tTY6kY
-         8CpKGO9DEJok7op3bIG+zhorQxTKW9o6AaM4YbjpCZdx/Hh/ADfQXuwVaTbIZCcihswI
-         OOEw==
-X-Gm-Message-State: AHQUAubRtODxzEHVHcATOoSOKYzF7pMIErlacWloksbl9QzOFieDsLt0
-        TGbKTwSRF2+W50OI74bNNnk=
-X-Google-Smtp-Source: AHgI3IaqYjrhmwHtVtU1e8u7wo5qI2SmycBvBhkqUv3x74d+DIhdODKOQdcGellUwMHkHGIpQ3ycFA==
-X-Received: by 2002:a62:8e19:: with SMTP id k25mr7635754pfe.185.1549411497487;
-        Tue, 05 Feb 2019 16:04:57 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id x27sm9050439pfe.178.2019.02.05.16.04.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 16:04:56 -0800 (PST)
-Date:   Tue, 5 Feb 2019 16:04:53 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        tdas@codeaurora.org, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] arm64: dts: sdm845: wireup the thermal trip
- points to cpufreq
-Message-ID: <20190206000451.GB19687@localhost.localdomain>
-References: <cover.1548093127.git.amit.kucheria@linaro.org>
- <6a21a9ee7663e1b32d8ea81ac5e51d187aed25fb.1548093127.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PveLu6VwOcmvUbk1BzXyZ4C45WLKLT2HijPu315z/hs=;
+        b=ilTpdAQ6mjhwjMev//i7z2mFge0Lzx5E2nerWsn3oSUKJs4qg7oiWB21uC/yJSXzam
+         m6o8J67mf69/rtSdoMP8xdfQO6/gkizkHxHd8MCozgoi4A7bkIA7FyZJZr1WS6gStspD
+         Y9rCzs7fRQNj0hYkbYY8RpryJZ6YlkLam1KAoMctTMnxTFQXKFxFyKgvy5f+j7qGxOuN
+         ARgFoeAVvGbIAu2AErr+2sbOo5pThQqzyalEyF/sypqngmNucoaJgTIysCtnJRm0HRVf
+         CH6Dg6+8IXAPp49NB8xt4enq/WiY4SmZwO0J/y6oig9NX1uJa/8jPYeGU6J9AAWEnU4f
+         PeUQ==
+X-Gm-Message-State: AHQUAuY4XZ9BGEoUcCvFVn2UCdZ9/hzyKYDeZXMmKzs+styQ/zH2mauP
+        gJ8W0EHPbjdnPRjEO5qHnqpVHzj045U=
+X-Google-Smtp-Source: AHgI3Ib0/ojImqCure+ihOKVB0Sp7E2bCksgifVC8pcvBsIEsfRdDcro/WfREfF0E/cuLx62+liuKg==
+X-Received: by 2002:aa7:cdda:: with SMTP id h26mr6114043edw.248.1549411868914;
+        Tue, 05 Feb 2019 16:11:08 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 05 Feb 2019 16:11:08 -0800 (PST)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andy Tucker <agtucker@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: [PATCH 00/32] kernel: Introduce Time Namespace
+Date:   Wed,  6 Feb 2019 00:10:34 +0000
+Message-Id: <20190206001107.16488-1-dima@arista.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a21a9ee7663e1b32d8ea81ac5e51d187aed25fb.1548093127.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:38:34PM +0530, Amit Kucheria wrote:
-> Since all cpus in the big and little clusters, respectively, are in the
-> same frequency domain, use all of them for mitigation in the
-> cooling-map. We end up with two cooling devices - one each for the big
-> and little clusters.
-> 
-> We throttle lightly at the first trip point, just removing the boost
-> frequency. At the next trip point we allow ourselves to be throttled to
-> any extent.
-> 
+Discussions around time namespace are there for a long time. The first
+attempt to implement it was in 2006 by Jeff Dike. From that time, the
+topic appears on and off in various discussions.
 
-From OF thermal descriptor, this patch looks fine to me:
+There are two main use cases for time namespaces:
+1. change date and time inside a container;
+2. adjust clocks for a container restored from a checkpoint.
 
-Acked-by: Eduardo Valentin <edubezval@gmail.com>
+“It seems like this might be one of the last major obstacles keeping
+migration from being used in production systems, given that not all
+containers and connections can be migrated as long as a time dependency
+is capable of messing it up.” (by github.com/dav-ell)
 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 225 +++++++++++++++++++++++++--
->  1 file changed, 209 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index c27cbd3bcb0a..878f661d16eb 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -13,6 +13,7 @@
->  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
->  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> +#include <dt-bindings/thermal/thermal.h>
->  
->  / {
->  	interrupt-parent = <&intc>;
-> @@ -99,6 +100,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_0>;
->  			L2_0: l2-cache {
->  				compatible = "cache";
-> @@ -114,6 +116,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x100>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_100>;
->  			L2_100: l2-cache {
->  				compatible = "cache";
-> @@ -126,6 +129,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x200>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_200>;
->  			L2_200: l2-cache {
->  				compatible = "cache";
-> @@ -138,6 +142,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x300>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_300>;
->  			L2_300: l2-cache {
->  				compatible = "cache";
-> @@ -150,6 +155,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x400>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_400>;
->  			L2_400: l2-cache {
->  				compatible = "cache";
-> @@ -162,6 +168,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x500>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_500>;
->  			L2_500: l2-cache {
->  				compatible = "cache";
-> @@ -174,6 +181,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x600>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_600>;
->  			L2_600: l2-cache {
->  				compatible = "cache";
-> @@ -186,6 +194,7 @@
->  			compatible = "qcom,kryo385";
->  			reg = <0x0 0x700>;
->  			enable-method = "psci";
-> +			#cooling-cells = <2>;
->  			next-level-cache = <&L2_700>;
->  			L2_700: l2-cache {
->  				compatible = "cache";
-> @@ -1691,18 +1700,41 @@
->  			thermal-sensors = <&tsens0 1>;
->  
->  			trips {
-> -				cpu_alert0: trip0 {
-> +				cpu0_alert1: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit0: trip1 {
-> +				cpu0_alert0: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu0_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu0_alert0>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU1 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU2 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU3 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu0_alert1>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu1-thermal {
-> @@ -1712,18 +1744,41 @@
->  			thermal-sensors = <&tsens0 2>;
->  
->  			trips {
-> -				cpu_alert1: trip0 {
-> +				cpu1_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit1: trip1 {
-> +				cpu1_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu1_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu1_alert0>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU1 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU2 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU3 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu1_alert1>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu2-thermal {
-> @@ -1733,18 +1788,41 @@
->  			thermal-sensors = <&tsens0 3>;
->  
->  			trips {
-> -				cpu_alert2: trip0 {
-> +				cpu2_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit2: trip1 {
-> +				cpu2_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu2_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu2_alert0>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU1 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU2 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU3 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu2_alert1>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu3-thermal {
-> @@ -1754,18 +1832,41 @@
->  			thermal-sensors = <&tsens0 4>;
->  
->  			trips {
-> -				cpu_alert3: trip0 {
-> +				cpu3_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit3: trip1 {
-> +				cpu3_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu3_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu3_alert0>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU1 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU2 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU3 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu3_alert1>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu4-thermal {
-> @@ -1775,18 +1876,41 @@
->  			thermal-sensors = <&tsens0 7>;
->  
->  			trips {
-> -				cpu_alert4: trip0 {
-> +				cpu4_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit4: trip1 {
-> +				cpu4_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu4_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu4_alert0>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU5 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU6 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU7 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu4_alert1>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu5-thermal {
-> @@ -1796,18 +1920,41 @@
->  			thermal-sensors = <&tsens0 8>;
->  
->  			trips {
-> -				cpu_alert5: trip0 {
-> +				cpu5_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit5: trip1 {
-> +				cpu5_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu5_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu5_alert0>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU5 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU6 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU7 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu5_alert1>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu6-thermal {
-> @@ -1817,18 +1964,41 @@
->  			thermal-sensors = <&tsens0 9>;
->  
->  			trips {
-> -				cpu_alert6: trip0 {
-> +				cpu6_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit6: trip1 {
-> +				cpu6_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu6_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu6_alert0>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU5 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU6 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU7 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu6_alert1>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  
->  		cpu7-thermal {
-> @@ -1838,18 +2008,41 @@
->  			thermal-sensors = <&tsens0 10>;
->  
->  			trips {
-> -				cpu_alert7: trip0 {
-> +				cpu7_alert0: trip-point@0 {
->  					temperature = <75000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
->  
-> -				cpu_crit7: trip1 {
-> +				cpu7_alert1: trip-point@1 {
-> +					temperature = <95000>;
-> +					hysteresis = <2000>;
-> +					type = "passive";
-> +				};
-> +
-> +				cpu7_crit: cpu_crit {
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu7_alert0>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU5 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU6 THERMAL_NO_LIMIT 1>,
-> +							 <&CPU7 THERMAL_NO_LIMIT 1>;
-> +				};
-> +				map1 {
-> +					trip = <&cpu7_alert1>;
-> +					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +				};
-> +			};
->  		};
->  	};
->  };
-> -- 
-> 2.17.1
-> 
+The kernel provides access to several clocks: CLOCK_REALTIME,
+CLOCK_MONOTONIC, CLOCK_BOOTTIME. Last two clocks are monotonous, but the
+start points for them are not defined and are different for each
+system. When a container is migrated from one node to another, all
+clocks have to be restored into consistent states; in other words, they
+have to continue running from the same points where they have been
+dumped.
+
+The main idea of this patch set is adding per-namespace offsets for
+system clocks. When a process in a non-root time namespace requests
+time of a clock, a namespace offset is added to the current value of
+this clock and the sum is returned.
+
+All offsets are placed on a separate page, this allows us to map it as
+part of VVAR into user processes and use offsets from VDSO calls.
+
+Now offsets are implemented for CLOCK_MONOTONIC and CLOCK_BOOTTIME
+clocks.
+
+v2: There are two major changes from the previous version:
+
+* Two versions of the VDSO library to avoid a performance penalty for
+  host tasks outside time namespace (as suggested by Andy and Thomas).
+
+  As it has been discussed on timens RFC, adding a new conditional branch
+  `if (inside_time_ns)` on VDSO for all processes is undesirable.
+  It will add a penalty for everybody as branch predictor may mispredict
+  the jump. Also there are instruction cache lines wasted on cmp/jmp.
+
+  Those effects of introducing time namespace are very much unwanted
+  having in mind how much work have been spent on micro-optimisation
+  VDSO code.
+
+  Addressing those problems, there are two versions of VDSO's .so:
+  for host tasks (without any penalty) and for processes inside of time
+  namespace with clk_to_ns() that subtracts offsets from host's time.
+
+
+* Allow to set clock offsets for a namespace only before any processes
+  appear in it.
+
+  Now a time namespace looks similar to a pid namespace in a way how it is
+  created: unshare(CLONE_NEWTIME) system call creates a new time namespace,
+  but doesn't set it to the current process. Then all children of
+  the process will be born in the new time namespace, or a process can
+  use the setns() system call to join a namespace.
+
+  This scheme allows to create a new time namespaces, set clock offsets
+  and then populate the namespace with processes.
+
+Our performance measurements show that the price of VDSO's clock_gettime()
+in a child time namespace is about 8% with a hot CPU cache and about 90%
+with a cold CPU cache. There is no performance regression for host
+processes outside time namespace on those tests.
+
+We wrote two small benchmarks. The first one gettime_perf.c calls
+clock_gettime() in a loop for 3 seconds. It shows us performance with
+a hot CPU cache (more clock_gettime() cycles - the better):
+
+        | before     | CONFIG_TIME_NS=n | host        | inside timens
+--------|------------|------------------|-------------|-------------
+cycles  | 139887013  | 139453003        | 139899785   | 128792458
+diff (%)| 100        | 99.7             | 100         | 92
+
+The second one gettime_perf_cold.c calls rdtsc, clock_gettime(), rdtsc
+and shows a difference between second and first rdtsc. The binary is
+called in a loop 1000 times, then calculate MODE for 1000 values.
+It should show us performance with a cold CPU cache
+(lesser tsc per cycle - the better):
+
+        | before     | CONFIG_TIME_NS=n | host        | inside timens
+--------|------------|------------------|-------------|-------------
+tsc     | 6748       | 6718             | 6862        | 12682
+diff (%)| 100        | 99.6             | 101.7       | 188
+
+The numbers gathered on Intel(R) Core(TM) i5-6300U CPU @ 2.40GHz.
+
+Cc: Adrian Reber <adrian@lisas.de>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Andy Tucker <agtucker@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Cyrill Gorcunov <gorcunov@openvz.org>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jeff Dike <jdike@addtoit.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Pavel Emelyanov <xemul@virtuozzo.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: containers@lists.linux-foundation.org
+Cc: criu@openvz.org
+Cc: linux-api@vger.kernel.org
+Cc: x86@kernel.org
+
+Andrei Vagin (15):
+  ns: Introduce Time Namespace
+  timens: Add timens_offsets
+  timens: Introduce CLOCK_MONOTONIC offsets
+  timens: Introduce CLOCK_BOOTTIME offset
+  timerfd/timens: Take into account ns clock offsets
+  posix-timers/timens: Take into account clock offsets
+  timens/kernel: Take into account timens clock offsets in
+    clock_nanosleep
+  x86/vdso/timens: Add offsets page in vvar
+  timens/fs/proc: Introduce /proc/pid/timens_offsets
+  selftest/timens: Add a test for timerfd
+  selftest/timens: Add a test for clock_nanosleep()
+  selftest/timens: Add timer offsets test
+  selftests: Add a simple perf test for clock_gettime()
+  selftest/timens: Check that a right vdso is mapped after fork and exec
+  x86/vdso: Align VDSO functions by CPU L1 cache line
+
+Dmitry Safonov (17):
+  timens: Shift /proc/uptime
+  x86/vdso2c: Correct err messages on file opening
+  x86/vdso2c: Convert iterator to unsigned
+  x86/vdso/Makefile: Add vobjs32
+  x86/vdso: Build timens .so(s)
+  x86/VDSO: Build VDSO with -ffunction-sections
+  x86/vdso2c: Optionally produce linker script for vdso entries
+  x86/vdso: Generate vdso{,32}-timens.lds
+  x86/vdso2c: Sort vdso entries by addresses for linker script
+  x86/vdso.lds: Align !timens (host's) vdso.so entries
+  x86/vdso2c: Align LOCAL symbols between vdso{-timens,}.so
+  x86/vdso: Initialize timens 64-bit vdso
+  x86/vdso: Switch image on setns()/unshare()/clone()
+  timens: Add align for timens_offsets
+  selftest/timens: Add Time Namespace test for supported clocks
+  selftest/timens: Add procfs selftest
+  x86/vdso: Restrict splitting VVAR VMA
+
+ MAINTAINERS                                   |   3 +
+ arch/Kconfig                                  |   5 +
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/entry/vdso/.gitignore                |   2 +
+ arch/x86/entry/vdso/Makefile                  |  61 ++-
+ arch/x86/entry/vdso/vclock_gettime-timens.c   |   6 +
+ arch/x86/entry/vdso/vclock_gettime.c          |  42 +++
+ arch/x86/entry/vdso/vdso-layout.lds.S         |  21 +-
+ arch/x86/entry/vdso/vdso-timens.lds.S         |   7 +
+ arch/x86/entry/vdso/vdso2c.c                  |  46 ++-
+ arch/x86/entry/vdso/vdso2c.h                  |  52 ++-
+ arch/x86/entry/vdso/vdso32/.gitignore         |   1 +
+ arch/x86/entry/vdso/vdso32/sigreturn.S        |   2 +
+ arch/x86/entry/vdso/vdso32/system_call.S      |   2 +-
+ .../entry/vdso/vdso32/vclock_gettime-timens.c |   6 +
+ .../x86/entry/vdso/vdso32/vdso32-timens.lds.S |   8 +
+ arch/x86/entry/vdso/vma.c                     | 110 ++++++
+ arch/x86/include/asm/vdso.h                   |   8 +
+ fs/proc/base.c                                | 101 +++++
+ fs/proc/namespaces.c                          |   4 +
+ fs/proc/uptime.c                              |   3 +
+ fs/timerfd.c                                  |  16 +-
+ include/linux/nsproxy.h                       |   2 +
+ include/linux/proc_ns.h                       |   2 +
+ include/linux/time_namespace.h                |  91 +++++
+ include/linux/timens_offsets.h                |  18 +
+ include/linux/user_namespace.h                |   1 +
+ include/uapi/linux/sched.h                    |   1 +
+ init/Kconfig                                  |   8 +
+ kernel/Makefile                               |   1 +
+ kernel/fork.c                                 |   3 +-
+ kernel/nsproxy.c                              |  41 ++-
+ kernel/time/hrtimer.c                         |   8 +
+ kernel/time/posix-timers.c                    |  24 +-
+ kernel/time/posix-timers.h                    |   1 +
+ kernel/time_namespace.c                       | 348 ++++++++++++++++++
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/timens/.gitignore     |   7 +
+ tools/testing/selftests/timens/Makefile       |  12 +
+ .../selftests/timens/clock_nanosleep.c        |  99 +++++
+ tools/testing/selftests/timens/config         |   1 +
+ tools/testing/selftests/timens/exec.c         |  91 +++++
+ tools/testing/selftests/timens/gettime_perf.c |  74 ++++
+ .../selftests/timens/gettime_perf_cold.c      |  63 ++++
+ tools/testing/selftests/timens/log.h          |  26 ++
+ tools/testing/selftests/timens/procfs.c       | 142 +++++++
+ tools/testing/selftests/timens/timens.c       | 191 ++++++++++
+ tools/testing/selftests/timens/timens.h       |  63 ++++
+ tools/testing/selftests/timens/timer.c        | 115 ++++++
+ tools/testing/selftests/timens/timerfd.c      | 119 ++++++
+ 50 files changed, 2008 insertions(+), 52 deletions(-)
+ create mode 100644 arch/x86/entry/vdso/vclock_gettime-timens.c
+ create mode 100644 arch/x86/entry/vdso/vdso-timens.lds.S
+ create mode 100644 arch/x86/entry/vdso/vdso32/vclock_gettime-timens.c
+ create mode 100644 arch/x86/entry/vdso/vdso32/vdso32-timens.lds.S
+ create mode 100644 include/linux/time_namespace.h
+ create mode 100644 include/linux/timens_offsets.h
+ create mode 100644 kernel/time_namespace.c
+ create mode 100644 tools/testing/selftests/timens/.gitignore
+ create mode 100644 tools/testing/selftests/timens/Makefile
+ create mode 100644 tools/testing/selftests/timens/clock_nanosleep.c
+ create mode 100644 tools/testing/selftests/timens/config
+ create mode 100644 tools/testing/selftests/timens/exec.c
+ create mode 100644 tools/testing/selftests/timens/gettime_perf.c
+ create mode 100644 tools/testing/selftests/timens/gettime_perf_cold.c
+ create mode 100644 tools/testing/selftests/timens/log.h
+ create mode 100644 tools/testing/selftests/timens/procfs.c
+ create mode 100644 tools/testing/selftests/timens/timens.c
+ create mode 100644 tools/testing/selftests/timens/timens.h
+ create mode 100644 tools/testing/selftests/timens/timer.c
+ create mode 100644 tools/testing/selftests/timens/timerfd.c
+
+-- 
+2.20.1
+
