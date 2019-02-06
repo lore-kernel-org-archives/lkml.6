@@ -6,109 +6,123 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73704C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA74C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D262081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E8E62081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbfBFL5s (ORCPT
+        id S1730330AbfBFL6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 06:57:48 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52102 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfBFL5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 06:57:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9DA9EBD;
-        Wed,  6 Feb 2019 03:57:47 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53E973F719;
-        Wed,  6 Feb 2019 03:57:46 -0800 (PST)
-Subject: Re: [PATCH 17/19] dma-iommu: switch copyright boilerplace to SPDX
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190114094159.27326-1-hch@lst.de>
- <20190114094159.27326-18-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <de98a953-954e-cefc-4a0d-91cdedcc16e6@arm.com>
-Date:   Wed, 6 Feb 2019 11:57:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 06:58:24 -0500
+Received: from ozlabs.org ([203.11.71.1]:36889 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726957AbfBFL6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 06:58:24 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43vg240LDFz9sLw;
+        Wed,  6 Feb 2019 22:58:20 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+Cc:     netdev@vger.kernel.org, arnd@arndb.de, y2038@lists.linaro.org,
+        ccaulfie@redhat.com, deller@gmx.de, paulus@samba.org,
+        ralf@linux-mips.org, rth@twiddle.net, cluster-devel@redhat.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH net-next v5 11/12] socket: Rename SO_RCVTIMEO/ SO_SNDTIMEO with _OLD suffixes
+In-Reply-To: <20190202153454.7121-12-deepa.kernel@gmail.com>
+References: <20190202153454.7121-1-deepa.kernel@gmail.com> <20190202153454.7121-12-deepa.kernel@gmail.com>
+Date:   Wed, 06 Feb 2019 22:58:18 +1100
+Message-ID: <87o97pku1x.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190114094159.27326-18-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/01/2019 09:41, Christoph Hellwig wrote:
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Deepa Dinamani <deepa.kernel@gmail.com> writes:
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-
+> SO_RCVTIMEO and SO_SNDTIMEO socket options use struct timeval
+> as the time format. struct timeval is not y2038 safe.
+> The subsequent patches in the series add support for new socket
+> timeout options with _NEW suffix that will use y2038 safe
+> data structures. Although the existing struct timeval layout
+> is sufficiently wide to represent timeouts, because of the way
+> libc will interpret time_t based on user defined flag, these
+> new flags provide a way of having a structure that is the same
+> for all architectures consistently.
+> Rename the existing options with _OLD suffix forms so that the
+> right option is enabled for userspace applications according
+> to the architecture and time_t definition of libc.
+>
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Acked-by: Willem de Bruijn <willemb@google.com>
+> Cc: ccaulfie@redhat.com
+> Cc: deller@gmx.de
+> Cc: paulus@samba.org
+> Cc: ralf@linux-mips.org
+> Cc: rth@twiddle.net
+> Cc: cluster-devel@redhat.com
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-alpha@vger.kernel.org
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-parisc@vger.kernel.org
+> Cc: sparclinux@vger.kernel.org
 > ---
->   drivers/iommu/dma-iommu.c | 13 +------------
->   include/linux/dma-iommu.h | 13 +------------
->   2 files changed, 2 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index e27909771d55..1b76121df94e 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->   /*
->    * A fairly generic DMA-API to IOMMU-API glue layer.
->    *
-> @@ -5,18 +6,6 @@
->    *
->    * based in part on arch/arm/mm/dma-mapping.c:
->    * Copyright (C) 2000-2004 Russell King
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->    */
->   
->   #include <linux/acpi_iort.h>
-> diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
-> index 5277aa8782bf..bfe9f19b1171 100644
-> --- a/include/linux/dma-iommu.h
-> +++ b/include/linux/dma-iommu.h
-> @@ -1,17 +1,6 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
->   /*
->    * Copyright (C) 2014-2015 ARM Ltd.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->    */
->   #ifndef __DMA_IOMMU_H
->   #define __DMA_IOMMU_H
-> 
+>  arch/alpha/include/uapi/asm/socket.h   | 7 +++++--
+>  arch/mips/include/uapi/asm/socket.h    | 6 ++++--
+>  arch/parisc/include/uapi/asm/socket.h  | 6 ++++--
+>  arch/powerpc/include/uapi/asm/socket.h | 4 ++--
+
+The powerpc changes look OK to me.
+
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+
+cheers
+
+> diff --git a/arch/powerpc/include/uapi/asm/socket.h b/arch/powerpc/include/uapi/asm/socket.h
+> index 94de465e0920..12aa0c43e775 100644
+> --- a/arch/powerpc/include/uapi/asm/socket.h
+> +++ b/arch/powerpc/include/uapi/asm/socket.h
+> @@ -11,8 +11,8 @@
+>  
+>  #define SO_RCVLOWAT	16
+>  #define SO_SNDLOWAT	17
+> -#define SO_RCVTIMEO	18
+> -#define SO_SNDTIMEO	19
+> +#define SO_RCVTIMEO_OLD	18
+> +#define SO_SNDTIMEO_OLD	19
+>  #define SO_PASSCRED	20
+>  #define SO_PEERCRED	21
+>  
+> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+> index 2713e0fa68ef..c56b8b487c12 100644
+> --- a/include/uapi/asm-generic/socket.h
+> +++ b/include/uapi/asm-generic/socket.h
+> @@ -30,8 +30,8 @@
+>  #define SO_PEERCRED	17
+>  #define SO_RCVLOWAT	18
+>  #define SO_SNDLOWAT	19
+> -#define SO_RCVTIMEO	20
+> -#define SO_SNDTIMEO	21
+> +#define SO_RCVTIMEO_OLD	20
+> +#define SO_SNDTIMEO_OLD	21
+>  #endif
+>  
+>  /* Security levels - as per NRL IPv6 - don't actually do anything */
+> @@ -116,6 +116,8 @@
+>  
+>  #if !defined(__KERNEL__)
+>  
+> +#define	SO_RCVTIMEO SO_RCVTIMEO_OLD
+> +#define	SO_SNDTIMEO SO_SNDTIMEO_OLD
+>  #if __BITS_PER_LONG == 64 || (defined(__x86_64__) && defined(__ILP32__))
+>  /* on 64-bit and x32, avoid the ?: operator */
+>  #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
