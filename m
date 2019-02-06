@@ -2,111 +2,146 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C31BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEC6C282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CE96218A1
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8A0D218A1
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:47:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LtA+9IsU"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="jDCmckdi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfBFDmL (ORCPT
+        id S1727280AbfBFDrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 22:42:11 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33403 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbfBFDmK (ORCPT
+        Tue, 5 Feb 2019 22:47:53 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41988 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfBFDrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 22:42:10 -0500
-Received: by mail-yw1-f66.google.com with SMTP id p17so2657667ywg.0;
-        Tue, 05 Feb 2019 19:42:09 -0800 (PST)
+        Tue, 5 Feb 2019 22:47:53 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y140so3490590qkb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 19:47:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uuk/Rx3fe36tfTHzRztmfd0lDXHNL10LU3kOZdp1hLE=;
-        b=LtA+9IsUZ0PY7OKLz28eIcTe4UFsH4e0/x7f+27OPl86WkK2jL2Hu6qOpe9dK+v5nt
-         /f+UZZ0cXYFy2JIrwlIs9+bagKzdSEqlYmhRgWfItSQsU2FExcTTVA9YWYkf1Kyuskzg
-         acnPdlIHnx/FUIuJwJ14VxFLqyyVGLA8Y4OBp1PcuX6GqLVeBx8Qgqh12aJZqRYCg7b6
-         GCogJBrbAjXarCPbEmdhF++mWJWdI224CincQXcceLBRw12X7356hwJHGFSmaCzIyjIY
-         K6VFyL9GsW7AGvMlVINxVRuz4GCYP4q3R3x0tLczmYnbpvMOzsrs6/zCuJtNHC911YMu
-         dSYQ==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=hn7+N9666cc4lS16XW3pckdR4GfHKvecl40QV/S0Gr0=;
+        b=jDCmckdiuhtXoybFpuM3uFm+lgtvEbsTXUi7VxzhH4gerkvuUkAcEMj20+hcJM0I4L
+         +Tm6nJTIF2LnT7Jv0bmR7CGF3BdDPlhMVo91k0OEdihfT75hjweOW8igV0UcvETTe3sM
+         xc2qMWcUMhQS1cQDjq1Qx+9M2O5r4iRDTk2EslJwzFxhelOZxJmHijj8d/bZwYy9/fC+
+         KGp2quNBAnmr0a8whQPJHIyGFGPEMlbZuagS6UsiFgOMzj8PNl5Pe55e++lvXL9KITz2
+         XENp3372I1aNr6brGGEd3nFSz5uE4MZ/HR5C7v1qvqtWo/eRwFWHhWwXqq+6pRR9IG0g
+         wXQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uuk/Rx3fe36tfTHzRztmfd0lDXHNL10LU3kOZdp1hLE=;
-        b=gcP4s0kzq0Zidr3+fuxtHquhmbd6+bBQExV5/oB21VHMvKLH6LP+b+O/hWeC2SgqF1
-         oOJaLC5K/e9kc35ne7UvBWwcCw32hKyrjjDK6gwKAOr6LQV2a/1bDzn9cW78Xr1l8si+
-         3CSf08JphEBps3XLRx1+oxfzLv/DyOTLmAPbMb/UADvDFhZ6qTa3cN3St8xw/aXtAFu3
-         T7FSGh6BSBTbiw8XGabvRO0KkxtEsUTI+YZjuQrFUqsRt3J45JLN4obIXAHZx7OpKcpv
-         +ZwT06Z8Pt0ztpg7GPH8SWceeNaPDGEAr0Goz9uwZh6mDaDM1sIqvlFlnrLp6KVUNGsu
-         6OHg==
-X-Gm-Message-State: AHQUAuYhwp58+BKE5CuY/dGeprIcpekEcN+bf3sFycASKT/QngEo3YWI
-        25e9xrQF6gsIhE+/6RNBrT6GYBA7
-X-Google-Smtp-Source: AHgI3IaMPeW4EjK/tL+dSKvp6jgPGkFf/2HkABb8VCUawam8I9to5SczxgV/zsRoUn78RWAQEEUAKg==
-X-Received: by 2002:a81:b341:: with SMTP id r62mr6922350ywh.65.1549424529277;
-        Tue, 05 Feb 2019 19:42:09 -0800 (PST)
-Received: from [192.168.86.235] (c-73-241-150-70.hsd1.ca.comcast.net. [73.241.150.70])
-        by smtp.gmail.com with ESMTPSA id w2sm1825993ywc.63.2019.02.05.19.42.07
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hn7+N9666cc4lS16XW3pckdR4GfHKvecl40QV/S0Gr0=;
+        b=EH6sS+AAAP6+ZpAK1SV/UYX6kmVpYiEjOZ5ZQDDoXywr+fqN+HFF6jKGEgtl2brEEc
+         1v5QoYS4uiRY8BsVJXmH+BFWcy40duTHPP0yPEFukMpe6S5eDg0tzEYJfdiA7ttPSQwW
+         Vr3efKeLnPL5gQLVy0ydRpg/Zcc3XIFhrSqPiNYD+6FHGgVtc/7QQGjbEZ9nE+AbLGWd
+         +gD+POImQ2Epgn7BHn7MVk6RJUaupAHDAt7Py0uk0bw8npVNCPdhKGGdVnEdpaM2gq0k
+         D6IN2cXRWPW7ttI4d0FIrUKqrj+Di8VH6C653u9u2dpqby/w73DoCrJcZBe++LhDtTBv
+         tW8Q==
+X-Gm-Message-State: AHQUAuZGSaS1SYorlCripOujwy51hsXZMLGiItsCCgyVd1WOXpVmeb6o
+        dnRpjhYSqRICP7XbA2yCwdh1wYj+rWA=
+X-Google-Smtp-Source: AHgI3IY5rnr5djl+RIVWHTf46zBv2SkMoEUn9XCb9tFsbn6dnXUyHHUJdKQTmk02zutMbpDTLc1DKw==
+X-Received: by 2002:a37:2d02:: with SMTP id t2mr5897714qkh.82.1549424871806;
+        Tue, 05 Feb 2019 19:47:51 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u27sm7392987qte.48.2019.02.05.19.47.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 19:42:08 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in __wake_up_common_lock
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+fb065bc06d3d4054be6f@syzkaller.appspotmail.com>,
-        Eric Dumazet <edumazet@google.com>
-Cc:     Karsten Keil <isdn@linux-pingi.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <000000000000c2e17f0580b3387c@google.com>
- <CACT4Y+YOTSY=ZVw882tfDDPZ6Y5ZSX6HHn2M=Q2uTxjUtjb9=w@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <6f9de558-6447-b64d-33c2-77bfc9f7aec6@gmail.com>
-Date:   Tue, 5 Feb 2019 19:42:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YOTSY=ZVw882tfDDPZ6Y5ZSX6HHn2M=Q2uTxjUtjb9=w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 05 Feb 2019 19:47:51 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     mgorman@techsingularity.net, vbabka@suse.cz, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] mm/compaction: no stuck in __reset_isolation_pfn()
+Date:   Tue,  5 Feb 2019 22:47:32 -0500
+Message-Id: <20190206034732.75687-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The commit c68d77911c23 ("mm, compaction: be selective about what
+pageblocks to clear skip hints") introduced an infinite loop if a pfn is
+invalid, it will loop again without increasing page counters. It can be
+reproduced by running LTP tests on an arm64 server.
 
+ # oom01 (swapping)
+ # hugemmap01
+tst_test.c:1096: INFO: Timeout per run is 0h 05m 00s
+mem.c:814: INFO: set nr_hugepages to 128
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Test timeouted, sending SIGKILL!
+Cannot kill test processes!
+Congratulation, likely test hit a kernel bug.
 
-On 02/05/2019 07:28 PM, Dmitry Vyukov wrote:
-> On Wed, Jan 30, 2019 at 10:02 PM syzbot
-> <syzbot+fb065bc06d3d4054be6f@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    62967898789d Merge git://git.kernel.org/pub/scm/linux/kern..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=10f0bf08c00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
->> dashboard link: https://syzkaller.appspot.com/bug?extid=fb065bc06d3d4054be6f
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+fb065bc06d3d4054be6f@syzkaller.appspotmail.com
-> 
-> I assume this is also fixed by:
-> 
-> #syz fix: mISDN: fix a race in dev_expire_timer()
+Also, triggers soft lockups.
 
-Yes this looks very probable, thanks.
+[  456.232228] watchdog: BUG: soft lockup - CPU#122 stuck for 22s! [kswapd0:1375]
+[  456.273354] pstate: 80400009 (Nzcv daif +PAN -UAO)
+[  456.278143] pc : pfn_valid+0x54/0xdc
+[  456.281713] lr : __reset_isolation_pfn+0x3a8/0x584
+[  456.369358] Call trace:
+[  456.371798]  pfn_valid+0x54/0xdc
+[  456.375019]  __reset_isolation_pfn+0x3a8/0x584
+[  456.379455]  __reset_isolation_suitable+0x1bc/0x280
+[  456.384325]  reset_isolation_suitable+0xb8/0xe0
+[  456.388847]  kswapd+0xd08/0x1048
+[  456.392067]  kthread+0x2f4/0x30c
+[  456.395289]  ret_from_fork+0x10/0x18
+
+Fixes: c68d77911c23 ("mm, compaction: be selective about what pageblocks to clear skip hints")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/compaction.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 03804ab412f3..1cc871da3fda 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -282,17 +282,16 @@ __reset_isolation_pfn(struct zone *zone, unsigned long pfn, bool check_source,
+ 	end_page = pfn_to_page(pfn);
+ 
+ 	do {
+-		if (!pfn_valid_within(pfn))
+-			continue;
+-
+-		if (check_source && PageLRU(page)) {
+-			clear_pageblock_skip(page);
+-			return true;
+-		}
++		if (pfn_valid_within(pfn)) {
++			if (check_source && PageLRU(page)) {
++				clear_pageblock_skip(page);
++				return true;
++			}
+ 
+-		if (check_target && PageBuddy(page)) {
+-			clear_pageblock_skip(page);
+-			return true;
++			if (check_target && PageBuddy(page)) {
++				clear_pageblock_skip(page);
++				return true;
++			}
+ 		}
+ 
+ 		page += (1 << PAGE_ALLOC_COSTLY_ORDER);
+-- 
+2.17.2 (Apple Git-113)
 
