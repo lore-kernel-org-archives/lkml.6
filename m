@@ -2,168 +2,172 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FF0C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37928C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215A72184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF7F92175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549455051;
+	bh=bqNMKvsHLsTxSy24+4x9/lnwCCxdiV0vDS70NkcaqRU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ua486b+pjQZiliSUeIMIIA0R5QJFceJLDPOV7jCuiisOhC/2vsCAoKV0nMQt+wNWj
+	 SDtC6xqJTK3srZS4fNZaoPtojhqTAg/TafR79QYHKHkMy3NRXPGqIiPROp0mTDbX6Z
+	 3vM6RClbWkoAvc2oXYT3UQcQvTsEaDlX7RjAEDJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbfBFMKk (ORCPT
+        id S1730366AbfBFMKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:10:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47030 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727085AbfBFMKk (ORCPT
+        Wed, 6 Feb 2019 07:10:49 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43985 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbfBFMKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:10:40 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16C5PR2132409
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 07:10:39 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfxsm245w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:10:39 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 6 Feb 2019 12:10:36 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 12:10:34 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16CAX7C8913254
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 12:10:33 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E72A44204F;
-        Wed,  6 Feb 2019 12:10:32 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80CD042070;
-        Wed,  6 Feb 2019 12:10:31 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  6 Feb 2019 12:10:31 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 06 Feb 2019 14:10:30 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH 2/2] memblock: split checks whether a region should be skipped to a helper function
-Date:   Wed,  6 Feb 2019 14:10:25 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549455025-17706-1-git-send-email-rppt@linux.ibm.com>
-References: <1549455025-17706-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19020612-0016-0000-0000-000002531D6C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020612-0017-0000-0000-000032AD2650
-Message-Id: <1549455025-17706-3-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902060096
+        Wed, 6 Feb 2019 07:10:49 -0500
+Received: by mail-ot1-f68.google.com with SMTP id a11so11376159otr.10;
+        Wed, 06 Feb 2019 04:10:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iU9FZ7LsLqk37gyhfU2Cej00CA9dwq7wg+MRo8yI1FU=;
+        b=AxmtxzdTNwwUYp6Faf7vbmiI8N980z8sGz7lU6o5dxkKxoq6AmysENWxcKupXgKhMi
+         p0UYxKLxktS40UEKuP2NDUduLFUL/sG0Mpr5iiipjQqYJ8E/O5Y0Wo5VQXtpcYcRxq7+
+         hE3WmdSlDffMsrJuYNS39whA8lUrouZSj3ROySibrwc2TfroV5G0YrJtvdWrS8Vc5YBa
+         /DFy/Zp1+JQ849yx3MPmveV7ihWMjWU2NVTRGhYyuA8UOSyiMTm4S7VHF0IUogHZt1wS
+         Aq4VRwTTaM5tbMcEG6kCbohX9xymMdhVTzwBTGjTcyXCDCRQ0IUZNVfQQXOJ+Yfdsch7
+         EzUQ==
+X-Gm-Message-State: AHQUAuab/Al5TnyRCkdGOl9Otk8O5cP8Xjqc7MFXcG7/OkFZhN7G/yBJ
+        b/CZH4KtkXqd/krtj+FiXfjxzOvnNujxINHg1J0=
+X-Google-Smtp-Source: AHgI3Ia5Gs/MNg+UkT5qBPibqN7u6i14i1ff2jlaYvMCN8KR5pBvkFRd+znGrNCRMMTuFz4YgaaS2vf9Iw0DYPMg24Y=
+X-Received: by 2002:a9d:5f06:: with SMTP id f6mr5656765oti.258.1549455047618;
+ Wed, 06 Feb 2019 04:10:47 -0800 (PST)
+MIME-Version: 1.0
+References: <1952449.TVsm6CJCTy@aspire.rjw.lan> <CAJZ5v0jOVLZDoW5BAy9obp7AptTYzKikFo7Qd15kNt5Y9=vXRQ@mail.gmail.com>
+ <CAPDyKFrq-r-rFDDB3yU=W4mOF2-A4xGGomqFqUba6MVWZugHmQ@mail.gmail.com>
+ <24600564.pMaimVIQbW@aspire.rjw.lan> <CAJZ5v0gBYyoumVkLTuEcHsFE8QKEXdYuhDRGwmvoKPhx7gPvgQ@mail.gmail.com>
+ <CAPDyKFoUfM8kopWfkorDhVKfk35wVaKVPzJeZ55RPRdc2Y1MYw@mail.gmail.com>
+In-Reply-To: <CAPDyKFoUfM8kopWfkorDhVKfk35wVaKVPzJeZ55RPRdc2Y1MYw@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 6 Feb 2019 13:10:35 +0100
+Message-ID: <CAJZ5v0hnXyqdrq3cXLuwZ-imda2=EEUEq8rx=en7=DwdgB5N9A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] driver core: Fix some device links issues and add
+ "consumer autoprobe" flag
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __next_mem_range() and __next_mem_range_rev() duplucate the code that
-checks whether a region should be skipped because of node or flags
-incompatibility.
+On Wed, Feb 6, 2019 at 12:24 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Wed, 6 Feb 2019 at 10:56, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Tue, Feb 5, 2019 at 12:27 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >
+> > > On Tuesday, February 5, 2019 9:15:49 AM CET Ulf Hansson wrote:
+> > > > On Mon, 4 Feb 2019 at 12:45, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > >
+> > > > > On Mon, Feb 4, 2019 at 12:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > >
+> > > > > > On Fri, Feb 1, 2019 at 4:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > [cut]
+> >
+> > > > >
+> > > > > For example, if the consumer device is suspended after the
+> > > > > device_link_add() that incremented the supplier's PM-runtime count and
+> > > > > then resumed again, the rpm_active refcount will be greater than one
+> > > > > because of the last resume and not because of the initial link
+> > > > > creation.  In that case, dropping the supplier's PM-runtime count on
+> > > > > link deletion may not work as expected.
+> > > >
+> > > > I see what your are saying and I must admit, by looking at the code,
+> > > > that it has turned into being rather complicated. Assuming of good
+> > > > reasons, of course.
+> > > >
+> > > > Anyway, I will play a little bit more with my tests to see what I can find out.
+> > > >
+> > > > >
+> > > > > > Arguably, device_link_del() could be made automatically drop the
+> > > > > > supplier's PM-runtime count by one if the link's rpm_active refcount
+> > > > > > is not one, but there will be failing scenarios in that case too
+> > > > > > AFAICS.
+> > > >
+> > > > Let's see.
+> > >
+> > > So for the record, below is the (untested) patch I'm thinking about.
+> > >
+> > > Having considered this for some time, I think that it would be better to
+> > > try to drop the supplier's PM-runtime usage counter on link removal even if
+> > > the link doesn't go away then.  That would be more consistent at least IMO.
+> >
+> > So I can't convince myself that this is the case.
+> >
+> > Either way, if there are two callers of device_link_add() for one
+> > consumer-supplier pair trying to add a stateless link between them and
+> > one of these callers passes DL_FLAG_RPM_ACTIVE set in the flags to it,
+> > there may be issues regardless of what device_link_del() and
+> > device_link_remove() do.  However, if they decrement the link's
+> > rpm_active refcount (and possibly the supplier's PM-runtime usage
+> > counter too), the supplier may be suspended prematurely, whereas in
+> > the other case (no decrementation of rpm_active, which how the code
+> > works after this series) it may just be prevented from suspending.  To
+> > me, the former is worse than the latter.
+>
+> Well, I would say it sucks in both cases. :-)
+>
+> >
+> > Moreover, there is a workaround for the latter issue that seems to be
+> > easy enough: it is sufficient to let the consumer runtime suspend
+> > after calling device_link_add() to create the link (with
+> > DL_FLAG_RPM_ACTIVE set) and before trying to remove it.
+>
+> I get your point, but unfortunate I don't think it's that simple.
+>
+> For example, someone (like a child) may prevent runtime suspend for
+> the consumer. Hence, also the supplier is prevented from being runtime
+> suspended.
 
-Split this code into a helper function.
+Well, in that case the supplier should not be suspended until the
+consumer can be suspended too.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- mm/memblock.c | 53 +++++++++++++++++++++++++----------------------------
- 1 file changed, 25 insertions(+), 28 deletions(-)
+IOW, if you call device_link_del() in that case, it would be a bug if
+it allowed the supplier suspend.
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index af5fe8e..f87d3ae 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -958,6 +958,29 @@ void __init_memblock __next_reserved_mem_region(u64 *idx,
- 	*idx = ULLONG_MAX;
- }
- 
-+static bool should_skip_region(struct memblock_region *m, int nid, int flags)
-+{
-+	int m_nid = memblock_get_region_node(m);
-+
-+	/* only memory regions are associated with nodes, check it */
-+	if (nid != NUMA_NO_NODE && nid != m_nid)
-+		return true;
-+
-+	/* skip hotpluggable memory regions if needed */
-+	if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
-+		return true;
-+
-+	/* if we want mirror memory skip non-mirror memory regions */
-+	if ((flags & MEMBLOCK_MIRROR) && !memblock_is_mirror(m))
-+		return true;
-+
-+	/* skip nomap memory unless we were asked for it explicitly */
-+	if (!(flags & MEMBLOCK_NOMAP) && memblock_is_nomap(m))
-+		return true;
-+
-+	return false;
-+}
-+
- /**
-  * __next__mem_range - next function for for_each_free_mem_range() etc.
-  * @idx: pointer to u64 loop variable
-@@ -1005,20 +1028,7 @@ void __init_memblock __next_mem_range(u64 *idx, int nid,
- 		phys_addr_t m_end = m->base + m->size;
- 		int	    m_nid = memblock_get_region_node(m);
- 
--		/* only memory regions are associated with nodes, check it */
--		if (nid != NUMA_NO_NODE && nid != m_nid)
--			continue;
--
--		/* skip hotpluggable memory regions if needed */
--		if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
--			continue;
--
--		/* if we want mirror memory skip non-mirror memory regions */
--		if ((flags & MEMBLOCK_MIRROR) && !memblock_is_mirror(m))
--			continue;
--
--		/* skip nomap memory unless we were asked for it explicitly */
--		if (!(flags & MEMBLOCK_NOMAP) && memblock_is_nomap(m))
-+		if (should_skip_region(m, nid, flags))
- 			continue;
- 
- 		if (!type_b) {
-@@ -1122,20 +1132,7 @@ void __init_memblock __next_mem_range_rev(u64 *idx, int nid,
- 		phys_addr_t m_end = m->base + m->size;
- 		int m_nid = memblock_get_region_node(m);
- 
--		/* only memory regions are associated with nodes, check it */
--		if (nid != NUMA_NO_NODE && nid != m_nid)
--			continue;
--
--		/* skip hotpluggable memory regions if needed */
--		if (movable_node_is_enabled() && memblock_is_hotpluggable(m))
--			continue;
--
--		/* if we want mirror memory skip non-mirror memory regions */
--		if ((flags & MEMBLOCK_MIRROR) && !memblock_is_mirror(m))
--			continue;
--
--		/* skip nomap memory unless we were asked for it explicitly */
--		if (!(flags & MEMBLOCK_NOMAP) && memblock_is_nomap(m))
-+		if (should_skip_region(m, nid, flags))
- 			continue;
- 
- 		if (!type_b) {
--- 
-2.7.4
+> So, if you want to push this responsibility to the driver, then I
+> think we need make __pm_runtime_set_status() to respect device links,
+> similar to how it already deals with child/parents.
+>
+> In that way, the driver could call pm_runtime_set_suspended(), before
+> dropping the device link in ->probe(), which would allow the supplier
+> to also become runtime suspended.
 
+I guess you mean that runtime PM would be disabled for the consumer at
+that point?
+
+> I did a quick research of users of device links, unless I am mistaken,
+> this seems like an okay approach.
+>
+> What do you think?
+
+Well, I think I need to know the exact use case you have in mind. :-)
