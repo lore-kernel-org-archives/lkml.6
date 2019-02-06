@@ -2,81 +2,110 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5881BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 097D4C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2387520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2A7720844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:08:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5kgIqAi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfBFUHl (ORCPT
+        id S1727172AbfBFUIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 15:07:41 -0500
-Received: from foss.arm.com ([217.140.101.70]:57800 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfBFUHl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 15:07:41 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1EFAF80D;
-        Wed,  6 Feb 2019 12:07:41 -0800 (PST)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87B063F719;
-        Wed,  6 Feb 2019 12:07:39 -0800 (PST)
-Subject: Re: [PATCH] mm/memory-hotplug: Add sysfs hot-remove trigger
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, mhocko@kernel.org, akpm@linux-foundation.org
-References: <29ed519902512319bcc62e071d52b712fa97e306.1549469965.git.robin.murphy@arm.com>
- <20190206184544.GA12326@kroah.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e73cf364-2034-2312-8ef9-c24d341f8f71@arm.com>
-Date:   Wed, 6 Feb 2019 20:07:28 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 6 Feb 2019 15:08:20 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43155 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfBFUIT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 15:08:19 -0500
+Received: by mail-qt1-f195.google.com with SMTP id y4so3870942qtc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 12:08:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ILKlvuUbPFyAG+5JJDItOklQEVaqz1AJ3gr+H60JLxw=;
+        b=h5kgIqAiqIyCyQbfgADMUsTyfTHAxAcwtGmWr/kx4L7gEXHG1U96vbpjkUz8ZeruVn
+         Uw7G9zyT5TRshxrrxMn7tDXE5TBxlUCNtA2CVVB4zXJeSz13MI3Fzir1lWvZsJzoC/TG
+         rAR/G6leoK9uc/Y+b+fNEZkxEQImvvW2cy6NLduuRStXsLIVhbjqHMRPavPn+TQ3sbGf
+         s0VOknrFKtNGa/N9SWkOzlPkp7N6vUq3xa1yeDcLu00ZjTjI4em70qoG5uFYaX50bOyl
+         P0Q/L7sJEjkCS5obrKQdFG5XF9iQHQW9I9b7Rs5XO4ZsbSQASIoCafAeLYTW7OVJAZ8w
+         w6ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ILKlvuUbPFyAG+5JJDItOklQEVaqz1AJ3gr+H60JLxw=;
+        b=nqu6JRfNWxxWUq4BnYB6GWrWbaPy6mWqikswr5pKwoUyXUUSBI7dHgbZO+iEYDgjIj
+         0TIWbqD96m7ffL+AtoxA5dyGG6NlqiKWxT7O7CJXzPb8wasHkdD2UFIvzmvX18sunAty
+         hdEc+lXQ63d1/ond+PR9r8aikQPrurZ4/B/6MopALEZUciCZFfXWZ/3xZUu5rrzCVg9U
+         MPApieC/a14vmmpbOfbhACLvSSDaCXgKalpVkdTnG1A0Cj/JAqwLXdD6sGJ2GUBsGazE
+         E9LoSsMUQveEoEsX1dE0j/cTLmflsJQQbP5fS6x+R2WEdv/TfRxBbFvnNgZDoaqb9CK1
+         jWIw==
+X-Gm-Message-State: AHQUAubXQz3fgz1xEqvDF0ueFxHYQwNJcLCDK/o70LjptVKgJdTHE0z0
+        fIlNyQi2IYcmv1oUk3V00dg=
+X-Google-Smtp-Source: AHgI3IbzgU09qqGx5RVBj/0QrbxhsNXm9gJ5PxGBBRLk6hKjfIXVOTGSHtkj9q2siPlv4hkYuuqadA==
+X-Received: by 2002:aed:3907:: with SMTP id l7mr9200485qte.65.1549483698482;
+        Wed, 06 Feb 2019 12:08:18 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id p2sm12160754qkg.92.2019.02.06.12.08.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 12:08:17 -0800 (PST)
+Date:   Wed, 6 Feb 2019 18:08:13 -0200
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/vkms: WARN when hrtimer_forward_now fails
+Message-ID: <20190206200813.d5w7gjpepoeeadiy@smtp.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206184544.GA12326@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-06 6:45 pm, Greg KH wrote:
-> On Wed, Feb 06, 2019 at 05:03:53PM +0000, Robin Murphy wrote:
->> ARCH_MEMORY_PROBE is a useful thing for testing and debugging hotplug,
->> but being able to exercise the (arguably trickier) hot-remove path would
->> be even more useful. Extend the feature to allow removal of offline
->> sections to be triggered manually to aid development.
->>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>
->> This is inspired by a previous proposal[1], but in coming up with a
->> more robust interface I ended up rewriting the whole thing from
->> scratch. The lack of documentation is semi-deliberate, since I don't
->> like the idea of anyone actually relying on this interface as ABI, but
->> as a handy tool it felt useful enough to be worth sharing :)
->>
->> Robin.
->>
->> [1] https://lore.kernel.org/lkml/22d34fe30df0fbacbfceeb47e20cb1184af73585.1511433386.git.ar@linux.vnet.ibm.com/
->>
->>   drivers/base/memory.c | 42 +++++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 41 insertions(+), 1 deletion(-)
-> 
-> You have to add new Documentation/ABI entries for each new sysfs file
-> you add :(
+Make the variable have the same type of function hrtimer_forward_now
+return.
 
-Ah, the documentation provided is adapted from the documentation for the 
-existing "probe" attribute it builds upon ;)
+Add a warn to verify the hrtimer_forward_now return.
 
-But yeah, perhaps I should have tagged this post as an RFC. Much as I 
-dislike it being anywhere near an ABI, if everyone thinks the feature is 
-merge-worthy I'll go ahead and write up some proper doc entries too.
+Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
+---
+ drivers/gpu/drm/vkms/vkms_crtc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Robin.
+diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+index 5a095610726b..734a3e197df8 100644
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -16,7 +16,7 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+ 						  vblank_hrtimer);
+ 	struct drm_crtc *crtc = &output->crtc;
+ 	struct vkms_crtc_state *state = to_vkms_crtc_state(crtc->state);
+-	int ret_overrun;
++	u64 ret_overrun;
+ 	bool ret;
+ 
+ 	spin_lock(&output->lock);
+@@ -43,6 +43,8 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+ 
+ 	ret_overrun = hrtimer_forward_now(&output->vblank_hrtimer,
+ 					  output->period_ns);
++	WARN_ON(ret_overrun != 1);
++
+ 	spin_unlock(&output->lock);
+ 
+ 	return HRTIMER_RESTART;
+-- 
+2.17.1
+
