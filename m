@@ -2,136 +2,187 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC977C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C313EC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B8C218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81B8F218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:18:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q1PhLnqs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBFVQL (ORCPT
+        id S1726786AbfBFVSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:16:11 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:41037 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfBFVQL (ORCPT
+        Wed, 6 Feb 2019 16:18:18 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:32946 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfBFVSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:16:11 -0500
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 1E9AE240007;
-        Wed,  6 Feb 2019 21:16:05 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 22:16:05 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v2 3/5] media: sunxi: Add A10 CSI driver
-Message-ID: <20190206211605.27cq2lxuv3gtyyux@flea>
-References: <cover.ba7411f0c7155d0292b38d3dec698e26b5cc813b.1548687041.git-series.maxime.ripard@bootlin.com>
- <c1a7d46f8504decb58ff224b0b5f2f0733282cc6.1548687041.git-series.maxime.ripard@bootlin.com>
- <20190129123949.qdmqnfaym3y42dvj@paasikivi.fi.intel.com>
+        Wed, 6 Feb 2019 16:18:17 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so9680429qtp.0;
+        Wed, 06 Feb 2019 13:18:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R9eu82QN005lXLW0iM8nnXzJJTl60vNjS2omKD3C5i8=;
+        b=q1PhLnqspQINftw4DjQ48g17LEwE4hXjkWgqZEVYAcQN5sC77QAGiHX+n4v4QOVdXe
+         KH5d3I6P28LHndxQkeJyl8ofFOq9bGTGzhdPTY2klmGjMq5+ETFYqs/QT84arm6MHTe6
+         +RSSl8qILDVnM5+unMUz0SDPt1g+yQUU5p8SnWzSFwIZlnoIBD3+UmhFDtULjKM2pqnJ
+         PNuW7YRGZwQRcFsIIgPqGlm68wc5GiH+R7tFfsO0Vi87KUQNJrYsGoA2ofLjixggusKh
+         ryKbh6q3sATaoybRVmcQmwrT5piqwjnmaRCuPbP4FlkaBeKxvdgMPluQbPYsA47jIpAe
+         RuRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R9eu82QN005lXLW0iM8nnXzJJTl60vNjS2omKD3C5i8=;
+        b=ZXk+rSRW7NNB/uYSfU2RgEe7LSWOQPmbh744CC/qD9ngY1PmvrNm2t2Ncji3uaBtn/
+         NN9g5PQGCZoDS/0ipBK+NTuLDPW8ZCD8drjWYjqv7lyLn+3XW+RD5Pzz7q83zRrg6DK8
+         1QSGpGLNEshOt5sEi8ltVEBmFdcCbXDc/D37+JORTOS+237zgip0PVC7vqxuGYx2Y5WD
+         O4LuhVFMuECT4zCof/OH8nt2UiPcwgMq4fyIs3vdWUZ8zrOO+z7bdoomdkYIw6mhESaV
+         5beDNj7cQPCTJlLQMPoxjJqKPbW6dDIshYE0XdmcQ4qMO4BIhD/yyKNBSa4y8sjS1WrX
+         uggA==
+X-Gm-Message-State: AHQUAubqcsjq1lb3GL3zP8GCM6CjCiUXEyLmZhcXIt9CuP4mOSNSFpTo
+        Op0MBEo1FC07k9pHsqUtqLM=
+X-Google-Smtp-Source: AHgI3IY4MWzLH57HTOzZBVGyO0AuIjANTSSqCPyTSCB3JYea7ikFEwxNoQuhzyZWbE4SxbcyJ5QM2Q==
+X-Received: by 2002:ac8:39e5:: with SMTP id v92mr9238048qte.142.1549487895979;
+        Wed, 06 Feb 2019 13:18:15 -0800 (PST)
+Received: from localhost.localdomain ([168.181.50.206])
+        by smtp.gmail.com with ESMTPSA id c49sm37727038qtc.94.2019.02.06.13.18.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 13:18:14 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 5B914180C4F; Wed,  6 Feb 2019 19:18:12 -0200 (-02)
+Date:   Wed, 6 Feb 2019 19:18:12 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     Julien Gomes <julien@arista.com>, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, vyasevich@gmail.com, lucien.xin@gmail.com
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190206211812.GE13621@localhost.localdomain>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
+ <20190206210827.GC16887@hmswarspite.think-freely.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129123949.qdmqnfaym3y42dvj@paasikivi.fi.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190206210827.GC16887@hmswarspite.think-freely.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
-
-Thanks for your review, I have a few questions though, and the rest
-will be addressed in the next version.
-
-On Tue, Jan 29, 2019 at 02:39:49PM +0200, Sakari Ailus wrote:
-> > +static int csi_notify_complete(struct v4l2_async_notifier *notifier)
-> > +{
-> > +	struct sun4i_csi *csi = container_of(notifier, struct sun4i_csi,
-> > +					     notifier);
-> > +	int ret;
-> > +
-> > +	ret = v4l2_device_register_subdev_nodes(&csi->v4l);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = sun4i_csi_v4l2_register(csi);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	return media_create_pad_link(&csi->src_subdev->entity, csi->src_pad,
-> > +				     &csi->vdev.entity, 0,
-> > +				     MEDIA_LNK_FL_ENABLED |
-> > +				     MEDIA_LNK_FL_IMMUTABLE);
+On Wed, Feb 06, 2019 at 04:08:27PM -0500, Neil Horman wrote:
+> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
+> > 
+> > 
+> > On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
+> > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> > >> structures longer than the current definitions.
+> > >>
+> > >> This should prevent unjustified setsockopt() failures due to struct
+> > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> > >> binaries that should be compatible, but were built with later kernel
+> > >> uapi headers.
+> > > 
+> > > Not sure if we support backwards compatibility like this?
+> > > 
+> > > My issue with this change is that by doing this, application will have
+> > > no clue if the new bits were ignored or not and it may think that an
+> > > event is enabled while it is not.
+> > > 
+> > > A workaround would be to do a getsockopt and check the size that was
+> > > returned. But then, it might as well use the right struct here in the
+> > > first place.
+> > > 
+> > > I'm seeing current implementation as an implicitly versioned argument:
+> > > it will always accept setsockopt calls with an old struct (v4.11 or
+> > > v4.12), but if the user tries to use v3 on a v1-only system, it will
+> > > be rejected. Pretty much like using a newer setsockopt on an old
+> > > system.
+> > 
+> > With the current implementation, given sources that say are supposed to
+> > run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
+> What given sources say that?  I understand it might be expected, but this is an
+> common concern with setsockopt method on many protocols, it just so happens that
+> sctp extends them more than other protocols.
 > 
-> This appears to create a link directly from the sensor entity to the video
-> device entity. Is that intentional? I'd expect to see a CSI-2 receiver
-> sub-device as well, which I don't see being created by the driver.
+> > we can't rebuild the exact same sources on a 4.19 kernel and still run
+> > them on 4.9 without messing with structures re-definition.
+> > 
+> Right, put another way, we support backward compatibility with older userspace
+> applications, but not newer one.  I.e. if you build an application against the
+> 4.9 SCTP API, it should work with the 4.19 UAPI, but not vice versa, which it
+> seems is like what you are trying to do here.
+
+Was looking for that. Thanks.
+
 > 
-> This is indeed a novel proposal. I have some concerns though.
+> > I understand your point, but this still looks like a sort of uapi
+> > breakage to me.
+> > 
+> > 
+> > I also had another way to work-around this in mind, by copying optlen
+> > bytes and checking that any additional field (not included in the
+> > "current" kernel structure definition) is not set, returning EINVAL in
+> > such case to keep a similar to current behavior.
+> > The issue with this is that I didn't find a suitable (ie not totally
+> > arbitrary such as "twice the existing structure size") upper limit to
+> > optlen.
+> > 
+> There is no real uppper limit to the size of the structure in this case, and
+> IIRC this isn't the only sockopt structure that can be exentded for SCTP in this
+> way.
 > 
-> The user doesn't have access to the configured media bus format (reflecting
-> the format on the CSI-2 bus on receiver's side). It's thus difficult to
-> figure out whether the V4L2 pixel format configured on the video node
-> matches what the sensor outputs. Admittedly, we don't have a perfect
-> solution to that whenever the DMA hardware supports multiple V4L2 pixel
-> formats on a single media bus format. We might need to have a different
-> solution for this one, should it be without that receiver sub-device.
+> I really don't see a sane way to allow newer userspaces to be compatible with
+> older kernels here.  If we were to do it I would suggest moving the
+> responsibility for that feature into lksctp-tools, versioning that library such
+> that correlary symbols are versioned to translate the application view of the
+> socket options structs to the size and format that the running kernel
+> undertands.  Note that I'm not really advocating for that, as it seems like a
+> fast moving target, but if we were to do it I think that would be the most sane
+> way to handle it.
+
+Speaking of that, recent lksctp-tools got some defines to help knowing
+which features the available kernel headers have as it now probes if
+specific struct members are available or not. Though yeah, it also
+wouldn't help in this case, just mentioning it.
+
 > 
-> Could you add the CSI-2 receiver sub-device, please?
-
-Even though the name of the controller is *very* confusing, this isn't
-a MIPI-CSI receiver, but a parallel one that supports RGB and BT656
-buses.
-
-> > +	csi->pad.flags = MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
+> Neil
 > 
-> Could you make it IMMUTABLE and ENABLED? If there is no need to disable it,
-> that is.
-
-The link is already created with those flags, and as far as I know it
-doesn't exist for the pads
-
-> > +static int csi_release(struct file *file)
-> > +{
-> > +	struct sun4i_csi *csi = video_drvdata(file);
-> > +	int ret;
-> > +
-> > +	mutex_lock(&csi->lock);
-> > +
-> > +	ret = v4l2_fh_release(file);
-> 
-> v4l2_fh_release() always returns 0. I guess it could be changed to return
-> void. The reason it has int is that it could be used as the release
-> callback as such.
-> 
-> > +	v4l2_pipeline_pm_use(&csi->vdev.entity, 0);
-> > +	pm_runtime_put(csi->dev);
-> > +
-> > +	mutex_unlock(&csi->lock);
-> > +
-> > +	return ret;
-> > +}
-
-Do you want me to change the construct then?
-
-Thanks!
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > > 
+> > >>
+> > >> Signed-off-by: Julien Gomes <julien@arista.com>
+> > >> ---
+> > >>  net/sctp/socket.c | 2 +-
+> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>
+> > >> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> > >> index 9644bdc8e85c..f9717e2789da 100644
+> > >> --- a/net/sctp/socket.c
+> > >> +++ b/net/sctp/socket.c
+> > >> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
+> > >>  	int i;
+> > >>  
+> > >>  	if (optlen > sizeof(struct sctp_event_subscribe))
+> > >> -		return -EINVAL;
+> > >> +		optlen = sizeof(struct sctp_event_subscribe);
+> > >>  
+> > >>  	if (copy_from_user(&subscribe, optval, optlen))
+> > >>  		return -EFAULT;
+> > >> -- 
+> > >> 2.20.1
+> > >>
+> > 
+> > 
