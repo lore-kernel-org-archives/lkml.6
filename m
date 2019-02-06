@@ -2,152 +2,281 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA69C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F66C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88086218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:03:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B4B7218D9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549486999;
+	bh=9EGzBQcXdymF3USuX+1/r1ZBxBAhgN5/rZ8OPB9FnBY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=1V2GKi5vbYhwiUhsItgwMPOxOUpFnoLXqcdX+F5uOXaMvSFCLVYkN1eBlSa/tkrZm
+	 Ifzwy6pEptGM03/BloqmcAh6jD+vES6bQCp4dJ7cjsHGmOeOfqDZ5gDnf9nZRmz2kr
+	 CtXmW7/GElAwHqtJZPYmlEN1z3ohkk0icCK1ZnG4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfBFVDF (ORCPT
+        id S1726901AbfBFVDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:03:05 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:51552 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbfBFVDF (ORCPT
+        Wed, 6 Feb 2019 16:03:18 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43671 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfBFVDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:03:05 -0500
-Received: by mail-it1-f199.google.com with SMTP id 2so7030209itf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:03:04 -0800 (PST)
+        Wed, 6 Feb 2019 16:03:16 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so3668522plb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:03:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YN9nijCwmIJVqmmxQRIU4F87Jix5RHTuSniqHUtT7rQ=;
-        b=Kjmm5RvfxJVWtYfmEF9enF6+xl5MWGF/WlurC/S4n5gDOy3dGC7NioKCcQvx0jFqPU
-         v9+ZV5uMsy+dHbYeDcoV5DYC9ktZHHNOFh2zZXeQ3D+CkR1DW+zdhg6ez3csBq3tQSyQ
-         uwrHi16cNZsPHEpWV8hCv+90yzbzNjuuMHY4l/DKDkG/IR0p7QctcH7/jeWZj2YU1fGz
-         2Wz5PzdWgra2ee3QZq0fJs2D+0AQP2C2ppZPt9+44QM42zamseELZuFBlVSWViB47sNA
-         RzikvD9DnfgrMrEaaCL+RFM3IhV7PmfbB6wZHJxnqOa2eqYwoOS3CDasCM88ohH/Xc0+
-         lYdQ==
-X-Gm-Message-State: AHQUAuaKjiSClV7tf5Atl92Np0mjRW60przBNKcq+f369TvsP46MDSQm
-        04e8bcsGmdBFzH+7XPrjCmj8rBsHgGC1T93WF6UlEiHFf45r
-X-Google-Smtp-Source: AHgI3IZd1CRAnfGM9cbAjhCAOFbtUoPoAMqoj5kyvKDb2fmNacPOPIvP7mfFirq9X3VM8V2bi8njJbNrSNphhxMM+q8TL9EnvaW6
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ev5fQYjMQIDVraJaISLnDDGA67yPU0B4LX8c1VpAgsA=;
+        b=kHJf9HrvqIh+41ByPoss+8Y54LHfBmoh+X38zCEc+fV4KwBzF0hMIQ/JqA95xbjzse
+         rTTDPMIOTU3DVki4fbHES8j4n7im7q3GZnuvLJ2uzkuRP+9z1g1pe8kV/cG4iQQIdhRb
+         JIjqw72nlm/gpHiaUPr4FwC/QBgMfHaEYpAItC4JPy3j+nVOO7vCHdLk6GU4Tu7CW9t2
+         jq1CNa7wvdXKQcSzJJVSntzquJVthvLVlpUWSYoN0SEG2p63cQgjqzpf3UFMhH9im4G5
+         sf3EO4BPCr8w25PVjZM1sqXPiRU6kRLYglXEmqk4UrmNGdyPhb2GHkcLGtM3g8QKETGv
+         o64g==
+X-Gm-Message-State: AHQUAubBmCCiuWFlnMZb2/rj8QVDNfjuxnWPKfPPQ/l1dlNJtMvgwQuE
+        pzomiLcFvxOIoaJooPkK76Yle2BdGg79Sw==
+X-Google-Smtp-Source: AHgI3IZYDu53/aarId4xjuLEwGl4OF30uoBlkKsuU4ibgMLuaqdzsGXnuuEAW5MGXF/KTzEemAih+g==
+X-Received: by 2002:a17:902:724a:: with SMTP id c10mr12974650pll.51.1549486995489;
+        Wed, 06 Feb 2019 13:03:15 -0800 (PST)
+Received: from localhost ([207.114.172.147])
+        by smtp.gmail.com with ESMTPSA id h129sm13766888pfb.110.2019.02.06.13.03.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 13:03:14 -0800 (PST)
+From:   Moritz Fischer <mdf@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        colin.king@canonical.com, linus.walleij@linaro.org,
+        yuehaibing@huawei.com, mcgrof@kernel.org, frowand.list@gmail.com,
+        robh+dt@kernel.org, UNGLinuxDriver@microchip.com,
+        woojung.huh@microchip.com, hkallweit1@gmail.com,
+        davem@davemloft.net, f.fainelli@gmail.com,
+        vivien.didelot@gmail.com, andrew@lunn.ch, moritz@ettus.com,
+        alex.williams@ni.com, Moritz Fischer <mdf@kernel.org>
+Subject: [RFC net-next] net: fixed_phy: Move the DT based link GPIO parsing to of_mdio.c
+Date:   Wed,  6 Feb 2019 12:51:06 -0800
+Message-Id: <20190206205106.11517-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:fe42:: with SMTP id w63mr3934559ith.13.1549486983883;
- Wed, 06 Feb 2019 13:03:03 -0800 (PST)
-Date:   Wed, 06 Feb 2019 13:03:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004234f60581400dac@google.com>
-Subject: general protection fault in team_nl_cmd_options_set
-From:   syzbot <syzbot+68ee510075cf64260cc4@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jiri@resnulli.us,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Move the DT based link GPIO parsing to of_mdio and let the places
+that register a fixed_phy pass in a GPIO descriptor or NULL.
 
-syzbot found the following crash on:
+This allows fixed_phy on non-DT platforms to have link GPIOs, too.
 
-HEAD commit:    9097a058d49e Merge branch 'i2c/for-current' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11995667400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=861a3573f4e78ba1
-dashboard link: https://syzkaller.appspot.com/bug?extid=68ee510075cf64260cc4
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1263c10d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130855b7400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+68ee510075cf64260cc4@syzkaller.appspotmail.com
-
-netlink: 'syz-executor043': attribute type 3 has an invalid length.
-netlink: 'syz-executor043': attribute type 3 has an invalid length.
-team0: Mode changed to "activebackup"
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 6431 Comm: syz-executor043 Not tainted 4.20.0-rc7+ #161
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__team_option_inst_tmp_find drivers/net/team/team.c:264 [inline]
-RIP: 0010:team_nl_cmd_options_set+0xa2d/0x1370 drivers/net/team/team.c:2591
-Code: 8b 74 24 38 75 13 e9 eb 05 00 00 e8 4d 27 e0 fc 49 39 dc 0f 84 dd 05  
-00 00 e8 3f 27 e0 fc 49 8d 7c 24 10 48 89 f8 48 c1 e8 03 <42> 80 3c 38 00  
-0f 85 af 06 00 00 49 8b 44 24 10 4c 8d 60 f0 49 39
-RSP: 0018:ffff8881af967270 EFLAGS: 00010203
-RAX: 000000060dac2cae RBX: ffff8881d189dc00 RCX: ffffffff849f5cb7
-RDX: 0000000000000000 RSI: ffffffff849f5d31 RDI: 000000306d616574
-RBP: ffff8881af9674d0 R08: ffff8881cc646080 R09: ffffed103b5e5020
-R10: ffffed103b5e5020 R11: ffff8881daf28107 R12: 000000306d616564
-R13: ffff8881d189de10 R14: ffff8881af967360 R15: dffffc0000000000
-FS:  00007fad37cf4700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004d1810 CR3: 00000001b96af000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  genl_family_rcv_msg+0x8a7/0x11a0 net/netlink/genetlink.c:601
-  genl_rcv_msg+0xc6/0x168 net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
-  genl_rcv+0x28/0x40 net/netlink/genetlink.c:637
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x44de49
-Code: e8 1c ba 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb c5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fad37cf3d88 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000006e0c5c RCX: 000000000044de49
-RDX: 0000000000000000 RSI: 0000000020000200 RDI: 0000000000000004
-RBP: 00000000006e0c50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000006c61767265
-R13: 746e695f6e696f6a R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace da19b5a20e6fec24 ]---
-RIP: 0010:__team_option_inst_tmp_find drivers/net/team/team.c:264 [inline]
-RIP: 0010:team_nl_cmd_options_set+0xa2d/0x1370 drivers/net/team/team.c:2591
-Code: 8b 74 24 38 75 13 e9 eb 05 00 00 e8 4d 27 e0 fc 49 39 dc 0f 84 dd 05  
-00 00 e8 3f 27 e0 fc 49 8d 7c 24 10 48 89 f8 48 c1 e8 03 <42> 80 3c 38 00  
-0f 85 af 06 00 00 49 8b 44 24 10 4c 8d 60 f0 49 39
-RSP: 0018:ffff8881af967270 EFLAGS: 00010203
-RAX: 000000060dac2cae RBX: ffff8881d189dc00 RCX: ffffffff849f5cb7
-RDX: 0000000000000000 RSI: ffffffff849f5d31 RDI: 000000306d616574
-RBP: ffff8881af9674d0 R08: ffff8881cc646080 R09: ffffed103b5e5020
-R10: ffffed103b5e5020 R11: ffff8881daf28107 R12: 000000306d616564
-R13: ffff8881d189de10 R14: ffff8881af967360 R15: dffffc0000000000
-FS:  00007fad37cf4700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004d1810 CR3: 00000001b96af000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/net/dsa/dsa_loop.c                   |  2 +-
+ drivers/net/ethernet/broadcom/bgmac.c        |  2 +-
+ drivers/net/ethernet/broadcom/genet/bcmmii.c |  2 +-
+ drivers/net/phy/fixed_phy.c                  | 48 ++------------------
+ drivers/net/usb/lan78xx.c                    |  2 +-
+ drivers/of/of_mdio.c                         | 15 +++++-
+ include/linux/phy_fixed.h                    |  3 +-
+ 7 files changed, 23 insertions(+), 51 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
+index 17482ae09aa5..7f124c620092 100644
+--- a/drivers/net/dsa/dsa_loop.c
++++ b/drivers/net/dsa/dsa_loop.c
+@@ -343,7 +343,7 @@ static int __init dsa_loop_init(void)
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < NUM_FIXED_PHYS; i++)
+-		phydevs[i] = fixed_phy_register(PHY_POLL, &status, NULL);
++		phydevs[i] = fixed_phy_register(PHY_POLL, &status, NULL, NULL);
+ 
+ 	return mdio_driver_register(&dsa_loop_drv);
+ }
+diff --git a/drivers/net/ethernet/broadcom/bgmac.c b/drivers/net/ethernet/broadcom/bgmac.c
+index 4632dd5dbad1..bce644dec5c2 100644
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -1446,7 +1446,7 @@ int bgmac_phy_connect_direct(struct bgmac *bgmac)
+ 	struct phy_device *phy_dev;
+ 	int err;
+ 
+-	phy_dev = fixed_phy_register(PHY_POLL, &fphy_status, NULL);
++	phy_dev = fixed_phy_register(PHY_POLL, &fphy_status, NULL, NULL);
+ 	if (!phy_dev || IS_ERR(phy_dev)) {
+ 		dev_err(bgmac->dev, "Failed to register fixed PHY device\n");
+ 		return -ENODEV;
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+index 51880d83131a..7cbd737aba80 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
+@@ -525,7 +525,7 @@ static int bcmgenet_mii_pd_init(struct bcmgenet_priv *priv)
+ 			.asym_pause = 0,
+ 		};
+ 
+-		phydev = fixed_phy_register(PHY_POLL, &fphy_status, NULL);
++		phydev = fixed_phy_register(PHY_POLL, &fphy_status, NULL, NULL);
+ 		if (!phydev || IS_ERR(phydev)) {
+ 			dev_err(kdev, "failed to register fixed PHY device\n");
+ 			return -ENODEV;
+diff --git a/drivers/net/phy/fixed_phy.c b/drivers/net/phy/fixed_phy.c
+index d810f914aaa4..845bd7c2065a 100644
+--- a/drivers/net/phy/fixed_phy.c
++++ b/drivers/net/phy/fixed_phy.c
+@@ -18,6 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
++#include <linux/of_mdio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/seqlock.h>
+ #include <linux/idr.h>
+@@ -191,50 +192,12 @@ static void fixed_phy_del(int phy_addr)
+ 	}
+ }
+ 
+-#ifdef CONFIG_OF_GPIO
+-static struct gpio_desc *fixed_phy_get_gpiod(struct device_node *np)
+-{
+-	struct device_node *fixed_link_node;
+-	struct gpio_desc *gpiod;
+-
+-	if (!np)
+-		return NULL;
+-
+-	fixed_link_node = of_get_child_by_name(np, "fixed-link");
+-	if (!fixed_link_node)
+-		return NULL;
+-
+-	/*
+-	 * As the fixed link is just a device tree node without any
+-	 * Linux device associated with it, we simply have obtain
+-	 * the GPIO descriptor from the device tree like this.
+-	 */
+-	gpiod = gpiod_get_from_of_node(fixed_link_node, "link-gpios", 0,
+-				       GPIOD_IN, "mdio");
+-	of_node_put(fixed_link_node);
+-	if (IS_ERR(gpiod)) {
+-		if (PTR_ERR(gpiod) == -EPROBE_DEFER)
+-			return gpiod;
+-		pr_err("error getting GPIO for fixed link %pOF, proceed without\n",
+-		       fixed_link_node);
+-		gpiod = NULL;
+-	}
+-
+-	return gpiod;
+-}
+-#else
+-static struct gpio_desc *fixed_phy_get_gpiod(struct device_node *np)
+-{
+-	return NULL;
+-}
+-#endif
+-
+ struct phy_device *fixed_phy_register(unsigned int irq,
+ 				      struct fixed_phy_status *status,
+-				      struct device_node *np)
++				      struct device_node *np,
++				      struct gpio_desc *gpiod)
+ {
+ 	struct fixed_mdio_bus *fmb = &platform_fmb;
+-	struct gpio_desc *gpiod = NULL;
+ 	struct phy_device *phy;
+ 	int phy_addr;
+ 	int ret;
+@@ -242,11 +205,6 @@ struct phy_device *fixed_phy_register(unsigned int irq,
+ 	if (!fmb->mii_bus || fmb->mii_bus->state != MDIOBUS_REGISTERED)
+ 		return ERR_PTR(-EPROBE_DEFER);
+ 
+-	/* Check if we have a GPIO associated with this fixed phy */
+-	gpiod = fixed_phy_get_gpiod(np);
+-	if (IS_ERR(gpiod))
+-		return ERR_CAST(gpiod);
+-
+ 	/* Get the next available PHY address, up to PHY_MAX_ADDR */
+ 	phy_addr = ida_simple_get(&phy_fixed_ida, 0, PHY_MAX_ADDR, GFP_KERNEL);
+ 	if (phy_addr < 0)
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 3d92ea6fcc02..bd88f0aef2fa 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2051,7 +2051,7 @@ static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
+ 	phydev = phy_find_first(dev->mdiobus);
+ 	if (!phydev) {
+ 		netdev_dbg(dev->net, "PHY Not Found!! Registering Fixed PHY\n");
+-		phydev = fixed_phy_register(PHY_POLL, &fphy_status, NULL);
++		phydev = fixed_phy_register(PHY_POLL, &fphy_status, NULL, NULL);
+ 		if (IS_ERR(phydev)) {
+ 			netdev_err(dev->net, "No PHY/fixed_PHY found\n");
+ 			return NULL;
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index de6157357e26..6be2120b5f03 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+ #include <linux/module.h>
++#include <linux/gpio/consumer.h>
+ 
+ #define DEFAULT_GPIO_RESET_DELAY	10	/* in microseconds */
+ 
+@@ -460,6 +461,7 @@ int of_phy_register_fixed_link(struct device_node *np)
+ {
+ 	struct fixed_phy_status status = {};
+ 	struct device_node *fixed_link_node;
++	struct gpio_desc *gpiod = NULL;
+ 	u32 fixed_link_prop[5];
+ 	const char *managed;
+ 
+@@ -483,7 +485,17 @@ int of_phy_register_fixed_link(struct device_node *np)
+ 		status.pause = of_property_read_bool(fixed_link_node, "pause");
+ 		status.asym_pause = of_property_read_bool(fixed_link_node,
+ 							  "asym-pause");
++
++		gpiod = gpiod_get_from_of_node(fixed_link_node, "link-gpios", 0,
++				       GPIOD_IN, "mdio");
+ 		of_node_put(fixed_link_node);
++		if (IS_ERR(gpiod)) {
++			if (PTR_ERR(gpiod) == -EPROBE_DEFER)
++				return PTR_ERR(gpiod);
++			pr_err("error getting GPIO for fixed link %pOF, proceed without\n",
++			       fixed_link_node);
++			gpiod = NULL;
++		}
+ 
+ 		goto register_phy;
+ 	}
+@@ -502,7 +514,8 @@ int of_phy_register_fixed_link(struct device_node *np)
+ 	return -ENODEV;
+ 
+ register_phy:
+-	return PTR_ERR_OR_ZERO(fixed_phy_register(PHY_POLL, &status, np));
++	return PTR_ERR_OR_ZERO(fixed_phy_register(PHY_POLL, &status, np,
++			       gpiod));
+ }
+ EXPORT_SYMBOL(of_phy_register_fixed_link);
+ 
+diff --git a/include/linux/phy_fixed.h b/include/linux/phy_fixed.h
+index c78fc203db43..69caa8cda767 100644
+--- a/include/linux/phy_fixed.h
++++ b/include/linux/phy_fixed.h
+@@ -18,7 +18,8 @@ extern int fixed_phy_add(unsigned int irq, int phy_id,
+ 			 struct fixed_phy_status *status);
+ extern struct phy_device *fixed_phy_register(unsigned int irq,
+ 					     struct fixed_phy_status *status,
+-					     struct device_node *np);
++					     struct device_node *np,
++					     struct gpio_desc *gpiod);
+ extern void fixed_phy_unregister(struct phy_device *phydev);
+ extern int fixed_phy_set_link_update(struct phy_device *phydev,
+ 			int (*link_update)(struct net_device *,
+-- 
+2.20.1
+
