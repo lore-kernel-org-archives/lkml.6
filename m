@@ -2,201 +2,102 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBEAC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1B0C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59D7B20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E422186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:17:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfBFNPh (ORCPT
+        id S1729386AbfBFNRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:15:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:32899 "EHLO mx1.redhat.com"
+        Wed, 6 Feb 2019 08:17:43 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26739 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfBFNPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:15:36 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4146251F04;
-        Wed,  6 Feb 2019 13:15:36 +0000 (UTC)
-Received: from doriath (ovpn-116-81.phx2.redhat.com [10.3.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 84EC25C5FD;
-        Wed,  6 Feb 2019 13:15:34 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 08:15:33 -0500
-From:   Luiz Capitulino <lcapitulino@redhat.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
-        riel@surriel.com, david@redhat.com, dodgen@google.com,
-        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
-Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor
- to the host
-Message-ID: <20190206081533.336110a0@doriath>
-In-Reply-To: <26a36489-2289-f970-3362-60547b268a76@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
-        <20190204201854.2328-6-nitesh@redhat.com>
-        <20190205154545-mutt-send-email-mst@kernel.org>
-        <26a36489-2289-f970-3362-60547b268a76@redhat.com>
+        id S1726716AbfBFNRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:17:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="136336010"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 05:17:39 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id AAB7215B; Wed,  6 Feb 2019 15:17:38 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH v2 04/28] thunderbolt: Add dummy read after port capability list walk on Light Ridge
+Date:   Wed,  6 Feb 2019 16:17:14 +0300
+Message-Id: <20190206131738.43696-5-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 06 Feb 2019 13:15:36 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Feb 2019 07:56:37 -0500
-Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+Light Ridge has an issue where reading the next capability pointer
+location in port config space the read data is not cleared. It is fine
+to read capabilities each after another so only thing we need to do is
+to make sure we issue dummy read after tb_port_find_cap() is finished to
+avoid the issue in next read.
 
-> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote:
-> > On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:  
-> >> This patch enables the caller to expose a single buffers to the
-> >> other end using vring descriptor. It also allows the caller to
-> >> perform this action in synchornous manner by using virtqueue_kick_sync.
-> >>
-> >> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>  
-> > I am not sure why do we need this API. Polling in guest
-> > until host runs isn't great either since these
-> > might be running on the same host CPU.  
-> True.
-> 
-> However, my understanding is that the existing API such as
-> virtqueue_add_outbuf() requires an allocation which will be problematic
-> for my implementation.
-> Although I am not blocking the allocation path during normal Linux
-> kernel usage as even if one of the zone is locked the other zone could
-> be used to get free pages.
-> But during the initial boot time (device initialization), in certain
-> situations the allocation can only come from a single zone, acquiring a
-> lock on it may result in a deadlock situation.
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/thunderbolt/cap.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I might be wrong, but if I remember correctly, this was true for
-your previous implementation where you'd report page hinting down
-from arch_free_page() so you couldn't allocate memory. But this
-is not the case anymore.
-
-> 
-> >
-> >
-> >  
-> >> ---
-> >>  drivers/virtio/virtio_ring.c | 72 ++++++++++++++++++++++++++++++++++++
-> >>  include/linux/virtio.h       |  4 ++
-> >>  2 files changed, 76 insertions(+)
-> >>
-> >> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> >> index cd7e755484e3..93c161ac6a28 100644
-> >> --- a/drivers/virtio/virtio_ring.c
-> >> +++ b/drivers/virtio/virtio_ring.c
-> >> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqueue *_vq,
-> >>  					out_sgs, in_sgs, data, ctx, gfp);
-> >>  }
-> >>  
-> >> +/**
-> >> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
-> >> + * @vq: the struct virtqueue we're talking about.
-> >> + * @addr: address of the buffer to add.
-> >> + * @len: length of the buffer.
-> >> + * @in: set if the buffer is for the device to write.
-> >> + *
-> >> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
-> >> + */
-> >> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in)
-> >> +{
-> >> +	struct vring_virtqueue *vq = to_vvq(_vq);
-> >> +	struct vring_desc *desc = vq->split.vring.desc;
-> >> +	u16 flags = in ? VRING_DESC_F_WRITE : 0;
-> >> +	unsigned int i;
-> >> +	void *data = (void *)addr;
-> >> +	int avail_idx;
-> >> +
-> >> +	/* Sanity check */
-> >> +	if (!_vq)
-> >> +		return -EINVAL;
-> >> +
-> >> +	START_USE(vq);
-> >> +	if (unlikely(vq->broken)) {
-> >> +		END_USE(vq);
-> >> +		return -EIO;
-> >> +	}
-> >> +
-> >> +	i = vq->free_head;
-> >> +	flags &= ~VRING_DESC_F_NEXT;
-> >> +	desc[i].flags = cpu_to_virtio16(_vq->vdev, flags);
-> >> +	desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> >> +	desc[i].len = cpu_to_virtio32(_vq->vdev, len);
-> >> +
-> >> +	vq->vq.num_free--;
-> >> +	vq->free_head = virtio16_to_cpu(_vq->vdev, desc[i].next);
-> >> +	vq->split.desc_state[i].data = data;
-> >> +	vq->split.avail_idx_shadow = 1;
-> >> +	avail_idx = vq->split.avail_idx_shadow;
-> >> +	vq->split.vring.avail->idx = cpu_to_virtio16(_vq->vdev, avail_idx);
-> >> +	vq->num_added = 1;
-> >> +	END_USE(vq);
-> >> +	return 0;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
-> >> +
-> >>  /**
-> >>   * virtqueue_add_sgs - expose buffers to other end
-> >>   * @vq: the struct virtqueue we're talking about.
-> >> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(virtqueue_notify);
-> >>  
-> >> +/**
-> >> + * virtqueue_kick_sync - update after add_buf and busy wait till update is done
-> >> + * @vq: the struct virtqueue
-> >> + *
-> >> + * After one or more virtqueue_add_* calls, invoke this to kick
-> >> + * the other side. Busy wait till the other side is done with the update.
-> >> + *
-> >> + * Caller must ensure we don't call this with other virtqueue
-> >> + * operations at the same time (except where noted).
-> >> + *
-> >> + * Returns false if kick failed, otherwise true.
-> >> + */
-> >> +bool virtqueue_kick_sync(struct virtqueue *vq)
-> >> +{
-> >> +	u32 len;
-> >> +
-> >> +	if (likely(virtqueue_kick(vq))) {
-> >> +		while (!virtqueue_get_buf(vq, &len) &&
-> >> +		       !virtqueue_is_broken(vq))
-> >> +			cpu_relax();
-> >> +		return true;
-> >> +	}
-> >> +	return false;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
-> >> +
-> >>  /**
-> >>   * virtqueue_kick - update after add_buf
-> >>   * @vq: the struct virtqueue
-> >> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> >> index fa1b5da2804e..58943a3a0e8d 100644
-> >> --- a/include/linux/virtio.h
-> >> +++ b/include/linux/virtio.h
-> >> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
-> >>  		      unsigned int in_sgs,
-> >>  		      void *data,
-> >>  		      gfp_t gfp);
-> >> +/* A desc with this init id is treated as an invalid desc */
-> >> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in);
-> >> +
-> >> +bool virtqueue_kick_sync(struct virtqueue *vq);
-> >>  
-> >>  bool virtqueue_kick(struct virtqueue *vq);
-> >>  
-> >> -- 
-> >> 2.17.2  
+diff --git a/drivers/thunderbolt/cap.c b/drivers/thunderbolt/cap.c
+index 0de548bda663..8aceb0d97a63 100644
+--- a/drivers/thunderbolt/cap.c
++++ b/drivers/thunderbolt/cap.c
+@@ -57,6 +57,21 @@ static int tb_port_enable_tmu(struct tb_port *port, bool enable)
+ 	return tb_sw_write(sw, &value, TB_CFG_SWITCH, offset, 1);
+ }
+ 
++static void tb_port_dummy_read(struct tb_port *port)
++{
++	/*
++	 * When reading from next capability pointer location in port
++	 * config space the read data is not cleared on LR. To avoid
++	 * reading stale data on next read perform one dummy read after
++	 * port capabilities are walked.
++	 */
++	if (port->sw->config.device_id == PCI_DEVICE_ID_INTEL_LIGHT_RIDGE) {
++		u32 dummy;
++
++		tb_port_read(port, &dummy, TB_CFG_PORT, 0, 1);
++	}
++}
++
+ static int __tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap)
+ {
+ 	u32 offset = 1;
+@@ -97,6 +112,7 @@ int tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap)
+ 
+ 	ret = __tb_port_find_cap(port, cap);
+ 
++	tb_port_dummy_read(port);
+ 	tb_port_enable_tmu(port, false);
+ 
+ 	return ret;
+-- 
+2.20.1
 
