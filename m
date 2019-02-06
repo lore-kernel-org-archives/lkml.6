@@ -5,129 +5,88 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D53C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF80C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7919C2186A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7874F2186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:39:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731306AbfBFQjR (ORCPT
+        id S1731331AbfBFQjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:39:17 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:31433 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730520AbfBFQjR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:39:17 -0500
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x16GcjE2011572;
-        Thu, 7 Feb 2019 01:38:45 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Thu, 07 Feb 2019 01:38:45 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x16Gciib011569
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 7 Feb 2019 01:38:45 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: linux-next: tracebacks in workqueue.c/__flush_work()
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Rusty Russell <rusty@rustcorp.com.au>,
-        Chris Metcalf <chris.d.metcalf@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, linux-mm <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-References: <72e7d782-85f2-b499-8614-9e3498106569@i-love.sakura.ne.jp>
- <87munc306z.fsf@rustcorp.com.au>
- <201902060631.x166V9J8014750@www262.sakura.ne.jp>
- <20190206143625.GA25998@roeck-us.net>
- <e4dd7464-a787-c54f-24f9-9caaeb759cfc@i-love.sakura.ne.jp>
- <20190206162359.GA30699@roeck-us.net>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <d2764efb-5298-2e90-d617-d5cedcac783b@i-love.sakura.ne.jp>
-Date:   Thu, 7 Feb 2019 01:38:41 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 6 Feb 2019 11:39:52 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3183 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730520AbfBFQjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 11:39:52 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4130AF3CCF7C76F780C3;
+        Thu,  7 Feb 2019 00:39:49 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 7 Feb 2019
+ 00:39:43 +0800
+Date:   Wed, 6 Feb 2019 16:39:29 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Keith Busch <keith.busch@intel.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dan Williams" <dan.j.williams@intel.com>
+Subject: Re: [PATCHv5 03/10] acpi/hmat: Parse and report heterogeneous
+ memory
+Message-ID: <20190206163929.0000394a@huawei.com>
+In-Reply-To: <20190206160613.GG28064@localhost.localdomain>
+References: <20190124230724.10022-1-keith.busch@intel.com>
+        <20190124230724.10022-4-keith.busch@intel.com>
+        <20190206122814.00000127@huawei.com>
+        <20190206160613.GG28064@localhost.localdomain>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-In-Reply-To: <20190206162359.GA30699@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/02/07 1:23, Guenter Roeck wrote:
-> On Wed, Feb 06, 2019 at 11:57:45PM +0900, Tetsuo Handa wrote:
->> On 2019/02/06 23:36, Guenter Roeck wrote:
->>> On Wed, Feb 06, 2019 at 03:31:09PM +0900, Tetsuo Handa wrote:
->>>> (Adding linux-arch ML.)
->>>>
->>>> Rusty Russell wrote:
->>>>> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
->>>>>> (Adding Chris Metcalf and Rusty Russell.)
->>>>>>
->>>>>> If NR_CPUS == 1 due to CONFIG_SMP=n, for_each_cpu(cpu, &has_work) loop does not
->>>>>> evaluate "struct cpumask has_work" modified by cpumask_set_cpu(cpu, &has_work) at
->>>>>> previous for_each_online_cpu() loop. Guenter Roeck found a problem among three
->>>>>> commits listed below.
->>>>>>
->>>>>>   Commit 5fbc461636c32efd ("mm: make lru_add_drain_all() selective")
->>>>>>   expects that has_work is evaluated by for_each_cpu().
->>>>>>
->>>>>>   Commit 2d3854a37e8b767a ("cpumask: introduce new API, without changing anything")
->>>>>>   assumes that for_each_cpu() does not need to evaluate has_work.
->>>>>>
->>>>>>   Commit 4d43d395fed12463 ("workqueue: Try to catch flush_work() without INIT_WORK().")
->>>>>>   expects that has_work is evaluated by for_each_cpu().
->>>>>>
->>>>>> What should we do? Do we explicitly evaluate has_work if NR_CPUS == 1 ?
->>>>>
->>>>> No, fix the API to be least-surprise.  Fix 2d3854a37e8b767a too.
->>>>>
->>>>> Doing anything else would be horrible, IMHO.
->>>>>
->>>>
->>>> Fixing 2d3854a37e8b767a might involve subtle changes. If we do
->>>>
->>>
->>> Why not fix the macros ?
->>>
->>> #define for_each_cpu(cpu, mask)                 \
->>>         for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
->>>
->>> does not really make sense since it does not evaluate mask.
->>>
->>> #define for_each_cpu(cpu, mask)                 \
->>>         for ((cpu) = 0; (cpu) < 1 && cpumask_test_cpu((cpu), (mask)); (cpu)++)
->>>
->>> or something similar might do it.
->>
->> Fixing macros is fine, The problem is that "mask" becomes evaluated
->> which might be currently undefined or unassigned if CONFIG_SMP=n.
->> Evaluating "mask" generates expected behavior for lru_add_drain_all()
->> case. But there might be cases where evaluating "mask" generate
->> unexpected behavior/results.
-> 
-> Interesting notion. I would have assumed that passing a parameter
-> to a function or macro implies that this parameter may be used.
-> 
-> This makes me wonder - what is the point of ", (mask)" in the current
-> macros ? It doesn't make sense to me.
 
-I guess it is to avoid "unused argument" warning; but optimization
-accepted passing even "undefined argument".
+...
 
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
+> > > +					   const unsigned long end)
+> > > +{
+> > > +	struct acpi_hmat_address_range *spa = (void *)header;
+> > > +
+> > > +	if (spa->header.length != sizeof(*spa)) {
+> > > +		pr_debug("HMAT: Unexpected address range header length: %d\n",
+> > > +			 spa->header.length);  
+> > 
+> > My gut feeling is that it's much more useful to make this always print rather
+> > than debug.  Same with other error paths above.  Given the number of times
+> > broken ACPI tables show up, it's nice to complain really loudly!
+> > 
+> > Perhaps others prefer to not do so though so I'll defer to subsystem norms.  
 > 
-> Anyway, I agree that fixing the macro might result in some failures.
-> However, I would argue that those failures would actually be bugs,
-> hidden by the buggy macros. But of course that it just my opinion.
+> Yeah, I demoted these to debug based on earlier feedback. We should
+> still be operational even with broken HMAT, so I don't want to create
+> unnecessary panic if its broken, but I agree something should be
+> immediately noticable if the firmware tables are incorrect. Maybe like
+> what bad_srat() provides.
 
-Yes, they are bugs which should be fixed. But since suddenly changing
-these macros might break something, I suggest temporarily managing at
-lru_add_drain_all() side for now, and make sure we have enough period
-at linux-next.git for testing changes to these macros.
+Agreed. Something general like that would be great. Let's people know they
+should turn debug on.
+
+Thanks,
+
+Jonathan
+
+
+
