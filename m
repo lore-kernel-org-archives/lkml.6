@@ -2,124 +2,110 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BBFC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987CCC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B409218E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:19:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENKwg+qD"
+	by mail.kernel.org (Postfix) with ESMTP id 6A8C3218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:20:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfBFVTv (ORCPT
+        id S1726836AbfBFVU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:19:51 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42844 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfBFVTv (ORCPT
+        Wed, 6 Feb 2019 16:20:26 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52084 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfBFVU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:19:51 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l15-v6so7409861lja.9
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fo8Lm4KBmvjTZ0mZCuqp4B4b09dyPVpXHLK0FgH2YtI=;
-        b=ENKwg+qDnJsXZX9to+9JBV9jqAFaAhb4kL7aj8fCMG4qCUZCT5yEAdGV697SnBh6Jp
-         9xPPxM4jaoWIAUz5kCpeKFlp69bn6ZA/dOqFVF8KUx7+rYmuBBWXbTBBacfN5YbgZcXq
-         f3WeiS98VvKVlGwEVaOuWpHAw1JESf+p8wvXC/67rECcNfvrYXeYR+TcLEPBaaUM2rLy
-         ByWZ8P4dD5YvjZNSUpynLgiOAz5bjahicL4+56d3ILWiLeoYvJB4qRuO5XNkF65oejOp
-         +mkub7f6dcuGSk036Bn1UHQtK+sey5bkki1LwTasZi6EiPuWrn3TNZ8kMvbHmplfAho5
-         5JuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fo8Lm4KBmvjTZ0mZCuqp4B4b09dyPVpXHLK0FgH2YtI=;
-        b=nBKLq1StpQ6qHVWA3wVNFjrAAp7uQvLxIUhUKgwDMg/eyNwiIm0y5s10S5Rya5eFk+
-         WsxXW0W1CTw8LISeavouHtE+6oAFulkkXOnefOYrX3F9LG2XRTAraxny7PK3PQF2TKsU
-         +YQlrAnX10lbpi/d4kII8e9le/6wnKEv8q99KqSLKtP8drh0c/wbEpBv7cwO4/Vfny+Z
-         Pig5aIzPZTRqUdcnXefvqTYQUu14/NzwnjI0UovoNVtgNVDLTE0yTD/g4mtVw6OuurIt
-         eQBOidDkCON7v3wa7UX1Il65tLVifeS/EgmQFWQ5pzUBbuLM5o3qLVJMOrQ7qInckdoA
-         eXgw==
-X-Gm-Message-State: AHQUAuaWwOttEP2UXZDaDjY0Y0Lj2FzhyXru62g27FKoupb7wQ38bR+U
-        Qq0wvIRG2W2UiG3XpA8/P5BWF7xV9pwPHb+VbNnhdjAseNI=
-X-Google-Smtp-Source: AHgI3IYtQslrCprwOmjhabNUPYLxwhykT7KHFrc3DyqXcKeZyQNrmucdeE+sZZ3mZPSYYD4RxEJnbAfcxB/K3UXm0I0=
-X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr6715134lja.19.1549487988741;
- Wed, 06 Feb 2019 13:19:48 -0800 (PST)
+        Wed, 6 Feb 2019 16:20:26 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 345D48030C; Wed,  6 Feb 2019 22:20:17 +0100 (CET)
+Date:   Wed, 6 Feb 2019 22:20:23 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     =?utf-8?B?0K/RgNC+0YHQu9Cw0LIg0KHQtdC80YfQtdC90LrQvg==?= 
+        <ukrkyi@gmail.com>, Greg KH <greg@kroah.com>,
+        kernel list <linux-kernel@vger.kernel.org>, kugel@rockbox.org,
+        ulf.hansson@linaro.org, johan@kernel.org,
+        rafael.j.wysocki@intel.com
+Cc:     rjw@rjwysocki.net, len.brown@intel.com, linux-pm@vger.kernel.org
+Subject: Re: REGRESSION - System does not resume from suspend
+Message-ID: <20190206212023.GA5353@amd>
+References: <CAAuoowhNsaXjBSHM9ZGeO_uwGVXprc8TS0SENGA3fKbg1xCWMQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190206175627.GA20399@gmail.com>
-In-Reply-To: <20190206175627.GA20399@gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 6 Feb 2019 22:19:37 +0100
-Message-ID: <CANiq72=gS7=G6WbZ4jqybMBh44FeF7UeVEfeb1hN8uMAMt_2bw@mail.gmail.com>
-Subject: Re: [PATCH v2] include/linux/module.h: mark init/cleanup_module
- aliases as __init/exit
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+Content-Disposition: inline
+In-Reply-To: <CAAuoowhNsaXjBSHM9ZGeO_uwGVXprc8TS0SENGA3fKbg1xCWMQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 6:56 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 8fa38d3e7538..1b5e370f1bc0 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -129,13 +129,13 @@ extern void cleanup_module(void);
->  #define module_init(initfn)                                    \
->         static inline initcall_t __maybe_unused __inittest(void)                \
->         { return initfn; }                                      \
-> -       int init_module(void) __attribute__((alias(#initfn)));
-> +       int init_module(void) __init __attribute__((alias(#initfn)));
->
->  /* This is only required if you want to be unloadable. */
->  #define module_exit(exitfn)                                    \
->         static inline exitcall_t __maybe_unused __exittest(void)                \
->         { return exitfn; }                                      \
-> -       void cleanup_module(void) __attribute__((alias(#exitfn)));
-> +       void cleanup_module(void) __exit __attribute__((alias(#exitfn)));
 
-It turns out that there are some modules without __init/__exit marked
-functions, which GCC complains about, since now the alias is in a
-different section than the target:
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  * In some cases, this is due to a missing __init/__exit marking
-(e.g. drivers/connector/connector.c). These should be fixed in any
-case.
-  * In other cases, the cleanup function is not marked as such because
-it is called from another place in the TU, like the init function
-(e.g. arch/x86/kvm/vmx.c). We would need to create an actual cleanup
-function (marked as __exit) that simply calls the current exit static
-function.
+Hi!
 
-So we have a few alternatives:
+> Since kernel version 4.19, my computer is unable to resume from suspend to
+> RAM. I've run git bisect and filed bug report at
+> https://bugzilla.kernel.org/show_bug.cgi?id=3D201519
+> three months ago, however, I received no reaction. Bug is still present in
+> 5.0-rc5 kernel version. Is there any possibility to fix this?
 
-  1) Going only with __cold.
-  2) Using the new __copy attribute (because then they are copied only
-in the cases they are actually used).
-  3) Fix and go for __init/__exit. While this requires some tweaking
-as explained above, it would be good if we can achieve it since then
-we are enforcing proper __init/__exit markings for all modules
-(whereas __copy wouldn't spot).
+Thanks for all the work bisecting / etc... Note that you can get patch
+reverted if it causes regression, but it needs to be done over
+email. (If maintainer does not reply, up-to Linus).
 
-I think it is worth achieving 3), but that will take a bit more of
-time. In that case, I suggest we push 1) or 2) for the moment (so that
-the warning is fixed) and then work on fixing all instances. As soon
-as that is done, we can push 3).
+For the record, patch is:
 
-What do you think?
+git bisect output:
+c62ec4610c40bcc44f2d3d5ed1c312737279e2f3 is the first bad commit
+commit c62ec4610c40bcc44f2d3d5ed1c312737279e2f3
+Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Date:   Tue May 22 13:02:17 2018 +0200
 
-Cheers,
-Miguel
+    PM / core: Fix direct_complete handling for devices with no
+    callbacks
+=2E..
+    Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D199693
+        Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and
+        SMART_PREPARE driver flags)
+ Reported-by: Thomas Martitz <kugel@rockbox.org>
+ Tested-by: Thomas Martitz <kugel@rockbox.org>
+		    Cc: 4.15+ <stable@vger.kernel.org> # 4.15+
+ Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+ Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+ Reviewed-by: Johan Hovold <johan@kernel.org>
+
+And the patch was tagged for stable, which sounds like a lot of fun.
+
+I added Ccs to people involved with the patch.
+
+									Pavel
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--YZ5djTAD1cGYuMQK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxbT5YACgkQMOfwapXb+vJy9ACfZtp1V+wP4pmoLWtVw7u4H0ka
+PS8AnRFvZNV9/mltGDcJjsYQ8XigGigV
+=zr7S
+-----END PGP SIGNATURE-----
+
+--YZ5djTAD1cGYuMQK--
