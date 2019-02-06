@@ -2,478 +2,179 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC6BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D861BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBB552075D
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BFE12075D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:48:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IQ5H/4Wx"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="AoFCpgLd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730820AbfBFOrj (ORCPT
+        id S1729012AbfBFOsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:47:39 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14277 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbfBFOrc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:47:32 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5af3850000>; Wed, 06 Feb 2019 06:47:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 06 Feb 2019 06:47:29 -0800
+        Wed, 6 Feb 2019 09:48:32 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:19987 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725817AbfBFOsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 09:48:31 -0500
+Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.77]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5af3bb0000>; Wed, 06 Feb 2019 22:48:28 +0800
+Received: from HKMAIL101.nvidia.com ([10.18.16.10])
+  by hkpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 06 Feb 2019 06:48:27 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 06 Feb 2019 06:47:29 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 6 Feb
- 2019 14:47:29 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 6 Feb
- 2019 14:47:28 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 6 Feb 2019 14:47:28 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.171.121]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c5af3800000>; Wed, 06 Feb 2019 06:47:29 -0800
+        by hkpgpgate102.nvidia.com on Wed, 06 Feb 2019 06:48:27 -0800
+Received: from HKMAIL103.nvidia.com (10.18.16.12) by HKMAIL101.nvidia.com
+ (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 6 Feb
+ 2019 14:48:26 +0000
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (104.47.40.58) by
+ HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Wed, 6 Feb 2019 14:48:26 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB3637.namprd12.prod.outlook.com (20.178.54.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Wed, 6 Feb 2019 14:48:23 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Wed, 6 Feb 2019
+ 14:48:23 +0000
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <digetx@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        "Sowjanya Komatineni" <skomatineni@nvidia.com>
-Subject: [PATCH V13 5/5] i2c: tegra: add i2c interface timing support
-Date:   Wed, 6 Feb 2019 06:47:21 -0800
-Message-ID: <1549464441-1836-5-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
-References: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Thread-Topic: [PATCH V12 3/5] i2c: tegra: Add DMA support
+Thread-Index: AQHUvaSihB2vPasFV02HZ/JY13Td7aXSqkqAgAAUt4CAAAEfAIAAAXOAgAAAhsCAAAYqgIAAADAAgAACQDCAAAL7gIAAA0OAgAAA7+CAAAJMgIAAAK1AgAACNoCAAAOeYA==
+Date:   Wed, 6 Feb 2019 14:48:23 +0000
+Message-ID: <BYAPR12MB3398ACF7999DFA8F24AB09DEC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+ <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
+ <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
+ <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
+ <BYAPR12MB33983A0E93B17808DECFD0F2C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <6edef92d-66a7-0f70-e59e-7381b82516eb@gmail.com>
+ <BYAPR12MB339826EB972C5DB7957E8A82C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <20190206140141.GO21676@ulmo>
+ <9b4bfee0-f3f2-bae7-5010-97a86bb5e03f@gmail.com>
+ <BYAPR12MB3398D7685B5A7462161F9578C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <649cdfb4-214e-bf01-348d-f950628ecf9b@gmail.com>
+ <BYAPR12MB33988A49F8831BD8CAB575E5C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <2f6ac9c6-bdc8-2a48-8f95-d761d5d56d8d@gmail.com>
+In-Reply-To: <2f6ac9c6-bdc8-2a48-8f95-d761d5d56d8d@gmail.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [24.176.232.13]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3637;6:VOHABmhbgvkAT9wvMgL0YRQobxjg+e0XgiaulGDQSa5T21PaRzu/r3l/Q3GUNhCPzN+o7l5SOgRinG1Kb99HmjILdCqgyMbsF5dY8NpX4LK5hfCtOcO7cka3LYl34IqzOh2tsaVdplX+yvhkYCATNwJlKRo8GPtC1OTIK8IgsPckg7NmTqBwloFuEO6RZeKymANSLDwQckD2j2eqmXZXGIqlVN9po3g6xVQzaW2nNhH7D6CMJ0wMVfkB3VhBq9Ug5KsG7EkNWNksYbItYXjckiMESYS+zGA1u4Z8T5DjtoniM+9A4hdx5wZxszkRIy1/Ofy3LHAcnlOXx7/xDIwx+wMJk0hl/qM96oP3YOX2hFWIcJcw/kxtXTeUFLLgKwVuonHtN9E0rPZblEIcfhUVt3XAyJrlg9aePXQmQm++yE8hvBW3n8gFrqCzZ5wRoGrQ1bw6rE+HHgV8hxeox04mHw==;5:HyY9UnLb8kZxJJz4/Hs5pvLwhkY1x9ajoCM58c3MC8fZlAXqlKGPzN3lYji3hR4/pWhhF1YFN8pDUKdzoIEv3e+LXVGPFStyKu8R2r0iCxEBAqgsnnxP2ouMX+P/FtOTZmSm8hVB1o0VcQ5IMP2BSqlAFkzEM6rT26XsnPd/z8exTAQRgO7sdVStPMELTlKLAUCvBz4XUs7PkF8XypN3mA==;7:XJu+llpXYYKGYivoJHIPqkPgvCClQnVoUqfrITkFFm+iMY5wlwgQ6V9szCp+uGV+b9MJQBpW/JgkBjcoNmIivuBOxG+/5aavCdj48D4OZ+ZeXhixKAPKOwmpLzLsHsG5yZTGiytjH2QHcYAwTz5Y6w==
+x-ms-office365-filtering-correlation-id: b1259a29-7f35-4087-3490-08d68c4224f8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3637;
+x-ms-traffictypediagnostic: BYAPR12MB3637:
+x-microsoft-antispam-prvs: <BYAPR12MB3637710616D6A42E19C14A7FC26F0@BYAPR12MB3637.namprd12.prod.outlook.com>
+x-forefront-prvs: 0940A19703
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(376002)(396003)(189003)(199004)(7696005)(86362001)(81156014)(99286004)(6506007)(81166006)(8676002)(102836004)(478600001)(966005)(26005)(4326008)(14454004)(53376002)(6246003)(97736004)(8936002)(186003)(2906002)(316002)(110136005)(25786009)(106356001)(3846002)(68736007)(6116002)(7736002)(305945005)(105586002)(74316002)(33656002)(486006)(93886005)(71190400001)(71200400001)(54906003)(14444005)(53936002)(446003)(11346002)(6436002)(55016002)(256004)(6306002)(229853002)(476003)(76176011)(9686003)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3637;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: L2d0l2LnYMW2J8C/PU09MvIiiENKdfhNUsdS2pGZ3rvpSdEvRxQf83AwDD8PMxxaByagrrcRY8NnT/u/+a62SQbr0xcEnjsKDU2pqOmDc9pYZRRcgX0ckpECAkARnRsDu9mKC/RfZTATK1LyU+OPoV9DgPjVkKW88YQry0GUk2FkErXX1Ezp65+aailw6jcJtnUwUdSumW06JSbspsQIVolBcK2T+EBS9nyYfJzklpb0jhCwDuG4Nj0u2ZXNKqOMsy9tlt8+S/58DwwoAC2YOLbVuIM5aImkl/Dyqf+PO3+j/iz4VEyoEz5U+Rhy+E8ULtBuohYIpxN9Z10zH7KM2AFkkYbLDzcdW3P/6JNpKe0l4ocesMsBOE7C5y7+lpjNy35Y4q8AmdhL/Ax6ui7RoaBqbGT/EkKN1nchdNuZFB4=
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1259a29-7f35-4087-3490-08d68c4224f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 14:48:23.4489
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3637
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549464453; bh=a3Fg5Qa5itZMXMndt/NhGr+rvr8YJW6qTdhb5iQHvU8=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=IQ5H/4WxcMJ4yuu2LbSwS04Bzrmfzf2dU0VGvmez1yXDhyq4y0o2mytS6OzVBbsvb
-         1b44VQxW9ud6T9rSpj0hk8fHwtfRPV7YQFecCNIgHoZdZiWQDDBm0tHZyGP6azHzRD
-         /xfYZv5X/lMY+ljZoxkwTHTVZGTKP4WmyQdpffXWDueJthzmWHQByzIoSvrr7ImzJ7
-         RXBEYGskl3yt+VABUHbo43YIHvoNsLRwVrbsAbjRQqYfIYkjt820HQXkwYAAiR2xFI
-         m3/EhMn/+0WDT4DjX26cAITmwbqYyiHBIgX1B85gbmO43SgUawiVO2sL22U29XwOm9
-         AagP4Qi8xJJxQ==
+        t=1549464508; bh=jT0orsHpKuo0jls3MhxOt8A0avqvV5D7dxKNjBzOxgg=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=AoFCpgLdsKRhLX1YjY2aABC8crcOJAbbQFzPrsmg4DsZ1OMZpqgd1sU3DQ+i0LHFo
+         Odm7TrWaGonuRGVeAjzmsdMHZCRt2IKjXCOguTuyMSsEiS0bl9rW34rDYy69IgcDAM
+         dhoJ7PIRTJavGsAuyuNwDN+hdVEVJAMF5E4GV/WvhOtax9MdkTFx4sEYtrwK65lf55
+         +56b5DRy0PuyTVFH8EuAdkXhGhhExQjZnUloHTTx2UIgDiW+goEOStggOgzOSJ/oOX
+         Lo63+RoScUP1ruxaI3uphJVetoQIwdDVhsIzm6aN/gzLkpulmukJWbahyKfxevYqBT
+         4VLX2V4l+qj0g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds I2C interface timing registers support for
-proper bus rate configuration along with meeting the i2c spec
-setup and hold times based on the tuning performed on Tegra210,
-Tegra186 and Tegra194 platforms.
-
-I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
-and Tegra I2C controller design uses them as a part of internal
-clock divisor.
-
-I2C_INTERFACE_TIMING_1 register contains the setup and hold times
-for start and stop conditions.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V12] 		: Fixed strict coding style check issues
- [V9/V10/V11]	: Same as V8
- [V8] 		: Updated to handle timing implementation within tegra_i2c_init directly
- [V7] 		: Minor updates to timing implementation
- [V5/V6] 	: Added this Interface timing patch in V5 of the patch series.
-
-
- drivers/i2c/busses/i2c-tegra.c | 189 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 160 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index f38ebc61fc26..a9391c3646b6 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -128,6 +128,15 @@
- #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
- #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
- 
-+#define I2C_INTERFACE_TIMING_0			0x94
-+#define I2C_THIGH_SHIFT				8
-+#define I2C_INTERFACE_TIMING_1			0x98
-+
-+#define I2C_STANDARD_MODE			100000
-+#define I2C_FAST_MODE				400000
-+#define I2C_FAST_PLUS_MODE			1000000
-+#define I2C_HS_MODE				3500000
-+
- /* Packet header size in bytes */
- #define I2C_PACKET_HEADER_SIZE			12
- 
-@@ -162,7 +171,10 @@ enum msg_end_type {
-  * @has_config_load_reg: Has the config load register to load the new
-  *		configuration.
-  * @clk_divisor_hs_mode: Clock divisor in HS mode.
-- * @clk_divisor_std_fast_mode: Clock divisor in standard/fast mode. It is
-+ * @clk_divisor_std_mode: Clock divisor in standard mode. It is
-+ *		applicable if there is no fast clock source i.e. single clock
-+ *		source.
-+ * @clk_divisor_fast_mode: Clock divisor in fast mode. It is
-  *		applicable if there is no fast clock source i.e. single clock
-  *		source.
-  * @clk_divisor_fast_plus_mode: Clock divisor in fast mode plus. It is
-@@ -180,6 +192,16 @@ enum msg_end_type {
-  * @supports_bus_clear: Bus Clear support to recover from bus hang during
-  *		SDA stuck low from device for some unknown reasons.
-  * @has_apb_dma: Support of APBDMA on corresponding Tegra chip.
-+ * @tlow_std_mode: Low period of the clock in standard mode.
-+ * @thigh_std_mode: High period of the clock in standard mode.
-+ * @tlow_fast_fastplus_mode: Low period of the clock in fast/fast-plus modes.
-+ * @thigh_fast_fastplus_mode: High period of the clock in fast/fast-plus modes.
-+ * @setup_hold_time_std_mode: Setup and hold time for start and stop conditions
-+ *		in standard mode.
-+ * @setup_hold_time_fast_fast_plus_mode: Setup and hold time for start and stop
-+ *		conditions in fast/fast-plus modes.
-+ * @setup_hold_time_hs_mode: Setup and hold time for start and stop conditions
-+ *		in HS mode.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -187,7 +209,8 @@ struct tegra_i2c_hw_feature {
- 	bool has_single_clk_source;
- 	bool has_config_load_reg;
- 	int clk_divisor_hs_mode;
--	int clk_divisor_std_fast_mode;
-+	int clk_divisor_std_mode;
-+	int clk_divisor_fast_mode;
- 	u16 clk_divisor_fast_plus_mode;
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
-@@ -195,6 +218,13 @@ struct tegra_i2c_hw_feature {
- 	const struct i2c_adapter_quirks *quirks;
- 	bool supports_bus_clear;
- 	bool has_apb_dma;
-+	u8 tlow_std_mode;
-+	u8 thigh_std_mode;
-+	u8 tlow_fast_fastplus_mode;
-+	u8 thigh_fast_fastplus_mode;
-+	u32 setup_hold_time_std_mode;
-+	u32 setup_hold_time_fast_fast_plus_mode;
-+	u32 setup_hold_time_hs_mode;
- };
- 
- /**
-@@ -664,11 +694,13 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 	return 0;
- }
- 
--static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
-+static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
- {
- 	u32 val;
- 	int err;
--	u32 clk_divisor;
-+	u32 clk_divisor, clk_multiplier;
-+	u32 tsu_thd = 0;
-+	u8 tlow, thigh;
- 
- 	err = pm_runtime_get_sync(i2c_dev->dev);
- 	if (err < 0) {
-@@ -698,6 +730,36 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 					I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT;
- 	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
- 
-+	if (i2c_dev->bus_clk_rate > I2C_STANDARD_MODE &&
-+	    i2c_dev->bus_clk_rate <= I2C_FAST_PLUS_MODE) {
-+		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
-+		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
-+		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
-+	} else {
-+		tlow = i2c_dev->hw->tlow_std_mode;
-+		thigh = i2c_dev->hw->thigh_std_mode;
-+		tsu_thd = i2c_dev->hw->setup_hold_time_std_mode;
-+	}
-+
-+	val = (thigh << I2C_THIGH_SHIFT) | tlow;
-+	if (val)
-+		i2c_writel(i2c_dev, val, I2C_INTERFACE_TIMING_0);
-+
-+	if (tsu_thd)
-+		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
-+
-+	if (!clk_reinit) {
-+		clk_multiplier = (tlow + thigh + 2);
-+		clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
-+		err = clk_set_rate(i2c_dev->div_clk,
-+				   i2c_dev->bus_clk_rate * clk_multiplier);
-+		if (err) {
-+			dev_err(i2c_dev->dev,
-+				"failed changing clock rate: %d\n", err);
-+			goto err;
-+		}
-+	}
-+
- 	if (!i2c_dev->is_dvc) {
- 		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
- 
-@@ -1104,7 +1166,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 			dmaengine_terminate_sync(i2c_dev->msg_read ?
- 						  i2c_dev->rx_dma_chan :
- 						  i2c_dev->tx_dma_chan);
--			tegra_i2c_init(i2c_dev);
-+			tegra_i2c_init(i2c_dev, true);
- 			return -ETIMEDOUT;
- 		}
- 
-@@ -1132,7 +1194,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (time_left == 0) {
- 		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
- 
--		tegra_i2c_init(i2c_dev);
-+		tegra_i2c_init(i2c_dev, true);
- 		return -ETIMEDOUT;
- 	}
- 
-@@ -1144,7 +1206,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
- 		return 0;
- 
--	tegra_i2c_init(i2c_dev);
-+	tegra_i2c_init(i2c_dev, true);
- 	/* start recovery upon arbitration loss in single master mode */
- 	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
- 		if (!i2c_dev->is_multimaster_mode)
-@@ -1239,7 +1301,8 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_per_pkt_xfer_complete_irq = false,
- 	.has_single_clk_source = false,
- 	.clk_divisor_hs_mode = 3,
--	.clk_divisor_std_fast_mode = 0,
-+	.clk_divisor_std_mode = 0,
-+	.clk_divisor_fast_mode = 0,
- 	.clk_divisor_fast_plus_mode = 0,
- 	.has_config_load_reg = false,
- 	.has_multi_master_mode = false,
-@@ -1248,6 +1311,13 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = false,
- 	.has_apb_dma = true,
-+	.tlow_std_mode = 0x4,
-+	.thigh_std_mode = 0x2,
-+	.tlow_fast_fastplus_mode = 0x4,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x0,
-+	.setup_hold_time_fast_fast_plus_mode = 0x0,
-+	.setup_hold_time_hs_mode = 0x0,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -1255,7 +1325,8 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_per_pkt_xfer_complete_irq = false,
- 	.has_single_clk_source = false,
- 	.clk_divisor_hs_mode = 3,
--	.clk_divisor_std_fast_mode = 0,
-+	.clk_divisor_std_mode = 0,
-+	.clk_divisor_fast_mode = 0,
- 	.clk_divisor_fast_plus_mode = 0,
- 	.has_config_load_reg = false,
- 	.has_multi_master_mode = false,
-@@ -1264,6 +1335,13 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = false,
- 	.has_apb_dma = true,
-+	.tlow_std_mode = 0x4,
-+	.thigh_std_mode = 0x2,
-+	.tlow_fast_fastplus_mode = 0x4,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x0,
-+	.setup_hold_time_fast_fast_plus_mode = 0x0,
-+	.setup_hold_time_hs_mode = 0x0,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -1271,7 +1349,8 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_per_pkt_xfer_complete_irq = true,
- 	.has_single_clk_source = true,
- 	.clk_divisor_hs_mode = 1,
--	.clk_divisor_std_fast_mode = 0x19,
-+	.clk_divisor_std_mode = 0x19,
-+	.clk_divisor_fast_mode = 0x19,
- 	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = false,
- 	.has_multi_master_mode = false,
-@@ -1280,6 +1359,13 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = true,
-+	.tlow_std_mode = 0x4,
-+	.thigh_std_mode = 0x2,
-+	.tlow_fast_fastplus_mode = 0x4,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x0,
-+	.setup_hold_time_fast_fast_plus_mode = 0x0,
-+	.setup_hold_time_hs_mode = 0x0,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -1287,7 +1373,8 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_per_pkt_xfer_complete_irq = true,
- 	.has_single_clk_source = true,
- 	.clk_divisor_hs_mode = 1,
--	.clk_divisor_std_fast_mode = 0x19,
-+	.clk_divisor_std_mode = 0x19,
-+	.clk_divisor_fast_mode = 0x19,
- 	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = true,
- 	.has_multi_master_mode = false,
-@@ -1296,6 +1383,13 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = true,
-+	.tlow_std_mode = 0x4,
-+	.thigh_std_mode = 0x2,
-+	.tlow_fast_fastplus_mode = 0x4,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x0,
-+	.setup_hold_time_fast_fast_plus_mode = 0x0,
-+	.setup_hold_time_hs_mode = 0x0,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -1303,7 +1397,8 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_per_pkt_xfer_complete_irq = true,
- 	.has_single_clk_source = true,
- 	.clk_divisor_hs_mode = 1,
--	.clk_divisor_std_fast_mode = 0x19,
-+	.clk_divisor_std_mode = 0x19,
-+	.clk_divisor_fast_mode = 0x19,
- 	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = true,
- 	.has_multi_master_mode = true,
-@@ -1312,27 +1407,67 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = true,
-+	.tlow_std_mode = 0x4,
-+	.thigh_std_mode = 0x2,
-+	.tlow_fast_fastplus_mode = 0x4,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0,
-+	.setup_hold_time_fast_fast_plus_mode = 0,
-+	.setup_hold_time_hs_mode = 0,
- };
- 
--static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-+static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
- 	.has_continue_xfer_support = true,
- 	.has_per_pkt_xfer_complete_irq = true,
- 	.has_single_clk_source = true,
- 	.clk_divisor_hs_mode = 1,
--	.clk_divisor_std_fast_mode = 0x19,
-+	.clk_divisor_std_mode = 0x16,
-+	.clk_divisor_fast_mode = 0x19,
- 	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = true,
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.quirks = &tegra_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x4,
-+	.thigh_std_mode = 0x3,
-+	.tlow_fast_fastplus_mode = 0x4,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0,
-+	.setup_hold_time_fast_fast_plus_mode = 0,
-+	.setup_hold_time_hs_mode = 0,
-+};
-+
-+static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.has_single_clk_source = true,
-+	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_std_mode = 0x4f,
-+	.clk_divisor_fast_mode = 0x3c,
-+	.clk_divisor_fast_plus_mode = 0x16,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
- 	.quirks = &tegra194_i2c_quirks,
- 	.supports_bus_clear = true,
- 	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_fastplus_mode = 0x2,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
- };
- 
- /* Match table for of_platform binding */
- static const struct of_device_id tegra_i2c_of_match[] = {
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
-+	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
- 	{ .compatible = "nvidia,tegra210-i2c", .data = &tegra210_i2c_hw, },
- 	{ .compatible = "nvidia,tegra124-i2c", .data = &tegra124_i2c_hw, },
- 	{ .compatible = "nvidia,tegra114-i2c", .data = &tegra114_i2c_hw, },
-@@ -1353,7 +1488,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	phys_addr_t base_phys;
- 	int irq;
- 	int ret = 0;
--	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base_phys = res->start;
-@@ -1424,20 +1558,17 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	i2c_dev->clk_divisor_non_hs_mode =
--			i2c_dev->hw->clk_divisor_std_fast_mode;
--	if (i2c_dev->hw->clk_divisor_fast_plus_mode &&
--		(i2c_dev->bus_clk_rate == 1000000))
-+	if (i2c_dev->bus_clk_rate > I2C_FAST_MODE &&
-+	    i2c_dev->bus_clk_rate <= I2C_FAST_PLUS_MODE)
- 		i2c_dev->clk_divisor_non_hs_mode =
--			i2c_dev->hw->clk_divisor_fast_plus_mode;
--
--	clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
--	ret = clk_set_rate(i2c_dev->div_clk,
--			   i2c_dev->bus_clk_rate * clk_multiplier);
--	if (ret) {
--		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
--		goto unprepare_fast_clk;
--	}
-+				i2c_dev->hw->clk_divisor_fast_plus_mode;
-+	else if (i2c_dev->bus_clk_rate > I2C_STANDARD_MODE &&
-+		 i2c_dev->bus_clk_rate <= I2C_FAST_MODE)
-+		i2c_dev->clk_divisor_non_hs_mode =
-+				i2c_dev->hw->clk_divisor_fast_mode;
-+	else
-+		i2c_dev->clk_divisor_non_hs_mode =
-+				i2c_dev->hw->clk_divisor_std_mode;
- 
- 	ret = clk_prepare(i2c_dev->div_clk);
- 	if (ret < 0) {
-@@ -1467,7 +1598,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto disable_div_clk;
- 
--	ret = tegra_i2c_init(i2c_dev);
-+	ret = tegra_i2c_init(i2c_dev, false);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
- 		goto disable_div_clk;
--- 
-2.7.4
-
+PiA+Pj4+Pj4gWWVzIHBsZWFzZSBwb3N0IGZ1bGwgbG9nIG9mIFBJTyBvbmx5IGFuZCBETUEgb25s
+eSBBbHNvLCBpbiBhYm92ZSANCj4gPj4+Pj4+IGxvZywgbG90cyBvZiBETUEgdHJhbnNmZXIgd2Vu
+dCB0aHJ1IGZpbmUgZXhjZXB0IHRoaXMgb25lIHRyYW5zZmVyIA0KPiA+Pj4+Pj4gd2hlcmUgRE1B
+IHRpbWVkIG91dC4NCj4gPj4+Pj4+IERNQSBjb21wbGV0aW9uIGRvZXNudCBoYXBwZW4gb24gRE1B
+IHN1Ym1pdCBkdXJpbmcgdGhpcyBwYXJ0aWN1bGFyIA0KPiA+Pj4+Pj4gdHJhbnNhY3Rpb24gdGlt
+ZWZyYW1lIGZvciBzb21lIHJlYXNvbi4NCj4gPj4+Pj4NCj4gPj4+Pj4gRG1pdHJ5LCBjYW4geW91
+IHByb3ZpZGUgc29tZSBiYWNrZ3JvdW5kIGluZm9ybWF0aW9uIG9uIHRoZSBzZXR1cCANCj4gPj4+
+Pj4gdGhhdCB5b3UncmUgdXNpbmc/IEkgdmFndWVseSByZW1lbWJlciBzb21ldGhpbmcgYWJvdXQg
+aTJjQDcwMDBkMDAwIA0KPiA+Pj4+PiBiZWluZyBzcGVjaWFsIG9uIG9sZGVyIFRlZ3JhIGRldmlj
+ZXMuIFBlcmhhcHMgdGhlcmUncyBzb21ldGhpbmcgDQo+ID4+Pj4+IGFkZGl0aW9uYWwgdGhhdCB3
+ZSBuZWVkIHRvIHRha2UgaW50byBhY2NvdW50Pw0KPiA+Pj4+Pg0KPiA+Pj4+PiBBaGEhIExvb2sg
+YXQgdGVncmFfaTJjX3JlZ19hZGRyKCkgd2hpY2ggc3BlY2lhbC1jYXNlcyBJMkNfVFhfRklGTyAN
+Cj4gPj4+Pj4gb24gdGhlIERWQyB2YXJpYW50IG9mIHRoZSBjb250cm9sbGVyLCB3aGljaCBpcyBl
+eGFjdGx5IHRoZSBvbmUgDQo+ID4+Pj4+IHRoYXQgeW91IGFyZSBzZWVpbmcgdGhlIHRpbWVvdXRz
+IG9uIGFuZCBpdCdzIGV4YWN0bHkgdGhlIHJlZ2lzdGVyIA0KPiA+Pj4+PiB0aGF0IHdlIHVzZSBh
+cyBkZXN0aW5hdGlvbiBmb3IgdGhlIERNQSB0cmFuc2Zlci4NCj4gPj4+Pj4NCj4gPj4+Pj4gSSB0
+aGluayB3ZSBuZWVkIHRvIGRvIHNvbWV0aGluZyBsaWtlIHRoaXM6DQo+ID4+Pj4+DQo+ID4+Pj4+
+IAlzbHZfY29uZmlnLmRzdF9hZGRyID0gaTJjX2Rldi0+YmFzZV9waHlzICsgDQo+ID4+Pj4+IHRl
+Z3JhX2kyY19yZWdfYWRkcihpMmNfZGV2LCBJMkNfVFhfRklGTyk7DQo+ID4+Pj4+DQo+ID4+Pj4+
+IHRvIG1ha2Ugc3VyZSB3ZSBwYXNzIHRoZSByaWdodCBGSUZPIHJlZ2lzdGVyIGFkZHJlc3MgdG8g
+RE1BLg0KPiA+Pj4+DQo+ID4+Pj4gSSdtIHJ1bm5pbmcgaXQgb24gVDIwIGF0IHRoZSBtb21lbnQu
+IEkgZG9uJ3Qga25vdyBhYm91dCB0aGUgRFZDIHF1aXJrcywgYnV0IHNvdW5kcyBwbGF1c2libGUu
+IFBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgbmVlZCBhbnkgb3RoZXIgaW5mby4NCj4gPj4+Pg0K
+PiA+Pj4+IEhlcmUgdGhlIGZ1bGwgbG9nczoNCj4gPj4+Pg0KPiA+Pj4+IFBJTy1vbmx5OiBodHRw
+Oi8vZHBhc3RlLmNvbS8yTVgzRUFOLnR4dA0KPiA+Pj4+IERNQS1vbmx5OiBodHRwOi8vZHBhc3Rl
+LmNvbS8zVlhaU1NNLnR4dA0KPiA+Pj4+DQo+ID4+Pj4gTm90ZSB0aGUgIkZhaWxlZCB0byByZWFk
+IFQ0NCBhbmQgVDUgKC0xMTApIiBlcnJvciB0aGF0IGhhcHBlbnMgaW4gRE1BLW9ubHkuIEFuZCBp
+dCBoYXBwZW5zIG9uIGkyY0A3MDAwYzAwMCwgRFZDIGlzIGkyY0A3MDAwZDAwMC4NCj4gPj4+DQo+
+ID4+PiBZZXMgdGhpcyBpcyBkdWUgdG8gc2FtZSBpc3N1ZSB0aGVpcnJ5IG1lbnRpb25lZC4NCj4g
+Pj4+IFByaW9yIHRvIHRyYW5zZmVyIHRpbWVvdXQgZm9yIHRvdWNoLCB0cHM2NTg2eCByZWd1bGF0
+b3IgcHJvYmUgZmFpbGVkIGR1ZSB0byBpMmMgdGltZW91dCB3aGljaCB1c2VzIERWQyAoNzAwMEQw
+MDApIGFuZCBzaW5jZSBETUEgbW9kZSBpcyBlbmZvcmNlZCA+IGFsbCBEVkMvUFdSIEkyQyB0cmFu
+c2FjdGlvbnMgYWxzbyBnbyB0aHJ1IERNQSBhbmQgRklGTyByZWdpc3RlciBmb3IgRFZDIG9mZnNl
+dCBpcyBub3QgYWNjb3VudGVkIHdoZW4gY29uZmlndXJlIHRvIGRtYSBzbGF2ZS4NCj4gPj4+IFdp
+bGwgZml4IGFuZCBzZW5kIHNvIHlvdSBjYW4gc2VlIGZvciByZXBybyB3aXRoIHVwZGF0ZWQgcGF0
+Y2guLg0KPiA+Pj4NCg0KPiA+PiBJIHRoaW5rIHRwczY1ODZ4IGFuZCBhdG1lbC10b3VjaCBzaG91
+bGQgYmUgaW5kZXBlbmRlbnQgaXNzdWVzLCBidXQgd2lsbCBzZWUuIFRoYW5rcyENCj4gPiBXaGF0
+cyB5b3VyIHBsYXRmb3JtIHNldHVwPyBJcyBhdG1lbCB0b3VjaCBwb3dlciBPTiBkZWZhdWx0IG9y
+IGl0cyBwcm9ncmFtbWVkIGR1cmluZyBib290IGJ5IFNXIHdoY2loIG5lZWQgdG8gdXNlIERWQz8N
+Cj4gPiANCj4gDQo+IEl0J3MgInBvd2VyIE9OIGRlZmF1bHQiLiBJIHRyaWVkIHRvIGJvb3QgaW4g
+UElPLW9ubHkgbW9kZSB3aXRoIHRwczY1ODZ4IGRpc2FibGVkIGFuZCB0aGVyZSBpcyBubyAiRmFp
+bGVkIHRvIHJlYWQgVDQ0IGFuZCBUNSIgZXJyb3IsIGF0bWVsIHByb2JlZCA+IHN1Y2Nlc3NmdWxs
+eS4NCg0KSSBzZWUgaW4gRE1BIGxvZyBidW5jaCBvZiA3MDAwRDAwMCBpMmMgdHJhbnNmZXJzIGJl
+Zm9yZSBhdG1lbCB0b3VjaCBwcm9iZS4gVkRELVNZUyBmb3IgNVYgaXMgbm90IHNlZW4uDQpTbyBz
+dGlsbCBjb3VsZCBiZSByZWxhdGVkIHRvIHBvd2VyIGR1ZSB0byBEVkMgdHJhbnNhY3Rpb25zIHRp
+bWVkb3V0IGFzIGNoYW5nZSBkb2VzbnQgYWNjb3VudCBmb3IgRFZDIG9mZnNldC4NCg0KUGxlYXNl
+IHRyeSB1cGRhdGVkIHBhdGNoIHdoaWNoIGhhcyBmaXggZm9yIERWQyB0cmFuc2FjdGlvbiBmYWls
+dXJlcy4NCg==
