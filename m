@@ -4,109 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7FEC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B6EC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6817420844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D85D20823
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:57:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YsH58K6T"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="VaGpYHLI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfBFEw5 (ORCPT
+        id S1727471AbfBFE5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 23:52:57 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37664 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfBFEw4 (ORCPT
+        Tue, 5 Feb 2019 23:57:13 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:35345 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfBFE5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 23:52:56 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c25so2402493pgb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 20:52:56 -0800 (PST)
+        Tue, 5 Feb 2019 23:57:12 -0500
+Received: by mail-qk1-f195.google.com with SMTP id w204so3588335qka.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 20:57:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jXHb9lbYoSf/MPyXB+Nyl8mORi2qbkCDejL2LhD8OUk=;
-        b=YsH58K6TkzUKdj07xj0Rc2v8PmOsoRwFTTVzbb2Dq6H4w5RhxrsRoK/NqkDyiAA2xJ
-         rfQ0fFoRh1BjhTjarUnPlQrYfYsC7G/TbrLDUYaIkjc0pTb3VZnXSTAOjJ1IIs3pszKa
-         G6WmgieTjHZGZ3Ci4sq3n33dzfyNwfAKFkwmtEP9pg6R7+KqdMhYYGBdyChgQfZS7Z8M
-         Mk9deWaXaCVTdYiMLCkKAZ4mXZSf9ia6VeTQAwuJFYYilqc2G+iysV0Y0INXRy53resN
-         qRKeTxPkwtk9CJnaJf4eFme8am1VVMq+vgmwpCqBi3k/X+OSSNL8+RBLdUJ4aF9ujQvS
-         Q+DQ==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=hyT7vucaind/xR3A8bXmjCQBx023N6EByMsSM7Ep6+g=;
+        b=VaGpYHLI3k9vl9sAbEUb5GiBtHS+xC8Hhs9+lPDOsVRsD2sA78qtFH41Hzcc1FMbfQ
+         BcjMlpRd3/phcWeo02dzpZ5+4v+bkSBrRzGnAU1ph3/12ykH6/e0DPxz9tEbqRjNVcv+
+         3DhY8Mv+++L9qeqQxVIgIhCZXnA96MkRI7yZZuVWJOfzVMyWUkk/8yVoAZa88rQB4EQK
+         hcRqw2EA5gCCfwgjcUnHM5VxB7adKNHlCdRiPCmIlQhPoIy8nKm75Kls7qT9oOPBAAnu
+         ylQI9Zc4XcOFqKVBaNhUZGirCdL/7eu8rHFdujt/7em4VghA8Xj+OA7KSqm652Q6A9aO
+         Wnpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jXHb9lbYoSf/MPyXB+Nyl8mORi2qbkCDejL2LhD8OUk=;
-        b=ftDkQbs87VxFKoBmhvcFyPZVCZ+4wBY/4toLDtlIW8s9YBAJZRFqzwPSXLWIgKxuwO
-         q41wetQqyD4tUwMAd24Be5ZOdDYwbH5RZX3yZH8xTHGCpfwXEfqZsK7BigmML5yAOSam
-         g/rKqVi1QUpb88WwfkLsglmV5gWdC04vscDiMuAHTPyP/fwx1ue97YVaGXIGmDAFPx8J
-         e+HYOVg+E7IJnqHvliaMxabuQElUB8Z+lLXeEIWzoewZV1HZ8+40SU7FZaly0M/MypKh
-         KU2W84J+a/Z08HlABEVVCIKuuc6aOjRA2NCwgjFHg485p9slcBJ85hCb87oL8tduyaTJ
-         Tn/A==
-X-Gm-Message-State: AHQUAub6FjiMIS3UN0nL5aBEmB7evJQeCwPdQhfGq5/5uAxafJ7chaHp
-        Lutc+Sz7eM9GI5HQOqzMrDJY8A==
-X-Google-Smtp-Source: AHgI3IYpGFT/s/hAcjJT6Li9JPvX+6mYH3O1Nu2RrbRFA5CUBdTYVRqg/Mcabcd0H0y87BQY6mZ0fQ==
-X-Received: by 2002:a63:4948:: with SMTP id y8mr7893639pgk.32.1549428775669;
-        Tue, 05 Feb 2019 20:52:55 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id x27sm10175969pfe.178.2019.02.05.20.52.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hyT7vucaind/xR3A8bXmjCQBx023N6EByMsSM7Ep6+g=;
+        b=pKPQ0+8xWW96YmURThpHzM+2C2WDO7nVjRQMJkAaQ/SXSw6ArgKZawZRL4BoKT4mt2
+         +fs7RznQxDdhgCPvg5s5YvXQNUJc5UeigSI0x6f6ouESKuWmPmVZjJxDTYRTKgtkzEDP
+         uRE/JhLfPG8WQHYZUWXe+f2iQrI5OD5CJMBmN6VY9kna8xkUei/kphuI5iwjOejqr86T
+         IDeyu/c95RCKzD+SqrPIL3r/x6gk55y9wQ8q56//QsJLqrHrUvtecnoHK57tp21M9SS2
+         eCLMofsCR40OoFL6OHUScG+5RoC/oMfXI6dl16qbXJnqmg5Qaw7hHlY7N7AuzzHbwzyR
+         U5Fw==
+X-Gm-Message-State: AHQUAua4YIMgAaXqQ0tH+Aw9BmalEjAGIQO1NwEvj065IrsjUOtN+G5k
+        cWyc5IdfhFdTuDSIaK5w7Ez5uA==
+X-Google-Smtp-Source: AHgI3IYz+D5+XeBjKYvVYHBgzusMer2xFn0CufjqTWSO380jKjS/vHa74SuA6SBJqAuEF+YP6K/jRQ==
+X-Received: by 2002:a37:9543:: with SMTP id x64mr6250203qkd.158.1549429031618;
+        Tue, 05 Feb 2019 20:57:11 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u23sm10392959qtj.74.2019.02.05.20.57.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 20:52:53 -0800 (PST)
-Date:   Wed, 6 Feb 2019 10:22:51 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Quentin Perret <quentin.perret@arm.com>,
-        Taniya Das <tdas@codeaurora.org>, CK Hu <ck.hu@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/2] cpufreq: qcom-hw: Register an Energy Model
-Message-ID: <20190206045251.23p4imsqlropssxl@vireshk-i7>
-References: <20190205175225.25923-1-mka@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205175225.25923-1-mka@chromium.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Tue, 05 Feb 2019 20:57:11 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        aryabinin@virtuozzo.com, glider@google.com, dvyukov@google.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] x86_64: tidy up KASAN_EXTRA
+Date:   Tue,  5 Feb 2019 23:56:57 -0500
+Message-Id: <20190206045657.76020-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-02-19, 09:52, Matthias Kaehlcke wrote:
-> Try and register an Energy Model from qcom-cpufreq-hw to allow
-> interested sub-systems like the task scheduler to use the provided
-> information.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  drivers/cpufreq/qcom-cpufreq-hw.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> index d83939a1b3d4c..a16b9dca7ea3b 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -205,6 +205,8 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
->  		goto error;
->  	}
->  
-> +	dev_pm_opp_of_register_em(policy->cpus);
-> +
->  	policy->fast_switch_possible = true;
->  
->  	return 0;
+The commit 585a4c1f9978 ("kasan: remove use after scope bugs
+detection.") removed KASAN_EXTRA, so tidy up leftovers.
 
-Applied both. Thanks.
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/x86/include/asm/page_64_types.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
+diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
+index 0ce558a8150d..8f657286d599 100644
+--- a/arch/x86/include/asm/page_64_types.h
++++ b/arch/x86/include/asm/page_64_types.h
+@@ -7,11 +7,7 @@
+ #endif
+ 
+ #ifdef CONFIG_KASAN
+-#ifdef CONFIG_KASAN_EXTRA
+-#define KASAN_STACK_ORDER 2
+-#else
+ #define KASAN_STACK_ORDER 1
+-#endif
+ #else
+ #define KASAN_STACK_ORDER 0
+ #endif
 -- 
-viresh
+2.17.2 (Apple Git-113)
+
