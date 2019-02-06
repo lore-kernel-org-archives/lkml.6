@@ -2,127 +2,130 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431F5C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9AEC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E1FC20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0303720B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:34:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FcFpOi4k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbfBFNem (ORCPT
+        id S1730781AbfBFNe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:34:42 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44426 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728381AbfBFNel (ORCPT
+        Wed, 6 Feb 2019 08:34:57 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33499 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728381AbfBFNe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:34:41 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16DTrqO184257
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 08:34:40 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qfxsp6h1n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:34:39 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bblock@linux.ibm.com>;
-        Wed, 6 Feb 2019 13:34:37 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 13:34:34 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16DYXml1769828
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 13:34:33 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F001D4C04E;
-        Wed,  6 Feb 2019 13:34:32 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D871D4C040;
-        Wed,  6 Feb 2019 13:34:32 +0000 (GMT)
-Received: from t480-pf1aa2c2 (unknown [9.152.212.148])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  6 Feb 2019 13:34:32 +0000 (GMT)
-Received: from bblock by t480-pf1aa2c2 with local (Exim 4.91)
-        (envelope-from <bblock@linux.ibm.com>)
-        id 1grNLU-0006JD-FE; Wed, 06 Feb 2019 14:34:32 +0100
-Date:   Wed, 6 Feb 2019 14:34:32 +0100
-From:   Benjamin Block <bblock@linux.ibm.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
+        Wed, 6 Feb 2019 08:34:56 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so6082785ljd.0;
+        Wed, 06 Feb 2019 05:34:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/TraXGrpDP3HhfJyy42ewoBODhy2MaW9/YMdeSly3V0=;
+        b=FcFpOi4k0aoJ885OUpxt2BzrSHEvw8P9ptsVozFOWZLdEyN7LT2DGaBw5vhC4VEBWa
+         NF98TPEuhb7SbaR/Ye+NnznrlW/dlqmKorhumcVmc0XWBFkixFodm8plSfQ34FIaKxmG
+         jz4fTGN1FrD/cl0BsZ4BtOe1D8UZg1oGVw/gR4i7WtD1punzbutOJHde3YApRmzy1ewU
+         FL5Wk3ofYr1paz4cHhcOwl+osXH5vs1oBVC5sKF4jZrmHWPpa0ZOZGr2YywT6Ac5+6kR
+         qqpVx9G0pmG33mkjp44jkRjp66aMPG1RQq6MGi/RDRDdJwDdUcfC8ZqQKSlJz6hxdZ19
+         8lMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/TraXGrpDP3HhfJyy42ewoBODhy2MaW9/YMdeSly3V0=;
+        b=dIOo/joiglan+K4haFU9To31Df1YWTyA6tjwsIdPsLeSJ897nvwztYihWqAJ5+7QP9
+         xt002DcCEJLAedjObxEDlkaR9UVfbaU6B+tyhqD7x8lmN251K1p+1/SnVkL/fxmg5eq+
+         Z4RSOTVqQi8nROJDSYA2NB7oE/7vEuPyWXYM/vR+nDdxFQ8jdW0wfz6T/7bOxbVrK0OV
+         wtQ7vhpQxHVPI6d7H7255ON03dq0SO/SMM91Q4r3472Z4goNflJTEQzLsXZ5GFKKvtHB
+         tLM+dItqz7mDFARO6Wliv7VRhjldRetKifri+GlnUHfRyiq7Gsg/IMXf7XJWLcZHN+dG
+         lFaw==
+X-Gm-Message-State: AHQUAuaaa8pCy067VQ6zP7E8f9DeUBEHOOM6rIwZzSz4OvVquFduKT9i
+        hYCRx2dzbFmk5XPGWzAHNYl4nMhK
+X-Google-Smtp-Source: AHgI3IaW8JM+TR0TOj4KCNswX36Xosy8uQTFuUrVMlmO1dlQrcWMkdUiKOVT4eXlqD4fDBEbJEkijg==
+X-Received: by 2002:a2e:9556:: with SMTP id t22-v6mr6431212ljh.36.1549460093841;
+        Wed, 06 Feb 2019 05:34:53 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id a20-v6sm3803303ljf.28.2019.02.06.05.34.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 05:34:53 -0800 (PST)
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-References: <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
- <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
- <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
- <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
- <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
- <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
- <20190205145244.GB28023@localhost.localdomain>
- <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
- <20190205182325.GA3302@lst.de>
- <3413b0b1-cb3f-3b09-106d-89cf8be30178@huawei.com>
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+ <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
+ <c4f67e39-df72-cc56-216b-8e6014891b52@gmail.com>
+ <BYAPR12MB3398E50ED1C6909D6BCB0DDFC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <304c1916-e836-fa95-5cec-887fef8f3eb2@gmail.com>
+ <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <82f38909-94f1-7984-2b0f-df6231aee58f@gmail.com>
+ <BYAPR12MB3398B4A862E4BFA5344AE461C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB3398501ACBC54906F677C661C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0cec3f47-6c47-b31d-74b5-696bd1f48596@gmail.com>
+Date:   Wed, 6 Feb 2019 16:34:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <BYAPR12MB3398501ACBC54906F677C661C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3413b0b1-cb3f-3b09-106d-89cf8be30178@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 19020613-4275-0000-0000-0000030C2A7D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020613-4276-0000-0000-0000381A2FF2
-Message-Id: <20190206133432.GB14106@t480-pf1aa2c2>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=908 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902060107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 09:21:40AM +0000, John Garry wrote:
-> On 05/02/2019 18:23, Christoph Hellwig wrote:
-> > On Tue, Feb 05, 2019 at 03:09:28PM +0000, John Garry wrote:
-> > > For SCSI devices, unfortunately not all IO sent to the HW originates from
-> > > blk-mq or any other single entity.
-> > 
-> > Where else would SCSI I/O originate from?
+06.02.2019 16:30, Sowjanya Komatineni пишет:
 > 
-> Please note that I was referring to other management IO, like SAS SMP, TMFs,
-> and other proprietary commands which the driver may generate for the HBA -
-> https://marc.info/?l=linux-scsi&m=154831889001973&w=2 discusses some of them
-> also.
+> 
+>>>
+>>>>>> BTW, I'm seeing "atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000" whithout making any modifications to the original patch as well and it shall not happen, hence there is bug somewhere. Probably FIFO triggers are still not set up correctly... ?
+>>>>>>
+>>>>>>
+>>>>> In snippet you sent, I see you are forcing dma_burst to 1 always which is what set for fifo trigger levels as well and also you are forcing dma all the time.
+>>>>> So always it will be 1 word dma burst and 1 word trigger level and that should not be an issue.
+>>>>>
+>>>>
+>>>> I reverted that snippet, this log is collected with the yours original patch.
+>>>>
+>>> From atmel driver, looks like this warning is from maxt_update_cfg 
+>>> and due to CRC mismatch and above values shows read data CRC is 0Xf436dc which is compared against info_crc of all 0's Info_crc is based on raw config file and somehow its all 0's. this is not based on data read thru i2c.
+>>> data->info_crc computed on data read is 0Xf436dc
+>>>
+>>> This warning is not related to I2C transfer
+>>>
+>>
+>> It doesn't happen with the I2C PIO mode. Seems it means that the I2C reads out the 0xF436DC value instead of 0x000000.. if I'm not missing anything.
+>>
+> Log that you shared this warning, doesn’t show any i2c failures with atmel and CRC based on i2c read  data is 0Xf436dc.
+> During this log, there are not DMA timeouts associated during this warning timeframe. So i2c read data is thru DMA which is non-zero.
+> 
+> Do you see DMA timeouts associated with this warning? I meant any DMA or I2C timeout during that time frame of warning?
 > 
 
-Especially the TMFs send via SCSI EH are a bit of a pain I guess,
-because they are entirely managed by the device drivers, but depending
-on the device driver they might not even qualify for the problem Hannes
-is seeing.
+Actually you're right, my bad. That atmel error and atmel I2C timeout (due to I2C_ERR_NO_ACK) happens in the PIO mode too, hence that part is fine.
 
--- 
-With Best Regards, Benjamin Block      /      Linux on IBM Z Kernel Development
-IBM Systems & Technology Group   /  IBM Deutschland Research & Development GmbH
-Vorsitz. AufsR.: Matthias Hartmann       /      Gesch�ftsf�hrung: Dirk Wittkopp
-Sitz der Gesellschaft: B�blingen / Registergericht: AmtsG Stuttgart, HRB 243294
+PIO log:
 
+[    1.028889] atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000
+[    1.078907] atmel_mxt_ts 0-004c: Resetting device
+[    1.128646] usb 1-1: new full-speed USB device number 2 using tegra-ehci
+[    1.198708] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-121)
+[    1.198732] atmel_mxt_ts 0-004c: Failed to read 28 messages (-121)
