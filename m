@@ -2,152 +2,87 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB0AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B55FC282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A417A2175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0A082175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbfBFJUG (ORCPT
+        id S1728619AbfBFJWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 04:20:06 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56255 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbfBFJUG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 04:20:06 -0500
-X-Originating-IP: 90.88.22.177
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id BC586240075;
-        Wed,  6 Feb 2019 09:20:00 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 10:20:00 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Priit Laes <plaes@plaes.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
- mmc2 clock
-Message-ID: <20190206092000.f46nsn4fw2n4crub@flea>
-References: <20190202155209.31617-1-plaes@plaes.org>
- <20190205094529.t7je4ozzu2b4ornc@flea>
- <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+        Wed, 6 Feb 2019 04:22:00 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57044 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725897AbfBFJV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 04:21:59 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 906D96BC16970496FCFD;
+        Wed,  6 Feb 2019 17:21:57 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 6 Feb 2019
+ 17:21:48 +0800
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+To:     Christoph Hellwig <hch@lst.de>
+References: <20190129172059.GC17132@localhost.localdomain>
+ <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
+ <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
+ <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
+ <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
+ <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
+ <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
+ <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
+ <20190205145244.GB28023@localhost.localdomain>
+ <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
+ <20190205182325.GA3302@lst.de>
+CC:     Keith Busch <keith.busch@intel.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hannes Reinecke" <hare@suse.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <3413b0b1-cb3f-3b09-106d-89cf8be30178@huawei.com>
+Date:   Wed, 6 Feb 2019 09:21:40 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sl7pkaf3p7ikf3a2"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190205182325.GA3302@lst.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/02/2019 18:23, Christoph Hellwig wrote:
+> On Tue, Feb 05, 2019 at 03:09:28PM +0000, John Garry wrote:
+>> For SCSI devices, unfortunately not all IO sent to the HW originates from
+>> blk-mq or any other single entity.
+>
+> Where else would SCSI I/O originate from?
 
---sl7pkaf3p7ikf3a2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please note that I was referring to other management IO, like SAS SMP, 
+TMFs, and other proprietary commands which the driver may generate for 
+the HBA - https://marc.info/?l=linux-scsi&m=154831889001973&w=2 
+discusses some of them also.
 
-On Tue, Feb 05, 2019 at 09:44:02PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Feb 5, 2019 at 5:45 PM Maxime Ripard <maxime.ripard@bootlin.com> =
-wrote:
-> >
-> > On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
-> > > Recent patch of improving MP clock rate calculations by taking
-> > > into account whether adjusting parent rate is allowed, have
-> > > unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
-> > > boards which fail with following error:
-> > >
-> > > [snip]
-> > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> > > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> > > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > > sunxi-mmc 1c11000.mmc: send stop command failed
-> > > [/snip]
-> > >
-> > > Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
-> > > clock rate with following parents:
->=20
-> You mean 52 and 51.2 MHz.
->=20
-> > > [snip]
-> > > pll-ddr-base        2  2        0   768000000 0     0  50000
-> > >    pll-ddr-other    1  1        0   768000000 0     0  50000
-> > >       mmc2          0  0        0    51200000 0     0  50000
-> > > [/snip]
-> > >
-> > > Now, after the improvements, requested and settled rate are both
-> > > 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
-> > > ends up like this:
-> > > [snip]
-> > > pll-periph-base     3  3        0  1200000000 0     0  50000
-> > >    pll-periph       6  6        0   600000000 0     0  50000
-> > >       mmc2          3  3        0    50000000 0     0  50000
-> > > [/snip]
-> > >
-> > > With this patch (allowing mmc2 to set parent rate), we end up with
-> > > working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
-> > > [snip]
-> > > pll-periph-base     3  3        0   312000000 0     0  50000
-> > >    mbus             1  1        0    78000000 0     0  50000
-> > >    pll-periph-sata  1  1        0    26000000 0     0  50000
-> > >       sata          1  1        0    26000000 0     0  50000
-> > >    pll-periph       5  5        0   156000000 0     0  50000
-> > >       mmc2          0  0        0    52000000 0     0  50000
-> > >       mmc0          0  0        0    39000000 0     0  50000
-> > > [/snip]
-> > >
-> > > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when=
- allowed")
-> > > Signed-off-by: Priit Laes <plaes@plaes.org>
-> >
-> > Applied, thanks!
-> > Maxime
->=20
-> I'm concerned for other users of the PLL-PERIPH clock. AFAIK
-> all of them, except the HRTIMER, expect the clock rate to stay
-> the same and not change underneath them. And SATA expects it to
-> be at 600 MHz, as the datasheet says. And while it may not directly
-> apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
-> reduced rate of 50 MHz just fine.
->=20
-> In the commit in question, clocks without CLK_SET_RATE_PARENT
-> should be using the old code (now in the if conditional block),
-> i.e. the behavior should not have changed.
->=20
-> I don't think this actually "fixes" whatever bug was introduced,
-> but only papers over the issue, and possible introduces further
-> issues for other users.
+Thanks,
+John
 
-You're right, I've overlooked that it was pll-periph being
-affected. I've dropped it for now.
+>
+> .
+>
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---sl7pkaf3p7ikf3a2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFqmvwAKCRDj7w1vZxhR
-xSw7AQDHxqxuEw37JOpF6w0RMseJfomBli6NRTUeA+PWrP5ymAD+KJFoB88BMXPP
-9BMD/2yvAg8+f+AtitKtK8nYtlhzVgM=
-=Hlbo
------END PGP SIGNATURE-----
-
---sl7pkaf3p7ikf3a2--
