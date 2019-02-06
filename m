@@ -2,73 +2,82 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBFFC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E30DC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA2B2083B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479916;
-	bh=ML2vFOb4cvoSl2x2j8/yMf0bXCQpACrQKo5uQ76N2S0=;
-	h=To:In-Reply-To:Subject:References:From:Date:List-ID:From;
-	b=BQn3o398qam5JP2ai8dmco7nnN/1ZaclJ1RpLitX6U8rEnyD0D2riBFCEAVE2oNMR
-	 K6vV5mfP6JHwJ3vqd8tlszQMU/ie2kLSEL4JTIRQyie5MiO+uwojF0BlZ5e9oE7qTX
-	 i+++AHlGCsE32qUVZgft7CBjHv7hewPKg5d35Y4I=
+	by mail.kernel.org (Postfix) with ESMTP id 240EE2186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:07:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dZtgTolq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfBFTFO (ORCPT
+        id S1726699AbfBFTHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:05:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 14:07:38 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35308 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfBFTFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:05:12 -0500
-Received: from localhost (unknown [104.132.0.74])
+        id S1725982AbfBFTHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 14:07:38 -0500
+Received: from zn.tnic (p200300EC2BCEF100C05112067955C97B.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:f100:c051:1206:7955:c97b])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E630220B1F;
-        Wed,  6 Feb 2019 19:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479912;
-        bh=ML2vFOb4cvoSl2x2j8/yMf0bXCQpACrQKo5uQ76N2S0=;
-        h=To:In-Reply-To:Subject:References:From:Date:From;
-        b=1GgZuPbjWKXsOnRC9GjD57iZbwA4AhzlL1ZQl9nmQl8/SraEF0uZteFydseXau8xV
-         ZQX+Fthp4Xp6FBqsbWy/PTdZC5iRehXLAJc29LI6db12aJ2yajVAQYIys3GaWhpdRs
-         2Ai+w1Dp+mDoU7GC6+4+VkHfvtaSZ1qlJfnroRHE=
-Content-Type: text/plain; charset="utf-8"
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AD8251EC0A98;
+        Wed,  6 Feb 2019 20:07:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549480056;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=WWfiCOY5QJ10wbuwitVtx/2Y7BRU6je1aaJqdUPB3S0=;
+        b=dZtgTolqMWDHcPKycdUxld1sUYCiKpq5K5G/oJd0Omer7LyD/EXWrd9yVsWJwIY6bEH2OR
+        CPusjEyw8ppP6shJVFWj87aruWOKwqByw2dhpgLwVhDXZxnYGp9LOg6Q/BQ0GHqhzEGgM/
+        XDqg9E+lzdjGsSxqrFEmJ6ycstv43H0=
+Date:   Wed, 6 Feb 2019 20:07:26 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V4 5/9] x86/alternative: Split text_poke_bp() into tree
+ steps
+Message-ID: <20190206190726.GI7314@zn.tnic>
+References: <cover.1549308412.git.bristot@redhat.com>
+ <cf7096ad15708be48f3ea62b4e903f6ef29e2838.1549308412.git.bristot@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     akshu.agrawal@amd.com, andrew.smirnov@gmail.com,
-        b.zolnierkie@samsung.com, corbet@lwn.net, cw00.choi@samsung.com,
-        djkurtz@chromium.org, krzk@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk, linux@roeck-us.net,
-        matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com,
-        mturquette@baylibre.com, pavel@ucw.cz, pombredanne@nexb.com,
-        rafael.j.wysocki@intel.com, sjhuang@iluvatar.ai, sre@kernel.org,
-        vkoul@kernel.org
-In-Reply-To: <f40c69fc858cc7ec3cc722c6664d933ea6558fb9.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH v7 3/3] clk: clk-st: avoid clkdev lookup leak at remove
-Message-ID: <154947991126.115909.9165588104956568526@swboyd.mtv.corp.google.com>
-References: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com> <f40c69fc858cc7ec3cc722c6664d933ea6558fb9.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 06 Feb 2019 11:05:11 -0800
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cf7096ad15708be48f3ea62b4e903f6ef29e2838.1549308412.git.bristot@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matti Vaittinen (2018-12-07 03:10:51)
-> Use devm based clkdev lookup registration to avoid leaking lookup
-> structures.
->=20
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
+On Mon, Feb 04, 2019 at 08:58:58PM +0100, Daniel Bristot de Oliveira wrote:
+> text_poke_bp() updates instructions on live kernel on SMP in three steps:
+>  1) add a int3 trap to the address that will be patched
+>  2) update all but the first byte of the patched range
+>  3) replace the first byte (int3) by the first byte of
+> 
+> This patch creates one function for each of these steps.
 
-Applied to clk-next
+s/This patch creates/Create/
 
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
