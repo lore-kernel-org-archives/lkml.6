@@ -2,172 +2,129 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB35EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BA7C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1192081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:23:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCvzvdVO"
+	by mail.kernel.org (Postfix) with ESMTP id 4B8B12186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbfBFRX1 (ORCPT
+        id S1728560AbfBFRZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:23:27 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35441 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfBFRX1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:23:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b17so2411413eds.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:23:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JvcKwIWlny3ttJZ1xLAWt497mnvC18dJy450P90yM2w=;
-        b=SCvzvdVOhvlAy67voL7FYAvyuejhJl4vSCGdpxJlOMsY+8wabGiSJZA1uUaEPZSzJz
-         6TsIIgrJRKv/aNHU8vW8J4FSe1X/Xw6iDZGBqG5c9rNEd3BJoQQdQNmcLBMKscJmUJ7b
-         4Z10Md+g3Fr53D5TOrI3G/vYYXS+OP3EFKsm48qVNtslHNlAiWabEvqagd43sg8AF2q3
-         L+kGfJBklnwUrC2dsnIJdEFK79ARloXzeMalaaUpT1yxSYeZtxYpLj6STdegY+D3w6wa
-         0AbFdVPqaCQaS+PpizEmsAudri2P7nzy7+k9j/2bfYw1FnGwmkdaoZAXYxcVWAk7nYqB
-         TLZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JvcKwIWlny3ttJZ1xLAWt497mnvC18dJy450P90yM2w=;
-        b=bCX+WmXJoh+2FXHOi76xZk2SbjPiyPuR/+fTlhSUc/qGVXawyHdLkpfeto3qZqkida
-         my8jbWHw/TWkP4JiYNn99pFV3gPrljHwL8/fnx/B0UX6viCG14A9sNIMtqwNUZ7vY53u
-         VUfSdpicE52nilZg09Zl6lvK8aDSegcc35pnR5UPpMmDQqG/naJ1TDcv7J2VUxOoFrFu
-         VgO8eqbJeFyrHmRyuPl5IZqUWHtvLCDMB6/oMR8GnGkiz5qbBqcKWX96yQOeetui03Ij
-         8jwe81YIJi7QWl/w2He8G8gOcmnWMnXv1RoPqmRZEyypKT8Zz100sXprvMhu2Yli+NnZ
-         uOoA==
-X-Gm-Message-State: AHQUAuaPNYYv89jzEaIBdJrNV3NS5Sfu8CcitJanVzMxVzMwxeFzfmdJ
-        56fvNQDOqOe/2iK60nVNyGMburHrBw3qpz+cYmI4Ew==
-X-Google-Smtp-Source: AHgI3IZ2bjGbksxVz6NccXNkBWqH4dgXoKknycBdJ4EIDM0+e5f+SVWZ2Q00jPjLBtxS5vmnti5hpj28QUnju70CS7U=
-X-Received: by 2002:a17:906:b38a:: with SMTP id o10mr3789264ejz.217.1549473804836;
- Wed, 06 Feb 2019 09:23:24 -0800 (PST)
+        Wed, 6 Feb 2019 12:25:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:55658 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbfBFRZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 12:25:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1504EEBD;
+        Wed,  6 Feb 2019 09:25:34 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 007693F719;
+        Wed,  6 Feb 2019 09:25:32 -0800 (PST)
+Subject: Re: [PATCH 4/5] sched/fair: Tune down misfit nohz kicks
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        vincent.guittot@linaro.org, morten.rasmussen@arm.com,
+        Dietmar.Eggemann@arm.com
+References: <20190117153411.2390-1-valentin.schneider@arm.com>
+ <20190117153411.2390-5-valentin.schneider@arm.com>
+ <20190206160413.GK17550@hirez.programming.kicks-ass.net>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <2d9c0edd-d00a-ddb1-d81f-f8da11f24304@arm.com>
+Date:   Wed, 6 Feb 2019 17:25:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
- <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com> <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
- <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
- <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
- <961e758d-b0a0-8f6c-a8fa-c3047e058706@gmail.com> <CAKv+Gu_faPAf+0NBTNM03EUH4-_0vWbPfDQneshps5vbaU4R_Q@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_faPAf+0NBTNM03EUH4-_0vWbPfDQneshps5vbaU4R_Q@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 6 Feb 2019 17:23:13 +0000
-Message-ID: <CAKv+Gu-4=1r8X8BUvRjcTwgxj=sZpZLyY3ABBZyzh-RsSm1eXg@mail.gmail.com>
-Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
-To:     "Koenig, Christian" <christian.koenig@amd.com>
-Cc:     Alex Deucher <alexdeucher@gmail.com>,
-        "Daenzer, Michel" <Michel.Daenzer@amd.com>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190206160413.GK17550@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019 at 11:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wr=
-ote:
->
-> On Fri, 25 Jan 2019 at 12:30, Christian K=C3=B6nig
-> <ckoenig.leichtzumerken@gmail.com> wrote:
-> >
-> > Am 25.01.19 um 09:43 schrieb Ard Biesheuvel:
-> > > On Thu, 24 Jan 2019 at 15:01, Alex Deucher <alexdeucher@gmail.com> wr=
-ote:
-> > >> On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
-> > >> <ard.biesheuvel@linaro.org> wrote:
-> > >>> On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
-> > >>> <Christian.Koenig@amd.com> wrote:
-> > >>>> Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
-> > >>>>> The DRM driver stack is designed to work with cache coherent devi=
-ces
-> > >>>>> only, but permits an optimization to be enabled in some cases, wh=
-ere
-> > >>>>> for some buffers, both the CPU and the GPU use uncached mappings,
-> > >>>>> removing the need for DMA snooping and allocation in the CPU cach=
-es.
-> > >>>>>
-> > >>>>> The use of uncached GPU mappings relies on the correct implementa=
-tion
-> > >>>>> of the PCIe NoSnoop TLP attribute by the platform, otherwise the =
-GPU
-> > >>>>> will use cached mappings nonetheless. On x86 platforms, this does=
- not
-> > >>>>> seem to matter, as uncached CPU mappings will snoop the caches in=
- any
-> > >>>>> case. However, on ARM and arm64, enabling this optimization on a
-> > >>>>> platform where NoSnoop is ignored results in loss of coherency, w=
-hich
-> > >>>>> breaks correct operation of the device. Since we have no way of
-> > >>>>> detecting whether NoSnoop works or not, just disable this
-> > >>>>> optimization entirely for ARM and arm64.
-> > >>>>>
-> > >>>>> Cc: Christian Koenig <christian.koenig@amd.com>
-> > >>>>> Cc: Alex Deucher <alexander.deucher@amd.com>
-> > >>>>> Cc: David Zhou <David1.Zhou@amd.com>
-> > >>>>> Cc: Huang Rui <ray.huang@amd.com>
-> > >>>>> Cc: Junwei Zhang <Jerry.Zhang@amd.com>
-> > >>>>> Cc: Michel Daenzer <michel.daenzer@amd.com>
-> > >>>>> Cc: David Airlie <airlied@linux.ie>
-> > >>>>> Cc: Daniel Vetter <daniel@ffwll.ch>
-> > >>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > >>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > >>>>> Cc: Sean Paul <sean@poorly.run>
-> > >>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > >>>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > >>>>> Cc: Will Deacon <will.deacon@arm.com>
-> > >>>>> Cc: Christoph Hellwig <hch@infradead.org>
-> > >>>>> Cc: Robin Murphy <robin.murphy@arm.com>
-> > >>>>> Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
-> > >>>>> Cc: dri-devel <dri-devel@lists.freedesktop.org>
-> > >>>>> Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
-> > >>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > >>>> The subject line should probably read "disable uncached...".
-> > >>>>
-> > >>> Ugh, of course ...
-> > >>>
-> > >>>> With that fixed the patch is Reviewed-by: Christian K=C3=B6nig
-> > >>>> <christian.koenig@amd.com>.
-> > >>>>
-> > >> Same:
-> > >> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-> > >>
-> > > Thanks all
-> > >
-> > > Should I resend the patch with the subject corrected?
-> >
-> > I will update the subject line and push it upstream through
-> > drm-misc-next if nobody objects.
-> >
->
-> Wonderful, thanks.
+Hi,
 
-Hi Christian,
+On 06/02/2019 16:04, Peter Zijlstra wrote:
+[...]
+>> @@ -9561,6 +9573,14 @@ static void nohz_balancer_kick(struct rq *rq)
+> 
+> 	sd = rcu_dereference(rq->sd);
+> 	if (sd) {
+> 		if ((rq->cfs.h_nr_running >= 1) &&
+> 		    check_cpu_capacity(rq, sd)) {
+> 			flags = NOHZ_KICK_MASK;
+> 			goto unlock;
+>>  		}
+>>  	}
+>>  
+>> +	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, cpu));
+>> +	if (sd) {
+>> +		if (check_misfit_status(rq, sd)) {
+>> +			flags = NOHZ_KICK_MASK;
+>> +			goto unlock;
+>> +		}
+>> +	}
+> 
+> So while the exact @sd to use for check_cpu_capacity() likely doesn't
+> matter; this is a 'implicit' test for actually having asym_capacity.
+> 
 
-Are you still planning to merge this for v5.1?
+I did feel compelled to use the "right" @sd to have a coherent
+imbalance_pct being used - on big.LITTLE, the @sd above this hunk would be
+MC (117 imbalance_pct) whereas the sd_asym_cpucapacity one would be
+DIE (125 imbalance_pct).
 
-Thanks,
-Ard.
+> Fair enough I suppose. However, now that you wrote such a nice comment
+> for the sd_llc_shared case, these other two cases are sad to not have a
+> comment.
+> 
+> So how about you add something like:
+> 
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9589,8 +9589,12 @@ static void nohz_balancer_kick(struct rq
+>  
+>  	sd = rcu_dereference(rq->sd);
+>  	if (sd) {
+> -		if ((rq->cfs.h_nr_running >= 1) &&
+> -		    check_cpu_capacity(rq, sd)) {
+> +		/*
+> +		 * If there's a CFS task and the current CPU has reduced
+> +		 * capacity; kick the ILB to see if there's a better CPU to run
+> +		 * on.
+> +		 */
+> +		if (rq->cfs.h_nr_running >= 1 && check_cpu_capacity(rq, sd)) {
+>  			flags = NOHZ_KICK_MASK;
+>  			goto unlock;
+>  		}
+> @@ -9598,6 +9602,10 @@ static void nohz_balancer_kick(struct rq
+>  
+>  	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, cpu));
+>  	if (sd) {
+> +		/*
+> +		 * When ASYM_CAPACITY; see if there's a higher capacity CPU to
+> +		 * run the misfit task on.
+> +		 */
+>  		if (check_misfit_status(rq, sd)) {
+>  			flags = NOHZ_KICK_MASK;
+>  			goto unlock;
+> @@ -9606,6 +9614,10 @@ static void nohz_balancer_kick(struct rq
+>  
+>  	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
+>  	if (sd) {
+> +		/*
+> +		 * When ASYM_PACKING; see if there's a more preferred CPU going
+> +		 * idle; in which case, kick the ILB to move tasks around.
+> +		 */
+
+s/going idle/currently idle/, no?
+
+>  		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
+>  			if (sched_asym_prefer(i, cpu)) {
+>  				flags = NOHZ_KICK_MASK;
+> 
