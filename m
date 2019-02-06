@@ -2,104 +2,213 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA94C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BD0C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CE7218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:43:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="QWJAsOxq"
+	by mail.kernel.org (Postfix) with ESMTP id 8645A218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbfBFVnn (ORCPT
+        id S1726565AbfBFVre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:43:43 -0500
-Received: from erza.pados.hu ([176.9.136.194]:41628 "EHLO erza.pados.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbfBFVnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:43:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
-         s=february2016; h=To:Subject:From:Content-Type:Date:MIME-Version:From:
-        Subject:To; bh=BeFnzPOgP7SDUFKa9XXlqu/yf5TUOxXrWEGIYDlSWfE=; b=QWJAsOxqTG1Evh
-        f5cogaQruBg6QjRP6d1Qzdz7Hv3CtffH8mAkOPw5DwG1di1YFHQ4ABM4rg1YpxNFPWBb+mz6ux6Qt
-        IwvD6KbWXGWnDVp4+nllf6KPBI8otXnIqd5719FKUsP0jV5ccg8GmPyi3FYlONtbZdlk1S2NRec4q
-        nzKPwTYeC7GoJ5XpQWx5ddua1Mucrli+ZeqeAFp56l4o9zTohoheyTRl2GFBYTmuadnI4c5WHdOx8
-        fa1ROnSygBRCsjMz0ScBMDEZzcpMvfs3xQToaCeWDlQGa4kEO3u4nuFuapP1zNlwMY3jIDa0jahVT
-        iY/nXbMDLJxCQpz1FrNQ==;
-Received: from localhost ([127.0.0.1] helo=webmail.pados.hu)
-        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <pados@pados.hu>)
-        id 1grUyp-00074u-1z; Wed, 06 Feb 2019 22:43:39 +0100
+        Wed, 6 Feb 2019 16:47:34 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:46735 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfBFVrd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 16:47:33 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1grV2V-0003vB-OG; Wed, 06 Feb 2019 14:47:27 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1grV2U-0008Oa-Nq; Wed, 06 Feb 2019 14:47:27 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
+        <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
+        <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
+        <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
+        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
+        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
+        <87tvhi4vl7.fsf@xmission.com> <87o97q1cky.fsf_-_@xmission.com>
+        <CACT4Y+bx6Jz0AF5ovoN=WQcbqQkF4Us=2-ACy8rzeML_GPa5Xw@mail.gmail.com>
+Date:   Wed, 06 Feb 2019 15:47:17 -0600
+In-Reply-To: <CACT4Y+bx6Jz0AF5ovoN=WQcbqQkF4Us=2-ACy8rzeML_GPa5Xw@mail.gmail.com>
+        (Dmitry Vyukov's message of "Wed, 6 Feb 2019 13:09:52 +0100")
+Message-ID: <87ef8ky4gq.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Date:   Wed, 06 Feb 2019 21:43:36 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: RainLoop/1.12.0
-From:   "Karoly Pados" <pados@pados.hu>
-Message-ID: <7af148c7c37e625525141bfa7d23754a@pados.hu>
-Subject: Re: [PATCH] USB: serial: cp210x: Fix GPIO in autosuspend
-To:     "Johan Hovold" <johan@kernel.org>
-Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20190204160944.GH4686@localhost>
-References: <20190204160944.GH4686@localhost>
- <20190115085743.GL3691@localhost> <20190114194352.4579-1-pados@pados.hu>
- <15f71a61af66817847d4b11b9e2e60e8@pados.hu>
- <20190115092607.GN3691@localhost> <20190115102942.GO3691@localhost>
-X-Spam_score: -2.9
-X-Spam_report: Spam detection software, running on the system "erza",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  Uhm, yes, sorry, it kind of went out of my head. I am doing
-    a lot of travelling lately (in the past 48 hours I've been on 3 airplanes),
-    and I had travels on earlier weeks too, mixed with some project [...] 
- Content analysis details:   (-2.9 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
- -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
-                             [score: 0.0000]
+Content-Type: text/plain
+X-XM-SPF: eid=1grV2U-0008Oa-Nq;;;mid=<87ef8ky4gq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19WEypbS3siJpd6XxGFuVBBQ49QD4+AFFs=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC][PATCH] signal: Store pending signal exit in tsk.jobctl not in tsk.pending
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uhm, yes, sorry, it kind of went out of my head. I am doing a lot of trav=
-elling lately (in the=0Apast 48 hours I've been on 3 airplanes), and I ha=
-d travels on earlier weeks too, mixed with=0Asome project releases and fa=
-mily celebrations. So my head is just somewhere else.=0ARealistically, I'=
-ll submit something by the weekend when I'm home again.=0A=0AKaroly=0A=0A=
-February 4, 2019 5:09 PM, "Johan Hovold" <johan@kernel.org> wrote:=0A=0A>=
- On Tue, Jan 15, 2019 at 11:29:42AM +0100, Johan Hovold wrote:=0A> =0A>> =
-On Tue, Jan 15, 2019 at 10:26:07AM +0100, Johan Hovold wrote:=0A>> On Tue=
-, Jan 15, 2019 at 09:17:58AM +0000, Karoly Pados wrote:=0A>>>> I think it=
-'s better to add the autopm call to gpio210x_gpio_get/set=0A>>>> only. Th=
-is will allow for a simpler patch, and keeps the autopm handling=0A>>>> c=
-onfined to the gpio paths.=0A>>> =0A>>> I'll submit a v2.=0A>>> =0A>>>>> =
-@@ -1383,6 +1397,7 @@ static void cp210x_gpio_set(struct gpio_chip *gc, u=
-nsigned int gpio, int=0A>>>>> value)=0A>>>>> } else {=0A>>>>> u16 wIndex =
-=3D buf.state << 8 | buf.mask;=0A>>>>> =0A>>>>> + usb_autopm_get_interfac=
-e(serial->interface);=0A>>>> =0A>>>> Also make sure to always check for e=
-rrors from autopm_get().=0A>>> =0A>>> I checked everywhere else, the reas=
-on I didn't check here is on=0A>>> purpose based on your previous feedbac=
-k. The caller function here=0A>>> doesn't have a return value, so the onl=
-y way to return errors is to=0A>>> log, but in my last patch to ftdi_sio =
-you made clear that errors from=0A>>> autopm_get shouldn't get logged. Tr=
-ying to call usb_control_msg() even=0A>>> though the device could not wak=
-e does not cause issues, and the return=0A>>> value from usb_control_msg(=
-) clearly identifies the reason for failure=0A>>> (failure due to autosus=
-pend), so error information is not lost either.=0A>>> So I thought not ch=
-ecking here has no real disadvantage and I still=0A>>> stay conformant to=
- your previous guidance.=0A>> =0A>> Ok, I understand your reasoning, but =
-please do check for errors and bail=0A>> out early if autopm_get() fails.=
- No need to log errors.=0A>> =0A>> Actually, we should probably add the m=
-issing error handling to the=0A>> callers and have gpio_set() propagate e=
-rrors too. If you want to take a=0A>> stab at that, that could be a follo=
-w-on patch.=0A> =0A> Karoly, did you plan on sending a v2 of this one?=0A=
-> =0A> Thanks,=0A> Johan
+Dmitry Vyukov <dvyukov@google.com> writes:
+
+> On Tue, Feb 5, 2019 at 4:26 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>>
+>> Recently syzkaller was able to create unkillablle processes by
+>> creating a timer that is delivered as a thread local signal on SIGHUP,
+>> and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop
+>> failing to deliver SIGHUP but always trying.
+>>
+>> Upon examination it turns out part of the problem is actually most of
+>> the solution.  Since 2.5 complete_signal has found all fatal signals
+>> and queued SIGKILL in every threads thread queue relying on
+>> signal->group_exit_code to preserve the information of which was the
+>> actual fatal signal.
+>>
+>> The conversion of all fatal signals to SIGKILL results in the
+>> synchronous signal heuristic in next_signal kicking in and preferring
+>> SIGHUP to SIGKILL.  Which is especially problematic as all
+>> fatal signals have already been transformed into SIGKILL.
+>>
+>> Now that we have task->jobctl we can do better and set a bit in
+>> task->jobctl instead of reusing tsk->pending[SIGKILL].  This allows
+>> giving already detected process exits a higher priority than any
+>> pending signal.
+>>
+>> Cc: stable@vger.kernel.org
+>> Reported-by: Dmitry Vyukov <dvyukov@google.com>
+>> Ref: ebf5ebe31d2c ("[PATCH] signal-fixes-2.5.59-A4")
+>> History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> ---
+>> Oleg, can you give this a quick review and see if I am missing anything?
+>> Dmitry, can you verify this runs cleanly in your test setups?
+>
+> Yes, this fixes the hang in my setup.
+> The process still hangs until I hit ^C or kill, but I guess this is an
+> intended behavior for such program.
+> Thanks for the quick fix.
+
+It is actually not an intended behavior.  The problem is that we are
+still getting synchronous signals and ordinary signals confused.
+
+The program should terminate with a SIGSEGV generated because
+the stack fills up, and no additional signals can be delivered.
+
+But that fix is a little more invsasive, and less serious.  So
+I am getting to it next.
+
+> Tested-by: Dmitry Vyukov <dvyukov@google.com>
+>
+>
+>
+>>  fs/coredump.c                |  2 +-
+>>  include/linux/sched/jobctl.h |  1 +
+>>  include/linux/sched/signal.h |  2 +-
+>>  kernel/signal.c              | 10 ++++++++--
+>>  4 files changed, 11 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/coredump.c b/fs/coredump.c
+>> index e42e17e55bfd..487995293ef0 100644
+>> --- a/fs/coredump.c
+>> +++ b/fs/coredump.c
+>> @@ -322,7 +322,7 @@ static int zap_process(struct task_struct *start, int exit_code, int flags)
+>>         for_each_thread(start, t) {
+>>                 task_clear_jobctl_pending(t, JOBCTL_PENDING_MASK);
+>>                 if (t != current && t->mm) {
+>> -                       sigaddset(&t->pending.signal, SIGKILL);
+>> +                       t->jobctl |= JOBCTL_TASK_EXIT;
+>>                         signal_wake_up(t, 1);
+>>                         nr++;
+>>                 }
+>> diff --git a/include/linux/sched/jobctl.h b/include/linux/sched/jobctl.h
+>> index 98228bd48aee..ff7b3ea43f4c 100644
+>> --- a/include/linux/sched/jobctl.h
+>> +++ b/include/linux/sched/jobctl.h
+>> @@ -18,6 +18,7 @@ struct task_struct;
+>>  #define JOBCTL_TRAP_NOTIFY_BIT 20      /* trap for NOTIFY */
+>>  #define JOBCTL_TRAPPING_BIT    21      /* switching to TRACED */
+>>  #define JOBCTL_LISTENING_BIT   22      /* ptracer is listening for events */
+>> +#define JOBCTL_TASK_EXIT       23      /* task is exiting */
+>>
+>>  #define JOBCTL_STOP_DEQUEUED   (1UL << JOBCTL_STOP_DEQUEUED_BIT)
+>>  #define JOBCTL_STOP_PENDING    (1UL << JOBCTL_STOP_PENDING_BIT)
+>> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+>> index 13789d10a50e..3f3edadf1ae1 100644
+>> --- a/include/linux/sched/signal.h
+>> +++ b/include/linux/sched/signal.h
+>> @@ -354,7 +354,7 @@ static inline int signal_pending(struct task_struct *p)
+>>
+>>  static inline int __fatal_signal_pending(struct task_struct *p)
+>>  {
+>> -       return unlikely(sigismember(&p->pending.signal, SIGKILL));
+>> +       return unlikely(p->jobctl & JOBCTL_TASK_EXIT);
+>>  }
+>>
+>>  static inline int fatal_signal_pending(struct task_struct *p)
+>> diff --git a/kernel/signal.c b/kernel/signal.c
+>> index 9ca8e5278c8e..0577e37fdf43 100644
+>> --- a/kernel/signal.c
+>> +++ b/kernel/signal.c
+>> @@ -989,7 +989,7 @@ static void complete_signal(int sig, struct task_struct *p, enum pid_type type)
+>>                         t = p;
+>>                         do {
+>>                                 task_clear_jobctl_pending(t, JOBCTL_PENDING_MASK);
+>> -                               sigaddset(&t->pending.signal, SIGKILL);
+>> +                               t->jobctl |= JOBCTL_TASK_EXIT;
+>>                                 signal_wake_up(t, 1);
+>>                         } while_each_thread(p, t);
+>>                         return;
+>> @@ -1273,7 +1273,7 @@ int zap_other_threads(struct task_struct *p)
+>>                 /* Don't bother with already dead threads */
+>>                 if (t->exit_state)
+>>                         continue;
+>> -               sigaddset(&t->pending.signal, SIGKILL);
+>> +               t->jobctl |= JOBCTL_TASK_EXIT;
+>>                 signal_wake_up(t, 1);
+>>         }
+>>
+>> @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
+>>                 goto relock;
+>>         }
+>>
+>> +       /* Has this task already been flagged for death? */
+>> +       ksig->info.si_signo = signr = SIGKILL;
+>> +       if (current->jobctl & JOBCTL_TASK_EXIT)
+>> +               goto fatal;
+>> +
+>>         for (;;) {
+>>                 struct k_sigaction *ka;
+>>
+>> @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
+>>                         continue;
+>>                 }
+>>
+>> +       fatal:
+>>                 spin_unlock_irq(&sighand->siglock);
+>>
+>>                 /*
+>> --
+>> 2.17.1
+>>
