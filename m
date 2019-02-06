@@ -2,350 +2,75 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615ABC282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC24C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18555218D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549488135;
-	bh=p8rqAzjOJt+cwwDEORI1nwyRPD6aCHKFkNofaAGLfP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=avUc8klILT5bYS2PNVCJ6cnoCdtwhXztNaGgHKeaRrpC5PwAp0NjbcLwHa6AFvLjb
-	 4qJ8Y+MF48bmQUGWt6JrEZhdN/3fgY1j87UzQS2wv+6Sp8o1pUg0+ogxh8w1SLGLpw
-	 9hLSTRDyLdUHVcnNcngHg4XYBoP9UFPydVBFwR/8=
+	by mail.kernel.org (Postfix) with ESMTP id 171F8218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:22:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="XR+jEie+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfBFVWN (ORCPT
+        id S1726958AbfBFVWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:22:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 16:22:32 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:52932 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbfBFVWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:22:13 -0500
-Received: from localhost (unknown [69.71.4.100])
+        id S1725983AbfBFVWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 16:22:32 -0500
+Received: from zn.tnic (p200300EC2BCEF100DD8CA670FB4D187A.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:f100:dd8c:a670:fb4d:187a])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C84F2218B0;
-        Wed,  6 Feb 2019 21:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549488131;
-        bh=p8rqAzjOJt+cwwDEORI1nwyRPD6aCHKFkNofaAGLfP4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lBc41plIFBGELCVCKyq3f4RCLd8VHZedEyKzgDKoIStxLrBDhdNZc/axy6WF9BYMt
-         AtjuTfJfKdWxleVkHQQuVI5p9Tdl6jeaszNEPU7frLtbRNTSIAJV/JZagb1ZSdtaZO
-         UQDsNpV1vJmZdsMurYzP1Y/jovWNjLW394ly+4sI=
-Date:   Wed, 6 Feb 2019 15:22:06 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 1/2] PCI: fix serious bug when sizing bridges with
- additional size
-Message-ID: <20190206212206.GE7268@google.com>
-References: <PS2P216MB064285AB6C7C1045AB86FC24806F0@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 816BA1EC0586;
+        Wed,  6 Feb 2019 22:22:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549488150;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=C+YkTlw+vDGbmKozFBkEC9gkJ2lauWYajkpGTfJXtPc=;
+        b=XR+jEie+q+bVO4mW+6hmr73tnIBCDATW0uYIQLcK7hz1Xe+Rb4iSGV9Jtpm/wGuHdy++Mn
+        J8tNd9ZwC0y6cGqXwzjTPlmE5F7C3/RH/f6Plib9CS45RvaqKRM741i0wAmTo2GJHpQFL0
+        TCOZEvg+Y5immA+kmO6YqqGApU5ShzQ=
+Date:   Wed, 6 Feb 2019 22:22:18 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Linux Edac Mailing List <linux-edac@vger.kernel.org>
+Subject: Re: linux-next: Tree for Feb 6 (drivers/edac/skx* and i10nm)
+Message-ID: <20190206212218.GJ7314@zn.tnic>
+References: <20190206170000.286b1f53@canb.auug.org.au>
+ <3f095f3e-ace0-aadb-ead1-01908da5c08c@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PS2P216MB064285AB6C7C1045AB86FC24806F0@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
+In-Reply-To: <3f095f3e-ace0-aadb-ead1-01908da5c08c@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Can you please add a cover letter and series revision the next time
-you post this?  See the list archives for samples.  That helps me know
-when I can ignore old patches when they've been superseded.
-
-I think you also need to put something in the "To:" header.  I usually
-use linux-pci@vger.kernel.org when there's no other obvious candidate.
-Mutt doesn't seem to handle the empty To: header correctly; I see this
-when responding:
-
-  Cc: no To-header on input <;,
-	"mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-	...
-
-You could probably also trim the CC: list.  I'm not sure *all* of them
-will be interested in PCI details like this.  But I don't really want
-to offend any of them by suggesting names to remove :)
-
-On Wed, Feb 06, 2019 at 10:25:13AM +0000, Nicholas Johnson wrote:
-> Background: I discovered a bug while preparing my next patch for
-> Thunderbolt native PCI enumeration. This bugfix is vital for that next
-> Thunderbolt patch. They are related and could be put together but I am
-> presenting them as separate patches.
+On Wed, Feb 06, 2019 at 01:11:23PM -0800, Randy Dunlap wrote:
+> CONFIG_EDAC_I10NM=y
+> but CONFIG_EDAC_SKX is not set.
+> since # CONFIG_ACPI is not set
 > 
-> Nature of problem: On boot, the PCI bridges are handled in the function
-> pci_assign_unassigned_root_bus_resources(). This function makes multiple
-> passes / attempts to assign all of the resources. It calls
-> __pci_bus_size_bridges() which tries to assign required resources, plus
-> additional requested space. It makes calls to pbus_size_io() and
-> pbus_size_mem() which return zero on success. However, these functions
-> misleadingly return non-zero if the resource is already assigned.
-> 
-> The fallout: If the first attempt to allocate resources on a bridge
-> succeeds in 64-bit MMIO_PREF, but fails in 32-bit MMIO, then a second
-> attempt is made. Then, the __pbus_size_mem() returns non-zero for
-> MMIO_PREF because the resource is already assigned. That makes
-> __pci_bus_size_bridges() think there is no space (ENOSPC) and it
-> attempts to assign the sum of the MMIO_PREF and MMIO sizes into a 32-bit
-> window. This means that it tries to request the sum of the the MMIO and
-> MMIO_PREF size into the MMIO window. In the best case, the MMIO size is
-> equal to the MMIO_PREF size and we get double the window in MMIO, and
-> the correct size in MMIO_PREF, and nothing bad happens. In a worse case,
-> doubling the size makes it fail due to lack of space in the miniscule
-> MMIO 32-bit address space. In that case, we might be able to reduce the
-> requested size. In the worst case, we have requested for a vast amount
-> of MMIO_PREF, and a small amount of MMIO. The kernel tries to assign the
-> sum of the sizes of the two types in the MMIO window, leaving us with
-> MMIO_PREF assigned and MMIO unassigned due to the requested size being
-> too large to assign. In this case, there is nothing we can do about it.
-> If a massive additional MMIO_PREF and a small non-zero amount of
-> additional MMIO are needed, then we cannot reduce the requested
-> MMIO_PREF to work around the bug.
-> 
-> The cause: pbus_size_io() and pbus_size_mem() both call
-> find_free_bus_resource() to identify which bridge window of the bus
-> meets the criteria. This function explicitly skips resources with a
-> parent, inevitably returning NULL. The functions pbus_size_io() and
-> pbus_size_mem() return -ENOSPC if find_free_bus_resource() returns NULL,
-> meaning an assigned resource is interpreted as having been failed to
-> assign, potentially causing it to try to allocate it again in another
-> window.
-> 
-> The solution: my proposed patch renames find_free_bus_resource() to
-> find_bus_resource_of_type() and modifies it to not skip resources with
-> r->parent. The name change is because returning an assigned resource
-> makes the resource potentially not "free". The calling functions,
-> pbus_size_io() and pbus_size_mem() have checks added for b_res->parent
-> and they return 0 (success) in this case. This is because a resource
-> with a parent is already assigned and should be interpreted as a
-> success, not a failure.
-> 
-> Testing: I have tested my proposed patch and it appears to work
-> flawlessly. It has the added benefit of slashing the number of attempts
-> taken to assign a given BAR, meaning a much cleaner dmesg. In fact, in
-> my configuration, it has gone from very messy to mainly IO BAR failures.
-> There is nothing that can be done about IO BARs because of the 16-bit
-> hardware limitation, meaning the amount of available space cannot be
-> increased. All that I am left with is a few "failed to assign [mem
-> size]" very early in boot, before those BARs succeed in the next
-> attempt. After the small initial set of failures for MEM, there are no
-> more "failed to assign" whatsoever for non-IO BARs.
+> Should EDAC_I10NM depend on ACPI also?
 
-If it's possible to distill a concrete example of an actual case that
-previously failed and now works, with real addresses from dmesg or
-similar, that is as small as possible, that might help understand the
-changes you're making.
+This should do it:
 
-> Remarks: I fixed some other block comments to comply with kernel code
-> styling standards. I had to modify the one block comment to reflect the
-> changes, and checkpatch.pl got really angry and yelled at me. So I
-> figured I may as well fix the lot.
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/commit/?h=for-next&id=d6a9f7336d925364daca00557afa59a68e78b422
 
-Thanks for the comment cleanups.  I do want those, but it's better if
-you can do the minimal changes required to accompany the code changes,
-followed by a second patch that does *only* the reformatting required
-by checkpatch.  That way the second patch will be trivial to review,
-since it's obvious that it doesn't change any code.  It also avoids
-cluttering the actual bug-fix or feature-add patches with changes to
-unrelated comments.  It's OK if the bug-fix patch is not 100%
-checkpatch-clean, as long as it doesn't make things *worse*.  It's
-even OK if the final patch is not 100% checkpatch-clean; human
-judgment is required to interpret the things it complains about.
+-- 
+Regards/Gruss,
+    Boris.
 
-I would wait a few days before reposting to address that.  Sometimes
-other people will comment and you can take care of those comments at
-the same time.  It's a little frustrating as a reviewer to spend a
-lot of time reviewing v1 only to find that v2 and v3 have been
-posted with significant changes while you were looking at v1.
-
-> Signed-off-by: Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-> ---
->  drivers/pci/setup-bus.c | 82 +++++++++++++++++++++++++----------------
->  1 file changed, 51 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index a8be1a90f..c7e0a5e2b 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -563,17 +563,19 @@ void pci_setup_cardbus(struct pci_bus *bus)
->  }
->  EXPORT_SYMBOL(pci_setup_cardbus);
->  
-> -/* Initialize bridges with base/limit values we have collected.
-> -   PCI-to-PCI Bridge Architecture Specification rev. 1.1 (1998)
-> -   requires that if there is no I/O ports or memory behind the
-> -   bridge, corresponding range must be turned off by writing base
-> -   value greater than limit to the bridge's base/limit registers.
-> -
-> -   Note: care must be taken when updating I/O base/limit registers
-> -   of bridges which support 32-bit I/O. This update requires two
-> -   config space writes, so it's quite possible that an I/O window of
-> -   the bridge will have some undesirable address (e.g. 0) after the
-> -   first write. Ditto 64-bit prefetchable MMIO.  */
-> +/*
-> + * Initialize bridges with base/limit values we have collected.
-> + * PCI-to-PCI Bridge Architecture Specification rev. 1.1 (1998)
-> + * requires that if there is no I/O ports or memory behind the
-> + * bridge, corresponding range must be turned off by writing base
-> + * value greater than limit to the bridge's base/limit registers.
-> + *
-> + * Note: care must be taken when updating I/O base/limit registers
-> + * of bridges which support 32-bit I/O. This update requires two
-> + * config space writes, so it's quite possible that an I/O window of
-> + * the bridge will have some undesirable address (e.g. 0) after the
-> + * first write. Ditto 64-bit prefetchable MMIO.
-> + */
->  static void pci_setup_bridge_io(struct pci_dev *bridge)
->  {
->  	struct resource *res;
-> @@ -636,9 +638,11 @@ static void pci_setup_bridge_mmio_pref(struct pci_dev *bridge)
->  	struct pci_bus_region region;
->  	u32 l, bu, lu;
->  
-> -	/* Clear out the upper 32 bits of PREF limit.
-> -	   If PCI_PREF_BASE_UPPER32 was non-zero, this temporarily
-> -	   disables PREF range, which is ok. */
-> +	/*
-> +	 * Clear out the upper 32 bits of PREF limit.
-> +	 * If PCI_PREF_BASE_UPPER32 was non-zero, this temporarily
-> +	 * disables PREF range, which is ok.
-> +	 */
->  	pci_write_config_dword(bridge, PCI_PREF_LIMIT_UPPER32, 0);
->  
->  	/* Set up PREF base/limit. */
-> @@ -730,9 +734,11 @@ int pci_claim_bridge_resource(struct pci_dev *bridge, int i)
->  	return -EINVAL;
->  }
->  
-> -/* Check whether the bridge supports optional I/O and
-> -   prefetchable memory ranges. If not, the respective
-> -   base/limit registers must be read-only and read as 0. */
-> +/*
-> + * Check whether the bridge supports optional I/O and
-> + * prefetchable memory ranges. If not, the respective
-> + * base/limit registers must be read-only and read as 0.
-> + */
->  static void pci_bridge_check_ranges(struct pci_bus *bus)
->  {
->  	u16 io;
-> @@ -752,9 +758,11 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
->  	if (io)
->  		b_res[0].flags |= IORESOURCE_IO;
->  
-> -	/*  DECchip 21050 pass 2 errata: the bridge may miss an address
-> -	    disconnect boundary by one PCI data phase.
-> -	    Workaround: do not use prefetching on this device. */
-> +	/*
-> +	 * DECchip 21050 pass 2 errata: the bridge may miss an address
-> +	 * disconnect boundary by one PCI data phase.
-> +	 * Workaround: do not use prefetching on this device.
-> +	 */
->  	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device == 0x0001)
->  		return;
->  
-> @@ -789,11 +797,17 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
->  	}
->  }
->  
-> -/* Helper function for sizing routines: find first available
-> -   bus resource of a given type. Note: we intentionally skip
-> -   the bus resources which have already been assigned (that is,
-> -   have non-NULL parent resource). */
-> -static struct resource *find_free_bus_resource(struct pci_bus *bus,
-> +/*
-> + * Helper function for sizing routines: find first bus resource of a
-> + * given type. Note: we do not skip the bus resources which have already
-> + * been assigned (r->parent != NULL). This is because a resource that is
-> + * already assigned (nothing more to be done) will be indistinguishable
-> + * from one that failed due to lack of space if we skip assigned
-> + * resources. If the caller function cannot tell the difference then it
-> + * might try to place the resources in a different window, doubling up on
-> + * resources or causing unforeseeable issues.
-> + */
-> +static struct resource *find_bus_resource_of_type(struct pci_bus *bus,
->  			 unsigned long type_mask, unsigned long type)
->  {
->  	int i;
-> @@ -802,7 +816,7 @@ static struct resource *find_free_bus_resource(struct pci_bus *bus,
->  	pci_bus_for_each_resource(bus, r, i) {
->  		if (r == &ioport_resource || r == &iomem_resource)
->  			continue;
-> -		if (r && (r->flags & type_mask) == type && !r->parent)
-> +		if (r && (r->flags & type_mask) == type)
->  			return r;
->  	}
->  	return NULL;
-> @@ -820,8 +834,10 @@ static resource_size_t calculate_iosize(resource_size_t size,
->  		size = min_size;
->  	if (old_size == 1)
->  		old_size = 0;
-> -	/* To be fixed in 2.5: we should have sort of HAVE_ISA
-> -	   flag in the struct pci_bus. */
-> +	/*
-> +	 * To be fixed in 2.5: we should have sort of HAVE_ISA
-> +	 * flag in the struct pci_bus.
-> +	 */
->  #if defined(CONFIG_ISA) || defined(CONFIG_EISA)
->  	size = (size & 0xff) + ((size & ~0xffUL) << 2);
->  #endif
-> @@ -900,14 +916,16 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
->  		resource_size_t add_size, struct list_head *realloc_head)
->  {
->  	struct pci_dev *dev;
-> -	struct resource *b_res = find_free_bus_resource(bus, IORESOURCE_IO,
-> -							IORESOURCE_IO);
-> +	struct resource *b_res = find_bus_resource_of_type(bus, IORESOURCE_IO,
-> +					IORESOURCE_IO);
->  	resource_size_t size = 0, size0 = 0, size1 = 0;
->  	resource_size_t children_add_size = 0;
->  	resource_size_t min_align, align;
->  
->  	if (!b_res)
->  		return;
-> +	if (b_res->parent)
-> +		return;
->  
->  	min_align = window_alignment(bus, IORESOURCE_IO);
->  	list_for_each_entry(dev, &bus->devices, bus_list) {
-> @@ -1012,7 +1030,7 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
->  	resource_size_t min_align, align, size, size0, size1;
->  	resource_size_t aligns[18];	/* Alignments from 1Mb to 128Gb */
->  	int order, max_order;
-> -	struct resource *b_res = find_free_bus_resource(bus,
-> +	struct resource *b_res = find_bus_resource_of_type(bus,
->  					mask | IORESOURCE_PREFETCH, type);
->  	resource_size_t children_add_size = 0;
->  	resource_size_t children_add_align = 0;
-> @@ -1020,6 +1038,8 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
->  
->  	if (!b_res)
->  		return -ENOSPC;
-> +	if (b_res->parent)
-> +		return 0;
->  
->  	memset(aligns, 0, sizeof(aligns));
->  	max_order = 0;
-> -- 
-> 2.19.1
-> 
+Good mailing practices for 400: avoid top-posting and trim the reply.
