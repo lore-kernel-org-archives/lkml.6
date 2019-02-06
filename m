@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90AFC282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57562C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1D9920821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1817220821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xZCxSRCm"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UA97yBlh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbfBFQOd (ORCPT
+        id S1730849AbfBFQOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:14:33 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37357 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729666AbfBFQOb (ORCPT
+        Wed, 6 Feb 2019 11:14:36 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53200 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730775AbfBFQOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:14:31 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c8so1397982wrs.4
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:14:30 -0800 (PST)
+        Wed, 6 Feb 2019 11:14:33 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so3078598wml.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:14:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EDVSHHteQjKl2FGFeIJNZ1MeClUNp/quRGzytDHcfMk=;
-        b=xZCxSRCmUHLA5Pn7p3HteWgmDp/pBeQkOToANCesPf7qRj0nqnUASHBqao9AMFneWb
-         zDqUU0PsOoKpTxfO92k1ITV16A68cAsXMJgCU1s2c8W7goNGmsbT5Q47ao1xfZLOb3lU
-         CH07ysVe7hVMpRHlQeQxFccCttcTPANJNq6OcMOgPYT66jYyqbGPyUDhB74EVi7yyqWE
-         swAWHKKrtP4MTPCtJNuOH5A+EXutiYbVRS5EuCd0B+1G4Odfa0IkKdYldTI2I6h1WCBd
-         ebZhrIKLGmT2g37//8OFeX4n8MACv9Y9XTnaEmn9bms66kpUFYzkjlyapPxPAkWVcM/y
-         6vCA==
+        bh=OoOAAHwh4rgzNRFqB1rNv+feFdv+xbxO5pzW9hXMxGY=;
+        b=UA97yBlhEMO6p0CFDPJbGtTUF9DPES/4crLzXlVCfUiK4I033eSHkf9uU8bUWg/uKr
+         ccOgS6z9cMXnYDVLYuhnn8n4sgLaKtJQW0FVv07IMev3iJY2ELBlt3f1NLR1zYh0NMIH
+         DPjUJ/HBbVu+APkiLLvtF43MVpkrinpzFYDhfZAwRTNkydCAjwb4nI8y7T9CVh1dKASm
+         tnyZuAtNszD37zgG3vaMyzWBfk5TYVoLVOOr7xrGLmqMEr+iLz39gbUyzxWzChjaDeC/
+         2/gs1ndRfGCj2snA5LT3CXbABLf77uMkxD1VvQMVUsC5vxasKMpbk7MIW0QXq0ewbXCc
+         ajHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EDVSHHteQjKl2FGFeIJNZ1MeClUNp/quRGzytDHcfMk=;
-        b=RUp8whJV5vPOzfnosTR+/a3TJ7x4J/V0YLWDN81gT5XkAH1oq+RNcB5a05/9sk7m4p
-         8UcroiiNvVjShGzzqJDDEKR9wP+bvKxwqkn7hMkktdnhozmCm+M0N1lIGqddGNrQxynA
-         /jIsg2HXyTpy6p20W3Nu6ukzB2M/q5WNPfnmKXP6hik6oQViYjYhWMvoCzkc8exOCWbJ
-         QBJbD3cDRCgz8Ye/gOiK/rrxy7YezK77j5LZuzVpDMC24sBkgsFTeCGys0As75hxfSA/
-         iOCF4tsYgp5ev2MToTr24A0ykbjG1V+pVWM4x8HyvH+K+ouvCQaTMCF+HIZH+9l9sII8
-         iERA==
-X-Gm-Message-State: AHQUAuY2wP1E723jDIDZrbh7P6EWqRk+HioJgZVfrpcOCpzLIdLdB77l
-        /DmDoxX8f9KsqXV4Yv66OBWBkKUVMhA=
-X-Google-Smtp-Source: AHgI3IbpWFs4PzZCJ5XJVx8zOnye89Kg6g6efNsmjp6cappZr5zAJwjLYHi0WbTs80vSYCNxUO7q7Q==
-X-Received: by 2002:adf:ec83:: with SMTP id z3mr8829307wrn.264.1549469669652;
-        Wed, 06 Feb 2019 08:14:29 -0800 (PST)
+        bh=OoOAAHwh4rgzNRFqB1rNv+feFdv+xbxO5pzW9hXMxGY=;
+        b=uPYrsvppdEp/QKpCl+RMJgfKo2TNsxL15I90tPaZsYF+w3EkSjPkURv5wvZjLOBeoi
+         qJptOzas551Gx97MR+USxXBabG54NlMCE8lCIRJQOY5JxbJHKIGnU7bCcMg1r+HhEA1e
+         W56oNIT9y6KXzBII/Nix/Hlws5cKB42Sf2ySiPYMz15jLUN9ABEHs0wz8FjTh95uuQNb
+         sXAjQdyctuKBn6ZX++/pS/Kd+LJFgRUAfMWgsc9vr6iqf0Vbo1y4ujwNVF/uCs8P5xi3
+         OxoKlYLJtOFuaFr6Rm6AiwunFB8NKB1MR1lqMTijapaC9yxcxkkm0IxvvmsEkhmqEad7
+         QYfg==
+X-Gm-Message-State: AHQUAuaD+afYe9L8DhOmu9mFQpuzCRcoBsq1U12gZr7/rU6tG0heShE0
+        h1Sd444Tb543KyzAVciDgWK2AwD5p8k=
+X-Google-Smtp-Source: AHgI3IY4MHznUNBn+npjpm+I8SYTmBtfklwXq+mj/b01reVkox0RIJ0EVvYuX+tgAndqSbq1p/a82Q==
+X-Received: by 2002:a7b:ce8e:: with SMTP id q14mr2073856wmj.10.1549469671295;
+        Wed, 06 Feb 2019 08:14:31 -0800 (PST)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:e4a1:3fb3:af18:c98a])
-        by smtp.gmail.com with ESMTPSA id y20sm27492328wra.51.2019.02.06.08.14.28
+        by smtp.gmail.com with ESMTPSA id y20sm27492328wra.51.2019.02.06.08.14.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 06 Feb 2019 08:14:28 -0800 (PST)
+        Wed, 06 Feb 2019 08:14:30 -0800 (PST)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org
 Cc:     tj@kernel.org, sargun@sargun.me, xiexiuqi@huawei.com,
         xiezhipeng1@huawei.com, torvalds@linux-foundation.org,
         Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 1/2] sched/fair: optimization of update_blocked_averages()
-Date:   Wed,  6 Feb 2019 17:14:21 +0100
-Message-Id: <1549469662-13614-2-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH 2/2] sched/fair: Fix O(nr_cgroups) in load balance path
+Date:   Wed,  6 Feb 2019 17:14:22 +0100
+Message-Id: <1549469662-13614-3-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
 References: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
@@ -72,87 +72,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removing a cfs_rq from rq->leaf_cfs_rq_list can break the parent/child
-ordering of the list when it will be added back. In order to remove an
-empty and fully decayed cfs_rq, we must remove its children too so they
-will be added back in the right order next time.
+This reverts:
+  commit c40f7d74c741 ("sched/fair: Fix infinite loop in update_blocked_averages() by reverting a9e7f6544b9c")
 
-With a normal decay of pelt, a parent will be empty and fully decayed
-if all children are empty and fully decayed too. In such a case, we just
-have to ensure that the whole branch will be added when a new task is
-enqueued. This is default behavior since :
-  commit f6783319737f ("sched/fair: Fix insertion in rq->leaf_cfs_rq_list")
-
-In case of throttling, the pelt of throttled cfs_rq will not be updated
-whereas the parent will. This breaks the assumption made above unless we
-remove the children of a cfs_rq that is throttled. Then, they will be
-added back when unthrottled and a sched_entity will be enqueued.
-
-As throttled cfs_rq are now removed from the list, we can remove the
-associated test in update_blocked_averages().
+Now that cfs_rq can be safely removed/added in the list, we can re-apply
+ commit a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/fair.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c | 43 ++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 34 insertions(+), 9 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ffd1ae7..badf8173 100644
+index badf8173..c6167bb 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -346,6 +346,18 @@ static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+@@ -368,9 +368,10 @@ static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+ 	SCHED_WARN_ON(rq->tmp_alone_branch != &rq->leaf_cfs_rq_list);
+ }
+ 
+-/* Iterate through all cfs_rq's on a runqueue in bottom-up order */
+-#define for_each_leaf_cfs_rq(rq, cfs_rq) \
+-	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
++/* Iterate thr' all leaf cfs_rq's on a runqueue */
++#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)			\
++	list_for_each_entry_safe(cfs_rq, pos, &rq->leaf_cfs_rq_list,	\
++				 leaf_cfs_rq_list)
+ 
+ /* Do the two (enqueued) entities belong to the same group ? */
+ static inline struct cfs_rq *
+@@ -461,8 +462,8 @@ static inline void assert_list_leaf_cfs_rq(struct rq *rq)
  {
- 	if (cfs_rq->on_list) {
-+		struct rq *rq = rq_of(cfs_rq);
-+
-+		/*
-+		 * With cfs_rq being unthrottled/throttled during an enqueue,
-+		 * it can happen the tmp_alone_branch points the a leaf that
-+		 * we finally want to del. In this case, tmp_alone_branch moves
-+		 * to the prev element but it will point to rq->leaf_cfs_rq_list
-+		 * at the end of the enqueue.
-+		 */
-+		if (rq->tmp_alone_branch == &cfs_rq->leaf_cfs_rq_list)
-+			rq->tmp_alone_branch = cfs_rq->leaf_cfs_rq_list.prev;
-+
- 		list_del_rcu(&cfs_rq->leaf_cfs_rq_list);
- 		cfs_rq->on_list = 0;
- 	}
-@@ -4438,6 +4450,10 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
- 		/* adjust cfs_rq_clock_task() */
- 		cfs_rq->throttled_clock_task_time += rq_clock_task(rq) -
- 					     cfs_rq->throttled_clock_task;
-+
-+		/* Add cfs_rq with already running entity in the list */
-+		if (cfs_rq->nr_running >= 1)
-+			list_add_leaf_cfs_rq(cfs_rq);
- 	}
+ }
  
- 	return 0;
-@@ -4449,8 +4465,10 @@ static int tg_throttle_down(struct task_group *tg, void *data)
- 	struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+-#define for_each_leaf_cfs_rq(rq, cfs_rq)	\
+-		for (cfs_rq = &rq->cfs; cfs_rq; cfs_rq = NULL)
++#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)	\
++		for (cfs_rq = &rq->cfs, pos = NULL; cfs_rq; cfs_rq = pos)
  
- 	/* group is entering throttled state, stop time */
--	if (!cfs_rq->throttle_count)
-+	if (!cfs_rq->throttle_count) {
- 		cfs_rq->throttled_clock_task = rq_clock_task(rq);
-+		list_del_leaf_cfs_rq(cfs_rq);
-+	}
- 	cfs_rq->throttle_count++;
+ static inline struct sched_entity *parent_entity(struct sched_entity *se)
+ {
+@@ -7699,10 +7700,27 @@ static inline bool others_have_blocked(struct rq *rq)
  
- 	return 0;
-@@ -7699,10 +7717,6 @@ static void update_blocked_averages(int cpu)
- 	for_each_leaf_cfs_rq(rq, cfs_rq) {
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 
++static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
++{
++	if (cfs_rq->load.weight)
++		return false;
++
++	if (cfs_rq->avg.load_sum)
++		return false;
++
++	if (cfs_rq->avg.util_sum)
++		return false;
++
++	if (cfs_rq->avg.runnable_load_sum)
++		return false;
++
++	return true;
++}
++
+ static void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+-	struct cfs_rq *cfs_rq;
++	struct cfs_rq *cfs_rq, *pos;
+ 	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
+ 	bool done = true;
+@@ -7714,7 +7732,7 @@ static void update_blocked_averages(int cpu)
+ 	 * Iterates the task_group tree in a bottom up fashion, see
+ 	 * list_add_leaf_cfs_rq() for details.
+ 	 */
+-	for_each_leaf_cfs_rq(rq, cfs_rq) {
++	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
  		struct sched_entity *se;
  
--		/* throttled entities do not contribute to load */
--		if (throttled_hierarchy(cfs_rq))
--			continue;
--
  		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq))
- 			update_tg_load_avg(cfs_rq, 0);
+@@ -7725,6 +7743,13 @@ static void update_blocked_averages(int cpu)
+ 		if (se && !skip_blocked_update(se))
+ 			update_load_avg(cfs_rq_of(se), se, 0);
  
++		/*
++		 * There can be a lot of idle CPU cgroups.  Don't let fully
++		 * decayed cfs_rqs linger on the list.
++		 */
++		if (cfs_rq_is_decayed(cfs_rq))
++			list_del_leaf_cfs_rq(cfs_rq);
++
+ 		/* Don't need periodic decay once load/util_avg are null */
+ 		if (cfs_rq_has_blocked(cfs_rq))
+ 			done = false;
+@@ -10606,10 +10631,10 @@ const struct sched_class fair_sched_class = {
+ #ifdef CONFIG_SCHED_DEBUG
+ void print_cfs_stats(struct seq_file *m, int cpu)
+ {
+-	struct cfs_rq *cfs_rq;
++	struct cfs_rq *cfs_rq, *pos;
+ 
+ 	rcu_read_lock();
+-	for_each_leaf_cfs_rq(cpu_rq(cpu), cfs_rq)
++	for_each_leaf_cfs_rq_safe(cpu_rq(cpu), cfs_rq, pos)
+ 		print_cfs_rq(m, cpu, cfs_rq);
+ 	rcu_read_unlock();
+ }
 -- 
 2.7.4
 
