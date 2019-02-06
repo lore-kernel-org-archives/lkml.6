@@ -2,126 +2,101 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E34C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AED7C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2282175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 533D32175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:06:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbfBFKF3 (ORCPT
+        id S1729001AbfBFKGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:05:29 -0500
-Received: from ozlabs.org ([203.11.71.1]:35733 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbfBFKF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:05:29 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43vcWp4B2fz9sMM;
-        Wed,  6 Feb 2019 21:05:26 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Build regressions/improvements in v5.0-rc5
-In-Reply-To: <5ccff302-3986-5892-d072-5c334484f990@infradead.org>
-References: <20190204134234.13636-1-geert@linux-m68k.org> <33e58393-97f1-321e-5ee0-a1242c7c7a26@infradead.org> <5ccff302-3986-5892-d072-5c334484f990@infradead.org>
-Date:   Wed, 06 Feb 2019 21:05:25 +1100
-Message-ID: <87zhr9kza2.fsf@concordia.ellerman.id.au>
+        Wed, 6 Feb 2019 05:06:38 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:58218 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726598AbfBFKGh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:06:37 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16A3tfV003010;
+        Wed, 6 Feb 2019 04:05:51 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2qfp68rkf2-1;
+        Wed, 06 Feb 2019 04:05:51 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id E0EA3611C8BB;
+        Wed,  6 Feb 2019 04:05:58 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 6 Feb 2019
+ 10:05:50 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x16A5nik007087; Wed,
+ 6 Feb 2019 10:05:49 GMT
+Date:   Wed, 6 Feb 2019 10:05:49 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+CC:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ASoC: dapm: Check for NULL widget in dapm_update_dai_unlocked
+Message-ID: <20190206100549.GO3837@imbe.wolfsonmicro.main>
+References: <CGME20190205211638epcas3p409823d4acac8073473153d745151ea5f@epcas3p4.samsung.com>
+ <20190205211622.GA5891@kozik-lap>
+ <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=781 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902060080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
-> On 2/4/19 9:46 AM, Randy Dunlap wrote:
->> On 2/4/19 5:42 AM, Geert Uytterhoeven wrote:
->>> Below is the list of build error/warning regressions/improvements in
->>> v5.0-rc5[1] compared to v4.20[2].
->>>
->>> Summarized:
->>>   - build errors: +2/-4
->>>   - build warnings: +113/-14843
->>>
->>> JFYI, when comparing v5.0-rc5[1] to v5.0-rc4[3], the summaries are:
->>>   - build errors: +0/-0
->>>   - build warnings: +56/-59
->>>
->>> Note that there may be false regressions, as some logs are incomplete.
->>> Still, they're build errors/warnings.
->>>
->>> Happy fixing! ;-)
->>>
->>> Thanks to the linux-next team for providing the build service.
->>>
->>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/ (238 out of 240 configs)
->>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8fe28cb58bcb235034b64cbbb7550a8a43fd88be/ (all 240 configs)
->>> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/f17b5f06cb92ef2250513a1e154c47b78df07d40/ (238 out of 240 configs)
->>>
->>>
->>>
->>> *** WARNINGS ***
->>>
->>> 113 warning regressions:
->> 
->>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS:  => N/A
->> 
->> Hi Geert,
->> 
->> I am trying to find the above warning (needle) in the haystack.
->> Can you please direct me to which config/build it is in?
->> 
->> Is there a good way for me to find it?
->> 
->> thanks.
->> 
->
-> Working backwards, it probably comes from this:
->
-> config CURRITUCK
-> 	bool "IBM Currituck (476fpe) Support"
-> 	depends on PPC_47x
-> 	select SWIOTLB
-> 	select 476FPE
-> 	select PPC4xx_PCI_EXPRESS
->
-> This is the only similar Kconfig segment that does not select FORCE_PCI
-> but PPC4xx_PCI_EXPRESS depends on PCI but
-> # CONFIG_PCI is not set
->
-> This could be related to a recent series of patches that allows ACPI to
-> be built without having PCI enabled.
->
-> Michael?
+DAIs linked to the dummy will not have an associated playback/capture
+widget, so we need to skip the update in that case.
 
-There isn't really an easy way to do it sorry.
+Fixes: 078a85f2806f ("ASoC: dapm: Only power up active channels from a DAI")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-If you download the page for the revision:
-  http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/
+Ok so that all makes sense, this patch is probably the best fix?
 
-With a lot of grep/sed/awk you can get a list of the URLs for all the
-builds eg. one would be:
+Thanks,
+Charles
 
-  http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/
+ sound/soc/soc-dapm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-And then you can just tack on "log/" to get:
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 482ddb825fb59..5235d8828758a 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -2570,6 +2570,9 @@ static int dapm_update_dai_unlocked(struct snd_pcm_substream *substream,
+ 	else
+ 		w = dai->capture_widget;
+ 
++	if (!w)
++		return 0;
++
+ 	dev_dbg(dai->dev, "Update DAI routes for %s %s\n", dai->name,
+ 		dir == SNDRV_PCM_STREAM_PLAYBACK ? "playback" : "capture");
+ 
+-- 
+2.11.0
 
-  http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/log/
-
-Which you can wget and grep.
-
-But that's all a bit of a pain.
-
-I have on my todo list to add json formatted build results and revision
-pages, which would make it quite a bit simpler. But of course I haven't
-had time to do it yet :/
-
-cheers
