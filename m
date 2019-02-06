@@ -5,78 +5,78 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8744C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D12C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98A792175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBA822175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731053AbfBFPIX (ORCPT
+        id S1731076AbfBFPIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:08:23 -0500
-Received: from mga12.intel.com ([192.55.52.136]:27468 "EHLO mga12.intel.com"
+        Wed, 6 Feb 2019 10:08:30 -0500
+Received: from foss.arm.com ([217.140.101.70]:54170 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729107AbfBFPIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:08:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 07:08:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="124417225"
-Received: from kmsmsx153.gar.corp.intel.com ([172.21.73.88])
-  by orsmga003.jf.intel.com with ESMTP; 06 Feb 2019 07:08:20 -0800
-Received: from pgsmsx102.gar.corp.intel.com ([169.254.6.99]) by
- KMSMSX153.gar.corp.intel.com ([169.254.5.199]) with mapi id 14.03.0415.000;
- Wed, 6 Feb 2019 23:08:19 +0800
-From:   "Pan, Harry" <harry.pan@intel.com>
-To:     "pavel@ucw.cz" <pavel@ucw.cz>
-CC:     "Brown, Len" <len.brown@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gs0622@gmail.com" <gs0622@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / suspend: measure the time of filesystem syncing
-Thread-Topic: [PATCH] PM / suspend: measure the time of filesystem syncing
-Thread-Index: AQHUu4AgquesjEnW50+dl61NWIyu6qXRNN0AgAEpl4A=
-Date:   Wed, 6 Feb 2019 15:08:18 +0000
-Message-ID: <fb17e68f94236b1dd02419ebe01c9f76f6fe2259.camel@intel.com>
-References: <20190203052007.27392-1-harry.pan@intel.com>
-         <20190205212308.GA2816@amd>
-In-Reply-To: <20190205212308.GA2816@amd>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.255.140.202]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7A22E95B5717B7458C90F6EFD6E1727A@intel.com>
-Content-Transfer-Encoding: base64
+        id S1730230AbfBFPI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:08:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D29280D;
+        Wed,  6 Feb 2019 07:08:29 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04B8A3F675;
+        Wed,  6 Feb 2019 07:08:27 -0800 (PST)
+Subject: Re: [PATCH 02/19] dma-iommu: cleanup dma-iommu.h
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190114094159.27326-1-hch@lst.de>
+ <20190114094159.27326-3-hch@lst.de>
+ <3f78b779-4360-1204-e942-39a8a81759c7@arm.com> <20190201161305.GI6532@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5bf081c2-2b8c-d3d1-c93e-468c8f3cef67@arm.com>
+Date:   Wed, 6 Feb 2019 15:08:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190201161305.GI6532@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTAyLTA1IGF0IDIyOjIzICswMTAwLCBQYXZlbCBNYWNoZWsgd3JvdGU6DQo+
-IE9uIFN1biAyMDE5LTAyLTAzIDEzOjIwOjA3LCBIYXJyeSBQYW4gd3JvdGU6DQo+ID4gVGhpcyBw
-YXRjaCBnaXZlcyB0aGUgcmVhZGVyIGFuIGludHVpdGl2ZSBtZXRyaWMgb2YgdGhlIHRpbWUgY29z
-dCBieQ0KPiA+IHRoZSBrZXJuZWwgaXNzdWluZyBhIGZpbGVzeXN0ZW0gc3luYyBkdXJpbmcgc3Vz
-cGVuZDsgYWx0aG91Z2gNCj4gPiBkZXZlbG9wZXINCj4gPiBjYW4gZ3Vlc3MgYnkgdGhlIHRpbWVz
-dGFtcCBvZiBuZXh0IGxvZyBvciBlbmFibGUgdGhlIGZ0cmFjZSBwb3dlcg0KPiA+IGV2ZW50DQo+
-ID4gZm9yIG1hbnVhbCBjYWxjdWxhdGlvbiwgdGhpcyBtYW5uZXIgaXMgZWFzaWVyIHRvIHJlYWQg
-YW5kIGJlbmVmaXRzDQo+ID4gdGhlDQo+ID4gYXV0b21hdGljIHNjcmlwdC4NCj4gDQo+IERvIHdl
-IHJlYWxseSBuZWVkIHRoaXMgZnVuY3Rpb25hbGl0eT8NCj4gDQo+IEFzIHlvdSBleHBsYWluZWQs
-IGRldmVsb3BlcnMgY2FuIGFscmVhZHkgdXNlIG5leHQgdGltZXN0YW1wIG9yDQo+IGZ0cmFjZS4u
-LiBhbmQgdGhpcyBpcyByZWFsbHkgbm90IHRoYXQgaW50ZXJlc3RpbmcgbnVtYmVyLg0KDQpUaGUg
-YmFja2Ryb3AgaXMgc29tZSBzdHJlc3MgdGVzdCBzY3JpcHQgb2Ygc3VzcGVuZC9yZXN1bWUsIGxp
-a2UgQ2hyb21lDQpPUywgaXMgZGVzaWduZWQgdG8gcHJvZ3JhbSBhbiBleHBlY3RlZCBSVEMgd2Fr
-ZS1hbGFybSB0aGVuIGlzc3VlDQpzdXNwZW5kIGNvbW1hbmQsIHdoaWxlIGluIHJhcmUgY2FzZSAo
-b3IgYnVnZ3kgc29mdHdhcmUpLCB0aGUgZmlsZXN5c3RlbQ0Kc3luYyBjb3VsZCBjb3N0IGxvbmdl
-ciB0aW1lIGluIHNlY29uZHMsIHRoaXMgY29uc3VtZXMgdGhlIGFsYXJtIGJ1ZGdldA0KY2F1c2Vz
-IHN1c3BlbmQgYWJvcnRpbmcsIGl0IGNvdWxkIGJlIGFic3RydXNlIHRvIHByb2R1Y3Rpb24gbGlu
-ZQ0KZGV2ZWxvcGVycyB0byByZWFsaXplIGl0IGlzIG5vdCBhIHBsYXRmb3JtIGlzc3VlIGluIHRl
-cm1zIG9mIGRyaXZlcnMNCnN1c3BlbmRpbmc7IGdpdmVuIGEgc3VjaCBtZXRyaWMgbWlnaHQgbWFr
-ZSB0aGUgY29tbXVuaWNhdGlvbiBlYXNpZXIsDQp0aGlzIGlzIG15IGludHVpdGlvbi4NCg0KLUhh
-cnJ5DQoNCg==
+On 01/02/2019 16:13, Christoph Hellwig wrote:
+> On Fri, Feb 01, 2019 at 02:47:17PM +0000, Robin Murphy wrote:
+>> On 14/01/2019 09:41, Christoph Hellwig wrote:
+>>> No need for a __KERNEL__ guard outside uapi, make sure we pull in the
+>>> includes unconditionally so users can rely on it, and add a missing
+>>> comment describing the #else cpp statement.  Last but not least include
+>>> <linux/errno.h> instead of the asm version, which is frowned upon.
+>>
+>> I think the __KERNEL__ and asm/errno.h slip-ups are things I cargo-culted
+>> from the arch code as a fresh-faced noob yet to learn the finer details, so
+>> ack for those parts. The forward-declarations, though, were a deliberate
+>> effort to minimise header dependencies and compilation bloat for includers
+>> who absolutely wouldn't care, and specifically to try to avoid setting
+>> transitive include expectations since they always seem to end up breaking
+>> someone's config somewhere down the line. Admittedly this little backwater
+>> is hardly comparable to the likes of the sched.h business, but I'm still
+>> somewhat on the fence about that change :/
+> 
+> As far as I can tell almost all users of linux/dma-iommu.h require
+> CONFIG_DMA_IOMMU to be enabled anyway..
+
+Other than dma-iommu.c itself, none of them *require* it - only 
+arch/arm64 selects it (the one from MTK_IOMMU is just bogus), and a lot 
+of the drivers also build for at least one other architecture (and/or 
+arm64 with !IOMMU_API).
+
+Either way, I have no vehement objection to the change, I just don't see 
+any positive value in it.
+
+Robin.
