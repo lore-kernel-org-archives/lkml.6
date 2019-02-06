@@ -2,137 +2,165 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF649C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34931C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96877217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09EE5217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbfBFKy5 (ORCPT
+        id S1728231AbfBFKzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:54:57 -0500
-Received: from mga01.intel.com ([192.55.52.88]:16674 "EHLO mga01.intel.com"
+        Wed, 6 Feb 2019 05:55:23 -0500
+Received: from foss.arm.com ([217.140.101.70]:51388 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726914AbfBFKy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:54:57 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 02:54:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,339,1544515200"; 
-   d="asc'?scan'208";a="114104207"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by orsmga006.jf.intel.com with ESMTP; 06 Feb 2019 02:54:54 -0800
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, oneukum@suse.com,
-        Mathias Nyman <mathias.nyman@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2] usb: xhci: add Immediate Data Transfer support
-In-Reply-To: <294f2492f8d3b7022bf659dcb473c45a34e85db8.camel@suse.de>
-References: <20190205195647.29258-1-nsaenzjulienne@suse.de> <87lg2tmnk3.fsf@linux.intel.com> <294f2492f8d3b7022bf659dcb473c45a34e85db8.camel@suse.de>
-Date:   Wed, 06 Feb 2019 12:54:50 +0200
-Message-ID: <871s4lmbk5.fsf@linux.intel.com>
+        id S1726914AbfBFKzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:55:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F481A78;
+        Wed,  6 Feb 2019 02:55:22 -0800 (PST)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D02743F719;
+        Wed,  6 Feb 2019 02:55:21 -0800 (PST)
+Subject: Re: Kernel 4.9: strange behavior with fifo scheduler
+To:     =?UTF-8?B?RnLDqWTDqXJpYyBNYXRoaWV1?= <frederic.mathieu@dualis.com>,
+        linux-kernel@vger.kernel.org
+References: <016801d4bd40$35c226e0$a14674a0$@dualis.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <0c3a5c51-9694-fc3e-3cbb-abdbe398a09f@arm.com>
+Date:   Wed, 6 Feb 2019 11:55:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <016801d4bd40$35c226e0$a14674a0$@dualis.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Frédéric,
 
+On 2/5/19 11:47 AM, Frédéric Mathieu wrote:
+> Hi,
+> 
+> on an X86_64 architecture (Intel(R) Core(TM) i3-6100U CPU @ 2.30GHz), I use
+> the linux kernel 4.9.146 with patch rt 125.
+> uname -a: Linux 4.9.146-rt125 #1 SMP PREEMPT RT Tue Jan 29 14:17:55 CET 2019
+> x86_64 GNU/Linux
+> 
+> I observed a strange behavior of the scheduler when several tasks are
+> executed in FIFO mode on a CPU core and a significant CPU activity.
+> 
+> first test (reference: cpu load=0%):
+> cyclictest -m -D 5 -i 1000 -p 50 -a 0
+>        	# / dev / cpu_dma_latency set to 0us
+>        	policy: fifo: loadavg: 1.95 1.06 0.43 1/159 14305
+>        	T: 0 (14145) P: 50 I: 1000 C: 4997 Min: 7 Act: 7 Avg: 7 Max: 18
+> work fine
+> 
+> now, i'm loading the system on the cpu core 0 with a homemade process:
+>        cpu load 60%, sched FIFO prio 1, cpu 0
 
-Hi,
+Are you sure that your test app runs with prio 1? Is this in the range 
+of the SCHED_FIFO (userspace) priorities shown by chrt -m?
 
-Nicolas Saenz Julienne <nsaenzjulienne@suse.de> writes:
->> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
->> > index 005e65922608..dec62f7f5dc8 100644
->> > --- a/drivers/usb/host/xhci.c
->> > +++ b/drivers/usb/host/xhci.c
->> > @@ -1238,6 +1238,21 @@ EXPORT_SYMBOL_GPL(xhci_resume);
->> >=20=20
->> >  /*-------------------------------------------------------------------=
-------
->> > */
->> >=20=20
->> > +/*
->> > + * Bypass the DMA mapping if URB is suitable for Immediate Transfer (=
-IDT),
->> > + * we'll copy the actual data into the TRB address register. This is
->> > limited to
->> > + * transfers up to 8 bytes on output endpoints of any kind with
->> > wMaxPacketSize
->> > + * >=3D 8 bytes.
->> > + */
->> > +static int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
->> > +				gfp_t mem_flags)
->> > +{
->> > +	if (xhci_urb_suitable_for_idt(urb))
->> > +		return 0;
->> > +
->> > +	return usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
->> > +}
->>=20
->> don't you need a matching unmap_urb_for_dma()??
->
-> Not really as every DMA mapping sets a matching URB flag to track it. For
-> example when usb_hcd_map_urb_for_dma() uses dma_map_single() it will set
-> URB_DMA_MAP_SINGLE in urb->transfer_flags, later on unmap_urb_for_dma() w=
-ill
-> catch it and unmap it. As I bypass the mapping altogether there are no
-> flags set, so unmap_urb_for_dma() won't have any effect.
->
-> I could still add it for clarity, and well, I guess it'll save some
-> instructions on the IDT suitable side.
+...
+SCHED_FIFO min/max priority	: 1/99
+...
 
-thanks for the clarification.
+If I run your setup (test and cyclictest affine to CPU0) on 4.15.0-43 
+(i7-4750HQ) with:
 
->> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
->> > index 652dc36e3012..9d77b0901ab7 100644
->> > --- a/drivers/usb/host/xhci.h
->> > +++ b/drivers/usb/host/xhci.h
->> > @@ -1295,6 +1295,8 @@ enum xhci_setup_dev {
->> >  #define TRB_IOC			(1<<5)
->> >  /* The buffer pointer contains immediate data */
->> >  #define TRB_IDT			(1<<6)
->> > +/* TDs smaller than this might use IDT */
->>=20
->> Technically, "TDs at most this" since you're 8 itself is an allowed
+(1) test prio > cyclictest prio
 
-heh, I made a mess on this sentence, but I guess you got the gist of it.
+# chrt -p $PID_TEST
 
-cheers
+pid 28489's current scheduling policy: SCHED_FIFO
+pid 28489's current scheduling priority: 51
 
-=2D-=20
-balbi
+# cat /proc/$PID_TEST/stat
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+28489 (test) R 28488 28487 8664 34828 28487 4194304 86 0 0 0 0 0 0 0 -52
 
------BEGIN PGP SIGNATURE-----
+I get your behaviour:
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxavPoACgkQzL64meEa
-mQbEphAAx7v6Cfg8lcpqDO9sG4SdQ2xwsEQZVh7tGXIxH5g4P+4JeZonjmWSbpO+
-jg+l7VXtMCBA03vkOSBEkhEePbdz5V9ew6CzPRVvcoqKubzBR2LaYXiCqolf7yol
-eLbNHDClKF5XGDnElQoMCYQqdP1A9tkeTxf1PRGQtIVvPP6hE9uqwe1upeyksihv
-v2R/wO5Ikj1FONhPhGptdp/Y6TpB6W3huks9xMHfdoGpybw27H6+C0hvWhn4C+1+
-rzsWKYCGSNVWrumsp4Yvhi/fXhVp8KGtNLz0zqtPqm1vvOldpsOVCBHGJTcC7zXN
-BP/4k1PFj0DlkbUVQnXunzNTUeeZCRNfckyqjs+ikh7+DylAleZXXUZGLifsXk5f
-RI0vJ6EPDRv90F5arIy9n2bsM7U4uo9FPHXpc4F9lJD4Ccg3QUfCfv4PfiH/Ky5n
-ph1GgCu/cdNeuSc3h6o4kvyigoD2fXHPaG8GeY3F6eh0nEMcJJ4S5ZXsDwGOpDAN
-YNtw7d/+xVwnOle4VUi+aRQQ2KU45iSzNTDJDOvPqSYYjdbO/cOKjnopftsoaeMV
-fKByimVFXgu5ehVOL1pREyiQUpUjC+oUoUhQ4z5vLskL7DxIhComD+NDZPTteBvi
-8xIjUDZvwA4x9UIgyQcFdaOoC7sXiMUZ4BLEWRI2uZzazgXnlLk=
-=YNGD
------END PGP SIGNATURE-----
---=-=-=--
+# /dev/cpu_dma_latency set to 0us
+Thread 0 Interval: 1500
+        0:       0:       6
+        0:       1:       5
+        0:       2:       2
+        0:       3:    5419
+        0:       4:       3
+        0:       5:       2
+        0:       6:       2
+        0:       7:       2
+        0:       8:    5422
+        0:       9:       3
+...
+
+whereas with:
+
+(2) test prio < cyclictest prio
+
+# chrt -p $PID_TEST
+
+pid 28811's current scheduling policy: SCHED_FIFO
+pid 28811's current scheduling priority: 49
+
+# cat /proc/$PID_TEST/stat
+
+28811 (test) S 28810 28809 8664 34828 28809 1077936128 90 0 0 0 0 0 0 0 -50
+
+I get:
+
+# /dev/cpu_dma_latency set to 0us
+Thread 0 Interval: 1500
+        0:       0:       7
+        0:       1:       4
+        0:       2:       3
+        0:       3:       5
+        0:       4:       4
+        0:       5:       2
+        0:       6:       2
+        0:       7:       2
+        0:       8:       2
+        0:       9:       3
+...
+
+[...]
+
+> In this case cyclictest detects very long latencies
+>        cyclictest -m -D 5 -i 1000 -p 50 -a 0 -v
+> 
+> Max CPUs = 2
+> # /dev/cpu_dma_latency set to 0us
+> Thread 0 Interval: 1500
+>         0:       0:      13
+>         0:       1:       8
+>         0:       2:       7
+>         0:       3:    5648
+>         0:       4:       8
+>         0:       5:       7
+>         0:       6:       7
+>         0:       7:       7
+>         0:       8:    5649
+
+[...]
+
+> After verification, although no other process is running with real time
+> scheduler, I see a latency of about 5.6 ms at regular intervals.
+> 
+> it seems that the priority task 1 (fifo) is not pre-empted by the cyclictest
+> process with a priority of 50 (fifo) when the low priority task is active.
+> This  corresponds to the cycle recorded in the file: 6 ms of latency
+> followed by 4 "normal" latencies of 7 us.
+> 
+> Does anyone have any idea of this problem?
+> 
+> Best regards
+> Frederic MATHIEU
