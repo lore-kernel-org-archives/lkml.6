@@ -6,257 +6,188 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDC2C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F18FC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B82E020844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D083E20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfBFNTL (ORCPT
+        id S1730923AbfBFNTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:19:11 -0500
-Received: from mga03.intel.com ([134.134.136.65]:26739 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730117AbfBFNRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:17:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="136336020"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 05:17:42 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id C1F9B18E; Wed,  6 Feb 2019 15:17:38 +0200 (EET)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 06/28] thunderbolt: Configure lanes when switch is initialized
-Date:   Wed,  6 Feb 2019 16:17:16 +0300
-Message-Id: <20190206131738.43696-7-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 6 Feb 2019 08:19:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47378 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729596AbfBFNTS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:19:18 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16DEB95094220
+        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 08:19:17 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfxbqyban-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:19:10 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 6 Feb 2019 13:17:44 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 6 Feb 2019 13:17:40 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16DHd0Y22741060
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Feb 2019 13:17:39 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E9E92B205F;
+        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFBB4B2073;
+        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.158.219])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7721B16C6B5D; Wed,  6 Feb 2019 05:16:47 -0800 (PST)
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 16/19] linux/srcu: Convert to SPDX license identifier
+Date:   Wed,  6 Feb 2019 05:16:41 -0800
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190206131614.GA17320@linux.ibm.com>
+References: <20190206131614.GA17320@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19020613-0052-0000-0000-000003841B58
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010547; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01157129; UDB=6.00603658; IPR=6.00937658;
+ MB=3.00025463; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-06 13:17:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020613-0053-0000-0000-00005FBD4A0A
+Message-Id: <20190206131644.23281-16-paulmck@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902060105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thunderbolt 2 devices and beyond need to have additional bits set in
-link controller specific registers. This includes two bits in LC_SX_CTRL
-that tell the link controller which lane is connected and whether it is
-upstream facing or not.
+Replace the license boiler plate with a SPDX license identifier.
+While in the area, update an email address.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- drivers/thunderbolt/lc.c      | 114 ++++++++++++++++++++++++++++++++++
- drivers/thunderbolt/switch.c  |   9 +++
- drivers/thunderbolt/tb.h      |   2 +
- drivers/thunderbolt/tb_regs.h |  11 ++++
- 4 files changed, 136 insertions(+)
+ include/linux/srcu.h     | 17 ++---------------
+ include/linux/srcutiny.h | 17 ++---------------
+ include/linux/srcutree.h | 17 ++---------------
+ 3 files changed, 6 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/thunderbolt/lc.c b/drivers/thunderbolt/lc.c
-index 2134a55ed837..a5dddf176546 100644
---- a/drivers/thunderbolt/lc.c
-+++ b/drivers/thunderbolt/lc.c
-@@ -19,3 +19,117 @@ int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid)
- 		return -EINVAL;
- 	return tb_sw_read(sw, uuid, TB_CFG_SWITCH, sw->cap_lc + TB_LC_FUSE, 4);
- }
-+
-+static int read_lc_desc(struct tb_switch *sw, u32 *desc)
-+{
-+	if (!sw->cap_lc)
-+		return -EINVAL;
-+	return tb_sw_read(sw, desc, TB_CFG_SWITCH, sw->cap_lc + TB_LC_DESC, 1);
-+}
-+
-+static int find_port_lc_cap(struct tb_port *port)
-+{
-+	struct tb_switch *sw = port->sw;
-+	int start, phys, ret, size;
-+	u32 desc;
-+
-+	ret = read_lc_desc(sw, &desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Start of port LC registers */
-+	start = (desc & TB_LC_DESC_SIZE_MASK) >> TB_LC_DESC_SIZE_SHIFT;
-+	size = (desc & TB_LC_DESC_PORT_SIZE_MASK) >> TB_LC_DESC_PORT_SIZE_SHIFT;
-+	phys = tb_phy_port_from_link(port->port);
-+
-+	return sw->cap_lc + start + phys * size;
-+}
-+
-+static int tb_lc_configure_lane(struct tb_port *port, bool configure)
-+{
-+	bool upstream = tb_is_upstream_port(port);
-+	struct tb_switch *sw = port->sw;
-+	u32 ctrl, lane;
-+	int cap, ret;
-+
-+	if (sw->generation < 2)
-+		return 0;
-+
-+	cap = find_port_lc_cap(port);
-+	if (cap < 0)
-+		return cap;
-+
-+	ret = tb_sw_read(sw, &ctrl, TB_CFG_SWITCH, cap + TB_LC_SX_CTRL, 1);
-+	if (ret)
-+		return ret;
-+
-+	/* Resolve correct lane */
-+	if (port->port % 2)
-+		lane = TB_LC_SX_CTRL_L1C;
-+	else
-+		lane = TB_LC_SX_CTRL_L2C;
-+
-+	if (configure) {
-+		ctrl |= lane;
-+		if (upstream)
-+			ctrl |= TB_LC_SX_CTRL_UPSTREAM;
-+	} else {
-+		ctrl &= ~lane;
-+		if (upstream)
-+			ctrl &= ~TB_LC_SX_CTRL_UPSTREAM;
-+	}
-+
-+	return tb_sw_write(sw, &ctrl, TB_CFG_SWITCH, cap + TB_LC_SX_CTRL, 1);
-+}
-+
-+/**
-+ * tb_lc_configure_link() - Let LC know about configured link
-+ * @sw: Switch that is being added
-+ *
-+ * Informs LC of both parent switch and @sw that there is established
-+ * link between the two.
-+ */
-+int tb_lc_configure_link(struct tb_switch *sw)
-+{
-+	struct tb_port *up, *down;
-+	int ret;
-+
-+	if (!sw->config.enabled || !tb_route(sw))
-+		return 0;
-+
-+	up = tb_upstream_port(sw);
-+	down = tb_port_at(tb_route(sw), tb_to_switch(sw->dev.parent));
-+
-+	/* Configure parent link toward this switch */
-+	ret = tb_lc_configure_lane(down, true);
-+	if (ret)
-+		return ret;
-+
-+	/* Configure upstream link from this switch to the parent */
-+	ret = tb_lc_configure_lane(up, true);
-+	if (ret)
-+		tb_lc_configure_lane(down, false);
-+
-+	return ret;
-+}
-+
-+/**
-+ * tb_lc_unconfigure_link() - Let LC know about unconfigured link
-+ * @sw: Switch to unconfigure
-+ *
-+ * Informs LC of both parent switch and @sw that the link between the
-+ * two does not exist anymore.
-+ */
-+void tb_lc_unconfigure_link(struct tb_switch *sw)
-+{
-+	struct tb_port *up, *down;
-+
-+	if (sw->is_unplugged || !sw->config.enabled || !tb_route(sw))
-+		return;
-+
-+	up = tb_upstream_port(sw);
-+	down = tb_port_at(tb_route(sw), tb_to_switch(sw->dev.parent));
-+
-+	tb_lc_configure_lane(up, false);
-+	tb_lc_configure_lane(down, false);
-+}
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index bd96eebd8248..760332f57b5c 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -1301,6 +1301,10 @@ int tb_switch_configure(struct tb_switch *sw)
- 	if (ret)
- 		return ret;
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index c614375cd264..5f102b265adb 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -1,24 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Sleepable Read-Copy Update mechanism for mutual exclusion
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, you can access it online at
+- * http://www.gnu.org/licenses/gpl-2.0.html.
+- *
+  * Copyright (C) IBM Corporation, 2006
+  * Copyright (C) Fujitsu, 2012
+  *
+- * Author: Paul McKenney <paulmck@us.ibm.com>
++ * Author: Paul McKenney <paulmck@linux.ibm.com>
+  *	   Lai Jiangshan <laijs@cn.fujitsu.com>
+  *
+  * For detailed explanation of Read-Copy Update mechanism see -
+diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
+index b19216aaaef2..c84cea86564a 100644
+--- a/include/linux/srcutiny.h
++++ b/include/linux/srcutiny.h
+@@ -1,24 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Sleepable Read-Copy Update mechanism for mutual exclusion,
+  *	tiny variant.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, you can access it online at
+- * http://www.gnu.org/licenses/gpl-2.0.html.
+- *
+  * Copyright (C) IBM Corporation, 2017
+  *
+- * Author: Paul McKenney <paulmck@us.ibm.com>
++ * Author: Paul McKenney <paulmck@linux.ibm.com>
+  */
  
-+	ret = tb_lc_configure_link(sw);
-+	if (ret)
-+		return ret;
-+
- 	return tb_plug_events_active(sw, true);
- }
+ #ifndef _LINUX_SRCU_TINY_H
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index 6f292bd3e7db..6e432fe27d0e 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -1,24 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Sleepable Read-Copy Update mechanism for mutual exclusion,
+  *	tree variant.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, you can access it online at
+- * http://www.gnu.org/licenses/gpl-2.0.html.
+- *
+  * Copyright (C) IBM Corporation, 2017
+  *
+- * Author: Paul McKenney <paulmck@us.ibm.com>
++ * Author: Paul McKenney <paulmck@linux.ibm.com>
+  */
  
-@@ -1504,6 +1508,7 @@ void tb_switch_remove(struct tb_switch *sw)
- 
- 	if (!sw->is_unplugged)
- 		tb_plug_events_active(sw, false);
-+	tb_lc_unconfigure_link(sw);
- 
- 	tb_switch_nvm_remove(sw);
- 
-@@ -1563,6 +1568,10 @@ int tb_switch_resume(struct tb_switch *sw)
- 	if (err)
- 		return err;
- 
-+	err = tb_lc_configure_link(sw);
-+	if (err)
-+		return err;
-+
- 	err = tb_plug_events_active(sw, true);
- 	if (err)
- 		return err;
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 530464b25dcb..e61c2409021d 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -451,6 +451,8 @@ int tb_drom_read(struct tb_switch *sw);
- int tb_drom_read_uid_only(struct tb_switch *sw, u64 *uid);
- 
- int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid);
-+int tb_lc_configure_link(struct tb_switch *sw);
-+void tb_lc_unconfigure_link(struct tb_switch *sw);
- 
- static inline int tb_route_length(u64 route)
- {
-diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
-index 4895ae9f0b40..e0f867dad5cf 100644
---- a/drivers/thunderbolt/tb_regs.h
-+++ b/drivers/thunderbolt/tb_regs.h
-@@ -238,6 +238,17 @@ struct tb_regs_hop {
- } __packed;
- 
- /* Common link controller registers */
-+#define TB_LC_DESC			0x02
-+#define TB_LC_DESC_SIZE_SHIFT		8
-+#define TB_LC_DESC_SIZE_MASK		GENMASK(15, 8)
-+#define TB_LC_DESC_PORT_SIZE_SHIFT	16
-+#define TB_LC_DESC_PORT_SIZE_MASK	GENMASK(27, 16)
- #define TB_LC_FUSE			0x03
- 
-+/* Link controller registers */
-+#define TB_LC_SX_CTRL			0x96
-+#define TB_LC_SX_CTRL_L1C		BIT(16)
-+#define TB_LC_SX_CTRL_L2C		BIT(20)
-+#define TB_LC_SX_CTRL_UPSTREAM		BIT(30)
-+
- #endif
+ #ifndef _LINUX_SRCU_TREE_H
 -- 
-2.20.1
+2.17.1
 
