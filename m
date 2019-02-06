@@ -3,182 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E29C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D9CC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89682175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D57062080D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:14:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbfBFPJq (ORCPT
+        id S1731202AbfBFPOF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:09:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:54236 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728030AbfBFPJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:09:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DBB380D;
-        Wed,  6 Feb 2019 07:09:45 -0800 (PST)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2E7B13F675;
-        Wed,  6 Feb 2019 07:09:44 -0800 (PST)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH] drivers: base: add support to skip power management in device/driver model
-Date:   Wed,  6 Feb 2019 15:09:35 +0000
-Message-Id: <20190206150935.12140-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 6 Feb 2019 10:14:05 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36703 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730384AbfBFPOE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:14:04 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d12so5147653edy.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:14:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/s+E70YYdc6I/KhbNBXngvUVfd6XKQycMfmIAypMTQU=;
+        b=GaxeZy6T+LE3sPgXzliFs0RMZ4/k4yOnyduHfEp7UWzpMzHmwaioRzmYokIf5/TU/o
+         4L7t0xgHICg3o8fUjU9FWT8YAB5u3LoSXcAyWPceg0y3hdaFip4Ku6FaMD+1JFpHmJoZ
+         H1F5I9Qa8hJWgZuoqPynQEcE2utQ5MquMHVed0SIouIVd5K9G1bCapmX083FQl9UEZkz
+         c7nUY2Girhn0N9ml9bS1/WZ1Vo0WINlmjgCztO+COLmo3g/jwOgbZsR9UgrJr5f0ijVj
+         wqmY72MKeqmsZ6qU27ash2+XvZRYZKvS+AXu1eMbYmNMn2gOMC/ozRHudBKAtTI9fIYt
+         B3Xg==
+X-Gm-Message-State: AHQUAuboDm+tL5+YJhvSKoZtdO5BfEH7Kj9qpL3x9x6HS9SyFXyqXNQi
+        As9gf2hXnuPKqzkJfCp33TC0tz6haRU=
+X-Google-Smtp-Source: AHgI3IaWVPzPl7L+2fFQJkqfEgXgUrPdGldh1aRsFkMysL2tpmyasg0NfKLNowdAReYa2lvcmdpjQw==
+X-Received: by 2002:a50:ef18:: with SMTP id m24mr8589152eds.136.1549466042564;
+        Wed, 06 Feb 2019 07:14:02 -0800 (PST)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
+        by smtp.gmail.com with ESMTPSA id q16sm5760534eds.60.2019.02.06.07.14.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 07:14:02 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id g67so3135109wmd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:14:02 -0800 (PST)
+X-Received: by 2002:a1c:494:: with SMTP id 142mr3558569wme.111.1549466041735;
+ Wed, 06 Feb 2019 07:14:01 -0800 (PST)
+MIME-Version: 1.0
+References: <20190128140219.4414-1-axel.lin@ingics.com> <CAGb2v67UV51oaDXgF2ocTSYJVNhZFPf_bmDtqLDApA_YB-oqWA@mail.gmail.com>
+ <CAFRkauB584T9CqmvwRO3eYhL+N4Xi38Ti6b7aPpCGk-L_-OcUA@mail.gmail.com>
+In-Reply-To: <CAFRkauB584T9CqmvwRO3eYhL+N4Xi38Ti6b7aPpCGk-L_-OcUA@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 6 Feb 2019 23:13:47 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66Weg_xrpXHdHe6oLuSGn-HXSZ1gCvjTr40SZqoEXPq_g@mail.gmail.com>
+Message-ID: <CAGb2v66Weg_xrpXHdHe6oLuSGn-HXSZ1gCvjTr40SZqoEXPq_g@mail.gmail.com>
+Subject: Re: [PATCH] regulator: axp20x: Fix incorrect vsel_mask settings
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All device objects in the driver model contain fields that control the
-handling of various power management activities. However, it's not
-always useful. There are few instances where pseudo devices are added
-to the model just to take advantage of many other features like
-kobjects, udev events, and so on. One such example is cpu devices and
-their caches.
+On Wed, Feb 6, 2019 at 10:47 PM Axel Lin <axel.lin@ingics.com> wrote:
+>
+> Chen-Yu Tsai <wens@csie.org> 於 2019年2月6日 週三 下午6:44寫道：
+> >
+> > On Mon, Jan 28, 2019 at 10:02 PM Axel Lin <axel.lin@ingics.com> wrote:
+> > >
+> > > Fix copy-paste mistake while converting to use defines for masks.
+> > >
+> > > Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
+> > > Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> >
+> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> >
+> > Though I believe the latter three have already been fixed by
+> >
+> >     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commit/?h=for-5.0&id=16c8a595740035c4a7ede608a60b4a59f67b76e6
+> >
+> > Could you respin this patch on top of that commit?
+>
+> This is similar fix but fixes different places.
+> BTW, Mark already applied both patches.
 
-The sysfs for the cpu caches are managed by adding devices with cpu
-as the parent in cpu_device_create() when secondary cpu is brought
-online. Generally when the secondary CPUs are hotplugged back in as part
-of resume from suspend-to-ram, we call cpu_device_create() from the cpu
-hotplug state machine while the cpu device associated with that CPU is
-not yet ready to be resumed as the device_resume() call happens bit
-later. It's not really needed to set the flag is_prepared for cpu
-devices as they are mostly pseudo device and hotplug framework deals
-with state machine and not managed through the cpu device.
+You're right. Sorry for the noise.
 
-This often results in annoying warning when resuming:
-Enabling non-boot CPUs ...
-CPU1: Booted secondary processor
- cache: parent cpu1 should not be sleeping
-CPU1 is up
-CPU2: Booted secondary processor
- cache: parent cpu2 should not be sleeping
-CPU2 is up
-.... and so on.
-
-So in order to fix these kind of errors, we could just completely avoid
-doing any power management related initialisations and operations if
-they are not used by these devices.
-
-Lets add no_pm_required flags to indicate that the device doesn't
-require any sort of pm activities and all of them can be completely
-skipped. We can use the same flag to also avoid adding not used *power*
-sysfs entries for these devices.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/base/cpu.c         |  2 ++
- drivers/base/power/main.c  |  7 +++++++
- drivers/base/power/sysfs.c |  4 ++++
- include/linux/device.h     | 10 ++++++++++
- include/linux/pm.h         |  1 +
- 5 files changed, 24 insertions(+)
-
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index eb9443d5bae1..ccec353aa24c 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -379,6 +379,7 @@ int register_cpu(struct cpu *cpu, int num)
- 	cpu->dev.bus->uevent = cpu_uevent;
- #endif
- 	cpu->dev.groups = common_cpu_attr_groups;
-+	device_set_pm_not_required(&cpu->dev);
- 	if (cpu->hotpluggable)
- 		cpu->dev.groups = hotplugable_cpu_attr_groups;
- 	error = device_register(&cpu->dev);
-@@ -427,6 +428,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
- 	dev->parent = parent;
- 	dev->groups = groups;
- 	dev->release = device_create_release;
-+	device_set_pm_not_required(dev);
- 	dev_set_drvdata(dev, drvdata);
- 
- 	retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 0992e67e862b..2a29c3d4e240 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -124,6 +124,10 @@ void device_pm_unlock(void)
-  */
- void device_pm_add(struct device *dev)
- {
-+	/* No need to create pm sysfs if explicitly specified as not required */
-+	if (device_pm_not_required(dev))
-+		return;
-+
- 	pr_debug("PM: Adding info for %s:%s\n",
- 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
- 	device_pm_check_callbacks(dev);
-@@ -142,6 +146,9 @@ void device_pm_add(struct device *dev)
-  */
- void device_pm_remove(struct device *dev)
- {
-+	if (device_pm_not_required(dev))
-+		return;
-+
- 	pr_debug("PM: Removing info for %s:%s\n",
- 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
- 	complete_all(&dev->power.completion);
-diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-index d713738ce796..6cd159b51114 100644
---- a/drivers/base/power/sysfs.c
-+++ b/drivers/base/power/sysfs.c
-@@ -648,6 +648,10 @@ int dpm_sysfs_add(struct device *dev)
- {
- 	int rc;
- 
-+	/* No need to create pm sysfs if explicitly disabled */
-+	if (device_pm_not_required(dev))
-+		return 0;
-+
- 	rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
- 	if (rc)
- 		return rc;
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 6cb4640b6160..739d0b62e4d4 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1165,6 +1165,16 @@ static inline bool device_async_suspend_enabled(struct device *dev)
- 	return !!dev->power.async_suspend;
- }
- 
-+static inline bool device_pm_not_required(struct device *dev)
-+{
-+	return dev->power.no_pm_required;
-+}
-+
-+static inline void device_set_pm_not_required(struct device *dev)
-+{
-+	dev->power.no_pm_required = true;
-+}
-+
- static inline void dev_pm_syscore_device(struct device *dev, bool val)
- {
- #ifdef CONFIG_PM_SLEEP
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 0bd9de116826..300ab9f0b858 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -592,6 +592,7 @@ struct dev_pm_info {
- 	bool			is_suspended:1;	/* Ditto */
- 	bool			is_noirq_suspended:1;
- 	bool			is_late_suspended:1;
-+	bool			no_pm_required:1;
- 	bool			early_init:1;	/* Owned by the PM core */
- 	bool			direct_complete:1;	/* Owned by the PM core */
- 	u32			driver_flags;
--- 
-2.17.1
-
+ChenYu
