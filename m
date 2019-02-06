@@ -2,114 +2,121 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E118EC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A24217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93FA2073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:09:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="nyxoR4Mc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PXuZpr2N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbfBFHvn (ORCPT
+        id S1728087AbfBFIJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 02:51:43 -0500
-Received: from mail-eopbgr140085.outbound.protection.outlook.com ([40.107.14.85]:7591
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726194AbfBFHvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 02:51:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3fjFmgiQHzS9dhgyCSYr//s52C+P0gZ6d6/CRuh1hcQ=;
- b=nyxoR4Mc/8uHGRZWiB2P9uevVRmTddY9bcmKRRKY3xE0YVOVU9s9nM86EtTpEzW+6zU2MBWoucnBzoRCJk8ZOrYK7vTtEOEMSCESdIrcRfDNzapiaGXNOTSn9JGXuRoSGCTgCYHPzxUrt7xgFhMuPrv3OOlCbqPHW7LxCDfIATo=
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
- AM6PR05MB6278.eurprd05.prod.outlook.com (20.179.4.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Wed, 6 Feb 2019 07:51:38 +0000
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.016; Wed, 6 Feb 2019
- 07:51:38 +0000
-From:   Ido Schimmel <idosch@mellanox.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MELLANOX MLX5 core VPI driver" 
-        <linux-rdma@vger.kernel.org>,
-        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>
-Subject: Re: [PATCH net-next v3 00/12] net: Introduce ndo_get_port_parent_id()
-Thread-Topic: [PATCH net-next v3 00/12] net: Introduce
- ndo_get_port_parent_id()
-Thread-Index: AQHUva5OxuMdQIeiKEeI1MwbcsUxgqXSZjUA
-Date:   Wed, 6 Feb 2019 07:51:38 +0000
-Message-ID: <20190206075136.GA2283@splinter>
-References: <20190205235326.14600-1-f.fainelli@gmail.com>
-In-Reply-To: <20190205235326.14600-1-f.fainelli@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P194CA0014.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:203:8f::24) To AM6PR05MB5240.eurprd05.prod.outlook.com
- (2603:10a6:20b:64::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=idosch@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR05MB6278;6:gOvsXRkRwufBG5efl+gZPNYxoA06FK4VD9YexxrqQNpaj3z4zTd6OOLJqrvUGtVtwzpV/V7TYHbgGCiOVQuNCUYmAnf8jiEekNH7mQUspX1V+YmgGok+YiIZ2PaR8GMjceI+YAPgz0qJT7GuFRkmZxv/2yzEtd5FhZ4jNmLDzfbckauYvKvWkp/RRbDMODa4beOfvHrS0/C++i9Ya4tP4wytHYe8MvjHIuRSm3l3MC1S9xdyN4ve+tquSwSB0efBawRaHB72h0RoWfBpMpHJy6hJrJFHFzv8XMHZkUF2ajUvwAY3U0n+p+0luBBPOO+G2wOHS6FXOzZ28ZiZ7Pix1c6rBsQ/pGids9rnzPbNQfvqA6gWrP4WZLCgNX+BmNYkez5xsksISiCi0CD0AIAN+ktZT5ek1ypgm538kPNS0EKkIpi0sa92lZDyhokdJbtrI7JTkd17eSFDe8tCiv15XA==;5:9LHudXbKVtj7d2o+HcB4wvv/3klXi6XS9LJwo5y85EtkRS/PCdVaAzglnlnXalbSnv1UN6jRFLL30eY3W3GCs39khEF1qu1Z9cgWZMR1Kfb7QHGaRYVrQcUrvVARZ6Vg+aCoy8xzCo2azdx9RQVn7MV+45nznK1IHj2vjduLc7ktFc+phZIFyBb9IsXwz/zzloBy6bptixb2o0vlRZGUqA==;7:jGiZYeagk99tuJS+h4QdP3amZLrCKwu8ZMmpZ/kO1bg/eNI//FdG7qu+sNaVhHmEjBnjhnp5bUFasJM4XtB0uFpZBB+7wdHG16stcMPL4hZb1c2818zIiyW/oF12Pr2LNfhWeLis6AT/ZU2p7pn2zw==
-x-ms-office365-filtering-correlation-id: f077152c-6183-45c9-3f98-08d68c07eca8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB6278;
-x-ms-traffictypediagnostic: AM6PR05MB6278:
-x-microsoft-antispam-prvs: <AM6PR05MB6278B8781EE93C4694DB12A3BF6F0@AM6PR05MB6278.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0940A19703
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(376002)(346002)(396003)(136003)(366004)(39860400002)(53754006)(199004)(189003)(6246003)(3846002)(6116002)(446003)(11346002)(4744005)(486006)(386003)(476003)(86362001)(66066001)(71200400001)(71190400001)(6512007)(9686003)(186003)(33716001)(26005)(76176011)(68736007)(6506007)(33896004)(102836004)(33656002)(52116002)(14454004)(1076003)(53936002)(105586002)(54906003)(229853002)(316002)(6486002)(8676002)(256004)(2906002)(6916009)(81156014)(81166006)(7736002)(106356001)(305945005)(6436002)(8936002)(99286004)(25786009)(478600001)(4326008)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6278;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lgaJod9JFKQHLHiGJHVY6EzuH1R9wcIk7ey0zC2Shcob5rVQ2ezaw+UnrbVx9KO0i0Q9G7iGI+nGYJ333ILnbDRQnlXxkFlSAEkbHKABo4OgigzhsnPEYdt2vIpnSXew8dLrP/pJ6ogjxImerIUdwnNZYfyY0NBKUmSqmxHDhQyuR2sBEcCSEbt15rZWHwNTsSztctMFko+wz8JgW9/Cc3IaFvswQj01vHTqQzprieITIICpT5XryKIV598lNWdpKEO80vuVsk/xmHYqrpDHeSTWiMf31jaukFXQN8DSGutOsIBYgFHaAsmfUB4exXcvnF9XTouiQ4iv0bFKbI/tQSrawazK8KcmuriYw9515ja+O+gLCVnfLjjBXVSXYqRmfPhWMF7rXXZhYC1yf1uUzuOHSgbMVya62OqlTFNz1fc=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <388E482218ED4E428D59B4AC8420E216@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 6 Feb 2019 03:09:52 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42066 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfBFIJw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 03:09:52 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so5187113lja.9
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 00:09:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=gOX1SsouACCPf08YjbmYPW5UOhkdAMvK3qlQKiv1d90=;
+        b=PXuZpr2NmwOfv77mOyOxxwUFls8tIM9qlDFd33QHru6dsHhKGLDahUyJQ8X1N5fq40
+         RoK9TTamwmReup4UWa8JjXQO1PKNEisiWbxklTxWoxlNxF3zmXV0WWYgstMedpJpJ8Ce
+         K2utHPc15FwEaXNCSFWkbg/t/CJmlumVyMsbGnTPs6qdw7gMZcFtZqF73aT+mtlpqq6C
+         NTyhXTixxRJv7RdEWS0vH2dp8TYxoRH6+dmJaipmBQholV8IRflC/gEonAfHBmiyEB7Z
+         DfCqvjNNqZYitHjuzc8TaicP7YOKdqZzMuoXZYmAIFbBAZosKNqui/B5vLtJxCU1o57K
+         UIZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=gOX1SsouACCPf08YjbmYPW5UOhkdAMvK3qlQKiv1d90=;
+        b=Y16YtPWaFuHMC35IlvF6GeRNai/zKA0ZgistU5yQoNm09Jz4v1IbSFYlcAvwJdV6fv
+         99mT1uN2qBFEK/bgDXkzeh2slE8mmun3l/zwcxmvfzJ4lK7Ltky6ti+DBPbbGEXjAfIS
+         ScgzmYrs0m+MPiQEM9Hu1E26YD0Yk/f74YsaKafufnkopRNfrF7p0weojotHHQtzucVZ
+         mLKCQk4VAtbmkxYUGUUl33noIlrZmM5/tK4istn9K+mZgp5ZTk5+lvIONIj4R60KFHbW
+         d85nqeZmIfRkqMkIAZa9XdDDrpwI6bZFN2E0fvkjhStH10ZG+cVVYqB/+byb5b7Nd29w
+         L49Q==
+X-Gm-Message-State: AHQUAuZS8MJ5XwdSAgKwXFZWQprQwzGgc8lb8IllsC5sWrj+qXvMvSBe
+        4zPFO8GjBLu1YOT5woHKpowHi8WTL/NrvQv5GUvtTw==
+X-Google-Smtp-Source: AHgI3IbCEkzbE7L0yrWtheCdQ4b0VGN5aeom4hRfjJXymqlyIgCDas/3KlJ2Rh0fwM9+2iVIkOEX3zA9sLqWHP1aFGk=
+X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr5576392ljh.135.1549440590149;
+ Wed, 06 Feb 2019 00:09:50 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f077152c-6183-45c9-3f98-08d68c07eca8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 07:51:38.0701
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6278
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 6 Feb 2019 09:09:39 +0100
+Message-ID: <CACRpkdYfCT9eBfrKZBA_Do3PcCwvTCX9odD1uHDyZQKdJ4KsNg@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v5.0-rc
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jason Kridner <jdk@ti.com>, Chen-Yu Tsai <wens@csie.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 03:53:14PM -0800, Florian Fainelli wrote:
-> Hi all,
->=20
-> Based on discussion with Ido and feedback from Jakub there are clearly
-> two classes of users that implement SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
->=20
-> - PF/VF drivers which typically only implement return the port's parent
->   ID, yet have to implement switchdev_port_attr_get() just for that
->=20
-> - Ethernet switch drivers: mlxsw, ocelot, DSA, etc. which implement more
->   attributes which we want to be able to eventually veto in the context
->   of the caller, thus making them candidates for using a blocking notifie=
-r
->   chain
+Hi Linus,
 
-Florian, patches look good to me. I'm going to build a kernel with these
-patches and run some tests. Will report later today.
+here are some overdue pin control fixes for the v5.0
+series. Was too busy to send them until now.
 
-Thanks
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v5.0-2
+
+for you to fetch changes up to 10098709b4ee6f6f19f25ba81d9c6f83518c584c:
+
+  pinctrl: sunxi: Correct number of IRQ banks on H6 main pin
+controller (2019-01-22 10:52:39 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v5.0 series:
+- Mediatek Kconfig fix
+- Sunxi regulator, IRQ banks and pin base fixup
+- Intel Cherryview Strago DMI workaround
+- Potential regmap problem on mcp23s08
+
+----------------------------------------------------------------
+Chen-Yu Tsai (3):
+      pinctrl: sunxi: Fix and simplify pin bank regulator handling
+      pinctrl: sunxi: Consider pin_base when calculating regulator array index
+      pinctrl: sunxi: Correct number of IRQ banks on H6 main pin controller
+
+Dmitry Torokhov (1):
+      pinctrl: cherryview: fix Strago DMI workaround
+
+Jason Kridner (1):
+      pinctrl: mcp23s08: spi: Fix regmap allocation for mcp23s18
+
+Ryder Lee (1):
+      pinctrl: mediatek: fix Kconfig build errors for moore core
+
+ drivers/pinctrl/intel/pinctrl-cherryview.c |  8 +++---
+ drivers/pinctrl/mediatek/Kconfig           |  3 ++
+ drivers/pinctrl/pinctrl-mcp23s08.c         |  7 ++++-
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c  |  2 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c      | 44 +++++++++++++++---------------
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h      |  2 +-
+ 6 files changed, 37 insertions(+), 29 deletions(-)
