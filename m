@@ -2,129 +2,110 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F925C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E858C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F7320844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:23:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D358420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:23:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmdZ4tkQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbfBFNXZ (ORCPT
+        id S1730676AbfBFNX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:23:25 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729771AbfBFNRp (ORCPT
+        Wed, 6 Feb 2019 08:23:28 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41888 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731014AbfBFNXZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:17:45 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16DDtZB015026
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 08:17:44 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfyxtsje3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:17:44 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 6 Feb 2019 13:17:43 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 13:17:39 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16DHcY516056330
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 13:17:38 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E1CDB2064;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB360B2068;
-        Wed,  6 Feb 2019 13:17:37 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.158.219])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Feb 2019 13:17:37 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5989316C6B58; Wed,  6 Feb 2019 05:16:47 -0800 (PST)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 11/19] linux/rcupdate: Convert to SPDX license identifier
-Date:   Wed,  6 Feb 2019 05:16:36 -0800
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190206131614.GA17320@linux.ibm.com>
-References: <20190206131614.GA17320@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19020613-0052-0000-0000-000003841B56
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010547; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01157129; UDB=6.00603658; IPR=6.00937658;
- MB=3.00025463; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-06 13:17:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020613-0053-0000-0000-00005FBD4A06
-Message-Id: <20190206131644.23281-11-paulmck@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902060105
+        Wed, 6 Feb 2019 08:23:25 -0500
+Received: by mail-lf1-f68.google.com with SMTP id e27so5304989lfj.8;
+        Wed, 06 Feb 2019 05:23:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bpQQpAbsD8hSVP28q4CvlhUkxdcolGWK48x4yYu34es=;
+        b=cmdZ4tkQQ/9ZFIzqIxVRMv3nv8xwl7tc95ceApEq/+MVhdfDglSwi+HVFaYck3Fjcv
+         0MJ2qCeHn3p0MtpelzW+ujCCeU3pjQWpDersbC5B0ibmOpwLb2WhV8CepkpoofAYy9bT
+         lJRwzD3AqtSZQv/lpsvIAwpe5ojgRn49wAU5TII1m9rRLog9zkcPDikjKHpH6tK+sBK2
+         aQP0BRd9KFaMZAeur5ceK7VlG3DQ35fNavRid8DeWAO1y2jdHoaOerIBxInYYL33GP1k
+         4uAU+9bHXF9395G73fKf+gddAHBWICFCkWh4iPBRgjWUlOnLqulMfvD3JSVn5rDVidVq
+         QLcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bpQQpAbsD8hSVP28q4CvlhUkxdcolGWK48x4yYu34es=;
+        b=KEfubsS64eon0Pc5NvriNhy3wbgkn91e2nGTu5eaBgr4iI+XfpDlIxpWeQDBkPM1uI
+         6b7slbJK8VEpVSmap44P/DOXR6wFPM3Z45/3Zxm3yN7sjC7zOT9X0q6RkRGnJMbWIjfM
+         8xZgu7I7SLo1w8qEc5IeilsXdLb4zuNPVBbC3AcgFZp+HnNW47S+48mHpYteBfQJ65KP
+         5sXVIzswy4VwLxQ8kFB3TUb350cuPHoV8n9JVwtgjhp1aX4nPrs9cVOjwPyuby1Lv1mx
+         4VakkZBXKczTTfc5StcLD1+6pYeoGCra3ysKqV3pFShwxXtL6BBwocjCnOIiQf/VyhUE
+         TdNA==
+X-Gm-Message-State: AHQUAuYI2NCDtUBr0JJldqNs++YqaGfw2DZlXZ1xqLOs8FEpPiPTRvtj
+        DPYsaXt/yDWRsaIaU5JqXVLiMXBc
+X-Google-Smtp-Source: AHgI3Ib7mw4JiOSCPWAL/BG4WLpw43RZ1sjIx92GEH0t7P59jUeCP44KY9WiCIKuNXrP34Lv986arw==
+X-Received: by 2002:a19:660a:: with SMTP id a10mr7158758lfc.146.1549459402975;
+        Wed, 06 Feb 2019 05:23:22 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id h22-v6sm3845549ljg.24.2019.02.06.05.23.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 05:23:22 -0800 (PST)
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+ <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
+ <c4f67e39-df72-cc56-216b-8e6014891b52@gmail.com>
+ <BYAPR12MB3398E50ED1C6909D6BCB0DDFC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <304c1916-e836-fa95-5cec-887fef8f3eb2@gmail.com>
+ <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <82f38909-94f1-7984-2b0f-df6231aee58f@gmail.com>
+Date:   Wed, 6 Feb 2019 16:23:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the license boiler plate with a SPDX license identifier.
-While in the area, update an email address.
+06.02.2019 16:17, Sowjanya Komatineni пишет:
+> 
+> 
+>>>> BTW, I'm seeing "atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000" whithout making any modifications to the original patch as well and it shall not happen, hence there is bug somewhere. Probably FIFO triggers are still not set up correctly... ?
+>>>>
+>>>>
+>>> In snippet you sent, I see you are forcing dma_burst to 1 always which is what set for fifo trigger levels as well and also you are forcing dma all the time.
+>>> So always it will be 1 word dma burst and 1 word trigger level and that should not be an issue.
+>>>
+>>
+>> I reverted that snippet, this log is collected with the yours original patch.
+>>
+> From atmel driver, looks like this warning is from maxt_update_cfg and due to CRC mismatch and above values shows read data CRC is 0Xf436dc which is compared against info_crc of all 0's 
+> Info_crc is based on raw config file and somehow its all 0's. this is not based on data read thru i2c. 
+> data->info_crc computed on data read is 0Xf436dc
+> 
+> This warning is not related to I2C transfer
+> 
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
----
- include/linux/rcupdate.h | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
-
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 0e39e0d2629e..6da69296d306 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -1,25 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Read-Copy Update mechanism for mutual exclusion
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, you can access it online at
-- * http://www.gnu.org/licenses/gpl-2.0.html.
-- *
-  * Copyright IBM Corporation, 2001
-  *
-  * Author: Dipankar Sarma <dipankar@in.ibm.com>
-  *
-- * Based on the original work by Paul McKenney <paulmck@us.ibm.com>
-+ * Based on the original work by Paul McKenney <paulmck@vnet.ibm.com>
-  * and inputs from Rusty Russell, Andrea Arcangeli and Andi Kleen.
-  * Papers:
-  * http://www.rdrop.com/users/paulmck/paper/rclockpdcsproof.pdf
--- 
-2.17.1
-
+It doesn't happen with the I2C PIO mode. Seems it means that the I2C reads out the 0xF436DC value instead of 0x000000.. if I'm not missing anything.
