@@ -3,218 +3,437 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57808C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE43C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E6E7218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:53:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="j+PbfjkI"
+	by mail.kernel.org (Postfix) with ESMTP id 36507218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549490511;
+	bh=1rulnxBBKxbBTOSkVKAeUNzfJN6xnWwk6dEWGMhxCCI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=P8Kwc5D4eqHGkBKxeK1UXGa734J5G0A8/e73ij9WlY8uemJoAMx/b/+R21jWrIAl/
+	 121GsEhMbzjCGY9pIsisQoC1CfLrEDcC3RJmRF0cPpFlnXGwuqswQz/IBLKiE53x2v
+	 1GTqLlFtXC+fq60EOo6i/8j6m5DO+IMvT1++mO8E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfBFVxq (ORCPT
+        id S1726624AbfBFWBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:53:46 -0500
-Received: from mx.aristanetworks.com ([162.210.129.12]:5831 "EHLO
-        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726037AbfBFVxq (ORCPT
+        Wed, 6 Feb 2019 17:01:49 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41989 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbfBFWBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:53:46 -0500
-Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 266EDE15;
-        Wed,  6 Feb 2019 13:53:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1549490025;
-        bh=auuwfRgZJLH4YOUDHYfVec3ToE3mNfw1tZtwe1SpyPQ=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To;
-        b=j+PbfjkIhw/8cSnvVCUgqpugU+aDuVuHaFBVsM1CZ7yMGl0jgBZtvKV+R2KaMZcdt
-         tZXqRQblKuBvrqEz0PNBJxccgHcBOBIoU1FLtF7DCZSx47WOJxXprAhFLDJyWxQtNh
-         0O1UvmBFXz2J8yB6da9FGQRcyWVEtc19/296ABrV1D/qb6IKpjeFPyOU6fG+BevAvk
-         jVrAgtDqf00QrdJ3/O74IFGG/cdN+ke2ozs3E7NqD+6WuDqyFDml2L1Fk1tPDph2Yf
-         jvp6ejZPFXS6UREW0B13WQ++bGqBy/XEA82e/+O0reWd2K4l34EyykWvcgillvAlTp
-         XAegpyJeVwV5A==
-Received: from [10.80.4.127] (unknown [10.80.4.127])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id C97CDE0F;
-        Wed,  6 Feb 2019 13:53:44 -0800 (PST)
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
- the option length
-From:   Julien Gomes <julien@arista.com>
-To:     Neil Horman <nhorman@tuxdriver.com>
-Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        vyasevich@gmail.com, lucien.xin@gmail.com
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
- <274c48cb-7590-682b-f4de-f5c4ce2d2144@arista.com>
- <20190206213948.GE16887@hmswarspite.think-freely.org>
- <271b88ca-ae7c-7d07-330a-242e8ba7322d@arista.com>
-Message-ID: <995f3cd8-b328-44b8-e23a-5d143dda8dc6@arista.com>
-Date:   Wed, 6 Feb 2019 13:53:44 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 17:01:49 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v23so14756339otk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 14:01:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ackIu6dKwLPk3LJnTbGPBgw/bawJaZTkqoaFdBswSJc=;
+        b=ow4YRheC4QTgDu2n8ahI5aGFj6wS/j5qzjQq0DgN1+/iVgTgWO1GXP6Oz0qRm29WOX
+         SfgjEnBdttd3S8O5tEdL0EidR/Chn0v8k5RP4098URJFmj7i87FDIU3/mdr3Q9hMMI9U
+         6e6R68pTSCl8+z406LpU5qM08n4S6CPct5vBTAEbky7x6UZ5CbyK05pJFKsurLp7I+S8
+         zHH3P/7bRJ9StrEpoC8gXdt6P9Vru6tAFQPCrYle5lF4m1+jS1CpMyr7NjJw1Jqav97g
+         Lr4Eqc/XBYYE9olL9Fhqhe04TXjFMLOIkbvI1asr6K6HfcrKJ2JIwWpP+iSB46JfM8Zj
+         KMOw==
+X-Gm-Message-State: AHQUAua2cSDooZR1YdBwUnZL7mwdus1eGXbkjpvGfgzrLFRmGv9tmi5R
+        x0qpGvtAxf3DBrFe0XPSn/la0S3VCAZeq8qgMIg=
+X-Google-Smtp-Source: AHgI3IZMONrqWjzS2rqQhOF6a43Yrl7bFIganRuT94NZXT+ICPCWm6D8w4g+/6iJtFTtN3O6LIG0K3m7KYZSkVmPaa0=
+X-Received: by 2002:aca:fdd0:: with SMTP id b199mr796606oii.178.1549490507774;
+ Wed, 06 Feb 2019 14:01:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <271b88ca-ae7c-7d07-330a-242e8ba7322d@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
+References: <20190206164551.29400-1-daniel.vetter@ffwll.ch> <20190206164702.29753-1-daniel.vetter@ffwll.ch>
+In-Reply-To: <20190206164702.29753-1-daniel.vetter@ffwll.ch>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 6 Feb 2019 23:01:35 +0100
+Message-ID: <CAJZ5v0gPLvu4oo-K4LNCWYyRsnNKkY-0VWPDFZTarjoZHzFO6A@mail.gmail.com>
+Subject: Re: [PATCH] component: Add documentation
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "C, Ramalingam" <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 6, 2019 at 5:47 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>
+> While typing these I think doing an s/component_master/aggregate/
+> would be useful:
+> - it's shorter :-)
+> - I think component/aggregate is much more meaningful naming than
+>   component/puppetmaster or something like that. At least to my
+>   English ear "aggregate" emphasizes much more the "assemble a pile of
+>   things into something bigger" aspect, and there's not really much
+>   of a control hierarchy between aggregate and constituing components.
+>
+> But that's way more than a quick doc typing exercise ...
+>
+> Thanks to Ram for commenting on an initial draft of these docs.
+>
+> v2: Review from Rafael:
+> - git add Documenation/driver-api/component.rst
+> - lots of polish to the wording + spelling fixes.
+>
+> v3: Review from Russell:
+> - s/framework/helper
+> - clarify the documentation for component_match_add functions.
+>
+> Cc: "C, Ramalingam" <ramalingam.c@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On 2/6/19 1:48 PM, Julien Gomes wrote:
-> 
-> 
-> On 2/6/19 1:39 PM, Neil Horman wrote:
->> On Wed, Feb 06, 2019 at 01:26:55PM -0800, Julien Gomes wrote:
->>>
->>>
->>> On 2/6/19 1:07 PM, Marcelo Ricardo Leitner wrote:
->>>> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
->>>>>
->>>>>
->>>>> On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
->>>>>> On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
->>>>>>> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
->>>>>>> structures longer than the current definitions.
->>>>>>>
->>>>>>> This should prevent unjustified setsockopt() failures due to struct
->>>>>>> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
->>>>>>> binaries that should be compatible, but were built with later kernel
->>>>>>> uapi headers.
->>>>>>
->>>>>> Not sure if we support backwards compatibility like this?
->>>>>>
->>>>>> My issue with this change is that by doing this, application will have
->>>>>> no clue if the new bits were ignored or not and it may think that an
->>>>>> event is enabled while it is not.
->>>>>>
->>>>>> A workaround would be to do a getsockopt and check the size that was
->>>>>> returned. But then, it might as well use the right struct here in the
->>>>>> first place.
->>>>>>
->>>>>> I'm seeing current implementation as an implicitly versioned argument:
->>>>>> it will always accept setsockopt calls with an old struct (v4.11 or
->>>>>> v4.12), but if the user tries to use v3 on a v1-only system, it will
->>>>>> be rejected. Pretty much like using a newer setsockopt on an old
->>>>>> system.
->>>>>
->>>>> With the current implementation, given sources that say are supposed to
->>>>> run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
->>>>> we can't rebuild the exact same sources on a 4.19 kernel and still run
->>>>> them on 4.9 without messing with structures re-definition.
->>>>
->>>> Maybe what we want(ed) here then is explicit versioning, to have the 3
->>>> definitions available. Then the application is able to use, say struct
->>>> sctp_event_subscribe, and be happy with it, while there is struct
->>>> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
->>>>
->>>> But it's too late for that now because that would break applications
->>>> already using the new fields in sctp_event_subscribe.
->>>
->>> Right.
->>>
->>>>
->>>>>
->>>>> I understand your point, but this still looks like a sort of uapi
->>>>> breakage to me.
->>>>
->>>> Not disagreeing. I really just don't know how supported that is.
->>>> Willing to know so I can pay more attention to this on future changes.
->>>>
->>>> Btw, is this the only occurrence?
->>>
->>> Can't really say, this is one I witnessed, I haven't really looked for
->>> others.
->>>
->>>>
->>>>>
->>>>>
->>>>> I also had another way to work-around this in mind, by copying optlen
->>>>> bytes and checking that any additional field (not included in the
->>>>> "current" kernel structure definition) is not set, returning EINVAL in
->>>>> such case to keep a similar to current behavior.
->>>>> The issue with this is that I didn't find a suitable (ie not totally
->>>>> arbitrary such as "twice the existing structure size") upper limit to
->>>>> optlen.
->>>>
->>>> Seems interesting. Why would it need that upper limit to optlen?
->>>>
->>>> Say struct v1 had 4 bytes, v3 now had 12. The user supplies 12 bytes
->>>> to the kernel that only knows about 4 bytes. It can check that (12-4)
->>>> bytes in the end, make sure no bit is on and use only the first 4.
->>>>
->>>> The fact that it was 12 or 200 shouldn't matter, should it? As long as
->>>> the (200-4) bytes are 0'ed, only the first 4 will be used and it
->>>> should be ok, otherwise EINVAL. No need to know how big the current
->>>> current actually is because it wouldn't be validating that here: just
->>>> that it can safely use the first 4 bytes.
->>>
->>> The upper limit concern is more regarding the call to copy_from_user
->>> with an unrestricted/unchecked value.
->> Copy_from_user should be safe to copy an arbitrary amount, the only restriction
->> is that optlen can't exceed the size of the buffer receiving the data in the
->> kernel.  From that standpoint your patch is safe.  However,  that exposes the
->> problem of checking any tail data on the userspace buffer.  That is to say, if
->> you want to ensure that any extra data that gets sent from userspace isn't
->> 'set', you would have to copy that extra data in consumable chunks and check
->> them individaully, and that screams DOS to me (i.e. imagine a user passing in a
->> 4GB buffer, and having to wait for the kernel to copy each X sized chunk,
->> looking for non-zero values).
-> 
-> There probably is a decent compromise to find between "not accepting a
-> single additional byte" and accepting several GB.
-> For example how likely is it that the growth of this structure make it
-> go over a page? I would hope not at all.
-> 
-> By choosing a large but decent high limit, I think we can find a
-> future-compatible compromise that doesn't rely on a preliminary
-> getsockopt() just for structure trucation decision...
-
-And I was just reminded about huge pages.
-But still, my point of finding a compromise still stands.
-
-> 
->>
->>> I am not sure of how much of a risk/how exploitable this could be,
->>> that's why I cautiously wanted to limit it in the first place just in case.
->>>
->>>>
->>>>>
->>>>>>
->>>>>>>
->>>>>>> Signed-off-by: Julien Gomes <julien@arista.com>
->>>>>>> ---
->>>>>>>  net/sctp/socket.c | 2 +-
->>>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
->>>>>>> index 9644bdc8e85c..f9717e2789da 100644
->>>>>>> --- a/net/sctp/socket.c
->>>>>>> +++ b/net/sctp/socket.c
->>>>>>> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
->>>>>>>  	int i;
->>>>>>>  
->>>>>>>  	if (optlen > sizeof(struct sctp_event_subscribe))
->>>>>>> -		return -EINVAL;
->>>>>>> +		optlen = sizeof(struct sctp_event_subscribe);
->>>>>>>  
->>>>>>>  	if (copy_from_user(&subscribe, optval, optlen))
->>>>>>>  		return -EFAULT;
->>>>>>> -- 
->>>>>>> 2.20.1
->>>>>>>
->>>>>
->>>
->>> -- 
->>> Julien Gomes
->>>
-> 
+> ---
+>  Documentation/driver-api/component.rst   |  17 ++++
+>  Documentation/driver-api/device_link.rst |   3 +
+>  Documentation/driver-api/index.rst       |   1 +
+>  drivers/base/component.c                 | 107 ++++++++++++++++++++++-
+>  include/linux/component.h                |  71 +++++++++++++++
+>  5 files changed, 196 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/driver-api/component.rst
+>
+> diff --git a/Documentation/driver-api/component.rst b/Documentation/driver-api/component.rst
+> new file mode 100644
+> index 000000000000..2da4a8f20607
+> --- /dev/null
+> +++ b/Documentation/driver-api/component.rst
+> @@ -0,0 +1,17 @@
+> +======================================
+> +Component Helper for Aggregate Drivers
+> +======================================
+> +
+> +.. kernel-doc:: drivers/base/component.c
+> +   :doc: overview
+> +
+> +
+> +API
+> +===
+> +
+> +.. kernel-doc:: include/linux/component.h
+> +   :internal:
+> +
+> +.. kernel-doc:: drivers/base/component.c
+> +   :export:
+> +
+> diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
+> index d6763272e747..2d5919b2b337 100644
+> --- a/Documentation/driver-api/device_link.rst
+> +++ b/Documentation/driver-api/device_link.rst
+> @@ -1,6 +1,9 @@
+>  .. |struct dev_pm_domain| replace:: :c:type:`struct dev_pm_domain <dev_pm_domain>`
+>  .. |struct generic_pm_domain| replace:: :c:type:`struct generic_pm_domain <generic_pm_domain>`
+>
+> +
+> +.. _device_link:
+> +
+>  ============
+>  Device links
+>  ============
+> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+> index ab38ced66a44..c0b600ed9961 100644
+> --- a/Documentation/driver-api/index.rst
+> +++ b/Documentation/driver-api/index.rst
+> @@ -22,6 +22,7 @@ available subsections can be seen below.
+>     device_connection
+>     dma-buf
+>     device_link
+> +   component
+>     message-based
+>     sound
+>     frame-buffer
+> diff --git a/drivers/base/component.c b/drivers/base/component.c
+> index ddcea8739c12..f34d4b784709 100644
+> --- a/drivers/base/component.c
+> +++ b/drivers/base/component.c
+> @@ -16,6 +16,32 @@
+>  #include <linux/slab.h>
+>  #include <linux/debugfs.h>
+>
+> +/**
+> + * DOC: overview
+> + *
+> + * The component helper allows drivers to collect a pile of sub-devices,
+> + * including their bound drivers, into an aggregate driver. Various subsystems
+> + * already provide functions to get hold of such components, e.g.
+> + * of_clk_get_by_name(). The component helper can be used when such a
+> + * subsystem-specific way to find a device is not available: The component
+> + * helper fills the niche of aggregate drivers for specific hardware, where
+> + * further standardization into a subsystem would not be practical. The common
+> + * example is when a logical device (e.g. a DRM display driver) is spread around
+> + * the SoC on various component (scanout engines, blending blocks, transcoders
+> + * for various outputs and so on).
+> + *
+> + * The component helper also doesn't solve runtime dependencies, e.g. for system
+> + * suspend and resume operations. See also :ref:`device links<device_link>`.
+> + *
+> + * Components are registered using component_add() and unregistered with
+> + * component_del(), usually from the driver's probe and disconnect functions.
+> + *
+> + * Aggregate drivers first assemble a component match list of what they need
+> + * using component_match_add(). This is then registered as an aggregate driver
+> + * using component_master_add_with_match(), and unregistered using
+> + * component_master_del().
+> + */
+> +
+>  struct component;
+>
+>  struct component_match_array {
+> @@ -301,10 +327,25 @@ static int component_match_realloc(struct device *dev,
+>         return 0;
+>  }
+>
+> -/*
+> - * Add a component to be matched, with a release function.
+> +/**
+> + * component_match_add_release - add a component match with release callback
+> + * @master: device with the aggregate driver
+> + * @matchptr: pointer to the list of component matches
+> + * @release: release function for @compare_data
+> + * @compare: compare function to match against all components
+> + * @compare_data: opaque pointer passed to the @compare function
+> + *
+> + * This adds a new component match to the list stored in @matchptr, which the
+> + * @master aggregate driver needs to function. The list of component matches
+> + * pointed to by @matchptr must be initialized to NULL before adding the first
+> + * match.
+> + *
+> + * The allocated match list in @matchptr is automatically released using devm
+> + * actions, where upon @release will be called to free any references held by
+> + * @compare_data, e.g. when @compare_data is a &device_node that must be
+> + * released with of_node_put().
+>   *
+> - * The match array is first created or extended if necessary.
+> + * See also component_match_add().
+>   */
+>  void component_match_add_release(struct device *master,
+>         struct component_match **matchptr,
+> @@ -367,6 +408,18 @@ static void free_master(struct master *master)
+>         kfree(master);
+>  }
+>
+> +/**
+> + * component_master_add_with_match - register an aggregate driver
+> + * @dev: device with the aggregate driver
+> + * @ops: callbacks for the aggregate driver
+> + * @match: component match list for the aggregate driver
+> + *
+> + * Registers a new aggregate driver consisting of the components added to @match
+> + * by calling one of the component_match_add() functions. Once all components in
+> + * @match are available, it will be assembled by calling
+> + * &component_master_ops.bind from @ops. Must be unregistered by calling
+> + * component_master_del().
+> + */
+>  int component_master_add_with_match(struct device *dev,
+>         const struct component_master_ops *ops,
+>         struct component_match *match)
+> @@ -403,6 +456,15 @@ int component_master_add_with_match(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(component_master_add_with_match);
+>
+> +/**
+> + * component_master_del - unregister an aggregate driver
+> + * @dev: device with the aggregate driver
+> + * @ops: callbacks for the aggregate driver
+> + *
+> + * Unregisters an aggregate driver registered with
+> + * component_master_add_with_match(). If necessary the aggregate driver is first
+> + * disassembled by calling &component_master_ops.unbind from @ops.
+> + */
+>  void component_master_del(struct device *dev,
+>         const struct component_master_ops *ops)
+>  {
+> @@ -430,6 +492,15 @@ static void component_unbind(struct component *component,
+>         devres_release_group(component->dev, component);
+>  }
+>
+> +/**
+> + * component_unbind_all - unbind all component to an aggregate driver
+> + * @master_dev: device with the aggregate driver
+> + * @data: opaque pointer, passed to all components
+> + *
+> + * Unbinds all components to the aggregate @dev by passing @data to their
+> + * &component_ops.unbind functions. Should be called from
+> + * &component_master_ops.unbind.
+> + */
+>  void component_unbind_all(struct device *master_dev, void *data)
+>  {
+>         struct master *master;
+> @@ -503,6 +574,15 @@ static int component_bind(struct component *component, struct master *master,
+>         return ret;
+>  }
+>
+> +/**
+> + * component_bind_all - bind all component to an aggregate driver
+> + * @master_dev: device with the aggregate driver
+> + * @data: opaque pointer, passed to all components
+> + *
+> + * Binds all components to the aggregate @dev by passing @data to their
+> + * &component_ops.bind functions. Should be called from
+> + * &component_master_ops.bind.
+> + */
+>  int component_bind_all(struct device *master_dev, void *data)
+>  {
+>         struct master *master;
+> @@ -537,6 +617,18 @@ int component_bind_all(struct device *master_dev, void *data)
+>  }
+>  EXPORT_SYMBOL_GPL(component_bind_all);
+>
+> +/**
+> + * component_add - register a component
+> + * @dev: component device
+> + * @ops: component callbacks
+> + *
+> + * Register a new component for @dev. Functions in @ops will be called when the
+> + * aggregate driver is ready to bind the overall driver by calling
+> + * component_bind_all(). See also &struct component_ops.
+> + *
+> + * The component needs to be unregistered at driver unload/disconnect by calling
+> + * component_del().
+> + */
+>  int component_add(struct device *dev, const struct component_ops *ops)
+>  {
+>         struct component *component;
+> @@ -568,6 +660,15 @@ int component_add(struct device *dev, const struct component_ops *ops)
+>  }
+>  EXPORT_SYMBOL_GPL(component_add);
+>
+> +/**
+> + * component_del - unregister a component
+> + * @dev: component device
+> + * @ops: component callbacks
+> + *
+> + * Unregister a component added with component_add(). If the component is bound
+> + * into an aggregate driver, this will force the entire aggregate driver, including
+> + * all its components, to be unbound.
+> + */
+>  void component_del(struct device *dev, const struct component_ops *ops)
+>  {
+>         struct component *c, *component = NULL;
+> diff --git a/include/linux/component.h b/include/linux/component.h
+> index e71fbbbc74e2..4911598b4c42 100644
+> --- a/include/linux/component.h
+> +++ b/include/linux/component.h
+> @@ -4,11 +4,31 @@
+>
+>  #include <linux/stddef.h>
+>
+> +
+>  struct device;
+>
+> +/**
+> + * struct component_ops - callbacks for component drivers
+> + *
+> + * Components are registered with component_add() and unregistered with
+> + * component_del().
+> + */
+>  struct component_ops {
+> +       /**
+> +        * @bind:
+> +        *
+> +        * Called through component_bind_all() when the aggregate driver is
+> +        * ready to bind the overall driver.
+> +        */
+>         int (*bind)(struct device *comp, struct device *master,
+>                     void *master_data);
+> +       /**
+> +        * @unbind:
+> +        *
+> +        * Called through component_unbind_all() when the aggregate driver is
+> +        * ready to bind the overall driver, or when component_bind_all() fails
+> +        * part-ways through and needs to unbind some already bound components.
+> +        */
+>         void (*unbind)(struct device *comp, struct device *master,
+>                        void *master_data);
+>  };
+> @@ -21,8 +41,42 @@ void component_unbind_all(struct device *master, void *master_data);
+>
+>  struct master;
+>
+> +/**
+> + * struct component_master_ops - callback for the aggregate driver
+> + *
+> + * Aggregate drivers are registered with component_master_add_with_match() and
+> + * unregistered with component_master_del().
+> + */
+>  struct component_master_ops {
+> +       /**
+> +        * @bind:
+> +        *
+> +        * Called when all components or the aggregate driver, as specified in
+> +        * the match list passed to component_master_add_with_match(), are
+> +        * ready. Usually there are 3 steps to bind an aggregate driver:
+> +        *
+> +        * 1. Allocate a structure for the aggregate driver.
+> +        *
+> +        * 2. Bind all components to the aggregate driver by calling
+> +        *    component_bind_all() with the aggregate driver structure as opaque
+> +        *    pointer data.
+> +        *
+> +        * 3. Register the aggregate driver with the subsystem to publish its
+> +        *    interfaces.
+> +        *
+> +        * Note that the lifetime of the aggregate driver does not align with
+> +        * any of the underlying &struct device instances. Therefore devm cannot
+> +        * be used and all resources acquired or allocated in this callback must
+> +        * be explicitly released in the @unbind callback.
+> +        */
+>         int (*bind)(struct device *master);
+> +       /**
+> +        * @unbind:
+> +        *
+> +        * Called when either the aggregate driver, using
+> +        * component_master_del(), or one of its components, using
+> +        * component_del(), is unregistered.
+> +        */
+>         void (*unbind)(struct device *master);
+>  };
+>
+> @@ -38,6 +92,23 @@ void component_match_add_release(struct device *master,
+>         void (*release)(struct device *, void *),
+>         int (*compare)(struct device *, void *), void *compare_data);
+>
+> +/**
+> + * component_match_add - add a compent match
+> + * @master: device with the aggregate driver
+> + * @matchptr: pointer to the list of component matches
+> + * @compare: compare function to match against all components
+> + * @compare_data: opaque pointer passed to the @compare function
+> + *
+> + * This adds a new component match to the list stored in @matchptr, which the
+> + * @master aggregate driver needs to function. The list of component matches
+> + * pointed to by @matchptr must be initialized to NULL before adding the first
+> + * match.
+> + *
+> + * The allocated match list in @matchptr is automatically released using devm
+> + * actions.
+> + *
+> + * See also component_match_add_release().
+> + */
+>  static inline void component_match_add(struct device *master,
+>         struct component_match **matchptr,
+>         int (*compare)(struct device *, void *), void *compare_data)
+> --
+> 2.20.1
+>
