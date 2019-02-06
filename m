@@ -2,123 +2,109 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D73EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7328AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05660217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4211A217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:41:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fJY0sOQo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lGhu39iF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfBFUkz (ORCPT
+        id S1726750AbfBFUld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 15:40:55 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41561 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbfBFUky (ORCPT
+        Wed, 6 Feb 2019 15:41:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53160 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbfBFUlc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 15:40:54 -0500
-Received: by mail-ed1-f67.google.com with SMTP id p15so2827308edy.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 12:40:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TcFr+rQH0odkIUor3u2H3BNmJOToPZn9FCa6jQJ2Gnw=;
-        b=fJY0sOQoftTHwboF3Q7SoO7K6oWcafFIgPZk1Yr5XfGnGIfXTCZ/0jgOHU5jCG1efZ
-         fKgl4KDa3tRavFi8d6rg90k2oBTQ0aKGfUXoYYNE2GC8IGH8xBJF9mVhYnTbuD8k1JRL
-         EVO6YJrzbc/FNT+B/xtYcpTa4Vz5Zt9/bl61c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=TcFr+rQH0odkIUor3u2H3BNmJOToPZn9FCa6jQJ2Gnw=;
-        b=lpFzyv9GbDqPV5TzhZqeocthIJvYzNAxYR51Y5B1O5Wr5hVZo9feq5W3/vMxTMlpSG
-         rE/Y/EKcvS5eNu5lovlG5+jDZlFoYYL5oxT+VlSshzGpF03RK/ao+ZifqjIOSYaYxA30
-         f5K2xHRRc7aod3VhDNpZRcvQUy+hZKvz9VFG3U7WpkQ49IeSPDn9hGWlZFa3MFRc0Hjo
-         T9y2BrkE3+Bau4tf6himfNulI7/P6fXPN81zcBM3icd9/OCO5GrPh7JcBzy6M85VZ8ML
-         x1y+ZAOC5EOjFb6ikMe3M91vXm+/CWRXrVGMay991FYq+vnKrXBnpL2UEr3OVCzCkTPx
-         b9Ig==
-X-Gm-Message-State: AHQUAuYtMeWMU++kag030ZTTrZNn5C6nliEAZHPMASGqbwUT8m6YWx2D
-        +HUTYJD5rKWM7ZO6irzs5LkQmA==
-X-Google-Smtp-Source: AHgI3IasITbSYX/F3S9Wr7E8dQsgQCY9Ndyo3yqCL88fyvxG0rfEOGdjwd4PnqOjIKWsQECuipjSzQ==
-X-Received: by 2002:a50:9724:: with SMTP id c33mr9712260edb.288.1549485652408;
-        Wed, 06 Feb 2019 12:40:52 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id a27sm6289951eda.65.2019.02.06.12.40.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 12:40:51 -0800 (PST)
-Date:   Wed, 6 Feb 2019 21:40:49 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Shayenne Moura <shayenneluzmoura@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/doc: Remove solved "VBlank issues"
-Message-ID: <20190206204049.GM3271@phenom.ffwll.local>
-Mail-Followup-To: Shayenne Moura <shayenneluzmoura@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190206193157.3b53ipdxtcqc4hv4@smtp.gmail.com>
+        Wed, 6 Feb 2019 15:41:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sWEKy5aicFMji7dfB83+mOjLcp3oFlOpybyajD/WoZQ=; b=lGhu39iFHGWpvbRYczilWLR4r
+        7fQM8YFJAZN8allzduj9Eody3bio+zBsadPFUnEagmSHYZVKNGx8DeHmVlJf5g04b9INUcxffjwRw
+        chp0xai/x6avJiMiMNSWnltw+JWwe2rOvPKh6EG7f8BYYhWgNWWRztUWVLRZIuAIqb0M28gvV87QG
+        kqinj6dE6kMmbuH1toWRNc026lLLmmUsYpu0pK2vhNbFdZ+MRRXMoDwOkgK0xm9YtBVTkG1Eb9WQz
+        m0yL5r/pbWigkgHqlRfTSgy6arFOxnWWo/QmTSUMLcX5qBP8oYd3Y3KFQtpQuPzl+bMEBuwHlRMtY
+        G2IgR77Iw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grU0e-0006kC-HG; Wed, 06 Feb 2019 20:41:28 +0000
+Date:   Wed, 6 Feb 2019 12:41:28 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Doug Ledford <dledford@redhat.com>
+Cc:     Christopher Lameter <cl@linux.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206204128.GR21860@bombadil.infradead.org>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz>
+ <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206194055.GP21860@bombadil.infradead.org>
+ <a9df9be75966f34f55f843a3cd7e1ee7d497c7fa.camel@redhat.com>
+ <20190206202021.GQ21860@bombadil.infradead.org>
+ <a8dc27e81182060b3480127332c77ac624abcb22.camel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190206193157.3b53ipdxtcqc4hv4@smtp.gmail.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a8dc27e81182060b3480127332c77ac624abcb22.camel@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 05:31:57PM -0200, Shayenne Moura wrote:
-> Remove the list of broken tests on VKMS solved by patchset
-> https://patchwork.freedesktop.org/series/55994/
+On Wed, Feb 06, 2019 at 03:28:35PM -0500, Doug Ledford wrote:
+> On Wed, 2019-02-06 at 12:20 -0800, Matthew Wilcox wrote:
+> > On Wed, Feb 06, 2019 at 03:16:02PM -0500, Doug Ledford wrote:
+> > > On Wed, 2019-02-06 at 11:40 -0800, Matthew Wilcox wrote:
+> > > > On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote:
+> > > > > though? If we only allow this use case then we may not have to worry about
+> > > > > long term GUP because DAX mapped files will stay in the physical location
+> > > > > regardless.
+> > > > 
+> > > > ... except for truncate.  And now that I think about it, there was a
+> > > > desire to support hot-unplug which also needed revoke.
+> > > 
+> > > We already support hot unplug of RDMA devices.  But it is extreme.  How
+> > > does hot unplug deal with a program running from the device (something
+> > > that would have returned ETXTBSY)?
+> > 
+> > Not hot-unplugging the RDMA device but hot-unplugging an NV-DIMM.
+> > 
+> > It's straightforward to migrate text pages from one DIMM to another;
+> > you remove the PTEs from the CPU's page tables, copy the data over and
+> > pagefaults put the new PTEs in place.  We don't have a way to do similar
+> > things to an RDMA device, do we?
 > 
-> Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-
-Excellent work from you!
-
-> ---
->  Documentation/gpu/vkms.rst | 11 -----------
->  1 file changed, 11 deletions(-)
+> We don't have a means of migration except in the narrowly scoped sense
+> of queue pair migration as defined by the IBTA and implemented on some
+> dual port IB cards.  This narrowly scoped migration even still involves
+> notification of the app.
 > 
-> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-> index 7dfc349a4508..61586fc861bb 100644
-> --- a/Documentation/gpu/vkms.rst
-> +++ b/Documentation/gpu/vkms.rst
-> @@ -23,17 +23,6 @@ CRC API Improvements
->  - Add igt test to check extreme alpha values i.e. fully opaque and fully
->    transparent (intermediate values are affected by hw-specific rounding modes).
->  
-> -Vblank issues
-> --------------
-> -
-> -Some IGT test cases are failing. Need to analyze why and fix the issues:
-> -
-> -- plain-flip-fb-recreate
-> -- plain-flip-ts-check
-> -- flip-vs-blocking-wf-vblank
-> -- plain-flip-fb-recreate-interruptible
-> -- flip-vs-wf_vblank-interruptible
+> Since there's no guarantee that any other port can connect to the same
+> machine as any port that's going away, it would always be a
+> disconnect/reconnect sequence in the app to support this, not an under
+> the covers migration.
 
-Patch applied to drm-misc-next, thanks for your patch.
--Daniel
+I don't understand you.  We're not talking about migrating from one IB
+card to another, we're talking about changing the addresses that an STag
+refers to.
 
-> -
->  Runtime Configuration
->  ---------------------
->  
-> -- 
-> 2.17.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
