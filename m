@@ -2,125 +2,117 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA24DC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99BCC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4972186A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A69C52175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MjoUcfkg"
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="NM7AywVY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfBFNIH (ORCPT
+        id S1728253AbfBFNI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:08:07 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45858 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbfBFNIG (ORCPT
+        Wed, 6 Feb 2019 08:08:58 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45102 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfBFNI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:08:06 -0500
-Received: by mail-lf1-f67.google.com with SMTP id b20so5241326lfa.12
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 05:08:05 -0800 (PST)
+        Wed, 6 Feb 2019 08:08:57 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q15so7424051wro.12
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 05:08:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YO8ECOXVmpCQTguOMMVFY1LWo4CRrL0NRpfp3Fidfms=;
-        b=MjoUcfkgn8mudz3phLrO/rIp+jp4dkicHRiOkSt2DNz0KFtCkWbagVfNdY5o2UxGUj
-         JRAw9X/87TMZz3EB8RtOxA013fsRMt5VJPIJwsO23NJ5MTaL4JV71jHwGUJcecsUrTdS
-         tvvxi/MMmdFEysObFZzMWCkc6AKHBfxF92Ameyml+rm1KvP2HqaSHdu8m5dQegX6F0Uv
-         eYQJvlz4OdrEvUptVx8Pif41Y2GTXJx4+HzprzkWagEHkEXppa75XC1JW32GFqTTMYcj
-         +uv9gx7P+iswc5rnMWkjyeOsytyDYfnpbOsQlq6r4NOvX7PGTMQ3S4x6PJ4gHSCc66SK
-         sa+A==
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P1pOlZW/Id97sp4fAA+2r0hhEC/TTJ/UW1DX4h/o9vI=;
+        b=NM7AywVY9VILtjTRV+wZ2glv9suyd8bMBHvMpU3wbOuGOuHq11V17x8MK3F3th7nMa
+         kc7plOaf1EPCWaKUlLhsJouiWGFZqpw5mzpyCJW8IwH1kqkYETS8Dq4rqeLeHrzb8ix9
+         QCiIhqXrfhmmF5YaML4XcIK7TY3qDkfNjslpyzNoLo3Dqxg7tyd2G03Yk7tOXRk9vdHE
+         EjcPgALv1c+NEU6DA6u3K1th+9kBnEGECABsKpWkGKkbNelI3NN8jT8206CutE8yM3+J
+         6XQLLa+Q81yeE62lK6PRfgHgufr1wXOsBtrql6eKwGulanOowtiDZ5ctpQpfUWgr3dMW
+         5EsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YO8ECOXVmpCQTguOMMVFY1LWo4CRrL0NRpfp3Fidfms=;
-        b=Z1zcWuAXKavM1GAjHIQRXRWrdCfUr/U+uTCvMsDkFGvbfgiUp1Wr2rftGm0iW5CJLE
-         aPSwhAUmPYijWOZhimJ7IFkkXklVooJ3q61fTfyEGfsxdbqScQ0apvY7y0MWpbfmAlr8
-         TE264Yjb5AUkiWvL6OZxQBSvOBnaUU2DUBqjBPbQv5CIhVoK7Cfrppb7z+HuExH+w7nK
-         1Wfh1L2rJZF//qXF39suNtsEYbNS7KRQ0y/7QurWW1t7yhU1F1RtfUxaN2PKUeHKy9Za
-         GOi8PO1qfvEyMrhhdD2iueNDonCKDi2Brt14H9kv2RMyegUxL3D6z1HfzlekY5zSiyDp
-         YRoQ==
-X-Gm-Message-State: AHQUAuY0uuj3ys82wuU+j4yhvYCSDZmdN+QlTmrZH9r98q4y8u1qPAO7
-        g+HRn61KbWmrvIEa6711D2hfsBGPA8+EiT1+gWNhlA==
-X-Google-Smtp-Source: AHgI3IYp+ia7omXyLV7gOqDz6m2ZL4eTD9/l6MOlma+iJwNlEM8ys3V51XmfyGEVNcN6zUfZo5ONSVlWqRhzPCcvkOY=
-X-Received: by 2002:a19:f607:: with SMTP id x7mr6355892lfe.51.1549458484380;
- Wed, 06 Feb 2019 05:08:04 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P1pOlZW/Id97sp4fAA+2r0hhEC/TTJ/UW1DX4h/o9vI=;
+        b=SXeVuZYf8SRr6M65sq2kcoYMaJwir720XfEBsPqD+0MXaVodgAl3CsBW/gngKO0HXC
+         VsFs+q5PZyxNdzqjlbgOBh7vOS013x+1m1PTLaBuwS57aRpTj5cxKchuTe3FLBvayu/V
+         k8DgkIWsvzKm6HzAYyLf09+SA5/rXFsbgDE0V+7pBk8TqskV3NwFe7KDKNVkNhgsi62S
+         fs8xtUHA4ftTrf28NUV1/OTM0Wma57DP/Qy8Q7mqDIn+9anCOF+fWuWDyDRDVprKmRy6
+         YnvlyS6/QEz96Lq1q1tZmFCRbowlYx6A0yZnLBGVlh4vjwhYFIarnmug5p3lMS//OOpX
+         qIag==
+X-Gm-Message-State: AHQUAub2un2lOhJqVS/Id4LxhDSAsO7JMKMkhAHoLm3fneC+oplchxnc
+        cT/YsSccOO2r5KXj/OiUm5/0yA==
+X-Google-Smtp-Source: AHgI3Ib3/nnzT6S8FH7jrpgXBr97s3NRqV1YTUtTkm3Qo2BHAMOtkSh7KMiCvrf8+KV9bqmPals0xQ==
+X-Received: by 2002:adf:f401:: with SMTP id g1mr8100652wro.103.1549458536006;
+        Wed, 06 Feb 2019 05:08:56 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id q12sm18603496wrx.31.2019.02.06.05.08.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 05:08:55 -0800 (PST)
+Date:   Wed, 6 Feb 2019 13:59:44 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MELLANOX MLX5 core VPI driver" 
+        <linux-rdma@vger.kernel.org>,
+        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>
+Subject: Re: [PATCH net-next v3 02/12] bnxt: Implement
+ ndo_get_port_parent_id()
+Message-ID: <20190206125944.GC2189@nanopsycho>
+References: <20190205235326.14600-1-f.fainelli@gmail.com>
+ <20190205235326.14600-3-f.fainelli@gmail.com>
 MIME-Version: 1.0
-References: <20190125162302.14036-1-masneyb@onstation.org> <20190125162302.14036-4-masneyb@onstation.org>
-In-Reply-To: <20190125162302.14036-4-masneyb@onstation.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 6 Feb 2019 14:07:52 +0100
-Message-ID: <CACRpkdZMe+JEQOa1yBfOoAErrC41Q9rggwxNb=_uwq1m2QKWyw@mail.gmail.com>
-Subject: Re: [PATCH 3/9] mfd: pm8xxx: convert to v2 irq interfaces to support
- hierarchical IRQ chips
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205235326.14600-3-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian!
+Wed, Feb 06, 2019 at 12:53:16AM CET, f.fainelli@gmail.com wrote:
+>BNXT only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it a
+>great candidate to be converted to use the ndo_get_port_parent_id() NDO
+>instead of implementing switchdev_port_attr_get(). The conversion is
+>straight forward here since the PF and VF code use the same getter.
+>
+>Since bnxt makes uses of switchdev_port_same_parent_id() convert it to
+>use netdev_port_same_parent_id().
+>
+>Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-I found one more bug in this patch, still not the last bug but I'm still
-digging around:
+[...]
 
-On Fri, Jan 25, 2019 at 5:23 PM Brian Masney <masneyb@onstation.org> wrote:
+>diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+>index c683b5e96b1d..170d2fbbb91b 100644
+>--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+>+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+>@@ -12,6 +12,7 @@
+> #include <linux/if_vlan.h>
+> #include <net/flow_dissector.h>
+> #include <net/pkt_cls.h>
+>+#include <net/switchdev.h>
 
-> +struct pm_irq_data {
-> +       int num_irqs;
-> +       struct irq_chip *irq_chip;
-> +       void (*irq_handler)(struct irq_desc *desc);
-> +};
-> +
->  struct pm_irq_chip {
->         struct regmap           *regmap;
->         spinlock_t              pm_irq_lock;
->         struct irq_domain       *irqdomain;
-> -       unsigned int            num_irqs;
->         unsigned int            num_blocks;
->         unsigned int            num_masters;
->         u8                      config[0];
-> -};
-> -
-> -struct pm_irq_data {
-> -       int num_irqs;
-> -       const struct irq_domain_ops  *irq_domain_ops;
-> -       void (*irq_handler)(struct irq_desc *desc);
-> +       const struct pm_irq_data *pm_irq_data;
->  };
+You don't need this. Looks like a leftover.
 
-This doesn't work: the config[0] must be the tail element
-of the struct since we allocate dynamically the trailing
-config[] bytes.
+Otherwise, looks fine.
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 
-As it looks now, the *pm_irq_data gets overwritten by
-the configs and it crashes.
 
-Yours,
-Linus Walleij
+> #include <net/tc_act/tc_gact.h>
+> #include <net/tc_act/tc_skbedit.h>
+> #include <net/tc_act/tc_mirred.h>
+
+[...]
