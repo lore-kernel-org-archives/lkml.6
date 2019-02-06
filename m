@@ -2,185 +2,335 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356BAC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4097AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD5F20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uA/Dsuiu"
+	by mail.kernel.org (Postfix) with ESMTP id 0EAF420821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbfBFNS2 (ORCPT
+        id S1730599AbfBFNSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:18:28 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33977 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbfBFNS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:18:27 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v14-v6so3209951ljv.1;
-        Wed, 06 Feb 2019 05:18:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=c+IE8Yz4vmq2TOpJoyl6QgxO1q5p0wtdsDhb+U6O/4M=;
-        b=uA/DsuiuFHstDk6LjG/2n2Gac+TaqepdVWD7sbbhKXCwfaMm4PjWtTyTR2QjtgqAqW
-         UqOJmah+XJVDplGbgnJRi4yPpQXtFGPquy+jjc2Cuuj2zNNlMubu9CGuOHGLbQBrecWO
-         adqz7BTq6pdfW6daR6SOYMkhBKZXwFsgQTprKWV3De4ehgxHL1PLVEoif0W3mYGlB+ym
-         5jGyERp4ZYmNk+fS9phMmTKGRORQBASKci7YrQmaIxNV1t+5P3bEw2BakbuvILmAG0qV
-         xq0FYz+QS4meMj2KH663YzZwTAWI2dAcsuygusphjQfigL92KuNd9oNgClXBeJkNHGxl
-         pWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=c+IE8Yz4vmq2TOpJoyl6QgxO1q5p0wtdsDhb+U6O/4M=;
-        b=H0y07ThKmsy6o3SETv5l2xhGpcuYWbcAldVbYxvsJCX5zt3pNK4V/f8nPlONzhAhsw
-         TM6a40W1suQK8pHWVEa/lRbF+ia7c+v/vGvOtJx98lplEF3peOw2ZLIM8WgWq6zVy5zM
-         bVEt1uI+JhjglWataDYX4QHkvjVNyHJvwbceVZw7Ip2AlTycXjaLBx7eGxQF8bI3bM1m
-         QAXi9ZFA/fIuz+Dj67XoqJJjs2ZdbBCCepVcH0wcX8F5kSSNomZh3MZiAB0vKRHdhivk
-         a8N1LNT/dF8mgAzz52jpnszvgGh0Py9nVikXSTSANcSjLxs3RkpdSPL6HRsUmVOpK2K1
-         XERg==
-X-Gm-Message-State: AHQUAua7snt5IWm8dZch7CRVTjZNOFYD04bQVMlQZJxPR0zSToJgvhOy
-        ACuOUxxxuT7lQrE9whOpI2KRTsv+
-X-Google-Smtp-Source: AHgI3Ibtk8sAnwL+UAlZp/6nml3bQqIXBfzq9y2jQgzHa1FTqQgd3jOBXhSq3WU7a7BBGSaqA1/Mhg==
-X-Received: by 2002:a2e:8894:: with SMTP id k20-v6mr1954888lji.138.1549459103362;
-        Wed, 06 Feb 2019 05:18:23 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id z17sm4037024lfh.9.2019.02.06.05.18.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 05:18:22 -0800 (PST)
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
- <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
- <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
- <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
-Date:   Wed, 6 Feb 2019 16:18:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 08:18:41 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26739 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730634AbfBFNRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:17:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="136336038"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 05:17:46 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 82FAD9A8; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH v2 24/28] thunderbolt: Add support for DMA tunnels
+Date:   Wed,  6 Feb 2019 16:17:34 +0300
+Message-Id: <20190206131738.43696-25-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206131310.GK21676@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2019 16:13, Thierry Reding пишет:
+In addition to PCIe and Display Port tunnels it is also possible to
+create tunnels that forward DMA traffic from the host interface adapter
+(NHI) to a NULL port that is connected to another domain through a
+Thunderbolt cable. These tunnels can be used to carry software messages
+such as networking packets.
 
-[snip]
+To support this we introduce another tunnel type (TB_TUNNEL_DMA) that
+supports paths from NHI to NULL port and back.
 
->> That's odd because it suggests that DMA actually completed, but the
->> message didn't.
->>
->> I'm not sure I understand how that could happen.
->>
->> What's also weird above is that there doesn't seem to be a DMA that
->> is started for that particular message. Or is the timeout message a
->> response to the prior transfer (length 10)? Seems like that should
->> not be possible because we get the "transfer complete" message.
-> 
-> Wait, those are actually different instances of the I2C controller, so
-> the relevant log entries are these:
-> 
-> 	[    0.945445] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-> 	[    0.945456] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-> 	...
-> 	[    1.049224] tegra-i2c 7000d000.i2c: i2c transfer timed out
-> 
-> And these don't happen if you use higher burst sizes or before the DMA
-> series?
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/thunderbolt/path.c    | 20 ++++++--
+ drivers/thunderbolt/switch.c  | 22 ++++++++
+ drivers/thunderbolt/tb.h      |  2 +
+ drivers/thunderbolt/tb_regs.h |  3 ++
+ drivers/thunderbolt/tunnel.c  | 94 ++++++++++++++++++++++++++++++++++-
+ drivers/thunderbolt/tunnel.h  | 10 ++++
+ 6 files changed, 147 insertions(+), 4 deletions(-)
 
-I tried to enforce DMA without changing bursts:
-
-----------
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index c538ed5f8e2c..5d1c54ce7800 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -6,6 +6,8 @@
-  * Author: Colin Cross <ccross@android.com>
-  */
+diff --git a/drivers/thunderbolt/path.c b/drivers/thunderbolt/path.c
+index ada60d4aa99b..afdb667fcc0d 100644
+--- a/drivers/thunderbolt/path.c
++++ b/drivers/thunderbolt/path.c
+@@ -284,7 +284,8 @@ static void __tb_path_deallocate_nfc(struct tb_path *path, int first_hop)
+ 	}
+ }
  
-+#define DEBUG
+-static int __tb_path_deactivate_hop(struct tb_port *port, int hop_index)
++static int __tb_path_deactivate_hop(struct tb_port *port, int hop_index,
++				    bool clear_fc)
+ {
+ 	struct tb_regs_hop hop;
+ 	ktime_t timeout;
+@@ -311,8 +312,20 @@ static int __tb_path_deactivate_hop(struct tb_port *port, int hop_index)
+ 		if (ret)
+ 			return ret;
+ 
+-		if (!hop.pending)
++		if (!hop.pending) {
++			if (clear_fc) {
++				/* Clear flow control */
++				hop.ingress_fc = 0;
++				hop.egress_fc = 0;
++				hop.ingress_shared_buffer = 0;
++				hop.egress_shared_buffer = 0;
 +
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/dmaengine.h>
-@@ -1046,8 +1048,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
-                xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
++				return tb_port_write(port, &hop, TB_CFG_HOPS,
++						     2 * hop_index, 2);
++			}
++
+ 			return 0;
++		}
  
-        xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
--       i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
--                                   i2c_dev->dma_buf;
-+       i2c_dev->is_curr_dma_xfer = !!i2c_dev->dma_buf;
-        tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
-        dma = i2c_dev->is_curr_dma_xfer;
-----------
+ 		usleep_range(10, 20);
+ 	} while (ktime_before(ktime_get(), timeout));
+@@ -326,7 +339,8 @@ static void __tb_path_deactivate_hops(struct tb_path *path, int first_hop)
+ 
+ 	for (i = first_hop; i < path->path_length; i++) {
+ 		res = __tb_path_deactivate_hop(path->hops[i].in_port,
+-					       path->hops[i].in_hop_index);
++					       path->hops[i].in_hop_index,
++					       path->clear_fc);
+ 		if (res)
+ 			tb_port_warn(path->hops[i].in_port,
+ 				     "hop deactivation failed for hop %d, index %d\n",
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index a1876dcd1d10..13eed95fc667 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -562,6 +562,28 @@ int tb_port_add_nfc_credits(struct tb_port *port, int credits)
+ 			     TB_CFG_PORT, 4, 1);
+ }
+ 
++/**
++ * tb_port_set_initial_credits() - Set initial port link credits allocated
++ * @port: Port to set the initial credits
++ * @credits: Number of credits to to allocate
++ *
++ * Set initial credits value to be used for ingress shared buffering.
++ */
++int tb_port_set_initial_credits(struct tb_port *port, u32 credits)
++{
++	u32 data;
++	int ret;
++
++	ret = tb_port_read(port, &data, TB_CFG_PORT, 5, 1);
++	if (ret)
++		return ret;
++
++	data &= ~TB_PORT_LCA_MASK;
++	data |= (credits << TB_PORT_LCA_SHIFT) & TB_PORT_LCA_MASK;
++
++	return tb_port_write(port, &data, TB_CFG_PORT, 5, 1);
++}
++
+ /**
+  * tb_port_clear_counter() - clear a counter in TB_CFG_COUNTER
+  *
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 7e155eed1fee..3a42a47df69f 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -198,6 +198,7 @@ struct tb_path {
+ 	int weight:4;
+ 	bool drop_packages;
+ 	bool activated;
++	bool clear_fc;
+ 	struct tb_path_hop *hops;
+ 	int path_length; /* number of hops */
+ };
+@@ -465,6 +466,7 @@ static inline struct tb_switch *tb_to_switch(struct device *dev)
+ 
+ int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged);
+ int tb_port_add_nfc_credits(struct tb_port *port, int credits);
++int tb_port_set_initial_credits(struct tb_port *port, u32 credits);
+ int tb_port_clear_counter(struct tb_port *port, int counter);
+ int tb_port_alloc_in_hopid(struct tb_port *port, int hopid, int max_hopid);
+ void tb_port_release_in_hopid(struct tb_port *port, int hopid);
+diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
+index 420d2a623f31..4591c8b1d546 100644
+--- a/drivers/thunderbolt/tb_regs.h
++++ b/drivers/thunderbolt/tb_regs.h
+@@ -215,6 +215,9 @@ struct tb_regs_port_header {
+ #define TB_PORT_NFC_CREDITS_MASK	GENMASK(19, 0)
+ #define TB_PORT_MAX_CREDITS_SHIFT	20
+ #define TB_PORT_MAX_CREDITS_MASK	GENMASK(26, 20)
++/* DWORD 5 */
++#define TB_PORT_LCA_SHIFT		22
++#define TB_PORT_LCA_MASK		GENMASK(28, 22)
+ 
+ /* Display Port adapter registers */
+ 
+diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
+index 7aab7e07739b..f10a0a15b873 100644
+--- a/drivers/thunderbolt/tunnel.c
++++ b/drivers/thunderbolt/tunnel.c
+@@ -26,7 +26,10 @@
+ #define TB_DP_AUX_PATH_OUT		1
+ #define TB_DP_AUX_PATH_IN		2
+ 
+-static const char * const tb_tunnel_names[] = { "PCI", "DP" };
++#define TB_DMA_PATH_OUT			0
++#define TB_DMA_PATH_IN			1
++
++static const char * const tb_tunnel_names[] = { "PCI", "DP", "DMA" };
+ 
+ #define __TB_TUNNEL_PRINT(level, tunnel, fmt, arg...)                   \
+ 	do {                                                            \
+@@ -461,6 +464,95 @@ struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
+ 	return NULL;
+ }
+ 
++static u32 tb_dma_credits(struct tb_port *nhi)
++{
++	u32 max_credits;
++
++	max_credits = nhi->config.nfc_credits & TB_PORT_MAX_CREDITS_MASK;
++	max_credits >>= TB_PORT_MAX_CREDITS_SHIFT;
++
++	return min(max_credits, 13U);
++}
++
++static int tb_dma_activate(struct tb_tunnel *tunnel, bool active)
++{
++	struct tb_port *nhi = tunnel->src_port;
++	u32 credits;
++
++	credits = active ? tb_dma_credits(nhi) : 0;
++	return tb_port_set_initial_credits(nhi, credits);
++}
++
++static void tb_dma_init_path(struct tb_path *path, unsigned int isb,
++			     unsigned int efc, u32 credits)
++{
++	int i;
++
++	path->egress_fc_enable = efc;
++	path->ingress_fc_enable = TB_PATH_ALL;
++	path->egress_shared_buffer = TB_PATH_NONE;
++	path->ingress_shared_buffer = isb;
++	path->priority = 5;
++	path->weight = 1;
++	path->clear_fc = true;
++
++	for (i = 0; i < path->path_length; i++)
++		path->hops[i].initial_credits = credits;
++}
++
++/**
++ * tb_tunnel_alloc_dma() - allocate a DMA tunnel
++ * @tb: Pointer to the domain structure
++ * @nhi: Host controller port
++ * @dst: Destination null port which the other domain is connected to
++ * @transmit_ring: NHI ring number used to send packets towards the
++ *		   other domain
++ * @transmit_path: HopID used for transmitting packets
++ * @receive_ring: NHI ring number used to receive packets from the
++ *		  other domain
++ * @reveive_path: HopID used for receiving packets
++ *
++ * Return: Returns a tb_tunnel on success or NULL on failure.
++ */
++struct tb_tunnel *tb_tunnel_alloc_dma(struct tb *tb, struct tb_port *nhi,
++				      struct tb_port *dst, int transmit_ring,
++				      int transmit_path, int receive_ring,
++				      int receive_path)
++{
++	struct tb_tunnel *tunnel;
++	struct tb_path *path;
++	u32 credits;
++
++	tunnel = tb_tunnel_alloc(tb, 2, TB_TUNNEL_DMA);
++	if (!tunnel)
++		return NULL;
++
++	tunnel->activate = tb_dma_activate;
++	tunnel->src_port = nhi;
++	tunnel->dst_port = dst;
++
++	credits = tb_dma_credits(nhi);
++
++	path = tb_path_alloc(tb, dst, nhi, receive_path, receive_ring, 0);
++	if (!path) {
++		tb_tunnel_free(tunnel);
++		return NULL;
++	}
++	tb_dma_init_path(path, TB_PATH_NONE, TB_PATH_SOURCE | TB_PATH_INTERNAL,
++			 credits);
++	tunnel->paths[TB_DMA_PATH_IN] = path;
++
++	path = tb_path_alloc(tb, nhi, dst, transmit_ring, transmit_path, 0);
++	if (!path) {
++		tb_tunnel_free(tunnel);
++		return NULL;
++	}
++	tb_dma_init_path(path, TB_PATH_SOURCE, TB_PATH_ALL, credits);
++	tunnel->paths[TB_DMA_PATH_OUT] = path;
++
++	return tunnel;
++}
++
+ /**
+  * tb_tunnel_free() - free a tunnel
+  * @tunnel: Tunnel to be freed
+diff --git a/drivers/thunderbolt/tunnel.h b/drivers/thunderbolt/tunnel.h
+index 07583f8247c1..fa51217e5925 100644
+--- a/drivers/thunderbolt/tunnel.h
++++ b/drivers/thunderbolt/tunnel.h
+@@ -14,6 +14,7 @@
+ enum tb_tunnel_type {
+ 	TB_TUNNEL_PCI,
+ 	TB_TUNNEL_DP,
++	TB_TUNNEL_DMA,
+ };
+ 
+ /**
+@@ -44,6 +45,10 @@ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
+ struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in);
+ struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
+ 				     struct tb_port *out);
++struct tb_tunnel *tb_tunnel_alloc_dma(struct tb *tb, struct tb_port *nhi,
++				      struct tb_port *dst, int transmit_ring,
++				      int transmit_path, int receive_ring,
++				      int receive_path);
+ 
+ void tb_tunnel_free(struct tb_tunnel *tunnel);
+ int tb_tunnel_activate(struct tb_tunnel *tunnel);
+@@ -61,5 +66,10 @@ static inline bool tb_tunnel_is_dp(const struct tb_tunnel *tunnel)
+ 	return tunnel->type == TB_TUNNEL_DP;
+ }
+ 
++static inline bool tb_tunnel_is_dma(const struct tb_tunnel *tunnel)
++{
++	return tunnel->type == TB_TUNNEL_DMA;
++}
++
+ #endif
+ 
+-- 
+2.20.1
 
-Here is the log with this change:
-
-[    0.760796] tegra_rtc 7000e000.rtc: registered as rtc1
-[    0.760850] tegra_rtc 7000e000.rtc: Tegra internal Real Time Clock
-[    0.761050] i2c /dev entries driver
-[    0.918928] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.918940] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.919040] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.919050] tegra-i2c 7000c000.i2c: starting DMA for length: 8
-[    0.919059] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.919322] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.919335] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.919343] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.919440] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.919448] tegra-i2c 7000c000.i2c: starting DMA for length: 112
-[    0.919456] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.922818] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    0.922829] atmel_mxt_ts 0-004c: Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
-[    0.922886] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.922895] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.922993] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.923002] tegra-i2c 7000c000.i2c: starting DMA for length: 224
-[    0.923011] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.933253] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-[    0.933287] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    0.933297] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.933478] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    0.933487] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    0.933496] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    0.945120] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-[    0.945130] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-[    1.038917] tegra-i2c 7000c000.i2c: DMA transfer timeout
-[    1.038982] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
-[    1.039000] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    1.039006] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
-[    1.039009] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.039148] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.039157] tegra-i2c 7000c000.i2c: starting DMA for length: 4
-[    1.039166] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.039304] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.039340] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    1.039349] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.039535] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.039544] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-[    1.039552] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.040055] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.040083] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-[    1.040092] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-[    1.040301] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-[    1.048934] tegra-i2c 7000d000.i2c: i2c transfer timed out
