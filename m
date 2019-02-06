@@ -2,106 +2,103 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D364C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4FBC4151A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6D62186A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549470333;
-	bh=gBJo2qq6TmdmoK4ipaybcysTmY+mqn8LNmDGe47UC10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=soHajjMudJa/bd5Ad4neaWI480kzA5ZjIdxQiDoouHo1zELBuwsAHFuk3oUDhPEhk
-	 /CTZehGzULG5jbDdd0HnYKX03tv29+zjQCSk8YXBck3blfFEOczthMxdI3cqw3Op7u
-	 cHdqAqVUoYV+BAhNhlvPvXve3dlbL89x2xM57ONQ=
+	by mail.kernel.org (Postfix) with ESMTP id A67B2218C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730963AbfBFQZc (ORCPT
+        id S1730903AbfBFQ0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:25:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34156 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 11:26:25 -0500
+Received: from mga14.intel.com ([192.55.52.115]:42960 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730009AbfBFQZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:25:31 -0500
-Received: from localhost (mobile-166-177-186-135.mycingular.net [166.177.186.135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA3082175B;
-        Wed,  6 Feb 2019 16:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549470330;
-        bh=gBJo2qq6TmdmoK4ipaybcysTmY+mqn8LNmDGe47UC10=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FOM4+8gti2WqiMWUZi7L90YvEtNZu0vlF7/6PNR+zpqAJPiizCL06uhlIU8SnoZ0C
-         5+nx/2DcMDhQEoF/tsa0ioSCCgnz+6RfzwTySrPnaJg++b7jfQUcJf/G5BCZY6/4tr
-         bZi1/oADGSbMitbP/+0MIpUqEzQv4gDfWbUgf8cY=
-Date:   Wed, 6 Feb 2019 17:25:24 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Nishad Kamdar <nishadkamdar@gmail.com>, devel@driverdev.osuosl.org,
-        Forest Bond <forest@alittletooquiet.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: vt6656: Use the correct style for SPDX license
- Identifier
-Message-ID: <20190206162524.GA22989@kroah.com>
-References: <20190205150620.GA17522@nishad>
- <20190205184431.GD22198@kroah.com>
- <7771453cf380ce43d906f6648edecd8b58fec38a.camel@perches.com>
+        id S1727082AbfBFQ0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 11:26:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 08:26:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="132038943"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga002.jf.intel.com with ESMTP; 06 Feb 2019 08:26:24 -0800
+Date:   Wed, 6 Feb 2019 09:25:53 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, linuxarm@huawei.com
+Subject: Re: [PATCHv5 10/10] doc/mm: New documentation for memory performance
+Message-ID: <20190206162553.GI28064@localhost.localdomain>
+References: <20190124230724.10022-1-keith.busch@intel.com>
+ <20190124230724.10022-11-keith.busch@intel.com>
+ <20190206104552.00003bad@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7771453cf380ce43d906f6648edecd8b58fec38a.camel@perches.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190206104552.00003bad@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 10:59:40AM -0800, Joe Perches wrote:
-> On Tue, 2019-02-05 at 19:44 +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Feb 05, 2019 at 08:36:24PM +0530, Nishad Kamdar wrote:
-> > > This patch corrects the style for SPDX license Identifier in mac.h
-> > > by using "/* */" in place of "//" as per Linux kernel licensing rules.
-> > > Issue found by checkpatch.
-> > > 
-> > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > > ---
-> > >  drivers/staging/vt6656/mac.h | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/vt6656/mac.h b/drivers/staging/vt6656/mac.h
-> > > index 94e700fcd0b6..75166020f7c6 100644
-> > > --- a/drivers/staging/vt6656/mac.h
-> > > +++ b/drivers/staging/vt6656/mac.h
-> > > @@ -1,5 +1,5 @@
-> > > -// SPDX-License-Identifier: GPL-2.0+
-> > > -/*
-> > > +/* SPDX-License-Identifier: GPL-2.0+
-> > 
-> > Should really be:
-> > 
-> > /* SPDX-License-Identifier: GPL-2.0+ */
+On Wed, Feb 06, 2019 at 10:45:52AM +0000, Jonathan Cameron wrote:
+> On Thu, 24 Jan 2019 16:07:24 -0700
+> Keith Busch <keith.busch@intel.com> wrote:
+> > +	# tree -P "read*|write*" /sys/devices/system/node/nodeY/access0/
+> > +	/sys/devices/system/node/nodeY/access0/
+> > +	|-- read_bandwidth
+> > +	|-- read_latency
+> > +	|-- write_bandwidth
+> > +	`-- write_latency
 > 
-> There's a fair number of style inconsistencies in the kernel
-> sources for that already.
-> 
-> ~8% of the .h files that have an 'SPDX-License-Identifier:'
-> don't use the recommended style.
-> 
-> $ git grep -h "SPDX-License" -- '*.h' | \
->   perl -p -e 's@Identifier:.*\*/*@Identifier: ... */@; s@Identifier: [^\.].*@Identifier:@' | \
->   sort | uniq -c | sort -rn
->    8506 /* SPDX-License-Identifier: ... */
->     593 // SPDX-License-Identifier:
->     154 /* SPDX-License-Identifier:
->      53  * SPDX-License-Identifier:
->       1  * SPDX-License-Identifier:	GPL-2.0
->       1 //SPDX-License-Identifier:
->       1 /*  SPDX-License-Identifier: ... */
+> These seem to be under
+> /sys/devices/system/node/nodeY/access0/initiators/
+> (so one directory deeper).
 
-Then let's fix them, the documentation says what the correct format is,
-there's no reason we can't actually follow what is written...
+You're right, I used data from the previous series to generate that.
+ 
+> > +	# tree sys/devices/system/node/node0/side_cache/
+> > +	/sys/devices/system/node/node0/side_cache/
+> > +	|-- index1
+> > +	|   |-- associativity
+> > +	|   |-- level
+> 
+> What is the purpose of having level in here?  Isn't it the same as the A..C
+> in the index naming?
+
+Yes, it is redundant with the name. I will remove it.
+ 
+> > +	|   |-- line_size
+> > +	|   |-- size
+> > +	|   `-- write_policy
+> > +
+> > +The "associativity" will be 0 if it is a direct-mapped cache, and non-zero
+> > +for any other indexed based, multi-way associativity.
+> 
+> Is it worth providing the ACPI mapping in this doc?  We have None, Direct and
+> 'complex'.   Fun question of what None means?  Not specified?
+
+Yeah, my take on "none" was that it's unreported and we don't know what
+is actually happening..
+
+> > +
+> > +The "level" is the distance from the far memory, and matches the number
+> > +appended to its "index" directory.
+> > +
+> > +The "line_size" is the number of bytes accessed on a cache miss.
+> 
+> Maybe "number of bytes accessed from next cache level" ?
+
+Sounds good.
