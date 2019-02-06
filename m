@@ -2,219 +2,135 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC320C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84211C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7881620B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51FF120B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:40:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXQKlIGv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbfBFNhw (ORCPT
+        id S1730490AbfBFNkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:37:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41348 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbfBFNhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:37:52 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A2298BDFA;
-        Wed,  6 Feb 2019 13:37:51 +0000 (UTC)
-Received: from doriath (ovpn-116-81.phx2.redhat.com [10.3.116.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D95FF426D;
-        Wed,  6 Feb 2019 13:37:40 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 08:29:42 -0500
-From:   Luiz Capitulino <lcapitulino@redhat.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
-        riel@surriel.com, david@redhat.com, dodgen@google.com,
-        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
-Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor
- to the host
-Message-ID: <20190206082942.29f52fe9@doriath>
-In-Reply-To: <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
-        <20190204201854.2328-6-nitesh@redhat.com>
-        <20190205154545-mutt-send-email-mst@kernel.org>
-        <26a36489-2289-f970-3362-60547b268a76@redhat.com>
-        <20190206081533.336110a0@doriath>
-        <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
+        Wed, 6 Feb 2019 08:40:55 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45623 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbfBFNkz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:40:55 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s5-v6so6029449ljd.12;
+        Wed, 06 Feb 2019 05:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EVRz7WAXvo478K6JZUYfxHwZmR4rGMDfjmUQEqU9Ay4=;
+        b=FXQKlIGvk0KSzXWL91mU+Xhv8dYg0eql7b2KdYOSegjWvdq2D3jo302zIqf4TgB4DA
+         v4+HUuNbsIVNcStRgwM3FoRSkM6J05MRwWF9ekVU/n1xqoha29jvIYzjgUkzcooXzKHJ
+         aCRGvHf1ONSBQiP1zzd4i5sxpFLngvPwdDYrL3AbjL2zBbroitQWzVxAqdpaevLBOkVm
+         r3RJvxURhYCWdfTIdiJFQPv4dpzeLbxtNSE9L9HOIuxShMV77sKCGhUAH4m66S0HUgGE
+         Kkb3PqkO2MCRk0JaCxTAHLfXIUlkUFNG+55I/2ViN0aZw9/7MwvjbF6y3xb1iIpHPMl0
+         hsCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EVRz7WAXvo478K6JZUYfxHwZmR4rGMDfjmUQEqU9Ay4=;
+        b=nTPm18aYgLaChE7d1eafNt5JNoo0wPGuMaGpCSQurGhR7AZ9nXdiTuuNILr2SYBxvQ
+         2sztDeKXR8Kiz5d9rI96RZQH9NLibhNYMOCgUPo9yKkTn63PK7Ni1hHFC7nu6Hfnv1eX
+         S7qfGioWK+Ah4Q1l2gZTcr4EHVukwWWjM2IcpWw4kBfa4EH0ItYE74txUeqRp0IJUoqE
+         0NRdTCCjUT6YSKt3qwVGgPRN867AKKgHX4yRCK85B8nyR8xOlSV1sBNoQLbrXmc1TyVV
+         ym8zFT0CY0mv2okTIagNhqrDTPdWtiOLOUOWd6uaWnqFz/8BFwH96iiapgNTEUQ36WGS
+         ZbFg==
+X-Gm-Message-State: AHQUAuaAtEH9sUc8TUXkoCJISsw4Eq/Hieghou7Tv53FpVXgliQ18bNK
+        +YDjHQLI0TA629JBm4py8cjJn4y+
+X-Google-Smtp-Source: AHgI3IbIegBZTag/kN6MqBhPKA7fbSTXNtjYushyXWzjYKPvGSO8GJf8I6tF1aUolaWaNtq3PVrqrA==
+X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr6555517ljg.164.1549460451779;
+        Wed, 06 Feb 2019 05:40:51 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id l17sm4280831lfk.40.2019.02.06.05.40.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 05:40:51 -0800 (PST)
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+ <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
+ <c4f67e39-df72-cc56-216b-8e6014891b52@gmail.com>
+ <BYAPR12MB3398E50ED1C6909D6BCB0DDFC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <304c1916-e836-fa95-5cec-887fef8f3eb2@gmail.com>
+ <BYAPR12MB33986680570EB919369000F3C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <82f38909-94f1-7984-2b0f-df6231aee58f@gmail.com>
+ <BYAPR12MB3398B4A862E4BFA5344AE461C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB3398501ACBC54906F677C661C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <0cec3f47-6c47-b31d-74b5-696bd1f48596@gmail.com>
+Message-ID: <a288d6e1-82bf-840b-a7f3-510e2afdc442@gmail.com>
+Date:   Wed, 6 Feb 2019 16:40:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 06 Feb 2019 13:37:51 +0000 (UTC)
+In-Reply-To: <0cec3f47-6c47-b31d-74b5-696bd1f48596@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Feb 2019 08:24:14 -0500
-Nitesh Narayan Lal <nitesh@redhat.com> wrote:
-
-> On 2/6/19 8:15 AM, Luiz Capitulino wrote:
-> > On Wed, 6 Feb 2019 07:56:37 -0500
-> > Nitesh Narayan Lal <nitesh@redhat.com> wrote:
-> >  
-> >> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote:  
-> >>> On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:    
-> >>>> This patch enables the caller to expose a single buffers to the
-> >>>> other end using vring descriptor. It also allows the caller to
-> >>>> perform this action in synchornous manner by using virtqueue_kick_sync.
-> >>>>
-> >>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>    
-> >>> I am not sure why do we need this API. Polling in guest
-> >>> until host runs isn't great either since these
-> >>> might be running on the same host CPU.    
-> >> True.
-> >>
-> >> However, my understanding is that the existing API such as
-> >> virtqueue_add_outbuf() requires an allocation which will be problematic
-> >> for my implementation.
-> >> Although I am not blocking the allocation path during normal Linux
-> >> kernel usage as even if one of the zone is locked the other zone could
-> >> be used to get free pages.
-> >> But during the initial boot time (device initialization), in certain
-> >> situations the allocation can only come from a single zone, acquiring a
-> >> lock on it may result in a deadlock situation.  
-> > I might be wrong, but if I remember correctly, this was true for
-> > your previous implementation where you'd report page hinting down
-> > from arch_free_page() so you couldn't allocate memory. But this
-> > is not the case anymore.  
+06.02.2019 16:34, Dmitry Osipenko пишет:
+> 06.02.2019 16:30, Sowjanya Komatineni пишет:
+>>
+>>
+>>>>
+>>>>>>> BTW, I'm seeing "atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000" whithout making any modifications to the original patch as well and it shall not happen, hence there is bug somewhere. Probably FIFO triggers are still not set up correctly... ?
+>>>>>>>
+>>>>>>>
+>>>>>> In snippet you sent, I see you are forcing dma_burst to 1 always which is what set for fifo trigger levels as well and also you are forcing dma all the time.
+>>>>>> So always it will be 1 word dma burst and 1 word trigger level and that should not be an issue.
+>>>>>>
+>>>>>
+>>>>> I reverted that snippet, this log is collected with the yours original patch.
+>>>>>
+>>>> From atmel driver, looks like this warning is from maxt_update_cfg 
+>>>> and due to CRC mismatch and above values shows read data CRC is 0Xf436dc which is compared against info_crc of all 0's Info_crc is based on raw config file and somehow its all 0's. this is not based on data read thru i2c.
+>>>> data->info_crc computed on data read is 0Xf436dc
+>>>>
+>>>> This warning is not related to I2C transfer
+>>>>
+>>>
+>>> It doesn't happen with the I2C PIO mode. Seems it means that the I2C reads out the 0xF436DC value instead of 0x000000.. if I'm not missing anything.
+>>>
+>> Log that you shared this warning, doesn’t show any i2c failures with atmel and CRC based on i2c read  data is 0Xf436dc.
+>> During this log, there are not DMA timeouts associated during this warning timeframe. So i2c read data is thru DMA which is non-zero.
+>>
+>> Do you see DMA timeouts associated with this warning? I meant any DMA or I2C timeout during that time frame of warning?
+>>
 > 
-> With the earlier implementation, the allocation was blocked all the time
-> when freeing was going on.
-> With this implementation, the allocation is not blocked during normal
-> Linux kernel usage (after Linux boots up). For example, on a 64 bit
-> machine, if the Normal zone is locked and there is an allocation request
-> then it can be served by DMA32 zone as well. (This is not the case
-> during device initialization time)
-> Feel free to correct me if I am wrong.
-
-That's what I meant :) I have an impression that your virtio API
-was necessary because of your earlier design. I guess it's not needed
-anymore as Michael says.
-
+> Actually you're right, my bad. That atmel error and atmel I2C timeout (due to I2C_ERR_NO_ACK) happens in the PIO mode too, hence that part is fine.
 > 
-> >  
-> >>>
-> >>>    
-> >>>> ---
-> >>>>  drivers/virtio/virtio_ring.c | 72 ++++++++++++++++++++++++++++++++++++
-> >>>>  include/linux/virtio.h       |  4 ++
-> >>>>  2 files changed, 76 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> >>>> index cd7e755484e3..93c161ac6a28 100644
-> >>>> --- a/drivers/virtio/virtio_ring.c
-> >>>> +++ b/drivers/virtio/virtio_ring.c
-> >>>> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqueue *_vq,
-> >>>>  					out_sgs, in_sgs, data, ctx, gfp);
-> >>>>  }
-> >>>>  
-> >>>> +/**
-> >>>> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
-> >>>> + * @vq: the struct virtqueue we're talking about.
-> >>>> + * @addr: address of the buffer to add.
-> >>>> + * @len: length of the buffer.
-> >>>> + * @in: set if the buffer is for the device to write.
-> >>>> + *
-> >>>> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
-> >>>> + */
-> >>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in)
-> >>>> +{
-> >>>> +	struct vring_virtqueue *vq = to_vvq(_vq);
-> >>>> +	struct vring_desc *desc = vq->split.vring.desc;
-> >>>> +	u16 flags = in ? VRING_DESC_F_WRITE : 0;
-> >>>> +	unsigned int i;
-> >>>> +	void *data = (void *)addr;
-> >>>> +	int avail_idx;
-> >>>> +
-> >>>> +	/* Sanity check */
-> >>>> +	if (!_vq)
-> >>>> +		return -EINVAL;
-> >>>> +
-> >>>> +	START_USE(vq);
-> >>>> +	if (unlikely(vq->broken)) {
-> >>>> +		END_USE(vq);
-> >>>> +		return -EIO;
-> >>>> +	}
-> >>>> +
-> >>>> +	i = vq->free_head;
-> >>>> +	flags &= ~VRING_DESC_F_NEXT;
-> >>>> +	desc[i].flags = cpu_to_virtio16(_vq->vdev, flags);
-> >>>> +	desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> >>>> +	desc[i].len = cpu_to_virtio32(_vq->vdev, len);
-> >>>> +
-> >>>> +	vq->vq.num_free--;
-> >>>> +	vq->free_head = virtio16_to_cpu(_vq->vdev, desc[i].next);
-> >>>> +	vq->split.desc_state[i].data = data;
-> >>>> +	vq->split.avail_idx_shadow = 1;
-> >>>> +	avail_idx = vq->split.avail_idx_shadow;
-> >>>> +	vq->split.vring.avail->idx = cpu_to_virtio16(_vq->vdev, avail_idx);
-> >>>> +	vq->num_added = 1;
-> >>>> +	END_USE(vq);
-> >>>> +	return 0;
-> >>>> +}
-> >>>> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
-> >>>> +
-> >>>>  /**
-> >>>>   * virtqueue_add_sgs - expose buffers to other end
-> >>>>   * @vq: the struct virtqueue we're talking about.
-> >>>> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
-> >>>>  }
-> >>>>  EXPORT_SYMBOL_GPL(virtqueue_notify);
-> >>>>  
-> >>>> +/**
-> >>>> + * virtqueue_kick_sync - update after add_buf and busy wait till update is done
-> >>>> + * @vq: the struct virtqueue
-> >>>> + *
-> >>>> + * After one or more virtqueue_add_* calls, invoke this to kick
-> >>>> + * the other side. Busy wait till the other side is done with the update.
-> >>>> + *
-> >>>> + * Caller must ensure we don't call this with other virtqueue
-> >>>> + * operations at the same time (except where noted).
-> >>>> + *
-> >>>> + * Returns false if kick failed, otherwise true.
-> >>>> + */
-> >>>> +bool virtqueue_kick_sync(struct virtqueue *vq)
-> >>>> +{
-> >>>> +	u32 len;
-> >>>> +
-> >>>> +	if (likely(virtqueue_kick(vq))) {
-> >>>> +		while (!virtqueue_get_buf(vq, &len) &&
-> >>>> +		       !virtqueue_is_broken(vq))
-> >>>> +			cpu_relax();
-> >>>> +		return true;
-> >>>> +	}
-> >>>> +	return false;
-> >>>> +}
-> >>>> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
-> >>>> +
-> >>>>  /**
-> >>>>   * virtqueue_kick - update after add_buf
-> >>>>   * @vq: the struct virtqueue
-> >>>> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> >>>> index fa1b5da2804e..58943a3a0e8d 100644
-> >>>> --- a/include/linux/virtio.h
-> >>>> +++ b/include/linux/virtio.h
-> >>>> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
-> >>>>  		      unsigned int in_sgs,
-> >>>>  		      void *data,
-> >>>>  		      gfp_t gfp);
-> >>>> +/* A desc with this init id is treated as an invalid desc */
-> >>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in);
-> >>>> +
-> >>>> +bool virtqueue_kick_sync(struct virtqueue *vq);
-> >>>>  
-> >>>>  bool virtqueue_kick(struct virtqueue *vq);
-> >>>>  
-> >>>> -- 
-> >>>> 2.17.2    
+> PIO log:
+> 
+> [    1.028889] atmel_mxt_ts 0-004c: Warning: Info CRC error - device=0xF436DC file=0x000000
+> [    1.078907] atmel_mxt_ts 0-004c: Resetting device
+> [    1.128646] usb 1-1: new full-speed USB device number 2 using tegra-ehci
+> [    1.198708] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-121)
+> [    1.198732] atmel_mxt_ts 0-004c: Failed to read 28 messages (-121)
+> 
 
+Oh gosh.. there is no I2C timeout, but instant NO_ACK. I'll make some coffee...
