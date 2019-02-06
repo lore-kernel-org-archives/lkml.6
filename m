@@ -2,110 +2,132 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC955C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174E1C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8703218AF
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:42:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Z3Z2lLvk"
+	by mail.kernel.org (Postfix) with ESMTP id E54D7218AF
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfBFXmd (ORCPT
+        id S1726732AbfBFXnd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 18:42:33 -0500
-Received: from mail-ot1-f48.google.com ([209.85.210.48]:45082 "EHLO
-        mail-ot1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbfBFXmc (ORCPT
+        Wed, 6 Feb 2019 18:43:33 -0500
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:44683 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726161AbfBFXnd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 18:42:32 -0500
-Received: by mail-ot1-f48.google.com with SMTP id 32so15144676ota.12
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 15:42:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mXx8poVQjV9HwQ463+J8Xh3rIF5Pas5UKY3iVculMOM=;
-        b=Z3Z2lLvknU+nXiktZsISNTZLCCnSxgLh9jbswTAZpFimWum7i8r4fiyXlbRXawiSFx
-         ubZthob+CbYbDMN5OCG6J2F9X3wECf+LBU+tTop4TVjaWjls++ZNfLtg+1JGYnPEcN37
-         EaNJwmPl89UKy8gR+WlqBXdJkRZg16QJ0BjDH4q+Sx6RPbFi1tr2TZb/EHnIeM4dOWHF
-         wHzB/rU13hd17CbU1+HNk9CJoObq4xDh7x4aC/CDMcamLw4e/S1MrwMzMk7bxycUqbgS
-         InxU0buRpVtfqCYuDLJanWPCzbVAjVkTWMWCnP0VW6BH5bVPjHYS4iqebcD180jVB1rC
-         q3Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mXx8poVQjV9HwQ463+J8Xh3rIF5Pas5UKY3iVculMOM=;
-        b=JRxSIZfS4MlooJ05F9U4V8n/qI5dHrFwt2NZq9EWctpUaVgCy2ZF4jKhTFgp+d7bIa
-         ay0+qmoOm/56wFETL4QTaxXf75fTKTjox3kLwHROGddt3uaH+FGIpJURPKDMREUHWDJo
-         /SAiQZzA7Q89/lLNHIe02Oo7xQu0B0ufdPU/UL9yFNLA4kw364h3UXLq4RuP1ZlRc9mp
-         Vk1u30UYDKY4X6/+POHcVr4FiH3o790vpVER8eSaUXzOuMFSYc+faYZM66RefeRdBgHF
-         bDpRwdiSov5aCgnc9BJ+sNPyTI3g5nInySKfe9tgHv8jKs3TSyBWXPYcyZpM/CB1ZtEm
-         yylA==
-X-Gm-Message-State: AHQUAuZwIy15d9XIrhtAfNS27mOrBpt0SpCON2YkHwC+M7cFmoTUdSjJ
-        vbeLwc/QXBQfYOE1mzJJyBsc5GBQxigaKh1QxwnfYQ==
-X-Google-Smtp-Source: AHgI3IYi1lYx53OeMuuIKEyrITbFju31q2tPP/t65m35wlLVFLatHOq9dRn/sh2Fw8NEo3ekoOOLnIYan2iyNMuAnBk=
-X-Received: by 2002:aca:240a:: with SMTP id n10mr956698oic.73.1549496551785;
- Wed, 06 Feb 2019 15:42:31 -0800 (PST)
+        Wed, 6 Feb 2019 18:43:33 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 07 Feb 2019 10:13:30 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1grWqm-0003U1-Pa; Thu, 07 Feb 2019 10:43:28 +1100
+Date:   Thu, 7 Feb 2019 10:43:28 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Nix <nix@esperi.org.uk>
+Cc:     linux-bcache@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: bcache on XFS: metadata I/O (dirent I/O?) not getting cached at
+ all?
+Message-ID: <20190206234328.GH14116@dastard>
+References: <87h8dgefee.fsf@esperi.org.uk>
 MIME-Version: 1.0
-References: <20190206231706.GB23860@ubuette>
-In-Reply-To: <20190206231706.GB23860@ubuette>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 6 Feb 2019 15:42:17 -0800
-Message-ID: <CAPcyv4jhkkUd_rZ9PhZhOZDYYgMj28siVBUjhMMT4c4HJiaAHw@mail.gmail.com>
-Subject: Re: question about mmap MAP_PRIVATE on PMEM/DAX/fs files
-To:     Larry Bassel <larry.bassel@oracle.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h8dgefee.fsf@esperi.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 3:17 PM Larry Bassel <larry.bassel@oracle.com> wrote:
->
-> Is mmaping a PMEM/DAX/fs file MAP_PRIVATE supported?
+On Wed, Feb 06, 2019 at 10:11:21PM +0000, Nix wrote:
+> So I just upgraded to 4.20 and revived my long-turned-off bcache now
+> that the metadata corruption leading to mount failure on dirty close may
+> have been identified (applying Tang Junhui's patch to do so)... and I
+> spotted something a bit disturbing. It appears that XFS directory and
+> metadata I/O is going more or less entirely uncached.
+> 
+> Here's some bcache stats before and after a git status of a *huge*
+> uncached tree (Chromium) on my no-writeback readaround cache. It takes
+> many minutes and pounds the disk with massively seeky metadata I/O in
+> the process:
+> 
+> Before:
+> 
+> stats_total/bypassed: 48.3G
+> stats_total/cache_bypass_hits: 7942
+> stats_total/cache_bypass_misses: 861045
+> stats_total/cache_hit_ratio: 3
+> stats_total/cache_hits: 16286
+> stats_total/cache_miss_collisions: 25
+> stats_total/cache_misses: 411575
+> stats_total/cache_readaheads: 0
+> 
+> After:
+> stats_total/bypassed: 49.3G
+> stats_total/cache_bypass_hits: 7942
+> stats_total/cache_bypass_misses: 1154887
+> stats_total/cache_hit_ratio: 3
+> stats_total/cache_hits: 16291
+> stats_total/cache_miss_collisions: 25
+> stats_total/cache_misses: 411625
+> stats_total/cache_readaheads: 0
+> 
+> Huge increase in bypassed reads, essentially no new cached reads. This
+> is... basically the optimum case for bcache, and it's not caching it!
+> 
+> From my reading of xfs_dir2_leaf_readbuf(), it looks like essentially
+> all directory reads in XFS appear to bcache as a single non-readahead
+> followed by a pile of readahead I/O: bcache bypasses readahead bios, so
+> all directory reads (or perhaps all directory reads larger than a single
+> block) are going to be bypassed out of hand.
 
-Yes.
+That's a bcache problem, not an XFS problem. XFS does extensive
+amounts of metadata readahead (btree traversals, directory access,
+etc), and always has.
 
-> Is it something
-> that people are likely to want to do?
+If bcache considers readahead as "not worth caching" then that has
+nothing to do with XFS.
 
-MAP_PRIVATE for file backed mappings is useful for processes to read
-common data as input, but hide their writes to that data.
+> 
+> This seems... suboptimal, but so does filling up the cache with
+> read-ahead blocks (particularly for non-metadata) that are never used.
 
-> If it is supported, suppose I open a file in PMEM/DAX/fs, mmap it
-> MAP_PRIVATE, read from the memory mapped file (with memory accesses,
-> not the read syscall) and take a page fault which the kernel satisfies.
->
-> At this time do my page tables for the private mmaped page(s) point to the
-> PMEM corresponding to the file and the kernel will wait until
-> the page(s) is/are altered (either by me or someone else) to
-> copy on write and give me a different page/mapping?
+Which is not the case for XFS. We do readahead when we know we are
+going to need a block in the near future. It is rarely unnecessary,
+it's a mechanism to reduce access latency when we do need to access
+the metadata.
 
-For this example let's assume the filesystem already allocated
-capacity for the file at the given offset, otherwise the kernel is
-free to map in a zero page to cover holes in the file.
+> Anyone got any ideas, 'cos I'm currently at a loss: XFS doesn't appear
+> to let us distinguish between "read-ahead just in case but almost
+> certain to be accessed" (like directory blocks) and "read ahead on the
+> offchance because someone did a single-block file read and what the hell
+> let's suck in a bunch more".
 
-> Or does the kernel avoid this by always mapping a copy of the
-> page(s) involved in the private mmap in the first place?
->
+File data readahead: REQ_RAHEAD
+Metadata readahead: REQ_META | REQ_RAHEAD
 
-At read-fault time the page tables point to the direct PMEM page for
-the file allocation, for a write fault a "System RAM" page is mapped
-in place of PMEM.
+drivers/md/bcache/request.c::check_should_bypass():
 
-> In either case, is my private copy going to come from PMEM or is it
-> an "ordinary" page, or is this "random"? Does the program have
-> any choice in this (i.e. suppose I want to make sure my copied
-> page is persistent)?
+        /*
+         * Flag for bypass if the IO is for read-ahead or background,
+         * unless the read-ahead request is for metadata (eg, for gfs2).
+         */
+        if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+            !(bio->bi_opf & REQ_PRIO))
+                goto skip;
 
-No, the copied page will never be persisted. From the mmap() man page:
+bcache needs fixing - it thinks REQ_PRIO means metadata IO. That's
+wrong - REQ_META means it's metadata IO, and so this is a bcache
+bug.
 
-"Updates to the mapping are not visible to other processes mapping the
-same file, and are not carried through to the underlying file."
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
