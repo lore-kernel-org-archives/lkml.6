@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1540FC282CB
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1830FC282CB
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13362186A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD56F218C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="KKU/5Rr7"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="ErP5Hen9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfBFALd (ORCPT
+        id S1728970AbfBFALf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 19:11:33 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40224 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728576AbfBFALa (ORCPT
+        Tue, 5 Feb 2019 19:11:35 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36764 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728703AbfBFALe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 19:11:30 -0500
-Received: by mail-ed1-f68.google.com with SMTP id g22so4470735edr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:29 -0800 (PST)
+        Tue, 5 Feb 2019 19:11:34 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d12so3445294edy.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lTWbi0cspDSUvTf1XFhVzvXrwfJNeSnlqsvl3s3OB4c=;
-        b=KKU/5Rr7rVKPT4ptNFbtx4oyhm5xwH1a+Ylin6Ck4CjrYJrSFYXtY4LCFgVC3zO3C9
-         xeXV6RQ7Lu8Ymvhbt0eF27tus9rAgiiFyWVdbjjN515Q3PpPHKqltJPzDtE4J9v//+Pa
-         eqrt5a9Ew+DgUQLeSP1No7vpRBScV701yWxMgZNed/V0kNjNIvYdmkLPrmLLhoCPzGlK
-         SGSqvp3Wosq5ktQuETNy/AcTv74UTzEdYa+oSF0h014b+J1sc9Ba2xtX8Yx1vkP9L8b6
-         42T/XqJbS5pD99ZSqSDHm/ZgsuS/LHBlg+x7TDKaTSES46OHbzz7N7QgIcBU2V30WZyJ
-         0LUw==
+        bh=a6FQqHa1rlbDWsBMTo823W1nruhzQX7vLOJJT+3cw68=;
+        b=ErP5Hen9uv1OAdWFBTRyNOmk9xRjmo9xQwvJ6VKb1rRJgz1xwkeDS7MSLs+2fQKiVU
+         pC4fn7aNJ8WBMCSuIO4jHHXHMmAGlSqtH5pK651kcyI1NQmaBSYcX7Pr/17f+vPfsxr6
+         Bf7bqULDg/nimG8jwpXkMnXFeykqbm08nbWEqCYUnEdkHcWqX1I9RgDC1ia+bIwwDMIB
+         5KU1rYOmz7zKWYmrw/Ug37+VZxMPDcUuf7Yyazro8IDD4YLAbSjbnvvTplRcGzzSOtOd
+         8j1EJChawpT0WulWgwZ6gFGAz5Zyl1fVjNNP3jRd5nYKdqR1EO+MTmCvz2oZSNtMwYz/
+         OTJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lTWbi0cspDSUvTf1XFhVzvXrwfJNeSnlqsvl3s3OB4c=;
-        b=PdvsZobLlbr7BH4HYFOvFvuuVvD+FMzTxmuqJeIuxkQkfqbnCtndY8l9owBazmxrSk
-         NJxqczGtekFF73j7wzW3XkGEZWE+fSrkfJ4ttKeXWzuhLa6WHUsmrh1ISTODpor4NfEt
-         JrO+QGeiJLRubLai6c8MRkBFJElCGFjPeAxCfmNUAQG4gKeKbiOt3UnYwb7KjFMB5Y/L
-         1zYcJJ2UPhgIqCES90YCoC4STJnrn98LBh6/MTZAyxANK5YcV8qkGe9tMtkn8Tp9cm8B
-         jMgWOOgOlFfORfwZ3VUr6fXC/IYGT4Ukr2gZUynVKoxh2bmGmsHBJ5zxIwLfo0rdNC+e
-         uKZg==
-X-Gm-Message-State: AHQUAuYOe+iXCirVcUr+gAC1KGFwB7Ie6q4aDHNX5QYD+BP69u8IRczt
-        HscoHnS9Pd+lT3tk7vfC6g0g2Zm9nvQ=
-X-Google-Smtp-Source: AHgI3IY9FWTtBp94pBdw68SrowyoVee/9bkYcB5hytaG8rgIZMqMn/mhQV9PJK14D3lj1CM+RVu39w==
-X-Received: by 2002:a50:b7d6:: with SMTP id i22mr5872133ede.27.1549411888456;
-        Tue, 05 Feb 2019 16:11:28 -0800 (PST)
+        bh=a6FQqHa1rlbDWsBMTo823W1nruhzQX7vLOJJT+3cw68=;
+        b=eGU7xUAcBAi/EAVP7ipshxGkj054v7qpdVehPROrtsI778BsD937BoenqCci1V1VyI
+         U3tHoO+a2bW559fsBjEhAs4OLUEIQMNbslQIsmxKICZ5Flmbx5EAJTQ6hX9MAUaD8H+j
+         kI3Wa27lGRmzz8vaKeDxTcOYOytqkosHqkpTjlEJ0VZj9gs7X2qkQhk2luPprfslYBsn
+         sAUuXdNXUyGMj2kTYVtmefk7ueVXj/TXlJMy1pUPN1beDqh+yh8eSCfz3Yq0gqgeDktz
+         KyZy5LSOtZamghjvc/Jsb/8ZH7envSA0hq8RkCH1MjsHeGYI9KwN8vxslMPW7hotSV34
+         ly3w==
+X-Gm-Message-State: AHQUAuaiFu6LCXoaZcyRchVIiLUXjkhqN3Dl6OxR+bYHbU7I3iga8S8Y
+        ZCm6NqXy+izGKXY6sdgNZt7x2qh8CKA=
+X-Google-Smtp-Source: AHgI3IZ1/ikPZs7NO6GoFnpodaqdvBVjS+afDXgEyQNQD+jMZgnndHBMpUEMX9ycnkjpEJrlxyOpyg==
+X-Received: by 2002:a50:8d8c:: with SMTP id r12mr5897141edh.105.1549411891262;
+        Tue, 05 Feb 2019 16:11:31 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.27
+        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.30
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 05 Feb 2019 16:11:27 -0800 (PST)
+        Tue, 05 Feb 2019 16:11:30 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
@@ -75,9 +75,9 @@ Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 14/32] x86/VDSO: Build VDSO with -ffunction-sections
-Date:   Wed,  6 Feb 2019 00:10:48 +0000
-Message-Id: <20190206001107.16488-15-dima@arista.com>
+Subject: [PATCH 16/32] x86/vdso: Generate vdso{,32}-timens.lds
+Date:   Wed,  6 Feb 2019 00:10:50 +0000
+Message-Id: <20190206001107.16488-17-dima@arista.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206001107.16488-1-dima@arista.com>
 References: <20190206001107.16488-1-dima@arista.com>
@@ -106,64 +106,134 @@ the entry points to VDSO should have the same offsets (addresses).
 That's needed as i.e. application that calls setns() may have already
 resolved VDSO symbols in GOT/PLT.
 
-Compile VDSO images with -ffunction-sections so that VDSO entries can be
-aligned on the same addresses with linker script magic.
-Put ia32 functions those are written in assembly into corresponding
-sections.
+Provide two linker scripts:
+- *-timens.lds for building VDSO for processes inside time namespace
+  (it has bigger functions and needs to build firstly)
+- *.lds for host processes VDSO
+  (it has smaller functions and entry addresses should be adjusted
+  with the linker script magic to fit with entries from timens)
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/entry/vdso/Makefile             | 2 +-
- arch/x86/entry/vdso/vdso32/sigreturn.S   | 2 ++
- arch/x86/entry/vdso/vdso32/system_call.S | 2 +-
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/entry/vdso/.gitignore                 |  1 +
+ arch/x86/entry/vdso/Makefile                   | 18 ++++++++++++++----
+ arch/x86/entry/vdso/vdso-timens.lds.S          |  7 +++++++
+ arch/x86/entry/vdso/vdso32/.gitignore          |  1 +
+ arch/x86/entry/vdso/vdso32/vdso32-timens.lds.S |  8 ++++++++
+ 5 files changed, 31 insertions(+), 4 deletions(-)
+ create mode 100644 arch/x86/entry/vdso/vdso-timens.lds.S
+ create mode 100644 arch/x86/entry/vdso/vdso32/vdso32-timens.lds.S
 
+diff --git a/arch/x86/entry/vdso/.gitignore b/arch/x86/entry/vdso/.gitignore
+index 9ab4fa4c7e7b..aaddf8f2171c 100644
+--- a/arch/x86/entry/vdso/.gitignore
++++ b/arch/x86/entry/vdso/.gitignore
+@@ -1,4 +1,5 @@
+ vdso.lds
++vdso-timens.lds
+ vdsox32.lds
+ vdso32-syscall-syms.lds
+ vdso32-sysenter-syms.lds
 diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 2433ed9342fd..55ba81d4415c 100644
+index ccb572831ea1..4e1659619e7e 100644
 --- a/arch/x86/entry/vdso/Makefile
 +++ b/arch/x86/entry/vdso/Makefile
-@@ -3,7 +3,7 @@
- # Building vDSO images for x86.
+@@ -44,11 +44,14 @@ vobjs := $(foreach F,$(vobjs-y),$(obj)/$F)
+ vobjs32 := $(foreach F,$(vobjs32-y),$(obj)/$F)
+ vobjs-timens := $(foreach F,$(vobjs-timens-y),$(obj)/$F)
+ vobjs32-timens := $(foreach F,$(vobjs32-timens-y),$(obj)/$F)
++dep-vdso.lds-$(CONFIG_TIME_NS) += $(obj)/vdso-image-64-timens.c
++dep-vdso32.lds-$(CONFIG_TIME_NS) += $(obj)/vdso-image-32-timens.c
+ 
+ $(obj)/vdso.o: $(obj)/vdso.so
+ 
+ targets += vdso.lds $(vobjs-y) $(vobjs-timens-y) vdso64.entries
+ targets += vdso32/vdso32.lds $(vobjs32-y) $(vobjs32-timens-y) vdso32.entries
++targets += vdso-timens.lds vdso32/vdso32-timens.lds
+ 
+ # Build the vDSO image C files and link them in.
+ vdso_img_objs := $(vdso_img-y:%=vdso-image-%.o)
+@@ -59,11 +62,13 @@ targets += $(vdso_img_cfiles)
+ targets += $(vdso_img_sodbg) $(vdso_img-y:%=vdso%.so)
+ 
+ CPPFLAGS_vdso.lds += -P -C
++CPPFLAGS_vdso-timens.lds := $(CPPFLAGS_vdso.lds)
+ 
+ VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
+ 			-z max-page-size=4096
++VDSO_LDFLAGS_vdso-timens.lds := $(VDSO_LDFLAGS_vdso.lds)
+ 
+-$(obj)/vdso64-timens.so.dbg: $(obj)/vdso.lds $(vobjs-timens) FORCE
++$(obj)/vdso64-timens.so.dbg: $(obj)/vdso-timens.lds $(vobjs-timens) FORCE
+ 	$(call if_changed,vdso)
+ 
+ $(obj)/vdso64.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
+@@ -79,6 +84,9 @@ quiet_cmd_vdso2c = VDSO2C  $@
+ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+ 	$(call if_changed,vdso2c)
+ 
++$(obj)/vdso.lds: $(dep-vdso.lds-y) $(obj)/vdso2c FORCE
++$(obj)/vdso32/vdso32.lds: $(dep-vdso32.lds-y) $(obj)/vdso2c FORCE
++
  #
+ # Don't omit frame pointers for ease of userspace debugging, but do
+ # optimize sibling calls.
+@@ -142,8 +150,10 @@ $(obj)/%.so: $(obj)/%.so.dbg
+ $(obj)/vdsox32.so.dbg: $(obj)/vdsox32.lds $(vobjx32s) FORCE
+ 	$(call if_changed,vdso)
  
--KBUILD_CFLAGS += $(DISABLE_LTO)
-+KBUILD_CFLAGS += $(DISABLE_LTO) -ffunction-sections
- KASAN_SANITIZE			:= n
- UBSAN_SANITIZE			:= n
- OBJECT_FILES_NON_STANDARD	:= y
-diff --git a/arch/x86/entry/vdso/vdso32/sigreturn.S b/arch/x86/entry/vdso/vdso32/sigreturn.S
-index c3233ee98a6b..b641ccf8d664 100644
---- a/arch/x86/entry/vdso/vdso32/sigreturn.S
-+++ b/arch/x86/entry/vdso/vdso32/sigreturn.S
-@@ -11,6 +11,7 @@
- 	.globl __kernel_sigreturn
- 	.type __kernel_sigreturn,@function
- 	nop /* this guy is needed for .LSTARTFDEDLSI1 below (watch for HACK) */
-+	.section .text.__kernel_sigreturn, "ax"
- 	ALIGN
- __kernel_sigreturn:
- .LSTART_sigreturn:
-@@ -21,6 +22,7 @@ __kernel_sigreturn:
- 	nop
- 	.size __kernel_sigreturn,.-.LSTART_sigreturn
+-CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
+-VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
++CPPFLAGS_vdso32.lds := $(CPPFLAGS_vdso.lds)
++CPPFLAGS_vdso32-timens.lds := $(CPPFLAGS_vdso32.lds)
++VDSO_LDFLAGS_vdso32.lds := -m elf_i386 -soname linux-gate.so.1
++VDSO_LDFLAGS_vdso32-timens.lds := $(VDSO_LDFLAGS_vdso32.lds)
  
-+	.section .text.__kernel_rt_sigreturn, "ax"
- 	.globl __kernel_rt_sigreturn
- 	.type __kernel_rt_sigreturn,@function
- 	ALIGN
-diff --git a/arch/x86/entry/vdso/vdso32/system_call.S b/arch/x86/entry/vdso/vdso32/system_call.S
-index 263d7433dea8..13ec05287f63 100644
---- a/arch/x86/entry/vdso/vdso32/system_call.S
-+++ b/arch/x86/entry/vdso/vdso32/system_call.S
-@@ -8,7 +8,7 @@
- #include <asm/cpufeatures.h>
- #include <asm/alternative-asm.h>
+ KBUILD_AFLAGS_32 := $(filter-out -m64,$(KBUILD_AFLAGS)) -DBUILD_VDSO
+ $(obj)/vdso32.so.dbg: KBUILD_AFLAGS = $(KBUILD_AFLAGS_32)
+@@ -172,7 +182,7 @@ endif
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+ $(obj)/vdso32-timens.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
  
--	.text
-+	.section .text.__kernel_vsyscall, "ax"
- 	.globl __kernel_vsyscall
- 	.type __kernel_vsyscall,@function
- 	ALIGN
+-$(obj)/vdso32-timens.so.dbg: $(obj)/vdso32/vdso32.lds $(vobjs32-timens) FORCE
++$(obj)/vdso32-timens.so.dbg: $(obj)/vdso32/vdso32-timens.lds $(vobjs32-timens) FORCE
+ 	$(call if_changed,vdso)
+ 
+ $(obj)/vdso32.so.dbg: $(obj)/vdso32/vdso32.lds $(vobjs32) FORCE
+diff --git a/arch/x86/entry/vdso/vdso-timens.lds.S b/arch/x86/entry/vdso/vdso-timens.lds.S
+new file mode 100644
+index 000000000000..687aba3bc5f0
+--- /dev/null
++++ b/arch/x86/entry/vdso/vdso-timens.lds.S
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Linker script for 64-bit timens vDSO.
++ */
++
++#define UNALIGNED_ENTRIES
++#include "vdso.lds.S"
+diff --git a/arch/x86/entry/vdso/vdso32/.gitignore b/arch/x86/entry/vdso/vdso32/.gitignore
+index e45fba9d0ced..ce4afb6ffb62 100644
+--- a/arch/x86/entry/vdso/vdso32/.gitignore
++++ b/arch/x86/entry/vdso/vdso32/.gitignore
+@@ -1 +1,2 @@
+ vdso32.lds
++vdso32-timens.lds
+diff --git a/arch/x86/entry/vdso/vdso32/vdso32-timens.lds.S b/arch/x86/entry/vdso/vdso32/vdso32-timens.lds.S
+new file mode 100644
+index 000000000000..1a3b3b1f0517
+--- /dev/null
++++ b/arch/x86/entry/vdso/vdso32/vdso32-timens.lds.S
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Linker script for 32-bit timens vDSO.
++ */
++
++#define UNALIGNED_ENTRIES
++
++#include "vdso32.lds.S"
 -- 
 2.20.1
 
