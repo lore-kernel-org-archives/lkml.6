@@ -2,104 +2,96 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A5AC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A482C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DABB2080D
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:46:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="D+opncBv"
+	by mail.kernel.org (Postfix) with ESMTP id D58CA217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:48:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549482536;
+	bh=pHLrlFbTI2rLtkD4ymAbJFQdveLIaTglrm1K9+u6yhM=;
+	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
+	b=UVCTuUjbYQ0rEd3zNQmMl42be2rZ23PvXkKTinOpz36vlz0x6JwpWnEwRXpl6xKyO
+	 20HF7RgweO+pGqx/2HIJhEhNN7aQXgjY1GxenOuQMchc+dFnYUOKshu3S2vxu+zuaU
+	 ZnKTdC/mnFoObjsuXSOh3VDUWR0LZEk1cw4oWgPA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfBFTqJ (ORCPT
+        id S1726864AbfBFTsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:46:09 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44673 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfBFTqI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:46:08 -0500
-Received: by mail-ot1-f68.google.com with SMTP id e24so4769735otp.11
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 11:46:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DPRk2YeA0ENLaCELegsjd2/mMdISAWmeKeSJ7XCFV30=;
-        b=D+opncBvF6bDRVFj2WCKwHoO6oV/Y3U6I7oyuFwqVTqLo57o4BCg4re51jm57NgtA6
-         ZVbb1nNsmHaoiADxy9d0RYV5RCd0kophHtPirdWFjW3lcbih/CSNYHfEwIMp5gASIcop
-         JyRI4Q/7bnNjz3EJSq87ynSThUyRwZVxhJ5g6GugqC+WYedS12P9ULseURTpQ1pvMw3P
-         7IHFTZ4kMiDI5wCJ2cFDbDjY7nKGNrNrfXeNSPcCt6gVVwx9safARDLh6EYsN2yatBil
-         943mbvlBkI8D7mzjvKttwI/evQmMOzaYVvLF/HwkxQ4kmHgO9cPYa+yUbb9eqOKF93b0
-         Vd3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DPRk2YeA0ENLaCELegsjd2/mMdISAWmeKeSJ7XCFV30=;
-        b=Vsc1SoQvEF/QdoFRH2TJErOzw+moksqfQF26eIjfN+W9WSmkpN/k2WHBXZfEe1t4pc
-         zM0mwh8yXB1B3ZCysNZsIeINi00ePDq8jEa+xToGEeY8HUtvr8DTz2W/ydCMJmBULU/B
-         KOaW7TKlDI7JptKskEEcY9Yir8j3trjsdR15evBnisMSLN67awvCtpNp9dZuihutTHH1
-         788Ey4LHnSxyuWBH/jREEIuquhrAXa30ZagUAdL0nzkKdeeDuRIdoLRsIYM56DlDk01H
-         rdmIIwEqSR4UUjCZ5KevYrFp2MNdf3k/EMuLCIYwckjhqrcMs+2AmLcQjmq8bTQ+PCm4
-         glgw==
-X-Gm-Message-State: AHQUAuaDbV/EdvdviIU5qKzVTBlM7+wHCFuhGQXlPjNnzsH7TDNPzg8m
-        DPyMLBeFJsA3SGvEF3u8jd16GxsE5MhkpopJ1WWJgQ==
-X-Google-Smtp-Source: AHgI3IbfowQ6doWzN8plMe6p/eR9jKuKihJMQsfeoWqHAFPTBKwxHJ+qAJPMxS3Qqf/ayEhmLl8IwOaQSZV7zgzp2PE=
-X-Received: by 2002:a9d:3a0a:: with SMTP id j10mr6481150otc.229.1549482367913;
- Wed, 06 Feb 2019 11:46:07 -0800 (PST)
+        Wed, 6 Feb 2019 14:48:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726161AbfBFTsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 14:48:54 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C87252083B;
+        Wed,  6 Feb 2019 19:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549482533;
+        bh=pHLrlFbTI2rLtkD4ymAbJFQdveLIaTglrm1K9+u6yhM=;
+        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
+        b=rvuR0ScaEWKQKT5ykL4ztFMunBBetOQRmRJ1O6JbU42z61DGwrk60EniHR+JNt/iU
+         P+IhPIW/7NvlsOIuIHGJex4gUU1l0WrW1ZkNGvsGCKCIWywsiST30LbKK1Py4rIzy2
+         HiTkNUrinhuGLTP5jCNBjUkudBy4oea/CAZwWj4U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
- <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org> <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <20190206183503.GO21860@bombadil.infradead.org> <20190206185233.GE12227@ziepe.ca>
-In-Reply-To: <20190206185233.GE12227@ziepe.ca>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 6 Feb 2019 11:45:56 -0800
-Message-ID: <CAPcyv4j4gDNHu836N4RfgQsE+eZU9Wt0N9Y09KQ43zV+4mK-eg@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Andy Gross <andy.gross@linaro.org>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>
+In-Reply-To: <SN6PR04MB4925A158FB93AC99D15ED3EBFC6F0@SN6PR04MB4925.namprd04.prod.outlook.com>
+User-Agent: alot/0.8
+Subject: RE: [PATCH v3 6/8] scsi: ufs: qcom: Expose the reset controller for PHY
+Message-ID: <154948253306.115909.17663891665120785337@swboyd.mtv.corp.google.com>
+References: <20190205185902.106085-1-evgreen@chromium.org> <20190205185902.106085-7-evgreen@chromium.org> <10ea3fe2-e331-0342-cfad-eccce3753d2e@ti.com> <SN6PR04MB4925A158FB93AC99D15ED3EBFC6F0@SN6PR04MB4925.namprd04.prod.outlook.com>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Can Guo <cang@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 06 Feb 2019 11:48:53 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 10:52 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Wed, Feb 06, 2019 at 10:35:04AM -0800, Matthew Wilcox wrote:
->
-> > > Admittedly, I'm coming in late to this conversation, but did I miss the
-> > > portion where that alternative was ruled out?
-> >
-> > That's my preferred option too, but the preponderance of opinion leans
-> > towards "We can't give people a way to make files un-truncatable".
->
-> I haven't heard an explanation why blocking ftruncate is worse than
-> giving people a way to break RDMA using process by calling ftruncate??
->
-> Isn't it exactly the same argument the other way?
+Quoting Avri Altman (2019-02-06 05:57:17)
+> Hi,
+>=20
+> > On 06/02/19 12:29 AM, Evan Green wrote:
+> > > Expose a reset controller that the phy will later use to control its
+> > > own PHY reset in the UFS controller. This will enable the combining
+> > > of PHY init functionality into a single function.
+> > >
+> > > Signed-off-by: Evan Green <evgreen@chromium.org>
+> >=20
+> > I'd like to get ACK from scsi/ufs/ MAINTAINER Vinayak for me merge it i=
+n PHY
+> > tree.
+> Looks like this series is qcom specific, and has less impact of the ufs c=
+ore driver.
+>=20
+> > > +   err =3D devm_reset_controller_register(dev, &host->rcdev);
+> Just my 2 cents:
+> Isn't this should be done somewhere in drivers/clk/qcom,
+> Like its done for any other qcom board?
 
-No, I don't think it is. The lease is there to set the expectation of
-getting out of the way, it's not a silent un-coordinated failure. The
-user asked for it, the kernel is just honoring a valid request. If the
-RDMA application doesn't want it to happen, arrange for it by
-permissions or other coordination to prevent truncation, but once the
-two conflicting / valid requests have arrived at the filesystem try to
-move the result forward to the user requested state not block and fail
-indefinitely.
+It's not a clk controller, so I don't see how that makes sense. There
+are clk/reset controllers on qcom platforms, and so we've combined them
+into the same overall driver there because those resets affect clk
+operations and vice-versa. But this looks like some sort of reset in the
+phy or the controller itself and isn't the "clk type" resets that we
+implement in drivers/clk/qcom/
+
