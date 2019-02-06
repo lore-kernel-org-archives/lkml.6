@@ -2,124 +2,101 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9486C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05465C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8453B2184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C86072184E
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:08:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OBi9ZHTK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbfBFLHi (ORCPT
+        id S1728945AbfBFLIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 06:07:38 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55257 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726914AbfBFLHh (ORCPT
+        Wed, 6 Feb 2019 06:08:37 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40164 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbfBFLIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 06:07:37 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1grL3C-00036l-VY; Wed, 06 Feb 2019 12:07:30 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1grL3C-00085P-5U; Wed, 06 Feb 2019 12:07:30 +0100
-Date:   Wed, 6 Feb 2019 12:07:30 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH v5 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20190206110730.ogqxncrnblyazgjw@pengutronix.de>
-References: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
- <1548762199-7065-2-git-send-email-yash.shah@sifive.com>
- <20190130081411.5rva7cpwoy2l5qjd@pengutronix.de>
- <CAJ2_jOHiJ3X5VYZMCNk2bpvUdDOsrqHJna3HPvtdNQpJB9fxjg@mail.gmail.com>
+        Wed, 6 Feb 2019 06:08:36 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x16B8ZFn021531;
+        Wed, 6 Feb 2019 05:08:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549451315;
+        bh=dbQkSPHc2KXm8g+32WtLpuqLCuqUVFDtEZDlhlNFuSA=;
+        h=From:To:CC:Subject:Date;
+        b=OBi9ZHTKDVfVwtoD15ZZAj4B7HGPsEkkNMKnes4P7sqfyeHJLudt+Mxo81VwkDyxG
+         CdkqmlEQb5I9EIV7OKD7TBOaANMEpyScMgbDpdfE4944Esmq8+lEs6U3Zso4e3eSkO
+         V/fHKdRuh+mhGzbuqfSELg2Rzp0mTJpZefS2SE8Q=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x16B8ZS0105047
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Feb 2019 05:08:35 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 6
+ Feb 2019 05:08:35 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 6 Feb 2019 05:08:34 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x16B8WaY024645;
+        Wed, 6 Feb 2019 05:08:33 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Roger Quadros <rogerq@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/4] PHY: Add support for SERDES in TI's AM654 platform
+Date:   Wed, 6 Feb 2019 16:37:49 +0530
+Message-ID: <20190206110753.28738-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ2_jOHiJ3X5VYZMCNk2bpvUdDOsrqHJna3HPvtdNQpJB9fxjg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:18:47PM +0530, Yash Shah wrote:
-> On Wed, Jan 30, 2019 at 1:44 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > On Tue, Jan 29, 2019 at 05:13:18PM +0530, Yash Shah wrote:
-> > > DT documentation for PWM controller added.
-> > >
-> > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > > [Atish: Compatible string update]
-> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > > ---
-> > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 ++++++++++++++++++++++
-> > >  1 file changed, 33 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > new file mode 100644
-> > > index 0000000..8dcb40d
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > @@ -0,0 +1,33 @@
-> > > +SiFive PWM controller
-> > > +
-> > > +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> > > +supports one period for all channels in the PWM. This is set globally in DTS.
-> >
-> > You can simply drop this if the first user can set this using the usual
-> > interface. Don't you like this suggestion that I already made a few
-> > times now?
-> >
-> > Did you consider to make the driver support only a single output with a
-> > more flexible period setting?
-> 
-> We cannot consider supporting only single output since we have boards that
-> use the additional PWM channels to control individual LED brightness
-> of a tri-color LED.
-> If we go down to one channel, then we can't control the brightness of
-> the individual LEDs.
-> It will break the use case.
+This patch series
+  *) adds support for SERDES module in am654
+  *) modifies phy_reset API to invoke pm_runtime_get/pm_runtime_put since
+the reset callback can access registers.
+  *) Add *release* phy_ops to be invoked when the consumer relinquishes
+PHY
 
-OK.
+Changes from v1:
+  *) Add *release* phy ops
+  *) Populate release phy_ops in phy-am654-serdes to cleanup
+initializations done in of_xlate
 
-> I am considering the below approach, let me know if it's fine by you.
-> 
-> - Drop the global period property and allow the only first user to change period
-> using the usual interface.
-> - A note in the binding that all PWMs need to run at the same
-> period. If the driver already refuses to apply incompatible periods,
-> the users are going to notice that they've got the DT wrong.
-> - In driver code, count the users using the .request and .free callbacks.
-> Based on this, allow changes to period iff the user count is one.
+Kishon Vijay Abraham I (4):
+  phy: core: Add *release* phy_ops invoked when the consumer
+    relinquishes PHY
+  phy: core: Invoke pm_runtime_get_*/pm_runtime_put_* before invoking
+    reset callback
+  dt-bindings: phy: ti: Add dt binding documentation for SERDES in
+    AM654x SoC
+  phy: ti: Add a new SERDES driver for TI's AM654x SoC
 
-Not sure you need to point this limitation in the binding doc. Other
-than that this is fine.
-
-Best regards
-Uwe
+ .../devicetree/bindings/phy/ti-phy.txt        |  77 +++
+ drivers/phy/phy-core.c                        |  11 +
+ drivers/phy/ti/Kconfig                        |  11 +
+ drivers/phy/ti/Makefile                       |   1 +
+ drivers/phy/ti/phy-am654-serdes.c             | 539 ++++++++++++++++++
+ include/dt-bindings/phy/phy-am654-serdes.h    |  13 +
+ include/linux/phy/phy.h                       |   2 +
+ 7 files changed, 654 insertions(+)
+ create mode 100644 drivers/phy/ti/phy-am654-serdes.c
+ create mode 100644 include/dt-bindings/phy/phy-am654-serdes.h
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.17.1
+
