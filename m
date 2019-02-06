@@ -2,113 +2,136 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88829C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A060C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5919E20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:56:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="FPZQ8ykA"
+	by mail.kernel.org (Postfix) with ESMTP id 5A29420B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549446986;
+	bh=7857HyMi+HGYA7Ywq3HGG1Hw67fYKxMjbVMe0XxEQps=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=nry4tiAHb60gUfpMn+IwZijArQMcplTI2gqmf+6bwNDwFYlBMyNjySlxVvatS8VSI
+	 3yAbFzn9NROL34jhtAMvVmJ1vbl7cAeO47Wo/yerKeRbrBYghoOJ/uM4yx4z1PGoK3
+	 wLwxd201Pgj3BKOD+gWc9pQ7AdehoixSYvSz2U/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfBFJ4G (ORCPT
+        id S1729128AbfBFJ4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 04:56:06 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:40732 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbfBFJ4E (ORCPT
+        Wed, 6 Feb 2019 04:56:24 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45490 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbfBFJ4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 04:56:04 -0500
-Received: from zyt.lan (unknown [IPv6:2a02:169:34b6::564])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id B1C485C145A;
-        Wed,  6 Feb 2019 10:56:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1549446962;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=N9XWwfEulsFK9VHuxbs2IvRFKykUhnv9rn+Qndj3W+U=;
-        b=FPZQ8ykAscZ1Md/ysJFslnfmnphUv+0B8YQJ1mgnoOgFV3w30i4L8gtefE6fOKYPdKTeqB
-        fLndSNXMBLxi22G9zqZTzJbNpygGyLMXpdVKBEomsKChPI6+rvMFOlPkS5ULI6AS4UU1LS
-        X1TSdZit6bnGv5d5zasFdK32+ufJXmU=
-From:   Stefan Agner <stefan@agner.ch>
-To:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, l.stach@pengutronix.de,
-        tpiepho@impinj.com
-Cc:     leonard.crestez@nxp.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefan@agner.ch
-Subject: [PATCH 2/2] PCI: imx6: limit DBI register length
-Date:   Wed,  6 Feb 2019 10:57:32 +0100
-Message-Id: <119211b4f2e9ada55b86041d009656e49c2b5281.1549446867.git.stefan@agner.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
-References: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
+        Wed, 6 Feb 2019 04:56:24 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 32so10800466ota.12;
+        Wed, 06 Feb 2019 01:56:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Eoc/WWCn19tq7HGo1SiAh/m3WRI5CuxD/5M1Hdn2Iho=;
+        b=eYpRBxig9eZZ8nnCbIyfYmTEnaudz4cI/11EfUWU8npzX5h3jSyOl6SpAQcOENbbpL
+         fmE7auPPiRqN0x5pmKG5dfK+nvzCqFlQBAQvKFupXsf5tyrJRRorzfzjtFTx2Oyw99y9
+         VS51ag/lKLtdxy57HE6/dwofMATwWHR6EjQ595iFZHIUt4upGA/47HA1t4bbfhM3LT9v
+         ZG9h2sAGOUq6L7KpCMTC8T3kFoO4+5XcC6xS3m0qQn1MbOJM9KdwAbwHu3cu+v/eQxPl
+         5M2xdtjij3m5LHsNuFooBEFQhWnHIxoK/ovMDIhuqNsN28WFZKxYl/QkjTHXuzgyNZQW
+         vzaQ==
+X-Gm-Message-State: AHQUAuZ4miSt7XD+LHQg8y7Mw8dEy6dquNNTjun6r0mneAXvSgXP1bG+
+        htOQMd7wkSpZTR7xjxcr4ZIwK7Ik5VNUwXbp5i0=
+X-Google-Smtp-Source: AHgI3IaS8NOoblC99gBChWFRRLmKTByC05R9jnYCQw2pguhkNDxOlk2m+ZFbDb8VB5DcoVwD3/gcjZV2URkss99BsZw=
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr4886943ota.244.1549446983432;
+ Wed, 06 Feb 2019 01:56:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1952449.TVsm6CJCTy@aspire.rjw.lan> <CAJZ5v0jOVLZDoW5BAy9obp7AptTYzKikFo7Qd15kNt5Y9=vXRQ@mail.gmail.com>
+ <CAPDyKFrq-r-rFDDB3yU=W4mOF2-A4xGGomqFqUba6MVWZugHmQ@mail.gmail.com> <24600564.pMaimVIQbW@aspire.rjw.lan>
+In-Reply-To: <24600564.pMaimVIQbW@aspire.rjw.lan>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 6 Feb 2019 10:56:11 +0100
+Message-ID: <CAJZ5v0gBYyoumVkLTuEcHsFE8QKEXdYuhDRGwmvoKPhx7gPvgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] driver core: Fix some device links issues and add
+ "consumer autoprobe" flag
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the length of the DBI registers. This makes sure that
-the kernel does not access registers beyond that point, avoiding
-the following abort on a i.MX 6Quad:
-  # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
-  [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
-  ...
-  [  100.056423] PC is at dw_pcie_read+0x50/0x84
-  [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
-  ...
+On Tue, Feb 5, 2019 at 12:27 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Tuesday, February 5, 2019 9:15:49 AM CET Ulf Hansson wrote:
+> > On Mon, 4 Feb 2019 at 12:45, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > >
+> > > On Mon, Feb 4, 2019 at 12:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > >
+> > > > On Fri, Feb 1, 2019 at 4:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
----
-Changes in v3:
-- Rebase on pci/dwc
-Changes in v4:
-- Rebase on pci/dwc
-Changes in v5:
-- Rebased ontop of pci/dwc
-- Use DBI length of 0x200
+[cut]
 
- drivers/pci/controller/dwc/pci-imx6.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> > >
+> > > For example, if the consumer device is suspended after the
+> > > device_link_add() that incremented the supplier's PM-runtime count and
+> > > then resumed again, the rpm_active refcount will be greater than one
+> > > because of the last resume and not because of the initial link
+> > > creation.  In that case, dropping the supplier's PM-runtime count on
+> > > link deletion may not work as expected.
+> >
+> > I see what your are saying and I must admit, by looking at the code,
+> > that it has turned into being rather complicated. Assuming of good
+> > reasons, of course.
+> >
+> > Anyway, I will play a little bit more with my tests to see what I can find out.
+> >
+> > >
+> > > > Arguably, device_link_del() could be made automatically drop the
+> > > > supplier's PM-runtime count by one if the link's rpm_active refcount
+> > > > is not one, but there will be failing scenarios in that case too
+> > > > AFAICS.
+> >
+> > Let's see.
+>
+> So for the record, below is the (untested) patch I'm thinking about.
+>
+> Having considered this for some time, I think that it would be better to
+> try to drop the supplier's PM-runtime usage counter on link removal even if
+> the link doesn't go away then.  That would be more consistent at least IMO.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index c1d434ba3642..1ef7be1232f3 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -55,6 +55,7 @@ enum imx6_pcie_variants {
- struct imx6_pcie_drvdata {
- 	enum imx6_pcie_variants variant;
- 	u32 flags;
-+	int dbi_length;
- };
- 
- struct imx6_pcie {
-@@ -1087,6 +1088,8 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
-+	pci->dbi_length = imx6_pcie->drvdata->dbi_length;
-+
- 	/* Grab turnoff reset */
- 	imx6_pcie->turnoff_reset = devm_reset_control_get_optional_exclusive(dev, "turnoff");
- 	if (IS_ERR(imx6_pcie->turnoff_reset)) {
-@@ -1170,6 +1173,7 @@ static const struct imx6_pcie_drvdata drvdata[] = {
- 		.variant = IMX6Q,
- 		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
- 			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
-+		.dbi_length = 0x200,
- 	},
- 	[IMX6SX] = {
- 		.variant = IMX6SX,
--- 
-2.20.1
+So I can't convince myself that this is the case.
 
+Either way, if there are two callers of device_link_add() for one
+consumer-supplier pair trying to add a stateless link between them and
+one of these callers passes DL_FLAG_RPM_ACTIVE set in the flags to it,
+there may be issues regardless of what device_link_del() and
+device_link_remove() do.  However, if they decrement the link's
+rpm_active refcount (and possibly the supplier's PM-runtime usage
+counter too), the supplier may be suspended prematurely, whereas in
+the other case (no decrementation of rpm_active, which how the code
+works after this series) it may just be prevented from suspending.  To
+me, the former is worse than the latter.
+
+Moreover, there is a workaround for the latter issue that seems to be
+easy enough: it is sufficient to let the consumer runtime suspend
+after calling device_link_add() to create the link (with
+DL_FLAG_RPM_ACTIVE set) and before trying to remove it.
+
+Because of the above, I'm just going to post a patch to document the
+current behavior of the code as a known limitation.
