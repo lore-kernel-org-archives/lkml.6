@@ -2,137 +2,135 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F1CC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190A6C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3BF20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D431720818
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:34:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p8T2AaZ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbfBFMbt (ORCPT
+        id S1730447AbfBFMd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:31:49 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50610 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730295AbfBFMbs (ORCPT
+        Wed, 6 Feb 2019 07:33:59 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36422 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbfBFMd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:31:48 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16CTHTJ094663
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 07:31:47 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfxbqvqqp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:31:46 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 6 Feb 2019 12:31:44 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 12:31:42 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16CVfxs9306546
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 12:31:41 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6325A48B3;
-        Wed,  6 Feb 2019 12:10:30 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70F68A48AE;
-        Wed,  6 Feb 2019 12:10:29 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  6 Feb 2019 12:10:29 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 06 Feb 2019 14:10:28 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH 1/2] memblock: remove memblock_{set,clear}_region_flags
-Date:   Wed,  6 Feb 2019 14:10:24 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549455025-17706-1-git-send-email-rppt@linux.ibm.com>
-References: <1549455025-17706-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19020612-4275-0000-0000-0000030C2305
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020612-4276-0000-0000-0000381A283D
-Message-Id: <1549455025-17706-2-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=887 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902060099
+        Wed, 6 Feb 2019 07:33:58 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so7376803wrv.3;
+        Wed, 06 Feb 2019 04:33:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+s1EmaK3oC+9seiiS52xOwx8uIjGJX026I3/pIjzUJ4=;
+        b=p8T2AaZ1HDv3hQTkOtlVKQsuZYdHihiJ7I08BVe/yosecuJ/+1jLP59EsdqMdzGjkH
+         OPf5g/zNwj4VVVWTi9fqmUL4RWYbY0CG3tNkD0HtkBXprbpUvFXUvHXxxmfXrbud055H
+         RJqrhSwYRikoHlKh1tfVieumbLDFfAbC0uCTfRkz8EakIp5JoUK8lPxqw3t4cVbn378z
+         mpuGeJif+2gtIGmqTy/D5wyxGEOt8L1l0huixvHHEesjZoLOGNTNAVj0HI8IDrag9nDj
+         T+5v+lIgKUjg0Zkc+obm0jK9RhMYiKQWUgJdY7d9LWRg/fk+SXxUZ7wu2dBI/Ihb5H00
+         RlUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+s1EmaK3oC+9seiiS52xOwx8uIjGJX026I3/pIjzUJ4=;
+        b=bfu9PP/YjKqKI54jhWWV0Q66XCwlhHI0isz8HhPa/tujet44WzU4lwAUYsmmEfNeGx
+         ojIazAZNu3Go1B0zW+wir42urdtDAvSQD/vkJjQsr6e8pxIQHFJ2M7i5enRBPliSjNfW
+         xovhjvR6k6XNryi+gll4XtOAjI5AQH1rSco4DfHwqNPb7WxLhCZnfESkdVYOogYupeXc
+         4dqyxBt275yUrXscn1yfB0MVpQbL7T1yoEAldbbI3y+vSxuAL2KQl+dlZmknqpP/fN63
+         Il35GTyNjDVEA07+eWL2wnl2Zllos7BQiYRYcVk/nHYUsZleFbKR2NQAdFfufSR1qbHX
+         mH5g==
+X-Gm-Message-State: AHQUAuYFnXk9q1AScTRjaQVBC5+B8RSnyWwDpRnHi/zTfKItRFuwXIG2
+        asdSwqeJaEYEThvrfhpPxrNpU2OCHg0=
+X-Google-Smtp-Source: AHgI3IbLFkwe8dup9RL0rdmSXaWOl335tkx/V+/4lB0wgJDMjzBsjnt6a9GZhsRC3X3aoLyVb98vEg==
+X-Received: by 2002:adf:fe43:: with SMTP id m3mr7569477wrs.290.1549456436744;
+        Wed, 06 Feb 2019 04:33:56 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id a187sm21428356wmf.33.2019.02.06.04.33.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 04:33:56 -0800 (PST)
+Date:   Wed, 6 Feb 2019 13:33:55 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>, Joe Perches <joe@perches.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Paul Zimmerman <pauldzim@gmail.com>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] r8169: Load MAC address from device tree if
+ present
+Message-ID: <20190206123355.GD21676@ulmo>
+References: <20190206123018.24802-1-thierry.reding@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sgneBHv3152wZ8jf"
+Content-Disposition: inline
+In-Reply-To: <20190206123018.24802-1-thierry.reding@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memblock API provides dedicated helpers to set or clear a flag on a
-memory region, e.g. memblock_{mark,clear}_hotplug().
 
-The memblock_{set,clear}_region_flags() functions are used only by the
-memblock internal function that adjusts the region flags.
-Drop these functions and use open-coded implementation instead.
+--sgneBHv3152wZ8jf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- include/linux/memblock.h | 12 ------------
- mm/memblock.c            |  9 ++++++---
- 2 files changed, 6 insertions(+), 15 deletions(-)
+On Wed, Feb 06, 2019 at 01:30:17PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>=20
+> If the system was booted using a device tree and if the device tree
+> contains a MAC address, use it instead of reading one from the EEPROM.
+> This is useful in situations where the EEPROM isn't properly programmed
+> or where the firmware wants to override the existing MAC address.
+>=20
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Applies on net-next.
+>=20
+> Changes in v2:
+> - rewrite error check for readability
+> - initialize mac_addr array
+>=20
+>  drivers/net/ethernet/realtek/r8169.c | 36 ++++++++++++++++++----------
+>  1 file changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index 71c9e32..32a9a6b 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -317,18 +317,6 @@ void __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
- 	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
- 			       nid, flags, p_start, p_end, p_nid)
- 
--static inline void memblock_set_region_flags(struct memblock_region *r,
--					     enum memblock_flags flags)
--{
--	r->flags |= flags;
--}
--
--static inline void memblock_clear_region_flags(struct memblock_region *r,
--					       enum memblock_flags flags)
--{
--	r->flags &= ~flags;
--}
--
- #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
- int memblock_set_node(phys_addr_t base, phys_addr_t size,
- 		      struct memblock_type *type, int nid);
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 0151a5b..af5fe8e 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -851,11 +851,14 @@ static int __init_memblock memblock_setclr_flag(phys_addr_t base,
- 	if (ret)
- 		return ret;
- 
--	for (i = start_rgn; i < end_rgn; i++)
-+	for (i = start_rgn; i < end_rgn; i++) {
-+		struct memblock_region *r = &type->regions[i];
-+
- 		if (set)
--			memblock_set_region_flags(&type->regions[i], flag);
-+			r->flags |= flag;
- 		else
--			memblock_clear_region_flags(&type->regions[i], flag);
-+			r->flags &= ~flag;
-+	}
- 
- 	memblock_merge_regions(type);
- 	return 0;
--- 
-2.7.4
+Sorry, I forgot to include Heiner's Reviewed-by tag here, but with any
+luck patchwork will pick it up if I do this:
 
+This patch previously:
+
+Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
+
+--sgneBHv3152wZ8jf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxa1C8ACgkQ3SOs138+
+s6GxWg//TDiJpd5gaQZNAade35NOyBX29QlimbE+xfLJmouURIPWzuqiDXllwYmV
+W9BqFppWTIYgzC86aJsKCwEoG80Bbp1pRRlQH2EHY4JtB5OVWywRdEaoNTZ51t1A
+8pIQdf13Fs3afcakEM6TQEqHnh9S1k3aR9GuWPIfj40kUw1ezvbeSJJUtMvYP+lg
+ii9nETSpYjbMFd+A5DZYcyVU+0ngushVdidq8BW3O96l4mOfEVPluIDfJW5cADqh
+PlCddHGH4cAbtX0X1U65SemzyYRM22dqsA/u/l6QB9zHVjujID6FPJVVFpHIJxoB
+ffvEcQHR3K+7B6nlyrYn1/1swFxdIURhlYDIJsTUzQ8p2yVgh9UugALa6GeyXifT
+Te0vzosuLU6tzrqSrlnnxyhbB5cBzU3KXDdYyrjGwHU0vExZk/9NqLjOCPRPzJR9
++6iCgj8QukckmOb65VLeRMC/6OF5qpJx0BuIdZSxdTkoJMNHmAhoBfGeg4Ce3ppf
+ub6BjegIdwHhwu5gPaGinV8RK7wTH0cv2UHU6BEQQ8pQKYnTnhgEdtHGeST0/iMl
+xNrqriRDIGweb8mk4eVb+Qr/rS87m6Wpvsi5qMhlQCx9i6CukwgsagQ55TQBmAMT
+wwUr1JWgkbSIlnXJDIyd5/f0NFi9VdV19yrQMzm1HKT1wn8rVdc=
+=61U5
+-----END PGP SIGNATURE-----
+
+--sgneBHv3152wZ8jf--
