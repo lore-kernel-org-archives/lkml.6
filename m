@@ -2,118 +2,98 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657B3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34439C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 330A5218AF
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:48:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549496907;
-	bh=Jb/sRI1XK8Vd07XB4TbRfHmOgfXNSZmLO2iLDDCIgr0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=pf+A9E8IvMXVixSJcfoVE9FFRNQuF0nDVBgKVyO67HixbQtwTKrUruDjo2xN+Fui6
-	 oZtBQ6a94oO9W7cjCoWz18t/In3WsZG7XhqrkyfMDC0Xkd8kq4JLlfz9dopRfn/j1I
-	 f4bZJyP9cMMNc4hX4lEUxL1/a2JKWgIVIQ7VlJ1g=
+	by mail.kernel.org (Postfix) with ESMTP id 0123A218AF
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfBFXsZ (ORCPT
+        id S1726549AbfBFXv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 18:48:25 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37140 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbfBFXsZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 18:48:25 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s13so15257385otq.4;
-        Wed, 06 Feb 2019 15:48:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2km3dMyZpRUU5hnOZjk3ra+UsEl0QjP4uRCEE8dLVpA=;
-        b=aiZAt8Ho0m4MD5zZLLh8kcKSA8T7ZdwhsYP/ig5YObJazOXjZLskBrK5mvtCVbq4hU
-         LsaVB/VYrN8h6lmsKGkumN7UBCx78KgD+qAZCEipAEWFBrJRzVj9Yt8mOLkyvgyGbG06
-         kqYaWBk2OR9g1jPFysxLZ/3WJdCtIQfLAYW7ILAHlMQELQqzJTs0xFRYWyxcPNdE4hYi
-         MJOBd0Fb4Uow0I4TNfeKnD+hGLxHtz8+qhLKgCpz7WBqDXmvdtu6sdtXVIVNlQZI2dJ/
-         QE+PxYQIN8evhhwe64BKyCSQrCE6+MFZ72PhRWnG2dMV9dXcTTqP8YxnIP8JyoCxvNBa
-         I/qg==
-X-Gm-Message-State: AHQUAub6VNSoXocXtabF2Exg0Yw8LhNpMWy90mRGT75PQi51Y5ZiR39m
-        Fz69ZAW9UjxM/ewypV4Kdm326PcU101xraCydouppfAO
-X-Google-Smtp-Source: AHgI3IZpEk2CWNtYPQQ7KqZEikUauiX+EFdFnS71/6BMSENFy4IR4l4ddI99XqMvH80bYuTgwAvnu48+7Fk1yZ21Y3Q=
-X-Received: by 2002:aca:f08b:: with SMTP id o133mr988016oih.32.1549496904026;
- Wed, 06 Feb 2019 15:48:24 -0800 (PST)
+        Wed, 6 Feb 2019 18:51:29 -0500
+Received: from anholt.net ([50.246.234.109]:52416 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726161AbfBFXv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 18:51:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 41EBF10A2BF3;
+        Wed,  6 Feb 2019 15:51:28 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id YpGqCJs-K-s6; Wed,  6 Feb 2019 15:51:27 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 10AB410A282F;
+        Wed,  6 Feb 2019 15:51:27 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 9E5772FE464C; Wed,  6 Feb 2019 15:51:26 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Eben Upton <eben@raspberrypi.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v4 3/4] drm/vc4: Detect and ignore underruns caused by out-of-sync dlists
+In-Reply-To: <20190206144906.24304-4-paul.kocialkowski@bootlin.com>
+References: <20190206144906.24304-1-paul.kocialkowski@bootlin.com> <20190206144906.24304-4-paul.kocialkowski@bootlin.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Wed, 06 Feb 2019 15:51:26 -0800
+Message-ID: <875ztwlblt.fsf@anholt.net>
 MIME-Version: 1.0
-References: <20190124230724.10022-1-keith.busch@intel.com> <20190124230724.10022-5-keith.busch@intel.com>
- <CAJZ5v0jE_gRT5WgpQYwZQmx6N5G+axymbSySb2Nk8Q0OGeNt9A@mail.gmail.com>
- <20190205145227.GG17950@kroah.com> <CAJZ5v0g4ouD+9YYPSkoN7CRLTXYymeCaVkYNzm6Q6gGdNgJbuQ@mail.gmail.com>
- <20190206230953.GB30221@localhost.localdomain>
-In-Reply-To: <20190206230953.GB30221@localhost.localdomain>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 7 Feb 2019 00:48:12 +0100
-Message-ID: <CAJZ5v0hHCVTui70g0Dcn8GEWOBTW1HCTi=3RXLPRHL_p2U62Dg@mail.gmail.com>
-Subject: Re: [PATCHv5 04/10] node: Link memory nodes to their compute nodes
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 12:10 AM Keith Busch <keith.busch@intel.com> wrote:
->
-> On Tue, Feb 05, 2019 at 04:17:09PM +0100, Rafael J. Wysocki wrote:
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > When you use a "raw" kobject then userspace tools do not see the devices
-> > > and attributes in libraries like udev.
-> >
-> > And why would they need it in this particular case?
-> >
-> > > So unless userspace does not care about this at all,
-> >
-> > Which I think is the case here, isn't it?
-> >
-> > > you should use a 'struct device' where ever
-> > > possible.  The memory "savings" usually just isn't worth it unless you
-> > > have a _lot_ of objects being created here.
-> > >
-> > > Who is going to use all of this new information?
-> >
-> > Somebody who wants to know how the memory in the system is laid out AFAICS.
->
-> Yes, this is for user space to make informed decisions about where it
-> wants to allocate/relocate hot and cold data with respect to particular
-> compute domains. So user space should care about these attributes,
-> and they won't always be static when memory hotplug support for these
-> attributes is added.
->
-> Does that change anything, or still recommending kobject? I don't have a
-> strong opinion either way and have both options coded and ready to
-> submit new version once I know which direction is most acceptable.
+--=-=-=
+Content-Type: text/plain
 
-If you want to make dynamic changes to the sysfs directories under
-this object, uevents generated by device registration and
-unregstration may be useful.  However, they only trigger automatically
-when you register and unregister, so presumably you'd need to do that
-every time for the changes to trigger an update in user space.  Also,
-whoever is interested in this data would need to listen to the uevents
-to get notified.
+Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
 
-OTOH, you can call kobject_uevent() for the "raw" kobjects too.
+> When the pipeline is reconfigured with a different mode, changes take
+> effect immediately for the CRTC and encoder while the HVS takes some
+> time to switch the active display list. This results in a period of
+> time where the pipeline is out of sync, that is very likely to cause
+> an underrun to be reported. Because the underrun is not related to the
+> new configuration, reporting it to userspace is a false positive.
 
-Anyway, if Greg really prefers struct device to be used here, that's
-fine by me, but since the uevents in question are going to be part of
-your user space I/F then, it may be good to take that into
-consideration. :-)
+This seems like a serious issue.  How are we enabling a CRTC with the
+corresponding HVS still scanning out old contents?  Did we need to wait
+for HVS to finish its old frame when we turned off the CRTC, so it's
+ready to receive the START when it's been set up with the new dlist and
+the CRTC is turned back on?  Or maybe do some sort of reset of that
+dlist when a crtc is being enabled?
 
-After all, you need to know how you want the I/F to work.
+If we can't sort that out, it feels to me like we should be enabling the
+interrupts from the flip_done path (when we know that the HVS is
+scanning out the new frame) instead of trying to mitigate enabling them
+too early.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlxbcv4ACgkQtdYpNtH8
+nuiTkhAAoKL/4v+X/hB+t3PxDjzBWduI0qDjJKwgKHROEBW2HTrWNd/J71r9+6P4
+SSVRoqvFE05GbxX0UxibpcjKpTScfBwhC24Ofkl3FYfNJM+R0HV0VQw7DuUCIQjR
+KoZ96MgAfeCy72lq0RmDLlXOZLh/DgUauWeN8VUVmT2G+TSpvB00ImU0sv4ZuIZB
+sFJ59q1JFIPyJs/E3M6K/gtcpHiOvFwakjPDEOPlyFht3+G9PDatXepakHmtA1FK
+ybx1oid23GMx6Dtd/EAvHPdSPIb7jNlEWvs5nJhlDnWgHnO7Oi+wrb7EdWh/eCyP
+0i5dl+7uTdo/MfjIrIGBbViwkgrS5uO8WMHYr9DojqhGIriQ76mEGDxeecrwK8Sm
+USXtMvClXmMxqskAZCo74zVGC8vg76LAqMffRZT06k54jzTr4XpErmjBe+r/uJ84
+SRdWK5z0EXkxREEPXPkFdAVdAxAApqVVbS9o1zfNiYu09CxZwJ5DIOjulXCcJBvX
+VXvSnyTY6XZs28ScUFIymVH/tlKmqCPgqoiNnz/mP7Km/dgBJr1d5PrnoX82eB3+
+Ylp41b44xSuRR8uK/b0UNjneFiFU70gI14G9+G4NYAeF3l67luoNpyvzJ7XTf7Ak
+TJiDv885cez3w88ShN1klKVx7KjoM9OAHD7SySyh0aGhkdbPVzc=
+=uaei
+-----END PGP SIGNATURE-----
+--=-=-=--
