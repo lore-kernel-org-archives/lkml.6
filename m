@@ -2,161 +2,109 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7283C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62CCC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8402C2080D
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549482013;
-	bh=XopYzYf3s1Zy0ZBiBCEL0/QigrtYkhisrvuFBbSdzG8=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=XMzxw5g/DEVVbCXtD6W1hzmUWiJBnqP2u8dZ5aG7XzqZ75eBrjbqNJjGI482CqHf0
-	 vzaKO7VALaYKsWjZWyUPvNv43k0M2Q5Z+eYqyqU0NYzakC305wcsVH8YS7zRm+rl2s
-	 aXtL2lFd0FMojr9P1W2PoXVFPfo9cB7Cb+7G5Zqs=
+	by mail.kernel.org (Postfix) with ESMTP id 813822080D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:41:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SSgOnHpa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfBFTkL (ORCPT
+        id S1726879AbfBFTlA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:40:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbfBFTkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:40:11 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 965A12080D;
-        Wed,  6 Feb 2019 19:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549482009;
-        bh=XopYzYf3s1Zy0ZBiBCEL0/QigrtYkhisrvuFBbSdzG8=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=dCbjH+X+tGQ8v/v5Vcgm8mY8bOmgVDL83jTqX6b0vApkIwUmi+LkQ9ScYqJZFaP0z
-         MM1ffw5o+eLE3kyLzX3SLEi2xTDijbTCIsdDdhleP1o8/3NstQs124xaop7uyZRUTz
-         nflV+3jtIkgSkqkFIHJ6ACkEKD7A6IbldTcLc4tg=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 6 Feb 2019 14:41:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53928 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbfBFTlA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 14:41:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KUo1sm11EKAgA+q/x8aFzMhJrSzJBKbg0a/gSVG3nvA=; b=SSgOnHpaimS7ENQea9aMmvnmb
+        UZpIO2AVsJQrc6Zftn+jEQn05/bgZWzoCwOKTQmsz8XsUL8gLr/ORIVAODYwuXTyiMsFLdDMDgUpG
+        YNZFWk5DvJE1cg8HylhWjkqmP+fLVZkWfycf5r9bMnGXBjhflXjVKfLLgfWgtrxRW1SnE75hYEsQO
+        rd6cuZmM1GzWZuRw7ZNPFGs3ZlraxiLL6bDjB414cV2JRDIK20468VPWjGrZ5I/42jJnDc/Zo3R7D
+        FcT+Vr29YYYvugS+Sa9QPCwOjCGKoKLF9BSOfJBtCouJXTlizucuv2Fv/XoLy3SMz1X6jum3yXWLh
+        6IwRD+ziw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grT43-00032j-M5; Wed, 06 Feb 2019 19:40:55 +0000
+Date:   Wed, 6 Feb 2019 11:40:55 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206194055.GP21860@bombadil.infradead.org>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz>
+ <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-In-Reply-To: <20190130235022.21949-1-katsuhiro@katsuster.net>
-User-Agent: alot/0.8
-Subject: Re: [PATCH] clk: fractional-divider: check parent rate only for general approximation
-Message-ID: <154948200879.115909.2117234752247335645@swboyd.mtv.corp.google.com>
-References: <20190130235022.21949-1-katsuhiro@katsuster.net>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Heiko Stuebner <heiko@sntech.de>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Wed, 06 Feb 2019 11:40:08 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Heiko because it mentions Rockchip
+On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote:
+> On Wed, 6 Feb 2019, Doug Ledford wrote:
+> > > Most of the cases we want revoke for are things like truncate().
+> > > Shouldn't happen with a sane system, but we're trying to avoid users
+> > > doing awful things like being able to DMA to pages that are now part of
+> > > a different file.
+> >
+> > Why is the solution revoke then?  Is there something besides truncate
+> > that we have to worry about?  I ask because EBUSY is not currently
+> > listed as a return value of truncate, so extending the API to include
+> > EBUSY to mean "this file has pinned pages that can not be freed" is not
+> > (or should not be) totally out of the question.
+> >
+> > Admittedly, I'm coming in late to this conversation, but did I miss the
+> > portion where that alternative was ruled out?
+> 
+> Coming in late here too but isnt the only DAX case that we are concerned
+> about where there was an mmap with the O_DAX option to do direct write
 
-Quoting Katsuhiro Suzuki (2019-01-30 15:50:22)
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate even if target rate is greater than parent.
->=20
-> This patch removes parent clock rate check from custom approximation.
->=20
-> For detailied example, clock tree of Rockchip I2S audio hardware.
+There is no O_DAX option.  There's mount -o dax, but there's nothing that
+a program does to say "Use DAX".
 
-s/detailied/detailed/
+> though? If we only allow this use case then we may not have to worry about
+> long term GUP because DAX mapped files will stay in the physical location
+> regardless.
 
->   - A i2s1_div is integer divider can divide input clock 1/1 ~ 1/16.
->     Initialize divider value is 1.
+... except for truncate.  And now that I think about it, there was a
+desire to support hot-unplug which also needed revoke.
 
-s/Initialize/Initial/
+> Maybe we can solve the long term GUP problem through the requirement that
+> user space acquires some sort of means to pin the pages? In the DAX case
+> this is given by the filesystem and the hardware will basically take care
+> of writeback.
 
->   - A i2s1_frac is fractional divider can divide input to x/y, x and
->     y are 16bit integer.
->   - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
->=20
-> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
-> GPLL --> |          | ,--------------'    |          |
->                       `--> i2s1_frac ---> |          |
->=20
-> Clock mux system try to choose suitable one from i2s1_div and
-> i2s1_frac for master clock (MCLK) of I2S1.
->=20
-> Bad scenario as follows:
->   - Try to set MCLK to 8.192MHz (32kHz audio replay)
->     Candidate setting is
->     - i2s1_div : GPLL / 60           =3D 8.192MHz
->     i2s1_div is same as target clock rate, so mux choose this.
->     i2s1_div output rate is changed 491.52MHz -> 8.192MHz
->=20
->   - After that try to set to 11.2896MHz (44.1kHz audio replay)
->     Candidate settings are
->     - i2s1_div : CPLL / 107 =3D 11.214945MHz
->     - i2s1_frac: i2s1_div   =3D 8.192MHz
->       This is because clk_fd_round_rate() thinks target rate
->       (11.2896MHz) is higher than parent rate (i2s1_div =3D 8.192MHz)
->       and returns parent clock rate.
->     Clock mux system choose i2s1_div, but this clock rate is not
->     acceptable for I2S driver, so users cannot replay audio.
->=20
-> Expected behavior is:
->   - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
->     Candidate settings are
->     - i2s1_div : CPLL / 107          =3D 11.214945MHz
->     - i2s1_frac: i2s1_div * 147/6400 =3D 11.2896MHz
->                  (change i2s1_div to GPLL / 1 =3D 491.52MHz)
->       If apply this commit, clk_fd_round_rate() calls custom
->       approximate function of Rockchip even if target rate is higher
->       than parent. Custom function changes both grand parent
->       (i2s1_div) and parent (i2s_frac) settings at same time.
+It's not given by the filesystem.
 
-Can you indicate what that function is? Is this merged upstream or
-something you're developing now?
+> In case of anonymous memory this can be guaranteed otherwise and is less
+> critical since these pages are not part of the pagecache and are not
+> subject to writeback.
 
->     Clock mux system can choose i2s1_frac and audio works fine.
-
-I think this last paragraph from "If apply this commit" can be
-unindented from the expected behavior section.
-
->=20
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> ---
->  drivers/clk/clk-fractional-divider.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fract=
-ional-divider.c
-> index 545dceec0bbf..b0fc5509e0ff 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -79,13 +79,17 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsi=
-gned long rate,
->         unsigned long m, n;
->         u64 ret;
-> =20
-> -       if (!rate || rate >=3D *parent_rate)
-> +       if (!rate)
->                 return *parent_rate;
-
-Ok. I think it would be clearer if we had
-
-	unsigned long flags =3D clk_hw_get_flags()
-
-	if (!rate ||
-	    !(flags & CLK_SET_PARENT_RATE) && rate >=3D *parent_rate)
-
-indicating that the parent of the clk isn't expected to change rate so
-we can only achieve that much frequency. Plus some sort of comment to
-this effect would be helpful too.
-
-We could also introduce macros to check clk flags. Then it would read
-nicer:
-
-	if (!rate || clk_hw_can_set_parent_rate(hw) && rate >=3D ...)
-
+but are subject to being swapped out?
