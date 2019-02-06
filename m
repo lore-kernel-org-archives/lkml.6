@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A934BC282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D70C282CB
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 738A22175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37D9E2175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="B22LoFYV"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Izj2RAxE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729194AbfBFALk (ORCPT
+        id S1730028AbfBFAMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 19:11:40 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40979 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729037AbfBFALi (ORCPT
+        Tue, 5 Feb 2019 19:12:53 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36767 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728993AbfBFALh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 19:11:38 -0500
-Received: by mail-ed1-f67.google.com with SMTP id p15so196192edy.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:37 -0800 (PST)
+        Tue, 5 Feb 2019 19:11:37 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d12so3445370edy.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AzD4I9vSpLa0znPUX8loomCgIT/NSp02B5H14ewm4us=;
-        b=B22LoFYVPi1fl9O8ZekaIEXsOLWdDBYXEyJ+jFGPSErEr0gLGmuxj39025meESR5kw
-         gjEEyYb3f3YtumzddUY4SGJiZ+w5nWlzmWXkx9qCpWLR7qKoECS8ZFeMUsGZgB2PHcKR
-         k2XaFD4ctvRhnTVI1ya+HPlA1Z7wRE+B1O0yJ/bSHcWn1PrvGRMtvzRoXQV7n/NgHOSA
-         ktH0QUIVVBgnfvxUCweGmedRTmsFPb2iiQdqMMu2JiLZOsEz6ZATzq30OjMdOT8N+I7x
-         LcthBQdIyE/yGbwGVlnVeyCvrXf7F1M/QFJJY0AmXjplz9b0xwnsY5N/6OLZM5/RVcTA
-         kBHw==
+        bh=nimaTeKw7f/fJd1Dlno7nOd96/JVuqHQeRI54wLbQ+4=;
+        b=Izj2RAxE2wSvlX8RKdqGreGsv1KNNvsVAH1A8YVSBR4OWKwROlI7L4W4Q5wEJPbnLy
+         12SJsfkvyW9vTo5FT460OFVoeXlDb+CFbbXP7sG6ShYQfCekMZfVr3/yCr3+m7S36zYy
+         OKwmz0QuMGgLw8WANDcg3swdulSXgDnUq+W29avZbqw9DHWVUrE+lguVgjNZrvcpY9RN
+         DzRQe7BGcBt8TofkKPOl2i0Kqhs54hY52pUnBeVVRYqY3HP0YpIWxdpiYG/O1QGTnmq+
+         yDgMhwu8WRACrHBWgw4rhS3UBZqJUohv+4xWKMPMLvWrPTScvqFF3WY3qxupFrxUhNua
+         A/8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AzD4I9vSpLa0znPUX8loomCgIT/NSp02B5H14ewm4us=;
-        b=L2mz/kbDgt/cNSOEKLGdbuXaywz5MuRjqh9uFoChjfGzQizUNCzCVTyt7D5muMNv7a
-         QU2GzyozLV3ivPUCJmfvywfqiiRiOHK79TDjZtuLOhU1csMeWu0kKjFILHTTcYU5FGFh
-         VlCFDeFphycE5ZuA4lWr9dpfvHwyxhl4S2Mga8bfIfFzEaFbXDFwezyOSg2MPo00hFGr
-         4CY5Tc110fFx/b9r36G4hK/T2yVrXC+6Fvp3G8Vx9qFn3YAiEqT647VLXia9dZ/VL+67
-         DZ1v8ZVamXvbTyFlWe/5AmF0/i9K3JAZLuiJ2pYaDZ1iMGVvZRVKG2HHSJDnNzeUotoT
-         ScuA==
-X-Gm-Message-State: AHQUAubfVxh5nhX2nvcs9jVESgm3jxaZaksHTWWFFu97fPetGFcq9AsD
-        SjohUpVb0k69DD+gL39hRPgW6EHocNc=
-X-Google-Smtp-Source: AHgI3IaChhpAxLHOWCxz+K1RzvpAQcmIhZTJlCNg6caTn54vndPLfV9IEMpKsl2jyWE3iKin+b5clQ==
-X-Received: by 2002:aa7:c906:: with SMTP id b6mr6039575edt.17.1549411896522;
-        Tue, 05 Feb 2019 16:11:36 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.35
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        bh=nimaTeKw7f/fJd1Dlno7nOd96/JVuqHQeRI54wLbQ+4=;
+        b=KQfp768o16UxtadnkF3MVqab8OstdVVSuFRw0MBI4iM91p3UBRSXHKeIp58L8HBruc
+         I7y3HBkrGOzazFgtcW9DYWUqkoFfWGww8ZAZ1rY/3hiW5PjE/4IjVbmlSGlwko1owXm7
+         tOEE04Ae9vx7wxXSoHO6vnnItgnjDjVpBNq2paVxElAKRWqTIXT6vYo8yuRMQfsAaoul
+         3NqAiuHOEp5VaMZBjhrS1uk2e4iY+mpYvkm/yguagom3wm1AqLFT3+LjDb6ckDvZVBV9
+         y7Wdd3Z6UsomyzVDsRm3nyIWn7C8FLcYdYvd+Y8P+n6wgH3yfUa94UzFvtCLWKLMzQfJ
+         1bRQ==
+X-Gm-Message-State: AHQUAuZI/NJzmaluQIJc2IImlhAsmwGFyxryYT9VimWQkYgNbFbSlFDG
+        V2XR8BvbQg6/EwSBuiTq9/XK7jTOiKE=
+X-Google-Smtp-Source: AHgI3IYUS4o7bq42mBWP5mTfZF2fWscQByrDhjvFzM1vR9YtCXkd1x0huWtXY+D+v0NHSoyg55B2gw==
+X-Received: by 2002:a17:906:6447:: with SMTP id l7mr5282738ejn.156.1549411895293;
         Tue, 05 Feb 2019 16:11:35 -0800 (PST)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 05 Feb 2019 16:11:34 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
@@ -75,9 +75,9 @@ Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 20/32] x86/vdso: Initialize timens 64-bit vdso
-Date:   Wed,  6 Feb 2019 00:10:54 +0000
-Message-Id: <20190206001107.16488-21-dima@arista.com>
+Subject: [PATCH 19/32] x86/vdso2c: Align LOCAL symbols between vdso{-timens,}.so
+Date:   Wed,  6 Feb 2019 00:10:53 +0000
+Message-Id: <20190206001107.16488-20-dima@arista.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206001107.16488-1-dima@arista.com>
 References: <20190206001107.16488-1-dima@arista.com>
@@ -88,54 +88,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize both 64-bit VDSO(s): host .so and timens one that has code
-for adding timens offsets.
+Align not only VDSO entries as on timens VDSO, but also addresses of
+local functions. Otherwise, ld will put them after everything else
+into *(.text*). That will result in common VDSO size bigger than
+timens VDSO size (sic!).
+
+Unfortunately, filtering by STB_WEAK doesn't work for ia32 VDSO:
+by some reason gcc transforms weak symbols into local symbols in .so,
+i.e.:
+    27: 00000000   219 FUNC    WEAK   DEFAULT   12 clock_gettime
+    29: 00000000    95 FUNC    WEAK   DEFAULT   14 gettimeofday
+    32: 00000000    40 FUNC    WEAK   DEFAULT   16 time
+
+become:
+    20: 000006e0   219 FUNC    LOCAL  DEFAULT   12 clock_gettime
+    31: 000007c0    95 FUNC    LOCAL  DEFAULT   12 gettimeofday
+    33: 00000820    40 FUNC    LOCAL  DEFAULT   12 time
+
+that results in the same align for two functions in .entries file:
+		. = ABSOLUTE(0x6e0);
+		*(.text.__vdso_clock_gettime*)
+		. = ABSOLUTE(0x6e0);
+		*(.text.clock_gettime*)
+
+As result, ld becomes a very sad animal and refuses to cooperate:
+ld:arch/x86/entry/vdso/vdso32/vdso32.lds:339 cannot move location counter backwards (from 0000000000000762 to 00000000000006e0)
+
+Align local functions on VDSO to timens VDSO and filter weak functions
+from .lds script.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/entry/vdso/vma.c   | 4 ++++
- arch/x86/include/asm/vdso.h | 6 ++++++
- 2 files changed, 10 insertions(+)
+ arch/x86/entry/vdso/vdso2c.h | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index d1031db94093..56a62076a320 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -343,6 +343,10 @@ static int __init init_vdso(void)
- {
- 	init_vdso_image(&vdso_image_64);
+diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
+index 50566dd94451..7096710140fe 100644
+--- a/arch/x86/entry/vdso/vdso2c.h
++++ b/arch/x86/entry/vdso/vdso2c.h
+@@ -15,7 +15,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	unsigned long mapping_size;
+ 	ELF(Ehdr) *hdr = (ELF(Ehdr) *)raw_addr;
+ 	unsigned int i, syms_nr;
+-	unsigned long j;
++	unsigned long j, last_entry_addr;
+ 	ELF(Shdr) *symtab_hdr = NULL, *strtab_hdr, *secstrings_hdr,
+ 		*alt_sec = NULL;
+ 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
+@@ -121,7 +121,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 		if (!out_entries_lds)
+ 			continue;
  
-+#ifdef CONFIG_TIME_NS
-+	init_vdso_image(&vdso_image_64_timens);
-+#endif
+-		if (ELF_FUNC(ST_BIND, sym->st_info) != STB_GLOBAL)
++		if (ELF_FUNC(ST_BIND, sym->st_info) == STB_WEAK)
+ 			continue;
+ 
+ 		if (ELF_FUNC(ST_TYPE, sym->st_info) != STT_FUNC)
+@@ -134,8 +134,19 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 
+ 	qsort(entries, next_entry - entries, sizeof(*entries), entry_addr_cmp);
+ 
++	last_entry_addr = -1UL;
+ 	while (next_entry != entries && out_entries_lds) {
+ 		next_entry--;
 +
- #ifdef CONFIG_X86_X32_ABI
- 	init_vdso_image(&vdso_image_x32);
- #endif
-diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
-index 619322065b8e..b6a1a028ac62 100644
---- a/arch/x86/include/asm/vdso.h
-+++ b/arch/x86/include/asm/vdso.h
-@@ -32,6 +32,9 @@ struct vdso_image {
- 
- #ifdef CONFIG_X86_64
- extern const struct vdso_image vdso_image_64;
-+#ifdef CONFIG_TIME_NS
-+extern const struct vdso_image vdso_image_64_timens;
-+#endif
- #endif
- 
- #ifdef CONFIG_X86_X32
-@@ -40,6 +43,9 @@ extern const struct vdso_image vdso_image_x32;
- 
- #if defined CONFIG_X86_32 || defined CONFIG_COMPAT
- extern const struct vdso_image vdso_image_32;
-+#ifdef CONFIG_TIME_NS
-+extern const struct vdso_image vdso_image_32_timens;
-+#endif
- #endif
- 
- extern void __init init_vdso_image(const struct vdso_image *image);
++		/*
++		 * Unfortunately, WEAK symbols from objects are resoved
++		 * into LOCAL symbols on ia32. Filter them here, as
++		 * linker wouldn't like aligning the same symbol twice.
++		 */
++		if (last_entry_addr == next_entry->addr)
++			continue;
++		last_entry_addr = next_entry->addr;
++
+ 		fprintf(out_entries_lds, "\t\t. = ABSOLUTE(%#lx);\n\t\t*(.text.%s*)\n",
+ 			next_entry->addr, next_entry->name);
+ 	}
 -- 
 2.20.1
 
