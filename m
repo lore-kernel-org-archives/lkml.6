@@ -2,88 +2,92 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 829B5C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0E9C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C61220823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99112075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:03:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="FnIJiLll"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfBFTA1 (ORCPT
+        id S1726879AbfBFTDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:00:27 -0500
-Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:46668 "EHLO
-        faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726561AbfBFTA1 (ORCPT
+        Wed, 6 Feb 2019 14:03:50 -0500
+Received: from a9-30.smtp-out.amazonses.com ([54.240.9.30]:46080 "EHLO
+        a9-30.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726270AbfBFTDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:00:27 -0500
-Received: from faui49copter1 (faui49copter1.informatik.uni-erlangen.de [131.188.42.149])
-        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 93F36548859;
-        Wed,  6 Feb 2019 20:00:21 +0100 (CET)
-Received: by faui49copter1 (sSMTP sendmail emulation); Wed, 06 Feb 2019 20:00:21 +0100
-From:   Andreas Ziegler <andreas.ziegler@fau.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Andreas Ziegler <andreas.ziegler@fau.de>
-Subject: [PATCH v2 RESEND] tracing: probeevent: Correctly update remaining space in dynamic area
-Date:   Wed,  6 Feb 2019 20:00:13 +0100
-Message-Id: <20190206190013.16405-1-andreas.ziegler@fau.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190122152634.18957-1-andreas.ziegler@fau.de>
-References: <20190122152634.18957-1-andreas.ziegler@fau.de>
+        Wed, 6 Feb 2019 14:03:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549479828;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=xYi6pCyDA9ZOQcYAxtOfItk+QwdU/COFlue4KVWz1Sk=;
+        b=FnIJiLll8xQfoA9hfRIsqHXFv7JymnplP5wZ7DxNoHDvrUAPoo8SzG6tfvRnypj/
+        V+jSIAlK+w1UOD/3q+ki7ZhfpMVhSqg9WuawKegLwHSdhj0/3my9z6+m5MYoCqyR8FV
+        v8flXD841rz/28n7k4eaOm8F1TKxqtgAlY7molh0=
+Date:   Wed, 6 Feb 2019 19:03:48 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org
+Subject: Re: [LSF/MM ATTEND ] memory reclaim with NUMA rebalancing
+In-Reply-To: <87h8dpnwxg.fsf@linux.ibm.com>
+Message-ID: <01000168c431dbc5-65c68c0c-e853-4dda-9eef-8a9346834e59-000000@email.amazonses.com>
+References: <20190130174847.GD18811@dhcp22.suse.cz> <87h8dpnwxg.fsf@linux.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.02.06-54.240.9.30
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9178412ddf5a ("tracing: probeevent: Return consumed
-bytes of dynamic area") improved the string fetching
-mechanism by returning the number of required bytes after
-copying the argument to the dynamic area. However, this
-return value is now only used to increment the pointer
-inside the dynamic area but misses updating the 'maxlen'
-variable which indicates the remaining space in the dynamic
-area.
+On Thu, 31 Jan 2019, Aneesh Kumar K.V wrote:
 
-This means that fetch_store_string() always reads the *total*
-size of the dynamic area from the data_loc pointer instead of
-the *remaining* size (and passes it along to
-strncpy_from_{user,unsafe}) even if we're already about to
-copy data into the middle of the dynamic area.
+> I would be interested in this topic too. I would like to
+> understand the API and how it can help exploit the different type of
+> devices we have on OpenCAPI.
 
-Fixes: 9178412ddf5a ("tracing: probeevent: Return consumed bytes of dynamic area")
-Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
----
-v2: follow coding guidelines for braces
+So am I. We may want to rethink the whole NUMA API and the way we handle
+different types of memory with their divergent performance
+characteristics.
 
- kernel/trace/trace_probe_tmpl.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+We need some way to allow a better selection of memory from the kernel
+without creating too much complexity. We have new characteristics to
+cover:
 
-diff --git a/kernel/trace/trace_probe_tmpl.h b/kernel/trace/trace_probe_tmpl.h
-index 5c56afc17cf8..4737bb8c07a3 100644
---- a/kernel/trace/trace_probe_tmpl.h
-+++ b/kernel/trace/trace_probe_tmpl.h
-@@ -180,10 +180,12 @@ store_trace_args(void *data, struct trace_probe *tp, struct pt_regs *regs,
- 		if (unlikely(arg->dynamic))
- 			*dl = make_data_loc(maxlen, dyndata - base);
- 		ret = process_fetch_insn(arg->code, regs, dl, base);
--		if (unlikely(ret < 0 && arg->dynamic))
-+		if (unlikely(ret < 0 && arg->dynamic)) {
- 			*dl = make_data_loc(0, dyndata - base);
--		else
-+		} else {
- 			dyndata += ret;
-+			maxlen -= ret;
-+		}
- 	}
- }
+1. Persistence (NVRAM) or generally a storage device that allows access to
+   the medium via a RAM like interface.
 
---
-2.17.1
+2. Coprocessor memory that can be shuffled back and forth to a device
+   (HMM).
+
+3. On Device memory (important since PCIe limitations are currently a
+   problem and Intel is stuck on PCIe3 and devices start to bypass the
+   processor to gain performance)
+
+4. High Density RAM (GDDR f.e.) with different caching behavior
+   and/or different cacheline sizes.
+
+5. Modifying access characteristics by reserving slice of a cache (f.e.
+   L3) for a specific memory region.
+
+6. SRAM support (high speed memory on the processor itself or by using
+   the processor cache to persist a cacheline)
+
+And then the old NUMA stuff where only the latency to memory varies. But
+that was a particular solution targeted at scaling SMP system through
+interconnects. This was a mostly symmetric approach. The use of
+accellerators etc etc and the above characteristics lead to more complex
+assymmetric memory approaches that may be difficult to manage and use from
+kernel space.
 
