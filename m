@@ -2,83 +2,72 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3702C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89312C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F81217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:21:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="bOeAn9H1"
+	by mail.kernel.org (Postfix) with ESMTP id 5A2992080D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729804AbfBFPVy (ORCPT
+        id S1729959AbfBFPWo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:21:54 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59340 "EHLO mail.skyhub.de"
+        Wed, 6 Feb 2019 10:22:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56728 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727638AbfBFPVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:21:53 -0500
-Received: from zn.tnic (p200300EC2BCEF1005C27BB339FB20F69.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:f100:5c27:bb33:9fb2:f69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725817AbfBFPWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:22:43 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 90B9D1EC0253;
-        Wed,  6 Feb 2019 16:21:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549466512;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=r7L2QRjbby7JI5M+tVwgkVMWvJYnfojKDjotPL68V7g=;
-        b=bOeAn9H1j1wkInEudzs/owyFBmiNZ8coCdK+ILIXeugoMvF5XGuGcWgcSTGj7FfcjgximQ
-        RvILHz9tj5iFHRi1L24dpg+vlpayUcCBV2O0eEDfc13WWwIpDKg5JlROCGvw68UuVx+YUk
-        Ty3lqZahPOD0kSz28MA2cqv7rfHYlGQ=
-Date:   Wed, 6 Feb 2019 16:21:41 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        dave.hansen@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kyle D Pelton <kyle.d.pelton@intel.com>,
-        Wei Huang <wei@redhat.com>
-Subject: Re: [PATCH] x86/boot/compressed/64: Do not corrupt EDX on EFER.LME=1
- setting
-Message-ID: <20190206152141.GF7314@zn.tnic>
-References: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D68446202;
+        Wed,  6 Feb 2019 15:22:43 +0000 (UTC)
+Received: from treble (ovpn-119-156.phx2.redhat.com [10.3.119.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 357A76155B;
+        Wed,  6 Feb 2019 15:22:39 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 09:22:37 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] livepatch: Followup changes for the atomic
+ replace patchset
+Message-ID: <20190206152237.vhoq2jsz6el2yysq@treble>
+References: <20190204135653.31406-1-pmladek@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204135653.31406-1-pmladek@suse.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 06 Feb 2019 15:22:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 02:52:53PM +0300, Kirill A. Shutemov wrote:
-> RDMSR in the trampoline code overrides EDX, but we use the register to
-> indicate if 5-level paging has to enabled. It leads to failure to boot
-> on a 5-level paging machine.
+On Mon, Feb 04, 2019 at 02:56:49PM +0100, Petr Mladek wrote:
+> This patchset implements ideas that were mentioned and postponed during
+> the review of the atomic replace patchset.
 > 
-> Preserve EDX on the stack while we are dealing with EFER.
+> The patches apply on top of livepatching.git, branch
+> origin/for-5.1/atomic-replace.
+> 
+> 
+> Changes against v1:
+> 
+>   + Added Joe's patch that fixed ptr_id() error code [Joe]
+>   + Did proper error handling in the shadow variable sefttest [All]
+>   + Removed the controversial patch that was removing patch->enabled flag [All].
+>   + Fixed few typo's [Joe]
+>   + Added available Acks.
 
-Comment says:
-
- * Non zero RDX on return means we need to enable 5-level paging.
-
-Is that per-chance refering to struct paging_config which
-paging_prepare() returns and on that return rdx contains
-paging_config.l5_required which is 1 when 5 level is to be enabled?
-
-If so, is that written somewhere explicitly? Because it is not
-immediately clear at least to me why that RDX is live...
-
-Thx.
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Josh
