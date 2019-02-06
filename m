@@ -2,91 +2,112 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26949C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331FEC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E84F52175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:23:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tWpaYTga"
+	by mail.kernel.org (Postfix) with ESMTP id 006B62186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730790AbfBFQXn (ORCPT
+        id S1730842AbfBFQX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:23:43 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41883 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfBFQXn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:23:43 -0500
-Received: by mail-qt1-f194.google.com with SMTP id b15so8455434qto.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:23:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Oh8atz+iR4+ECiTaTUpXjXYmQ7/3LE+YBTxI8eIOLLo=;
-        b=tWpaYTgaC1VhxaInRFw64von/l/FM/TLujCJXUrbriI4YQ13wcU6AuSvHje/98AdnZ
-         8w50ELobBZqPTOhXKmia/+8bgx2/hevaoxgOPvTgltRWCIUEG/immBiVCVeRpoG10CZl
-         //JE4PsgMFJNO8R4EvyFxSNOH5//iDoukqN3xf3vx++BMLW28lF31oCIEF/3m1WujHO3
-         t7JO+phXxLC3mENZ6wWMJ+1gUglycbVkc94Ab9YCqqP8gGoy33kAFDXdnw5hGsWYtHPs
-         ZLmxC0amFps+/36QlYVAULx+mgGDKsF0gPSPKGHdoOWvk/imA4sxDw2hZCvNWnLMi5Qf
-         pWHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Oh8atz+iR4+ECiTaTUpXjXYmQ7/3LE+YBTxI8eIOLLo=;
-        b=D8psmnE/uCLb9g74PyWsN2/cdOdg0GnhuJ4Oeb9RJHQjY8YItTPlJREbmBRgztEWCy
-         /njUYUVE3S1AbwYoObMrvCIFXrmUhvAGjTtiBT+Wu5A5D81JesztaYEoBstxzqH+gOmh
-         CRvDJLAuvA3PzvHaLJyU8GqGxlh0ocRXQKwt7kS62tWZwqwdYyqXA1rDTSVqQqy1+KpJ
-         PwQ42z1xStyF5D+2pHc5QWsQ3u12cVqzdEuwcjPRG9k6KNASehLeM+LJfMyQXI6FwqSF
-         eC0IGv/c6niyLwTR9ykyYr9BTb/KK4c5EAPnQddsV4Ml+PB1sgQ/1khzIBxe7bgNAZKE
-         pewg==
-X-Gm-Message-State: AHQUAuavbaDZRkOrOwkaSZNgQY9X7teySzJde4pYRMQgCla7zILQLais
-        yioMwAxgtIlzaR/Ax/fkAHZU11GE4fNkrhO4j0izeMTG
-X-Google-Smtp-Source: AHgI3IaGu0Ejmhv1aJskOfnIF+yDDxWd4YAdFCdnHVSQQI8YGXZZ+yVxFm+jzwOUoJ9XbW+9NVprGOnTuzckiFmGwIw=
-X-Received: by 2002:ac8:278a:: with SMTP id w10mr8408581qtw.149.1549470221761;
- Wed, 06 Feb 2019 08:23:41 -0800 (PST)
+        Wed, 6 Feb 2019 11:23:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:55132 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726306AbfBFQXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 11:23:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F66380D;
+        Wed,  6 Feb 2019 08:23:55 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 565183F675;
+        Wed,  6 Feb 2019 08:23:54 -0800 (PST)
+Subject: Re: [PATCH] genirq: introduce irq_chip_mask_ack_parent()
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     linux-kernel@vger.kernel.org, Brian Masney <masneyb@onstation.org>
+References: <20190206151521.6574-1-linus.walleij@linaro.org>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <9d274add-adce-3ffe-ab56-4966cb67cd34@arm.com>
+Date:   Wed, 6 Feb 2019 16:23:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 6 Feb 2019 17:23:30 +0100
-Message-ID: <CAKfTPtBnJRm6J9mtSzZiZ9s3dWHHsHmACYb-Cu2p7oChwnZOPg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] sched/fair: Fix O(nr_cgroups) in load balance path
-To:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Tejun Heo <tj@kernel.org>, Sargun Dhillon <sargun@sargun.me>,
-        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190206151521.6574-1-linus.walleij@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Feb 2019 at 17:14, Vincent Guittot <vincent.guittot@linaro.org> wrote:
->
-> This patchset adds missing pieces in the management of leaf_cfs_rq_list
-> to ensure that cfs_rqs are always correctly ordered before
-> re-enabling ("sched/fair: Fix O(nr_cgroups) in load balance path")
+On 06/02/2019 15:15, Linus Walleij wrote:
+> The hierarchical irqchip never before ran into a situation
+> where the parent is not "simple", i.e. does not implement
+> .irq_ack() and .irq_mask() like most, but the qcom-pm8xxx.c
+> happens to implement only .irq_mask_ack().
+> 
+> Since we want to make ssbi-gpio a hierarchical child of this
+> irqchip, it must *also* only implement .irq_mask_ack()
+> and call down to the parent, and for this we of course
+> need irq_chip_mask_ack_parent().
+> 
+> Cc: Brian Masney <masneyb@onstation.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-I should have mentioned that this patchset applies on the latest
-tip/sched/core branch
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
->
-> Vincent Guittot (2):
->   sched/fair: optimization of update_blocked_averages()
->   sched/fair: Fix O(nr_cgroups) in load balance path
->
->  kernel/sched/fair.c | 67 ++++++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 53 insertions(+), 14 deletions(-)
->
-> --
-> 2.7.4
->
+	M.
+-- 
+Jazz is not dead. It just smells funny...
