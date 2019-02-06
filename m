@@ -2,139 +2,171 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AD1C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CE1C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C43A218A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549428083;
-	bh=/VHxJyIBpRzCH+yqtI/5Hc0l7YU9N4pdah5ExIwuEy0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=xGQgRb03GW8lmU3TPESpjZ8to9k0l5bwlzDeTvX0WS6aik7S7PrQGcN4kDIgnFz7F
-	 Xne+3ATn2sZyPr5GemOIJ8emJvWgfog1jd3U1YWmxvT93Kp7EIHbokBR8Mn8icAMw/
-	 mj3k6/eDZV4VF000CgqYZWFVYUU9m5R2OdbIQu+Q=
+	by mail.kernel.org (Postfix) with ESMTP id D67C520844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfBFElT (ORCPT
+        id S1727348AbfBFEoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 23:41:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46656 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 23:44:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:44137 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbfBFElT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 23:41:19 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726062AbfBFEox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 23:44:53 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 525DA218A1;
-        Wed,  6 Feb 2019 04:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549428078;
-        bh=/VHxJyIBpRzCH+yqtI/5Hc0l7YU9N4pdah5ExIwuEy0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kJcTv9tl7kedIqQ7s/q6H0aaFwvnqvWgLC0F0CiMidsFQ8aLBdJ7aIYSnDnJQ0YxQ
-         464KAtKWRM+LYt6tH0OEE3CAQMAY13H9wXOlXGRtyJULC8/OBel7jQCnahKNSVTMHH
-         GxGZqXsxIZuaALjfYBIlTyqna+DLsy42viuHnOUU=
-Date:   Wed, 6 Feb 2019 13:41:15 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        William Cohen <wcohen@redhat.com>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        lttng@reliableembeddedsystems.com,
-        lttng-dev <lttng-dev@lists.lttng.org>
-Subject: Re: BUG: optimized kprobes illegal instructions in v4.19 stable
- kernels
-Message-Id: <20190206134115.baba291e33022a2f6b6ae5f8@kernel.org>
-In-Reply-To: <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com>
-References: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com>
-        <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by ozlabs.org (Postfix) with ESMTPSA id 43vTPt6lfJz9sDX;
+        Wed,  6 Feb 2019 15:44:50 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list\:LINUX FOR POWERPC \(32-BIT AND 64-BIT\)" 
+        <linuxppc-dev@lists.ozlabs.org>, live-patching@vger.kernel.org,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nicolai Stange <nstange@suse.de>, Torsten Duwe <duwe@lst.de>
+Subject: Re: [PATCH 1/4] powerpc/64s: Clear on-stack exception marker upon exception return
+In-Reply-To: <CAKTCnznr9MoL=eZsNWyGkKYdx7UbLQr86VL=xmC8h2ig8Sw+RQ@mail.gmail.com>
+References: <20190122155724.27557-1-joe.lawrence@redhat.com> <20190122155724.27557-2-joe.lawrence@redhat.com> <20190202011455.GN26056@350D> <CAKTCnzmWCxPRSBdc8T_phtmoBftNZLV3BdFp3Dee5Lc8VGzFYg@mail.gmail.com> <87bm3qmqak.fsf@concordia.ellerman.id.au> <CAKTCnznr9MoL=eZsNWyGkKYdx7UbLQr86VL=xmC8h2ig8Sw+RQ@mail.gmail.com>
+Date:   Wed, 06 Feb 2019 15:44:48 +1100
+Message-ID: <8736p1msov.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019 15:06:10 +0000
-Kees Cook <keescook@chromium.org> wrote:
+Balbir Singh <bsingharora@gmail.com> writes:
+> On Tue, Feb 5, 2019 at 10:24 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> Balbir Singh <bsingharora@gmail.com> writes:
+>> > On Sat, Feb 2, 2019 at 12:14 PM Balbir Singh <bsingharora@gmail.com> wrote:
+>> >> On Tue, Jan 22, 2019 at 10:57:21AM -0500, Joe Lawrence wrote:
+>> >> > From: Nicolai Stange <nstange@suse.de>
+>> >> >
+>> >> > The ppc64 specific implementation of the reliable stacktracer,
+>> >> > save_stack_trace_tsk_reliable(), bails out and reports an "unreliable
+>> >> > trace" whenever it finds an exception frame on the stack. Stack frames
+>> >> > are classified as exception frames if the STACK_FRAME_REGS_MARKER magic,
+>> >> > as written by exception prologues, is found at a particular location.
+>> >> >
+>> >> > However, as observed by Joe Lawrence, it is possible in practice that
+>> >> > non-exception stack frames can alias with prior exception frames and thus,
+>> >> > that the reliable stacktracer can find a stale STACK_FRAME_REGS_MARKER on
+>> >> > the stack. It in turn falsely reports an unreliable stacktrace and blocks
+>> >> > any live patching transition to finish. Said condition lasts until the
+>> >> > stack frame is overwritten/initialized by function call or other means.
+>> >> >
+>> >> > In principle, we could mitigate this by making the exception frame
+>> >> > classification condition in save_stack_trace_tsk_reliable() stronger:
+>> >> > in addition to testing for STACK_FRAME_REGS_MARKER, we could also take into
+>> >> > account that for all exceptions executing on the kernel stack
+>> >> > - their stack frames's backlink pointers always match what is saved
+>> >> >   in their pt_regs instance's ->gpr[1] slot and that
+>> >> > - their exception frame size equals STACK_INT_FRAME_SIZE, a value
+>> >> >   uncommonly large for non-exception frames.
+>> >> >
+>> >> > However, while these are currently true, relying on them would make the
+>> >> > reliable stacktrace implementation more sensitive towards future changes in
+>> >> > the exception entry code. Note that false negatives, i.e. not detecting
+>> >> > exception frames, would silently break the live patching consistency model.
+>> >> >
+>> >> > Furthermore, certain other places (diagnostic stacktraces, perf, xmon)
+>> >> > rely on STACK_FRAME_REGS_MARKER as well.
+>> >> >
+>> >> > Make the exception exit code clear the on-stack STACK_FRAME_REGS_MARKER
+>> >> > for those exceptions running on the "normal" kernel stack and returning
+>> >> > to kernelspace: because the topmost frame is ignored by the reliable stack
+>> >> > tracer anyway, returns to userspace don't need to take care of clearing
+>> >> > the marker.
+>> >> >
+>> >> > Furthermore, as I don't have the ability to test this on Book 3E or
+>> >> > 32 bits, limit the change to Book 3S and 64 bits.
+>> >> >
+>> >> > Finally, make the HAVE_RELIABLE_STACKTRACE Kconfig option depend on
+>> >> > PPC_BOOK3S_64 for documentation purposes. Before this patch, it depended
+>> >> > on PPC64 && CPU_LITTLE_ENDIAN and because CPU_LITTLE_ENDIAN implies
+>> >> > PPC_BOOK3S_64, there's no functional change here.
+>> >> >
+>> >> > Fixes: df78d3f61480 ("powerpc/livepatch: Implement reliable stack tracing for the consistency model")
+>> >> > Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
+>> >> > Signed-off-by: Nicolai Stange <nstange@suse.de>
+>> >> > Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+>> >> > ---
+>> >> >  arch/powerpc/Kconfig           | 2 +-
+>> >> >  arch/powerpc/kernel/entry_64.S | 7 +++++++
+>> >> >  2 files changed, 8 insertions(+), 1 deletion(-)
+>> >> >
+>> >> > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>> >> > index 2890d36eb531..73bf87b1d274 100644
+>> >> > --- a/arch/powerpc/Kconfig
+>> >> > +++ b/arch/powerpc/Kconfig
+>> >> > @@ -220,7 +220,7 @@ config PPC
+>> >> >       select HAVE_PERF_USER_STACK_DUMP
+>> >> >       select HAVE_RCU_TABLE_FREE              if SMP
+>> >> >       select HAVE_REGS_AND_STACK_ACCESS_API
+>> >> > -     select HAVE_RELIABLE_STACKTRACE         if PPC64 && CPU_LITTLE_ENDIAN
+>> >> > +     select HAVE_RELIABLE_STACKTRACE         if PPC_BOOK3S_64 && CPU_LITTLE_ENDIAN
+>> >> >       select HAVE_SYSCALL_TRACEPOINTS
+>> >> >       select HAVE_VIRT_CPU_ACCOUNTING
+>> >> >       select HAVE_IRQ_TIME_ACCOUNTING
+>> >> > diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+>> >> > index 435927f549c4..a2c168b395d2 100644
+>> >> > --- a/arch/powerpc/kernel/entry_64.S
+>> >> > +++ b/arch/powerpc/kernel/entry_64.S
+>> >> > @@ -1002,6 +1002,13 @@ END_FTR_SECTION_IFSET(CPU_FTR_HAS_PPR)
+>> >> >       ld      r2,_NIP(r1)
+>> >> >       mtspr   SPRN_SRR0,r2
+>> >> >
+>> >> > +     /*
+>> >> > +      * Leaving a stale exception_marker on the stack can confuse
+>> >> > +      * the reliable stack unwinder later on. Clear it.
+>> >> > +      */
+>> >> > +     li      r2,0
+>> >> > +     std     r2,STACK_FRAME_OVERHEAD-16(r1)
+>> >> > +
+>> >>
+>> >> Could you please double check, r4 is already 0 at this point
+>> >> IIUC. So the change might be a simple
+>> >>
+>> >> std r4,STACK_FRAME_OVERHEAD-16(r1)
+>> >>
+>> >
+>> > r4 is not 0, sorry for the noise
+>>
+>> Isn't it?
+>
+> It is, I seem to be reading the wrong bits and confused myself, had to
+> re-read mtmsrd to ensure it does not modify RS, just MSR. So I guess
+> we could reuse r4.
 
-> On Mon, Feb 4, 2019 at 7:15 PM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
-> >
-> > Hi,
-> >
-> > I notice this commit as a possible culprit of the illegal instructions my lttng
-> > users are noticing on arm32 when using kprobes on a v4.19.13 Linux kernel
-> > in a Yocto environment [1]. They were able to reproduce the issue with perf
-> > as well.
-> >
-> > commit e46daee53bb50bde38805f1823a182979724c229
-> > Author: Kees Cook <keescook@chromium.org>
-> > Date:   Tue Oct 30 22:12:56 2018 +0100
-> >
-> >     ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
-> >
-> > I *think* the intent there was to do
-> >
-> > -       memcpy(code, &optprobe_template_entry,
-> > +       memcpy(code, (unsigned long *)&optprobe_template_entry,
-> >
-> > But if you look at the commit, the "&" seems to have been stripped away,
-> > which happens to change the behavior significantly.
-> 
-> Yeah, this was a typo on my part. :(
+Yeah it's a bit hard to follow now that we have the split exit paths for
+user vs kernel. r4 does get used on the return to userspace case, by
+ACCOUNT_CPU_USER_EXIT(), but for the return to kernel it's still got
+zero in it.
 
-Ah, I thought it had been fixed as same as x86.
-On x86, all optprobe_template_* are defined as kprobe_opcode_t [],
-but on arm, it still be kprobe_opcode_t.
+> Should I send a patch on top of this? I have limited testing
+> infrastructure at the moment, I could use qemu
 
-Hmm, but I think we should use kprobe_opcode_t [] or char[] as asm/sections.h does.
-OK, I'll prepare for the change.
+I'm not sure. It's a bit fragile relying on the r4 value being zero, it
+would be easy to accidentally reuse r4. Though it actually wouldn't
+matter as long as r4 never has "regshere" in it.
 
-Thank you,
+In fact we could store any random value there, it just needs to not be
+the exception marker. eg. we could just stick the SRR0 value in there,
+that should never alias with "regshere".
 
+But I think maybe we're over thinking it, the cost of the li is pretty
+minimal compared to everything else going on here, and this is only on
+the return to kernel case, which is arguably not a super hot path.
 
-> 
-> > Has this change ever been runtime-tested ?
-> 
-> I thought I had, given the details from the original bug report, but
-> clearly it didn't exercise it.
-> 
-> Thanks for fixing this!
-> 
-> -Kees
-> 
-> >
-> > It has been backported to:
-> > - 4.19 stable as commit 3fe0c68aea21
-> > - 4.14 stable as commit f9e0bc710347
-> >
-> > Thanks,
-> >
-> > Mathieu
-> >
-> > [1] https://bugs.lttng.org/issues/1174
-> >
-> > --
-> > Mathieu Desnoyers
-> > EfficiOS Inc.
-> > http://www.efficios.com
-> 
-> 
-> 
-> -- 
-> Kees Cook
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+cheers
