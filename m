@@ -2,263 +2,287 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F94C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C026C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497CE20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:01:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYKFrK/a"
+	by mail.kernel.org (Postfix) with ESMTP id 2F3322186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbfBFOBr (ORCPT
+        id S1730057AbfBFOF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:01:47 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54043 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730722AbfBFOBr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:01:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d15so2593312wmb.3;
-        Wed, 06 Feb 2019 06:01:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Wcz2lGJZud6zm1sgSGU4O7NQG80s6W9F7R/lEOETHFE=;
-        b=kYKFrK/aKF50BaAS6jzpEXgbIL67PW07wS8OcIHg3rXopEKOmiq0ghc1aecm2o5e8T
-         gL8hvj5WOC+73TCqI2MUw1GtXk0xacVDUX1MrjmwGiEsH3LtyBUSe+B9cAZqzj75dfdP
-         ifOmm752DBEC/R3gC9ATFmS9yodESTMR5oVdR9O5KoHCQaWZVQd8F94gOQt1j0zJ3IAj
-         wVZXEaCTxojvuD4vm4zXXl5NKqvvwnYA/fGkhUIAJbOBzGGGalZadyicBurxPPu2QiNu
-         LwaBUxFFc25GN+9NPCH2iIYJvdiTk2f3m/4t2NOMDMEfOiUv/ZtyTK4skdJCmDhfvDmz
-         PbhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Wcz2lGJZud6zm1sgSGU4O7NQG80s6W9F7R/lEOETHFE=;
-        b=kthvd5jrE9fxTkKYlWBg0jjlkiUHaqXlYyjrF6XgS0rixbA6NtgNszPnEfvfI0emKf
-         pCUd6WooWHJb2hgeNqWF30wP/4gT5LFxMgRDc2gN/qL4ch14Jr9RpsZbi7BGFHdc+Wk9
-         lQaUPHkN0la0GJtG++SCo7u3CkPjQVY60rs/dqyssvQVzlVQbJ3kouiIyhXOnaFIhzby
-         2zrMrFOjqo0jJeLLHHbdIy4p42gcXenjh3020D6vcxsRkjITVR07A/LOdgm3+VkSDofA
-         6NJCybnbIV1iFmvFOifoPydBvKfXWLbhvyDsjTnFl3Wc9n/Fm5KpEWZpV0mHx+xNJggd
-         /CBQ==
-X-Gm-Message-State: AHQUAuZ3+YB42cV7iKy1sAMsposr1D0+87AG7Q9FOg7GyWdmsm/1wGqt
-        oN0IWDvU6KFuHzkLTU3XEhk=
-X-Google-Smtp-Source: AHgI3IYLhdLv9SoVSOxJfzViDGVT7zlYBFlGBRnE4pbf8WM47qso3CEEvYQ89nfDFjtIqqgfHuj7+Q==
-X-Received: by 2002:a7b:c1d7:: with SMTP id a23mr3192374wmj.48.1549461703862;
-        Wed, 06 Feb 2019 06:01:43 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id b18sm21816394wrw.83.2019.02.06.06.01.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 06:01:42 -0800 (PST)
-Date:   Wed, 6 Feb 2019 15:01:41 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
-Message-ID: <20190206140141.GO21676@ulmo>
-References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
- <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
- <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
- <20190206130909.GJ21676@ulmo>
- <20190206131310.GK21676@ulmo>
- <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
- <BYAPR12MB33983A0E93B17808DECFD0F2C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <6edef92d-66a7-0f70-e59e-7381b82516eb@gmail.com>
- <BYAPR12MB339826EB972C5DB7957E8A82C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
+        Wed, 6 Feb 2019 09:05:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727823AbfBFOF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 09:05:58 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9277CC05FF87;
+        Wed,  6 Feb 2019 14:05:57 +0000 (UTC)
+Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AF0D184BC7;
+        Wed,  6 Feb 2019 14:05:22 +0000 (UTC)
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+To:     Luiz Capitulino <lcapitulino@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
+        riel@surriel.com, david@redhat.com, dodgen@google.com,
+        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
+Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor to
+ the host
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-6-nitesh@redhat.com>
+ <20190205154545-mutt-send-email-mst@kernel.org>
+ <26a36489-2289-f970-3362-60547b268a76@redhat.com>
+ <20190206081533.336110a0@doriath>
+ <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
+ <20190206082942.29f52fe9@doriath>
+Organization: Red Hat Inc,
+Message-ID: <05031929-72b2-9080-9ee7-ac930ae3b83c@redhat.com>
+Date:   Wed, 6 Feb 2019 09:05:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190206082942.29f52fe9@doriath>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QRo3kt64Wi40AlcO"
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB33989329D0E0C0049F1DEA6EC26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ protocol="application/pgp-signature";
+ boundary="ziyT34O3M5k8Sijc1K1Ey2paXRmdFxd2r"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 06 Feb 2019 14:05:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ziyT34O3M5k8Sijc1K1Ey2paXRmdFxd2r
+Content-Type: multipart/mixed; boundary="ugpAWSYRAogVFGB4XaOOI3UGm1Dq1ANpE";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pbonzini@redhat.com, pagupta@redhat.com,
+ wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
+ david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
+ dhildenb@redhat.com, aarcange@redhat.com
+Message-ID: <05031929-72b2-9080-9ee7-ac930ae3b83c@redhat.com>
+Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor to
+ the host
 
---QRo3kt64Wi40AlcO
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--ugpAWSYRAogVFGB4XaOOI3UGm1Dq1ANpE
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 06, 2019 at 01:51:12PM +0000, Sowjanya Komatineni wrote:
->=20
-> > >>>> That's odd because it suggests that DMA actually completed, but=20
-> > >>>> the message didn't.
-> > >>>>
-> > >>>> I'm not sure I understand how that could happen.
-> > >>>>
-> > >>>> What's also weird above is that there doesn't seem to be a DMA=20
-> > >>>> that is started for that particular message. Or is the timeout=20
-> > >>>> message a response to the prior transfer (length 10)? Seems like=
-=20
-> > >>>> that should not be possible because we get the "transfer complete"=
- message.
-> > >>>
-> > >>> Wait, those are actually different instances of the I2C=20
-> > >>> controller, so the relevant log entries are these:
-> > >>>
-> > >>> 	[    0.945445] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-> > >>> 	[    0.945456] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-> > >>> 	...
-> > >>> 	[    1.049224] tegra-i2c 7000d000.i2c: i2c transfer timed out
-> > >>>
-> > >>> And these don't happen if you use higher burst sizes or before the=
-=20
-> > >>> DMA series?
-> > >>
-> > >> I tried to enforce DMA without changing bursts:
-> > >>
-> > >> ----------
-> > >> diff --git a/drivers/i2c/busses/i2c-tegra.c=20
-> > >> b/drivers/i2c/busses/i2c-tegra.c index c538ed5f8e2c..5d1c54ce7800
-> > >> 100644
-> > >> --- a/drivers/i2c/busses/i2c-tegra.c
-> > >> +++ b/drivers/i2c/busses/i2c-tegra.c
-> > >> @@ -6,6 +6,8 @@
-> > >>   * Author: Colin Cross <ccross@android.com>
-> > >>   */
-> > >> =20
-> > >> +#define DEBUG
-> > >> +
-> > >>  #include <linux/clk.h>
-> > >>  #include <linux/delay.h>
-> > >>  #include <linux/dmaengine.h>
-> > >> @@ -1046,8 +1048,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c=
-_dev *i2c_dev,
-> > >>                 xfer_size =3D msg->len + I2C_PACKET_HEADER_SIZE;
-> > >> =20
-> > >>         xfer_size =3D ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-> > >> -       i2c_dev->is_curr_dma_xfer =3D (xfer_size > I2C_PIO_MODE_MAX_=
-LEN) &&
-> > >> -                                   i2c_dev->dma_buf;
-> > >> +       i2c_dev->is_curr_dma_xfer =3D !!i2c_dev->dma_buf;
-> > >>         tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
-> > >>         dma =3D i2c_dev->is_curr_dma_xfer;
-> > >> ----------
-> > >>
-> > >> Here is the log with this change:
-> > >>
-> > >> [    0.760796] tegra_rtc 7000e000.rtc: registered as rtc1
-> > >> [    0.760850] tegra_rtc 7000e000.rtc: Tegra internal Real Time Clock
-> > >> [    0.761050] i2c /dev entries driver
-> > >> [    0.918928] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    0.918940] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.919040] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    0.919050] tegra-i2c 7000c000.i2c: starting DMA for length: 8
-> > >> [    0.919059] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.919322] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    0.919335] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    0.919343] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.919440] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    0.919448] tegra-i2c 7000c000.i2c: starting DMA for length: 112
-> > >> [    0.919456] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.922818] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-> > >> [    0.922829] atmel_mxt_ts 0-004c: Family: 160 Variant: 0 Firmware =
-V1.0.AA Objects: 18
-> > >> [    0.922886] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    0.922895] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.922993] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    0.923002] tegra-i2c 7000c000.i2c: starting DMA for length: 224
-> > >> [    0.923011] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.933253] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
-> > >> [    0.933287] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    0.933297] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.933478] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    0.933487] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-> > >> [    0.933496] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    0.945120] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-> > >> [    0.945130] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-> > >> [    1.038917] tegra-i2c 7000c000.i2c: DMA transfer timeout
-> > >> [    1.038982] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer fai=
-led (-110)
-> > >> [    1.039000] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    1.039006] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
->=20
->=20
->=20
-> > >> [    1.039009] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    1.039148] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    1.039157] tegra-i2c 7000c000.i2c: starting DMA for length: 4
-> > >> [    1.039166] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    1.039304] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    1.039340] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    1.039349] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    1.039535] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    1.039544] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-> > >> [    1.039552] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    1.040055] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    1.040083] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> > >> [    1.040092] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> > >> [    1.040301] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> > >> [    1.048934] tegra-i2c 7000d000.i2c: i2c transfer timed out
-> > >=20
-> > > This log shows DMA transfer timeout for atmel read.
-> > > Do you see issue if you don=E2=80=99t enforce dma all time and let it=
- choose PIO Vs DMA?
-> > >=20
-> >=20
-> > No, there are no timeout errors in PIO mode. I could post full log with=
- the PIO-only mode if you want.
-> >
-> Yes please post full log of PIO only and DMA only
-> Also, in above log, lots of DMA transfer went thru fine except this
-> one transfer where DMA timed out.
-> DMA completion doesnt happen on DMA submit during this particular
-> transaction timeframe for some reason.
+On 2/6/19 8:29 AM, Luiz Capitulino wrote:
+> On Wed, 6 Feb 2019 08:24:14 -0500
+> Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>
+>> On 2/6/19 8:15 AM, Luiz Capitulino wrote:
+>>> On Wed, 6 Feb 2019 07:56:37 -0500
+>>> Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>>> =20
+>>>> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote: =20
+>>>>> On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:=
+   =20
+>>>>>> This patch enables the caller to expose a single buffers to the
+>>>>>> other end using vring descriptor. It also allows the caller to
+>>>>>> perform this action in synchornous manner by using virtqueue_kick_=
+sync.
+>>>>>>
+>>>>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>   =20
+>>>>> I am not sure why do we need this API. Polling in guest
+>>>>> until host runs isn't great either since these
+>>>>> might be running on the same host CPU.   =20
+>>>> True.
+>>>>
+>>>> However, my understanding is that the existing API such as
+>>>> virtqueue_add_outbuf() requires an allocation which will be problema=
+tic
+>>>> for my implementation.
+>>>> Although I am not blocking the allocation path during normal Linux
+>>>> kernel usage as even if one of the zone is locked the other zone cou=
+ld
+>>>> be used to get free pages.
+>>>> But during the initial boot time (device initialization), in certain=
 
-Dmitry, can you provide some background information on the setup that
-you're using? I vaguely remember something about i2c@7000d000 being
-special on older Tegra devices. Perhaps there's something additional
-that we need to take into account?
+>>>> situations the allocation can only come from a single zone, acquirin=
+g a
+>>>> lock on it may result in a deadlock situation. =20
+>>> I might be wrong, but if I remember correctly, this was true for
+>>> your previous implementation where you'd report page hinting down
+>>> from arch_free_page() so you couldn't allocate memory. But this
+>>> is not the case anymore. =20
+>> With the earlier implementation, the allocation was blocked all the ti=
+me
+>> when freeing was going on.
+>> With this implementation, the allocation is not blocked during normal
+>> Linux kernel usage (after Linux boots up). For example, on a 64 bit
+>> machine, if the Normal zone is locked and there is an allocation reque=
+st
+>> then it can be served by DMA32 zone as well. (This is not the case
+>> during device initialization time)
+>> Feel free to correct me if I am wrong.
+> That's what I meant :) I have an impression that your virtio API
+> was necessary because of your earlier design. I guess it's not needed
+> anymore as Michael says.
+I will re-visit this change before my next posting.
+>>> =20
+>>>>>   =20
+>>>>>> ---
+>>>>>>  drivers/virtio/virtio_ring.c | 72 +++++++++++++++++++++++++++++++=
++++++
+>>>>>>  include/linux/virtio.h       |  4 ++
+>>>>>>  2 files changed, 76 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_=
+ring.c
+>>>>>> index cd7e755484e3..93c161ac6a28 100644
+>>>>>> --- a/drivers/virtio/virtio_ring.c
+>>>>>> +++ b/drivers/virtio/virtio_ring.c
+>>>>>> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virt=
+queue *_vq,
+>>>>>>  					out_sgs, in_sgs, data, ctx, gfp);
+>>>>>>  }
+>>>>>> =20
+>>>>>> +/**
+>>>>>> + * virtqueue_add_desc - add a buffer to a chain using a vring des=
+c
+>>>>>> + * @vq: the struct virtqueue we're talking about.
+>>>>>> + * @addr: address of the buffer to add.
+>>>>>> + * @len: length of the buffer.
+>>>>>> + * @in: set if the buffer is for the device to write.
+>>>>>> + *
+>>>>>> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
+>>>>>> + */
+>>>>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, =
+int in)
+>>>>>> +{
+>>>>>> +	struct vring_virtqueue *vq =3D to_vvq(_vq);
+>>>>>> +	struct vring_desc *desc =3D vq->split.vring.desc;
+>>>>>> +	u16 flags =3D in ? VRING_DESC_F_WRITE : 0;
+>>>>>> +	unsigned int i;
+>>>>>> +	void *data =3D (void *)addr;
+>>>>>> +	int avail_idx;
+>>>>>> +
+>>>>>> +	/* Sanity check */
+>>>>>> +	if (!_vq)
+>>>>>> +		return -EINVAL;
+>>>>>> +
+>>>>>> +	START_USE(vq);
+>>>>>> +	if (unlikely(vq->broken)) {
+>>>>>> +		END_USE(vq);
+>>>>>> +		return -EIO;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	i =3D vq->free_head;
+>>>>>> +	flags &=3D ~VRING_DESC_F_NEXT;
+>>>>>> +	desc[i].flags =3D cpu_to_virtio16(_vq->vdev, flags);
+>>>>>> +	desc[i].addr =3D cpu_to_virtio64(_vq->vdev, addr);
+>>>>>> +	desc[i].len =3D cpu_to_virtio32(_vq->vdev, len);
+>>>>>> +
+>>>>>> +	vq->vq.num_free--;
+>>>>>> +	vq->free_head =3D virtio16_to_cpu(_vq->vdev, desc[i].next);
+>>>>>> +	vq->split.desc_state[i].data =3D data;
+>>>>>> +	vq->split.avail_idx_shadow =3D 1;
+>>>>>> +	avail_idx =3D vq->split.avail_idx_shadow;
+>>>>>> +	vq->split.vring.avail->idx =3D cpu_to_virtio16(_vq->vdev, avail_=
+idx);
+>>>>>> +	vq->num_added =3D 1;
+>>>>>> +	END_USE(vq);
+>>>>>> +	return 0;
+>>>>>> +}
+>>>>>> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
+>>>>>> +
+>>>>>>  /**
+>>>>>>   * virtqueue_add_sgs - expose buffers to other end
+>>>>>>   * @vq: the struct virtqueue we're talking about.
+>>>>>> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq=
+)
+>>>>>>  }
+>>>>>>  EXPORT_SYMBOL_GPL(virtqueue_notify);
+>>>>>> =20
+>>>>>> +/**
+>>>>>> + * virtqueue_kick_sync - update after add_buf and busy wait till =
+update is done
+>>>>>> + * @vq: the struct virtqueue
+>>>>>> + *
+>>>>>> + * After one or more virtqueue_add_* calls, invoke this to kick
+>>>>>> + * the other side. Busy wait till the other side is done with the=
+ update.
+>>>>>> + *
+>>>>>> + * Caller must ensure we don't call this with other virtqueue
+>>>>>> + * operations at the same time (except where noted).
+>>>>>> + *
+>>>>>> + * Returns false if kick failed, otherwise true.
+>>>>>> + */
+>>>>>> +bool virtqueue_kick_sync(struct virtqueue *vq)
+>>>>>> +{
+>>>>>> +	u32 len;
+>>>>>> +
+>>>>>> +	if (likely(virtqueue_kick(vq))) {
+>>>>>> +		while (!virtqueue_get_buf(vq, &len) &&
+>>>>>> +		       !virtqueue_is_broken(vq))
+>>>>>> +			cpu_relax();
+>>>>>> +		return true;
+>>>>>> +	}
+>>>>>> +	return false;
+>>>>>> +}
+>>>>>> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
+>>>>>> +
+>>>>>>  /**
+>>>>>>   * virtqueue_kick - update after add_buf
+>>>>>>   * @vq: the struct virtqueue
+>>>>>> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+>>>>>> index fa1b5da2804e..58943a3a0e8d 100644
+>>>>>> --- a/include/linux/virtio.h
+>>>>>> +++ b/include/linux/virtio.h
+>>>>>> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
+>>>>>>  		      unsigned int in_sgs,
+>>>>>>  		      void *data,
+>>>>>>  		      gfp_t gfp);
+>>>>>> +/* A desc with this init id is treated as an invalid desc */
+>>>>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, =
+int in);
+>>>>>> +
+>>>>>> +bool virtqueue_kick_sync(struct virtqueue *vq);
+>>>>>> =20
+>>>>>>  bool virtqueue_kick(struct virtqueue *vq);
+>>>>>> =20
+>>>>>> --=20
+>>>>>> 2.17.2   =20
+--=20
+Regards
+Nitesh
 
-Aha! Look at tegra_i2c_reg_addr() which special-cases I2C_TX_FIFO on
-the DVC variant of the controller, which is exactly the one that you
-are seeing the timeouts on and it's exactly the register that we use
-as destination for the DMA transfer.
 
-I think we need to do something like this:
+--ugpAWSYRAogVFGB4XaOOI3UGm1Dq1ANpE--
 
-	slv_config.dst_addr =3D i2c_dev->base_phys + tegra_i2c_reg_addr(i2c_dev, I=
-2C_TX_FIFO);
-
-to make sure we pass the right FIFO register address to DMA.
-
-Thierry
-
---QRo3kt64Wi40AlcO
+--ziyT34O3M5k8Sijc1K1Ey2paXRmdFxd2r
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxa6MIACgkQ3SOs138+
-s6GfARAAutmdp6kHFE0/MnHIachlUMYBkEEvxVNZifDpBwXz8aSkFhC8NRHB66p7
-exsR3xKGhg/N0LyTjocrjbLrSnUVKuFjcmQjd2CYABcvdTs9TmO+3fXAI/X40ktt
-a5EwE1c0J0UFqdlV1H1WMadJqqqYNLlCyaeB2ZQVqDDjJxVrN2M2rUapAZrhTLKc
-DpX/OHv3CkaD958CnsV0xjZcoROIcpNhT0Jxn6JZ/QbaSpMy+4R0T7Q66TDpLIgL
-rYS2SYfhZQdSxEhexzKTZyYyCavxuB59HXeYm6TDyE/c5k4sxEiAySpJ9lF2M6/t
-nLykJ4z7CWbMLazs3lBmqJ3KSaEAUW0TC/jK3NFPrYOrgPHWGy6IVDSsL90lA+sj
-X0q/Wpk6gCL8l7DAjK+BPC83DEBYMhbWLS0OEqc9/NDSgNv8lGpte9vLiczM26m3
-DnV2noOD+KwVMI66VfIdB/164WJKEC0jnCcBZ269gPfmktkKJtK3cy9HzlrUSKv5
-bAKj276Fgksd2D6eiRcmpVhwZcObu7zSfWT5CHfC59TPk8TAlNv3VY4wh5FWJuDo
-WFo+5hWkLtiBabG76plxPV9qv3KOu2SjysFewa6jil2K5b8A6q8DkLGaUKxH9ftr
-XTUjIjXJZs0WSlKQNP868IggoCCXDiz+7zhPj7e+hvsstwVwDDM=
-=jIyr
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxa6aEACgkQo4ZA3AYy
+ozljDhAAk4NyEX6Ijk3Cvw7ZofeD2dfKM+78fNZ/1znIKVdasYVRDca21SHxsCaQ
+95UH6VlSQGqyJdKacF/jp1jMnrqXHztPsR/+60a750tJvoyicuoLuCClTlEetzS9
+GfuGKxJKIz0uS3AJihiF5ZaeHTcgMRF7zBg5TPMfHx5iHG7KEapBcIfXMZx2lvP2
+yMO1GTyQP2QjUlRkmS/kG4Q9AuE62oDb5aeGfRgTBBHuTadAFxg4Ejq3rIK70vHi
+JzNy0ZC+lR3Hx7rqD3zsGo4U5Bbw4w35EVoLPjkxTMmr4ZO7MzdZ6mdyQs1oUigs
+ePTcRc3x36KNNCbiX2wuXcEeknyAN9mNNnG8O+4jbHD11K939KGzmKLAE1Grt0rT
+pEgep8GQ9YM43+hYqSyh3EvL4vYRsOJxlzYe8jQtFcP7Ei/H8UBSDvCxzwgjleLQ
+AjZ3t3EgRj4S4eACJnq/f4FQL3Qtpt/3N+BER55esgdpKGuI1RoMA1M0b4cSq6q6
+qOeHOXGBb14KyO0/92P4qKTl1z1AyHGdBJXCa2vfYu17dD3HWCXOQkg9oP/NFhqz
+Ud5iwmg36kCD6Wl/0U7ZUxXA1ZpNTupFEpVBSKkA4iLdglkfmFBll7E6IN11jurY
+lEFe1JSULT2P3Jyf2Ib4E1jfzFmrpMplziT0RXoyFysJJB4qdK0=
+=VsJL
 -----END PGP SIGNATURE-----
 
---QRo3kt64Wi40AlcO--
+--ziyT34O3M5k8Sijc1K1Ey2paXRmdFxd2r--
