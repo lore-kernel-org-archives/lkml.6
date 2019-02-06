@@ -2,134 +2,112 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D10C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2748C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B474217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:56:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YohOJKiI"
+	by mail.kernel.org (Postfix) with ESMTP id 8C566217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbfBFR4p (ORCPT
+        id S1728961AbfBFSAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:56:45 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50959 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730908AbfBFR4n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:56:43 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z5so3439156wmf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=9K77dtj/H5E1d6eBcuvAME5hWkpBH0E7hyAQxJ7wVDg=;
-        b=YohOJKiIo3RLBbI2kH0lra50GZjR1P3Oqp3rY+49iiVE96fXdNNsPIcXLQjQHQNgwE
-         Png2CbZWUl2uTVxwEesj9wIC3x2n6R5z6i/vuHSd2eomc8bhJOT/Vf/x09wnGduN2Sdy
-         nY0+LwcizpsqkFBLzgvC1o7P4/tTbkUbX4Ay1OWRw9lISlYRkVpitGTK7Hbplk8VqVYs
-         xvV3z3AxkrX/Xh2tm77U9KyDdbAguwoMoY2YhZySeDJKON+EqzEYBW+V730bT1c2P5w6
-         qa+CU3deZQ3VzI2yHTBILvFs1sPWG4eXUYcPauPU8JqVHfMlAJpFY7DIUy+Z9Ba0PipS
-         T1QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=9K77dtj/H5E1d6eBcuvAME5hWkpBH0E7hyAQxJ7wVDg=;
-        b=ncOqo6wq5gczJOQa/7qnxbfTnBO2ox7fPHLT+OSI8vQT+H4tp2pkVhGaaAFuYHeBgU
-         ABCXi3WUbgOY50zSd9G2DYe5M8m9s1xWTdFj7VSoxRPrdRqR8YE8gueZIyfxndOc6/Kx
-         AA+xoX374TJSl0gVW9k7Ijj+q1duAQKGZC4VSSBDNWxxjE9tLQwhg0cDsNd6W6TiIzLN
-         jMY4y5OcEq5Qg7dKwutM/NjPiyh0pf6t2yU4n1rdOJg8GiEGOqstWXm3QubXAhvojxjK
-         loOYChOpVeNvSRixDPvYfPqzcxWfjkSfyw3J73aPuf46UPPdSDXPb6W9wjspJkaKg9En
-         t7Cw==
-X-Gm-Message-State: AHQUAuYXKcQObODc0Rvw4/9AJPiYabfxhpvBWvKxZevV7iYV4HV3wEjg
-        5q7G6sTo5XLkTJfhztoWWDE=
-X-Google-Smtp-Source: AHgI3IZGAIS1N6kkkXFV28rR/DjIWB0WfjV7etBXV9QGpigLVbcgx3gl2CXyWgJ91wy9vW9a/o5XQQ==
-X-Received: by 2002:a1c:be11:: with SMTP id o17mr4020699wmf.111.1549475801860;
-        Wed, 06 Feb 2019 09:56:41 -0800 (PST)
-Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
-        by smtp.gmail.com with ESMTPSA id f139sm3811877wmd.19.2019.02.06.09.56.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 09:56:41 -0800 (PST)
-Date:   Wed, 6 Feb 2019 18:56:27 +0100
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Martin Sebor <msebor@gcc.gnu.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] include/linux/module.h: mark init/cleanup_module aliases
- as __init/exit
-Message-ID: <20190206175627.GA20399@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: elm/2
+        Wed, 6 Feb 2019 13:00:00 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:59900 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbfBFSAA (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 6 Feb 2019 13:00:00 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 06 Feb 2019 18:59:58 +0100
+Received: from linux-r8p5.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Wed, 06 Feb 2019 17:59:34 +0000
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     jgg@ziepe.ca, akpm@linux-foundation.org
+Cc:     dledford@redhat.com, jgg@mellanox.com, jack@suse.cz,
+        willy@infradead.org, ira.weiny@intel.com,
+        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dave@stgolabs.net
+Subject: [PATCH v3 0/6] mm: make pinned_vm atomic and simplify users
+Date:   Wed,  6 Feb 2019 09:59:14 -0800
+Message-Id: <20190206175920.31082-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-(enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target.
+Changes from v2 (https://patchwork.kernel.org/cover/10774255/):
+ - Added more reviews for patch 1 and also fixed mm/debug.c to
+   use llx insted of lx so gcc doesn't complain.
 
-In particular, it triggers for all the init/cleanup_module
-aliases in the kernel (defined by the module_init/exit macros),
-ending up being very noisy.
+ - Re did patch 3 (qib rdma) such that we still have to take
+   mmap_sem as it now uses gup_longterm(). gup_fast() conversion
+   remains for patch 2 which is not infiniband.
 
-These aliases point to the __init/__exit functions of a module,
-which are defined as __cold (among other attributes). However,
-the aliases themselves do not have the __cold attribute.
-
-Since the compiler behaves differently when compiling a __cold
-function as well as when compiling paths leading to calls
-to __cold functions, the warning is trying to point out
-the possibly-forgotten attribute in the alias.
-
-In order to keep the warning enabled, we choose to silence
-the warning by marking the aliases as __init/__exit.
-
-Note that the warning would go away marking either the extern
-declaration, the definition, or both. However, we only mark
-the definition of the alias, since we do not want callers
-(which only see the declaration) to be compiled as if the function
-was __cold (and therefore the paths leading to those calls
-would be assumed to be unlikely).
-
-Link: https://lore.kernel.org/lkml/20190123173707.GA16603@gmail.com/
-Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
-Tested-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
-The new version I pushed for -next.
-
- include/linux/module.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 8fa38d3e7538..1b5e370f1bc0 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -129,13 +129,13 @@ extern void cleanup_module(void);
- #define module_init(initfn)					\
- 	static inline initcall_t __maybe_unused __inittest(void)		\
- 	{ return initfn; }					\
--	int init_module(void) __attribute__((alias(#initfn)));
-+	int init_module(void) __init __attribute__((alias(#initfn)));
+ - Rebased for rdma tree.
  
- /* This is only required if you want to be unloadable. */
- #define module_exit(exitfn)					\
- 	static inline exitcall_t __maybe_unused __exittest(void)		\
- 	{ return exitfn; }					\
--	void cleanup_module(void) __attribute__((alias(#exitfn)));
-+	void cleanup_module(void) __exit __attribute__((alias(#exitfn)));
- 
- #endif
- 
+Changes from v1 (https://patchwork.kernel.org/cover/10764923/):
+ - Converted pinned_vm to atomic64 instead of atomic_long such that
+   infiniband need not worry about overflows.
+
+ - Rebased patch 1 and added Ira's reviews as well as Parvi's review
+   for patch 5 (thanks!).
+   
+--------
+
+Hi,
+
+The following patches aim to provide cleanups to users that pin pages
+(mostly infiniband) by converting the counter to atomic -- note that
+Daniel Jordan also has patches[1] for the locked_vm counterpart and vfio.
+
+Apart from removing a source of mmap_sem writer, we benefit in that
+we can get rid of a lot of code that defers work when the lock cannot
+be acquired, as well as drivers avoiding mmap_sem altogether by also
+converting gup to gup_fast() and letting the mm handle it. Users
+that do the gup_longterm() remain of course under at least reader mmap_sem.
+
+Everything has been compile-tested _only_ so I hope I didn't do anything
+too stupid. Please consider for v5.1.
+
+On a similar topic and potential follow up, it would be nice to resurrect
+Peter's VM_PINNED idea in that the broken semantics that occurred after
+bc3e53f682 ("mm: distinguish between mlocked and pinned pages") are still
+present. Also encapsulating internal mm logic via mm[un]pin() instead of
+drivers having to know about internals and playing nice with compaction are
+all wins.
+
+Applies against rdma's for-next branch.
+
+Thanks!
+
+[1] https://lkml.org/lkml/2018/11/5/854
+
+Davidlohr Bueso (6):
+  mm: make mm->pinned_vm an atomic64 counter
+  drivers/mic/scif: do not use mmap_sem
+  drivers/IB,qib: optimize mmap_sem usage
+  drivers/IB,hfi1: do not se mmap_sem
+  drivers/IB,usnic: reduce scope of mmap_sem
+  drivers/IB,core: reduce scope of mmap_sem
+
+ drivers/infiniband/core/umem.c              | 47 ++----------------
+ drivers/infiniband/hw/hfi1/user_pages.c     | 12 ++---
+ drivers/infiniband/hw/qib/qib_user_pages.c  | 75 +++++++++++------------------
+ drivers/infiniband/hw/usnic/usnic_ib_main.c |  2 -
+ drivers/infiniband/hw/usnic/usnic_uiom.c    | 60 +++--------------------
+ drivers/infiniband/hw/usnic/usnic_uiom.h    |  1 -
+ drivers/misc/mic/scif/scif_rma.c            | 38 +++++----------
+ fs/proc/task_mmu.c                          |  2 +-
+ include/linux/mm_types.h                    |  2 +-
+ kernel/events/core.c                        |  8 +--
+ kernel/fork.c                               |  2 +-
+ mm/debug.c                                  |  5 +-
+ 12 files changed, 65 insertions(+), 189 deletions(-)
+
 -- 
-2.17.1
+2.16.4
 
