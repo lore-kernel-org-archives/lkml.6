@@ -2,77 +2,96 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DD6C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA1EC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F78D206C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6052218A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbfBFK3i (ORCPT
+        id S1729562AbfBFKal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:29:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55812 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726977AbfBFK3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:29:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E59B3B6AF;
-        Wed,  6 Feb 2019 10:29:36 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 11:29:36 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] livepatch: Followup changes for the atomic
- replace patchset
-Message-ID: <20190206102936.hjuvq3d4xa7redra@pathway.suse.cz>
-References: <20190204135653.31406-1-pmladek@suse.com>
+        Wed, 6 Feb 2019 05:30:41 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:50269 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfBFKal (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:30:41 -0500
+Received: from 79.184.254.36.ipv4.supernova.orange.pl (79.184.254.36) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id aad89d2f0e3602f0; Wed, 6 Feb 2019 11:30:38 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] cpufreq: stats: Declare freq-attr right after their callbacks
+Date:   Wed, 06 Feb 2019 11:29:26 +0100
+Message-ID: <2982623.nvCWEY4x1A@aspire.rjw.lan>
+In-Reply-To: <d5d8c15aca712342350d2f451002f55e15e9e93b.1549001732.git.viresh.kumar@linaro.org>
+References: <d5d8c15aca712342350d2f451002f55e15e9e93b.1549001732.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204135653.31406-1-pmladek@suse.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-02-04 14:56:49, Petr Mladek wrote:
-> This patchset implements ideas that were mentioned and postponed during
-> the review of the atomic replace patchset.
+On Friday, February 1, 2019 7:15:44 AM CET Viresh Kumar wrote:
+> Freq attribute for "trans_table" is defined right after its callback
+> (without any blank line between them), but the others are defined
+> separately later on. Keep this consistent and define all attributes
+> right after their callbacks.
 > 
-> The patches apply on top of livepatching.git, branch
-> origin/for-5.1/atomic-replace.
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/cpufreq_stats.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/cpufreq/cpufreq_stats.c b/drivers/cpufreq/cpufreq_stats.c
+> index 1572129844a5..941e63e3e652 100644
+> --- a/drivers/cpufreq/cpufreq_stats.c
+> +++ b/drivers/cpufreq/cpufreq_stats.c
+> @@ -51,6 +51,7 @@ static ssize_t show_total_trans(struct cpufreq_policy *policy, char *buf)
+>  {
+>  	return sprintf(buf, "%d\n", policy->stats->total_trans);
+>  }
+> +cpufreq_freq_attr_ro(total_trans);
+>  
+>  static ssize_t show_time_in_state(struct cpufreq_policy *policy, char *buf)
+>  {
+> @@ -69,6 +70,7 @@ static ssize_t show_time_in_state(struct cpufreq_policy *policy, char *buf)
+>  	}
+>  	return len;
+>  }
+> +cpufreq_freq_attr_ro(time_in_state);
+>  
+>  static ssize_t store_reset(struct cpufreq_policy *policy, const char *buf,
+>  			   size_t count)
+> @@ -77,6 +79,7 @@ static ssize_t store_reset(struct cpufreq_policy *policy, const char *buf,
+>  	cpufreq_stats_clear_table(policy->stats);
+>  	return count;
+>  }
+> +cpufreq_freq_attr_wo(reset);
+>  
+>  static ssize_t show_trans_table(struct cpufreq_policy *policy, char *buf)
+>  {
+> @@ -126,10 +129,6 @@ static ssize_t show_trans_table(struct cpufreq_policy *policy, char *buf)
+>  }
+>  cpufreq_freq_attr_ro(trans_table);
+>  
+> -cpufreq_freq_attr_ro(total_trans);
+> -cpufreq_freq_attr_ro(time_in_state);
+> -cpufreq_freq_attr_wo(reset);
+> -
+>  static struct attribute *default_attrs[] = {
+>  	&total_trans.attr,
+>  	&time_in_state.attr,
 > 
-> Changes against v1:
-> 
->   + Added Joe's patch that fixed ptr_id() error code [Joe]
->   + Did proper error handling in the shadow variable sefttest [All]
->   + Removed the controversial patch that was removing patch->enabled flag [All].
->   + Fixed few typo's [Joe]
->   + Added available Acks.
-> 
-> 
-> Joe Lawrence (1):
->   livepatch: return -ENOMEM on ptr_id() allocation failure
-> 
-> Petr Mladek (3):
->   livepatch: Introduce klp_for_each_patch macro
->   livepatch: Proper error handling in the shadow variables selftest
->   livepatch: Module coming and going callbacks can proceed with all
->     listed patches
 
-I have applied all 4 paches into for-5.1/atomic-replace branch.
+Applied, along with the [2/2], thanks!
 
-Best Regards,
-Petr
