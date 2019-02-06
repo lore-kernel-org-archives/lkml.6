@@ -3,191 +3,348 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F18FC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1D0C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D083E20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF7720844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730923AbfBFNTW (ORCPT
+        id S1730946AbfBFNTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:19:22 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47378 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729596AbfBFNTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:19:18 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16DEB95094220
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 08:19:17 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfxbqyban-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:19:10 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 6 Feb 2019 13:17:44 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 13:17:40 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16DHd0Y22741060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 13:17:39 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E9E92B205F;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFBB4B2073;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.158.219])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7721B16C6B5D; Wed,  6 Feb 2019 05:16:47 -0800 (PST)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 16/19] linux/srcu: Convert to SPDX license identifier
-Date:   Wed,  6 Feb 2019 05:16:41 -0800
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190206131614.GA17320@linux.ibm.com>
-References: <20190206131614.GA17320@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19020613-0052-0000-0000-000003841B58
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010547; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01157129; UDB=6.00603658; IPR=6.00937658;
- MB=3.00025463; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-06 13:17:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020613-0053-0000-0000-00005FBD4A0A
-Message-Id: <20190206131644.23281-16-paulmck@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902060105
+        Wed, 6 Feb 2019 08:19:34 -0500
+Received: from mga07.intel.com ([134.134.136.100]:28027 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730604AbfBFNRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:17:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="318109350"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Feb 2019 05:17:45 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 786009A3; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        netdev@vger.kernel.org
+Subject: [PATCH v2 23/28] thunderbolt: Add XDomain UUID exchange support
+Date:   Wed,  6 Feb 2019 16:17:33 +0300
+Message-Id: <20190206131738.43696-24-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the license boiler plate with a SPDX license identifier.
-While in the area, update an email address.
+Currently ICM has been handling XDomain UUID exchange so there was no
+need to have it in the driver yet. However, since now we are going to
+add the same capabilities to the software connection manager it needs to
+be handled properly.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+For this reason modify the driver XDomain protocol handling so that if
+the remote domain UUID is not filled in the core will query it first and
+only then start the normal property exchange flow.
+
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- include/linux/srcu.h     | 17 ++---------------
- include/linux/srcutiny.h | 17 ++---------------
- include/linux/srcutree.h | 17 ++---------------
- 3 files changed, 6 insertions(+), 45 deletions(-)
+ drivers/thunderbolt/tb_msgs.h |  11 +++
+ drivers/thunderbolt/xdomain.c | 136 +++++++++++++++++++++++++++++++---
+ include/linux/thunderbolt.h   |   8 ++
+ 3 files changed, 145 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index c614375cd264..5f102b265adb 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -1,24 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Sleepable Read-Copy Update mechanism for mutual exclusion
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, you can access it online at
-- * http://www.gnu.org/licenses/gpl-2.0.html.
-- *
-  * Copyright (C) IBM Corporation, 2006
-  * Copyright (C) Fujitsu, 2012
-  *
-- * Author: Paul McKenney <paulmck@us.ibm.com>
-+ * Author: Paul McKenney <paulmck@linux.ibm.com>
-  *	   Lai Jiangshan <laijs@cn.fujitsu.com>
-  *
-  * For detailed explanation of Read-Copy Update mechanism see -
-diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
-index b19216aaaef2..c84cea86564a 100644
---- a/include/linux/srcutiny.h
-+++ b/include/linux/srcutiny.h
-@@ -1,24 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Sleepable Read-Copy Update mechanism for mutual exclusion,
-  *	tiny variant.
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, you can access it online at
-- * http://www.gnu.org/licenses/gpl-2.0.html.
-- *
-  * Copyright (C) IBM Corporation, 2017
-  *
-- * Author: Paul McKenney <paulmck@us.ibm.com>
-+ * Author: Paul McKenney <paulmck@linux.ibm.com>
-  */
+diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
+index 02c84aa3d018..afbe1d29bb03 100644
+--- a/drivers/thunderbolt/tb_msgs.h
++++ b/drivers/thunderbolt/tb_msgs.h
+@@ -492,6 +492,17 @@ struct tb_xdp_header {
+ 	u32 type;
+ };
  
- #ifndef _LINUX_SRCU_TINY_H
-diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-index 6f292bd3e7db..6e432fe27d0e 100644
---- a/include/linux/srcutree.h
-+++ b/include/linux/srcutree.h
-@@ -1,24 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Sleepable Read-Copy Update mechanism for mutual exclusion,
-  *	tree variant.
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, you can access it online at
-- * http://www.gnu.org/licenses/gpl-2.0.html.
-- *
-  * Copyright (C) IBM Corporation, 2017
-  *
-- * Author: Paul McKenney <paulmck@us.ibm.com>
-+ * Author: Paul McKenney <paulmck@linux.ibm.com>
-  */
++struct tb_xdp_uuid {
++	struct tb_xdp_header hdr;
++};
++
++struct tb_xdp_uuid_response {
++	struct tb_xdp_header hdr;
++	uuid_t src_uuid;
++	u32 src_route_hi;
++	u32 src_route_lo;
++};
++
+ struct tb_xdp_properties {
+ 	struct tb_xdp_header hdr;
+ 	uuid_t src_uuid;
+diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
+index 59789bdd93ac..7aa8b9da78c1 100644
+--- a/drivers/thunderbolt/xdomain.c
++++ b/drivers/thunderbolt/xdomain.c
+@@ -18,6 +18,7 @@
+ #include "tb.h"
  
- #ifndef _LINUX_SRCU_TREE_H
+ #define XDOMAIN_DEFAULT_TIMEOUT			5000 /* ms */
++#define XDOMAIN_UUID_RETRIES			10
+ #define XDOMAIN_PROPERTIES_RETRIES		60
+ #define XDOMAIN_PROPERTIES_CHANGED_RETRIES	10
+ 
+@@ -222,6 +223,50 @@ static int tb_xdp_handle_error(const struct tb_xdp_header *hdr)
+ 	return 0;
+ }
+ 
++static int tb_xdp_uuid_request(struct tb_ctl *ctl, u64 route, int retry,
++			       uuid_t *uuid)
++{
++	struct tb_xdp_uuid_response res;
++	struct tb_xdp_uuid req;
++	int ret;
++
++	memset(&req, 0, sizeof(req));
++	tb_xdp_fill_header(&req.hdr, route, retry % 4, UUID_REQUEST,
++			   sizeof(req));
++
++	memset(&res, 0, sizeof(res));
++	ret = __tb_xdomain_request(ctl, &req, sizeof(req),
++				   TB_CFG_PKG_XDOMAIN_REQ, &res, sizeof(res),
++				   TB_CFG_PKG_XDOMAIN_RESP,
++				   XDOMAIN_DEFAULT_TIMEOUT);
++	if (ret)
++		return ret;
++
++	ret = tb_xdp_handle_error(&res.hdr);
++	if (ret)
++		return ret;
++
++	uuid_copy(uuid, &res.src_uuid);
++	return 0;
++}
++
++static int tb_xdp_uuid_response(struct tb_ctl *ctl, u64 route, u8 sequence,
++				const uuid_t *uuid)
++{
++	struct tb_xdp_uuid_response res;
++
++	memset(&res, 0, sizeof(res));
++	tb_xdp_fill_header(&res.hdr, route, sequence, UUID_RESPONSE,
++			   sizeof(res));
++
++	uuid_copy(&res.src_uuid, uuid);
++	res.src_route_hi = upper_32_bits(route);
++	res.src_route_lo = lower_32_bits(route);
++
++	return __tb_xdomain_response(ctl, &res, sizeof(res),
++				     TB_CFG_PKG_XDOMAIN_RESP);
++}
++
+ static int tb_xdp_error_response(struct tb_ctl *ctl, u64 route, u8 sequence,
+ 				 enum tb_xdp_error error)
+ {
+@@ -512,7 +557,14 @@ static void tb_xdp_handle_request(struct work_struct *work)
+ 		break;
+ 	}
+ 
++	case UUID_REQUEST_OLD:
++	case UUID_REQUEST:
++		ret = tb_xdp_uuid_response(ctl, route, sequence, uuid);
++		break;
++
+ 	default:
++		tb_xdp_error_response(ctl, route, sequence,
++				      ERROR_NOT_SUPPORTED);
+ 		break;
+ 	}
+ 
+@@ -828,6 +880,55 @@ static void tb_xdomain_restore_paths(struct tb_xdomain *xd)
+ 	}
+ }
+ 
++static void tb_xdomain_get_uuid(struct work_struct *work)
++{
++	struct tb_xdomain *xd = container_of(work, typeof(*xd),
++					     get_uuid_work.work);
++	struct tb *tb = xd->tb;
++	uuid_t uuid;
++	int ret;
++
++	ret = tb_xdp_uuid_request(tb->ctl, xd->route, xd->uuid_retries, &uuid);
++	if (ret < 0) {
++		if (xd->uuid_retries-- > 0) {
++			queue_delayed_work(xd->tb->wq, &xd->get_uuid_work,
++					   msecs_to_jiffies(100));
++		} else {
++			dev_dbg(&xd->dev, "failed to read remote UUID\n");
++		}
++		return;
++	}
++
++	if (uuid_equal(&uuid, xd->local_uuid)) {
++		dev_dbg(&xd->dev, "intra-domain loop detected\n");
++		return;
++	}
++
++	/*
++	 * If the UUID is different, there is another domain connected
++	 * so mark this one unplugged and wait for the connection
++	 * manager to replace it.
++	 */
++	if (xd->remote_uuid && !uuid_equal(&uuid, xd->remote_uuid)) {
++		dev_dbg(&xd->dev, "remote UUID is different, unplugging\n");
++		xd->is_unplugged = true;
++		return;
++	}
++
++	/* First time fill in the missing UUID */
++	if (!xd->remote_uuid) {
++		xd->remote_uuid = kmemdup(&uuid, sizeof(uuid_t), GFP_KERNEL);
++		if (!xd->remote_uuid)
++			return;
++	}
++
++	/* Now we can start the normal properties exchange */
++	queue_delayed_work(xd->tb->wq, &xd->properties_changed_work,
++			   msecs_to_jiffies(100));
++	queue_delayed_work(xd->tb->wq, &xd->get_properties_work,
++			   msecs_to_jiffies(1000));
++}
++
+ static void tb_xdomain_get_properties(struct work_struct *work)
+ {
+ 	struct tb_xdomain *xd = container_of(work, typeof(*xd),
+@@ -1034,21 +1135,29 @@ static void tb_xdomain_release(struct device *dev)
+ 
+ static void start_handshake(struct tb_xdomain *xd)
+ {
++	xd->uuid_retries = XDOMAIN_UUID_RETRIES;
+ 	xd->properties_retries = XDOMAIN_PROPERTIES_RETRIES;
+ 	xd->properties_changed_retries = XDOMAIN_PROPERTIES_CHANGED_RETRIES;
+ 
+-	/* Start exchanging properties with the other host */
+-	queue_delayed_work(xd->tb->wq, &xd->properties_changed_work,
+-			   msecs_to_jiffies(100));
+-	queue_delayed_work(xd->tb->wq, &xd->get_properties_work,
+-			   msecs_to_jiffies(1000));
++	if (xd->needs_uuid) {
++		queue_delayed_work(xd->tb->wq, &xd->get_uuid_work,
++				   msecs_to_jiffies(100));
++	} else {
++		/* Start exchanging properties with the other host */
++		queue_delayed_work(xd->tb->wq, &xd->properties_changed_work,
++				   msecs_to_jiffies(100));
++		queue_delayed_work(xd->tb->wq, &xd->get_properties_work,
++				   msecs_to_jiffies(1000));
++	}
+ }
+ 
+ static void stop_handshake(struct tb_xdomain *xd)
+ {
++	xd->uuid_retries = 0;
+ 	xd->properties_retries = 0;
+ 	xd->properties_changed_retries = 0;
+ 
++	cancel_delayed_work_sync(&xd->get_uuid_work);
+ 	cancel_delayed_work_sync(&xd->get_properties_work);
+ 	cancel_delayed_work_sync(&xd->properties_changed_work);
+ }
+@@ -1091,7 +1200,7 @@ EXPORT_SYMBOL_GPL(tb_xdomain_type);
+  *	    other domain is reached).
+  * @route: Route string used to reach the other domain
+  * @local_uuid: Our local domain UUID
+- * @remote_uuid: UUID of the other domain
++ * @remote_uuid: UUID of the other domain (optional)
+  *
+  * Allocates new XDomain structure and returns pointer to that. The
+  * object must be released by calling tb_xdomain_put().
+@@ -1110,6 +1219,7 @@ struct tb_xdomain *tb_xdomain_alloc(struct tb *tb, struct device *parent,
+ 	xd->route = route;
+ 	ida_init(&xd->service_ids);
+ 	mutex_init(&xd->lock);
++	INIT_DELAYED_WORK(&xd->get_uuid_work, tb_xdomain_get_uuid);
+ 	INIT_DELAYED_WORK(&xd->get_properties_work, tb_xdomain_get_properties);
+ 	INIT_DELAYED_WORK(&xd->properties_changed_work,
+ 			  tb_xdomain_properties_changed);
+@@ -1118,9 +1228,14 @@ struct tb_xdomain *tb_xdomain_alloc(struct tb *tb, struct device *parent,
+ 	if (!xd->local_uuid)
+ 		goto err_free;
+ 
+-	xd->remote_uuid = kmemdup(remote_uuid, sizeof(uuid_t), GFP_KERNEL);
+-	if (!xd->remote_uuid)
+-		goto err_free_local_uuid;
++	if (remote_uuid) {
++		xd->remote_uuid = kmemdup(remote_uuid, sizeof(uuid_t),
++					  GFP_KERNEL);
++		if (!xd->remote_uuid)
++			goto err_free_local_uuid;
++	} else {
++		xd->needs_uuid = true;
++	}
+ 
+ 	device_initialize(&xd->dev);
+ 	xd->dev.parent = get_device(parent);
+@@ -1291,7 +1406,8 @@ static struct tb_xdomain *switch_find_xdomain(struct tb_switch *sw,
+ 			xd = port->xdomain;
+ 
+ 			if (lookup->uuid) {
+-				if (uuid_equal(xd->remote_uuid, lookup->uuid))
++				if (xd->remote_uuid &&
++				    uuid_equal(xd->remote_uuid, lookup->uuid))
+ 					return xd;
+ 			} else if (lookup->link &&
+ 				   lookup->link == xd->link &&
+diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
+index bf6ec83e60ee..2d7e012db03f 100644
+--- a/include/linux/thunderbolt.h
++++ b/include/linux/thunderbolt.h
+@@ -181,6 +181,8 @@ void tb_unregister_property_dir(const char *key, struct tb_property_dir *dir);
+  * @device_name: Name of the device (or %NULL if not known)
+  * @is_unplugged: The XDomain is unplugged
+  * @resume: The XDomain is being resumed
++ * @needs_uuid: If the XDomain does not have @remote_uuid it will be
++ *		queried first
+  * @transmit_path: HopID which the remote end expects us to transmit
+  * @transmit_ring: Local ring (hop) where outgoing packets are pushed
+  * @receive_path: HopID which we expect the remote end to transmit
+@@ -189,6 +191,9 @@ void tb_unregister_property_dir(const char *key, struct tb_property_dir *dir);
+  * @properties: Properties exported by the remote domain
+  * @property_block_gen: Generation of @properties
+  * @properties_lock: Lock protecting @properties.
++ * @get_uuid_work: Work used to retrieve @remote_uuid
++ * @uuid_retries: Number of times left @remote_uuid is requested before
++ *		  giving up
+  * @get_properties_work: Work used to get remote domain properties
+  * @properties_retries: Number of times left to read properties
+  * @properties_changed_work: Work used to notify the remote domain that
+@@ -220,6 +225,7 @@ struct tb_xdomain {
+ 	const char *device_name;
+ 	bool is_unplugged;
+ 	bool resume;
++	bool needs_uuid;
+ 	u16 transmit_path;
+ 	u16 transmit_ring;
+ 	u16 receive_path;
+@@ -227,6 +233,8 @@ struct tb_xdomain {
+ 	struct ida service_ids;
+ 	struct tb_property_dir *properties;
+ 	u32 property_block_gen;
++	struct delayed_work get_uuid_work;
++	int uuid_retries;
+ 	struct delayed_work get_properties_work;
+ 	int properties_retries;
+ 	struct delayed_work properties_changed_work;
 -- 
-2.17.1
+2.20.1
 
