@@ -2,278 +2,125 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BA7C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76E4C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCD820823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75FB12073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:21:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X57ZZSFw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfBFSTV (ORCPT
+        id S1729056AbfBFSVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:19:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfBFSTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:19:21 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 76E012D4B6E;
-        Wed,  6 Feb 2019 18:19:20 +0000 (UTC)
-Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 047A01048117;
-        Wed,  6 Feb 2019 18:19:10 +0000 (UTC)
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
-        dhildenb@redhat.com, aarcange@redhat.com
-Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor to
- the host
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-6-nitesh@redhat.com>
- <20190205154545-mutt-send-email-mst@kernel.org>
- <26a36489-2289-f970-3362-60547b268a76@redhat.com>
- <20190206130201-mutt-send-email-mst@kernel.org>
-Organization: Red Hat Inc,
-Message-ID: <85a799bf-93f1-3b4b-c4a0-db7af2aef292@redhat.com>
-Date:   Wed, 6 Feb 2019 13:19:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 13:21:22 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41646 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbfBFSVW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:21:22 -0500
+Received: by mail-qk1-f194.google.com with SMTP id u188so4854661qkh.8;
+        Wed, 06 Feb 2019 10:21:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:message-id:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-disposition:content-transfer-encoding;
+        bh=sJY6SozMeweLkOESTHv5iTZYjJjXNBDdJF8oG18/R1U=;
+        b=X57ZZSFwiaJVl+HqDuB3rf6KN3lt+A8nQfl+l+FH+iMoMBFB0G3WKCwUvrY1iCC0e1
+         ASQL0F86v22n1YoTAZfE4QsEQAdCpffTeEWxWv2QFs2iDGLRC2NUfmMIWjB+lO2nnwVp
+         m/DeJS0jAkhZCFLplthhzVkfJg8PKAFn42aaCmaKB007YWAVk9cogIMwxUurFuJXJ4tV
+         ME8nJDNOHv109sL1lX9lLcc1OvrbpnN+FPobuQUDAGJTvheV9zd2uVO6K1zcl9F4eGUZ
+         4bq3/hRl5DIw0yPZi+HQ4Rlnmiz/qQ9DnZo1Xyjan7cU+KHCy7McAluxHZ5lN4o5UH7B
+         r/sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=sJY6SozMeweLkOESTHv5iTZYjJjXNBDdJF8oG18/R1U=;
+        b=pBgDr81JzPP+/XKjZVvky+F/fQiG+loLagMg7m+a39yfJHZvQvWDenObUPighMMPU0
+         AkhbvGRamG5EMSPIckTOa7rZccugouN799mtNedL8ABZf4/IwuwunYrMgmpVAxjMEgSm
+         Pv7ppkPadY1Y8Zrdzjy+8rQXKJbOuqcvnO/bXDsdgXz91404CX48wrFBBi32Dkl7dGEy
+         mSE3xbWtAA78yCK7prFWWRZ459SPg4361AcBgmQi+8UQQbapYbYCldaQZKgXsc1W3QMq
+         wA0GTuB4KNlwB57FZIKFAPBucqF6j3fsdVOCCI6y/mQy9NMRx13lzwkoqMRhfJ0vhyuD
+         9X/g==
+X-Gm-Message-State: AHQUAuaApOrJwcq6yPOxZqYPQ5+bBEyJN0e3RKY8ce7UzcQ7K/HdnWhN
+        A/Q0cBjaDcwRRHPHD7P1+5E=
+X-Google-Smtp-Source: AHgI3IaqO0fxaTEQ6aHUC2sbzNGVPNtWiv+6xPjl/dG63hfiH85M2gz7NoUTjnw5VHhoObzVVBQEZw==
+X-Received: by 2002:a37:6d44:: with SMTP id i65mr8311365qkc.73.1549477280676;
+        Wed, 06 Feb 2019 10:21:20 -0800 (PST)
+Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
+        by smtp.gmail.com with ESMTPSA id s36sm23167433qth.17.2019.02.06.10.21.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 10:21:19 -0800 (PST)
+Date:   Wed, 6 Feb 2019 13:21:18 -0500
+Message-ID: <20190206132118.GD9278@t480s.localdomain>
+From:   Vivien Didelot <vivien.didelot@gmail.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MELLANOX MLX5 core VPI driver" 
+        <linux-rdma@vger.kernel.org>,
+        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>
+Subject: Re: [PATCH net-next v3 11/12] net: dsa: Implement
+ ndo_get_port_parent_id()
+In-Reply-To: <20190205235326.14600-12-f.fainelli@gmail.com>
+References: <20190205235326.14600-1-f.fainelli@gmail.com>
+ <20190205235326.14600-12-f.fainelli@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206130201-mutt-send-email-mst@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="Q6sZGAJ51pl5TzrWDpkYMI19Gl7KcJ3h8"
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 06 Feb 2019 18:19:20 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Q6sZGAJ51pl5TzrWDpkYMI19Gl7KcJ3h8
-Content-Type: multipart/mixed; boundary="O2qf5b9opplM6CBL1D4fEoPN7vjh41AiG";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com,
- lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
- yang.zhang.wz@gmail.com, riel@surriel.com, david@redhat.com,
- dodgen@google.com, konrad.wilk@oracle.com, dhildenb@redhat.com,
- aarcange@redhat.com
-Message-ID: <85a799bf-93f1-3b4b-c4a0-db7af2aef292@redhat.com>
-Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor to
- the host
+Hi Florian,
 
---O2qf5b9opplM6CBL1D4fEoPN7vjh41AiG
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Tue,  5 Feb 2019 15:53:25 -0800, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> DSA implements SWITCHDEV_ATTR_ID_PORT_PARENT_ID and we want to get rid
+> of switchdev_ops eventually, ease that migration by implementing a
+> ndo_get_port_parent_id() function which returns what
+> switchdev_port_attr_get() would do.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  net/dsa/slave.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+> index 91de3a663226..70395a0ae52e 100644
+> --- a/net/dsa/slave.c
+> +++ b/net/dsa/slave.c
+> @@ -362,18 +362,23 @@ static int dsa_slave_port_obj_del(struct net_device *dev,
+>  	return err;
+>  }
+>  
+> -static int dsa_slave_port_attr_get(struct net_device *dev,
+> -				   struct switchdev_attr *attr)
+> +static int dsa_slave_get_port_parent_id(struct net_device *dev,
+> +					struct netdev_phys_item_id *ppid)
+>  {
+>  	struct dsa_port *dp = dsa_slave_to_port(dev);
+>  	struct dsa_switch *ds = dp->ds;
+>  	struct dsa_switch_tree *dst = ds->dst;
+>  
+> +	ppid->id_len = sizeof(dst->index);
+> +	memcpy(&ppid->id, &dst->index, ppid->id_len);
+> +
+> +	return 0;
+> +}
 
-On 2/6/19 1:03 PM, Michael S. Tsirkin wrote:
-> On Wed, Feb 06, 2019 at 07:56:37AM -0500, Nitesh Narayan Lal wrote:
->> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote:
->>> On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:
->>>> This patch enables the caller to expose a single buffers to the
->>>> other end using vring descriptor. It also allows the caller to
->>>> perform this action in synchornous manner by using virtqueue_kick_sy=
-nc.
->>>>
->>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
->>> I am not sure why do we need this API. Polling in guest
->>> until host runs isn't great either since these
->>> might be running on the same host CPU.
->> True.
->>
->> However, my understanding is that the existing API such as
->> virtqueue_add_outbuf() requires an allocation which will be problemati=
-c
->> for my implementation.
-> Not with a single s/g entry, no.
-Didn't know this. I will re-check.
->
->> Although I am not blocking the allocation path during normal Linux
->> kernel usage as even if one of the zone is locked the other zone could=
+Finally this will give us a way to distinguish two ports with the same switch
+and port IDs on a system with two disjoint switch trees, thanks!
 
->> be used to get free pages.
->
-> I am a bit confused about locking,=20
-My bad, I think I created the confusion.
-> I was under the impression
-> that you are not calling virtio under a zone lock.
-
-Yeap. Your understanding is correct.
-I will re-visit this and correct it in the next version.
-> FYI doing that was nacked by Linus.
->
->
->> But during the initial boot time (device initialization), in certain
->> situations the allocation can only come from a single zone, acquiring =
-a
->> lock on it may result in a deadlock situation.
->>
->>>
->>>
->>>> ---
->>>>  drivers/virtio/virtio_ring.c | 72 +++++++++++++++++++++++++++++++++=
-+++
->>>>  include/linux/virtio.h       |  4 ++
->>>>  2 files changed, 76 insertions(+)
->>>>
->>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ri=
-ng.c
->>>> index cd7e755484e3..93c161ac6a28 100644
->>>> --- a/drivers/virtio/virtio_ring.c
->>>> +++ b/drivers/virtio/virtio_ring.c
->>>> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqu=
-eue *_vq,
->>>>  					out_sgs, in_sgs, data, ctx, gfp);
->>>>  }
->>>> =20
->>>> +/**
->>>> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
->>>> + * @vq: the struct virtqueue we're talking about.
->>>> + * @addr: address of the buffer to add.
->>>> + * @len: length of the buffer.
->>>> + * @in: set if the buffer is for the device to write.
->>>> + *
->>>> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
->>>> + */
->>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, in=
-t in)
->>>> +{
->>>> +	struct vring_virtqueue *vq =3D to_vvq(_vq);
->>>> +	struct vring_desc *desc =3D vq->split.vring.desc;
->>>> +	u16 flags =3D in ? VRING_DESC_F_WRITE : 0;
->>>> +	unsigned int i;
->>>> +	void *data =3D (void *)addr;
->>>> +	int avail_idx;
->>>> +
->>>> +	/* Sanity check */
->>>> +	if (!_vq)
->>>> +		return -EINVAL;
->>>> +
->>>> +	START_USE(vq);
->>>> +	if (unlikely(vq->broken)) {
->>>> +		END_USE(vq);
->>>> +		return -EIO;
->>>> +	}
->>>> +
->>>> +	i =3D vq->free_head;
->>>> +	flags &=3D ~VRING_DESC_F_NEXT;
->>>> +	desc[i].flags =3D cpu_to_virtio16(_vq->vdev, flags);
->>>> +	desc[i].addr =3D cpu_to_virtio64(_vq->vdev, addr);
->>>> +	desc[i].len =3D cpu_to_virtio32(_vq->vdev, len);
->>>> +
->>>> +	vq->vq.num_free--;
->>>> +	vq->free_head =3D virtio16_to_cpu(_vq->vdev, desc[i].next);
->>>> +	vq->split.desc_state[i].data =3D data;
->>>> +	vq->split.avail_idx_shadow =3D 1;
->>>> +	avail_idx =3D vq->split.avail_idx_shadow;
->>>> +	vq->split.vring.avail->idx =3D cpu_to_virtio16(_vq->vdev, avail_id=
-x);
->>>> +	vq->num_added =3D 1;
->>>> +	END_USE(vq);
->>>> +	return 0;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
->>>> +
->>>>  /**
->>>>   * virtqueue_add_sgs - expose buffers to other end
->>>>   * @vq: the struct virtqueue we're talking about.
->>>> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(virtqueue_notify);
->>>> =20
->>>> +/**
->>>> + * virtqueue_kick_sync - update after add_buf and busy wait till up=
-date is done
->>>> + * @vq: the struct virtqueue
->>>> + *
->>>> + * After one or more virtqueue_add_* calls, invoke this to kick
->>>> + * the other side. Busy wait till the other side is done with the u=
-pdate.
->>>> + *
->>>> + * Caller must ensure we don't call this with other virtqueue
->>>> + * operations at the same time (except where noted).
->>>> + *
->>>> + * Returns false if kick failed, otherwise true.
->>>> + */
->>>> +bool virtqueue_kick_sync(struct virtqueue *vq)
->>>> +{
->>>> +	u32 len;
->>>> +
->>>> +	if (likely(virtqueue_kick(vq))) {
->>>> +		while (!virtqueue_get_buf(vq, &len) &&
->>>> +		       !virtqueue_is_broken(vq))
->>>> +			cpu_relax();
->>>> +		return true;
->>>> +	}
->>>> +	return false;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
->>>> +
->>>>  /**
->>>>   * virtqueue_kick - update after add_buf
->>>>   * @vq: the struct virtqueue
->>>> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
->>>> index fa1b5da2804e..58943a3a0e8d 100644
->>>> --- a/include/linux/virtio.h
->>>> +++ b/include/linux/virtio.h
->>>> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
->>>>  		      unsigned int in_sgs,
->>>>  		      void *data,
->>>>  		      gfp_t gfp);
->>>> +/* A desc with this init id is treated as an invalid desc */
->>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, in=
-t in);
->>>> +
->>>> +bool virtqueue_kick_sync(struct virtqueue *vq);
->>>> =20
->>>>  bool virtqueue_kick(struct virtqueue *vq);
->>>> =20
->>>> --=20
->>>> 2.17.2
->> --=20
->> Regards
->> Nitesh
->>
->
->
---=20
-Regards
-Nitesh
-
-
---O2qf5b9opplM6CBL1D4fEoPN7vjh41AiG--
-
---Q6sZGAJ51pl5TzrWDpkYMI19Gl7KcJ3h8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxbJR0ACgkQo4ZA3AYy
-ozlk/w//QOrzz18+1WBn/AxrF6Zmt/PTMWVeiFVRVs1G9V4n/JTvT4Q/ZoEBtwhs
-K196jOD5uUtoidZr1xTFiuG9RDcVbY8IEHo+qC6dLEGl6qvtpyEUpach0lwothsF
-/PmuuDhOCMp3b4uzgkub12dY1i75X4rho3cxBW5Btysik28r6o06SsWb+pf0/S3I
-GKXGKwlusX5ZGpJAu8992QgnL09DqBfVLWtq2zsOUBd9Ls80+DcpDSQ7ss/G7ZNh
-bfM38r1jPdNJrMBxSYo1rr2rceg0L0E8qfCjGvVebuJQeQuj02xjWuWBErfKSGEL
-mvfuXuIx3px3UuDY/dkTIcLvy/hjbNhxJdbM8pej1y/N9gbG+MNeBl1HfXIOkn5y
-Hv6vpK9Xz1iY9UxXUrc3VN6UdP0q8xM5befm358SRQZbJ4onCTNrfNkWmhECiI0Z
-z3yyO5JXXRVqpGdAhjYAQePMf18svrDZuV4y/TW0fGx6bN11rBgvSFJ9L8QcyyGH
-SYDyr56obc+jQ8XIhgwcKvbn84nL+k1k3TO9PPQvCOg6kpzfZauCHm6yi5zwlSuP
-vMAPboZleCvK0AObrWThvImuUriblesNC1RYSU95DVise0NUy5vlbZOuLOOmOSHP
-nepsTB2g94XdlMbK+Y7wKsOaHuMjWJn0FZk+OipCHI8a+FqgLiA=
-=wtiu
------END PGP SIGNATURE-----
-
---Q6sZGAJ51pl5TzrWDpkYMI19Gl7KcJ3h8--
+Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
