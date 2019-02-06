@@ -2,85 +2,97 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8665DC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FF9C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EA52175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:47:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="o3gYsD7p"
+	by mail.kernel.org (Postfix) with ESMTP id 05D20217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728751AbfBFKrl (ORCPT
+        id S1728923AbfBFKs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:47:41 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46500 "EHLO mail.skyhub.de"
+        Wed, 6 Feb 2019 05:48:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:51248 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728260AbfBFKrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:47:41 -0500
-Received: from zn.tnic (p200300EC2BCEF100E462A2470AE7196B.dip0.t-ipconnect.de [IPv6:2003:ec:2bce:f100:e462:a247:ae7:196b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 00AC21EC014B;
-        Wed,  6 Feb 2019 11:47:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549450060;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=9j9ridPilZ9o93SYAOltVR2t+jBzlF0oG4VkJ/lo2jY=;
-        b=o3gYsD7p87Fh+iIDiD4xf7C1nBrvF69ynYt8stqNFhXf2eOxBCBe50pg3+7ECaDJ0vFUvd
-        bxBP8jW2xjhz3H0r0vXQKM1nLlcNi6T0F00HLks+Mgo3bMgJvJDptVO9zpSm7/VcUe6Er3
-        gNG1v2ALPN7+EIrtTZvHceqVWHouekQ=
-Date:   Wed, 6 Feb 2019 11:47:29 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
-Message-ID: <20190206104729.GC7314@zn.tnic>
-References: <20190131115820.GF6749@zn.tnic>
- <CAK7LNATGUs0PPssA=WfHojEEPuztDcNHf0NdH6ohOdf8k8PZOQ@mail.gmail.com>
- <20190201094217.GB31854@zn.tnic>
- <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
- <20190201103038.GE31854@zn.tnic>
- <20190201103648.GF31854@zn.tnic>
- <CAK7LNAQ4juLxrdMoPumQQ-96fMorf+wfAqkNxq1X1k=0i_R4vQ@mail.gmail.com>
- <20190201151139.GK31854@zn.tnic>
- <CAK7LNATVeX=6Mmn6A4+EGmZ9OSf=ePwbQWV1m1c=e=_LiebdNQ@mail.gmail.com>
- <20190202144227.GC27822@zn.tnic>
+        id S1726804AbfBFKsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:48:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65681A78;
+        Wed,  6 Feb 2019 02:48:55 -0800 (PST)
+Received: from big-swifty.cambridge.arm.com (big-swifty.cambridge.arm.com [10.1.30.189])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B8073F719;
+        Wed,  6 Feb 2019 02:48:52 -0800 (PST)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Heyi Guo <guoheyi@huawei.com>, Heyi Guo <heyi.guo@linaro.org>,
+        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Zheng Xiang <zhengxiang9@huawei.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] irqchip updates for 5.0-rc6
+Date:   Wed,  6 Feb 2019 10:48:43 +0000
+Message-Id: <20190206104848.12580-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190202144227.GC27822@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 02, 2019 at 03:42:27PM +0100, Borislav Petkov wrote:
-> On Sat, Feb 02, 2019 at 10:48:00PM +0900, Masahiro Yamada wrote:
-> > '?=' is the same as '=' here.
-> 
-> Sure but if the slowdown disappears, then make does something else for
-> '?=' apparently vs for '='.
+Hi Thomas,
 
-Ok, let me ask a different question then: would a separate target which
-will be used to generate only clean asm for debugging purposes ala
+This is the final set of 5.0 updates from the irqchip department. This
+time, an embarassingly large number of GICv3/GICv4 buglets (VLPI drop,
+MSI allocation race on device sharing the same DevID, LPI pool
+exhaustion and other cleanups), as well as a fix for PJ4-based systems
+that apparently never worked correctly until now.
 
-make <path-to-file>.asm
+Please pull,
 
-or so be an acceptable approach?
+	M.
 
-Thx.
+The following changes since commit 8208d1708b88b412ca97f50a6d951242c88cbbac:
 
--- 
-Regards/Gruss,
-    Boris.
+  irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size (2019-01-18 14:35:38 +0000)
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-5.0-3
+
+for you to fetch changes up to 56841070ccc87b463ac037d2d1f2beb8e5e35f0c:
+
+  irqchip/gic-v3-its: Fix ITT_entry_size accessor (2019-01-31 12:51:33 +0000)
+
+----------------------------------------------------------------
+irqchip update for 5.0-rc6
+
+- Another GICv3 ITS fix for devices sharing the same DevID
+- Don't return invalid data on exhaustion of the GICv3 LPI pool
+- Fix a GICv3 field decoding bug leading to memory over-allocation
+- Init GICv4 at boot time instead of lazy init
+- Fix interrupt masking on PJ4
+
+----------------------------------------------------------------
+Heyi Guo (1):
+      irqchip/gic-v4: Fix occasional VLPI drop
+
+Lubomir Rintel (1):
+      irqchip/mmp: Only touch the PJ4 IRQ & FIQ bits on enable/disable
+
+Marc Zyngier (2):
+      irqchip/gic-v3-its: Plug allocation race for devices sharing a DevID
+      irqchip/gic-v3-its: Gracefully fail on LPI exhaustion
+
+Zenghui Yu (1):
+      irqchip/gic-v3-its: Fix ITT_entry_size accessor
+
+ drivers/irqchip/irq-gic-v3-its.c   | 101 +++++++++++++++++++++++++++++--------
+ drivers/irqchip/irq-mmp.c          |   6 ++-
+ include/linux/irqchip/arm-gic-v3.h |   2 +-
+ 3 files changed, 85 insertions(+), 24 deletions(-)
