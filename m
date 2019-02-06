@@ -2,97 +2,135 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C384DC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EC6C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEA8218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 892E2218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfBFWbB (ORCPT
+        id S1726456AbfBFWcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 17:31:01 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:39197 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfBFWbB (ORCPT
+        Wed, 6 Feb 2019 17:32:36 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54572 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfBFWcg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:31:01 -0500
-Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 16F57100005;
-        Wed,  6 Feb 2019 22:30:57 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 23:30:57 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-        a.zummo@towertech.it, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, ben.dooks@codethink.co.uk,
-        ccaione@baylibre.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: rtc: add device-tree bindings for
- the Amlogic Meson RTC
-Message-ID: <20190206223057.GB4719@piout.net>
-References: <20190119144332.11984-1-martin.blumenstingl@googlemail.com>
- <20190119144332.11984-2-martin.blumenstingl@googlemail.com>
+        Wed, 6 Feb 2019 17:32:36 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B74B0802D1; Wed,  6 Feb 2019 23:32:25 +0100 (CET)
+Date:   Wed, 6 Feb 2019 23:32:31 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     =?utf-8?B?0K/RgNC+0YHQu9Cw0LIg0KHQtdC80YfQtdC90LrQvg==?= 
+        <ukrkyi@gmail.com>, Greg KH <greg@kroah.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Thomas Martitz <kugel@rockbox.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Johan Hovold <johan@kernel.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: REGRESSION - System does not resume from suspend
+Message-ID: <20190206223231.GA13324@amd>
+References: <CAAuoowhNsaXjBSHM9ZGeO_uwGVXprc8TS0SENGA3fKbg1xCWMQ@mail.gmail.com>
+ <20190206212023.GA5353@amd>
+ <CAJZ5v0gZmSfN2pk50sKYr-exbJy8m3dY4Xnz6pcKMcbAX92yfA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
 Content-Disposition: inline
-In-Reply-To: <20190119144332.11984-2-martin.blumenstingl@googlemail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJZ5v0gZmSfN2pk50sKYr-exbJy8m3dY4Xnz6pcKMcbAX92yfA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 19/01/2019 15:43:31+0100, Martin Blumenstingl wrote:
-> The 32-bit Amlogic Meson SoCs (Meson6, Meson8, Meson8b and Meson8m2)
-> have a built-in RTC block.
-> It has the following inputs:
-> - an 32.768kHz crystal oscillator
-> - an interrupt line
-> - a reset line
-> - 0.9V voltage input
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> [resurrected patches from Ben after 2 years]
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  .../devicetree/bindings/rtc/rtc-meson.txt     | 32 +++++++++++++++++++
->  1 file changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/rtc-meson.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/rtc-meson.txt b/Documentation/devicetree/bindings/rtc/rtc-meson.txt
-> new file mode 100644
-> index 000000000000..23df3cf2dd73
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/rtc-meson.txt
-> @@ -0,0 +1,32 @@
-> +* Amlogic Meson6, Meson8, Meson8b and Meson8m2 RTC
-> +
-> +Required properties:
-> +- compatible: should be one of the following describing the hardware:
-> +	* "amlogic,meson6-rtc"
-> +	* "amlogic,meson8-rtc"
-> +	* "amlogic,meson8b-rtc"
-> +	* "amlogic,meson8m2-rtc"
-> +
-> +- reg: physical register space for the controller's memory mapped registers.
-> +- interrupts: the interrupt line of the RTC block.
-> +- clocks: reference to the external 32.768kHz crystal oscillator.
-> +- vdd-supply: reference to the power supply of the RTC block.
-> +- resets: reset controller reference to allow reset of the controller
-> +
-> +Optional properties:
-> +- #address-cells: should be 1 to address the internal non-volatile memory
-> +- #address-cells: should be 1 to reference the internal non-volatile memory
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shouldn't that one be #size-cells ?
+On Wed 2019-02-06 23:19:18, Rafael J. Wysocki wrote:
+> On Wed, Feb 6, 2019 at 10:20 PM Pavel Machek <pavel@ucw.cz> wrote:
+> >
+> > Hi!
+> >
+> > > Since kernel version 4.19, my computer is unable to resume from suspe=
+nd to
+> > > RAM. I've run git bisect and filed bug report at
+> > > https://bugzilla.kernel.org/show_bug.cgi?id=3D201519
+> > > three months ago, however, I received no reaction. Bug is still prese=
+nt in
+> > > 5.0-rc5 kernel version. Is there any possibility to fix this?
+> >
+> > Thanks for all the work bisecting / etc... Note that you can get patch
+> > reverted if it causes regression, but it needs to be done over
+> > email. (If maintainer does not reply, up-to Linus).
+> >
+> > For the record, patch is:
+> >
+> > git bisect output:
+> > c62ec4610c40bcc44f2d3d5ed1c312737279e2f3 is the first bad commit
+> > commit c62ec4610c40bcc44f2d3d5ed1c312737279e2f3
+> > Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Date:   Tue May 22 13:02:17 2018 +0200
+> >
+> >     PM / core: Fix direct_complete handling for devices with no
+> >     callbacks
+> > ...
+> >     Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D199693
+> >         Fixes: 08810a4119aa (PM / core: Add NEVER_SKIP and
+> >         SMART_PREPARE driver flags)
+> >  Reported-by: Thomas Martitz <kugel@rockbox.org>
+> >  Tested-by: Thomas Martitz <kugel@rockbox.org>
+> >                     Cc: 4.15+ <stable@vger.kernel.org> # 4.15+
+> >  Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >  Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >  Reviewed-by: Johan Hovold <johan@kernel.org>
+> >
+> > And the patch was tagged for stable, which sounds like a lot of fun.
+>=20
+> Not really.  This just restored previous behavior as the commit log says.
+>=20
+> If the system breaks after this one, it most likely didn't work before
+> commit 08810a4119aa which was in 4.15 and c62ec4610c40bcc44f2 first
+> appeared in 4.17-rc1.
+>=20
+> Unfortunately, it cannot be reverted without breaking other systems
+> that used to work before commit 08810a4119aa.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+So what is going on there?
+
+If some devices need one behaviour and other devices need second
+behaviour, we can just add the flag for the driver, right?
+
+Because we know that Jaroslav's system can suspend, so this is fixable.
+
+Jaroslav -- can you find out which device has problem?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxbYH8ACgkQMOfwapXb+vKSsQCgrpWjeMJYtzHaNcIaDz1o22L3
+11sAoJZWB+iZTwJHRwKRHyvhYrnt91N6
+=x7gl
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
