@@ -2,147 +2,122 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A69C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A3EC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82F62184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:30:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="NfefY0Tp"
+	by mail.kernel.org (Postfix) with ESMTP id B352E2184E
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfBFDau (ORCPT
+        id S1728191AbfBFDcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 22:30:50 -0500
-Received: from mx3.ucr.edu ([138.23.248.64]:17436 "EHLO mx3.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbfBFDat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 22:30:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1549423849; x=1580959849;
-  h=from:to:cc:subject:date:message-id;
-  bh=RoHy0oCGXIhna6y33HCrI+i2WKeLdKhVB5imxc0MR+A=;
-  b=NfefY0TpyrDFyPa9/32x9M/MQ/Ipdn3He16GpP7ajdSPRwRTdXeO2KhR
-   FReKZ6VRfP8WWGndpsXk4PkxdFeU78Z2nF21GZmBK6SKVrWkR34zcAWiT
-   r8U3jsBOti8c7FMRoAVUIVHAPj/4ZDDDvR7L6bwk35mZWu4mRy8LyWTEI
-   El7dJhHZfCxdaWowjfbUAp9ocu+ZALSpi7p5XWIrdGurDWSnNZ09OsLuQ
-   E5iJ2Eo1e+wJgbP4D0QUItDerTlzFacLD2Qle8HxlhT2BBsRqSimlP1AM
-   C8HEHWvIN5sbFzBAkXHWeYTid9nL0iR/9J3XFcphvMc8DYo1JerjRKrGN
-   Q==;
-IronPort-PHdr: =?us-ascii?q?9a23=3A/DT9/BSHUoff3NUmlefZC8lUR9psv+yvbD5Q0YIu?=
- =?us-ascii?q?jvd0So/mwa69bBaN2/xhgRfzUJnB7Loc0qyK6/CmATRIyK3CmUhKSIZLWR4BhJ?=
- =?us-ascii?q?detC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBxrwKxd+?=
- =?us-ascii?q?KPjrFY7OlcS30P2594HObwlSizexfbB/IA+qoQnNq8IbnZZsJqEtxxXTv3BGYf?=
- =?us-ascii?q?5WxWRmJVKSmxbz+MK994N9/ipTpvws6ddOXb31cKokQ7NYCi8mM30u683wqRbD?=
- =?us-ascii?q?VwqP6WACXWgQjxFFHhLK7BD+Xpf2ryv6qu9w0zSUMMHqUbw5Xymp4rx1QxH0li?=
- =?us-ascii?q?gIKz858HnWisNuiqJbvAmhrAF7z4LNfY2ZKOZycqbbcNMfRGpBRd1RVy1HAoOz?=
- =?us-ascii?q?coABEfMPNvtWr4n8uVQOqQaxDhSoCO7h1jNEg3n71rA43es8CwHLxAwuEcwTvn?=
- =?us-ascii?q?rar9v7M7wfXfypwKTS0TnOde9a1Sv75YPVch4hu/aMXbdofMXTyEkuFgPFjkiX?=
- =?us-ascii?q?qYf4OD6U1uUMs2iB4OphSe6jl2Aqphpsojez3McgkJfGiZ8Iyl3d8yhy3YU7Jc?=
- =?us-ascii?q?WgRUJlfdKpFIFcuiKaOodsXM8uXmFltDwnxrACvZO3ZDUGxZUjyhLFdfCKfYiF?=
- =?us-ascii?q?7gj9WOuQOzt1hn1odbSijBio60eg0PfzVsys3VZPqSpKj8fDu2gW1xzW9siHUv?=
- =?us-ascii?q?x9/lq92TqX1wDc9OVEIUcsmKreMZEhw7owmoMLsUTMAyP6gUv2gLKSe0gg4OSo?=
- =?us-ascii?q?5OPnYrLppp+YKYB4kB3xMqMrmsCnAOQ4NBYBX3SD9OiiyLHu+Vf1TbZKg/EsjK?=
- =?us-ascii?q?XVrZDXKd4GqqO9BwJZyoMj5Ay+Dzei3tQYh34HLFdddROHjonpO0vBIPHkAfuj?=
- =?us-ascii?q?jVmhiypryOzcPrH7HJrCM2XDnK/7fblh805c1BYzzddH6pJQC7EBJu/zW0DouN?=
- =?us-ascii?q?zbEBA5KQq0zPjjCNhmyIMeVnyAArWDPKPRr1CI/OQvLPeIZIMPvzb9MfcltLbA?=
- =?us-ascii?q?l3g8zG4cb6m02tNDeWK4F/U+ex6xfHH2xNoNDDFZ7UIFUOX2hQjaAnZobHGoUv?=
- =?us-ascii?q?d5uWk2?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BMAACFVFpcgMfXVdFlHAEBAQQBAQcEA?=
- =?us-ascii?q?QGBUgYBAQsBgztKD4x8ixZPAQEBBoplGG2FWIJzhQ+BewEKAQEshECDFCI1CA0?=
- =?us-ascii?q?BAwEBAgEBAgETAQEJDQkIGwwxgjopgl82UoEVAQUBNVuCRwGBdA2hCzyMFzOIZ?=
- =?us-ascii?q?QEHgUsJAQiHcIRBgQ+BB4NuiFOCQwKBLAEBAZAIkUgBBgIBgWWBQ48MJYM2hwC?=
- =?us-ascii?q?IFAEtmz0CBAIEBQIFDyGBJgGCDE0lgWwKgUSCUo4sHjOBB41zAQ?=
-X-IPAS-Result: =?us-ascii?q?A2BMAACFVFpcgMfXVdFlHAEBAQQBAQcEAQGBUgYBAQsBgzt?=
- =?us-ascii?q?KD4x8ixZPAQEBBoplGG2FWIJzhQ+BewEKAQEshECDFCI1CA0BAwEBAgEBAgETA?=
- =?us-ascii?q?QEJDQkIGwwxgjopgl82UoEVAQUBNVuCRwGBdA2hCzyMFzOIZQEHgUsJAQiHcIR?=
- =?us-ascii?q?BgQ+BB4NuiFOCQwKBLAEBAZAIkUgBBgIBgWWBQ48MJYM2hwCIFAEtmz0CBAIEB?=
- =?us-ascii?q?QIFDyGBJgGCDE0lgWwKgUSCUo4sHjOBB41zAQ?=
-X-IronPort-AV: E=Sophos;i="5.58,338,1544515200"; 
-   d="scan'208";a="29270258"
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-  by smtp3.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 05 Feb 2019 19:30:48 -0800
-Received: by mail-pg1-f199.google.com with SMTP id 143so3734091pgc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 19:30:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YYDz1uajXM2BD9Gmd2pvUl+dFDUhIgT0Qevcatq2bns=;
-        b=J455sllK7qe6i9NWLNivQ180OZkrLqrzJhkvyx7/PVIYaaEgR5eXrGnyzZSqrxTjrj
-         iTFajcyDTkV+xETkf0tgOux8+RkufCRO2Jv5Hobaytdlx65xFFbwVkUz5ory2q5Lwb+k
-         WZ88Ka0bS9tTOEVXW96X+lvXHKYN52jOB+HgVLTIZYwi1eTAhcEGulpY1I+poABSXl6L
-         TrJ6v/rLOrZUkb7RKiE/hr4XWLLek2tAb161CEKrhG59PgJBz/Ju89H2QXs3tYn018W3
-         3Fou9xcFZNVMRSiyd3Pr8K+5NLvckRorIHOCBbrIvPK5LfyhPNYBvU1/7L/d4O3w0VId
-         7ejQ==
-X-Gm-Message-State: AHQUAuYjzhg9wPszdCATjnBAKAnEtXKxtDgNi+wSB++aRoqEgI7W6CrM
-        1N0+d5moCVYSJA1qOqiGtRLzREsnpCoxB/YaKqbFTuWQ7quh3KdtqnVDCeZnE4XetjqQHRKjuWe
-        s84POEb5/eMxOInLPIQCBpiCugw==
-X-Received: by 2002:a17:902:654a:: with SMTP id d10mr8345243pln.324.1549423847913;
-        Tue, 05 Feb 2019 19:30:47 -0800 (PST)
-X-Google-Smtp-Source: AHgI3IaToAk1qKrM98u2WVG62AntNk2kOh/LjiLDaXOGTAhdEC3TosN9dKtPsvvezCKOlTRbmIcmWg==
-X-Received: by 2002:a17:902:654a:: with SMTP id d10mr8345227pln.324.1549423847721;
-        Tue, 05 Feb 2019 19:30:47 -0800 (PST)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id v15sm5414056pfn.94.2019.02.05.19.30.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 19:30:47 -0800 (PST)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: Variable "val" in function miphy_osc_is_ready() could be uninitialized
-Date:   Tue,  5 Feb 2019 19:30:36 -0800
-Message-Id: <20190206033036.22729-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 5 Feb 2019 22:32:50 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:33774 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727984AbfBFDcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 22:32:48 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id B85305FD5D; Wed,  6 Feb 2019 11:32:43 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH 4/9] ARM: dts: sun9i: cubieboard4: Add GPIO pin-bank regulator supplies
+Date:   Wed,  6 Feb 2019 11:32:34 +0800
+Message-Id: <20190206033239.3619-5-wens@csie.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206033239.3619-1-wens@csie.org>
+References: <20190206033239.3619-1-wens@csie.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function miphy_osc_is_ready(), local variable "val"
-could be uninitalized. if function regmap_read() returns
--EINVAL. However, this value is used in if statement.
-This is potentially unsafe.
+The Cubieboard 4 has the PMIC providing voltage to all the pin-bank
+supply rails from its various regulator outputs. All pin-banks that
+have supply rails are accounted for. PN pin-bank does not have a
+supply rail.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+Also remove any "regulator-always-on" properties from regulators that
+were only marked to provide pin-bank power.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/phy/st/phy-miphy28lp.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/sun9i-a80-cubieboard4.dts | 23 ++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/st/phy-miphy28lp.c b/drivers/phy/st/phy-miphy28lp.c
-index 213e2e15339c..40c7c0a611a0 100644
---- a/drivers/phy/st/phy-miphy28lp.c
-+++ b/drivers/phy/st/phy-miphy28lp.c
-@@ -835,7 +835,8 @@ static int miphy_osc_is_ready(struct miphy28lp_phy *miphy_phy)
- {
- 	struct miphy28lp_dev *miphy_dev = miphy_phy->phydev;
- 	unsigned long finish = jiffies + 5 * HZ;
--	u32 val;
-+	u32 val = 0;
-+	int ret;
+diff --git a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+index 85da85faf869..0daab9b374e6 100644
+--- a/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
++++ b/arch/arm/boot/dts/sun9i-a80-cubieboard4.dts
+@@ -183,10 +183,26 @@
+ 	clocks = <&ac100_rtc 0>;
+ };
  
- 	if (!miphy_phy->osc_rdy)
- 		return 0;
-@@ -844,8 +845,10 @@ static int miphy_osc_is_ready(struct miphy28lp_phy *miphy_phy)
- 		return -EINVAL;
++&pio {
++	vcc-pa-supply = <&reg_ldo_io1>;
++	vcc-pb-supply = <&reg_aldo2>;
++	vcc-pc-supply = <&reg_dcdc1>;
++	vcc-pd-supply = <&reg_dc1sw>;
++	vcc-pe-supply = <&reg_eldo2>;
++	vcc-pf-supply = <&reg_dcdc1>;
++	vcc-pg-supply = <&reg_ldo_io0>;
++	vcc-ph-supply = <&reg_dcdc1>;
++};
++
+ &r_ir {
+ 	status = "okay";
+ };
  
- 	do {
--		regmap_read(miphy_dev->regmap,
-+		ret = regmap_read(miphy_dev->regmap,
- 				miphy_phy->syscfg_reg[SYSCFG_STATUS], &val);
-+		if (ret)
-+			return ret;
++&r_pio {
++	vcc-pl-supply = <&reg_dldo2>;
++	vcc-pm-supply = <&reg_eldo3>;
++};
++
+ &r_rsb {
+ 	status = "okay";
  
- 		if ((val & MIPHY_OSC_RDY) != MIPHY_OSC_RDY)
- 			cpu_relax();
+@@ -217,6 +233,10 @@
+ 				/* unused */
+ 			};
+ 
++			reg_dc1sw: dc1sw {
++				regulator-name = "vcc-pd";
++			};
++
+ 			reg_dc5ldo: dc5ldo {
+ 				regulator-always-on;
+ 				regulator-min-microvolt = <800000>;
+@@ -271,7 +291,6 @@
+ 			};
+ 
+ 			reg_dldo2: dldo2 {
+-				regulator-always-on;
+ 				regulator-min-microvolt = <3000000>;
+ 				regulator-max-microvolt = <3000000>;
+ 				regulator-name = "vcc-pl";
+@@ -290,14 +309,12 @@
+ 			};
+ 
+ 			reg_eldo3: eldo3 {
+-				regulator-always-on;
+ 				regulator-min-microvolt = <3000000>;
+ 				regulator-max-microvolt = <3000000>;
+ 				regulator-name = "vcc-pm-codec-io1";
+ 			};
+ 
+ 			reg_ldo_io0: ldo_io0 {
+-				regulator-always-on;
+ 				regulator-min-microvolt = <3000000>;
+ 				regulator-max-microvolt = <3000000>;
+ 				regulator-name = "vcc-pg";
 -- 
-2.17.1
+2.20.1
 
