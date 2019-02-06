@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B84C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19555C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B9D12073D
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:46:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4112073D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8JycExy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kv3EmQBK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfBFRqa (ORCPT
+        id S1730036AbfBFRqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:46:30 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41780 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730680AbfBFRq0 (ORCPT
+        Wed, 6 Feb 2019 12:46:46 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39993 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730632AbfBFRqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:46:26 -0500
-Received: by mail-pl1-f193.google.com with SMTP id k15so3410755pls.8;
-        Wed, 06 Feb 2019 09:46:25 -0800 (PST)
+        Wed, 6 Feb 2019 12:46:22 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i12so3406853pfo.7;
+        Wed, 06 Feb 2019 09:46:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qTQuMDXybzEy13PR44sPjWjmSHRmeRN98zHu2/LCGyc=;
-        b=b8JycExyqGZt/va0hrd1T/MSedN53Z+egyFTXz7gzweWuHQGSsMJ58K62Nj3QzqsR3
-         keezTNF7QpPlDbSOVAMDP0oqgZLf42ILsBG3NZp95Vr8dHfSghgHKI9A77KvBVOvMgxz
-         ZigWmH5+IDWajjoliT0GkKs/6q7qw/3Gsl5fQcYOCOucK52oLNq1ZycOvLPGqo3wJ9Nd
-         RFzctS+2DSfuMy6BQXZ7Ea2ouXhefzLBY47mxItop37m6vLsYhDDfT0UiybapkdR5A0A
-         NVnItY2IcNP9R17WCyC/flDKgej1TZyNto06J4xtiV+m4oVStlhPss8rjFxqU7Rghs4i
-         6lCQ==
+        bh=ArJyP52WUHjXEmWeKQMCdCvrHE5jBBDMmVZMHMTBbik=;
+        b=kv3EmQBKIJRBUX3Frbcbe6KFkkmMEGxPkJQ6qWmZYdfjiTqynD3LGBH/9KLHL60owR
+         UAhl3ayyTJOtT2LaiGQEyyDzK1MK9pLyTvBMpjI5/u+QirNI2MKuLmXUjRVWTn8p3QOE
+         n7wACuqx4MKpzuuODLR20DDGp5BuFTHv1jlDAy+ImNGwkLvmOXQxSGsxeWk2ucIcSZrs
+         CDHYin4crGq7xQVrR3F+yw0qlctUOHrqPVUyvL4drAFCJA00gN5DnbNWtZPG22bxnPRr
+         N+H15YfpIcyBN599IOY3yOTcvThdS1zTIaFVnb46zyoPWbWvtxr1NjUrYnPB/xa2hiJX
+         g+5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=qTQuMDXybzEy13PR44sPjWjmSHRmeRN98zHu2/LCGyc=;
-        b=DA940xki8fRSbTMv986Klo4H7v+DniN2i5bvfmb3/brMIx2zb+2Qdn6LM7mDeoGbVD
-         aNXq+hHUi/pvJ1ENRj2/VGAg+OY+6AqvlIhfTzJHoitsrBiRabTMODrpDo4M91D6YdDW
-         zp6OLUOXq709kxUi3hFxZpuhAWXiAq0WW9e0JgA00fMyL3R1bdFU95nEl2cQsChaWIwc
-         JvThJBRiZOG/SgFndEMUFpaHFZeaBHhqhbaZDY62J+MaR7MOVGH2d+osdFFB9rm++o6i
-         3N3B1MxOiSKfVeOvCAbTEvr6z6XLuMmHUPNTv1ea0aWLLTbCEts5+nh0PpD54pPnsqCU
-         kdfg==
-X-Gm-Message-State: AHQUAuaiK0R5Z3wYo8mU+1be2DuxCFl6dlFGimh7492SiU+ewHaClaEX
-        mzsayzTuTvlJEM/VShr7yfDq9bD4
-X-Google-Smtp-Source: AHgI3IaBy6B2j+R5n3Lq7gGaSIt3iINTyxPtxiVRvYqhaJo7sP5QWSBClI9Zm8iZ1JYsgMzbFLWjRA==
-X-Received: by 2002:a17:902:1d4a:: with SMTP id u10mr11403863plu.122.1549475184694;
-        Wed, 06 Feb 2019 09:46:24 -0800 (PST)
+        bh=ArJyP52WUHjXEmWeKQMCdCvrHE5jBBDMmVZMHMTBbik=;
+        b=eJ/T8h/4HV7T/hwwm4c0Ob7O+VwJsEn7oXDX4s75B3q3CemzHpjPrOPcxDVDu9I2Sb
+         J1b9sWoeonXX9tcrVNYGklHIWVdy1mVTOqCNx2gDAfBBtLoD3kVlc2ux+O1jfNnkZXU5
+         gwmyLu3QELOkepWHC4ZRSWVnB1mUufnizpV1ms8WfCLbKJtra+KOHM5y8k4pWE3sdvhB
+         6ZIeyGgWikk0fbKpJHj5aswN4gC4xLH1cZyxlXqyQtgHjaOtVGHDLyF3/XPVeDAxtCBf
+         woX6ft+7QMBnhTSVywwHI72DeZuxQrNaA1QaegiczCYMIai5I+Fh3CJnHiL10rPUrC+9
+         oeMQ==
+X-Gm-Message-State: AHQUAuZaY9FZgtZSE3Ychpnqrrqb8SrIaeC4hs13p59Bj/wY63efTeL4
+        IDFaqWcVMcvZINN8xtRpV1aPsNc6
+X-Google-Smtp-Source: AHgI3IZwpAHiucfTIgaDWCi5SMXVYYBg98z3+aQaQCPIErVnsKSdPjpy0uDEQ23s/ojkHm2/n8TFmg==
+X-Received: by 2002:a65:40ca:: with SMTP id u10mr10712961pgp.321.1549475180057;
+        Wed, 06 Feb 2019 09:46:20 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 15sm10435313pfr.55.2019.02.06.09.46.23
+        by smtp.gmail.com with ESMTPSA id 15sm10435313pfr.55.2019.02.06.09.46.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 09:46:23 -0800 (PST)
+        Wed, 06 Feb 2019 09:46:18 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v4 12/12] net: Get rid of SWITCHDEV_ATTR_ID_PORT_PARENT_ID
-Date:   Wed,  6 Feb 2019 09:45:46 -0800
-Message-Id: <20190206174546.23597-13-f.fainelli@gmail.com>
+Subject: [PATCH net-next v4 09/12] netdevsim: Implement ndo_get_port_parent_id()
+Date:   Wed,  6 Feb 2019 09:45:43 -0800
+Message-Id: <20190206174546.23597-10-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190206174546.23597-1-f.fainelli@gmail.com>
 References: <20190206174546.23597-1-f.fainelli@gmail.com>
@@ -76,262 +76,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have a dedicated NDO for getting a port's parent ID, get rid
-of SWITCHDEV_ATTR_ID_PORT_PARENT_ID and convert all callers to use the
-NDO exclusively. This is a preliminary change to getting rid of
-switchdev_ops eventually.
+netdevsim only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it a
+great candidate to be converted to use the ndo_get_port_parent_id() NDO
+instead of implementing switchdev_port_attr_get().
 
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- include/net/switchdev.h   | 11 -----------
- net/bridge/br_switchdev.c | 14 +++-----------
- net/core/net-sysfs.c      | 19 ++++---------------
- net/core/rtnetlink.c      | 16 +++-------------
- net/ipv4/ipmr.c           | 19 +++++--------------
- net/switchdev/switchdev.c | 20 --------------------
- 6 files changed, 15 insertions(+), 84 deletions(-)
+ drivers/net/netdevsim/netdev.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/include/net/switchdev.h b/include/net/switchdev.h
-index 63843ae5dc81..5e87b54c5dc5 100644
---- a/include/net/switchdev.h
-+++ b/include/net/switchdev.h
-@@ -43,7 +43,6 @@ static inline bool switchdev_trans_ph_commit(struct switchdev_trans *trans)
+diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+index 8d8e2b3f263e..75a50b59cb8f 100644
+--- a/drivers/net/netdevsim/netdev.c
++++ b/drivers/net/netdevsim/netdev.c
+@@ -22,7 +22,6 @@
+ #include <net/netlink.h>
+ #include <net/pkt_cls.h>
+ #include <net/rtnetlink.h>
+-#include <net/switchdev.h>
  
- enum switchdev_attr_id {
- 	SWITCHDEV_ATTR_ID_UNDEFINED,
--	SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
- 	SWITCHDEV_ATTR_ID_PORT_STP_STATE,
- 	SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS,
- 	SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
-@@ -61,7 +60,6 @@ struct switchdev_attr {
- 	void *complete_priv;
- 	void (*complete)(struct net_device *dev, int err, void *priv);
- 	union {
--		struct netdev_phys_item_id ppid;	/* PORT_PARENT_ID */
- 		u8 stp_state;				/* PORT_STP_STATE */
- 		unsigned long brport_flags;		/* PORT_BRIDGE_FLAGS */
- 		unsigned long brport_flags_support;	/* PORT_BRIDGE_FLAGS_SUPPORT */
-@@ -208,9 +206,6 @@ void switchdev_port_fwd_mark_set(struct net_device *dev,
- 				 struct net_device *group_dev,
- 				 bool joining);
+ #include "netdevsim.h"
  
--bool switchdev_port_same_parent_id(struct net_device *a,
--				   struct net_device *b);
--
- int switchdev_handle_port_obj_add(struct net_device *dev,
- 			struct switchdev_notifier_port_obj_info *port_obj_info,
- 			bool (*check_cb)(const struct net_device *dev),
-@@ -295,12 +290,6 @@ call_switchdev_blocking_notifiers(unsigned long val,
- 	return NOTIFY_DONE;
+@@ -148,26 +147,16 @@ static struct device_type nsim_dev_type = {
+ 	.release = nsim_dev_release,
+ };
+ 
+-static int
+-nsim_port_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++static int nsim_get_port_parent_id(struct net_device *dev,
++				   struct netdev_phys_item_id *ppid)
+ {
+ 	struct netdevsim *ns = netdev_priv(dev);
+ 
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = sizeof(ns->sdev->switch_id);
+-		memcpy(&attr->u.ppid.id, &ns->sdev->switch_id,
+-		       attr->u.ppid.id_len);
+-		return 0;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++	ppid->id_len = sizeof(ns->sdev->switch_id);
++	memcpy(&ppid->id, &ns->sdev->switch_id, ppid->id_len);
++	return 0;
  }
  
--static inline bool switchdev_port_same_parent_id(struct net_device *a,
--						 struct net_device *b)
--{
--	return false;
--}
+-static const struct switchdev_ops nsim_switchdev_ops = {
+-	.switchdev_port_attr_get	= nsim_port_attr_get,
+-};
 -
- static inline int
- switchdev_handle_port_obj_add(struct net_device *dev,
- 			struct switchdev_notifier_port_obj_info *port_obj_info,
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index 06b0ae44585f..db9e8ab96d48 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -14,8 +14,7 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- 	/* dev is yet to be added to the port list. */
- 	list_for_each_entry(p, &br->port_list, list) {
--		if (netdev_port_same_parent_id(dev, p->dev) ||
--		    switchdev_port_same_parent_id(dev, p->dev))
-+		if (netdev_port_same_parent_id(dev, p->dev))
- 			return p->offload_fwd_mark;
- 	}
- 
-@@ -24,19 +23,12 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- int nbp_switchdev_mark_set(struct net_bridge_port *p)
+ static int nsim_init(struct net_device *dev)
  {
--	const struct net_device_ops *ops = p->dev->netdev_ops;
--	struct switchdev_attr attr = {
--		.orig_dev = p->dev,
--		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
--	};
-+	struct netdev_phys_item_id ppid = { };
- 	int err;
+ 	char sdev_ddir_name[10], sdev_link_name[32];
+@@ -214,7 +203,6 @@ static int nsim_init(struct net_device *dev)
+ 		goto err_bpf_uninit;
  
- 	ASSERT_RTNL();
+ 	SET_NETDEV_DEV(dev, &ns->dev);
+-	SWITCHDEV_SET_OPS(dev, &nsim_switchdev_ops);
  
--	if (ops->ndo_get_port_parent_id)
--		err = dev_get_port_parent_id(p->dev, &attr.u.ppid, true);
--	else
--		err = switchdev_port_attr_get(p->dev, &attr);
-+	err = dev_get_port_parent_id(p->dev, &ppid, true);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 4eace9f1dcf9..7c5061123ead 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -12,7 +12,6 @@
- #include <linux/capability.h>
- #include <linux/kernel.h>
- #include <linux/netdevice.h>
--#include <net/switchdev.h>
- #include <linux/if_arp.h>
- #include <linux/slab.h>
- #include <linux/sched/signal.h>
-@@ -495,27 +494,17 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
- 	struct net_device *netdev = to_net_dev(dev);
--	const struct net_device_ops *ops = netdev->netdev_ops;
- 	ssize_t ret = -EINVAL;
+ 	err = nsim_devlink_setup(ns);
+ 	if (err)
+@@ -493,6 +481,7 @@ static const struct net_device_ops nsim_netdev_ops = {
+ 	.ndo_setup_tc		= nsim_setup_tc,
+ 	.ndo_set_features	= nsim_set_features,
+ 	.ndo_bpf		= nsim_bpf,
++	.ndo_get_port_parent_id	= nsim_get_port_parent_id,
+ };
  
- 	if (!rtnl_trylock())
- 		return restart_syscall();
- 
- 	if (dev_isalive(netdev)) {
--		struct switchdev_attr attr = {
--			.orig_dev = netdev,
--			.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
--			.flags = SWITCHDEV_F_NO_RECURSE,
--		};
--
--		if (ops->ndo_get_port_parent_id)
--			ret = dev_get_port_parent_id(netdev, &attr.u.ppid,
--						     false);
--		else
--			ret = switchdev_port_attr_get(netdev, &attr);
-+		struct netdev_phys_item_id ppid = { };
-+
-+		ret = dev_get_port_parent_id(netdev, &ppid, false);
- 		if (!ret)
--			ret = sprintf(buf, "%*phN\n", attr.u.ppid.id_len,
--				      attr.u.ppid.id);
-+			ret = sprintf(buf, "%*phN\n", ppid.id_len, ppid.id);
- 	}
- 	rtnl_unlock();
- 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 90dd02c1f561..a51cab95ba64 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -46,7 +46,6 @@
- 
- #include <linux/inet.h>
- #include <linux/netdevice.h>
--#include <net/switchdev.h>
- #include <net/ip.h>
- #include <net/protocol.h>
- #include <net/arp.h>
-@@ -1146,26 +1145,17 @@ static int rtnl_phys_port_name_fill(struct sk_buff *skb, struct net_device *dev)
- 
- static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
- {
--	const struct net_device_ops *ops = dev->netdev_ops;
-+	struct netdev_phys_item_id ppid = { };
- 	int err;
--	struct switchdev_attr attr = {
--		.orig_dev = dev,
--		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
--		.flags = SWITCHDEV_F_NO_RECURSE,
--	};
- 
--	if (ops->ndo_get_port_parent_id)
--		err = dev_get_port_parent_id(dev, &attr.u.ppid, false);
--	else
--		err = switchdev_port_attr_get(dev, &attr);
-+	err = dev_get_port_parent_id(dev, &ppid, false);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
- 		return err;
- 	}
- 
--	if (nla_put(skb, IFLA_PHYS_SWITCH_ID, attr.u.ppid.id_len,
--		    attr.u.ppid.id))
-+	if (nla_put(skb, IFLA_PHYS_SWITCH_ID, ppid.id_len, ppid.id))
- 		return -EMSGSIZE;
- 
- 	return 0;
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index c71bcc42d66d..e536970557dd 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -67,7 +67,6 @@
- #include <net/fib_rules.h>
- #include <linux/netconf.h>
- #include <net/nexthop.h>
--#include <net/switchdev.h>
- 
- #include <linux/nospec.h>
- 
-@@ -837,11 +836,8 @@ static void ipmr_update_thresholds(struct mr_table *mrt, struct mr_mfc *cache,
- static int vif_add(struct net *net, struct mr_table *mrt,
- 		   struct vifctl *vifc, int mrtsock)
- {
--	const struct net_device_ops *ops;
-+	struct netdev_phys_item_id ppid = { };
- 	int vifi = vifc->vifc_vifi;
--	struct switchdev_attr attr = {
--		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
--	};
- 	struct vif_device *v = &mrt->vif_table[vifi];
- 	struct net_device *dev;
- 	struct in_device *in_dev;
-@@ -920,15 +916,10 @@ static int vif_add(struct net *net, struct mr_table *mrt,
- 			vifc->vifc_flags | (!mrtsock ? VIFF_STATIC : 0),
- 			(VIFF_TUNNEL | VIFF_REGISTER));
- 
--	attr.orig_dev = dev;
--	ops = dev->netdev_ops;
--	if (ops->ndo_get_port_parent_id &&
--	    !dev_get_port_parent_id(dev, &attr.u.ppid, true)) {
--		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
--		v->dev_parent_id.id_len = attr.u.ppid.id_len;
--	} else if (!switchdev_port_attr_get(dev, &attr)) {
--		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
--		v->dev_parent_id.id_len = attr.u.ppid.id_len;
-+	err = dev_get_port_parent_id(dev, &ppid, true);
-+	if (err == 0) {
-+		memcpy(v->dev_parent_id.id, ppid.id, ppid.id_len);
-+		v->dev_parent_id.id_len = ppid.id_len;
- 	} else {
- 		v->dev_parent_id.id_len = 0;
- 	}
-diff --git a/net/switchdev/switchdev.c b/net/switchdev/switchdev.c
-index cd78253de31d..7e1357db33d7 100644
---- a/net/switchdev/switchdev.c
-+++ b/net/switchdev/switchdev.c
-@@ -592,26 +592,6 @@ int call_switchdev_blocking_notifiers(unsigned long val, struct net_device *dev,
- }
- EXPORT_SYMBOL_GPL(call_switchdev_blocking_notifiers);
- 
--bool switchdev_port_same_parent_id(struct net_device *a,
--				   struct net_device *b)
--{
--	struct switchdev_attr a_attr = {
--		.orig_dev = a,
--		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
--	};
--	struct switchdev_attr b_attr = {
--		.orig_dev = b,
--		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
--	};
--
--	if (switchdev_port_attr_get(a, &a_attr) ||
--	    switchdev_port_attr_get(b, &b_attr))
--		return false;
--
--	return netdev_phys_item_id_same(&a_attr.u.ppid, &b_attr.u.ppid);
--}
--EXPORT_SYMBOL_GPL(switchdev_port_same_parent_id);
--
- static int __switchdev_handle_port_obj_add(struct net_device *dev,
- 			struct switchdev_notifier_port_obj_info *port_obj_info,
- 			bool (*check_cb)(const struct net_device *dev),
+ static void nsim_setup(struct net_device *dev)
 -- 
 2.17.1
 
