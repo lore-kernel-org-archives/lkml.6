@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4097AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D48C7C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAF420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E17C20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730599AbfBFNSl (ORCPT
+        id S1730846AbfBFNSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:18:41 -0500
-Received: from mga03.intel.com ([134.134.136.65]:26739 "EHLO mga03.intel.com"
+        Wed, 6 Feb 2019 08:18:40 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26754 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730634AbfBFNRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730622AbfBFNRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 6 Feb 2019 08:17:49 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:49 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:48 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="136336038"
+   d="scan'208";a="136336035"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 05:17:46 -0800
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 05:17:45 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 82FAD9A8; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
+        id 62BB7914; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Michael Jamet <michael.jamet@intel.com>,
@@ -40,9 +40,9 @@ Cc:     Michael Jamet <michael.jamet@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         netdev@vger.kernel.org
-Subject: [PATCH v2 24/28] thunderbolt: Add support for DMA tunnels
-Date:   Wed,  6 Feb 2019 16:17:34 +0300
-Message-Id: <20190206131738.43696-25-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 21/28] thunderbolt: Add support for Display Port tunnels
+Date:   Wed,  6 Feb 2019 16:17:31 +0300
+Message-Id: <20190206131738.43696-22-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
@@ -53,280 +53,795 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In addition to PCIe and Display Port tunnels it is also possible to
-create tunnels that forward DMA traffic from the host interface adapter
-(NHI) to a NULL port that is connected to another domain through a
-Thunderbolt cable. These tunnels can be used to carry software messages
-such as networking packets.
-
-To support this we introduce another tunnel type (TB_TUNNEL_DMA) that
-supports paths from NHI to NULL port and back.
+Display Port tunnels are somewhat more complex than PCIe tunnels as it
+requires 3 tunnels (AUX Rx/Tx and Video). In addition we are not
+supposed to create the tunnels immediately when a DP OUT is enumerated.
+Instead we need to wait until we get hotplug event to that adapter port
+or check if the port has HPD set before tunnels can be established. This
+adds Display Port tunneling support to the software connection manager.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/path.c    | 20 ++++++--
- drivers/thunderbolt/switch.c  | 22 ++++++++
- drivers/thunderbolt/tb.h      |  2 +
- drivers/thunderbolt/tb_regs.h |  3 ++
- drivers/thunderbolt/tunnel.c  | 94 ++++++++++++++++++++++++++++++++++-
- drivers/thunderbolt/tunnel.h  | 10 ++++
- 6 files changed, 147 insertions(+), 4 deletions(-)
+ drivers/thunderbolt/switch.c  | 111 ++++++++++++++
+ drivers/thunderbolt/tb.c      | 119 ++++++++++++---
+ drivers/thunderbolt/tb.h      |  17 +++
+ drivers/thunderbolt/tb_regs.h |  22 +++
+ drivers/thunderbolt/tunnel.c  | 277 +++++++++++++++++++++++++++++++++-
+ drivers/thunderbolt/tunnel.h  |  21 +++
+ 6 files changed, 545 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/thunderbolt/path.c b/drivers/thunderbolt/path.c
-index ada60d4aa99b..afdb667fcc0d 100644
---- a/drivers/thunderbolt/path.c
-+++ b/drivers/thunderbolt/path.c
-@@ -284,7 +284,8 @@ static void __tb_path_deallocate_nfc(struct tb_path *path, int first_hop)
- 	}
- }
- 
--static int __tb_path_deactivate_hop(struct tb_port *port, int hop_index)
-+static int __tb_path_deactivate_hop(struct tb_port *port, int hop_index,
-+				    bool clear_fc)
- {
- 	struct tb_regs_hop hop;
- 	ktime_t timeout;
-@@ -311,8 +312,20 @@ static int __tb_path_deactivate_hop(struct tb_port *port, int hop_index)
- 		if (ret)
- 			return ret;
- 
--		if (!hop.pending)
-+		if (!hop.pending) {
-+			if (clear_fc) {
-+				/* Clear flow control */
-+				hop.ingress_fc = 0;
-+				hop.egress_fc = 0;
-+				hop.ingress_shared_buffer = 0;
-+				hop.egress_shared_buffer = 0;
-+
-+				return tb_port_write(port, &hop, TB_CFG_HOPS,
-+						     2 * hop_index, 2);
-+			}
-+
- 			return 0;
-+		}
- 
- 		usleep_range(10, 20);
- 	} while (ktime_before(ktime_get(), timeout));
-@@ -326,7 +339,8 @@ static void __tb_path_deactivate_hops(struct tb_path *path, int first_hop)
- 
- 	for (i = first_hop; i < path->path_length; i++) {
- 		res = __tb_path_deactivate_hop(path->hops[i].in_port,
--					       path->hops[i].in_hop_index);
-+					       path->hops[i].in_hop_index,
-+					       path->clear_fc);
- 		if (res)
- 			tb_port_warn(path->hops[i].in_port,
- 				     "hop deactivation failed for hop %d, index %d\n",
 diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index a1876dcd1d10..13eed95fc667 100644
+index 7cc1f534e776..a1876dcd1d10 100644
 --- a/drivers/thunderbolt/switch.c
 +++ b/drivers/thunderbolt/switch.c
-@@ -562,6 +562,28 @@ int tb_port_add_nfc_credits(struct tb_port *port, int credits)
- 			     TB_CFG_PORT, 4, 1);
+@@ -760,6 +760,10 @@ bool tb_port_is_enabled(struct tb_port *port)
+ 	case TB_TYPE_PCIE_DOWN:
+ 		return tb_pci_port_is_enabled(port);
+ 
++	case TB_TYPE_DP_HDMI_IN:
++	case TB_TYPE_DP_HDMI_OUT:
++		return tb_dp_port_is_enabled(port);
++
+ 	default:
+ 		return false;
+ 	}
+@@ -792,6 +796,113 @@ int tb_pci_port_enable(struct tb_port *port, bool enable)
+ 	return tb_port_write(port, &word, TB_CFG_PORT, port->cap_adap, 1);
  }
  
 +/**
-+ * tb_port_set_initial_credits() - Set initial port link credits allocated
-+ * @port: Port to set the initial credits
-+ * @credits: Number of credits to to allocate
++ * tb_dp_port_hpd_is_active() - Is HPD already active
++ * @port: DP out port to check
 + *
-+ * Set initial credits value to be used for ingress shared buffering.
++ * Checks if the DP OUT adapter port has HDP bit already set.
 + */
-+int tb_port_set_initial_credits(struct tb_port *port, u32 credits)
++int tb_dp_port_hpd_is_active(struct tb_port *port)
 +{
 +	u32 data;
 +	int ret;
 +
-+	ret = tb_port_read(port, &data, TB_CFG_PORT, 5, 1);
++	ret = tb_port_read(port, &data, TB_CFG_PORT, port->cap_adap + 2, 1);
 +	if (ret)
 +		return ret;
 +
-+	data &= ~TB_PORT_LCA_MASK;
-+	data |= (credits << TB_PORT_LCA_SHIFT) & TB_PORT_LCA_MASK;
-+
-+	return tb_port_write(port, &data, TB_CFG_PORT, 5, 1);
-+}
-+
- /**
-  * tb_port_clear_counter() - clear a counter in TB_CFG_COUNTER
-  *
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 7e155eed1fee..3a42a47df69f 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -198,6 +198,7 @@ struct tb_path {
- 	int weight:4;
- 	bool drop_packages;
- 	bool activated;
-+	bool clear_fc;
- 	struct tb_path_hop *hops;
- 	int path_length; /* number of hops */
- };
-@@ -465,6 +466,7 @@ static inline struct tb_switch *tb_to_switch(struct device *dev)
- 
- int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged);
- int tb_port_add_nfc_credits(struct tb_port *port, int credits);
-+int tb_port_set_initial_credits(struct tb_port *port, u32 credits);
- int tb_port_clear_counter(struct tb_port *port, int counter);
- int tb_port_alloc_in_hopid(struct tb_port *port, int hopid, int max_hopid);
- void tb_port_release_in_hopid(struct tb_port *port, int hopid);
-diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
-index 420d2a623f31..4591c8b1d546 100644
---- a/drivers/thunderbolt/tb_regs.h
-+++ b/drivers/thunderbolt/tb_regs.h
-@@ -215,6 +215,9 @@ struct tb_regs_port_header {
- #define TB_PORT_NFC_CREDITS_MASK	GENMASK(19, 0)
- #define TB_PORT_MAX_CREDITS_SHIFT	20
- #define TB_PORT_MAX_CREDITS_MASK	GENMASK(26, 20)
-+/* DWORD 5 */
-+#define TB_PORT_LCA_SHIFT		22
-+#define TB_PORT_LCA_MASK		GENMASK(28, 22)
- 
- /* Display Port adapter registers */
- 
-diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
-index 7aab7e07739b..f10a0a15b873 100644
---- a/drivers/thunderbolt/tunnel.c
-+++ b/drivers/thunderbolt/tunnel.c
-@@ -26,7 +26,10 @@
- #define TB_DP_AUX_PATH_OUT		1
- #define TB_DP_AUX_PATH_IN		2
- 
--static const char * const tb_tunnel_names[] = { "PCI", "DP" };
-+#define TB_DMA_PATH_OUT			0
-+#define TB_DMA_PATH_IN			1
-+
-+static const char * const tb_tunnel_names[] = { "PCI", "DP", "DMA" };
- 
- #define __TB_TUNNEL_PRINT(level, tunnel, fmt, arg...)                   \
- 	do {                                                            \
-@@ -461,6 +464,95 @@ struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
- 	return NULL;
- }
- 
-+static u32 tb_dma_credits(struct tb_port *nhi)
-+{
-+	u32 max_credits;
-+
-+	max_credits = nhi->config.nfc_credits & TB_PORT_MAX_CREDITS_MASK;
-+	max_credits >>= TB_PORT_MAX_CREDITS_SHIFT;
-+
-+	return min(max_credits, 13U);
-+}
-+
-+static int tb_dma_activate(struct tb_tunnel *tunnel, bool active)
-+{
-+	struct tb_port *nhi = tunnel->src_port;
-+	u32 credits;
-+
-+	credits = active ? tb_dma_credits(nhi) : 0;
-+	return tb_port_set_initial_credits(nhi, credits);
-+}
-+
-+static void tb_dma_init_path(struct tb_path *path, unsigned int isb,
-+			     unsigned int efc, u32 credits)
-+{
-+	int i;
-+
-+	path->egress_fc_enable = efc;
-+	path->ingress_fc_enable = TB_PATH_ALL;
-+	path->egress_shared_buffer = TB_PATH_NONE;
-+	path->ingress_shared_buffer = isb;
-+	path->priority = 5;
-+	path->weight = 1;
-+	path->clear_fc = true;
-+
-+	for (i = 0; i < path->path_length; i++)
-+		path->hops[i].initial_credits = credits;
++	return !!(data & TB_DP_HDP);
 +}
 +
 +/**
-+ * tb_tunnel_alloc_dma() - allocate a DMA tunnel
-+ * @tb: Pointer to the domain structure
-+ * @nhi: Host controller port
-+ * @dst: Destination null port which the other domain is connected to
-+ * @transmit_ring: NHI ring number used to send packets towards the
-+ *		   other domain
-+ * @transmit_path: HopID used for transmitting packets
-+ * @receive_ring: NHI ring number used to receive packets from the
-+ *		  other domain
-+ * @reveive_path: HopID used for receiving packets
++ * tb_dp_port_hpd_clear() - Clear HPD from DP IN port
++ * @port: Port to clear HPD
 + *
-+ * Return: Returns a tb_tunnel on success or NULL on failure.
++ * If the DP IN port has HDP set, this function can be used to clear it.
 + */
-+struct tb_tunnel *tb_tunnel_alloc_dma(struct tb *tb, struct tb_port *nhi,
-+				      struct tb_port *dst, int transmit_ring,
-+				      int transmit_path, int receive_ring,
-+				      int receive_path)
++int tb_dp_port_hpd_clear(struct tb_port *port)
++{
++	u32 data;
++	int ret;
++
++	ret = tb_port_read(port, &data, TB_CFG_PORT, port->cap_adap + 3, 1);
++	if (ret)
++		return ret;
++
++	data |= TB_DP_HPDC;
++	return tb_port_write(port, &data, TB_CFG_PORT, port->cap_adap + 3, 1);
++}
++
++/**
++ * tb_dp_port_set_hops() - Set video/aux Hop IDs for DP port
++ * @port: DP IN/OUT port to set hops
++ * @video: Video Hop ID
++ * @aux_tx: AUX TX Hop ID
++ * @aux_rx: AUX RX Hop ID
++ *
++ * Programs specified Hop IDs for DP IN/OUT port.
++ */
++int tb_dp_port_set_hops(struct tb_port *port, unsigned int video,
++			unsigned int aux_tx, unsigned int aux_rx)
++{
++	u32 data[2];
++	int ret;
++
++	ret = tb_port_read(port, data, TB_CFG_PORT, port->cap_adap,
++			   ARRAY_SIZE(data));
++	if (ret)
++		return ret;
++
++	data[0] &= ~TB_DP_VIDEO_HOPID_MASK;
++	data[1] &= ~(TB_DP_AUX_RX_HOPID_MASK | TB_DP_AUX_TX_HOPID_MASK);
++
++	data[0] |= (video << TB_DP_VIDEO_HOPID_SHIFT) & TB_DP_VIDEO_HOPID_MASK;
++	data[1] |= aux_tx & TB_DP_AUX_TX_HOPID_MASK;
++	data[1] |= (aux_rx << TB_DP_AUX_RX_HOPID_SHIFT) & TB_DP_AUX_RX_HOPID_MASK;
++
++	return tb_port_write(port, data, TB_CFG_PORT, port->cap_adap,
++			     ARRAY_SIZE(data));
++}
++
++/**
++ * tb_dp_port_is_enabled() - Is DP adapter port enabled
++ * @port: DP adapter port to check
++ */
++bool tb_dp_port_is_enabled(struct tb_port *port)
++{
++	u32 data;
++
++	if (tb_port_read(port, &data, TB_CFG_PORT, port->cap_adap, 1))
++		return false;
++
++	return !!(data & (TB_DP_VIDEO_EN | TB_DP_AUX_EN));
++}
++
++/**
++ * tb_dp_port_enable() - Enables/disables DP paths of a port
++ * @port: DP IN/OUT port
++ * @enable: Enable/disable DP path
++ *
++ * Once Hop IDs are programmed DP paths can be enabled or disabled by
++ * calling this function.
++ */
++int tb_dp_port_enable(struct tb_port *port, bool enable)
++{
++	u32 data;
++	int ret;
++
++	ret = tb_port_read(port, &data, TB_CFG_PORT, port->cap_adap, 1);
++	if (ret)
++		return ret;
++
++	if (enable)
++		data |= TB_DP_VIDEO_EN | TB_DP_AUX_EN;
++	else
++		data &= ~(TB_DP_VIDEO_EN | TB_DP_AUX_EN);
++
++	return tb_port_write(port, &data, TB_CFG_PORT, port->cap_adap, 1);
++}
++
+ /* switch utility functions */
+ 
+ static void tb_dump_switch(struct tb *tb, struct tb_regs_switch_header *sw)
+diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
+index 98c993259759..2565e30cdb96 100644
+--- a/drivers/thunderbolt/tb.c
++++ b/drivers/thunderbolt/tb.c
+@@ -28,6 +28,32 @@ struct tb_cm {
+ 	bool hotplug_active;
+ };
+ 
++struct tb_hotplug_event {
++	struct work_struct work;
++	struct tb *tb;
++	u64 route;
++	u8 port;
++	bool unplug;
++};
++
++static void tb_handle_hotplug(struct work_struct *work);
++
++static void tb_queue_hotplug(struct tb *tb, u64 route, u8 port, bool unplug)
++{
++	struct tb_hotplug_event *ev;
++
++	ev = kmalloc(sizeof(*ev), GFP_KERNEL);
++	if (!ev)
++		return;
++
++	ev->tb = tb;
++	ev->route = route;
++	ev->port = port;
++	ev->unplug = unplug;
++	INIT_WORK(&ev->work, tb_handle_hotplug);
++	queue_work(tb->wq, &ev->work);
++}
++
+ /* enumeration & hot plug handling */
+ 
+ static void tb_discover_tunnels(struct tb_switch *sw)
+@@ -42,6 +68,10 @@ static void tb_discover_tunnels(struct tb_switch *sw)
+ 
+ 		port = &sw->ports[i];
+ 		switch (port->config.type) {
++		case TB_TYPE_DP_HDMI_IN:
++			tunnel = tb_tunnel_discover_dp(tb, port);
++			break;
++
+ 		case TB_TYPE_PCIE_DOWN:
+ 			tunnel = tb_tunnel_discover_pci(tb, port);
+ 			break;
+@@ -102,6 +132,14 @@ static void tb_scan_port(struct tb_port *port)
+ 	struct tb_switch *sw;
+ 	if (tb_is_upstream_port(port))
+ 		return;
++
++	if (tb_port_is_dpout(port) && tb_dp_port_hpd_is_active(port) == 1) {
++		tb_port_dbg(port, "DP adapter HPD set, queuing hotplug\n");
++		tb_queue_hotplug(port->sw->tb, tb_route(port->sw), port->port,
++				 false);
++		return;
++	}
++
+ 	if (port->config.type != TB_TYPE_PORT)
+ 		return;
+ 	if (port->dual_link_port && port->link_nr)
+@@ -148,6 +186,26 @@ static void tb_scan_port(struct tb_port *port)
+ 	tb_scan_switch(sw);
+ }
+ 
++static int tb_free_tunnel(struct tb *tb, enum tb_tunnel_type type,
++			  struct tb_port *src_port, struct tb_port *dst_port)
++{
++	struct tb_cm *tcm = tb_priv(tb);
++	struct tb_tunnel *tunnel;
++
++	list_for_each_entry(tunnel, &tcm->tunnel_list, list) {
++		if (tunnel->type == type &&
++		    ((src_port && src_port == tunnel->src_port) ||
++		     (dst_port && dst_port == tunnel->dst_port))) {
++			tb_tunnel_deactivate(tunnel);
++			list_del(&tunnel->list);
++			tb_tunnel_free(tunnel);
++			return 0;
++		}
++	}
++
++	return -ENODEV;
++}
++
+ /**
+  * tb_free_invalid_tunnels() - destroy tunnels of devices that have gone away
+  */
+@@ -227,6 +285,44 @@ static struct tb_port *tb_find_unused_port(struct tb_switch *sw,
+ 	return NULL;
+ }
+ 
++static int tb_tunnel_dp(struct tb *tb, struct tb_port *out)
++{
++	struct tb_cm *tcm = tb_priv(tb);
++	struct tb_switch *sw = out->sw;
++	struct tb_tunnel *tunnel;
++	struct tb_port *in;
++
++	if (tb_port_is_enabled(out))
++		return 0;
++
++	do {
++		sw = tb_to_switch(sw->dev.parent);
++		if (!sw)
++			return 0;
++		in = tb_find_unused_port(sw, TB_TYPE_DP_HDMI_IN);
++	} while (!in);
++
++	tunnel = tb_tunnel_alloc_dp(tb, in, out);
++	if (!tunnel) {
++		tb_port_dbg(out, "DP tunnel allocation failed\n");
++		return -EIO;
++	}
++
++	if (tb_tunnel_activate(tunnel)) {
++		tb_port_info(out, "DP tunnel activation failed, aborting\n");
++		tb_tunnel_free(tunnel);
++		return -EIO;
++	}
++
++	list_add_tail(&tunnel->list, &tcm->tunnel_list);
++	return 0;
++}
++
++static void tb_teardown_dp(struct tb *tb, struct tb_port *out)
++{
++	tb_free_tunnel(tb, TB_TUNNEL_DP, NULL, out);
++}
++
+ static int tb_tunnel_pci(struct tb *tb, struct tb_switch *sw)
+ {
+ 	struct tb_cm *tcm = tb_priv(tb);
+@@ -283,14 +379,6 @@ static int tb_approve_switch(struct tb *tb, struct tb_switch *sw)
+ 
+ /* hotplug handling */
+ 
+-struct tb_hotplug_event {
+-	struct work_struct work;
+-	struct tb *tb;
+-	u64 route;
+-	u8 port;
+-	bool unplug;
+-};
+-
+ /**
+  * tb_handle_hotplug() - handle hotplug event
+  *
+@@ -335,6 +423,8 @@ static void tb_handle_hotplug(struct work_struct *work)
+ 			cancel_work_sync(&sw->work);
+ 			tb_switch_remove(port->remote->sw);
+ 			port->remote = NULL;
++		} else if (tb_port_is_dpout(port)) {
++			tb_teardown_dp(tb, port);
+ 		} else {
+ 			tb_port_info(port,
+ 				     "got unplug event for disconnected port, ignoring\n");
+@@ -348,6 +438,8 @@ static void tb_handle_hotplug(struct work_struct *work)
+ 			tb_scan_port(port);
+ 			if (!port->remote)
+ 				tb_port_info(port, "hotplug: no switch found\n");
++		} else if (tb_port_is_dpout(port)) {
++			tb_tunnel_dp(tb, port);
+ 		}
+ 	}
+ out:
+@@ -364,7 +456,6 @@ static void tb_handle_event(struct tb *tb, enum tb_cfg_pkg_type type,
+ 			    const void *buf, size_t size)
+ {
+ 	const struct cfg_event_pkg *pkg = buf;
+-	struct tb_hotplug_event *ev;
+ 	u64 route;
+ 
+ 	if (type != TB_CFG_PKG_EVENT) {
+@@ -380,15 +471,7 @@ static void tb_handle_event(struct tb *tb, enum tb_cfg_pkg_type type,
+ 			pkg->port);
+ 	}
+ 
+-	ev = kmalloc(sizeof(*ev), GFP_KERNEL);
+-	if (!ev)
+-		return;
+-	INIT_WORK(&ev->work, tb_handle_hotplug);
+-	ev->tb = tb;
+-	ev->route = route;
+-	ev->port = pkg->port;
+-	ev->unplug = pkg->unplug;
+-	queue_work(tb->wq, &ev->work);
++	tb_queue_hotplug(tb, route, pkg->port, pkg->unplug);
+ }
+ 
+ static void tb_stop(struct tb *tb)
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index d16a67898a34..e06e5a944998 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -291,6 +291,16 @@ static inline bool tb_port_is_null(const struct tb_port *port)
+ 	return port->port && port->config.type == TB_TYPE_PORT;
+ }
+ 
++static inline bool tb_port_is_dpin(const struct tb_port *port)
++{
++	return port->config.type == TB_TYPE_DP_HDMI_IN;
++}
++
++static inline bool tb_port_is_dpout(const struct tb_port *port)
++{
++	return port->config.type == TB_TYPE_DP_HDMI_OUT;
++}
++
+ static inline int tb_sw_read(struct tb_switch *sw, void *buffer,
+ 			     enum tb_cfg_space space, u32 offset, u32 length)
+ {
+@@ -467,6 +477,13 @@ bool tb_port_is_enabled(struct tb_port *port);
+ bool tb_pci_port_is_enabled(struct tb_port *port);
+ int tb_pci_port_enable(struct tb_port *port, bool enable);
+ 
++int tb_dp_port_hpd_is_active(struct tb_port *port);
++int tb_dp_port_hpd_clear(struct tb_port *port);
++int tb_dp_port_set_hops(struct tb_port *port, unsigned int video,
++			unsigned int aux_tx, unsigned int aux_rx);
++bool tb_dp_port_is_enabled(struct tb_port *port);
++int tb_dp_port_enable(struct tb_port *port, bool enable);
++
+ struct tb_path *tb_path_discover(struct tb_port *port, int start_hopid,
+ 				 struct tb_port **last);
+ struct tb_path *tb_path_alloc(struct tb *tb, struct tb_port *src,
+diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
+index 74c0f4a5606d..420d2a623f31 100644
+--- a/drivers/thunderbolt/tb_regs.h
++++ b/drivers/thunderbolt/tb_regs.h
+@@ -213,6 +213,28 @@ struct tb_regs_port_header {
+ 
+ /* DWORD 4 */
+ #define TB_PORT_NFC_CREDITS_MASK	GENMASK(19, 0)
++#define TB_PORT_MAX_CREDITS_SHIFT	20
++#define TB_PORT_MAX_CREDITS_MASK	GENMASK(26, 20)
++
++/* Display Port adapter registers */
++
++/* DWORD 0 */
++#define TB_DP_VIDEO_EN			BIT(31)
++#define TB_DP_AUX_EN			BIT(30)
++#define TB_DP_VIDEO_HOPID_SHIFT		16
++#define TB_DP_VIDEO_HOPID_MASK		GENMASK(26, 16)
++/* DWORD 1 */
++#define TB_DP_AUX_TX_HOPID_MASK		GENMASK(10, 0)
++#define TB_DP_AUX_RX_HOPID_SHIFT	11
++#define TB_DP_AUX_RX_HOPID_MASK		GENMASK(21, 11)
++/* DWORD 2 */
++#define TB_DP_HDP			BIT(6)
++/* DWORD 3 */
++#define TB_DP_HPDC			BIT(9)
++/* DWORD 4 */
++#define TB_DP_LOCAL_CAP			4
++/* DWORD 5 */
++#define TB_DP_REMOTE_CAP		5
+ 
+ /* PCIe adapter registers */
+ 
+diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
+index 1a5e2aa395c6..7aab7e07739b 100644
+--- a/drivers/thunderbolt/tunnel.c
++++ b/drivers/thunderbolt/tunnel.c
+@@ -18,14 +18,25 @@
+ #define TB_PCI_PATH_DOWN		0
+ #define TB_PCI_PATH_UP			1
+ 
++/* DP adapters use hop ID 8 for aux and 9 for video */
++#define TB_DP_AUX_TX_HOPID		8
++#define TB_DP_VIDEO_HOPID		9
++
++#define TB_DP_VIDEO_PATH_OUT		0
++#define TB_DP_AUX_PATH_OUT		1
++#define TB_DP_AUX_PATH_IN		2
++
++static const char * const tb_tunnel_names[] = { "PCI", "DP" };
++
+ #define __TB_TUNNEL_PRINT(level, tunnel, fmt, arg...)                   \
+ 	do {                                                            \
+ 		struct tb_tunnel *__tunnel = (tunnel);                  \
+-		level(__tunnel->tb, "%llx:%x <-> %llx:%x (PCI): " fmt,  \
++		level(__tunnel->tb, "%llx:%x <-> %llx:%x (%s): " fmt,   \
+ 		      tb_route(__tunnel->src_port->sw),                 \
+ 		      __tunnel->src_port->port,                         \
+ 		      tb_route(__tunnel->dst_port->sw),                 \
+ 		      __tunnel->dst_port->port,                         \
++		      tb_tunnel_names[__tunnel->type],			\
+ 		      ## arg);                                          \
+ 	} while (0)
+ 
+@@ -36,7 +47,8 @@
+ #define tb_tunnel_info(tunnel, fmt, arg...) \
+ 	__TB_TUNNEL_PRINT(tb_info, tunnel, fmt, ##arg)
+ 
+-static struct tb_tunnel *tb_tunnel_alloc(struct tb *tb, size_t npaths)
++static struct tb_tunnel *tb_tunnel_alloc(struct tb *tb, size_t npaths,
++					 enum tb_tunnel_type type)
+ {
+ 	struct tb_tunnel *tunnel;
+ 
+@@ -53,6 +65,7 @@ static struct tb_tunnel *tb_tunnel_alloc(struct tb *tb, size_t npaths)
+ 	INIT_LIST_HEAD(&tunnel->list);
+ 	tunnel->tb = tb;
+ 	tunnel->npaths = npaths;
++	tunnel->type = type;
+ 
+ 	return tunnel;
+ }
+@@ -99,7 +112,7 @@ struct tb_tunnel *tb_tunnel_discover_pci(struct tb *tb, struct tb_port *down)
+ 	if (!tb_pci_port_is_enabled(down))
+ 		return NULL;
+ 
+-	tunnel = tb_tunnel_alloc(tb, 2);
++	tunnel = tb_tunnel_alloc(tb, 2, TB_TUNNEL_PCI);
+ 	if (!tunnel)
+ 		return NULL;
+ 
+@@ -165,7 +178,7 @@ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
+ 	struct tb_tunnel *tunnel;
+ 	struct tb_path *path;
+ 
+-	tunnel = tb_tunnel_alloc(tb, 2);
++	tunnel = tb_tunnel_alloc(tb, 2, TB_TUNNEL_PCI);
+ 	if (!tunnel)
+ 		return NULL;
+ 
+@@ -192,6 +205,262 @@ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
+ 	return tunnel;
+ }
+ 
++static int tb_dp_xchg_caps(struct tb_port *in, struct tb_port *out)
++{
++	u32 in_dp_cap, out_dp_cap;
++	int ret;
++
++	/*
++	 * Copy DP_LOCAL_CAP register to DP_REMOTE_CAP register for
++	 * newer generation hardware.
++	 */
++	if (in->sw->generation < 2 || out->sw->generation < 2)
++		return 0;
++
++	/* Read both DP_LOCAL_CAP registers */
++	ret = tb_port_read(in, &in_dp_cap, TB_CFG_PORT,
++			   in->cap_adap + TB_DP_LOCAL_CAP, 1);
++	if (ret)
++		return ret;
++
++	ret = tb_port_read(out, &out_dp_cap, TB_CFG_PORT,
++			   out->cap_adap + TB_DP_LOCAL_CAP, 1);
++	if (ret)
++		return ret;
++
++	/* Write them to the opposite adapter port */
++	ret = tb_port_write(out, &in_dp_cap, TB_CFG_PORT,
++			    out->cap_adap + TB_DP_REMOTE_CAP, 1);
++	if (ret)
++		return ret;
++
++	return tb_port_write(in, &out_dp_cap, TB_CFG_PORT,
++			     in->cap_adap + TB_DP_REMOTE_CAP, 1);
++}
++
++static int tb_dp_activate(struct tb_tunnel *tunnel, bool active)
++{
++	int ret;
++
++	if (active) {
++		struct tb_path **paths;
++		int last;
++
++		ret = tb_dp_xchg_caps(tunnel->src_port, tunnel->dst_port);
++		if (ret)
++			return ret;
++
++		paths = tunnel->paths;
++		last = paths[TB_DP_VIDEO_PATH_OUT]->path_length - 1;
++
++		tb_dp_port_set_hops(tunnel->src_port,
++			paths[TB_DP_VIDEO_PATH_OUT]->hops[0].in_hop_index,
++			paths[TB_DP_AUX_PATH_OUT]->hops[0].in_hop_index,
++			paths[TB_DP_AUX_PATH_IN]->hops[last].next_hop_index);
++
++		tb_dp_port_set_hops(tunnel->dst_port,
++			paths[TB_DP_VIDEO_PATH_OUT]->hops[last].next_hop_index,
++			paths[TB_DP_AUX_PATH_IN]->hops[0].in_hop_index,
++			paths[TB_DP_AUX_PATH_OUT]->hops[last].next_hop_index);
++	} else {
++		tb_dp_port_hpd_clear(tunnel->src_port);
++	}
++
++	ret = tb_dp_port_enable(tunnel->src_port, active);
++	if (ret)
++		return ret;
++
++	return tb_dp_port_enable(tunnel->dst_port, active);
++}
++
++static void tb_dp_init_aux_path(struct tb_path *path)
++{
++	int i;
++
++	path->egress_fc_enable = TB_PATH_SOURCE | TB_PATH_INTERNAL;
++	path->egress_shared_buffer = TB_PATH_NONE;
++	path->ingress_fc_enable = TB_PATH_ALL;
++	path->ingress_shared_buffer = TB_PATH_NONE;
++	path->priority = 2;
++	path->weight = 1;
++
++	path->hops[0].initial_credits = 1;
++	for (i = 1; i < path->path_length; i++)
++		path->hops[i].initial_credits = 1;
++}
++
++static void tb_dp_init_video_path(struct tb_path *path, bool discover)
++{
++	const struct tb_port *in = path->hops[0].in_port;
++
++	path->egress_fc_enable = TB_PATH_NONE;
++	path->egress_shared_buffer = TB_PATH_NONE;
++	path->ingress_fc_enable = TB_PATH_NONE;
++	path->ingress_shared_buffer = TB_PATH_NONE;
++	path->priority = 1;
++	path->weight = 1;
++
++	if (discover) {
++		path->nfc_credits =
++			in->config.nfc_credits & TB_PORT_NFC_CREDITS_MASK;
++	} else {
++		u32 max_credits;
++
++		max_credits = in->config.nfc_credits & TB_PORT_MAX_CREDITS_MASK;
++		max_credits >>= TB_PORT_MAX_CREDITS_SHIFT;
++
++		/* Leave some credits for AUX path */
++		path->nfc_credits = min_t(u32, max_credits - 2, 12);
++	}
++}
++
++/**
++ * tb_tunnel_discover_dp() - Discover existing Display Port tunnels
++ * @tb: Pointer to the domain structure
++ * @in: DP in adapter
++ *
++ * If @in adapter is active, follows the tunnel to the DP out adapter
++ * and back. Returns the discovered tunnel or %NULL if there was no
++ * tunnel.
++ *
++ * Return: DP tunnel or %NULL if no tunnel found.
++ */
++struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in)
 +{
 +	struct tb_tunnel *tunnel;
 +	struct tb_path *path;
-+	u32 credits;
++	struct tb_port *out;
++	int ret, hopid;
++	u32 data[4];
 +
-+	tunnel = tb_tunnel_alloc(tb, 2, TB_TUNNEL_DMA);
++	ret = tb_port_read(in, data, TB_CFG_PORT, in->cap_adap,
++			   ARRAY_SIZE(data));
++	if (ret < 0)
++		return NULL;
++
++	/* Both needs to be enabled for now */
++	if (!(data[0] & TB_DP_VIDEO_EN) || !(data[0] & TB_DP_AUX_EN))
++		return NULL;
++
++	tunnel = tb_tunnel_alloc(tb, 3, TB_TUNNEL_DP);
 +	if (!tunnel)
 +		return NULL;
 +
-+	tunnel->activate = tb_dma_activate;
-+	tunnel->src_port = nhi;
-+	tunnel->dst_port = dst;
++	tunnel->activate = tb_dp_activate;
++	tunnel->src_port = in;
 +
-+	credits = tb_dma_credits(nhi);
++	hopid = (data[0] & TB_DP_VIDEO_HOPID_MASK) >> TB_DP_VIDEO_HOPID_SHIFT;
++	path = tb_path_discover(in, hopid, &out);
++	if (!path)
++		goto err_free;
 +
-+	path = tb_path_alloc(tb, dst, nhi, receive_path, receive_ring, 0);
-+	if (!path) {
-+		tb_tunnel_free(tunnel);
-+		return NULL;
++	if (out->config.type != TB_TYPE_DP_HDMI_OUT) {
++		tb_port_warn(in, "path does not end to a DP adapter\n");
++		goto err_free;
 +	}
-+	tb_dma_init_path(path, TB_PATH_NONE, TB_PATH_SOURCE | TB_PATH_INTERNAL,
-+			 credits);
-+	tunnel->paths[TB_DMA_PATH_IN] = path;
 +
-+	path = tb_path_alloc(tb, nhi, dst, transmit_ring, transmit_path, 0);
-+	if (!path) {
-+		tb_tunnel_free(tunnel);
-+		return NULL;
++	tunnel->paths[TB_DP_VIDEO_PATH_OUT] = path;
++	tunnel->dst_port = out;
++
++	hopid = data[1] & TB_DP_AUX_TX_HOPID_MASK;
++	path = tb_path_discover(in, hopid, NULL);
++	if (!path)
++		goto err_free;
++	tunnel->paths[TB_DP_AUX_PATH_OUT] = path;
++
++	ret = tb_port_read(out, data, TB_CFG_PORT, out->cap_adap,
++			   ARRAY_SIZE(data));
++	if (ret < 0)
++		goto err_free;
++
++	hopid = data[1] & TB_DP_AUX_TX_HOPID_MASK;
++
++	if (!(data[0] & TB_DP_VIDEO_EN) || !(data[0] & TB_DP_AUX_EN))
++		goto err_free;
++
++	path = tb_path_discover(out, hopid, &in);
++	if (!path)
++		goto err_free;
++
++	tunnel->paths[TB_DP_AUX_PATH_IN] = path;
++
++	if (in != tunnel->src_port) {
++		tb_tunnel_warn(tunnel, "path is not complete, skipping\n");
++		goto err_free;
 +	}
-+	tb_dma_init_path(path, TB_PATH_SOURCE, TB_PATH_ALL, credits);
-+	tunnel->paths[TB_DMA_PATH_OUT] = path;
++
++	/* Activated by the boot firmware */
++	tunnel->paths[TB_DP_VIDEO_PATH_OUT]->activated = true;
++	tunnel->paths[TB_DP_AUX_PATH_OUT]->activated = true;
++	tunnel->paths[TB_DP_AUX_PATH_IN]->activated = true;
++
++	tb_dp_init_video_path(tunnel->paths[TB_DP_VIDEO_PATH_OUT], true);
++	tb_dp_init_aux_path(tunnel->paths[TB_DP_AUX_PATH_OUT]);
++	tb_dp_init_aux_path(tunnel->paths[TB_DP_AUX_PATH_IN]);
 +
 +	return tunnel;
++
++err_free:
++	tb_tunnel_free(tunnel);
++	return NULL;
++}
++
++/**
++ * tb_tunnel_alloc_dp() - allocate a Display Port tunnel
++ * @tb: Pointer to the domain structure
++ * @in: DP in adapter port
++ * @out: DP out adapter port
++ *
++ * Allocates a tunnel between @in and @out that is capable of tunneling
++ * Display Port traffic.
++ *
++ * Return: Returns a tb_tunnel on success or NULL on failure.
++ */
++struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
++				     struct tb_port *out)
++{
++	struct tb_tunnel *tunnel;
++	struct tb_path **paths;
++	struct tb_path *path;
++
++	if (WARN_ON(!in->cap_adap || !out->cap_adap))
++		return NULL;
++
++	tunnel = tb_tunnel_alloc(tb, 3, TB_TUNNEL_DP);
++	if (!tunnel)
++		return NULL;
++
++	tunnel->activate = tb_dp_activate;
++	tunnel->src_port = in;
++	tunnel->dst_port = out;
++
++	paths = tunnel->paths;
++
++	path = tb_path_alloc(tb, in, out, TB_DP_VIDEO_HOPID, -1, 1);
++	if (!path)
++		goto err_free;
++	tb_dp_init_video_path(path, false);
++	paths[TB_DP_VIDEO_PATH_OUT] = path;
++
++	path = tb_path_alloc(tb, in, out, TB_DP_AUX_TX_HOPID, -1, 1);
++	if (!path)
++		goto err_free;
++	tb_dp_init_aux_path(path);
++	paths[TB_DP_AUX_PATH_OUT] = path;
++
++	path = tb_path_alloc(tb, out, in, TB_DP_AUX_TX_HOPID, -1, 1);
++	if (!path)
++		goto err_free;
++	tb_dp_init_aux_path(path);
++	paths[TB_DP_AUX_PATH_IN] = path;
++
++	return tunnel;
++
++err_free:
++	tb_tunnel_free(tunnel);
++	return NULL;
 +}
 +
  /**
   * tb_tunnel_free() - free a tunnel
   * @tunnel: Tunnel to be freed
 diff --git a/drivers/thunderbolt/tunnel.h b/drivers/thunderbolt/tunnel.h
-index 07583f8247c1..fa51217e5925 100644
+index 7e801a31f9d1..07583f8247c1 100644
 --- a/drivers/thunderbolt/tunnel.h
 +++ b/drivers/thunderbolt/tunnel.h
-@@ -14,6 +14,7 @@
- enum tb_tunnel_type {
- 	TB_TUNNEL_PCI,
- 	TB_TUNNEL_DP,
-+	TB_TUNNEL_DMA,
+@@ -11,6 +11,11 @@
+ 
+ #include "tb.h"
+ 
++enum tb_tunnel_type {
++	TB_TUNNEL_PCI,
++	TB_TUNNEL_DP,
++};
++
+ /**
+  * struct tb_tunnel - Tunnel between two ports
+  * @tb: Pointer to the domain
+@@ -20,6 +25,7 @@
+  * @npaths: Number of paths in @paths
+  * @activate: Optional tunnel specific activation/deactivation
+  * @list: Tunnels are linked using this field
++ * @type: Type of the tunnel
+  */
+ struct tb_tunnel {
+ 	struct tb *tb;
+@@ -29,16 +35,31 @@ struct tb_tunnel {
+ 	size_t npaths;
+ 	int (*activate)(struct tb_tunnel *tunnel, bool activate);
+ 	struct list_head list;
++	enum tb_tunnel_type type;
  };
  
- /**
-@@ -44,6 +45,10 @@ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
- struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in);
- struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
- 				     struct tb_port *out);
-+struct tb_tunnel *tb_tunnel_alloc_dma(struct tb *tb, struct tb_port *nhi,
-+				      struct tb_port *dst, int transmit_ring,
-+				      int transmit_path, int receive_ring,
-+				      int receive_path);
- 
+ struct tb_tunnel *tb_tunnel_discover_pci(struct tb *tb, struct tb_port *down);
+ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
+ 				      struct tb_port *down);
++struct tb_tunnel *tb_tunnel_discover_dp(struct tb *tb, struct tb_port *in);
++struct tb_tunnel *tb_tunnel_alloc_dp(struct tb *tb, struct tb_port *in,
++				     struct tb_port *out);
++
  void tb_tunnel_free(struct tb_tunnel *tunnel);
  int tb_tunnel_activate(struct tb_tunnel *tunnel);
-@@ -61,5 +66,10 @@ static inline bool tb_tunnel_is_dp(const struct tb_tunnel *tunnel)
- 	return tunnel->type == TB_TUNNEL_DP;
- }
+ int tb_tunnel_restart(struct tb_tunnel *tunnel);
+ void tb_tunnel_deactivate(struct tb_tunnel *tunnel);
+ bool tb_tunnel_is_invalid(struct tb_tunnel *tunnel);
  
-+static inline bool tb_tunnel_is_dma(const struct tb_tunnel *tunnel)
++static inline bool tb_tunnel_is_pci(const struct tb_tunnel *tunnel)
 +{
-+	return tunnel->type == TB_TUNNEL_DMA;
++	return tunnel->type == TB_TUNNEL_PCI;
++}
++
++static inline bool tb_tunnel_is_dp(const struct tb_tunnel *tunnel)
++{
++	return tunnel->type == TB_TUNNEL_DP;
 +}
 +
  #endif
