@@ -2,93 +2,107 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEF2C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75766C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6E92083B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42579217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549482731;
+	bh=w+DGFDTLkP77xayNW0w9JiSIyI48OufI8Y2ZmervkNo=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=yWdfKZ3drlJvFvKXn2TGDZpTtda3/bLQId5TqVoprVfJc4FbjA3OBcOY4619AW81Q
+	 mu7t9Nxkn6+ZhILimhk68FNI1Z4vZ0Elg9dhf+/Kx9KODmuHP2Xdjk3pV3azBHUCUG
+	 hUOX6xQM+gzzY/s/8ofqp8gaZqSlmt/dZIHzwOug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbfBFTun (ORCPT
+        id S1726876AbfBFTwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:50:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43346 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbfBFTun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:50:43 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 07ED925EC6;
-        Wed,  6 Feb 2019 19:50:43 +0000 (UTC)
-Received: from [10.10.124.78] (ovpn-124-78.rdu2.redhat.com [10.10.124.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AD93A87DB;
-        Wed,  6 Feb 2019 19:50:41 +0000 (UTC)
-Subject: Re: [PATCH] x86/boot/compressed/64: Do not corrupt EDX on EFER.LME=1
- setting
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Kyle D Pelton <kyle.d.pelton@intel.com>
-References: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
-From:   Wei Huang <wei@redhat.com>
-Message-ID: <ac67e82b-7e66-8325-a1e3-43c0c0b06024@redhat.com>
-Date:   Wed, 6 Feb 2019 13:50:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 6 Feb 2019 14:52:09 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:43063 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbfBFTwJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 14:52:09 -0500
+Received: by mail-yw1-f65.google.com with SMTP id u200so3632272ywu.10;
+        Wed, 06 Feb 2019 11:52:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=MSVhCOK7rMXrMnBSLKltiXtG9QzJqhjoir0Y7Ntls3c=;
+        b=FKUKxUoasMRjF57OKehoZon53ZPx1HG813SjdHT+f3mRavOKEvvk4d1PMufjjKhkl7
+         IbUKhenmXA7gNeE9QuPFX/vJmnYwLVhQ/ZJMDNpM6v0EjCVYoAWeLdd24u14xrtROnfP
+         2W0POEDa8IW8hKwMy5pdZopsrgCZQhpwIosWBS6l/TrKTPDxH3BluLkrXZ+lLvPKWkB0
+         /FI+zDeiXgZVQ4a2cp3urHpewQKG/6dRHJYcN+Tb2+M8UYV4siPEqc/9LM9DMLhAONqF
+         babm2lccBSH9/Z/KASR1hT6oGLbBx6CGIzgUGjnk41Ybb2WW65p/GRoOg7dTy3g1K490
+         sl6A==
+X-Gm-Message-State: AHQUAub9OFLsCUGvQ9NlFzb+ILcqi6Nd3v7GDvZod6qjvAEWy4JhLAOk
+        rcZATUZR3LQLVZ0jNdaVmzs=
+X-Google-Smtp-Source: AHgI3IYgS5fB6kOCNQjl03Mf1yuO+8Z1DoiVZcLE9r6Xftfdoc3AsbgaRnWRQqlIHzuvrbFKbDnfpg==
+X-Received: by 2002:a0d:e8c9:: with SMTP id r192mr3641239ywe.321.1549482727690;
+        Wed, 06 Feb 2019 11:52:07 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id e194sm5777996ywa.85.2019.02.06.11.52.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 11:52:06 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Wed, 06 Feb 2019 11:52:02 -0800
+Date:   Wed, 6 Feb 2019 11:52:02 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Zev Weiss <zev@bewilderbeest.net>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+        yzaikin@google.com, brendanhiggins@google.com
+Subject: Re: [PATCH 1/2] test_sysctl: add tests for >32-bit values written to
+ 32-bit integers
+Message-ID: <20190206195202.GF11489@garbanzo.do-not-panic.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 06 Feb 2019 19:50:43 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks for the patches, please include akpm@linux-foundation.org in the
+future, as we can merge the changes through Andrew as well.
+
+Also please Cc yzaikin@google.com, brendanhiggins@google.com in follow
+ups for now.  They are looking at the sysctl testing code as well.
+
+Some feedback below:
+
+In-Reply-To: <20181227111231.12912-2-zev@bewilderbeest.net>
+
+On Thu, Dec 27, 2018 at 05:12:29AM -0600, Zev Weiss wrote:
+> +run_wideint_tests()
+> +{
+> +	# check negative and positive 64-bit values, with and without
+> +	# bits set in the lower 31, and with and without bit 31 (sign
+> +	# bit of a 32-bit int) set.  None of these are representable
+> +	# in 32 bits, and hence all should fail.
+> +	check_failure 0x0000010000000000
+> +	check_failure 0x0000010080000000
+> +	check_failure 0x000001ff7fffffff
+> +	check_failure 0x000001ffffffffff
+> +	check_failure 0xffffffff7fffffff
 
 
-On 2/6/19 5:52 AM, Kirill A. Shutemov wrote:
-> RDMSR in the trampoline code overrides EDX, but we use the register to
-> indicate if 5-level paging has to enabled. It leads to failure to boot
-> on a 5-level paging machine.
-> 
-> Preserve EDX on the stack while we are dealing with EFER.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Fixes: b677dfae5aa1 ("x86/boot/compressed/64: Set EFER.LME=1 in 32-bit trampoline before returning to long mode")
-> Reported-by: Kyle D Pelton <kyle.d.pelton@intel.com>
-> Cc: Wei Huang <wei@redhat.com>
-> ---
->  arch/x86/boot/compressed/head_64.S | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-> index f105ae8651c9..f62e347862cc 100644
-> --- a/arch/x86/boot/compressed/head_64.S
-> +++ b/arch/x86/boot/compressed/head_64.S
-> @@ -602,10 +602,12 @@ ENTRY(trampoline_32bit_src)
->  3:
->  	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
->  	pushl	%ecx
-> +	pushl	%edx
->  	movl	$MSR_EFER, %ecx
->  	rdmsr
->  	btsl	$_EFER_LME, %eax
->  	wrmsr
-> +	popl	%edx
->  	popl	%ecx
->  
->  	/* Enable PAE and LA57 (if required) paging modes */
-> 
+> +	check_failure 0xffffffffffffffff
 
-Oops, rdmsr indeed corrupts EDX.
+This s64 version of -1
 
-Acked-by: Wei Huang <wei@redhat.com>
+> +	check_failure 0xffffff0000000000
+> +	check_failure 0xffffff0080000000
+> +}
 
+It was still unclear from the comments and manually looking at the
+values why they are clear candidates to always test from all respective
+64-bit values. A comment per each would be useful.
+
+  Luis
