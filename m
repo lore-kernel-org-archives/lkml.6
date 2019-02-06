@@ -2,137 +2,93 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7520CC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C957C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDA9218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6546B218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:04:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ViP4o7nL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfBFVEC (ORCPT
+        id S1726864AbfBFVEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:04:02 -0500
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:32024 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726649AbfBFVEC (ORCPT
+        Wed, 6 Feb 2019 16:04:55 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35693 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfBFVEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:04:02 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 07 Feb 2019 07:33:59 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1grUMO-0003Ji-FA; Thu, 07 Feb 2019 08:03:56 +1100
-Date:   Thu, 7 Feb 2019 08:03:56 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190206210356.GZ6173@dastard>
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
- <20190206095000.GA12006@quack2.suse.cz>
- <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+        Wed, 6 Feb 2019 16:04:54 -0500
+Received: by mail-pg1-f195.google.com with SMTP id s198so3474110pgs.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:04:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
+         :subject:message-id:references:cc:from:date;
+        bh=fPLjGlqReW8R3/Rrke2fNcnowF/7bAVMyCUc2xdQWgQ=;
+        b=ViP4o7nLA2rVBYlNNnIwJCngAkXwNo1IGEXK1VrrnHNDpGxNQJ0FUz7kn0aO3G2jxS
+         eFCyLe/TUy6WpQrJEgBj0W1BDGUGTw20NlCfeE2Y37C6UYzCR+kMOqP6RAF/egU3xjNq
+         +HW6lOUC16AQUhbXTPhYAevBfvgxjTS48TowU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to
+         :in-reply-to:user-agent:subject:message-id:references:cc:from:date;
+        bh=fPLjGlqReW8R3/Rrke2fNcnowF/7bAVMyCUc2xdQWgQ=;
+        b=gRVdxM3RyJTQOcafiMMnsI8xhyzT/3Kh3ol1gBAaNhSjjoxOTcQOUDUdOOzzMYZxDN
+         oi1Fy9GteClASbzFHDKFpRmu3VncpnsdWXdatW+yLh1OAER184vKzpVMI9AaD83b2lHZ
+         0cLT2iIM939et4Zwrek+nBSFF2TpHWfjb92/6pJzip622s13+8YBYMHhiNzCHvr0FVTx
+         CX/PKKfaqtOsKloujCB+7/ceFVBtrgahuuwC4IlnMpFiR2cpkI4+f8bt6OyTsjGMLa9D
+         FNpOpcfqH4ufruCTAjfIbtwLkX7UW2bwUtkFwxQFPViXspDji7UFA4dSuUoI2mGkkBs1
+         4AvQ==
+X-Gm-Message-State: AHQUAuY8L6X+Yd3YzxyHmHt1I63rvPT6MOenTliqdTbdgCoYWaTtnCmN
+        hcstv2UClLfyyKhid2yA3WOB+g==
+X-Google-Smtp-Source: AHgI3IaJiG9smRLpuEJWBGEmmZ+ocjgm9SgzRC2rSOZpeoNKKUx5b/HE9SWsYaFlCjdnp56XBl6Qvw==
+X-Received: by 2002:a63:e80e:: with SMTP id s14mr11460138pgh.30.1549487094122;
+        Wed, 06 Feb 2019 13:04:54 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id b7sm9439585pfa.52.2019.02.06.13.04.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 13:04:53 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: quoted-printable
+To:     Andy Gross <andy.gross@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+In-Reply-To: <20190205185902.106085-7-evgreen@chromium.org>
+User-Agent: alot/0.8
+Subject: Re: [PATCH v3 6/8] scsi: ufs: qcom: Expose the reset controller for PHY
+Message-ID: <154948709228.115909.11813314659494594710@swboyd.mtv.corp.google.com>
+References: <20190205185902.106085-1-evgreen@chromium.org> <20190205185902.106085-7-evgreen@chromium.org>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Can Guo <cang@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Wed, 06 Feb 2019 13:04:52 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote:
-> On Wed, 6 Feb 2019, Doug Ledford wrote:
-> 
-> > > Most of the cases we want revoke for are things like truncate().
-> > > Shouldn't happen with a sane system, but we're trying to avoid users
-> > > doing awful things like being able to DMA to pages that are now part of
-> > > a different file.
-> >
-> > Why is the solution revoke then?  Is there something besides truncate
-> > that we have to worry about?  I ask because EBUSY is not currently
-> > listed as a return value of truncate, so extending the API to include
-> > EBUSY to mean "this file has pinned pages that can not be freed" is not
-> > (or should not be) totally out of the question.
-> >
-> > Admittedly, I'm coming in late to this conversation, but did I miss the
-> > portion where that alternative was ruled out?
-> 
-> Coming in late here too but isnt the only DAX case that we are concerned
-> about where there was an mmap with the O_DAX option to do direct write
-> though? If we only allow this use case then we may not have to worry about
-> long term GUP because DAX mapped files will stay in the physical location
-> regardless.
+Quoting Evan Green (2019-02-05 10:59:00)
+> Expose a reset controller that the phy will later use to control its
+> own PHY reset in the UFS controller. This will enable the combining
+> of PHY init functionality into a single function.
+>=20
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+>=20
+> ---
 
-No, that is not guaranteed. Soon as we have reflink support on XFS,
-writes will physically move the data to a new physical location.
-This is non-negotiatiable, and cannot be blocked forever by a gup
-pin.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-IOWs, DAX on RDMA requires a) page fault capable hardware so that
-the filesystem can move data physically on write access, and b)
-revokable file leases so that the filesystem can kick userspace out
-of the way when it needs to.
-
-Truncate is a red herring. It's definitely a case for revokable
-leases, but it's the rare case rather than the one we actually care
-about. We really care about making copy-on-write capable filesystems like
-XFS work with DAX (we've got people asking for it to be supported
-yesterday!), and that means DAX+RDMA needs to work with storage that
-can change physical location at any time.
-
-> Maybe we can solve the long term GUP problem through the requirement that
-> user space acquires some sort of means to pin the pages? In the DAX case
-> this is given by the filesystem and the hardware will basically take care
-> of writeback.
-
-That's what the revokable file leases provide (it's basically the
-same thing as a NFSv4 delegation). We already have all the
-infrastructure in the filesystems for triggering revokes when
-needed (implemented for pNFS a few years ago), and DAX already
-piggy-backs on that infrastructureuses that infrastructure to wait
-on gup pinned pages. See dax_layout_busy_page() and BREAK_UNMAP.
-
-The problem is that dax_layout_busy_page can block forever when
-userspace pins the file for RDMA. It's not just truncate - it's any
-filesystem operation that needs to manipulate the underlying file
-layout without doing data IO. i.e. any fallocate() operation, and
-when we add reflink support it will include anythign that
-shares or de-shares extents between files, too.
-
-The revokable file leases are necessary because access to file data,
-internal metadata and the storage is arbitrated by the filesystem,
-not the mm/ subsystem and physical pages. i.e. FS-DAX means that the
-*filesystem* is managing access to physical pages, not the mm/
-subsystem. And we can't just ignore the filesystem in this case
-because allowing access to the physical storage outside of the
-filesystem's visibility and/or direct control is a potential
-security vulnerability, data corruption or filesystem corruption
-vector.
-
-And that's the real problem we need to solve here. RDMA has no trust
-model other than "I'm userspace, I pinned you, trust me!". That's
-not good enough for FS-DAX+RDMA....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
