@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B54B7C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 05:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C26C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 05:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E9520823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 05:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 771C120844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 05:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfBFFBG (ORCPT
+        id S1726733AbfBFFBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 00:01:06 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:34843 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfBFFBF (ORCPT
+        Wed, 6 Feb 2019 00:01:05 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:51291 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfBFFBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 6 Feb 2019 00:01:05 -0500
-Received: by mail-it1-f200.google.com with SMTP id v188so2583391ita.0
+Received: by mail-it1-f198.google.com with SMTP id 2so2577646itf.1
         for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 21:01:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=RQyiJnLv6/luNmT088fJjs9ciD6KHLAhEmRJkaaKntU=;
-        b=uDiCmJPDvR0vLHzxgzwZDE1+CmHb9ODUnWanRPWj2GT/mXyuTYHMmq0xC1n0TT0YIe
-         C4HXswubM64Lb/kgZZBimrY/5JftNFzzt7SfcMtnH3+a8m0a832wbCTC1YzVQ0YFiLGu
-         ycH8YShPultRKnnO37qlAXC0j5Ix/i6dXK2s06IDSCbmJpv9/D8DQCdvttTIjo+PdOfJ
-         AL6l3tR2HlVpQXmGqAZ6iMRv6WJiS1GV9wzfnlVP2ShUmE+9PnY/hG5MZtDMWbA/8INA
-         iBQSpd7KfT44/ECJMxKmQtt1Bb1DsmTGBD7L70GgkImy5uFYxVma+TWUYZ4cQXTPhwmu
-         6tlg==
-X-Gm-Message-State: AHQUAuYoJ5BTWbRns89TL5fE0hOZzKhRkxhqOt0aJ+W8iUF7Xo/94V9G
-        Ss8roxFovRJ8hhyA4AHpPc5AVnFHz8ussA2qjXIsfacoFwQA
-X-Google-Smtp-Source: AHgI3Ibh/alEfThMDC9Z2iCguyx+sEqP9uFxxfNYrVE4FK2U7IBg0veiyIxjKfVXbo80iQKudKzeB9XMiUsMB2ypN5cH8OZ25iBv
+        bh=X4F/sDIZEdS7NwnVbe37i/9aMAfDzAT04hQIjzToG34=;
+        b=hvqZOzH7sxdy+cIBiNjJDq4y5sexYnubzaZeis4bIRz/D+LbrneiRlzNZy+1iy2AYD
+         OfXgD8XPOwieVD5ZZcqv3UvWcOJskMnpWoLexxY0dkFMIsJRYlBZVofxAgU86XWtCe4W
+         Ei0gKZ2fp3+TCz54xQRtgEZnKElWLi5WNz9WjkaJ8cWLuCqG8FgbuWVbsnP3jGBB/FuV
+         9kGChBy/SBRlDtVXloyCjtW3tSO8J96E1YTaAy62yLP2af6j7+xxj6VhDD2NrIjjsYq7
+         wAxUufMvJ0+YoF3y8s3b82lp0IAyKw4EKxaszoNZ4BzKZh8PeaHV+jF2+GMZKNpU3Q5M
+         GI2A==
+X-Gm-Message-State: AHQUAubYGitMBtq8y3riAkpeSM5DuBBi4dvUVadxBZftGXdoPDsF75lA
+        Z18YqSgWF1sda3asoqaqwaVJkyMD1hlM+oL4qwOqTrvhNfVy
+X-Google-Smtp-Source: AHgI3IZFdy8CGW8wNkpS7+qG0QlGTFG7zYp6KLzvliHgJJjD6m0fcAaZq44goiktGIt74bOQZiYz04U4Qox5hoRbBtW0hsXoo9rQ
 MIME-Version: 1.0
-X-Received: by 2002:a6b:a10:: with SMTP id z16mr5849422ioi.13.1549429263850;
+X-Received: by 2002:a6b:d11a:: with SMTP id l26mr5882908iob.34.1549429263674;
  Tue, 05 Feb 2019 21:01:03 -0800 (PST)
 Date:   Tue, 05 Feb 2019 21:01:03 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e063bb0581329cc0@google.com>
-Subject: BUG: spinlock bad magic in __queue_work
-From:   syzbot <syzbot+636bcaf4b481f6b7343c@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+Message-ID: <000000000000ddb37c0581329cc5@google.com>
+Subject: KASAN: use-after-free Read in tcp_sk_exit
+From:   syzbot <syzbot+f797267da5e5012d0920@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com, kuznet@ms2.inr.ac.ru,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
@@ -57,82 +57,97 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    962c382d482a Merge tag 'mac80211-next-for-davem-2019-02-01..
+HEAD commit:    33a0efa4baec devlink: Use DIV_ROUND_UP_ULL in DEVLINK_HEAL..
 git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=169299f8c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=33ad02b9305759c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=636bcaf4b481f6b7343c
+console output: https://syzkaller.appspot.com/x/log.txt?x=14e2e55f400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+dashboard link: https://syzkaller.appspot.com/bug?extid=f797267da5e5012d0920
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+636bcaf4b481f6b7343c@syzkaller.appspotmail.com
+Reported-by: syzbot+f797267da5e5012d0920@syzkaller.appspotmail.com
 
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor5'.
-BUG: spinlock bad magic on CPU#0, syz-executor0/1737
-  lock: 0xffff8880ae82c7e0, .magic: ffffffff, .owner: %us  
-workers=%d/1902867055, .owner_cpu: 0
-CPU: 0 PID: 1737 Comm: syz-executor0 Not tainted 5.0.0-rc4+ #40
+==================================================================
+BUG: KASAN: use-after-free in inet_ctl_sock_destroy  
+include/net/inet_common.h:56 [inline]
+BUG: KASAN: use-after-free in tcp_sk_exit+0x203/0x230  
+net/ipv4/tcp_ipv4.c:2588
+Read of size 8 at addr ffff888064de4378 by task kworker/u4:3/131
+
+CPU: 0 PID: 131 Comm: kworker/u4:3 Not tainted 5.0.0-rc3+ #17
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue: netns cleanup_net
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  spin_dump.cold+0x81/0xe6 kernel/locking/spinlock_debug.c:67
-  spin_bug kernel/locking/spinlock_debug.c:75 [inline]
-  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
-  do_raw_spin_lock+0x231/0x2e0 kernel/locking/spinlock_debug.c:112
-  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
-  _raw_spin_lock+0x37/0x40 kernel/locking/spinlock.c:144
-  spin_lock include/linux/spinlock.h:329 [inline]
-  __queue_work+0x23d/0x1180 kernel/workqueue.c:1417
-  __queue_delayed_work+0x1d6/0x270 kernel/workqueue.c:1522
-  mod_delayed_work_on+0xd8/0x200 kernel/workqueue.c:1596
-  mod_delayed_work include/linux/workqueue.h:542 [inline]
-  addrconf_mod_dad_work+0x3f/0xa0 net/ipv6/addrconf.c:328
-  addrconf_dad_start+0x76/0xb0 net/ipv6/addrconf.c:4011
-  addrconf_add_linklocal+0x28c/0x3c0 net/ipv6/addrconf.c:3190
-  addrconf_addr_gen+0x34d/0x3a0 net/ipv6/addrconf.c:3313
-  addrconf_dev_config+0x1ea/0x2c0 net/ipv6/addrconf.c:3356
-  addrconf_notify+0x3c5/0x2280 net/ipv6/addrconf.c:3591
-kobject: 'loop4' (00000000f520b29a): kobject_uevent_env
-kobject: 'loop4' (00000000f520b29a): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-  notifier_call_chain+0xc7/0x240 kernel/notifier.c:93
-  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
-  raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:401
-  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1739
-  call_netdevice_notifiers_extack net/core/dev.c:1751 [inline]
-  call_netdevice_notifiers net/core/dev.c:1765 [inline]
-  dev_open net/core/dev.c:1436 [inline]
-  dev_open+0x143/0x160 net/core/dev.c:1424
-  ipmr_new_tunnel+0x3d3/0x4d0 net/ipv4/ipmr.c:511
-  vif_add+0x1bd/0xed0 net/ipv4/ipmr.c:873
-  ip_mroute_setsockopt+0xd05/0xe10 net/ipv4/ipmr.c:1453
-  do_ip_setsockopt.isra.0+0x3036/0x3e00 net/ipv4/ip_sockglue.c:638
-  ip_setsockopt+0x49/0x100 net/ipv4/ip_sockglue.c:1246
-  raw_setsockopt+0xe0/0x100 net/ipv4/raw.c:860
-  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3016
-  __sys_setsockopt+0x180/0x280 net/socket.c:1902
-  __do_sys_setsockopt net/socket.c:1913 [inline]
-  __se_sys_setsockopt net/socket.c:1910 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  inet_ctl_sock_destroy include/net/inet_common.h:56 [inline]
+  tcp_sk_exit+0x203/0x230 net/ipv4/tcp_ipv4.c:2588
+  ops_exit_list.isra.0+0xb0/0x160 net/core/net_namespace.c:153
+  cleanup_net+0x51d/0xb10 net/core/net_namespace.c:551
+  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+Allocated by task 5864:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+  kasan_kmalloc mm/kasan/common.c:504 [inline]
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
+  kmem_cache_alloc+0x12d/0x710 mm/slab.c:3543
+  getname_flags fs/namei.c:140 [inline]
+  getname_flags+0xd6/0x5b0 fs/namei.c:129
+  getname+0x1a/0x20 fs/namei.c:211
+  do_sys_open+0x3a5/0x7c0 fs/open.c:1057
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fbac2bcec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457e39
-RDX: 00000000000000ca RSI: 0000000000000000 RDI: 0000000000000004
-RBP: 000000000073bfa0 R08: 0000000000000010 R09: 0000000000000000
-R10: 0000000020000000 R11: 0000000000000246 R12: 00007fbac2bcf6d4
-R13: 00000000004c5c09 R14: 00000000004da070 R15: 00000000ffffffff
-netlink: 8 bytes leftover after parsing attributes in process  
-`syz-executor5'.
+
+Freed by task 5864:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3749
+  putname+0xef/0x130 fs/namei.c:261
+  do_sys_open+0x3f4/0x7c0 fs/open.c:1072
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff888064de4180
+  which belongs to the cache names_cache of size 4096
+The buggy address is located 504 bytes inside of
+  4096-byte region [ffff888064de4180, ffff888064de5180)
+The buggy address belongs to the page:
+page:ffffea0001937900 count:1 mapcount:0 mapping:ffff88821bc45380 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea0001931108 ffffea0001796b88 ffff88821bc45380
+raw: 0000000000000000 ffff888064de4180 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888064de4200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888064de4280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff888064de4300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                 ^
+  ffff888064de4380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888064de4400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
