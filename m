@@ -2,247 +2,178 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83112C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539DCC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35FAC217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:23:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LaX7zbR/"
+	by mail.kernel.org (Postfix) with ESMTP id 1EC2420844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:23:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfBFVXr (ORCPT
+        id S1727019AbfBFVXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:23:47 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46439 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfBFVXr (ORCPT
+        Wed, 6 Feb 2019 16:23:53 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:34258 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfBFVXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:23:47 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so7172339edt.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:23:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vFEIBubFtM9Rt2PFGbyxo47yogIA7OLrfIEavljBuKY=;
-        b=LaX7zbR/uy3XUDTO61apcwTZae5KQvy+yx+DUb9gFImdMCw6Az6e3NJMs6ZtFOc0Uh
-         KxXsAl+3jVzw5oJT6YPqgcyqVtUW3fSZu6h53bzrDpD13oE+C6wv2mfMAZLLbJChsoFi
-         ngIS7IEh8stu+arNf2e9FpWRE9OJ7L6MidhDs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vFEIBubFtM9Rt2PFGbyxo47yogIA7OLrfIEavljBuKY=;
-        b=fqJ7PfYk8zbF3zGKe3Sezb0ywv7LxMWpbvN1wVsgMY4HgiqZeBLIoskEQK4tjrxWBi
-         P5MJB/waNBY+1epfSmTDt5fGXY+dYua80FTb5T70hBPpEUF9L4yYxKK0zUTv9BUPo6tK
-         AXts1RgDnLWIh8QYhfi1JXDYdMVi9pu74mC/QOkpUjs3hNAIBEKVV59ykFJTp9CWCJ5F
-         /jrdLMierENFkyKqXOib3jiY6YU+H4/ET6+HwINknogneQE/92a3Kb8XuVWk5maNVtJ3
-         E1RMsyPreeVus9plrAvc5jSOwYXSeLCXGkbu0gyuKQbsl5y2T2uIB5RSQj5K3D7yYEql
-         MLVw==
-X-Gm-Message-State: AHQUAuYaDUr7Ls2EgULj/Q5O2kr1MzxK0Y8TuR4wLidV/YY7JE31m59S
-        wt5vkrj1f31WY1CxbJsDgPYUuUJd7/E=
-X-Google-Smtp-Source: AHgI3IaUiJmY/VeceSaUEXU3/9Ksp4BzD5+syq7WmY5lKu1UlC1LeLJYj8T+bdPjKgF13E0Fmk1iQg==
-X-Received: by 2002:aa7:d487:: with SMTP id b7mr9430839edr.256.1549488224718;
-        Wed, 06 Feb 2019 13:23:44 -0800 (PST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id i8sm1477401edg.21.2019.02.06.13.23.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 13:23:44 -0800 (PST)
-Received: by mail-wm1-f52.google.com with SMTP id z5so4020749wmf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:23:43 -0800 (PST)
-X-Received: by 2002:a1c:27c6:: with SMTP id n189mr4578711wmn.108.1549488223205;
- Wed, 06 Feb 2019 13:23:43 -0800 (PST)
+        Wed, 6 Feb 2019 16:23:52 -0500
+Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1grUfY-0007KP-75; Wed, 06 Feb 2019 16:23:47 -0500
+Date:   Wed, 6 Feb 2019 16:23:16 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     Julien Gomes <julien@arista.com>, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, vyasevich@gmail.com, lucien.xin@gmail.com
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190206212316.GD16887@hmswarspite.think-freely.org>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
+ <20190206210723.GD13621@localhost.localdomain>
 MIME-Version: 1.0
-References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-20-thgarnie@chromium.org>
- <20190206195642.GD9575@linux.intel.com>
-In-Reply-To: <20190206195642.GD9575@linux.intel.com>
-From:   Thomas Garnier <thgarnie@chromium.org>
-Date:   Wed, 6 Feb 2019 13:23:31 -0800
-X-Gmail-Original-Message-ID: <CAJcbSZGhPej6=jroABPtR00Z46LY-vd-dmiw71Sx3Dj8UxmD+g@mail.gmail.com>
-Message-ID: <CAJcbSZGhPej6=jroABPtR00Z46LY-vd-dmiw71Sx3Dj8UxmD+g@mail.gmail.com>
-Subject: Re: [PATCH v6 19/27] kvm: Adapt assembly for PIE support
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206210723.GD13621@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 11:56 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Thu, Jan 31, 2019 at 11:24:26AM -0800, Thomas Garnier wrote:
-> > Change the assembly code to use only relative references of symbols for the
-> > kernel to be PIE compatible. The new __ASM_MOVABS macro is used to
-> > get the address of a symbol on both 32 and 64-bit with PIE support.
-> >
-> > Position Independent Executable (PIE) support will allow to extend the
-> > KASLR randomization range below 0xffffffff80000000.
-> >
-> > Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h | 8 ++++++--
-> >  arch/x86/kernel/kvm.c           | 6 ++++--
-> >  arch/x86/kvm/svm.c              | 4 ++--
-> >  arch/x86/kvm/vmx/vmx.c          | 2 +-
-> >  4 files changed, 13 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> > index 4660ce90de7f..fdb3307d5fe1 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1498,9 +1498,13 @@ asmlinkage void kvm_spurious_fault(void);
-> >       ".pushsection .fixup, \"ax\" \n" \
-> >       "667: \n\t" \
-> >       cleanup_insn "\n\t"                   \
-> > -     "cmpb $0, kvm_rebooting \n\t"         \
-> > +     "cmpb $0, kvm_rebooting" __ASM_SEL(, (%%rip)) " \n\t" \
-> >       "jne 668b \n\t"                       \
-> > -     __ASM_SIZE(push) " $666b \n\t"        \
-> > +     __ASM_SIZE(push) "$0 \n\t"              \
-> > +     __ASM_SIZE(push) "%%" _ASM_AX " \n\t"           \
-> > +     _ASM_MOVABS " $666b, %%" _ASM_AX "\n\t" \
-> > +     _ASM_MOV " %%" _ASM_AX ", " __ASM_SEL(4, 8) "(%%" _ASM_SP ") \n\t" \
-> > +     __ASM_SIZE(pop) "%%" _ASM_AX " \n\t"            \
->
-> This blob isn't very intuitive to begin with, and the extra stack
-> shenanigans are a bit much when PIE is disabled.  What about breaking
-> out the behavior to separate helper macros to keep the simpler code
-> for non-PIE and to make the code somewhat self-documenting?  E.g.:
->
-> #ifndef CONFIG_X86_PIE
-> #define KVM_PUSH_FAULTING_INSN_RIP       __ASM_SIZE(push) " $666b \n\t"
-> #else
-> #define KVM_PUSH_FAULTING_INSN_RIP                                         \
->         __ASM_SIZE(push) "$0 \n\t"                                         \
->         __ASM_SIZE(push) "%%" _ASM_AX " \n\t"                              \
->         _ASM_MOVABS " $666b, %%" _ASM_AX "\n\t"                            \
->         _ASM_MOV " %%" _ASM_AX ", " __ASM_SEL(4, 8) "(%%" _ASM_SP ") \n\t" \
->         __ASM_SIZE(pop) "%%" _ASM_AX " \n\t"
-> #endif
->
-> #define ____kvm_handle_fault_on_reboot(insn, cleanup_insn)      \
->         "666: " insn "\n\t" \
->         "668: \n\t"                           \
->         ".pushsection .fixup, \"ax\" \n" \
->         "667: \n\t" \
->         cleanup_insn "\n\t"                   \
->         "cmpb $0, kvm_rebooting" __ASM_SEL(, (%%rip)) " \n\t" \
->         "jne 668b \n\t"                       \
->         KVM_PUSH_FAULTING_INSN_RIP              \
->         "jmp kvm_spurious_fault \n\t"         \
->         ".popsection \n\t" \
->         _ASM_EXTABLE(666b, 667b)
->
-> >       "jmp kvm_spurious_fault \n\t"         \
-> >       ".popsection \n\t" \
-> >       _ASM_EXTABLE(666b, 667b)
-> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > index 5c93a65ee1e5..f6eb02004e43 100644
-> > --- a/arch/x86/kernel/kvm.c
-> > +++ b/arch/x86/kernel/kvm.c
->
-> This change to arch/x86/kernel/kvm.c should be done in a separate patch
-> as it affects the kernel itself when running as a guest under KVM,
-> whereas arch/x86/kvm/**/* and arch/x86/include/asm/kvm_host.h affect
-> KVM as a host, i.e. the KVM module.  Case in point, the below bug causes
-> a kernel panic when running as a KVM guest but has no impact on the KVM
-> module.
+On Wed, Feb 06, 2019 at 07:07:23PM -0200, Marcelo Ricardo Leitner wrote:
+> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
+> > 
+> > 
+> > On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
+> > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> > >> structures longer than the current definitions.
+> > >>
+> > >> This should prevent unjustified setsockopt() failures due to struct
+> > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> > >> binaries that should be compatible, but were built with later kernel
+> > >> uapi headers.
+> > > 
+> > > Not sure if we support backwards compatibility like this?
+> > > 
+> > > My issue with this change is that by doing this, application will have
+> > > no clue if the new bits were ignored or not and it may think that an
+> > > event is enabled while it is not.
+> > > 
+> > > A workaround would be to do a getsockopt and check the size that was
+> > > returned. But then, it might as well use the right struct here in the
+> > > first place.
+> > > 
+> > > I'm seeing current implementation as an implicitly versioned argument:
+> > > it will always accept setsockopt calls with an old struct (v4.11 or
+> > > v4.12), but if the user tries to use v3 on a v1-only system, it will
+> > > be rejected. Pretty much like using a newer setsockopt on an old
+> > > system.
+> > 
+> > With the current implementation, given sources that say are supposed to
+> > run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
+> > we can't rebuild the exact same sources on a 4.19 kernel and still run
+> > them on 4.9 without messing with structures re-definition.
+> 
+> Maybe what we want(ed) here then is explicit versioning, to have the 3
+> definitions available. Then the application is able to use, say struct
+> sctp_event_subscribe, and be happy with it, while there is struct
+> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
+> 
+> But it's too late for that now because that would break applications
+> already using the new fields in sctp_event_subscribe.
+> 
+Yeah, I'm not supportive of codifying that knoweldge in the kernel.  If we were
+to support bi-directional versioning, I would encode it into lksctp-tools rather
+than the kernel.
 
-Got it, will split in next iteration.
+> > 
+> > I understand your point, but this still looks like a sort of uapi
+> > breakage to me.
+> 
+> Not disagreeing. I really just don't know how supported that is.
+> Willing to know so I can pay more attention to this on future changes.
+> 
+> Btw, is this the only occurrence?
+> 
+No, I think there are a few others (maybe paddrparams?)
 
->
-> > @@ -826,8 +826,10 @@ asm(
-> >  ".global __raw_callee_save___kvm_vcpu_is_preempted;"
-> >  ".type __raw_callee_save___kvm_vcpu_is_preempted, @function;"
-> >  "__raw_callee_save___kvm_vcpu_is_preempted:"
-> > -"movq        __per_cpu_offset(,%rdi,8), %rax;"
-> > -"cmpb        $0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
-> > +"leaq        __per_cpu_offset(%rip), %rax;"
-> > +"movq        (%rax,%rdi,8), %rax;"
-> > +"addq        " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rax;"
->
-> This is wrong, it's directly accessing the per-cpu offset of 'steal_time'
-> as a virtual address, e.g. without PIE enabled:
->
->     0xffffffff8104820b <+11>:    add    0x7efccffe(%rip),%rax        # 0x15210 <steal_time+16>
->
-> This results in kernel panics due to unhandled page faults:
->
->     [    0.001453] BUG: unable to handle kernel paging request at 0000000000015210
->     [    0.001453] #PF error: [normal kernel read fault]
+> > 
+> > 
+> > I also had another way to work-around this in mind, by copying optlen
+> > bytes and checking that any additional field (not included in the
+> > "current" kernel structure definition) is not set, returning EINVAL in
+> > such case to keep a similar to current behavior.
+> > The issue with this is that I didn't find a suitable (ie not totally
+> > arbitrary such as "twice the existing structure size") upper limit to
+> > optlen.
+> 
+> Seems interesting. Why would it need that upper limit to optlen?
+> 
+I think the thought was to differentiate between someone passing a legit larger
+structure from a newer UAPI, from someone just passing in a massive
+inappropriately sized buffer (even if the return on both is the same).
 
-Yes, I think something went wrong in rebasing. Thanks for pointing it out.
+> Say struct v1 had 4 bytes, v3 now had 12. The user supplies 12 bytes
+> to the kernel that only knows about 4 bytes. It can check that (12-4)
+> bytes in the end, make sure no bit is on and use only the first 4.
+> 
+> The fact that it was 12 or 200 shouldn't matter, should it? As long as
+> the (200-4) bytes are 0'ed, only the first 4 will be used and it
+> should be ok, otherwise EINVAL. No need to know how big the current
+> current actually is because it wouldn't be validating that here: just
+> that it can safely use the first 4 bytes.
+> 
+I'm less than excited about making the kernel check an unbounded user space
+buffer, thats seems like a potential DOS attack from an unpriviledged user to
+me.  I'm also still hung up on the notion that, despite how we do this, this
+patch is going into the latest kernel, so it will only work on a kernel that
+already understands the most recent set of subscriptions.  It would work if we,
+again someday in the future extended this struct, someone built against that
+newer UAPI, and then tried to run it on a kernel that had this patch.
 
->
-> I think you want something like the following, except that the whole
-> point of handcoded assembly is to avoid modifying registers other than
-> RAX, i.e. modifying RDI is a no-no.
->
->     "leaq   " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rdi;"
->     "cmpb   $0, (%rax,%rdi,1);"
->
->
-> And similar to the comment on ____kvm_handle_fault_on_reboot(), what
-> about wrapping the PIE-specific version in an ifdef?
+FWIW, there is an existing implied method to determine the available
+subscription events. sctp_getsockopt_events does clamp the size of the output
+buffer, and returns that information in the optlen field via put_user.  An
+application that was build against UAPIs from 4.19 could pass in the 4.19
+sctp_event_subscribe struct to sctp_getsockopt_events, and read the output
+length, whcih would inform the application of the events that the kernel is
+capable of reporting, and limit itself to only using those events.  Its not a
+perfect solution, but its direct, understandable and portable.
 
-I will look into this and try your approach.
+Neil
 
->
-> > +"cmpb        $0, (%rax);"
-> >  "setne       %al;"
-> >  "ret;"
-> >  ".popsection");
-> > diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> > index f13a3a24d360..26abb82b1b67 100644
-> > --- a/arch/x86/kvm/svm.c
-> > +++ b/arch/x86/kvm/svm.c
-> > @@ -706,12 +706,12 @@ static u32 svm_msrpm_offset(u32 msr)
-> >
-> >  static inline void clgi(void)
-> >  {
-> > -     asm volatile (__ex("clgi"));
-> > +     asm volatile (__ex("clgi") : :);
-> >  }
-> >
-> >  static inline void stgi(void)
-> >  {
-> > -     asm volatile (__ex("stgi"));
-> > +     asm volatile (__ex("stgi") : :);
-> >  }
-> >
-> >  static inline void invlpga(unsigned long addr, u32 asid)
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 4341175339f3..3275761a7375 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -2161,7 +2161,7 @@ static void vmclear_local_loaded_vmcss(void)
-> >   */
-> >  static void kvm_cpu_vmxoff(void)
-> >  {
-> > -     asm volatile (__ex("vmxoff"));
-> > +     asm volatile (__ex("vmxoff") :::);
-> >
-> >       intel_pt_handle_vmx(0);
-> >       cr4_clear_bits(X86_CR4_VMXE);
-> > --
-> > 2.20.1.495.gaa96b0ce6b-goog
-> >
-
-Thanks for the feedback.
+> > 
+> > > 
+> > >>
+> > >> Signed-off-by: Julien Gomes <julien@arista.com>
+> > >> ---
+> > >>  net/sctp/socket.c | 2 +-
+> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>
+> > >> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> > >> index 9644bdc8e85c..f9717e2789da 100644
+> > >> --- a/net/sctp/socket.c
+> > >> +++ b/net/sctp/socket.c
+> > >> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
+> > >>  	int i;
+> > >>  
+> > >>  	if (optlen > sizeof(struct sctp_event_subscribe))
+> > >> -		return -EINVAL;
+> > >> +		optlen = sizeof(struct sctp_event_subscribe);
+> > >>  
+> > >>  	if (copy_from_user(&subscribe, optval, optlen))
+> > >>  		return -EFAULT;
+> > >> -- 
+> > >> 2.20.1
+> > >>
+> > 
+> 
