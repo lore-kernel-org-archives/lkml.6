@@ -2,485 +2,137 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EDFC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF649C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5AD217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96877217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbfBFKxJ (ORCPT
+        id S1727760AbfBFKy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:53:09 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3275 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726509AbfBFKwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:52:33 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E183D4C3A8D3489C6FB9;
-        Wed,  6 Feb 2019 18:52:30 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 6 Feb 2019 18:52:23 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 1/6] scsi: hisi_sas: Add support for DIX feature for v3 hw
-Date:   Wed, 6 Feb 2019 18:52:51 +0800
-Message-ID: <1549450376-114929-2-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1549450376-114929-1-git-send-email-john.garry@huawei.com>
-References: <1549450376-114929-1-git-send-email-john.garry@huawei.com>
+        Wed, 6 Feb 2019 05:54:57 -0500
+Received: from mga01.intel.com ([192.55.52.88]:16674 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726914AbfBFKy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:54:57 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 02:54:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,339,1544515200"; 
+   d="asc'?scan'208";a="114104207"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by orsmga006.jf.intel.com with ESMTP; 06 Feb 2019 02:54:54 -0800
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, oneukum@suse.com,
+        Mathias Nyman <mathias.nyman@intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2] usb: xhci: add Immediate Data Transfer support
+In-Reply-To: <294f2492f8d3b7022bf659dcb473c45a34e85db8.camel@suse.de>
+References: <20190205195647.29258-1-nsaenzjulienne@suse.de> <87lg2tmnk3.fsf@linux.intel.com> <294f2492f8d3b7022bf659dcb473c45a34e85db8.camel@suse.de>
+Date:   Wed, 06 Feb 2019 12:54:50 +0200
+Message-ID: <871s4lmbk5.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds support for DIX to v3 hw driver.
 
-For this, we build upon support for DIF, most significantly
-is adding new DMA map and unmap paths.
+Hi,
 
-Some pre-existing macro precedence issues are also tidied. They
-were detected by checkpatch --strict.
+Nicolas Saenz Julienne <nsaenzjulienne@suse.de> writes:
+>> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+>> > index 005e65922608..dec62f7f5dc8 100644
+>> > --- a/drivers/usb/host/xhci.c
+>> > +++ b/drivers/usb/host/xhci.c
+>> > @@ -1238,6 +1238,21 @@ EXPORT_SYMBOL_GPL(xhci_resume);
+>> >=20=20
+>> >  /*-------------------------------------------------------------------=
+------
+>> > */
+>> >=20=20
+>> > +/*
+>> > + * Bypass the DMA mapping if URB is suitable for Immediate Transfer (=
+IDT),
+>> > + * we'll copy the actual data into the TRB address register. This is
+>> > limited to
+>> > + * transfers up to 8 bytes on output endpoints of any kind with
+>> > wMaxPacketSize
+>> > + * >=3D 8 bytes.
+>> > + */
+>> > +static int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+>> > +				gfp_t mem_flags)
+>> > +{
+>> > +	if (xhci_urb_suitable_for_idt(urb))
+>> > +		return 0;
+>> > +
+>> > +	return usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
+>> > +}
+>>=20
+>> don't you need a matching unmap_urb_for_dma()??
+>
+> Not really as every DMA mapping sets a matching URB flag to track it. For
+> example when usb_hcd_map_urb_for_dma() uses dma_map_single() it will set
+> URB_DMA_MAP_SINGLE in urb->transfer_flags, later on unmap_urb_for_dma() w=
+ill
+> catch it and unmap it. As I bypass the mapping altogether there are no
+> flags set, so unmap_urb_for_dma() won't have any effect.
+>
+> I could still add it for clarity, and well, I guess it'll save some
+> instructions on the IDT suitable side.
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas.h       | 40 ++++++++---
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 96 +++++++++++++++++++++++---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 80 +++++++++++++++++----
- 3 files changed, 184 insertions(+), 32 deletions(-)
+thanks for the clarification.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index 9b35f84b5029..df2a92a0e7a1 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -41,20 +41,25 @@
- #define HISI_SAS_COMMAND_TABLE_SZ (sizeof(union hisi_sas_command_table))
- 
- #define hisi_sas_status_buf_addr(buf) \
--	(buf + offsetof(struct hisi_sas_slot_buf_table, status_buffer))
--#define hisi_sas_status_buf_addr_mem(slot) hisi_sas_status_buf_addr(slot->buf)
-+	((buf) + offsetof(struct hisi_sas_slot_buf_table, status_buffer))
-+#define hisi_sas_status_buf_addr_mem(slot) hisi_sas_status_buf_addr((slot)->buf)
- #define hisi_sas_status_buf_addr_dma(slot) \
--	hisi_sas_status_buf_addr(slot->buf_dma)
-+	hisi_sas_status_buf_addr((slot)->buf_dma)
- 
- #define hisi_sas_cmd_hdr_addr(buf) \
--	(buf + offsetof(struct hisi_sas_slot_buf_table, command_header))
--#define hisi_sas_cmd_hdr_addr_mem(slot) hisi_sas_cmd_hdr_addr(slot->buf)
--#define hisi_sas_cmd_hdr_addr_dma(slot) hisi_sas_cmd_hdr_addr(slot->buf_dma)
-+	((buf) + offsetof(struct hisi_sas_slot_buf_table, command_header))
-+#define hisi_sas_cmd_hdr_addr_mem(slot) hisi_sas_cmd_hdr_addr((slot)->buf)
-+#define hisi_sas_cmd_hdr_addr_dma(slot) hisi_sas_cmd_hdr_addr((slot)->buf_dma)
- 
- #define hisi_sas_sge_addr(buf) \
--	(buf + offsetof(struct hisi_sas_slot_buf_table, sge_page))
--#define hisi_sas_sge_addr_mem(slot) hisi_sas_sge_addr(slot->buf)
--#define hisi_sas_sge_addr_dma(slot) hisi_sas_sge_addr(slot->buf_dma)
-+	((buf) + offsetof(struct hisi_sas_slot_buf_table, sge_page))
-+#define hisi_sas_sge_addr_mem(slot) hisi_sas_sge_addr((slot)->buf)
-+#define hisi_sas_sge_addr_dma(slot) hisi_sas_sge_addr((slot)->buf_dma)
-+
-+#define hisi_sas_sge_dif_addr(buf) \
-+	((buf) + offsetof(struct hisi_sas_slot_dif_buf_table, sge_dif_page))
-+#define hisi_sas_sge_dif_addr_mem(slot) hisi_sas_sge_dif_addr((slot)->buf)
-+#define hisi_sas_sge_dif_addr_dma(slot) hisi_sas_sge_dif_addr((slot)->buf_dma)
- 
- #define HISI_SAS_MAX_SSP_RESP_SZ (sizeof(struct ssp_frame_hdr) + 1024)
- #define HISI_SAS_MAX_SMP_RESP_SZ 1028
-@@ -74,7 +79,11 @@
- 				SHOST_DIF_TYPE2_PROTECTION | \
- 				SHOST_DIF_TYPE3_PROTECTION)
- 
--#define HISI_SAS_PROT_MASK (HISI_SAS_DIF_PROT_MASK)
-+#define HISI_SAS_DIX_PROT_MASK (SHOST_DIX_TYPE1_PROTECTION | \
-+				SHOST_DIX_TYPE2_PROTECTION | \
-+				SHOST_DIX_TYPE3_PROTECTION)
-+
-+#define HISI_SAS_PROT_MASK (HISI_SAS_DIF_PROT_MASK | HISI_SAS_DIX_PROT_MASK)
- 
- #define HISI_SAS_WAIT_PHYUP_TIMEOUT 20
- 
-@@ -201,6 +210,7 @@ struct hisi_sas_slot {
- 	struct sas_task *task;
- 	struct hisi_sas_port	*port;
- 	u64	n_elem;
-+	u64	n_elem_dif;
- 	int	dlvry_queue;
- 	int	dlvry_queue_slot;
- 	int	cmplt_queue;
-@@ -464,6 +474,11 @@ struct hisi_sas_sge_page {
- 	struct hisi_sas_sge sge[HISI_SAS_SGE_PAGE_CNT];
- }  __aligned(16);
- 
-+#define HISI_SAS_SGE_DIF_PAGE_CNT   SG_CHUNK_SIZE
-+struct hisi_sas_sge_dif_page {
-+	struct hisi_sas_sge sge[HISI_SAS_SGE_DIF_PAGE_CNT];
-+}  __aligned(16);
-+
- struct hisi_sas_command_table_ssp {
- 	struct ssp_frame_hdr hdr;
- 	union {
-@@ -494,6 +509,11 @@ struct hisi_sas_slot_buf_table {
- 	struct hisi_sas_sge_page sge_page;
- };
- 
-+struct hisi_sas_slot_dif_buf_table {
-+	struct hisi_sas_slot_buf_table slot_buf;
-+	struct hisi_sas_sge_dif_page sge_dif_page;
-+};
-+
- extern struct scsi_transport_template *hisi_sas_stt;
- 
- extern bool hisi_sas_debugfs_enable;
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 2d6b5fe90a9e..1a3d31d4258c 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -252,11 +252,19 @@ void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba, struct sas_task *task,
- 
- 		task->lldd_task = NULL;
- 
--		if (!sas_protocol_ata(task->task_proto))
-+		if (!sas_protocol_ata(task->task_proto)) {
-+			struct sas_ssp_task *ssp_task = &task->ssp_task;
-+			struct scsi_cmnd *scsi_cmnd = ssp_task->cmd;
-+
- 			if (slot->n_elem)
- 				dma_unmap_sg(dev, task->scatter,
- 					     task->num_scatter,
- 					     task->data_dir);
-+			if (slot->n_elem_dif)
-+				dma_unmap_sg(dev, scsi_prot_sglist(scsi_cmnd),
-+					     scsi_prot_sg_count(scsi_cmnd),
-+					     task->data_dir);
-+		}
- 	}
- 
- 
-@@ -380,6 +388,59 @@ static int hisi_sas_dma_map(struct hisi_hba *hisi_hba,
- 	return rc;
- }
- 
-+static void hisi_sas_dif_dma_unmap(struct hisi_hba *hisi_hba,
-+				   struct sas_task *task, int n_elem_dif)
-+{
-+	struct device *dev = hisi_hba->dev;
-+
-+	if (n_elem_dif) {
-+		struct sas_ssp_task *ssp_task = &task->ssp_task;
-+		struct scsi_cmnd *scsi_cmnd = ssp_task->cmd;
-+
-+		dma_unmap_sg(dev, scsi_prot_sglist(scsi_cmnd),
-+			     scsi_prot_sg_count(scsi_cmnd),
-+			     task->data_dir);
-+	}
-+}
-+
-+static int hisi_sas_dif_dma_map(struct hisi_hba *hisi_hba,
-+				int *n_elem_dif, struct sas_task *task)
-+{
-+	struct device *dev = hisi_hba->dev;
-+	struct sas_ssp_task *ssp_task;
-+	struct scsi_cmnd *scsi_cmnd;
-+	int rc;
-+
-+	if (task->num_scatter) {
-+		ssp_task = &task->ssp_task;
-+		scsi_cmnd = ssp_task->cmd;
-+
-+		if (scsi_prot_sg_count(scsi_cmnd)) {
-+			*n_elem_dif = dma_map_sg(dev,
-+						 scsi_prot_sglist(scsi_cmnd),
-+						 scsi_prot_sg_count(scsi_cmnd),
-+						 task->data_dir);
-+
-+			if (!*n_elem_dif)
-+				return -ENOMEM;
-+
-+			if (*n_elem_dif > HISI_SAS_SGE_DIF_PAGE_CNT) {
-+				dev_err(dev, "task prep: n_elem_dif(%d) too large\n",
-+					*n_elem_dif);
-+				rc = -EINVAL;
-+				goto err_out_dif_dma_unmap;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+
-+err_out_dif_dma_unmap:
-+	dma_unmap_sg(dev, scsi_prot_sglist(scsi_cmnd),
-+		     scsi_prot_sg_count(scsi_cmnd), task->data_dir);
-+	return rc;
-+}
-+
- static int hisi_sas_task_prep(struct sas_task *task,
- 			      struct hisi_sas_dq **dq_pointer,
- 			      bool is_tmf, struct hisi_sas_tmf_task *tmf,
-@@ -394,7 +455,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 	struct asd_sas_port *sas_port = device->port;
- 	struct device *dev = hisi_hba->dev;
- 	int dlvry_queue_slot, dlvry_queue, rc, slot_idx;
--	int n_elem = 0, n_elem_req = 0, n_elem_resp = 0;
-+	int n_elem = 0, n_elem_dif = 0, n_elem_req = 0, n_elem_resp = 0;
- 	struct hisi_sas_dq *dq;
- 	unsigned long flags;
- 	int wr_q_index;
-@@ -427,6 +488,12 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 	if (rc < 0)
- 		goto prep_out;
- 
-+	if (!sas_protocol_ata(task->task_proto)) {
-+		rc = hisi_sas_dif_dma_map(hisi_hba, &n_elem_dif, task);
-+		if (rc < 0)
-+			goto err_out_dma_unmap;
-+	}
-+
- 	if (hisi_hba->hw->slot_index_alloc)
- 		rc = hisi_hba->hw->slot_index_alloc(hisi_hba, device);
- 	else {
-@@ -445,7 +512,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 		rc  = hisi_sas_slot_index_alloc(hisi_hba, scsi_cmnd);
- 	}
- 	if (rc < 0)
--		goto err_out_dma_unmap;
-+		goto err_out_dif_dma_unmap;
- 
- 	slot_idx = rc;
- 	slot = &hisi_hba->slot_info[slot_idx];
-@@ -466,6 +533,7 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 	dlvry_queue_slot = wr_q_index;
- 
- 	slot->n_elem = n_elem;
-+	slot->n_elem_dif = n_elem_dif;
- 	slot->dlvry_queue = dlvry_queue;
- 	slot->dlvry_queue_slot = dlvry_queue_slot;
- 	cmd_hdr_base = hisi_hba->cmd_hdr[dlvry_queue];
-@@ -509,6 +577,9 @@ static int hisi_sas_task_prep(struct sas_task *task,
- 
- err_out_tag:
- 	hisi_sas_slot_index_free(hisi_hba, slot_idx);
-+err_out_dif_dma_unmap:
-+	if (!sas_protocol_ata(task->task_proto))
-+		hisi_sas_dif_dma_unmap(hisi_hba, task, n_elem_dif);
- err_out_dma_unmap:
- 	hisi_sas_dma_unmap(hisi_hba, task, n_elem,
- 			   n_elem_req, n_elem_resp);
-@@ -2174,19 +2245,24 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba)
- 
- 	/* roundup to avoid overly large block size */
- 	max_command_entries_ru = roundup(max_command_entries, 64);
--	sz_slot_buf_ru = roundup(sizeof(struct hisi_sas_slot_buf_table), 64);
-+	if (hisi_hba->prot_mask & HISI_SAS_DIX_PROT_MASK)
-+		sz_slot_buf_ru = sizeof(struct hisi_sas_slot_dif_buf_table);
-+	else
-+		sz_slot_buf_ru = sizeof(struct hisi_sas_slot_buf_table);
-+	sz_slot_buf_ru = roundup(sz_slot_buf_ru, 64);
- 	s = lcm(max_command_entries_ru, sz_slot_buf_ru);
- 	blk_cnt = (max_command_entries_ru * sz_slot_buf_ru) / s;
- 	slots_per_blk = s / sz_slot_buf_ru;
-+
- 	for (i = 0; i < blk_cnt; i++) {
--		struct hisi_sas_slot_buf_table *buf;
--		dma_addr_t buf_dma;
- 		int slot_index = i * slots_per_blk;
-+		dma_addr_t buf_dma;
-+		void *buf;
- 
--		buf = dmam_alloc_coherent(dev, s, &buf_dma, GFP_KERNEL);
-+		buf = dmam_alloc_coherent(dev, s, &buf_dma,
-+					  GFP_KERNEL | __GFP_ZERO);
- 		if (!buf)
- 			goto err_out;
--		memset(buf, 0, s);
- 
- 		for (j = 0; j < slots_per_blk; j++, slot_index++) {
- 			struct hisi_sas_slot *slot;
-@@ -2196,8 +2272,8 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba)
- 			slot->buf_dma = buf_dma;
- 			slot->idx = slot_index;
- 
--			buf++;
--			buf_dma += sizeof(*buf);
-+			buf += sz_slot_buf_ru;
-+			buf_dma += sz_slot_buf_ru;
- 		}
- 	}
- 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index eafcab088c0b..0455fba93daf 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -399,6 +399,8 @@ struct hisi_sas_err_record_v3 {
- #define USR_DATA_BLOCK_SZ_OFF	20
- #define USR_DATA_BLOCK_SZ_MSK	(0x3 << USR_DATA_BLOCK_SZ_OFF)
- #define T10_CHK_MSK_OFF	    16
-+#define T10_CHK_REF_TAG_MSK (0xf0 << T10_CHK_MSK_OFF)
-+#define T10_CHK_APP_TAG_MSK (0xc << T10_CHK_MSK_OFF)
- 
- static bool hisi_sas_intr_conv;
- MODULE_PARM_DESC(intr_conv, "interrupt converge enable (0-1)");
-@@ -969,19 +971,44 @@ static void prep_prd_sge_v3_hw(struct hisi_hba *hisi_hba,
- 
- 	hdr->prd_table_addr = cpu_to_le64(hisi_sas_sge_addr_dma(slot));
- 
--	hdr->sg_len = cpu_to_le32(n_elem << CMD_HDR_DATA_SGL_LEN_OFF);
-+	hdr->sg_len |= cpu_to_le32(n_elem << CMD_HDR_DATA_SGL_LEN_OFF);
-+}
-+
-+static void prep_prd_sge_dif_v3_hw(struct hisi_hba *hisi_hba,
-+				   struct hisi_sas_slot *slot,
-+				   struct hisi_sas_cmd_hdr *hdr,
-+				   struct scatterlist *scatter,
-+				   int n_elem)
-+{
-+	struct hisi_sas_sge_dif_page *sge_dif_page;
-+	struct scatterlist *sg;
-+	int i;
-+
-+	sge_dif_page = hisi_sas_sge_dif_addr_mem(slot);
-+
-+	for_each_sg(scatter, sg, n_elem, i) {
-+		struct hisi_sas_sge *entry = &sge_dif_page->sge[i];
-+
-+		entry->addr = cpu_to_le64(sg_dma_address(sg));
-+		entry->page_ctrl_0 = 0;
-+		entry->page_ctrl_1 = 0;
-+		entry->data_len = cpu_to_le32(sg_dma_len(sg));
-+		entry->data_off = 0;
-+	}
-+
-+	hdr->dif_prd_table_addr =
-+		cpu_to_le64(hisi_sas_sge_dif_addr_dma(slot));
-+
-+	hdr->sg_len |= cpu_to_le32(n_elem << CMD_HDR_DIF_SGL_LEN_OFF);
- }
- 
- static u32 get_prot_chk_msk_v3_hw(struct scsi_cmnd *scsi_cmnd)
- {
- 	unsigned char prot_flags = scsi_cmnd->prot_flags;
- 
--	if (prot_flags & SCSI_PROT_TRANSFER_PI) {
--		if (prot_flags & SCSI_PROT_REF_CHECK)
--			return 0xc << 16;
--		return 0xfc << 16;
--	}
--	return 0;
-+	if (prot_flags & SCSI_PROT_REF_CHECK)
-+		return T10_CHK_APP_TAG_MSK;
-+	return T10_CHK_REF_TAG_MSK | T10_CHK_APP_TAG_MSK;
- }
- 
- static void fill_prot_v3_hw(struct scsi_cmnd *scsi_cmnd,
-@@ -992,15 +1019,33 @@ static void fill_prot_v3_hw(struct scsi_cmnd *scsi_cmnd,
- 	u32 lbrt_chk_val = t10_pi_ref_tag(scsi_cmnd->request);
- 
- 	switch (prot_op) {
-+	case SCSI_PROT_READ_INSERT:
-+		prot->dw0 |= T10_INSRT_EN_MSK;
-+		prot->lbrtgv = lbrt_chk_val;
-+		break;
- 	case SCSI_PROT_READ_STRIP:
- 		prot->dw0 |= (T10_RMV_EN_MSK | T10_CHK_EN_MSK);
- 		prot->lbrtcv = lbrt_chk_val;
- 		prot->dw4 |= get_prot_chk_msk_v3_hw(scsi_cmnd);
- 		break;
-+	case SCSI_PROT_READ_PASS:
-+		prot->dw0 |= T10_CHK_EN_MSK;
-+		prot->lbrtcv = lbrt_chk_val;
-+		prot->dw4 |= get_prot_chk_msk_v3_hw(scsi_cmnd);
-+		break;
- 	case SCSI_PROT_WRITE_INSERT:
- 		prot->dw0 |= T10_INSRT_EN_MSK;
- 		prot->lbrtgv = lbrt_chk_val;
- 		break;
-+	case SCSI_PROT_WRITE_STRIP:
-+		prot->dw0 |= (T10_RMV_EN_MSK | T10_CHK_EN_MSK);
-+		prot->lbrtcv = lbrt_chk_val;
-+		break;
-+	case SCSI_PROT_WRITE_PASS:
-+		prot->dw0 |= T10_CHK_EN_MSK;
-+		prot->lbrtcv = lbrt_chk_val;
-+		prot->dw4 |= get_prot_chk_msk_v3_hw(scsi_cmnd);
-+		break;
- 	default:
- 		WARN(1, "prot_op(0x%x) is not valid\n", prot_op);
- 		break;
-@@ -1077,9 +1122,15 @@ static void prep_ssp_v3_hw(struct hisi_hba *hisi_hba,
- 	hdr->dw2 = cpu_to_le32(dw2);
- 	hdr->transfer_tags = cpu_to_le32(slot->idx);
- 
--	if (has_data)
-+	if (has_data) {
- 		prep_prd_sge_v3_hw(hisi_hba, slot, hdr, task->scatter,
--					slot->n_elem);
-+				   slot->n_elem);
-+
-+		if (scsi_prot_sg_count(scsi_cmnd))
-+			prep_prd_sge_dif_v3_hw(hisi_hba, slot, hdr,
-+					       scsi_prot_sglist(scsi_cmnd),
-+					       slot->n_elem_dif);
-+	}
- 
- 	hdr->cmd_table_addr = cpu_to_le64(hisi_sas_cmd_hdr_addr_dma(slot));
- 	hdr->sts_buffer_addr = cpu_to_le64(hisi_sas_status_buf_addr_dma(slot));
-@@ -1120,18 +1171,19 @@ static void prep_ssp_v3_hw(struct hisi_hba *hisi_hba,
- 		fill_prot_v3_hw(scsi_cmnd, &prot);
- 		memcpy(buf_cmd_prot, &prot,
- 		       sizeof(struct hisi_sas_protect_iu_v3_hw));
--
- 		/*
- 		 * For READ, we need length of info read to memory, while for
- 		 * WRITE we need length of data written to the disk.
- 		 */
--		if (prot_op == SCSI_PROT_WRITE_INSERT) {
-+		if (prot_op == SCSI_PROT_WRITE_INSERT ||
-+		    prot_op == SCSI_PROT_READ_INSERT ||
-+		    prot_op == SCSI_PROT_WRITE_PASS ||
-+		    prot_op == SCSI_PROT_READ_PASS) {
- 			unsigned int interval = scsi_prot_interval(scsi_cmnd);
- 			unsigned int ilog2_interval = ilog2(interval);
- 
- 			len = (task->total_xfer_len >> ilog2_interval) * 8;
- 		}
--
- 	}
- 
- 	hdr->dw1 = cpu_to_le32(dw1);
-@@ -2526,6 +2578,7 @@ static struct scsi_host_template sht_v3_hw = {
- 	.bios_param		= sas_bios_param,
- 	.this_id		= -1,
- 	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
-+	.sg_prot_tablesize	= HISI_SAS_SGE_PAGE_CNT,
- 	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
- 	.eh_device_reset_handler = sas_eh_device_reset_handler,
- 	.eh_target_reset_handler = sas_eh_target_reset_handler,
-@@ -2701,6 +2754,9 @@ hisi_sas_v3_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		dev_info(dev, "Registering for DIF/DIX prot_mask=0x%x\n",
- 			 prot_mask);
- 		scsi_host_set_prot(hisi_hba->shost, prot_mask);
-+		if (hisi_hba->prot_mask & HISI_SAS_DIX_PROT_MASK)
-+			scsi_host_set_guard(hisi_hba->shost,
-+					    SHOST_DIX_GUARD_CRC);
- 	}
- 
- 	rc = scsi_add_host(shost, dev);
--- 
-2.17.1
+>> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+>> > index 652dc36e3012..9d77b0901ab7 100644
+>> > --- a/drivers/usb/host/xhci.h
+>> > +++ b/drivers/usb/host/xhci.h
+>> > @@ -1295,6 +1295,8 @@ enum xhci_setup_dev {
+>> >  #define TRB_IOC			(1<<5)
+>> >  /* The buffer pointer contains immediate data */
+>> >  #define TRB_IDT			(1<<6)
+>> > +/* TDs smaller than this might use IDT */
+>>=20
+>> Technically, "TDs at most this" since you're 8 itself is an allowed
 
+heh, I made a mess on this sentence, but I guess you got the gist of it.
+
+cheers
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxavPoACgkQzL64meEa
+mQbEphAAx7v6Cfg8lcpqDO9sG4SdQ2xwsEQZVh7tGXIxH5g4P+4JeZonjmWSbpO+
+jg+l7VXtMCBA03vkOSBEkhEePbdz5V9ew6CzPRVvcoqKubzBR2LaYXiCqolf7yol
+eLbNHDClKF5XGDnElQoMCYQqdP1A9tkeTxf1PRGQtIVvPP6hE9uqwe1upeyksihv
+v2R/wO5Ikj1FONhPhGptdp/Y6TpB6W3huks9xMHfdoGpybw27H6+C0hvWhn4C+1+
+rzsWKYCGSNVWrumsp4Yvhi/fXhVp8KGtNLz0zqtPqm1vvOldpsOVCBHGJTcC7zXN
+BP/4k1PFj0DlkbUVQnXunzNTUeeZCRNfckyqjs+ikh7+DylAleZXXUZGLifsXk5f
+RI0vJ6EPDRv90F5arIy9n2bsM7U4uo9FPHXpc4F9lJD4Ccg3QUfCfv4PfiH/Ky5n
+ph1GgCu/cdNeuSc3h6o4kvyigoD2fXHPaG8GeY3F6eh0nEMcJJ4S5ZXsDwGOpDAN
+YNtw7d/+xVwnOle4VUi+aRQQ2KU45iSzNTDJDOvPqSYYjdbO/cOKjnopftsoaeMV
+fKByimVFXgu5ehVOL1pREyiQUpUjC+oUoUhQ4z5vLskL7DxIhComD+NDZPTteBvi
+8xIjUDZvwA4x9UIgyQcFdaOoC7sXiMUZ4BLEWRI2uZzazgXnlLk=
+=YNGD
+-----END PGP SIGNATURE-----
+--=-=-=--
