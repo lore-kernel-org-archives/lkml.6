@@ -2,142 +2,141 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACEDC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AF0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5796A20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EA8820B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:31:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="utJhRuLq"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kXG4I1gu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730472AbfBFMa0 (ORCPT
+        id S1730504AbfBFMbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:30:26 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35960 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728167AbfBFMaX (ORCPT
+        Wed, 6 Feb 2019 07:31:08 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:37780 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728167AbfBFMbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:30:23 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so7363133wrv.3;
-        Wed, 06 Feb 2019 04:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=p+V+ugKLmy1ndrNliBfqiopLtR1Ests8dXxdeFR9BBs=;
-        b=utJhRuLqjsE0TQIzdZfoW29ZLUG3Ys/qOs74lzpfuny257ZbdvxMQWwxL4/+/HJxap
-         aPClm2CY6SFZk3eydMqrGAKJWvLj81OYk045+mtKuby2N4W0lXHXHXTaLv1AO5jb1hhP
-         CjUP9bkhTgbJFw+xyECkk5sM/3XV3S/HEnxLW4D/hKQL2sqWiibslRv7iHOSvuIEK8Ml
-         Z1q1FtP+Zosoi8ZIQbFmgpVhMJRFbVLxI6oY2f/pejd32wpqQFEwb1S8iSp2rYcK/r5c
-         CUt7SZ6WgF66fb0gFNij1fQcCtT0LRQatkzoAOcTSIJD10edQAK0BbyIWH/J7TotJedq
-         SG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=p+V+ugKLmy1ndrNliBfqiopLtR1Ests8dXxdeFR9BBs=;
-        b=efkbHOucmTCtZgQz6aIEfk3sbht1nonNOkhxiTaHItRmMmjow8gFGq+pCzq/CqSo5p
-         txEe8G8WM//Mf+1OjdLGXl5uwXJ6TyEKK1I7847EvhcBjboE5r/GO/lYJ9Zt3fdENTC9
-         bhRu9BUh6HJOwnaaM1CN2A7lLcSuvk5FX3j/g2QsdQPtFmKlOJ63u0FY9oCnQOOZdd1a
-         sXOVz3T0z36FhzuWf0+eygdFgq94YxGfeC3qLBQlxvNLQJrdbDvO6fFECCfL/VeeRSwb
-         drB7z+TLAogJICrLLW74xVKUA81as3gr1+24RFgQYknqw8J8ZlUADV/RuHE1IKMGnIg5
-         U29g==
-X-Gm-Message-State: AHQUAubqOkaQvsWhLGfDBXwT/9apFkvwVLbTd7w9qfOiHVIutIYLlNdm
-        Lhyl6FpVkgz/8+O0j+N76ic=
-X-Google-Smtp-Source: AHgI3IZMKEuaHFpSRJE348VNK/JYaycjUA+1v0IpGqweptfYndOMZLbriZHwwrL4rsTm1I5ofPUzDg==
-X-Received: by 2002:a05:6000:1144:: with SMTP id d4mr7572918wrx.136.1549456221584;
-        Wed, 06 Feb 2019 04:30:21 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id x12sm18283182wrt.20.2019.02.06.04.30.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 04:30:21 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Joe Perches <joe@perches.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Paul Zimmerman <pauldzim@gmail.com>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] r8169: Avoid pointer aliasing
-Date:   Wed,  6 Feb 2019 13:30:18 +0100
-Message-Id: <20190206123018.24802-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190206123018.24802-1-thierry.reding@gmail.com>
-References: <20190206123018.24802-1-thierry.reding@gmail.com>
+        Wed, 6 Feb 2019 07:31:08 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x16CUsWa112683;
+        Wed, 6 Feb 2019 06:30:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549456254;
+        bh=nfcU7k8TYeiDCdUMfCPF6U7955+D8uZttty0YIAt5s0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kXG4I1guGwbWFc2uawtu9Wg2Fqk9SPHdiCSDN7UbOjauvIajnIPFnoAPy43PQZnEu
+         Rq64nqZO9rPURDMxeaL1iX15C8C9HNq3oV4YlczJBeSZwKH86kcMxbcoMBCpMhStBB
+         nkfQvISk4t9+5JH31rt50ZQlcyH2MFwkG24n+3uk=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x16CUsrv054112
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Feb 2019 06:30:54 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 6
+ Feb 2019 06:30:53 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 6 Feb 2019 06:30:53 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x16CUoF7005639;
+        Wed, 6 Feb 2019 06:30:50 -0600
+Subject: Re: [PATCH v5 0/9] phy: Add configuration interface for MIPI D-PHY
+ devices
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+CC:     Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-media@vger.kernel.org>
+References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
+ <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
+ <20190205084620.GW3271@phenom.ffwll.local>
+ <4177fba5-279d-3283-88f0-c681f72e5951@ti.com>
+ <20190206122546.7zucalixgcm4ph36@flea>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <f3a70714-5538-d6fa-201f-16b70e9d062c@ti.com>
+Date:   Wed, 6 Feb 2019 18:00:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190206122546.7zucalixgcm4ph36@flea>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hi,
 
-Read MAC address 32-bit at a time and manually extract the individual
-bytes. This avoids pointer aliasing and gives the compiler a better
-chance of optimizing the operation.
+On 06/02/19 5:55 PM, Maxime Ripard wrote:
+> Hi Kishon,
+> 
+> On Wed, Feb 06, 2019 at 05:43:12PM +0530, Kishon Vijay Abraham I wrote:
+>> On 05/02/19 2:16 PM, Daniel Vetter wrote:
+>>> On Mon, Feb 04, 2019 at 03:33:31PM +0530, Kishon Vijay Abraham I wrote:
+>>>>
+>>>>
+>>>> On 21/01/19 9:15 PM, Maxime Ripard wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Here is a set of patches to allow the phy framework consumers to test and
+>>>>> apply runtime configurations.
+>>>>>
+>>>>> This is needed to support more phy classes that require tuning based on
+>>>>> parameters depending on the current use case of the device, in addition to
+>>>>> the power state management already provided by the current functions.
+>>>>>
+>>>>> A first test bed for that API are the MIPI D-PHY devices. There's a number
+>>>>> of solutions that have been used so far to support these phy, most of the
+>>>>> time being an ad-hoc driver in the consumer.
+>>>>>
+>>>>> That approach has a big shortcoming though, which is that this is quite
+>>>>> difficult to deal with consumers integrated with multiple variants of phy,
+>>>>> of multiple consumers integrated with the same phy.
+>>>>>
+>>>>> The latter case can be found in the Cadence DSI bridge, and the CSI
+>>>>> transceiver and receivers. All of them are integrated with the same phy, or
+>>>>> can be integrated with different phy, depending on the implementation.
+>>>>>
+>>>>> I've looked at all the MIPI DSI drivers I could find, and gathered all the
+>>>>> parameters I could find. The interface should be complete, and most of the
+>>>>> drivers can be converted in the future. The current set converts two of
+>>>>> them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
+>>>>> use them, and the Allwinner MIPI-DSI driver.
+>>>>
+>>>> Can the PHY changes go independently of the consumer drivers? or else I'll need
+>>>> ACKs from the GPU MAINTAINER.
+>>>
+>>> Maxime is a gpu maintainer, so you're all good :-)
+>>
+>> cool.. I've merged all the patches except drm/bridge.
+>>
+>> Please see if everything looks okay once it shows up in phy -next (give a day)
+> 
+> Thanks!
+> 
+> If possible (and if that's still an option), it would be better if the
+> sun6i related patches (patches 4 and 5) would go through the DRM tree
+> (with your Acked-by of course).
+> 
+> We have a number of patches in flight that have a decent chance to
+> conflict with patch 4.
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Applies to net-next.
+Sure. Dropped patches 4 and 5 from my tree.
 
-I tested this on a Jetson TX2 with an add-in Realtek ethernet card that
-has a properly programmed OTP to verify that I got the endianess right.
-Seems like everything works and the device behaves the same with or
-without this patch.
-
-Changes in v3:
-- align MAC address to u16 for is_valid_ether_addr()
-
- drivers/net/ethernet/realtek/r8169.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 501891be7c56..1dd72137fd53 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7113,12 +7113,21 @@ static int rtl_alloc_irq(struct rtl8169_private *tp)
- static void rtl_read_mac_address(struct rtl8169_private *tp,
- 				 u8 mac_addr[ETH_ALEN])
- {
-+	u32 value;
-+
- 	/* Get MAC address */
- 	switch (tp->mac_version) {
- 	case RTL_GIGA_MAC_VER_35 ... RTL_GIGA_MAC_VER_38:
- 	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
--		*(u32 *)&mac_addr[0] = rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
--		*(u16 *)&mac_addr[4] = rtl_eri_read(tp, 0xe4, ERIAR_EXGMAC);
-+		value = rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
-+		mac_addr[0] = (value >>  0) & 0xff;
-+		mac_addr[1] = (value >>  8) & 0xff;
-+		mac_addr[2] = (value >> 16) & 0xff;
-+		mac_addr[3] = (value >> 24) & 0xff;
-+
-+		value = rtl_eri_read(tp, 0xe4, ERIAR_EXGMAC);
-+		mac_addr[4] = (value >>  0) & 0xff;
-+		mac_addr[5] = (value >>  8) & 0xff;
- 		break;
- 	default:
- 		break;
-@@ -7316,7 +7325,8 @@ static int rtl_get_ether_clk(struct rtl8169_private *tp)
- static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
--	u8 mac_addr[ETH_ALEN] __aligned(4) = {};
-+	/* align to u16 for is_valid_ether_addr() */
-+	u8 mac_addr[ETH_ALEN] __aligned(2) = {};
- 	struct rtl8169_private *tp;
- 	struct net_device *dev;
- 	int chipset, region, i;
--- 
-2.19.1
-
+Thanks
+Kishon
