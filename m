@@ -2,164 +2,255 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA050C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81C3C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76140217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:07:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gsn/CgGz"
+	by mail.kernel.org (Postfix) with ESMTP id 94A1B217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbfBFQHZ (ORCPT
+        id S1730724AbfBFQH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:07:25 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46829 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfBFQHZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:07:25 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f5so5711018lfc.13;
-        Wed, 06 Feb 2019 08:07:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8rujl7kw6twe6IHDOqyal91pzUIV1BTP3REMjoYm6+U=;
-        b=Gsn/CgGzvQmfOaW5jcm2HkZkvrTjBxgHHZTwH5z6fVhabe2hF+Nk8SfrSBWwD0Wxl1
-         t4cfMDtMJO8FdmQ9ofPKc1koTrT3aUIu9Vf1LTME6jy3fKUgWqXHfUTqL7cAaNEXLuSv
-         TPtc3p/CKwdi+2ojHK/hxn7u5D7JNGC7US2sJ+qapHifmGcfQpCcO0sGk0gLgdg9/VzO
-         GIKZqK2Aa5VHqebNGW7cZIAgm5V2U0aatBjG8bKLn8Yp5175Wjb5xMd7Ins/S45g4XM5
-         7BHzAeXiscSi67E2ONsdUTxkQihn4uuDwDu4+vauQYF8e2EgH8sevcl5BXoGuSIzUDJ5
-         zFAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8rujl7kw6twe6IHDOqyal91pzUIV1BTP3REMjoYm6+U=;
-        b=gjMEbIuQIwr2ZoEI8iTRJ0lQhisgi9y7bkaif1HDU3hUILm25cFpzQqHTDdm4EmDaX
-         mr8cLrS7D89aswCUuJld7gIUiDABuPSSoS61Mmgt8TPlhLW5lHt2L1gNAMHdwz8oxNjX
-         YPEZ1sZvjKNlX9bNlB73Fzxm4jxIokgcUrRXg4qZLRIavxcaD9PhCvU8BTk5ye8taukZ
-         I1TtSkJ335WZIjccnlQsa5XnP8G/zjpUYgGh1QexcMJva5dHRKXNkwicJHcNuG5PZ7B4
-         vmnq/6+NYDU81X/sydBc48bs629CyBThdk3hc9BwIrXaT6DVeRuf/hgqJwfiq0q8uv8c
-         DNUA==
-X-Gm-Message-State: AHQUAuZahFEOBXnyqGAOmv+dxUGHUF51Bcw2VMXrHc8CCMMNLCSYz6mC
-        EAhdMpYeTDUARYYVT/B5UIbIpA1N
-X-Google-Smtp-Source: AHgI3IaTql2leOa+5fgQ1QW3JZhl0TINeFgK8cKKgR0SlJYXRjinqaWWrze9APhUUs7xC1K/KCOFKQ==
-X-Received: by 2002:a19:760a:: with SMTP id c10mr7039748lff.53.1549469241693;
-        Wed, 06 Feb 2019 08:07:21 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id s9-v6sm3805737lja.12.2019.02.06.08.07.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 08:07:21 -0800 (PST)
-Subject: Re: [PATCH V13 3/5] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
- <1549464441-1836-3-git-send-email-skomatineni@nvidia.com>
- <4ecd3894-a1cb-20dd-8675-26e6e84254e7@gmail.com>
- <BYAPR12MB3398A6C76EC731D259FC3EA4C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33988DCC1F4997AAF2112447C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9c6524ec-b40b-5b0f-eb70-f9ce2c426fd9@gmail.com>
-Date:   Wed, 6 Feb 2019 19:07:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 11:07:59 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32876 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726270AbfBFQH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 11:07:59 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 2CBC3381FA0F0E930B1B;
+        Wed,  6 Feb 2019 16:07:57 +0000 (GMT)
+Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 6 Feb
+ 2019 16:07:49 +0000
+Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
+ from TPM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190206105724.14495-1-roberto.sassu@huawei.com>
+ <20190206125725.GA9257@linux.intel.com>
+ <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
+ <20190206135450.GA20061@linux.intel.com>
+ <2dea31e3-0796-e21f-5625-1ddc78485c71@huawei.com>
+ <20190206153445.GA23970@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <3cd14c24-9de2-d347-b40c-22ca87d9df87@huawei.com>
+Date:   Wed, 6 Feb 2019 17:07:49 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB33988DCC1F4997AAF2112447C26F0@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190206153445.GA23970@linux.intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.155]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2019 18:55, Sowjanya Komatineni пишет:
-> 
-> 
->>> Two ";;" at the end.
+On 2/6/2019 4:34 PM, Jarkko Sakkinen wrote:
+> On Wed, Feb 06, 2019 at 03:25:48PM +0100, Roberto Sassu wrote:
+>> On 2/6/2019 2:54 PM, Jarkko Sakkinen wrote:
+>>> On Wed, Feb 06, 2019 at 02:07:04PM +0100, Roberto Sassu wrote:
+>>>> On 2/6/2019 1:57 PM, Jarkko Sakkinen wrote:
+>>>>> On Wed, Feb 06, 2019 at 11:57:18AM +0100, Roberto Sassu wrote:
+>>>>>> Update
+>>>>>>
+>>>>>> This version of the patch set includes three additional patches (5-7/7)
+>>>>>> that allow users of the TPM driver to provide a digest for each PCR bank to
+>>>>>> tpm_pcr_extend(). The new patches have been included to facilitate the
+>>>>>> review of all the changes to support TPM 2.0 crypto agility for reading and
+>>>>>> extending PCRs.
+>>>>>>
+>>>>>>
+>>>>>> Original patch set description
+>>>>>>
+>>>>>> The TPM driver currently relies on the crypto subsystem to determine the
+>>>>>> digest size of supported TPM algorithms. In the future, TPM vendors might
+>>>>>> implement new algorithms in their chips, and those algorithms might not
+>>>>>> be supported by the crypto subsystem.
+>>>>>>
+>>>>>> Usually, vendors provide patches for the new hardware, and likely
+>>>>>> the crypto subsystem will be updated before the new algorithm is
+>>>>>> introduced. However, old kernels might be updated later, after patches
+>>>>>> are included in the mainline kernel. This would leave the opportunity
+>>>>>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+>>>>>> are not extended.
+>>>>>>
+>>>>>> This patch set provides a long term solution for this issue. If a TPM
+>>>>>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
+>>>>>> the digest size from the TPM with a PCR read. All the PCR banks are
+>>>>>> extended, even if the algorithm is not yet supported by the crypto
+>>>>>> subsystem.
+>>>>>>
+>>>>>> PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+>>>>>> is stored in the tpm_chip structure and available for users of the TPM
+>>>>>> driver.
+>>>>>>
+>>>>>> Changelog
+>>>>>>
+>>>>>> v9:
+>>>>>> - add comment for ima_load_kexec_buffer() in ima_init()
+>>>>>> - move 'digests' and ima_init_digests() to ima_queue.c
+>>>>>> - remove comment for TPM_RETRY
+>>>>>>
+>>>>>> v8:
+>>>>>> - set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
+>>>>>> - replace enum tpm_const with #define
+>>>>>> - rename labels in init_trusted()
+>>>>>> - allocate tpm_digest array after retrieving random data in init_digests()
+>>>>>>
+>>>>>> v7:
+>>>>>> - use memchr_inv() in tpm2_get_pcr_allocation()
+>>>>>> - add patch to move tpm_chip to include/linux/tpm.h
+>>>>>> - add patch to set the tpm_chip argument in trusted.c to a pointer from
+>>>>>>      tpm_default_chip()
+>>>>>> - remove definition of tpm_extend_digest
+>>>>>> - remove code in tpm2_pcr_extend() to extend unused PCR banks with the
+>>>>>>      first digest passed by the caller of tpm_pcr_extend()
+>>>>>> - remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
+>>>>>> - remove padding of SHA1 digest in tpm_pcr_extend()
+>>>>>> - pre-allocate and initialize array of tpm_digest structures in
+>>>>>>      security/keys/trusted.c and security/integrity/ima/ima_init.c
+>>>>>>
+>>>>>> v6:
+>>>>>> - squash patches 4-6
+>>>>>> - rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+>>>>>>      members to size and data
+>>>>>> - add comment in tpm2_init_bank_info()
+>>>>>>
+>>>>>> v5:
+>>>>>> - rename digest_struct variable to digest
+>>>>>> - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+>>>>>> - rename digest_size member of tpm_bank_list to extend_size
+>>>>>> - change type of alg_id member of tpm_bank_list from u8 to u16
+>>>>>> - add missing semi-colon in pcrlock()
+>>>>>>
+>>>>>> v4:
+>>>>>> - rename active_banks to allocated_banks
+>>>>>> - replace kmalloc_array() with kcalloc()
+>>>>>> - increment nr_allocated_banks if at least one PCR in the bank is selected
+>>>>>> - pass multiple digests to tpm_pcr_extend()
+>>>>>>
+>>>>>> v3:
+>>>>>> - remove end marker change
+>>>>>> - replace active_banks static array with pointer to dynamic array
+>>>>>> - remove TPM2_ACTIVE_PCR_BANKS
+>>>>>>
+>>>>>> v2:
+>>>>>> - change the end marker of the active_banks array
+>>>>>> - check digest size from output of PCR read command
+>>>>>> - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+>>>>>>
+>>>>>> v1:
+>>>>>> - modify definition of tpm_pcr_read()
+>>>>>> - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+>>>>>>
+>>>>>>
+>>>>>> Roberto Sassu (6):
+>>>>>>      tpm: dynamically allocate the allocated_banks array
+>>>>>>      tpm: rename and export tpm2_digest and tpm2_algorithms
+>>>>>>      tpm: retrieve digest size of unknown algorithms with PCR read
+>>>>>>      tpm: move tpm_chip definition to include/linux/tpm.h
+>>>>>>      KEYS: trusted: explicitly use tpm_chip structure from
+>>>>>>        tpm_default_chip()
+>>>>>>      tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+>>>>>>
+>>>>>>     drivers/char/tpm/tpm-chip.c         |   1 +
+>>>>>>     drivers/char/tpm/tpm-interface.c    |  38 ++++----
+>>>>>>     drivers/char/tpm/tpm.h              | 117 ++---------------------
+>>>>>>     drivers/char/tpm/tpm1-cmd.c         |  12 +++
+>>>>>>     drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
+>>>>>>     include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
+>>>>>>     include/linux/tpm_eventlog.h        |   9 +-
+>>>>>>     security/integrity/ima/ima.h        |   1 +
+>>>>>>     security/integrity/ima/ima_crypto.c |  10 +-
+>>>>>>     security/integrity/ima/ima_init.c   |   4 +
+>>>>>>     security/integrity/ima/ima_queue.c  |  27 +++++-
+>>>>>>     security/keys/trusted.c             |  73 +++++++++++----
+>>>>>>     12 files changed, 349 insertions(+), 208 deletions(-)
+>>>>>>
+>>>>>> -- 
+>>>>>> 2.17.1
+>>>>>>
+>>>>>
+>>>>> Can you do two things:
+>>>>>
+>>>>> 1. Check the v3: https://patchwork.kernel.org/patch/10797181/. Needs
+>>>>> to be applied first.
+>>>>> 2. Check that this does not cause merge conflicts with the current
+>>>>>       imaster? If it does, fix them, and use --subject-prefix="RESEND,PATCH v10".
+>>>>>
+>>>>> Thanks.
+>>>>
+>>>> I already applied the patch set on top of linux-tpmdd/next
+>>>> (41ac27d19b07) and your patch.
+>>>>
+>>>> Also, there are no conflicts with the current master.
+>>>>
+>>>> Roberto
 >>>
+>>> Before getting your new version, I applied:
 >>>
+>>> https://patchwork.kernel.org/project/linux-integrity/list/?series=76223
 >>>
->>> Good news: DVC I2C works now and tps6586x probes fine! :) Bad news: 
->>> atmel-touch still has same problems as in V12 :(
+>>> This causes some merge conflicts:
 >>>
->>> DMA-only V13: http://dpaste.com/0XJ1Z8G.txt
+>>> error: Failed to merge in the changes.
+>>> Patch failed at 0003 tpm: retrieve digest size of unknown algorithms with PCR read
 >>
->> Strangely, there are many transactions to touch and all of them are good except DMA timeout only when reading T44 and T5 atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
+>> I fixed it and patch 4/6. But, I think there is a problem in your patch
+>> 'tpm: move tpm_validate_commmand() to tpm2-space.c':
+>>
+>> ---
+>> -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32
+>> cc,
+>> -                      u8 *cmd)
+>> +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space
+>> *space,
+>> +                               const void *cmd, size_t len)
+>> +{
+>> +       const struct tpm_header *header = (const void *)cmd;
+>> +       int i;
+>> +       u32 cc;
+>> +       u32 attrs;
+>> +       unsigned int nr_handles;
+>> +
+>> +       if (len < TPM_HEADER_SIZE)
+>> +               return -EINVAL;
+>> +
+>> +       if (chip->nr_commands) {
+>>
+>> [...]
+>>
+>> +       }
+>> +
+>> +       return cc;
+>> +
+>> ---
+>>
+>> 'cc' may be not initialized before returning the value.
 > 
-> [    0.923138] tegra-i2c 7000c000.i2c: starting DMA for length: 16
-> [    0.923148] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> [    0.923337] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
-> [    0.923347] tegra-i2c 7000c000.i2c: starting DMA for length: 12
-> [    0.923355] tegra-i2c 7000c000.i2c: unmasked irq: 0c
-> [    0.935048] tegra-i2c 7000d000.i2c: starting DMA for length: 16
-> [    0.935058] tegra-i2c 7000d000.i2c: unmasked irq: 0c
-> [    1.028750] tegra-i2c 7000c000.i2c: DMA transfer timeout
-> [    1.028816] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
-> 
-> Looking into timestamps and transactions, DMA timeouts after start of DMA for I2C1 to touch during this transaction.
-> While it is waiting for I2C1 DMA transfer, lots of DVC transactions happened thru DMA which are successful
-> 
-> What is the I2C1 speed?
+> Ah. Thank you for catching that one. Can you quickly check the attached
+> commit? I'll squash it to the corresponding commit.
 
-400KHz
+Seems ok to me. I'll send patch 3/6 and 4/6.
 
-> Also incase if device is running slow for some reason, probably timeout was not enough as this patch series changes timeout with base 100mS + msg transfer time based on transfer size.
-> Can you give quick try with increased timeout incase if device is running slow?
+Roberto
+
+
+> /Jarkko
 > 
 
-Tried to increase the timeout to 1 second, doesn't help.
-
-What helped again is the I2C HW resetting after each transfer. Likely that means that HW isn't programmed correctly, please carefully check every bit.
-
-DMA-only + I2C HW reset: http://dpaste.com/26AQXFM.txt
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index a9391c3646b6..e0a569b69572 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -6,6 +6,8 @@
-  * Author: Colin Cross <ccross@android.com>
-  */
- 
-+#define DEBUG
-+
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/dmaengine.h>
-@@ -1044,8 +1046,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
-                xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
- 
-        xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
--       i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
--                                   i2c_dev->dma_buf;
-+       i2c_dev->is_curr_dma_xfer = !!i2c_dev->dma_buf;
-        tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
-        dma = i2c_dev->is_curr_dma_xfer;
- 
-@@ -1203,10 +1204,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
-                i2c_dev->msg_err);
- 
-        i2c_dev->is_curr_dma_xfer = false;
-+       tegra_i2c_init(i2c_dev, true);
-        if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
-                return 0;
- 
--       tegra_i2c_init(i2c_dev, true);
-        /* start recovery upon arbitration loss in single master mode */
-        if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
-                if (!i2c_dev->is_multimaster_mode)
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
