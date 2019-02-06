@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD283C282CB
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E7EC282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F7B218AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3D61217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 00:11:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Yvl1gGbl"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="oXpybZ65"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfBFALi (ORCPT
+        id S1729380AbfBFALo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 19:11:38 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45735 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbfBFALe (ORCPT
+        Tue, 5 Feb 2019 19:11:44 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35248 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729178AbfBFALl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 19:11:34 -0500
-Received: by mail-ed1-f68.google.com with SMTP id t6so3213155edw.12
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:33 -0800 (PST)
+        Tue, 5 Feb 2019 19:11:41 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b17so322530eds.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 16:11:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Bm2bfrig1u8sdvSQGYkmziO995BytTCx2B7Yh/bdjcY=;
-        b=Yvl1gGblQILe6uSFp2dhuWivUoqZyNpvypQseVf86yma7yOVpmi9vEEpcrBOKVhNip
-         hZUTVtej7BzCPswE8q0pH/N3C17Fkdsk8bPjsR12WWTST8lkXeIL5n7igxmIAmCOAfLp
-         +jpH5smD3Y/wdUMX27G6b8646RiEn0UIIS0qvCN8onXM9Ad27PinFxZtIw8dkLB8h3bh
-         GuL3BNcGwv1Uu+6hoAHoiFqCDZgitE2d3RTBWxKvpwouoOxlixaPrtAxnyzf9p1cON0y
-         HlvV5tTfxgYaSLuVN2CvYKXfjvuehUPBJ+MFj8fMBlOQgBobvjNXYaXJKLYklh2oGgWf
-         8xsQ==
+        bh=GYtWgsYIrbQ+wXLZQ6GRDMo0YzwFjr2Z8S6W7O2LBTk=;
+        b=oXpybZ65zOtlwlrNVV8Yjeex71UpqY5Rgkc3a9e2a1zA5iFgEUgjOTCqINQfhqZU/j
+         OK3h98L2SbrO86GYKrZ4tMgkj09Vix1yirSNGGDEhEn4ReOnQWO5oHYlnT4S1q/wDq3A
+         lgbbCaZ66TaRnh2j9uLXvENEIvi9S98TDglvK4WR9eenUiCp/ybuqNqlfIF4/rrUB3/M
+         vE61TPBmaRhPuscVhgcVse30bb53qDoV8Fs/J/VgngYFGKgl+6E053T9zMZ85AfKGxWR
+         jc71d+6fhgOjb55VZOIkp+FfXBrt9lCVwSokgJNdfWrMADt/TZEJmxrBPULJ2JO6AG2l
+         9Z5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Bm2bfrig1u8sdvSQGYkmziO995BytTCx2B7Yh/bdjcY=;
-        b=XYymQGviIuJxn/QcRv4KC6NyafMHwuTyMxpJlOMH9Kf/MOhyDNdgxhG0l883jfAzsq
-         5XdL36Whoj23ag9GjxicNoYi0djfM4BlSGZ91T23lnGBm1Z66V8lK2l6IJZ6oJM4Y0gn
-         r+0fdI0tv1UHqISHyrV68TTLHFRyuztx9pgIBlH4zvFcaaimscKKhvzPd3+IqLcDCmJs
-         bkgRKhR79k1DDljqzyrnE5g6MewHYDSRyokSEkZPYGg+IrN8DkYD9niWXCaQTZ3bVkGY
-         XnKLY63AL5/jjpBKoZ0iOZhTmO0eC/UCNt+saAGstBGj3mVmQHn7JFihWletHyHRXSmh
-         Z+2w==
-X-Gm-Message-State: AHQUAuZ23x0xElnj4Dr/Xx+XufGZHaP8/0eQNnyvB8VwgHqMpZQsCUDs
-        maaA891WP8/5Qy6qjsHibeHIIEhOEKE=
-X-Google-Smtp-Source: AHgI3IaMpoMQbGtokpQePYbo6ODA+ABs+iuD91FziR3i8U+WHJpdmvAEC3tHXoXAesqRKF4h+TTNAg==
-X-Received: by 2002:a17:906:d288:: with SMTP id ay8mr5468223ejb.59.1549411892598;
-        Tue, 05 Feb 2019 16:11:32 -0800 (PST)
+        bh=GYtWgsYIrbQ+wXLZQ6GRDMo0YzwFjr2Z8S6W7O2LBTk=;
+        b=kpn3HCNsamZrvCYHSFTkvngf9kkUtNKmznSIp67mpUAj1FGCVGrj6c+PuvJRKkx0O7
+         g/tE7N2Mo+nTA/p3La/oUOO9dA3OvTfgRQ5mHLqtsuO1BCsD11eq+J0d1hbvBie7+8N2
+         8yyKX7SDEVkr2kp43au5bD0Wt5kcfsXStdO8JFZGMxSSGp4Tji/EKIvI2e6BWUQgHG5z
+         XrlGgmKSrLapzdOGvpuvj+RL9Bt5QfmlgHYti+GYNZtZ219e5zXMv2BjDsvza5ZzMHyG
+         T1DCXbB6kg23/muHfRc342DSSRL5eiG3zGnMdZt4MKlyF23UZrlvIzTfnqZcIzBC3/Bf
+         hB5A==
+X-Gm-Message-State: AHQUAuakRGXbLS3n+p9L92m9vcB0m1EAdQXynB76g2fgt8iXwvXkbXf6
+        /mirbJ656U2m3WJCRqnBbPpvSS6bJF0=
+X-Google-Smtp-Source: AHgI3IZBgA0WgbRyskGX5wgPcmIoKRoeaNeGe3Zjf9nareDBLe6AlYLT5zA0QGeIUkhFHGADpHfHNQ==
+X-Received: by 2002:a17:906:d29b:: with SMTP id ay27mr5260960ejb.119.1549411899093;
+        Tue, 05 Feb 2019 16:11:39 -0800 (PST)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.31
+        by smtp.gmail.com with ESMTPSA id p30sm5489594eda.68.2019.02.05.16.11.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 05 Feb 2019 16:11:32 -0800 (PST)
+        Tue, 05 Feb 2019 16:11:38 -0800 (PST)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
@@ -75,9 +75,9 @@ Cc:     Dmitry Safonov <dima@arista.com>, Adrian Reber <adrian@lisas.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 17/32] x86/vdso2c: Sort vdso entries by addresses for linker script
-Date:   Wed,  6 Feb 2019 00:10:51 +0000
-Message-Id: <20190206001107.16488-18-dima@arista.com>
+Subject: [PATCH 22/32] timens: Add align for timens_offsets
+Date:   Wed,  6 Feb 2019 00:10:56 +0000
+Message-Id: <20190206001107.16488-23-dima@arista.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206001107.16488-1-dima@arista.com>
 References: <20190206001107.16488-1-dima@arista.com>
@@ -88,96 +88,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two linker scripts for vdso .so(s):
-- *-timens.lds for building vdso for processes inside time namespace
-  (it has bigger functions and needs to build firstly)
-- *.lds for host processes vdso
-  (it has smaller functions and entry addresses should be adjusted
-  with the linker script magic to fit with entries from timens)
-
-To adjust entries on host vdso, *.lds includes *.entries.
-Those are generated by vdso2c while parsing timens vdso.
-
-Linker doesn't allow going back on some addresses, so sort entries
-to timens VDSO before writing them to .entries file.
+Align offsets so that time namespace will work for ia32 applications on
+x86_64 host.
 
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/entry/vdso/vdso2c.c | 13 +++++++++++++
- arch/x86/entry/vdso/vdso2c.h | 20 +++++++++++++++++---
- 2 files changed, 30 insertions(+), 3 deletions(-)
+ include/linux/timens_offsets.h | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vdso2c.c b/arch/x86/entry/vdso/vdso2c.c
-index 72731c4cfdce..4f91640398b2 100644
---- a/arch/x86/entry/vdso/vdso2c.c
-+++ b/arch/x86/entry/vdso/vdso2c.c
-@@ -119,6 +119,19 @@ static void fail(const char *format, ...)
- 	va_end(ap);
- }
+diff --git a/include/linux/timens_offsets.h b/include/linux/timens_offsets.h
+index 777530c46852..f2a03d4f7a91 100644
+--- a/include/linux/timens_offsets.h
++++ b/include/linux/timens_offsets.h
+@@ -2,9 +2,17 @@
+ #ifndef _LINUX_TIME_OFFSETS_H
+ #define _LINUX_TIME_OFFSETS_H
  
-+struct vdso_entry {
-+	unsigned long addr;
-+	const char *name;
-+};
-+
-+static int entry_addr_cmp(const void *_a, const void *_b)
-+{
-+	const struct vdso_entry *a = _a;
-+	const struct vdso_entry *b = _b;
-+
-+	return (a->addr < b->addr) - (a->addr > b->addr);
-+}
-+
- /*
-  * Evil macros for little-endian reads and writes
-  */
-diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
-index 065dac6c29c8..50566dd94451 100644
---- a/arch/x86/entry/vdso/vdso2c.h
-+++ b/arch/x86/entry/vdso/vdso2c.h
-@@ -21,6 +21,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
- 	const char *secstrings;
- 	INT_BITS syms[NSYMS] = {};
-+	struct vdso_entry *entries, *next_entry;
++/*
++ * Time offsets need align as they're placed on VVAR page,
++ * which is used by x86_64 and ia32 VDSO code.
++ * On ia32 offset::tv_sec (u64) has align(4), so re-align offsets
++ * to the same positions as 64-bit offsets.
++ * On 64-bit big-endian systems VDSO should convert to timespec64
++ * to timespec because of a padding occurring between the fields.
++ */
+ struct timens_offsets {
+-	struct timespec64  monotonic_time_offset;
+-	struct timespec64  monotonic_boottime_offset;
++	struct timespec64  monotonic_time_offset __aligned(8);
++	struct timespec64  monotonic_boottime_offset __aligned(8);
+ };
  
- 	ELF(Phdr) *pt = (ELF(Phdr) *)(raw_addr + GET_LE(&hdr->e_phoff));
- 
-@@ -88,6 +89,10 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 		GET_LE(&hdr->e_shentsize) * GET_LE(&symtab_hdr->sh_link);
- 
- 	syms_nr = GET_LE(&symtab_hdr->sh_size) / GET_LE(&symtab_hdr->sh_entsize);
-+	entries = calloc(syms_nr, sizeof(*entries));
-+	if (!entries)
-+		fail("malloc()\n");
-+	next_entry = entries;
- 	/* Walk the symbol table */
- 	for (i = 0; i < syms_nr; i++) {
- 		unsigned int k;
-@@ -122,11 +127,20 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
- 		if (ELF_FUNC(ST_TYPE, sym->st_info) != STT_FUNC)
- 			continue;
- 
--		fprintf(out_entries_lds, "\t\t. = ABSOLUTE(%#lx);\n",
--				(unsigned long)GET_LE(&sym->st_value));
--		fprintf(out_entries_lds, "\t\t*(.text.%s*)\n", name);
-+		next_entry->addr = GET_LE(&sym->st_value);
-+		next_entry->name = name;
-+		next_entry++;
- 	}
- 
-+	qsort(entries, next_entry - entries, sizeof(*entries), entry_addr_cmp);
-+
-+	while (next_entry != entries && out_entries_lds) {
-+		next_entry--;
-+		fprintf(out_entries_lds, "\t\t. = ABSOLUTE(%#lx);\n\t\t*(.text.%s*)\n",
-+			next_entry->addr, next_entry->name);
-+	}
-+	free(entries);
-+
- 	/* Validate mapping addresses. */
- 	for (i = 0; i < sizeof(special_pages) / sizeof(special_pages[0]); i++) {
- 		INT_BITS symval = syms[special_pages[i]];
+ #endif
 -- 
 2.20.1
 
