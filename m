@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC13C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776E2C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A3A20823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD0D206DD
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479130;
-	bh=StfklJzmAwX0dp/5iI29AmlwDkniwo0lgNZwVRdsLI4=;
+	s=default; t=1549479148;
+	bh=T+NeTDAoKrKIppjIwh43TIWRIrfcv2V7GEJoDr+UmpM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=04/9MzZJag08XURdZizOURN1jt9nLDXvOgtELPVgO6nQY8g/Sp0/tWgI4TXzWTiWg
-	 9QZQKEW/x6R9o4fV5cwLTjAxStjYNdRwcBSV6sLphm7qZGtt6UOU6NV+wmPdIWogOx
-	 E7kCX894Vq3BfcrjQz2FTJnl1n0ext97gaNXPJJ8=
+	b=broeVyAeoBs9qtVxaVoW9VoaQtZBqWa+xfzA9YKxXyggwOG0ZdFui9HV4kKh3Udcl
+	 X6yFOt01snRHnqtwzfefxMimz527L04Sc71Zko2KN0VX/4lFwdfBBgYOy7pffrrk4o
+	 ArKfOYljTRuVuYPf8YDerkAC0tGeeDdeeRhCtXQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbfBFSwJ (ORCPT
+        id S1728120AbfBFSvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:52:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46370 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:51:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728219AbfBFSwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:52:05 -0500
+        id S1728060AbfBFSvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:51:47 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2809620823;
-        Wed,  6 Feb 2019 18:52:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91A7C2186A;
+        Wed,  6 Feb 2019 18:51:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479124;
-        bh=StfklJzmAwX0dp/5iI29AmlwDkniwo0lgNZwVRdsLI4=;
+        s=default; t=1549479106;
+        bh=T+NeTDAoKrKIppjIwh43TIWRIrfcv2V7GEJoDr+UmpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oL4kXaD3itbmWMyZoVyc8w+9I8q0NWQ3fJbOm277FHmwNjgVwt6t3/Etv9k79uS3J
-         xKVB4fSRHEtCNDwpfSR4Y5rXzrG9Lcx6QRHL5jC6KBC0Aczw/MBboozS1naRXbN57k
-         tTBBPOou2tJVmePCTrhMrHDIjzKAcDooiIy3sT+8=
+        b=UHmgdXOCY7P7FxUDM1hDniDO4aXsukMBjtdnQ6vDV73ChMvDRSiofW6rkeF+myRfD
+         L25QGAl6nZ4lcnXD8A9OZgbans5PpxVDtiQZod5jcpwg7qDtoA1xaf3B/c2fs0vrxl
+         DqHqoPCmKtI7kcNs+AaGyV+1jyCiW23lIuRtvVP4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 53/53] perf auxtrace: Add timestamp to auxtrace errors
-Date:   Wed,  6 Feb 2019 15:49:03 -0300
-Message-Id: <20190206184903.24054-54-acme@kernel.org>
+Subject: [PATCH 46/53] perf thread-stack: Tidy thread_stack__push_cp() usage
+Date:   Wed,  6 Feb 2019 15:48:56 -0300
+Message-Id: <20190206184903.24054-47-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -62,243 +61,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-The timestamp can use useful to find part of a trace that has an error
-without outputting all of the trace e.g. using the itrace 's' option to
-skip initial number of events.
+If 'cp' is checked in thread_stack__push_cp() a number of error checks
+can be removed, reducing code size and improving readability.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20190206103947.15750-6-adrian.hunter@intel.com
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20190109091835.5570-3-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.c    | 22 ++++++++++++++++++++--
- tools/perf/util/auxtrace.h    |  2 +-
- tools/perf/util/event.h       |  3 ++-
- tools/perf/util/intel-bts.c   |  4 ++--
- tools/perf/util/intel-pt.c    | 23 ++++++++++++++++-------
- tools/perf/util/s390-cpumsf.c |  7 ++++---
- tools/perf/util/session.c     |  3 +++
- 7 files changed, 48 insertions(+), 16 deletions(-)
+ tools/perf/util/thread-stack.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index ad186d3255d1..267e54df511b 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -27,6 +27,7 @@
- #include <linux/bitops.h>
- #include <linux/log2.h>
- #include <linux/string.h>
-+#include <linux/time64.h>
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index d52f27f373ce..93ba3ab6a602 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -493,6 +493,9 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 	struct thread_stack_entry *tse;
+ 	int err;
  
- #include <sys/param.h>
- #include <stdlib.h>
-@@ -858,7 +859,7 @@ void auxtrace_buffer__free(struct auxtrace_buffer *buffer)
- 
- void auxtrace_synth_error(struct auxtrace_error_event *auxtrace_error, int type,
- 			  int code, int cpu, pid_t pid, pid_t tid, u64 ip,
--			  const char *msg)
-+			  const char *msg, u64 timestamp)
- {
- 	size_t size;
- 
-@@ -870,7 +871,9 @@ void auxtrace_synth_error(struct auxtrace_error_event *auxtrace_error, int type,
- 	auxtrace_error->cpu = cpu;
- 	auxtrace_error->pid = pid;
- 	auxtrace_error->tid = tid;
-+	auxtrace_error->fmt = 1;
- 	auxtrace_error->ip = ip;
-+	auxtrace_error->time = timestamp;
- 	strlcpy(auxtrace_error->msg, msg, MAX_AUXTRACE_ERROR_MSG);
- 
- 	size = (void *)auxtrace_error->msg - (void *)auxtrace_error +
-@@ -1160,12 +1163,27 @@ static const char *auxtrace_error_name(int type)
- size_t perf_event__fprintf_auxtrace_error(union perf_event *event, FILE *fp)
- {
- 	struct auxtrace_error_event *e = &event->auxtrace_error;
-+	unsigned long long nsecs = e->time;
-+	const char *msg = e->msg;
- 	int ret;
- 
- 	ret = fprintf(fp, " %s error type %u",
- 		      auxtrace_error_name(e->type), e->type);
++	if (!cp)
++		return -ENOMEM;
 +
-+	if (e->fmt && nsecs) {
-+		unsigned long secs = nsecs / NSEC_PER_SEC;
-+
-+		nsecs -= secs * NSEC_PER_SEC;
-+		ret += fprintf(fp, " time %lu.%09llu", secs, nsecs);
-+	} else {
-+		ret += fprintf(fp, " time 0");
-+	}
-+
-+	if (!e->fmt)
-+		msg = (const char *)&e->time;
-+
- 	ret += fprintf(fp, " cpu %d pid %d tid %d ip %#"PRIx64" code %u: %s\n",
--		       e->cpu, e->pid, e->tid, e->ip, e->code, e->msg);
-+		       e->cpu, e->pid, e->tid, e->ip, e->code, msg);
- 	return ret;
- }
+ 	if (ts->cnt == ts->sz) {
+ 		err = thread_stack__grow(ts);
+ 		if (err)
+@@ -576,8 +579,6 @@ static int thread_stack__bottom(struct thread_stack *ts,
  
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index fac32482db61..c69bcd9a3091 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -519,7 +519,7 @@ void auxtrace_index__free(struct list_head *head);
+ 	cp = call_path__findnew(cpr, &cpr->call_path, sym, ip,
+ 				ts->kernel_start);
+-	if (!cp)
+-		return -ENOMEM;
  
- void auxtrace_synth_error(struct auxtrace_error_event *auxtrace_error, int type,
- 			  int code, int cpu, pid_t pid, pid_t tid, u64 ip,
--			  const char *msg);
-+			  const char *msg, u64 timestamp);
+ 	return thread_stack__push_cp(ts, ip, sample->time, ref, cp,
+ 				     true, false);
+@@ -609,8 +610,6 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 			cp = call_path__findnew(cpr, &cpr->call_path,
+ 						to_al->sym, sample->addr,
+ 						ts->kernel_start);
+-			if (!cp)
+-				return -ENOMEM;
+ 			return thread_stack__push_cp(ts, 0, sample->time, ref,
+ 						     cp, true, false);
+ 		}
+@@ -633,8 +632,6 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 	/* This 'return' had no 'call', so push and pop top of stack */
+ 	cp = call_path__findnew(cpr, parent, from_al->sym, sample->ip,
+ 				ts->kernel_start);
+-	if (!cp)
+-		return -ENOMEM;
  
- int perf_event__synthesize_auxtrace_info(struct auxtrace_record *itr,
- 					 struct perf_tool *tool,
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index feba1aa819b4..36ae7e92dab1 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -532,8 +532,9 @@ struct auxtrace_error_event {
- 	u32 cpu;
- 	u32 pid;
- 	u32 tid;
--	u32 reserved__; /* For alignment */
-+	u32 fmt;
- 	u64 ip;
-+	u64 time;
- 	char msg[MAX_AUXTRACE_ERROR_MSG];
- };
+ 	err = thread_stack__push_cp(ts, sample->addr, sample->time, ref, cp,
+ 				    true, false);
+@@ -680,8 +677,6 @@ static int thread_stack__trace_end(struct thread_stack *ts,
  
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index f99ac0cbe3ff..0c0180c67574 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -144,7 +144,7 @@ static int intel_bts_lost(struct intel_bts *bts, struct perf_sample *sample)
+ 	cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp, NULL, 0,
+ 				ts->kernel_start);
+-	if (!cp)
+-		return -ENOMEM;
  
- 	auxtrace_synth_error(&event.auxtrace_error, PERF_AUXTRACE_ERROR_ITRACE,
- 			     INTEL_BTS_ERR_LOST, sample->cpu, sample->pid,
--			     sample->tid, 0, "Lost trace data");
-+			     sample->tid, 0, "Lost trace data", sample->time);
+ 	ret_addr = sample->ip + sample->insn_len;
  
- 	err = perf_session__deliver_synth_event(bts->session, &event, NULL);
- 	if (err)
-@@ -374,7 +374,7 @@ static int intel_bts_synth_error(struct intel_bts *bts, int cpu, pid_t pid,
- 
- 	auxtrace_synth_error(&event.auxtrace_error, PERF_AUXTRACE_ERROR_ITRACE,
- 			     INTEL_BTS_ERR_NOINSN, cpu, pid, tid, ip,
--			     "Failed to get instruction");
-+			     "Failed to get instruction", 0);
- 
- 	err = perf_session__deliver_synth_event(bts->session, &event, NULL);
- 	if (err)
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 2e72373ec6df..3b497bab4324 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -1411,7 +1411,7 @@ static int intel_pt_synth_pwrx_sample(struct intel_pt_queue *ptq)
- }
- 
- static int intel_pt_synth_error(struct intel_pt *pt, int code, int cpu,
--				pid_t pid, pid_t tid, u64 ip)
-+				pid_t pid, pid_t tid, u64 ip, u64 timestamp)
- {
- 	union perf_event event;
- 	char msg[MAX_AUXTRACE_ERROR_MSG];
-@@ -1420,7 +1420,7 @@ static int intel_pt_synth_error(struct intel_pt *pt, int code, int cpu,
- 	intel_pt__strerror(code, msg, MAX_AUXTRACE_ERROR_MSG);
- 
- 	auxtrace_synth_error(&event.auxtrace_error, PERF_AUXTRACE_ERROR_ITRACE,
--			     code, cpu, pid, tid, ip, msg);
-+			     code, cpu, pid, tid, ip, msg, timestamp);
- 
- 	err = perf_session__deliver_synth_event(pt->session, &event, NULL);
- 	if (err)
-@@ -1430,6 +1430,18 @@ static int intel_pt_synth_error(struct intel_pt *pt, int code, int cpu,
- 	return err;
- }
- 
-+static int intel_ptq_synth_error(struct intel_pt_queue *ptq,
-+				 const struct intel_pt_state *state)
-+{
-+	struct intel_pt *pt = ptq->pt;
-+	u64 tm = ptq->timestamp;
-+
-+	tm = pt->timeless_decoding ? 0 : tsc_to_perf_time(tm, &pt->tc);
-+
-+	return intel_pt_synth_error(pt, state->err, ptq->cpu, ptq->pid,
-+				    ptq->tid, state->from_ip, tm);
-+}
-+
- static int intel_pt_next_tid(struct intel_pt *pt, struct intel_pt_queue *ptq)
- {
- 	struct auxtrace_queue *queue;
-@@ -1676,10 +1688,7 @@ static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
- 				intel_pt_next_tid(pt, ptq);
- 			}
- 			if (pt->synth_opts.errors) {
--				err = intel_pt_synth_error(pt, state->err,
--							   ptq->cpu, ptq->pid,
--							   ptq->tid,
--							   state->from_ip);
-+				err = intel_ptq_synth_error(ptq, state);
- 				if (err)
- 					return err;
- 			}
-@@ -1804,7 +1813,7 @@ static int intel_pt_process_timeless_queues(struct intel_pt *pt, pid_t tid,
- static int intel_pt_lost(struct intel_pt *pt, struct perf_sample *sample)
- {
- 	return intel_pt_synth_error(pt, INTEL_PT_ERR_LOST, sample->cpu,
--				    sample->pid, sample->tid, 0);
-+				    sample->pid, sample->tid, 0, sample->time);
- }
- 
- static struct intel_pt_queue *intel_pt_cpu_to_ptq(struct intel_pt *pt, int cpu)
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index 835249c77f56..d9525d220db1 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -819,7 +819,7 @@ static int s390_cpumsf_process_queues(struct s390_cpumsf *sf, u64 timestamp)
- }
- 
- static int s390_cpumsf_synth_error(struct s390_cpumsf *sf, int code, int cpu,
--				   pid_t pid, pid_t tid, u64 ip)
-+				   pid_t pid, pid_t tid, u64 ip, u64 timestamp)
- {
- 	char msg[MAX_AUXTRACE_ERROR_MSG];
- 	union perf_event event;
-@@ -827,7 +827,7 @@ static int s390_cpumsf_synth_error(struct s390_cpumsf *sf, int code, int cpu,
- 
- 	strncpy(msg, "Lost Auxiliary Trace Buffer", sizeof(msg) - 1);
- 	auxtrace_synth_error(&event.auxtrace_error, PERF_AUXTRACE_ERROR_ITRACE,
--			     code, cpu, pid, tid, ip, msg);
-+			     code, cpu, pid, tid, ip, msg, timestamp);
- 
- 	err = perf_session__deliver_synth_event(sf->session, &event, NULL);
- 	if (err)
-@@ -839,7 +839,8 @@ static int s390_cpumsf_synth_error(struct s390_cpumsf *sf, int code, int cpu,
- static int s390_cpumsf_lost(struct s390_cpumsf *sf, struct perf_sample *sample)
- {
- 	return s390_cpumsf_synth_error(sf, 1, sample->cpu,
--				       sample->pid, sample->tid, 0);
-+				       sample->pid, sample->tid, 0,
-+				       sample->time);
- }
- 
- static int
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 2012396abb7c..18fb9c8cbf9c 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -703,7 +703,10 @@ static void perf_event__auxtrace_error_swap(union perf_event *event,
- 	event->auxtrace_error.cpu  = bswap_32(event->auxtrace_error.cpu);
- 	event->auxtrace_error.pid  = bswap_32(event->auxtrace_error.pid);
- 	event->auxtrace_error.tid  = bswap_32(event->auxtrace_error.tid);
-+	event->auxtrace_error.fmt  = bswap_32(event->auxtrace_error.fmt);
- 	event->auxtrace_error.ip   = bswap_64(event->auxtrace_error.ip);
-+	if (event->auxtrace_error.fmt)
-+		event->auxtrace_error.time = bswap_64(event->auxtrace_error.time);
- }
- 
- static void perf_event__thread_map_swap(union perf_event *event,
+@@ -745,8 +740,6 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 		cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp,
+ 					to_al->sym, sample->addr,
+ 					ts->kernel_start);
+-		if (!cp)
+-			return -ENOMEM;
+ 		err = thread_stack__push_cp(ts, ret_addr, sample->time, ref,
+ 					    cp, false, trace_end);
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
 -- 
 2.20.1
 
