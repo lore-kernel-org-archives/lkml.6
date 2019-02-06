@@ -2,100 +2,334 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CA0C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAA8C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC6B218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:57:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 817BA218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:59:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sfeik/Zl"
+	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="PrEM7YxK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfBFW5G (ORCPT
+        id S1726515AbfBFW75 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 17:57:06 -0500
-Received: from ozlabs.org ([203.11.71.1]:57091 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725959AbfBFW5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:57:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43vxf74fB3z9sLw;
-        Thu,  7 Feb 2019 09:57:03 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549493823;
-        bh=8qE6k2HDtv5kkw4XGROJp22eI5s8WNyWQZFkmL7DtwE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sfeik/ZlsNflgpJ2qLCKZzptfd48SNFbHgFni2CvkhEd/aqLEur4kx8GLq13CIklV
-         zfLSYe4CAVOValUrde8IPNW7fSK0U8G1L6JxydyfDbpsXgVDFBfdG4fMvN0o4WhAuT
-         FAYjezP72U7toT3YlqnOI/kc9GVSLoBrVI+wdOjpqR/WJEEzeJSJNw8qhSE5CSdled
-         6O2Ul2MGXboh91MhJTWy9PJ/wTd/NQpXStY8zxvgensikooYp5K0wQ/zWWs3gnTBXp
-         sqwKU7CoJX84NVTSXGkNyTspgTnhVluZ7D0eT3v05JOUfz2KAL6wS5Wg/xyvlacL3k
-         B7QwwCyagtCYg==
-Date:   Thu, 7 Feb 2019 09:57:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Subject: linux-next: Fixes tag needs some work in the drivers-x86 tree
-Message-ID: <20190207095703.564e76b2@canb.auug.org.au>
+        Wed, 6 Feb 2019 17:59:57 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42158 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfBFW74 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 17:59:56 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b74so5527393vsd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 14:59:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uXH9a2dppdpSNAGK0f8SWpctS4xZNg2ypeaL9mfYgoY=;
+        b=PrEM7YxKxgYWN/NkcaFXH+B1fOUI9tOO/9jKglnXwzcsJR2ngPHLIGHvl3+J+XXpnj
+         vxGSU/73gD9/y98ZB4tQKI/cHMNUB5dZA1T5C6FU6ZZx9pfX+fQGIfs1+oxomURERuW0
+         e3kapAMluAIUBoRdeBmHWhbbaMai8fx/KTVujsZiZ8/m1rXLM6zrMx9QwmXwBviao7JR
+         YaMc8IxZm4Gcoe2DmeFzM+iCVduoUxjqqN5RPRn0Tk3Gxw5pJpD1MDfzoorMhi6CAAZX
+         Uq3KK9vRKXOzDgWjIgQLx5R7wWQM2BxVPwutltCaUxyhrTSMIkw5gLh2GMX65oDhN/9q
+         KOvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uXH9a2dppdpSNAGK0f8SWpctS4xZNg2ypeaL9mfYgoY=;
+        b=TtNpehmgbaRQ8SZpa4wwdj0xlqbYhsfJIH5jB6g6N3NC3qyMGWUMmqnH940XSeXYMY
+         plyzIfNz9KVTDMkOW9v2IKMZZnDiDwwKlaGM2Ume4UIWcGdHyI+u6gpqIEuf6J7CMPbW
+         qW7gsv9+Ik6h7KUkIBtqimUaT/SnBVPVRxodzxo3/7P8GAn34EbNHC86G5JZ6ckTGf7b
+         K3ChDFfItTDbHgst2nYif0iGVgpaHww9KTEWCtxrXjtqRwmx5XlSE/QAQ6v7fsQdnyR5
+         5Fj8dx5HUUiCMid4eWiqluHPu3dN+LXoQthAlWojZMsERcSjDknhFa+zMrL4oOTcb2QG
+         mLRw==
+X-Gm-Message-State: AHQUAuawO4KSxXWzTj+I1eDATEZi19mqUo1x+RusWY6yLJ1Q8T4qK+WJ
+        Y4Ym2Zm7MbyiBLltdGeiMpyILOZppdOq1JZcVrP5zQ==
+X-Google-Smtp-Source: AHgI3IZQ2RXu2sClg9a8t6oN4ckj8Ve3ttJSZx4yW6qQivAmVgPIfWj0B3j5rb0jXX2umuBwY9v64qUybbl6XgVaX+M=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr5179586vsh.200.1549493994583;
+ Wed, 06 Feb 2019 14:59:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JrloarUeDi9Ju44Le1giVnh"; protocol="application/pgp-signature"
+References: <cover.ba7411f0c7155d0292b38d3dec698e26b5cc813b.1548687041.git-series.maxime.ripard@bootlin.com>
+ <c1a7d46f8504decb58ff224b0b5f2f0733282cc6.1548687041.git-series.maxime.ripard@bootlin.com>
+In-Reply-To: <c1a7d46f8504decb58ff224b0b5f2f0733282cc6.1548687041.git-series.maxime.ripard@bootlin.com>
+From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date:   Wed, 6 Feb 2019 19:59:43 -0300
+Message-ID: <CAAEAJfAxWBvj6E1fJ8fy=F2xDXLHwRq7-2BT3tQqbPvbZxseyg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] media: sunxi: Add A10 CSI driver
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JrloarUeDi9Ju44Le1giVnh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, 28 Jan 2019 at 11:53, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> The older CSI drivers have camera capture interface different from the one
+> in the newer ones.
+>
+> This IP is pretty simple. Some variants (one controller out of two
+> instances on some SoCs) have an ISP embedded, but there's no code that make
+> use of it, so we ignored that part for now.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  MAINTAINERS                                         |   8 +-
+>  drivers/media/platform/sunxi/Kconfig                |   1 +-
+>  drivers/media/platform/sunxi/Makefile               |   1 +-
+>  drivers/media/platform/sunxi/sun4i-csi/Kconfig      |  12 +-
+>  drivers/media/platform/sunxi/sun4i-csi/Makefile     |   5 +-
+>  drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c  | 261 ++++++++-
+>  drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.h  | 142 ++++-
+>  drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c  | 435 +++++++++++++-
+>  drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c | 305 +++++++++-
+>  9 files changed, 1170 insertions(+)
+>  create mode 100644 drivers/media/platform/sunxi/sun4i-csi/Kconfig
+>  create mode 100644 drivers/media/platform/sunxi/sun4i-csi/Makefile
+>  create mode 100644 drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+>  create mode 100644 drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.h
+>  create mode 100644 drivers/media/platform/sunxi/sun4i-csi/sun4i_dma.c
+>  create mode 100644 drivers/media/platform/sunxi/sun4i-csi/sun4i_v4l2.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 32d444476a90..5f703ed9adb1 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1295,6 +1295,14 @@ F:       drivers/pinctrl/sunxi/
+>  F:     drivers/soc/sunxi/
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git
+>
+> +Allwinner A10 CSI driver
+> +M:     Maxime Ripard <maxime.ripard@bootlin.com>
+> +L:     linux-media@vger.kernel.org
+> +T:     git git://linuxtv.org/media_tree.git
+> +S:     Maintained
+> +F:     drivers/media/platform/sunxi/sun4i-csi/
+> +F:     Documentation/devicetree/bindings/media/sun4i-csi.txt
+> +
+>  ARM/Amlogic Meson SoC CLOCK FRAMEWORK
+>  M:     Neil Armstrong <narmstrong@baylibre.com>
+>  M:     Jerome Brunet <jbrunet@baylibre.com>
+> diff --git a/drivers/media/platform/sunxi/Kconfig b/drivers/media/platform/sunxi/Kconfig
+> index 1b6e89cb78b2..71808e93ac2e 100644
+> --- a/drivers/media/platform/sunxi/Kconfig
+> +++ b/drivers/media/platform/sunxi/Kconfig
+> @@ -1 +1,2 @@
+> +source "drivers/media/platform/sunxi/sun4i-csi/Kconfig"
+>  source "drivers/media/platform/sunxi/sun6i-csi/Kconfig"
+> diff --git a/drivers/media/platform/sunxi/Makefile b/drivers/media/platform/sunxi/Makefile
+> index 8d06f98500ee..a05127529006 100644
+> --- a/drivers/media/platform/sunxi/Makefile
+> +++ b/drivers/media/platform/sunxi/Makefile
+> @@ -1 +1,2 @@
+> +obj-y          += sun4i-csi/
+>  obj-y          += sun6i-csi/
+> diff --git a/drivers/media/platform/sunxi/sun4i-csi/Kconfig b/drivers/media/platform/sunxi/sun4i-csi/Kconfig
+> new file mode 100644
+> index 000000000000..841a6f4d9c99
+> --- /dev/null
+> +++ b/drivers/media/platform/sunxi/sun4i-csi/Kconfig
+> @@ -0,0 +1,12 @@
+> +config VIDEO_SUN4I_CSI
+> +       tristate "Allwinner A10 CMOS Sensor Interface Support"
+> +       depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
+> +       depends on ARCH_SUNXI || COMPILE_TEST
+> +       select VIDEOBUF2_DMA_CONTIG
+> +       select V4L2_FWNODE
+> +       select V4L2_MEM2MEM_DEV
+> +       help
+> +         This is a V4L2 driver for the Allwinner A10 CSI
+> +
+> +         To compile this driver as a module, choose M here: the module
+> +         will be called sun4i_csi.
+> diff --git a/drivers/media/platform/sunxi/sun4i-csi/Makefile b/drivers/media/platform/sunxi/sun4i-csi/Makefile
+> new file mode 100644
+> index 000000000000..7c790a57f5ee
+> --- /dev/null
+> +++ b/drivers/media/platform/sunxi/sun4i-csi/Makefile
+> @@ -0,0 +1,5 @@
+> +sun4i-csi-y += sun4i_csi.o
+> +sun4i-csi-y += sun4i_dma.o
+> +sun4i-csi-y += sun4i_v4l2.o
+> +
+> +obj-$(CONFIG_VIDEO_SUN4I_CSI)  += sun4i-csi.o
+> diff --git a/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+> new file mode 100644
+> index 000000000000..9b58b42c0043
+> --- /dev/null
+> +++ b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+> @@ -0,0 +1,261 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2016 NextThing Co
+> + * Copyright (C) 2016-2018 Bootlin
+> + *
+> + * Author: Maxime Ripard <maxime.ripard@bootlin.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_graph.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+> +#include <linux/videodev2.h>
+> +
+> +#include <media/v4l2-dev.h>
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-fwnode.h>
+> +#include <media/v4l2-ioctl.h>
+> +#include <media/v4l2-mediabus.h>
+> +
+> +#include <media/videobuf2-core.h>
+> +#include <media/videobuf2-dma-contig.h>
+> +
+> +#include "sun4i_csi.h"
+> +
+> +static int csi_notify_bound(struct v4l2_async_notifier *notifier,
+> +                           struct v4l2_subdev *subdev,
+> +                           struct v4l2_async_subdev *asd)
+> +{
+> +       struct sun4i_csi *csi = container_of(notifier, struct sun4i_csi,
+> +                                            notifier);
+> +
+> +       csi->src_subdev = subdev;
+> +       csi->src_pad = media_entity_get_fwnode_pad(&subdev->entity,
+> +                                                  subdev->fwnode,
+> +                                                  MEDIA_PAD_FL_SOURCE);
+> +       if (csi->src_pad < 0) {
+> +               dev_err(csi->dev, "Couldn't find output pad for subdev %s\n",
+> +                       subdev->name);
+> +               return csi->src_pad;
+> +       }
+> +
+> +       dev_dbg(csi->dev, "Bound %s pad: %d\n", subdev->name, csi->src_pad);
+> +       return 0;
+> +}
+> +
+> +static int csi_notify_complete(struct v4l2_async_notifier *notifier)
+> +{
+> +       struct sun4i_csi *csi = container_of(notifier, struct sun4i_csi,
+> +                                            notifier);
+> +       int ret;
+> +
+> +       ret = v4l2_device_register_subdev_nodes(&csi->v4l);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ret = sun4i_csi_v4l2_register(csi);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       return media_create_pad_link(&csi->src_subdev->entity, csi->src_pad,
+> +                                    &csi->vdev.entity, 0,
+> +                                    MEDIA_LNK_FL_ENABLED |
+> +                                    MEDIA_LNK_FL_IMMUTABLE);
+> +}
+> +
+> +static const struct v4l2_async_notifier_operations csi_notify_ops = {
+> +       .bound          = csi_notify_bound,
+> +       .complete       = csi_notify_complete,
+> +};
+> +
+> +static int sun4i_csi_async_parse(struct device *dev,
+> +                                struct v4l2_fwnode_endpoint *vep,
+> +                                struct v4l2_async_subdev *asd)
+> +{
+> +       struct sun4i_csi *csi = dev_get_drvdata(dev);
+> +
+> +       if (vep->base.port || vep->base.id)
+> +               return -EINVAL;
+> +
+> +       if (vep->bus_type != V4L2_MBUS_PARALLEL)
+> +               return -EINVAL;
+> +
+> +       csi->bus = vep->bus.parallel;
+> +
+> +       return 0;
+> +}
+> +
+> +static int csi_probe(struct platform_device *pdev)
+> +{
+> +       struct sun4i_csi *csi;
+> +       struct resource *res;
+> +       int ret;
+> +       int irq;
+> +
+> +       csi = devm_kzalloc(&pdev->dev, sizeof(*csi), GFP_KERNEL);
+> +       if (!csi)
+> +               return -ENOMEM;
+> +       platform_set_drvdata(pdev, csi);
+> +       csi->dev = &pdev->dev;
+> +
+> +       csi->mdev.dev = csi->dev;
+> +       strscpy(csi->mdev.model, "Allwinner Video Capture Device",
+> +               sizeof(csi->mdev.model));
+> +       csi->mdev.hw_revision = 0;
+> +       media_device_init(&csi->mdev);
+> +       v4l2_async_notifier_init(&csi->notifier);
+> +
+> +       csi->pad.flags = MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_MUST_CONNECT;
+> +       ret = media_entity_pads_init(&csi->vdev.entity, 1, &csi->pad);
+> +       if (ret < 0)
+> +               return 0;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       csi->regs = devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(csi->regs))
+> +               return PTR_ERR(csi->regs);
+> +
+> +       irq = platform_get_irq(pdev, 0);
+> +       if (irq < 0)
+> +               return irq;
+> +
+> +       csi->bus_clk = devm_clk_get(&pdev->dev, "bus");
+> +       if (IS_ERR(csi->bus_clk)) {
+> +               dev_err(&pdev->dev, "Couldn't get our bus clock\n");
+> +               return PTR_ERR(csi->bus_clk);
+> +       }
+> +
+> +       csi->isp_clk = devm_clk_get(&pdev->dev, "isp");
+> +       if (IS_ERR(csi->isp_clk)) {
+> +               dev_err(&pdev->dev, "Couldn't get our ISP clock\n");
+> +               return PTR_ERR(csi->isp_clk);
+> +       }
+> +
+> +       csi->mod_clk = devm_clk_get(&pdev->dev, "mod");
+> +       if (IS_ERR(csi->mod_clk)) {
+> +               dev_err(&pdev->dev, "Couldn't get our mod clock\n");
+> +               return PTR_ERR(csi->mod_clk);
+> +       }
+> +
+> +       csi->ram_clk = devm_clk_get(&pdev->dev, "ram");
+> +       if (IS_ERR(csi->ram_clk)) {
+> +               dev_err(&pdev->dev, "Couldn't get our ram clock\n");
+> +               return PTR_ERR(csi->ram_clk);
+> +       }
+> +
 
-Hi all,
+Minor comment: perhaps you can take advantage
+of the clock bulk API and simplify the clock management.
 
-In commit
-
-  4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr=
-_show")
-
-Fixes tag
-
-  Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Toleranc=
-e info")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean:
-
-  2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JrloarUeDi9Ju44Le1giVnh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbZj8ACgkQAVBC80lX
-0GxziAf+OZiiUxf14raDsB9CyenVnSXgLln30g4hqU9cdgCHDsXjNSN1KKevSQ/P
-Kd9W26sBqt5KlPZ2mUJ6fWiHtmRi5vv0dvHVavGvgAr380qjIIQvucpKSdqSP2iJ
-Yq+x6l9Hxq6VXTocJKATMdTojwnW3KSYu5ENVhYnZJH2K0KTmQOiUDsl5lONwMtN
-Eupg3rW/iSyahpG3eB5nPIjBf6B5LwbosRzpbKsBqaQwKZwY+46LYGg/ddSe8A84
-GlQaBGY3ZHYjN+V89jPvh7ZlqSSIjSZAlA1CAYm1wl6qsU2ha9yt9Slnt2U+oQ8y
-zzPx72gpdpAFPDvMgrJOq7LOz67/vw==
-=J3HE
------END PGP SIGNATURE-----
-
---Sig_/JrloarUeDi9Ju44Le1giVnh--
+Regards,
+Ezequiel
