@@ -2,313 +2,330 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11805C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5226C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C076320821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 712BE20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:40:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="cJc2TR2G"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U87xh9g7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfBFPkc (ORCPT
+        id S1730575AbfBFPkl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:40:32 -0500
-Received: from mail-eopbgr140048.outbound.protection.outlook.com ([40.107.14.48]:32994
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729015AbfBFPkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:40:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xEo802Pfnk8Flx0m8jfKBGdJnWBXcuoPADdJAZHh41A=;
- b=cJc2TR2GXsB8jhGUUYMiHgCsDclc1RmkKHUgFTSy7+qZoi1ufDcr/YgzS5Rl6sczNfvtMNFhrzKq1pGALJDje49ww7p6mRycghMya7+eWvvv5YzeHpKSnQPYOEA9f41z1YxGv1RDKUWxQ1gE3P1jNR9OVgrXnRw4FIcMYGCY71E=
-Received: from AM6PR08MB3175.eurprd08.prod.outlook.com (52.135.164.24) by
- AM6PR08MB3030.eurprd08.prod.outlook.com (52.135.164.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Wed, 6 Feb 2019 15:40:25 +0000
-Received: from AM6PR08MB3175.eurprd08.prod.outlook.com
- ([fe80::41ac:8166:9e93:9721]) by AM6PR08MB3175.eurprd08.prod.outlook.com
- ([fe80::41ac:8166:9e93:9721%3]) with mapi id 15.20.1601.016; Wed, 6 Feb 2019
- 15:40:25 +0000
-From:   =?utf-8?B?w5hyamFuIEVpZGU=?= <Orjan.Eide@arm.com>
-To:     Brian Starkey <Brian.Starkey@arm.com>
-CC:     Liam Mark <lmark@codeaurora.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "tkjos@android.com" <tkjos@android.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        "arve@android.com" <arve@android.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>, nd <nd@arm.com>,
-        "maco@android.com" <maco@android.com>,
-        "christian@brauner.io" <christian@brauner.io>
-Subject: Re: [Linaro-mm-sig] [PATCH 2/4] staging: android: ion: Restrict cache
- maintenance to dma mapped memory
-Thread-Topic: [Linaro-mm-sig] [PATCH 2/4] staging: android: ion: Restrict
- cache maintenance to dma mapped memory
-Thread-Index: AQHUuI9lns/3+YiToUC0S+cImvhCrKXS82qA
-Date:   Wed, 6 Feb 2019 15:40:25 +0000
-Message-ID: <20190206154021.GC3768@e106893-lin.trondheim.arm.com>
-References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
- <1547836667-13695-3-git-send-email-lmark@codeaurora.org>
- <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
- <alpine.DEB.2.10.1901181316380.9328@lmark-linux.qualcomm.com>
- <alpine.DEB.2.10.1901291544001.19412@lmark-linux.qualcomm.com>
- <20190130113122.fipxgcmgrqggozcm@DESKTOP-E1NTVVP.localdomain>
-In-Reply-To: <20190130113122.fipxgcmgrqggozcm@DESKTOP-E1NTVVP.localdomain>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [217.140.106.39]
-user-agent: Mutt/1.5.21 (2010-09-15)
-x-clientproxiedby: CWLP123CA0110.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:401:5f::26) To AM6PR08MB3175.eurprd08.prod.outlook.com
- (2603:10a6:209:46::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Orjan.Eide@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR08MB3030;6:6UIq29ik3tvjmQKKcpf9PzvdVy26BHPv6NAq/Uusi/jaIB+AxH+7LnTinzGeZL333ndPG3cLFVEYXsWBAWdxQeMoz7IrF+si4rpk7zm5blFiEiLy5unvCGH/2BHH3m/Tf0I29y2fEJJbFxUxSZtdLO4EPgHXuxZA4SM+Tym04Pfyw4WOnkZsFm27cbUuoawfmmmfHkDOd55+TOne82cMYEhApHOpzT2b6W5IjKRSuwPR6KrqAUfsiWhu63mEeTHwwaZ6j8AXCCDDiwgLr1cn0jRTGAMCGFLjc0VYr1RAu+Hlr4EtVPQ4y5XM60wRj1a3mZJrDBI4yJNZfjvhCMYiU5Q6yjqlqUY2P8ofNgFnnNLEtmUyt5DWDTTYNCIOD4TvI9i4vkOTvR5HWrWitxPoz3LzGDfRUwr9Fj25wQgMxLJpJqLJp4QWdzoDfkooWsztrjfrrgivtL9mCEAoFWc5fw==;5:C5mp5nIbiOWSHPWCU7lCveS8A2ebjLtQkCb66J2us9zdetJTv7P0RBdHpynQOW+l5lbGUdXZd/BlODqzP9lptv8ZyREgco625eVZcxmxIyhPS+yaXlzwANUicrEw0Rsow947WuOUfDdz7xnwzIAXCnOzx3gx5bh630kkHiUeGvR/eVvjb2zLKpiO1XIRyP3rJjb8TCAY6AxXufxNf+xkJw==;7:IfSjD6GvXbI9Vp70JwAZkInkI5bCNL1QH7Xpo9cXsMK7SIYuZ35puo8aK3RfmCzBEFOcI+/tTmRalHgjf3ZahsDVYrNHrVJwGSfQm01xT4G5sSFjzCL4Ryoo6/FO1KKYDz4cRxfxszjWI0Ty6DAqEQ==
-x-ms-office365-filtering-correlation-id: 75ab870a-1f6d-47f4-062d-08d68c49697a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3030;
-x-ms-traffictypediagnostic: AM6PR08MB3030:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM6PR08MB303051E7DE89EB5E66B5D188906F0@AM6PR08MB3030.eurprd08.prod.outlook.com>
-x-forefront-prvs: 0940A19703
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(366004)(39860400002)(396003)(376002)(199004)(189003)(6246003)(316002)(4326008)(6862004)(6306002)(97736004)(6512007)(54906003)(58126008)(53936002)(5024004)(14444005)(256004)(76176011)(68736007)(33656002)(966005)(72206003)(478600001)(52116002)(66066001)(14454004)(2906002)(99286004)(6636002)(25786009)(186003)(81156014)(81166006)(53546011)(8936002)(386003)(93886005)(6506007)(102836004)(446003)(26005)(11346002)(106356001)(8676002)(85202003)(105586002)(86362001)(486006)(7736002)(476003)(305945005)(6116002)(6436002)(6486002)(3846002)(30864003)(7416002)(1076003)(229853002)(71190400001)(71200400001)(85192001)(85182001)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3030;H:AM6PR08MB3175.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VwR3wd2hwz+ywU1jO/4iEq4PzhCVVLaqvdXIsLHMeJkbEZwElyoaL4/ev2o43EFbBKD/Nty3n1XyBUl+Ash+j4jPSVYdVxsGoD6w9FcuhNRV2mu+hpx83U3X99e1ZcoZCJly+DnUFwW1p2CsNLFf9zSeJJHSmGd900IoJ2qL3TM+8yljK3hxbJxjyk9Hw8VVTrowevXVfsP/f6yD7aJj+A6V7H3u4IDMojIa8UZaHTLRE2hw75e3sfJYmN8neKdAsU6YkggL/gIuOT+YSQ3R4HhN49vfbYxidGcLAEZBIh0tkE42zgEVPMP1V9S5cOZd6V762C+Uvrj54c98lBQMv8lVFuJs0dpanIAjaoNP60H/uF5sREqc3FcqBTlfHQJwV8yWsuSOAtS9Vyx4P36Ol6m0KRgmbr6nbtV5rZMHKYM=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A8FAB111BE04474D860F47DDCF90318A@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 6 Feb 2019 10:40:41 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:57982 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730540AbfBFPkl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:40:41 -0500
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190206154038epoutp04bb32264f23c515ff389e2f9f54cb33d5~A0JuerpNj1458414584epoutp04O
+        for <linux-kernel@vger.kernel.org>; Wed,  6 Feb 2019 15:40:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190206154038epoutp04bb32264f23c515ff389e2f9f54cb33d5~A0JuerpNj1458414584epoutp04O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549467638;
+        bh=0Jck/3w7jJbPg7bdH//gM6dKMHh23tgrPpTn0jkACfg=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=U87xh9g7hjr2MjqhvM6GleuEmiaGe3ZhTn0//O4qy1h6RNGIctVpXp1BZcaDhvWI8
+         A7oxyS2BLS+MMTuN6jQMtzZYN0//2COxj4C+Qx2+qJ1cnTNfiiXAkLMR66u5IApUXA
+         S2UbRRGE9Zwn8UUo7nZAjnIN7DwoYqhcBVdK17z0=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20190206154037epcas5p300e703361103e333805e317e1007733a~A0JtytwUF0140801408epcas5p3c;
+        Wed,  6 Feb 2019 15:40:37 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B7.E3.04135.5FFFA5C5; Thu,  7 Feb 2019 00:40:37 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190206154037epcas5p3e2f6d586bd0423ab2fb8b37861627884~A0JtEMMaj0125901259epcas5p3f;
+        Wed,  6 Feb 2019 15:40:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190206154037epsmtrp23f425a2ae0494f0a183c0960b41db661~A0JtC420L1292812928epsmtrp2F;
+        Wed,  6 Feb 2019 15:40:37 +0000 (GMT)
+X-AuditID: b6c32a49-bc7ff70000001027-ba-5c5afff567a0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EC.1E.03971.4FFFA5C5; Thu,  7 Feb 2019 00:40:36 +0900 (KST)
+Received: from [107.108.73.28] (unknown [107.108.73.28]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190206154034epsmtip1468718c430a23f8fc2a6a4144c2c770c~A0JrF07HJ1207012070epsmtip16;
+        Wed,  6 Feb 2019 15:40:34 +0000 (GMT)
+Subject: Re: [PATCH v3 5/5] Revert
+ "scsi: ufs: disable vccq if it's not needed by UFS device"
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        SCSI <linux-scsi@vger.kernel.org>
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+Message-ID: <64b97f5b-fac3-5348-7118-b5edc72901df@samsung.com>
+Date:   Wed, 6 Feb 2019 20:53:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75ab870a-1f6d-47f4-062d-08d68c49697a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 15:40:24.1454
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3030
+In-Reply-To: <20190205194607.GH31919@minitux>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUhTYRTGee+9u15Hk9tUPGlfjKRU/EqDC4aJFFwx0P4JNUmHXlR0Uze1
+        DwwMs/IzTXA5P9M0WlQoupY2/NaGGsnUxCxhWmmxFU0L0TC3W+R/v3Oe5+G85/BSuHhe4E6l
+        yXM4hVyaISGFhHbI66jv+nZcfMDsSCCzbQhiVjdmSGa8z0IwNd83cOZrczliJtsHSKZoUYUx
+        00spTFXfpANj7KknmdK3OpLRWidx5sboOsHMtb4gw5xY43QkW1cwRbDGinKMvfPUKmAXZl+S
+        bFefFbHWzoPsrf5SLJqKE55M5jLS8jiFf2iiMFVjGXPIKgu5rKt5hAqQ0a8EURTQwTBtuFqC
+        hJSY7kUwN16BSpDjTvEDwaIpnxd+ItC0PrELtsDSSjfGC3oEay0fSb4wIzCv6giby5lOgErN
+        DGZjFzoARiaMhM2E0wUEmIof2k0k7QPvVV12k4gOhaVXbwQ2Jugj0L31nbSxKx0DQ+UWxHv2
+        gqF22Z51pH2hUaWy93HaDeaXmzCeD8Fzcz3OP1XjANpf13g+DYWTOoxnZ/gy1uXAsztYLXqS
+        v0U6lPUE8e18aGscJXg+Bf3T9YTNgtNe8KzHn5/kBOWbyxifFMHtm2Le7QmFlpm/SQ+oKi0V
+        8MzCwNDU31N9w2Dx1yhWiQ6rdy2m3rWMetcy6v+TmxGhQfu4LKUshVOeyAqUc5f8lFKZMlee
+        4peUKetE9h/nHaFD6tdnBxFNIckeUfR8XLxYIM1TXpENIqBwiYvI/GmnJUqWXrnKKTITFLkZ
+        nHIQeVCExE3UcKDhgphOkeZw6RyXxSn+qRjl6F6A9seGDR+7zbiaO9LVka0h+SvxVkNNTHJU
+        7KpJ905fd76ibeVi6tqHzIoH4ZXZ93uTVkdGzm31NJlEMKDql90Niyj23Wz5vO7TGHxc5bZS
+        bdwYqNZH9WfHnCq8rq3GwxMX3LjIM+/1tb91w/eEi7VF2Y894zq7fPJH2yeWO4LlJgmhTJUG
+        euMKpfQP2t0r6G0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsWy7bCSnO6X/1ExBhM+W1j8P2ls8fLnVTaL
+        0/vfsVhM+/CT2eL1gl5Gi7PLDrJZtN6fzmRx5XG6xcT9Z9ktLu+aw2bRfX0Hm8W2z2eZLVqO
+        fWWxuLF4J5sDn8flK94esxsusnhc7utl8uhf95nV4861PWweW/Z/ZvT4vEnOo/1AN1MARxSX
+        TUpqTmZZapG+XQJXxqp3x9kLeqwrdkxbydjAeFmvi5GTQ0LAROLxi61MXYxcHEICuxkluvf9
+        YYdISEtc3zgByhaWWPnvOTtE0WtGidbTm5lAEsIC8RJ9TadYQWwRAQOJo2cus4AUMQs0sEjs
+        mPqGGaLjPZPEoS+TGUGq2AS0Je5O3wLWzStgJ/H4xAWwbhYBFYmtfz6wgdiiAhESH5/ug6oR
+        lDg58wkLiM0poCsxb/p0sDnMAmYS8zY/ZIawxSVuPZnPBGHLS2x/O4d5AqPQLCTts5C0zELS
+        MgtJywJGllWMkqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMGRqaW5g/HykvhDjAIcjEo8
+        vAG3omKEWBPLiitzDzFKcDArifC+fQYU4k1JrKxKLcqPLyrNSS0+xCjNwaIkzvs071ikkEB6
+        YklqdmpqQWoRTJaJg1OqgXHytr1TDzs9+aQd22ysxHJ2wR4Bnu2dexU/FHsriZj+npy7qr66
+        8q2Yv+LTWk2mS64GgbISHyY2rC3QSv/qbr0n1Nde/F8D1/b4QOEKmfrHDcmblE4a3tQLu7g8
+        NPpy/c5L/VW/9qR6LZed83+C41OH3QZFwh8XN9+cGHGvQvPK5J/L5xWYSyqxFGckGmoxFxUn
+        AgCd11HjyAIAAA==
+X-CMS-MailID: 20190206154037epcas5p3e2f6d586bd0423ab2fb8b37861627884
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20190204174549epcas4p4682667176f55101f69cc24cc455c9f3c
+References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
+        <CGME20190204174549epcas4p4682667176f55101f69cc24cc455c9f3c@epcas4p4.samsung.com>
+        <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
+        <5f2a8378-1f22-6a52-356d-56d3b393ab1d@samsung.com>
+        <20190205062720.GF31919@minitux>
+        <b190a7f0-eec9-3e87-f9c7-4969e05590df@samsung.com>
+        <20190205194607.GH31919@minitux>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCBKYW4gMzAsIDIwMTkgYXQgMTE6MzE6MjNBTSArMDAwMCwgQnJpYW4gU3RhcmtleSB3
-cm90ZToNCj4gDQo+IE9uIFR1ZSwgSmFuIDI5LCAyMDE5IGF0IDAzOjQ0OjUzUE0gLTA4MDAsIExp
-YW0gTWFyayB3cm90ZToNCj4gPiBPbiBGcmksIDE4IEphbiAyMDE5LCBMaWFtIE1hcmsgd3JvdGU6
-DQo+ID4gDQo+ID4gPiBPbiBGcmksIDE4IEphbiAyMDE5LCBBbmRyZXcgRi4gRGF2aXMgd3JvdGU6
-DQo+ID4gPiANCj4gPiA+ID4gT24gMS8xOC8xOSAxMjozNyBQTSwgTGlhbSBNYXJrIHdyb3RlOg0K
-PiA+ID4gPiA+IFRoZSBJT04gYmVnaW5fY3B1X2FjY2VzcyBhbmQgZW5kX2NwdV9hY2Nlc3MgZnVu
-Y3Rpb25zIHVzZSB0aGUNCj4gPiA+ID4gPiBkbWFfc3luY19zZ19mb3JfY3B1IGFuZCBkbWFfc3lu
-Y19zZ19mb3JfZGV2aWNlIEFQSXMgdG8gcGVyZm9ybSBjYWNoZQ0KPiA+ID4gPiA+IG1haW50ZW5h
-bmNlLg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+IEN1cnJlbnRseSBpdCBpcyBwb3NzaWJsZSB0byBh
-cHBseSBjYWNoZSBtYWludGVuYW5jZSwgdmlhIHRoZQ0KPiA+ID4gPiA+IGJlZ2luX2NwdV9hY2Nl
-c3MgYW5kIGVuZF9jcHVfYWNjZXNzIEFQSXMsIHRvIElPTiBidWZmZXJzIHdoaWNoIGFyZSBub3QN
-Cj4gPiA+ID4gPiBkbWEgbWFwcGVkLg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+IFRoZSBkbWEgc3lu
-YyBzZyBBUElzIHNob3VsZCBub3QgYmUgY2FsbGVkIG9uIHNnIGxpc3RzIHdoaWNoIGhhdmUgbm90
-IGJlZW4NCj4gPiA+ID4gPiBkbWEgbWFwcGVkIGFzIHRoaXMgY2FuIHJlc3VsdCBpbiBjYWNoZSBt
-YWludGVuYW5jZSBiZWluZyBhcHBsaWVkIHRvIHRoZQ0KPiA+ID4gPiA+IHdyb25nIGFkZHJlc3Mu
-IElmIGFuIHNnIGxpc3QgaGFzIG5vdCBiZWVuIGRtYSBtYXBwZWQgdGhlbiBpdHMgZG1hX2FkZHJl
-c3MNCj4gPiA+ID4gPiBmaWVsZCBoYXMgbm90IGJlZW4gcG9wdWxhdGVkLCBzb21lIGRtYSBvcHMg
-c3VjaCBhcyB0aGUgc3dpb3RsYl9kbWFfb3BzIG9wcw0KPiA+ID4gPiA+IHVzZSB0aGUgZG1hX2Fk
-ZHJlc3MgZmllbGQgdG8gY2FsY3VsYXRlIHRoZSBhZGRyZXNzIG9udG8gd2hpY2ggdG8gYXBwbHkN
-Cj4gPiA+ID4gPiBjYWNoZSBtYWludGVuYW5jZS4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBBbHNv
-IEkgZG9u4oCZdCB0aGluayB3ZSB3YW50IENNT3MgdG8gYmUgYXBwbGllZCB0byBhIGJ1ZmZlciB3
-aGljaCBpcyBub3QNCj4gPiA+ID4gPiBkbWEgbWFwcGVkIGFzIHRoZSBtZW1vcnkgc2hvdWxkIGFs
-cmVhZHkgYmUgY29oZXJlbnQgZm9yIGFjY2VzcyBmcm9tIHRoZQ0KPiA+ID4gPiA+IENQVS4gQW55
-IENNT3MgcmVxdWlyZWQgZm9yIGRldmljZSBhY2Nlc3MgdGFrZW4gY2FyZSBvZiBpbiB0aGUNCj4g
-PiA+ID4gPiBkbWFfYnVmX21hcF9hdHRhY2htZW50IGFuZCBkbWFfYnVmX3VubWFwX2F0dGFjaG1l
-bnQgY2FsbHMuDQo+ID4gPiA+ID4gU28gcmVhbGx5IGl0IG9ubHkgbWFrZXMgc2Vuc2UgZm9yIGJl
-Z2luX2NwdV9hY2Nlc3MgYW5kIGVuZF9jcHVfYWNjZXNzIHRvDQo+ID4gPiA+ID4gYXBwbHkgQ01P
-cyBpZiB0aGUgYnVmZmVyIGlzIGRtYSBtYXBwZWQuDQo+ID4gPiA+ID4gDQo+ID4gPiA+ID4gRml4
-IHRoZSBJT04gYmVnaW5fY3B1X2FjY2VzcyBhbmQgZW5kX2NwdV9hY2Nlc3MgZnVuY3Rpb25zIHRv
-IG9ubHkgYXBwbHkNCj4gPiA+ID4gPiBjYWNoZSBtYWludGVuYW5jZSB0byBidWZmZXJzIHdoaWNo
-IGFyZSBkbWEgbWFwcGVkLg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+IEZpeGVzOiAyYTU1ZTdiNWU1
-NDQgKCJzdGFnaW5nOiBhbmRyb2lkOiBpb246IENhbGwgZG1hX21hcF9zZyBmb3Igc3luY2luZyBh
-bmQgbWFwcGluZyIpDQo+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTGlhbSBNYXJrIDxsbWFya0Bj
-b2RlYXVyb3JhLm9yZz4NCj4gPiA+ID4gPiAtLS0NCj4gPiA+ID4gPiAgZHJpdmVycy9zdGFnaW5n
-L2FuZHJvaWQvaW9uL2lvbi5jIHwgMjYgKysrKysrKysrKysrKysrKysrKysrLS0tLS0NCj4gPiA+
-ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+
-ID4gPiA+ID4gDQo+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lk
-L2lvbi9pb24uYyBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYw0KPiA+ID4gPiA+
-IGluZGV4IDZmNWFmYWI3YzFhMS4uMWZlNjMzYTdmZGJhIDEwMDY0NA0KPiA+ID4gPiA+IC0tLSBh
-L2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYw0KPiA+ID4gPiA+ICsrKyBiL2RyaXZl
-cnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYw0KPiA+ID4gPiA+IEBAIC0yMTAsNiArMjEwLDcg
-QEAgc3RydWN0IGlvbl9kbWFfYnVmX2F0dGFjaG1lbnQgew0KPiA+ID4gPiA+ICAJc3RydWN0IGRl
-dmljZSAqZGV2Ow0KPiA+ID4gPiA+ICAJc3RydWN0IHNnX3RhYmxlICp0YWJsZTsNCj4gPiA+ID4g
-PiAgCXN0cnVjdCBsaXN0X2hlYWQgbGlzdDsNCj4gPiA+ID4gPiArCWJvb2wgZG1hX21hcHBlZDsN
-Cj4gPiA+ID4gPiAgfTsNCj4gPiA+ID4gPiAgDQo+ID4gPiA+ID4gIHN0YXRpYyBpbnQgaW9uX2Rt
-YV9idWZfYXR0YWNoKHN0cnVjdCBkbWFfYnVmICpkbWFidWYsDQo+ID4gPiA+ID4gQEAgLTIzMSw2
-ICsyMzIsNyBAQCBzdGF0aWMgaW50IGlvbl9kbWFfYnVmX2F0dGFjaChzdHJ1Y3QgZG1hX2J1ZiAq
-ZG1hYnVmLA0KPiA+ID4gPiA+ICANCj4gPiA+ID4gPiAgCWEtPnRhYmxlID0gdGFibGU7DQo+ID4g
-PiA+ID4gIAlhLT5kZXYgPSBhdHRhY2htZW50LT5kZXY7DQo+ID4gPiA+ID4gKwlhLT5kbWFfbWFw
-cGVkID0gZmFsc2U7DQo+ID4gPiA+ID4gIAlJTklUX0xJU1RfSEVBRCgmYS0+bGlzdCk7DQo+ID4g
-PiA+ID4gIA0KPiA+ID4gPiA+ICAJYXR0YWNobWVudC0+cHJpdiA9IGE7DQo+ID4gPiA+ID4gQEAg
-LTI2MSwxMiArMjYzLDE4IEBAIHN0YXRpYyBzdHJ1Y3Qgc2dfdGFibGUgKmlvbl9tYXBfZG1hX2J1
-ZihzdHJ1Y3QgZG1hX2J1Zl9hdHRhY2htZW50ICphdHRhY2htZW50LA0KPiA+ID4gPiA+ICB7DQo+
-ID4gPiA+ID4gIAlzdHJ1Y3QgaW9uX2RtYV9idWZfYXR0YWNobWVudCAqYSA9IGF0dGFjaG1lbnQt
-PnByaXY7DQo+ID4gPiA+ID4gIAlzdHJ1Y3Qgc2dfdGFibGUgKnRhYmxlOw0KPiA+ID4gPiA+ICsJ
-c3RydWN0IGlvbl9idWZmZXIgKmJ1ZmZlciA9IGF0dGFjaG1lbnQtPmRtYWJ1Zi0+cHJpdjsNCj4g
-PiA+ID4gPiAgDQo+ID4gPiA+ID4gIAl0YWJsZSA9IGEtPnRhYmxlOw0KPiA+ID4gPiA+ICANCj4g
-PiA+ID4gPiArCW11dGV4X2xvY2soJmJ1ZmZlci0+bG9jayk7DQo+ID4gPiA+ID4gIAlpZiAoIWRt
-YV9tYXBfc2coYXR0YWNobWVudC0+ZGV2LCB0YWJsZS0+c2dsLCB0YWJsZS0+bmVudHMsDQo+ID4g
-PiA+ID4gLQkJCWRpcmVjdGlvbikpDQo+ID4gPiA+ID4gKwkJCWRpcmVjdGlvbikpIHsNCj4gPiA+
-ID4gPiArCQltdXRleF91bmxvY2soJmJ1ZmZlci0+bG9jayk7DQo+ID4gPiA+ID4gIAkJcmV0dXJu
-IEVSUl9QVFIoLUVOT01FTSk7DQo+ID4gPiA+ID4gKwl9DQo+ID4gPiA+ID4gKwlhLT5kbWFfbWFw
-cGVkID0gdHJ1ZTsNCj4gPiA+ID4gPiArCW11dGV4X3VubG9jaygmYnVmZmVyLT5sb2NrKTsNCj4g
-PiA+ID4gPiAgDQo+ID4gPiA+ID4gIAlyZXR1cm4gdGFibGU7DQo+ID4gPiA+ID4gIH0NCj4gPiA+
-ID4gPiBAQCAtMjc1LDcgKzI4MywxMyBAQCBzdGF0aWMgdm9pZCBpb25fdW5tYXBfZG1hX2J1Zihz
-dHJ1Y3QgZG1hX2J1Zl9hdHRhY2htZW50ICphdHRhY2htZW50LA0KPiA+ID4gPiA+ICAJCQkgICAg
-ICBzdHJ1Y3Qgc2dfdGFibGUgKnRhYmxlLA0KPiA+ID4gPiA+ICAJCQkgICAgICBlbnVtIGRtYV9k
-YXRhX2RpcmVjdGlvbiBkaXJlY3Rpb24pDQo+ID4gPiA+ID4gIHsNCj4gPiA+ID4gPiArCXN0cnVj
-dCBpb25fZG1hX2J1Zl9hdHRhY2htZW50ICphID0gYXR0YWNobWVudC0+cHJpdjsNCj4gPiA+ID4g
-PiArCXN0cnVjdCBpb25fYnVmZmVyICpidWZmZXIgPSBhdHRhY2htZW50LT5kbWFidWYtPnByaXY7
-DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsJbXV0ZXhfbG9jaygmYnVmZmVyLT5sb2NrKTsNCj4g
-PiA+ID4gPiAgCWRtYV91bm1hcF9zZyhhdHRhY2htZW50LT5kZXYsIHRhYmxlLT5zZ2wsIHRhYmxl
-LT5uZW50cywgZGlyZWN0aW9uKTsNCj4gPiA+ID4gPiArCWEtPmRtYV9tYXBwZWQgPSBmYWxzZTsN
-Cj4gPiA+ID4gPiArCW11dGV4X3VubG9jaygmYnVmZmVyLT5sb2NrKTsNCj4gPiA+ID4gPiAgfQ0K
-PiA+ID4gPiA+ICANCj4gPiA+ID4gPiAgc3RhdGljIGludCBpb25fbW1hcChzdHJ1Y3QgZG1hX2J1
-ZiAqZG1hYnVmLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkNCj4gPiA+ID4gPiBAQCAtMzQ2
-LDggKzM2MCw5IEBAIHN0YXRpYyBpbnQgaW9uX2RtYV9idWZfYmVnaW5fY3B1X2FjY2VzcyhzdHJ1
-Y3QgZG1hX2J1ZiAqZG1hYnVmLA0KPiA+ID4gPiA+ICANCj4gPiA+ID4gPiAgCW11dGV4X2xvY2so
-JmJ1ZmZlci0+bG9jayk7DQo+ID4gPiA+ID4gIAlsaXN0X2Zvcl9lYWNoX2VudHJ5KGEsICZidWZm
-ZXItPmF0dGFjaG1lbnRzLCBsaXN0KSB7DQo+ID4gPiA+IA0KPiA+ID4gPiBXaGVuIG5vIGRldmlj
-ZXMgYXJlIGF0dGFjaGVkIHRoZW4gYnVmZmVyLT5hdHRhY2htZW50cyBpcyBlbXB0eSBhbmQgdGhl
-DQo+ID4gPiA+IGJlbG93IGRvZXMgbm90IHJ1biwgc28gaWYgSSB1bmRlcnN0YW5kIHRoaXMgcGF0
-Y2ggY29ycmVjdGx5IHRoZW4gd2hhdA0KPiA+ID4gPiB5b3UgYXJlIHByb3RlY3RpbmcgYWdhaW5z
-dCBpcyBDUFUgYWNjZXNzIGluIHRoZSB3aW5kb3cgYWZ0ZXINCj4gPiA+ID4gZG1hX2J1Zl9hdHRh
-Y2ggYnV0IGJlZm9yZSBkbWFfYnVmX21hcC4NCj4gPiA+ID4gDQo+ID4gPiANCj4gPiA+IFllcw0K
-PiA+ID4gDQo+ID4gPiA+IFRoaXMgaXMgdGhlIGtpbmQgb2YgdGhpbmcgdGhhdCBhZ2FpbiBtYWtl
-cyBtZSB0aGluayBhIGNvdXBsZSBtb3JlDQo+ID4gPiA+IG9yZGVyaW5nIHJlcXVpcmVtZW50cyBv
-biBETUEtQlVGIG9wcyBhcmUgbmVlZGVkLiBETUEtQlVGcyBkbyBub3QgcmVxdWlyZQ0KPiA+ID4g
-PiB0aGUgYmFja2luZyBtZW1vcnkgdG8gYmUgYWxsb2NhdGVkIHVudGlsIG1hcCB0aW1lLCB0aGlz
-IGlzIHdoeSB0aGUNCj4gPiA+ID4gZG1hX2FkZHJlc3MgZmllbGQgd291bGQgc3RpbGwgYmUgbnVs
-bCBhcyB5b3Ugbm90ZSBpbiB0aGUgY29tbWl0IG1lc3NhZ2UuDQo+ID4gPiA+IFNvIHdoeSBzaG91
-bGQgdGhlIENQVSBiZSBwZXJmb3JtaW5nIGFjY2Vzc2VzIG9uIGEgYnVmZmVyIHRoYXQgaXMgbm90
-DQo+ID4gPiA+IGFjdHVhbGx5IGJhY2tlZCB5ZXQ/DQo+ID4gPiA+IA0KPiA+ID4gPiBJIGNhbiB0
-aGluayBvZiB0d28gc29sdXRpb25zOg0KPiA+ID4gPiANCj4gPiA+ID4gMSkgT25seSBhbGxvdyBD
-UFUgYWNjZXNzIChtbWFwLCBrbWFwLCB7YmVnaW4sZW5kfV9jcHVfYWNjZXNzKSB3aGlsZSBhdA0K
-PiA+ID4gPiBsZWFzdCBvbmUgZGV2aWNlIGlzIG1hcHBlZC4NCj4gPiA+ID4gDQo+ID4gPiANCj4g
-PiA+IFdvdWxkIGJlIHF1aXRlIGxpbWl0aW5nIHRvIGNsaWVudHMuDQo+ID4gPiANCj4gPiA+ID4g
-MikgVHJlYXQgdGhlIENQVSBhY2Nlc3MgcmVxdWVzdCBsaWtlIHRoZSBhIGRldmljZSBtYXAgcmVx
-dWVzdCBhbmQNCj4gPiA+ID4gdHJpZ2dlciB0aGUgYWxsb2NhdGlvbiBvZiBiYWNraW5nIG1lbW9y
-eSBqdXN0IGxpa2UgaWYgYSBkZXZpY2UgbWFwIGhhZA0KPiA+ID4gPiBjb21lIGluLg0KPiA+ID4g
-PiANCj4gPiA+IA0KPiA+ID4gV2hpY2ggaXMsIGFzIHlvdSBtZW50aW9uIHByZXR0eSBtdWNoIHdo
-YXQgd2UgaGF2ZSBub3cgKHRob3VnaCB0aGUgYnVmZmVyIA0KPiA+ID4gaXMgYWxsb2NhdGVkIGV2
-ZW4gZWFybGllcikuDQo+ID4gPiANCj4gPiA+ID4gSSBrbm93IHRoZSBjdXJyZW50IElvbiBoZWFw
-cyAoYW5kIG1vc3Qgb3RoZXIgRE1BLUJVRiBleHBvcnRlcnMpIGFsbCBkbw0KPiA+ID4gPiB0aGUg
-YWxsb2NhdGlvbiB1cCBmcm9udCBzbyB0aGUgbWVtb3J5IGlzIGFscmVhZHkgdGhlcmUsIGJ1dCBE
-TUEtQlVGIHdhcw0KPiA+ID4gPiBkZXNpZ25lZCB3aXRoIGxhdGUgYWxsb2NhdGlvbiBpbiBtaW5k
-LiBJIGhhdmUgYSB1c2UtY2FzZSBJJ20gd29ya2luZyBvbg0KPiA+ID4gPiB0aGF0IGZpbmFsbHkg
-ZXhlcmNpc2VzIHRoaXMgRE1BLUJVRiBmdW5jdGlvbmFsaXR5IGFuZCBJIHdvdWxkIGxpa2UgdG8N
-Cj4gPiA+ID4gaGF2ZSBpdCBleHBvcnQgdGhyb3VnaCBJT04uIFRoaXMgcGF0Y2ggZG9lc24ndCBw
-cmV2ZW50IHRoYXQsIGJ1dCBzZWVtcw0KPiA+ID4gPiBsaWtlIGl0IGlzIGVuZG9yc2luZyB0aGUg
-dGhlIGlkZWEgdGhhdCBidWZmZXJzIGFsd2F5cyBuZWVkIHRvIGJlIGJhY2tlZCwNCj4gPiA+ID4g
-ZXZlbiBiZWZvcmUgZGV2aWNlIGF0dGFjaC9tYXAgaXMgaGFzIG9jY3VycmVkLg0KPiA+ID4gPiAN
-Cj4gPiA+IA0KPiA+ID4gSSBkaWRuJ3QgaW50ZXJwcmV0IHRoZSBETUEtYnVmIGNvbnRyYWN0IGFz
-IHJlcXVpcmluZyB0aGUgZG1hLW1hcCB0byBiZSANCj4gPiA+IGNhbGxlZCBpbiBvcmRlciBmb3Ig
-YSBiYWNraW5nIHN0b3JlIHRvIGJlIHByb3ZpZGVkLCBJIGludGVycHJldGVkIGl0IGFzIA0KPiA+
-ID4gbWVhbmluZyB0aGVyZSBjb3VsZCBiZSBhIGJhY2tpbmcgc3RvcmUgYmVmb3JlIHRoZSBkbWEt
-bWFwIGJ1dCBhdCB0aGUgDQo+ID4gPiBkbWEtbWFwIGNhbGwgdGhlIGZpbmFsIGJhY2tpbmcgc3Rv
-cmUgY29uZmlndXJhdGlvbiB3b3VsZCBiZSBkZWNpZGVkIA0KPiA+ID4gKHBlcmhhcHMgaW52b2x2
-aW5nIG1pZ3JhdGluZyB0aGUgbWVtb3J5IHRvIHRoZSBmaW5hbCBiYWNraW5nIHN0b3JlKS4NCj4g
-PiA+IEkgd2lsbCBsZXQgdGhlIGRtYS1idWYgZXhwZXJ0cyBjb3JyZWN0IG1lIG9uIHRoYXQuDQo+
-ID4gPiANCj4gPiA+IExpbWl0aW5nIHVzZXJzcGFjZSBjbGllbnRzIHRvIG5vdCBiZSBhYmxlIHRv
-IGFjY2VzcyBidWZmZXJzIHVudGlsIGFmdGVyIA0KPiA+ID4gdGhleSBhcmUgZG1hLW1hcHBlZCBz
-ZWVtcyB1bmZvcnR1bnRhdGUgdG8gbWUsIGRtYS1tYXBwaW5nIHVzdWFsbHkgbWVhbnMgYSANCj4g
-PiA+IGNoYW5nZSBvZiBvd25lcnNoaXAgb2YgdGhlIG1lbW9yeSBmcm9tIHRoZSBDUFUgdG8gdGhl
-IGRldmljZS4gU28gZ2VuZXJhbGx5IA0KPiA+ID4gd2hpbGUgYSBidWZmZXIgaXMgZG1hIG1hcHBl
-ZCB5b3UgaGF2ZSB0aGUgZGV2aWNlIGFjY2VzcyBpdCAodGhvdWdoIG9mIA0KPiA+ID4gY291cnNl
-IGl0IGlzIHN1cHBvcnRlZCBmb3IgQ1BVIHRvIGFjY2VzcyB0byB0aGUgYnVmZmVyIHdoaWxlIGRt
-YSBtYXBwZWQpIA0KPiA+ID4gYW5kIHRoZW4gb25jZSB0aGUgYnVmZmVyIGlzIGRtYS11bm1hcHBl
-ZCB0aGUgQ1BVIGNhbiBhY2Nlc3MgaXQuICBUaGlzIGlzIA0KPiA+ID4gaG93IHRoZSBETUEgQVBJ
-cyBhcmUgZnJlcXVlbnRseSB1c2VkLCBhbmQgdGhlIGNoYW5nZXMgYWJvdmUgbWFrZSBJT04gYWxp
-Z24gDQo+ID4gPiBtb3JlIHdpdGggdGhlIHdheSB0aGUgRE1BIEFQSXMgYXJlIHVzZWQuIEJhc2lj
-YWxseSB3aGVuIHRoZSBidWZmZXIgaXMgbm90IA0KPiA+ID4gZG1hLW1hcHBlZCB0aGUgQ1BVIGRv
-ZXNuJ3QgbmVlZCB0byBkbyBhbnkgQ01PcyB0byBhY2Nlc3MgdGhlIGJ1ZmZlciAoYW5kIA0KPiA+
-ID4gSU9OIGVuc3VyZXMgbm90IENNT3MgYXJlIGFwcGxpZWQpIGJ1dCBpZiB0aGUgQ1BVIGRvZXMg
-d2FudCB0byBhY2Nlc3MgdGhlIA0KPiA+ID4gYnVmZmVyIHdoaWxlIGl0IGlzIGRtYSBtYXBwZWQg
-dGhlbiBJT04gZW5zdXJlcyB0aGF0IHRoZSBhcHByb3ByaWF0ZSBDTU9zIA0KPiA+ID4gYXJlIGFw
-cGxpZWQuDQo+ID4gPiANCj4gPiA+IEl0IHNlZW1zIGxpa2UgYSBsZWdpdGltYXRlIHVzZXMgY2Fz
-ZSB0byBtZSB0byBhbGxvdyBjbGllbnRzIHRvIGFjY2VzcyB0aGUgDQo+ID4gPiBidWZmZXIgYmVm
-b3JlIChhbmQgYWZ0ZXIpIGRtYS1tYXBwaW5nLCBleGFtcGxlIHBvc3QgcHJvY2Vzc2luZyBvZiBi
-dWZmZXJzLg0KPiA+ID4gDQo+ID4gPiANCj4gPiA+ID4gRWl0aGVyIG9mIHRoZSBhYm92ZSB0d28g
-c29sdXRpb25zIHdvdWxkIG5lZWQgdG8gdGFyZ2V0IHRoZSBETUEtQlVGDQo+ID4gPiA+IGZyYW1l
-d29yaywNCj4gPiA+ID4gDQo+ID4gPiA+IFN1bWl0LA0KPiA+ID4gPiANCj4gPiA+ID4gQW55IGNv
-bW1lbnQ/DQo+ID4gPiA+IA0KPiA+IA0KPiA+IEluIGEgc2VwYXJhdGUgdGhyZWFkIFN1bWl0IHNl
-ZW1zIHRvIGhhdmUgY29uZmlybWVkIHRoYXQgaXQgaXMgbm90IGEgDQo+ID4gcmVxdWlyZW1lbnQg
-Zm9yIGV4cG9ydGVycyB0byBkZWZlciB0aGUgYWxsb2NhdGlvbiB1bnRpbCBmaXJzdCBkbWEgbWFw
-Lg0KPiA+IA0KPiA+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvQ0FPXzQ4R0VZUFcwdTZ1
-V2trRmdxam1tYWJMY0JtNjlPRDM0UWloU05HZXdxel9BcVNRQG1haWwuZ21haWwuY29tLw0KPiA+
-IA0KPiA+IEZyb20gU3VtaXQ6DQo+ID4gIiIiDQo+ID4gPiBNYXliZSBpdCBzaG91bGQgYmUgdXAg
-dG8gdGhlIGV4cG9ydGVyIGlmIGVhcmx5IENQVSBhY2Nlc3MgaXMgYWxsb3dlZD8NCj4gPiA+DQo+
-ID4gPiBJJ20gaG9waW5nIHNvbWVvbmUgd2l0aCBhdXRob3JpdHkgb3ZlciB0aGUgRE1BLUJVRiBm
-cmFtZXdvcmsgY2FuIGNsYXJpZnkNCj4gPiA+IG9yaWdpbmFsIGludGVudGlvbnMgaGVyZS4NCj4g
-PiA+DQo+ID4gDQo+ID4gSSBzdXBwb3NlIGRtYS1idWYgYXMgYSBmcmFtZXdvcmsgY2FuJ3Qga25v
-dyBvciBkZWNpZGUgd2hhdCB0aGUgZXhwb3J0ZXIgDQo+ID4gd2FudHMgb3IgY2FuIGRvIC0gd2hl
-dGhlciB0aGUgZXhwb3J0ZXIgd2FudHMgdG8gdXNlIGl0IGZvciAnb25seSANCj4gPiB6ZXJvLWNv
-cHknLCBvciBkbyBzb21lIGludGVsbGlnZW50IHRoaW5ncyBiZWhpbmQgdGhlIHNjZW5lLCBJIHRo
-aW5rIHNob3VsZCANCj4gPiBiZSBiZXN0IGxlZnQgdG8gdGhlIGV4cG9ydGVyLg0KPiA+ICIiIg0K
-PiA+IA0KPiA+IFNvIGl0IHNlZW1zIGxpa2UgaXQgaXMgYWNjZXB0YWJsZSBmb3IgSU9OIHRvIGNv
-bnRpbnVlIHRvIHN1cHBvcnQgYWNjZXNzIHRvIA0KPiA+IHRoZSBidWZmZXIgZnJvbSB0aGUgQ1BV
-IGJlZm9yZSBpdCBpcyBETUEgbWFwcGVkLg0KPiA+IA0KPiA+IEkgd2FzIHdvbmRlcmluZyBpZiB0
-aGVyZSB3YXMgYW55IGFkZGl0aW9uYWwgZmVlZGJhY2sgb24gdGhpcyBjaGFuZ2Ugc2luY2UgDQo+
-ID4gaXQgZG9lcyBmaXggYSBidWcgd2hlcmUgdXNlcnNwYWNlIGNhbiBjYXVzZSB0aGUgc3lzdGVt
-IHRvIGNyYXNoIGFuZCBJIA0KPiA+IHRoaW5rIHRoZSBjaGFuZ2UgYWxzbyByZXN1bHRzIGluIGEg
-bW9yZSBsb2dpY2FsIGFwcGxpY2F0aW9uIG9mIENNT3MuDQo+ID4gDQo+IA0KPiBXZSBoaXQgdGhl
-IHNhbWUgY3Jhc2gsIGFuZCB0aGlzIHBhdGNoIGNlcnRhaW5seSBsb29rcyBsaWtlIGl0IHdvdWxk
-DQo+IGZpeCBpdC4gT24gdGhhdCBiYXNpczoNCj4gDQo+IFJldmlld2VkLWJ5OiBCcmlhbiBTdGFy
-a2V5IDxicmlhbi5zdGFya2V5QGFybS5jb20+DQo+IA0KPiBJIGRvbid0IHRoaW5rIGFueW9uZSBo
-ZXJlIGhhZCBhIGNoYW5jZSB0byB0ZXN0IGl0IHlldCwgdGhvdWdoLg0KDQpJJ3ZlIHJ1biBzb21l
-IHRlc3RpbmcsIGFuZCB0aGlzIHBhdGNoIGRvZXMgaW5kZWVkIGZpeCB0aGUgY3Jhc2ggaW4NCmRt
-YV9zeW5jX3NnX2Zvcl9jcHUgd2hlbiBpdCB0cmllZCB0byB1c2UgdGhlIDAgZG1hX2FkZHJlc3Mg
-ZnJvbSB0aGUgc2cNCmxpc3QuDQoNClRlc3RlZC1ieTogw5hyamFuIEVpZGUgPG9yamFuLmVpZGVA
-YXJtLmNvbT4NCg0KSSB0ZXN0ZWQgdGhpcyBvbiBhbiBvbGRlciBrZXJuZWwsIHY0LjE0LCBzaW5j
-ZSB0aGUgZG1hLW1hcHBpbmcgY29kZQ0KbW92ZWQsIGluIHY0LjE5LCB0byBpZ25vcmUgdGhlIGRt
-YV9hZGRyZXNzIGFuZCBpbnN0ZWFkIHVzZSBzZ19waHlzKCkgdG8NCmdldCBhIHZhbGlkIGFkZHJl
-c3MgZnJvbSB0aGUgcGFnZSwgd2hpY2ggaXMgYWx3YXlzIHZhbGlkIGluIHRoZSBpb24gc2cNCmxp
-c3RzLiBXaGlsZSB0aGlzIHdvdWxkbid0IGNyYXNoIG9uIG5ld2VyIGtlcm5lbHMsIGl0J3Mgc3Rp
-bGwgZ29vZCB0bw0KYXZvaWQgdGhlIHVubmVjZXNzYXJ5IHdvcmsgd2hlbiBubyBDTU8gaXMgbmVl
-ZGVkLg0KDQpJcyB0aGlzIHBhdGNoIGEgY2FuZGlkYXRlIGZvciB0aGUgcmVsZXZhbnQgc3RhYmxl
-IGtlcm5lbHMsIHRob3NlIHRoYXQNCmhhdmUgdGhpcyBidWcgZXhwb3NlZCB0byB1c2VyIHNwYWNl
-IHZpYSBJb24gYW5kIERNQV9CVUZfSU9DVExfU1lOQz8NCg0KVGhhbmtzLCANCi3DmHJqYW4NCg0K
-PiANCj4gVGhhbmtzLA0KPiAtQnJpYW4NCj4gDQo+ID4gDQo+ID4gPiA+IFRoYW5rcywNCj4gPiA+
-ID4gQW5kcmV3DQo+ID4gPiA+IA0KPiA+ID4gPiA+IC0JCWRtYV9zeW5jX3NnX2Zvcl9jcHUoYS0+
-ZGV2LCBhLT50YWJsZS0+c2dsLCBhLT50YWJsZS0+bmVudHMsDQo+ID4gPiA+ID4gLQkJCQkgICAg
-ZGlyZWN0aW9uKTsNCj4gPiA+ID4gPiArCQlpZiAoYS0+ZG1hX21hcHBlZCkNCj4gPiA+ID4gPiAr
-CQkJZG1hX3N5bmNfc2dfZm9yX2NwdShhLT5kZXYsIGEtPnRhYmxlLT5zZ2wsDQo+ID4gPiA+ID4g
-KwkJCQkJICAgIGEtPnRhYmxlLT5uZW50cywgZGlyZWN0aW9uKTsNCj4gPiA+ID4gPiAgCX0NCj4g
-PiA+ID4gPiAgDQo+ID4gPiA+ID4gIHVubG9jazoNCj4gPiA+ID4gPiBAQCAtMzY5LDggKzM4NCw5
-IEBAIHN0YXRpYyBpbnQgaW9uX2RtYV9idWZfZW5kX2NwdV9hY2Nlc3Moc3RydWN0IGRtYV9idWYg
-KmRtYWJ1ZiwNCj4gPiA+ID4gPiAgDQo+ID4gPiA+ID4gIAltdXRleF9sb2NrKCZidWZmZXItPmxv
-Y2spOw0KPiA+ID4gPiA+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeShhLCAmYnVmZmVyLT5hdHRhY2ht
-ZW50cywgbGlzdCkgew0KPiA+ID4gPiA+IC0JCWRtYV9zeW5jX3NnX2Zvcl9kZXZpY2UoYS0+ZGV2
-LCBhLT50YWJsZS0+c2dsLCBhLT50YWJsZS0+bmVudHMsDQo+ID4gPiA+ID4gLQkJCQkgICAgICAg
-ZGlyZWN0aW9uKTsNCj4gPiA+ID4gPiArCQlpZiAoYS0+ZG1hX21hcHBlZCkNCj4gPiA+ID4gPiAr
-CQkJZG1hX3N5bmNfc2dfZm9yX2RldmljZShhLT5kZXYsIGEtPnRhYmxlLT5zZ2wsDQo+ID4gPiA+
-ID4gKwkJCQkJICAgICAgIGEtPnRhYmxlLT5uZW50cywgZGlyZWN0aW9uKTsNCj4gPiA+ID4gPiAg
-CX0NCj4gPiA+ID4gPiAgCW11dGV4X3VubG9jaygmYnVmZmVyLT5sb2NrKTsNCj4gPiA+ID4gPiAg
-DQo+ID4gPiA+ID4gDQo+ID4gPiA+IA0KPiA+ID4gDQo+ID4gPiBRdWFsY29tbSBJbm5vdmF0aW9u
-IENlbnRlciwgSW5jLiBpcyBhIG1lbWJlciBvZiBDb2RlIEF1cm9yYSBGb3J1bSwNCj4gPiA+IGEg
-TGludXggRm91bmRhdGlvbiBDb2xsYWJvcmF0aXZlIFByb2plY3QNCj4gPiANCj4gPiBRdWFsY29t
-bSBJbm5vdmF0aW9uIENlbnRlciwgSW5jLiBpcyBhIG1lbWJlciBvZiBDb2RlIEF1cm9yYSBGb3J1
-bSwNCj4gPiBhIExpbnV4IEZvdW5kYXRpb24gQ29sbGFib3JhdGl2ZSBQcm9qZWN0DQo+IA0KPiA+
-IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+ID4gZHJp
-LWRldmVsIG1haWxpbmcgbGlzdA0KPiA+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcN
-Cj4gPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18NCj4gTGluYXJvLW1tLXNpZyBtYWlsaW5nIGxpc3QNCj4gTGluYXJvLW1tLXNpZ0BsaXN0cy5s
-aW5hcm8ub3JnDQo+IGh0dHBzOi8vbGlzdHMubGluYXJvLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xp
-bmFyby1tbS1zaWcNCg==
+
+
+On 06/02/19 1:16 AM, Bjorn Andersson wrote:
+> On Tue 05 Feb 02:52 PST 2019, Alim Akhtar wrote:
+> 
+>> Hi Bjorn,
+>>
+>> On 05/02/19 11:57 AM, Bjorn Andersson wrote:
+>>> On Mon 04 Feb 20:58 PST 2019, Alim Akhtar wrote:
+>>>
+>>>> Hi Marc,
+>>>>
+>>>> On 04/02/19 11:12 PM, Marc Gonzalez wrote:
+>>>>> This reverts commit 60f0187031c05e04cbadffb62f557d0ff3564490.
+>>>>>
+>>>>> Calling ufshcd_set_vccq_rail_unused hangs my system.
+>>>>> It seems vccq is not *not* needed.
+>>>>>
+>>>>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>>>>> ---
+>>>>
+>>>> AFAIK Samsung and Toshiba UFS devices does not use VCCQ (this pin is
+>>>> either floating or connected to Ground, at least on the devices that I
+>>>> have worked on).
+>>>
+>>> But why does such system define a vccq-supply? If the system doesn't
+>>> have a regulator connected to VCCQ, then the UFS driver shouldn't be
+>>> told that there is one. And if VCCQ is optional the UFS driver should
+>>> support the fact that this regulator might not be supplied (i.e. call
+>>> regulator_get_optional() and handle the error indicating that the supply
+>>> isn't specified).
+>>>
+>> As per JESD220C, chapter 6.1, it does says "VCCQ - Supply voltage used
+>> typically for the memory controller and optionally for the PHY
+>> interface, the memory IO, and any other internal very low voltage block"
+>> And we have VCCQ2 - which serve the pretty much same purpose. The
+>> voltage range for VCCQ and VCCQ2 are different, VCCQ has a lower voltage
+>> suitable to some low voltage block inside UFS device. I think this is
+>> design consideration which allow some vendor to use one less physical
+>> pin may be. And also depends on the voltage requirements of some of the
+>> internal circuit.
+>>
+> 
+> This looks to me that you are required to have a VCCQ. But you said that
+> you do not have a regulator supplying VCCQ on your board, and if that
+> really is the case then you should not specify vccq-supply.
+> 
+> The patch Marc is reverting states that for devices that does not have
+> VCCQ connected, some unrelated regulator should be assigned to the UFS
+> driver so that it can turn it off.
+> 
+> 
+> If you have a regulator connected to VCCQ then it should go in
+> vccq-supply, if you have a regulator connected to VCCQ2 the is should go
+> in vccq2-supply. If you don't have these pins connected then there
+> shouldn't be any regulators specified here!
+> 
+Yes, that's correct, it should be like what you are suggesting, DT 
+entries should match the board schematic.
+
+> Regards,
+> Bjorn
+> 
+>>
+>>> Regards,
+>>> Bjorn
+>>>
+>>>> You said your system hanged, I believe you have set UFS_DEVICE_NO_VCCQ
+>>>> quirks, in that case VCCQ regulator should having been disabled.
+>>>> So you mean your system hanged because vccq regulator got disabled?
+>>>>
+>>>>>     drivers/scsi/ufs/ufs.h    |  1 -
+>>>>>     drivers/scsi/ufs/ufshcd.c | 59 +++------------------------------------
+>>>>>     2 files changed, 4 insertions(+), 56 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+>>>>> index dd65fea07687..7da7318eb6a6 100644
+>>>>> --- a/drivers/scsi/ufs/ufs.h
+>>>>> +++ b/drivers/scsi/ufs/ufs.h
+>>>>> @@ -514,7 +514,6 @@ struct ufs_vreg {
+>>>>>     	struct regulator *reg;
+>>>>>     	const char *name;
+>>>>>     	bool enabled;
+>>>>> -	bool unused;
+>>>>>     	int min_uV;
+>>>>>     	int max_uV;
+>>>>>     	int min_uA;
+>>>>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>>>>> index 9ba7671b84f8..8b9a01073d62 100644
+>>>>> --- a/drivers/scsi/ufs/ufshcd.c
+>>>>> +++ b/drivers/scsi/ufs/ufshcd.c
+>>>>> @@ -245,7 +245,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba);
+>>>>>     static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+>>>>>     				 bool skip_ref_clk);
+>>>>>     static int ufshcd_setup_clocks(struct ufs_hba *hba, bool on);
+>>>>> -static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused);
+>>>>>     static int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
+>>>>>     static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba);
+>>>>>     static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba);
+>>>>> @@ -6819,11 +6818,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>>>>>     	ufs_fixup_device_setup(hba, &card);
+>>>>>     	ufshcd_tune_unipro_params(hba);
+>>>>>     
+>>>>> -	ret = ufshcd_set_vccq_rail_unused(hba,
+>>>>> -		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
+>>>>> -	if (ret)
+>>>>> -		goto out;
+>>>>> -
+>>>>>     	/* UFS device is also active now */
+>>>>>     	ufshcd_set_ufs_dev_active(hba);
+>>>>>     	ufshcd_force_reset_auto_bkops(hba);
+>>>>> @@ -7007,24 +7001,13 @@ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
+>>>>>     static inline int ufshcd_config_vreg_lpm(struct ufs_hba *hba,
+>>>>>     					 struct ufs_vreg *vreg)
+>>>>>     {
+>>>>> -	if (!vreg)
+>>>>> -		return 0;
+>>>>> -	else if (vreg->unused)
+>>>>> -		return 0;
+>>>>> -	else
+>>>>> -		return ufshcd_config_vreg_load(hba->dev, vreg,
+>>>>> -					       UFS_VREG_LPM_LOAD_UA);
+>>>>> +	return ufshcd_config_vreg_load(hba->dev, vreg, UFS_VREG_LPM_LOAD_UA);
+>>>>>     }
+>>>>>     
+>>>>>     static inline int ufshcd_config_vreg_hpm(struct ufs_hba *hba,
+>>>>>     					 struct ufs_vreg *vreg)
+>>>>>     {
+>>>>> -	if (!vreg)
+>>>>> -		return 0;
+>>>>> -	else if (vreg->unused)
+>>>>> -		return 0;
+>>>>> -	else
+>>>>> -		return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
+>>>>> +	return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
+>>>>>     }
+>>>>>     
+>>>>>     static int ufshcd_config_vreg(struct device *dev,
+>>>>> @@ -7062,9 +7045,7 @@ static int ufshcd_enable_vreg(struct device *dev, struct ufs_vreg *vreg)
+>>>>>     {
+>>>>>     	int ret = 0;
+>>>>>     
+>>>>> -	if (!vreg)
+>>>>> -		goto out;
+>>>>> -	else if (vreg->enabled || vreg->unused)
+>>>>> +	if (!vreg || vreg->enabled)
+>>>>>     		goto out;
+>>>>>     
+>>>>>     	ret = ufshcd_config_vreg(dev, vreg, true);
+>>>>> @@ -7084,9 +7065,7 @@ static int ufshcd_disable_vreg(struct device *dev, struct ufs_vreg *vreg)
+>>>>>     {
+>>>>>     	int ret = 0;
+>>>>>     
+>>>>> -	if (!vreg)
+>>>>> -		goto out;
+>>>>> -	else if (!vreg->enabled || vreg->unused)
+>>>>> +	if (!vreg || !vreg->enabled)
+>>>>>     		goto out;
+>>>>>     
+>>>>>     	ret = regulator_disable(vreg->reg);
+>>>>> @@ -7192,36 +7171,6 @@ static int ufshcd_init_hba_vreg(struct ufs_hba *hba)
+>>>>>     	return 0;
+>>>>>     }
+>>>>>     
+>>>>> -static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused)
+>>>>> -{
+>>>>> -	int ret = 0;
+>>>>> -	struct ufs_vreg_info *info = &hba->vreg_info;
+>>>>> -
+>>>>> -	if (!info)
+>>>>> -		goto out;
+>>>>> -	else if (!info->vccq)
+>>>>> -		goto out;
+>>>>> -
+>>>>> -	if (unused) {
+>>>>> -		/* shut off the rail here */
+>>>>> -		ret = ufshcd_toggle_vreg(hba->dev, info->vccq, false);
+>>>>> -		/*
+>>>>> -		 * Mark this rail as no longer used, so it doesn't get enabled
+>>>>> -		 * later by mistake
+>>>>> -		 */
+>>>>> -		if (!ret)
+>>>>> -			info->vccq->unused = true;
+>>>>> -	} else {
+>>>>> -		/*
+>>>>> -		 * rail should have been already enabled hence just make sure
+>>>>> -		 * that unused flag is cleared.
+>>>>> -		 */
+>>>>> -		info->vccq->unused = false;
+>>>>> -	}
+>>>>> -out:
+>>>>> -	return ret;
+>>>>> -}
+>>>>> -
+>>>>>     static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+>>>>>     					bool skip_ref_clk)
+>>>>>     {
+>>>>>
+>>>
+>>>
+> 
+> 
