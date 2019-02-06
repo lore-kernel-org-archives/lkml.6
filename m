@@ -2,95 +2,122 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EC1C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFB0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C0A218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3387C2075D
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="oJLfYiy/"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Tyvqg0Tf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730353AbfBFOrV (ORCPT
+        id S1730490AbfBFOrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:47:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42465 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbfBFOrU (ORCPT
+        Wed, 6 Feb 2019 09:47:25 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14269 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728049AbfBFOrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:47:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id q18so7825326wrx.9
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 06:47:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=USJ6HCrc5EIcZWFDnBygF5kGUHF6deOK++9P1ruU+Ps=;
-        b=oJLfYiy/9mzV7s7DQTqOdkKT8EMaIMk4xE8pxoTOnRdJj9TGoqsDh375cVi/GsNQtl
-         PRVlEWqirX2zpe9gOl8HHnNi0aaiCcvmgzfr+yowE+2nJcqMmUsslajinzept3aVmEOF
-         TAhZbhIWq3n734hFM4ASJYyiYLvoL4GnklsrXGdQd+FNb7KfKI3rnw6M96ghfhApLtpB
-         mX8Lt4UPij2qBZJC808tKcFeGKJQMH7rjQJ6dzhaNSQfmFEZm8SDgq7O7+lZUcate3nV
-         UBVMDhYPPqCGKQFGzvNK4hc/Jhy7pLB3DxUIj/ombl3sj/WlC3a64s94zK7isErDicLC
-         NyjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=USJ6HCrc5EIcZWFDnBygF5kGUHF6deOK++9P1ruU+Ps=;
-        b=nTKDDzLXow4fTsJsGU8fRinXrmu5n2QtM62MDos19i60eh/W/PDqqyP9YHQyMRdCpX
-         +vbtKjDeadbLH2qU6U7QHpl6zDpZKhPTmZm49+Xhca8uxxKIj0jazJk86VyJvyCM4kh4
-         hO03vjnV+bcQjttDyOEyGVM6agyH2I/hL7CBMoS12VPMWbxEdPZ7x4nU/hfGrW6QsR2h
-         8Ui8IgLU110untjyEovyXjW+oSUOH7jbfA7HsGyKzbKU2eQM+UOhhmKs2g1EOUCG0C66
-         0uZ4sLYIymhzdxx3tvKgBa9n/N8jHySd3qHIHa8HNIo+Y+1ikxG0jjwNg5rH2rkOQezM
-         tKKg==
-X-Gm-Message-State: AHQUAuZ2q+EfwedJKH53ZHFogsCJn8JTnBuxWSFRcoFvFNW5NM92/LHF
-        9Qc3+DVpQwMsQ8At7oUw/iAuvsDtvjNiD55T/Oi5cQ==
-X-Google-Smtp-Source: AHgI3IYnxX5B4n+jBu/GdePDDrA4yCWmxInyN3TuQKCZ+OF15V+6raL6XSjiPgogw63thDSl/uiWexo6FEZu7nsH/so=
-X-Received: by 2002:adf:ed11:: with SMTP id a17mr852231wro.283.1549464438982;
- Wed, 06 Feb 2019 06:47:18 -0800 (PST)
+        Wed, 6 Feb 2019 09:47:24 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5af37f0000>; Wed, 06 Feb 2019 06:47:27 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 06 Feb 2019 06:47:23 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 06 Feb 2019 06:47:23 -0800
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 6 Feb
+ 2019 14:47:23 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 6 Feb 2019 14:47:23 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.171.121]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c5af37a0000>; Wed, 06 Feb 2019 06:47:23 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <digetx@gmail.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V13 1/5] i2c: tegra: sort all the include headers alphabetically
+Date:   Wed, 6 Feb 2019 06:47:17 -0800
+Message-ID: <1549464441-1836-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20190128140219.4414-1-axel.lin@ingics.com> <CAGb2v67UV51oaDXgF2ocTSYJVNhZFPf_bmDtqLDApA_YB-oqWA@mail.gmail.com>
-In-Reply-To: <CAGb2v67UV51oaDXgF2ocTSYJVNhZFPf_bmDtqLDApA_YB-oqWA@mail.gmail.com>
-From:   Axel Lin <axel.lin@ingics.com>
-Date:   Wed, 6 Feb 2019 22:47:07 +0800
-Message-ID: <CAFRkauB584T9CqmvwRO3eYhL+N4Xi38Ti6b7aPpCGk-L_-OcUA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: axp20x: Fix incorrect vsel_mask settings
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549464447; bh=q1lCORGaraRS4HjSlxbg9qH9fu0S33Vobtpml44EeKA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=Tyvqg0TfXTCQDYb/DTW+7ZWilagnGicD8WXibe3LL0Dp071WqoS8WVAXDu48zsxla
+         o0HdR5F7vtzimVwRt8erxFP2H/qrmXihkLsYqagprZ8az54C/G5jz9K/Fg8YcyvL4S
+         r8mWFStPooY8qeAgqzPh5F6Rhusy1ACThI62ArZp24cKYNmX83Mxu1R4t5a9+QSDnI
+         3Nyc4uq2XHTZDZd/vVTkCJqTzvcDFC5mb1AGx1dNRocVnHjwqiL2JEKY1OBgDOWoro
+         /1RgSgsrZclVscOip4DKS+GwU9+f+ykcQ0wg4e77UpQxzHH25wM3Xva/aOhmCm7ITO
+         rZoz6wwP98OSA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chen-Yu Tsai <wens@csie.org> =E6=96=BC 2019=E5=B9=B42=E6=9C=886=E6=97=A5 =
-=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=886:44=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Mon, Jan 28, 2019 at 10:02 PM Axel Lin <axel.lin@ingics.com> wrote:
-> >
-> > Fix copy-paste mistake while converting to use defines for masks.
-> >
-> > Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
-> > Signed-off-by: Axel Lin <axel.lin@ingics.com>
->
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->
-> Though I believe the latter three have already been fixed by
->
->     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git=
-/commit/?h=3Dfor-5.0&id=3D16c8a595740035c4a7ede608a60b4a59f67b76e6
->
-> Could you respin this patch on top of that commit?
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
-This is similar fix but fixes different places.
-BTW, Mark already applied both patches.
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V9/V10/V11/V12/V13] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] 		  : Added this in V2 to sort the headers in tegra I2C
 
-Regards,
-Axel
+
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c77adbbea0c7..79c6aa87499b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
+
