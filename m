@@ -2,108 +2,118 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36570C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C62BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111C520821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B75E20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:13:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbfBFSMu (ORCPT
+        id S1729107AbfBFSNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:12:50 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:40479 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726914AbfBFSMu (ORCPT
+        Wed, 6 Feb 2019 13:13:19 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43733 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBFSNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:12:50 -0500
-X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="26383923"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 06 Feb 2019 11:12:33 -0700
-Received: from tenerife.corp.atmel.com (10.10.76.4) by
- chn-sv-exch04.mchp-main.com (10.10.76.105) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 6 Feb 2019 11:12:33 -0700
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Sebastian Reichel <sre@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH v2 3/3] power: reset: at91-reset: add support for sam9x60 SoC
-Date:   Wed, 6 Feb 2019 19:12:21 +0100
-Message-ID: <20190206181221.27914-3-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190206181221.27914-1-nicolas.ferre@microchip.com>
-References: <20190206181221.27914-1-nicolas.ferre@microchip.com>
+        Wed, 6 Feb 2019 13:13:19 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x16ID7Ib1391439
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 6 Feb 2019 10:13:07 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x16ID7L51391435;
+        Wed, 6 Feb 2019 10:13:07 -0800
+Date:   Wed, 6 Feb 2019 10:13:07 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
+Message-ID: <tip-82434d23f36de42f70925f70d645ed3b1394361b@git.kernel.org>
+Cc:     wei@redhat.com, bp@suse.de, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, mingo@redhat.com, hpa@zytor.com,
+        kyle.d.pelton@intel.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, x86@kernel.org
+Reply-To: x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          kyle.d.pelton@intel.com, hpa@zytor.com, mingo@kernel.org,
+          mingo@redhat.com, kirill.shutemov@linux.intel.com, bp@suse.de,
+          wei@redhat.com
+In-Reply-To: <20190206154756.matwldebbxkmlnae@black.fi.intel.com>
+References: <20190206154756.matwldebbxkmlnae@black.fi.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/boot/compressed/64: Explain
+ paging_prepare()'s return value
+Git-Commit-ID: 82434d23f36de42f70925f70d645ed3b1394361b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for additional reset causes and the proper compatibility
-string for sam9x60 SoC. The restart function is the same as the samx7.
+Commit-ID:  82434d23f36de42f70925f70d645ed3b1394361b
+Gitweb:     https://git.kernel.org/tip/82434d23f36de42f70925f70d645ed3b1394361b
+Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate: Wed, 6 Feb 2019 18:29:08 +0300
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 6 Feb 2019 19:08:34 +0100
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+x86/boot/compressed/64: Explain paging_prepare()'s return value
+
+paging_prepare() returns a two-quadword structure which lands
+into RDX:RAX:
+
+  - Address of the trampoline is returned in RAX.
+  - Non zero RDX means trampoline needs to enable 5-level paging.
+
+Document that explicitly.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: dave.hansen@linux.intel.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kyle D Pelton <kyle.d.pelton@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wei Huang <wei@redhat.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190206154756.matwldebbxkmlnae@black.fi.intel.com
 ---
-v2: split series and collect tag
+ arch/x86/boot/compressed/head_64.S | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Sebastian,
-I add your Acked-by tag here but as I would like that you take the 3 patches on
-your tree now, I let you modify it on your side. I'm expecting Alexandre or
-Ludovic to have a look as well.
-
-Best regards,
-  Nicolas
-
- drivers/power/reset/at91-reset.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/power/reset/at91-reset.c b/drivers/power/reset/at91-reset.c
-index f44a9ffcc2ab..44ca983a49a1 100644
---- a/drivers/power/reset/at91-reset.c
-+++ b/drivers/power/reset/at91-reset.c
-@@ -44,6 +44,9 @@ enum reset_type {
- 	RESET_TYPE_WATCHDOG	= 2,
- 	RESET_TYPE_SOFTWARE	= 3,
- 	RESET_TYPE_USER		= 4,
-+	RESET_TYPE_CPU_FAIL	= 6,
-+	RESET_TYPE_XTAL_FAIL	= 7,
-+	RESET_TYPE_ULP2		= 8,
- };
- 
- static void __iomem *at91_ramc_base[2], *at91_rstc_base;
-@@ -164,6 +167,15 @@ static void __init at91_reset_status(struct platform_device *pdev)
- 	case RESET_TYPE_USER:
- 		reason = "user reset";
- 		break;
-+	case RESET_TYPE_CPU_FAIL:
-+		reason = "CPU clock failure detection";
-+		break;
-+	case RESET_TYPE_XTAL_FAIL:
-+		reason = "32.768 kHz crystal failure detection";
-+		break;
-+	case RESET_TYPE_ULP2:
-+		reason = "ULP2 reset";
-+		break;
- 	default:
- 		reason = "unknown reset";
- 		break;
-@@ -183,6 +195,7 @@ static const struct of_device_id at91_reset_of_match[] = {
- 	{ .compatible = "atmel,at91sam9g45-rstc", .data = at91sam9g45_restart },
- 	{ .compatible = "atmel,sama5d3-rstc", .data = sama5d3_restart },
- 	{ .compatible = "atmel,samx7-rstc", .data = samx7_restart },
-+	{ .compatible = "microchip,sam9x60-rstc", .data = samx7_restart },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, at91_reset_of_match);
--- 
-2.17.1
-
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index b27b338d2f6d..73b9d7e91a9c 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -358,8 +358,11 @@ ENTRY(startup_64)
+ 	 * paging_prepare() sets up the trampoline and checks if we need to
+ 	 * enable 5-level paging.
+ 	 *
+-	 * Address of the trampoline is returned in RAX.
+-	 * Non zero RDX on return means we need to enable 5-level paging.
++	 * paging_prepare() returns a two-quadword structure which lands
++	 * into RDX:RAX:
++	 *   - Address of the trampoline is returned in RAX.
++	 *   - Non zero RDX means trampoline needs to enable 5-level
++	 *     paging.
+ 	 *
+ 	 * RSI holds real mode data and needs to be preserved across
+ 	 * this function call.
+@@ -565,7 +568,7 @@ adjust_got:
+  *
+  * RDI contains the return address (might be above 4G).
+  * ECX contains the base address of the trampoline memory.
+- * Non zero RDX on return means we need to enable 5-level paging.
++ * Non zero RDX means trampoline needs to enable 5-level paging.
+  */
+ ENTRY(trampoline_32bit_src)
+ 	/* Set up data and stack segments */
