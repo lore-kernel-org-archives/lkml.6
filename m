@@ -2,94 +2,151 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69ACDC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67FB8C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F25132175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:01:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=livid.pp.ru header.i=@livid.pp.ru header.b="eKKRgjz8"
+	by mail.kernel.org (Postfix) with ESMTP id 40D572175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730175AbfBFMB6 (ORCPT
+        id S1730214AbfBFMGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:01:58 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43209 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729756AbfBFMB5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:01:57 -0500
-Received: by mail-qk1-f194.google.com with SMTP id z18so4028898qkj.10
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 04:01:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=livid.pp.ru; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f9JLYkj5kAyNqDP+ARJLiQQxjhGYLveQYTvF/T/df6E=;
-        b=eKKRgjz85oiKJgKT65Mg7caHhbbsfsPOwVU6pZGIwpOci7S3xmRzc2mzb6mFd4Wlq5
-         xKidPh2DfHTXgGjj+3IgWuxZbiDu/wUVuVSrQNbNUf5iRe2rRPCz6cCsLWN4G9AT2cK6
-         RHP2FL+qvUezLcyav2PUHUzQrjRwrhVPGFJUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f9JLYkj5kAyNqDP+ARJLiQQxjhGYLveQYTvF/T/df6E=;
-        b=hD89ibCiIXkkrHvLn5chPsL8UcQjAdlR1/GAKG3bxXzjdaZ7Vc0A333tLnRtUrq7iM
-         eFM8qPFwTA2a18Sy78u8Y0PiGLdjK2o7JgwgYJ9iI8SNlNrn9p4tqd+r4YRyb5Cg0S7y
-         E5LX2CGX5nnhD+d5yt79e4j0pW53wXlocVZhLDXKpkl0cp6AJN/IjTFWWSHu0lMOsPJR
-         ixWpA/qC0a2I0LwSLrxxhK9kEf9ddfJovMBo902VH0k9F3uM4kFFcgoeLxMQ77iEm81b
-         GAw7DWGfv+gc8XclRi5c9heGkwaAbjm3OaTtrQ1uNRuwW/oEKrVZN7VxZAWY8W6spqq1
-         vnOg==
-X-Gm-Message-State: AHQUAuYaQbRVp9biX3gxdj/GL+9+KslAT106jxI0ccegdeoblbdFNoOM
-        IxnR33Po33oD0gaMTuIFbhx5QwlxqO/7yYpjAbO8cg==
-X-Google-Smtp-Source: AHgI3Ia/Dp1hjkYVp8LAxQlRv6t0FaEvbrIcRepJ7OO6tHEpL4puEwI8EFidQt8wzytg3PfU+6Gjz706t27cew/qeh0=
-X-Received: by 2002:a37:9906:: with SMTP id b6mr7157554qke.208.1549454516519;
- Wed, 06 Feb 2019 04:01:56 -0800 (PST)
+        Wed, 6 Feb 2019 07:06:40 -0500
+Received: from mga17.intel.com ([192.55.52.151]:40336 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727116AbfBFMGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 07:06:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 04:06:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,339,1544515200"; 
+   d="scan'208";a="141129832"
+Received: from kerva-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.235])
+  by fmsmga002.fm.intel.com with ESMTP; 06 Feb 2019 04:06:35 -0800
+Date:   Wed, 6 Feb 2019 14:06:34 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+Message-ID: <20190206120634.GA4680@linux.intel.com>
+References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-References: <20190115161354.6806-1-root@livid.pp.ru> <C672AA6DAAC36042A98BAD0B0B25BDA94CB280EC@BGSMSX104.gar.corp.intel.com>
- <CA+A=rXGckxCsEPAG_DczMgLwS2+K3SXFUnHnXQrOOr+9WOWj9w@mail.gmail.com> <C672AA6DAAC36042A98BAD0B0B25BDA94CB2885A@BGSMSX104.gar.corp.intel.com>
-In-Reply-To: <C672AA6DAAC36042A98BAD0B0B25BDA94CB2885A@BGSMSX104.gar.corp.intel.com>
-From:   Nikolay Yakimov <root@livid.pp.ru>
-Date:   Wed, 6 Feb 2019 15:01:45 +0300
-Message-ID: <CA+A=rXE_4q1ioEFTD2iXcS3PLvErXVepZ+uQgj9UW6vKfozxqw@mail.gmail.com>
-Subject: Re: [PATCH] USB: Fix configuration selection issues introduced in v4.20.0
-To:     "Gopal, Saranya" <saranya.gopal@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey there.
+On Wed, Feb 06, 2019 at 12:47:07AM +0200, Jarkko Sakkinen wrote:
+> Make the changes necessary to detach TPM space code and TPM activation
+> code out of the tpm_transmit() flow because of both of these can cause
+> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+> to maintain, and thus, it is better to just fix things now before this
+> turns into a bigger mess.
+> 
+> v11:
+> * Drop the patch that tries to flush TPM space on system. Not a proper
+>   fallback + out of scope for this patch set.
+> 
+> v10:
+> * Use void pointers to avoid unnecessary casts in functions paramaters
+>   where it makes sense.
+> 
+> v9:
+> * Fixed again tpm_try_get_ops().
+> * Added missing reviewed-by's.
+> 
+> v8:
+> * Re-add the check for ret < 0 after calling tpm_try_transmit() that
+>   was dropped by mistake while moving code.
+> * Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+>   fails.
+> 
+> v7:
+> *  Reorganize series so that more trivial and self-contained changes are
+>    in the head.
+> 
+> v6:
+> * When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+>   the TPM header was incorrectly declared as struct tpm_input_header.
+> * Fix return value in tpm_validate_command().
+> 
+> v5:
+> * Add the missing rev's from Stefan Berger.
+> 
+> v4:
+> * Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+> * Fix error handling flow in tpm_try_transmit().
+> * Replace struct tpm_input_header and struct tpm_output_header with
+>   struct tpm_header.
+> 
+> v3:
+> * Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+> * Move TPM power gating code and locking to tpm_try_get_ops() and
+>   tpm_put_ops().
+> * Call power gating code directly in tpm_chip_register() and
+>   tpm2_del_space().
+> 
+> v2:
+> * Print tpm2_commit_space() error inside tpm2_commit_space()
+> * Error code was not printed when recv() callback failed. It is
+>   fixed in this version.
+> * Added a patch that removes @space from tpm_transmit().
+> * Fixed a regression in earlier series. Forgot to amend the change
+>   from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+> 
+> Jarkko Sakkinen (16):
+>   tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+>   tpm: fix invalid return value in pubek_show()
+>   tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+>   tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+>   tpm: declare struct tpm_header
+>   tpm: access command header through struct in tpm_try_transmit()
+>   tpm: encapsulate tpm_dev_transmit()
+>   tpm: clean up tpm_try_transmit() error handling flow
+>   tpm: move tpm_validate_commmand() to tpm2-space.c
+>   tpm: move TPM space code out of tpm_transmit()
+>   tpm: remove @space from tpm_transmit()
+>   tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+>   tpm: remove TPM_TRANSMIT_UNLOCKED flag
+>   tpm: introduce tpm_chip_start() and tpm_chip_stop()
+>   tpm: take TPM chip power gating out of tpm_transmit()
+>   tpm: remove @flags from tpm_transmit()
+> 
+>  drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
+>  drivers/char/tpm/tpm-dev-common.c |  44 ++++-
+>  drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
+>  drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+>  drivers/char/tpm/tpm.h            |  64 +++-----
+>  drivers/char/tpm/tpm1-cmd.c       |  28 +---
+>  drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+>  drivers/char/tpm/tpm2-space.c     |  91 +++++++---
+>  drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+>  drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+>  drivers/char/tpm/xen-tpmfront.c   |   2 +-
+>  11 files changed, 408 insertions(+), 421 deletions(-)
+> 
+> -- 
+> 2.19.1
+> 
 
-Sorry to nag, but it seems we came to the conclusion that there's
-indeed a problem with the current code, and then collectively decided
-that we're done. Can I do something to expedite this? Are there any
-issues with my proposed patch? If there are, what can I do to fix
-those? Alternatively, perhaps it would be easier/faster if a bona fide
-kernel developer could fix problems described in this thread (well,
-actually, I believe we're down to one somewhat pressing problem, which
-could be fixed just by moving some code around)
+Applied to master and next.
 
-
-On Thu, 17 Jan 2019 at 06:53, Gopal, Saranya <saranya.gopal@intel.com> wrote:
->
-> > The result is this:
-> > Before f13912d3f014a, if an RNDIS device has non-vendor-specific
-> > configurations after the first one, that one would be selected.
-> > After ff2a8c532c14, the first configuration would always be selected
-> > for RNDIS devices. Besides, there are several redundant checks in this
-> > case, which is, if nothing else, confusing.
-> >
-> > Hopefully I've explained my point clearly enough.
->
-> Agreed. Thanks for pointing it out. I somehow missed this :(
->
-> Thanks,
-> Saranya
+/Jarkko
