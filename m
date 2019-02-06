@@ -2,185 +2,167 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2F0C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B196AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337C8218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75EC6218E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X1zVWglR"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UjACPc/7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfBFWES (ORCPT
+        id S1726645AbfBFWIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 17:04:18 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42176 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbfBFWES (ORCPT
+        Wed, 6 Feb 2019 17:08:31 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:47062 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfBFWIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:04:18 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so3535162pga.9
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 14:04:17 -0800 (PST)
+        Wed, 6 Feb 2019 17:08:30 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so3530330pgp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 14:08:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
-         :subject:message-id:references:cc:from:date;
-        bh=3FKj50cnBV7mXYIaVQIe+ttTaK6DyS8ngGDtzG+5HL4=;
-        b=X1zVWglReizCmDG4xBQvVKblfPrvlzfHRATobDQtjpWmnPxd0K6SgPylzEsXxL7vd8
-         IG21s2QOK4tK96BnxbYonyv+3U9nzjPqupRHDgB69kjoaLCdfQ56+fABZGVlVNyycTta
-         5wl+DK/fS7GIltL64psgKTg2wlIW5RXcl0+DU=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KJwz5D7Q6Dz66NllUORQ/Snomm0KllaaPa/yLCdCQ6s=;
+        b=UjACPc/7YocMeD76XYauB6nZ6RDa63UossHuaJ+0TIiKgho/ArpyBlacPPqsZLrNnT
+         KnHqLhX8P3aJV8864C9Tt9DI58/184m0jfEFnmLrRvW40Nd86trk3aJ53qkD/bG6gYfh
+         IJNio6AyjA6beSbJRPDCSPJ3tMdw7zgulCBAcso4hIw5ocsapg0AumKahiqQVn9xRJYZ
+         JQnQLAE5mrdKolFzsQNwfnkQmj4pz6yIiPtguPt+v8g1qFK7im9gyqoQU/XE4iHnxnR7
+         YDF4R60zWNu45I8qSRhVYXW0+h+NNHSoJDCLQ4cciOYgXWXrt7gBPQVyio/gcxVZZQaZ
+         OrNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to
-         :in-reply-to:user-agent:subject:message-id:references:cc:from:date;
-        bh=3FKj50cnBV7mXYIaVQIe+ttTaK6DyS8ngGDtzG+5HL4=;
-        b=HtqQAS8kIB0tCqXuzxkaYsdZoFE7MTgMQPp7clmaxKOmIWhmMIzVRZpGsr2hgCBVza
-         Rqcu67UiUI+FQSVSVMjV0pDVMKIlEPixu5axHdthhYnMG/bqyGQy/1QSVDxvZ01+1c5y
-         Y7RJrqsB6j2FcXWQhLilGAaTh7JH2NJSzWWG14LHl6hvlgtmjJUNFVV18vXgYJm5AJ+e
-         bHu3Yff3VWh6wVlXzQq00fpgrHg3cT2PjQG+lt0/KDxcrTYaxoHUn2Syn1RtR0dWHSlv
-         LA5u4hY3Q8Myd1lLxNTvK8md9HESk3Eu1ldDOdop3DX2wIlq3JdozoILl4X8lV1ZDE4D
-         v9Lg==
-X-Gm-Message-State: AHQUAub//ucomNtwB5s5sCvEJ5gUwb4nYwEYGo18SrRirFoz34rXO+tX
-        0tS2u/HXcwhjA5QfNPSVGxL3Ug==
-X-Google-Smtp-Source: AHgI3IYJ5wX5feeGW6SLOkcNdX6rPcqLj4t0WmD1CP/I8ZI1akmSpnlEkEpTqxTOh7+vAKFktHYW+g==
-X-Received: by 2002:a63:da14:: with SMTP id c20mr11253242pgh.233.1549490657074;
-        Wed, 06 Feb 2019 14:04:17 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id t67sm18527751pfd.90.2019.02.06.14.04.16
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KJwz5D7Q6Dz66NllUORQ/Snomm0KllaaPa/yLCdCQ6s=;
+        b=VTYy8URxudDzNtlJB31KpywRO4x5UjmhHOfvHBY0LON8hPhYnaYd0p7ah9wTvaSFFA
+         tAxyfTvP1EhuHIje6F1DK4iwJbcR7vZljj2m9QR2zi5kRo4Fykhj3WpbyOPvzgchT1z5
+         mmqownjcyJzN3aB9o6xjvgFnH+kbot/s8IMYaETh6twv5iA8WpcEDF1rZdC345ik77cC
+         dhUkbWIluhduu+A3Snd/6KfoWcsPxnudtlLVBeXWcCT3CKqitMdk12cFnyEuIuyyjeWn
+         f9ndbHKxLX5xiXDDAHEyasMd6ljpAWvvfEzA3kvLSP5VahMInTJ4G2FNRk+dMH0y2IoM
+         6Skg==
+X-Gm-Message-State: AHQUAuYOx7q5N75Rd6u6DfldHONHbGYImnqXFgknnU/Bh9nppgVmV6jf
+        mHTmI7taeJ4Bb7UZRqwOV/mruQ==
+X-Google-Smtp-Source: AHgI3IZ9sM2NemHPkXJcEytXog4mo9/7nqUOfJbzWrMCoEPFEnffuZ1BU2oh+A0ce2olQXr6DG07vw==
+X-Received: by 2002:a63:ed03:: with SMTP id d3mr11531445pgi.275.1549490909681;
+        Wed, 06 Feb 2019 14:08:29 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id p24sm144065pfj.72.2019.02.06.14.08.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 14:04:16 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 06 Feb 2019 14:08:28 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1grVMq-0004ip-7P; Wed, 06 Feb 2019 15:08:28 -0700
+Date:   Wed, 6 Feb 2019 15:08:28 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206220828.GJ12227@ziepe.ca>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz>
+ <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-In-Reply-To: <20190205185902.106085-9-evgreen@chromium.org>
-User-Agent: alot/0.8
-Subject: Re: [PATCH v3 8/8] phy: ufs-qcom: Refactor all init steps into phy_poweron
-Message-ID: <154949065550.115909.10216592012769136925@swboyd.mtv.corp.google.com>
-References: <20190205185902.106085-1-evgreen@chromium.org> <20190205185902.106085-9-evgreen@chromium.org>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Can Guo <cang@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-scsi@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Wed, 06 Feb 2019 14:04:15 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206210356.GZ6173@dastard>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-02-05 10:59:02)
-> The phy code was using implicit sequencing between the PHY driver
-> and the UFS driver to implement certain hardware requirements.
-> Specifically, the PHY reset register in the UFS controller needs
-> to be deasserted before serdes start occurs in the PHY.
->=20
-> Before this change, the code was doing this by utilizing the two
-> phy callbacks, phy_init() and phy_poweron(), as "init step 1" and
-> "init step 2", where the UFS driver would deassert reset between
-> these two steps.
->=20
-> This makes it challenging to power off the regulators in suspend,
-> as regulators are initialized in init, not in poweron(), but only
-> poweroff() is called during suspend, not exit().
->=20
-> For UFS, move the actual firing up of the PHY to phy_poweron() and
-> phy_poweroff() callbacks, rather than init()/exit(). UFS calls
-> phy_poweroff() during suspend, so now all clocks and regulators for
-> the phy can be powered down during suspend.
->=20
-> QMP is a little tricky because the PHY is also shared with PCIe and
-> USB3, which have their own definitions for init() and poweron(). Rename
-> the meaty functions to _enable() and _disable() to disentangle from the
-> PHY core names, and then create two different ops structures: one for
-> UFS and one for the other PHY types.
->=20
-> In phy-qcom-ufs, remove the 'is_powered_on' and 'is_started' guards,
-> as the generic PHY code does the reference counting. The
-> 14/20nm-specific init functions get collapsed into the generic power_on()
-> function, with the addition of a calibrate() callback specific to 14/20nm.
->=20
-> Signed-off-by: Evan Green <evgreen@chromium.org>
+On Thu, Feb 07, 2019 at 08:03:56AM +1100, Dave Chinner wrote:
+> On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote:
+> > On Wed, 6 Feb 2019, Doug Ledford wrote:
+> > 
+> > > > Most of the cases we want revoke for are things like truncate().
+> > > > Shouldn't happen with a sane system, but we're trying to avoid users
+> > > > doing awful things like being able to DMA to pages that are now part of
+> > > > a different file.
+> > >
+> > > Why is the solution revoke then?  Is there something besides truncate
+> > > that we have to worry about?  I ask because EBUSY is not currently
+> > > listed as a return value of truncate, so extending the API to include
+> > > EBUSY to mean "this file has pinned pages that can not be freed" is not
+> > > (or should not be) totally out of the question.
+> > >
+> > > Admittedly, I'm coming in late to this conversation, but did I miss the
+> > > portion where that alternative was ruled out?
+> > 
+> > Coming in late here too but isnt the only DAX case that we are concerned
+> > about where there was an mmap with the O_DAX option to do direct write
+> > though? If we only allow this use case then we may not have to worry about
+> > long term GUP because DAX mapped files will stay in the physical location
+> > regardless.
+> 
+> No, that is not guaranteed. Soon as we have reflink support on XFS,
+> writes will physically move the data to a new physical location.
+> This is non-negotiatiable, and cannot be blocked forever by a gup
+> pin.
+> 
+> IOWs, DAX on RDMA requires a) page fault capable hardware so that
+> the filesystem can move data physically on write access, and b)
+> revokable file leases so that the filesystem can kick userspace out
+> of the way when it needs to.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Why do we need both? You want to have leases for normal CPU mmaps too?
 
-although it may change if the patch before this is changed
-significantly.
+> Truncate is a red herring. It's definitely a case for revokable
+> leases, but it's the rare case rather than the one we actually care
+> about. We really care about making copy-on-write capable filesystems like
+> XFS work with DAX (we've got people asking for it to be supported
+> yesterday!), and that means DAX+RDMA needs to work with storage that
+> can change physical location at any time.
 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/p=
-hy-qcom-qmp.c
-> index 2861c64b9bcc..3597c4c0e50f 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> @@ -1341,8 +1341,7 @@ static int qcom_qmp_phy_com_exit(struct qcom_qmp *q=
-mp)
->         return 0;
->  }
-> =20
-> -/* PHY Initialization */
-> -static int qcom_qmp_phy_init(struct phy *phy)
-> +static int qcom_qmp_phy_enable(struct phy *phy)
->  {
->         struct qmp_phy *qphy =3D phy_get_drvdata(phy);
->         struct qcom_qmp *qmp =3D qphy->qmp;
-> @@ -1423,14 +1422,6 @@ static int qcom_qmp_phy_init(struct phy *phy)
->                         goto err_lane_rst;
->         }
-> =20
-> -       /*
-> -        * UFS PHY requires the deassert of software reset before serdes =
-start.
-> -        * For UFS PHYs that do not have software reset control bits, def=
-er
-> -        * starting serdes until the power on callback.
-> -        */
-> -       if ((cfg->type =3D=3D PHY_TYPE_UFS) && cfg->no_pcs_sw_reset)
-> -               goto out;
-> -
->         /*
->          * Pull out PHY from POWER DOWN state.
->          * This is active low enable signal to power-down PHY.
-> @@ -1442,7 +1433,9 @@ static int qcom_qmp_phy_init(struct phy *phy)
->                 usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
-> =20
->         /* Pull PHY out of reset state */
-> -       qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +       if (!cfg->no_pcs_sw_reset)
-> +               qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +
->         if (cfg->has_phy_dp_com_ctrl)
->                 qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
-> =20
+Then we must continue to ban longterm pin with DAX..
 
-This is non-obvious, but OK I can see now that it's fine that everything
-is combined into one function. I didn't realize that phy_init() was
-polling the ready bit in addition to power on doing that under certain
-circumstances.
+Nobody is going to want to deploy a system where revoke can happen at
+any time and if you don't respond fast enough your system either locks
+with some kind of FS meltdown or your process gets SIGKILL. 
 
-Quite honestly, I find the whole implementation to be obtuse; combining
-all the phy code together into one function and then changing the
-execution paths via booleans and the 'type' member. It makes following
-and reviewing this code really painful. We should make phy ops for each
-type of phy: USB, USB+DP, PCIE, UFS, etc. and then have those ops call
-simpler building block functions that do the common things. Then
-reviewers don't have to untangle the execution paths in their minds to
-make sure that nothing goes wrong when a stray 'if (my_phy_flag)' is
-thrown into the init function and have to wonder if that causes problems
-for something else.
+I don't really see a reason to invest so much design work into
+something that isn't production worthy.
 
+It *almost* made sense with ftruncate, because you could architect to
+avoid ftruncate.. But just any FS op might reallocate? Naw.
+
+Dave, you said the FS is responsible to arbitrate access to the
+physical pages..
+
+Is it possible to have a filesystem for DAX that is more suited to
+this environment? Ie designed to not require block reallocation (no
+COW, no reflinks, different approach to ftruncate, etc)
+
+> And that's the real problem we need to solve here. RDMA has no trust
+> model other than "I'm userspace, I pinned you, trust me!". That's
+> not good enough for FS-DAX+RDMA....
+
+It is baked into the silicon, and I don't see much motion on this
+front right now. My best hope is that IOMMU PASID will get widely
+deployed and RDMA silicon will arrive that can use it. Seems to be
+years away, if at all.
+
+At least we have one chip design that can work in a page faulting mode
+..
+
+Jason
