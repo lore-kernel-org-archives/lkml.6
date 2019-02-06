@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53B3C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5535AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82FF12186A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 245A1218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549478987;
-	bh=o8uIxCcIoF0hOFEN1vPINJ/plIKMNROwZf6gVOdadoM=;
+	s=default; t=1549478989;
+	bh=HMYqZhuniqdwFejBdxjkiaqgqvE82YV09El7G2q5yWM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wX9Aqf6yd//nUaQTLrMrCprgeNfholFthgpG3QEq1NcWSWqrybfdJwa1i0tBLf8dV
-	 SQHbRbrHQWl4oIMxue14bkWHt9g5xe9onliYlH6KnBYJDlTZJeDlG1YAMi9C277sJt
-	 n3WATAnf8vXzROcAXvE8p4oCiG5+Fq6s7yEKBquE=
+	b=LViDWepaAVyDiv+QpqyK30ohsgTlHyjmSotEMW7oMSae397SfQx7iVr9h90OQ/2NZ
+	 MvNDZQ+PSCZub0ZSCRtDkOUS2OjhpHkrlEmpvlYEGbNYxCIWcXW9KF1SnziB90gC+Y
+	 OOrFk2hMImbG6WOZm1Yg3D+YxXruqOLdsjE14B84=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfBFStp (ORCPT
+        id S1727256AbfBFStr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:49:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44030 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:49:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727180AbfBFStl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:49:41 -0500
+        id S1727230AbfBFStq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:49:46 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE033206DD;
-        Wed,  6 Feb 2019 18:49:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA325206DD;
+        Wed,  6 Feb 2019 18:49:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549478980;
-        bh=o8uIxCcIoF0hOFEN1vPINJ/plIKMNROwZf6gVOdadoM=;
+        s=default; t=1549478985;
+        bh=HMYqZhuniqdwFejBdxjkiaqgqvE82YV09El7G2q5yWM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c+OltE04969+MnncEixiITGmwhXd3qWBhfd6I1f3/4h/tSzJTW98O+NxtVl4+ABtG
-         3wti/y6/8CDEHY0Uxd8IGVxPNxruM8Jphx7LNAipa5/ZGrX8Ya/HW015f4Zfp2WY6N
-         KPLyVJvogxlOpK1dQEl5n28RjI0n9dDqFMy8MQMw=
+        b=USR+zO0/7Cpa2lHPNLzrF2Roy3o3G0uzVNebECCIMi1Z6t4ErrOWdx1YqH8ep2Ezd
+         pY/VmhNtQbsCzhyn76wgqxsK/r9WHQs2wPjR1MAhdcyBQ/Fn/NejjeDp7ibO+MYyC1
+         PZadHYLQoRN/PwcBJM6tL0lQLVNqWAJVP9dckpVo=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 09/53] perf hist: Remove symbol.h from hist.h, just fwd decls are needed
-Date:   Wed,  6 Feb 2019 15:48:19 -0300
-Message-Id: <20190206184903.24054-10-acme@kernel.org>
+Subject: [PATCH 11/53] perf evsel: No need to include symbol.h in evsel.h, symbol_conf.h is enough
+Date:   Wed,  6 Feb 2019 15:48:21 -0300
+Message-Id: <20190206184903.24054-12-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -61,75 +61,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-To reduce the includes dependencies.
+To reduce the header dependency and avoid unnecessary rebuilds when
+things change in symbol.h.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-cmvg5ght75mmfg1efeyna9rn@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-6duflwliprh2tr47w5x4t260@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/gtk/annotate.c | 1 +
- tools/perf/util/auxtrace.c   | 1 +
- tools/perf/util/callchain.c  | 1 +
- tools/perf/util/hist.h       | 3 ++-
- 4 files changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/util/evsel.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/ui/gtk/annotate.c b/tools/perf/ui/gtk/annotate.c
-index f42666ee0672..df49c9ba1785 100644
---- a/tools/perf/ui/gtk/annotate.c
-+++ b/tools/perf/ui/gtk/annotate.c
-@@ -5,6 +5,7 @@
- #include "util/annotate.h"
- #include "util/evsel.h"
- #include "util/map.h"
-+#include "util/symbol.h"
- #include "ui/helpline.h"
- #include <inttypes.h>
- #include <signal.h>
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index f69961c4a4f3..94a22cc8004c 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -41,6 +41,7 @@
- #include "pmu.h"
- #include "evsel.h"
- #include "cpumap.h"
-+#include "symbol.h"
- #include "thread_map.h"
- #include "asm/bug.h"
- #include "auxtrace.h"
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index cc47dba973f2..abb608b09269 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -26,6 +26,7 @@
- #include "map.h"
- #include "callchain.h"
- #include "branch.h"
-+#include "symbol.h"
- 
- #define CALLCHAIN_PARAM_DEFAULT			\
- 	.mode		= CHAIN_GRAPH_ABS,	\
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index f50aad24928e..38a72eb81427 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -8,12 +8,13 @@
- #include "evsel.h"
- #include "header.h"
- #include "color.h"
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 29c5eb68c44b..cc578e02e08f 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -8,7 +8,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/types.h>
+ #include "xyarray.h"
 -#include "symbol.h"
- #include "ui/progress.h"
++#include "symbol_conf.h"
+ #include "cpumap.h"
+ #include "counts.h"
  
- struct hist_entry;
- struct hist_entry_ops;
- struct addr_location;
-+struct mem_info;
-+struct branch_info;
- struct symbol;
- 
- enum hist_filter {
 -- 
 2.20.1
 
