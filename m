@@ -2,164 +2,113 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E04C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80914C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BC420811
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB7420811
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549470960;
+	bh=1SUh9l/cxMwj6wc2ZQilHDbq3HKFOTfU+lKaBt7FAHA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=G8oEzvgdXmtfUQSWi6GRzYB4/h6lWQsrOPT4Oolh/iqDkPlieuTUWmRPP7SdOD+03
+	 5clHHXRm1qudwNs/DWA9I6r/C1jI/E7S3qh+18xa40+Zbxv85ASS0Wn1KbsxqSZkJd
+	 aRnFOjjZ9wi2yoKTbn+8QIr9zGIO8j7UAibSCPJU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbfBFQfw (ORCPT
+        id S1731254AbfBFQf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:35:52 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57671 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730678AbfBFQfw (ORCPT
+        Wed, 6 Feb 2019 11:35:58 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:44940 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730678AbfBFQf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:35:52 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1grQAr-00058p-3Z; Wed, 06 Feb 2019 17:35:45 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1grQAq-0001bv-B4; Wed, 06 Feb 2019 17:35:44 +0100
-Date:   Wed, 6 Feb 2019 17:35:44 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Yash Shah <yash.shah@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH v5 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20190206163544.rwzinr75cw262njv@pengutronix.de>
-References: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
- <1548762199-7065-2-git-send-email-yash.shah@sifive.com>
- <20190130081411.5rva7cpwoy2l5qjd@pengutronix.de>
- <CAJ2_jOHiJ3X5VYZMCNk2bpvUdDOsrqHJna3HPvtdNQpJB9fxjg@mail.gmail.com>
- <20190206110730.ogqxncrnblyazgjw@pengutronix.de>
- <20190206124055.GF21676@ulmo>
- <20190206153854.52bqbwf2ty2j7rvj@pengutronix.de>
- <20190206161634.GB23805@ulmo>
+        Wed, 6 Feb 2019 11:35:58 -0500
+Received: by mail-yb1-f194.google.com with SMTP id k189so2725681yba.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:35:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1bDqe5bpN75Cv8RakPvUvJU14xvpjTP2tT+FSOTp+n4=;
+        b=OorqG8iKw60Ekk74Y7EKNnb+p91EV9Pow8ZdYleAP6TmguCIdw5DZZ1N6GPkKoUVKe
+         WxLpFBrqT+O+oj+mukjkUVGGUk1Ut2wgavaXM5PG0UcqRfLovmFN+DcCheYRTT4P7aJS
+         zxd/AZCFn1cy7Sdm3uoJdJ3EZBY2M0wuqymJYSriq66kBUfoMxIMvQjIcv+kyqV+CQm6
+         L0NWZGpnzY099LNapiKZBRR6Mo4mC169JP4p2c85boZgLybW5A3tFJabIuShOR1ktaV8
+         pUazgYXNwTWeXz01MP3K+3oLLuRAMFv7Mg6aSFsb6+NF7sE2WAL7dYydcODV8GuEIUwy
+         AvLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1bDqe5bpN75Cv8RakPvUvJU14xvpjTP2tT+FSOTp+n4=;
+        b=FZeLdXd9dGrHx6vQe6OPlA5Hm3yc3uhIMZlxeVqjo8sjPacazaFnzuaopj13Br12Dx
+         /EHDCw+nxGqMYemfX7/HtGCMh1cG0LhXLOYaTwYUnw2NM3IEs65GMHP2QjL5SsL/uClW
+         JX85n6cHhuqHITYXS4Y5EkTNeBX7AJTxVKa/xUzApoTB/iVjlIf18CYUOBoiM8jAxiOT
+         0pxHPZCPWQ+YksSgUVZZ3Njl6+fVBm066/cLaHBONCuIxIHd5sHR2S4sLUYCcw3gGMoc
+         1FwtWUwxUF2Q5+gMlL9uR3y/17Llm2WIUw+JR6YUMjI7MMNpH1Jg8je7T/kBzR0mQvmg
+         pQSw==
+X-Gm-Message-State: AHQUAuZq58Gee25+rknJBxNc3A/M5iR8i9nfQUspT1WiMYC46dSGXoH3
+        LSXLZKeyOrXTcGJUZ5hQrQw=
+X-Google-Smtp-Source: AHgI3IasV/EY3WR3XheGJDq0Xu3BtoT7Ky9L0E5zJw15EdXKkSA8vZjsLl6CsU9bkybFXC3KAPBEOw==
+X-Received: by 2002:a25:414f:: with SMTP id o76mr9089799yba.159.1549470956919;
+        Wed, 06 Feb 2019 08:35:56 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:3bf9])
+        by smtp.gmail.com with ESMTPSA id n66sm2263490ywf.49.2019.02.06.08.35.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 08:35:55 -0800 (PST)
+Date:   Wed, 6 Feb 2019 08:35:54 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Ayush Mittal <ayush.m@samsung.com>
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        pankaj.m@samsung.com, a.sahrawat@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH v2] kernfs: Allocating memory for kernfs_iattrs with
+ kmem_cache.
+Message-ID: <20190206163554.GI50184@devbig004.ftw2.facebook.com>
+References: <CGME20190206050507epcas5p30ea6ad0f13693aeacbf41088d2c380a5@epcas5p3.samsung.com>
+ <1549428942-5466-1-git-send-email-ayush.m@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190206161634.GB23805@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <1549428942-5466-1-git-send-email-ayush.m@samsung.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 05:16:34PM +0100, Thierry Reding wrote:
-> On Wed, Feb 06, 2019 at 04:38:54PM +0100, Uwe Kleine-König wrote:
-> > On Wed, Feb 06, 2019 at 01:40:55PM +0100, Thierry Reding wrote:
-> > > On Wed, Feb 06, 2019 at 12:07:30PM +0100, Uwe Kleine-König wrote:
-> > > > On Wed, Feb 06, 2019 at 04:18:47PM +0530, Yash Shah wrote:
-> > > > > On Wed, Jan 30, 2019 at 1:44 PM Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > > >
-> > > > > > On Tue, Jan 29, 2019 at 05:13:18PM +0530, Yash Shah wrote:
-> > > > > > > DT documentation for PWM controller added.
-> > > > > > >
-> > > > > > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > > > > > > [Atish: Compatible string update]
-> > > > > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > > > > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > > > > > > ---
-> > > > > > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 ++++++++++++++++++++++
-> > > > > > >  1 file changed, 33 insertions(+)
-> > > > > > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > > > > >
-> > > > > > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > > > > > new file mode 100644
-> > > > > > > index 0000000..8dcb40d
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > > > > > @@ -0,0 +1,33 @@
-> > > > > > > +SiFive PWM controller
-> > > > > > > +
-> > > > > > > +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> > > > > > > +supports one period for all channels in the PWM. This is set globally in DTS.
-> > > > > >
-> > > > > > You can simply drop this if the first user can set this using the usual
-> > > > > > interface. Don't you like this suggestion that I already made a few
-> > > > > > times now?
-> > > > > >
-> > > > > > Did you consider to make the driver support only a single output with a
-> > > > > > more flexible period setting?
-> > > > > 
-> > > > > We cannot consider supporting only single output since we have boards that
-> > > > > use the additional PWM channels to control individual LED brightness
-> > > > > of a tri-color LED.
-> > > > > If we go down to one channel, then we can't control the brightness of
-> > > > > the individual LEDs.
-> > > > > It will break the use case.
-> > > > 
-> > > > OK.
-> > > > 
-> > > > > I am considering the below approach, let me know if it's fine by you.
-> > > > > 
-> > > > > - Drop the global period property and allow the only first user to change period
-> > > > > using the usual interface.
-> > > > > - A note in the binding that all PWMs need to run at the same
-> > > > > period. If the driver already refuses to apply incompatible periods,
-> > > > > the users are going to notice that they've got the DT wrong.
-> > > > > - In driver code, count the users using the .request and .free callbacks.
-> > > > > Based on this, allow changes to period iff the user count is one.
-> > > > 
-> > > > Not sure you need to point this limitation in the binding doc. Other
-> > > > than that this is fine.
-> > > 
-> > > I think it's useful to point this out in the binding documentation since
-> > > it's something that device tree writers will want to know.
-> > 
-> > OK, we're talking about an FPGA implementation but I still think if the
-> > dt-author is the first to know about this limitation this is too late.
-> > The hardware designer must know about that, and they don't look into the
-> > bindind documentation. The binding documentation should IMHO only
-> > describe the binding and functional limitiations of the device are out
-> > of scope.
-> > 
-> > The binding for the Freescale network interface doesn't describe that it
-> > only supports 480 MBit/s in its GHz mode, and that's good. The binding
-> > for i2c devices doesn't describe that a reboot in the middle of a
-> > transfer might block the bus.
-> > 
-> > The target for the binding documentation is to document how a given
-> > device is described in a device tree. It's not there to duplicate
-> > information that belongs in the reference manual.
+On Wed, Feb 06, 2019 at 10:25:42AM +0530, Ayush Mittal wrote:
+> Creating a new cache for kernfs_iattrs.
+> Currently, memory is allocated with kzalloc() which
+> always gives aligned memory. On ARM, this is 64 byte aligned.
+> To avoid the wastage of memory in aligning the size requested,
+> a new cache for kernfs_iattrs is created.
 > 
-> But the device tree bindings for PWM devices describe where and how to
-> describe the period for each PWM that you reference. That's entirely
-> different from the examples that you give above.
+> Size of struct kernfs_iattrs is 80 Bytes.
+> On ARM, it will come in kmalloc-128 slab.
+> and it will come in kmalloc-192 slab if debug info is enabled.
+> Extra bytes taken 48 bytes.
+> 
+> Total number of objects created : 4096
+> Total saving = 48*4096 = 192 KB
+> 
+> After creating new slab(When debug info is enabled) :
+> sh-3.2# cat /proc/slabinfo
+> ...
+> kernfs_iattrs_cache   4069   4096    128   32    1 : tunables    0    0    0 : slabdata    128    128      0
+> ...
+> 
+> All testing has been done on ARM target.
+> 
+> Signed-off-by: Ayush Mittal <ayush.m@samsung.com>
+> Signed-off-by: Vaneet Narang <v.narang@samsung.com>
 
-Ah right, I had not on my radar that the binding also gives a suggestion
-for the period. Then yes, I agree that pointing out that all pwms
-belonging to the same provider should have matching periods is a good
-idea.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-Is using this "typical" approach to specify the period in a pwm-list a
-bad idea for this device type for this reason? On the other hand
-diverting from the typical approach has its own cost. Not sure ...
-
-Best regards
-Uwe
+Thanks.
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+tejun
