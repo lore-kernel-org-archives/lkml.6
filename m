@@ -2,63 +2,75 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1172BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 06:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62798C282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D437A217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 06:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C9E8218A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:07:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbfBFG5w (ORCPT
+        id S1727819AbfBFHG5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 01:57:52 -0500
-Received: from verein.lst.de ([213.95.11.211]:58147 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbfBFG5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 01:57:51 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 218227F1C3; Wed,  6 Feb 2019 07:57:50 +0100 (CET)
-Date:   Wed, 6 Feb 2019 07:57:50 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-direct: Export dma_direct_alloc() and
- dma_direct_free()
-Message-ID: <20190206065749.GA23392@lst.de>
-References: <20190205110602.27717-1-thierry.reding@gmail.com> <20190205161036.GA782@lst.de> <20190205162057.GA29974@ulmo> <20190205163837.GA1222@lst.de> <20190205175611.GA7052@ulmo> <20190205180218.GB2882@lst.de> <20190205222912.GC1372@mithrandir>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205222912.GC1372@mithrandir>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Wed, 6 Feb 2019 02:06:57 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:45660 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfBFHG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 02:06:56 -0500
+Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 2900DCF2A4;
+        Wed,  6 Feb 2019 08:14:45 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v3 0/2] Bluetooth: Add NULL check for tiocmget() and
+ tiocmset()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190206063533.GA7402@myunghoj-Precision-5530>
+Date:   Wed, 6 Feb 2019 08:06:54 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <AD78221A-2ABE-4BC2-A63A-F706FD5BC2FE@holtmann.org>
+References: <cover.1549346039.git.mhjungk@gmail.com>
+ <0D421861-FCD6-4AFF-8A0F-DBEE520DB64B@holtmann.org>
+ <20190206063533.GA7402@myunghoj-Precision-5530>
+To:     Myungho Jung <mhjungk@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 11:29:12PM +0100, Thierry Reding wrote:
-> > > 	https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/host1x/cdma.c#n106
-> > 
-> > Yes, I think we I can come up with a nicer helper for that.
-> 
-> One thing I could also try is to remove direct IOMMU API usage at least
-> from the host1x driver. I think this might work nowadays.
-> 
-> For Tegra DRM we still need direct IOMMU API usage because we need to be
-> able to map into an IOMMU domain without knowing the struct device *
-> that we're mapping for (it could be needed by any of up to four display
-> controllers). For host1x we always only have one struct device *, so the
-> DMA mapping API should be good enough.
+Hi Myungho,
 
-If you can convert it to plain DMA API usage, please do.
+>>> tiocmget() and tiocmset() operations are optional and some tty drivers
+>>> like pty miss the operations. Add NULL checks to prevent from
+>>> dereference.
+>>> 
+>>> Myungho Jung (2):
+>>> Bluetooth: hci_ath: Add NULL check for tiocmget() and tiocmset() in
+>>>   ath_setup()
+>>> Bluetooth: hci_ldisc: Add NULL check for tiocmget() and tiocmset() in
+>>>   hci_uart_set_flow_control()
+>>> 
+>>> drivers/bluetooth/hci_ath.c   | 6 ++++++
+>>> drivers/bluetooth/hci_ldisc.c | 4 ++++
+>>> 2 files changed, 10 insertions(+)
+>> 
+>> why are we not enforcing the availability of these in the hci_uart_tty_open?
+> 
+> Are the operations required on any HCI UART drivers? For now, I found only 5
+> drivers (ath, bcm, intel, mrvl, and qca) are explicitly calling them. So, I'm
+> not sure whether it breaks any existing code with other drivers if returning
+> error in open().
 
-I did look into an IOMMU API memory allocator, and while we can do it
-easily for coherent devices, we need some arch hooks for non-coherent
-device support.  With a pending series from me we have those for arm64,
-but 32-bit arm support will require a lot more work first.
+the H:4 spec requires setting flow control. In some cases this is done by the hciattach or btattach utility, but it still means that it is required. So failing on TTYs that don’t support it is just fine.
+
+Regards
+
+Marcel
+
