@@ -2,145 +2,253 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D33C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D715C282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221212184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE9A2184E
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:01:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbfBFLBG (ORCPT
+        id S1729120AbfBFLBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 06:01:06 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34182 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726159AbfBFLBF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 06:01:05 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16AsbCn005654;
-        Wed, 6 Feb 2019 04:59:57 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2qfp68rmxg-1;
-        Wed, 06 Feb 2019 04:59:57 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id ED6D8611C8B3;
-        Wed,  6 Feb 2019 05:00:20 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 6 Feb 2019
- 10:59:56 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x16AxtVa016379; Wed,
- 6 Feb 2019 10:59:55 GMT
-Date:   Wed, 6 Feb 2019 10:59:55 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] ASoC: dapm: Check for NULL widget in
- dapm_update_dai_unlocked
-Message-ID: <20190206105955.GP3837@imbe.wolfsonmicro.main>
-References: <CGME20190205211638epcas3p409823d4acac8073473153d745151ea5f@epcas3p4.samsung.com>
- <20190205211622.GA5891@kozik-lap>
- <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
- <20190206100549.GO3837@imbe.wolfsonmicro.main>
- <CAJKOXPejBO_9iBHg1R8M2=tcuTck72DjxTYEUyQOp8cPV-0xTg@mail.gmail.com>
+        Wed, 6 Feb 2019 06:01:23 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32869 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726159AbfBFLBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 06:01:23 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 93E50BF2E05B8B48E88F;
+        Wed,  6 Feb 2019 11:01:21 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.34) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 6 Feb 2019 11:01:13 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v10 2/6] tpm: rename and export tpm2_digest and tpm2_algorithms
+Date:   Wed, 6 Feb 2019 11:57:20 +0100
+Message-ID: <20190206105724.14495-3-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190206105724.14495-1-roberto.sassu@huawei.com>
+References: <20190206105724.14495-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPejBO_9iBHg1R8M2=tcuTck72DjxTYEUyQOp8cPV-0xTg@mail.gmail.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=890 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902060087
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 11:22:33AM +0100, Krzysztof Kozlowski wrote:
-> On Wed, 6 Feb 2019 at 11:05, Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> >
-> > DAIs linked to the dummy will not have an associated playback/capture
-> > widget, so we need to skip the update in that case.
-> >
-> > Fixes: 078a85f2806f ("ASoC: dapm: Only power up active channels from a DAI")
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > ---
-> >
-> > Ok so that all makes sense, this patch is probably the best fix?
-> >
-> > Thanks,
-> > Charles
-> 
-> For this particular issue (NULL-pointer):
-> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> However now I see bug sleeping in atomic context:
-> 
-> [   64.000828] BUG: sleeping function called from invalid context at
-> ../kernel/locking/mutex.c:908
+Rename tpm2_* to tpm_* and move the definitions to include/linux/tpm.h so
+that these can be used by other kernel subsystems (e.g. IMA).
 
-Does this probably definitely get fixed by reverting my patch?
-It's just a bit odd as this seems to be complaining about a clock
-operation in i2s_trigger and I don't think my patch should have
-any affect on the trigger callback. It should get run from either
-the dai_link DAPM event or hw_params, neither of which should
-happen in an atomic context.
+Also, set the length of the digest array in tpm_digest to a new constant
+named TPM_MAX_DIGEST_SIZE, equal to SHA512_DIGEST_SIZE.
 
-> [   64.307534] the existing dependency chain (in reverse order) is:
-> [   64.314985]
-> [   64.314985] -> #1 (&(&pri_dai->spinlock)->rlock){....}:
-> [   64.321667]        clk_mux_set_parent+0x34/0xb8
-> [   64.326162]        clk_core_set_parent_nolock+0x21c/0x54c
-> [   64.331535]        clk_set_parent+0x38/0x6c
-> [   64.335696]        of_clk_set_defaults+0x11c/0x384
-> [   64.340460]        of_clk_add_provider+0x8c/0xc8
-> [   64.345054]        samsung_i2s_probe+0x484/0x64c
-> [   64.349651]        platform_drv_probe+0x6c/0xa4
-> [   64.354153]        really_probe+0x280/0x414
-> [   64.358311]        driver_probe_device+0x78/0x1c4
-> [   64.362991]        bus_for_each_drv+0x74/0xb8
-> [   64.367323]        __device_attach+0xd4/0x16c
-> [   64.371655]        bus_probe_device+0x88/0x90
-> [   64.375988]        deferred_probe_work_func+0x4c/0xd0
-> [   64.381017]        process_one_work+0x228/0x810
-> [   64.385520]        worker_thread+0x30/0x570
-> [   64.389681]        kthread+0x134/0x164
-> [   64.393405]        ret_from_fork+0x14/0x20
-> [   64.397477]          (null)
-> [   64.400249]
-> [   64.400249] -> #0 (prepare_lock){+.+.}:
-> [   64.405539]        __mutex_lock+0x7c/0xa98
-> [   64.409610]        mutex_lock_nested+0x1c/0x24
-> [   64.414029]        clk_prepare_lock+0x50/0xf8
-> [   64.418362]        clk_core_get_rate+0xc/0x60
-> [   64.422695]        i2s_trigger+0x444/0x6c8
-> [   64.426768]        soc_pcm_trigger+0x100/0x140
-> [   64.431188]        snd_pcm_action_single+0x38/0x80
-> [   64.435953]        snd_pcm_action+0x54/0x5c
-> [   64.440112]        snd_pcm_action_lock_irq+0x28/0x3c
-> [   64.445052]        snd_pcm_ioctl+0x920/0x123c
-> [   64.449386]        do_vfs_ioctl+0xb0/0x9f8
-> [   64.453457]        ksys_ioctl+0x34/0x5c
-> [   64.457269]        ret_fast_syscall+0x0/0x28
-> [   64.461516]        0xbe8db8ec
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ drivers/char/tpm/tpm-interface.c |  2 +-
+ drivers/char/tpm/tpm.h           | 13 +------------
+ drivers/char/tpm/tpm1-cmd.c      |  2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 18 +++++++++---------
+ include/linux/tpm.h              | 19 +++++++++++++++++++
+ include/linux/tpm_eventlog.h     |  9 ++-------
+ 6 files changed, 33 insertions(+), 30 deletions(-)
 
-Thanks,
-Charles
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 619a2ad3bece..2a85194413e2 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -488,7 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+ {
+ 	int rc;
+-	struct tpm2_digest *digest_list;
++	struct tpm_digest *digest_list;
+ 	int i;
+ 
+ 	chip = tpm_find_get_ops(chip);
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 6b94306ab7c5..e961e5c5d197 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -122,17 +122,6 @@ enum tpm2_return_codes {
+ 	TPM2_RC_RETRY		= 0x0922,
+ };
+ 
+-enum tpm2_algorithms {
+-	TPM2_ALG_ERROR		= 0x0000,
+-	TPM2_ALG_SHA1		= 0x0004,
+-	TPM2_ALG_KEYEDHASH	= 0x0008,
+-	TPM2_ALG_SHA256		= 0x000B,
+-	TPM2_ALG_SHA384		= 0x000C,
+-	TPM2_ALG_SHA512		= 0x000D,
+-	TPM2_ALG_NULL		= 0x0010,
+-	TPM2_ALG_SM3_256	= 0x0012,
+-};
+-
+ enum tpm2_command_codes {
+ 	TPM2_CC_FIRST		        = 0x011F,
+ 	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
+@@ -561,7 +550,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+-		    struct tpm2_digest *digests);
++		    struct tpm_digest *digests);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 564d599e89ea..1f8699d428be 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -715,7 +715,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 	}
+ 
+-	chip->allocated_banks[0] = TPM2_ALG_SHA1;
++	chip->allocated_banks[0] = TPM_ALG_SHA1;
+ 	chip->nr_allocated_banks = 1;
+ 
+ 	return rc;
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 158c34721c8a..db8e05c8dad3 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -33,11 +33,11 @@ struct tpm2_hash {
+ };
+ 
+ static struct tpm2_hash tpm2_hash_map[] = {
+-	{HASH_ALGO_SHA1, TPM2_ALG_SHA1},
+-	{HASH_ALGO_SHA256, TPM2_ALG_SHA256},
+-	{HASH_ALGO_SHA384, TPM2_ALG_SHA384},
+-	{HASH_ALGO_SHA512, TPM2_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
++	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
++	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
++	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
++	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
++	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+ };
+ 
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+@@ -192,7 +192,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ 	pcr_select[pcr_idx >> 3] = 1 << (pcr_idx & 0x7);
+ 
+ 	tpm_buf_append_u32(&buf, 1);
+-	tpm_buf_append_u16(&buf, TPM2_ALG_SHA1);
++	tpm_buf_append_u16(&buf, TPM_ALG_SHA1);
+ 	tpm_buf_append_u8(&buf, TPM2_PCR_SELECT_MIN);
+ 	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
+ 		       sizeof(pcr_select));
+@@ -226,7 +226,7 @@ struct tpm2_null_auth_area {
+  * Return: Same as with tpm_transmit_cmd.
+  */
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+-		    struct tpm2_digest *digests)
++		    struct tpm_digest *digests)
+ {
+ 	struct tpm_buf buf;
+ 	struct tpm2_null_auth_area auth_area;
+@@ -449,7 +449,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 
+ 	/* public */
+ 	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
+-	tpm_buf_append_u16(&buf, TPM2_ALG_KEYEDHASH);
++	tpm_buf_append_u16(&buf, TPM_ALG_KEYEDHASH);
+ 	tpm_buf_append_u16(&buf, hash);
+ 
+ 	/* policy */
+@@ -464,7 +464,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 	}
+ 
+ 	/* public parameters */
+-	tpm_buf_append_u16(&buf, TPM2_ALG_NULL);
++	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
+ 	tpm_buf_append_u16(&buf, 0);
+ 
+ 	/* outside info */
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 13563b8c0c3a..9fe8c9816cf0 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -22,12 +22,31 @@
+ #ifndef __LINUX_TPM_H__
+ #define __LINUX_TPM_H__
+ 
++#include <crypto/hash_info.h>
++
+ #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
++#define TPM_MAX_DIGEST_SIZE SHA512_DIGEST_SIZE
+ 
+ struct tpm_chip;
+ struct trusted_key_payload;
+ struct trusted_key_options;
+ 
++enum tpm_algorithms {
++	TPM_ALG_ERROR		= 0x0000,
++	TPM_ALG_SHA1		= 0x0004,
++	TPM_ALG_KEYEDHASH	= 0x0008,
++	TPM_ALG_SHA256		= 0x000B,
++	TPM_ALG_SHA384		= 0x000C,
++	TPM_ALG_SHA512		= 0x000D,
++	TPM_ALG_NULL		= 0x0010,
++	TPM_ALG_SM3_256		= 0x0012,
++};
++
++struct tpm_digest {
++	u16 alg_id;
++	u8 digest[TPM_MAX_DIGEST_SIZE];
++} __packed;
++
+ enum TPM_OPS_FLAGS {
+ 	TPM_OPS_AUTO_STARTUP = BIT(0),
+ };
+diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+index f47342361e87..81519f163211 100644
+--- a/include/linux/tpm_eventlog.h
++++ b/include/linux/tpm_eventlog.h
+@@ -3,7 +3,7 @@
+ #ifndef __LINUX_TPM_EVENTLOG_H__
+ #define __LINUX_TPM_EVENTLOG_H__
+ 
+-#include <crypto/hash_info.h>
++#include <linux/tpm.h>
+ 
+ #define TCG_EVENT_NAME_LEN_MAX	255
+ #define MAX_TEXT_EVENT		1000	/* Max event string length */
+@@ -105,16 +105,11 @@ struct tcg_event_field {
+ 	u8 event[0];
+ } __packed;
+ 
+-struct tpm2_digest {
+-	u16 alg_id;
+-	u8 digest[SHA512_DIGEST_SIZE];
+-} __packed;
+-
+ struct tcg_pcr_event2_head {
+ 	u32 pcr_idx;
+ 	u32 event_type;
+ 	u32 count;
+-	struct tpm2_digest digests[];
++	struct tpm_digest digests[];
+ } __packed;
+ 
+ #endif
+-- 
+2.17.1
+
