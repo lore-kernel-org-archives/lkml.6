@@ -2,113 +2,110 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D25ADC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABC8C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:58:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9D92073F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:56:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AALbfhzb"
+	by mail.kernel.org (Postfix) with ESMTP id 11E7620844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 14:58:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730934AbfBFO4H (ORCPT
+        id S1730949AbfBFO6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 09:56:07 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40439 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfBFO4G (ORCPT
+        Wed, 6 Feb 2019 09:58:16 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:32268 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfBFO6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 09:56:06 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n18-v6so6302993lji.7;
-        Wed, 06 Feb 2019 06:56:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sYD+4x7D/riHr95LzbpFXFWdRHGv1pyolcQUSjsCBPI=;
-        b=AALbfhzbA7Bm3FnnlW4tiFdbFI9+h67aAUFoqWGb2P6qNC5D3DDinbPam+0DYXUnYR
-         V5Aby5srdZCtVOz5ca6BE1THoACjV8+7zoFH7HR+PfMMksd5D9IY8FPkeSNoTgQ3hNC4
-         vu1Ccwl2SFX9jFkhUw9twk4OIJCwdxT+HG+nYkOqTdRzPA4MAPlhlRg2w96e3zrzRPR9
-         W1x6vAllbk0k6DUIPU69Dyi9zkyzMJVFj+S93avxAf0ywMIHrRZgZJ+KlpXcMYfdjx+r
-         ZjGOWWA68S9+P+31H3IYEl7cQ49UuUTtsMarZhBadIN1gqelc5mi8A6Gxq5Hp4r7l/Rd
-         n4aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sYD+4x7D/riHr95LzbpFXFWdRHGv1pyolcQUSjsCBPI=;
-        b=HqqUI3fWGpMPQgbau6DnZo2zUJWkREModNrrkFAzEiXq2y7t4cgOV7HtIkEvxjaQHV
-         iBwX2D2Gs8l+Bdk4v47bfRwd8Vh8ygnZ9ICIs/XD7Ak8AUBvTWEXqrnaCAzCYpp9+hmF
-         U3K1ja451T/bziia66T2FsV0dZMNf8rikZTNGhTUMWn3AWpUZxwxw19tBXY9qebPUBoY
-         y4OKPWvL3O52/MhOavDPIpHfB2oPJO/Ioe9gcU7pY8fkpn2tBNccBgwX6cmg/Giw4fsL
-         SeSuH6fV3TgMDzlsEJQgEp1kAejMp3NeaFJEYgkkeDpq4P4IIrC0A7JFN0RgTleTB8Y2
-         GtRw==
-X-Gm-Message-State: AHQUAubVVjzJ6ybQKyd2VCKA7P1RJ7nxrsbhGR42KM5Qebo0gCOu3tyk
-        mGNMkNg32sVFkmYoSCA4lC3jBiM6
-X-Google-Smtp-Source: AHgI3IaJ0VWK2QRIZTAsd+MaOTUg08tt1VvEvd8EV8Dl5TXATDSctvhA4Km5ITewBL39QzmK3w2wbw==
-X-Received: by 2002:a2e:750a:: with SMTP id q10-v6mr6040094ljc.39.1549464963876;
-        Wed, 06 Feb 2019 06:56:03 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id y1-v6sm3759804ljh.39.2019.02.06.06.56.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 06:56:03 -0800 (PST)
-Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
- <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
- <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com> <20190206145343.GA3651@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <5e66803c-b13b-cb00-e2ff-d096a1650612@gmail.com>
-Date:   Wed, 6 Feb 2019 17:56:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 09:58:16 -0500
+Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x16Evkl3045080;
+        Wed, 6 Feb 2019 23:57:46 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
+ Wed, 06 Feb 2019 23:57:46 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x16EviNl045047
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 6 Feb 2019 23:57:45 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: linux-next: tracebacks in workqueue.c/__flush_work()
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Rusty Russell <rusty@rustcorp.com.au>,
+        Chris Metcalf <chris.d.metcalf@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-mm <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+References: <72e7d782-85f2-b499-8614-9e3498106569@i-love.sakura.ne.jp>
+ <87munc306z.fsf@rustcorp.com.au>
+ <201902060631.x166V9J8014750@www262.sakura.ne.jp>
+ <20190206143625.GA25998@roeck-us.net>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <e4dd7464-a787-c54f-24f9-9caaeb759cfc@i-love.sakura.ne.jp>
+Date:   Wed, 6 Feb 2019 23:57:45 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190206145343.GA3651@ulmo>
+In-Reply-To: <20190206143625.GA25998@roeck-us.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2019 17:53, Thierry Reding пишет:
-> On Tue, Feb 05, 2019 at 05:26:25PM +0300, Dmitry Osipenko wrote:
-> [...]
->> Oh, another important moment is that physically contiguous dma_buf
->> allocation isn't guaranteed by the DMA API. This may become a problem
->> for T186+ that can transfer up to 64K. We need to enforce the
->> contiguous-allocation requirement by using
->> dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the
->> dma_alloc_coherent(), please see my other comment below.
+On 2019/02/06 23:36, Guenter Roeck wrote:
+> On Wed, Feb 06, 2019 at 03:31:09PM +0900, Tetsuo Handa wrote:
+>> (Adding linux-arch ML.)
+>>
+>> Rusty Russell wrote:
+>>> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+>>>> (Adding Chris Metcalf and Rusty Russell.)
+>>>>
+>>>> If NR_CPUS == 1 due to CONFIG_SMP=n, for_each_cpu(cpu, &has_work) loop does not
+>>>> evaluate "struct cpumask has_work" modified by cpumask_set_cpu(cpu, &has_work) at
+>>>> previous for_each_online_cpu() loop. Guenter Roeck found a problem among three
+>>>> commits listed below.
+>>>>
+>>>>   Commit 5fbc461636c32efd ("mm: make lru_add_drain_all() selective")
+>>>>   expects that has_work is evaluated by for_each_cpu().
+>>>>
+>>>>   Commit 2d3854a37e8b767a ("cpumask: introduce new API, without changing anything")
+>>>>   assumes that for_each_cpu() does not need to evaluate has_work.
+>>>>
+>>>>   Commit 4d43d395fed12463 ("workqueue: Try to catch flush_work() without INIT_WORK().")
+>>>>   expects that has_work is evaluated by for_each_cpu().
+>>>>
+>>>> What should we do? Do we explicitly evaluate has_work if NR_CPUS == 1 ?
+>>>
+>>> No, fix the API to be least-surprise.  Fix 2d3854a37e8b767a too.
+>>>
+>>> Doing anything else would be horrible, IMHO.
+>>>
+>>
+>> Fixing 2d3854a37e8b767a might involve subtle changes. If we do
+>>
 > 
-> Actually I don't think that's necessary here. DMA_ATTR_FORCE_CONTIGUOUS
-> only seems relevant if you've got an IOMMU attached to the device to
-> make sure the physical memory is also contiguous.
+> Why not fix the macros ?
 > 
-> See this extract from Documentation/DMA-attributes.txt:
+> #define for_each_cpu(cpu, mask)                 \
+>         for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
 > 
-> | DMA_ATTR_FORCE_CONTIGUOUS
-> | -------------------------
-> | 
-> | By default DMA-mapping subsystem is allowed to assemble the buffer
-> | allocated by dma_alloc_attrs() function from individual pages if it can
-> | be mapped as contiguous chunk into device dma address space. By
-> | specifying this attribute the allocated buffer is forced to be contiguous
-> | also in physical memory.
+> does not really make sense since it does not evaluate mask.
 > 
-> We don't have an IOMMU attached to I2C or APBDMA, so this can't happen
-> and even if we had an IOMMU attached, all we care about is the device's
-> DMA address space, which means IOVA space, and that would still be
-> guaranteed to be contiguous, according to the above.
+> #define for_each_cpu(cpu, mask)                 \
+>         for ((cpu) = 0; (cpu) < 1 && cpumask_test_cpu((cpu), (mask)); (cpu)++)
+> 
+> or something similar might do it.
 
-Yes, but doesn't T186+ have IOMMU support for the DMA controller?
+Fixing macros is fine, The problem is that "mask" becomes evaluated
+which might be currently undefined or unassigned if CONFIG_SMP=n.
+Evaluating "mask" generates expected behavior for lru_add_drain_all()
+case. But there might be cases where evaluating "mask" generate
+unexpected behavior/results.
