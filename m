@@ -2,72 +2,79 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478D3C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199C7C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE93218C3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9BA620B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:54:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="na9ZA9Jw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbfBFMxc (ORCPT
+        id S1730180AbfBFMyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:53:32 -0500
-Received: from mail.pantelija.rs ([3.17.35.93]:44290 "EHLO mail.pantelija.rs"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfBFMx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:53:29 -0500
-X-Greylist: delayed 474 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Feb 2019 07:53:28 EST
-Received: from [192.168.7.11] (cable-178-148-85-173.dynamic.sbb.rs [178.148.85.173])
-        by mail.pantelija.rs (Postfix) with ESMTPS id 0D4F360324
-        for <linux-kernel@vger.kernel.org>; Wed,  6 Feb 2019 13:45:32 +0100 (CET)
-To:     linux-kernel@vger.kernel.org
-From:   Dragan Milenkovic <dragan.milenkovic@pantelija.rs>
-Subject: [BUG] Deadlock in block/blk-flush.c, with resolution
-Message-ID: <8a90744a-8e2d-21b9-c88a-818991b3b753@pantelija.rs>
-Date:   Wed, 6 Feb 2019 13:45:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 6 Feb 2019 07:54:07 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:7671 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728055AbfBFMyG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 07:54:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1549457646; x=1580993646;
+  h=from:to:cc:subject:references:date:in-reply-to:
+   message-id:mime-version;
+  bh=kRiBg6+PJSypMIEr1o3KlnRGpo6KX2xIqB3DZhbH498=;
+  b=na9ZA9Jwd8WHkYHRaFeTyThyNRL4rC4uqQE9+eWTlJxbnA0+OMTsr553
+   mfcM7EselnmxPUJlb0D0In5+8FxssTS6+ORkJ0D0by7yl031j/gl8on7A
+   M2Qqcvf9Nzn+8jdjy3TRnQnke6trP9Rm+fj+Ss/b3zibgWguS1G2MesNv
+   4=;
+X-IronPort-AV: E=Sophos;i="5.58,340,1544486400"; 
+   d="scan'208";a="657949096"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-f14f4a47.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 06 Feb 2019 12:54:02 +0000
+Received: from u54ee758033e858cfa736.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2a-f14f4a47.us-west-2.amazon.com (Postfix) with ESMTPS id 0721FA20B6;
+        Wed,  6 Feb 2019 12:53:58 +0000 (UTC)
+From:   Julian Stecklina <jsteckli@amazon.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     "Suthikulpanit\, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "joro\@8bytes.org" <joro@8bytes.org>,
+        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
+        "tglx\@linutronix.de" <tglx@linutronix.de>,
+        "mingo\@redhat.com" <mingo@redhat.com>,
+        "bp\@alien8.de" <bp@alien8.de>, "hpa\@zytor.com" <hpa@zytor.com>,
+        "sironi\@amazon.de" <sironi@amazon.de>,
+        "wawei\@amazon.de" <wawei@amazon.de>
+Subject: Re: [RFC PATCH 7/8] KVM: i8254: Remove need for irq ack notifier
+References: <20190204144128.9489-1-suravee.suthikulpanit@amd.com>
+        <20190204144128.9489-8-suravee.suthikulpanit@amd.com>
+        <8ecf791c-d850-25d9-562e-aa2ff5944d2e@redhat.com>
+Date:   Wed, 06 Feb 2019 13:53:56 +0100
+In-Reply-To: <8ecf791c-d850-25d9-562e-aa2ff5944d2e@redhat.com> (Paolo
+        Bonzini's message of "Wed, 6 Feb 2019 11:29:15 +0100")
+Message-ID: <ciirm8sgx1axi3.fsf@u54ee758033e858cfa736.ant.amazon.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bug manifests by mdX_raid1 and other related tasks being blocked.
+Paolo Bonzini <pbonzini@redhat.com> writes:
 
-It is triggered by LVM RAID, but is not caused by it. I have also 
-triggered it by LVM + mdraid, but only once. It is more frequent by
-LVM RAID.
+> Alternatively, it is probably a good time to switch the default to split irqchip
+> in QEMU.  Split irqchip was introduced in kernel 4.5, which was released about
+> three years ago.
 
-It does not occur in the master branch, but it does in 4.20.y, 4.19.y, 
-4.18.y. Here is a Debian bug report:
-     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=913119
+I totally agree. At some point, the in-kernel PIT/PIC emulation should
+also be removed, but I guess it's too early to talk about this.
 
-I have tracked it to this commit:
-
- 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=344e9ffcbd1898e1dc04085564a6e05c30ea8199
-
-Specifically to this line:
-
- 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/block/blk-flush.c?id=344e9ffcbd1898e1dc04085564a6e05c30ea8199
-
-The commit log message makes it appear as if this is a refactoring 
-change, but the check for q->elevator was inverted.
-
-The line has not been changed between that commit and the current master 
-branch. Since I applied this change to my distribution's kernel (4.19), 
-my system has been completely stable.
-
-Let me know if you need me to do anything else, but this seems as a 
-straight-forward cherry-pick.
-
-Dragan
-
+Julian
