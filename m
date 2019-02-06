@@ -2,101 +2,69 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42452C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BC7C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10F442084D
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:56:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R/JZaxxX"
+	by mail.kernel.org (Postfix) with ESMTP id 7AFD22081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 23:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfBFX4A (ORCPT
+        id S1726775AbfBFX5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 18:56:00 -0500
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:41980 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfBFXz7 (ORCPT
+        Wed, 6 Feb 2019 18:57:12 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:7669 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725959AbfBFX5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 18:55:59 -0500
-Received: by mail-yb1-f202.google.com with SMTP id y63so1570375yby.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 15:55:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=aO0K/0tKy8AOp6h35fENa/NV5JSrDiAT7U9CyNpTqow=;
-        b=R/JZaxxX15aqoj9AUJmLk1xwSMuiNELhse4z3SzsoY8j7tVj9qsrVFTiDzideqAwh/
-         T+8bNMBY9Y/NZ3BWtcQlLAgz9m6nZ6ZauK+jzk9TXVD2iO1aSRHyqFEGdPF53LzCNcjj
-         2RPRvLszljEHMvvDIcpzWLUmPOU/h/DKZPOXZu27Zee0lYPihWDtiJxC5D5uHH4E6xob
-         3VOlFJGfemfPfBv5yp7rZqEw20flmRpBCvKcwzzRYfaqysTs89ipd5FVyLTfoMACn57/
-         HpSI1gWR8OZ9lxbcedvAVkKFlVap1vgjRoud0l4CgY66qrzB2QHKtd56jB0Zu2kihvim
-         wOsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=aO0K/0tKy8AOp6h35fENa/NV5JSrDiAT7U9CyNpTqow=;
-        b=hyEpzswZ2nKA3bMuTcdLEImdOfDOQVMQRK3KwiLwqyS6+NHYzp/dO4nCtubcwuRO4K
-         0ZAQUny0I2SZzJdJlUmuetKmWwmWutIlFZrkzBBzdWh2vOc4hhyyRUy33pLMXxJJLbK5
-         GCgwd8nujn8p8uRhfitQG9fj38XTLSOgOUhxTf9ewPSNChS3gq+/Y7DE62m4tTjDF9Rq
-         8sdQMqKI7UYEw6PT6jlI828o8Q4aAdk4DxojpXk9JghWkx+1zheY1YeGKLseKZH8okK3
-         cAbbwThXr+Ygrbc+f58Wkq/h5XlKV1iXM+63452xqQKqbCkImHKS6G3Li2NsaI+yp+Ko
-         JZGQ==
-X-Gm-Message-State: AHQUAubjNl8MUQR7B42Oh+2otGGvX8UrLAEjN/umj9HNWkRc6LhlzIPL
-        SztbsLtFPB8udy3yyMG1DC8H9mHanJ+USUrR
-X-Google-Smtp-Source: AHgI3IaCHk4/+QK/h+OTMA2mhoHo1NbWQRVF8mAMhttaVWpDFghmIPOkE+BC72aiyz2ZLqGMFloWS2eURLCI+bnw
-X-Received: by 2002:a25:6643:: with SMTP id z3mr5565779ybm.16.1549497358866;
- Wed, 06 Feb 2019 15:55:58 -0800 (PST)
-Date:   Wed,  6 Feb 2019 15:54:15 -0800
-Message-Id: <20190206235415.10394-1-schuffelen@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
-Subject: [PATCH mac80211-next] virt_wifi: Remove REGULATORY_WIPHY_SELF_MANAGED
-From:   Cody Schuffelen <schuffelen@google.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@android.com,
-        Cody Schuffelen <schuffelen@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Greg Hartman <ghartman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Feb 2019 18:57:12 -0500
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 6 Feb 2019 15:56:24 -0800
+Received: from ubuntu.localdomain (unknown [10.33.115.182])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 9A86240FC2;
+        Wed,  6 Feb 2019 15:57:11 -0800 (PST)
+From:   Nadav Amit <namit@vmware.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Arnd Bergmann <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
+        Julien Freche <jfreche@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 1/6] vmw_balloon: remove the version number
+Date:   Wed, 6 Feb 2019 15:57:01 -0800
+Message-ID: <20190206235706.4851-2-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190206235706.4851-1-namit@vmware.com>
+References: <20190206235706.4851-1-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-REGULATORY_WIPHY_SELF_MANAGED as set here breaks NL80211_CMD_GET_REG,
-because it expects the wiphy to do regulatory management. Since
-virt_wifi does not do regulatory management, this triggers a WARN_ON in
-NL80211_CMD_GET_REG and fails the netlink command.
+Following the new kernel policy.
 
-Removing REGULATORY_WIPHY_SELF_MANAGED fixes the problem and the virtual
-wireless network continues to work.
-
-Signed-off-by: Cody Schuffelen <schuffelen@google.com>
-Acked-by: Alistair Strachan <astrachan@google.com>
-Acked-by: Greg Hartman <ghartman@google.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/net/wireless/virt_wifi.c | 1 -
+ drivers/misc/vmw_balloon.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/wireless/virt_wifi.c b/drivers/net/wireless/virt_wifi.c
-index 71044c6cfd8c..606999f102eb 100644
---- a/drivers/net/wireless/virt_wifi.c
-+++ b/drivers/net/wireless/virt_wifi.c
-@@ -360,7 +360,6 @@ static struct wiphy *virt_wifi_make_wiphy(void)
- 	wiphy->bands[NL80211_BAND_5GHZ] = &band_5ghz;
- 	wiphy->bands[NL80211_BAND_60GHZ] = NULL;
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index f8240b87df22..c4371ec132d3 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -34,7 +34,6 @@
  
--	wiphy->regulatory_flags = REGULATORY_WIPHY_SELF_MANAGED;
- 	wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION);
- 
- 	priv = wiphy_priv(wiphy);
+ MODULE_AUTHOR("VMware, Inc.");
+ MODULE_DESCRIPTION("VMware Memory Control (Balloon) Driver");
+-MODULE_VERSION("1.5.0.0-k");
+ MODULE_ALIAS("dmi:*:svnVMware*:*");
+ MODULE_ALIAS("vmware_vmmemctl");
+ MODULE_LICENSE("GPL");
 -- 
-2.20.1.611.gfbb209baf1-goog
+2.17.1
 
