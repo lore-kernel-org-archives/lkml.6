@@ -2,93 +2,135 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C957C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6001C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6546B218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80CE5218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:05:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ViP4o7nL"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="VrEBiF/n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfBFVEz (ORCPT
+        id S1726983AbfBFVFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:04:55 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35693 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbfBFVEy (ORCPT
+        Wed, 6 Feb 2019 16:05:11 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41582 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfBFVFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:04:54 -0500
-Received: by mail-pg1-f195.google.com with SMTP id s198so3474110pgs.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:04:54 -0800 (PST)
+        Wed, 6 Feb 2019 16:05:11 -0500
+Received: by mail-ot1-f66.google.com with SMTP id u16so14485538otk.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 13:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
-         :subject:message-id:references:cc:from:date;
-        bh=fPLjGlqReW8R3/Rrke2fNcnowF/7bAVMyCUc2xdQWgQ=;
-        b=ViP4o7nLA2rVBYlNNnIwJCngAkXwNo1IGEXK1VrrnHNDpGxNQJ0FUz7kn0aO3G2jxS
-         eFCyLe/TUy6WpQrJEgBj0W1BDGUGTw20NlCfeE2Y37C6UYzCR+kMOqP6RAF/egU3xjNq
-         +HW6lOUC16AQUhbXTPhYAevBfvgxjTS48TowU=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tln1vBiQeKwSmWLEy4Y/wGxdB8A98ek27z5oOhyQLgA=;
+        b=VrEBiF/nY0BRkKbELA8YzJ7IN0MCmwGWeP8qEGlxO6zA425I51oG4Sx/5gG8fnO61F
+         MyKBWmhcqncgDlOOq+iUihs43ijgFAZqMYYJttETe6AhtQOq+UTWWqBNggUo385bV+9r
+         ub9KiMpezLEqr3woQgo9Y09iOoaNs/MaQCy14kWqDTdzxg7zRXMRrtyvVmIs5ERUBuRy
+         ZcEaQVS0ymH+Dipc8hCKCOHfeCpGDEq4YdM1p2IZNt3bk0KVtWcwb+X7dUAMrE+sDB+W
+         gyowMVU33isZFYYwoJi17/V1JFHCl7yssHiSM0p5Q7/10kTm9kL2vaIvdbTFHosAwCHT
+         xBtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to
-         :in-reply-to:user-agent:subject:message-id:references:cc:from:date;
-        bh=fPLjGlqReW8R3/Rrke2fNcnowF/7bAVMyCUc2xdQWgQ=;
-        b=gRVdxM3RyJTQOcafiMMnsI8xhyzT/3Kh3ol1gBAaNhSjjoxOTcQOUDUdOOzzMYZxDN
-         oi1Fy9GteClASbzFHDKFpRmu3VncpnsdWXdatW+yLh1OAER184vKzpVMI9AaD83b2lHZ
-         0cLT2iIM939et4Zwrek+nBSFF2TpHWfjb92/6pJzip622s13+8YBYMHhiNzCHvr0FVTx
-         CX/PKKfaqtOsKloujCB+7/ceFVBtrgahuuwC4IlnMpFiR2cpkI4+f8bt6OyTsjGMLa9D
-         FNpOpcfqH4ufruCTAjfIbtwLkX7UW2bwUtkFwxQFPViXspDji7UFA4dSuUoI2mGkkBs1
-         4AvQ==
-X-Gm-Message-State: AHQUAuY8L6X+Yd3YzxyHmHt1I63rvPT6MOenTliqdTbdgCoYWaTtnCmN
-        hcstv2UClLfyyKhid2yA3WOB+g==
-X-Google-Smtp-Source: AHgI3IaJiG9smRLpuEJWBGEmmZ+ocjgm9SgzRC2rSOZpeoNKKUx5b/HE9SWsYaFlCjdnp56XBl6Qvw==
-X-Received: by 2002:a63:e80e:: with SMTP id s14mr11460138pgh.30.1549487094122;
-        Wed, 06 Feb 2019 13:04:54 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b7sm9439585pfa.52.2019.02.06.13.04.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 13:04:53 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tln1vBiQeKwSmWLEy4Y/wGxdB8A98ek27z5oOhyQLgA=;
+        b=sLY/51dVXG5sZDhpC/imYPyisM6M7nF7F5bkhJ4KDc+vyURqkyeg2y/lloiVf3SOT5
+         LyzwH7yJdmfshLI6NVkvGGtCbi6ZXBvAzZCztr6pefymDuh72n3T7uOit4NaAdgkxTno
+         pe7/LDE9jzKyjPcH0kUyzCtQ5ykqS+18104gvhKUqZ/I8r2BjJ4txIXbr1WPNu4rtVLY
+         M0A1KXjq10nUbNZvjIf0qrTS201G0z+pM4c5H7hANDPeuswyOAbNkxFUXoBv/gTzgzeS
+         9DHBAwb8o0zKu2gkwQ6v9d7xO8wwZm1MqJuuDSA2p712D9PMK3X4bXYEvv6VXZEbjqkb
+         IThg==
+X-Gm-Message-State: AHQUAubXLi380s05qPzzIY4n+Vu37KgkU0UP4EMDZQhX5tCMxpGlrd1R
+        WYOWJG0okEQBlyh6M+9awUnQm4ZKfCRzThEeMJeCwQ==
+X-Google-Smtp-Source: AHgI3IY5Sf4Cfy+fW6IBS156GRZUo4fehxu0u1cov625T4vkimXmry6pTIglZ0NOmMcIGuv/4D02xrG6vTD+irmRQ+4=
+X-Received: by 2002:aca:240a:: with SMTP id n10mr645661oic.73.1549487109886;
+ Wed, 06 Feb 2019 13:05:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-In-Reply-To: <20190205185902.106085-7-evgreen@chromium.org>
-User-Agent: alot/0.8
-Subject: Re: [PATCH v3 6/8] scsi: ufs: qcom: Expose the reset controller for PHY
-Message-ID: <154948709228.115909.11813314659494594710@swboyd.mtv.corp.google.com>
-References: <20190205185902.106085-1-evgreen@chromium.org> <20190205185902.106085-7-evgreen@chromium.org>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Can Guo <cang@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Wed, 06 Feb 2019 13:04:52 -0800
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org> <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <20190206183503.GO21860@bombadil.infradead.org> <20190206185233.GE12227@ziepe.ca>
+ <CAPcyv4j4gDNHu836N4RfgQsE+eZU9Wt0N9Y09KQ43zV+4mK-eg@mail.gmail.com> <671e7ebc8e125d1ebd71de9943868183e27f052b.camel@redhat.com>
+In-Reply-To: <671e7ebc8e125d1ebd71de9943868183e27f052b.camel@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 6 Feb 2019 13:04:57 -0800
+Message-ID: <CAPcyv4id2rzJVUZw98PfJ-k05BvD-opwj0XhOWPKZQicmhXJ=g@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+To:     Doug Ledford <dledford@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-02-05 10:59:00)
-> Expose a reset controller that the phy will later use to control its
-> own PHY reset in the UFS controller. This will enable the combining
-> of PHY init functionality into a single function.
->=20
-> Signed-off-by: Evan Green <evgreen@chromium.org>
->=20
-> ---
+On Wed, Feb 6, 2019 at 12:14 PM Doug Ledford <dledford@redhat.com> wrote:
+>
+> On Wed, 2019-02-06 at 11:45 -0800, Dan Williams wrote:
+> > On Wed, Feb 6, 2019 at 10:52 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > On Wed, Feb 06, 2019 at 10:35:04AM -0800, Matthew Wilcox wrote:
+> > >
+> > > > > Admittedly, I'm coming in late to this conversation, but did I miss the
+> > > > > portion where that alternative was ruled out?
+> > > >
+> > > > That's my preferred option too, but the preponderance of opinion leans
+> > > > towards "We can't give people a way to make files un-truncatable".
+> > >
+> > > I haven't heard an explanation why blocking ftruncate is worse than
+> > > giving people a way to break RDMA using process by calling ftruncate??
+> > >
+> > > Isn't it exactly the same argument the other way?
+> >
+> >
+> > If the
+> > RDMA application doesn't want it to happen, arrange for it by
+> > permissions or other coordination to prevent truncation,
+>
+> I just argued the *exact* same thing, except from the other side: if you
+> want a guaranteed ability to truncate, then arrange the perms so the
+> RDMA or DAX capable things can't use the file.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+That doesn't make sense. All we have to work with is rwx bits. It's
+possible to prevents writes / truncates. There's no permission bit for
+mmap, O_DIRECT and RDMA mappings, hence leases.
 
+> >  but once the
+> > two conflicting / valid requests have arrived at the filesystem try to
+> > move the result forward to the user requested state not block and fail
+> > indefinitely.
+>
+> Except this is wrong.  We already have ETXTBSY, and arguably it is much
+> easier for ETXTBSY to simply kill all of the running processes with
+> extreme prejudice.  But we don't do that.  We block indefinitely.  So,
+> no, there is no expectation that things will "move forward to the user
+> requested state".  Not when pages are in use by the kernel, and very
+> arguably pages being used for direct I/O are absolutely in use by the
+> kernel, then truncate blocks.
+>
+> There is a major case of dissonant cognitive behavior here if the
+> syscall supports ETXTBSY, even though the ability to kill apps using the
+> text pages is trivial, but thinks supporting EBUSY is out of the
+> question.
+
+It's introducing a new failure mode where one did not exist before.
+It's especially problematic when the only difference between the case
+when it fails and one where it doesn't comes down to the
+idiosyncrasies of DAX mappings and whether or not the RDMA device has
+capabilities like ODP.
