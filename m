@@ -2,349 +2,442 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E787BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BA6C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3696218DA
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B4520818
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:47:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Eo6KG0ja"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbfBFQrH (ORCPT
+        id S1731456AbfBFQrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:47:07 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:56644 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728167AbfBFQrF (ORCPT
+        Wed, 6 Feb 2019 11:47:13 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40125 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728167AbfBFQrM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:47:05 -0500
-Received: by mail-it1-f197.google.com with SMTP id 135so5661726itb.6
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:47:04 -0800 (PST)
+        Wed, 6 Feb 2019 11:47:12 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g22so6453592edr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=PSAl5Vk5/4xvwry0x6LplDmDORdq7fnY5y2c51DrLvc=;
+        b=Eo6KG0ja+E5vVRJhVwXCR0ILHPmmFmnvsJaNXiNSDTcwlVZWFKth8SFhvJpfw+gq58
+         UGZ3jK+p2k8B5G350IVk7aiXTXCgW+W27WD77tA1nja/Vva60X2LVPaU5p2wjTlOWkaO
+         WdF5G2JtQ5rYSaoE2vxRD8vbHlb2p37ZoiCZI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ApGPaiYnKZVQ39Um4yazSLv4GHwsIjTc8bTvFWr5lFo=;
-        b=fVCuHAY4n8CDIkrMqRGgYmLU6I7dbLv8BJ+TXjbrsMXfTGeZfNHEHX5iLMEHC+MUBo
-         tVlRcfwbTNUgJSq3SLUKaDf6e7xLvelUucydd4TyeSI50mXyXhWfFJ71K20BZUPAZ+j2
-         1y01hCXNPUFkPxvRxMYmAPTIA8vx6pmK/oHkUnFRbSUiqp6if4avl1UgYro9bojXCNFK
-         PdvwKgdSxaLrCAY4ORNvb9VzENL88pAN3f4qwT5/y1D/J/Dy/Jp2liCCmmXaAOrxbnEN
-         4aFDQjQJWsKgC9SRBeGteVpJNm+HsfKR7gJWgECwDIkthUwu9p6fdTMzVOgygKSl+o6e
-         RPQg==
-X-Gm-Message-State: AHQUAuae9QGBXc8e3huPMqaf1gdHelKZaHy8aNvqEalYV0RrJE4okAN5
-        7HWWS0F6TnrdjHON8STrj2ebe4nhKL7ISiGGLFlxy2Vpqa7f
-X-Google-Smtp-Source: AHgI3IY90p2XiNpZutpfgfZdee4QCY+He2w6CUBhBIORBfXPa8qBggEW1b8NhwKDg8+pTK/QMjp7W5esMY39h7jNkggUTrw+jhEM
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PSAl5Vk5/4xvwry0x6LplDmDORdq7fnY5y2c51DrLvc=;
+        b=S7hjUd9wid9/O09SmrvQbAqX65GW6nttSnjD6WwmpNfEJ1k/rMInlxLyjCvIw9DgXh
+         iEpk4UMKV8882XNzfx9W5rHCG8T+ZK94jVkyYokDisthbJvAKtrLnSvpZCrEzE+xgbmw
+         zwlvYxRG59jDSSS4ROLCdrNbGaQGbXlkyRNVUdsOSjtzMcOdMlN74vA6m2413p6vaPt1
+         RpEve7xJgL1bLeJkceRbQzcJl6WitKgLzXhAL/3N+qbCpY3yfBhkzSP07CH7jcDkArN7
+         vSJkhzwZuy/jTbh4bYCHxMFybUJiy9qGDlnzj891e1/9I/luNWlD5DpEGVsEyd1UZRGO
+         3J+w==
+X-Gm-Message-State: AHQUAuatfBs0wZXPriC4l5JUZEh2s5UYOIL6VTWHrlbfalYrfdHWdWmb
+        6cAvrd0bERSMJqk3U0gkPc6EbA==
+X-Google-Smtp-Source: AHgI3IZGrLuglDXWkIYWZ16tRYG0ijmHjLvEEsKzEVyeIbSovGaKgIBwcXWYy5YNbYFPGA1hOhPCZQ==
+X-Received: by 2002:a50:9dc1:: with SMTP id l1mr8956055edk.272.1549471629308;
+        Wed, 06 Feb 2019 08:47:09 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id a38sm6089154edd.44.2019.02.06.08.47.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 08:47:07 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "C, Ramalingam" <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH] component: Add documentation
+Date:   Wed,  6 Feb 2019 17:47:02 +0100
+Message-Id: <20190206164702.29753-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190206164551.29400-1-daniel.vetter@ffwll.ch>
+References: <20190206164551.29400-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-X-Received: by 2002:a02:8609:: with SMTP id e9mr6813224jai.8.1549471624337;
- Wed, 06 Feb 2019 08:47:04 -0800 (PST)
-Date:   Wed, 06 Feb 2019 08:47:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c24a5e05813c798b@google.com>
-Subject: INFO: task hung in tipc_bcast_stop
-From:   syzbot <syzbot+8118fd903ae608d128e1@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+While typing these I think doing an s/component_master/aggregate/
+would be useful:
+- it's shorter :-)
+- I think component/aggregate is much more meaningful naming than
+  component/puppetmaster or something like that. At least to my
+  English ear "aggregate" emphasizes much more the "assemble a pile of
+  things into something bigger" aspect, and there's not really much
+  of a control hierarchy between aggregate and constituing components.
 
-syzbot found the following crash on:
+But that's way more than a quick doc typing exercise ...
 
-HEAD commit:    c8101f7729da net: dsa: Fix lockdep false positive splat
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=1553f728c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e0064f906afee10
-dashboard link: https://syzkaller.appspot.com/bug?extid=8118fd903ae608d128e1
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Thanks to Ram for commenting on an initial draft of these docs.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+v2: Review from Rafael:
+- git add Documenation/driver-api/component.rst
+- lots of polish to the wording + spelling fixes.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8118fd903ae608d128e1@syzkaller.appspotmail.com
+v3: Review from Russell:
+- s/framework/helper
+- clarify the documentation for component_match_add functions.
 
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:3e:c4:ef:c6:e1:9c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:a6:63:10:7b:ed:f3, vlan:0)
-INFO: task kworker/u4:4:3054 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc4+ #63
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-net_ratelimit: 66009 callbacks suppressed
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source  
-address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source  
-address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:3e:c4:ef:c6:e1:9c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:a6:63:10:7b:ed:f3, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source  
-address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-kworker/u4:4    D24832  3054      2 0x80000000
-Workqueue: netns cleanup_net
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  exp_funnel_lock kernel/rcu/tree_exp.h:319 [inline]
-  _synchronize_rcu_expedited.constprop.0+0x4d4/0x530  
-kernel/rcu/tree_exp.h:622
-  synchronize_rcu_expedited+0x27/0xa0 kernel/rcu/tree_exp.h:762
-  synchronize_net+0x3b/0x60 net/core/dev.c:9165
-  tipc_bcast_stop+0x198/0x310 net/tipc/bcast.c:545
-  tipc_exit_net+0x26/0x40 net/tipc/core.c:102
-  ops_exit_list.isra.0+0xb0/0x160 net/core/net_namespace.c:153
-  cleanup_net+0x3fb/0x960 net/core/net_namespace.c:551
-  process_one_work+0x98e/0x1760 kernel/workqueue.c:2153
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-INFO: task syz-executor1:17203 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc4+ #63
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D30144 17203   7626 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:584 [inline]
-  rwsem_down_write_failed+0x774/0xc30 kernel/locking/rwsem-xadd.c:613
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0x53/0x90 kernel/locking/rwsem.c:72
-  register_netdevice_notifier+0x7e/0x630 net/core/dev.c:1634
-  bcm_init+0x1a8/0x220 net/can/bcm.c:1502
-  can_create+0x28a/0x4b0 net/can/af_can.c:183
-  __sock_create+0x3e6/0x750 net/socket.c:1275
-  sock_create net/socket.c:1315 [inline]
-  __sys_socket+0x103/0x220 net/socket.c:1345
-  __do_sys_socket net/socket.c:1354 [inline]
-  __se_sys_socket net/socket.c:1352 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1352
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: Bad RIP value.
-RSP: 002b:00007f2b02d39c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
-RDX: 0000000000000002 RSI: 0000000000000002 RDI: 000000000000001d
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2b02d3a6d4
-R13: 00000000004c60f6 R14: 00000000004db1e0 R15: 00000000ffffffff
-INFO: task syz-executor1:17207 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc4+ #63
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D29872 17207   7626 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2844 [inline]
-  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
-  schedule+0x92/0x180 kernel/sched/core.c:3529
-  __rwsem_down_write_failed_common kernel/locking/rwsem-xadd.c:584 [inline]
-  rwsem_down_write_failed+0x774/0xc30 kernel/locking/rwsem-xadd.c:613
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0x53/0x90 kernel/locking/rwsem.c:72
-  register_netdevice_notifier+0x7e/0x630 net/core/dev.c:1634
-  bcm_init+0x1a8/0x220 net/can/bcm.c:1502
-  can_create+0x28a/0x4b0 net/can/af_can.c:183
-  __sock_create+0x3e6/0x750 net/socket.c:1275
-  sock_create net/socket.c:1315 [inline]
-  __sys_socket+0x103/0x220 net/socket.c:1345
-  __do_sys_socket net/socket.c:1354 [inline]
-  __se_sys_socket net/socket.c:1352 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1352
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: Bad RIP value.
-RSP: 002b:00007f2b02d18c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
-RDX: 0000000000000002 RSI: 0000000000000002 RDI: 000000000000001d
-RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2b02d196d4
-R13: 00000000004c60f6 R14: 00000000004db1e0 R15: 00000000ffffffff
-
-Showing all locks held in the system:
-3 locks held by ksoftirqd/1/16:
-1 lock held by khungtaskd/1040:
-  #0: 00000000e3131bf8 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:4389
-3 locks held by kworker/u4:4/3054:
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:220 [inline]
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at:  
-atomic_long_set include/asm-generic/atomic-long.h:59 [inline]
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 000000002f6c8bac ((wq_completion)"%s""netns"){+.+.}, at:  
-process_one_work+0x87e/0x1760 kernel/workqueue.c:2124
-  #1: 00000000356e77de (net_cleanup_work){+.+.}, at:  
-process_one_work+0x8b4/0x1760 kernel/workqueue.c:2128
-  #2: 0000000070308617 (pernet_ops_rwsem){++++}, at: cleanup_net+0xae/0x960  
-net/core/net_namespace.c:518
-1 lock held by rsyslogd/7473:
-2 locks held by getty/7586:
-  #0: 000000007d8d2e99 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000009ac587d5 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7587:
-  #0: 000000009302afb1 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000be8c1a8d (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7588:
-  #0: 0000000082755b9e (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000a2bc657f (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7589:
-  #0: 00000000d211856e (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000279c75af (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7590:
-  #0: 000000000111820e (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000db1c3ad5 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7591:
-  #0: 00000000756df6ea (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 0000000026a342a6 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-2 locks held by getty/7592:
-  #0: 00000000f85959b5 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000a7cf75cc (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
-1 lock held by syz-executor1/17203:
-  #0: 0000000070308617 (pernet_ops_rwsem){++++}, at:  
-register_netdevice_notifier+0x7e/0x630 net/core/dev.c:1634
-1 lock held by syz-executor1/17207:
-  #0: 0000000070308617 (pernet_ops_rwsem){++++}, at:  
-register_netdevice_notifier+0x7e/0x630 net/core/dev.c:1634
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1040 Comm: khungtaskd Not tainted 5.0.0-rc4+ #63
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:203 [inline]
-  watchdog+0x9df/0xee0 kernel/hung_task.c:287
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.389  
-msecs
-NMI backtrace for cpu 0
-CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 5.0.0-rc4+ #63
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:rol32 include/linux/bitops.h:83 [inline]
-RIP: 0010:jhash2 include/linux/jhash.h:128 [inline]
-RIP: 0010:hash_stack lib/stackdepot.c:161 [inline]
-RIP: 0010:depot_save_stack+0x76/0x460 lib/stackdepot.c:230
-Code: 0f 86 ec 01 00 00 44 89 cb 44 89 c8 48 89 ca 03 5a 08 41 83 e8 03 48  
-83 c2 0c 44 03 4a f4 03 42 f8 45 89 cb 41 89 d9 41 29 db <41> c1 c1 04 01  
-c3 45 31 d9 44 29 c8 41 89 c2 44 89 c8 41 01 d9 c1
-RSP: 0018:ffff8880a9886ed8 EFLAGS: 00000206
-RAX: 00000000ce5caf29 RBX: 00000000b5fb600c RCX: ffff8880a9886f38
-RDX: ffff8880a9886f68 RSI: 0000000000490220 RDI: 0000000000000016
-RBP: ffff8880a9886f10 R08: 0000000000000020 R09: 00000000b5fb600c
-R10: 000000008a18bda7 R11: 000000001a539322 R12: 0000000000490220
-R13: ffff8880a9886f20 R14: 0000000000000000 R15: ffff88812c3f0940
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000457e0f CR3: 00000000a4f2e000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  save_stack+0xa9/0xd0 mm/kasan/common.c:79
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_kmalloc mm/kasan/common.c:496 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
-  kasan_kmalloc mm/kasan/common.c:504 [inline]
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
-  slab_post_alloc_hook mm/slab.h:444 [inline]
-  slab_alloc_node mm/slab.c:3324 [inline]
-  kmem_cache_alloc_node_trace+0x13c/0x720 mm/slab.c:3650
-  __do_kmalloc_node mm/slab.c:3672 [inline]
-  __kmalloc_node_track_caller+0x3d/0x70 mm/slab.c:3687
-  __kmalloc_reserve.isra.0+0x40/0xf0 net/core/skbuff.c:140
-  __alloc_skb+0x10b/0x5e0 net/core/skbuff.c:208
-  alloc_skb include/linux/skbuff.h:1011 [inline]
-  nlmsg_new include/net/netlink.h:654 [inline]
-  fdb_notify+0x9f/0x190 net/bridge/br_fdb.c:706
-  br_fdb_update net/bridge/br_fdb.c:601 [inline]
-  br_fdb_update+0x2fd/0xa70 net/bridge/br_fdb.c:562
-  br_handle_frame_finish+0x84f/0x14c0 net/bridge/br_input.c:97
-  br_nf_hook_thresh+0x2ec/0x380 net/bridge/br_netfilter_hooks.c:1009
-  br_nf_pre_routing_finish_ipv6+0x708/0xdc0  
-net/bridge/br_netfilter_ipv6.c:210
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  br_nf_pre_routing_ipv6+0x3c4/0x740 net/bridge/br_netfilter_ipv6.c:238
-  br_nf_pre_routing+0xe80/0x13a0 net/bridge/br_netfilter_hooks.c:482
-  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
-  nf_hook_slow+0xbf/0x1f0 net/netfilter/core.c:511
-  nf_hook include/linux/netfilter.h:244 [inline]
-  NF_HOOK include/linux/netfilter.h:287 [inline]
-  br_handle_frame+0x95b/0x1450 net/bridge/br_input.c:305
-  __netif_receive_skb_core+0xa96/0x3010 net/core/dev.c:4902
-  __netif_receive_skb_one_core+0xa8/0x1a0 net/core/dev.c:4971
-  __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
-  process_backlog+0x206/0x750 net/core/dev.c:5923
-  napi_poll net/core/dev.c:6346 [inline]
-  net_rx_action+0x4fa/0x1070 net/core/dev.c:6412
-  __do_softirq+0x266/0x95a kernel/softirq.c:292
-  run_ksoftirqd kernel/softirq.c:654 [inline]
-  run_ksoftirqd+0x8e/0x110 kernel/softirq.c:646
-  smpboot_thread_fn+0x6ab/0xa10 kernel/smpboot.c:164
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-
+Cc: "C, Ramalingam" <ramalingam.c@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/driver-api/component.rst   |  17 ++++
+ Documentation/driver-api/device_link.rst |   3 +
+ Documentation/driver-api/index.rst       |   1 +
+ drivers/base/component.c                 | 107 ++++++++++++++++++++++-
+ include/linux/component.h                |  71 +++++++++++++++
+ 5 files changed, 196 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/driver-api/component.rst
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/Documentation/driver-api/component.rst b/Documentation/driver-api/component.rst
+new file mode 100644
+index 000000000000..2da4a8f20607
+--- /dev/null
++++ b/Documentation/driver-api/component.rst
+@@ -0,0 +1,17 @@
++======================================
++Component Helper for Aggregate Drivers
++======================================
++
++.. kernel-doc:: drivers/base/component.c
++   :doc: overview
++
++
++API
++===
++
++.. kernel-doc:: include/linux/component.h
++   :internal:
++
++.. kernel-doc:: drivers/base/component.c
++   :export:
++
+diff --git a/Documentation/driver-api/device_link.rst b/Documentation/driver-api/device_link.rst
+index d6763272e747..2d5919b2b337 100644
+--- a/Documentation/driver-api/device_link.rst
++++ b/Documentation/driver-api/device_link.rst
+@@ -1,6 +1,9 @@
+ .. |struct dev_pm_domain| replace:: :c:type:`struct dev_pm_domain <dev_pm_domain>`
+ .. |struct generic_pm_domain| replace:: :c:type:`struct generic_pm_domain <generic_pm_domain>`
+ 
++
++.. _device_link:
++
+ ============
+ Device links
+ ============
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index ab38ced66a44..c0b600ed9961 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -22,6 +22,7 @@ available subsections can be seen below.
+    device_connection
+    dma-buf
+    device_link
++   component
+    message-based
+    sound
+    frame-buffer
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index ddcea8739c12..f34d4b784709 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -16,6 +16,32 @@
+ #include <linux/slab.h>
+ #include <linux/debugfs.h>
+ 
++/**
++ * DOC: overview
++ *
++ * The component helper allows drivers to collect a pile of sub-devices,
++ * including their bound drivers, into an aggregate driver. Various subsystems
++ * already provide functions to get hold of such components, e.g.
++ * of_clk_get_by_name(). The component helper can be used when such a
++ * subsystem-specific way to find a device is not available: The component
++ * helper fills the niche of aggregate drivers for specific hardware, where
++ * further standardization into a subsystem would not be practical. The common
++ * example is when a logical device (e.g. a DRM display driver) is spread around
++ * the SoC on various component (scanout engines, blending blocks, transcoders
++ * for various outputs and so on).
++ *
++ * The component helper also doesn't solve runtime dependencies, e.g. for system
++ * suspend and resume operations. See also :ref:`device links<device_link>`.
++ *
++ * Components are registered using component_add() and unregistered with
++ * component_del(), usually from the driver's probe and disconnect functions.
++ *
++ * Aggregate drivers first assemble a component match list of what they need
++ * using component_match_add(). This is then registered as an aggregate driver
++ * using component_master_add_with_match(), and unregistered using
++ * component_master_del().
++ */
++
+ struct component;
+ 
+ struct component_match_array {
+@@ -301,10 +327,25 @@ static int component_match_realloc(struct device *dev,
+ 	return 0;
+ }
+ 
+-/*
+- * Add a component to be matched, with a release function.
++/**
++ * component_match_add_release - add a component match with release callback
++ * @master: device with the aggregate driver
++ * @matchptr: pointer to the list of component matches
++ * @release: release function for @compare_data
++ * @compare: compare function to match against all components
++ * @compare_data: opaque pointer passed to the @compare function
++ *
++ * This adds a new component match to the list stored in @matchptr, which the
++ * @master aggregate driver needs to function. The list of component matches
++ * pointed to by @matchptr must be initialized to NULL before adding the first
++ * match.
++ *
++ * The allocated match list in @matchptr is automatically released using devm
++ * actions, where upon @release will be called to free any references held by
++ * @compare_data, e.g. when @compare_data is a &device_node that must be
++ * released with of_node_put().
+  *
+- * The match array is first created or extended if necessary.
++ * See also component_match_add().
+  */
+ void component_match_add_release(struct device *master,
+ 	struct component_match **matchptr,
+@@ -367,6 +408,18 @@ static void free_master(struct master *master)
+ 	kfree(master);
+ }
+ 
++/**
++ * component_master_add_with_match - register an aggregate driver
++ * @dev: device with the aggregate driver
++ * @ops: callbacks for the aggregate driver
++ * @match: component match list for the aggregate driver
++ *
++ * Registers a new aggregate driver consisting of the components added to @match
++ * by calling one of the component_match_add() functions. Once all components in
++ * @match are available, it will be assembled by calling
++ * &component_master_ops.bind from @ops. Must be unregistered by calling
++ * component_master_del().
++ */
+ int component_master_add_with_match(struct device *dev,
+ 	const struct component_master_ops *ops,
+ 	struct component_match *match)
+@@ -403,6 +456,15 @@ int component_master_add_with_match(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(component_master_add_with_match);
+ 
++/**
++ * component_master_del - unregister an aggregate driver
++ * @dev: device with the aggregate driver
++ * @ops: callbacks for the aggregate driver
++ *
++ * Unregisters an aggregate driver registered with
++ * component_master_add_with_match(). If necessary the aggregate driver is first
++ * disassembled by calling &component_master_ops.unbind from @ops.
++ */
+ void component_master_del(struct device *dev,
+ 	const struct component_master_ops *ops)
+ {
+@@ -430,6 +492,15 @@ static void component_unbind(struct component *component,
+ 	devres_release_group(component->dev, component);
+ }
+ 
++/**
++ * component_unbind_all - unbind all component to an aggregate driver
++ * @master_dev: device with the aggregate driver
++ * @data: opaque pointer, passed to all components
++ *
++ * Unbinds all components to the aggregate @dev by passing @data to their
++ * &component_ops.unbind functions. Should be called from
++ * &component_master_ops.unbind.
++ */
+ void component_unbind_all(struct device *master_dev, void *data)
+ {
+ 	struct master *master;
+@@ -503,6 +574,15 @@ static int component_bind(struct component *component, struct master *master,
+ 	return ret;
+ }
+ 
++/**
++ * component_bind_all - bind all component to an aggregate driver
++ * @master_dev: device with the aggregate driver
++ * @data: opaque pointer, passed to all components
++ *
++ * Binds all components to the aggregate @dev by passing @data to their
++ * &component_ops.bind functions. Should be called from
++ * &component_master_ops.bind.
++ */
+ int component_bind_all(struct device *master_dev, void *data)
+ {
+ 	struct master *master;
+@@ -537,6 +617,18 @@ int component_bind_all(struct device *master_dev, void *data)
+ }
+ EXPORT_SYMBOL_GPL(component_bind_all);
+ 
++/**
++ * component_add - register a component
++ * @dev: component device
++ * @ops: component callbacks
++ *
++ * Register a new component for @dev. Functions in @ops will be called when the
++ * aggregate driver is ready to bind the overall driver by calling
++ * component_bind_all(). See also &struct component_ops.
++ *
++ * The component needs to be unregistered at driver unload/disconnect by calling
++ * component_del().
++ */
+ int component_add(struct device *dev, const struct component_ops *ops)
+ {
+ 	struct component *component;
+@@ -568,6 +660,15 @@ int component_add(struct device *dev, const struct component_ops *ops)
+ }
+ EXPORT_SYMBOL_GPL(component_add);
+ 
++/**
++ * component_del - unregister a component
++ * @dev: component device
++ * @ops: component callbacks
++ *
++ * Unregister a component added with component_add(). If the component is bound
++ * into an aggregate driver, this will force the entire aggregate driver, including
++ * all its components, to be unbound.
++ */
+ void component_del(struct device *dev, const struct component_ops *ops)
+ {
+ 	struct component *c, *component = NULL;
+diff --git a/include/linux/component.h b/include/linux/component.h
+index e71fbbbc74e2..4911598b4c42 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -4,11 +4,31 @@
+ 
+ #include <linux/stddef.h>
+ 
++
+ struct device;
+ 
++/**
++ * struct component_ops - callbacks for component drivers
++ *
++ * Components are registered with component_add() and unregistered with
++ * component_del().
++ */
+ struct component_ops {
++	/**
++	 * @bind:
++	 *
++	 * Called through component_bind_all() when the aggregate driver is
++	 * ready to bind the overall driver.
++	 */
+ 	int (*bind)(struct device *comp, struct device *master,
+ 		    void *master_data);
++	/**
++	 * @unbind:
++	 *
++	 * Called through component_unbind_all() when the aggregate driver is
++	 * ready to bind the overall driver, or when component_bind_all() fails
++	 * part-ways through and needs to unbind some already bound components.
++	 */
+ 	void (*unbind)(struct device *comp, struct device *master,
+ 		       void *master_data);
+ };
+@@ -21,8 +41,42 @@ void component_unbind_all(struct device *master, void *master_data);
+ 
+ struct master;
+ 
++/**
++ * struct component_master_ops - callback for the aggregate driver
++ *
++ * Aggregate drivers are registered with component_master_add_with_match() and
++ * unregistered with component_master_del().
++ */
+ struct component_master_ops {
++	/**
++	 * @bind:
++	 *
++	 * Called when all components or the aggregate driver, as specified in
++	 * the match list passed to component_master_add_with_match(), are
++	 * ready. Usually there are 3 steps to bind an aggregate driver:
++	 *
++	 * 1. Allocate a structure for the aggregate driver.
++	 *
++	 * 2. Bind all components to the aggregate driver by calling
++	 *    component_bind_all() with the aggregate driver structure as opaque
++	 *    pointer data.
++	 *
++	 * 3. Register the aggregate driver with the subsystem to publish its
++	 *    interfaces.
++	 *
++	 * Note that the lifetime of the aggregate driver does not align with
++	 * any of the underlying &struct device instances. Therefore devm cannot
++	 * be used and all resources acquired or allocated in this callback must
++	 * be explicitly released in the @unbind callback.
++	 */
+ 	int (*bind)(struct device *master);
++	/**
++	 * @unbind:
++	 *
++	 * Called when either the aggregate driver, using
++	 * component_master_del(), or one of its components, using
++	 * component_del(), is unregistered.
++	 */
+ 	void (*unbind)(struct device *master);
+ };
+ 
+@@ -38,6 +92,23 @@ void component_match_add_release(struct device *master,
+ 	void (*release)(struct device *, void *),
+ 	int (*compare)(struct device *, void *), void *compare_data);
+ 
++/**
++ * component_match_add - add a compent match
++ * @master: device with the aggregate driver
++ * @matchptr: pointer to the list of component matches
++ * @compare: compare function to match against all components
++ * @compare_data: opaque pointer passed to the @compare function
++ *
++ * This adds a new component match to the list stored in @matchptr, which the
++ * @master aggregate driver needs to function. The list of component matches
++ * pointed to by @matchptr must be initialized to NULL before adding the first
++ * match.
++ *
++ * The allocated match list in @matchptr is automatically released using devm
++ * actions.
++ *
++ * See also component_match_add_release().
++ */
+ static inline void component_match_add(struct device *master,
+ 	struct component_match **matchptr,
+ 	int (*compare)(struct device *, void *), void *compare_data)
+-- 
+2.20.1
+
