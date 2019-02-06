@@ -2,186 +2,101 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DA3C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D5BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD0A2081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71FB2218AE
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:28:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSj1Iwff"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbfBFR0J (ORCPT
+        id S1728682AbfBFR2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:26:09 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55678 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbfBFR0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:26:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0293EBD;
-        Wed,  6 Feb 2019 09:26:08 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE3A43F719;
-        Wed,  6 Feb 2019 09:26:07 -0800 (PST)
-Subject: Re: [PATCH 5/5] sched/fair: Skip LLC nohz logic for asymmetric
- systems
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        vincent.guittot@linaro.org, morten.rasmussen@arm.com,
-        Dietmar.Eggemann@arm.com
-References: <20190117153411.2390-1-valentin.schneider@arm.com>
- <20190117153411.2390-6-valentin.schneider@arm.com>
- <20190206161452.GL17550@hirez.programming.kicks-ass.net>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <5010b09f-6954-fda6-a10f-a8aa05806866@arm.com>
-Date:   Wed, 6 Feb 2019 17:26:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 12:28:55 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44989 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfBFR2z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 12:28:55 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z13so5944264lfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:28:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ka79cc6MJH0OieTR/HXOXJAkfsrfoLYsu3B1pRe0KUk=;
+        b=iSj1IwffGfHETNh70cQhSCWZq7NftUqzFCwaoKw8+tO/RRd8LE8/VCdslGeBfyAq61
+         dOR5X6nltY4sccvTydH91g8ldPrYj/KnACjvr8GD0XGkCwEpd9qUxyy0/KQmQ4hPFAz0
+         TvxMYM53ZMwk3lNdr8afXbaJC2trFtQ7lKwWw6BqzZ2gDxH7N3owQYVoPIB4jY2sRVV9
+         EXQw9cxaqJey3G7ITAlhNXU38qAqh99bDouYLW5TEHfGA/IGwNoX5nDiPpKw4c2/mSu/
+         /Oqf+jImV0kXlUApVRECbExKc5knnHFhdi7Qg6YW4pxRCyBy+1me5mLwm9gfHal/UouH
+         MbTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ka79cc6MJH0OieTR/HXOXJAkfsrfoLYsu3B1pRe0KUk=;
+        b=oOIfbHQ7+hd1rJtNevjZRAljnVl5wkkMKNoT2gn6zRKegIexanoyXSKp3SS5FT6SKt
+         +16F/M8Yz4uO0CAiB8F84OJqDUXsXu+tNkW9QF4tS0ui3/PIcwHrNfxe44qvlmI1/lME
+         iAzrJs5MVyo/NxKbS40Yd4JLE5YZ9pg/v0mJblKUBWNqpAje64OU6df4g69QjsOIeErJ
+         jL0jP895YJwYz2YWtVhV2hsWPxVDWvIoqOFph916nPBykyx70uXom80248J8Nog6wK3K
+         ak6OjSgF92wMJEaex4+w67ZL3MoisC5kjEY1t9RcSZ+RIpjVlA9UboIjvZ2I/ynpHeWF
+         4z5Q==
+X-Gm-Message-State: AHQUAuZc5enTYXT9TeID1aySGwMN0rMKLSQqA+UaGEDd4gtzo9aDPfkw
+        lMIj6oc64Al9LfMIZBXgKDqpcPiXOFiPOiKrxps=
+X-Google-Smtp-Source: AHgI3IYM926McE+DoWUaxnLCdA8Jwl4Onz5VAKpN+clhWLU4WdYQczo0uBVWZ8UxpU8vjv8LYyjrPmZZo3F/g17ZkZ4=
+X-Received: by 2002:a19:a84e:: with SMTP id r75mr6502378lfe.45.1549474133390;
+ Wed, 06 Feb 2019 09:28:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190206161452.GL17550@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190123173707.GA16603@gmail.com> <20190131142221.GA26303@linux-8ccs>
+ <CANiq72m8VuD_dsA+=0q88FRJgVnnSS1pt1SAFf9upGS7RFjT_g@mail.gmail.com>
+ <20190204150852.GA24444@linux-8ccs> <CANiq72=cK0oMFtMejAsphNyJmQ8KvG5=70Gyt7idbvp4ScoxgA@mail.gmail.com>
+In-Reply-To: <CANiq72=cK0oMFtMejAsphNyJmQ8KvG5=70Gyt7idbvp4ScoxgA@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 6 Feb 2019 18:28:42 +0100
+Message-ID: <CANiq72nBHnsHu_XCjrhrLow08gx0XHszDrm9gGL-r663Ne7rHw@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/module.h: mark init/cleanup_module aliases
+ as __cold
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Feb 6, 2019 at 5:31 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Mon, Feb 4, 2019 at 4:08 PM Jessica Yu <jeyu@kernel.org> wrote:
+> >
+> > IMHO I think annotating with __init is more straightforward, instead
+> > of cherry-picking attributes (we wouldn't know at first glance why the
+> > aliases are specifically annotated with __cold without looking at git
+> > history). Plus the actual module init function and alias declarations
+> > would be consistent. Just looking at the __init attributes:
+> >
+> >     #define __init              __section(.init.text) __cold  __latent_entropy __noinitretpoline
 
-On 06/02/2019 16:14, Peter Zijlstra wrote:
-[...]
->> @@ -9545,6 +9545,17 @@ static void nohz_balancer_kick(struct rq *rq)
->>  	}
->>  
->>  	rcu_read_lock();
->> +
->> +	if (static_branch_unlikely(&sched_asym_cpucapacity))
->> +		/*
->> +		 * For asymmetric systems, we do not want to nicely balance
->> +		 * cache use, instead we want to embrace asymmetry and only
->> +		 * ensure tasks have enough CPU capacity.
->> +		 *
->> +		 * Skip the LLC logic because it's not relevant in that case.
->> +		 */
->> +		goto check_capacity;
->> +
->>  	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
->>  	if (sds) {
->>  		/*
-> 
-> Since (before this) the actual order of the various tests doesn't
-> matter, it's a logical cascade of conditions for which to KICK_MASK.
-> 
+By the way, note that we also need to annotate the exit ones. To do
+something similar, for __exit we have:
 
-Ah, I assumed the order did matter somewhat with the "cheaper" LLC check
-first and the more costly loops further down in case we are still looking
-for a reason to do a kick.
+    #define __exit          __section(.exit.text) __exitused __cold notrace
 
-> We can easily reorder and short-circuit the cascase like so, no?
-> 
-> The only concern is if sd_llc_shared < sd_asym_capacity; in which case
-> we just lost a balance opportunity. Not sure how to best retain that
-> though.
-> 
+__exitused expands to nothing when MODULE is defined.
 
-I'm afraid I don't follow - we don't lose a balance opportunity with the
-below change (compared to the original patch), do we?
+notrace is either hotpatch(0,0) or no_instrument_function; and they
+shouldn't matter in the alias since we are not generating code (and
+anyway they disable the extra code, instead of enabling).
 
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9568,25 +9568,6 @@ static void nohz_balancer_kick(struct rq
->  	}
->  
->  	rcu_read_lock();
-> -	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
-> -	if (sds) {
-> -		/*
-> -		 * If there is an imbalance between LLC domains (IOW we could
-> -		 * increase the overall cache use), we need some less-loaded LLC
-> -		 * domain to pull some load. Likewise, we may need to spread
-> -		 * load within the current LLC domain (e.g. packed SMT cores but
-> -		 * other CPUs are idle). We can't really know from here how busy
-> -		 * the others are - so just get a nohz balance going if it looks
-> -		 * like this LLC domain has tasks we could move.
-> -		 */
-> -		nr_busy = atomic_read(&sds->nr_busy_cpus);
-> -		if (nr_busy > 1) {
-> -			flags = NOHZ_KICK_MASK;
-> -			goto unlock;
-> -		}
-> -
-> -	}
-> -
->  	sd = rcu_dereference(rq->sd);
->  	if (sd) {
->  		/*
-> @@ -9600,6 +9581,20 @@ static void nohz_balancer_kick(struct rq
->  		}
->  	}
->  
-> +	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
-> +	if (sd) {
-> +		/*
-> +		 * When ASYM_PACKING; see if there's a more preferred CPU going
-> +		 * idle; in which case, kick the ILB to move tasks around.
-> +		 */
-> +		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
-> +			if (sched_asym_prefer(i, cpu)) {
-> +				flags = NOHZ_KICK_MASK;
-> +				goto unlock;
-> +			}
-> +		}
-> +	}
-> +
->  	sd = rcu_dereference(per_cpu(sd_asym_cpucapacity, cpu));
->  	if (sd) {
->  		/*
-> @@ -9610,21 +9605,36 @@ static void nohz_balancer_kick(struct rq
->  			flags = NOHZ_KICK_MASK;
->  			goto unlock;
->  		}
-> +
-> +		/*
-> +		 * For asymmetric systems, we do not want to nicely balance
-> +		 * cache use, instead we want to embrace asymmetry and only
-> +		 * ensure tasks have enough CPU capacity.
-> +		 *
-> +		 * Skip the LLC logic because it's not relevant in that case.
-> +		 */
-> +		goto unlock;
->  	}
->  
-> -	sd = rcu_dereference(per_cpu(sd_asym_packing, cpu));
-> -	if (sd) {
-> +	sds = rcu_dereference(per_cpu(sd_llc_shared, cpu));
-> +	if (sds) {
->  		/*
-> -		 * When ASYM_PACKING; see if there's a more preferred CPU going
-> -		 * idle; in which case, kick the ILB to move tasks around.
-> +		 * If there is an imbalance between LLC domains (IOW we could
-> +		 * increase the overall cache use), we need some less-loaded LLC
-> +		 * domain to pull some load. Likewise, we may need to spread
-> +		 * load within the current LLC domain (e.g. packed SMT cores but
-> +		 * other CPUs are idle). We can't really know from here how busy
-> +		 * the others are - so just get a nohz balance going if it looks
-> +		 * like this LLC domain has tasks we could move.
->  		 */
-> -		for_each_cpu_and(i, sched_domain_span(sd), nohz.idle_cpus_mask) {
-> -			if (sched_asym_prefer(i, cpu)) {
-> -				flags = NOHZ_KICK_MASK;
-> -				goto unlock;
-> -			}
-> +		nr_busy = atomic_read(&sds->nr_busy_cpus);
-> +		if (nr_busy > 1) {
-> +			flags = NOHZ_KICK_MASK;
-> +			goto unlock;
->  		}
-> +
->  	}
-> +
->  unlock:
->  	rcu_read_unlock();
->  out:
-> 
+So I will also use __exit there instead of only __cold too.
+
+Cheers,
+Miguel
