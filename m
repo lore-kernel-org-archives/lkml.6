@@ -3,53 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66326C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A41C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC0520844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930C0218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:21:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731025AbfBFNUm (ORCPT
+        id S1730868AbfBFNVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:20:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38482 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730403AbfBFNRs (ORCPT
+        Wed, 6 Feb 2019 08:21:04 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37382 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730200AbfBFNRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 6 Feb 2019 08:17:48 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16DDtXZ056480
-        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 08:17:46 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfwq4ss01-1
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x16DDrJK014720
+        for <linux-kernel@vger.kernel.org>; Wed, 6 Feb 2019 08:17:45 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfyxtsjgc-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:17:46 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:17:45 -0500
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Wed, 6 Feb 2019 13:17:44 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 6 Feb 2019 13:17:40 -0000
+        Wed, 6 Feb 2019 13:17:38 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16DHccJ12714092
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x16DHbLk21233806
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Feb 2019 13:17:39 GMT
+        Wed, 6 Feb 2019 13:17:37 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BACDBB2070;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 9A405B2068;
+        Wed,  6 Feb 2019 13:17:37 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 67D44B2067;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 75E9EB2073;
+        Wed,  6 Feb 2019 13:17:37 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.158.219])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  6 Feb 2019 13:17:38 +0000 (GMT)
+        Wed,  6 Feb 2019 13:17:37 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 600E716C6B59; Wed,  6 Feb 2019 05:16:47 -0800 (PST)
+        id 36D1116C6B44; Wed,  6 Feb 2019 05:16:47 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -59,26 +59,26 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 12/19] linux/rcu_segcblist: Convert to SPDX license identifier
-Date:   Wed,  6 Feb 2019 05:16:37 -0800
+Subject: [PATCH tip/core/rcu 05/19] rcu/srcu: Convert to SPDX license identifier
+Date:   Wed,  6 Feb 2019 05:16:30 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190206131614.GA17320@linux.ibm.com>
 References: <20190206131614.GA17320@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19020613-0064-0000-0000-000003A39125
+x-cbid: 19020613-0060-0000-0000-000003067598
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010547; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000279; SDB=6.01157129; UDB=6.00603658; IPR=6.00937658;
- MB=3.00025463; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-06 13:17:44
+ MB=3.00025463; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-06 13:17:43
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020613-0065-0000-0000-00003C50525D
-Message-Id: <20190206131644.23281-12-paulmck@linux.ibm.com>
+x-cbparentid: 19020613-0061-0000-0000-00004832B795
+Message-Id: <20190206131644.23281-5-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=993 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=980 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902060105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -90,21 +90,19 @@ While in the area, update an email address.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- include/linux/rcu_segcblist.h | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ kernel/rcu/srcutiny.c | 17 ++---------------
+ kernel/rcu/srcutree.c | 17 ++---------------
+ 2 files changed, 4 insertions(+), 30 deletions(-)
 
-diff --git a/include/linux/rcu_segcblist.h b/include/linux/rcu_segcblist.h
-index c3ad00e63556..0211b74a14b1 100644
---- a/include/linux/rcu_segcblist.h
-+++ b/include/linux/rcu_segcblist.h
-@@ -1,3 +1,4 @@
+diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+index 32dfd6522548..5d4a39a6505a 100644
+--- a/kernel/rcu/srcutiny.c
++++ b/kernel/rcu/srcutiny.c
+@@ -1,24 +1,11 @@
 +// SPDX-License-Identifier: GPL-2.0+
  /*
-  * RCU segmented callback lists
-  *
-@@ -5,23 +6,9 @@
-  * because the size of the TREE SRCU srcu_struct structure depends
-  * on these definitions.
+  * Sleepable Read-Copy Update mechanism for mutual exclusion,
+  *	tiny version for non-preemptible single-CPU use.
   *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -120,13 +118,44 @@ index c3ad00e63556..0211b74a14b1 100644
 - * along with this program; if not, you can access it online at
 - * http://www.gnu.org/licenses/gpl-2.0.html.
 - *
-  * Copyright IBM Corporation, 2017
+  * Copyright (C) IBM Corporation, 2017
   *
-- * Authors: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-+ * Authors: Paul E. McKenney <paulmck@linux.net.ibm.com>
+- * Author: Paul McKenney <paulmck@us.ibm.com>
++ * Author: Paul McKenney <paulmck@linux.ibm.com>
   */
  
- #ifndef __INCLUDE_LINUX_RCU_SEGCBLIST_H
+ #include <linux/export.h>
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 3600d88d8956..7a5944b42b02 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -1,24 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Sleepable Read-Copy Update mechanism for mutual exclusion.
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, you can access it online at
+- * http://www.gnu.org/licenses/gpl-2.0.html.
+- *
+  * Copyright (C) IBM Corporation, 2006
+  * Copyright (C) Fujitsu, 2012
+  *
+- * Author: Paul McKenney <paulmck@us.ibm.com>
++ * Author: Paul McKenney <paulmck@linux.ibm.com>
+  *	   Lai Jiangshan <laijs@cn.fujitsu.com>
+  *
+  * For detailed explanation of Read-Copy Update mechanism see -
 -- 
 2.17.1
 
