@@ -2,230 +2,120 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D3DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D276C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD3CF218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF54D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:49:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgMPgsW6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0rkUeJX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbfBFRrn (ORCPT
+        id S1729693AbfBFRtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:47:43 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39104 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730418AbfBFRqK (ORCPT
+        Wed, 6 Feb 2019 12:49:35 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41951 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727299AbfBFRte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:46:10 -0500
-Received: by mail-pf1-f194.google.com with SMTP id f132so1124853pfa.6;
-        Wed, 06 Feb 2019 09:46:09 -0800 (PST)
+        Wed, 6 Feb 2019 12:49:34 -0500
+Received: by mail-ot1-f66.google.com with SMTP id u16so13373687otk.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:49:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G7Ci0rv3hQtOueYt0rcl1mxa1iU3dwEVnAYBxfPFBHI=;
-        b=mgMPgsW6nken4TlNO/Pv+4E7a+Sr8yIJ1qZyl9cBSzFTR9S5UnQVZ12g91qVCvRrHm
-         4x6foaJPEDs/7+XCIIykP7cQUArZ1Q/hn8EyXfQkleWO8dRiZ6pOLqK+n8JUkUfE3PDB
-         mP/1CfiT0q4eCL3R5Rl/Bwe3AYEFmcBpBPNqG50HMd7GNNNRZlipeSa0tajlrPzHRR7u
-         7hT52Bj6Xs250hrgy5zxc+Tda/zbHJHpzSBH/XKAsU4ox/L3xk19W+G3LPnLv4g1LJuu
-         OxnBTS6c8L39otzvyDRkrlq/xB4M9clouvqREV2l1r5lZnrlQgx4yl0HGa+appnbyy7U
-         5wMQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+rRMVWcIepJ780DiGU65IJUJ+FeBxKihEfR1/RuIkls=;
+        b=c0rkUeJXHWQAog5OCqvrgIB4oKC94nuDCiTyHdVBmx/Vv7Oi4UVLorFPf1idqeCbbu
+         YeIg0K+LRZLk+1jxWsElcb5WTobQaIKlQTYYXbV3qf3PGIskRCXELaJkRTtiiPT4Vn6T
+         5Rx+Gtt9VGDA0Em8QY3qRV1E1sUDL0amdLR5QDg1FV1IKxYzq8gdEyFYEsUMDdv8D50m
+         oTdSnK2hpWMBAqMvaQZtXm4cAYGwFvSD6vG45euieSw2ByH8tsYDyvMLWHTjJIaW7p/O
+         fw1wDBXpa5svPIbbd6lI84kcOi9KA6fZFvFSR6PgJZN4t4BmdlGA8K0W37FqjFlZCkP8
+         VeHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=G7Ci0rv3hQtOueYt0rcl1mxa1iU3dwEVnAYBxfPFBHI=;
-        b=gy4lwrsVMASvKeHEPk7cWz530bQqdr8dE/UyXtAr8dqONqQcK26nSI9j9hS+ohIP+i
-         Y8hTlNab9Wj5ZY/6sDQtM5XLK7DkHDTtVQtnKLIcjxzzHTpGfpyO1kR2sh5zlCkLzK9d
-         WAPzIk/kizzuo6dam7dqiXqhIb6OpGhi0X8y23enoKb/bHDNi3SXp82BQ2pXr8sHPXAK
-         0WVwUzKgyPK7MiHdcJYoltWi6WF/0ZtTeULFCPsppv84vFjMGUgoA08akX/am2i92yto
-         D9V0B0Q8YGZ3JHsDg/KKJho00GY4EG+Zii/6Ut4j5b1XLKkJAUYBOn4ev19UlExRdyR7
-         Azaw==
-X-Gm-Message-State: AHQUAuYhLGYY6uXygK3J2Sro3xmMa8svxXnVJiiGFjfRuRJUMFNdb+bs
-        GZk2hDlYsKRX38ZijoD+BSSVm7ON
-X-Google-Smtp-Source: AHgI3IbRCyF8F7AV1XyLeKXNd6sYH8tPjuzkxIoHkr/uFlGPUwCYWqjbKH1Vlhqd8Tzdy2MlH6ktRg==
-X-Received: by 2002:a62:4618:: with SMTP id t24mr11606031pfa.139.1549475168668;
-        Wed, 06 Feb 2019 09:46:08 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 15sm10435313pfr.55.2019.02.06.09.46.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 09:46:07 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
-        oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v4 03/12] liquidio: Implement ndo_get_port_parent_id()
-Date:   Wed,  6 Feb 2019 09:45:37 -0800
-Message-Id: <20190206174546.23597-4-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190206174546.23597-1-f.fainelli@gmail.com>
-References: <20190206174546.23597-1-f.fainelli@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+rRMVWcIepJ780DiGU65IJUJ+FeBxKihEfR1/RuIkls=;
+        b=EnYfQ5zGOabPJhCcS4vTvRULUXmGUFwaanJJ/GLrgkAWwPt0ntDzmNBpSQCCJqyUde
+         SUHBQ/SFjoz5K7KPEzewJyw498wZu9ZKUD4E08FEAlirbBDtr/V6tNXYACXf4cKN5rw7
+         i73IHTTYXAvfGCJJxKpSBtHyvbJ+ucMaLSJ0sZVQFPAPn0ramXzIKUNj2xgca+Fu2zgy
+         5RJ0Gg6inoEpLuQKdFA3Upoj0ioajU3iWalwmH0u2q14xEqtlsf08hRujJXSxzeGiz3e
+         UCt+Tp7I0WsIyyXBStEmVwTz9CxG3r7Pnpqhxi0f0HZlUUyYJfO2EB93vddlsWABrX+X
+         lgPA==
+X-Gm-Message-State: AHQUAubEwRkngceYAPnQEodnJSQpyCQZYj768K1Nn0hgPy7XucFWyfgw
+        ThDGMR8aVftQmXm4WPHWAdvoUAqNs52air6LOOQ=
+X-Google-Smtp-Source: AHgI3IZHXRbqo5Mh6CNOpZe1WXwSlub/z2BlsbFrnHgiDvJU/XoIJTLwPDD8z+BG4T7ImsImPqIlQ9MAJ+hir7keyfM=
+X-Received: by 2002:a9d:61c8:: with SMTP id h8mr5959942otk.279.1549475373118;
+ Wed, 06 Feb 2019 09:49:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20190204220952.30761-1-TheSven73@googlemail.com>
+ <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
+ <CAGngYiUsq55EUKa0rYCeQ62VanhwNUxs-pfkJxUwqd4HO3m-Lg@mail.gmail.com>
+ <20190205184355.GC22198@kroah.com> <CAGngYiUMuM_ZxHKVWRihDHZcMncvTwR6Sz1zGNJLrGpyhhT1uQ@mail.gmail.com>
+ <20190206164657.GC8466@kroah.com> <CAKdAkRQbCj59_Cw2RqpyDEU2zzn4ajOjXF44NE2LJ7QB8-DLtw@mail.gmail.com>
+In-Reply-To: <CAKdAkRQbCj59_Cw2RqpyDEU2zzn4ajOjXF44NE2LJ7QB8-DLtw@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Wed, 6 Feb 2019 12:49:22 -0500
+Message-ID: <CAGngYiUh1o8yMjDAO5VFPJ-Jw-fF3q-2NHnz-+DNaEpt7SmwZw@mail.gmail.com>
+Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liquidio only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it
-a great candidate to be converted to use the ndo_get_port_parent_id()
-NDO instead of implementing switchdev_port_attr_get().
+On Wed, Feb 6, 2019 at 12:30 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Yeah. But devm irq gave most trouble because we did not have enough
+> devm APIs so we often ended up with mixed devm/non-devm usage and that
+> is what was causing most of the issues. If we can switch everything to
+> devm then devm irq is not that troublesome.
+>
 
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- .../net/ethernet/cavium/liquidio/lio_main.c   | 22 ++++------------
- .../net/ethernet/cavium/liquidio/lio_vf_rep.c | 25 ++++++-------------
- 2 files changed, 12 insertions(+), 35 deletions(-)
+It sounds to me like _incomplete_ devm_ is worse than no devm at all.
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index 3d24133e5e49..e97e6754ee09 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -21,7 +21,6 @@
- #include <linux/firmware.h>
- #include <net/vxlan.h>
- #include <linux/kthread.h>
--#include <net/switchdev.h>
- #include "liquidio_common.h"
- #include "octeon_droq.h"
- #include "octeon_iq.h"
-@@ -3184,7 +3183,8 @@ static const struct devlink_ops liquidio_devlink_ops = {
- };
- 
- static int
--lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
-+liquidio_get_port_parent_id(struct net_device *dev,
-+			    struct netdev_phys_item_id *ppid)
- {
- 	struct lio *lio = GET_LIO(dev);
- 	struct octeon_device *oct = lio->oct_dev;
-@@ -3192,24 +3192,12 @@ lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
- 	if (oct->eswitch_mode != DEVLINK_ESWITCH_MODE_SWITCHDEV)
- 		return -EOPNOTSUPP;
- 
--	switch (attr->id) {
--	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
--		attr->u.ppid.id_len = ETH_ALEN;
--		ether_addr_copy(attr->u.ppid.id,
--				(void *)&lio->linfo.hw_addr + 2);
--		break;
--
--	default:
--		return -EOPNOTSUPP;
--	}
-+	ppid->id_len = ETH_ALEN;
-+	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
- 
- 	return 0;
- }
- 
--static const struct switchdev_ops lio_pf_switchdev_ops = {
--	.switchdev_port_attr_get = lio_pf_switchdev_attr_get,
--};
--
- static int liquidio_get_vf_stats(struct net_device *netdev, int vfidx,
- 				 struct ifla_vf_stats *vf_stats)
- {
-@@ -3259,6 +3247,7 @@ static const struct net_device_ops lionetdevops = {
- 	.ndo_set_vf_trust	= liquidio_set_vf_trust,
- 	.ndo_set_vf_link_state  = liquidio_set_vf_link_state,
- 	.ndo_get_vf_stats	= liquidio_get_vf_stats,
-+	.ndo_get_port_parent_id	= liquidio_get_port_parent_id,
- };
- 
- /** \brief Entry point for the liquidio module
-@@ -3534,7 +3523,6 @@ static int setup_nic_devices(struct octeon_device *octeon_dev)
- 		 * netdev tasks.
- 		 */
- 		netdev->netdev_ops = &lionetdevops;
--		SWITCHDEV_SET_OPS(netdev, &lio_pf_switchdev_ops);
- 
- 		retval = netif_set_real_num_rx_queues(netdev, num_oqueues);
- 		if (retval) {
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-index de61060721c4..f3f2e71431ac 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-@@ -25,7 +25,6 @@
- #include "octeon_nic.h"
- #include "octeon_main.h"
- #include "octeon_network.h"
--#include <net/switchdev.h>
- #include "lio_vf_rep.h"
- 
- static int lio_vf_rep_open(struct net_device *ndev);
-@@ -38,6 +37,8 @@ static int lio_vf_rep_phys_port_name(struct net_device *dev,
- static void lio_vf_rep_get_stats64(struct net_device *dev,
- 				   struct rtnl_link_stats64 *stats64);
- static int lio_vf_rep_change_mtu(struct net_device *ndev, int new_mtu);
-+static int lio_vf_get_port_parent_id(struct net_device *dev,
-+				     struct netdev_phys_item_id *ppid);
- 
- static const struct net_device_ops lio_vf_rep_ndev_ops = {
- 	.ndo_open = lio_vf_rep_open,
-@@ -47,6 +48,7 @@ static const struct net_device_ops lio_vf_rep_ndev_ops = {
- 	.ndo_get_phys_port_name = lio_vf_rep_phys_port_name,
- 	.ndo_get_stats64 = lio_vf_rep_get_stats64,
- 	.ndo_change_mtu = lio_vf_rep_change_mtu,
-+	.ndo_get_port_parent_id = lio_vf_get_port_parent_id,
- };
- 
- static int
-@@ -443,31 +445,19 @@ lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	return NETDEV_TX_OK;
- }
- 
--static int
--lio_vf_rep_attr_get(struct net_device *dev, struct switchdev_attr *attr)
-+static int lio_vf_get_port_parent_id(struct net_device *dev,
-+				     struct netdev_phys_item_id *ppid)
- {
- 	struct lio_vf_rep_desc *vf_rep = netdev_priv(dev);
- 	struct net_device *parent_ndev = vf_rep->parent_ndev;
- 	struct lio *lio = GET_LIO(parent_ndev);
- 
--	switch (attr->id) {
--	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
--		attr->u.ppid.id_len = ETH_ALEN;
--		ether_addr_copy(attr->u.ppid.id,
--				(void *)&lio->linfo.hw_addr + 2);
--		break;
--
--	default:
--		return -EOPNOTSUPP;
--	}
-+	ppid->id_len = ETH_ALEN;
-+	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
- 
- 	return 0;
- }
- 
--static const struct switchdev_ops lio_vf_rep_switchdev_ops = {
--	.switchdev_port_attr_get        = lio_vf_rep_attr_get,
--};
--
- static void
- lio_vf_rep_fetch_stats(struct work_struct *work)
- {
-@@ -524,7 +514,6 @@ lio_vf_rep_create(struct octeon_device *oct)
- 		ndev->min_mtu = LIO_MIN_MTU_SIZE;
- 		ndev->max_mtu = LIO_MAX_MTU_SIZE;
- 		ndev->netdev_ops = &lio_vf_rep_ndev_ops;
--		SWITCHDEV_SET_OPS(ndev, &lio_vf_rep_switchdev_ops);
- 
- 		vf_rep = netdev_priv(ndev);
- 		memset(vf_rep, 0, sizeof(*vf_rep));
--- 
-2.17.1
+Imagine a devm_ resource depends on a non-devm one:
 
+int acme_probe(struct device *dev)
+{
+  ...
+  r = create_something();
+  d = devm_create_thing(dev, r);
+}
+
+Then remove could get us into some serious trouble:
+
+void acme_remove(struct device *dev)
+{
+  /* r _must_ be released here, we have no other place to do it */
+  destroy_something(r);
+  /* here, d is still alive because it's devm
+   * which is cleaned up _after_ remove().
+  * Now we have a live resource using a released resource.
+  * use-after-free anyone?
+  */
+}
+
+This is a more generalized version of the issue I originally
+observed, where r => struct work_struct.
+
+I'm sure there must be plenty of these around the codebase.
+
+I wish we had a Coccinelle script to catch these, because it's
+one thing to fix them today. More will be added tomorrow.
+devm_ is so elegant that people frequently use it without
+thinking it through.
+
+I certainly would have, before yesterday :)
