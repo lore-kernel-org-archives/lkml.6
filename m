@@ -2,102 +2,94 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0BEC282CB
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 02:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A95DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C822184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 02:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED4B7218A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 03:10:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sRXu8Biv"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="eni2uIBU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfBFC4C (ORCPT
+        id S1727580AbfBFDKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 21:56:02 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:44029 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbfBFC4C (ORCPT
+        Tue, 5 Feb 2019 22:10:30 -0500
+Received: from mx.aristanetworks.com ([162.210.129.12]:20453 "EHLO
+        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725981AbfBFDKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 21:56:02 -0500
-Received: by mail-vk1-f194.google.com with SMTP id o130so1299767vke.10
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 18:56:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jyYa+dnct96MCe0p8mnyg6Kxz97EvONG5+L2aZOQX80=;
-        b=sRXu8BivgCfLOj+nH50X6ZXGL8LeOmWOzM9GI2gJFv57gpomJITjcl8tcw26fhsY5u
-         g7iCMDjiVdFvhgcjYSxORlIOtoDdqCRngCVK2elHE9x8xg2HIiuNZv3DoiCMqBmday5q
-         601upOIHJhg7C87s8Ri0zTZCULHaIqNZPI/KD2y91M70Sf+R5R9/foHd9pYFstAtOVtZ
-         nVjR7Ho9AX66WuBDFGgj+Y4MYCOHOF/sC6EzC0eJ2eqEGjYlSw1XZYg0EivRe5W+5oLB
-         n4/FixRv+1MozVrC2ZeTwZ5trTIuIR4w5B114rd9ktqLNH46ZZGAXqlxUmCYQTln2fLO
-         Ecfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jyYa+dnct96MCe0p8mnyg6Kxz97EvONG5+L2aZOQX80=;
-        b=ERejGP2Z2dePqROEhm2Y8v62MTAx1OAl1pihiekwjnYVtj7EzwO9hRd8eHQDKuWj1i
-         /nl7n6yN97tBjG9bB9m0DOHqbOLI75Kbg5pwGokOYOzYy+BpgPYa1Q+ye/w7hKyV+cRd
-         q7LMaAuJSJUdKAUOAdcEPIcUaOXTaBzawo8INNXryWaBTFs5Yi0sWdPpKeIzZogKHQMO
-         aOvDwGk7RBA6PeBmUNl4BFQan23di+8NjW0tEZ7p/ODxYp0N/ig4NgXzSxRMEd+AKVaw
-         SUS3sJggkvWC056fPqpbBATWLEQNbPpOwXZpTYZBAOLLfJr/+xvCX1WfHe+r3MD8BYaP
-         okKA==
-X-Gm-Message-State: AHQUAuYru1Gz7TZLfFnyhJEL/RHsxgMZzMIp9KvofL3NrtZvO902VQJb
-        CMf0PC4KHSLkiUj86kst8tNJdIexiIC8ztr6KBQ=
-X-Google-Smtp-Source: AHgI3IZOOpT6eO8jFMiJDNa9569DVkpgsIvE1qPHHPeNZ3H2QBUt+hsjUZLigDfkJu6flyrKXmdgAfcsxp1Sb2dCP7o=
-X-Received: by 2002:a1f:8784:: with SMTP id j126mr2325579vkd.84.1549421761186;
- Tue, 05 Feb 2019 18:56:01 -0800 (PST)
+        Tue, 5 Feb 2019 22:10:30 -0500
+Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 5AE91E05;
+        Tue,  5 Feb 2019 19:10:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1549422629;
+        bh=bGGPhGmbcYhx+29tLhYNeqoBW22IGCZWaAvPb0f9SBo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=eni2uIBUkQSWwV/ApwpUrgfns8VSmUxX60QikkMZ1X6038EwOda9NKQi+99/yyEdm
+         DzzBPvSo1ONaz5wV9fg7QNIv3mf8CGS354qNsaV6zYOOzSQRe6xHyujTog9wSPDhIh
+         AZELdTf+7Ie2zql6+7YRwcTt6xrRSS8EIlTxn3TxCScSlGnHmEFKvathT+VGUJiGMx
+         sPBBWqYqCpsBzA3ErjcAt2gZxMETW8aaKB16wx4zXinxUJnqsy7bx/64FqFnn0mY4H
+         /zmw4Raz1hpsHWePBZAkb6p43W95Ponxt/C8VVPNXYaHPQaRrUUkW56H0Q09y2sdlN
+         Axpwa/oOsYMMw==
+Received: from visor (unknown [172.20.208.17])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 4D8E0E01;
+        Tue,  5 Feb 2019 19:10:29 -0800 (PST)
+Date:   Tue, 5 Feb 2019 19:10:29 -0800
+From:   Ivan Delalande <colona@arista.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v2] exec: don't force_sigsegv processes with a pending
+ fatal signal
+Message-ID: <20190206031029.GB9368@visor>
+References: <20190205025308.GA24455@visor>
+ <20190205131119.3e388a0a1a69c0a041ed87ef@linux-foundation.org>
 MIME-Version: 1.0
-References: <20190131103022.10218-1-peterx@redhat.com> <20190131171106.GD19324@redhat.com>
- <3013350.qntrAZtlsQ@townsend>
-In-Reply-To: <3013350.qntrAZtlsQ@townsend>
-From:   Balbir Singh <bsingharora@gmail.com>
-Date:   Wed, 6 Feb 2019 13:55:49 +1100
-Message-ID: <CAKTCnzmC74fQ_NCGvvXY3sv--hp-C094jVy8JfCUYqwp_wcBAg@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/powernv/npu: Remove redundant change_pte() hook
-To:     Alistair Popple <alistair@popple.id.au>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205131119.3e388a0a1a69c0a041ed87ef@linux-foundation.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 2:52 PM Alistair Popple <alistair@popple.id.au> wrote:
->
-> On Thursday, 31 January 2019 12:11:06 PM AEDT Andrea Arcangeli wrote:
-> > On Thu, Jan 31, 2019 at 06:30:22PM +0800, Peter Xu wrote:
-> > > The change_pte() notifier was designed to use as a quick path to
-> > > update secondary MMU PTEs on write permission changes or PFN changes.
-> > > For KVM, it could reduce the vm-exits when vcpu faults on the pages
-> > > that was touched up by KSM.  It's not used to do cache invalidations,
-> > > for example, if we see the notifier will be called before the real PTE
-> > > update after all (please see set_pte_at_notify that set_pte_at was
-> > > called later).
->
-> Thanks for the fixup. I didn't realise that invalidate_range() always gets
-> called but I now see that is the case so this change looks good to me as well.
->
-> Reviewed-by: Alistair Popple <alistair@popple.id.au>
->
-I checked the three callers of set_pte_at_notify and the assumption
-seems correct
+On Tue, Feb 05, 2019 at 01:11:19PM -0800, Andrew Morton wrote:
+> On Mon, 4 Feb 2019 18:53:08 -0800 Ivan Delalande <colona@arista.com> wrote:
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -1660,7 +1660,12 @@ int search_binary_handler(struct linux_binprm *bprm)
+> >  		if (retval < 0 && !bprm->mm) {
+> >  			/* we got to flush_old_exec() and failed after it */
+> >  			read_unlock(&binfmt_lock);
+> > -			force_sigsegv(SIGSEGV, current);
+> > +			if (!fatal_signal_pending(current)) {
+> > +				if (print_fatal_signals)
+> > +					pr_info("load_binary() failed: %d\n",
+> > +						retval);
+> 
+> Should we be using print_fatal_signal() here?
 
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+I don't think so, the force_sigsegv() already ensures it will be called
+from get_signal() when the signal is handled, and so the process
+information will be printed then.
+
+> > +				force_sigsegv(SIGSEGV, current);
+> > +			}
+> >  			return retval;
+> >  		}
+> >  		if (retval != -ENOEXEC || !bprm->file) {
+
+
+Thanks,
+
+-- 
+Ivan Delalande
+Arista Networks
