@@ -2,151 +2,104 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2FBC4151A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5088AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57FA020823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479162;
-	bh=ykpzrW1iNH2hxE6ltJ1grjJMWh3PzyccGH5CPIYOak8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ypRK9hlICng5FqMGX3o3Ubf4Xtc6G7czLFuTRkpfnqx5lrbtqrUS94L4/a9AtQazM
-	 sYHaKTEnUe6t51uY3Ad2xjQvM9vOsbwH+MOjZ+SF4irgXQ8QFn4gCx/7dZBY6ZRQzM
-	 Al6Mb+YGAM3So8KL8nGyUPug7WC2fLnuTC3iWAwg=
+	by mail.kernel.org (Postfix) with ESMTP id 1DEB1218D9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:52:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UeDKl0Kc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfBFSwl (ORCPT
+        id S1727601AbfBFSwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:52:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727115AbfBFSvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:51:49 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E676206DD;
-        Wed,  6 Feb 2019 18:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479109;
-        bh=ykpzrW1iNH2hxE6ltJ1grjJMWh3PzyccGH5CPIYOak8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xrAgH59MeYtDE6iUORoSJKLOSU6HQ1kgOqKn4uuSxSrIOO+3qsfJhGsV783Df/Kpr
-         JE5dRlwvQW6Jy4V/1VtOT+gcy3aG26ApBkyxZ2cq02G1KmuTN68PVnA6sssQppY0CX
-         7iQ7BBvPH7gRSk5Nt0l1mAKZgiYSEEi08RqZOHvQ=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 47/53] perf thread-stack: Tidy thread_stack__no_call_return() by adding more local variables
-Date:   Wed,  6 Feb 2019 15:48:57 -0300
-Message-Id: <20190206184903.24054-48-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
-References: <20190206184903.24054-1-acme@kernel.org>
+        Wed, 6 Feb 2019 13:52:39 -0500
+Received: from mail-pl1-f172.google.com ([209.85.214.172]:46324 "EHLO
+        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfBFSwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:52:35 -0500
+Received: by mail-pl1-f172.google.com with SMTP id o6so3480865pls.13
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 10:52:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7kkFe7VdBrYTS6xqWBGiPDeMMQbpDhl/VS6LUReyUBQ=;
+        b=UeDKl0KcK9Kh84HZYa+Kne8AvZDEZqJjKRI+db+e6qNigCbKK9k11LicvJ+v6NwMTL
+         ikRkpAlhvpX+VwaJ5A5gEjhJJXGFoq3jYEi61RKLq4bHORjLX84v80uvJkRxuk3lIuPg
+         qFRlyaK6OFtCH5ONOXEE/30mb9WgiDfve0J3SRETcJD0rNpKRgy1TX2J5tsyhLk0h0VD
+         E7PqtsWopoi/2QtU/oSqwAPBSJKr25LnINrMPtLfGvojjf3wUW76x/pbiHk+Ro2ikOTW
+         J5/jh+VVhlV11sOMR+jf+9CM9/YgCQWiKt4POuKeRh6GzUWk0/q9DXC6VSo2sjfDS0zZ
+         pBDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7kkFe7VdBrYTS6xqWBGiPDeMMQbpDhl/VS6LUReyUBQ=;
+        b=N5HIG14gh+zabYPWL+n0zZuWhCkP9d21oF2C59VT7QwWlC6w11xKkDSdN91J37kh+G
+         9qkW2kjxKcmTcE6+Yi482cOhg85LQv3fK2QPiqz6eOs0voiqXHgauqNSMaNatWAM2zkC
+         zaByZfKuaeV+4JCGQG9migRqPDTaoHD5CAq8UQ1NjSy6+vhrskJwNanQllV6ypeGd5a8
+         bM2VjrmCMCaiQsNQPWXE7drQQ9ciCYHk+jllGM2Pci8ksVfk1ps2WASFSSmZ+i5ds1tK
+         6GbKsz7pYHQVGIvG7gnwsg2Oj9UoHIVE6i/8v1EQheGE/smjVB3Dxp2bkFBUd/qXaswk
+         Mk5A==
+X-Gm-Message-State: AHQUAuYdMgnbqPzn0haltYxkZJA5HvazCdu51oM/4qUI16yj9mEYxEwH
+        uR7k3l0eQatcAvT1g9SNu9tiAm0XCDg=
+X-Google-Smtp-Source: AHgI3IatX2FVUNy8ZnyYH2Fw5fpeSFfpCk+VVQB6B+D6cnVwuZwhknf53tZzWm/cIRrvMjAPeVeTaw==
+X-Received: by 2002:a17:902:8497:: with SMTP id c23mr12071867plo.64.1549479155012;
+        Wed, 06 Feb 2019 10:52:35 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id 64sm9553472pff.101.2019.02.06.10.52.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 10:52:34 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1grSJF-0004c2-Pk; Wed, 06 Feb 2019 11:52:33 -0700
+Date:   Wed, 6 Feb 2019 11:52:33 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206185233.GE12227@ziepe.ca>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz>
+ <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <20190206183503.GO21860@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206183503.GO21860@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+On Wed, Feb 06, 2019 at 10:35:04AM -0800, Matthew Wilcox wrote:
 
-Make thread_stack__no_call_return() more readable by adding more local
-variables.
+> > Admittedly, I'm coming in late to this conversation, but did I miss the
+> > portion where that alternative was ruled out?
+> 
+> That's my preferred option too, but the preponderance of opinion leans
+> towards "We can't give people a way to make files un-truncatable".
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20190109091835.5570-4-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/thread-stack.c | 35 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+I haven't heard an explanation why blocking ftruncate is worse than
+giving people a way to break RDMA using process by calling ftruncate??
 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index 93ba3ab6a602..7f8eff018c16 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -591,34 +591,36 @@ static int thread_stack__no_call_return(struct thread *thread,
- 					struct addr_location *to_al, u64 ref)
- {
- 	struct call_path_root *cpr = ts->crp->cpr;
-+	struct call_path *root = &cpr->call_path;
-+	struct symbol *fsym = from_al->sym;
-+	struct symbol *tsym = to_al->sym;
- 	struct call_path *cp, *parent;
- 	u64 ks = ts->kernel_start;
-+	u64 addr = sample->addr;
-+	u64 tm = sample->time;
-+	u64 ip = sample->ip;
- 	int err;
- 
--	if (sample->ip >= ks && sample->addr < ks) {
-+	if (ip >= ks && addr < ks) {
- 		/* Return to userspace, so pop all kernel addresses */
- 		while (thread_stack__in_kernel(ts)) {
- 			err = thread_stack__call_return(thread, ts, --ts->cnt,
--							sample->time, ref,
--							true);
-+							tm, ref, true);
- 			if (err)
- 				return err;
- 		}
- 
- 		/* If the stack is empty, push the userspace address */
- 		if (!ts->cnt) {
--			cp = call_path__findnew(cpr, &cpr->call_path,
--						to_al->sym, sample->addr,
--						ts->kernel_start);
--			return thread_stack__push_cp(ts, 0, sample->time, ref,
--						     cp, true, false);
-+			cp = call_path__findnew(cpr, root, tsym, addr, ks);
-+			return thread_stack__push_cp(ts, 0, tm, ref, cp, true,
-+						     false);
- 		}
--	} else if (thread_stack__in_kernel(ts) && sample->ip < ks) {
-+	} else if (thread_stack__in_kernel(ts) && ip < ks) {
- 		/* Return to userspace, so pop all kernel addresses */
- 		while (thread_stack__in_kernel(ts)) {
- 			err = thread_stack__call_return(thread, ts, --ts->cnt,
--							sample->time, ref,
--							true);
-+							tm, ref, true);
- 			if (err)
- 				return err;
- 		}
-@@ -627,19 +629,16 @@ static int thread_stack__no_call_return(struct thread *thread,
- 	if (ts->cnt)
- 		parent = ts->stack[ts->cnt - 1].cp;
- 	else
--		parent = &cpr->call_path;
-+		parent = root;
- 
- 	/* This 'return' had no 'call', so push and pop top of stack */
--	cp = call_path__findnew(cpr, parent, from_al->sym, sample->ip,
--				ts->kernel_start);
-+	cp = call_path__findnew(cpr, parent, fsym, ip, ks);
- 
--	err = thread_stack__push_cp(ts, sample->addr, sample->time, ref, cp,
--				    true, false);
-+	err = thread_stack__push_cp(ts, addr, tm, ref, cp, true, false);
- 	if (err)
- 		return err;
- 
--	return thread_stack__pop_cp(thread, ts, sample->addr, sample->time, ref,
--				    to_al->sym);
-+	return thread_stack__pop_cp(thread, ts, addr, tm, ref, tsym);
- }
- 
- static int thread_stack__trace_begin(struct thread *thread,
--- 
-2.20.1
+Isn't it exactly the same argument the other way?
 
+Jason
