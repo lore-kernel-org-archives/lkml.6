@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1D0C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D84C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF7720844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A23FF20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730946AbfBFNTe (ORCPT
+        id S1730933AbfBFNTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:19:34 -0500
-Received: from mga07.intel.com ([134.134.136.100]:28027 "EHLO mga07.intel.com"
+        Wed, 6 Feb 2019 08:19:33 -0500
+Received: from mga03.intel.com ([134.134.136.65]:26754 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730604AbfBFNRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:17:48 -0500
+        id S1730611AbfBFNRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:17:49 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:48 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:48 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="318109350"
+   d="scan'208";a="136336033"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Feb 2019 05:17:45 -0800
+  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 05:17:45 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 786009A3; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
+        id 96F9DA23; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Michael Jamet <michael.jamet@intel.com>,
@@ -40,9 +40,9 @@ Cc:     Michael Jamet <michael.jamet@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         netdev@vger.kernel.org
-Subject: [PATCH v2 23/28] thunderbolt: Add XDomain UUID exchange support
-Date:   Wed,  6 Feb 2019 16:17:33 +0300
-Message-Id: <20190206131738.43696-24-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 26/28] thunderbolt: Add support for XDomain connections
+Date:   Wed,  6 Feb 2019 16:17:36 +0300
+Message-Id: <20190206131738.43696-27-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
@@ -53,298 +53,261 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently ICM has been handling XDomain UUID exchange so there was no
-need to have it in the driver yet. However, since now we are going to
-add the same capabilities to the software connection manager it needs to
-be handled properly.
-
-For this reason modify the driver XDomain protocol handling so that if
-the remote domain UUID is not filled in the core will query it first and
-only then start the normal property exchange flow.
+Two domains (hosts) can be connected through a Thunderbolt cable and in
+that case they can start software services such as networking over the
+high-speed DMA paths. Now that we have all the basic building blocks in
+place to create DMA tunnels over the Thunderbolt fabric we can add this
+support to the software connection manager as well.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/tb_msgs.h |  11 +++
- drivers/thunderbolt/xdomain.c | 136 +++++++++++++++++++++++++++++++---
- include/linux/thunderbolt.h   |   8 ++
- 3 files changed, 145 insertions(+), 10 deletions(-)
+ drivers/thunderbolt/switch.c |  29 ++++++--
+ drivers/thunderbolt/tb.c     | 131 ++++++++++++++++++++++++++++++++++-
+ 2 files changed, 153 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/thunderbolt/tb_msgs.h b/drivers/thunderbolt/tb_msgs.h
-index 02c84aa3d018..afbe1d29bb03 100644
---- a/drivers/thunderbolt/tb_msgs.h
-+++ b/drivers/thunderbolt/tb_msgs.h
-@@ -492,6 +492,17 @@ struct tb_xdp_header {
- 	u32 type;
- };
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index ba7dfce0b96f..79391c3d834e 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -1885,6 +1885,17 @@ int tb_switch_resume(struct tb_switch *sw)
+ 	if (tb_route(sw)) {
+ 		u64 uid;
  
-+struct tb_xdp_uuid {
-+	struct tb_xdp_header hdr;
-+};
++		/*
++		 * Check first that we can still read the switch config
++		 * space. It may be that there is now another domain
++		 * connected.
++		 */
++		err = tb_cfg_get_upstream_port(sw->tb->ctl, tb_route(sw));
++		if (err < 0) {
++			tb_sw_info(sw, "switch not present anymore\n");
++			return err;
++		}
 +
-+struct tb_xdp_uuid_response {
-+	struct tb_xdp_header hdr;
-+	uuid_t src_uuid;
-+	u32 src_route_hi;
-+	u32 src_route_lo;
-+};
+ 		err = tb_drom_read_uid_only(sw, &uid);
+ 		if (err) {
+ 			tb_sw_warn(sw, "uid read failed\n");
+@@ -1916,13 +1927,23 @@ int tb_switch_resume(struct tb_switch *sw)
+ 		struct tb_port *port = &sw->ports[i];
+ 		if (tb_is_upstream_port(port))
+ 			continue;
+-		if (!port->remote)
 +
- struct tb_xdp_properties {
- 	struct tb_xdp_header hdr;
- 	uuid_t src_uuid;
-diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
-index 59789bdd93ac..7aa8b9da78c1 100644
---- a/drivers/thunderbolt/xdomain.c
-+++ b/drivers/thunderbolt/xdomain.c
-@@ -18,6 +18,7 @@
- #include "tb.h"
- 
- #define XDOMAIN_DEFAULT_TIMEOUT			5000 /* ms */
-+#define XDOMAIN_UUID_RETRIES			10
- #define XDOMAIN_PROPERTIES_RETRIES		60
- #define XDOMAIN_PROPERTIES_CHANGED_RETRIES	10
- 
-@@ -222,6 +223,50 @@ static int tb_xdp_handle_error(const struct tb_xdp_header *hdr)
++		if (!port->remote && !port->xdomain)
+ 			continue;
+-		if (tb_wait_for_port(port, true) <= 0
+-			|| tb_switch_resume(port->remote->sw)) {
++
++		if (tb_wait_for_port(port, true) <= 0) {
+ 			tb_port_warn(port,
+ 				     "lost during suspend, disconnecting\n");
+-			tb_sw_set_unplugged(port->remote->sw);
++			if (port->remote)
++				tb_sw_set_unplugged(port->remote->sw);
++			else if (port->xdomain)
++				port->xdomain->is_unplugged = true;
++		} else if (port->remote) {
++			if (tb_switch_resume(port->remote->sw)) {
++				tb_port_warn(port,
++					     "lost during suspend, disconnecting\n");
++				tb_sw_set_unplugged(port->remote->sw);
++			}
+ 		}
+ 	}
  	return 0;
+diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
+index 65a206f01941..94dd1fd12967 100644
+--- a/drivers/thunderbolt/tb.c
++++ b/drivers/thunderbolt/tb.c
+@@ -111,6 +111,28 @@ static void tb_switch_authorize(struct work_struct *work)
+ 	mutex_unlock(&sw->tb->lock);
  }
  
-+static int tb_xdp_uuid_request(struct tb_ctl *ctl, u64 route, int retry,
-+			       uuid_t *uuid)
++static void tb_scan_xdomain(struct tb_port *port)
 +{
-+	struct tb_xdp_uuid_response res;
-+	struct tb_xdp_uuid req;
-+	int ret;
++	struct tb_switch *sw = port->sw;
++	struct tb *tb = sw->tb;
++	struct tb_xdomain *xd;
++	u64 route;
 +
-+	memset(&req, 0, sizeof(req));
-+	tb_xdp_fill_header(&req.hdr, route, retry % 4, UUID_REQUEST,
-+			   sizeof(req));
++	route = tb_downstream_route(port);
++	xd = tb_xdomain_find_by_route(tb, route);
++	if (xd) {
++		tb_xdomain_put(xd);
++		return;
++	}
 +
-+	memset(&res, 0, sizeof(res));
-+	ret = __tb_xdomain_request(ctl, &req, sizeof(req),
-+				   TB_CFG_PKG_XDOMAIN_REQ, &res, sizeof(res),
-+				   TB_CFG_PKG_XDOMAIN_RESP,
-+				   XDOMAIN_DEFAULT_TIMEOUT);
-+	if (ret)
-+		return ret;
++	xd = tb_xdomain_alloc(tb, &sw->dev, route, tb->root_switch->uuid,
++			      NULL);
++	if (xd) {
++		tb_port_at(route, sw)->xdomain = xd;
++		tb_xdomain_add(xd);
++	}
++}
 +
-+	ret = tb_xdp_handle_error(&res.hdr);
-+	if (ret)
-+		return ret;
+ static void tb_scan_port(struct tb_port *port);
+ 
+ /**
+@@ -150,19 +172,36 @@ static void tb_scan_port(struct tb_port *port)
+ 	if (tb_wait_for_port(port, false) <= 0)
+ 		return;
+ 	if (port->remote) {
+-		tb_port_WARN(port, "port already has a remote!\n");
++		tb_port_dbg(port, "port already has a remote\n");
+ 		return;
+ 	}
+ 	sw = tb_switch_alloc(port->sw->tb, &port->sw->dev,
+ 			     tb_downstream_route(port));
+-	if (IS_ERR(sw))
++	if (IS_ERR(sw)) {
++		/*
++		 * If there is an error accessing the connected switch
++		 * it may be connected to another domain. Also we allow
++		 * the other domain to be connected to a max depth switch.
++		 */
++		if (PTR_ERR(sw) == -EIO || PTR_ERR(sw) == -EADDRNOTAVAIL)
++			tb_scan_xdomain(port);
+ 		return;
++	}
+ 
+ 	if (tb_switch_configure(sw)) {
+ 		tb_switch_put(sw);
+ 		return;
+ 	}
+ 
++	/*
++	 * If there was previously another domain connected remove it
++	 * first.
++	 */
++	if (port->xdomain) {
++		tb_xdomain_remove(port->xdomain);
++		port->xdomain = NULL;
++	}
 +
-+	uuid_copy(uuid, &res.src_uuid);
+ 	/*
+ 	 * Do not send uevents until we have discovered all existing
+ 	 * tunnels and know which switches were authorized already by
+@@ -377,6 +416,51 @@ static int tb_approve_switch(struct tb *tb, struct tb_switch *sw)
+ 	return tb_tunnel_pci(tb, sw);
+ }
+ 
++static int tb_approve_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
++{
++	struct tb_cm *tcm = tb_priv(tb);
++	struct tb_port *nhi_port, *dst_port;
++	struct tb_tunnel *tunnel;
++	struct tb_switch *sw;
++
++	sw = tb_to_switch(xd->dev.parent);
++	dst_port = tb_port_at(xd->route, sw);
++	nhi_port = tb_find_port(tb->root_switch, TB_TYPE_NHI);
++
++	tunnel = tb_tunnel_alloc_dma(tb, nhi_port, dst_port, xd->transmit_ring,
++				     xd->transmit_path, xd->receive_ring,
++				     xd->receive_path);
++	if (!tunnel)
++		return -ENOMEM;
++
++	if (tb_tunnel_activate(tunnel)) {
++		tb_port_info(nhi_port,
++			     "DMA tunnel activation failed, aborting\n");
++		tb_tunnel_free(tunnel);
++		return -EIO;
++	}
++	list_add_tail(&tunnel->list, &tcm->tunnel_list);
++
 +	return 0;
 +}
 +
-+static int tb_xdp_uuid_response(struct tb_ctl *ctl, u64 route, u8 sequence,
-+				const uuid_t *uuid)
++static int tb_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd)
 +{
-+	struct tb_xdp_uuid_response res;
++	struct tb_port *dst_port;
++	struct tb_switch *sw;
 +
-+	memset(&res, 0, sizeof(res));
-+	tb_xdp_fill_header(&res.hdr, route, sequence, UUID_RESPONSE,
-+			   sizeof(res));
-+
-+	uuid_copy(&res.src_uuid, uuid);
-+	res.src_route_hi = upper_32_bits(route);
-+	res.src_route_lo = lower_32_bits(route);
-+
-+	return __tb_xdomain_response(ctl, &res, sizeof(res),
-+				     TB_CFG_PKG_XDOMAIN_RESP);
-+}
-+
- static int tb_xdp_error_response(struct tb_ctl *ctl, u64 route, u8 sequence,
- 				 enum tb_xdp_error error)
- {
-@@ -512,7 +557,14 @@ static void tb_xdp_handle_request(struct work_struct *work)
- 		break;
- 	}
- 
-+	case UUID_REQUEST_OLD:
-+	case UUID_REQUEST:
-+		ret = tb_xdp_uuid_response(ctl, route, sequence, uuid);
-+		break;
-+
- 	default:
-+		tb_xdp_error_response(ctl, route, sequence,
-+				      ERROR_NOT_SUPPORTED);
- 		break;
- 	}
- 
-@@ -828,6 +880,55 @@ static void tb_xdomain_restore_paths(struct tb_xdomain *xd)
- 	}
- }
- 
-+static void tb_xdomain_get_uuid(struct work_struct *work)
-+{
-+	struct tb_xdomain *xd = container_of(work, typeof(*xd),
-+					     get_uuid_work.work);
-+	struct tb *tb = xd->tb;
-+	uuid_t uuid;
-+	int ret;
-+
-+	ret = tb_xdp_uuid_request(tb->ctl, xd->route, xd->uuid_retries, &uuid);
-+	if (ret < 0) {
-+		if (xd->uuid_retries-- > 0) {
-+			queue_delayed_work(xd->tb->wq, &xd->get_uuid_work,
-+					   msecs_to_jiffies(100));
-+		} else {
-+			dev_dbg(&xd->dev, "failed to read remote UUID\n");
-+		}
-+		return;
-+	}
-+
-+	if (uuid_equal(&uuid, xd->local_uuid)) {
-+		dev_dbg(&xd->dev, "intra-domain loop detected\n");
-+		return;
-+	}
++	sw = tb_to_switch(xd->dev.parent);
++	dst_port = tb_port_at(xd->route, sw);
 +
 +	/*
-+	 * If the UUID is different, there is another domain connected
-+	 * so mark this one unplugged and wait for the connection
-+	 * manager to replace it.
++	 * It is possible that the tunnel was already teared down (in
++	 * case of cable disconnect) so it is fine if we cannot find it
++	 * here anymore.
 +	 */
-+	if (xd->remote_uuid && !uuid_equal(&uuid, xd->remote_uuid)) {
-+		dev_dbg(&xd->dev, "remote UUID is different, unplugging\n");
-+		xd->is_unplugged = true;
-+		return;
-+	}
-+
-+	/* First time fill in the missing UUID */
-+	if (!xd->remote_uuid) {
-+		xd->remote_uuid = kmemdup(&uuid, sizeof(uuid_t), GFP_KERNEL);
-+		if (!xd->remote_uuid)
-+			return;
-+	}
-+
-+	/* Now we can start the normal properties exchange */
-+	queue_delayed_work(xd->tb->wq, &xd->properties_changed_work,
-+			   msecs_to_jiffies(100));
-+	queue_delayed_work(xd->tb->wq, &xd->get_properties_work,
-+			   msecs_to_jiffies(1000));
++	tb_free_tunnel(tb, TB_TUNNEL_DMA, NULL, dst_port);
++	return 0;
 +}
 +
- static void tb_xdomain_get_properties(struct work_struct *work)
- {
- 	struct tb_xdomain *xd = container_of(work, typeof(*xd),
-@@ -1034,21 +1135,29 @@ static void tb_xdomain_release(struct device *dev)
+ /* hotplug handling */
  
- static void start_handshake(struct tb_xdomain *xd)
- {
-+	xd->uuid_retries = XDOMAIN_UUID_RETRIES;
- 	xd->properties_retries = XDOMAIN_PROPERTIES_RETRIES;
- 	xd->properties_changed_retries = XDOMAIN_PROPERTIES_CHANGED_RETRIES;
- 
--	/* Start exchanging properties with the other host */
--	queue_delayed_work(xd->tb->wq, &xd->properties_changed_work,
--			   msecs_to_jiffies(100));
--	queue_delayed_work(xd->tb->wq, &xd->get_properties_work,
--			   msecs_to_jiffies(1000));
-+	if (xd->needs_uuid) {
-+		queue_delayed_work(xd->tb->wq, &xd->get_uuid_work,
-+				   msecs_to_jiffies(100));
-+	} else {
-+		/* Start exchanging properties with the other host */
-+		queue_delayed_work(xd->tb->wq, &xd->properties_changed_work,
-+				   msecs_to_jiffies(100));
-+		queue_delayed_work(xd->tb->wq, &xd->get_properties_work,
-+				   msecs_to_jiffies(1000));
-+	}
+ /**
+@@ -417,12 +501,16 @@ static void tb_handle_hotplug(struct work_struct *work)
+ 	}
+ 	if (ev->unplug) {
+ 		if (port->remote) {
+-			tb_port_info(port, "unplugged\n");
++			tb_port_dbg(port, "switch unplugged\n");
+ 			tb_sw_set_unplugged(port->remote->sw);
+ 			tb_free_invalid_tunnels(tb);
+ 			cancel_work_sync(&sw->work);
+ 			tb_switch_remove(port->remote->sw);
+ 			port->remote = NULL;
++		} else if (port->xdomain) {
++			tb_port_dbg(port, "xdomain unplugged\n");
++			tb_xdomain_remove(port->xdomain);
++			port->xdomain = NULL;
+ 		} else if (tb_port_is_dpout(port)) {
+ 			tb_teardown_dp(tb, port);
+ 		} else {
+@@ -594,13 +682,50 @@ static int tb_resume_noirq(struct tb *tb)
+ 	return 0;
  }
  
- static void stop_handshake(struct tb_xdomain *xd)
- {
-+	xd->uuid_retries = 0;
- 	xd->properties_retries = 0;
- 	xd->properties_changed_retries = 0;
- 
-+	cancel_delayed_work_sync(&xd->get_uuid_work);
- 	cancel_delayed_work_sync(&xd->get_properties_work);
- 	cancel_delayed_work_sync(&xd->properties_changed_work);
- }
-@@ -1091,7 +1200,7 @@ EXPORT_SYMBOL_GPL(tb_xdomain_type);
-  *	    other domain is reached).
-  * @route: Route string used to reach the other domain
-  * @local_uuid: Our local domain UUID
-- * @remote_uuid: UUID of the other domain
-+ * @remote_uuid: UUID of the other domain (optional)
-  *
-  * Allocates new XDomain structure and returns pointer to that. The
-  * object must be released by calling tb_xdomain_put().
-@@ -1110,6 +1219,7 @@ struct tb_xdomain *tb_xdomain_alloc(struct tb *tb, struct device *parent,
- 	xd->route = route;
- 	ida_init(&xd->service_ids);
- 	mutex_init(&xd->lock);
-+	INIT_DELAYED_WORK(&xd->get_uuid_work, tb_xdomain_get_uuid);
- 	INIT_DELAYED_WORK(&xd->get_properties_work, tb_xdomain_get_properties);
- 	INIT_DELAYED_WORK(&xd->properties_changed_work,
- 			  tb_xdomain_properties_changed);
-@@ -1118,9 +1228,14 @@ struct tb_xdomain *tb_xdomain_alloc(struct tb *tb, struct device *parent,
- 	if (!xd->local_uuid)
- 		goto err_free;
- 
--	xd->remote_uuid = kmemdup(remote_uuid, sizeof(uuid_t), GFP_KERNEL);
--	if (!xd->remote_uuid)
--		goto err_free_local_uuid;
-+	if (remote_uuid) {
-+		xd->remote_uuid = kmemdup(remote_uuid, sizeof(uuid_t),
-+					  GFP_KERNEL);
-+		if (!xd->remote_uuid)
-+			goto err_free_local_uuid;
-+	} else {
-+		xd->needs_uuid = true;
++static int tb_free_unplugged_xdomains(struct tb_switch *sw)
++{
++	int i, ret = 0;
++
++	for (i = 1; i <= sw->config.max_port_number; i++) {
++		struct tb_port *port = &sw->ports[i];
++
++		if (tb_is_upstream_port(port))
++			continue;
++		if (port->xdomain && port->xdomain->is_unplugged) {
++			tb_xdomain_remove(port->xdomain);
++			port->xdomain = NULL;
++			ret++;
++		} else if (port->remote) {
++			ret += tb_free_unplugged_xdomains(port->remote->sw);
++		}
 +	}
++
++	return ret;
++}
++
++static void tb_complete(struct tb *tb)
++{
++	/*
++	 * Release any unplugged XDomains and if there is a case where
++	 * another domain is swapped in place of unplugged XDomain we
++	 * need to run another rescan.
++	 */
++	mutex_lock(&tb->lock);
++	if (tb_free_unplugged_xdomains(tb->root_switch))
++		tb_scan_switch(tb->root_switch);
++	mutex_unlock(&tb->lock);
++}
++
+ static const struct tb_cm_ops tb_cm_ops = {
+ 	.start = tb_start,
+ 	.stop = tb_stop,
+ 	.suspend_noirq = tb_suspend_noirq,
+ 	.resume_noirq = tb_resume_noirq,
++	.complete = tb_complete,
+ 	.handle_event = tb_handle_event,
+ 	.approve_switch = tb_approve_switch,
++	.approve_xdomain_paths = tb_approve_xdomain_paths,
++	.disconnect_xdomain_paths = tb_disconnect_xdomain_paths,
+ };
  
- 	device_initialize(&xd->dev);
- 	xd->dev.parent = get_device(parent);
-@@ -1291,7 +1406,8 @@ static struct tb_xdomain *switch_find_xdomain(struct tb_switch *sw,
- 			xd = port->xdomain;
- 
- 			if (lookup->uuid) {
--				if (uuid_equal(xd->remote_uuid, lookup->uuid))
-+				if (xd->remote_uuid &&
-+				    uuid_equal(xd->remote_uuid, lookup->uuid))
- 					return xd;
- 			} else if (lookup->link &&
- 				   lookup->link == xd->link &&
-diff --git a/include/linux/thunderbolt.h b/include/linux/thunderbolt.h
-index bf6ec83e60ee..2d7e012db03f 100644
---- a/include/linux/thunderbolt.h
-+++ b/include/linux/thunderbolt.h
-@@ -181,6 +181,8 @@ void tb_unregister_property_dir(const char *key, struct tb_property_dir *dir);
-  * @device_name: Name of the device (or %NULL if not known)
-  * @is_unplugged: The XDomain is unplugged
-  * @resume: The XDomain is being resumed
-+ * @needs_uuid: If the XDomain does not have @remote_uuid it will be
-+ *		queried first
-  * @transmit_path: HopID which the remote end expects us to transmit
-  * @transmit_ring: Local ring (hop) where outgoing packets are pushed
-  * @receive_path: HopID which we expect the remote end to transmit
-@@ -189,6 +191,9 @@ void tb_unregister_property_dir(const char *key, struct tb_property_dir *dir);
-  * @properties: Properties exported by the remote domain
-  * @property_block_gen: Generation of @properties
-  * @properties_lock: Lock protecting @properties.
-+ * @get_uuid_work: Work used to retrieve @remote_uuid
-+ * @uuid_retries: Number of times left @remote_uuid is requested before
-+ *		  giving up
-  * @get_properties_work: Work used to get remote domain properties
-  * @properties_retries: Number of times left to read properties
-  * @properties_changed_work: Work used to notify the remote domain that
-@@ -220,6 +225,7 @@ struct tb_xdomain {
- 	const char *device_name;
- 	bool is_unplugged;
- 	bool resume;
-+	bool needs_uuid;
- 	u16 transmit_path;
- 	u16 transmit_ring;
- 	u16 receive_path;
-@@ -227,6 +233,8 @@ struct tb_xdomain {
- 	struct ida service_ids;
- 	struct tb_property_dir *properties;
- 	u32 property_block_gen;
-+	struct delayed_work get_uuid_work;
-+	int uuid_retries;
- 	struct delayed_work get_properties_work;
- 	int properties_retries;
- 	struct delayed_work properties_changed_work;
+ struct tb *tb_probe(struct tb_nhi *nhi)
 -- 
 2.20.1
 
