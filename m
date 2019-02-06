@@ -2,127 +2,104 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA74C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6011C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E8E62081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9504A2175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:01:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5VTA7OW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbfBFL6Y (ORCPT
+        id S1729543AbfBFMBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 06:58:24 -0500
-Received: from ozlabs.org ([203.11.71.1]:36889 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfBFL6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 06:58:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43vg240LDFz9sLw;
-        Wed,  6 Feb 2019 22:58:20 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>, davem@davemloft.net,
-        linux-kernel@vger.kernel.org
-Cc:     netdev@vger.kernel.org, arnd@arndb.de, y2038@lists.linaro.org,
-        ccaulfie@redhat.com, deller@gmx.de, paulus@samba.org,
-        ralf@linux-mips.org, rth@twiddle.net, cluster-devel@redhat.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH net-next v5 11/12] socket: Rename SO_RCVTIMEO/ SO_SNDTIMEO with _OLD suffixes
-In-Reply-To: <20190202153454.7121-12-deepa.kernel@gmail.com>
-References: <20190202153454.7121-1-deepa.kernel@gmail.com> <20190202153454.7121-12-deepa.kernel@gmail.com>
-Date:   Wed, 06 Feb 2019 22:58:18 +1100
-Message-ID: <87o97pku1x.fsf@concordia.ellerman.id.au>
+        Wed, 6 Feb 2019 07:01:31 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38085 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbfBFMBb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 07:01:31 -0500
+Received: by mail-lf1-f65.google.com with SMTP id j15so5136842lfh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 04:01:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=alQXlRABZxGsBwyXN8vJmrW9qOB/AJZRlxeH7KjpRAs=;
+        b=c5VTA7OWNNhUafU+dzUvFsl6/6LiMsQ6mov+mvu7UpfnE5xStimzn754fhXpfUFA3R
+         WDnmoF0n+mzGq/FAQ+dBbIcd4RcXT6ehMjFzg8PbDqRqQb00DloN1ci1rQd3o2i889vx
+         82YehowXfXpf/dZkmE7oJX3ScJZ38sbJ1etwQtGG/NBa1cReZdQ7SS/cJkFHLP/7knjP
+         7sBQgPHphzOCNxIpCbc3uFBD4TGSdCWzEilmjg3M0RtlZ/MYdDgfGvI0PH9PV4yxAhJ4
+         qz8wFG7V+6APZYrV8n7reNIoibnVr/NXq7H8I2owB8BfE+15vy449eKxqdR9XTeml0+Y
+         8Ycw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=alQXlRABZxGsBwyXN8vJmrW9qOB/AJZRlxeH7KjpRAs=;
+        b=km3CdhyjNufVYfKARso7Zz3EWlJgrvf1GSluvqBvTDbxQVm/OI8TB+7Mr/AMEtVvRm
+         P4tKC+NA0+jvz8vzbau9VRNtQkXiDhXhEpohTyAouWfowdHOJQqgxpOcvbjSb1uHPGPY
+         IrDSdwZOYqP3KqPvdEaexD4CGZeCDw2SGONiNOcV5y0BtmuLSSvHczouehjf4mQ4LhR1
+         FCm1f+rANBoLI06h/j9iz2OZY3kK//FZIeT+cn4rfPGulk8T3ZIU86FxfuTfqUxYRsyC
+         VxasxG9B6QX1QfcfS3lAptnv15hJGfsbvyROHGDFrV+kLO7jQqbV8Dp/3IyFh4EGEjuT
+         S+Tw==
+X-Gm-Message-State: AHQUAuZje2vKFiOgUtmQBlQLIgnqZF0yzCVakMw3WYJMYo86gzpUojvc
+        4yYJESh9cSUpiJrko0p9tD9nBPW26OzTG/4+thOYpg==
+X-Google-Smtp-Source: AHgI3IZhDc4i7yy8Qm8fl3g6Cw1dB4dQS9WhhuTZPQufaiZmVzXEgSGYkRP7QIAybe7aMzbHG+FlGswYdfqgu8M/Fn0=
+X-Received: by 2002:a19:9a08:: with SMTP id c8mr6283085lfe.8.1549454488940;
+ Wed, 06 Feb 2019 04:01:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190125162302.14036-1-masneyb@onstation.org> <20190125162302.14036-2-masneyb@onstation.org>
+In-Reply-To: <20190125162302.14036-2-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 6 Feb 2019 13:01:15 +0100
+Message-ID: <CACRpkdb=xsWG+x6pQZYrnpubAiOEx7Bs-puhKMZcQPuvxjX5gw@mail.gmail.com>
+Subject: Re: [PATCH 1/9] pinctrl: qcom: ssbi-gpio: hardcode IRQ counts
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deepa Dinamani <deepa.kernel@gmail.com> writes:
+Hi Brian!
 
-> SO_RCVTIMEO and SO_SNDTIMEO socket options use struct timeval
-> as the time format. struct timeval is not y2038 safe.
-> The subsequent patches in the series add support for new socket
-> timeout options with _NEW suffix that will use y2038 safe
-> data structures. Although the existing struct timeval layout
-> is sufficiently wide to represent timeouts, because of the way
-> libc will interpret time_t based on user defined flag, these
-> new flags provide a way of having a structure that is the same
-> for all architectures consistently.
-> Rename the existing options with _OLD suffix forms so that the
-> right option is enabled for userspace applications according
-> to the architecture and time_t definition of libc.
->
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Acked-by: Willem de Bruijn <willemb@google.com>
-> Cc: ccaulfie@redhat.com
-> Cc: deller@gmx.de
-> Cc: paulus@samba.org
-> Cc: ralf@linux-mips.org
-> Cc: rth@twiddle.net
-> Cc: cluster-devel@redhat.com
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-alpha@vger.kernel.org
-> Cc: linux-arch@vger.kernel.org
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-parisc@vger.kernel.org
-> Cc: sparclinux@vger.kernel.org
-> ---
->  arch/alpha/include/uapi/asm/socket.h   | 7 +++++--
->  arch/mips/include/uapi/asm/socket.h    | 6 ++++--
->  arch/parisc/include/uapi/asm/socket.h  | 6 ++++--
->  arch/powerpc/include/uapi/asm/socket.h | 4 ++--
+I found a second bug in this patch:
 
-The powerpc changes look OK to me.
+On Fri, Jan 25, 2019 at 5:23 PM Brian Masney <masneyb@onstation.org> wrote:
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> -       npins = platform_irq_count(pdev);
+(...)
+> -       pctrl->npins = npins;
 
-cheers
+Do not lose this assignment of pctrl->npins.
 
-> diff --git a/arch/powerpc/include/uapi/asm/socket.h b/arch/powerpc/include/uapi/asm/socket.h
-> index 94de465e0920..12aa0c43e775 100644
-> --- a/arch/powerpc/include/uapi/asm/socket.h
-> +++ b/arch/powerpc/include/uapi/asm/socket.h
-> @@ -11,8 +11,8 @@
->  
->  #define SO_RCVLOWAT	16
->  #define SO_SNDLOWAT	17
-> -#define SO_RCVTIMEO	18
-> -#define SO_SNDTIMEO	19
-> +#define SO_RCVTIMEO_OLD	18
-> +#define SO_SNDTIMEO_OLD	19
->  #define SO_PASSCRED	20
->  #define SO_PEERCRED	21
->  
-> diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
-> index 2713e0fa68ef..c56b8b487c12 100644
-> --- a/include/uapi/asm-generic/socket.h
-> +++ b/include/uapi/asm-generic/socket.h
-> @@ -30,8 +30,8 @@
->  #define SO_PEERCRED	17
->  #define SO_RCVLOWAT	18
->  #define SO_SNDLOWAT	19
-> -#define SO_RCVTIMEO	20
-> -#define SO_SNDTIMEO	21
-> +#define SO_RCVTIMEO_OLD	20
-> +#define SO_SNDTIMEO_OLD	21
->  #endif
->  
->  /* Security levels - as per NRL IPv6 - don't actually do anything */
-> @@ -116,6 +116,8 @@
->  
->  #if !defined(__KERNEL__)
->  
-> +#define	SO_RCVTIMEO SO_RCVTIMEO_OLD
-> +#define	SO_SNDTIMEO SO_SNDTIMEO_OLD
->  #if __BITS_PER_LONG == 64 || (defined(__x86_64__) && defined(__ILP32__))
->  /* on 64-bit and x32, avoid the ?: operator */
->  #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
+pctrl->npins is used further down in the code and the gpiochip
+does not probe because of zero pins. You could
+get rid of the local variable npins and just use pctrl->npins
+everywhere though.
+
+Yours,
+Linus Walleij
