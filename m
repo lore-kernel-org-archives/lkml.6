@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACADFC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FB6C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD2C20823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1CD720823
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479065;
-	bh=y4C0AbYwPs/Nr/AmMLb/TUEabNi0p4kmZl+5Clc9G4A=;
+	s=default; t=1549479069;
+	bh=JUOC/pQwfJcp4lm1AESFYNxh400PhosDoclyJdtt8U8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dYoU6XuMAYlRwMaHH+HMom2DzN02mC6pyNF1VWd6zb4R61uxopESyHVXI0Gx6R55R
-	 Z8Y7g1jsK5O6+AT683MldCK0FmTeL1KJflWvNenrN+hRIhcSs8jjjJ1f3KsWIVrl4H
-	 xKK2kpm1iznC17bTOi+S6P7wHdkGUhvaQi4YFfC4=
+	b=gO2v7ssO8y1bFNINc0q0sC1DQB5QMZ8bJluBU8rkTJWKgXiRLANNaWBp8wNwqFl8f
+	 /NA/nM5RCEhpAr0J4jZVV0/S8I+Dobbbobn5CWIyKTu0NFhhQlLxe95zUvIqMOoYse
+	 XxLIt42zjYnNeAdLES37f/LuSuuSnMfEsHWuFfcQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbfBFSvE (ORCPT
+        id S1727882AbfBFSvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:51:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45320 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:51:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfBFSvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:51:01 -0500
+        id S1726708AbfBFSvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:51:06 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB97E218E0;
-        Wed,  6 Feb 2019 18:50:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BA36206DD;
+        Wed,  6 Feb 2019 18:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479061;
-        bh=y4C0AbYwPs/Nr/AmMLb/TUEabNi0p4kmZl+5Clc9G4A=;
+        s=default; t=1549479064;
+        bh=JUOC/pQwfJcp4lm1AESFYNxh400PhosDoclyJdtt8U8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJplhmILYHY5Nafwmgvyd+QqZgzZ6ER/Q9Qrzz7rexuPHNevmzfHEFL9lu0xug8hW
-         uM8A3Lho8U3IEPkEdnHHX25Zs2YWroaHIFQZRh9pg15Cofzffq6j0gWUIUEXOePXLB
-         D142eJrU1OW7CUdXNEpQM5APwWBROc0IYTxw0BGk=
+        b=w+j2JiT2dRIdRxWDVzLrIQkFjS37RdtOxD80dLHxJ1afCCwQQrrD7QL7rSy3M79J2
+         m4pTtsrQSVndJjamYo7AWw9hZBF5KNJ7vm6W2GWcYFewi2Wzc8Nlkh8UUD13a/XIPk
+         YC55nXVsM9vY3alnCdOt9LKtzOfZL1F4pSvRepGw=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -49,9 +49,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Kan Liang <kan.liang@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 33/53] perf evsel: Add output_resort_cb method
-Date:   Wed,  6 Feb 2019 15:48:43 -0300
-Message-Id: <20190206184903.24054-34-acme@kernel.org>
+Subject: [PATCH 34/53] perf report: Move symbol annotation to the resort phase
+Date:   Wed,  6 Feb 2019 15:48:44 -0300
+Message-Id: <20190206184903.24054-35-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -64,8 +64,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Add perf_evsel__output_resort_cb() so we have an interface with a
-callback for each hist entry. It will be used in the following patch.
+Currently we make the annotation for the IPC column during the entry
+display, already outside of the progress bar scope, so it appears like
+'perf report' is stuck.
+
+Move the annotation retrieval to the resort phase, so that all the data
+are ready for display.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -73,54 +77,77 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190204141808.23031-3-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190204141808.23031-4-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/hist.c | 10 ++++++++--
- tools/perf/util/hist.h |  2 ++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ tools/perf/builtin-report.c | 21 +++++++++++++++++++--
+ tools/perf/util/sort.c      |  7 -------
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 64ad603a0592..669f961316f0 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -1775,7 +1775,8 @@ static void output_resort(struct hists *hists, struct ui_progress *prog,
- 	}
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index a007ea9a3874..2e8c74d6430c 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -616,6 +616,21 @@ static int report__collapse_hists(struct report *rep)
+ 	return ret;
  }
  
--void perf_evsel__output_resort(struct perf_evsel *evsel, struct ui_progress *prog)
-+void perf_evsel__output_resort_cb(struct perf_evsel *evsel, struct ui_progress *prog,
-+				  hists__resort_cb_t cb, void *cb_arg)
- {
- 	bool use_callchain;
- 
-@@ -1786,7 +1787,12 @@ void perf_evsel__output_resort(struct perf_evsel *evsel, struct ui_progress *pro
- 
- 	use_callchain |= symbol_conf.show_branchflag_count;
- 
--	output_resort(evsel__hists(evsel), prog, use_callchain, NULL, NULL);
-+	output_resort(evsel__hists(evsel), prog, use_callchain, cb, cb_arg);
++static int hists__resort_cb(struct hist_entry *he, void *arg)
++{
++	struct report *rep = arg;
++	struct symbol *sym = he->ms.sym;
++
++	if (rep->symbol_ipc && sym && !sym->annotate2) {
++		struct perf_evsel *evsel = hists_to_evsel(he->hists);
++
++		symbol__annotate2(sym, he->ms.map, evsel,
++				  &annotation__default_options, NULL);
++	}
++
++	return 0;
 +}
 +
-+void perf_evsel__output_resort(struct perf_evsel *evsel, struct ui_progress *prog)
-+{
-+	return perf_evsel__output_resort_cb(evsel, prog, NULL, NULL);
+ static void report__output_resort(struct report *rep)
+ {
+ 	struct ui_progress prog;
+@@ -623,8 +638,10 @@ static void report__output_resort(struct report *rep)
+ 
+ 	ui_progress__init(&prog, rep->nr_entries, "Sorting events for output...");
+ 
+-	evlist__for_each_entry(rep->session->evlist, pos)
+-		perf_evsel__output_resort(pos, &prog);
++	evlist__for_each_entry(rep->session->evlist, pos) {
++		perf_evsel__output_resort_cb(pos, &prog,
++					     hists__resort_cb, rep);
++	}
+ 
+ 	ui_progress__finish();
  }
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 79e794406bef..2b6c1ccb878c 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -429,8 +429,6 @@ static int hist_entry__sym_ipc_snprintf(struct hist_entry *he, char *bf,
+ {
  
- void hists__output_resort(struct hists *hists, struct ui_progress *prog)
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 69a367d4aeaf..4af27fbab24f 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -165,6 +165,8 @@ void hist_entry__delete(struct hist_entry *he);
+ 	struct symbol *sym = he->ms.sym;
+-	struct map *map = he->ms.map;
+-	struct perf_evsel *evsel = hists_to_evsel(he->hists);
+ 	struct annotation *notes;
+ 	double ipc = 0.0, coverage = 0.0;
+ 	char tmp[64];
+@@ -438,11 +436,6 @@ static int hist_entry__sym_ipc_snprintf(struct hist_entry *he, char *bf,
+ 	if (!sym)
+ 		return repsep_snprintf(bf, size, "%-*s", width, "-");
  
- typedef int (*hists__resort_cb_t)(struct hist_entry *he, void *arg);
+-	if (!sym->annotate2 && symbol__annotate2(sym, map, evsel,
+-		&annotation__default_options, NULL) < 0) {
+-		return 0;
+-	}
+-
+ 	notes = symbol__annotation(sym);
  
-+void perf_evsel__output_resort_cb(struct perf_evsel *evsel, struct ui_progress *prog,
-+				  hists__resort_cb_t cb, void *cb_arg);
- void perf_evsel__output_resort(struct perf_evsel *evsel, struct ui_progress *prog);
- void hists__output_resort(struct hists *hists, struct ui_progress *prog);
- void hists__output_resort_cb(struct hists *hists, struct ui_progress *prog,
+ 	if (notes->hit_cycles)
 -- 
 2.20.1
 
