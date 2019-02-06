@@ -2,190 +2,127 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12332C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDBE22175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73B912175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfBFKIG (ORCPT
+        id S1729178AbfBFKIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:08:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50026 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726598AbfBFKIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:08:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C2BEAEE3;
-        Wed,  6 Feb 2019 10:08:04 +0000 (UTC)
-Message-ID: <294f2492f8d3b7022bf659dcb473c45a34e85db8.camel@suse.de>
-Subject: Re: [RFC v2] usb: xhci: add Immediate Data Transfer support
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>, oneukum@suse.com,
-        Mathias Nyman <mathias.nyman@intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 06 Feb 2019 11:08:02 +0100
-In-Reply-To: <87lg2tmnk3.fsf@linux.intel.com>
-References: <20190205195647.29258-1-nsaenzjulienne@suse.de>
-         <87lg2tmnk3.fsf@linux.intel.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-6r4fzilJ9n6UXsMvKJAp"
-User-Agent: Evolution 3.30.4 
-Mime-Version: 1.0
+        Wed, 6 Feb 2019 05:08:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48640 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfBFKIP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:08:15 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1grK7n-0001Ag-V6; Wed, 06 Feb 2019 10:08:12 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: 88pm80x: fix unintended sign extension
+Date:   Wed,  6 Feb 2019 10:08:11 +0000
+Message-Id: <20190206100811.13315-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---=-6r4fzilJ9n6UXsMvKJAp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+the top bit of the u8 is set then the following conversion to an unsigned
+long will sign extend the value causing the upper 32 bits to be set in
+the result.
 
-Hi Felipe, thanks for the review!
+Fix this by casting the u8 value to an unsigned long before the shift.
 
-On Wed, 2019-02-06 at 08:35 +0200, Felipe Balbi wrote:
-> Hi,
->=20
-> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> writes:
-> > diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.=
-c
-> > index 40fa25c4d041..a4efbe62a1a3 100644
-> > --- a/drivers/usb/host/xhci-ring.c
-> > +++ b/drivers/usb/host/xhci-ring.c
-> > @@ -3272,8 +3272,15 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gf=
-p_t
-> > mem_flags,
-> >  			field |=3D TRB_IOC;
-> >  			more_trbs_coming =3D false;
-> >  			td->last_trb =3D ring->enqueue;
-> > +
-> > +			if (xhci_urb_suitable_for_idt(urb)) {
-> > +				memcpy(&send_addr, urb->transfer_buffer,
-> > +				       trb_buff_len);
-> > +				field |=3D TRB_IDT;
-> > +			}
-> >  		}
-> > =20
-> > +
->=20
-> trailing change
+Detected by CoverityScan, CID#714646-714649 ("Unintended sign extension")
 
-Noted
+Fixes: 2985c29c1964 ("rtc: Add rtc support to 88PM80X PMIC")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rtc/rtc-88pm80x.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
->=20
-> > @@ -3411,6 +3418,12 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gf=
-p_t
-> > mem_flags,
-> >  	if (urb->transfer_buffer_length > 0) {
-> >  		u32 length_field, remainder;
-> > =20
-> > +		if (xhci_urb_suitable_for_idt(urb)) {
-> > +			memcpy(&urb->transfer_dma, urb->transfer_buffer,
-> > +			       urb->transfer_buffer_length);
-> > +			field |=3D TRB_IDT;
-> > +		}
-> > +
-> >  		remainder =3D xhci_td_remainder(xhci, 0,
-> >  				urb->transfer_buffer_length,
-> >  				urb->transfer_buffer_length,
-> > @@ -3420,6 +3433,7 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp=
-_t
-> > mem_flags,
-> >  				TRB_INTR_TARGET(0);
-> >  		if (setup->bRequestType & USB_DIR_IN)
-> >  			field |=3D TRB_DIR_IN;
-> > +
->=20
-> trailing change
-
-Noted
-
->=20
-> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> > index 005e65922608..dec62f7f5dc8 100644
-> > --- a/drivers/usb/host/xhci.c
-> > +++ b/drivers/usb/host/xhci.c
-> > @@ -1238,6 +1238,21 @@ EXPORT_SYMBOL_GPL(xhci_resume);
-> > =20
-> >  /*--------------------------------------------------------------------=
------
-> > */
-> > =20
-> > +/*
-> > + * Bypass the DMA mapping if URB is suitable for Immediate Transfer (I=
-DT),
-> > + * we'll copy the actual data into the TRB address register. This is
-> > limited to
-> > + * transfers up to 8 bytes on output endpoints of any kind with
-> > wMaxPacketSize
-> > + * >=3D 8 bytes.
-> > + */
-> > +static int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
-> > +				gfp_t mem_flags)
-> > +{
-> > +	if (xhci_urb_suitable_for_idt(urb))
-> > +		return 0;
-> > +
-> > +	return usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
-> > +}
->=20
-> don't you need a matching unmap_urb_for_dma()??
-
-Not really as every DMA mapping sets a matching URB flag to track it. For
-example when usb_hcd_map_urb_for_dma() uses dma_map_single() it will set
-URB_DMA_MAP_SINGLE in urb->transfer_flags, later on unmap_urb_for_dma() wil=
-l
-catch it and unmap it. As I bypass the mapping altogether there are no
-flags set, so unmap_urb_for_dma() won't have any effect.
-
-I could still add it for clarity, and well, I guess it'll save some
-instructions on the IDT suitable side.
-
->=20
-> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> > index 652dc36e3012..9d77b0901ab7 100644
-> > --- a/drivers/usb/host/xhci.h
-> > +++ b/drivers/usb/host/xhci.h
-> > @@ -1295,6 +1295,8 @@ enum xhci_setup_dev {
-> >  #define TRB_IOC			(1<<5)
-> >  /* The buffer pointer contains immediate data */
-> >  #define TRB_IDT			(1<<6)
-> > +/* TDs smaller than this might use IDT */
->=20
-> Technically, "TDs at most this" since you're 8 itself is an allowed
-> size.
->=20
-
-Noted
-
-Regards,
-Nicolas
-
-
-
---=-6r4fzilJ9n6UXsMvKJAp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlxasgIACgkQlfZmHno8
-x/5E6Af/csw7wvDtJrUA3ld81HAB4UkFQkd8lrVIs/QojScmFu5HXe1iC5nuCBcd
-I0yBy2gOCPfg3F0bxKoLdlnrffPyES+5hPRgyaOKA3+hOV+sLqjL0ZaNLZPx7/nt
-xI2k2J01gk0X66Xe4p7+hCl5PqbXMFNPvwZGla8Cn8plCjzGWmoLDiePmE6M60By
-/WjdJYQ+N4hUwp8XUbAYjhEXm4uI8KPRueE7FoLrfRpYKpKxC4cIMMLf46ZBLIIZ
-spcOudOcJvueHgxmrv2Z0gqBKd7CcjTzyD7iVIaI5n3rhDoEQ4aM0i029hrwUMDF
-UnsGTYv+dbpNRZI+lC+9JzfzYeoHTQ==
-=Ebfu
------END PGP SIGNATURE-----
-
---=-6r4fzilJ9n6UXsMvKJAp--
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index cab293cb2bf0..1fc48ebd3cd0 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -114,12 +114,14 @@ static int pm80x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	unsigned char buf[4];
+ 	unsigned long ticks, base, data;
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -137,7 +139,8 @@ static int pm80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	base = ticks - data;
+ 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -158,11 +161,13 @@ static int pm80x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	int ret;
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE1_1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+@@ -185,12 +190,14 @@ static int pm80x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	regmap_update_bits(info->map, PM800_RTC_CONTROL, PM800_ALARM1_EN, 0);
+ 
+ 	regmap_raw_read(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-	base = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	base = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	dev_dbg(info->dev, "%x-%x-%x-%x\n", buf[0], buf[1], buf[2], buf[3]);
+ 
+ 	/* load 32-bit read-only counter */
+ 	regmap_raw_read(info->map, PM800_RTC_COUNTER1, buf, 4);
+-	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
++	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
++		(buf[1] << 8) | buf[0];
+ 	ticks = base + data;
+ 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
+ 		base, data, ticks);
+-- 
+2.20.1
 
