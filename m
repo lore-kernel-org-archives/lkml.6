@@ -2,124 +2,130 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A095C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDA5C282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A83E218C3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C64ED20B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:56:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="SJYShG0l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfBFJu6 (ORCPT
+        id S1728942AbfBFJ4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 04:50:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48415 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbfBFJu6 (ORCPT
+        Wed, 6 Feb 2019 04:56:05 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:40720 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727927AbfBFJ4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 04:50:58 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1grJr4-0008BE-1z; Wed, 06 Feb 2019 09:50:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rtc: 88pm860x: fix unintended sign extension
-Date:   Wed,  6 Feb 2019 09:50:53 +0000
-Message-Id: <20190206095053.12894-1-colin.king@canonical.com>
+        Wed, 6 Feb 2019 04:56:04 -0500
+Received: from zyt.lan (unknown [IPv6:2a02:169:34b6::564])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 9D9F75C0E70;
+        Wed,  6 Feb 2019 10:56:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1549446962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=DH+6w/0bF1TKf575G8D1qyFGtPAj1HvC32lm1b3LSQE=;
+        b=SJYShG0ltwlN1p/6zW+cgPhRgF1NzQesYDvnNQ8dxnZBtaJs7DAzEKryhVmZZ3VmaUZe+9
+        +BAmkb3FEa2LY3yHI6sUeIBLt7XbE4nUA64UKN06GcVshh//O7BFCTh2cPapwMtq0jyYN6
+        z1s4/cUOy9c5BLw9T5etqp9N5sLLyZQ=
+From:   Stefan Agner <stefan@agner.ch>
+To:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, l.stach@pengutronix.de,
+        tpiepho@impinj.com
+Cc:     leonard.crestez@nxp.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefan@agner.ch
+Subject: [PATCH 1/2] PCI: dwc: allow to limit registers set length
+Date:   Wed,  6 Feb 2019 10:57:31 +0100
+Message-Id: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Add length to the struct dw_pcie and check that the accessors
+dw_pcie_(rd|wr)_conf() do not read/write beyond that point.
 
-Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-the top bit of the u8 is set then the following conversion to an unsigned
-long will sign extend the value causing the upper 32 bits to be set in
-the result.
-
-Fix this by casting the u8 value to an unsigned long before the shift.
-
-Detected by CoverityScan, CID#144925-144928 ("Unintended sign extension")
-
-Fixes: 008b30408c40 ("mfd: Add rtc support to 88pm860x")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Suggested-by: Trent Piepho <tpiepho@impinj.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/rtc/rtc-88pm860x.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+Changes in v4:
+- Move length check to dw_pcie_rd_conf
+Changes in v5:
+- Rebased ontop of pci/dwc
 
-diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
-index 01ffc0ef8033..d25282b4a7dd 100644
---- a/drivers/rtc/rtc-88pm860x.c
-+++ b/drivers/rtc/rtc-88pm860x.c
-@@ -115,11 +115,13 @@ static int pm860x_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
- 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
- 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
--	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
-+	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
-+		(buf[5] << 8) | buf[7];
+ .../pci/controller/dwc/pcie-designware-host.c    | 16 ++++++++++++++--
+ drivers/pci/controller/dwc/pcie-designware.h     |  1 +
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 45ff5e4f8af6..bad54204fb52 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -612,14 +612,20 @@ static int dw_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
+ 			   int size, u32 *val)
+ {
+ 	struct pcie_port *pp = bus->sysdata;
++	struct dw_pcie *pci;
  
- 	/* load 32-bit read-only counter */
- 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
--	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-+	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
-+		(buf[1] << 8) | buf[0];
- 	ticks = base + data;
- 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
- 		base, data, ticks);
-@@ -145,7 +147,8 @@ static int pm860x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn))) {
+ 		*val = 0xffffffff;
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 	}
  
- 	/* load 32-bit read-only counter */
- 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
--	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-+	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
-+		(buf[1] << 8) | buf[0];
- 	base = ticks - data;
- 	dev_dbg(info->dev, "set base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
- 		base, data, ticks);
-@@ -170,10 +173,12 @@ static int pm860x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
- 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
- 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
--	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
-+	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
-+		(buf[5] << 8) | buf[7];
+-	if (bus->number == pp->root_bus_nr)
++	if (bus->number == pp->root_bus_nr) {
++		pci = to_dw_pcie_from_pp(pp);
++		if (pci->dbi_length && where + size > pci->dbi_length)
++			return PCIBIOS_BAD_REGISTER_NUMBER;
++
+ 		return dw_pcie_rd_own_conf(pp, where, size, val);
++	}
  
- 	pm860x_bulk_read(info->i2c, PM8607_RTC_EXPIRE1, 4, buf);
--	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-+	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
-+		(buf[1] << 8) | buf[0];
- 	ticks = base + data;
- 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
- 		base, data, ticks);
-@@ -198,11 +203,13 @@ static int pm860x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	pm860x_page_bulk_read(info->i2c, REG0_ADDR, 8, buf);
- 	dev_dbg(info->dev, "%x-%x-%x-%x-%x-%x-%x-%x\n", buf[0], buf[1],
- 		buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
--	base = (buf[1] << 24) | (buf[3] << 16) | (buf[5] << 8) | buf[7];
-+	base = ((unsigned long)buf[1] << 24) | (buf[3] << 16) |
-+		(buf[5] << 8) | buf[7];
+ 	return dw_pcie_rd_other_conf(pp, bus, devfn, where, size, val);
+ }
+@@ -628,12 +634,18 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
+ 			   int where, int size, u32 val)
+ {
+ 	struct pcie_port *pp = bus->sysdata;
++	struct dw_pcie *pci;
  
- 	/* load 32-bit read-only counter */
- 	pm860x_bulk_read(info->i2c, PM8607_RTC_COUNTER1, 4, buf);
--	data = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-+	data = ((unsigned long)buf[3] << 24) | (buf[2] << 16) |
-+		(buf[1] << 8) | buf[0];
- 	ticks = base + data;
- 	dev_dbg(info->dev, "get base:0x%lx, RO count:0x%lx, ticks:0x%lx\n",
- 		base, data, ticks);
+ 	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn)))
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+-	if (bus->number == pp->root_bus_nr)
++	if (bus->number == pp->root_bus_nr) {
++		pci = to_dw_pcie_from_pp(pp);
++		if (pci->dbi_length && where + size > pci->dbi_length)
++			return PCIBIOS_BAD_REGISTER_NUMBER;
++
+ 		return dw_pcie_wr_own_conf(pp, where, size, val);
++	}
+ 
+ 	return dw_pcie_wr_other_conf(pp, bus, devfn, where, size, val);
+ }
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 279000255ad1..d1d95119a422 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -226,6 +226,7 @@ struct dw_pcie_ops {
+ struct dw_pcie {
+ 	struct device		*dev;
+ 	void __iomem		*dbi_base;
++	int			dbi_length;
+ 	void __iomem		*dbi_base2;
+ 	/* Used when iatu_unroll_enabled is true */
+ 	void __iomem		*atu_base;
 -- 
 2.20.1
 
