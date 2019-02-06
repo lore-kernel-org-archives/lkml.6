@@ -2,80 +2,114 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB34C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA76C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2D32073F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:28:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC572081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:29:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S1ZQg6yh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbfBFP2b (ORCPT
+        id S1730010AbfBFP3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:28:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54502 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728658AbfBFP2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:28:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA71780D;
-        Wed,  6 Feb 2019 07:28:30 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80B053F675;
-        Wed,  6 Feb 2019 07:28:29 -0800 (PST)
-Subject: Re: [PATCH 03/19] dma-iommu: don't use a scatterlist in
- iommu_dma_alloc
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190114094159.27326-1-hch@lst.de>
- <20190114094159.27326-4-hch@lst.de>
- <5145b2f7-6fc8-6ed9-4cf2-9b7e1d33b0fe@arm.com> <20190201161638.GJ6532@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f59852aa-394c-3165-f7c0-fa6cdcea059f@arm.com>
-Date:   Wed, 6 Feb 2019 15:28:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 10:29:24 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:38704 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbfBFP3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:29:24 -0500
+Received: by mail-vk1-f196.google.com with SMTP id w72so1712026vkd.5
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:29:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mTKfnQFkkJ/QsAoPKwJp9zSQ4x0uzyPSgB4zTS8O4bM=;
+        b=S1ZQg6yhQBTL10D8RPa4Ls0DzVs70IeJjWZ+WVXnubNYJiDaeZ/qIuJ0ILkS9cq+aM
+         HJvnk56NvhjUoQdcVZPFP+R25yPfgwnyTmQTh9tjbGAVoNJWy51G3+Yd5Kt2XwmDxVTB
+         2LExsm9FZwQKpoJ6/qvfOdU5O7M8U/cewY6o4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mTKfnQFkkJ/QsAoPKwJp9zSQ4x0uzyPSgB4zTS8O4bM=;
+        b=Oog1lcmp2LA4V1GCXh9NNKnvCtOkwSdgLHyd3A4GYdAxgCqitTaZD/XvSO9XOhTh7D
+         DJ5I5GQ9xNwqR6FW605ltMyCZqaaVH3B9T5fdoGroYDn7W8GQNWGC+8JCMmabLkra1b3
+         cQ1ZFlpiSlJ2QYoXxvdBUfvEIfOXKOtEOSUI5lgsGATirzOI58MfG6s8PTguzqsoczj6
+         N3NZae1e+5ZczRHiAyvqN9bI63EXjaeuzU1B6NJCGOce7hLKQMKHVNHiqQ1PIZtVoIBD
+         heGEFhMhMAYSSut2XzzdkOjx/gANT+0glzL6p7zpSUS2TMVD9eO2HQgXe6zfcPQFuHaV
+         maFw==
+X-Gm-Message-State: AHQUAuZ1j2+PWbiS7sqGFFZtdi4G9BRZAfPuF9YK3roo1JoAgoC8H3pn
+        jfx+4DnO4mAqyRYgq7WdVnrKa/onrtc=
+X-Google-Smtp-Source: AHgI3IYQ7T+tXevDbaTBneFcQsBOS7pF9mReLaj/QlkLImgQ2mKVA+vG0dZrGlerGVzWixUpArLJEQ==
+X-Received: by 2002:a1f:1c81:: with SMTP id c123mr4397517vkc.52.1549466962902;
+        Wed, 06 Feb 2019 07:29:22 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id q125sm3869843vkh.32.2019.02.06.07.29.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 07:29:19 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id p74so4644047vsc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:29:19 -0800 (PST)
+X-Received: by 2002:a67:7d01:: with SMTP id y1mr4744679vsc.48.1549466958881;
+ Wed, 06 Feb 2019 07:29:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190201161638.GJ6532@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1548866403-13390-1-git-send-email-js@alien8.de>
+ <1548866403-13390-2-git-send-email-js@alien8.de> <20190205144441.GS21801@zn.tnic>
+ <ciirm8womdaxn2.fsf@u54ee758033e858cfa736.ant.amazon.com> <20190206141753.GE7314@zn.tnic>
+In-Reply-To: <20190206141753.GE7314@zn.tnic>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 6 Feb 2019 15:29:06 +0000
+X-Gmail-Original-Message-ID: <CAGXu5jLdm5O9U5N+LR15EnAYcPGB83qK_soaKb7HJ_Pa+G5+Fg@mail.gmail.com>
+Message-ID: <CAGXu5jLdm5O9U5N+LR15EnAYcPGB83qK_soaKb7HJ_Pa+G5+Fg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86/boot: increase maximum number of avoided KASLR regions
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Julian Stecklina <jsteckli@amazon.de>,
+        Julian Stecklina <js@alien8.de>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, jschoenh@amazon.de,
+        Dave Jiang <dave.jiang@intel.com>, Baoquan He <bhe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2019 16:16, Christoph Hellwig wrote:
-> On Fri, Feb 01, 2019 at 03:24:45PM +0000, Robin Murphy wrote:
->> On 14/01/2019 09:41, Christoph Hellwig wrote:
->>> Directly iterating over the pages makes the code a bit simpler and
->>> prepares for the following changes.
->>
->> It also defeats the whole purpose of __iommu_dma_alloc_pages(), so I'm not
->> really buying the simplification angle - you've *seen* that code, right? ;)
-> 
-> How does it defeat the purpose of __iommu_dma_alloc_pages?
+On Wed, Feb 6, 2019 at 2:18 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Wed, Feb 06, 2019 at 01:50:57PM +0100, Julian Stecklina wrote:
+> > Because at this point, we are not in a good position to handle an
+> > unlimited amount of regions.
+>
+> We could save only the regions which are ok to kaslr into. And we do,
+> apparently:
+>
+> static struct slot_area slot_areas[MAX_SLOT_AREA];
+>
+> but I guess there was a reason to do the mem_avoid thing too instead of
+> collecting only OK ranges directly. Maybe Kees will know.
 
-Because if iommu_map() only gets called at PAGE_SIZE granularity, then 
-the IOMMU PTEs will be created at PAGE_SIZE (or smaller) granularity, so 
-any effort to get higher-order allocations matching larger IOMMU block 
-sizes is wasted, and we may as well have just done this:
+Originally, there weren't a lot of things that needed to be avoided
+and physical memory was relatively consecutive, so adding complexity
+here didn't make sense.
 
-	for (i = 0; i < count; i++) {
-		struct page *page = alloc_page(gfp);
-		...
-		iommu_map(..., page_to_phys(page), PAGE_SIZE, ...);
-	}
+I'm fine adjusting all this to do things better. Ultimately, we're
+still walking two lists to process their intersection.
 
-Really, it's a shame we have to split huge pages for the CPU remap, 
-since in the common case the CPU MMU will have a matching block size, 
-but IIRC there was something in vmap() or thereabouts that explicitly 
-chokes on them.
+> > As for the choice of "16", I took our usecase and multiplied it by two.
+> > FWIW, this could be even larger.
+>
+> Because our kernel is not fat enough huh?
 
-Robin.
+Eh, it's just in the boot stub. ;)
+
+-- 
+Kees Cook
