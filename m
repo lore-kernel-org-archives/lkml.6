@@ -2,145 +2,126 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE09C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E34C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0E2C2080A
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:03:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="eXqHcEoe"
+	by mail.kernel.org (Postfix) with ESMTP id BA2282175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 10:05:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbfBFKDO (ORCPT
+        id S1728824AbfBFKF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:03:14 -0500
-Received: from plaes.org ([188.166.43.21]:51748 "EHLO plaes.org"
+        Wed, 6 Feb 2019 05:05:29 -0500
+Received: from ozlabs.org ([203.11.71.1]:35733 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbfBFKDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:03:14 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 06D7140354;
-        Wed,  6 Feb 2019 10:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1549447391; bh=8/Z5G5XftRwjdoYiNOxsQ/6m69rVL16G4o3Y/S7FXm0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eXqHcEoeXo54Xi9KStGy0yeEDlj6G2dXvNqbnvgoUCtZonDcmgdYralLCt5QWL3Dy
-         4hCvLSLUJ2WMz6RwCi1phA11984YzXDB6mP4yHJQzAVN8M1Vnv6yvznal4WLvsNa7u
-         XJh3N4uRzT23fnI8K5ZLVrYy4FV6wYFbqJmgQze3NnUnoYvCCDdkylupHSeb8GDPSG
-         qntmwlRtAdtkI/xTjk02VCarzmn8z0w2wW4HQe6hkxKMlht9ddMhMijP5geEOkLoGO
-         XZ1HZvPzfHMUYFMFQzVJiKVYTLgtgWNdX0+emZHGM97d24dMQp30KyvDVBWRE7KQu+
-         enOCt739q7UuQ==
-Date:   Wed, 6 Feb 2019 10:03:09 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
- mmc2 clock
-Message-ID: <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
-References: <20190202155209.31617-1-plaes@plaes.org>
- <20190205094529.t7je4ozzu2b4ornc@flea>
- <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
- <20190206092000.f46nsn4fw2n4crub@flea>
+        id S1726598AbfBFKF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 05:05:29 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43vcWp4B2fz9sMM;
+        Wed,  6 Feb 2019 21:05:26 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Build regressions/improvements in v5.0-rc5
+In-Reply-To: <5ccff302-3986-5892-d072-5c334484f990@infradead.org>
+References: <20190204134234.13636-1-geert@linux-m68k.org> <33e58393-97f1-321e-5ee0-a1242c7c7a26@infradead.org> <5ccff302-3986-5892-d072-5c334484f990@infradead.org>
+Date:   Wed, 06 Feb 2019 21:05:25 +1100
+Message-ID: <87zhr9kza2.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206092000.f46nsn4fw2n4crub@flea>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 10:20:00AM +0100, Maxime Ripard wrote:
-> On Tue, Feb 05, 2019 at 09:44:02PM +0800, Chen-Yu Tsai wrote:
-> > On Tue, Feb 5, 2019 at 5:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
-> > > > Recent patch of improving MP clock rate calculations by taking
-> > > > into account whether adjusting parent rate is allowed, have
-> > > > unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
-> > > > boards which fail with following error:
-> > > >
-> > > > [snip]
-> > > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> > > > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> > > > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > > > sunxi-mmc 1c11000.mmc: send stop command failed
-> > > > [/snip]
-> > > >
-> > > > Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
-> > > > clock rate with following parents:
-> > 
-> > You mean 52 and 51.2 MHz.
-> > 
-> > > > [snip]
-> > > > pll-ddr-base        2  2        0   768000000 0     0  50000
-> > > >    pll-ddr-other    1  1        0   768000000 0     0  50000
-> > > >       mmc2          0  0        0    51200000 0     0  50000
-> > > > [/snip]
-> > > >
-> > > > Now, after the improvements, requested and settled rate are both
-> > > > 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
-> > > > ends up like this:
-> > > > [snip]
-> > > > pll-periph-base     3  3        0  1200000000 0     0  50000
-> > > >    pll-periph       6  6        0   600000000 0     0  50000
-> > > >       mmc2          3  3        0    50000000 0     0  50000
-> > > > [/snip]
-> > > >
-> > > > With this patch (allowing mmc2 to set parent rate), we end up with
-> > > > working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
-> > > > [snip]
-> > > > pll-periph-base     3  3        0   312000000 0     0  50000
-> > > >    mbus             1  1        0    78000000 0     0  50000
-> > > >    pll-periph-sata  1  1        0    26000000 0     0  50000
-> > > >       sata          1  1        0    26000000 0     0  50000
-> > > >    pll-periph       5  5        0   156000000 0     0  50000
-> > > >       mmc2          0  0        0    52000000 0     0  50000
-> > > >       mmc0          0  0        0    39000000 0     0  50000
-> > > > [/snip]
-> > > >
-> > > > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when allowed")
-> > > > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > >
-> > > Applied, thanks!
-> > > Maxime
-> > 
-> > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
-> > all of them, except the HRTIMER, expect the clock rate to stay
-> > the same and not change underneath them. And SATA expects it to
-> > be at 600 MHz, as the datasheet says. And while it may not directly
-> > apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
-> > reduced rate of 50 MHz just fine.
-> > 
-> > In the commit in question, clocks without CLK_SET_RATE_PARENT
-> > should be using the old code (now in the if conditional block),
-> > i.e. the behavior should not have changed.
-> > 
-> > I don't think this actually "fixes" whatever bug was introduced,
-> > but only papers over the issue, and possible introduces further
-> > issues for other users.
-> 
-> You're right, I've overlooked that it was pll-periph being
-> affected. I've dropped it for now.
+Randy Dunlap <rdunlap@infradead.org> writes:
+> On 2/4/19 9:46 AM, Randy Dunlap wrote:
+>> On 2/4/19 5:42 AM, Geert Uytterhoeven wrote:
+>>> Below is the list of build error/warning regressions/improvements in
+>>> v5.0-rc5[1] compared to v4.20[2].
+>>>
+>>> Summarized:
+>>>   - build errors: +2/-4
+>>>   - build warnings: +113/-14843
+>>>
+>>> JFYI, when comparing v5.0-rc5[1] to v5.0-rc4[3], the summaries are:
+>>>   - build errors: +0/-0
+>>>   - build warnings: +56/-59
+>>>
+>>> Note that there may be false regressions, as some logs are incomplete.
+>>> Still, they're build errors/warnings.
+>>>
+>>> Happy fixing! ;-)
+>>>
+>>> Thanks to the linux-next team for providing the build service.
+>>>
+>>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/ (238 out of 240 configs)
+>>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8fe28cb58bcb235034b64cbbb7550a8a43fd88be/ (all 240 configs)
+>>> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/f17b5f06cb92ef2250513a1e154c47b78df07d40/ (238 out of 240 configs)
+>>>
+>>>
+>>>
+>>> *** WARNINGS ***
+>>>
+>>> 113 warning regressions:
+>> 
+>>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS:  => N/A
+>> 
+>> Hi Geert,
+>> 
+>> I am trying to find the above warning (needle) in the haystack.
+>> Can you please direct me to which config/build it is in?
+>> 
+>> Is there a good way for me to find it?
+>> 
+>> thanks.
+>> 
+>
+> Working backwards, it probably comes from this:
+>
+> config CURRITUCK
+> 	bool "IBM Currituck (476fpe) Support"
+> 	depends on PPC_47x
+> 	select SWIOTLB
+> 	select 476FPE
+> 	select PPC4xx_PCI_EXPRESS
+>
+> This is the only similar Kconfig segment that does not select FORCE_PCI
+> but PPC4xx_PCI_EXPRESS depends on PCI but
+> # CONFIG_PCI is not set
+>
+> This could be related to a recent series of patches that allows ACPI to
+> be built without having PCI enabled.
+>
+> Michael?
 
-Any ideas what could be done. I currently have no time to debug it, but it affects existing systems.
-> 
-> Maxime
-> 
-> -- 
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+There isn't really an easy way to do it sorry.
 
+If you download the page for the revision:
+  http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/
 
+With a lot of grep/sed/awk you can get a list of the URLs for all the
+builds eg. one would be:
+
+  http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/
+
+And then you can just tack on "log/" to get:
+
+  http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/log/
+
+Which you can wget and grep.
+
+But that's all a bit of a pain.
+
+I have on my todo list to add json formatted build results and revision
+pages, which would make it quite a bit simpler. But of course I haven't
+had time to do it yet :/
+
+cheers
