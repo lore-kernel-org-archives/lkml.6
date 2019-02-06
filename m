@@ -2,167 +2,139 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B196AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C471AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EC6218E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:08:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F563218E0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UjACPc/7"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAb3R2pz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfBFWIb (ORCPT
+        id S1726732AbfBFWIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 17:08:31 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47062 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbfBFWIa (ORCPT
+        Wed, 6 Feb 2019 17:08:37 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44987 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbfBFWIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:08:30 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so3530330pgp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 14:08:30 -0800 (PST)
+        Wed, 6 Feb 2019 17:08:36 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p4so3753097plq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 14:08:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KJwz5D7Q6Dz66NllUORQ/Snomm0KllaaPa/yLCdCQ6s=;
-        b=UjACPc/7YocMeD76XYauB6nZ6RDa63UossHuaJ+0TIiKgho/ArpyBlacPPqsZLrNnT
-         KnHqLhX8P3aJV8864C9Tt9DI58/184m0jfEFnmLrRvW40Nd86trk3aJ53qkD/bG6gYfh
-         IJNio6AyjA6beSbJRPDCSPJ3tMdw7zgulCBAcso4hIw5ocsapg0AumKahiqQVn9xRJYZ
-         JQnQLAE5mrdKolFzsQNwfnkQmj4pz6yIiPtguPt+v8g1qFK7im9gyqoQU/XE4iHnxnR7
-         YDF4R60zWNu45I8qSRhVYXW0+h+NNHSoJDCLQ4cciOYgXWXrt7gBPQVyio/gcxVZZQaZ
-         OrNg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=DH1GMO7ONcewLD5Iwy3rwHZsxjWkQFcnRV0dI8v2FAY=;
+        b=bAb3R2pzhlaZVEi2ZtuYpSPkafehJ9X2H+B5lbllR0bCYCb9ep9Kzy9cY7faI4Ul6G
+         kvgyVwSWGenY3Z8keeJ/6dSxOFiyMLoXF7/4cg08ApAB5pGSZaIe/dfPGqi8Tmde4Bqh
+         Z6TTA4YbRotltk0RfIO+eO2E5RcGlqWWJ+XbGhjISowWNhkGpJPsPa5aqz4amHOPNZxU
+         Q15ruPJYNmHE47FiNv93c6w3iBmzohKq8N+hYXtAqsby0Z0gGfqXCW9VhRHXY2Gn3Wk/
+         cT+01Smh9QPrJT71xtBiK7RDzdPnI8H9UpcmhF+01KtrN6ErIVew2Nk4POEGMx73twnn
+         gYvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KJwz5D7Q6Dz66NllUORQ/Snomm0KllaaPa/yLCdCQ6s=;
-        b=VTYy8URxudDzNtlJB31KpywRO4x5UjmhHOfvHBY0LON8hPhYnaYd0p7ah9wTvaSFFA
-         tAxyfTvP1EhuHIje6F1DK4iwJbcR7vZljj2m9QR2zi5kRo4Fykhj3WpbyOPvzgchT1z5
-         mmqownjcyJzN3aB9o6xjvgFnH+kbot/s8IMYaETh6twv5iA8WpcEDF1rZdC345ik77cC
-         dhUkbWIluhduu+A3Snd/6KfoWcsPxnudtlLVBeXWcCT3CKqitMdk12cFnyEuIuyyjeWn
-         f9ndbHKxLX5xiXDDAHEyasMd6ljpAWvvfEzA3kvLSP5VahMInTJ4G2FNRk+dMH0y2IoM
-         6Skg==
-X-Gm-Message-State: AHQUAuYOx7q5N75Rd6u6DfldHONHbGYImnqXFgknnU/Bh9nppgVmV6jf
-        mHTmI7taeJ4Bb7UZRqwOV/mruQ==
-X-Google-Smtp-Source: AHgI3IZ9sM2NemHPkXJcEytXog4mo9/7nqUOfJbzWrMCoEPFEnffuZ1BU2oh+A0ce2olQXr6DG07vw==
-X-Received: by 2002:a63:ed03:: with SMTP id d3mr11531445pgi.275.1549490909681;
-        Wed, 06 Feb 2019 14:08:29 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id p24sm144065pfj.72.2019.02.06.14.08.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 14:08:28 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1grVMq-0004ip-7P; Wed, 06 Feb 2019 15:08:28 -0700
-Date:   Wed, 6 Feb 2019 15:08:28 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190206220828.GJ12227@ziepe.ca>
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
- <20190206095000.GA12006@quack2.suse.cz>
- <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=DH1GMO7ONcewLD5Iwy3rwHZsxjWkQFcnRV0dI8v2FAY=;
+        b=eD2PiASfGABxD655CGtnxPsVWd9qNDb6KL2R+n2WbErMTo/Y0WN+P7pAG1e4R0hLAG
+         kBXkaNL4/ovEu+2wJQ/FecayHOiJ9mcnDSiWAbt1UqmG15g7/QRSEYynWadV5xDe5oBu
+         xTfplvTgY7e6pCrjbXzk/xZuWml7003hq2pWDuUM1w71svUJ1WQdfccTOao120pXlPuw
+         QmAK3p/hXuVck2lwIxhkcfjaR3SnTGfzAakR4rbRiTWXoXPfB0JNUTzM7bFpUinE80mu
+         Z0kPbA6StZCcolUhz1/6MSJfMuUh6HApNf5acL65yqHlarNcTzIg/dNV/E+qV/GgiW+x
+         cpLw==
+X-Gm-Message-State: AHQUAuYWuot+VCcYI8eTvrJRKV+fLmi2RThZgJVnTHpUNQRYGShro33O
+        qlsZb1S4n7MturZeGcExakXo2Npu
+X-Google-Smtp-Source: AHgI3IYGt07SOx/uLhrhBjerAnRfYPrENtDMltatD9mb9SbsxK1Nx2Ie00czr1VVLpFOTq4WbkFOGg==
+X-Received: by 2002:a17:902:c05:: with SMTP id 5mr13065787pls.155.1549490916065;
+        Wed, 06 Feb 2019 14:08:36 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h128sm9285846pgc.15.2019.02.06.14.08.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 14:08:34 -0800 (PST)
+Date:   Wed, 6 Feb 2019 14:08:33 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Thierry Reding <treding@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu: host1x: Use direct DMA with IOMMU API usage
+Message-ID: <20190206220833.GA20747@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190206210356.GZ6173@dastard>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 08:03:56AM +1100, Dave Chinner wrote:
-> On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote:
-> > On Wed, 6 Feb 2019, Doug Ledford wrote:
-> > 
-> > > > Most of the cases we want revoke for are things like truncate().
-> > > > Shouldn't happen with a sane system, but we're trying to avoid users
-> > > > doing awful things like being able to DMA to pages that are now part of
-> > > > a different file.
-> > >
-> > > Why is the solution revoke then?  Is there something besides truncate
-> > > that we have to worry about?  I ask because EBUSY is not currently
-> > > listed as a return value of truncate, so extending the API to include
-> > > EBUSY to mean "this file has pinned pages that can not be freed" is not
-> > > (or should not be) totally out of the question.
-> > >
-> > > Admittedly, I'm coming in late to this conversation, but did I miss the
-> > > portion where that alternative was ruled out?
-> > 
-> > Coming in late here too but isnt the only DAX case that we are concerned
-> > about where there was an mmap with the O_DAX option to do direct write
-> > though? If we only allow this use case then we may not have to worry about
-> > long term GUP because DAX mapped files will stay in the physical location
-> > regardless.
+On Fri, Feb 01, 2019 at 02:28:26PM +0100, Thierry Reding wrote:
+> If we use the IOMMU API directly to map buffers into host1x' IOVA space,
+> we must make sure that the DMA API doesn't already set up a mapping, or
+> else translation will fail.
 > 
-> No, that is not guaranteed. Soon as we have reflink support on XFS,
-> writes will physically move the data to a new physical location.
-> This is non-negotiatiable, and cannot be blocked forever by a gup
-> pin.
+> The direct DMA API allows us to allocate memory that will not be mapped
+> through an IOMMU automatically.
 > 
-> IOWs, DAX on RDMA requires a) page fault capable hardware so that
-> the filesystem can move data physically on write access, and b)
-> revokable file leases so that the filesystem can kick userspace out
-> of the way when it needs to.
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Why do we need both? You want to have leases for normal CPU mmaps too?
+arm64:defconfig:
 
-> Truncate is a red herring. It's definitely a case for revokable
-> leases, but it's the rare case rather than the one we actually care
-> about. We really care about making copy-on-write capable filesystems like
-> XFS work with DAX (we've got people asking for it to be supported
-> yesterday!), and that means DAX+RDMA needs to work with storage that
-> can change physical location at any time.
+ERROR: "dma_direct_free" [drivers/gpu/host1x/host1x.ko] undefined!
+ERROR: "dma_direct_alloc" [drivers/gpu/host1x/host1x.ko] undefined!
 
-Then we must continue to ban longterm pin with DAX..
+Guenter
 
-Nobody is going to want to deploy a system where revoke can happen at
-any time and if you don't respond fast enough your system either locks
-with some kind of FS meltdown or your process gets SIGKILL. 
-
-I don't really see a reason to invest so much design work into
-something that isn't production worthy.
-
-It *almost* made sense with ftruncate, because you could architect to
-avoid ftruncate.. But just any FS op might reallocate? Naw.
-
-Dave, you said the FS is responsible to arbitrate access to the
-physical pages..
-
-Is it possible to have a filesystem for DAX that is more suited to
-this environment? Ie designed to not require block reallocation (no
-COW, no reflinks, different approach to ftruncate, etc)
-
-> And that's the real problem we need to solve here. RDMA has no trust
-> model other than "I'm userspace, I pinned you, trust me!". That's
-> not good enough for FS-DAX+RDMA....
-
-It is baked into the silicon, and I don't see much motion on this
-front right now. My best hope is that IOMMU PASID will get widely
-deployed and RDMA silicon will arrive that can use it. Seems to be
-years away, if at all.
-
-At least we have one chip design that can work in a page faulting mode
-..
-
-Jason
+> ---
+>  drivers/gpu/host1x/cdma.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+> index 64099cc1964b..e22c1133a4c5 100644
+> --- a/drivers/gpu/host1x/cdma.c
+> +++ b/drivers/gpu/host1x/cdma.c
+> @@ -19,6 +19,7 @@
+>  
+>  #include <asm/cacheflush.h>
+>  #include <linux/device.h>
+> +#include <linux/dma-direct.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/host1x.h>
+>  #include <linux/interrupt.h>
+> @@ -70,6 +71,7 @@ static void host1x_pushbuffer_destroy(struct push_buffer *pb)
+>   */
+>  static int host1x_pushbuffer_init(struct push_buffer *pb)
+>  {
+> +	unsigned long attrs = DMA_ATTR_WRITE_COMBINE;
+>  	struct host1x_cdma *cdma = pb_to_cdma(pb);
+>  	struct host1x *host1x = cdma_to_host1x(cdma);
+>  	struct iova *alloc;
+> @@ -91,8 +93,8 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+>  
+>  		size = iova_align(&host1x->iova, size);
+>  
+> -		pb->mapped = dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> +		pb->mapped = dma_direct_alloc(host1x->dev, size, &pb->phys,
+> +					      GFP_KERNEL, attrs);
+>  		if (!pb->mapped)
+>  			return -ENOMEM;
+>  
+> @@ -127,7 +129,10 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+>  iommu_free_iova:
+>  	__free_iova(&host1x->iova, alloc);
+>  iommu_free_mem:
+> -	dma_free_wc(host1x->dev, size, pb->mapped, pb->phys);
+> +	if (host1x->domain)
+> +		dma_direct_free(host1x->dev, size, pb->mapped, pb->phys, attrs);
+> +	else
+> +		dma_free_wc(host1x->dev, size, pb->mapped, pb->phys);
+>  
+>  	return err;
+>  }
+> -- 
+> 2.7.4
