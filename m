@@ -2,290 +2,186 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AA0C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95E4C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C7720818
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549456817;
-	bh=ZXpq9Sqb2KI/E3kMrW5d9B7wMsaNfxXLmEe3YvvG1Gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OEsU1cl8vf8Crnbdd1XLGGgDMsbHMMC+y8TIRbUjcabkRpPCcdFPMcMgj4ukm+LyT
-	 RXrEbnehCy6w4vxBvtTAoT1bg5+XO1UIt5Q6jS8P92MxetQuU18z8umpGd3UDF4j4G
-	 uwtoawq2ygLFLiRZDPA8TXP14HE+wV+FgwqArHfs=
+	by mail.kernel.org (Postfix) with ESMTP id 6C67D20818
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 12:41:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7VGxFoZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbfBFMkK (ORCPT
+        id S1730537AbfBFMlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:40:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbfBFMkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:40:10 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D153620818;
-        Wed,  6 Feb 2019 12:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549456808;
-        bh=ZXpq9Sqb2KI/E3kMrW5d9B7wMsaNfxXLmEe3YvvG1Gk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gs6nEE+4gxexbqstls+V3DU7TwWVycCiPchvK8dsoy41wzjr3bFHbym225BpxPNiZ
-         BR9JPihoT1V1xtjJY3TmH9e95rfZ8mbf9Wlam5BGSGdneUpZeP/7cs288LF+itB7hN
-         Bd0k3/k3IWci7Vy8hPQQsDJDvPd0KIpoOrysAdyU=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D47744034F; Wed,  6 Feb 2019 09:39:49 -0300 (-03)
-Date:   Wed, 6 Feb 2019 09:39:49 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] perf thread-stack: Represent jmps to the start of a
- different symbol
-Message-ID: <20190206123949.GB32016@kernel.org>
-References: <20190109091835.5570-1-adrian.hunter@intel.com>
- <20190109091835.5570-5-adrian.hunter@intel.com>
+        Wed, 6 Feb 2019 07:41:01 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38010 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727580AbfBFMlA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 07:41:00 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so7379887wrw.5;
+        Wed, 06 Feb 2019 04:40:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tis5SAcrLw0sVnBACth58RVphDEDrVdV+7xU8ZHdREg=;
+        b=g7VGxFoZh70yxpHWhuFlu5bNfmisB9CFRcCXckmywRVmxLe1iJnd8af5dInPjTIdTS
+         lyKy3J7fCpIyjZAt4ONhVPs2FMRjptaBj+pmZE6q003fv9sWukJQAodtAnygANv8Q2O0
+         vKuAbYwR8V0MkkAULmNWIG7DmV+DTH6ulTWuZhdNbhSBHnjCjKZexf+aBJ/HiqGP/T4s
+         KDcgaBuz1nVEM49e8kP/KoE/bMOt2fOKHlpIcxDAHG+nCAy1MzgH7QcU/Fnk+5sM9RDP
+         ywFjJq13b+8EvBqV+KObk07tsorOvXtoTQM5+8pp1ppw1S/SAMEpsLz1j9SM5rHgYTbl
+         rQsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tis5SAcrLw0sVnBACth58RVphDEDrVdV+7xU8ZHdREg=;
+        b=pDHqQ1/YNidZjRHjEL53yvGNwtWueOZIcPQed7jK721J/dc3CuVAcnKri2YUEh8iOF
+         PAEUQPpL4ID3EYYpTuEwIFPsPOPpsnk9cw7uUC/5ocD91DZ88X+JXi4wpccLT8TGsbUq
+         oal+v0K0+8I1yo9w68U6fyZrWBnczDQEh9fPN5up/zBLFaFvwvsPR+omnwwOTkXFTVsh
+         XtgYCz72HSDhgdgWymhR3XIKM4iQLoTz8ajVI5s+wVBoKhJTIBeyNY+F/cclwMus8QVs
+         KP07O4bm89LNKp4wOPmvjxyOZEqWTOeSTE39GjOwobv/zMtFOdoSfN0y8QN/DyGiANcL
+         yPIA==
+X-Gm-Message-State: AHQUAubff3JFu5hCPHXeGGVE3x3TVZyj6z0FGxtwc0QbXbmBaeFzN8aj
+        NpCxZKECAdjyLGFHOTTmRWQ=
+X-Google-Smtp-Source: AHgI3Ibwj8kdKRUo8QAgRdIUcEgTemw7KxE3Q+5xKOsLuCBn1qnLB4YrBHNwAdhndeu9/ErvbEuUYQ==
+X-Received: by 2002:adf:fd50:: with SMTP id h16mr8396338wrs.231.1549456857554;
+        Wed, 06 Feb 2019 04:40:57 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id f8sm7471981wrv.41.2019.02.06.04.40.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 04:40:56 -0800 (PST)
+Date:   Wed, 6 Feb 2019 13:40:55 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Yash Shah <yash.shah@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sachin Ghadi <sachin.ghadi@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: Re: [PATCH v5 1/2] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller
+Message-ID: <20190206124055.GF21676@ulmo>
+References: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
+ <1548762199-7065-2-git-send-email-yash.shah@sifive.com>
+ <20190130081411.5rva7cpwoy2l5qjd@pengutronix.de>
+ <CAJ2_jOHiJ3X5VYZMCNk2bpvUdDOsrqHJna3HPvtdNQpJB9fxjg@mail.gmail.com>
+ <20190206110730.ogqxncrnblyazgjw@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eDB11BtaWSyaBkpc"
 Content-Disposition: inline
-In-Reply-To: <20190109091835.5570-5-adrian.hunter@intel.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20190206110730.ogqxncrnblyazgjw@pengutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Jan 09, 2019 at 11:18:33AM +0200, Adrian Hunter escreveu:
-> The compiler might optimize a call/ret combination by making it a jmp.
-> However the thread-stack does not presently cater for that, so that such
-> control flow is not visible in the call graph. Make it visible by recording
-> on the stack a branch to the start of a different symbol. Note, that means
-> when a ret pops the stack, all jmps must be popped off first.
-> 
-> Example:
-> 
-> $ cat jmp-to-fn.c
-> __attribute__((noinline)) int bar(void)
-> {
->         return -1;
-> }
-> 
-> __attribute__((noinline)) int foo(void)
-> {
->         return bar() + 1;
-> }
-> 
-> int main()
-> {
->         return foo();
-> }
-> $ gcc -ggdb3 -Wall -Wextra -O2 -o jmp-to-fn jmp-to-fn.c
-> $ objdump -d jmp-to-fn
-> <SNIP>
-> 0000000000001040 <main>:
->     1040:       31 c0                   xor    %eax,%eax
->     1042:       e9 09 01 00 00          jmpq   1150 <foo>
-> <SNIP>
-> 0000000000001140 <bar>:
->     1140:       b8 ff ff ff ff          mov    $0xffffffff,%eax
->     1145:       c3                      retq
-> <SNIP>
-> 0000000000001150 <foo>:
->     1150:       31 c0                   xor    %eax,%eax
->     1152:       e8 e9 ff ff ff          callq  1140 <bar>
->     1157:       83 c0 01                add    $0x1,%eax
->     115a:       c3                      retq
-> <SNIP>
-> $ perf record -o jmp-to-fn.perf.data -e intel_pt/cyc/u ./jmp-to-fn
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0,017 MB jmp-to-fn.perf.data ]
-> $ perf script -i jmp-to-fn.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py jmp-to-fn.db branches calls
-> 2019-01-08 13:24:58.783069 Creating database...
-> 2019-01-08 13:24:58.794650 Writing records...
-> 2019-01-08 13:24:59.008050 Adding indexes
-> 2019-01-08 13:24:59.015802 Done
-> $  ~/libexec/perf-core/scripts/python/exported-sql-viewer.py jmp-to-fn.db
 
-So, while testing this I notice that we need to do the python3
-conversions for these scripts as well:
+--eDB11BtaWSyaBkpc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[acme@quaco adrian]$ objdump -d jmp-to-fn > /tmp/bla
-[acme@quaco adrian]$ vim /tmp/bla
-[acme@quaco adrian]$ perf record -o jmp-to-fn.perf.data -e intel_pt/cyc/u ./jmp-to-fn
-Couldn't synthesize bpf events.
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0.017 MB jmp-to-fn.perf.data ]
-[acme@quaco adrian]$ perf script -i jmp-to-fn.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py jmp-to-fn.db branches calls
-  File "/home/acme/libexec/perf-core/scripts/python/export-to-sqlite.py", line 103
-    print datetime.datetime.today(), "Creating database..."
-                 ^
-SyntaxError: invalid syntax
-Error running python script /home/acme/libexec/perf-core/scripts/python/export-to-sqlite.py
-[acme@quaco adrian]$
+On Wed, Feb 06, 2019 at 12:07:30PM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> On Wed, Feb 06, 2019 at 04:18:47PM +0530, Yash Shah wrote:
+> > On Wed, Jan 30, 2019 at 1:44 PM Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > >
+> > > On Tue, Jan 29, 2019 at 05:13:18PM +0530, Yash Shah wrote:
+> > > > DT documentation for PWM controller added.
+> > > >
+> > > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> > > > [Atish: Compatible string update]
+> > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> > > > ---
+> > > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 ++++++++++=
+++++++++++++
+> > > >  1 file changed, 33 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifiv=
+e.txt
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b=
+/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > > new file mode 100644
+> > > > index 0000000..8dcb40d
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> > > > @@ -0,0 +1,33 @@
+> > > > +SiFive PWM controller
+> > > > +
+> > > > +Unlike most other PWM controllers, the SiFive PWM controller curre=
+ntly only
+> > > > +supports one period for all channels in the PWM. This is set globa=
+lly in DTS.
+> > >
+> > > You can simply drop this if the first user can set this using the usu=
+al
+> > > interface. Don't you like this suggestion that I already made a few
+> > > times now?
+> > >
+> > > Did you consider to make the driver support only a single output with=
+ a
+> > > more flexible period setting?
+> >=20
+> > We cannot consider supporting only single output since we have boards t=
+hat
+> > use the additional PWM channels to control individual LED brightness
+> > of a tri-color LED.
+> > If we go down to one channel, then we can't control the brightness of
+> > the individual LEDs.
+> > It will break the use case.
+>=20
+> OK.
+>=20
+> > I am considering the below approach, let me know if it's fine by you.
+> >=20
+> > - Drop the global period property and allow the only first user to chan=
+ge period
+> > using the usual interface.
+> > - A note in the binding that all PWMs need to run at the same
+> > period. If the driver already refuses to apply incompatible periods,
+> > the users are going to notice that they've got the DT wrong.
+> > - In driver code, count the users using the .request and .free callback=
+s.
+> > Based on this, allow changes to period iff the user count is one.
+>=20
+> Not sure you need to point this limitation in the binding doc. Other
+> than that this is fine.
 
-Mostly are simple, i.e. in this case we need something like:
+I think it's useful to point this out in the binding documentation since
+it's something that device tree writers will want to know.
 
-  print(str(datetime.datetime.today()) + "Creating database...")
+Thierry
 
+--eDB11BtaWSyaBkpc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-for a really crude conversion, but one that would make this work with
-both python2 and python3 (make PYTHON=python3 when building perf).
+-----BEGIN PGP SIGNATURE-----
 
- 
-> Before:
-> 
->     main
->         -> bar
-> 
-> After:
-> 
->     main
->         -> foo
->             -> bar
-> 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  .../scripts/python/export-to-postgresql.py    |  2 +-
->  tools/perf/scripts/python/export-to-sqlite.py |  2 +-
->  tools/perf/util/thread-stack.c                | 30 +++++++++++++++++--
->  tools/perf/util/thread-stack.h                |  3 ++
->  4 files changed, 33 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
-> index 0564dd7377f2..30130213da7e 100644
-> --- a/tools/perf/scripts/python/export-to-postgresql.py
-> +++ b/tools/perf/scripts/python/export-to-postgresql.py
-> @@ -478,7 +478,7 @@ if perf_db_export_calls:
->  			'branch_count,'
->  			'call_id,'
->  			'return_id,'
-> -			'CASE WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' ELSE \'\' END AS flags,'
-> +			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE flags END AS flags,'
->  			'parent_call_path_id'
->  		' FROM calls INNER JOIN call_paths ON call_paths.id = call_path_id')
->  
-> diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-> index 245caf2643ed..ed237f2ed03f 100644
-> --- a/tools/perf/scripts/python/export-to-sqlite.py
-> +++ b/tools/perf/scripts/python/export-to-sqlite.py
-> @@ -320,7 +320,7 @@ if perf_db_export_calls:
->  			'branch_count,'
->  			'call_id,'
->  			'return_id,'
-> -			'CASE WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' ELSE \'\' END AS flags,'
-> +			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE flags END AS flags,'
->  			'parent_call_path_id'
->  		' FROM calls INNER JOIN call_paths ON call_paths.id = call_path_id')
->  
-> diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-> index 7f8eff018c16..f52c0f90915d 100644
-> --- a/tools/perf/util/thread-stack.c
-> +++ b/tools/perf/util/thread-stack.c
-> @@ -38,6 +38,7 @@
->   * @cp: call path
->   * @no_call: a 'call' was not seen
->   * @trace_end: a 'call' but trace ended
-> + * @non_call: a branch but not a 'call' to the start of a different symbol
->   */
->  struct thread_stack_entry {
->  	u64 ret_addr;
-> @@ -47,6 +48,7 @@ struct thread_stack_entry {
->  	struct call_path *cp;
->  	bool no_call;
->  	bool trace_end;
-> +	bool non_call;
->  };
->  
->  /**
-> @@ -268,6 +270,8 @@ static int thread_stack__call_return(struct thread *thread,
->  		cr.flags |= CALL_RETURN_NO_CALL;
->  	if (no_return)
->  		cr.flags |= CALL_RETURN_NO_RETURN;
-> +	if (tse->non_call)
-> +		cr.flags |= CALL_RETURN_NON_CALL;
->  
->  	return crp->process(&cr, crp->data);
->  }
-> @@ -510,6 +514,7 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
->  	tse->cp = cp;
->  	tse->no_call = no_call;
->  	tse->trace_end = trace_end;
-> +	tse->non_call = false;
->  
->  	return 0;
->  }
-> @@ -531,14 +536,16 @@ static int thread_stack__pop_cp(struct thread *thread, struct thread_stack *ts,
->  							 timestamp, ref, false);
->  	}
->  
-> -	if (ts->stack[ts->cnt - 1].ret_addr == ret_addr) {
-> +	if (ts->stack[ts->cnt - 1].ret_addr == ret_addr &&
-> +	    !ts->stack[ts->cnt - 1].non_call) {
->  		return thread_stack__call_return(thread, ts, --ts->cnt,
->  						 timestamp, ref, false);
->  	} else {
->  		size_t i = ts->cnt - 1;
->  
->  		while (i--) {
-> -			if (ts->stack[i].ret_addr != ret_addr)
-> +			if (ts->stack[i].ret_addr != ret_addr ||
-> +			    ts->stack[i].non_call)
->  				continue;
->  			i += 1;
->  			while (ts->cnt > i) {
-> @@ -757,6 +764,25 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
->  		err = thread_stack__trace_begin(thread, ts, sample->time, ref);
->  	} else if (sample->flags & PERF_IP_FLAG_TRACE_END) {
->  		err = thread_stack__trace_end(ts, sample, ref);
-> +	} else if (sample->flags & PERF_IP_FLAG_BRANCH &&
-> +		   from_al->sym != to_al->sym && to_al->sym &&
-> +		   to_al->addr == to_al->sym->start) {
-> +		struct call_path_root *cpr = ts->crp->cpr;
-> +		struct call_path *cp;
-> +
-> +		/*
-> +		 * The compiler might optimize a call/ret combination by making
-> +		 * it a jmp. Make that visible by recording on the stack a
-> +		 * branch to the start of a different symbol. Note, that means
-> +		 * when a ret pops the stack, all jmps must be popped off first.
-> +		 */
-> +		cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp,
-> +					to_al->sym, sample->addr,
-> +					ts->kernel_start);
-> +		err = thread_stack__push_cp(ts, 0, sample->time, ref, cp, false,
-> +					    false);
-> +		if (!err)
-> +			ts->stack[ts->cnt - 1].non_call = true;
->  	}
->  
->  	return err;
-> diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
-> index 1f626f4a1c40..b7c04e19ad41 100644
-> --- a/tools/perf/util/thread-stack.h
-> +++ b/tools/perf/util/thread-stack.h
-> @@ -35,10 +35,13 @@ struct call_path;
->   *
->   * CALL_RETURN_NO_CALL: 'return' but no matching 'call'
->   * CALL_RETURN_NO_RETURN: 'call' but no matching 'return'
-> + * CALL_RETURN_NON_CALL: a branch but not a 'call' to the start of a different
-> + *                       symbol
->   */
->  enum {
->  	CALL_RETURN_NO_CALL	= 1 << 0,
->  	CALL_RETURN_NO_RETURN	= 1 << 1,
-> +	CALL_RETURN_NON_CALL	= 1 << 2,
->  };
->  
->  /**
-> -- 
-> 2.17.1
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxa1dcACgkQ3SOs138+
+s6FwnxAAnOiWlI5IXor27eIlWOEiHliIvBCTzMGSSDQ44AM/j+38k8KSzvq+n1qW
+s207o9cjcOdJ3RCDh3fc26RLUVDJktckltr3KErgeaWuHZOktAlCznk6dlr8KNgo
+eNTM31TqOtDKo5w6bWLvJ1hL+VUgqOCQDvHmyKzPIN8mfde3E+qegEq67QLicCzx
+f9TPgGt6rBW5T7dGYgFmXcScanUrsJJsNSZchz3Jr8rhwQH6yzngWiaKVQJAZFfi
+/elDBQecb/RGrFWae136qGSkcc1iXs613WCotxx9VwS1LeboMOXNSbsZOaBNK4JK
+4948roLoBNZePVPaUfDFZjc6JiVOZO7cjJWystXdniw2DjYjjT8jeAX6Ib2uSOcw
+/nZg7dd7t5XATDLe6X8WHvcgmrBZJ9pzEtFfcZfYy9yS3qD6f1fGxn3x+s9lbbzp
+MA89TJdvZw1frVRbYq4dn5fMwqSm8Xkk/0f+aP8JyYYPgbDDnHl3vxja1wop6X2P
+XjomhsxSXcUZ8ingcWpVZdrFQXKzg7iZKxRLI0UUl/6mwfflq7vOZ1DsuRYkBLvw
+sXel5NH8sm2LHdnGl2ygss++aOhS5ycN9jwMHhxA+PqUz+geiXNWMD36ufKuq32O
+IZZoeldKTLKTKcuouWqYIuc9unhQRvbNQTATCoLe4FRJw3bmBWE=
+=l1j6
+-----END PGP SIGNATURE-----
 
--- 
-
-- Arnaldo
+--eDB11BtaWSyaBkpc--
