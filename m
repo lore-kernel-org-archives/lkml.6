@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB783C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C482AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F87020844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F85D20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbfBFNWX (ORCPT
+        id S1731178AbfBFNWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:22:23 -0500
-Received: from mga05.intel.com ([192.55.52.43]:56949 "EHLO mga05.intel.com"
+        Wed, 6 Feb 2019 08:22:31 -0500
+Received: from mga12.intel.com ([192.55.52.136]:18588 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730057AbfBFNRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:17:47 -0500
+        id S1730049AbfBFNRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:17:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:45 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:45 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="142036820"
+   d="scan'208";a="141146076"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 06 Feb 2019 05:17:43 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 06 Feb 2019 05:17:42 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 041E0642; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
+        id B6B9C180; Wed,  6 Feb 2019 15:17:38 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Michael Jamet <michael.jamet@intel.com>,
@@ -40,9 +40,9 @@ Cc:     Michael Jamet <michael.jamet@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         netdev@vger.kernel.org
-Subject: [PATCH v2 12/28] thunderbolt: Add functions for allocating and releasing hop IDs
-Date:   Wed,  6 Feb 2019 16:17:22 +0300
-Message-Id: <20190206131738.43696-13-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 05/28] thunderbolt: Move LC specific functionality into a separate file
+Date:   Wed,  6 Feb 2019 16:17:15 +0300
+Message-Id: <20190206131738.43696-6-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
@@ -53,167 +53,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each port has a separate path configuration space that is used for
-finding the next hop (switch) in the path. Hop ID is an index to this
-configuration space and hop IDs 0 - 7 are reserved.
-
-In order to get next available hop ID for each direction we provide two
-pairs of helper functions that can be used to allocate and release hop
-IDs for a given port.
-
-While there remove obsolete TODO comment.
+We will be adding more link controller functionality in subsequent
+patches and it does not make sense to keep all that in switch.c, so
+separate LC functionality into its own file.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/switch.c | 87 +++++++++++++++++++++++++++++++++++-
- drivers/thunderbolt/tb.h     |  8 ++++
- 2 files changed, 94 insertions(+), 1 deletion(-)
+ drivers/thunderbolt/Makefile  |  2 +-
+ drivers/thunderbolt/lc.c      | 21 +++++++++++++++++++++
+ drivers/thunderbolt/switch.c  | 12 +++++++-----
+ drivers/thunderbolt/tb.h      |  3 +++
+ drivers/thunderbolt/tb_regs.h |  2 ++
+ 5 files changed, 34 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/thunderbolt/lc.c
 
+diff --git a/drivers/thunderbolt/Makefile b/drivers/thunderbolt/Makefile
+index f2f0de27252b..8531f15d3b3c 100644
+--- a/drivers/thunderbolt/Makefile
++++ b/drivers/thunderbolt/Makefile
+@@ -1,3 +1,3 @@
+ obj-${CONFIG_THUNDERBOLT} := thunderbolt.o
+ thunderbolt-objs := nhi.o ctl.o tb.o switch.o cap.o path.o tunnel_pci.o eeprom.o
+-thunderbolt-objs += domain.o dma_port.o icm.o property.o xdomain.o
++thunderbolt-objs += domain.o dma_port.o icm.o property.o xdomain.o lc.o
+diff --git a/drivers/thunderbolt/lc.c b/drivers/thunderbolt/lc.c
+new file mode 100644
+index 000000000000..2134a55ed837
+--- /dev/null
++++ b/drivers/thunderbolt/lc.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Thunderbolt link controller support
++ *
++ * Copyright (C) 2019, Intel Corporation
++ * Author: Mika Westerberg <mika.westerberg@linux.intel.com>
++ */
++
++#include "tb.h"
++
++/**
++ * tb_lc_read_uuid() - Read switch UUID from link controller common register
++ * @sw: Switch whose UUID is read
++ * @uuid: UUID is placed here
++ */
++int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid)
++{
++	if (!sw->cap_lc)
++		return -EINVAL;
++	return tb_sw_read(sw, uuid, TB_CFG_SWITCH, sw->cap_lc + TB_LC_FUSE, 4);
++}
 diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index b20af050ce9a..320f64ebe8b8 100644
+index a90d21abed88..bd96eebd8248 100644
 --- a/drivers/thunderbolt/switch.c
 +++ b/drivers/thunderbolt/switch.c
-@@ -601,11 +601,88 @@ static int tb_init_port(struct tb_port *port)
+@@ -1207,6 +1207,10 @@ struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
+ 	}
+ 	sw->cap_plug_events = cap;
  
- 	tb_dump_port(port->sw->tb, &port->config);
- 
--	/* TODO: Read dual link port, DP port and more from EEPROM. */
-+	/* Control port does not need Hop ID allocation */
-+	if (port->port) {
-+		ida_init(&port->in_hopids);
-+		ida_init(&port->out_hopids);
-+	}
++	cap = tb_switch_find_vse_cap(sw, TB_VSE_CAP_LINK_CONTROLLER);
++	if (cap > 0)
++		sw->cap_lc = cap;
 +
- 	return 0;
- 
- }
- 
-+static int tb_port_alloc_hopid(struct tb_port *port, bool in, int min_hopid,
-+			       int max_hopid)
-+{
-+	int port_max_hopid;
-+	struct ida *ida;
-+
-+	if (in) {
-+		port_max_hopid = port->config.max_in_hop_id;
-+		ida = &port->in_hopids;
-+	} else {
-+		port_max_hopid = port->config.max_out_hop_id;
-+		ida = &port->out_hopids;
-+	}
-+
-+	/* Hop IDs 0-7 are reserved */
-+	if (min_hopid < 8)
-+		min_hopid = 8;
-+
-+	if (max_hopid < 0 || max_hopid > port_max_hopid)
-+		max_hopid = port_max_hopid;
-+
-+	return ida_simple_get(ida, min_hopid, max_hopid + 1, GFP_KERNEL);
-+}
-+
-+/**
-+ * tb_port_alloc_in_hopid() - Allocate input hop ID from port
-+ * @port: Port to allocate hop ID for
-+ * @min_hopid: Minimum acceptable input hop ID
-+ * @max_hopid: Maximum acceptable input hop ID
-+ *
-+ * Return: Hop ID between @min_hopid and @max_hopid or negative errno in
-+ * case of error.
-+ */
-+int tb_port_alloc_in_hopid(struct tb_port *port, int min_hopid, int max_hopid)
-+{
-+	return tb_port_alloc_hopid(port, true, min_hopid, max_hopid);
-+}
-+
-+/**
-+ * tb_port_alloc_out_hopid() - Allocate output hop ID from port
-+ * @port: Port to allocate hop ID for
-+ * @min_hopid: Minimum acceptable output hop ID
-+ * @max_hopid: Maximum acceptable output hop ID
-+ *
-+ * Return: Hop ID between @min_hopid and @max_hopid or negative errno in
-+ * case of error.
-+ */
-+int tb_port_alloc_out_hopid(struct tb_port *port, int min_hopid, int max_hopid)
-+{
-+	return tb_port_alloc_hopid(port, false, min_hopid, max_hopid);
-+}
-+
-+/**
-+ * tb_port_release_in_hopid() - Release allocated input hop ID from port
-+ * @port: Port whose hop ID to release
-+ * @hopid: Hop ID to release
-+ */
-+void tb_port_release_in_hopid(struct tb_port *port, int hopid)
-+{
-+	ida_simple_remove(&port->in_hopids, hopid);
-+}
-+
-+/**
-+ * tb_port_release_out_hopid() - Release allocated output hop ID from port
-+ * @port: Port whose hop ID to release
-+ * @hopid: Hop ID to release
-+ */
-+void tb_port_release_out_hopid(struct tb_port *port, int hopid)
-+{
-+	ida_simple_remove(&port->out_hopids, hopid);
-+}
-+
- /**
-  * tb_pci_port_enable() - Enable PCIe adapter port
-  * @port: PCIe port to enable
-@@ -1080,9 +1157,17 @@ static const struct attribute_group *switch_groups[] = {
- static void tb_switch_release(struct device *dev)
+ 	/* Root switch is always authorized */
+ 	if (!route)
+ 		sw->authorized = true;
+@@ -1303,7 +1307,7 @@ int tb_switch_configure(struct tb_switch *sw)
+ static void tb_switch_set_uuid(struct tb_switch *sw)
  {
- 	struct tb_switch *sw = tb_to_switch(dev);
-+	int i;
+ 	u32 uuid[4];
+-	int cap;
++	int ret;
  
- 	dma_port_free(sw->dma_port);
- 
-+	for (i = 1; i <= sw->config.max_port_number; i++) {
-+		if (!sw->ports[i].disabled) {
-+			ida_destroy(&sw->ports[i].in_hopids);
-+			ida_destroy(&sw->ports[i].out_hopids);
-+		}
-+	}
-+
- 	kfree(sw->uuid);
- 	kfree(sw->device_name);
- 	kfree(sw->vendor_name);
+ 	if (sw->uuid)
+ 		return;
+@@ -1312,10 +1316,8 @@ static void tb_switch_set_uuid(struct tb_switch *sw)
+ 	 * The newer controllers include fused UUID as part of link
+ 	 * controller specific registers
+ 	 */
+-	cap = tb_switch_find_vse_cap(sw, TB_VSE_CAP_LINK_CONTROLLER);
+-	if (cap > 0) {
+-		tb_sw_read(sw, uuid, TB_CFG_SWITCH, cap + 3, 4);
+-	} else {
++	ret = tb_lc_read_uuid(sw, uuid);
++	if (ret) {
+ 		/*
+ 		 * ICM generates UUID based on UID and fills the upper
+ 		 * two words with ones. This is not strictly following
 diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index a13d1cd53bc3..bfa1cee193fd 100644
+index 5faec5a8eb98..530464b25dcb 100644
 --- a/drivers/thunderbolt/tb.h
 +++ b/drivers/thunderbolt/tb.h
-@@ -130,6 +130,8 @@ struct tb_switch {
-  * @dual_link_port: If the switch is connected using two ports, points
-  *		    to the other port.
-  * @link_nr: Is this primary or secondary port on the dual_link.
-+ * @in_hopids: Currently allocated input hopids
-+ * @out_hopids: Currently allocated output hopids
-  */
- struct tb_port {
- 	struct tb_regs_port_header config;
-@@ -142,6 +144,8 @@ struct tb_port {
- 	bool disabled;
- 	struct tb_port *dual_link_port;
- 	u8 link_nr:1;
-+	struct ida in_hopids;
-+	struct ida out_hopids;
- };
+@@ -63,6 +63,7 @@ struct tb_switch_nvm {
+  * @device_name: Name of the device (or %NULL if not known)
+  * @generation: Switch Thunderbolt generation
+  * @cap_plug_events: Offset to the plug events capability (%0 if not found)
++ * @cap_lc: Offset to the link controller capability (%0 if not found)
+  * @is_unplugged: The switch is going away
+  * @drom: DROM of the switch (%NULL if not found)
+  * @nvm: Pointer to the NVM if the switch has one (%NULL otherwise)
+@@ -98,6 +99,7 @@ struct tb_switch {
+ 	const char *device_name;
+ 	unsigned int generation;
+ 	int cap_plug_events;
++	int cap_lc;
+ 	bool is_unplugged;
+ 	u8 *drom;
+ 	struct tb_switch_nvm *nvm;
+@@ -448,6 +450,7 @@ bool tb_path_is_invalid(struct tb_path *path);
+ int tb_drom_read(struct tb_switch *sw);
+ int tb_drom_read_uid_only(struct tb_switch *sw, u64 *uid);
  
- /**
-@@ -439,6 +443,10 @@ static inline struct tb_switch *tb_to_switch(struct device *dev)
- int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged);
- int tb_port_add_nfc_credits(struct tb_port *port, int credits);
- int tb_port_clear_counter(struct tb_port *port, int counter);
-+int tb_port_alloc_in_hopid(struct tb_port *port, int hopid, int max_hopid);
-+void tb_port_release_in_hopid(struct tb_port *port, int hopid);
-+int tb_port_alloc_out_hopid(struct tb_port *port, int hopid, int max_hopid);
-+void tb_port_release_out_hopid(struct tb_port *port, int hopid);
++int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid);
  
- int tb_switch_find_vse_cap(struct tb_switch *sw, enum tb_switch_vse_cap vsec);
- int tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap);
+ static inline int tb_route_length(u64 route)
+ {
+diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
+index 6f1ff04ee195..4895ae9f0b40 100644
+--- a/drivers/thunderbolt/tb_regs.h
++++ b/drivers/thunderbolt/tb_regs.h
+@@ -237,5 +237,7 @@ struct tb_regs_hop {
+ 	u32 unknown3:4; /* set to zero */
+ } __packed;
+ 
++/* Common link controller registers */
++#define TB_LC_FUSE			0x03
+ 
+ #endif
 -- 
 2.20.1
 
