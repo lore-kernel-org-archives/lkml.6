@@ -2,226 +2,833 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33740C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8C4C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB64218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D0D218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549487453;
-	bh=pVqaXhrDjaOg4LRaNSE+COulbcp+8Mnk9ba+Rtvxcpw=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=gi7GlaM8JY6QJzoMbyQlIM3OxM1SAH2VjMY9mupv4BlUbUTyr2zomMJAQUfAHRqrp
-	 /X35YQKHtUSJpEsnUdpMqO8i4igHGGji+FmxOA3uPoOycTQe9lO2J4qBxCQQcnuXor
-	 lkJL8J4lyBsG2XU8W3fcP6pVO4BL9iAoJEdHwxRQ=
+	s=default; t=1549487462;
+	bh=hA7Hg2UPxWGmwPGo/rhiMT5Bns50A2ucSsSBfYFpn3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=K0yy+6wU/hkeiUebxTckMZv5fi2vzXpjn4aVf25jImfIOkiuii9dCckcLFnNh5eSU
+	 cNhGIRpFVSGUunfhKv8s4PBSl2O+o45eD0PcSUskv3FZjFoyLqIcmZuouWOiVPVn6d
+	 yn/rQbvbhfKUC27vxlVBoGpmBb63V5d6c9A9ya+k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfBFVKv (ORCPT
+        id S1727013AbfBFVLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:10:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41016 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 16:11:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725983AbfBFVKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:10:50 -0500
+        id S1725983AbfBFVK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 16:10:59 -0500
 Received: from localhost (unknown [178.226.110.48])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD5D4218B0;
-        Wed,  6 Feb 2019 21:10:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBE6A218B0;
+        Wed,  6 Feb 2019 21:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549487449;
-        bh=pVqaXhrDjaOg4LRaNSE+COulbcp+8Mnk9ba+Rtvxcpw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=w8WsgR8BYhCFby13bcCk3UCGaVW4L1MarpWVG3EvphTaFzeiqko2d2HCezTTAJWjm
-         2K2zv+VmxNXkchtYA6pHHPpU6iXOlE6rVX3jffTW+M0HiXO6rVvduT0G2zwhRLD6Pd
-         lWOukSS5h4HIblFl07JpzCKg5dSDqP9tOxcRGZg0=
-Date:   Wed, 6 Feb 2019 22:10:33 +0100
+        s=default; t=1549487458;
+        bh=hA7Hg2UPxWGmwPGo/rhiMT5Bns50A2ucSsSBfYFpn3w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pYFtl4jeoGZsh1TAa6G2jYeQsWaKRy2D9l2aOyW0iVyNYEBfA6BfyR/vV0P8cq0T0
+         6VubztP3q0JwEyzUuYVMmQw+4EuXlQDAk+wg5PKU1Ne28LchjBR0Kce3Ny8OVolviY
+         SVo7HM1OC75euwLSIee73zNx744zfBwgOGx+OnPo=
+Date:   Wed, 6 Feb 2019 22:10:38 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 3.18.134
-Message-ID: <20190206211033.GA4973@kroah.com>
+Subject: Re: Linux 3.18.134
+Message-ID: <20190206211038.GB4973@kroah.com>
+References: <20190206211033.GA4973@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190206211033.GA4973@kroah.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 3.18.134 kernel.
-
-All users of the 3.18 kernel series must upgrade.
-
-The updated 3.18.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-3.18.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                    |    2 -
- arch/s390/kernel/smp.c                      |    4 ++
- arch/x86/boot/compressed/aslr.c             |    4 +-
- drivers/input/joystick/xpad.c               |    3 +
- drivers/net/can/dev.c                       |   27 ++++++++---------
- drivers/net/ethernet/freescale/ucc_geth.c   |    2 +
- drivers/platform/x86/asus-nb-wmi.c          |    3 -
- drivers/s390/char/sclp_config.c             |    2 +
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1=20
- drivers/tty/n_hdlc.c                        |    1=20
- drivers/tty/tty_io.c                        |    3 +
- drivers/tty/vt/vt.c                         |    1=20
- drivers/usb/serial/pl2303.c                 |    1=20
- drivers/usb/serial/pl2303.h                 |    2 +
- drivers/usb/serial/usb-serial-simple.c      |    3 +
- fs/cifs/smb2ops.c                           |    6 +--
- fs/cifs/smb2pdu.c                           |    4 +-
- fs/dcache.c                                 |    6 ---
- fs/f2fs/node.c                              |    4 +-
- fs/gfs2/rgrp.c                              |    2 -
- mm/migrate.c                                |    7 +++-
- mm/oom_kill.c                               |    8 +++++
- net/can/bcm.c                               |   27 +++++++++++++++++
- net/ipv6/af_inet6.c                         |    3 +
- net/l2tp/l2tp_core.c                        |   43 ++++++++++++++---------=
------
- net/l2tp/l2tp_core.h                        |   31 ++++++++++++++++++++
- net/l2tp/l2tp_ip.c                          |    3 +
- net/l2tp/l2tp_ip6.c                         |    3 +
- net/netrom/nr_timer.c                       |   20 ++++++-------
- net/openvswitch/flow_netlink.c              |    2 -
- net/rose/rose_route.c                       |    5 +++
- tools/perf/util/unwind-libdw.c              |    4 +-
- 32 files changed, 168 insertions(+), 69 deletions(-)
-
-Andreas Gruenbacher (1):
-      gfs2: Revert "Fix loop in gfs2_rbm_find"
-
-Bernard Pidoux (1):
-      net/rose: fix NULL ax25_cb kernel panic
-
-Charles Yeh (1):
-      USB: serial: pl2303: add new PID to support PL2303TB
-
-Cong Wang (1):
-      netrom: switch to sock timer API
-
-Daniel Drake (1):
-      x86/kaslr: Fix incorrect i8254 outb() parameters
-
-David Ahern (1):
-      ipv6: Consider sk_bound_dev_if when binding a socket to an address
-
-David Hildenbrand (1):
-      mm: migrate: don't rely on __PageMovable() of newpage after unlocking=
- it
-
-Gerald Schaefer (1):
-      s390/smp: fix CPU hotplug deadlock with CPU rescan
-
-Greg Kroah-Hartman (2):
-      tty: Handle problem if line discipline does not have receive_buf
-      Linux 3.18.134
-
-Jacob Wen (2):
-      l2tp: copy 4 more bytes to linear part if necessary
-      l2tp: fix reading optional fields of L2TPv3
-
-Jo=E3o Paulo Rechi Vita (2):
-      platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
-      platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
-
-Lorenzo Bianconi (1):
-      l2tp: remove l2specific_len dependency in l2tp_core
-
-Manfred Schlaegl (1):
-      can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb=
- by removing it
-
-Martin Vuille (1):
-      perf unwind: Unwind with libdw doesn't take symfs into account
-
-Mathias Thore (1):
-      ucc_geth: Reset BQL queue when stopping device
-
-Max Schulze (1):
-      USB: serial: simple: add Motorola Tetra TPG2200 device id
-
-Michael Straube (1):
-      staging: rtl8188eu: Add device code for D-Link DWA-121 rev B1
-
-Milian Wolff (1):
-      perf unwind: Take pgoff into account when reporting elf to libdwfl
-
-Nicolas Pitre (1):
-      vt: invoke notifier on screen size change
-
-Oliver Hartkopp (1):
-      can: bcm: check timer values before ktime conversion
-
-Pan Bian (1):
-      f2fs: read page index before freeing
-
-Paul Fulghum (1):
-      tty/n_hdlc: fix __might_sleep warning
-
-Pavel Shilovsky (2):
-      CIFS: Fix possible hang during async MTU reads and writes
-      CIFS: Do not count -ENODATA as failure for query directory
-
-Ross Lagerwall (1):
-      openvswitch: Avoid OOB read when parsing flow nlattrs
-
-Shakeel Butt (1):
-      mm, oom: fix use-after-free in oom_kill_process
-
-Tom Panfil (1):
-      Input: xpad - add support for SteelSeries Stratus Duo
-
-Waiman Long (1):
-      fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache=
-_sb()
-
-
---Qxx1br4bt0+wmkIi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlxbTUUACgkQONu9yGCS
-aT7hQBAAwBhH828hnmQ1BOzmQe8h8fy1SeBCc9qovZta4x6QNP8GZ9Hxag8xBuv9
-KcKWxFulQJTfQpqkWi2onvVNhj4XRe6aS49JYfZ2karX1IYxp6DM16XARVmt+2xM
-pFo8KPoZxhwiGhFGK4RPs0JhApEKlatyrkwLILtbSJbm9PthakGU7pOd2BOhwk8a
-6ySYzZe/+4+qjEyHVefQpN5fgux05rWjREjysQZijxE7qs4zfF3VDB2cuJ85nDiV
-ybybUcysks+mdSZFr9UU+ARqxHUryzY1xX1sO+4JQPDf9UhLwl9EPk9HfNs30oi6
-mFPPpeL6Fei+X+Vy2P/sK7AkwHg29txlbKdoX17TTmW0ohcmBMyPb9ETtwNyeMaU
-lgRvEj+UDN6rHuzjRxZJvtfz7doEBCn+L8VydAhxyrGoQ1hxZV3c8ldW+vCBvO2D
-rilozC0iE8kO65kckiir6Ns52VZxbscuyHMpugjypdprv8zoGQ8hUdaVm90AxvEY
-bsMReUxehSr2d8fUFynojB48a5ekkhmdyb5yK67GAbNaZXMTfi8yd7WdB2AIwI9P
-G8YfNoOgVnBEZQBHCzii04CNFwxOdX7WISYfkeG/UA4v7MoPEQaxU4hbfQcXxbfD
-9M+NNHOKogQOL3/8sgkB7eS9SSoh14Mw7/UaA70rqtl7pJU7fZo=
-=atC5
------END PGP SIGNATURE-----
-
---Qxx1br4bt0+wmkIi--
+diff --git a/Makefile b/Makefile
+index 487a367b924d..b82f7c3383ec 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 3
+ PATCHLEVEL = 18
+-SUBLEVEL = 133
++SUBLEVEL = 134
+ EXTRAVERSION =
+ NAME = Diseased Newt
+ 
+diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+index 6fd9e60101f1..8b3a41ab3fc4 100644
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -1014,7 +1014,11 @@ static ssize_t __ref rescan_store(struct device *dev,
+ {
+ 	int rc;
+ 
++	rc = lock_device_hotplug_sysfs();
++	if (rc)
++		return rc;
+ 	rc = smp_rescan_cpus();
++	unlock_device_hotplug();
+ 	return rc ? rc : count;
+ }
+ static DEVICE_ATTR(rescan, 0200, NULL, rescan_store);
+diff --git a/arch/x86/boot/compressed/aslr.c b/arch/x86/boot/compressed/aslr.c
+index bb1376381985..d68094cc4627 100644
+--- a/arch/x86/boot/compressed/aslr.c
++++ b/arch/x86/boot/compressed/aslr.c
+@@ -24,8 +24,8 @@ static inline u16 i8254(void)
+ 	u16 status, timer;
+ 
+ 	do {
+-		outb(I8254_PORT_CONTROL,
+-		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
++		outb(I8254_CMD_READBACK | I8254_SELECT_COUNTER0,
++		     I8254_PORT_CONTROL);
+ 		status = inb(I8254_PORT_COUNTER0);
+ 		timer  = inb(I8254_PORT_COUNTER0);
+ 		timer |= inb(I8254_PORT_COUNTER0) << 8;
+diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+index f55dcdf99bc5..26476a64e663 100644
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -255,6 +255,8 @@ static const struct xpad_device {
+ 	{ 0x0f30, 0x0202, "Joytech Advanced Controller", 0, XTYPE_XBOX },
+ 	{ 0x0f30, 0x8888, "BigBen XBMiniPad Controller", 0, XTYPE_XBOX },
+ 	{ 0x102c, 0xff0c, "Joytech Wireless Advanced Controller", 0, XTYPE_XBOX },
++	{ 0x1038, 0x1430, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
++	{ 0x1038, 0x1431, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
+ 	{ 0x11c9, 0x55f0, "Nacon GC-100XF", 0, XTYPE_XBOX360 },
+ 	{ 0x12ab, 0x0004, "Honey Bee Xbox360 dancepad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x12ab, 0x0301, "PDP AFTERGLOW AX.1", 0, XTYPE_XBOX360 },
+@@ -431,6 +433,7 @@ static const struct usb_device_id xpad_table[] = {
+ 	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f X-Box One controllers */
+ 	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
+ 	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
++	XPAD_XBOX360_VENDOR(0x1038),		/* SteelSeries Controllers */
+ 	XPAD_XBOX360_VENDOR(0x11c9),		/* Nacon GC100XF */
+ 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
+ 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
+diff --git a/drivers/net/can/dev.c b/drivers/net/can/dev.c
+index f78577693937..e614da2824c8 100644
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -346,8 +346,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
+-	struct sk_buff *skb = priv->echo_skb[idx];
+-	struct canfd_frame *cf;
+ 
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -355,20 +353,21 @@ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8
+ 		return NULL;
+ 	}
+ 
+-	if (!skb) {
+-		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
+-			   __func__, idx);
+-		return NULL;
+-	}
++	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
++		struct sk_buff *skb = priv->echo_skb[idx];
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
++
++		*len_ptr = len;
++		priv->echo_skb[idx] = NULL;
+ 
+-	/* Using "struct canfd_frame::len" for the frame
+-	 * length is supported on both CAN and CANFD frames.
+-	 */
+-	cf = (struct canfd_frame *)skb->data;
+-	*len_ptr = cf->len;
+-	priv->echo_skb[idx] = NULL;
++		return skb;
++	}
+ 
+-	return skb;
++	return NULL;
+ }
+ 
+ /*
+diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+index 3cf0478b3728..386a57ccf3ba 100644
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -1882,6 +1882,8 @@ static void ucc_geth_free_tx(struct ucc_geth_private *ugeth)
+ 	u16 i, j;
+ 	u8 __iomem *bd;
+ 
++	netdev_reset_queue(ugeth->ndev);
++
+ 	ug_info = ugeth->ug_info;
+ 	uf_info = &ug_info->uf_info;
+ 
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index f13b5b95c00f..26a987cf2946 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -312,8 +312,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
+ 	{ KE_KEY, 0x30, { KEY_VOLUMEUP } },
+ 	{ KE_KEY, 0x31, { KEY_VOLUMEDOWN } },
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+-	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+-	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
+diff --git a/drivers/s390/char/sclp_config.c b/drivers/s390/char/sclp_config.c
+index 944156207477..dcb949dcfa66 100644
+--- a/drivers/s390/char/sclp_config.c
++++ b/drivers/s390/char/sclp_config.c
+@@ -43,7 +43,9 @@ static void sclp_cpu_capability_notify(struct work_struct *work)
+ 
+ static void __ref sclp_cpu_change_notify(struct work_struct *work)
+ {
++	lock_device_hotplug();
+ 	smp_rescan_cpus();
++	unlock_device_hotplug();
+ }
+ 
+ static void sclp_conf_receiver_fn(struct evbuf_header *evbuf)
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_intf.c b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+index e606a7a6c278..76892e4f2935 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -48,6 +48,7 @@ static struct usb_device_id rtw_usb_id_tbl[] = {
+ 	{USB_DEVICE(0x2001, 0x330F)}, /* DLink DWA-125 REV D1 */
+ 	{USB_DEVICE(0x2001, 0x3310)}, /* Dlink DWA-123 REV D1 */
+ 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
++	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
+ 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
+ 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
+ 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+diff --git a/drivers/tty/n_hdlc.c b/drivers/tty/n_hdlc.c
+index 6d1e2f746ab4..8d6253903f24 100644
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -598,6 +598,7 @@ static ssize_t n_hdlc_tty_read(struct tty_struct *tty, struct file *file,
+ 				/* too large for caller's buffer */
+ 				ret = -EOVERFLOW;
+ 			} else {
++				__set_current_state(TASK_RUNNING);
+ 				if (copy_to_user(buf, rbuf->buf, rbuf->count))
+ 					ret = -EFAULT;
+ 				else
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 73c813939487..33e81b7e2a5a 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2243,7 +2243,8 @@ static int tiocsti(struct tty_struct *tty, char __user *p)
+ 		return -EFAULT;
+ 	tty_audit_tiocsti(tty, ch);
+ 	ld = tty_ldisc_ref_wait(tty);
+-	ld->ops->receive_buf(tty, &ch, &mbz, 1);
++	if (ld->ops->receive_buf)
++		ld->ops->receive_buf(tty, &ch, &mbz, 1);
+ 	tty_ldisc_deref(ld);
+ 	return 0;
+ }
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index d7b435af42d3..cbb4d1ab5672 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -949,6 +949,7 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
+ 	if (CON_IS_VISIBLE(vc))
+ 		update_screen(vc);
+ 	vt_event_post(VT_EVENT_RESIZE, vc->vc_num, vc->vc_num);
++	notify_update(vc);
+ 	return err;
+ }
+ 
+diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
+index e05190191767..9e62776336f4 100644
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -47,6 +47,7 @@ static const struct usb_device_id id_table[] = {
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID) },
+diff --git a/drivers/usb/serial/pl2303.h b/drivers/usb/serial/pl2303.h
+index e0a2c4ca9dea..df752193142a 100644
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -13,6 +13,7 @@
+ 
+ #define PL2303_VENDOR_ID	0x067b
+ #define PL2303_PRODUCT_ID	0x2303
++#define PL2303_PRODUCT_ID_TB		0x2304
+ #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+@@ -25,6 +26,7 @@
+ #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
+ #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
+ 
++
+ #define ATEN_VENDOR_ID		0x0557
+ #define ATEN_VENDOR_ID2		0x0547
+ #define ATEN_PRODUCT_ID		0x2008
+diff --git a/drivers/usb/serial/usb-serial-simple.c b/drivers/usb/serial/usb-serial-simple.c
+index f9f52187beff..7cdc5193ecd9 100644
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -75,7 +75,8 @@ DEVICE(moto_modem, MOTO_IDS);
+ /* Motorola Tetra driver */
+ #define MOTOROLA_TETRA_IDS()			\
+ 	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
+-	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
++	{ USB_DEVICE(0x0cad, 0x9012) },	/* MTP6550 */ \
++	{ USB_DEVICE(0x0cad, 0x9016) }	/* TPG2200 */
+ DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 
+ /* Novatel Wireless GPS driver */
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 6796ca994d64..59e6a85d87d3 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -143,14 +143,14 @@ smb2_wait_mtu_credits(struct TCP_Server_Info *server, unsigned int size,
+ 
+ 			scredits = server->credits;
+ 			/* can deadlock with reopen */
+-			if (scredits == 1) {
++			if (scredits <= 8) {
+ 				*num = SMB2_MAX_BUFFER_SIZE;
+ 				*credits = 0;
+ 				break;
+ 			}
+ 
+-			/* leave one credit for a possible reopen */
+-			scredits--;
++			/* leave some credits for reopen and other ops */
++			scredits -= 8;
+ 			*num = min_t(unsigned int, size,
+ 				     scredits * SMB2_MAX_BUFFER_SIZE);
+ 
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 2667de60b2cb..102dd6caa321 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2309,8 +2309,8 @@ SMB2_query_directory(const unsigned int xid, struct cifs_tcon *tcon,
+ 		if (rc == -ENODATA && rsp->hdr.Status == STATUS_NO_MORE_FILES) {
+ 			srch_inf->endOfSearch = true;
+ 			rc = 0;
+-		}
+-		cifs_stats_fail_inc(tcon, SMB2_QUERY_DIRECTORY_HE);
++		} else
++			cifs_stats_fail_inc(tcon, SMB2_QUERY_DIRECTORY_HE);
+ 		goto qdir_exit;
+ 	}
+ 
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 5977fc3f4705..f97c7842fa68 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1103,15 +1103,11 @@ static enum lru_status dentry_lru_isolate_shrink(struct list_head *item,
+  */
+ void shrink_dcache_sb(struct super_block *sb)
+ {
+-	long freed;
+-
+ 	do {
+ 		LIST_HEAD(dispose);
+ 
+-		freed = list_lru_walk(&sb->s_dentry_lru,
++		list_lru_walk(&sb->s_dentry_lru,
+ 			dentry_lru_isolate_shrink, &dispose, 1024);
+-
+-		this_cpu_sub(nr_dentry_unused, freed);
+ 		shrink_dentry_list(&dispose);
+ 		cond_resched();
+ 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 44b8afef43d9..6084f7d5db60 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -565,6 +565,7 @@ static void truncate_node(struct dnode_of_data *dn)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+ 	struct node_info ni;
++	pgoff_t index;
+ 
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	if (dn->inode->i_blocks == 0) {
+@@ -588,10 +589,11 @@ invalidate:
+ 	clear_node_page_dirty(dn->node_page);
+ 	F2FS_SET_SB_DIRT(sbi);
+ 
++	index = dn->node_page->index;
+ 	f2fs_put_page(dn->node_page, 1);
+ 
+ 	invalidate_mapping_pages(NODE_MAPPING(sbi),
+-			dn->node_page->index, dn->node_page->index);
++			index, index);
+ 
+ 	dn->node_page = NULL;
+ 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
+diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+index dbae3a7dd9ff..7474c413ffd1 100644
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -1671,9 +1671,9 @@ static int gfs2_rbm_find(struct gfs2_rbm *rbm, u8 state, u32 *minext,
+ 			goto next_iter;
+ 		}
+ 		if (ret == -E2BIG) {
+-			n += rbm->bii - initial_bii;
+ 			rbm->bii = 0;
+ 			rbm->offset = 0;
++			n += (rbm->bii - initial_bii);
+ 			goto res_covered_end_of_rgrp;
+ 		}
+ 		return ret;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 57559f9295f9..0e80c254d77a 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -943,6 +943,7 @@ static int unmap_and_move(new_page_t get_new_page, free_page_t put_new_page,
+ 	int rc = 0;
+ 	int *result = NULL;
+ 	struct page *newpage = get_new_page(page, private, &result);
++	bool is_lru = !isolated_balloon_page(page);
+ 
+ 	if (!newpage)
+ 		return -ENOMEM;
+@@ -975,12 +976,14 @@ out:
+ 	/*
+ 	 * If migration was not successful and there's a freeing callback, use
+ 	 * it.  Otherwise, putback_lru_page() will drop the reference grabbed
+-	 * during isolation.
++	 * during isolation. Use the old state of the isolated source page to
++	 * determine if we migrated a LRU page. newpage was already unlocked
++	 * and possibly modified by its owner - don't rely on the page state.
+ 	 */
+ 	if (rc != MIGRATEPAGE_SUCCESS && put_new_page) {
+ 		ClearPageSwapBacked(newpage);
+ 		put_new_page(newpage, private);
+-	} else if (unlikely(__is_movable_balloon_page(newpage))) {
++	} else if (rc == MIGRATEPAGE_SUCCESS && unlikely(!is_lru)) {
+ 		/* drop our reference, page already in the balloon */
+ 		put_page(newpage);
+ 	} else
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 5340f6b91312..dc8487de9edf 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -464,6 +464,13 @@ void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
+ 	 * still freeing memory.
+ 	 */
+ 	read_lock(&tasklist_lock);
++
++	/*
++	 * The task 'p' might have already exited before reaching here. The
++	 * put_task_struct() will free task_struct 'p' while the loop still try
++	 * to access the field of 'p', so, get an extra reference.
++	 */
++	get_task_struct(p);
+ 	for_each_thread(p, t) {
+ 		list_for_each_entry(child, &t->children, sibling) {
+ 			unsigned int child_points;
+@@ -483,6 +490,7 @@ void oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
+ 			}
+ 		}
+ 	}
++	put_task_struct(p);
+ 	read_unlock(&tasklist_lock);
+ 
+ 	p = find_lock_task_mm(victim);
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index 51c208f0d3d1..9819cfe644b0 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -67,6 +67,9 @@
+  */
+ #define MAX_NFRAMES 256
+ 
++/* limit timers to 400 days for sending/timeouts */
++#define BCM_TIMER_SEC_MAX (400 * 24 * 60 * 60)
++
+ /* use of last_frames[index].can_dlc */
+ #define RX_RECV    0x40 /* received data for this element */
+ #define RX_THR     0x80 /* element not been sent due to throttle feature */
+@@ -133,6 +136,22 @@ static inline struct bcm_sock *bcm_sk(const struct sock *sk)
+ 	return (struct bcm_sock *)sk;
+ }
+ 
++/* check limitations for timeval provided by user */
++static bool bcm_is_invalid_tv(struct bcm_msg_head *msg_head)
++{
++	if ((msg_head->ival1.tv_sec < 0) ||
++	    (msg_head->ival1.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival1.tv_usec < 0) ||
++	    (msg_head->ival1.tv_usec >= USEC_PER_SEC) ||
++	    (msg_head->ival2.tv_sec < 0) ||
++	    (msg_head->ival2.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival2.tv_usec < 0) ||
++	    (msg_head->ival2.tv_usec >= USEC_PER_SEC))
++		return true;
++
++	return false;
++}
++
+ #define CFSIZ sizeof(struct can_frame)
+ #define OPSIZ sizeof(struct bcm_op)
+ #define MHSIZ sizeof(struct bcm_msg_head)
+@@ -842,6 +861,10 @@ static int bcm_tx_setup(struct bcm_msg_head *msg_head, struct msghdr *msg,
+ 	if (msg_head->nframes < 1 || msg_head->nframes > MAX_NFRAMES)
+ 		return -EINVAL;
+ 
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->tx_ops, msg_head->can_id, ifindex);
+ 
+@@ -1009,6 +1032,10 @@ static int bcm_rx_setup(struct bcm_msg_head *msg_head, struct msghdr *msg,
+ 	     (!(msg_head->can_id & CAN_RTR_FLAG))))
+ 		return -EINVAL;
+ 
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->rx_ops, msg_head->can_id, ifindex);
+ 	if (op) {
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 552fba77327d..01fd9d35fb43 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -333,6 +333,9 @@ int inet6_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ 					err = -EINVAL;
+ 					goto out_unlock;
+ 				}
++			}
++
++			if (sk->sk_bound_dev_if) {
+ 				dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
+ 				if (!dev) {
+ 					err = -ENODEV;
+diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+index 9010f9a5b18b..ee04f2965d87 100644
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -83,8 +83,7 @@
+ #define L2TP_SLFLAG_S	   0x40000000
+ #define L2TP_SL_SEQ_MASK   0x00ffffff
+ 
+-#define L2TP_HDR_SIZE_SEQ		10
+-#define L2TP_HDR_SIZE_NOSEQ		6
++#define L2TP_HDR_SIZE_MAX		14
+ 
+ /* Default trace flags */
+ #define L2TP_DEFAULT_DEBUG_FLAGS	0
+@@ -701,11 +700,9 @@ void l2tp_recv_common(struct l2tp_session *session, struct sk_buff *skb,
+ 				 "%s: recv data ns=%u, session nr=%u\n",
+ 				 session->name, ns, session->nr);
+ 		}
++		ptr += 4;
+ 	}
+ 
+-	/* Advance past L2-specific header, if present */
+-	ptr += session->l2specific_len;
+-
+ 	if (L2TP_SKB_CB(skb)->has_seq) {
+ 		/* Received a packet with sequence numbers. If we're the LNS,
+ 		 * check if we sre sending sequence numbers and if not,
+@@ -856,7 +853,7 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb,
+ 	__skb_pull(skb, sizeof(struct udphdr));
+ 
+ 	/* Short packet? */
+-	if (!pskb_may_pull(skb, L2TP_HDR_SIZE_SEQ)) {
++	if (!pskb_may_pull(skb, L2TP_HDR_SIZE_MAX)) {
+ 		l2tp_info(tunnel, L2TP_MSG_DATA,
+ 			  "%s: recv short packet (len=%d)\n",
+ 			  tunnel->name, skb->len);
+@@ -929,6 +926,10 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb,
+ 		goto error;
+ 	}
+ 
++	if (tunnel->version == L2TP_HDR_VER_3 &&
++	    l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto error;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, hdrflags, length, payload_hook);
+ 
+ 	return 0;
+@@ -1027,21 +1028,20 @@ static int l2tp_build_l2tpv3_header(struct l2tp_session *session, void *buf)
+ 		memcpy(bufp, &session->cookie[0], session->cookie_len);
+ 		bufp += session->cookie_len;
+ 	}
+-	if (session->l2specific_len) {
+-		if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
+-			u32 l2h = 0;
+-			if (session->send_seq) {
+-				l2h = 0x40000000 | session->ns;
+-				session->ns++;
+-				session->ns &= 0xffffff;
+-				l2tp_dbg(session, L2TP_MSG_SEQ,
+-					 "%s: updated ns to %u\n",
+-					 session->name, session->ns);
+-			}
++	if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
++		u32 l2h = 0;
+ 
+-			*((__be32 *) bufp) = htonl(l2h);
++		if (session->send_seq) {
++			l2h = 0x40000000 | session->ns;
++			session->ns++;
++			session->ns &= 0xffffff;
++			l2tp_dbg(session, L2TP_MSG_SEQ,
++				 "%s: updated ns to %u\n",
++				 session->name, session->ns);
+ 		}
+-		bufp += session->l2specific_len;
++
++		*((__be32 *)bufp) = htonl(l2h);
++		bufp += 4;
+ 	}
+ 	if (session->offset)
+ 		bufp += session->offset;
+@@ -1723,7 +1723,7 @@ int l2tp_session_delete(struct l2tp_session *session)
+ EXPORT_SYMBOL_GPL(l2tp_session_delete);
+ 
+ /* We come here whenever a session's send_seq, cookie_len or
+- * l2specific_len parameters are set.
++ * l2specific_type parameters are set.
+  */
+ void l2tp_session_set_header_len(struct l2tp_session *session, int version)
+ {
+@@ -1732,7 +1732,8 @@ void l2tp_session_set_header_len(struct l2tp_session *session, int version)
+ 		if (session->send_seq)
+ 			session->hdr_len += 4;
+ 	} else {
+-		session->hdr_len = 4 + session->cookie_len + session->l2specific_len + session->offset;
++		session->hdr_len = 4 + session->cookie_len + session->offset;
++		session->hdr_len += l2tp_get_l2specific_len(session);
+ 		if (session->tunnel->encap == L2TP_ENCAPTYPE_UDP)
+ 			session->hdr_len += 4;
+ 	}
+diff --git a/net/l2tp/l2tp_core.h b/net/l2tp/l2tp_core.h
+index 1c1a033a546a..bc2688377904 100644
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -312,6 +312,37 @@ do {									\
+ #define l2tp_session_dec_refcount(s) l2tp_session_dec_refcount_1(s)
+ #endif
+ 
++static inline int l2tp_get_l2specific_len(struct l2tp_session *session)
++{
++	switch (session->l2specific_type) {
++	case L2TP_L2SPECTYPE_DEFAULT:
++		return 4;
++	case L2TP_L2SPECTYPE_NONE:
++	default:
++		return 0;
++	}
++}
++
++static inline int l2tp_v3_ensure_opt_in_linear(struct l2tp_session *session, struct sk_buff *skb,
++					       unsigned char **ptr, unsigned char **optr)
++{
++	int opt_len = session->peer_cookie_len + l2tp_get_l2specific_len(session);
++
++	if (opt_len > 0) {
++		int off = *ptr - *optr;
++
++		if (!pskb_may_pull(skb, off + opt_len))
++			return -1;
++
++		if (skb->data != *optr) {
++			*optr = skb->data;
++			*ptr = skb->data + off;
++		}
++	}
++
++	return 0;
++}
++
+ #define l2tp_printk(ptr, type, func, fmt, ...)				\
+ do {									\
+ 	if (((ptr)->debug) & (type))					\
+diff --git a/net/l2tp/l2tp_ip.c b/net/l2tp/l2tp_ip.c
+index 85285f460468..350039b089ac 100644
+--- a/net/l2tp/l2tp_ip.c
++++ b/net/l2tp/l2tp_ip.c
+@@ -163,6 +163,9 @@ static int l2tp_ip_recv(struct sk_buff *skb)
+ 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
+ 	}
+ 
++	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto discard;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len, tunnel->recv_payload_hook);
+ 
+ 	return 0;
+diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
+index cf0958712058..3cd25ba3a13b 100644
+--- a/net/l2tp/l2tp_ip6.c
++++ b/net/l2tp/l2tp_ip6.c
+@@ -174,6 +174,9 @@ static int l2tp_ip6_recv(struct sk_buff *skb)
+ 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
+ 	}
+ 
++	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto discard;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len,
+ 			 tunnel->recv_payload_hook);
+ 	return 0;
+diff --git a/net/netrom/nr_timer.c b/net/netrom/nr_timer.c
+index 94d05806a9a2..f0ecaec1ff3d 100644
+--- a/net/netrom/nr_timer.c
++++ b/net/netrom/nr_timer.c
+@@ -53,21 +53,21 @@ void nr_start_t1timer(struct sock *sk)
+ {
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+-	mod_timer(&nr->t1timer, jiffies + nr->t1);
++	sk_reset_timer(sk, &nr->t1timer, jiffies + nr->t1);
+ }
+ 
+ void nr_start_t2timer(struct sock *sk)
+ {
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+-	mod_timer(&nr->t2timer, jiffies + nr->t2);
++	sk_reset_timer(sk, &nr->t2timer, jiffies + nr->t2);
+ }
+ 
+ void nr_start_t4timer(struct sock *sk)
+ {
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+-	mod_timer(&nr->t4timer, jiffies + nr->t4);
++	sk_reset_timer(sk, &nr->t4timer, jiffies + nr->t4);
+ }
+ 
+ void nr_start_idletimer(struct sock *sk)
+@@ -75,37 +75,37 @@ void nr_start_idletimer(struct sock *sk)
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+ 	if (nr->idle > 0)
+-		mod_timer(&nr->idletimer, jiffies + nr->idle);
++		sk_reset_timer(sk, &nr->idletimer, jiffies + nr->idle);
+ }
+ 
+ void nr_start_heartbeat(struct sock *sk)
+ {
+-	mod_timer(&sk->sk_timer, jiffies + 5 * HZ);
++	sk_reset_timer(sk, &sk->sk_timer, jiffies + 5 * HZ);
+ }
+ 
+ void nr_stop_t1timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t1timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t1timer);
+ }
+ 
+ void nr_stop_t2timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t2timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t2timer);
+ }
+ 
+ void nr_stop_t4timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t4timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t4timer);
+ }
+ 
+ void nr_stop_idletimer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->idletimer);
++	sk_stop_timer(sk, &nr_sk(sk)->idletimer);
+ }
+ 
+ void nr_stop_heartbeat(struct sock *sk)
+ {
+-	del_timer(&sk->sk_timer);
++	sk_stop_timer(sk, &sk->sk_timer);
+ }
+ 
+ int nr_t1timer_running(struct sock *sk)
+diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
+index 918e96645b05..b5133dc56466 100644
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -314,7 +314,7 @@ static int __parse_flow_nlattrs(const struct nlattr *attr,
+ 			return -EINVAL;
+ 		}
+ 
+-		if (!nz || !is_all_zero(nla_data(nla), expected_len)) {
++		if (!nz || !is_all_zero(nla_data(nla), nla_len(nla))) {
+ 			attrs |= 1 << type;
+ 			a[type] = nla;
+ 		}
+diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
+index 40148932c8a4..e3effcf06128 100644
+--- a/net/rose/rose_route.c
++++ b/net/rose/rose_route.c
+@@ -849,6 +849,7 @@ void rose_link_device_down(struct net_device *dev)
+ 
+ /*
+  *	Route a frame to an appropriate AX.25 connection.
++ *	A NULL ax25_cb indicates an internally generated frame.
+  */
+ int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
+ {
+@@ -866,6 +867,10 @@ int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
+ 
+ 	if (skb->len < ROSE_MIN_LEN)
+ 		return res;
++
++	if (!ax25)
++		return rose_loopback_queue(skb, NULL);
++
+ 	frametype = skb->data[2];
+ 	lci = ((skb->data[0] << 8) & 0xF00) + ((skb->data[1] << 0) & 0x0FF);
+ 	if (frametype == ROSE_CALL_REQUEST &&
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index dbd9954eda4a..f4d085c38029 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -41,13 +41,13 @@ static int __report_module(struct addr_location *al, u64 ip,
+ 		Dwarf_Addr s;
+ 
+ 		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
+-		if (s != al->map->start)
++		if (s != al->map->start - al->map->pgoff)
+ 			mod = 0;
+ 	}
+ 
+ 	if (!mod)
+ 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
+-				      dso->long_name, -1, al->map->start,
++				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start - al->map->pgoff,
+ 				      false);
+ 
+ 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
