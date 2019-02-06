@@ -2,327 +2,205 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEB4C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0DAC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7051B20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01E6C20844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:25:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=online.net header.i=@online.net header.b="3rg6qNAx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730806AbfBFNYk (ORCPT
+        id S1730713AbfBFNZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:24:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730373AbfBFNYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:24:39 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 35FB8C0587DF;
-        Wed,  6 Feb 2019 13:24:38 +0000 (UTC)
-Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 04DA16445D;
-        Wed,  6 Feb 2019 13:24:15 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor to
- the host
-To:     Luiz Capitulino <lcapitulino@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
-        riel@surriel.com, david@redhat.com, dodgen@google.com,
-        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-6-nitesh@redhat.com>
- <20190205154545-mutt-send-email-mst@kernel.org>
- <26a36489-2289-f970-3362-60547b268a76@redhat.com>
- <20190206081533.336110a0@doriath>
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
-Date:   Wed, 6 Feb 2019 08:24:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 08:25:22 -0500
+Received: from smtpauth-dc2.online.net ([62.210.16.40]:41112 "EHLO
+        smtpauth-dc2-1.online.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728673AbfBFNZW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:25:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=online.net; s=folays2;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:In-Reply-To:References:To:From; bh=JZpG9OzZfpZQJ5Il9kqVBmckmBoxtphHKJjG3plyGlo=;
+        b=3rg6qNAxp5TmNg7bAlNOLSyx0vSwuJZfz9dXinGPadwQv2Qe8erXMqahYVDChrJHpVIBXACS5U+Qd06rN0MJNIjPmqgvf3F5wtdoTGA7X82iaAu9R7ZhviFA+yWPKtFnpFE58JRgWLaqK2QEKAqVuv/hLuq0XXVdH3lAkZaj6a4=;
+Received: from [185.18.169.48] (helo=FMAPORT)
+        by smtpauth-dc2-1.online.net with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.82)
+        (envelope-from <frederic.mathieu@dualis.com>)
+        id 1grNCY-0004rw-8P; Wed, 06 Feb 2019 14:25:18 +0100
+From:   =?utf-8?Q?Fr=C3=A9d=C3=A9ric_Mathieu?= 
+        <frederic.mathieu@dualis.com>
+To:     "'Dietmar Eggemann'" <dietmar.eggemann@arm.com>,
+        <linux-kernel@vger.kernel.org>
+References: <016801d4bd40$35c226e0$a14674a0$@dualis.com> <0c3a5c51-9694-fc3e-3cbb-abdbe398a09f@arm.com>
+In-Reply-To: <0c3a5c51-9694-fc3e-3cbb-abdbe398a09f@arm.com>
+Subject: RE: Kernel 4.9: strange behavior with fifo scheduler
+Date:   Wed, 6 Feb 2019 14:25:18 +0100
+Message-ID: <001c01d4be1f$67f74930$37e5db90$@dualis.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206081533.336110a0@doriath>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="ydQ3gFSeLBzpA4HRzhDbX7X4MWPQ5cQ40"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 06 Feb 2019 13:24:38 +0000 (UTC)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: fr
+Thread-Index: AQFAhKHPJ5+e53DwF6m03vUSRLNF7gH/m93XpusxwvA=
+X-auth-smtp-user: frederic.mathieu@dualis.com
+X-online-auth-user: FLEX_Q0Nxd0tVU0lrMm13S3FPSw==6qkTy6AqBrUYDaWjdJBILwIGvv4IgBoPcxkE
+X-online-auth-smtp: FLEX_MldTOHN5dzBHdXM0cUtTbw==bwvUr7sRiJeSB8DCh40Fb4m5DF+QcalenXEClA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ydQ3gFSeLBzpA4HRzhDbX7X4MWPQ5cQ40
-Content-Type: multipart/mixed; boundary="xIZFlAEj5S9sHTwrDQsL3CT1eA3cNyLGx";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: Luiz Capitulino <lcapitulino@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, pbonzini@redhat.com, pagupta@redhat.com,
- wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
- david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
- dhildenb@redhat.com, aarcange@redhat.com
-Message-ID: <1d478678-0a14-a144-2efc-10ff13cf1a5a@redhat.com>
-Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor to
- the host
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-6-nitesh@redhat.com>
- <20190205154545-mutt-send-email-mst@kernel.org>
- <26a36489-2289-f970-3362-60547b268a76@redhat.com>
- <20190206081533.336110a0@doriath>
-In-Reply-To: <20190206081533.336110a0@doriath>
+Hi Dietmar,
 
---xIZFlAEj5S9sHTwrDQsL3CT1eA3cNyLGx
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Attention !, these tests were executed on a kernel with the patch RT and =
+the option CONFIG_PREEMPT_RT_FULL =3D y. I confirm the truth of my =
+priority settings
+On a vanilla kernel, I get the same results as you.
 
+After talking with mike Galbraith, I turned my attention to the priority =
+of kernel threads. The following link explains in the behavior of the =
+scheduler :=20
+https://wiki.linuxfoundation.org/realtime/documentation/technical_details=
+/hr_timers
 
-On 2/6/19 8:15 AM, Luiz Capitulino wrote:
-> On Wed, 6 Feb 2019 07:56:37 -0500
-> Nitesh Narayan Lal <nitesh@redhat.com> wrote:
->
->> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote:
->>> On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:  =
+Contrary to what I thought, there is no dynamic adjustment of the =
+priority according to the priority of the calling task.
 
->>>> This patch enables the caller to expose a single buffers to the
->>>> other end using vring descriptor. It also allows the caller to
->>>> perform this action in synchornous manner by using virtqueue_kick_sy=
-nc.
->>>>
->>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com> =20
->>> I am not sure why do we need this API. Polling in guest
->>> until host runs isn't great either since these
->>> might be running on the same host CPU. =20
->> True.
->>
->> However, my understanding is that the existing API such as
->> virtqueue_add_outbuf() requires an allocation which will be problemati=
-c
->> for my implementation.
->> Although I am not blocking the allocation path during normal Linux
->> kernel usage as even if one of the zone is locked the other zone could=
+-----Message d'origine-----
+De : linux-kernel-owner@vger.kernel.org =
+[mailto:linux-kernel-owner@vger.kernel.org] De la part de Dietmar =
+Eggemann
+Envoy=C3=A9 : mercredi 6 f=C3=A9vrier 2019 11:55
+=C3=80 : Fr=C3=A9d=C3=A9ric Mathieu <frederic.mathieu@dualis.com>; =
+linux-kernel@vger.kernel.org
+Objet : Re: Kernel 4.9: strange behavior with fifo scheduler
 
->> be used to get free pages.
->> But during the initial boot time (device initialization), in certain
->> situations the allocation can only come from a single zone, acquiring =
-a
->> lock on it may result in a deadlock situation.
-> I might be wrong, but if I remember correctly, this was true for
-> your previous implementation where you'd report page hinting down
-> from arch_free_page() so you couldn't allocate memory. But this
-> is not the case anymore.
+Hi Fr=C3=A9d=C3=A9ric,
 
-With the earlier implementation, the allocation was blocked all the time
-when freeing was going on.
-With this implementation, the allocation is not blocked during normal
-Linux kernel usage (after Linux boots up). For example, on a 64 bit
-machine, if the Normal zone is locked and there is an allocation request
-then it can be served by DMA32 zone as well. (This is not the case
-during device initialization time)
-Feel free to correct me if I am wrong.
+On 2/5/19 11:47 AM, Fr=C3=A9d=C3=A9ric Mathieu wrote:
+> Hi,
+>=20
+> on an X86_64 architecture (Intel(R) Core(TM) i3-6100U CPU @ 2.30GHz),=20
+> I use the linux kernel 4.9.146 with patch rt 125.
+> uname -a: Linux 4.9.146-rt125 #1 SMP PREEMPT RT Tue Jan 29 14:17:55=20
+> CET 2019
+> x86_64 GNU/Linux
+>=20
+> I observed a strange behavior of the scheduler when several tasks are=20
+> executed in FIFO mode on a CPU core and a significant CPU activity.
+>=20
+> first test (reference: cpu load=3D0%):
+> cyclictest -m -D 5 -i 1000 -p 50 -a 0
+>        	# / dev / cpu_dma_latency set to 0us
+>        	policy: fifo: loadavg: 1.95 1.06 0.43 1/159 14305
+>        	T: 0 (14145) P: 50 I: 1000 C: 4997 Min: 7 Act: 7 Avg: 7 Max:=20
+> 18 work fine
+>=20
+> now, i'm loading the system on the cpu core 0 with a homemade process:
+>        cpu load 60%, sched FIFO prio 1, cpu 0
 
->
->>>
->>> =20
->>>> ---
->>>>  drivers/virtio/virtio_ring.c | 72 +++++++++++++++++++++++++++++++++=
-+++
->>>>  include/linux/virtio.h       |  4 ++
->>>>  2 files changed, 76 insertions(+)
->>>>
->>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ri=
-ng.c
->>>> index cd7e755484e3..93c161ac6a28 100644
->>>> --- a/drivers/virtio/virtio_ring.c
->>>> +++ b/drivers/virtio/virtio_ring.c
->>>> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqu=
-eue *_vq,
->>>>  					out_sgs, in_sgs, data, ctx, gfp);
->>>>  }
->>>> =20
->>>> +/**
->>>> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
->>>> + * @vq: the struct virtqueue we're talking about.
->>>> + * @addr: address of the buffer to add.
->>>> + * @len: length of the buffer.
->>>> + * @in: set if the buffer is for the device to write.
->>>> + *
->>>> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
->>>> + */
->>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, in=
-t in)
->>>> +{
->>>> +	struct vring_virtqueue *vq =3D to_vvq(_vq);
->>>> +	struct vring_desc *desc =3D vq->split.vring.desc;
->>>> +	u16 flags =3D in ? VRING_DESC_F_WRITE : 0;
->>>> +	unsigned int i;
->>>> +	void *data =3D (void *)addr;
->>>> +	int avail_idx;
->>>> +
->>>> +	/* Sanity check */
->>>> +	if (!_vq)
->>>> +		return -EINVAL;
->>>> +
->>>> +	START_USE(vq);
->>>> +	if (unlikely(vq->broken)) {
->>>> +		END_USE(vq);
->>>> +		return -EIO;
->>>> +	}
->>>> +
->>>> +	i =3D vq->free_head;
->>>> +	flags &=3D ~VRING_DESC_F_NEXT;
->>>> +	desc[i].flags =3D cpu_to_virtio16(_vq->vdev, flags);
->>>> +	desc[i].addr =3D cpu_to_virtio64(_vq->vdev, addr);
->>>> +	desc[i].len =3D cpu_to_virtio32(_vq->vdev, len);
->>>> +
->>>> +	vq->vq.num_free--;
->>>> +	vq->free_head =3D virtio16_to_cpu(_vq->vdev, desc[i].next);
->>>> +	vq->split.desc_state[i].data =3D data;
->>>> +	vq->split.avail_idx_shadow =3D 1;
->>>> +	avail_idx =3D vq->split.avail_idx_shadow;
->>>> +	vq->split.vring.avail->idx =3D cpu_to_virtio16(_vq->vdev, avail_id=
-x);
->>>> +	vq->num_added =3D 1;
->>>> +	END_USE(vq);
->>>> +	return 0;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
->>>> +
->>>>  /**
->>>>   * virtqueue_add_sgs - expose buffers to other end
->>>>   * @vq: the struct virtqueue we're talking about.
->>>> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(virtqueue_notify);
->>>> =20
->>>> +/**
->>>> + * virtqueue_kick_sync - update after add_buf and busy wait till up=
-date is done
->>>> + * @vq: the struct virtqueue
->>>> + *
->>>> + * After one or more virtqueue_add_* calls, invoke this to kick
->>>> + * the other side. Busy wait till the other side is done with the u=
-pdate.
->>>> + *
->>>> + * Caller must ensure we don't call this with other virtqueue
->>>> + * operations at the same time (except where noted).
->>>> + *
->>>> + * Returns false if kick failed, otherwise true.
->>>> + */
->>>> +bool virtqueue_kick_sync(struct virtqueue *vq)
->>>> +{
->>>> +	u32 len;
->>>> +
->>>> +	if (likely(virtqueue_kick(vq))) {
->>>> +		while (!virtqueue_get_buf(vq, &len) &&
->>>> +		       !virtqueue_is_broken(vq))
->>>> +			cpu_relax();
->>>> +		return true;
->>>> +	}
->>>> +	return false;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
->>>> +
->>>>  /**
->>>>   * virtqueue_kick - update after add_buf
->>>>   * @vq: the struct virtqueue
->>>> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
->>>> index fa1b5da2804e..58943a3a0e8d 100644
->>>> --- a/include/linux/virtio.h
->>>> +++ b/include/linux/virtio.h
->>>> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
->>>>  		      unsigned int in_sgs,
->>>>  		      void *data,
->>>>  		      gfp_t gfp);
->>>> +/* A desc with this init id is treated as an invalid desc */
->>>> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, in=
-t in);
->>>> +
->>>> +bool virtqueue_kick_sync(struct virtqueue *vq);
->>>> =20
->>>>  bool virtqueue_kick(struct virtqueue *vq);
->>>> =20
->>>> --=20
->>>> 2.17.2 =20
---=20
-Regards
-Nitesh
+Are you sure that your test app runs with prio 1? Is this in the range =
+of the SCHED_FIFO (userspace) priorities shown by chrt -m?
 
+...
+SCHED_FIFO min/max priority	: 1/99
+...
 
---xIZFlAEj5S9sHTwrDQsL3CT1eA3cNyLGx--
+If I run your setup (test and cyclictest affine to CPU0) on 4.15.0-43
+(i7-4750HQ) with:
 
---ydQ3gFSeLBzpA4HRzhDbX7X4MWPQ5cQ40
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+(1) test prio > cyclictest prio
 
------BEGIN PGP SIGNATURE-----
+# chrt -p $PID_TEST
 
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxa3/4ACgkQo4ZA3AYy
-oznFPg/8DrrowPWmB96yDWYenJxwlQjixTkfgWwyg4e3WgNNuwTo56ZVXVAhztmv
-2XPruYVpFX9OJe2mCpvePj/9iRXWt7AQScwPtWV87XRQIdOZI5lFPDGPTLliPmVn
-U6EP0K13tE8l0yuCGLWwgTyNPudQefYDEVkPRyLx3iX9yKf7+iEskXtkGBsxB4uH
-vOrQ4fiKElkOqbk776CEWUpKOP7JMG7AXiKQMfosaYDWYDuj/svzu2aikY6n1ZHQ
-fTF/MJ8r7kFXIp2p78tMukwv7zsE3hAn8NQ1iNbxxyAY0+5PlSbPeOWFxIEsSUTs
-bIUpyCyOARSLInQxaHcMpBUYu6YeLdFlyBJ9ZhZv95Z7RDVVcxFS4Seaz+/aePla
-x7VD+ZLxft5ZY301sQoXFw1D4XVt/zdgcXRgBMt6k0sAJe8mat/NRiXRd12h7G+4
-LCl6oRzI+G2GcOboddm3yrqsqPGhB7oYB2pKV4cXyexDzo3TOzvAdiL4YeBNJbHA
-B+G6E+u5ctfuhzMgZM7AgLgjyjoY96XQ05xrtWeORHGX6UfdgmskDKVuH47OUdle
-+fwb78Yd2j64frNHkTSylFZ9ARp3E7AIZ1AJEsTImb1YXSBV59X8UzgDcSnUbUhK
-vRi7mXtqIDTeomtfGRTcslDas30nyh2uU0E6H81QlICMr20msGk=
-=JTts
------END PGP SIGNATURE-----
+pid 28489's current scheduling policy: SCHED_FIFO pid 28489's current =
+scheduling priority: 51
 
---ydQ3gFSeLBzpA4HRzhDbX7X4MWPQ5cQ40--
+# cat /proc/$PID_TEST/stat
+
+28489 (test) R 28488 28487 8664 34828 28487 4194304 86 0 0 0 0 0 0 0 -52
+
+I get your behaviour:
+
+# /dev/cpu_dma_latency set to 0us
+Thread 0 Interval: 1500
+        0:       0:       6
+        0:       1:       5
+        0:       2:       2
+        0:       3:    5419
+        0:       4:       3
+        0:       5:       2
+        0:       6:       2
+        0:       7:       2
+        0:       8:    5422
+        0:       9:       3
+...
+
+whereas with:
+
+(2) test prio < cyclictest prio
+
+# chrt -p $PID_TEST
+
+pid 28811's current scheduling policy: SCHED_FIFO pid 28811's current =
+scheduling priority: 49
+
+# cat /proc/$PID_TEST/stat
+
+28811 (test) S 28810 28809 8664 34828 28809 1077936128 90 0 0 0 0 0 0 0 =
+-50
+
+I get:
+
+# /dev/cpu_dma_latency set to 0us
+Thread 0 Interval: 1500
+        0:       0:       7
+        0:       1:       4
+        0:       2:       3
+        0:       3:       5
+        0:       4:       4
+        0:       5:       2
+        0:       6:       2
+        0:       7:       2
+        0:       8:       2
+        0:       9:       3
+...
+
+[...]
+
+> In this case cyclictest detects very long latencies
+>        cyclictest -m -D 5 -i 1000 -p 50 -a 0 -v
+>=20
+> Max CPUs =3D 2
+> # /dev/cpu_dma_latency set to 0us
+> Thread 0 Interval: 1500
+>         0:       0:      13
+>         0:       1:       8
+>         0:       2:       7
+>         0:       3:    5648
+>         0:       4:       8
+>         0:       5:       7
+>         0:       6:       7
+>         0:       7:       7
+>         0:       8:    5649
+
+[...]
+
+> After verification, although no other process is running with real=20
+> time scheduler, I see a latency of about 5.6 ms at regular intervals.
+>=20
+> it seems that the priority task 1 (fifo) is not pre-empted by the=20
+> cyclictest process with a priority of 50 (fifo) when the low priority =
+task is active.
+> This  corresponds to the cycle recorded in the file: 6 ms of latency=20
+> followed by 4 "normal" latencies of 7 us.
+>=20
+> Does anyone have any idea of this problem?
+>=20
+> Best regards
+> Frederic MATHIEU
+
