@@ -2,166 +2,101 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BECEC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD86BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB2E20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:09:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CX9qkTpS"
+	by mail.kernel.org (Postfix) with ESMTP id 9CE3A20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549476674;
+	bh=LhJmLMfymTUSA5sOc/silIzRODW9r2RzDkRvQ0Q4N8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=K6efOpbAilGYr7wSga06Tb9ROHdGjAoh6mrVI1tGv4zL5Crr0epx00fCjxzGdXbJD
+	 vvX+/MUB28NohAuOIoHzcxBLsh6WUUKpfvb4WXz0rtSfdT22niJEbgRIXhVCFuOrfz
+	 S52pHDkzOQr7yKSbZm7+BxCqZF5UM89oDbLPa1oM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbfBFSJA (ORCPT
+        id S1729155AbfBFSLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:09:00 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33963 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfBFSJA (ORCPT
+        Wed, 6 Feb 2019 13:11:12 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55226 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBFSLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:09:00 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so3444626pfg.1;
-        Wed, 06 Feb 2019 10:08:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6nJURJ4r/iJ7dJytgwY+6iLCpLFguSmIjCgEe0Lraf4=;
-        b=CX9qkTpSPWYIhphSfmRUdXLrgLmlbaKzOftqHnWN/uEZ+574Od5BHx5eGFl7JK+Kgc
-         V71UTnYtks8orwnbDX37EomRWbqUQJ9iJz+MkMdKMVrM+X5MwFgXwqHYMTlPkmjms3G3
-         bxJMEwqE8JT+nVUYzTFV1jbMffn6J2w1cJwge0586eFSXI7GEJAjEzPsK8KPTXsmeYfk
-         gtS7qcvh1d51WMe62YP6Ub+22OM2hIQlGp2ur/l0zY5Okz0oQofNb8dcc7ph5vbkktqc
-         FRyPOtkbdI4/paj0OZ+h+DhcwP/khOlUX/0YYKUZ23y1kXZEWsJTqNQvMd2Z/VC5cmFX
-         TmwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6nJURJ4r/iJ7dJytgwY+6iLCpLFguSmIjCgEe0Lraf4=;
-        b=c6sSdvCowdFiIAjbZ+6lr0bYcAYGuSVIhViz75p/KfjlkQIoO4fb/5qLPb/1+cAEzT
-         +fkrLbu6Jk71NlioGaZPT52/2aGS9ul1TVkeif/lSwjq6ZsDjsw7BkgcZDjp/gpwwBZC
-         sbC3xiLZxDx3Rv6hdjRetDRq4vGaXp4yyQZzaLZe6ouQoBH3/A+/pJLP6OohzJlDDWEV
-         AS0w+huXACYdeB4S3IiETx5dWKsSaRF/aRy/RXTzTLvDD3lKNdLKV6HauGhPRa6k8dhH
-         0YXx9al6o6UOGkVEmGduSY1LEMr2NP08acuzmVf7Ypcrfe80oGwHS6CizCpGGYQxGe6v
-         qHAA==
-X-Gm-Message-State: AHQUAuYqHrVg0czL+Jq1ZBzjYzkxAhFNxfjoCrHZXA5ApAxGzt+cuzTA
-        FdG63eghWUl6g8hGvrDWisANq30r
-X-Google-Smtp-Source: AHgI3IYov8k9udyigdeSHw/oTZigWam/SVQ74ajGgWhMSpG3YhAsKmXtujg6yJV6u9gA0vecaPFaSg==
-X-Received: by 2002:a63:f552:: with SMTP id e18mr865806pgk.239.1549476538510;
-        Wed, 06 Feb 2019 10:08:58 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id h128sm8875408pgc.15.2019.02.06.10.08.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 10:08:57 -0800 (PST)
-Date:   Wed, 6 Feb 2019 10:08:56 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>
-Subject: [PATCH] Input: ims-pcu - switch to using brightness_set_blocking()
-Message-ID: <20190206180856.GA199121@dtor-ws>
+        Wed, 6 Feb 2019 13:11:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GDOIfaCNsuHx4awkfMWy4r84WH8WTHE040DlvmA5f/o=; b=f59u5lHPuEMG20gqlkqRbBmUB
+        bJkjZWykVfYH8h+bSIjm3OZgvhCjS3jk5YSH5O6YI34EXY5nhegbeH5WZQpL+34f8R0f8rwM6B+hs
+        YApyKopjnX+LIRQeF9azvrdyP6n6mi8QGtrHKsqVLwvzpf4x/VZvdWjA0gLSn32XFirtQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1grRex-0007WF-5s; Wed, 06 Feb 2019 18:10:55 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 842791127EA3; Wed,  6 Feb 2019 18:10:54 +0000 (GMT)
+Date:   Wed, 6 Feb 2019 18:10:54 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] ASoC: codecs: jz4740: Use SPDX license notifier
+Message-ID: <20190206181054.GF17630@sirena.org.uk>
+References: <20190205031108.26171-1-paul@crapouillou.net>
+ <20190205031108.26171-3-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aPdhxNJGSeOG9wFI"
 Content-Disposition: inline
+In-Reply-To: <20190205031108.26171-3-paul@crapouillou.net>
+X-Cookie: In space, no one can hear you fart.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that LEDs core allows "blocking" flavor of "set brightness" method we
-can use it and get rid of private work item.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/misc/ims-pcu.c | 27 ++++++++-------------------
- 1 file changed, 8 insertions(+), 19 deletions(-)
+--aPdhxNJGSeOG9wFI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/input/misc/ims-pcu.c b/drivers/input/misc/ims-pcu.c
-index 3d51175c4d72..74cf3b612f05 100644
---- a/drivers/input/misc/ims-pcu.c
-+++ b/drivers/input/misc/ims-pcu.c
-@@ -39,8 +39,6 @@ struct ims_pcu_gamepad {
- 
- struct ims_pcu_backlight {
- 	struct led_classdev cdev;
--	struct work_struct work;
--	enum led_brightness desired_brightness;
- 	char name[32];
- };
- 
-@@ -949,14 +947,14 @@ static void ims_pcu_process_async_firmware(const struct firmware *fw,
- 
- #define IMS_PCU_MAX_BRIGHTNESS		31998
- 
--static void ims_pcu_backlight_work(struct work_struct *work)
-+static int ims_pcu_backlight_set_brightness(struct led_classdev *cdev,
-+					    enum led_brightness value)
- {
- 	struct ims_pcu_backlight *backlight =
--			container_of(work, struct ims_pcu_backlight, work);
-+			container_of(cdev, struct ims_pcu_backlight, cdev);
- 	struct ims_pcu *pcu =
- 			container_of(backlight, struct ims_pcu, backlight);
--	int desired_brightness = backlight->desired_brightness;
--	__le16 br_val = cpu_to_le16(desired_brightness);
-+	__le16 br_val = cpu_to_le16(value);
- 	int error;
- 
- 	mutex_lock(&pcu->cmd_mutex);
-@@ -966,19 +964,11 @@ static void ims_pcu_backlight_work(struct work_struct *work)
- 	if (error && error != -ENODEV)
- 		dev_warn(pcu->dev,
- 			 "Failed to set desired brightness %u, error: %d\n",
--			 desired_brightness, error);
-+			 value, error);
- 
- 	mutex_unlock(&pcu->cmd_mutex);
--}
- 
--static void ims_pcu_backlight_set_brightness(struct led_classdev *cdev,
--					     enum led_brightness value)
--{
--	struct ims_pcu_backlight *backlight =
--			container_of(cdev, struct ims_pcu_backlight, cdev);
--
--	backlight->desired_brightness = value;
--	schedule_work(&backlight->work);
-+	return error;
- }
- 
- static enum led_brightness
-@@ -1015,14 +1005,14 @@ static int ims_pcu_setup_backlight(struct ims_pcu *pcu)
- 	struct ims_pcu_backlight *backlight = &pcu->backlight;
- 	int error;
- 
--	INIT_WORK(&backlight->work, ims_pcu_backlight_work);
- 	snprintf(backlight->name, sizeof(backlight->name),
- 		 "pcu%d::kbd_backlight", pcu->device_no);
- 
- 	backlight->cdev.name = backlight->name;
- 	backlight->cdev.max_brightness = IMS_PCU_MAX_BRIGHTNESS;
- 	backlight->cdev.brightness_get = ims_pcu_backlight_get_brightness;
--	backlight->cdev.brightness_set = ims_pcu_backlight_set_brightness;
-+	backlight->cdev.brightness_set_blocking =
-+					 ims_pcu_backlight_set_brightness;
- 
- 	error = led_classdev_register(pcu->dev, &backlight->cdev);
- 	if (error) {
-@@ -1040,7 +1030,6 @@ static void ims_pcu_destroy_backlight(struct ims_pcu *pcu)
- 	struct ims_pcu_backlight *backlight = &pcu->backlight;
- 
- 	led_classdev_unregister(&backlight->cdev);
--	cancel_work_sync(&backlight->work);
- }
- 
- 
--- 
-2.20.1.611.gfbb209baf1-goog
+On Tue, Feb 05, 2019 at 12:11:05AM -0300, Paul Cercueil wrote:
 
+> +++ b/sound/soc/codecs/jz4740.c
+> @@ -1,14 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
+> - *
 
--- 
-Dmitry
+Please convert the whole comment to C++ style so it looks more
+consistent with the rest of ASoC (and itself).
+
+--aPdhxNJGSeOG9wFI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxbIy0ACgkQJNaLcl1U
+h9C9ygf+JHkT2svpsqkGAQ0zFVpciiYkmRlqFlvGQOo0Uyb57bINoJCazjYc4WLv
+xoTLbn56dDNWyi8Sn0N69v5qTiAlE9lCHAi/OrkcCQBncggpXiYAdVxWYn/AYBU4
+UmK7Vb6RdEiwD140Q51SX2fh7DVVo/YSRPEgCB4QLPRfZiGKkzscIqsmxV/mOqio
+pNtIY5XReEQ1nBmFk0Kyf14C/q7nK89SYzhu+Frdruy7GnJ4gB3PooUWLUvmEEzh
+S3zGvLqEDynPaIyCjKOCS9QegWOz1TPOPDQSYVjjMpBgB4liera/dU+ehaC17TDW
+sgysn4Y6m1a9F5ffhyx3Tt5JFNvsyg==
+=/XhK
+-----END PGP SIGNATURE-----
+
+--aPdhxNJGSeOG9wFI--
