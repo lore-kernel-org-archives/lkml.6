@@ -2,142 +2,178 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9750EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A868BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C21620818
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74F9420818
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731094AbfBFSAe (ORCPT
+        id S1728523AbfBFSBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:00:34 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:36715 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729173AbfBFSAc (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 6 Feb 2019 13:00:32 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 06 Feb 2019 19:00:30 +0100
-Received: from linux-r8p5.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Wed, 06 Feb 2019 17:59:58 +0000
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     jgg@ziepe.ca, akpm@linux-foundation.org
-Cc:     dledford@redhat.com, jgg@mellanox.com, jack@suse.cz,
-        willy@infradead.org, ira.weiny@intel.com,
-        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, dave@stgolabs.net,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 6/6] drivers/IB,core: reduce scope of mmap_sem
-Date:   Wed,  6 Feb 2019 09:59:20 -0800
-Message-Id: <20190206175920.31082-7-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190206175920.31082-1-dave@stgolabs.net>
-References: <20190206175920.31082-1-dave@stgolabs.net>
+        Wed, 6 Feb 2019 13:01:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbfBFSBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:01:45 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DC3190919;
+        Wed,  6 Feb 2019 18:01:43 +0000 (UTC)
+Received: from redhat.com (ovpn-122-237.rdu2.redhat.com [10.10.122.237])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 357C5608DC;
+        Wed,  6 Feb 2019 18:01:37 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 13:01:36 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Pankaj Gupta <pagupta@redhat.com>, jack@suse.cz,
+        kvm@vger.kernel.org, linux-nvdimm@ml01.01.org,
+        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
+        adilger.kernel@dilger.ca, zwisler@kernel.org, eblake@redhat.com,
+        Andrea Arcangeli <aarcange@redhat.com>, dave.jiang@intel.com,
+        darrick.wong@oracle.com, vishal.l.verma@intel.com,
+        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
+        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
+        stefanha@redhat.com, imammedo@redhat.com, dan.j.williams@intel.com,
+        lcapitulino@redhat.com, linux-ext4@vger.kernel.org, tytso@mit.edu,
+        xiaoguangrong.eric@gmail.com, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, pbonzini@redhat.com
+Subject: Re: security implications of caching with virtio pmem (was Re:
+ [PATCH v3 0/5] kvm "virtio pmem" device)
+Message-ID: <20190206125535-mutt-send-email-mst@kernel.org>
+References: <20190109144736.17452-1-pagupta@redhat.com>
+ <20190204170515-mutt-send-email-mst@kernel.org>
+ <5b8a06a7-be44-698f-f319-6b2cbcf1eb8a@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b8a06a7-be44-698f-f319-6b2cbcf1eb8a@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 06 Feb 2019 18:01:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ib_umem_get() uses gup_longterm() and relies on the lock to
-stabilze the vma_list, so we cannot really get rid of mmap_sem
-altogether, but now that the counter is atomic, we can get of
-some complexity that mmap_sem brings with only pinned_vm.
+On Wed, Feb 06, 2019 at 03:00:26PM +0100, David Hildenbrand wrote:
+> On 04.02.19 23:56, Michael S. Tsirkin wrote:
+> > 
+> > On Wed, Jan 09, 2019 at 08:17:31PM +0530, Pankaj Gupta wrote:
+> >>  This patch series has implementation for "virtio pmem". 
+> >>  "virtio pmem" is fake persistent memory(nvdimm) in guest 
+> >>  which allows to bypass the guest page cache. This also
+> >>  implements a VIRTIO based asynchronous flush mechanism.  
+> > 
+> > 
+> > At Pankaj's request I looked at information leak implications of virtio
+> > pmem in light of the recent page cache side channels paper
+> > (https://arxiv.org/pdf/1901.01161.pdf) - to see what
+> > kind of side channels it might create if any.  TLDR - I think that
+> > depending on the host side implementation there could be some, but this
+> > might be addressable by better documentation in both code and spec.
+> > The fake dax approach backing the guest memory by a host page cache
+> > does seem to have potential issues.
+> > 
+> > For clarity: we are talking about leaking information either to a VM, or
+> > within a VM (I did not look into leaks to hypervisor in configurations
+> > such as SEV) through host page cache.
+> > 
+> > Leaks into a VM: It seems clear that while pmem allows memory accesses
+> > versus read/write with e.g. a block device, from host page cache point
+> > of view this doesn't matter much: reads populate cache in the same way
+> > as memory faults.  Thus ignoring presence of information leaks (which is
+> > an interesting question e.g. in light of recent discard support) pmem
+> > doesn't seem to be any better or worse for leaking information into a
+> > VM.
+> 
+> +1, just a different way to access that cache.
+> 
+> Conceptually a virtio-pmem devices is from the guest view a "device with
+> a managed buffer". Some accesses might be faster than others. There are
+> no guarantees on how fast a certain access is. And yes, actions on other
+> guests can result in accesses being slower but not faster.
+> 
+> Also other storage devices have caches like that (well, the caches size
+> depends on the device) - thinking especially about storage systems -
+> which would in my opinion, also allow similar leaks. How are such
+> security concerns handled there? Are they different (besides eventually
+> access speed)?
+> 
+> > 
+> > Leaks within VM: Right now pmem seems to bypass the guest page cache
+> > completely.  Whether pmem memory is then resident in a page cache would
+> > be up to the device/host. Assuming that it is, the "Preventing
+> > Efficient Eviction while Increasing the System Performance"
+> > countermeasure for the page cache side channel attack would appear to
+> > become ineffective with pmem. What is suggested is a per-process
+> > management of the page cache, and host does not have visibility of
+> > processes within a VM. Another possible countermeasure - not discussed
+> > in the paper - could be modify the applications to lock the security
+> > relevant pages in memory.  Again this becomes impractical with pmem as
+> > host does not have visibility into that. However note that as long
+> > as the only countermeasure linux uses is "Privileged Access"
+> > (i.e. blocking mincore) nothing can be done as guest page cache
+> > remains as vulnerable as host page cache.
+> 
+> This sounds very use-case specific. If I run a VM only with a very
+> specific workload (say, a container running one application), I usually
+> don't care about leaks within the VM. At least not leaks between
+> applications ;)
+> 
+> In contrast, to running different applications (e.g. containers from
+> different customers) on one system, I really care about leaks within a VM.
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- drivers/infiniband/core/umem.c | 41 ++---------------------------------------
- 1 file changed, 2 insertions(+), 39 deletions(-)
+Clearly, not everyone cares about closing off information leaks.
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index 678abe1afcba..b69d3efa8712 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -165,15 +165,12 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
- 
- 	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
- 
--	down_write(&mm->mmap_sem);
--	new_pinned = atomic64_read(&mm->pinned_vm) + npages;
-+	new_pinned = atomic64_add_return(npages, &mm->pinned_vm);
- 	if (new_pinned > lock_limit && !capable(CAP_IPC_LOCK)) {
--		up_write(&mm->mmap_sem);
-+		atomic64_sub(npages, &mm->pinned_vm);
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	atomic64_set(&mm->pinned_vm, new_pinned);
--	up_write(&mm->mmap_sem);
- 
- 	cur_base = addr & PAGE_MASK;
- 
-@@ -233,9 +230,7 @@ struct ib_umem *ib_umem_get(struct ib_udata *udata, unsigned long addr,
- umem_release:
- 	__ib_umem_release(context->device, umem, 0);
- vma:
--	down_write(&mm->mmap_sem);
- 	atomic64_sub(ib_umem_num_pages(umem), &mm->pinned_vm);
--	up_write(&mm->mmap_sem);
- out:
- 	if (vma_list)
- 		free_page((unsigned long) vma_list);
-@@ -258,25 +253,12 @@ static void __ib_umem_release_tail(struct ib_umem *umem)
- 		kfree(umem);
- }
- 
--static void ib_umem_release_defer(struct work_struct *work)
--{
--	struct ib_umem *umem = container_of(work, struct ib_umem, work);
--
--	down_write(&umem->owning_mm->mmap_sem);
--	atomic64_sub(ib_umem_num_pages(umem), &umem->owning_mm->pinned_vm);
--	up_write(&umem->owning_mm->mmap_sem);
--
--	__ib_umem_release_tail(umem);
--}
--
- /**
-  * ib_umem_release - release memory pinned with ib_umem_get
-  * @umem: umem struct to release
-  */
- void ib_umem_release(struct ib_umem *umem)
- {
--	struct ib_ucontext *context = umem->context;
--
- 	if (umem->is_odp) {
- 		ib_umem_odp_release(to_ib_umem_odp(umem));
- 		__ib_umem_release_tail(umem);
-@@ -285,26 +267,7 @@ void ib_umem_release(struct ib_umem *umem)
- 
- 	__ib_umem_release(umem->context->device, umem, 1);
- 
--	/*
--	 * We may be called with the mm's mmap_sem already held.  This
--	 * can happen when a userspace munmap() is the call that drops
--	 * the last reference to our file and calls our release
--	 * method.  If there are memory regions to destroy, we'll end
--	 * up here and not be able to take the mmap_sem.  In that case
--	 * we defer the vm_locked accounting a workqueue.
--	 */
--	if (context->closing) {
--		if (!down_write_trylock(&umem->owning_mm->mmap_sem)) {
--			INIT_WORK(&umem->work, ib_umem_release_defer);
--			queue_work(ib_wq, &umem->work);
--			return;
--		}
--	} else {
--		down_write(&umem->owning_mm->mmap_sem);
--	}
- 	atomic64_sub(ib_umem_num_pages(umem), &umem->owning_mm->pinned_vm);
--	up_write(&umem->owning_mm->mmap_sem);
--
- 	__ib_umem_release_tail(umem);
- }
- EXPORT_SYMBOL(ib_umem_release);
--- 
-2.16.4
+> > 
+> > 
+> > Countermeasures: which host-side countermeasures can be designed would
+> > depend on which countermeasures are used guest-side - we would need to
+> > make sure they are not broken by pmem.  For "Preventing Efficient
+> > Eviction while Increasing the System Performance" modifying the host
+> > implementation to ensure that pmem device bypasses the host page cache
+> > would seem to address the security problem.Similarly, ensuring that a
+> > real memory device (e.g. DAX, RAM such as hugetlbfs, pmem for nested
+> > virt) is used for pmem would make the memory locking countermeasure
+> > work.  Whether with such limitations the device is still useful
+> > performance wise is an open question.  These questions probably should
+> > be addressed in the documentation, spec and possible qemu code.
+> > 
+> I also want to note that using a disk/file as memory backend with
+> NVDIMMs in QEMU essentially results in the exact same questions we have
+> with virtio-pmem.
+> 
+> E.g. kata-containers use nvdimms for the rootfile system (read-only) as
+> far as I am aware.
+> 
+> Conceptually, a virtio-pmem device is just an emulated nvdimm device
+> with a flush interface. And the nice thing is, that it is designed to
+> also work on architectures that don't speak "nvdimm".
+> 
+> > 
+> > Severity of the security implications: some people argue that the
+> > security implications of the page cache leaks are minor.  I do not have
+> > an opinion on this: the severity would seem to depend on the specific
+> > configuration.
+> 
+> I guess configuration and use case.
 
+Good point.
+
+> Nice summary, thanks for looking into this Michael!
+> 
+> 
+> -- 
+> 
+> Thanks,
+> 
+> David / dhildenb
+> _______________________________________________
+> Virtualization mailing list
+> Virtualization@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/virtualization
