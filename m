@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719A3C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65198C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 357B22070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26BCE2070B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479280;
-	bh=UWIu1mRSumwMCMRTuJP1O0nEruLzXljQgIHDJv9OVXA=;
+	s=default; t=1549479290;
+	bh=sdplpdCvwp3ioOEXwOpZze5e40V78qVatPAq70HNx7g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hfd6mCMq8GxpEsRZcf6AGLRkL6Gh+L3qdM/z54pqI/pjQT7K8mn04P2B+bXsNq1VT
-	 ocjpRGLqhK9yd0sGTAxdpqSc65XTp0UNB2tdreFsJxx0uBmZaWNT4mdOAobOan/C6B
-	 pDT3Aop9IcyrQ7Yc/cW8A/nOe3Yb8PteDKBUZEog=
+	b=DmjjAJ2RHyzncFiB8XPh1G8iZaC/M0hsGFoHL59nbb0I30pDQj6NFQQKhsekxfj0o
+	 DmH2iCDciR5rB+NsudR82iUiMl7j40jnhOznqta0QQXyrA7NjbFxMBsoM01DBja91C
+	 zvP9FpY7dDaBIrUGEBbeIG9fEQNk+7qItrGp5pnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfBFSyi (ORCPT
+        id S1727922AbfBFSyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:54:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44074 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:54:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbfBFSto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:49:44 -0500
+        id S1727068AbfBFSth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:49:37 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 621892186A;
-        Wed,  6 Feb 2019 18:49:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D7C92083B;
+        Wed,  6 Feb 2019 18:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549478983;
-        bh=UWIu1mRSumwMCMRTuJP1O0nEruLzXljQgIHDJv9OVXA=;
+        s=default; t=1549478976;
+        bh=sdplpdCvwp3ioOEXwOpZze5e40V78qVatPAq70HNx7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Prra8eZF7Iz6COzBmRbV6J5Vw8EOFGkkto4VYzJLhCvbDZUe6yqGkOQyJ6xiAl8D7
-         FKrquVUeRDpss3Z6hga7ANioflg6+FCG8pyj/npq2Jpaw0SV5kFKtkmFgkdQsqpnrP
-         RrEQwWV04DIu/s79UIwvjo95q29NYNU8GqvVE4yk=
+        b=rVRMlszULUS/np06ELnT353Eq+w+wzl2E3n1KNoQOVGDDPcUhEzJJw/kYvan2/NrN
+         YtowSGyz3E7Cdvc4LMmdZsPa2WXKWKCcx8p1mTHGkNhLUJz8MTuD0rRXTcm2Vopf1/
+         31CAJIalu6av9Dr2z3bbAfFrgzKhpoICGdtWAsNc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 10/53] perf tools: Add missing include for symbols.h
-Date:   Wed,  6 Feb 2019 15:48:20 -0300
-Message-Id: <20190206184903.24054-11-acme@kernel.org>
+Subject: [PATCH 07/53] perf map: Move structs and prototypes for map groups to a separate header
+Date:   Wed,  6 Feb 2019 15:48:17 -0300
+Message-Id: <20190206184903.24054-8-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
 References: <20190206184903.24054-1-acme@kernel.org>
@@ -61,227 +61,359 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Several places were using definitions found in symbols.h but not
-including it, getting it by sheer luck from some other headers that now
-are in the process of removing that include because they don't need it
-or because simply having struct forward declarations is enough, fix it.
+And since machine.h only needs what is in there, make it stop including
+map.h and instead include this newly introduced map_groups.h instead.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-xbcvvx296d70kpg9wb0qmeq9@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-dbob25fv5rp2rjpwlnterf38@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c                               | 1 +
- tools/perf/builtin-inject.c                            | 1 +
- tools/perf/builtin-trace.c                             | 1 +
- tools/perf/tests/code-reading.c                        | 1 +
- tools/perf/tests/dwarf-unwind.c                        | 1 +
- tools/perf/ui/browsers/hists.c                         | 1 +
- tools/perf/ui/stdio/hist.c                             | 1 +
- tools/perf/util/event.c                                | 1 +
- tools/perf/util/hist.c                                 | 1 +
- tools/perf/util/intel-bts.c                            | 1 +
- tools/perf/util/machine.c                              | 1 +
- tools/perf/util/scripting-engines/trace-event-perl.c   | 1 +
- tools/perf/util/scripting-engines/trace-event-python.c | 1 +
- tools/perf/util/session.c                              | 1 +
- tools/perf/util/thread.c                               | 1 +
- tools/perf/util/unwind-libdw.c                         | 1 +
- 16 files changed, 16 insertions(+)
+ tools/perf/arch/arm/tests/dwarf-unwind.c     |  1 +
+ tools/perf/arch/arm64/tests/dwarf-unwind.c   |  1 +
+ tools/perf/arch/powerpc/tests/dwarf-unwind.c |  1 +
+ tools/perf/arch/x86/tests/dwarf-unwind.c     |  1 +
+ tools/perf/ui/stdio/hist.c                   |  1 +
+ tools/perf/util/machine.h                    |  2 +-
+ tools/perf/util/map.c                        |  6 ++
+ tools/perf/util/map.h                        | 87 +------------------
+ tools/perf/util/map_groups.h                 | 91 ++++++++++++++++++++
+ tools/perf/util/probe-event.c                |  1 +
+ tools/perf/util/symbol-elf.c                 |  1 +
+ 11 files changed, 106 insertions(+), 87 deletions(-)
+ create mode 100644 tools/perf/util/map_groups.h
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 72ec0ae7d8ad..b2bf117881f1 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -33,6 +33,7 @@
- #include "ui/browsers/hists.h"
- #include "thread.h"
- #include "mem2node.h"
-+#include "symbol.h"
- 
- struct c2c_hists {
- 	struct hists		hists;
-diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-index 3499addcfc12..9bb1f35d5cb7 100644
---- a/tools/perf/builtin-inject.c
-+++ b/tools/perf/builtin-inject.c
-@@ -20,6 +20,7 @@
- #include "util/data.h"
- #include "util/auxtrace.h"
- #include "util/jit.h"
-+#include "util/symbol.h"
- #include "util/thread.h"
- 
- #include <subcmd/parse-options.h>
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index c0b91595d6e3..81a44954d435 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -30,6 +30,7 @@
- #include <subcmd/exec-cmd.h>
- #include "util/machine.h"
- #include "util/map.h"
-+#include "util/symbol.h"
- #include "util/path.h"
- #include "util/session.h"
- #include "util/thread.h"
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 59d00b3d0a74..4ebd2681e760 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -16,6 +16,7 @@
- #include "cpumap.h"
- #include "machine.h"
- #include "map.h"
-+#include "symbol.h"
- #include "event.h"
- #include "thread.h"
- 
-diff --git a/tools/perf/tests/dwarf-unwind.c b/tools/perf/tests/dwarf-unwind.c
-index 7c8d2e422401..077c306c1cae 100644
---- a/tools/perf/tests/dwarf-unwind.c
-+++ b/tools/perf/tests/dwarf-unwind.c
-@@ -10,6 +10,7 @@
- #include "../util/unwind.h"
+diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/arm/tests/dwarf-unwind.c
+index 9a0242e74cfc..2c35e532bc9a 100644
+--- a/tools/perf/arch/arm/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
+@@ -3,6 +3,7 @@
  #include "perf_regs.h"
- #include "map.h"
-+#include "symbol.h"
  #include "thread.h"
- #include "callchain.h"
- 
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 8ada0c690771..ac176b48178c 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -12,6 +12,7 @@
- #include "../../util/evlist.h"
- #include "../../util/hist.h"
- #include "../../util/map.h"
-+#include "../../util/symbol.h"
- #include "../../util/pstack.h"
- #include "../../util/sort.h"
- #include "../../util/util.h"
+ #include "map.h"
++#include "map_groups.h"
+ #include "event.h"
+ #include "debug.h"
+ #include "tests/tests.h"
+diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+index 5522ce384723..a6a407fa1b8b 100644
+--- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+@@ -3,6 +3,7 @@
+ #include "perf_regs.h"
+ #include "thread.h"
+ #include "map.h"
++#include "map_groups.h"
+ #include "event.h"
+ #include "debug.h"
+ #include "tests/tests.h"
+diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+index 5f39efef0856..5c178e4a1995 100644
+--- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
++++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+@@ -3,6 +3,7 @@
+ #include "perf_regs.h"
+ #include "thread.h"
+ #include "map.h"
++#include "map_groups.h"
+ #include "event.h"
+ #include "debug.h"
+ #include "tests/tests.h"
+diff --git a/tools/perf/arch/x86/tests/dwarf-unwind.c b/tools/perf/arch/x86/tests/dwarf-unwind.c
+index 7879df34569a..6ad0a1cedb13 100644
+--- a/tools/perf/arch/x86/tests/dwarf-unwind.c
++++ b/tools/perf/arch/x86/tests/dwarf-unwind.c
+@@ -3,6 +3,7 @@
+ #include "perf_regs.h"
+ #include "thread.h"
+ #include "map.h"
++#include "map_groups.h"
+ #include "event.h"
+ #include "debug.h"
+ #include "tests/tests.h"
 diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index bb653a47f47a..f25116f70878 100644
+index 814abf5e9a5c..bb653a47f47a 100644
 --- a/tools/perf/ui/stdio/hist.c
 +++ b/tools/perf/ui/stdio/hist.c
-@@ -6,6 +6,7 @@
+@@ -5,6 +5,7 @@
+ #include "../../util/util.h"
  #include "../../util/hist.h"
  #include "../../util/map.h"
- #include "../../util/map_groups.h"
-+#include "../../util/symbol.h"
++#include "../../util/map_groups.h"
  #include "../../util/sort.h"
  #include "../../util/evsel.h"
  #include "../../util/srcline.h"
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 4d84e7754be9..ba7be74fad6e 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -22,6 +22,7 @@
- #include "thread_map.h"
- #include "sane_ctype.h"
- #include "map.h"
-+#include "symbol.h"
- #include "symbol/kallsyms.h"
- #include "asm/bug.h"
- #include "stat.h"
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 9e7a8e044a0a..3560ad2e5551 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -11,6 +11,7 @@
- #include "evsel.h"
- #include "annotate.h"
- #include "srcline.h"
-+#include "symbol.h"
- #include "thread.h"
- #include "ui/progress.h"
- #include <errno.h>
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index f7fe8ccf6d65..f99ac0cbe3ff 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -28,6 +28,7 @@
- #include "evlist.h"
- #include "machine.h"
- #include "map.h"
-+#include "symbol.h"
- #include "session.h"
- #include "util.h"
- #include "thread.h"
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 66f019fdc510..61959aba7e27 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -10,6 +10,7 @@
- #include "hist.h"
- #include "machine.h"
- #include "map.h"
-+#include "symbol.h"
- #include "sort.h"
- #include "strlist.h"
- #include "thread.h"
-diff --git a/tools/perf/util/scripting-engines/trace-event-perl.c b/tools/perf/util/scripting-engines/trace-event-perl.c
-index a9f22694eed1..5f06378a482b 100644
---- a/tools/perf/util/scripting-engines/trace-event-perl.c
-+++ b/tools/perf/util/scripting-engines/trace-event-perl.c
-@@ -38,6 +38,7 @@
- #include "../callchain.h"
- #include "../machine.h"
- #include "../map.h"
-+#include "../symbol.h"
- #include "../thread.h"
- #include "../event.h"
- #include "../trace-event.h"
-diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
-index d9c83776a80f..0e17db41b49b 100644
---- a/tools/perf/util/scripting-engines/trace-event-python.c
-+++ b/tools/perf/util/scripting-engines/trace-event-python.c
-@@ -45,6 +45,7 @@
- #include "../trace-event.h"
- #include "../call-path.h"
- #include "map.h"
-+#include "symbol.h"
- #include "thread_map.h"
- #include "cpumap.h"
- #include "print_binary.h"
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index e9755a649993..2012396abb7c 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -14,6 +14,7 @@
- #include "evsel.h"
- #include "memswap.h"
- #include "map.h"
-+#include "symbol.h"
- #include "session.h"
- #include "tool.h"
- #include "sort.h"
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index c83372329f89..4c179fef442d 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -12,6 +12,7 @@
- #include "debug.h"
- #include "namespaces.h"
- #include "comm.h"
-+#include "symbol.h"
- #include "unwind.h"
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index e2f3df45410a..f70ab98a7bde 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -4,7 +4,7 @@
  
- #include <api/fs/fs.h>
-diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
-index 8ea7c89e73fd..407d0167b942 100644
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -9,6 +9,7 @@
- #include "unwind-libdw.h"
- #include "machine.h"
- #include "map.h"
-+#include "symbol.h"
- #include "thread.h"
- #include <linux/types.h>
+ #include <sys/types.h>
+ #include <linux/rbtree.h>
+-#include "map.h"
++#include "map_groups.h"
+ #include "dso.h"
  #include "event.h"
+ #include "rwsem.h"
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index cf407cc9d915..fbeb0c6efaa6 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -557,6 +557,12 @@ void map_groups__init(struct map_groups *mg, struct machine *machine)
+ 	refcount_set(&mg->refcnt, 1);
+ }
+ 
++void map_groups__insert(struct map_groups *mg, struct map *map)
++{
++	maps__insert(&mg->maps, map);
++	map->groups = mg;
++}
++
+ static void __maps__purge(struct maps *maps)
+ {
+ 	struct rb_root *root = &maps->entries;
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 5a889db4fca5..0e20749f2c55 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -6,12 +6,10 @@
+ #include <linux/compiler.h>
+ #include <linux/list.h>
+ #include <linux/rbtree.h>
+-#include <pthread.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdbool.h>
+ #include <linux/types.h>
+-#include "rwsem.h"
+ 
+ struct dso;
+ struct ip_callchain;
+@@ -48,38 +46,7 @@ struct map {
+ 	refcount_t		refcnt;
+ };
+ 
+-#define KMAP_NAME_LEN 256
+-
+-struct kmap {
+-	struct ref_reloc_sym	*ref_reloc_sym;
+-	struct map_groups	*kmaps;
+-	char			name[KMAP_NAME_LEN];
+-};
+-
+-struct maps {
+-	struct rb_root	 entries;
+-	struct rb_root	 names;
+-	struct rw_semaphore lock;
+-};
+-
+-struct map_groups {
+-	struct maps	 maps;
+-	struct machine	 *machine;
+-	refcount_t	 refcnt;
+-};
+-
+-struct map_groups *map_groups__new(struct machine *machine);
+-void map_groups__delete(struct map_groups *mg);
+-bool map_groups__empty(struct map_groups *mg);
+-
+-static inline struct map_groups *map_groups__get(struct map_groups *mg)
+-{
+-	if (mg)
+-		refcount_inc(&mg->refcnt);
+-	return mg;
+-}
+-
+-void map_groups__put(struct map_groups *mg);
++struct kmap;
+ 
+ struct kmap *__map__kmap(struct map *map);
+ struct kmap *map__kmap(struct map *map);
+@@ -187,61 +154,9 @@ void map__fixup_end(struct map *map);
+ 
+ void map__reloc_vmlinux(struct map *map);
+ 
+-void maps__insert(struct maps *maps, struct map *map);
+-void maps__remove(struct maps *maps, struct map *map);
+-struct map *maps__find(struct maps *maps, u64 addr);
+-struct map *maps__first(struct maps *maps);
+-struct map *map__next(struct map *map);
+-struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name,
+-                                         struct map **mapp);
+-void map_groups__init(struct map_groups *mg, struct machine *machine);
+-void map_groups__exit(struct map_groups *mg);
+-int map_groups__clone(struct thread *thread,
+-		      struct map_groups *parent);
+-size_t map_groups__fprintf(struct map_groups *mg, FILE *fp);
+-
+ int map__set_kallsyms_ref_reloc_sym(struct map *map, const char *symbol_name,
+ 				    u64 addr);
+ 
+-static inline void map_groups__insert(struct map_groups *mg, struct map *map)
+-{
+-	maps__insert(&mg->maps, map);
+-	map->groups = mg;
+-}
+-
+-static inline void map_groups__remove(struct map_groups *mg, struct map *map)
+-{
+-	maps__remove(&mg->maps, map);
+-}
+-
+-static inline struct map *map_groups__find(struct map_groups *mg, u64 addr)
+-{
+-	return maps__find(&mg->maps, addr);
+-}
+-
+-struct map *map_groups__first(struct map_groups *mg);
+-
+-static inline struct map *map_groups__next(struct map *map)
+-{
+-	return map__next(map);
+-}
+-
+-struct symbol *map_groups__find_symbol(struct map_groups *mg,
+-				       u64 addr, struct map **mapp);
+-
+-struct symbol *map_groups__find_symbol_by_name(struct map_groups *mg,
+-					       const char *name,
+-					       struct map **mapp);
+-
+-struct addr_map_symbol;
+-
+-int map_groups__find_ams(struct addr_map_symbol *ams);
+-
+-int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map,
+-				   FILE *fp);
+-
+-struct map *map_groups__find_by_name(struct map_groups *mg, const char *name);
+-
+ bool __map__is_kernel(const struct map *map);
+ bool __map__is_extra_kernel_map(const struct map *map);
+ 
+diff --git a/tools/perf/util/map_groups.h b/tools/perf/util/map_groups.h
+new file mode 100644
+index 000000000000..4dcda33e0fdf
+--- /dev/null
++++ b/tools/perf/util/map_groups.h
+@@ -0,0 +1,91 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __PERF_MAP_GROUPS_H
++#define __PERF_MAP_GROUPS_H
++
++#include <linux/refcount.h>
++#include <linux/rbtree.h>
++#include <stdio.h>
++#include <stdbool.h>
++#include <linux/types.h>
++#include "rwsem.h"
++
++struct ref_reloc_sym;
++struct machine;
++struct map;
++struct thread;
++
++struct maps {
++	struct rb_root      entries;
++	struct rb_root	    names;
++	struct rw_semaphore lock;
++};
++
++void maps__insert(struct maps *maps, struct map *map);
++void maps__remove(struct maps *maps, struct map *map);
++struct map *maps__find(struct maps *maps, u64 addr);
++struct map *maps__first(struct maps *maps);
++struct map *map__next(struct map *map);
++struct symbol *maps__find_symbol_by_name(struct maps *maps, const char *name, struct map **mapp);
++
++struct map_groups {
++	struct maps	 maps;
++	struct machine	 *machine;
++	refcount_t	 refcnt;
++};
++
++#define KMAP_NAME_LEN 256
++
++struct kmap {
++	struct ref_reloc_sym *ref_reloc_sym;
++	struct map_groups    *kmaps;
++	char		     name[KMAP_NAME_LEN];
++};
++
++struct map_groups *map_groups__new(struct machine *machine);
++void map_groups__delete(struct map_groups *mg);
++bool map_groups__empty(struct map_groups *mg);
++
++static inline struct map_groups *map_groups__get(struct map_groups *mg)
++{
++	if (mg)
++		refcount_inc(&mg->refcnt);
++	return mg;
++}
++
++void map_groups__put(struct map_groups *mg);
++void map_groups__init(struct map_groups *mg, struct machine *machine);
++void map_groups__exit(struct map_groups *mg);
++int map_groups__clone(struct thread *thread, struct map_groups *parent);
++size_t map_groups__fprintf(struct map_groups *mg, FILE *fp);
++
++void map_groups__insert(struct map_groups *mg, struct map *map);
++
++static inline void map_groups__remove(struct map_groups *mg, struct map *map)
++{
++	maps__remove(&mg->maps, map);
++}
++
++static inline struct map *map_groups__find(struct map_groups *mg, u64 addr)
++{
++	return maps__find(&mg->maps, addr);
++}
++
++struct map *map_groups__first(struct map_groups *mg);
++
++static inline struct map *map_groups__next(struct map *map)
++{
++	return map__next(map);
++}
++
++struct symbol *map_groups__find_symbol(struct map_groups *mg, u64 addr, struct map **mapp);
++struct symbol *map_groups__find_symbol_by_name(struct map_groups *mg, const char *name, struct map **mapp);
++
++struct addr_map_symbol;
++
++int map_groups__find_ams(struct addr_map_symbol *ams);
++
++int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map, FILE *fp);
++
++struct map *map_groups__find_by_name(struct map_groups *mg, const char *name);
++
++#endif // __PERF_MAP_GROUPS_H
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index b0192160513d..0030f9b9bf7e 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -42,6 +42,7 @@
+ #include "cache.h"
+ #include "color.h"
+ #include "map.h"
++#include "map_groups.h"
+ #include "symbol.h"
+ #include "thread.h"
+ #include <api/fs/fs.h>
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 848d1a0f8dc0..6b9a2a70da29 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -7,6 +7,7 @@
+ #include <inttypes.h>
+ 
+ #include "map.h"
++#include "map_groups.h"
+ #include "symbol.h"
+ #include "demangle-java.h"
+ #include "demangle-rust.h"
 -- 
 2.20.1
 
