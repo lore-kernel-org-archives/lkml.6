@@ -2,149 +2,98 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10BAC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C33AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9322F20844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:47:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tQ66QJOr"
+	by mail.kernel.org (Postfix) with ESMTP id 01F6920B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 09:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbfBFJrG (ORCPT
+        id S1728393AbfBFJuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 04:47:06 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:24629 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbfBFJrG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 04:47:06 -0500
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190206094701epoutp031b2a5706307254e8ffaa85bb18733e8b~AvU_xXji92635626356epoutp03B;
-        Wed,  6 Feb 2019 09:47:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190206094701epoutp031b2a5706307254e8ffaa85bb18733e8b~AvU_xXji92635626356epoutp03B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549446421;
-        bh=I9M8zpgyUcg49ZjMGfwICWUPbbLGEdFGxZxHF68vLaw=;
-        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
-        b=tQ66QJOro5ZMBA2834JMF6EQYgkRxJ8QjPseckv21RJAAbRyjZBtzO2IklcbS47Ls
-         2m1FTMskMPylWjUG8FZabRLoMew3jNsI9bCZ6Go8KolR8i190iZooSbv380wqLVcHe
-         f0EIpWyDOaJwkoGBrQKPny5yToQAIfsA9jfn2q9k=
-Received: from epsmges2p3.samsung.com (unknown [182.195.42.71]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190206094700epcas2p304f0e187df7b420192460ea7cbd4c356~AvU9rW_Y21526915269epcas2p3q;
-        Wed,  6 Feb 2019 09:47:00 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        70.28.04134.41DAA5C5; Wed,  6 Feb 2019 18:47:00 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20190206094700epcas2p27287a46402e9eb44fabd528a217557d6~AvU9SC6fw0529205292epcas2p2X;
-        Wed,  6 Feb 2019 09:47:00 +0000 (GMT)
-X-AuditID: b6c32a47-8abff70000001026-b1-5c5aad14b73f
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id B7.09.03689.41DAA5C5; Wed,  6 Feb
-        2019 18:47:00 +0900 (KST)
-Received: from [106.116.147.40] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PMI00IWG0I70PA0@mmp2.samsung.com>; Wed, 06 Feb 2019 18:47:00 +0900 (KST)
-Subject: Re: [BUG BISECT] NULL pointer after commit
- "ASoC: dapm: Only power up active channels from a DAI"
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        ckeepax@opensource.cirrus.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <844c3f34-f7db-6b26-169a-994922367c78@samsung.com>
-Date:   Wed, 06 Feb 2019 10:46:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
-MIME-version: 1.0
-In-reply-to: <20190205211622.GA5891@kozik-lap>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7bCmha7I2qgYgy/zFSyuXDzEZDH14RM2
-        iyutmxgtzp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLzl39rBYbvq9ldODy2PC5ic1j56y7
-        7B6bVnWyeUyf85/RY9/bZWwefVtWMXqs33KVxePzJrkAjigum5TUnMyy1CJ9uwSujP2PjzEX
-        NPJU9N28wdTA+JCzi5GTQ0LAROLDo/OsXYxcHEICOxgl5t7fyQaSEBL4zihxZVIUTFHD/GXs
-        EEUbGCXmNV5ggii6zyhx5KIfiC0skCNxfMoFFpAiEYGPjBKTmo8xgiSYBYolph/6DtbAJmAo
-        0Xu0DyjOwcErYCfxtp0ZJMwioCrx4t9idhBbVCBC4nDvO7BWXgFBiR+T77GA2JwCehIrb81k
-        gxipKfHiyyQWCFtc4tj9m1Cr5CU2r3nLDHKDhMB/NonVL/ewQ3zgInG+7xYbhC0t8WzVRkYI
-        u1pi1/ZuqIYORomWC9uZIRLWEoePX2SFmMon0XH4LzvI0RICvBIdbUIQJR4SfYvbWCAB0cgo
-        sXmr5QRGmVlI7p6F5NZZSG6dheTWBYwsqxjFUguKc9NTi40KjPWKE3OLS/PS9ZLzczcxgtOL
-        lvsOxm3nfA4xCnAwKvHwanRHxgixJpYVV+YeYpTgYFYS4TWfERUjxJuSWFmVWpQfX1Sak1p8
-        iFGag0VJnPeh9NxoIYH0xJLU7NTUgtQimCwTB6dUA2NGwzy/H0Z637fxPn1RMpel69WxxNJ5
-        +2YedElfMfvsgnkVkjLftI/P3Nv/+M7MloR5Pj4Xz4RIbBTprhObaXTbSMP32OaUnRlxrsuU
-        BSbujDtTFvZly+wa750tGgw5L9YoPjry3SHn2jILqdpcTwO3qHct0+9GXBRx65u8m2/O77Zi
-        J84LN6crsRRnJBpqMRcVJwIA0qM6ISsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42I5/e+xoK7I2qgYgy+rOS2uXDzEZDH14RM2
-        iyutmxgtzp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLzl39rBYbvq9ldODy2PC5ic1j56y7
-        7B6bVnWyeUyf85/RY9/bZWwefVtWMXqs33KVxePzJrkAjigum5TUnMyy1CJ9uwSujP2PjzEX
-        NPJU9N28wdTA+JCzi5GTQ0LARKJh/jL2LkYuDiGBdYwS61oeQDkPGSX+r73ODlIlLJAjcXzK
-        BRaQhIjAR0aJWc/3AyU4OJgFiiX6notCNDQzSjS33GQGaWATMJToPdrHCFLDK2An8bYdLMwi
-        oCrx4t9isJmiAhESH5/uYwKxeQUEJX5MvscCYnMK6EmsvDWTDWK8usSUKbkgYWYBcYlj928y
-        QtjyEpvXvGWewCgwC0n3LISOWUg6ZiHpWMDIsopRMrWgODc9t9iowCgvtVyvODG3uDQvXS85
-        P3cTIzB+th3W6t/B+HhJ/CFGAQ5GJR5eje7IGCHWxLLiytxDjBIczEoivOYzomKEeFMSK6tS
-        i/Lji0pzUosPMUpzsCiJ8/LnH4sUEkhPLEnNTk0tSC2CyTJxcEo1MOot8paPZ/p8615fgaz4
-        k68MC6R+V4ben5ycrLRnR+NJfeEZkxtSn3ayTjsccaev96zzzPNOn8/1WR0WXdm27e3cl8de
-        M6680DHD8uBaH/GNv7fJ/4moF572uY7zlfjzW94ito9DxKZ3/m7dtlr0gcu2rK9WF25bn6lx
-        OnNjOXO2Xthh2xO3g/iUWIozEg21mIuKEwFc50TYmwIAAA==
-X-CMS-MailID: 20190206094700epcas2p27287a46402e9eb44fabd528a217557d6
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190205211638epcas3p409823d4acac8073473153d745151ea5f
-References: <CGME20190205211638epcas3p409823d4acac8073473153d745151ea5f@epcas3p4.samsung.com>
-        <20190205211622.GA5891@kozik-lap>
+        Wed, 6 Feb 2019 04:50:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42260 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725965AbfBFJuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 04:50:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 263D1AE43;
+        Wed,  6 Feb 2019 09:50:02 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7E0631E3E15; Wed,  6 Feb 2019 10:50:00 +0100 (CET)
+Date:   Wed, 6 Feb 2019 10:50:00 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206095000.GA12006@quack2.suse.cz>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-Cc: Charles
-
-On 2/5/19 22:16, Krzysztof Kozlowski wrote:
-> Bisect pointed to commit:
->     commit 078a85f2806f0ffd11289009462a6a390f9adb5c
->     Author: Charles Keepax <ckeepax@opensource.cirrus.com>
->     Date:   Thu Jan 31 13:30:18 2019 +0000
->         ASoC: dapm: Only power up active channels from a DAI
+On Tue 05-02-19 09:50:59, Ira Weiny wrote:
+> The problem: Once we have pages marked as GUP-pinned how should various
+> subsystems work with those markings.
 > 
-> as a bad commit for NULL pointer on my Odroid XU3 and Odroid U3 board when
-> doing "aplay /usr/share/sounds/alsa/Front_Right.wav".
+> The current work for John Hubbards proposed solutions (part 1 and 2) is
+> progressing.[1]  But the final part (3) of his solution is also going to take
+> some work.
 > 
-> 1. Arch ARM Linux
-> 2. exynos_defconfig
-> 3. Odroid U3, XU3, Exynos SoC, ARMv7
+> In Johns presentation he lists 3 alternatives for gup-pinned pages:
 > 
-> Last address is in calltrace:
-> c079552c
-> dapm_update_dai_unlocked
-> sound/soc/soc-dapm.c:2586
+> 1) Hold off try_to_unmap
+> 2) Allow writeback while pinned (via bounce buffers)
+> 	[Note this will not work for DAX]
 
-Thanks for bisecting this, I ran into same issue last night and I'm starting
-to debug this now. I have added some debug prints and it looks like it oopses
-on NULL playback_widget of the dummy DAI.
+Well, but DAX does not need it because by definition there's nothing to
+writeback :)
 
-[   30.701182] hdmi-audio-codec hdmi-audio-codec.0.auto: Update DAI routes for i2s-hifi playback
-[   30.709630] dapm_update_dai_unlocked:2586 w=8bd27d28
-[   30.714403] dapm_update_dai_unlocked:2594 w=8bd27d28
-[   30.724688] max98090 5-0010: Update DAI routes for HiFi playback
-[   30.730163] dapm_update_dai_unlocked:2586 w=3fc942af
-[   30.735154] dapm_update_dai_unlocked:2594 w=3fc942af
-[   30.745051] snd-soc-dummy snd-soc-dummy: Update DAI routes for snd-soc-dummy-dai playback
-[   30.753128] dapm_update_dai_unlocked:2586 w=  (null)
-[   30.758114] Unable to handle kernel NULL pointer dereference at virtual address 0000007c
+> 3) Use a "revocable reservation" (or lease) on those pages
+> 4) Pin the blocks as busy in the FS allocator
+> 
+> The problem with lease's on pages used by RDMA is that the references to
+> these pages is not local to the machine.  Once the user has been given
+> access to the page they, through the use of a remote tokens, give a
+> reference to that page to remote nodes.  This is the core essence of
+> RDMA, and like it or not, something which is increasingly used by major
+> Linux users.
+> 
+> Therefore we need to discuss the extent by which leases are appropriate and
+> what happens should a lease be revoked which a user does not respond to.
 
+I don't know the RDMA hardware so this is just an opinion of filesystem /
+mm guy but my idea how this should work would be:
+
+MM/FS asks for lease to be revoked. The revoke handler agrees with the
+other side on cancelling RDMA or whatever and drops the page pins. Now I
+understand there can be HW / communication failures etc. in which case the
+driver could either block waiting or make sure future IO will fail and drop
+the pins. But under normal conditions there should be a way to revoke the
+access. And if the HW/driver cannot support this, then don't let it anywhere
+near DAX filesystem.
+
+								Honza
 -- 
-Regards,
-Sylwester
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
