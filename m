@@ -2,210 +2,78 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3628C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B74AC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F4021872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F5A2190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfBGOta (ORCPT
+        id S1726650AbfBGOwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:49:30 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:42767 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbfBGOt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:49:29 -0500
-Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1grkzC-0005f7-VR; Thu, 07 Feb 2019 09:49:24 -0500
-Date:   Thu, 7 Feb 2019 09:48:39 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Julien Gomes <julien@arista.com>
-Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        vyasevich@gmail.com, lucien.xin@gmail.com
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Message-ID: <20190207144839.GC23613@hmswarspite.think-freely.org>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
- <274c48cb-7590-682b-f4de-f5c4ce2d2144@arista.com>
- <20190206213948.GE16887@hmswarspite.think-freely.org>
- <271b88ca-ae7c-7d07-330a-242e8ba7322d@arista.com>
+        Thu, 7 Feb 2019 09:52:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41886 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726348AbfBGOwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 09:52:01 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C2B521872;
+        Thu,  7 Feb 2019 14:51:59 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 09:51:57 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     Torsten Duwe <duwe@lst.de>, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
+Message-ID: <20190207095157.3dea1086@gandalf.local.home>
+In-Reply-To: <198550d8-78d4-6e30-0179-b5e07dd140f8@arm.com>
+References: <20190118163736.6A99268CEB@newverein.lst.de>
+        <20190118163908.E338E68D93@newverein.lst.de>
+        <e206e229-7813-2d37-d5c6-7a9785e311c9@arm.com>
+        <20190206150524.GA28892@lst.de>
+        <198550d8-78d4-6e30-0179-b5e07dd140f8@arm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <271b88ca-ae7c-7d07-330a-242e8ba7322d@arista.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 01:48:44PM -0800, Julien Gomes wrote:
-> 
-> 
-> On 2/6/19 1:39 PM, Neil Horman wrote:
-> > On Wed, Feb 06, 2019 at 01:26:55PM -0800, Julien Gomes wrote:
-> >>
-> >>
-> >> On 2/6/19 1:07 PM, Marcelo Ricardo Leitner wrote:
-> >>> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
-> >>>>
-> >>>>
-> >>>> On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
-> >>>>> On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
-> >>>>>> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
-> >>>>>> structures longer than the current definitions.
-> >>>>>>
-> >>>>>> This should prevent unjustified setsockopt() failures due to struct
-> >>>>>> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
-> >>>>>> binaries that should be compatible, but were built with later kernel
-> >>>>>> uapi headers.
-> >>>>>
-> >>>>> Not sure if we support backwards compatibility like this?
-> >>>>>
-> >>>>> My issue with this change is that by doing this, application will have
-> >>>>> no clue if the new bits were ignored or not and it may think that an
-> >>>>> event is enabled while it is not.
-> >>>>>
-> >>>>> A workaround would be to do a getsockopt and check the size that was
-> >>>>> returned. But then, it might as well use the right struct here in the
-> >>>>> first place.
-> >>>>>
-> >>>>> I'm seeing current implementation as an implicitly versioned argument:
-> >>>>> it will always accept setsockopt calls with an old struct (v4.11 or
-> >>>>> v4.12), but if the user tries to use v3 on a v1-only system, it will
-> >>>>> be rejected. Pretty much like using a newer setsockopt on an old
-> >>>>> system.
-> >>>>
-> >>>> With the current implementation, given sources that say are supposed to
-> >>>> run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
-> >>>> we can't rebuild the exact same sources on a 4.19 kernel and still run
-> >>>> them on 4.9 without messing with structures re-definition.
-> >>>
-> >>> Maybe what we want(ed) here then is explicit versioning, to have the 3
-> >>> definitions available. Then the application is able to use, say struct
-> >>> sctp_event_subscribe, and be happy with it, while there is struct
-> >>> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
-> >>>
-> >>> But it's too late for that now because that would break applications
-> >>> already using the new fields in sctp_event_subscribe.
-> >>
-> >> Right.
-> >>
-> >>>
-> >>>>
-> >>>> I understand your point, but this still looks like a sort of uapi
-> >>>> breakage to me.
-> >>>
-> >>> Not disagreeing. I really just don't know how supported that is.
-> >>> Willing to know so I can pay more attention to this on future changes.
-> >>>
-> >>> Btw, is this the only occurrence?
-> >>
-> >> Can't really say, this is one I witnessed, I haven't really looked for
-> >> others.
-> >>
-> >>>
-> >>>>
-> >>>>
-> >>>> I also had another way to work-around this in mind, by copying optlen
-> >>>> bytes and checking that any additional field (not included in the
-> >>>> "current" kernel structure definition) is not set, returning EINVAL in
-> >>>> such case to keep a similar to current behavior.
-> >>>> The issue with this is that I didn't find a suitable (ie not totally
-> >>>> arbitrary such as "twice the existing structure size") upper limit to
-> >>>> optlen.
-> >>>
-> >>> Seems interesting. Why would it need that upper limit to optlen?
-> >>>
-> >>> Say struct v1 had 4 bytes, v3 now had 12. The user supplies 12 bytes
-> >>> to the kernel that only knows about 4 bytes. It can check that (12-4)
-> >>> bytes in the end, make sure no bit is on and use only the first 4.
-> >>>
-> >>> The fact that it was 12 or 200 shouldn't matter, should it? As long as
-> >>> the (200-4) bytes are 0'ed, only the first 4 will be used and it
-> >>> should be ok, otherwise EINVAL. No need to know how big the current
-> >>> current actually is because it wouldn't be validating that here: just
-> >>> that it can safely use the first 4 bytes.
-> >>
-> >> The upper limit concern is more regarding the call to copy_from_user
-> >> with an unrestricted/unchecked value.
-> > Copy_from_user should be safe to copy an arbitrary amount, the only restriction
-> > is that optlen can't exceed the size of the buffer receiving the data in the
-> > kernel.  From that standpoint your patch is safe.  However,  that exposes the
-> > problem of checking any tail data on the userspace buffer.  That is to say, if
-> > you want to ensure that any extra data that gets sent from userspace isn't
-> > 'set', you would have to copy that extra data in consumable chunks and check
-> > them individaully, and that screams DOS to me (i.e. imagine a user passing in a
-> > 4GB buffer, and having to wait for the kernel to copy each X sized chunk,
-> > looking for non-zero values).
-> 
-> There probably is a decent compromise to find between "not accepting a
-> single additional byte" and accepting several GB.
-> For example how likely is it that the growth of this structure make it
-> go over a page? I would hope not at all.
-> 
-Probably not, but I'm not going to pick a magic number to gate whats ok and
-whats not for sockopt validation.
+On Thu, 7 Feb 2019 10:33:50 +0000
+Julien Thierry <julien.thierry@arm.com> wrote:
 
-> By choosing a large but decent high limit, I think we can find a
-> future-compatible compromise that doesn't rely on a preliminary
-> getsockopt() just for structure trucation decision...
+> I don't see really much documentation on that function. As far as I can
+> tell it is only called once for each site (and if it didn't, we'd always
+> be placing the same instruction, but I agree it wouldn't be nice). It
+> could depend on how far you can expand the notion of "adjusting" :) .
 > 
-We really don't have to, I refer you to my previous not referencing the fact
-that the getsockopt variant of this call will return the expected length of this
-option for the running kernel, allowing userspace to know explicitly what the
-buffer size should be, and by extension, what options are supported
+> Steven, do you have an opinion on whether it would be acceptable to
+> modify function entry code in ftrace_call_adjust() ?
 
-Neil
+Just to make sure I'm on the same page as you are. You want to modify
+the function entry code at the time of the ftrace_call_adjust()?
 
-> > 
-> >> I am not sure of how much of a risk/how exploitable this could be,
-> >> that's why I cautiously wanted to limit it in the first place just in case.
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>> Signed-off-by: Julien Gomes <julien@arista.com>
-> >>>>>> ---
-> >>>>>>  net/sctp/socket.c | 2 +-
-> >>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> >>>>>> index 9644bdc8e85c..f9717e2789da 100644
-> >>>>>> --- a/net/sctp/socket.c
-> >>>>>> +++ b/net/sctp/socket.c
-> >>>>>> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
-> >>>>>>  	int i;
-> >>>>>>  
-> >>>>>>  	if (optlen > sizeof(struct sctp_event_subscribe))
-> >>>>>> -		return -EINVAL;
-> >>>>>> +		optlen = sizeof(struct sctp_event_subscribe);
-> >>>>>>  
-> >>>>>>  	if (copy_from_user(&subscribe, optval, optlen))
-> >>>>>>  		return -EFAULT;
-> >>>>>> -- 
-> >>>>>> 2.20.1
-> >>>>>>
-> >>>>
-> >>
-> >> -- 
-> >> Julien Gomes
-> >>
-> 
-> -- 
-> Julien Gomes
-> 
+I would update the rec->ip to the offset you want at
+ftrace_call_adjust() but not do any modifications. It really isn't safe
+to do it there. But right after that is called, you will have the arch
+specific call of ftrace_make_nop() called with MCOUNT_ADDR as the
+second parameter to let you know that this is the first time the call
+is made at this address. This is where you can do that initial
+modifications.
+
+-- Steve
