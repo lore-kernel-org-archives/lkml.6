@@ -2,143 +2,102 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D735C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2643C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74D6921907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8119C21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:53:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c3BWfxji"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfBGWwp (ORCPT
+        id S1727091AbfBGWxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:52:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51124 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfBGWwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:52:44 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 726AC21721;
-        Thu,  7 Feb 2019 22:52:41 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 17:52:39 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
-        atishp04@gmail.com, dancol@google.com,
-        Dan Williams <dan.j.williams@intel.com>,
-        gregkh@linuxfoundation.org, Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, karim.yaghmour@opersys.com,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Manoj Rao <linux@manojrajarao.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        paulmck@linux.vnet.ibm.com,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        rdunlap@infradead.org, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-        yhs@fb.com
-Subject: Re: [PATCH 1/2] Provide in-kernel headers for making it easy to
- extend the kernel
-Message-ID: <20190207175239.0607f5eb@gandalf.local.home>
-In-Reply-To: <20190207211102.154634-1-joel@joelfernandes.org>
-References: <20190207211102.154634-1-joel@joelfernandes.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 7 Feb 2019 17:53:22 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45646 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGWxV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:53:21 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so1137103lfa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YhSNRD1YNL95zw/7uEGz3G0NGJgHNBHGk+Z0V0EY+OA=;
+        b=c3BWfxjiyJH2n+C8OH4ICqaY0qDLGHSdeuEQlHjL2aeJfGi8DOtBUGAc8Cpuw3DQzj
+         Iof7dKRRGqRD+SRqieKipjWX18nC4zGnM+ekgTeZeQ/LdGrfHYO5FcOlks5g2LJLKkye
+         blHxMCm/xworKcgtne9LjC7hN9yibqtbSodn0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YhSNRD1YNL95zw/7uEGz3G0NGJgHNBHGk+Z0V0EY+OA=;
+        b=KmftMrqnxO5mxa1HzNfMIcPtliLsW8qGqk4C3VYfeSOprI6/hYX/CctMfV4EODaesB
+         eWyeCxAI1Rv7kry1/Q4DsZFVQkK78AwrsJLJI+0Jnvz00tHzuKQyYTu3NSnLxaPHGP8o
+         cm/jq5nRA8g39+Y2xlqHGAbALIPVdzDwtn8vuKdGPYhCBDCo2I1wM5WCFXP/cMEnIq23
+         mFhqnz0GK+L8kWnJu5z2WP8c4CsUIJUZu+zHrLZb1kRH6dvE1sVNcaZ7/uAhsJfhuqqV
+         hWSIgdITPM9hc5YvBfzVna0Rq+c0tXXOJUvZ7u1rOdWE0OYSXSU6bgNa1WE8LcTN/gkM
+         UW2Q==
+X-Gm-Message-State: AHQUAuaVDFIfsbxoXyDS2oK76u4fthfCMrraR2XkLp9pJgAukGvV56W2
+        vTY6/eFPOAtcymdVcrRcqHL23HQqmGjBRQ==
+X-Google-Smtp-Source: AHgI3IaGI9fXo7Dec10D3l8a0KuTrNsgUZouy1zrEkPtbIMvEY2SShleWQIk6N30FfavMVDiWYvqNw==
+X-Received: by 2002:a19:a9d2:: with SMTP id s201mr11801114lfe.154.1549579999177;
+        Thu, 07 Feb 2019 14:53:19 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id z17sm53672lfh.9.2019.02.07.14.53.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 14:53:18 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id q2-v6so1327939lji.10
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:53:17 -0800 (PST)
+X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr11084699ljg.87.1549579997436;
+ Thu, 07 Feb 2019 14:53:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181224231106.GA27438@gmail.com> <20190207001737.GA32096@agluck-desk>
+ <20190207101846.GB32511@hirez.programming.kicks-ass.net> <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com>
+ <20190207140131.GB32477@hirez.programming.kicks-ass.net> <20190207173600.GA15682@agluck-desk>
+ <20190207175720.GE32511@hirez.programming.kicks-ass.net> <8D8DF81C-3331-4105-8594-9600281010EF@amacapital.net>
+ <20190207184606.GB17049@agluck-desk> <22E08A6D-5180-42F1-B94B-6B6DB832F953@amacapital.net>
+In-Reply-To: <22E08A6D-5180-42F1-B94B-6B6DB832F953@amacapital.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 7 Feb 2019 22:53:01 +0000
+X-Gmail-Original-Message-ID: <CAHk-=wiZ3t_YbtRz1tLTEvF0JS1DH07DdDR3FP-FHcZW8wfSAw@mail.gmail.com>
+Message-ID: <CAHk-=wiZ3t_YbtRz1tLTEvF0JS1DH07DdDR3FP-FHcZW8wfSAw@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/mm changes for v4.21
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     "Luck, Tony" <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  7 Feb 2019 16:11:01 -0500
-"Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+On Thu, Feb 7, 2019 at 1:24 PM Andy Lutomirski <luto@amacapital.net> wrote:
+>
+> How bad would it be to set CR0.CD while fiddling with the page tables rather than masking the address?
 
-> +
-> +# Build a list of in-kernel headers for building kernel modules
-> +# Any other files will be stored in IKH_EXTRA variable.
-> +ikh_file_list := include/
-> +ikh_file_list += arch/$(ARCH)/Makefile
-> +ikh_file_list += arch/$(ARCH)/include/
-> +ikh_file_list += $(IKH_EXTRA)
-> +ikh_file_list += scripts/
-> +ikh_file_list += Makefile
-> +ikh_file_list += Module.symvers
-> +ifeq ($(CONFIG_STACK_VALIDATION), y)
-> +ikh_file_list += $(objtree)/tools/objtool/objtool
-> +endif
-> +
-> +$(obj)/kheaders.o: $(obj)/kheaders_data.h
-> +
-> +targets += kheaders_data.txz
-> +
-> +quiet_cmd_genikh = GEN     $(obj)/kheaders_data.txz
-> +cmd_genikh = $(srctree)/scripts/gen_ikh_data.sh $@ $^ >/dev/null 2>&1
-> +$(obj)/kheaders_data.txz: $(ikh_file_list) FORCE
-> +	$(call cmd,genikh)
-> +
-> +filechk_ikheadersxz = (echo "static const char kernel_headers_data[] __used = KH_MAGIC_START"; cat $< | scripts/bin2c; echo "KH_MAGIC_END;")
-> +
-> +targets += kheaders_data.h
-> +$(obj)/kheaders_data.h: $(obj)/kheaders_data.txz FORCE
-> +	$(call filechk,ikheadersxz)
-> diff --git a/scripts/gen_ikh_data.sh b/scripts/gen_ikh_data.sh
-> new file mode 100755
-> index 000000000000..609196b5cea2
-> --- /dev/null
-> +++ b/scripts/gen_ikh_data.sh
-> @@ -0,0 +1,19 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +spath="$(dirname "$(readlink -f "$0")")"
-> +
-> +rm -rf $1.tmp
-> +mkdir $1.tmp
-> +
-> +for f in "${@:2}";
-> +	do find "$f" ! -name "*.c" ! -name "*.o" ! -name "*.cmd" ! -name ".*";
+I would suggest against it. When you disable caching, things don't
+just go "slightly slower". Everything comes to a screeching halt, with
+instruction fetch etc becoming a serious problem.
 
-I wonder if it is a good idea to pick all files in the directories
-defined in ikh_file_list, and not just explicitly list what we want,
-with a '*.h' and such?
+So disabling caching for a few instructions in a very simple asm
+snippet might be reasonable (particularly since you could pre-fetch
+the cache and just rely on CR0.CD not fetching *new* lines). But doing
+it in C code that might have things like tracing enabled etc? I'd be
+very very leery.
 
-
-> +done | cpio -pd $1.tmp
-> +
-> +for f in $(find $1.tmp); do
-> +	$spath/strip-comments.pl $f
-> +done
-> +
-> +tar -Jcf $1 -C $1.tmp/ . > /dev/null
-> +
-> +rm -rf $1.tmp
-> diff --git a/scripts/strip-comments.pl b/scripts/strip-comments.pl
-> new file mode 100755
-> index 000000000000..f8ada87c5802
-> --- /dev/null
-> +++ b/scripts/strip-comments.pl
-> @@ -0,0 +1,8 @@
-> +#!/usr/bin/perl -pi
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# This script removes /**/ comments from a file, unless such comments
-> +# contain "SPDX". It is used when building compressed in-kernel headers.
-> +
-> +BEGIN {undef $/;}
-> +s/\/\*((?!SPDX).)*?\*\///smg;
-
-Hmm, I'm also wondering if we could us the C pre-processor for the
-stripping of everything from the header file. We would then even get
-the header files only having what is necessary for the running kernel.
-
--- Steve
+                 Linus
