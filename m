@@ -2,162 +2,124 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37AEC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C958C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A67217F9
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B6FF218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="GEkdLvOc"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pDmW+M8Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbfBGAn5 (ORCPT
+        id S1726704AbfBGArb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:43:57 -0500
-Received: from mail-eopbgr710063.outbound.protection.outlook.com ([40.107.71.63]:33088
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726424AbfBGAn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:43:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JRlu5tFyktvP98pq28nzFSuXxZEVrV369hALB61iwiU=;
- b=GEkdLvOcjvWg6vDxKPG1RcFsafTMjgIaKHymyfY3ywvbcdlRHNW7sMsRajYNJ3DD1oUbQabtvaPeBMCYdniOR9XcP57Y5QFgKcV91d0D4sirCIF7J4B3zIS66qG/X7jJXnO0ax7u4socDab1KADWILKHjisH6Fch9fjMcqAFVZg=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4390.namprd05.prod.outlook.com (52.135.202.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.11; Thu, 7 Feb 2019 00:43:51 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::99ab:18fb:f393:df31]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::99ab:18fb:f393:df31%3]) with mapi id 15.20.1622.010; Thu, 7 Feb 2019
- 00:43:51 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Julien Freche <jfreche@vmware.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH 3/6] mm/balloon_compaction: list interfaces
-Thread-Topic: [PATCH 3/6] mm/balloon_compaction: list interfaces
-Thread-Index: AQHUvne93vwnG+SDO0m1oDeHgENDvqXTfDGAgAADPwA=
-Date:   Thu, 7 Feb 2019 00:43:51 +0000
-Message-ID: <0DFA5F3F-8358-4268-83C7-9937C5F0CFFF@vmware.com>
-References: <20190206235706.4851-1-namit@vmware.com>
- <20190206235706.4851-4-namit@vmware.com>
- <20190206191936-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190206191936-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4390;20:aJEs0M76oo4sEwFUXRnEiOA7s0cPafBPzqG5NMZgkeUoPPKRKXTAKUiFD7plVIhCFhgo8pdtUqcN5zSuhCMQfv8QzGQzJoSrd5dQDxr+0oTd4osjfMNkOcfMtYXgbkraj7vwcEvEokzb+S+KxQ5ZNoibny9TgcquaLLcKgSHDD8=
-x-ms-office365-filtering-correlation-id: 08525ae4-bb16-43c6-4c02-08d68c95545b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4390;
-x-ms-traffictypediagnostic: BYAPR05MB4390:
-x-microsoft-antispam-prvs: <BYAPR05MB4390AD7AB9484B39FEC98F61D0680@BYAPR05MB4390.namprd05.prod.outlook.com>
-x-forefront-prvs: 0941B96580
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(346002)(136003)(39860400002)(51914003)(52314003)(199004)(189003)(305945005)(2616005)(446003)(476003)(11346002)(14454004)(478600001)(186003)(486006)(36756003)(68736007)(106356001)(6916009)(71190400001)(229853002)(6486002)(82746002)(71200400001)(83716004)(6116002)(3846002)(2906002)(6246003)(14444005)(53936002)(256004)(105586002)(54906003)(25786009)(4326008)(86362001)(8936002)(66066001)(316002)(7736002)(33656002)(6506007)(81156014)(102836004)(81166006)(26005)(53546011)(76176011)(6436002)(8676002)(99286004)(97736004)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4390;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zXunqZEYQnBkMnQAktAJFOogeajmdP+xTA1zNX2Gv29ExFP1G8FYc0GzJ/YhaquLetkYBmafsp6QHw6Wqc4m/1EUuvwNPJZmMiCNd2sbX8HJu3KwBmNjL6z8uIIKfkByZooZwuolMe/j6ZDavYfp1VYF9tlZHYvcAsbZeiT1YXoGB1F7SvuEWSWnM+gUgKb3b9sCyLL8csQa7JtCx7wijlsXAdBayzEXMmO0L6573SUBsg7Cnt6XTekZwQSRBYJKiSqCekj0LlPwgOtmssdNpchnGaBlEv6B0znHv2Rd66/SyEpYpbA54QIdZl0bQgNa/UG9NmSdoDBsHy2BgnvfYC8qGgFiguYe1OrHG2yN4/ZRxBe6vHs8nDeBiHAXCqAAQmPDSUKMA8p3cjTM0qqvGcttEyyglelQ+x24jYW8tEA=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B129CE5743807F4BA9EB367F67D58F11@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 6 Feb 2019 19:47:31 -0500
+Received: from ozlabs.org ([203.11.71.1]:43851 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726186AbfBGAra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 19:47:30 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43w05X1G7zz9s3q;
+        Thu,  7 Feb 2019 11:47:28 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549500448;
+        bh=Zp+p0jHWtgs5UWtPK1b2zEWNffhb8e5+dEXNeJCnCmc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=pDmW+M8YOnuvyEfFF4H/RXxxG0jRCHBT0qf75igj5HbpK9Rz/gx53o2/yfTvA9kP2
+         1dsmZ/pr8q+D1kLTW3XWMdN77ygxkhzkHel0+AK045VhKkd7JbzSC9vmehiVE4bwWk
+         6McgFWx7S2LglXgNiTZgvKJfC1S3L87pdFUinvOFuTLl8qbpt5muYMLSxQaIj5n60N
+         Q5HYSputAb8EqpX2kbfqmhEAmIF2YkrdRxzvflXxm2HEmf2544xc6/7v9tiET1KKi6
+         Axahd/nr1VRnE9H1rhsTlY4sXTnn0s1qxgeYdQIneNWmRrfvChRY0ROIZGWkuSfF0S
+         3aLDdEkdIJWWw==
+Date:   Thu, 7 Feb 2019 11:47:26 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: linux-next: manual merge of the opp tree with the cpufreq-arm tree
+Message-ID: <20190207114726.741da653@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08525ae4-bb16-43c6-4c02-08d68c95545b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 00:43:51.0627
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4390
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nV2JY/799zyzBbiIdh3+g1k"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBGZWIgNiwgMjAxOSwgYXQgNDozMiBQTSwgTWljaGFlbCBTLiBUc2lya2luIDxtc3RAcmVk
-aGF0LmNvbT4gd3JvdGU6DQo+IA0KPiBPbiBXZWQsIEZlYiAwNiwgMjAxOSBhdCAwMzo1NzowM1BN
-IC0wODAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4gSW50cm9kdWNlIGludGVyZmFjZXMgZm9yIGJh
-bGxvb25pbmcgZW5xdWV1ZWluZyBhbmQgZGVxdWV1ZWluZyBvZiBhIGxpc3QNCj4+IG9mIHBhZ2Vz
-LiBUaGVzZSBpbnRlcmZhY2VzIHJlZHVjZSB0aGUgb3ZlcmhlYWQgb2Ygc3RvcmluZyBhbmQgcmVz
-dG9yaW5nDQo+PiBJUlFzIGJ5IGJhdGNoaW5nIHRoZSBvcGVyYXRpb25zLiBJbiBhZGRpdGlvbiB0
-aGV5IGRvIG5vdCBwYW5pYyBpZiB0aGUNCj4+IGxpc3Qgb2YgcGFnZXMgaXMgZW1wdHkuDQo+PiAN
-Cg0KW1NuaXBdDQoNCkZpcnN0LCB0aGFua3MgZm9yIHRoZSBxdWljayBmZWVkYmFjay4NCg0KPj4g
-Kw0KPj4gKy8qKg0KPj4gKyAqIGJhbGxvb25fcGFnZV9saXN0X2VucXVldWUoKSAtIGluc2VydHMg
-YSBsaXN0IG9mIHBhZ2VzIGludG8gdGhlIGJhbGxvb24gcGFnZQ0KPj4gKyAqCQkJCSBsaXN0Lg0K
-Pj4gKyAqIEBiX2Rldl9pbmZvOiBiYWxsb29uIGRldmljZSBkZXNjcmlwdG9yIHdoZXJlIHdlIHdp
-bGwgaW5zZXJ0IGEgbmV3IHBhZ2UgdG8NCj4+ICsgKiBAcGFnZXM6IHBhZ2VzIHRvIGVucXVldWUg
-LSBhbGxvY2F0ZWQgdXNpbmcgYmFsbG9vbl9wYWdlX2FsbG9jLg0KPj4gKyAqDQo+PiArICogRHJp
-dmVyIG11c3QgY2FsbCBpdCB0byBwcm9wZXJseSBlbnF1ZXVlIGEgYmFsbG9vbiBwYWdlcyBiZWZv
-cmUgZGVmaW5pdGl2ZWx5DQo+PiArICogcmVtb3ZpbmcgaXQgZnJvbSB0aGUgZ3Vlc3Qgc3lzdGVt
-Lg0KPj4gKyAqLw0KPj4gK3ZvaWQgYmFsbG9vbl9wYWdlX2xpc3RfZW5xdWV1ZShzdHJ1Y3QgYmFs
-bG9vbl9kZXZfaW5mbyAqYl9kZXZfaW5mbywNCj4+ICsJCQkgICAgICAgc3RydWN0IGxpc3RfaGVh
-ZCAqcGFnZXMpDQo+PiArew0KPj4gKwlzdHJ1Y3QgcGFnZSAqcGFnZSwgKnRtcDsNCj4+ICsJdW5z
-aWduZWQgbG9uZyBmbGFnczsNCj4+ICsNCj4+ICsJc3Bpbl9sb2NrX2lycXNhdmUoJmJfZGV2X2lu
-Zm8tPnBhZ2VzX2xvY2ssIGZsYWdzKTsNCj4+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKHBh
-Z2UsIHRtcCwgcGFnZXMsIGxydSkNCj4+ICsJCWJhbGxvb25fcGFnZV9lbnF1ZXVlX29uZShiX2Rl
-dl9pbmZvLCBwYWdlKTsNCj4+ICsJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmYl9kZXZfaW5mby0+
-cGFnZXNfbG9jaywgZmxhZ3MpOw0KPiANCj4gQXMgdGhpcyBpcyBzY2FubmluZyBwYWdlcyBvbmUg
-Ynkgb25lIGFueXdheSwgaXQgd2lsbCBiZSB1c2VmdWwNCj4gdG8gaGF2ZSB0aGlzIHJldHVybiB0
-aGUgIyBvZiBwYWdlcyBlbnF1ZXVlZC4NCg0KU3VyZS4NCg0KPiANCj4+ICt9DQo+PiArRVhQT1JU
-X1NZTUJPTF9HUEwoYmFsbG9vbl9wYWdlX2xpc3RfZW5xdWV1ZSk7DQo+PiArDQo+PiArLyoqDQo+
-PiArICogYmFsbG9vbl9wYWdlX2xpc3RfZGVxdWV1ZSgpIC0gcmVtb3ZlcyBwYWdlcyBmcm9tIGJh
-bGxvb24ncyBwYWdlIGxpc3QgYW5kDQo+PiArICoJCQkJIHJldHVybnMgYSBsaXN0IG9mIHRoZSBw
-YWdlcy4NCj4+ICsgKiBAYl9kZXZfaW5mbzogYmFsbG9vbiBkZXZpY2UgZGVjcmlwdG9yIHdoZXJl
-IHdlIHdpbGwgZ3JhYiBhIHBhZ2UgZnJvbS4NCj4+ICsgKiBAcGFnZXM6IHBvaW50ZXIgdG8gdGhl
-IGxpc3Qgb2YgcGFnZXMgdGhhdCB3b3VsZCBiZSByZXR1cm5lZCB0byB0aGUgY2FsbGVyLg0KPj4g
-KyAqIEBuX3JlcV9wYWdlczogbnVtYmVyIG9mIHJlcXVlc3RlZCBwYWdlcy4NCj4+ICsgKg0KPj4g
-KyAqIERyaXZlciBtdXN0IGNhbGwgaXQgdG8gcHJvcGVybHkgZGUtYWxsb2NhdGUgYSBwcmV2aW91
-cyBlbmxpc3RlZCBiYWxsb29uIHBhZ2VzDQo+PiArICogYmVmb3JlIGRlZmluZXRpdmVseSByZWxl
-YXNpbmcgaXQgYmFjayB0byB0aGUgZ3Vlc3Qgc3lzdGVtLiBUaGlzIGZ1bmN0aW9uDQo+PiArICog
-dHJpZXMgdG8gcmVtb3ZlIEBuX3JlcV9wYWdlcyBmcm9tIHRoZSBiYWxsb29uZWQgcGFnZXMgYW5k
-IHJldHVybiBpdCB0byB0aGUNCj4+ICsgKiBjYWxsZXIgaW4gdGhlIEBwYWdlcyBsaXN0Lg0KPj4g
-KyAqDQo+PiArICogTm90ZSB0aGF0IHRoaXMgZnVuY3Rpb24gbWF5IGZhaWwgdG8gZGVxdWV1ZSBz
-b21lIHBhZ2VzIHRlbXBvcmFyaWx5IGVtcHR5IGR1ZQ0KPj4gKyAqIHRvIGNvbXBhY3Rpb24gaXNv
-bGF0ZWQgcGFnZXMuDQo+PiArICoNCj4+ICsgKiBSZXR1cm46IG51bWJlciBvZiBwYWdlcyB0aGF0
-IHdlcmUgYWRkZWQgdG8gdGhlIEBwYWdlcyBsaXN0Lg0KPj4gKyAqLw0KPj4gK2ludCBiYWxsb29u
-X3BhZ2VfbGlzdF9kZXF1ZXVlKHN0cnVjdCBiYWxsb29uX2Rldl9pbmZvICpiX2Rldl9pbmZvLA0K
-Pj4gKwkJCSAgICAgICBzdHJ1Y3QgbGlzdF9oZWFkICpwYWdlcywgaW50IG5fcmVxX3BhZ2VzKQ0K
-PiANCj4gQXJlIHdlIHN1cmUgdGhpcyBpbnQgbmV2ZXIgb3ZlcmZsb3dzPyBXaHkgbm90IGp1c3Qg
-dXNlIHU2NA0KPiBvciBzaXplX3Qgc3RyYWlnaHQgYXdheT8NCg0Kc2l6ZV90IGl0IGlzLg0KDQo+
-IA0KPj4gK3sNCj4+ICsJc3RydWN0IHBhZ2UgKnBhZ2UsICp0bXA7DQo+PiArCXVuc2lnbmVkIGxv
-bmcgZmxhZ3M7DQo+PiArCWludCBuX3BhZ2VzID0gMDsNCj4+ICsNCj4+ICsJc3Bpbl9sb2NrX2ly
-cXNhdmUoJmJfZGV2X2luZm8tPnBhZ2VzX2xvY2ssIGZsYWdzKTsNCj4+ICsJbGlzdF9mb3JfZWFj
-aF9lbnRyeV9zYWZlKHBhZ2UsIHRtcCwgJmJfZGV2X2luZm8tPnBhZ2VzLCBscnUpIHsNCj4+ICsJ
-CS8qDQo+PiArCQkgKiBCbG9jayBvdGhlcnMgZnJvbSBhY2Nlc3NpbmcgdGhlICdwYWdlJyB3aGls
-ZSB3ZSBnZXQgYXJvdW5kDQo+PiArCQkgKiBlc3RhYmxpc2hpbmcgYWRkaXRpb25hbCByZWZlcmVu
-Y2VzIGFuZCBwcmVwYXJpbmcgdGhlICdwYWdlJw0KPj4gKwkJICogdG8gYmUgcmVsZWFzZWQgYnkg
-dGhlIGJhbGxvb24gZHJpdmVyLg0KPj4gKwkJICovDQo+PiArCQlpZiAoIXRyeWxvY2tfcGFnZShw
-YWdlKSkNCj4+ICsJCQljb250aW51ZTsNCj4+ICsNCj4+ICsJCWlmIChJU19FTkFCTEVEKENPTkZJ
-R19CQUxMT09OX0NPTVBBQ1RJT04pICYmDQo+PiArCQkgICAgUGFnZUlzb2xhdGVkKHBhZ2UpKSB7
-DQo+PiArCQkJLyogcmFjZWQgd2l0aCBpc29sYXRpb24gKi8NCj4+ICsJCQl1bmxvY2tfcGFnZShw
-YWdlKTsNCj4+ICsJCQljb250aW51ZTsNCj4+ICsJCX0NCj4+ICsJCWJhbGxvb25fcGFnZV9kZWxl
-dGUocGFnZSk7DQo+PiArCQlfX2NvdW50X3ZtX2V2ZW50KEJBTExPT05fREVGTEFURSk7DQo+PiAr
-CQl1bmxvY2tfcGFnZShwYWdlKTsNCj4+ICsJCWxpc3RfYWRkKCZwYWdlLT5scnUsIHBhZ2VzKTsN
-Cj4+ICsJCWlmICgrK25fcGFnZXMgPj0gbl9yZXFfcGFnZXMpDQo+PiArCQkJYnJlYWs7DQo+PiAr
-CX0NCj4+ICsJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmYl9kZXZfaW5mby0+cGFnZXNfbG9jaywg
-ZmxhZ3MpOw0KPj4gKw0KPj4gKwlyZXR1cm4gbl9wYWdlczsNCj4+ICt9DQo+PiArRVhQT1JUX1NZ
-TUJPTF9HUEwoYmFsbG9vbl9wYWdlX2xpc3RfZGVxdWV1ZSk7DQo+PiArDQo+IA0KPiBUaGlzIGxv
-b2tzIHF1aXRlIHJlYXNvbmFibGUuIEluIGZhY3QgdmlydGlvIGNhbiBiZSByZXdvcmtlZCB0byB1
-c2UNCj4gdGhpcyB0b28gYW5kIHRoZW4gdGhlIG9yaWdpbmFsIG9uZSBjYW4gYmUgZHJvcHBlZC4N
-Cj4gDQo+IEhhdmUgdGhlIHRpbWU/DQoNCk9idmlvdXNseSBub3QsIGJ1dCBJIGFtIHdpbGxpbmcg
-dG8gbWFrZSB0aGUgdGltZS4gV2hhdCBJIGNhbm5vdCDigJxtYWtlIiBpcyBhbg0KYXBwcm92YWwg
-dG8gc2VuZCBwYXRjaGVzIGZvciBvdGhlciBoeXBlcnZpc29ycy4gTGV0IG1lIHJ1biBhIHF1aWNr
-IGNoZWNrDQp3aXRoIG91ciBGT1NTIHBlb3BsZSBoZXJlLg0KDQpBbnlob3csIEkgaG9wZSBpdCB3
-b3VsZCBub3QgcHJldmVudCB0aGUgcGF0Y2hlcyBmcm9tIGdldHRpbmcgdG8gdGhlIG5leHQNCnJl
-bGVhc2UuDQoNCg==
+--Sig_/nV2JY/799zyzBbiIdh3+g1k
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Viresh,
+
+Today's linux-next merge of the opp tree got a conflict in:
+
+  drivers/cpufreq/qcom-cpufreq-hw.c
+
+between commit:
+
+  5471b2c9bd08 ("cpufreq: qcom: Read voltage LUT and populate OPP")
+
+from the cpufreq-arm tree and commit:
+
+  597457d7e054 ("cpufreq: qcom-hw: Register an Energy Model")
+
+from the opp tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/cpufreq/qcom-cpufreq-hw.c
+index 15f31e8c09c2,a16b9dca7ea3..000000000000
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@@ -224,13 -205,8 +224,15 @@@ static int qcom_cpufreq_hw_cpu_init(str
+  		goto error;
+  	}
+ =20
+ +	ret =3D dev_pm_opp_get_opp_count(cpu_dev);
+ +	if (ret <=3D 0) {
+ +		dev_err(cpu_dev, "Failed to add OPPs\n");
+ +		ret =3D -ENODEV;
+ +		goto error;
+ +	}
+ +
++ 	dev_pm_opp_of_register_em(policy->cpus);
++=20
+  	policy->fast_switch_possible =3D true;
+ =20
+  	return 0;
+
+--Sig_/nV2JY/799zyzBbiIdh3+g1k
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbgB4ACgkQAVBC80lX
+0GzyXQf/TTJt2einDltTe1wTkY7UAEDMMKYZblGBnjigwEerH+Efyj6vfNzuhZRM
+rqmKONIVCyxhMeJj5r2WXhjB7bmuwk6HpMDaK4v+S1ZKBDbwkzLT67ZbAaaIPKiB
+jw++xPFL0cHIMH1H2qDbX99I04Q5uv4VFKoaVkC8JTM16ZF9Qsim9No0/uvNBCOp
+SHDnV/XC15Ne7Q+SjcJQeFkOLrrBq3SgWzMOqrZSYoklVm6ETBRNdfTjI2/wqxSB
+ZdThB2bhECDElj7s6Zc4DxJSQqUlQdERW2WooyHTUZ9Lko+hqUKv1zCqiboZt2W8
+LrtT+Ehwn0K2BKryKfhWxc5dGMPeUw==
+=lCoA
+-----END PGP SIGNATURE-----
+
+--Sig_/nV2JY/799zyzBbiIdh3+g1k--
