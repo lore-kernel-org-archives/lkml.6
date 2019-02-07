@@ -6,114 +6,83 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B18FC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E2AC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9AE621908
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:35:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CC2421721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:36:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfBGRfW (ORCPT
+        id S1726978AbfBGRgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:35:22 -0500
-Received: from mga01.intel.com ([192.55.52.88]:35955 "EHLO mga01.intel.com"
+        Thu, 7 Feb 2019 12:36:01 -0500
+Received: from mga12.intel.com ([192.55.52.136]:2626 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbfBGRfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:35:22 -0500
+        id S1726319AbfBGRgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:36:01 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 09:35:21 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 09:36:00 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="136687393"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga001.jf.intel.com with ESMTP; 07 Feb 2019 09:35:20 -0800
-Date:   Thu, 7 Feb 2019 09:35:04 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Doug Ledford <dledford@redhat.com>,
+   d="scan'208";a="141533042"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Feb 2019 09:35:59 -0800
+Date:   Thu, 7 Feb 2019 09:36:00 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190207173504.GD29531@iweiny-DESK2.sc.intel.com>
-References: <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [GIT PULL] x86/mm changes for v4.21
+Message-ID: <20190207173600.GA15682@agluck-desk>
+References: <20181224231106.GA27438@gmail.com>
+ <20190207001737.GA32096@agluck-desk>
+ <20190207101846.GB32511@hirez.programming.kicks-ass.net>
+ <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com>
+ <20190207140131.GB32477@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190207140131.GB32477@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
-> One approach that may be a clean way to solve this:
+On Thu, Feb 07, 2019 at 03:01:31PM +0100, Peter Zijlstra wrote:
+> On Thu, Feb 07, 2019 at 11:50:52AM +0000, Linus Torvalds wrote:
+> > If you re-generate the canonical address in __cpa_addr(), now we'll
+> > actually have the real virtual address around for a lot of code-paths
+> > (pte lookup etc), which was what people wanted to avoid in the first
+> > place.
 > 
-> 1. Long term GUP usage requires the virtual mapping to the pages be fixed
->    for the duration of the GUP Map. There never has been a way to break
->    the pinnning and thus this needs to be preserved.
+> Note that it's an 'unsigned long' address, not an actual pointer, and
+> (afaict) non of the code paths use it as a pointer. This _should_ avoid
+> the CPU from following said pointer and doing a deref on it.
 
-How does this fit in with the changes John is making?
+The type doesn't matter. You want to avoid having the
+true value in the register as long as possible. Ideal
+spot would be the instruction before the TLB is flushed.
 
-> 
-> 2. Page Cache Long term pins are not allowed since regular filesystems
->    depend on COW and other tricks which are incompatible with a long term
->    pin.
+The speculative issue is that any branch you encounter
+while you have the address in a register may be mispredicted.
+You might also get a bogus hit in the branch target cache
+and speculatively jump into the weeds. While there you
+could find an instruction that loads using that register, and
+even though it is speculative and the instruction won't
+retire, a machine check log will be created in a bank (no
+machine check is signalled).
 
-Unless the hardware supports ODP or equivalent functionality.  Right?
+Once the TLB is updated, you are safe. A speculative
+access to an uncached address will not load or log anything.
 
-> 
-> 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
->    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
->    on the longterm pinned range until the long term pin is removed.
->    Hardware may do its job (like for persistent memory) but no data
->    consistency on the NVDIMM medium is guaranteed until the long term pin
->    is removed  and the filesystems regains control over the area.
-
-I believe Dan attempted something like this and it became pretty difficult.
-
-> 
-> 4. Long term pin means that the mapped sections are an actively used part
->    of the file (like a filesystem write) and it cannot be truncated for
->    the duration of the pin. It can be thought of as if the truncate is
->    immediate followed by a write extending the file again. The mapping
->    by RDMA implies after all that remote writes can occur at anytime
->    within the area pinned long term.
->
-
-This is a very interesting idea.  I've never quite thought of it that way.
-
-That would be essentially like failing the truncate but without actually
-failing it...  sneaky.  ;-)
-
-What if user space then writes to the end of the file?  Does that write end
-up at the point they truncated to or off the end of the mmaped area (old
-length)?
-
-I can see the behavior being defined either way.  But one interferes with the
-RDMA data and the other does not.  Not sure which is easier for the FS to
-handle either.
-
-Ira
-
+-Tony
