@@ -2,223 +2,107 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F28C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68F2C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C841C21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549578170;
-	bh=+S0HWjzFF0bkCAurrzo7b8npCJKlJiHsUY5c5VVDZDY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Hc1EEmXXyyHLuFqGFQJTUN92pSCk6Kc7wctsNxg7wA/P6aPX4wrnlLUdX4DJQPboM
-	 IV1g//YL/fvUGNQ7GvHPMKEqYSnsjlghyGYEkooE41ixUaHL8i/nASsZd4vyLszxIe
-	 g12cW3HPtMXo3zoWv8rYbgc+6gJjZopdbfLnZgac=
+	by mail.kernel.org (Postfix) with ESMTP id 6CC442147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:25:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWl3lIeu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfBGWWt (ORCPT
+        id S1726822AbfBGWZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34340 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfBGWWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:22:49 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 383AC2147C;
-        Thu,  7 Feb 2019 22:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549578167;
-        bh=+S0HWjzFF0bkCAurrzo7b8npCJKlJiHsUY5c5VVDZDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JDOjQa/cArkkc7VQhjY5RWYjgsni7kBaXiozB7ISiGTshZGO4hk4CnSzg5LkHPoU+
-         5ByVGq3aUxVOjDRajNa7CInblnqHRKJZXH+QMH1bGqpbeOM6x9CcgPQrpLc1eVH41Y
-         7vo/nhV2/zmQ4wuaGgYONGymC+E/Zn+X3oUBrXBY=
-Date:   Thu, 7 Feb 2019 16:22:46 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 5/5] genirq/affinity: remove support for allocating
- interrupt sets
-Message-ID: <20190207222245.GR7268@google.com>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
- <20190125095347.17950-6-ming.lei@redhat.com>
+        Thu, 7 Feb 2019 17:25:23 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41046 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGWZW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:25:22 -0500
+Received: by mail-lj1-f196.google.com with SMTP id j1-v6so1295739lja.8;
+        Thu, 07 Feb 2019 14:25:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=N/0KHLV4PdDoWFvlsA8pg6q7hWNQedtJTXYUsKKtuks=;
+        b=YWl3lIeu5M7ku/RD7eNcABz3+1x5g/jE6xaILQCq2Y72n7yDPDctvna2R2OIVUjauB
+         gB/DHTQEgwUQ1ezDo/dHExB76HnhPUX7IyAgb70t7b/lwR2IXGWBC8XIFGsbZdVWLojW
+         oUGL7ITC+FKqie8FF5W1cjbnQk9zETZsxBvTAUCSXkqd8IBpwrAkmc8jX318ZYgtVyWH
+         FtQMK9CwNjyPcAhvP47McwvDq5pArmLPHYZan4sXBmUXRXbB0je1ED6EeXsh1iZGLk8P
+         kFsCixj+yN5jG+/JPsN/L6XGIcF8rpxXPXP+kdgHmz9oIV0LuGX6CCPw4EnS7BvI8l3Q
+         9AmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=N/0KHLV4PdDoWFvlsA8pg6q7hWNQedtJTXYUsKKtuks=;
+        b=QRi4EhUR+DmE4fHAemVBSaTLMxX5S7ctPgye/IUTunEg7SjP4V8kyojAteaKU0X8mV
+         BzP/urehw3y9O8Rku61vFi/vLU4lv6nG+GKLo5Xh4qNhGP99/o8s5aNxIwzdGDWRCt93
+         JwytqeBGZ+OpusSR5ufg22XzgvzDODOJvGspFnP7Zjf6gGZoLbCxsNwcP7Fc03xq90m1
+         eydeY4WLnlNl40T2mvKYuc5xhIP93V4DZOFmFeg+5bh+K6Vc1M/lfN13r21+HlPixpe7
+         agDaoMvHiZD97FyMBGFPx0gjwissHDUYhz8w9iYKd/bIAYY6oOWES5zaHXabX41O8vq0
+         sC4Q==
+X-Gm-Message-State: AHQUAuZuhoYRTMFbB7DF0vqkJPi7Y4RWYXlrpPzlSwezkl1EHguUeIRI
+        +hfJ5q1hhKWwRcCRVl7p0JLDWFYg
+X-Google-Smtp-Source: AHgI3Iat4hAdu+/knknjnex1/B7mtvGZQYWL16JpjWcJZwnbLmcwBs89Yyn8wv7u2wgCYMmTK575ug==
+X-Received: by 2002:a2e:9c87:: with SMTP id x7-v6mr11038476lji.196.1549578320049;
+        Thu, 07 Feb 2019 14:25:20 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id q62sm33318lfg.67.2019.02.07.14.25.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 14:25:19 -0800 (PST)
+Subject: Re: [PATCH V15 3/6] i2c: tegra: fix maximum transfer size
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
+ <1549576040-15907-3-git-send-email-skomatineni@nvidia.com>
+ <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
+Message-ID: <515cb722-c345-8dd6-dbe5-557dec0d1384@gmail.com>
+Date:   Fri, 8 Feb 2019 01:25:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125095347.17950-6-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1202cc91-cacf-673e-c32b-b4d1c78b71f2@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 05:53:47PM +0800, Ming Lei wrote:
-> Now allocating interrupt sets can be done via .setup_affinity()
-> easily, so remove the support for allocating interrupt sets.
-> 
-> With this change, we don't need the limit of 'minvec == maxvec'
-> any more in pci_alloc_irq_vectors_affinity().
-> 
-> Meantime irq_create_affinity_masks() gets simplified a lot.
-> 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> 08.02.2019 1:16, Sowjanya Komatineni пишет:> 
+>>> This is wrong, 65535 = 64 * 1024 - 1.
+>>>
+>>> Let's just use size-constants provided by kernel:
+>>>
+>>> static const struct i2c_adapter_quirks tegra_i2c_quirks = {
+>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
+>>> 	.max_read_len = SZ_4K,
+>>> 	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE, };
+>>>
+>>> static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
+>>> 	.flags = I2C_AQ_NO_ZERO_LEN,
+>>> 	.max_read_len = SZ_64K,
+>>> 	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE, };
+>>>
+>>>
+>>> I'll take a look at other patches later today, no need to send out new version right now.
+>>>
+>>>
+>> 
+>> SIZE_64K is 0x00010000 (65536)
+>> 
+>> msg len is u16 and max that can be set to msg.len is 65535
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci/msi.c parts
-
-> ---
->  drivers/pci/msi.c         | 14 -------------
->  include/linux/interrupt.h |  4 ----
->  kernel/irq/affinity.c     | 52 +++++++++++------------------------------------
->  3 files changed, 12 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> index 4c0b47867258..331483de1294 100644
-> --- a/drivers/pci/msi.c
-> +++ b/drivers/pci/msi.c
-> @@ -1035,13 +1035,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
->  	if (maxvec < minvec)
->  		return -ERANGE;
->  
-> -	/*
-> -	 * If the caller is passing in sets, we can't support a range of
-> -	 * vectors. The caller needs to handle that.
-> -	 */
-> -	if (affd && affd->nr_sets && minvec != maxvec)
-> -		return -EINVAL;
-> -
->  	if (WARN_ON_ONCE(dev->msi_enabled))
->  		return -EINVAL;
->  
-> @@ -1093,13 +1086,6 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
->  	if (maxvec < minvec)
->  		return -ERANGE;
->  
-> -	/*
-> -	 * If the caller is passing in sets, we can't support a range of
-> -	 * supported vectors. The caller needs to handle that.
-> -	 */
-> -	if (affd && affd->nr_sets && minvec != maxvec)
-> -		return -EINVAL;
-> -
->  	if (WARN_ON_ONCE(dev->msix_enabled))
->  		return -EINVAL;
->  
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index b820b07f3b55..a035e165f405 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -260,8 +260,6 @@ struct irq_affinity_desc {
->   * 			and driver has to handle pre_vectors & post_vectors
->   * 			correctly, set 'is_managed' flag correct too
->   * @priv:		Private data of @setup_affinity
-> - * @nr_sets:		Length of passed in *sets array
-> - * @sets:		Number of affinitized sets
->   */
->  struct irq_affinity {
->  	int	pre_vectors;
-> @@ -270,8 +268,6 @@ struct irq_affinity {
->  				  struct irq_affinity_desc *,
->  				  unsigned int);
->  	void    *priv;
-> -	int	nr_sets;
-> -	int	*sets;
->  };
->  
->  #if defined(CONFIG_SMP)
-> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> index 524fdcda9f85..e8fea65325d9 100644
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -269,9 +269,9 @@ struct irq_affinity_desc *
->  irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  {
->  	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
-> -	int curvec, usedvecs;
-> +	int curvec;
->  	struct irq_affinity_desc *masks = NULL;
-> -	int i, nr_sets;
-> +	int i;
->  
->  	/*
->  	 * If there aren't any vectors left after applying the pre/post
-> @@ -293,34 +293,14 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	/* Fill out vectors at the beginning that don't need affinity */
->  	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
->  		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
-> -	/*
-> -	 * Spread on present CPUs starting from affd->pre_vectors. If we
-> -	 * have multiple sets, build each sets affinity mask separately.
-> -	 */
-> -	nr_sets = affd->nr_sets;
-> -	if (!nr_sets)
-> -		nr_sets = 1;
-> -
-> -	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
-> -		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-> -		int ret;
-> -
-> -		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
-> -						curvec, masks);
-> -		if (ret) {
-> -			kfree(masks);
-> -			return NULL;
-> -		}
-> -		curvec += this_vecs;
-> -		usedvecs += this_vecs;
-> +
-> +	if (irq_build_affinity_masks(affd, curvec, affvecs, curvec, masks)) {
-> +		kfree(masks);
-> +		return NULL;
->  	}
->  
->  	/* Fill out vectors at the end that don't need affinity */
-> -	if (usedvecs >= affvecs)
-> -		curvec = affd->pre_vectors + affvecs;
-> -	else
-> -		curvec = affd->pre_vectors + usedvecs;
-> -	for (; curvec < nvecs; curvec++)
-> +	for (curvec = affd->pre_vectors + affvecs; curvec < nvecs; curvec++)
->  		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
->  
->  	/* Mark the managed interrupts */
-> @@ -340,21 +320,13 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
->  {
->  	int resv = affd->pre_vectors + affd->post_vectors;
->  	int vecs = maxvec - resv;
-> -	int set_vecs;
-> +	int ret;
->  
->  	if (resv > minvec)
->  		return 0;
->  
-> -	if (affd->nr_sets) {
-> -		int i;
-> -
-> -		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
-> -			set_vecs += affd->sets[i];
-> -	} else {
-> -		get_online_cpus();
-> -		set_vecs = cpumask_weight(cpu_possible_mask);
-> -		put_online_cpus();
-> -	}
-> -
-> -	return resv + min(set_vecs, vecs);
-> +	get_online_cpus();
-> +	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
-> +	put_online_cpus();
-> +	return ret;
->  }
-> -- 
-> 2.9.5
-> 
+Ah, okay. Then it looks about right, maybe it's time to change u16 to u32 in the I2C core.
