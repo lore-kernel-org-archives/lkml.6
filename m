@@ -2,101 +2,232 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A11C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAF9C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EEAA218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:06:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549566391;
-	bh=SrI+UkKmM8ViKNKzUoYpm11/pnksSPr7YRdHRNABJF4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BcoxcvPHxXyHtj5gZzDQDaoOL6rfXhv28kqhGFc7zFNBvNV068g7jzzC3PR83nlGX
-	 dUsWsYaBjxTOxti8TilXv5gInJ8e2zFsX/2fROK1sGiOgqHwTCV5wtUDUL5AEZGW0a
-	 QDhisGGidt9QszkSZvvLLhXjWtgMVX5oQ44+3Fes=
+	by mail.kernel.org (Postfix) with ESMTP id 0E8C321920
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:08:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfBGTGa (ORCPT
+        id S1726958AbfBGTIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 14:06:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38246 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 14:08:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41080 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfBGTGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 14:06:08 -0500
-Received: from garbanzo.lan (c-73-71-40-85.hsd1.ca.comcast.net [73.71.40.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726512AbfBGTIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 14:08:37 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8E5021916;
-        Thu,  7 Feb 2019 19:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549566367;
-        bh=SrI+UkKmM8ViKNKzUoYpm11/pnksSPr7YRdHRNABJF4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qlhdrDuqT9gVySgPEgiNEf9dgsMcuxEoMsKOKqChNfnogEzUSHQ4HX9AVQndZ5iKg
-         /x6WHEPFt/aBtAEi5LvYx+GV6pNwOuSpqOnuCBdB1Scpw4INW0VeWVrguZaOz5k6AC
-         eWHTiISJqVBA9JdyvswUQZSIrm6ivyfyeJR/9ji4=
-From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
-To:     gregkh@linuxfoundation.org
-Cc:     akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, linux-wireless@vger.kernel.org,
-        keescook@chromium.org, shuah@kernel.org, mfuzzey@parkeon.com,
-        zohar@linux.vnet.ibm.com, dhowells@redhat.com,
-        pali.rohar@gmail.com, tiwai@suse.de, arend.vanspriel@broadcom.com,
-        zajec5@gmail.com, nbroeking@me.com, markivx@codeaurora.org,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 1/3] Revert "selftests: firmware: add CONFIG_FW_LOADER_USER_HELPER_FALLBACK to config"
-Date:   Thu,  7 Feb 2019 11:06:00 -0800
-Message-Id: <20190207190602.502-2-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190207190602.502-1-mcgrof@kernel.org>
-References: <20190207190602.502-1-mcgrof@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D607C004BF1;
+        Thu,  7 Feb 2019 19:08:35 +0000 (UTC)
+Received: from llong.com (dhcp-17-35.bos.redhat.com [10.18.17.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1EE4D62FA3;
+        Thu,  7 Feb 2019 19:08:28 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new rwsem features
+Date:   Thu,  7 Feb 2019 14:07:04 -0500
+Message-Id: <1549566446-27967-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 07 Feb 2019 19:08:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luis Chamberlain <mcgrof@kernel.org>
+This patchset revamps the current rwsem-xadd implementation to make
+it saner and easier to work with. This patchset removes all the
+architecture specific assembly code and uses generic C code for all
+architectures. This eases maintenance and enables us to enhance the
+code more easily.
 
-This reverts commit 7492902e8d22b568463897fa967c0886764cf034.
+This patchset also implements the following 3 new features:
 
-The commit tried to address an issue discovered by Dan where he got
-a message saying:
+ 1) Waiter lock handoff
+ 2) Reader optimistic spinning
+ 3) Store write-lock owner in the atomic count (x86-64 only)
 
-'usermode helper disabled so ignoring test'.
+Waiter lock handoff is similar to the mechanism currently in the mutex
+code. This ensures that lock starvation won't happen.
 
-Dans's commit is forcing CONFIG_FW_LOADER_USER_HELPER_FALLBACK but just
-having CONFIG_FW_LOADER_USER_HELPER suffices to emulate the_FALLBACK
-functionality.
+Reader optimistic spinning enables readers to acquire the lock more
+quickly.  So workloads that use a mix of readers and writers should
+see an increase in performance.
 
-Dan's commit is trying to fix an issue which is hidden from a previous
-commit. That issue will be addressed properly next.
+Finally, storing the write-lock owner into the count will allow
+optimistic spinners to get to the lock holder's task structure more
+quickly and eliminating the timing gap where the write lock is acquired
+but the owner isn't known yet. This is important for RT tasks where
+spinning on a lock with an unknown owner is not allowed.
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- tools/testing/selftests/firmware/config | 1 -
- 1 file changed, 1 deletion(-)
+Because of the fact that multiple readers can share the same lock,
+there is a natural preference for readers when measuring in term of
+locking throughput as more readers are likely to get into the locking
+fast path than the writers. With waiter lock handoff, we are not going
+to starve the writers.
 
-diff --git a/tools/testing/selftests/firmware/config b/tools/testing/selftests/firmware/config
-index 913a25a4a32b..bf634dda0720 100644
---- a/tools/testing/selftests/firmware/config
-+++ b/tools/testing/selftests/firmware/config
-@@ -1,6 +1,5 @@
- CONFIG_TEST_FIRMWARE=y
- CONFIG_FW_LOADER=y
- CONFIG_FW_LOADER_USER_HELPER=y
--CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
- CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
+Patches 1-2 reworks the qspinlock_stat code to make it generic (lock
+event counting) so that it can be used by all architectures and all
+locking code.
+
+Patch 3 reloctes the rwsem_down_read_failed() and associated functions
+to below the optimistic spinning functions.
+
+Patch 4 eliminates all architecture specific code and use generic C
+code for all.
+
+Patch 5 moves code that manages the owner field closer to the rwsem
+lock fast path as it is not needed by the rwsem-spinlock code.
+
+Patch 6 renames rwsem.h to rwsem-xadd.h as it is now specific to
+rwsem-xadd.c only.
+
+Patch 7 hides the internal rwsem-xadd functions from the public.
+
+Patch 8 moves the DEBUG_RWSEMS_WARN_ON checks from rwsem.c to
+kernel/locking/rwsem-xadd.h and adds some new ones.
+
+Patch 9 enhances the DEBUG_RWSEMS_WARN_ON macro to print out rwsem
+internal states that can be useful for debugging purpose.
+
+Patch 10 enables lock event countings in the rwsem code.
+
+Patch 11 implements a new rwsem locking scheme similar to what qrwlock
+is current doing. Write lock is done by atomic_cmpxchg() while read
+lock is still being done by atomic_add().
+
+Patch 12 implments lock handoff to prevent lock starvation.
+
+Patch 13 removes rwsem_wake() wakeup optimization as it doesn't work
+with lock handoff.
+
+Patch 14 adds some new rwsem owner access helper functions.
+
+Patch 15 merges the write-lock owner task pointer into the count.
+Only 64-bit count has enough space to provide a reasonable number of bits
+for reader count. ARM64 seems to have problem with the current encoding
+scheme. So this owner merging is currently limited to x86-64 only.
+
+Patch 16 eliminates redundant computation of the merged owner-count.
+
+Patch 17 reduces the chance of missed optimistic spinning opportunity
+because of some race conditions.
+
+Patch 18 makes rwsem_spin_on_owner() returns a tri-state value.
+
+Patch 19 enables reader to spin on a writer-owned rwsem.
+
+Patch 20 enables lock waiters to spin on a reader-owned rwsem with
+limited number of tries.
+
+Patch 21 makes reader wakeup to wake all the readers in the wait queue
+instead of just those in the front.
+
+Patch 22 disallows RT tasks to spin on a rwsem with unknown owner.
+
+In term of performance, eliminating architecture specific assembly code
+and using generic code doesn't seem to have any impact on performance.
+
+Supporting lock handoff does have a minor performance impact on highly
+contended rwsem, but it is a price worth paying for preventing lock
+starvation.
+
+Reader optimistic spinning is generally good for performance. Of course,
+there will be some corner cases where performance may suffer.
+
+Merging owner into count does have a minor performance impact. We can
+discuss if this is a feature we want to have in the rwsem code.
+
+There are also some performance data scattered in some of the patches.
+
+
+Waiman Long (22):
+  locking/qspinlock_stat: Introduce a generic lockevent counting APIs
+  locking/lock_events: Make lock_events available for all archs & other
+    locks
+  locking/rwsem: Relocate rwsem_down_read_failed()
+  locking/rwsem: Remove arch specific rwsem files
+  locking/rwsem: Move owner setting code from rwsem.c to rwsem.h
+  locking/rwsem: Rename kernel/locking/rwsem.h
+  locking/rwsem: Move rwsem internal function declarations to
+    rwsem-xadd.h
+  locking/rwsem: Add debug check for __down_read*()
+  locking/rwsem: Enhance DEBUG_RWSEMS_WARN_ON() macro
+  locking/rwsem: Enable lock event counting
+  locking/rwsem: Implement a new locking scheme
+  locking/rwsem: Implement lock handoff to prevent lock starvation
+  locking/rwsem: Remove rwsem_wake() wakeup optimization
+  locking/rwsem: Add more rwsem owner access helpers
+  locking/rwsem: Merge owner into count on x86-64
+  locking/rwsem: Remove redundant computation of writer lock word
+  locking/rwsem: Recheck owner if it is not on cpu
+  locking/rwsem: Make rwsem_spin_on_owner() return a tri-state value
+  locking/rwsem: Enable readers spinning on writer
+  locking/rwsem: Enable count-based spinning on reader
+  locking/rwsem: Wake up all readers in wait queue
+  locking/rwsem: Ensure an RT task will not spin on reader
+
+ MAINTAINERS                         |   1 -
+ arch/Kconfig                        |  10 +
+ arch/alpha/include/asm/rwsem.h      | 211 -----------
+ arch/arm/include/asm/Kbuild         |   1 -
+ arch/arm64/include/asm/Kbuild       |   1 -
+ arch/hexagon/include/asm/Kbuild     |   1 -
+ arch/ia64/include/asm/rwsem.h       | 172 ---------
+ arch/powerpc/include/asm/Kbuild     |   1 -
+ arch/s390/include/asm/Kbuild        |   1 -
+ arch/sh/include/asm/Kbuild          |   1 -
+ arch/sparc/include/asm/Kbuild       |   1 -
+ arch/x86/Kconfig                    |   8 -
+ arch/x86/include/asm/rwsem.h        | 237 -------------
+ arch/x86/lib/Makefile               |   1 -
+ arch/x86/lib/rwsem.S                | 156 ---------
+ arch/xtensa/include/asm/Kbuild      |   1 -
+ include/asm-generic/rwsem.h         | 140 --------
+ include/linux/rwsem.h               |  11 +-
+ kernel/locking/Makefile             |   1 +
+ kernel/locking/lock_events.c        | 153 ++++++++
+ kernel/locking/lock_events.h        |  55 +++
+ kernel/locking/lock_events_list.h   |  71 ++++
+ kernel/locking/percpu-rwsem.c       |   4 +
+ kernel/locking/qspinlock.c          |   8 +-
+ kernel/locking/qspinlock_paravirt.h |  19 +-
+ kernel/locking/qspinlock_stat.h     | 242 +++----------
+ kernel/locking/rwsem-xadd.c         | 682 +++++++++++++++++++++---------------
+ kernel/locking/rwsem-xadd.h         | 436 +++++++++++++++++++++++
+ kernel/locking/rwsem.c              |  31 +-
+ kernel/locking/rwsem.h              | 134 -------
+ 30 files changed, 1197 insertions(+), 1594 deletions(-)
+ delete mode 100644 arch/alpha/include/asm/rwsem.h
+ delete mode 100644 arch/ia64/include/asm/rwsem.h
+ delete mode 100644 arch/x86/include/asm/rwsem.h
+ delete mode 100644 arch/x86/lib/rwsem.S
+ delete mode 100644 include/asm-generic/rwsem.h
+ create mode 100644 kernel/locking/lock_events.c
+ create mode 100644 kernel/locking/lock_events.h
+ create mode 100644 kernel/locking/lock_events_list.h
+ create mode 100644 kernel/locking/rwsem-xadd.h
+ delete mode 100644 kernel/locking/rwsem.h
+
 -- 
-2.18.0
+1.8.3.1
 
