@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60312C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B21EC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5CC21928
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 191B02175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XNaMLDvm"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f9X6RRnW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfBGU5v (ORCPT
+        id S1727622AbfBGU54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:57:51 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37328 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727563AbfBGU5u (ORCPT
+        Thu, 7 Feb 2019 15:57:56 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41564 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbfBGU5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:57:50 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so535002plr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:57:50 -0800 (PST)
+        Thu, 7 Feb 2019 15:57:54 -0500
+Received: by mail-pg1-f193.google.com with SMTP id m1so491219pgq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:57:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TaQt44LZ/RgJMg+KOP1uNPzwqb7oQUqEYZ+0YwXObdU=;
-        b=XNaMLDvmhdqik4WyKLnmEJSrikd5Gtl6T2EvsYYgyG4q19++MZFwL51DaHWcx9cV7Z
-         oKhGkSLhpC7/ixJlHU2zYA5iI4Q1kNWVFX+3m71KqoTgzxaxCJO+owO4Z8X/IP370xQ+
-         ERCIXPDYG1vUeeGxUcPw76xHlhMiMibDPbl/0=
+        bh=bBOrwufm4FHfjMXGrxdvnQvXb/cSnW3qN7gry5U8GvU=;
+        b=f9X6RRnWU4eA2avJU355gF6GI/Ea4SwxPSjHHUW0EWVE9U00Fg5ZwQb343olHBNioU
+         E4AOEDxLqvk2ljWLK1uZ5F4lYEDJ9h8+0hPgKjk1RAi0wnQIQZblxnOLgcDl/zzfLP2g
+         UBwdc7+e73/Cg7rvbtR01KndlMpZbQFQcBN6M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TaQt44LZ/RgJMg+KOP1uNPzwqb7oQUqEYZ+0YwXObdU=;
-        b=EPcwxdGkIHTmi/05gW4pgblo7+RzI6iUyR6cV/tD1IoJQsQ7MYSmm8MvaVURAdjJiD
-         7ByTvpBgeEWGfRW8LnJVYEJXS4lE/4sZ8KO8GIniY6hX/w3524rHv0ATpGBJgP0KH7C1
-         /4FkSnRO99dR00UAwyeX4+BaIzofDl8HbyTHKTCJN+l4tk1poJ4U7YJlXtcQgI/+1x6l
-         oGEfSXc72zsYRVfnZIAokM5Nrw6/5I8IXRNz5VXyGS4OacBCVprK/R10gpj0p6pU9l5D
-         9sgzAdFYzjMXGEc90UlHwVh4n3xhE/p8k7YE1Eh8+BIGQ7+oq39tdn5AgjcSG2Izx2vA
-         PqrA==
-X-Gm-Message-State: AHQUAuagSk5NXA14Aj33IMcFvx1gK1TpF5JWQAPM9wQCjXPqgz44zRfT
-        NtMn7wesAFlato0dHwjey7Dtuw==
-X-Google-Smtp-Source: AHgI3IYAlpAbhePcDHpFAHMl3iLxEMniMWtPps5GlshTP8NP2devcVV52NZy9wCcGwSzGN7QHuA3AA==
-X-Received: by 2002:a17:902:8c8a:: with SMTP id t10mr16404837plo.39.1549573069816;
-        Thu, 07 Feb 2019 12:57:49 -0800 (PST)
+        bh=bBOrwufm4FHfjMXGrxdvnQvXb/cSnW3qN7gry5U8GvU=;
+        b=Eo+D4hkPhKcPUq1dll47jcpWudDtmCze1YDjpiVe0puw4DRlVhBiRFMp0023eIlOor
+         3TSbxQYMn+fu6zZZC1DStRpiSfLrBB2kvc1oF2IWf37kogvIhnKt2tnJfPLdcZf6DpYJ
+         Rp0dQrEqv1nRSCFmDcgGdMpscbYA3TglYVUp6TZBWP+D6ZAKT7uRB2F6vL2y1tXXx9Ic
+         0VkP0xmnW60lOgvYnsVr0CPKCBzFkWM7gE9X1k3FTgXWAGOk6S5ZAqr4BunRuTPwyIrL
+         mfQZi0rqwx83K5o8O1a/IAsuyZDiJLATWZsEfbrHr8jObGcPN9JpEy0By9mGt+r91S/J
+         mXhw==
+X-Gm-Message-State: AHQUAub7YtHP0jqK7K8iVyghbnuBrdaobPQ7uANftqYlIfdMhDo/gTWJ
+        /CAU1SjWNZLKZmSLJKDCfESHfw==
+X-Google-Smtp-Source: AHgI3IYwkcAxfqEv6G5SK5dqEAswIL+qV42uI6+ChdkYlJm+1lWtnkrnor7/iFCU6Yn5V/wYEjd0zg==
+X-Received: by 2002:a62:33c1:: with SMTP id z184mr18085394pfz.104.1549573073203;
+        Thu, 07 Feb 2019 12:57:53 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id y9sm27199pfi.74.2019.02.07.12.57.48
+        by smtp.gmail.com with ESMTPSA id y9sm27199pfi.74.2019.02.07.12.57.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Feb 2019 12:57:49 -0800 (PST)
+        Thu, 07 Feb 2019 12:57:52 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Bart Van Assche <bvanassche@acm.org>,
@@ -62,9 +62,9 @@ Cc:     Bart Van Assche <bvanassche@acm.org>,
         Ming Lei <ming.lei@redhat.com>,
         Evan Green <evgreen@chromium.org>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] loop: Report EOPNOTSUPP properly
-Date:   Thu,  7 Feb 2019 12:57:28 -0800
-Message-Id: <20190207205730.199332-2-evgreen@chromium.org>
+Subject: [PATCH v2 2/2] loop: Better discard support for block devices
+Date:   Thu,  7 Feb 2019 12:57:29 -0800
+Message-Id: <20190207205730.199332-3-evgreen@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207205730.199332-1-evgreen@chromium.org>
 References: <20190207205730.199332-1-evgreen@chromium.org>
@@ -75,53 +75,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properly plumb out EOPNOTSUPP from loop driver operations, which may
-get returned when for instance a discard operation is attempted but not
-supported by the underlying block device. Before this change, everything
-was reported in the log as an I/O error, which is scary and not
-helpful in debugging.
+If the backing device for a loop device is a block device,
+then mirror the discard properties of the underlying block
+device into the loop device. While in there, differentiate
+between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
+different for block devices, but which the loop device had
+just been lumping together.
+
+This change fixes blktest block/003, and removes an extraneous
+error print in block/013 when testing on a loop device backed
+by a block device that does not support discard.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
 ---
 
-Changes in v2:
-- Unnested error if statement (Bart)
+Changes in v2: None
 
-Ming, I opted to keep your Reviewed-by since the change since v1 was trivial.
-Hope that's okay.
-
----
- drivers/block/loop.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/block/loop.c | 61 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 41 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index cf5538942834..b6c2d8f3202b 100644
+index b6c2d8f3202b..9b1fb2d639f1 100644
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -458,7 +458,9 @@ static void lo_complete_rq(struct request *rq)
- 
- 	if (!cmd->use_aio || cmd->ret < 0 || cmd->ret == blk_rq_bytes(rq) ||
- 	    req_op(rq) != REQ_OP_READ) {
--		if (cmd->ret < 0)
-+		if (cmd->ret == -EOPNOTSUPP)
-+			ret = BLK_STS_NOTSUPP;
-+		else if (cmd->ret < 0)
- 			ret = BLK_STS_IOERR;
- 		goto end_io;
- 	}
-@@ -1878,7 +1880,10 @@ static void loop_handle_cmd(struct loop_cmd *cmd)
-  failed:
- 	/* complete non-aio request */
- 	if (!cmd->use_aio || ret) {
--		cmd->ret = ret ? -EIO : 0;
-+		if (ret == -EOPNOTSUPP)
-+			cmd->ret = ret;
-+		else
-+			cmd->ret = ret ? -EIO : 0;
- 		blk_mq_complete_request(rq);
- 	}
+@@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
+ 	return ret;
  }
+ 
+-static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
++static int lo_discard(struct loop_device *lo, struct request *rq,
++		int mode, loff_t pos)
+ {
+-	/*
+-	 * We use punch hole to reclaim the free space used by the
+-	 * image a.k.a. discard. However we do not support discard if
+-	 * encryption is enabled, because it may give an attacker
+-	 * useful information.
+-	 */
+ 	struct file *file = lo->lo_backing_file;
+-	int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
++	struct request_queue *q = lo->lo_queue;
+ 	int ret;
+ 
+-	if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
++	if (!blk_queue_discard(q)) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
+ 	}
+@@ -599,8 +594,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
+ 	case REQ_OP_FLUSH:
+ 		return lo_req_flush(lo, rq);
+ 	case REQ_OP_DISCARD:
++		return lo_discard(lo, rq,
++			FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
++
+ 	case REQ_OP_WRITE_ZEROES:
+-		return lo_discard(lo, rq, pos);
++		return lo_discard(lo, rq,
++			FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
++
+ 	case REQ_OP_WRITE:
+ 		if (lo->transfer)
+ 			return lo_write_transfer(lo, rq, pos);
+@@ -854,6 +854,25 @@ static void loop_config_discard(struct loop_device *lo)
+ 	struct file *file = lo->lo_backing_file;
+ 	struct inode *inode = file->f_mapping->host;
+ 	struct request_queue *q = lo->lo_queue;
++	struct request_queue *backingq;
++
++	/*
++	 * If the backing device is a block device, mirror its discard
++	 * capabilities.
++	 */
++	if (S_ISBLK(inode->i_mode)) {
++		backingq = bdev_get_queue(inode->i_bdev);
++		blk_queue_max_discard_sectors(q,
++			backingq->limits.max_discard_sectors);
++
++		blk_queue_max_write_zeroes_sectors(q,
++			backingq->limits.max_write_zeroes_sectors);
++
++		q->limits.discard_granularity =
++			backingq->limits.discard_granularity;
++
++		q->limits.discard_alignment =
++			backingq->limits.discard_alignment;
+ 
+ 	/*
+ 	 * We use punch hole to reclaim the free space used by the
+@@ -861,22 +880,24 @@ static void loop_config_discard(struct loop_device *lo)
+ 	 * encryption is enabled, because it may give an attacker
+ 	 * useful information.
+ 	 */
+-	if ((!file->f_op->fallocate) ||
+-	    lo->lo_encrypt_key_size) {
++	} else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
+ 		q->limits.discard_granularity = 0;
+ 		q->limits.discard_alignment = 0;
+ 		blk_queue_max_discard_sectors(q, 0);
+ 		blk_queue_max_write_zeroes_sectors(q, 0);
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+-		return;
+-	}
+ 
+-	q->limits.discard_granularity = inode->i_sb->s_blocksize;
+-	q->limits.discard_alignment = 0;
++	} else {
++		q->limits.discard_granularity = inode->i_sb->s_blocksize;
++		q->limits.discard_alignment = 0;
++
++		blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
++		blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
++	}
+ 
+-	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
+-	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
++	if (q->limits.max_discard_sectors || q->limits.max_write_zeroes_sectors)
++		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
++	else
++		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+ }
+ 
+ static void loop_unprepare_queue(struct loop_device *lo)
 -- 
 2.20.1
 
