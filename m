@@ -2,96 +2,93 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD345C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641DBC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7666207E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DBA0218D9
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfBGJNu (ORCPT
+        id S1726830AbfBGJQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 04:13:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbfBGJNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 04:13:50 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A5E40C065F63;
-        Thu,  7 Feb 2019 09:13:49 +0000 (UTC)
-Received: from [10.40.204.71] (ovpn-204-71.brq.redhat.com [10.40.204.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 315F96155B;
-        Thu,  7 Feb 2019 09:13:47 +0000 (UTC)
-Subject: Re: [PATCH v2] powerpc/mm: move a KERN_WARNING message to pr_debug()
-To:     Michael Ellerman <mpe@ellerman.id.au>, linux-kernel@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-References: <20190205202133.5048-1-lvivier@redhat.com>
- <8736p0kyiy.fsf@concordia.ellerman.id.au>
-From:   Laurent Vivier <lvivier@redhat.com>
-Message-ID: <866a19ec-93b2-de04-d8a3-11858fcaacea@redhat.com>
-Date:   Thu, 7 Feb 2019 10:13:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 7 Feb 2019 04:16:44 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:38167 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfBGJQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 04:16:44 -0500
+Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 203D5100003;
+        Thu,  7 Feb 2019 09:16:39 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 10:16:39 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v5 6/9] drm/bridge: cdns: Separate DSI and D-PHY
+ configuration
+Message-ID: <20190207091639.4doo4h3okqqfbvw6@flea>
+References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
+ <0b3bea44e05745b65c23af7926ca546bc80a1bcc.1548085432.git-series.maxime.ripard@bootlin.com>
+ <1d6fb3d0f97880d829a88b6da5aa71456f50507f.camel@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <8736p0kyiy.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 07 Feb 2019 09:13:50 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bghpz54hbxx3ahfa"
+Content-Disposition: inline
+In-Reply-To: <1d6fb3d0f97880d829a88b6da5aa71456f50507f.camel@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2019 05:33, Michael Ellerman wrote:
-> Hi Laurent,
-> 
-> I'm not sure I'm convinced about this one. It seems like we're just
-> throwing away the warning because it's annoying.
-> 
-> Laurent Vivier <lvivier@redhat.com> writes:
->> resize_hpt_for_hotplug() reports a warning when it cannot
->> increase the hash page table ("Unable to resize hash page
->> table to target order") but this is not blocking and
->> can make user thinks something has not worked properly.
-> 
-> Something did not work properly, the resize didn't work properly. Right?
-> 
->> As we move the message to the debug area, report again the
->> ENODEV error.
->>
->> If the operation cannot be done the real error message
->> will be reported by arch_add_memory() if create_section_mapping()
->> fails.
-> 
-> Can you explain that more. Isn't the fact that the resize failed "the
-> real error message"?
 
-In arch_add_memory(), after calling resize_hpt_for_hotplug() it calls
-create_section_mapping() and if create_section_mapping() fails we will
-have the error message "Unable to create mapping for hot added memory"
-and the real exit (EFAULT).
+--bghpz54hbxx3ahfa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> Fixes: 7339390d772dd
->>        powerpc/pseries: Don't give a warning when HPT resizing isn't available
-> 
-> This should all be on one line, and formatted as:
-> 
-> Fixes: 7339390d772d ("powerpc/pseries: Don't give a warning when HPT resizing isn't available")
-> 
-> See Documentation/process/submitting-patches.rst for more info and how
-> to configure git to do it automatically for you.
+On Thu, Feb 07, 2019 at 09:44:46AM +0100, Paul Kocialkowski wrote:
+> Hi,
+>=20
+> On Mon, 2019-01-21 at 16:45 +0100, Maxime Ripard wrote:
+> > The current configuration of the DSI bridge and its associated D-PHY is
+> > intertwined. In order to ease the future conversion to the phy framework
+> > for the D-PHY part, let's split the configuration in two.
+>=20
+> See below about a silly mistake when refactoring. Looks good otherwise,
+> so with that fixed:
+>=20
+> Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Thank you, I didn't know the format was documented.
+I've fixed it while applying, thanks!
+Maxime
 
-Thanks,
-Laurent
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--bghpz54hbxx3ahfa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFv3dwAKCRDj7w1vZxhR
+xTBuAQDttACZStsezB6blvrLn0ablceJCGfKESgvEhrq44HuUAD+KCTaTPBfs3Lk
+HyRXYkXUE6Oh0CTNJhLV5hJ3c7x+dwk=
+=JSUm
+-----END PGP SIGNATURE-----
+
+--bghpz54hbxx3ahfa--
