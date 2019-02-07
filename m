@@ -2,182 +2,226 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A31C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810D4C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B76A20823
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4187721872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:54:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WgkR+WEs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfBGJyC (ORCPT
+        id S1726916AbfBGJye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 04:54:02 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58764 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726691AbfBGJyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 04:54:01 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 89CA8EC8D4B0CDB62978;
-        Thu,  7 Feb 2019 17:53:59 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Thu, 7 Feb 2019
- 17:53:50 +0800
-Date:   Thu, 7 Feb 2019 09:53:36 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Keith Busch <keith.busch@intel.com>, <linux-mm@kvack.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCHv5 00/10] Heterogeneuos memory node attributes
-Message-ID: <20190207095336.0000529f@huawei.com>
-In-Reply-To: <20190124230724.10022-1-keith.busch@intel.com>
-References: <20190124230724.10022-1-keith.busch@intel.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        Thu, 7 Feb 2019 04:54:34 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:41632 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfBGJye (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 04:54:34 -0500
+Received: by mail-ua1-f67.google.com with SMTP id z24so3243269ual.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 01:54:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VD51wS+QuXj8SMbRrKNFsUgDPed915Pd4fTCamk2ym0=;
+        b=WgkR+WEsaQKvKrKkE2qXc0ZJ+6aOaJPqMVJBEQF+I85OcbdAJWT8X3cOiQha91kP5Z
+         QgBLiTJivvteA8E588K8qUUwMAx/WGgSv2duDU97AcSRvNx4y7f/3dmJ+gmGFmhu3KxJ
+         Htsnhjpl2hCfGKClnSEwlhXRSncPF8z1S1KfA693Nm4RdXZckz3bJNysqMqodu04CuqW
+         u03sh5szZ0yx0vl7j6ar02t7vYfuXSCyTCnaiC29hzKCw7FLS+ZlD+RiFSH4yIq5PhG5
+         hax33OXpP+z3f/EX0rEzE39xBWMTTPNkmgdpYBy45sk/uKxTfZ1ckWfNvaNsP8pn84LZ
+         f5bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VD51wS+QuXj8SMbRrKNFsUgDPed915Pd4fTCamk2ym0=;
+        b=ulPbO78BG2o/d5XHeV17jzEFRC89UzAVsKBhU8TRspHm2CXi4xBKckLdg9JVyca0R9
+         hkChOUJHSVWmIQNyOSMJ6qU/WvAPKVjbenhEqgeVDGjcIC8RmePkwiQVXqGY66eCsNTP
+         VjwwGQVLGOZhfBd6u/jMhbwAzxifdZhamM2xc0Ip0G+JkB42xkqRUxrWzjdnHNEWX8OQ
+         AJRQzjQgRFN18cJsNUJ6rZihASsEu0MBoXc+jE0lTCA0pxyiCKH15nxAo8zEGrLoVdys
+         eqTOsk5wipZSraNeQjw5PRxngvqQIh9bWbiQ+nzooFOx22PPcRWlKBVEKOy1o7n5ZfSZ
+         3QKQ==
+X-Gm-Message-State: AHQUAuapPZSBI4Ai+zETtxGCTBQ/mHrZKtkVXxTG3gAdB8y4zFoNh9N1
+        u0zKwki18jdkQyDIZ8MSAd501g9+R5WFa0WX6zu89vXHhjY=
+X-Google-Smtp-Source: AHgI3IbTR2p07tfrmBblUCFVOeTHeCsOQiEz0L/wJADTgq+rlDyttXzHoiWp9aCxvwGBfmamlsFGfgfqcKT2B6aHxCQ=
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr5742846uan.107.1549533272843;
+ Thu, 07 Feb 2019 01:54:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+References: <20190206150935.12140-1-sudeep.holla@arm.com>
+In-Reply-To: <20190206150935.12140-1-sudeep.holla@arm.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 7 Feb 2019 10:53:56 +0100
+Message-ID: <CAPDyKFr2qwXoOL3SRy7Crf-pg4FMn_qecPrw__BE+YpVAjAFZA@mail.gmail.com>
+Subject: Re: [PATCH] drivers: base: add support to skip power management in
+ device/driver model
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 16:07:14 -0700
-Keith Busch <keith.busch@intel.com> wrote:
+On Wed, 6 Feb 2019 at 16:09, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> All device objects in the driver model contain fields that control the
+> handling of various power management activities. However, it's not
+> always useful. There are few instances where pseudo devices are added
+> to the model just to take advantage of many other features like
+> kobjects, udev events, and so on. One such example is cpu devices and
+> their caches.
+>
+> The sysfs for the cpu caches are managed by adding devices with cpu
+> as the parent in cpu_device_create() when secondary cpu is brought
+> online. Generally when the secondary CPUs are hotplugged back in as part
+> of resume from suspend-to-ram, we call cpu_device_create() from the cpu
+> hotplug state machine while the cpu device associated with that CPU is
+> not yet ready to be resumed as the device_resume() call happens bit
+> later. It's not really needed to set the flag is_prepared for cpu
+> devices as they are mostly pseudo device and hotplug framework deals
+> with state machine and not managed through the cpu device.
 
-> == Changes since v4 ==
-> 
->   All public interfaces have kernel docs.
-> 
->   Renamed "class" to "access", docs and changed logs updated
->   accordingly. (Rafael)
-> 
->   The sysfs hierarchy is altered to put initiators and targets in their
->   own attribute group directories (Rafael).
-> 
->   The node lists are removed. This feedback is in conflict with v1
->   feedback, but consensus wants to remove multi-value sysfs attributes,
->   which includes lists. We only have symlinks now, just like v1 provided.
-> 
->   Documentation and code patches are combined such that the code
->   introducing new attributes and its documentation are in the same
->   patch. (Rafael and Dan).
-> 
->   The performance attributes, bandwidth and latency, are moved into the
->   initiators directory. This should make it obvious for which node
->   access the attributes apply, which was previously ambiguous.
->   (Jonathan Cameron).
-> 
->   The HMAT code selecting "local" initiators is substantially changed.
->   Only PXM's that have identical performance to the HMAT's processor PXM
->   in Address Range Structure are registered. This is to avoid considering
->   nodes identical when only one of several perf attributes are the same.
->   (Jonathan Cameron).
-> 
->   Verbose variable naming. Examples include "initiator" and "target"
->   instead of "i" and "t", "mem_pxm" and "cpu_pxm" instead of "m" and
->   "p". (Rafael)
-> 
->   Compile fixes for when HMEM_REPORTING is not set. This is not a user
->   selectable config option, default 'n', and will have to be selected
->   by other config options that require it (Greg KH and Rafael).
-> 
-> == Background ==
-> 
-> Platforms may provide multiple types of cpu attached system memory. The
-> memory ranges for each type may have different characteristics that
-> applications may wish to know about when considering what node they want
-> their memory allocated from. 
-> 
-> It had previously been difficult to describe these setups as memory
-> rangers were generally lumped into the NUMA node of the CPUs. New
-> platform attributes have been created and in use today that describe
-> the more complex memory hierarchies that can be created.
-> 
-> This series' objective is to provide the attributes from such systems
-> that are useful for applications to know about, and readily usable with
-> existing tools and libraries.
+What's the point of removing and then re-adding the sysfs attributes
+for the cpu caches, at each hotplug off/on sequence? To me that sounds
+inefficient and unnecessary, no?
 
-As a general heads up, ACPI 6.3 is out and makes some changes.
-Discussions I've had in the past suggested there were few systems
-shipping with 6.2 HMAT and that many firmwares would start at 6.3.
-Of course, that might not be true, but there was fairly wide participation
-in the meeting so fingers crossed it's accurate.
+If you avoid this, would that solve this problem?
 
-https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
+Kind regards
+Uffe
 
-Particular points to note:
-1. Most of the Memory Proximity Domain Attributes Structure was deprecated.
-   This includes the reservation hint which has been replaced
-   with a new mechanism (not used in this patch set)
-
-2. Base units for latency changed to picoseconds.  There is a lot more
-   explanatory text around how those work.
-
-3. The measurements of latency and bandwidth no longer have an
-   'aggregate performance' version.  Given the work load was not described
-   this never made any sense.  Better for a knowledgeable bit of software
-   to work out it's own estimate.
-
-4. There are now Generic Initiator Domains that have neither memory nor
-   processors.  I'll come back with proposals on handling those soon if
-   no one beats me to it. (I think it's really easy but may be wrong ;)
-   I've not really thought out how this series applies to GI only domains
-   yet.  Probably not useful to know you have an accelerator near to
-   particular memory if you are deciding where to pin your host processor
-   task ;)
-
-Jonathan
-
-> 
-> Keith Busch (10):
->   acpi: Create subtable parsing infrastructure
->   acpi: Add HMAT to generic parsing tables
->   acpi/hmat: Parse and report heterogeneous memory
->   node: Link memory nodes to their compute nodes
->   acpi/hmat: Register processor domain to its memory
->   node: Add heterogenous memory access attributes
->   acpi/hmat: Register performance attributes
->   node: Add memory caching attributes
->   acpi/hmat: Register memory side cache attributes
->   doc/mm: New documentation for memory performance
-> 
->  Documentation/ABI/stable/sysfs-devices-node   |  87 ++++-
->  Documentation/admin-guide/mm/numaperf.rst     | 167 ++++++++
->  arch/arm64/kernel/acpi_numa.c                 |   2 +-
->  arch/arm64/kernel/smp.c                       |   4 +-
->  arch/ia64/kernel/acpi.c                       |  12 +-
->  arch/x86/kernel/acpi/boot.c                   |  36 +-
->  drivers/acpi/Kconfig                          |   1 +
->  drivers/acpi/Makefile                         |   1 +
->  drivers/acpi/hmat/Kconfig                     |   9 +
->  drivers/acpi/hmat/Makefile                    |   1 +
->  drivers/acpi/hmat/hmat.c                      | 537 ++++++++++++++++++++++++++
->  drivers/acpi/numa.c                           |  16 +-
->  drivers/acpi/scan.c                           |   4 +-
->  drivers/acpi/tables.c                         |  76 +++-
->  drivers/base/Kconfig                          |   8 +
->  drivers/base/node.c                           | 354 ++++++++++++++++-
->  drivers/irqchip/irq-gic-v2m.c                 |   2 +-
->  drivers/irqchip/irq-gic-v3-its-pci-msi.c      |   2 +-
->  drivers/irqchip/irq-gic-v3-its-platform-msi.c |   2 +-
->  drivers/irqchip/irq-gic-v3-its.c              |   6 +-
->  drivers/irqchip/irq-gic-v3.c                  |  10 +-
->  drivers/irqchip/irq-gic.c                     |   4 +-
->  drivers/mailbox/pcc.c                         |   2 +-
->  include/linux/acpi.h                          |   6 +-
->  include/linux/node.h                          |  60 ++-
->  25 files changed, 1344 insertions(+), 65 deletions(-)
->  create mode 100644 Documentation/admin-guide/mm/numaperf.rst
->  create mode 100644 drivers/acpi/hmat/Kconfig
->  create mode 100644 drivers/acpi/hmat/Makefile
->  create mode 100644 drivers/acpi/hmat/hmat.c
-> 
-
-
+>
+> This often results in annoying warning when resuming:
+> Enabling non-boot CPUs ...
+> CPU1: Booted secondary processor
+>  cache: parent cpu1 should not be sleeping
+> CPU1 is up
+> CPU2: Booted secondary processor
+>  cache: parent cpu2 should not be sleeping
+> CPU2 is up
+> .... and so on.
+>
+> So in order to fix these kind of errors, we could just completely avoid
+> doing any power management related initialisations and operations if
+> they are not used by these devices.
+>
+> Lets add no_pm_required flags to indicate that the device doesn't
+> require any sort of pm activities and all of them can be completely
+> skipped. We can use the same flag to also avoid adding not used *power*
+> sysfs entries for these devices.
+>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/base/cpu.c         |  2 ++
+>  drivers/base/power/main.c  |  7 +++++++
+>  drivers/base/power/sysfs.c |  4 ++++
+>  include/linux/device.h     | 10 ++++++++++
+>  include/linux/pm.h         |  1 +
+>  5 files changed, 24 insertions(+)
+>
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index eb9443d5bae1..ccec353aa24c 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -379,6 +379,7 @@ int register_cpu(struct cpu *cpu, int num)
+>         cpu->dev.bus->uevent = cpu_uevent;
+>  #endif
+>         cpu->dev.groups = common_cpu_attr_groups;
+> +       device_set_pm_not_required(&cpu->dev);
+>         if (cpu->hotpluggable)
+>                 cpu->dev.groups = hotplugable_cpu_attr_groups;
+>         error = device_register(&cpu->dev);
+> @@ -427,6 +428,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
+>         dev->parent = parent;
+>         dev->groups = groups;
+>         dev->release = device_create_release;
+> +       device_set_pm_not_required(dev);
+>         dev_set_drvdata(dev, drvdata);
+>
+>         retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 0992e67e862b..2a29c3d4e240 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -124,6 +124,10 @@ void device_pm_unlock(void)
+>   */
+>  void device_pm_add(struct device *dev)
+>  {
+> +       /* No need to create pm sysfs if explicitly specified as not required */
+> +       if (device_pm_not_required(dev))
+> +               return;
+> +
+>         pr_debug("PM: Adding info for %s:%s\n",
+>                  dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>         device_pm_check_callbacks(dev);
+> @@ -142,6 +146,9 @@ void device_pm_add(struct device *dev)
+>   */
+>  void device_pm_remove(struct device *dev)
+>  {
+> +       if (device_pm_not_required(dev))
+> +               return;
+> +
+>         pr_debug("PM: Removing info for %s:%s\n",
+>                  dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>         complete_all(&dev->power.completion);
+> diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
+> index d713738ce796..6cd159b51114 100644
+> --- a/drivers/base/power/sysfs.c
+> +++ b/drivers/base/power/sysfs.c
+> @@ -648,6 +648,10 @@ int dpm_sysfs_add(struct device *dev)
+>  {
+>         int rc;
+>
+> +       /* No need to create pm sysfs if explicitly disabled */
+> +       if (device_pm_not_required(dev))
+> +               return 0;
+> +
+>         rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
+>         if (rc)
+>                 return rc;
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 6cb4640b6160..739d0b62e4d4 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1165,6 +1165,16 @@ static inline bool device_async_suspend_enabled(struct device *dev)
+>         return !!dev->power.async_suspend;
+>  }
+>
+> +static inline bool device_pm_not_required(struct device *dev)
+> +{
+> +       return dev->power.no_pm_required;
+> +}
+> +
+> +static inline void device_set_pm_not_required(struct device *dev)
+> +{
+> +       dev->power.no_pm_required = true;
+> +}
+> +
+>  static inline void dev_pm_syscore_device(struct device *dev, bool val)
+>  {
+>  #ifdef CONFIG_PM_SLEEP
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 0bd9de116826..300ab9f0b858 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -592,6 +592,7 @@ struct dev_pm_info {
+>         bool                    is_suspended:1; /* Ditto */
+>         bool                    is_noirq_suspended:1;
+>         bool                    is_late_suspended:1;
+> +       bool                    no_pm_required:1;
+>         bool                    early_init:1;   /* Owned by the PM core */
+>         bool                    direct_complete:1;      /* Owned by the PM core */
+>         u32                     driver_flags;
+> --
+> 2.17.1
+>
