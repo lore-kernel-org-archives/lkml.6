@@ -2,89 +2,75 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFB1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C16C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF58B21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A22721908
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:54:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dTixeQLV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfBGNxi (ORCPT
+        id S1727061AbfBGNye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:53:38 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36285 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfBGNxh (ORCPT
+        Thu, 7 Feb 2019 08:54:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33664 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfBGNye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:53:37 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d12so8025693edy.3;
-        Thu, 07 Feb 2019 05:53:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lm5Avw4EPLC0zdN0Yr9cwA50XTgURy4PyLPaThhN+lU=;
-        b=Qs1RLlEPkelmegQHTYXlhuhmoUxyg0teJ1gcQpUKpKZ0c/J6eJKN6C4Lzjt4CYxRn/
-         Nd+MebdNc/ITu20Hd7rEQiXZI2uYhkmdqeCk5q22z0ZdtsOu8z9M2bxRqjYOVE/H2tlr
-         iq0K8HZeVTqw7/DozotAQT+a5H7KuGMowPj8oqBEWrN/6di3yiYF+kwqJqrmCO33Iwm9
-         Ee+9AuCOCofkWykMXwyMz3wUGDDoRgdUlWrBdyjzhgnki+qiuFcGGSOeWsqOK8JRh6JK
-         gfSMXXKqjdc+xhip9PsGvbkQ2DTLnKfZsag/iUpRhD5IjF59KzbPwP/5qRRW5q3qdwyO
-         cF5A==
-X-Gm-Message-State: AHQUAub41s2Ye16SvVEoHuz4qnABYyJ6Aykpf7aTBYnddc95EeCGTBOV
-        IokuENZsOHZqbmM8MTKjFbJbQAYxlvw=
-X-Google-Smtp-Source: AHgI3IYASUycXwNZntenyldK54+kAKD6RrVVCe+amcE+SZgXZkIFGBCUp7pzBaqMFw9zoSDbeENGGQ==
-X-Received: by 2002:a17:906:2ec8:: with SMTP id s8mr11936062eji.235.1549547615429;
-        Thu, 07 Feb 2019 05:53:35 -0800 (PST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id y14sm4084904eju.58.2019.02.07.05.53.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 05:53:35 -0800 (PST)
-Received: by mail-wr1-f51.google.com with SMTP id q1so1648175wrp.7;
-        Thu, 07 Feb 2019 05:53:35 -0800 (PST)
-X-Received: by 2002:adf:891a:: with SMTP id s26mr12263321wrs.44.1549547614690;
- Thu, 07 Feb 2019 05:53:34 -0800 (PST)
+        Thu, 7 Feb 2019 08:54:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MslmhBf6sHBX+lTIZiGv5oF8ktq/q6NsQm5zdWGHpTQ=; b=dTixeQLVu7KVSglvTuT6y6NrB
+        rYgagcrHhJjihyiiIkRYAiB55rstLOlgOmT/ytB6+MR4UHv2vN/3TX71ojKEKepM8SM2PM6G+vVRM
+        SSi1Bqwl0MYMHTVCwd25Tkg7CkQwvFOQ1e5S8dLp8+Mo2W2npAnkDWxmP00Jx0CmqZmL7ayCGsO5k
+        bopYRxg/SUtKwzZ3xaha6RLVrjXS93Tq3k7TytGPy6iLX1acucpccOyvne5HPEFRbNf5FPihb2+bX
+        W4dPTweVdsHFZUub8DYpjK75j3A37u79TwYV91pIW4rBFkGuleAtWDlckD64Rgal0bkx4q9IA739A
+        2OqF0klUA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grk7n-0003OL-U6; Thu, 07 Feb 2019 13:53:55 +0000
+Date:   Thu, 7 Feb 2019 05:53:55 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/2] mm: add probe_user_read()
+Message-ID: <20190207135355.GU21860@bombadil.infradead.org>
+References: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
-References: <20190208005042.6b353e17@canb.auug.org.au>
-In-Reply-To: <20190208005042.6b353e17@canb.auug.org.au>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 7 Feb 2019 21:53:22 +0800
-X-Gmail-Original-Message-ID: <CAGb2v650UCEXbEnNPTiPPSn_5Tznso4gg5W23P9K8Y7f_pAqxw@mail.gmail.com>
-Message-ID: <CAGb2v650UCEXbEnNPTiPPSn_5Tznso4gg5W23P9K8Y7f_pAqxw@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the sunxi tree
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 9:50 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> In commit
->
->   df0aeb208b24 ("ARM: dts: sun9i: a80-optimus: Add node for AXP809's unused dc1sw regulator")
->
-> Fixes tag
->
->   Fixes: aa4a27bc819e ("ARM: dts: sun9i: a80-optimus: Add AXP809 PMIC
->
-> has these problem(s):
->
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
->
-> Please don't wrap the Fixes tag over more than one line.
+On Wed, Jan 16, 2019 at 04:59:27PM +0000, Christophe Leroy wrote:
+>  v3: Moved 'Returns:" comment after description.
+>      Explained in the commit log why the function is defined static inline
+> 
+>  v2: Added "Returns:" comment and removed probe_user_address()
 
-Right. I forgot to update the messages from these I made in the past.
+The correct spelling is 'Return:', not 'Returns:':
 
-Maxime, can you fix it up?
+Return values
+~~~~~~~~~~~~
 
-Thanks
-ChenYu
+The return value, if any, should be described in a dedicated section
+named ``Return``.
+
