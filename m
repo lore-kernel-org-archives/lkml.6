@@ -2,113 +2,137 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D536AC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F18C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5A82147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56A1E2147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBGWRx (ORCPT
+        id S1726896AbfBGWUe convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:17:53 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40160 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGWRw (ORCPT
+        Thu, 7 Feb 2019 17:20:34 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:51797 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfBGWUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:17:52 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1A4C980280; Thu,  7 Feb 2019 23:17:40 +0100 (CET)
-Date:   Thu, 7 Feb 2019 23:17:46 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     ofono@ofono.org, kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Droid 4 modem support in kernel & ofono
-Message-ID: <20190207221745.GA12219@amd>
-References: <20190201203616.GA2087@amd>
- <20190201205032.GF5720@atomide.com>
+        Thu, 7 Feb 2019 17:20:33 -0500
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 2FA8F100003;
+        Thu,  7 Feb 2019 22:20:29 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 23:20:28 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH] mtd: rawnand: denali_dt: remove single anonymous clock
+ support
+Message-ID: <20190207232028.26b4a7f5@xps13>
+In-Reply-To: <ea245b53-59c9-0d7f-f33a-44aa93db99ac@kernel.org>
+References: <1547539894-12898-1-git-send-email-yamada.masahiro@socionext.com>
+        <20190115092229.59e09c2d@xps13>
+        <CAK7LNATnfTQXHrXJQp7732-e7hvd8ORcYubyDmz0KHaRXRMDqQ@mail.gmail.com>
+        <20190128112007.440046e6@xps13>
+        <da2ea926-30e9-c7b9-8b1f-ee65ccc0fb7a@kernel.org>
+        <20190131182644.366a54a5@bbrezillon>
+        <20190205141853.4b7ed954@xps13>
+        <ea245b53-59c9-0d7f-f33a-44aa93db99ac@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
-In-Reply-To: <20190201205032.GF5720@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dinh,
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dinh Nguyen <dinguyen@kernel.org> wrote on Thu, 7 Feb 2019 12:17:50
+-0600:
 
-Hi!
+> On 2/5/19 7:18 AM, Miquel Raynal wrote:
+> > Hi Dinh,
+> > 
+> > Boris Brezillon <bbrezillon@kernel.org> wrote on Thu, 31 Jan 2019
+> > 18:26:44 +0100:
+> >   
+> >> Hi Dinh,
+> >>
+> >> On Thu, 31 Jan 2019 11:24:16 -0600
+> >> Dinh Nguyen <dinguyen@kernel.org> wrote:
+> >>  
+> >>> On 1/28/19 4:20 AM, Miquel Raynal wrote:    
+> >>>> Hi Dinh,
+> >>>>
+> >>>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Wed, 16 Jan
+> >>>> 2019 10:27:11 +0900:
+> >>>>       
+> >>>>> (+CC Dinh Nguyen)
+> >>>>>
+> >>>>> On Tue, Jan 15, 2019 at 5:22 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:      
+> >>>>>>
+> >>>>>> Hi Masahiro,
+> >>>>>>
+> >>>>>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 15 Jan
+> >>>>>> 2019 17:11:34 +0900:
+> >>>>>>        
+> >>>>>>> Commit 6f1fe97bec34 ("mtd: rawnand: denali_dt: add more clocks based
+> >>>>>>> on IP datasheet") introduced a more correct binding that requires
+> >>>>>>> three named clocks.
+> >>>>>>>
+> >>>>>>> Now that all upstream DT files migrated over to it, remove the single
+> >>>>>>> anonymous clock support.        
+> >>>>>>
+> >>>>>> I would love to do that but I think this is against the "DT backward
+> >>>>>> compatibility rule".        
+> >>>>>
+> >>>>> Yeah, I know this rule, but we break DT binding from time to time.
+> >>>>>
+> >>>>>
+> >>>>>      
+> >>>>>> Anyway, IIRC it is accepted that this kind of
+> >>>>>> rule might be broken if decided per the arch-maintainer (in this
+> >>>>>> case, you I suppose). So if this is really what you want, I'll queue
+> >>>>>> it.        
+> >>>>>
+> >>>>> My platform is fine, but this driver is used by SOCFPGA boards as well.
+> >>>>>
+> >>>>> I CCed the SOCFPGA maintainer, Dinh Nguyen.
+> >>>>>      
+> >>>>
+> >>>> Gentle ping on this topic.
+> >>>>       
+> >>>
+> >>> This patch looks fine to be. Feel free to add:
+> >>>
+> >>> Tested-by: Dinh Nguyen <dinguyen@kernel.org>    
+> >>
+> >> I think Miquel is waiting for an Acked-by to confirm that you're okay
+> >> breaking backward compat with old DT.  
+> > 
+> > Yes, I am waiting for your Acked-by.
+> > 
+> >   
+> 
+> Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+> 
+> Dinh
 
-> > Ok, so I got calls and smses somehow working in kernel&ofono ... which
-> > is really all I need.
->=20
-> Nice :)
->=20
-> I think the SIM card reading and writing should be doable
-> using dlci10 /dev/motmdm10 for AT+CRSM calls..
+Applied to nand/next.
 
-Might be. Sorry, this is outside of my area of interest, because LTE
-would not be on usable frequencies, anyway.
-
-> > I pushed the tree to git@github.com:pavelmachek/ofono.git , branch
-> > d4... But I had to do some "rather interesting" hacks. D4 modem
-> > expects packets and current kernel drivers rely on write() boundaries
-> > and flush(). .. which is a bit of problem for in ofonod, as it expects
-> > to work with bytestream with no explicit packet boundaries.
-> >=20
-> > However D4 still uses normal AT commands, so... it would be good to be
-> > able to use AT parsing framework in ofono.
-> >=20
-> > I believe easiest solution would be to automatically do the packet
-> > splitting in kernel, it should be as easy as splitting on \r and
-> > ^Z. (Currently packets are only generated when \r or ^Z is seen on
-> > write boundary, but that does not work well for ofono).
->=20
-> OK yeah it's worth trying. I hit that issue too with the
-> flush needed for droid4-sms-tools scripts. And the traffic
-> we're seeing is minimal and AFAIK there's no network port
-> for ts27010. And SMS messages are PDU encoded anyways.
->=20
-> Hmm should we do it for \r\n and \r? Otherwise the \n
-> will be left out of the packet :)
-
-I guess splitting on \n makes sense, yes.=20
-
-Ofono normally uses just \r. Translating it to \r\n in kernel (ttys
-already do that) would be super nice, but I think this is easy enough
-to handle in ofono.
 
 Thanks,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxcrokACgkQMOfwapXb+vK4bwCfV/LVgMgAXt7Rt3r5EGz7Cq9V
-vV8AoJcZpIFS/6ox5j6ZCvHU9VHo6GkG
-=9OQ6
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+Miquèl
