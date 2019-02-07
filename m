@@ -2,102 +2,98 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C475C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA25C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:04:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC05E2147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:57:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qmocZc7+"
+	by mail.kernel.org (Postfix) with ESMTP id E1F8F2147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfBGE5G (ORCPT
+        id S1726666AbfBGFEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 23:57:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34028 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbfBGE5F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 23:57:05 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h3so4240183pfg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 20:57:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=u6WiCMKwISCpmZcBrhgNTgWJl8aql0X7p1MXMIxaG/M=;
-        b=qmocZc7+OpLv0eADHLv1xXQqC8i2tEsUdQNRWn9W+Ggp4FEubua1E7qyrqgElumRpL
-         aG7/sUsPDwl9vKFi/CcIEgy977hzTrhnYBbGy7t8mLdXRKRozADA8xIK9hP0JXWlh34Y
-         DEEy9B9ZqjQOCLHaMInhDqaonHKIpXosXlwZS1i/5u0R9/0sg/iDS9J7OcnAQ21FKQQ2
-         Jqnpg1+t8I3czTMosKsUJBuwTVnWe+vy9XifcGSwTfLwYWfQys3pv1ATyTH8WCacJl4k
-         IiPu8AkLKChHSNnRSV8KBIuALWKeVXBCbzH+fomdLH1kowiTATOFC3HkSbIGHw5aLgyx
-         QJbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u6WiCMKwISCpmZcBrhgNTgWJl8aql0X7p1MXMIxaG/M=;
-        b=eoBP6/s7M3AtcTMxq2vUdLqxm6TX5xEmOQoBMbFX/QyEEGuFlHZPPPoOuk7eIvPmNH
-         0h0HaTszGhU4og6V44oYjS943C4Y1xxmC60FEnbtoJ/jG+8GlNffXL6x32qDO63lrdQN
-         yfbZqcegMFavZPsbCf05KuUsGknWs7EuITMn8dtGx/Dkr0JlSyrC41w69FcMDo0ooxf9
-         2Sli1gmJrNvLEtowFqIPLFTEumdrAzZDr+MgQ5xJoRo+IeBlF2vJb+TrHP6y09sV3H5n
-         cnnXfdjpLjX0cdyZBahDVweUMFpNrc7LIcFzsFVclkiJcq6cEV0LMXXZP3Rmbb5NxTvE
-         FrZw==
-X-Gm-Message-State: AHQUAuYiEZbg3CTvdZjPsmGCgu4TcFik4eG0Joc/g0+aZq86KY3c1gcM
-        rYhm5V5Nu/Vu74+iEi0c7m0xvQ==
-X-Google-Smtp-Source: AHgI3IargbZi1/A5JuoN7T/ESWge2VONzHkcZdXZ0FTCtn7d0m6y9B7OTuCHEias7CyW7hVJ2j2WLA==
-X-Received: by 2002:aa7:8714:: with SMTP id b20mr2217900pfo.214.1549515425214;
-        Wed, 06 Feb 2019 20:57:05 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id o8sm12632224pfa.42.2019.02.06.20.57.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 20:57:03 -0800 (PST)
-Date:   Thu, 7 Feb 2019 10:27:01 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rjw@rjwysocki.net, quentin.perret@arm.com,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cpufreq: imx6q: Register an Energy Model
-Message-ID: <20190207045701.uckm5uvxqhyfgjld@vireshk-i7>
-References: <20190207043420.3838-1-tiny.windzz@gmail.com>
+        Thu, 7 Feb 2019 00:04:10 -0500
+Received: from ozlabs.org ([203.11.71.1]:55265 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725910AbfBGFEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 00:04:10 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43w5ng2hX4z9s6w;
+        Thu,  7 Feb 2019 16:04:07 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm: add probe_user_read()
+In-Reply-To: <20190205174242.GA24427@kermit.br.ibm.com>
+References: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr> <20190205174242.GA24427@kermit.br.ibm.com>
+Date:   Thu, 07 Feb 2019 16:04:07 +1100
+Message-ID: <87zhr8jik8.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207043420.3838-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-02-19, 23:34, Yangtao Li wrote:
-> Try and register an Energy Model from imx6q-cpufreq to allow
-> interested subsystems like the task scheduler to use the provided
-> information.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/cpufreq/imx6q-cpufreq.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-> index 9fedf627e000..73bfd5bc3087 100644
-> --- a/drivers/cpufreq/imx6q-cpufreq.c
-> +++ b/drivers/cpufreq/imx6q-cpufreq.c
-> @@ -210,6 +210,7 @@ static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
->  	policy->clk = clks[ARM].clk;
->  	ret = cpufreq_generic_init(policy, freq_table, transition_latency);
->  	policy->suspend_freq = max_freq;
-> +	dev_pm_opp_of_register_em(policy->cpus);
->  
->  	return ret;
->  }
+Murilo Opsfelder Araujo <muriloo@linux.ibm.com> writes:
+>> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+>> index 37b226e8df13..ef99edd63da3 100644
+>> --- a/include/linux/uaccess.h
+>> +++ b/include/linux/uaccess.h
+>> @@ -263,6 +263,40 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
+>>  #define probe_kernel_address(addr, retval)		\
+>>  	probe_kernel_read(&retval, addr, sizeof(retval))
+>>
+>> +/**
+>> + * probe_user_read(): safely attempt to read from a user location
+>> + * @dst: pointer to the buffer that shall take the data
+>> + * @src: address to read from
+>> + * @size: size of the data chunk
+>> + *
+>> + * Safely read from address @src to the buffer at @dst.  If a kernel fault
+>> + * happens, handle that and return -EFAULT.
+>> + *
+>> + * We ensure that the copy_from_user is executed in atomic context so that
+>> + * do_page_fault() doesn't attempt to take mmap_sem.  This makes
+>> + * probe_user_read() suitable for use within regions where the caller
+>> + * already holds mmap_sem, or other locks which nest inside mmap_sem.
+>> + *
+>> + * Returns: 0 on success, -EFAULT on error.
+>> + */
+>> +
+>> +#ifndef probe_user_read
+>> +static __always_inline long probe_user_read(void *dst, const void __user *src,
+>> +					    size_t size)
+>> +{
+>> +	long ret;
+>> +
+>> +	if (!access_ok(src, size))
+>> +		return -EFAULT;
+>
+> Hopefully, there is still time for a minor comment.
+>
+> Do we need to differentiate the returned error here, e.g.: return
+> -EACCES?
+>
+> I wonder if there will be situations where callers need to know why
+> probe_user_read() failed.
 
-Applied both. Thanks.
+It's pretty standard to return EFAULT when an access_ok() check fails,
+so I think using EFAULT here is the safest option.
 
--- 
-viresh
+If we used EACCES we'd need to be more careful about converting code to
+use this helper, as doing so would potentially cause the error value to
+change, which in some cases is not OK.
+
+cheers
