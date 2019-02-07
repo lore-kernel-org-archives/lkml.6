@@ -2,123 +2,118 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDD5C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E3CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C13521916
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="MX6TWWQw"
+	by mail.kernel.org (Postfix) with ESMTP id B042B21917
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549552978;
+	bh=QI75GPkU4E3XDC3jl4R+eJQ+MBFz9zI1wjbotFZbN54=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=uFUAOxZdKI4AbmK2uPtrlLxDHMMPFXBLqAfZvPVvQvaHk3lKodi0Ng5AxXOV4KMf+
+	 UahKuHwLkZMaU2X13kYOesL5Ue5h5T017LoPXPVvs9V9uWMGuhNMz2pWcQoJA2zOVZ
+	 b9n1uynPzZwKykRBdApkq5+7PoFv2yOae8j6rq3g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfBGPWz (ORCPT
+        id S1727177AbfBGPW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:22:55 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:57085 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfBGPWw (ORCPT
+        Thu, 7 Feb 2019 10:22:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44130 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfBGPWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:22:52 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 772D525B7E2;
-        Fri,  8 Feb 2019 02:22:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549552968; bh=0Gg+/3ZS/T5JMLaXR2tKuPZLfBl6dZRemVfHwM4Rw/Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MX6TWWQwhgjTNzcV8CcbAvZC1UH+MEyg+7At1XdP7APfv8YYeO67mw7ZG7bK1XR7J
-         E/QyizHlAYm055380he/Vkvc6DkIKqQutLRWhr4xYIIsBldvLrGFKdOQU2CbGQrgBq
-         jMgzLsg6/w8qNffmSmb7p+iacPL70OMacsfOEQso=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 816829444AA; Thu,  7 Feb 2019 16:22:46 +0100 (CET)
-Date:   Thu, 7 Feb 2019 16:22:46 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/5] clk: renesas: rcar-gen3: Support Z and Z2 clocks
- with high frequency parents
-Message-ID: <20190207152242.xzxfvojyyvsqhmtt@verge.net.au>
-References: <20190207133550.13967-1-horms+renesas@verge.net.au>
- <20190207133550.13967-4-horms+renesas@verge.net.au>
- <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Thu, 7 Feb 2019 10:22:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=CeUZUG+he5nZRgLpZPozqc+PmoCQ4AjCgtJK3TA5Tw8=; b=xx5fxIKkWrnH
+        gDjlSH3EU7ml2omPRT9e3eGZxWd6w68NT6ZfStPjtb0tiGb2fDJgHY3xeavBtYvLiVONQ3ZbSrS1Z
+        tH/nOtoCsmkBKwA7Yqq+a1mtbf+REgqllRQJYWKQIE1SU9rPdX6sfBp56IVdkQMFAtdaD9w/+gjLy
+        Vc37E=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1grlVp-0006P9-VC; Thu, 07 Feb 2019 15:22:50 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 8D4131127EF9; Thu,  7 Feb 2019 15:22:49 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: lochnagar: Fix n_voltages setting for VDDCORE" to the regulator tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20190207152249.8D4131127EF9@debutante.sirena.org.uk>
+Date:   Thu,  7 Feb 2019 15:22:49 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:05:58PM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Thu, Feb 7, 2019 at 2:36 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> > Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
-> > (~4.29GHz).
-> >
-> > The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
-> > divisor. This leads to truncation of the dividend, which is the Z or Z2
-> 
-> truncation of the divisor.
-> 
-> > parent clock frequency in HZ, on platforms where frequency of that clock is
-> > greater than UINT32_MAX Hz.
-> >
-> > To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which an
-> 
-> which takes an
-> 
-> > unsigned 32bit dividend and divisor, is introduced.
-> 
-> 64-bit
-> 
-> > An earlier version of this patch made use of the existing
-> > DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
-> > dividend and divisor. However, this does not compile on 32bit systems, such
-> > as i386 and mips, when called with the types used at this callsite, an
-> > unsigned long long dividend and unsigned long divisor.
-> 
-> Thanks for fixing this!
-> 
-> > This work is in preparation for supporting the Z2 cloco on the R-Car Gen3
-> > E3 (r8a77990) SoC which has a 4.8GHz parent clock.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> With the above fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> > ---
-> > v4: Add and use DIV64_U64_ROUND_CLOSEST
-> >
-> > v2: New patch
-> > ---
-> >  drivers/clk/renesas/rcar-gen3-cpg.c |  4 ++--
-> >  include/linux/math64.h              | 13 +++++++++++++
-> 
-> While I have no issue taking this change through the clk-renesas tree if
-> Andrew provides his Acked-by, I think the introduction of
-> DIV64_U64_ROUND_CLOSEST() should be a separate patch.
-> 
-> However, given commit 68600f623d69da42 ("mm: don't miss the last page
-> because of round-off error") added both DIV64_U64_ROUND_UP() and its
-> user under mm/, there's precedence for not splitting it off...
+The patch
 
-I also assumed a separate patch would be better,
-but I found little evidence of that practice being
-recently used in math64.h.
+   regulator: lochnagar: Fix n_voltages setting for VDDCORE
 
-In any case, as I need to respin I'll break it out into
-a separate patch.
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9df3bb319c449c6723c2c2a1c78db45301fd8669 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Tue, 29 Jan 2019 11:01:56 +0800
+Subject: [PATCH] regulator: lochnagar: Fix n_voltages setting for VDDCORE
+
+With current n_voltages setting, regulator_list_voltage will return
+-EINVAL when selector >=57. The highest selector is 0x41, so the
+n_voltages should be 0x41+1, i.e. 66.
+
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/lochnagar-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+index 818d20410518..47f5663e99c8 100644
+--- a/drivers/regulator/lochnagar-regulator.c
++++ b/drivers/regulator/lochnagar-regulator.c
+@@ -194,7 +194,7 @@ static const struct regulator_desc lochnagar_regulators[] = {
+ 		.name = "VDDCORE",
+ 		.supply_name = "SYSVDD",
+ 		.type = REGULATOR_VOLTAGE,
+-		.n_voltages = 57,
++		.n_voltages = 66,
+ 		.ops = &lochnagar_vddcore_ops,
+ 
+ 		.id = LOCHNAGAR_VDDCORE,
+-- 
+2.20.1
+
