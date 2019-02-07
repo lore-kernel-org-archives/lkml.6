@@ -2,141 +2,131 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9D6C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB595C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0D2021721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E5CF21721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JndamBC4"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="K8qwLPwT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfBGUYO (ORCPT
+        id S1727505AbfBGUYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:24:14 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:38196 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfBGUYO (ORCPT
+        Thu, 7 Feb 2019 15:24:21 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37942 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbfBGUYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:24:14 -0500
-Received: by mail-vk1-f195.google.com with SMTP id w72so300048vkd.5;
-        Thu, 07 Feb 2019 12:24:13 -0800 (PST)
+        Thu, 7 Feb 2019 15:24:20 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g189so450146pgc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:24:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=bYIL8cQreU3apb8WuK9wGn1i33FCMHOWR7pnhH11HHE=;
-        b=JndamBC4se21TPTPoG6UTyo/qW/8CkptGF/uwsCBDQmT3TQ+bNIAzIKYbaH9Hd6b8G
-         lLs5fFtT28eAnGJPdORK3+2ZB4IiZBHn9PpPYZFthegW0oZf+lzvbGCSYiSDnLfTimFL
-         3TImx08QuNjS6BHVKHIgB3cTvB7x7mnDcGIeQ+J7Mzo8rAnkBm3CAl38FGLF9Yv109pY
-         kA+IobuQbEPhukhThsHR7x5+yQ8xzj8X3d7FlV/O2/kzxPS9JrtkupL+FMsmGV3FDDBl
-         ugyae4qXS0vqGN4LP8FMFp68vaKzz9z7aG1ydR+UQIjZerMx8aunflb2GrW7+ILOxVUl
-         XbqQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=xSDbE82RQuhxtIOqN+QQMMwheps2PFZF9+GFCiEfYm0=;
+        b=K8qwLPwTfzQQVQR32xRkVo7RZG8QlfjEqdqZCWq9EI1tWwwOLvfwAiOGofDyQ20F2Z
+         RiAAxRxbQ5/j/7xQEKyU7GSKfZ1cA3MQGZPTxwiE/GrPVnD+9i6trl+pd86/8Jaa1bsd
+         XB9qpf9Y5fs9yFQx2ZG8I1cCi4DJXjv+cWBXxrreRqSW9bQFV1YJzCP79LrsKkX87e+w
+         fqmxTs8Yv19cuCzuGWdUEKO2qwryaHIQ0b1sffDdMe2fQLVXrZPUWsfCvIIgoPnb2D0a
+         Ut5wdsryhStftkoNV4buyvYH8VblVaNuN4QxiqEKfceWmyInBp+ksO4R5NyrW6T3H3Ty
+         4gmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=bYIL8cQreU3apb8WuK9wGn1i33FCMHOWR7pnhH11HHE=;
-        b=R5AcOcmubza8JAZNwvw+CgIHuneSUxCfzQISDaMkeZylqfm/+pNQiSrcPRZ8BYXEfH
-         1v3INLUF9dhsTg7rsD/vv/FImfNFFA2uSO18fpFWgyIrwB+/5G1zySsJ56b1NVHd6ovn
-         rGp7nzpCiQw2XJQVJiHH983+zjc6ZId//GFVbajzacwDarZvYudENQPe3ATuOM1jFhBZ
-         ZN6rUW+Te2MW0WfUA3jSv5VfMQEnFdSL0b4QDiLM+IaQsgxMVeOgBBR6Oww4PRKGE8A+
-         lznhfe+xi//O7z8aJMCLpg3p+9RfKb+UbFRpuZU4woq9tsuvoEJL1ryLPYm/jRxXTHlt
-         PyyQ==
-X-Gm-Message-State: AHQUAuZ+xc5Cz8WUWsDJbWYhnzTJ+9dvv3cS6ey5ouUXZGifldesMyR5
-        AAVZJu1eILVsFQqq+lWQhlnWpuBjX5wG8LiyaDZHzGCp
-X-Google-Smtp-Source: AHgI3IahF63LR5J8Bn96uINN9wKb2DnTVWLLNts8BGokOW0Ww4SDydZKvS0gOqEVABQ6PjaTPY7DznJ13/2nrGJ2KhE=
-X-Received: by 2002:a1f:c041:: with SMTP id q62mr7319805vkf.50.1549571052727;
- Thu, 07 Feb 2019 12:24:12 -0800 (PST)
-MIME-Version: 1.0
-From:   Gerlando Falauto <gerlando.falauto@gmail.com>
-Date:   Thu, 7 Feb 2019 21:24:00 +0100
-Message-ID: <CABMprFit_4dv7FjjOUfFPSZgoL8AMM594qwi1SyB+x6iTcJpEg@mail.gmail.com>
-Subject: debugging irq threaded handler not getting called
-To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=xSDbE82RQuhxtIOqN+QQMMwheps2PFZF9+GFCiEfYm0=;
+        b=Tslv0CVHOP6xlt0jGqyWuv4pAQcV9O+Zt7P4e7Enaecu7Sk1tuRTII7UOxZxa+dyO2
+         c7QtqYy6Arlh693S0/dMdVqcvLeMYJTflbJVQIGCd/fkYX1WutPrHoHlpBMICrsqK8zt
+         fM5sl2pUmFPE6wTsGUxKJhag2bV6McqA0DKWH0CXrZDDy3+vBqXgb3tkQRcN/IdTjP++
+         WfbqPp3NHnay06Jaj6J51aT/zhbh6uEDsPXa3Xzs3dsaYTT18VCIUEegbQL8drFJ1oMJ
+         V4dLl7uD5VXcIdif+hFEJrmfhSMoHocPSRbhKlkhH5hb1VW4HUpkMuZ1gk14lYMqoBBX
+         WOcA==
+X-Gm-Message-State: AHQUAuZtehbFt3NKTIu2UGxatguUnOfItF2QChqJ3Up6foUDAD967Jtc
+        E7mDkW4ct5cABerT1s3ZiicfAw==
+X-Google-Smtp-Source: AHgI3IZZuyXMz6ZjRvudA/tWG+CkO6REQSSQnoeXHKbnnwEL0CiLrHjfBkMBkjwsLOAQcPd06rSSig==
+X-Received: by 2002:a62:dbc2:: with SMTP id f185mr17992381pfg.235.1549571060197;
+        Thu, 07 Feb 2019 12:24:20 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:7429:802a:c653:76a4:cb6c? ([2601:646:c200:7429:802a:c653:76a4:cb6c])
+        by smtp.gmail.com with ESMTPSA id 64sm13580437pff.101.2019.02.07.12.24.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 12:24:19 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [GIT PULL] x86/mm changes for v4.21
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16C101)
+In-Reply-To: <20190207184606.GB17049@agluck-desk>
+Date:   Thu, 7 Feb 2019 12:24:18 -0800
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rik van Riel <riel@surriel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <22E08A6D-5180-42F1-B94B-6B6DB832F953@amacapital.net>
+References: <20181224231106.GA27438@gmail.com> <20190207001737.GA32096@agluck-desk> <20190207101846.GB32511@hirez.programming.kicks-ass.net> <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com> <20190207140131.GB32477@hirez.programming.kicks-ass.net> <20190207173600.GA15682@agluck-desk> <20190207175720.GE32511@hirez.programming.kicks-ass.net> <8D8DF81C-3331-4105-8594-9600281010EF@amacapital.net> <20190207184606.GB17049@agluck-desk>
+To:     "Luck, Tony" <tony.luck@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I'm having a hard time debugging a custom SPI device with multiple
-interrupt GPIO pins, connected to a Samsung Artik 710 SoC module.
-
-The device is a microcontroller acting as an SPI-CAN bridge (emulating
-the hi3110, so SPI slave device) for two separate can busses.
-[The idea was to make it emulate two separate hi3110 devices, each
-with its own interrupt pin, and tweak the hi311x.c driver].
-So I have 2 instances of the same device in the device tree, each with
-its own GPIO as interrupt source:
-
-    can0: can@0 {
-      /*.... */
-        interrupts = <26 IRQ_TYPE_LEVEL_HIGH>;
-    }
-
-    can1: can@1 {
-      /*.... */
-        interrupts = <27 IRQ_TYPE_LEVEL_HIGH>;
-    }
-
-Interrupts are requested as threaded and one-shot, on HIGH level:
-
-    unsigned long flags = IRQF_ONESHOT | IRQF_TRIGGER_HIGH;
-    ret = request_threaded_irq(spi->irq, NULL, hi3110_can_ist,
-                   flags, DEVICE_NAME, priv);
 
 
-The threaded IRQ handler essentially does its job and always returns
-IRQ_HANDLED:
+> On Feb 7, 2019, at 10:46 AM, Luck, Tony <tony.luck@intel.com> wrote:
+>=20
+>> On Thu, Feb 07, 2019 at 10:07:28AM -0800, Andy Lutomirski wrote:
+>> Joining this thread late...
+>>=20
+>> This is all IMO rather crazy.  How about we fiddle with CR0 to turn off
+>> the cache, then fiddle with page tables, then turn caching on?  Or, heck,=
 
-    static irqreturn_t hi3110_can_ist(int irq, void *dev_id) {
+>> see if there=E2=80=99s some chicken bit we can set to improve the situati=
+on
+>> while we=E2=80=99re in the MCE handler.
+>=20
+>> Also, since I don=E2=80=99t really want
+>> to dig into the code to answer this, how exactly do we do a broadcast TLB=
 
-      /* Does its business */
-      return IRQ_HANDLED;
-    }
+>> flush from MCE context?  We=E2=80=99re super-duper-atomic, and locks migh=
+t be
+>> held on various CPUs.  Shouldn=E2=80=99t we be telling the cpa code to sk=
+ip
+>> the flush and then just have the MCE code do a full flush manually?
+>> The MCE code has already taken over all CPUs on non-LMCE systems.
+>=20
+> MCE code doesn't do this while still in MCE context. You helped
+> restructure this code so the recovery bits happen after we call
+>=20
+>    ist_begin_non_atomic(regs);
+>=20
+> on just the CPU that hit the error (in the broadcast case we've
+> let the other out of MCE jail by this point).
+>=20
+> So there is a small window where we know the broken page is still
+> mapped WB in the kernel 1:1 map. But we just live dangerously for
+> a few more microseconds until we can fix the map.
 
-I understand having a level trigger with ONESHOT should just re-enable
-the interrupt at the end of the threaded handler.
-Two interrupts could occur at mostly the same time, and this approach
-seems to handle concurrency correctly with their locks.
-The SPI bus is shared, but transactions look just fine.
+Hmm.
 
-What happens is that under moderately heavy load (100+100 irq/s),
-after some minutes one of the two interrupts is not served anymore.
-On a logic analyzer, the interrupt pin stays high forever with no
-interaction with the SPI bus.
-What's weird is that it's always the second instance to expose this
-behavior. The first instance keeps working just fine, serving its
-interrupts nicely.
+How bad would it be to set CR0.CD while fiddling with the page tables rather=
+ than masking the address?
 
-I traced execution of the threaded handler on the analyzer, driving a
-GPIO high/low at the very start/end of the handler.
-You can see it go high right after the interrupt goes high, and go low
-afterwards.
-So the handler code always returns, and IRQ_HANDLED is the only
-possible return value.
-
-When this issue happens, the interrupt pin goes high but the driven
-GPIO stays low -- this means the threaded handler never gets called.
-I assume there's nothing more I should do other than just returning
-IRQ_HANDLED to get the interrupt to get re-enabled, but I suspect
-this doesn't really happen for some reason.
-
-I also tried swapping the two interrupt lines, but again it's always
-the second instance to get disabled, even though it's now on a
-different pin.
-
-Any suggestion on how I can dynamically inspect whether (and WHY?) the
-interrupt was left disabled?
-I saw some interesting entries in sysfs to inspect irq status
-(https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-kernel-irq)
-but I'm running a custom 4.4 kernel so that's unfortunately not available.
-Any idea would be highly appreciated!
-
-Thank you,
-Gerlando
+>=20
+>> Or, better yet, get Intel to fix the hardware. A failed speculative
+>> access while already in MCE context should just be ignored.
+>=20
+> Good idea.
+>=20
+> -Tony
