@@ -2,148 +2,107 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACE4C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBA3C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 229AE2190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F268721904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVut03Jt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfBGPwk (ORCPT
+        id S1726880AbfBGPw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:52:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39274 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfBGPwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:52:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30673A78;
-        Thu,  7 Feb 2019 07:52:39 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CD9C3F719;
-        Thu,  7 Feb 2019 07:52:32 -0800 (PST)
-Subject: Re: [PATCH v6 1/6] irqchip/mtk-sysirq: support 4 interrupt parameters
- for sysirq
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Erin Lo <erin.lo@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>
-References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
- <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
- <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
- <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <c0187acf-bd8c-2d41-d84d-d35fc63b2beb@arm.com>
-Date:   Thu, 7 Feb 2019 15:52:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 7 Feb 2019 10:52:57 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42986 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfBGPw5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:52:57 -0500
+Received: by mail-qt1-f194.google.com with SMTP id b8so338633qtr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:52:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=N3sRoWnV8l9cuish6xpPYCWFViw68bxZ7EA3iVa8O1s=;
+        b=CVut03Jtn8IM+EcNxiK6siZZHgvwBNTkWRJ/DbHXGHeW9XZieuz3U0QMflo32eYDCK
+         YZEcpTmOw1oqbwkZlcKXedeRksRe0eh0m9p/SKFp0FS8500yGKQQ8fcVkUgMCka2qGRQ
+         Z5ipqvZYbTmYvTZdRQgkfccPZRTgx7C3hW/U77eveMpRGCxHcoeoiQJ4Bt1V6RrnqLId
+         +qx/sqtI38t+RH3KVicP2dqX4/FZDcp4FYktDb/Z+H1IpU5Pws84DxQ/a+rdpnfNOuyy
+         FyFWnvYkuJlFUgkT7icdrXuXysr0ntTcgTLoZtO9Ulc7kLaH6lOnmmOz8F7WvASmDkOB
+         mCQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=N3sRoWnV8l9cuish6xpPYCWFViw68bxZ7EA3iVa8O1s=;
+        b=klZRzo5KkyUoa7jlP3YEPprrbWf3yyCjz3Lbv9Ayb5pUl76glu/rq6A1jpcLzfGGgs
+         AOYZy5Tq9ngFOrgMNj1aSS2tuhMNWSDQkRix0pLTrt29puxEgBUAnSm7lXePCjECJdqk
+         i7tbdvPeKAeb0a4Q866/+fA6b5Qn1OoWRwfAng8Yw0VcWdch8rCcwEWQMEFsJVWL5vba
+         jAurxK9ZUYflxun1iBmyPwwiJOwTSB6002JiLTC46KiitjR9/XGH1TQvINZR4ZEOB4c2
+         3qRtOGICcdDHfQoSShX4Hp6JSGLcojjyhBGnunwEbRR87JTExdJce76MsiFc+IXwebQC
+         D5wQ==
+X-Gm-Message-State: AHQUAubiRSxGr82pmim+YCVXRodK7ExDC3YfAHJu2X4FQRtESFQ0udWn
+        z94VwKrVB/RLON9AR73zt/Od8g==
+X-Google-Smtp-Source: AHgI3IYAZcgvr8QUtHv1ptPc4VTZhVvVqb5q9Kbmz3qvexxqneYJ9T8n8UmA1DHR9y0+pYQ9X4xtMA==
+X-Received: by 2002:aed:23a3:: with SMTP id j32mr12241830qtc.205.1549554775825;
+        Thu, 07 Feb 2019 07:52:55 -0800 (PST)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id e35sm4744164qte.8.2019.02.07.07.52.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 07:52:55 -0800 (PST)
+Date:   Thu, 7 Feb 2019 10:52:53 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Stefan Agner <stefan@agner.ch>
+cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        ndesaulniers@google.com, natechancellor@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>, ard.biesheuvel@linaro.org,
+        thierry.reding@gmail.com, Will Deacon <will.deacon@arm.com>,
+        julien.thierry@arm.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] ARM: use unified assembler in macros
+In-Reply-To: <5b710816f634307d6a67ffcf7e4b538818dcb2a3.1549532513.git.stefan@agner.ch>
+Message-ID: <nycvar.YSQ.7.76.1902071051030.2213@knanqh.ubzr>
+References: <cover.1549532513.git.stefan@agner.ch> <5b710816f634307d6a67ffcf7e4b538818dcb2a3.1549532513.git.stefan@agner.ch>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2019 15:47, Marc Zyngier wrote:
-> On 07/02/2019 15:20, Matthias Brugger wrote:
->>
->>
->> On 24/01/2019 09:07, Erin Lo wrote:
->>> From: Seiya Wang <seiya.wang@mediatek.com>
->>>
->>> To support partitioned PPIs, 4 interrupt parameters should be valid
->>> for sysirq.
->>>
->>> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
->>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
->>> ---
->>>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
->>> index 90aaf19..282736a 100644
->>> --- a/drivers/irqchip/irq-mtk-sysirq.c
->>> +++ b/drivers/irqchip/irq-mtk-sysirq.c
->>> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
->>>  				       unsigned int *type)
->>>  {
->>>  	if (is_of_node(fwspec->fwnode)) {
->>> -		if (fwspec->param_count != 3)
->>> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
->>
->> Where is this 4th parameter used?
+On Thu, 7 Feb 2019, Stefan Agner wrote:
+
+> Use unified assembler syntax (UAL) in macros. Divided syntax is
+> considered depricated. This will also allow to build the kernel
+> using LLVM's integrated assembler.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt#n14
-Sorry, I fired Send way too early.
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  arch/arm/lib/copy_from_user.S | 2 +-
+>  arch/arm/lib/copy_to_user.S   | 2 +-
+>  arch/arm/lib/memcpy.S         | 4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/lib/copy_from_user.S b/arch/arm/lib/copy_from_user.S
+> index 0d4c189c7f4f..712ca399f559 100644
+> --- a/arch/arm/lib/copy_from_user.S
+> +++ b/arch/arm/lib/copy_from_user.S
+> @@ -91,7 +91,7 @@
+>  	.endm
+>  
+>  	.macro str1b ptr reg cond=al abort
+> -	str\cond\()b \reg, [\ptr], #1
+> +	strb\cond\() \reg, [\ptr], #1
 
-What I wanted to add is that it is not clear to me why this change would
-be required here, as this driver only supports SPIs. It could be fixed
-by just relaxing the binding itself.
+You don't need the \() any longer. This was used simply to separate the 
+b suffix from the cond parameter name. 
 
-Thanks,
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Nicolas
