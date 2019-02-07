@@ -2,104 +2,130 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A10C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F297C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E4321902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8D9720663
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfBGNaW (ORCPT
+        id S1727232AbfBGNa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:30:22 -0500
-Received: from mga12.intel.com ([192.55.52.136]:45017 "EHLO mga12.intel.com"
+        Thu, 7 Feb 2019 08:30:27 -0500
+Received: from mga06.intel.com ([134.134.136.31]:41264 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726740AbfBGNaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:30:21 -0500
+        id S1726740AbfBGNa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:30:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 05:30:21 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 05:30:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="297960142"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 07 Feb 2019 05:30:18 -0800
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     x86@kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+   d="scan'208";a="317082652"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Feb 2019 05:30:24 -0800
+Received: from [10.125.252.152] (abudanko-mobl.ccr.corp.intel.com [10.125.252.152])
+        by linux.intel.com (Postfix) with ESMTP id D4CB95802E1;
+        Thu,  7 Feb 2019 05:30:20 -0800 (PST)
+Subject: [PATCH v2 2/4] perf-security: document collected perf_events/Perf
+ data categories
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jann Horn <jannh@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] PCI: Fixup the RTIT_BAR of Intel TH on Denverton
-Date:   Thu,  7 Feb 2019 15:30:05 +0200
-Message-Id: <20190207133005.67328-1-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        Andi Kleen <ak@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <6d075f2c-ada4-e56d-5bf8-d6d617b761db@linux.intel.com>
+Date:   Thu, 7 Feb 2019 16:30:19 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Denverton's integration of the Intel(R) Trace Hub (for a reference
-and overview see Documentation/trace/intel_th.txt) the reported size of
-one of its resources (RTIT_BAR) doesn't match its actual size, which
-leads to overlaps with other devices' resources.
 
-In practice, it overlaps with XHCI MMIO space, which results in the xhci
-driver bailing out after seeing its registers as 0xffffffff, and perceived
-disappearance of all USB devices:
+Document and categorize system and performance data into groups that
+can be captured by perf_events/Perf and explicitly indicate the group
+that can contain process sensitive data.
 
-> intel_th_pci 0000:00:1f.7: enabling device (0004 -> 0006)
-> xhci_hcd 0000:00:15.0: xHCI host controller not responding, assume dead
-> xhci_hcd 0000:00:15.0: xHC not responding in xhci_irq, assume controller is dead
-> xhci_hcd 0000:00:15.0: HC died; cleaning up
-> usb 1-1: USB disconnect, device number 2
-...
-
-For this reason, we need to resize the RTIT_BAR on Denverton to its
-actual size, which in this case is 4MB. The corresponding erratum is
-DNV36 at the link below.
-
-Link: https://www.intel.com/content/dam/www/public/us/en/documents/specification-updates/atom-c3000-family-spec-update.pdf
-Fixes: 5118ccd34780 ("intel_th: pci: Add Denverton SOC support")
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- arch/x86/pci/fixup.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Changes in v2:
+- applied comments on v1
 
-diff --git a/arch/x86/pci/fixup.c b/arch/x86/pci/fixup.c
-index 30a5111ae5fd..527e69b12002 100644
---- a/arch/x86/pci/fixup.c
-+++ b/arch/x86/pci/fixup.c
-@@ -635,6 +635,22 @@ static void quirk_no_aersid(struct pci_dev *pdev)
- DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
- 			      PCI_CLASS_BRIDGE_PCI, 8, quirk_no_aersid);
- 
-+static void quirk_intel_th_dnv(struct pci_dev *dev)
-+{
-+	struct resource *r = &dev->resource[4];
-+
-+	/*
-+	 * Denverton reports 2k of RTIT_BAR (intel_th resource 4), which
-+	 * appears to be 4 MB in reality.
-+	 */
-+	if (r->end == r->start + 0x7ff) {
-+		r->start = 0;
-+		r->end   = 0x3fffff;
-+		r->flags |= IORESOURCE_UNSET;
-+	}
-+}
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x19e1, quirk_intel_th_dnv);
-+
- #ifdef CONFIG_PHYS_ADDR_T_64BIT
- 
- #define AMD_141b_MMIO_BASE(x)	(0x80 + (x) * 0x8)
--- 
-2.20.1
+---
+ Documentation/admin-guide/perf-security.rst | 32 +++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
+index 3915f07b9dea..e6eb7e1ee5ad 100644
+--- a/Documentation/admin-guide/perf-security.rst
++++ b/Documentation/admin-guide/perf-security.rst
+@@ -11,8 +11,34 @@ impose a considerable risk of leaking sensitive data accessed by monitored
+ processes. The data leakage is possible both in scenarios of direct usage of
+ perf_events system call API [2]_ and over data files generated by Perf tool user
+ mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
+-perf_events performance monitoring units (PMU) [2]_ collect and expose for
+-performance analysis. Having that said perf_events/Perf performance monitoring
++perf_events performance monitoring units (PMU) [2]_ and Perf collect and expose
++for performance analysis. Collected system and performance data may be split into
++several categories:
++
++1. System hardware and software configuration data, for example: a CPU model and
++   its cache configuration, an amount of available memory and its topology, used
++   kernel and Perf versions, performance monitoring setup including experiment
++   time, events configuration, Perf command line parameters, etc.
++
++2. User and kernel module paths and their load addresses with sizes, process and
++   thread names with their PIDs and TIDs, timestamps for captured hardware and
++   software events.
++
++3. Content of kernel software counters (e.g., for context switches, page faults,
++   CPU migrations), architectural hardware performance counters (PMC) [8]_ and
++   machine specific registers (MSR) [9]_ that provide execution metrics for
++   various monitored parts of the system (e.g., memory controller (IMC), interconnect
++   (QPI/UPI) or peripheral (PCIe) uncore counters) without direct attribution to any
++   execution context state.
++
++4. Content of architectural execution context registers (e.g., RIP, RSP, RBP on
++   x86_64), process user and kernel space memory addresses and data, content of
++   various architectural MSRs that capture data from this category.
++
++Data that belong to the fourth category can potentially contain sensitive process
++data. If PMUs in some monitoring modes capture values of execution context registers
++or data from process memory then access to such monitoring capabilities requires
++to be ordered and secured properly. So, perf_events/Perf performance monitoring
+ is the subject for security access control management [5]_ .
+ 
+ perf_events/Perf access control
+@@ -128,6 +154,8 @@ Bibliography
+ .. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
+ .. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
+ .. [7] `<http://man7.org/linux/man-pages/man2/ptrace.2.html>`_
++.. [8] `<https://en.wikipedia.org/wiki/Hardware_performance_counter>`_
++.. [9] `<https://en.wikipedia.org/wiki/Model-specific_register>`_
+ .. [11] `<http://man7.org/linux/man-pages/man2/getrlimit.2.html>`_
+ .. [12] `<http://man7.org/linux/man-pages/man5/limits.conf.5.html>`_
