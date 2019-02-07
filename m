@@ -2,78 +2,96 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA116C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2E4C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0EE22175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA01F2175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfBGSpm (ORCPT
+        id S1727002AbfBGSqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:45:42 -0500
-Received: from mga05.intel.com ([192.55.52.43]:3813 "EHLO mga05.intel.com"
+        Thu, 7 Feb 2019 13:46:08 -0500
+Received: from mga03.intel.com ([134.134.136.65]:38884 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726512AbfBGSpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:45:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726474AbfBGSqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 13:46:08 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 10:45:41 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 10:46:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
-   d="scan'208";a="131855755"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Feb 2019 10:45:41 -0800
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     joro@8bytes.org, dwmw2@infradead.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH v1 1/1] iommu/vt-d: Enable PRI only if the device enables PASID.
-Date:   Thu,  7 Feb 2019 10:44:19 -0800
-Message-Id: <142748f6a00153f9926fe2a9dc30cf3cd89164cd.1549408090.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+   d="scan'208";a="114479477"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by orsmga006.jf.intel.com with ESMTP; 07 Feb 2019 10:46:06 -0800
+Date:   Thu, 7 Feb 2019 10:46:06 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [GIT PULL] x86/mm changes for v4.21
+Message-ID: <20190207184606.GB17049@agluck-desk>
+References: <20181224231106.GA27438@gmail.com>
+ <20190207001737.GA32096@agluck-desk>
+ <20190207101846.GB32511@hirez.programming.kicks-ass.net>
+ <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com>
+ <20190207140131.GB32477@hirez.programming.kicks-ass.net>
+ <20190207173600.GA15682@agluck-desk>
+ <20190207175720.GE32511@hirez.programming.kicks-ass.net>
+ <8D8DF81C-3331-4105-8594-9600281010EF@amacapital.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <8D8DF81C-3331-4105-8594-9600281010EF@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Thu, Feb 07, 2019 at 10:07:28AM -0800, Andy Lutomirski wrote:
+> Joining this thread late...
+> 
+> This is all IMO rather crazy.  How about we fiddle with CR0 to turn off
+> the cache, then fiddle with page tables, then turn caching on?  Or, heck,
+> see if there’s some chicken bit we can set to improve the situation
+> while we’re in the MCE handler.
 
-Intel IOMMU Page Request Services (PRS) only works with devices which
-supports/uses PASID. So enable PRI only if the device also enables
-PASID support. For more details, Please check the implementation of PRQ
-handler(prq_event_thread()) in intel-svm driver.
+> Also, since I don’t really want
+> to dig into the code to answer this, how exactly do we do a broadcast TLB
+> flush from MCE context?  We’re super-duper-atomic, and locks might be
+> held on various CPUs.  Shouldn’t we be telling the cpa code to skip
+> the flush and then just have the MCE code do a full flush manually?
+> The MCE code has already taken over all CPUs on non-LMCE systems.
 
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+MCE code doesn't do this while still in MCE context. You helped
+restructure this code so the recovery bits happen after we call
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 1457f931218e..ef1a646e0993 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1402,7 +1402,8 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
- 	if (info->pasid_supported && !pci_enable_pasid(pdev, info->pasid_supported & ~1))
- 		info->pasid_enabled = 1;
- 
--	if (info->pri_supported && !pci_reset_pri(pdev) && !pci_enable_pri(pdev, 32))
-+	if (info->pri_supported && info->pasid_enabled &&
-+	    !pci_reset_pri(pdev) && !pci_enable_pri(pdev, 32))
- 		info->pri_enabled = 1;
- #endif
- 	if (!pdev->untrusted && info->ats_supported &&
--- 
-2.20.1
+	ist_begin_non_atomic(regs);
 
+on just the CPU that hit the error (in the broadcast case we've
+let the other out of MCE jail by this point).
+
+So there is a small window where we know the broken page is still
+mapped WB in the kernel 1:1 map. But we just live dangerously for
+a few more microseconds until we can fix the map.
+
+> Or, better yet, get Intel to fix the hardware. A failed speculative
+> access while already in MCE context should just be ignored.
+
+Good idea.
+
+-Tony
