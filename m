@@ -2,99 +2,98 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCFAC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011DEC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A42421721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:48:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwIYtvH7"
+	by mail.kernel.org (Postfix) with ESMTP id ADBDB21917
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549579849;
+	bh=Pz5Mh8vSoDEW8hLlU8s62gfP62fcO7adWqyR5mug+PY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=VSLPSdhVhK/aD1Pmvj3Mo4PMs6Naru7VuvO46dbc+08hEsMp2m2EOxySsaM0rNaCY
+	 DxqSOc51RP4j8vdE9mi104PW09wQ0UtCW6aHhdKLo3wF4TW6pIPym9dShg47dxWAf2
+	 pHfAEjKSOakPza9btl/kqooMmqF94mo16C8ULdFQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfBGWsw (ORCPT
+        id S1726858AbfBGWur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:48:52 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51991 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbfBGWsv (ORCPT
+        Thu, 7 Feb 2019 17:50:47 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:42279 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726622AbfBGWur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:48:51 -0500
-Received: by mail-it1-f195.google.com with SMTP id w18so4285838ite.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:48:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jzQzslJ11C0UlZoMvWBLrEA9sQ73JX0eKPxZpsC99rg=;
-        b=kwIYtvH7qYzh2T2OOlLp1pjmK4TUAfz88JPIp+W+deQ2XdXeyLthomf2m6vweGw3T4
-         TGp9My8VK0+jF8NFdKgxEExheM/IfJXexm+Q8dqqtkm976hMdnp70G5yqwI7OnQ+OxTJ
-         gHlqG2Ph+/H3GylK4EwOXRxQTAtVzduWk0Oo4UdgL35FfhTQxLdS1YB6W5pyCYJP7+Bd
-         PaJkqRJVJKHUWAXD+25G/0A3bX3pAx+A/MGIIHbXAJyL8FSUPAzE+Th9Xro/ns+l74jx
-         6WToCEqCbYGQoaYkhGR05CXxoxkmiyKi3hH5cNVcbJo4s660VEphtYdS0m1FZhCKVlSn
-         9Yzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jzQzslJ11C0UlZoMvWBLrEA9sQ73JX0eKPxZpsC99rg=;
-        b=d3IT8mR41Wo6Ezs0BHnSn8E0xRbINU9kOsL01JUIHRMAqpc/TILVbCFHhSY+wH4uM9
-         V3pbmPfLUPll+tpxFHXZ25yJvAtqwT2JVuHQQxsg0SfwSXFx9GG13K/lMhpXXAb07i7v
-         7Pd30HGkKa6mkVUc94o4shS5yTjoFGaAXv16V9nt3suyzAlYggn1Cwk2mQxr8jhZ34Un
-         K5DTuGEEY4QktzGu9Jbc8vq2ydQ0VqZWj9zHfB8tUhqkSKDdAECqTcuEzvtLgFWVNLpf
-         IYEJTNTekoDjZ3mp3HdTTmVSxryfqWyMU3/sw6TbKv10h0oTYeFohONwdedhBJ19vqiU
-         OqSQ==
-X-Gm-Message-State: AHQUAubq6Ec2PNvRP6cqJerwyV4JK+et+D/b0TT88zlsmuPEYuv+RI2N
-        S32R0OO2Se4XhukIg2m1/QJ7Mqu5PqzxvguQ6ITDLw==
-X-Google-Smtp-Source: AHgI3IbuoPXmZujoN0xgA+rXsEB+oIzkBme1ipeBVpqV5tKWplZQF014GIyy/HEWWx9/LibP/T4vew/hFE6Zr56/2Ak=
-X-Received: by 2002:a24:d1c4:: with SMTP id w187mr6359655itg.141.1549579730721;
- Thu, 07 Feb 2019 14:48:50 -0800 (PST)
+        Thu, 7 Feb 2019 17:50:47 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8EF132235B;
+        Thu,  7 Feb 2019 17:50:46 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 07 Feb 2019 17:50:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=dItnojEAFP5Cq99oJ
+        B1tDw1BTK7iumgl5emWxoonvM4=; b=OMa8l/XK2rM49xDgXQwWA0+EvCWbeOmx8
+        Qu9UAiV3MN5emZTwqGMssSw+uti+EqhxeTan7BWxXdq85NmaqETlZvG9x48AYDB5
+        1fChLLZzYy2/XiVFw9Q539oasr8ZN5/t8kLgagTVJebpm87pPukLLYg6OERakEgO
+        OPvzISA2cW3qx6raANcy4lTr5w+UQqGwPJrSie82hdvDzrf1xCaEDeXxA/f+bc0h
+        CnXeqMuoNbbAjn9BEGG9r5VcDwa4CJnnO1nCfJxL3w4ijkl5/dftyaw95kw4YP8w
+        XkCg9fFjGTPGZrW7GMDKvumeS66rUlwQdJNKHE8sGuC9/A06jG4eA==
+X-ME-Sender: <xms:RrZcXM_l1Ne9SDg4BJE6YTqtTcNpKExaUUJECtiSVsIjGBsdSffMpw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrledugddtudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffogg
+    fgsedtkeertdertddtnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcu
+    oehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukfhppeduvddurdeggedrudelledrud
+    dtleenucfrrghrrghmpehmrghilhhfrhhomhepthhosghinheskhgvrhhnvghlrdhorhhg
+    necuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:RrZcXF9HxzQSr0b5e_jBr01BouwDIOpBPmrlX7F5kyUuwFa-zFSxSQ>
+    <xmx:RrZcXPEan0uFopJ3Xk9ujbEzAgmDaPcT73As9MwdQqofYB81pF5kSw>
+    <xmx:RrZcXPcAQ8x6Qq3xHdTBZWeMcqwpWQVmeYLIOvvEeAzXzHwGAKUDMw>
+    <xmx:RrZcXLxvHrachqjOfVJk9nhmT6Q0zHdDv4z7ZFLP6C4HisOqJ80MQw>
+Received: from eros.localdomain (ppp121-44-199-109.bras1.syd2.internode.on.net [121.44.199.109])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3926EE4649;
+        Thu,  7 Feb 2019 17:50:43 -0500 (EST)
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     kernel-hardening@lists.openwall.com
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Minor bug fixes to leaking_addresses.pl
+Date:   Fri,  8 Feb 2019 09:50:23 +1100
+Message-Id: <20190207225026.11723-1-tobin@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
- <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
- <CAGngYiUTJ0TjdTu=UB9yXRJ_mXG8LPmcuBQBDha+T5RHoRUvcQ@mail.gmail.com>
- <CAKdAkRS3mxXO9+60Lu7_3gqN9XN1CYQJGM5fcta1pG8qXm9wqw@mail.gmail.com> <CAGngYiWBdXc0VzpjBQmVyKi+E2rVaO2WsoiPLho0bxHnrdiDKw@mail.gmail.com>
-In-Reply-To: <CAGngYiWBdXc0VzpjBQmVyKi+E2rVaO2WsoiPLho0bxHnrdiDKw@mail.gmail.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Thu, 7 Feb 2019 14:48:39 -0800
-Message-ID: <CAKdAkRRbRjs9X78+V77YPo2Xrn=ZmtyfQgGz-RC12oK3G4c-iw@mail.gmail.com>
-Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 2:32 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
->
-> On Thu, Feb 7, 2019 at 5:21 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> >
-> > > ./drivers//input/keyboard/matrix_keypad.c:512:1-18: missing clean-up
-> > > of INIT_WORK/INIT_DELAYED_WORK initialized here
-> >
-> > This is not as simple.
-> >
->
-> PS If you change
-> flush_work(&keypad->work.work);
-> to
-> flush_delayed_work(&keypad->work);
->
-> then the Coccinelle script works correctly, and does not flag
-> this driver.
+Hi,
 
-Yes, I just sent out the patch as it was in fact a bug: we could have
-missed work that is scheduled but not queued.
+Here are a few minor fixes/improvements to scripts/leaking_addresses.pl
+
+Patch 1: Fixes places where I don't know how to Perl.
+
+Patch 2: Removes `--version` command line option, completely this time.
+
+Patch 3: Fix a bug in the command line options parsing.
+
+thanks,
+Tobin.
+
+
+Tobin C. Harding (3):
+  leaking_addresses: Fix calls to dprint
+  leaking_addresses: Completely remove --version flag
+  leaking_addresses: Expand tilde in output file name
+
+ scripts/leaking_addresses.pl | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 -- 
-Dmitry
+2.20.1
+
