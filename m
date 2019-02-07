@@ -2,207 +2,93 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47109C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1446DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071DF21902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549541019;
-	bh=Wf1HXLhiPkqNBgk5wFtmBdA6hASO0S1zCmGUxC44c58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TXFiq/IzABeCJUKq4LxMOTroOl34PpCmSERTlDK1PNa3jLCBSRIoJyYkT/UFcnoxI
-	 KEJ26rYjVxxBy6OEAyBrHoq9WAc2/nFIhdUPPuhnq7ahwFBOXdODUfFOkDAtX1Kklz
-	 Sxt8OiFu/fCDcd2dLAWMhaIjA0YPTwGlz+ZdZ94c=
+	by mail.kernel.org (Postfix) with ESMTP id E100621902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfBGMDh (ORCPT
+        id S1726876AbfBGMIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:03:37 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48310 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfBGMDg (ORCPT
+        Thu, 7 Feb 2019 07:08:15 -0500
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:49220 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726448AbfBGMIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:03:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Gm9K+i4NzBEWKyZUgxdC/mempUtOzUZgP4D0EegQEPg=; b=eTZbhfnCohFp/uEzQXKKUn8yW
-        rj37lPV03DeVirULHjHXbsJFuWpfBdQGcBLxIbd8Sd6lN53xAgDd86DLItW17UZh8spHLMmcJg/uL
-        j02bc9QsHGAXf60Sk7aqxo3FihzqAmQOjBNgPQkExsPHhB/n277jGMK+VM1t+XJj+iZyo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1griOo-0004s4-ML; Thu, 07 Feb 2019 12:03:22 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2A4BD1127EF9; Thu,  7 Feb 2019 12:03:22 +0000 (GMT)
-Date:   Thu, 7 Feb 2019 12:03:22 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com, tglx@linutronix.de,
-        jason@lakedaemon.net
-Subject: Re: [PATCH 4/6] mfd: Add support for the MediaTek MT6358 PMIC
-Message-ID: <20190207120322.GA6190@sirena.org.uk>
-References: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1548839891-20932-5-git-send-email-hsin-hsiung.wang@mediatek.com>
- <20190207093450.GH4672@dell>
- <345df368-b247-9c4b-a69d-e95f14bff8b6@arm.com>
+        Thu, 7 Feb 2019 07:08:15 -0500
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x174LpFN026802;
+        Thu, 7 Feb 2019 04:23:06 GMT
+Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2qg8q11mxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Feb 2019 04:23:06 +0000
+Received: from sarge.linuxathome.me (unknown [16.99.168.108])
+        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 425CFAE;
+        Thu,  7 Feb 2019 04:23:03 +0000 (UTC)
+From:   Hedi Berriche <hedi.berriche@hpe.com>
+To:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
+        x86@kernel.org, Hedi Berriche <hedi.berriche@hpe.com>,
+        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
+Subject: [Patch v2 3/4] x86/platform/UV: use efi_enabled() instead of test_bit()
+Date:   Thu,  7 Feb 2019 04:22:33 +0000
+Message-Id: <20190207042234.25109-4-hedi.berriche@hpe.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190207042234.25109-1-hedi.berriche@hpe.com>
+References: <20190207042234.25109-1-hedi.berriche@hpe.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
-Content-Disposition: inline
-In-Reply-To: <345df368-b247-9c4b-a69d-e95f14bff8b6@arm.com>
-X-Cookie: A day without sunshine is like night.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=410 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902070032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use ad hoc efi_enabled() instead of fiddling with test_bit().
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cleanup, no functional changes.
 
-On Thu, Feb 07, 2019 at 10:04:50AM +0000, Marc Zyngier wrote:
-> On 07/02/2019 09:34, Lee Jones wrote:
+Cc: Russ Anderson <rja@hpe.com>
+Cc: Mike Travis <mike.travis@hpe.com>
+Cc: Dimitri Sivanich <sivanich@hpe.com>
+Cc: Steve Wahl <steve.wahl@hpe.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+---
+ arch/x86/platform/uv/bios_uv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >> +static struct irq_top_t mt6358_ints[] =3D {
-> >> +	MT6358_TOP_GEN(BUCK),
-> >> +	MT6358_TOP_GEN(LDO),
-> >> +	MT6358_TOP_GEN(PSC),
-> >> +	MT6358_TOP_GEN(SCK),
-> >> +	MT6358_TOP_GEN(BM),
-> >> +	MT6358_TOP_GEN(HK),
-> >> +	MT6358_TOP_GEN(AUD),
-> >> +	MT6358_TOP_GEN(MISC),
-> >> +};
+diff --git a/arch/x86/platform/uv/bios_uv.c b/arch/x86/platform/uv/bios_uv.c
+index cd05af157763..8bace0ca9e57 100644
+--- a/arch/x86/platform/uv/bios_uv.c
++++ b/arch/x86/platform/uv/bios_uv.c
+@@ -44,7 +44,7 @@ s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
+ 	 * If EFI_OLD_MEMMAP is set, we need to fall back to using our old EFI
+ 	 * callback method, which uses efi_call() directly, with the kernel page tables:
+ 	 */
+-	if (unlikely(test_bit(EFI_OLD_MEMMAP, &efi.flags)))
++	if (unlikely(efi_enabled(EFI_OLD_MEMMAP)))
+ 		ret = efi_call((void *)__va(tab->function), (u64)which, a1, a2, a3, a4, a5);
+ 	else
+ 		ret = efi_call_virt_pointer(tab, function, (u64)which, a1, a2, a3, a4, a5);
+-- 
+2.20.1
 
-> > What is a 'top' IRQ?
-
-It looks like it's an intermediate parent IRQ controller; that's quite a
-common design for MFDs on slow buses to cut down on the number of status
-registers to poll.  IIRC there at least used to be some framework reason
-for not using normal chained interrupts for these but I can't remember
-it any more - possibly something to do with threaded handlers.
-
-This is all looking very famililar, I suspect it's based on other
-drivers dating back years rather than doing anything original.  There's
-certainly a bunch of other drivers with very similar patterns in tree,
-this doesn't look like it's got any problems over what most similar
-drivers are doing.  The patterns all predate drivers/irqchip and a lot
-of them will come from me.
-
-> >> +static void pmic_irq_enable(struct irq_data *data)
-> >> +{
-> >> +	unsigned int hwirq =3D irqd_to_hwirq(data);
-> >> +	struct mt6397_chip *chip =3D irq_data_get_irq_chip_data(data);
-> >> +	struct pmic_irq_data *irq_data =3D chip->irq_data;
-> >> +
-> >> +	irq_data->enable_hwirq[hwirq] =3D 1;
-> >> +}
-
-> > I see that you're doing your own caching operations.  Is that
-> > required?  I think I'm going to stop here and as for some IRQ guy's
-> > input on this.
-
-> Dunno either. I thought that's what regmap was for?
-
-IIRC from when I wrote drivers for chips like this these operations are
-called with interrupts disabled so you can't write to interrupt driven
-buses so you need to cache the write and flush in sync_unlock().  You
-can't do this with regmap as it stands since on a device that can't be
-accessed with interrupts disabled you'd need to disable the writes
-before going into the interrupts off section and there's a risk that
-having the device cache disabled would disrupt some other function on
-the chip that was expecting writes to get posted immediately. =20
-
-It would be possible to add per-register cache only behaviour but
-someone would need to do that and it's not clear that it's worth the
-effort, especially since for slow buses we currently lock the entire
-regmap including the cache with mutexes so you can't actually access the
-cache with interrupts off at the minute.
-
-> >> +	for (i =3D 0; i < irq_data->num_pmic_irqs; i++) {
-> >> +		if (irq_data->enable_hwirq[i] =3D=3D
-> >> +				irq_data->cache_hwirq[i])
-> >> +			continue;
-
-> Please explain what you are trying to do here. The unlock operation is
-> supposed to affect exactly one interrupt. Instead, you seem to deal with
-> a bunch of them at once. Operations are supposed to happen on the "leaf"
-> IRQs, not on the multiplexing interrupt.
-
-IIRC it was done this way because it wasn't altogether clear if
-operations on multiple interrupts could ever be batched or not and given
-that we're dealing with slow buses the cost of the loop is negligable.
-
-> Also, the whole cache thing seems pretty pointless. Why isn't regmap
-> doing that for you?
-
-See above.
-
-> >> +	for (i =3D 0; i < mt6358_irq_data->num_top; i++) {
-> >> +		if (top_int_status & BIT(mt6358_ints[i].top_offset))
-> >> +			mt6358_irq_sp_handler(chip, i);
-> >> +	}
-> >> +
-> >> +	return IRQ_HANDLED;
-> >> +}
-
-> Why isn't this a normal chained irq flow, instead of a homegrown irq
-> handler? Is that because this is a threaded handler?
-
-I think that's it but like I say I can't remember clearly any more, it's
-been a decade.
-
-> >> +	ret =3D devm_request_threaded_irq(chip->dev, chip->irq, NULL,
-> >> +					mt6358_irq_handler, IRQF_ONESHOT,
-> >> +					mt6358_irq_chip.name, chip);
-> >> +	if (ret) {
-> >> +		dev_err(chip->dev, "failed to register irq=3D%d; err: %d\n",
-> >> +			chip->irq, ret);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	enable_irq_wake(chip->irq);
-
-> Why is that decided at probe time, from kernel space?
-
-IIRC it's due to it being the main interrupt for the device and there
-being at some point issues with this getting propagated to parent
-interrupts so wake just got turned on all the time for the parent and we
-relied on controlling the children.  Making things be proper chained
-interrupt controllers would solve that I think.
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxcHocACgkQJNaLcl1U
-h9B9mAf/RuWwFpw3PPjPrnHv+xB/CJ53tlD3ne/pLesX3Dj2s5CJwyZ4IQSzAGFi
-B8KuBsT4410iudGgjRUBaa/S/CxDa+krUbCDhsSQJtYtKrnluYU0H8oxTCHklMJa
-TwOOY9wb3DHgtkfqpPW9rGYEh9QVf6eBBDwVdxFezg7L6zkpZo5jNhSn11bpfnQK
-XoEvqqNcQlUaPHQYxLO7UUwLjHwQf6RPJ7Apz+cq+Ba1PodachBYgorlmwpri1Uo
-rQoaK1gWRrhfYo6t5seS/boh1lh3UG8wcPsOCC8oUsK+slMnoh/JgMR12D1EMy0I
-Hab61OGqyBJKO3G+lhhm+xRtWYADHg==
-=wiwY
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
