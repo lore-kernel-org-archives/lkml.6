@@ -2,95 +2,108 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B56CAC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCB2C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6712147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A8AF2147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:47:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GD6MNJTH"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AMLmU1kw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfBGTqQ (ORCPT
+        id S1727123AbfBGTri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 14:46:16 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:45574 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfBGTqP (ORCPT
+        Thu, 7 Feb 2019 14:47:38 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36946 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfBGTri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 14:46:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d2Auinqj+iinWuACUh1zWQLvdx+uvY34M1d8kVvscRo=; b=GD6MNJTH7ahxODIJwjMRtXdnR
-        RGD+hw9J+ZDL8sz/xbv/d7Zqgil1ESzAyfO7J6vTAR0eOBQbKA+2n1dr0BkrZrWBaHsHiinLNErB3
-        g+h3oZHOrxMVq84OJ9xWE4MvvJNsJ7gMZziSCkHMHlorLYek/Ay+0h+X4Ff02okQAYSM9Q9kbsEYG
-        sP6vzRH/Aw3OMOnEjV905Mx2248RvsaFgDw5pfYmQN1OH4MoKxYYnGwKbb1rQt3d/GT/GYTWx5Omh
-        KzbHIoABiKb148eXjHvwxsrvCmrg26erty1ERFcwZ5kSKWjGzDj0O5Sh8u0FqWgxN6v7ekPCAzKqa
-        wmJhspFPg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1grpcH-00070v-BQ; Thu, 07 Feb 2019 19:45:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 01FBD2029E062; Thu,  7 Feb 2019 20:45:42 +0100 (CET)
-Date:   Thu, 7 Feb 2019 20:45:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [PATCH-tip 15/22] locking/rwsem: Merge owner into count on x86-64
-Message-ID: <20190207194542.GG32511@hirez.programming.kicks-ass.net>
-References: <1549566446-27967-1-git-send-email-longman@redhat.com>
- <1549566446-27967-16-git-send-email-longman@redhat.com>
+        Thu, 7 Feb 2019 14:47:38 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so431366pfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 11:47:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
+         :subject:message-id:references:cc:from:date;
+        bh=IRYtenou0nQZU/UrLSZo31LR0ze34XKDzqIcZlOhIjE=;
+        b=AMLmU1kw+Rr5ZRun3SQwC0Hv7fbNirKNpTxbKl2XwX5Rh+49f2/jQyxyUp9F1O3D56
+         6p5ubB0lwm+nBq5cgPddhXqvu7pHrK+eC9HApsa6Rm8wZUrNOhliRrGpMNcOxxJdWop6
+         ZGS14pkBJfRM0YVf8+0S0rvG+GnkRTbqfK088=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to
+         :in-reply-to:user-agent:subject:message-id:references:cc:from:date;
+        bh=IRYtenou0nQZU/UrLSZo31LR0ze34XKDzqIcZlOhIjE=;
+        b=fgu+Bgc4ECxcySJlym7U6k3Ace0nWTiwy6u/2Gg53n3uZk7EFu2gfRHAzDy4Tzh3gz
+         3uOcECsn6ImRjPBzNYkrEQFT88QPzbR4KYwwyXjOkz7oHnvB4AAdMNSmZAgBL5M8IEZF
+         5Y9zGKBtxmZyBtSdtCp9xf/lUyKoX1rSpu3Lu0bmn30dYUyvlZIHCjFhoJaGZfJtydOj
+         HZ4+ipVVC8FrJZQd7GfbsKtE+iHTfP3/o1aS+SQfyX6+H6i517bwrIogXBWH0e7Yojxt
+         YIYlEd4xsnIpP+O27TIy98wyVxILAfUV8Kvq0dF8xF/d96d++R3FT0yQVhjLtLDXzhu6
+         5rcQ==
+X-Gm-Message-State: AHQUAubSG9yfD/uwDvXGCa9q7JANORq2DHFlYMLguwPaQVlrNo1Ok3LX
+        MdtSo+3eGk89mtX0c4+1fGcYHA==
+X-Google-Smtp-Source: AHgI3IZEvPBOP2yMug1W4Z21u+jmRIB3hocEQAJUEwIIkqqqr3SIQVzHl8sFaQg7axKzVKLWvtgkLA==
+X-Received: by 2002:a62:5182:: with SMTP id f124mr8024439pfb.238.1549568856381;
+        Thu, 07 Feb 2019 11:47:36 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id d13sm19679273pfd.58.2019.02.07.11.47.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 11:47:35 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549566446-27967-16-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <7af27aa5-3ff6-d4ee-1dc0-bac797c2bdbc@codeaurora.org>
+User-Agent: alot/0.8
+Subject: Re: [RFC/PATCH 0/5] DVFS in the OPP core
+Message-ID: <154956885472.115909.8681514480591552850@swboyd.mtv.corp.google.com>
+References: <20190129015547.213276-1-swboyd@chromium.org> <7af27aa5-3ff6-d4ee-1dc0-bac797c2bdbc@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Thu, 07 Feb 2019 11:47:34 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 02:07:19PM -0500, Waiman Long wrote:
-> On 32-bit architectures, there aren't enough bits to hold both.
-> 64-bit architectures, however, can have enough bits to do that. For
-> x86-64, the physical address can use up to 52 bits. That is 4PB of
-> memory. That leaves 12 bits available for other use. The task structure
-> pointer is also aligned to the L1 cache size. That means another 6 bits
-> (64 bytes cacheline) will be available. Reserving 2 bits for status
-> flags, we will have 16 bits for the reader count.  That can supports
-> up to (64k-1) readers.
+Quoting Rajendra Nayak (2019-02-06 22:57:12)
+>=20
+> > 3) How do we handle devices that already have power-domains specified in
+> > DT? The opp binding for required-opps doesn't let us specify the power
+> > domain to target, instead it assumes that whatever power domain is
+> > attached to a device is the one that OPP needs to use to change the
+> > genpd performance state. Do we need a
+> > dev_pm_opp_set_required_opps_name() or something to be explicit about
+> > this? Can we have some way for the power domain that required-opps
+> > correspond to be expressed in the OPP tables themselves?
+>=20
+> I was converting a few more drivers to use the proposed approach in this
+> RFC, in order to identify all outstanding issues we need to deal with,
+> and specifically for UFS, I end up with this exact scenario where UFS alr=
+eady
+> has an existing power domain (gdsc) and I need to add another one (rpmhpd=
+) for
+> setting the performance state.
+>=20
+> If I use dev_pm_opp_of_add_table() to add the opp table from DT, the opp
+> layer assumes its the same device on which it can do a dev_pm_genpd_set_p=
+erformance_state()
+> with, however the device that's actually associated with the pm_domain wh=
+en we
+> have multiple power domains is infact the one (dummy) that we create when
+> the driver makes a call to dev_pm_domain_attach_by_name/id().
+>=20
+> Any thoughts on whats a good way to handle this?
+>=20
 
-*groan*...
+Ulf mentioned that we can use dev_pm_opp_set_genpd_virt_dev() for this.
+Does that API work here?
 
-So take qrwlock's idea for a queue, then make the count value (similar
-to the new mutex); that is have a bit0 be a r/w bit, when w bits 6-N are
-owner, when r they are reader-count. bit1 can be a pending bit, bit2 a
-handoff bit etc..
-
-That should fit and work on 32bit and 64bit without issue.
-
-I have a half-arsed rwsem-atomic.c somewhere that does just that. I just
-never got around to doing all the optimistic spin and steal crap that
-makes our current rwsem fly.
-
-And that nicely gets rid of that mind bending BIAS crud.
