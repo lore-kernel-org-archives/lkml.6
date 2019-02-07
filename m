@@ -2,192 +2,106 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC60DC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6911EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF9A21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549578095;
-	bh=SriIerW9Gq0RzWOeJdouSrhpvOFqRZnQYWmkydk8a0I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lACeejCSIGhWDrKSuqGpAn9LS8mX783nOwnbNfWCWWODb1NjL369s8MzTnEUSbk5w
-	 shxG3bSDlPEeNdwPWYdTgbVvTI91Ng1eInRKPORzbXeVCOq1A8mdcL31PKkLdlFO6z
-	 4qOT9cftGKRMjVRjJZHd6Rin5+yYWhsNUp+9aBhQ=
+	by mail.kernel.org (Postfix) with ESMTP id 348FB21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aEZR8Px3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfBGWVe (ORCPT
+        id S1727083AbfBGWWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:21:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33580 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 17:22:25 -0500
+Received: from ozlabs.org ([203.11.71.1]:56647 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726731AbfBGWVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:21:34 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726622AbfBGWWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:22:24 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D4E82147C;
-        Thu,  7 Feb 2019 22:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549578092;
-        bh=SriIerW9Gq0RzWOeJdouSrhpvOFqRZnQYWmkydk8a0I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iHqdxvD0bQCRQXMWGDsspjtPtJp0FztOq3BoSbbiQm7qMKzsoCpKhh0KKM3nJgdlk
-         bax02RdSG9ry2EPA3UVQv8hewo5TzQ6DEK2hlAHLMVFvCm0dWjmfgi3ENzqxoZxYTk
-         hSa8mjAtGwpfeoOyLUe2a+bMNmIKbBFXa3pYl7sc=
-Date:   Thu, 7 Feb 2019 16:21:30 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/5] genirq/affinity: allow driver to setup managed IRQ's
- affinity
-Message-ID: <20190207222130.GQ7268@google.com>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
- <20190125095347.17950-3-ming.lei@redhat.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 43wXqX6w4Bz9s7h;
+        Fri,  8 Feb 2019 09:22:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549578141;
+        bh=gG7Fl8IGeDyEyzxZlO+MOR7LI8w01mnLK07Bp5lc7XA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=aEZR8Px3S9cYe/9z81gKOOkg00HawwhCPVWjshspfKcAslb6gm/Hg3VOd7y8sA2A8
+         3eF5buKP1k2EDlprvqppoASIlJlQ3kFZGil+hGpyiqiDU9Xva5z6YV44IMUwttYVmJ
+         MlKdP6nd7M0Xmg+lzYcsGH25FgKQZrv13fcdMtnL/oMXJ9Twg6k1iEuQFa/YzmuPw5
+         wtilBFFt5GXIP2OVOs48DrlCqEzeNzWFF5GrzXWR2n+3LquJJ4LazMXr4ydgePQye5
+         VW90Ecx7tt367hl9yGZ+XRLX/OtINb2QBhZ5CzS+Vi7wlaBN0frysRktV84t2OmFHa
+         A0hzeys8FsK7Q==
+Date:   Fri, 8 Feb 2019 09:22:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Huang Pei <huangpei@loongson.cn>
+Subject: linux-next: manual merge of the mips tree with the mips-fixes tree
+Message-ID: <20190208092210.653a9bcf@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125095347.17950-3-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rrF3iid0usznE6OR18/XudT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 05:53:44PM +0800, Ming Lei wrote:
-> This patch introduces callback of .setup_affinity into 'struct
-> irq_affinity', so that:
-> 
-> 1) allow drivers to customize the affinity for managed IRQ, for
-> example, now NVMe has special requirement for read queues & poll
-> queues
-> 
-> 2) 6da4b3ab9a6e9 ("genirq/affinity: Add support for allocating interrupt sets")
-> makes pci_alloc_irq_vectors_affinity() a bit difficult to use for
-> allocating interrupt sets: 'max_vecs' is required to same with 'min_vecs'.
+--Sig_/rrF3iid0usznE6OR18/XudT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-s/is required to same with/is required to be equal to/
+Hi all,
 
-> With this patch, driver can implement their own .setup_affinity to
-> customize the affinity, then the above thing can be solved easily.
+Today's linux-next merge of the mips tree got a conflict in:
 
-s/driver/drivers/
+  arch/mips/include/asm/pgtable.h
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  include/linux/interrupt.h | 26 +++++++++++++++++---------
->  kernel/irq/affinity.c     |  6 ++++++
->  2 files changed, 23 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index c672f34235e7..f6cea778cf50 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -242,30 +242,38 @@ struct irq_affinity_notify {
->  };
->  
->  /**
-> + * struct irq_affinity_desc - Interrupt affinity descriptor
-> + * @mask:	cpumask to hold the affinity assignment
-> + */
-> +struct irq_affinity_desc {
-> +	struct cpumask	mask;
-> +	unsigned int	is_managed : 1;
-> +};
+between commit:
 
-I was going to comment that "managed" already has a common usage
-related to the devm_*() functions, but I don't think that's what you
-mean here.  But then I noticed that you're only *moving* this code,
-so you couldn't change it anyway.
+  e02e07e3127d ("MIPS: Loongson: Introduce and use loongson_llsc_mb()")
 
-But I still wonder what "managed" means here.
+from the mips-fixes tree and commit:
 
-> +
-> +/**
->   * struct irq_affinity - Description for automatic irq affinity assignements
->   * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
->   *			the MSI(-X) vector space
->   * @post_vectors:	Don't apply affinity to @post_vectors at end of
->   *			the MSI(-X) vector space
-> + * @setup_affinity:	Use driver's method to setup irq vectors affinity,
-> + * 			and driver has to handle pre_vectors & post_vectors
-> + * 			correctly, set 'is_managed' flag correct too
+  c7e2d71dda7a ("MIPS: Fix set_pte() for Netlogic XLR using cmpxchg64()")
 
-s/irq vectors/irq vector/
-s/correct/correctly/
+from the mips tree.
 
-In general I don't think "correctly" is very useful in changelogs
-and comments.  Usually it just means "how *I* think it should be
-done", but it doesn't tell anybody else exactly *how* it should be
-done.
+I fixed it up (I just used the mips tree version) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
-What does it mean for a driver to handle pre_vectors & post_vectors
-"correctly"?  The driver's .setup_affinity() method receives an array
-of struct irq_affinity; maybe it means that method should set the
-cpumask for each element as it desires.  For @pre_vectors and
-@post_vectors, I suppose that means their cpumask would be
-irq_default_affinity?
 
-But I guess the .setup_affinity() method means the driver would have
-complete flexibility for each vector, and it could use
-irq_default_affinity for arbitrary vectors, not just the first few
-(@pre_vectors) and the last few (@post_vectors)?
 
-What's the rule for how a driver sets "is_managed"?
+--=20
+Cheers,
+Stephen Rothwell
 
-> + * @priv:		Private data of @setup_affinity
->   * @nr_sets:		Length of passed in *sets array
->   * @sets:		Number of affinitized sets
->   */
->  struct irq_affinity {
->  	int	pre_vectors;
->  	int	post_vectors;
-> +	int	(*setup_affinity)(const struct irq_affinity *,
-> +				  struct irq_affinity_desc *,
-> +				  unsigned int);
-> +	void    *priv;
->  	int	nr_sets;
->  	int	*sets;
->  };
->  
-> -/**
-> - * struct irq_affinity_desc - Interrupt affinity descriptor
-> - * @mask:	cpumask to hold the affinity assignment
-> - */
-> -struct irq_affinity_desc {
-> -	struct cpumask	mask;
-> -	unsigned int	is_managed : 1;
-> -};
-> -
->  #if defined(CONFIG_SMP)
->  
->  extern cpumask_var_t irq_default_affinity;
-> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> index 118b66d64a53..7b77cbdf739c 100644
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -257,6 +257,12 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	if (!masks)
->  		return NULL;
->  
-> +	if (affd->setup_affinity) {
-> +		if (affd->setup_affinity(affd, masks, nvecs))
-> +			return NULL;
-> +		return masks;
-> +	}
+--Sig_/rrF3iid0usznE6OR18/XudT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->  	/* Fill out vectors at the beginning that don't need affinity */
->  	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
->  		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
-> -- 
-> 2.9.5
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcr5IACgkQAVBC80lX
+0GwAfAf+OdzsNJWdkZsZAt0+mLS7IYyWB45KKDXCzrAwK/9i2b1MIjeECKheJUyE
+NRbJ6wBN//+b/XbgZq27/nPe0rasyzDCwN6SxOpgCNKpCSl5Ylcbjz97EPdUp1Z8
+m6o6mMz8qU/LDBf2khURAPUWO7lMmmj9zTU4RhZa1Rr08Crq1jo8227JEUSt3noS
++d7Uni4EcWoA7J28L3qesoHCo+k31QAivlbkXtXW053lZ9uNWoXQAklWhXQC20Sy
+S4opS3eXReLA089SmE8r3O6f8go/56IclzGl76Oeh+tRiYfE65VH7/bpGmSjfueq
+4sNwTbG0HFPNCGt3wBy4L+Xygz/0XQ==
+=fmO3
+-----END PGP SIGNATURE-----
+
+--Sig_/rrF3iid0usznE6OR18/XudT--
