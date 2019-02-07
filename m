@@ -2,128 +2,385 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1F9C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1EAC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD432173B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:12:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=raithlin.onmicrosoft.com header.i=@raithlin.onmicrosoft.com header.b="cLJKbULx"
+	by mail.kernel.org (Postfix) with ESMTP id 8DB0121904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:14:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfBGRM5 (ORCPT
+        id S1726883AbfBGRON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:12:57 -0500
-Received: from mail-eopbgr660102.outbound.protection.outlook.com ([40.107.66.102]:15808
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfBGRM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:12:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=raithlin.onmicrosoft.com; s=selector1-raithlin-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xhkX4kyquyhfAPut4hwfVsgQ6KPYouVvKuAcCGy6uVc=;
- b=cLJKbULxmNaB2tSbn5gukDIHvXEQ6PAgBmuOAnlFxzMsxOyaLXlcclnIbLR37ZtMuFL61M7HHqLXs0UjMy0Wz3RGdOl3Q0H0UNJ+pWkcKDqvo6C/uATzDxId/naL41uTqVqdotGPsyW6hZnUhB7OlwSjKYBjnqoWMHidJhU4dzI=
-Received: from YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM (52.132.75.145) by
- YQXPR0101MB1096.CANPRD01.PROD.OUTLOOK.COM (52.132.78.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Thu, 7 Feb 2019 17:12:52 +0000
-Received: from YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::3984:214:c472:b3d7]) by YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::3984:214:c472:b3d7%2]) with mapi id 15.20.1601.016; Thu, 7 Feb 2019
- 17:12:52 +0000
-From:   "Stephen  Bates" <sbates@raithlin.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        IDE/ATA development list <linux-ide@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>
-Subject: [LSF/MM TOPIC] BPF for Block Devices
-Thread-Topic: [LSF/MM TOPIC] BPF for Block Devices
-Thread-Index: AQHUvwhboOvoMzJnxEqbA/z88fpLtw==
-Date:   Thu, 7 Feb 2019 17:12:52 +0000
-Message-ID: <40D2EB06-6BF2-4233-9196-7A26AC43C64E@raithlin.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.16.0.190203
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com; 
-x-originating-ip: [70.65.250.31]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YQXPR0101MB1096;6:ob6azazJQUOEsRZD3gVCXkxJoaGEQ4oaRr29iFRgd6B4ZOSU36ZYy2D9SXgqQwxYRKcPdbO0P2tlm7MsB0A4Mu8OA2tzZxRFlVJnURmhAVM2Mg00q5hHHe75te2PRbmsdEtS44fBXBQ89TuOaW9oAYrC6tz17sNMggQ5U3yVQ5Tdcto2xwp8sM8iiauN7R3hfMq2TFA5mPCAgpYULUv+AZNIlAwm8OdbbOEu9ftQ/GBOgDUIk0vycXxydXXEA8CzpBWwNmawFQ3ZVtc54gbMJ+Uprbe5MY6i9OLaAjcenoPoLkUlqBsb6h5+sPHiRSDl/LdMafRMe27pOuY7bN2B1n3dt3zgRrc6IHpXVM/bqng4q3CYFu0mr5Gzxfz5P0mXIVMYpHEoN6Cdr2gpWBXk8RejtQI97PtWKB+uAzs7YsNFZNUR3NvS3e7bGXwhMHY8oUF8xC5KJ7cQSRw1g036Uw==;5:fBzSAnsB9JER0Ld1ad0Jx85+NrMF1y415qL7qHvyNrbHbPngSB5/T/SmCH2N0I4vPIuDWtr629xsEm6V+NwShrLViYYXhcORRiuFRm6Ze1hJKZc0wYZ4uX2usWhtIGoOP5JGoQXVXm6WRyVVySRGmeE6kcKOaATi5YdHc+YwTXlgKX26x65GiuNLr9TwhvocVM7HmgFnCMv0LPuN/IUd7Q==;7:vwtk3Hf5BLBrleCgmILXEE0McusnAynS3HfL78URuvS9XeKJj5Ik0rmKSxAylIQYUcUqeXQHxFm5P+LPFx4qoYBr87Eqp/gN9QkvtM2rQl8B9NGVMzd8jlEyng2D/GvfAmlYTjM69MAGjXB0eBAhyA==
-x-ms-office365-filtering-correlation-id: e627a5eb-b078-428f-a380-08d68d1f7e5b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:YQXPR0101MB1096;
-x-ms-traffictypediagnostic: YQXPR0101MB1096:
-x-microsoft-antispam-prvs: <YQXPR0101MB109684F0B1A4A96A46C95C29AA680@YQXPR0101MB1096.CANPRD01.PROD.OUTLOOK.COM>
-x-forefront-prvs: 0941B96580
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(136003)(376002)(39830400003)(396003)(199004)(189003)(53754006)(8676002)(476003)(186003)(486006)(7416002)(6506007)(102836004)(110136005)(54906003)(81166006)(81156014)(2616005)(58126008)(26005)(7736002)(86362001)(6306002)(36756003)(99286004)(105586002)(316002)(305945005)(106356001)(256004)(14444005)(68736007)(14454004)(4326008)(3846002)(966005)(6116002)(25786009)(2906002)(83716004)(71200400001)(71190400001)(2501003)(33656002)(6512007)(82746002)(508600001)(66066001)(97736004)(8936002)(53936002)(6436002)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:YQXPR0101MB1096;H:YQXPR0101MB0728.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: raithlin.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: MxvFc1fOz11+eyBeylzZK2apkhk30AJza2Zu79KJh2GEgyZW4/iJloqAQDFkETtEVbLol4H3uoyd9/lhTkHqFzA95Hd24vK8wkZgbx4OoSvwQUpns6Id3a/uLRpY5ZbF7yK+cnOUcAH7ZlTS8Q99t8h9uXsrwnCYInkd9jrpmDBmAMvv6cB2ZS/iyRrQVC5tU4Do4lcIawimvQdpw1skcRqzVuuqCxg6dN1QYKrPdoklnnOU8aVzRDDzEWWd7JKm93/Uz8JzdJdgeNUW8L5j+jyy/jaNwpUU6yWRLoOfFgALU/xBfkjFYB9gUT2tTUQUYH23mz37dgJ3sXEBGiV7lf9TRAkNwIclArS/x5mAe2cORSE8F+FVgBgNZZ9BP94VtmhJ7uoup2gNKAj2tvGSb1i9C5i8chGCCel+AKSfk8s=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <80AE72F32E8C7642AD78708C57CA9358@CANPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e627a5eb-b078-428f-a380-08d68d1f7e5b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 17:12:52.1490
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR0101MB1096
+        Thu, 7 Feb 2019 12:14:13 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:46479 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbfBGRON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:14:13 -0500
+Received: from orion.localdomain ([77.2.6.87]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MhUDj-1hNZI83qr5-00edGg; Thu, 07 Feb 2019 18:14:03 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-gpio@vger.kernel.org, bgolaszewski@baylibre.com,
+        linus.walleij@linaro.org, platform-driver-x86@vger.kernel.org,
+        andy@infradead.org, dvhart@infradead.org
+Subject: [PATCH 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
+Date:   Thu,  7 Feb 2019 18:13:59 +0100
+Message-Id: <1549559639-9447-2-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1549559639-9447-1-git-send-email-info@metux.net>
+References: <1549559639-9447-1-git-send-email-info@metux.net>
+X-Provags-ID: V03:K1:chp6BNjdmpP0zuddh30DVFEOv+AxTlniLB03nIpxx1/fpMaIc05
+ JGo+07lnXY0K9s96qKTbZ+PLzElxM8LMmvf3VmnetNpWxEkTmhZspM5g86nJg0te1p3Vm16
+ ztVH0WAX5amQBA4VFF67DJCxyDBt0YZuvMJyDR2BiHkcWYS/S1SLYnICpBVwyWUOhOUyBW8
+ fLJ162Jkf0eSM/kqNpsXg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sixnHSG06TU=:rv6tshJYqaHKjQ0iUAn4rh
+ Nbyn8HlUXMidhRzNfbsO7EYDTewKxJHIvwST5kgfl2cayE9rNC42/SbsUxlDY8pB9JWZp8JKN
+ YoG3LS4qdkIQGYdT8iXaRqLGmd8Sw50elY3DUd0/p8vRsn+oHscOCpkVe7pF+vH2AG2vtAiDl
+ /9aEf6QXw0vY1LgC/IMPqbv3vjUv+81gkfjyVVF7oUGk8yyjrgT1DFy9waWSOLCUX4N9LGSNH
+ yjbOdEOHWIVvffA7hysiz4zw5nzXZb9UblgeRB4MX3EG/50CJ6r/EoXcwyUs2No/T5QyaDGn1
+ Dk/xpJ+8E0G6Nvu1082z++t+dv6uuulD48jbrPT5dF4mM/4k8Fvb4UQawzwD4snoRLMIHUbup
+ TdCQhjjrIbP93lE8K9vnFR/8ShYB9+vCrnquR8UJ7VQL/IQc/3dDijJL+hjThj4CovLV9W/sn
+ EABwvX22m4yxASdpa9fZycESO3YZ7A5qxx3yzaxh9VBkYnx4P5rF3v+CxjIgv9+LSoCkdJs2y
+ +EcFlL/rXWeCxIUMF90XvrTRNqmMWNUi3kZU/V7MQCFvyGLQ8kLCyDjB/FqMhCmLS9yJmdVFs
+ 3JcMCA5yttuy4vstQueulcnCXLYIQ/55t/dLimbASB+JSiKqwx2Ob1vU+XbaQk2PepbunrmeO
+ ma6aDfEuuUCbWBfdtrBLuf8nSwch36AaNw1cSXCYHujMj1wuTbOhZaQ1zeQrVWjNE0u3UxxMD
+ 5BiQR7fqY2iZyfaowAPWne/ub0GHEgB8YFCITA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQWxsDQoNCj4gQSBCUEYgdHJhY2sgd2lsbCBqb2luIHRoZSBhbm51YWwgTFNGL01NIFN1bW1p
-dCB0aGlzIHllYXIhIFBsZWFzZSByZWFkIHRoZSB1cGRhdGVkIGRlc2NyaXB0aW9uIGFuZCBDRlAg
-aW5mb3JtYXRpb24gYmVsb3cuDQoNCldlbGwgaWYgd2UgYXJlIGFkZGluZyBCUEYgdG8gTFNGL01N
-IEkgaGF2ZSB0byBzdWJtaXQgYSByZXF1ZXN0IHRvIGRpc2N1c3MgQlBGIGZvciBibG9jayBkZXZp
-Y2VzIHBsZWFzZSENCg0KVGhlcmUgaGFzIGJlZW4gcXVpdGUgYSBiaXQgb2YgYWN0aXZpdHkgYXJv
-dW5kIHRoZSBjb25jZXB0IG9mIENvbXB1dGF0aW9uYWwgU3RvcmFnZSBpbiB0aGUgcGFzdCAxMiBt
-b250aHMuIFNOSUEgcmVjZW50bHkgZm9ybWVkIGEgVGVjaG5pY2FsIFdvcmtpbmcgR3JvdXAgKFRX
-RykgYW5kIGl0IGlzIGV4cGVjdGVkIHRoYXQgdGhpcyBUV0cgd2lsbCBiZSBtYWtpbmcgcHJvcG9z
-YWxzIHRvIHN0YW5kYXJkcyBsaWtlIE5WTSBFeHByZXNzIHRvIGFkZCBBUElzIGZvciBjb21wdXRh
-dGlvbiBlbGVtZW50cyB0aGF0IHJlc2lkZSBvbiBvciBuZWFyIGJsb2NrIGRldmljZXMuDQoNCldo
-aWxlIHNvbWUgb2YgdGhlc2UgQ29tcHV0YXRpb25hbCBTdG9yYWdlIGFjY2VsZXJhdG9ycyB3aWxs
-IHByb3ZpZGUgZml4ZWQgZnVuY3Rpb25zIChlLmcuIGEgUkFJRCwgZW5jcnlwdGlvbiBvciBjb21w
-cmVzc2lvbiksIG90aGVycyB3aWxsIGJlIG1vcmUgZmxleGlibGUuIFNvbWUgb2YgdGhlc2UgZmxl
-eGlibGUgYWNjZWxlcmF0b3JzIHdpbGwgYmUgY2FwYWJsZSBvZiBydW5uaW5nIEJQRiBjb2RlIG9u
-IHRoZW0gKHNvbWV0aGluZyB0aGF0IGNlcnRhaW4gTGludXggZHJpdmVycyBmb3IgU21hcnROSUNz
-IHN1cHBvcnQgdG9kYXkgWzFdKS4gSSB3b3VsZCBsaWtlIHRvIGRpc2N1c3Mgd2hhdCBzdWNoIGEg
-ZnJhbWV3b3JrIGNvdWxkIGxvb2sgbGlrZSBmb3IgdGhlIHN0b3JhZ2UgbGF5ZXIgYW5kIHRoZSBm
-aWxlLXN5c3RlbSBsYXllci4gSSdkIGxpa2UgdG8gZGlzY3VzcyBob3cgZGV2aWNlcyBjb3VsZCBh
-ZHZlcnRpc2UgdGhpcyBjYXBhYmlsaXR5IChhIHNwZWNpYWwgdHlwZSBvZiBOVk1lIG5hbWVzcGFj
-ZSBvciBTQ1NJIExVTiBwZXJoYXBzPykgYW5kIGhvdyB0aGUgQlBGIGVuZ2luZSBjb3VsZCBiZSBw
-cm9ncmFtbWVkIGFuZCB0aGVuIHVzZWQgYWdhaW5zdCBibG9jayBJTy4gSWRlYWxseSBJJ2QgbGlr
-ZSB0byBkaXNjdXNzIGRvaW5nIHRoaXMgaW4gYSB2ZW5kb3ItbmV1dHJhbCB3YXkgYW5kIGRldmVs
-b3AgaWRlYXMgSSBjYW4gdGFrZSBiYWNrIHRvIE5WTWUgYW5kIHRoZSBTTklBIFRXRyB0byBoZWxw
-IHNoYXBlIGhvdyB0aGVzZSBzdGFuZGFyZCBldm9sdmUuDQoNClRvIHByb3ZpZGUgYW4gZXhhbXBs
-ZSB1c2UtY2FzZSBvbmUgY291bGQgY29uc2lkZXIgYSBCUEYgY2FwYWJsZSBhY2NlbGVyYXRvciBi
-ZWluZyB1c2VkIHRvIHBlcmZvcm0gYSBmaWx0ZXJpbmcgZnVuY3Rpb24gYW5kIHRoZW4gdXNpbmcg
-cDJwZG1hIHRvIHNjYW4gZGF0YSBvbiBhIG51bWJlciBvZiBhZGphY2VudCBOVk1lIFNTRHMsIGZp
-bHRlcmluZyBzYWlkIGRhdGEgYW5kIHRoZW4gb25seSBwcm92aWRpbmcgZmlsdGVyLW1hdGNoZWQg
-TEJBcyB0byB0aGUgaG9zdC4gTWFueSBvdGhlciBwb3RlbnRpYWwgYXBwbGljYXRpb25zIGFwcGx5
-LiANCg0KQWxzbywgSSBhbSBpbnRlcmVzdGVkIGluIHRoZSAiVGhlIGVuZCBvZiB0aGUgREFYIEV4
-cGVyaW1lbnQiIHRvcGljIHByb3Bvc2VkIGJ5IERhbiBhbmQgdGhlICIgWm9uZWQgQmxvY2sgRGV2
-aWNlcyIgZnJvbSBNYXRpYXMgYW5kIERhbWllbi4NCg0KQ2hlZXJzDQogDQpTdGVwaGVuDQoNClsx
-XSBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxk
-cy9saW51eC5naXQvdHJlZS9kcml2ZXJzL25ldC9ldGhlcm5ldC9uZXRyb25vbWUvbmZwL2JwZi9v
-ZmZsb2FkLmM/aD12NS4wLXJjNQ0KIA0KICAgIA0KDQo=
+Driver for PCengines APUv2 board that supports GPIOs via AMD PCH
+and attached LEDs and keys.
+
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ MAINTAINERS                            |   5 +
+ drivers/platform/x86/Kconfig           |   9 ++
+ drivers/platform/x86/Makefile          |   1 +
+ drivers/platform/x86/pcengines-apuv2.c | 263 +++++++++++++++++++++++++++++++++
+ 4 files changed, 278 insertions(+)
+ create mode 100644 drivers/platform/x86/pcengines-apuv2.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a693f39..2bdc975 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11515,6 +11515,11 @@ F:	lib/parman.c
+ F:	lib/test_parman.c
+ F:	include/linux/parman.h
+ 
++PC ENGINES APU BOARD DRIVER
++M:	Enrico Weigelt, metux IT consult <info@metux.net>
++S:	Maintained
++F:	drivers/platform/x86/pcengines-apuv2.c
++
+ PC87360 HARDWARE MONITORING DRIVER
+ M:	Jim Cromie <jim.cromie@gmail.com>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index b5e9db8..e424643 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1303,6 +1303,15 @@ config HUAWEI_WMI
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called huawei-wmi.
+ 
++config PCENGINES_APU2
++	tristate "LEDs and buttons driver forPC Engines APUv2 board"
++	depends on GPIO_AMD_FCH
++	depends on KEYBOARD_GPIO
++	depends on KEYBOARD_GPIO_POLLED
++	depends on LEDS_GPIO
++	---help---
++	  This options adds APUv2 board support for LEDs and keys
++
+ endif # X86_PLATFORM_DEVICES
+ 
+ config PMC_ATOM
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index ce8da26..86cb766 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
+ obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
+ obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
+ obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
++obj-$(CONFIG_PCENGINES_APU2)	+= pcengines-apuv2.o
+diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+new file mode 100644
+index 0000000..9bb89d6
+--- /dev/null
++++ b/drivers/platform/x86/pcengines-apuv2.c
+@@ -0,0 +1,263 @@
++/*
++ * PC-Engines APUv2 board platform driver for gpio buttons and LEDs
++ *
++ * Copyright (C) 2018 metux IT consult
++ * Author: Enrico Weigelt <info@metux.net>
++ */
++
++// SPDX-License-Identifier: GPL+
++
++#include <linux/dmi.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/gpio_keys.h>
++#include <linux/input.h>
++#include <linux/platform_data/x86/amd-fch-gpio-pdata.h>
++
++/* TODO
++   * support apu1 board (different fch, different register layouts
++   * add spinlocks
++*/
++
++#define FCH_ACPI_MMIO_BASE	0xFED80000
++#define FCH_GPIO_OFFSET		0x1500
++#define FCH_GPIO_SIZE		0x300
++
++#define GPIO_BASE		100
++
++#define GPIO_LED1		(GPIO_BASE+0)
++#define GPIO_LED2		(GPIO_BASE+1)
++#define GPIO_LED3		(GPIO_BASE+2)
++#define GPIO_MODESW		(GPIO_BASE+3)
++#define GPIO_SIMSWAP		(GPIO_BASE+4)
++
++struct board_data {
++	const char		*name;
++	struct resource		res;
++	int			gpio_num;
++	int			gpio_base;
++	struct amd_fch_gpio_reg	*gpio_regs;
++};
++
++static const struct gpio_led apu2_leds[] /* __initconst */ = {
++	{ .name = "apu:green:1", .gpio = GPIO_LED1, .active_low = 1, },
++	{ .name = "apu:green:2", .gpio = GPIO_LED2, .active_low = 1, },
++	{ .name = "apu:green:3", .gpio = GPIO_LED3, .active_low = 1, }
++};
++
++static const struct gpio_led_platform_data apu2_leds_pdata /* __initconst */ = {
++	.num_leds	= ARRAY_SIZE(apu2_leds),
++	.leds		= apu2_leds,
++};
++
++static struct amd_fch_gpio_reg apu2_gpio_regs[] = {
++	{ 0x44 }, // GPIO_57 -- LED1
++	{ 0x45 }, // GPIO_58 -- LED2
++	{ 0x46 }, // GPIO_59 -- LED3
++	{ 0x59 }, // GPIO_32 -- LED4 -- GE32 -- #modesw
++	{ 0x5A }, // GPIO_33 -- LED5 -- GE33 -- simswap
++	{ 0x42 }, // GPIO_51 -- LED6
++	{ 0x43 }, // GPIO_55 -- LED7
++	{ 0x47 }, // GPIO_64 -- LED8
++	{ 0x48 }, // GPIO_68 -- LED9
++	{ 0x4C }, // GPIO_70 -- LED10
++};
++
++static struct gpio_keys_button apu2_keys_buttons[] = {
++	{
++		.code			= KEY_A,
++		.gpio			= GPIO_MODESW,
++		.active_low		= 1,
++		.desc			= "modeswitch",
++		.type			= EV_KEY, /* or EV_SW ? */
++		.debounce_interval	= 10,
++		.value			= 1,
++	}
++};
++
++static const struct gpio_keys_platform_data apu2_keys_pdata = {
++	.buttons	= apu2_keys_buttons,
++	.nbuttons	= ARRAY_SIZE(apu2_keys_buttons),
++	.poll_interval	= 100,
++	.rep		= 0,
++	.name		= "apu2-keys",
++};
++
++static const struct amd_fch_gpio_pdata board_apu2 = {
++	.res		= DEFINE_RES_MEM_NAMED(FCH_ACPI_MMIO_BASE + FCH_GPIO_OFFSET,
++					       FCH_GPIO_SIZE,
++					       "apu2-gpio-iomem"),
++	.gpio_num	= ARRAY_SIZE(apu2_gpio_regs),
++	.gpio_reg	= apu2_gpio_regs,
++	.gpio_base	= GPIO_BASE,
++};
++
++/* note: matching works on string prefix, so "apu2" must come before "apu" */
++static const struct dmi_system_id apu_gpio_dmi_table[] __initconst = {
++
++	/* APU2 w/ legacy bios < 4.0.8 */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU2")
++		},
++		.driver_data	= (void*)&board_apu2,
++	},
++	/* APU2 w/ legacy bios >= 4.0.8 */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu2")
++		},
++		.driver_data	= (void*)&board_apu2,
++	},
++	/* APU2 w/ maainline bios */
++	{
++		.ident		= "apu2",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
++		},
++		.driver_data	= (void*)&board_apu2,
++	},
++
++	/* APU3 w/ legacy bios < 4.0.8 */
++	{
++		.ident		= "apu3",
++		.matches	= {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "APU3")
++		},
++		.driver_data = (void*)&board_apu2,
++	},
++	/* APU3 w/ legacy bios >= 4.0.8 */
++	{
++		.ident       = "apu3",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "apu3")
++		},
++		.driver_data = (void*)&board_apu2,
++	},
++	/* APU3 w/ mainline bios */
++	{
++		.ident       = "apu3",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
++		},
++		.driver_data = (void*)&board_apu2,
++	},
++
++	/* APU1 */
++	/* not supported yet - the register set is pretty different
++	{
++		.ident       = "apu",
++		.matches     = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
++		},
++		.driver_data = (void*)&board_apu1,
++	},
++	*/
++	{}
++};
++
++static struct platform_device *apu_gpio_pdev = NULL;
++static struct platform_device *apu_leds_pdev = NULL;
++static struct platform_device *apu_keys_pdev = NULL;
++
++static int __init apu_gpio_init(void)
++{
++	int rc;
++	const struct dmi_system_id *dmi = dmi_first_match(apu_gpio_dmi_table);
++
++	if (!dmi) {
++		pr_err(KBUILD_MODNAME ": failed to detect apu board via dmi\n");
++		return -ENODEV;
++	}
++
++	pr_info(KBUILD_MODNAME ": registering gpio\n");
++	if (IS_ERR(apu_gpio_pdev = platform_device_register_resndata(
++			NULL,					/* parent */
++			AMD_FCH_GPIO_DRIVER_NAME,		/* name */
++			-1,					/* id */
++			NULL,					/* res */
++			0,					/* res_num */
++			dmi->driver_data,			/* platform_data */
++			sizeof(struct amd_fch_gpio_pdata)))) {
++		pr_err(KBUILD_MODNAME ": failed registering gpio device\n");
++		rc = PTR_ERR(apu_gpio_pdev);
++		goto fail;
++	}
++
++	pr_info(KBUILD_MODNAME ": registering leds\n");
++	if (IS_ERR(apu_leds_pdev = platform_device_register_resndata(
++			NULL,					/* parent */
++			"leds-gpio",				/* driver name */
++			-1,					/* id */
++			NULL,					/* res */
++			0,					/* ren_num */
++			&apu2_leds_pdata,			/* platform data */
++			sizeof(apu2_leds_pdata)))) {
++		pr_err(KBUILD_MODNAME ": failed registering leds device\n");
++		rc = PTR_ERR(apu_leds_pdev);
++		goto fail;
++	}
++
++	pr_info(KBUILD_MODNAME ": registering keys\n");
++	if (IS_ERR(apu_keys_pdev = platform_device_register_resndata(
++			NULL,					/* parent */
++			"gpio-keys-polled",			/* driver name */
++			-1,					/* id */
++			NULL,					/* res */
++			0,					/* res_num */
++			&apu2_keys_pdata,			/* platform_data */
++			sizeof(apu2_keys_pdata)))) {
++		pr_err(KBUILD_MODNAME ": failed registering keys device\n");
++		rc = PTR_ERR(apu_keys_pdev);
++		goto fail;
++	}
++
++	pr_info(KBUILD_MODNAME ": initialized: gpio, leds, keys\n");
++	return 0;
++
++fail:
++	if (!IS_ERR(apu_keys_pdev))
++		platform_device_unregister(apu_keys_pdev);
++	if (!IS_ERR(apu_leds_pdev))
++		platform_device_unregister(apu_leds_pdev);
++	if (!IS_ERR(apu_gpio_pdev))
++		platform_device_unregister(apu_gpio_pdev);
++
++	pr_err(KBUILD_MODNAME ": probe FAILED: %d\n", rc);
++	return rc;
++}
++
++static void __exit apu_gpio_exit(void)
++{
++	if (!IS_ERR(apu_keys_pdev))
++		platform_device_unregister(apu_keys_pdev);
++	if (!IS_ERR(apu_leds_pdev))
++		platform_device_unregister(apu_leds_pdev);
++	if (!IS_ERR(apu_gpio_pdev))
++		platform_device_unregister(apu_gpio_pdev);
++}
++
++module_init(apu_gpio_init);
++module_exit(apu_gpio_exit);
++
++MODULE_AUTHOR("Enrico Weigelt, metux IT consult <info@metux.net>");
++MODULE_DESCRIPTION("PC Engines APUv2 board GPIO/LED/keys driver");
++MODULE_LICENSE("GPL");
++MODULE_DEVICE_TABLE(dmi, apu_gpio_dmi_table);
++MODULE_ALIAS("platform:apu-board");
++MODULE_SOFTDEP("pre: gpio_amd_fch");
++MODULE_SOFTDEP("pre: gpio_keys");
++MODULE_SOFTDEP("pre: gpio_keys_polled");
+-- 
+1.9.1
+
