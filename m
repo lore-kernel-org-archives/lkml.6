@@ -2,102 +2,161 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E308EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B95FC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93E92175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 493932175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549519426;
+	bh=ckgsNnvjqTYu/CL2eMB7Vi5pPkP9yY64N4psaEuHick=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=MXe13VmnvFF2+9ZT/CIYbr794xL9Dtm+U7N2ouzmTv3KROVnjH7oINwkFeLK/2FXx
+	 TueHwp8fUFIX1pAYuXHUresJneXNNQExIgu3MlHYev3Szb6lr4QTwI2NRmbt9qCiXM
+	 IrRdxye6GVH7DkzVBN3zF6xsYjz71gh3SflKEtg0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfBGGBm (ORCPT
+        id S1726830AbfBGGDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 01:01:42 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46967 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfBGGBl (ORCPT
+        Thu, 7 Feb 2019 01:03:44 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45661 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726293AbfBGGDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 01:01:41 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f5so7209912lfc.13;
-        Wed, 06 Feb 2019 22:01:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YtjE25NANOkRGY0RUxMUUZAOa39JN3YFgyq9uzFUiuw=;
-        b=Ap77jc2+5oFDakiGFtYZ53FSoWNdC0WCrIqiqTwqSKSdGfblfEJBPHuQ0l/j2LM/FK
-         l14Ihr+AXNqaJ/1LvuPNDM5rPCzqYnVssAeirBkw3bX3gSoD/BNIr2CKr600GlkVM3ox
-         b211KzyqNFcjlxqcDyFAwSCBMv7h77Yj3sjX4QEusr4AO7eq0At9pt9s7L4YGRP9eFVC
-         UHC6H8nSMXAtnOPh1viGWWExyNo7aw840+hmCQbPot/bqOeiSzO3owSHouF+20g6lEpn
-         MAT80Um2NnKuSAM/uMU5QmXYdmyhGtZSlvMupCX95ntihw6+Um0zcBC9AaPm+8QRSIZj
-         p+cQ==
-X-Gm-Message-State: AHQUAua12tu08/DuVKFAY2YFiSNuxxCl+Ra8uPsxG6A2wbtyCX5/JK6h
-        hOI/QkhrlC/NCE8OgkxUguM=
-X-Google-Smtp-Source: AHgI3IbNt+QT3jXkTPbYd6sV0xozb+qYK9f6ctBZFsF7tycooX3IvjXSuPN0aBrMYdMsHf893CH2RQ==
-X-Received: by 2002:a19:59c2:: with SMTP id n185mr8667443lfb.118.1549519298495;
-        Wed, 06 Feb 2019 22:01:38 -0800 (PST)
-Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
-        by smtp.gmail.com with ESMTPSA id y10-v6sm4033646ljy.65.2019.02.06.22.01.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 22:01:37 -0800 (PST)
-Date:   Thu, 7 Feb 2019 08:01:04 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mazziesaccount@gmail.com, Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, sre@kernel.org, lgirdwood@gmail.com,
-        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        wim@linux-watchdog.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v7 05/10] clk: bd718x7: Support ROHM BD70528 clk block
-Message-ID: <20190207060104.GB5798@localhost.localdomain>
-References: <cover.1549444366.git.matti.vaittinen@fi.rohmeurope.com>
- <88c49b30bbb4b1f3ecc24d333647585e2c82f4e4.1549444366.git.matti.vaittinen@fi.rohmeurope.com>
- <154947428734.74891.4523492147164733315@swboyd.mtv.corp.google.com>
+        Thu, 7 Feb 2019 01:03:43 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 88477216C5;
+        Thu,  7 Feb 2019 01:03:40 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 07 Feb 2019 01:03:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=kybLdcasHY90S2gQe
+        i36OgIfnRf0JHFY0mLaV69S/wU=; b=bIbSSDbEykRBKdvpAhz3CA9JqcEx20ZAE
+        T8521aL7zl1m5u+YKFB5FU6/Ga+uGdfI4TBZNiIJcg0YXOgSi68VU7eMp7BaAp9d
+        dce1zoZkX1fJpcgvf3ohKtd2gEEvHHdvKP+Fc+w7kQLaYuMeGAiUVUJaVYBYJTFL
+        9YqHZQVecGThybGf47+QtFkxDWvqzTAes+he97ON+gFyuCKaf0uwu0OBtgkuPpyz
+        PvQj+KPZDl9QvSjLE3031gteT00L00Pf0uDlOFiXJUVcc4nhR62VxNc/rZsn6m3n
+        arB1B34fe7vWKKdBlkiEdAsUR7I2xPvBvwP7Bb1z1COjtZUP2pMAA==
+X-ME-Sender: <xms:O8pbXNQxXRW_JGGnLBL2cm2f55FS89hoXIwZh3PHYKTlho3QGt_hUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrkeelgdekkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffogg
+    fgsedtkeertdertddtnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcu
+    oehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukfhppeduvddurdeggedrvddviedrud
+    ejleenucfrrghrrghmpehmrghilhhfrhhomhepthhosghinheskhgvrhhnvghlrdhorhhg
+    necuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:O8pbXKmDl-JDFGx9MRS7GaML-CMECMoGs0yccizsuJCPxiquSs-b1Q>
+    <xmx:O8pbXL5E5tp68kdDK9BBZJ24pnoXFnmCL5_65xr2wyJ63kCySP4bFQ>
+    <xmx:O8pbXIhU0KxtGkqmeu-hUmUpzEOXRFPhxQB-NyvynFtU6oWNx89AYQ>
+    <xmx:PMpbXC_KwOcql2wyBTdngtge1TVuNP6BujYEbhVm5ATPOnU-E3HyiA>
+Received: from eros.localdomain (ppp121-44-226-179.bras2.syd2.internode.on.net [121.44.226.179])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 32B7DE425A;
+        Thu,  7 Feb 2019 01:03:36 -0500 (EST)
+From:   "Tobin C. Harding" <tobin@kernel.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] Start conversion of PowerPC docs
+Date:   Thu,  7 Feb 2019 17:03:15 +1100
+Message-Id: <20190207060316.3221-1-tobin@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154947428734.74891.4523492147164733315@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 09:31:27AM -0800, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2019-02-06 01:39:38)
-> > @@ -86,9 +87,21 @@ static int bd71837_clk_probe(struct platform_device *pdev)
-> >                 dev_err(&pdev->dev, "No parent clk found\n");
-> >                 return -EINVAL;
-> >         }
-> > -
-> > -       c->reg = BD718XX_REG_OUT32K;
-> > -       c->mask = BD718XX_OUT32K_EN;
-> > +       switch (mfd->chip_type) {
-> > +       case ROHM_CHIP_TYPE_BD71837:
-> > +       case ROHM_CHIP_TYPE_BD71847:
-> > +
-> 
-> Nitpick: why the extra newline above?
-For no obvious reason. I'll fix this as I need to create new version
-anyways. I'll squash the first 3 patches and fix some issues pointed out
-by the 0-Day test suite.
+Hi Michael,
 
-Br,
-	Matti Vaittinen
+As discussed at LCA here is the start to the docs conversion for PowerPC
+to RST.
+
+This applies cleanly on top of the mainline (5.20-rc5) and Jon's tree
+(docs-next branch).
+
+I'm guessing it should go in through the PowerPC tree because I doubt
+you want to review this Jon, it's one big single patch (all blame for
+that falls on mpe ;)
+
+This patch converts all the files that do _not_ contain ASCII art - I'm
+not sure how to go about doing those, suggestions please.
+
+From the commit message:
+
+ - Add SPDX license identifier to each new RST file.
+
+    .. SPDX-License-Identifier: GPL-2.0
+
+ - User correct heading adornments.
+
+ - Make all lines < 72 characters in width.
+
+ - Use correct indentation for code blocks, add syntax highlighting
+
+ - Sparingly use double ticks if it makes the files easier to parse
+   both in text and on the web.
+
+ - Fix any super obvious typos (lean towards not making changes so that
+   we don't introduce errors).
+
+Edited as text files (obviously) and formatted as HTML to verify
+rendering, no other formats verified.
+
+thanks,
+Tobin.
+
+Tobin C. Harding (1):
+  docs: powerpc: Convert docs to RST format.
+
+ Documentation/index.rst                       |   1 +
+ Documentation/powerpc/DAWR-POWER9.rst         |  60 ++++
+ Documentation/powerpc/DAWR-POWER9.txt         |  58 ---
+ Documentation/powerpc/bootwrapper.rst         | 140 ++++++++
+ Documentation/powerpc/bootwrapper.txt         | 141 --------
+ Documentation/powerpc/conf.py                 |  10 +
+ Documentation/powerpc/cpu_features.rst        |  62 ++++
+ Documentation/powerpc/cpu_features.txt        |  56 ---
+ .../powerpc/eeh-pci-error-recovery.rst        | 319 +++++++++++++++++
+ .../powerpc/eeh-pci-error-recovery.txt        | 334 ------------------
+ Documentation/powerpc/index.rst               |  21 ++
+ Documentation/powerpc/isa-versions.rst        | 234 ++++++++----
+ Documentation/powerpc/mpc52xx.rst             |  52 +++
+ Documentation/powerpc/mpc52xx.txt             |  39 --
+ Documentation/powerpc/pmu-ebb.rst             | 148 ++++++++
+ Documentation/powerpc/pmu-ebb.txt             | 137 -------
+ Documentation/powerpc/ptrace.rst              | 177 ++++++++++
+ Documentation/powerpc/ptrace.txt              | 151 --------
+ .../{syscall64-abi.txt => syscall64-abi.rst}  |  80 +++--
+ .../powerpc/transactional_memory.rst          | 259 ++++++++++++++
+ .../powerpc/transactional_memory.txt          | 244 -------------
+ 21 files changed, 1460 insertions(+), 1263 deletions(-)
+ create mode 100644 Documentation/powerpc/DAWR-POWER9.rst
+ delete mode 100644 Documentation/powerpc/DAWR-POWER9.txt
+ create mode 100644 Documentation/powerpc/bootwrapper.rst
+ delete mode 100644 Documentation/powerpc/bootwrapper.txt
+ create mode 100644 Documentation/powerpc/conf.py
+ create mode 100644 Documentation/powerpc/cpu_features.rst
+ delete mode 100644 Documentation/powerpc/cpu_features.txt
+ create mode 100644 Documentation/powerpc/eeh-pci-error-recovery.rst
+ delete mode 100644 Documentation/powerpc/eeh-pci-error-recovery.txt
+ create mode 100644 Documentation/powerpc/index.rst
+ create mode 100644 Documentation/powerpc/mpc52xx.rst
+ delete mode 100644 Documentation/powerpc/mpc52xx.txt
+ create mode 100644 Documentation/powerpc/pmu-ebb.rst
+ delete mode 100644 Documentation/powerpc/pmu-ebb.txt
+ create mode 100644 Documentation/powerpc/ptrace.rst
+ delete mode 100644 Documentation/powerpc/ptrace.txt
+ rename Documentation/powerpc/{syscall64-abi.txt => syscall64-abi.rst} (58%)
+ create mode 100644 Documentation/powerpc/transactional_memory.rst
+ delete mode 100644 Documentation/powerpc/transactional_memory.txt
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+2.20.1
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
