@@ -2,220 +2,206 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF80DC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2916C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A2421904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EB812190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539744;
-	bh=8GJQ6K8i8b2i9RUOR5rhXCJl7zECUdrLoSVF0mlLcsg=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Ih+F97x2Ifkq/woEMLizFFew5Ko+aTJh1/6LD5pQzF9wiDE6hQInqhk2eQjeX8HUw
-	 9JMqc6R34oGM5M4Gx4OKxaM/rprC5qViOvsUcJPCuCoVNmJxDFxjOYhNyIrNVZJuTt
-	 ebki6uOnVMA+dHspC2R6b+ENNcvqD9Uwm59gowW4=
+	s=default; t=1549539751;
+	bh=voYghfDWK3zOmsLaBiOY/384Shx3baxqwZ6Al2fDdOU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=PX2nFJ8vYdTbxj7JGohXeHThjh+hEWqpWe4G5EEK0otp2QID/rkp1Xp/bsb9SUiwG
+	 RhGNWnBV6zQK5D/tQU6Q2Oher0YpL0OF7H/0cyHnthZrjYSPm8KANhJU687LkE0m5d
+	 AMgr+1lW+O+X7VSHK9kCFpMFm4uCmLdPqX1kpemc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfBGLmW (ORCPT
+        id S1726994AbfBGLma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:42:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60616 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:42:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfBGLmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:42:22 -0500
+        id S1726691AbfBGLm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:42:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25656218FE;
-        Thu,  7 Feb 2019 11:42:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B446221907;
+        Thu,  7 Feb 2019 11:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539740;
-        bh=8GJQ6K8i8b2i9RUOR5rhXCJl7zECUdrLoSVF0mlLcsg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xg25pfbHhSYHKVqwhpnNJGg0ijcYVTij1SchyCxceODY3UzxhYDNXrhf4NPYZuewR
-         x3mNVpmOl0i63gnc+TdnftsCQ152DcYsA1csOou4h3PI4wKXPP2/6QVG15eOCrVgMG
-         cIS6DJmwb6Suf6p82wNJTkGUTVhPYvbQjRq/yAdU=
+        s=default; t=1549539748;
+        bh=voYghfDWK3zOmsLaBiOY/384Shx3baxqwZ6Al2fDdOU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZaVae5218YPDDtw7R+MKwX4aU7AXOM9X1DCU18qWk4pgebOEGssUu7Ioo09Q2Z2RZ
+         2O1c5GeT8/iG+bCfXz4EjnLY5ON83n7K1/8GGftebAr59uCtWvn7rnmH8ad5GIyXk+
+         gBuSvsWB2PFm+4f4cORBpkJ30ZH70EbJezjFn8yI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/34] 4.4.174-stable review
-Date:   Thu,  7 Feb 2019 12:41:42 +0100
-Message-Id: <20190207113025.552605181@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 01/34] inet: frags: change inet_frags_init_net() return value
+Date:   Thu,  7 Feb 2019 12:41:43 +0100
+Message-Id: <20190207113025.610460985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
+References: <20190207113025.552605181@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.174-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.174-rc1
-X-KernelTest-Deadline: 2019-02-09T11:30+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.174 release.
-There are 34 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Feb  9 11:30:10 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.174-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+From: Eric Dumazet <edumazet@google.com>
 
-thanks,
+commit 787bea7748a76130566f881c2342a0be4127d182 upstream.
 
-greg k-h
+We will soon initialize one rhashtable per struct netns_frags
+in inet_frags_init_net().
 
--------------
-Pseudo-Shortlog of commits:
+This patch changes the return value to eventually propagate an
+error.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.174-rc1
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/net/inet_frag.h                 |    3 ++-
+ net/ieee802154/6lowpan/reassembly.c     |   11 ++++++++---
+ net/ipv4/ip_fragment.c                  |   12 +++++++++---
+ net/ipv6/netfilter/nf_conntrack_reasm.c |   12 +++++++++---
+ net/ipv6/reassembly.c                   |   11 +++++++++--
+ 5 files changed, 37 insertions(+), 12 deletions(-)
 
-Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-    rcu: Force boolean subscript for expedited stall warnings
-
-Michal Kubecek <mkubecek@suse.cz>
-    net: ipv4: do not handle duplicate fragments as overlapping
-
-Dimitris Michailidis <dmichail@google.com>
-    net: fix pskb_trim_rcsum_slow() with odd trim offset
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: better deal with smp races
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    ipv4: frags: precedence bug in ip_expire()
-
-Taehee Yoo <ap420073@gmail.com>
-    ip: frags: fix crash in ip_do_fragment()
-
-Peter Oskolkov <posk@google.com>
-    ip: process in-order fragments efficiently
-
-Peter Oskolkov <posk@google.com>
-    ip: add helpers to process in-order fragments faster.
-
-Peter Oskolkov <posk@google.com>
-    ip: use rb trees for IP frag queue.
-
-Eric Dumazet <edumazet@google.com>
-    net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
-
-Florian Westphal <fw@strlen.de>
-    ipv6: defrag: drop non-last frags smaller than min mtu
-
-Peter Oskolkov <posk@google.com>
-    net: modify skb_rbtree_purge to return the truesize of all purged skbs.
-
-Peter Oskolkov <posk@google.com>
-    ip: discard IPv4 datagrams with overlapping segments.
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: fix ip6frag_low_thresh boundary
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: get rid of ipfrag_skb_cb/FRAG_CB
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: reorganize struct netns_frags
-
-Eric Dumazet <edumazet@google.com>
-    rhashtable: reorganize struct rhashtable layout
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: frags: rewrite ip6_expire_frag_queue()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: do not clone skb in ip_expire()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: break the 2GB limit for frags storage
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: remove inet_frag_maybe_warn_overflow()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: get rif of inet_frag_evicting()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: remove some helpers
-
-Paolo Abeni <pabeni@redhat.com>
-    ipfrag: really prevent allocation on netns exit
-
-Alexander Aring <aring@mojatatu.com>
-    net: ieee802154: 6lowpan: fix frag reassembly
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: use rhashtables for reassembly units
-
-Eric Dumazet <edumazet@google.com>
-    rhashtable: add schedule points
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    rhashtable: Add rhashtable_lookup()
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    rhashtable: add rhashtable_lookup_get_insert_key()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: refactor lowpan_net_frag_init()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: refactor ipv6_frag_init()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: refactor ipfrag_init()
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: add a pointer to struct netns_frags
-
-Eric Dumazet <edumazet@google.com>
-    inet: frags: change inet_frags_init_net() return value
-
-
--------------
-
-Diffstat:
-
- Documentation/networking/ip-sysctl.txt  |  13 +-
- Makefile                                |   4 +-
- include/linux/rhashtable.h              | 143 ++++++--
- include/linux/skbuff.h                  |  16 +-
- include/net/inet_frag.h                 | 133 ++++----
- include/net/ip.h                        |   1 -
- include/net/ipv6.h                      |  26 +-
- include/uapi/linux/snmp.h               |   1 +
- kernel/rcu/tree.c                       |   2 +-
- lib/rhashtable.c                        |  15 +-
- net/core/skbuff.c                       |  21 +-
- net/ieee802154/6lowpan/6lowpan_i.h      |  26 +-
- net/ieee802154/6lowpan/reassembly.c     | 148 ++++-----
- net/ipv4/inet_fragment.c                | 389 +++++-----------------
- net/ipv4/ip_fragment.c                  | 571 ++++++++++++++++++--------------
- net/ipv4/proc.c                         |   7 +-
- net/ipv6/netfilter/nf_conntrack_reasm.c | 100 +++---
- net/ipv6/proc.c                         |   5 +-
- net/ipv6/reassembly.c                   | 209 ++++++------
- 19 files changed, 868 insertions(+), 962 deletions(-)
+--- a/include/net/inet_frag.h
++++ b/include/net/inet_frag.h
+@@ -103,9 +103,10 @@ struct inet_frags {
+ int inet_frags_init(struct inet_frags *);
+ void inet_frags_fini(struct inet_frags *);
+ 
+-static inline void inet_frags_init_net(struct netns_frags *nf)
++static inline int inet_frags_init_net(struct netns_frags *nf)
+ {
+ 	atomic_set(&nf->mem, 0);
++	return 0;
+ }
+ void inet_frags_exit_net(struct netns_frags *nf, struct inet_frags *f);
+ 
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -580,14 +580,19 @@ static int __net_init lowpan_frags_init_
+ {
+ 	struct netns_ieee802154_lowpan *ieee802154_lowpan =
+ 		net_ieee802154_lowpan(net);
++	int res;
+ 
+ 	ieee802154_lowpan->frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	ieee802154_lowpan->frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	ieee802154_lowpan->frags.timeout = IPV6_FRAG_TIMEOUT;
+ 
+-	inet_frags_init_net(&ieee802154_lowpan->frags);
+-
+-	return lowpan_frags_ns_sysctl_register(net);
++	res = inet_frags_init_net(&ieee802154_lowpan->frags);
++	if (res < 0)
++		return res;
++	res = lowpan_frags_ns_sysctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&ieee802154_lowpan->frags, &lowpan_frags);
++	return res;
+ }
+ 
+ static void __net_exit lowpan_frags_exit_net(struct net *net)
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -853,6 +853,8 @@ static void __init ip4_frags_ctl_registe
+ 
+ static int __net_init ipv4_frags_init_net(struct net *net)
+ {
++	int res;
++
+ 	/* Fragment cache limits.
+ 	 *
+ 	 * The fragment memory accounting code, (tries to) account for
+@@ -876,9 +878,13 @@ static int __net_init ipv4_frags_init_ne
+ 	 */
+ 	net->ipv4.frags.timeout = IP_FRAG_TIME;
+ 
+-	inet_frags_init_net(&net->ipv4.frags);
+-
+-	return ip4_frags_ns_ctl_register(net);
++	res = inet_frags_init_net(&net->ipv4.frags);
++	if (res < 0)
++		return res;
++	res = ip4_frags_ns_ctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&net->ipv4.frags, &ip4_frags);
++	return res;
+ }
+ 
+ static void __net_exit ipv4_frags_exit_net(struct net *net)
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -650,12 +650,18 @@ EXPORT_SYMBOL_GPL(nf_ct_frag6_consume_or
+ 
+ static int nf_ct_net_init(struct net *net)
+ {
++	int res;
++
+ 	net->nf_frag.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	net->nf_frag.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	net->nf_frag.frags.timeout = IPV6_FRAG_TIMEOUT;
+-	inet_frags_init_net(&net->nf_frag.frags);
+-
+-	return nf_ct_frag6_sysctl_register(net);
++	res = inet_frags_init_net(&net->nf_frag.frags);
++	if (res < 0)
++		return res;
++	res = nf_ct_frag6_sysctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&net->nf_frag.frags, &nf_frags);
++	return res;
+ }
+ 
+ static void nf_ct_net_exit(struct net *net)
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -708,13 +708,20 @@ static void ip6_frags_sysctl_unregister(
+ 
+ static int __net_init ipv6_frags_init_net(struct net *net)
+ {
++	int res;
++
+ 	net->ipv6.frags.high_thresh = IPV6_FRAG_HIGH_THRESH;
+ 	net->ipv6.frags.low_thresh = IPV6_FRAG_LOW_THRESH;
+ 	net->ipv6.frags.timeout = IPV6_FRAG_TIMEOUT;
+ 
+-	inet_frags_init_net(&net->ipv6.frags);
++	res = inet_frags_init_net(&net->ipv6.frags);
++	if (res < 0)
++		return res;
+ 
+-	return ip6_frags_ns_sysctl_register(net);
++	res = ip6_frags_ns_sysctl_register(net);
++	if (res < 0)
++		inet_frags_exit_net(&net->ipv6.frags, &ip6_frags);
++	return res;
+ }
+ 
+ static void __net_exit ipv6_frags_exit_net(struct net *net)
 
 
