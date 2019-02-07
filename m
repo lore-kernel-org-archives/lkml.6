@@ -2,112 +2,146 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F4CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324D8C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBDE420863
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:14:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09B1A20863
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfBGQOI (ORCPT
+        id S1726864AbfBGQPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:14:08 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50366 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfBGQOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:14:08 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 571F8A1F3AA1B816CC6A;
-        Fri,  8 Feb 2019 00:14:05 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 8 Feb 2019 00:13:56 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <rjw@rjwysocki.net>, <lenb@kernel.org>
-CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jeremy.linton@arm.com>, <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] ACPI/PPTT: Add acpi_pptt_warn_missing() to consolidate logs
-Date:   Fri, 8 Feb 2019 00:14:21 +0800
-Message-ID: <1549556061-107418-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        Thu, 7 Feb 2019 11:15:08 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39592 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbfBGQPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:15:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77532A78;
+        Thu,  7 Feb 2019 08:15:07 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F15133F675;
+        Thu,  7 Feb 2019 08:15:05 -0800 (PST)
+Date:   Thu, 7 Feb 2019 16:15:02 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] PCI: keystone: Modify legacy_irq_handler to check
+ the IRQ_STATUS of INTA/B/C/D
+Message-ID: <20190207161502.GC21111@e107981-ln.cambridge.arm.com>
+References: <20190207110924.30716-1-kishon@ti.com>
+ <20190207110924.30716-3-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207110924.30716-3-kishon@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For a system using ACPI-based FW without a PPTT, we may get many warnings
-about the lack of a PPTT, as shown:
+On Thu, Feb 07, 2019 at 04:39:17PM +0530, Kishon Vijay Abraham I wrote:
+> The legacy interrupt handler directly checks the IRQ_STATUS register
+> corresponding to a interrupt line inorder to invoke generic_handle_irq.
+> 
+> While this is okay for K2G platform which has separate interrupt line for
+> each of the 4 legacy interrupts, AM654 which uses the same PCIe wrapper
+> has a single interrupt line for all the legacy interrupts. So for AM654
+> the interrupt handler won't be able to directly check the IRQ_STATUS
+> register corresponding to the interrupt line.
+> 
+> Also the legacy interrupt handler uses 'virq' obtained from
+> irq_of_parse_and_map to find the correct interrupt line which raised the
+> interrupt. There is no guarantee that virq assigned for contiguous hardware
+> irq will be contiguous and the interrupt handler might end up checking
+> the wrong IRQ_STATUS register.
+> 
+> In order to overcome the above issues, read the IRQ_STATUS register of
+> all the 4 legacy interrupts to determine which interrupt was raised.
+> 
+> Link: https://lkml.kernel.org/r/bb081d21-7c03-0357-4294-7e92d95d838c@arm.com
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 5286a480f76b..4cf9849d5a1d 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -214,16 +214,11 @@ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+>  {
+>  	struct dw_pcie *pci = ks_pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	u32 pending;
+>  	int virq;
+>  
+> -	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
+> -
+> -	if (BIT(0) & pending) {
+> -		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
+> -		dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
+> -		generic_handle_irq(virq);
+> -	}
+> +	virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
+> +	dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
+> +	generic_handle_irq(virq);
+>  
+>  	/* EOI the INTx interrupt */
+>  	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
+> @@ -607,8 +602,9 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+>  	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+>  	struct dw_pcie *pci = ks_pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
+>  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	unsigned int irq_no;
+> +	u32 reg;
+>  
+>  	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
+>  
+> @@ -618,7 +614,13 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+>  	 * ack operation.
+>  	 */
+>  	chained_irq_enter(chip, desc);
+> -	ks_pcie_handle_legacy_irq(ks_pcie, irq_offset);
+> +	for (irq_no = 0; irq_no < PCI_NUM_INTX; irq_no++) {
 
-root@(none)$ dmesg | grep -i pptt
-[    0.010125] ACPI PPTT: No PPTT table found, cpu topology may be inaccurate
-[    7.138339] ACPI PPTT: No PPTT table found, cache topology may be inaccurate
-[    7.145368] ACPI PPTT: No PPTT table found, cache topology may be inaccurate
+I understand the aim of this code but now on platforms where there
+is a 1:1 relationship between Linux IRQ and INTX this loop has
+steps carried out for nothing.
 
-These logs are generated with pr_warn_once(), so the intention was for a
-single log, but the logs overlap, so consolidate them.
+If I understand the code correctly what this code does is force
+looping over INTX status regs regardless of what linux IRQ number was
+actually active.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
+You could do something faster by creating a matrix LinuxIRQ x INTx to
+detect what INTx status register should actually be checked.
 
-diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-index da031b1df6f5..ad31c50de3be 100644
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -451,6 +451,11 @@ static struct acpi_pptt_processor *acpi_find_processor_package_id(struct acpi_ta
- 	return cpu;
- }
- 
-+static void acpi_pptt_warn_missing(void)
-+{
-+	pr_warn_once("No PPTT table found, cpu and cache topology may be inaccurate\n");
-+}
-+
- /**
-  * topology_get_acpi_cpu_tag() - Find a unique topology value for a feature
-  * @table: Pointer to the head of the PPTT table
-@@ -498,7 +503,7 @@ static int find_acpi_cpu_topology_tag(unsigned int cpu, int level, int flag)
- 
- 	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
- 	if (ACPI_FAILURE(status)) {
--		pr_warn_once("No PPTT table found, cpu topology may be inaccurate\n");
-+		acpi_pptt_warn_missing();
- 		return -ENOENT;
- 	}
- 	retval = topology_get_acpi_cpu_tag(table, cpu, level, flag);
-@@ -531,7 +536,7 @@ int acpi_find_last_cache_level(unsigned int cpu)
- 	acpi_cpu_id = get_acpi_id_for_cpu(cpu);
- 	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
- 	if (ACPI_FAILURE(status)) {
--		pr_warn_once("No PPTT table found, cache topology may be inaccurate\n");
-+		acpi_pptt_warn_missing();
- 	} else {
- 		number_of_levels = acpi_find_cache_levels(table, acpi_cpu_id);
- 		acpi_put_table(table);
-@@ -563,7 +568,7 @@ int cache_setup_acpi(unsigned int cpu)
- 
- 	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
- 	if (ACPI_FAILURE(status)) {
--		pr_warn_once("No PPTT table found, cache topology may be inaccurate\n");
-+		acpi_pptt_warn_missing();
- 		return -ENOENT;
- 	}
- 
-@@ -617,7 +622,7 @@ int find_acpi_cpu_cache_topology(unsigned int cpu, int level)
- 
- 	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
- 	if (ACPI_FAILURE(status)) {
--		pr_warn_once("No PPTT table found, topology may be inaccurate\n");
-+		acpi_pptt_warn_missing();
- 		return -ENOENT;
- 	}
- 
--- 
-2.17.1
+This seems overkill to me but it is not that complicated to implement
+and may clarify the code (and avoid reading up to three registers for
+nothing on the IRQ code path, which can make things faster too).
 
+Lorenzo
+
+> +		reg = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(irq_no));
+> +		if (!(reg & INTx_EN))
+> +			continue;
+> +		ks_pcie_handle_legacy_irq(ks_pcie, irq_no);
+> +	}
+> +
+>  	chained_irq_exit(chip, desc);
+>  }
+>  
+> -- 
+> 2.17.1
+> 
