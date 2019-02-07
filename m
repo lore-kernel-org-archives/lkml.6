@@ -2,119 +2,136 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A55C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE693C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EEDB20863
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC51A21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3417xV9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfBGPl7 (ORCPT
+        id S1726894AbfBGPmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:41:59 -0500
-Received: from p3plsmtpa11-04.prod.phx3.secureserver.net ([68.178.252.105]:47295
-        "EHLO p3plsmtpa11-04.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726037AbfBGPl6 (ORCPT
+        Thu, 7 Feb 2019 10:42:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37538 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfBGPmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:41:58 -0500
-Received: from [192.168.0.55] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id rloKgn9rxZBM2rloKgnqGf; Thu, 07 Feb 2019 08:41:58 -0700
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-To:     Doug Ledford <dledford@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
- <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <20190207035258.GD6173@dastard> <20190207052310.GA22726@ziepe.ca>
- <CC414509-F046-49E3-9D0C-F66FD488AC64@oracle.com>
- <6b260348-966a-bc95-162b-44ae8265cf03@talpey.com>
- <f000f699219a8f636dccfbe1fde3e17acdc674a4.camel@redhat.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <ea175620-3dc2-c7f0-1590-02080216edf8@talpey.com>
-Date:   Thu, 7 Feb 2019 10:41:55 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 7 Feb 2019 10:42:32 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b5so104101plr.4;
+        Thu, 07 Feb 2019 07:42:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NIgsqiuQR28DVR70vS/tR7cqO2gKsSLJxdOnp0Nf0dg=;
+        b=h3417xV9nJRVKTGENqUROxdGpMPdwb4oZiIiJsujek4PMRDVtghhyD8VVgLODyfytN
+         oDg+OB+gqmr92oNlQjtjjOlk2ySWEGo4cyD/H6rU8EH8FenTQQF+bIQ1fcJLsCyi+YZl
+         qXxdiDm9mvwiXeHlFzqFBUW7PP+A4wuAC+9dNQr7WUfcVc9l0pf+Cey8BmiSeDA143lQ
+         pkeU8UpPAKT2O//+OqW7IWgkUW3uqUDhULdZUFxQu7KHpjHa7FP131oP+aaQsRJs/Xoc
+         wLauU0+l1YQsklC/7lwRpqGiL4KaNoxZV3k1py7CiD/rVZ3Y+ts4SurntkU480nbhQb5
+         acTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NIgsqiuQR28DVR70vS/tR7cqO2gKsSLJxdOnp0Nf0dg=;
+        b=RhThiEqkwsiN6PGOOrKyufRrZn9IEHVQFq2035sJUHztIn/9FMofGTKK8sllWiPhv2
+         3KuVLffSAh5ZrN36GmAMCk8ihOU09TklfK/AC/ICZ8mYdwwKjHQ1TJ+/jJxdoJpUmkz9
+         495KDm6roDWhCBmiXgMOy/git5fUiVCIG2yVE3JJF4S+iojV8qvKBQ1JEGrmTx5k1yUB
+         g27vXQ1oXgQMkVKUOoPxvHCE8w2/tAIWQ7k3OBOgmqs2ip9SmQmn+WX4AFV/hIzt925e
+         XrQJiwJEcxY0DkxQdAaq5UNlX8gAmzYVTOuMAX1DaSBMiamBT4tnsS6/X/nNfEQaE711
+         8r/g==
+X-Gm-Message-State: AHQUAuaxCbIbVonhenNaxo74dvnIndFFW1/OgOcrbSAio1vIJhPMuNVj
+        r8Ix6lTcbDg47wgsMFFOUJE=
+X-Google-Smtp-Source: AHgI3IbicIP2yZbeFS7vGVKcZD3eNkaLdqvKjCk8gW7D89GUHUyn97SDf16i6XfIN2pgJBN0SgK7MQ==
+X-Received: by 2002:a17:902:9691:: with SMTP id n17mr17534229plp.9.1549554151522;
+        Thu, 07 Feb 2019 07:42:31 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e2sm13088357pga.92.2019.02.07.07.42.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 07:42:30 -0800 (PST)
+Date:   Thu, 7 Feb 2019 07:42:29 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v8 4/8] devicetree: bindings: Document first ROHM BD70528
+ bindings
+Message-ID: <20190207154229.GA19277@roeck-us.net>
+References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <52b17ed2599b21f4b93665ac689113ce3f8816b7.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190207140418.GH20638@dell>
+ <20190207153600.GA1920@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <f000f699219a8f636dccfbe1fde3e17acdc674a4.camel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAF0L4q5BF+i2qxDq6hVvHGMzH5m66vAghTMsoCkgYnCEuoe07eEabPDGQlm6rBhVYK4mOVWeWaN7kbjDPuwZW8nockMHBDnB3CIZXqsP97b07ggiqww
- Nv2u9ttTGXvumDNmU0vN4fXpYKLUMOBx4x5rwGMR4lQte/LdVOt55sDnjTM+3rCdpFSnwvZ81RTtpSTdU7it/LCQFPyNSgzaZ1O9KSiIDabXKUN5cL9UpQsU
- JrkRBbkkqkr11pTwg1bZJlV1BTbQZtB3iRPV7GWphJ61sP1VRQOHc7grpvaGhR0ZPS3pEV2AjOur6Nw39jhi6JrS4k0Qb08h1KjxHBFlUfq3fs+W9IOPU8Y0
- nw9zamydxuFzxd+9KpYzH6s/45BGeQTYMDiTYg+TItDHeVawvuPn/rIZX9bs1XFpxJZaOxvfw8vGmVOmDzlQPn3a2CXFf3Zo1MhJVOh7wsdCCqZwTWtWeUqv
- QIZiqwzc8du2ffu+BKmpZbubSDsHiYNcE099rQPsIV9sDcv7Owa1y1Xdt1C02EfEdz+J9suziPFR78Dz0vNDVyM3gbwu4n4hkVBsWqyFdcBu1hD5i6cTMHLc
- E9RVNFQdAITsHGHYTI8ZHwSq3uwDJXPM0GCYCzqLxRIHdJIukv5UdLOZXxXrfzccK2A=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207153600.GA1920@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/2019 10:37 AM, Doug Ledford wrote:
-> On Thu, 2019-02-07 at 10:28 -0500, Tom Talpey wrote:
->> On 2/7/2019 10:04 AM, Chuck Lever wrote:
->>>
->>>> On Feb 7, 2019, at 12:23 AM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->>>>
->>>> On Thu, Feb 07, 2019 at 02:52:58PM +1100, Dave Chinner wrote:
->>>>
->>>>> Requiring ODP capable hardware and applications that control RDMA
->>>>> access to use file leases and be able to cancel/recall client side
->>>>> delegations (like NFS is already able to do!) seems like a pretty
->>>>
->>>> So, what happens on NFS if the revoke takes too long?
->>>
->>> NFS distinguishes between "recall" and "revoke". Dave used "recall"
->>> here, it means that the server recalls the client's delegation. If
->>> the client doesn't respond, the server revokes the delegation
->>> unilaterally and other users are allowed to proceed.
->>
->> The SMB3 protocol has a similar "lease break" mechanism, btw.
->>
->> SMB3 "push mode" has long-expected to allow DAX mapping of files
->> only when an exclusive lease is held by the requesting client.
->> The server may recall the lease if the DAX mapping needs to change.
->>
->> Once local (MMU) and remote (RDMA) mappings are dropped, the
->> client may re-request that the server reestablish them. No
->> connection or process is terminated, and no data is silently lost.
+On Thu, Feb 07, 2019 at 05:36:00PM +0200, Matti Vaittinen wrote:
+> Hello Lee,
 > 
-> Yeah, but you're referring to a situation where the communication agent
-> and the filesystem agent are one and the same and they work
-> cooperatively to resolve the issue.  With DAX under Linux, the
-> filesystem agent and the communication agent are separate, and right
-> now, to my knowledge, the filesystem agent doesn't tell the
-> communication agent about a broken lease, it want's to be able to do
-> things 100% transparently without any work on the communication agent's
-> part.  That works for ODP, but not for anything else.  If the filesystem
-> notified the communication agent of the need to drop the MMU region and
-> rebuild it, the communication agent could communicate that to the remote
-> host, and things would work.  But there's no POSIX message for "your
-> file is moving on media, redo your mmap".
+> Thanks for the reviews!
+> 
+> On Thu, Feb 07, 2019 at 02:04:18PM +0000, Lee Jones wrote:
+> > On Thu, 07 Feb 2019, Matti Vaittinen wrote:
+> > 
+> > > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> > > drivers) and 4 GPIO pins which can be configured for I/O or
+> > > as interrupt sources withe configurable trigger levels.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > > ---
+> > >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++++++++++++++++++++
+> > >  1 file changed, 102 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> > > new file mode 100644
+> > > index 000000000000..f80be7e40184
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> > > @@ -0,0 +1,102 @@
+> > > +* ROHM BD70528 Power Management Integrated Circuit bindings
+> > > +
+> > > +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
+> > 
+> > What's an Iq?
+> 
+> http://www.ti.com/lit/an/slyt412/slyt412.pdf
+> Iq is an abbreviation of quiescet current. Do you think it's worth
+> writing the whole words instead of an abbreviation?
+> 
+https://acronyms.thefreedictionary.com/IQ lists 23 definitions.
+This one is not listed. Yes, I think it would be beneficial to use
+the whole word.
 
-Indeed, the MMU notifier and the filesystem need to be integrated.
+Guenter
 
-I'm unmoved by the POSIX argument. This stuff didn't happen in 1990.
-
-Tom.
+> Thanks for the rest of the corrections, I'll fix them in next version.
+> 
+> Br,
+> 	Matti Vaittinen
