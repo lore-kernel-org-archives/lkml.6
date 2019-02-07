@@ -2,140 +2,172 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112F0C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A17C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2EEE2083B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED4362083B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:47:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="tFvSjWEM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeMcskHP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfBGRq7 (ORCPT
+        id S1726958AbfBGRrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:46:59 -0500
-Received: from mx2.ucr.edu ([138.23.62.3]:18734 "EHLO mx2.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfBGRq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:46:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1549561615; x=1581097615;
-  h=from:to:cc:subject:date:message-id;
-  bh=wImntgiBJtk3wwGZmT6fv88DkNLi+LVBqQWMeTeg6K4=;
-  b=tFvSjWEMv5doygeYrIZA47vnhv/Q58aPFpuk0aSwOZdl+CMhlK8JhIfT
-   mNs7yuvFUUsZ+Y4XEtbMFa/D7cUXD/Pd/jewnKiSD1c/o4EkAmEKPuj5r
-   nnbfBXgPsY6QOV6Kx3NxUKt8atbVRwpNhDHfXjPcWQR57Yy71K7S2W5wT
-   X7oGoKAWzjnwvWWDCYkiQzit6Nt/czqLcbbiM3g+oWXahVoYcnh4Csnll
-   3SXjcKYgrvCGE0b8tbvWSfHq8Ate+Y8HCiaI8gG+UCNkDM1+t8M8Sbsma
-   udUwLQ8oqGQ36skHQBlN9KgwwA83qnhRuDfFC+6E3rJd/xFT03DmFZs45
-   Q==;
-IronPort-PHdr: =?us-ascii?q?9a23=3AB1OKWxA8HpbGAlKaArEZUyQJP3N1i/DPJgcQr6Af?=
- =?us-ascii?q?oPdwSPvzpcbcNUDSrc9gkEXOFd2Cra4c26yO6+jJYi8p2d65qncMcZhBBVcuqP?=
- =?us-ascii?q?49uEgeOvODElDxN/XwbiY3T4xoXV5h+GynYwAOQJ6tL1LdrWev4jEMBx7xKRR6?=
- =?us-ascii?q?JvjvGo7Vks+7y/2+94fcbglUhzexe69+IAmrpgjNq8cahpdvJLwswRXTuHtIfO?=
- =?us-ascii?q?pWxWJsJV2Nmhv3+9m98p1+/SlOovwt78FPX7n0cKQ+VrxYES8pM3sp683xtBnM?=
- =?us-ascii?q?VhWA630BWWgLiBVIAgzF7BbnXpfttybxq+Rw1DWGMcDwULs5Qiqp4bt1RxD0iS?=
- =?us-ascii?q?cHLz85/3/Risxsl6JQvRatqwViz4LIfI2ZMfxzfqbcfdMBXmpBX8BRVyNcCY2i?=
- =?us-ascii?q?doUEEuQBPedGoIn5ulQFsB+yCAewCO/qzDJDm3340rAg0+k5EQ/IwhEuEdwNvn?=
- =?us-ascii?q?rTt9j5KLseXPqpwKTS0TnPc/Vb0ir95ojSdRAhpOmBUrBxccvQyUkvCgTFhUiX?=
- =?us-ascii?q?pI3lPjKV1v4Cs2mH4+Z8W++ikHMnpB1rojS12Mgjl5TJi5sTx1vZ9it52J44Kc?=
- =?us-ascii?q?OkREN/e9KpE5tduzuEO4drQs4uWX9ktDomxrEepJK2fSwHxI45yxPRa/GLaZaE?=
- =?us-ascii?q?7xP5WOuTLjp1gm9udqiliBao60egz/XxVsyz0FlXsCVIisLMtnUR1xzL7ciHV+?=
- =?us-ascii?q?d98l+h2TmR0wDT7flJIUUumqraL54t26YwlpUOvUjaEC/6hln6gLOMekUr/eio?=
- =?us-ascii?q?7OvnYrH4qZOGK4B0jQT+Prwvmsy5H+s4LhADU3aH9em4zrHu/k30TK9UgvErkq?=
- =?us-ascii?q?TVqo7WKdgHqqKhBg9ayIcj6xKxDze819QYmGEKLVJEeRKHlYfpOk3CLOz2APqk?=
- =?us-ascii?q?nlSjjC1ry+rYMbL8H5XBNmLDn6v5fbZh905czxI+zdRe55JSF7EAL+v/Wkzvu9?=
- =?us-ascii?q?zCCB82LQi0zv35CNVyyIweQ3iDAqyHP6PIt1+H+OYvL/OLZI8PtzauY9Y/4Pu7?=
- =?us-ascii?q?vH4rmUIaNf24z5seaSjgRdx7KF/fbHbx1IRSWVwWtxYzGbS5wGaJViReMjPtB6?=
- =?us-ascii?q?8=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CmAwCnblxcgMjXVdFkHAEBAQQBAQcEA?=
- =?us-ascii?q?QGBZYM8Sg+MfIsQUgaKfm2FWYJzhwoBCgEBLIRAgyoiSgEDAQECAQMBEwEBCQ0?=
- =?us-ascii?q?JCBsMMYI6KYJfNlKBFQEFATVbgkkBgXQNoVg8jBcziFkBB4FLCQEIh3CEQYEPg?=
- =?us-ascii?q?QeDboR/g1SCQwKBLAEBAYpQhTyRVAEGAgGBZYFDjxElgW2BSocBOIdkAS2bTwI?=
- =?us-ascii?q?EAgQFAgUPIYMzTSWBbAqBRIJSjiweM4EHiyaCTQE?=
-X-IPAS-Result: =?us-ascii?q?A2CmAwCnblxcgMjXVdFkHAEBAQQBAQcEAQGBZYM8Sg+MfIs?=
- =?us-ascii?q?QUgaKfm2FWYJzhwoBCgEBLIRAgyoiSgEDAQECAQMBEwEBCQ0JCBsMMYI6KYJfN?=
- =?us-ascii?q?lKBFQEFATVbgkkBgXQNoVg8jBcziFkBB4FLCQEIh3CEQYEPgQeDboR/g1SCQwK?=
- =?us-ascii?q?BLAEBAYpQhTyRVAEGAgGBZYFDjxElgW2BSocBOIdkAS2bTwIEAgQFAgUPIYMzT?=
- =?us-ascii?q?SWBbAqBRIJSjiweM4EHiyaCTQE?=
-X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
-   d="scan'208";a="1055034899"
-Received: from mail-pg1-f200.google.com ([209.85.215.200])
-  by smtp2.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 07 Feb 2019 09:46:38 -0800
-Received: by mail-pg1-f200.google.com with SMTP id i11so403913pgb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:46:38 -0800 (PST)
+        Thu, 7 Feb 2019 12:47:22 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45810 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfBGRrV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:47:21 -0500
+Received: by mail-qt1-f195.google.com with SMTP id e5so783492qtr.12;
+        Thu, 07 Feb 2019 09:47:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tyFtXeXAq3xEDtPxgYsIo8ynnJPzJwUMHkslAlj3iTM=;
+        b=jeMcskHP8tzhmmEJdeXCNsc6TgSJGDtnNWVPwuqKXEHCIVg/ItMNpEAqIbs4rN+60e
+         uEbfXp3rPACfd9uFQlxJyfcHZBUOPU0MrUc3xIN9TZY6DIiCqkYJ+sr9nkH+7bHVWCUZ
+         T85mRIfsTAPPYiCp29y6VYhIjeiJyAPfBwHG/ysGQalRFVbsSVvJHVxH2Bfz4lUKPB7T
+         jz/anMJ2W1Tp7CLdC4zj1gnRbHQWGC/d/bltqPQyVEFtMIraf6YQo/5mFd5mXkg0AQyC
+         lsFZ4+xz2YaSF83UJ0O2JaqOWOIB0QmrXwk+tjRO3NltTyWQpmMpKIeXRCpq7GmX5xO7
+         /9Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2tzpVyPYpfdzliPB1oyDkazyBfCrViS9BIM/UOQo4PI=;
-        b=E0bp8owJtdY7WXhvQFuFBCuLn0R0qqtqLPRZL3x2Sre8VFvgZCY7yUaux3OMsTgcU4
-         CUhFrpMKW7kNfHuitvWLkqQaUx0z0T13JspzmzbjQm6JGxO+ta8FHg59cbIhltXtKszL
-         MBC65uhzlFf6wq6KsGlp4t97eDFRWMnkRGvYFStTKb6SB0sIsSRL2saXNMtF/w3scCN5
-         abVKigAmARFYIoVlof6YCLTchWOUpJJ+96qkYeiBtF8gmOYHEj56a/Ygxo0W5H/J4EP5
-         BaiKHiqxDFFsw+iSrv0dxLar/glATX7A5W3zLMtJ/2XoxXfs6DbHQ854AGWthWIE8yqX
-         96Jw==
-X-Gm-Message-State: AHQUAuZ1MyyuvrF+0ny6e8pgNB29cR5jiwQDe8JXJ2ExOnuxqCXGIfzV
-        b/nM0EDt0PItuBDGbLNs9CspWGGk8Trh4MavmrUX+7C8w4Bl7bxz7dl0eI7ZhoudMmjnO2/Z9iU
-        YP22E4kgKeu6wZ4T0+5XwgDza9Q==
-X-Received: by 2002:a63:da14:: with SMTP id c20mr15338846pgh.233.1549561597764;
-        Thu, 07 Feb 2019 09:46:37 -0800 (PST)
-X-Google-Smtp-Source: AHgI3IayrGVGwQ3ZjOg/wOj9tm31uHR4CdpsjffL6HoAIgRqtFTZ12maLg7c1SCwb6lANot4erlZ3A==
-X-Received: by 2002:a63:da14:: with SMTP id c20mr15338773pgh.233.1549561597020;
-        Thu, 07 Feb 2019 09:46:37 -0800 (PST)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id m67sm14007791pfm.73.2019.02.07.09.46.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 09:46:36 -0800 (PST)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: stmmac: Variable "val" in function sun8i_dwmac_set_syscon() could be uninitialized
-Date:   Thu,  7 Feb 2019 09:46:23 -0800
-Message-Id: <20190207174623.16712-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tyFtXeXAq3xEDtPxgYsIo8ynnJPzJwUMHkslAlj3iTM=;
+        b=F4DHqK+DPTZ6tpsjBt4/jQL2pi97sofrR62iYwGEQ1xdUsItRLtzn2Yv2H5PDWPHtK
+         YLdpSAYDt+SQiQF6yjQ/k3/iZibCYzIOW9I6DbVBOfOW531oRI6+SqQ1TZzZd7l2+l4y
+         W9n/DTk1dmwDPfJ3li10f5ZzZxAXGLz7sX/vgF5JjyKrcBWm7t4YtVfaKEKQpoAhTQ4d
+         GkZw9DIZr91MbyUQIB+2qGYZTjQzdvAJWj4Q8X8GA5JczWA+Z1pizih6wA4GMFcZUkF1
+         lR7h4PDxNtCZBR+JzGtFrp6N/roYySMV/DaoEnqW/Q8UTUf6/nFIzPMwttoy4vsWcC+P
+         XB4A==
+X-Gm-Message-State: AHQUAubeHA+JsCWs7jWtXh7D/qg3j+Gal8087d5QzeGwj5JwQ5L/hNas
+        7R+qo9LKHp4OuDvkh6SuW3KUqPFyesM=
+X-Google-Smtp-Source: AHgI3IboKZthc2Dl6db9yzUqje6X27U9A6DCnB7PkN4hGENJAJEO9PR+cyORnUokwl4hueWYYkDcwg==
+X-Received: by 2002:ac8:71d0:: with SMTP id i16mr13216853qtp.386.1549561640032;
+        Thu, 07 Feb 2019 09:47:20 -0800 (PST)
+Received: from localhost.localdomain ([2001:1284:f019:c4a1:e98a:edae:d055:8fc6])
+        by smtp.gmail.com with ESMTPSA id s65sm11023067qkc.97.2019.02.07.09.47.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 09:47:18 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id AEF75180CC4; Thu,  7 Feb 2019 15:47:15 -0200 (-02)
+Date:   Thu, 7 Feb 2019 15:47:15 -0200
+From:   'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Julien Gomes <julien@arista.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nhorman@tuxdriver.com" <nhorman@tuxdriver.com>,
+        "vyasevich@gmail.com" <vyasevich@gmail.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190207174715.GF13621@localhost.localdomain>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
+ <20190206210723.GD13621@localhost.localdomain>
+ <1257941619984a2a992af8d801855c04@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1257941619984a2a992af8d801855c04@AcuMS.aculab.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function sun8i_dwmac_set_syscon(), local variable "val" could
-be uninitialized if function regmap_read() returns -EINVAL.
-However, it will be used directly in the if statement, which
-is potentially unsafe.
+On Thu, Feb 07, 2019 at 05:33:07PM +0000, David Laight wrote:
+> From: Marcelo Ricardo Leitner
+> > Sent: 06 February 2019 21:07
+> > 
+> > On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
+> > >
+> > >
+> > > On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
+> > > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> > > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> > > >> structures longer than the current definitions.
+> > > >>
+> > > >> This should prevent unjustified setsockopt() failures due to struct
+> > > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> > > >> binaries that should be compatible, but were built with later kernel
+> > > >> uapi headers.
+> > > >
+> > > > Not sure if we support backwards compatibility like this?
+> > > >
+> > > > My issue with this change is that by doing this, application will have
+> > > > no clue if the new bits were ignored or not and it may think that an
+> > > > event is enabled while it is not.
+> > > >
+> > > > A workaround would be to do a getsockopt and check the size that was
+> > > > returned. But then, it might as well use the right struct here in the
+> > > > first place.
+> > > >
+> > > > I'm seeing current implementation as an implicitly versioned argument:
+> > > > it will always accept setsockopt calls with an old struct (v4.11 or
+> > > > v4.12), but if the user tries to use v3 on a v1-only system, it will
+> > > > be rejected. Pretty much like using a newer setsockopt on an old
+> > > > system.
+> > >
+> > > With the current implementation, given sources that say are supposed to
+> > > run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
+> > > we can't rebuild the exact same sources on a 4.19 kernel and still run
+> > > them on 4.9 without messing with structures re-definition.
+> > 
+> > Maybe what we want(ed) here then is explicit versioning, to have the 3
+> > definitions available. Then the application is able to use, say struct
+> > sctp_event_subscribe, and be happy with it, while there is struct
+> > sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
+> > 
+> > But it's too late for that now because that would break applications
+> > already using the new fields in sctp_event_subscribe.
+> 
+> It is probably better to break the recompilation of the few programs
+> that use the new fields (and have them not work on old kernels)
+> than to stop recompilations of old programs stop working on old
+> kernels or have requested new options silently ignored.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+I got confused here, not sure what you mean. Seems there is one "stop"
+word too many.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index 39c2122a4f26..50cfd6d83052 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -641,7 +641,12 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
- 	int ret;
- 	u32 reg, val;
- 
--	regmap_read(gmac->regmap, SYSCON_EMAC_REG, &val);
-+	ret = regmap_read(gmac->regmap, SYSCON_EMAC_REG, &val);
-+	if (ret) {
-+		dev_err(priv->device, "Fail to read SYSCON_EMAC_REG.\n");
-+		return ret;
-+	}
-+
- 	reg = gmac->variant->default_syscon_value;
- 	if (reg != val)
- 		dev_warn(priv->device,
--- 
-2.17.1
+> 
+> There are all sorts of reasons why programs get built on systems that
+> are newer than the ones they need to run on.
+> I'm currently planning to get around the glibc 'memcpy()' fubar so I
+> can retire some very old build systems before their disks die.
 
+You can virtualize those. That's not really a good reason for
+building with newer kernel and running on old systems, as virtually
+any old system can be virtualized.
+
+  Marcelo
+
+> 
+> Fortunately our sctp code is in the kernel - so has to be compiled
+> with the correct headers.
+> 
+> > > I understand your point, but this still looks like a sort of uapi
+> > > breakage to me.
+> > 
+> > Not disagreeing. I really just don't know how supported that is.
+> > Willing to know so I can pay more attention to this on future changes.
+> 
+> Agreed, these structures should never be changed.
+> 
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+> 
