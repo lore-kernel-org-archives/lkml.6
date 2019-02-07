@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F157C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5671CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D09E2190B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2403321908
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539762;
-	bh=aYVdSjKz6mOyiXztVrcLXAJSrakBXsyk99vZVM4aJTw=;
+	s=default; t=1549539766;
+	bh=bmHHXX7fye+jNjMXNZwH+I0sXudN+L2jUhvtjDLYef0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XXCExtIt9/CLIMyaSdM6K+VBaKNMSEFVdopqjE2A2ent1KIkVF/JKnoUNq/jax23L
-	 e82miF9pJCY0ZMKAHDnPE1Ct9LeE6XY1QubBlnVvKU7ddUHWfuq4Vh06vOLblHwWHN
-	 p1iRU0gGbG1Bdg6KWHbl8zJdKPYxUxY1gO0IUoCo=
+	b=o05qA/7oEGdcom19fckjcfNffEk97XcusErpgWCcFOGlYx822vH24Kr4ye14Nskzq
+	 DsV4PGV4fDBVJYaaeZprsSK8q8M2uXhyCKtAppFEtHGWPihF0rjmeHYk7rgk3hzt6z
+	 xDLhJ7geIBgkXhULVgU+ogibSqnceBy2T2blG4oo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfBGLmk (ORCPT
+        id S1727138AbfBGLmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:42:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60878 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:42:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfBGLmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:42:38 -0500
+        id S1727116AbfBGLmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:42:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C10622190A;
-        Thu,  7 Feb 2019 11:42:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDBAA218FE;
+        Thu,  7 Feb 2019 11:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539757;
-        bh=aYVdSjKz6mOyiXztVrcLXAJSrakBXsyk99vZVM4aJTw=;
+        s=default; t=1549539760;
+        bh=bmHHXX7fye+jNjMXNZwH+I0sXudN+L2jUhvtjDLYef0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3VKAQTeVf9jLxjqt4mBMu4ElPaihV1wtWmTsiskV9WNLMlNEzfNnwOX04U+FkOES
-         c43vEx/0zhpHw8BHjyDhNmCza8OEmEN7rC4Rub7Kw3PJ6lx+Vl5+DJZuRriOrK02+V
-         g+SZzyrALvI1r7/ZDtcHvvfgOAHFbriuJigdruH0=
+        b=mfyObIgBdoQePLsr8Gf9yJFJEyZkrs2Bt23XY9GrvVjXeZYo4TBzPiyRXw6je5Q5W
+         SMRDtWGvavV7pQbRtonxbZDq6PxPXDgtMqLyl5yR+ab+bVAKW8WtfjmmAUFnzEUyPm
+         02P1Le9bmHc9DXFYtfLlR/WEzOPDnTP2U6QJxd/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 04/34] inet: frags: refactor ipv6_frag_init()
-Date:   Thu,  7 Feb 2019 12:41:46 +0100
-Message-Id: <20190207113025.738735210@linuxfoundation.org>
+Subject: [PATCH 4.4 05/34] inet: frags: refactor lowpan_net_frag_init()
+Date:   Thu,  7 Feb 2019 12:41:47 +0100
+Message-Id: <20190207113025.778162679@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -67,72 +68,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 5b975bab23615cd0fdf67af6c9298eb01c4b9f61 upstream.
+commit 807f1844df4ac23594268fa9f41902d0549e92aa upstream.
 
-We want to call inet_frags_init() earlier.
+We want to call lowpan_net_frag_init() earlier.
+Similar to commit "inet: frags: refactor ipv6_frag_init()"
 
 This is a prereq to "inet: frags: use rhashtables for reassembly units"
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 4.4: Also delete a redundant assignment to
- ip6_frags.skb_free]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/reassembly.c |   26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ net/ieee802154/6lowpan/reassembly.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -739,10 +739,21 @@ int __init ipv6_frag_init(void)
+--- a/net/ieee802154/6lowpan/reassembly.c
++++ b/net/ieee802154/6lowpan/reassembly.c
+@@ -614,14 +614,6 @@ int __init lowpan_net_frag_init(void)
  {
  	int ret;
  
--	ret = inet6_add_protocol(&frag_protocol, IPPROTO_FRAGMENT);
-+	ip6_frags.hashfn = ip6_hashfn;
-+	ip6_frags.constructor = ip6_frag_init;
-+	ip6_frags.destructor = NULL;
-+	ip6_frags.qsize = sizeof(struct frag_queue);
-+	ip6_frags.match = ip6_frag_match;
-+	ip6_frags.frag_expire = ip6_frag_expire;
-+	ip6_frags.frags_cache_name = ip6_frag_cache_name;
-+	ret = inet_frags_init(&ip6_frags);
- 	if (ret)
- 		goto out;
- 
-+	ret = inet6_add_protocol(&frag_protocol, IPPROTO_FRAGMENT);
-+	if (ret)
-+		goto err_protocol;
-+
- 	ret = ip6_frags_sysctl_register();
- 	if (ret)
- 		goto err_sysctl;
-@@ -751,17 +762,6 @@ int __init ipv6_frag_init(void)
- 	if (ret)
- 		goto err_pernet;
- 
--	ip6_frags.hashfn = ip6_hashfn;
--	ip6_frags.constructor = ip6_frag_init;
--	ip6_frags.destructor = NULL;
--	ip6_frags.skb_free = NULL;
--	ip6_frags.qsize = sizeof(struct frag_queue);
--	ip6_frags.match = ip6_frag_match;
--	ip6_frags.frag_expire = ip6_frag_expire;
--	ip6_frags.frags_cache_name = ip6_frag_cache_name;
--	ret = inet_frags_init(&ip6_frags);
+-	ret = lowpan_frags_sysctl_register();
+-	if (ret)
+-		return ret;
+-
+-	ret = register_pernet_subsys(&lowpan_frags_ops);
 -	if (ret)
 -		goto err_pernet;
- out:
- 	return ret;
+-
+ 	lowpan_frags.hashfn = lowpan_hashfn;
+ 	lowpan_frags.constructor = lowpan_frag_init;
+ 	lowpan_frags.destructor = NULL;
+@@ -632,11 +624,21 @@ int __init lowpan_net_frag_init(void)
+ 	lowpan_frags.frags_cache_name = lowpan_frags_cache_name;
+ 	ret = inet_frags_init(&lowpan_frags);
+ 	if (ret)
+-		goto err_pernet;
++		goto out;
++
++	ret = lowpan_frags_sysctl_register();
++	if (ret)
++		goto err_sysctl;
  
-@@ -769,6 +769,8 @@ err_pernet:
- 	ip6_frags_sysctl_unregister();
- err_sysctl:
- 	inet6_del_protocol(&frag_protocol, IPPROTO_FRAGMENT);
-+err_protocol:
-+	inet_frags_fini(&ip6_frags);
- 	goto out;
++	ret = register_pernet_subsys(&lowpan_frags_ops);
++	if (ret)
++		goto err_pernet;
++out:
+ 	return ret;
+ err_pernet:
+ 	lowpan_frags_sysctl_unregister();
++err_sysctl:
++	inet_frags_fini(&lowpan_frags);
+ 	return ret;
  }
  
 
