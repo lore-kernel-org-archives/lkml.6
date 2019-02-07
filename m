@@ -2,145 +2,92 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6856C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC626C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F93B218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2BE8218FE
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:34:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JM2BBt4c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfBGEXW (ORCPT
+        id S1726786AbfBGEeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 23:23:22 -0500
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:33962 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726489AbfBGEXU (ORCPT
+        Wed, 6 Feb 2019 23:34:44 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:47065 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfBGEeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 23:23:20 -0500
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x174L3Qd009782;
-        Thu, 7 Feb 2019 04:23:09 GMT
-Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qg550326v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Feb 2019 04:23:09 +0000
-Received: from sarge.linuxathome.me (unknown [16.99.168.108])
-        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 54A679D;
-        Thu,  7 Feb 2019 04:23:06 +0000 (UTC)
-From:   Hedi Berriche <hedi.berriche@hpe.com>
-To:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
-        x86@kernel.org, Hedi Berriche <hedi.berriche@hpe.com>,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
-Subject: [Patch v2 4/4] x86/platform/UV: use efi_runtime_sem to serialise BIOS calls
-Date:   Thu,  7 Feb 2019 04:22:34 +0000
-Message-Id: <20190207042234.25109-5-hedi.berriche@hpe.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190207042234.25109-1-hedi.berriche@hpe.com>
-References: <20190207042234.25109-1-hedi.berriche@hpe.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=624 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902070032
+        Wed, 6 Feb 2019 23:34:44 -0500
+Received: by mail-pl1-f194.google.com with SMTP id o6so4190376pls.13;
+        Wed, 06 Feb 2019 20:34:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TdWV8zaDsbS5D8yo5py6H+fVu+r9OXN8sENHXC5gOwM=;
+        b=JM2BBt4ciTeNh0942oaqMXx1eMY81XikVvUDq/cne4pNWGT4EsoDLi1z8t+uOocymr
+         2GdB2t/HrVn10Y2zuWrl87nG06UJMbLODzLTw1bELY7T0rdaBh77o37xwgoIZdlB7qHJ
+         WZCIAds0bMmZcJqZr7AA3XRcWXUWFI6mL1yPApLvOjetfYGH+LLdw8xfWHKi3Iari0Kv
+         nVJ4D5yVaLvdJXkXG4kWJlzfxm3hV1z2jXz77ur9apYq8bwrT/J2A0wd3O/LsxeZv/Yp
+         OU0vSsMhnbXLgMkpGvgTR5s4HUuH72+HXMYqjnOIah/UdgxNTe7PVaTdqzZ+W0G/1nlL
+         JsHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TdWV8zaDsbS5D8yo5py6H+fVu+r9OXN8sENHXC5gOwM=;
+        b=nGeEcIJZwHq/foS74CV3ytEZCbKdlbkJjd0cPDCBOtm55v+CorTAprs3i9tBulnsCS
+         uSy5yNiSYFduIXbj0zj3wvOKhCQdqQJ7BTYe4ZFDJOEvxRa+kGb8aZgp9dLyZ0lnPjig
+         iTHT1tjsq1XzTisFF9jJygAYblUwRwBj/uq4uq0Rf9GsUIpweKWkL9/ghqDwoKxrNm+3
+         OFcwqPHnSMmwpw4LXu15i0QvA5XA89o6Tuv7vMc6tBeNfS/f0OjtzNvboOfJJzqWkfQO
+         7e7gTMKtTzEzfbC+rYTjEZaVQ8u1AjfU0UOtBOnb6FnRUJ1/XTZp/M3exbJwVK+vCfKc
+         XB7A==
+X-Gm-Message-State: AHQUAuZ/iFmK/SHDOsR/jVxdlpjFpYeXs6UwmjcEfx45FeTD67f1TMFt
+        CT2MbXlIDfkNRISUE0V2CKk=
+X-Google-Smtp-Source: AHgI3Ibx37dLZNjm6pPnxB136+eNX+WRjHgEr+5TORF6RkoglWEP6fJAT1pToaNKtY+792/ruCnHKw==
+X-Received: by 2002:a17:902:e090:: with SMTP id cb16mr759219plb.32.1549514083415;
+        Wed, 06 Feb 2019 20:34:43 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id o84sm19595648pfi.172.2019.02.06.20.34.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 20:34:42 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rjw@rjwysocki.net, viresh.kumar@linaro.org, quentin.perret@arm.com
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 1/2] cpufreq: imx6q: Register an Energy Model
+Date:   Wed,  6 Feb 2019 23:34:20 -0500
+Message-Id: <20190207043420.3838-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Calls into UV firmware must be protected against concurrency, use the
-now visible efi_runtime_sem lock to serialise them.
+Try and register an Energy Model from imx6q-cpufreq to allow
+interested subsystems like the task scheduler to use the provided
+information.
 
-Cc: Russ Anderson <rja@hpe.com>
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Dimitri Sivanich <sivanich@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- arch/x86/include/asm/uv/bios.h |  3 ++-
- arch/x86/platform/uv/bios_uv.c | 23 +++++++++++++++++++++--
- 2 files changed, 23 insertions(+), 3 deletions(-)
+ drivers/cpufreq/imx6q-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/uv/bios.h b/arch/x86/include/asm/uv/bios.h
-index 4eee646544b2..581e2978a16c 100644
---- a/arch/x86/include/asm/uv/bios.h
-+++ b/arch/x86/include/asm/uv/bios.h
-@@ -48,7 +48,8 @@ enum {
- 	BIOS_STATUS_SUCCESS		=  0,
- 	BIOS_STATUS_UNIMPLEMENTED	= -ENOSYS,
- 	BIOS_STATUS_EINVAL		= -EINVAL,
--	BIOS_STATUS_UNAVAIL		= -EBUSY
-+	BIOS_STATUS_UNAVAIL		= -EBUSY,
-+	BIOS_STATUS_ABORT		= -EINTR,
- };
- 
- /* Address map parameters */
-diff --git a/arch/x86/platform/uv/bios_uv.c b/arch/x86/platform/uv/bios_uv.c
-index 8bace0ca9e57..e779b2a128ea 100644
---- a/arch/x86/platform/uv/bios_uv.c
-+++ b/arch/x86/platform/uv/bios_uv.c
-@@ -29,7 +29,8 @@
- 
- struct uv_systab *uv_systab;
- 
--s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
-+static s64 __uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
-+			u64 a4, u64 a5)
- {
- 	struct uv_systab *tab = uv_systab;
- 	s64 ret;
-@@ -51,6 +52,19 @@ s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 9fedf627e000..73bfd5bc3087 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -210,6 +210,7 @@ static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
+ 	policy->clk = clks[ARM].clk;
+ 	ret = cpufreq_generic_init(policy, freq_table, transition_latency);
+ 	policy->suspend_freq = max_freq;
++	dev_pm_opp_of_register_em(policy->cpus);
  
  	return ret;
  }
-+
-+s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
-+{
-+	s64 ret;
-+
-+	if (down_interruptible(&efi_runtime_sem))
-+		return BIOS_STATUS_ABORT;
-+
-+	ret = __uv_bios_call(which, a1, a2, a3, a4, a5);
-+	up(&efi_runtime_sem);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(uv_bios_call);
- 
- s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
-@@ -59,10 +73,15 @@ s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
- 	unsigned long bios_flags;
- 	s64 ret;
- 
-+	if (down_interruptible(&efi_runtime_sem))
-+		return BIOS_STATUS_ABORT;
-+
- 	local_irq_save(bios_flags);
--	ret = uv_bios_call(which, a1, a2, a3, a4, a5);
-+	ret = __uv_bios_call(which, a1, a2, a3, a4, a5);
- 	local_irq_restore(bios_flags);
- 
-+	up(&efi_runtime_sem);
-+
- 	return ret;
- }
- 
 -- 
-2.20.1
+2.17.0
 
