@@ -5,66 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2063C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C972C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A99452147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B0112147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:03:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn4j45vM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hO9NUmVp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbfBGADZ (ORCPT
+        id S1726786AbfBGADk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:03:25 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38247 "EHLO
+        Wed, 6 Feb 2019 19:03:40 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42418 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfBGADY (ORCPT
+        with ESMTP id S1725959AbfBGADj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:03:24 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g189so3679895pgc.5;
-        Wed, 06 Feb 2019 16:03:23 -0800 (PST)
+        Wed, 6 Feb 2019 19:03:39 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so3674353pga.9;
+        Wed, 06 Feb 2019 16:03:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=p6Y2SMTy/DLvibQn4rvUxUkItMt4BibJMOVwHTLlWdU=;
-        b=Bn4j45vMnDeJ187Pc028HJG8OhN+ineByup/7oFOJzwXTK29kxU822HUPNS5A0NzBf
-         98s+pbbGafgdmMfcfWQ/e49gsPCNWKAQZawO/BVDYtSVtGpsLza/e1UJGtImNiYVZH0B
-         v0W7pD8R6IxVFQHlW5ViFFecmQS102F1HurvmVo2z2Spdhh+Ca0Xj9XzUaj+ne6j9uF/
-         +hEpeUS7QRw1GFrlZhHK6/UCnl11fZic7oFpbchY9Ufrrye1fZHXBpp0lri8KDBVdA+H
-         ZP+IjMibkya85ebNoVcfbGM0INBXCRw01H8v/VFsWpVbutFbzhCA3vGXHh8chzAxZd05
-         2kKQ==
+        bh=SWqatzBoLVZPIIbjTL1UeI0Wg+QJBI2JUsh0P/6kqdI=;
+        b=hO9NUmVpB5vJLaYLgDx9ifAoc89SZa8LJm8ArgqX8ygUDUO/1HlTIrpqcx+voW5IcH
+         Nb9ffzRSWrnKf/BJWBQg7lOlwjfygM/NikbxPkZ/SVhTOVvZaz8TWwyDHBN2icbrsNFV
+         gpBy6f65KUksxsAzcYgglRwZgBQHk58KOnNPEirmzFcgPnIsi2GogD5xl6OgxlMXJUWV
+         9IaSZe3ggFRJSWHq54ePk0oUdpIkVVDM0OUMhUjVeslUaIUgel/aF0imYzV4sBcL6Mso
+         EpaVGsa29EGDHM576rRdyx+GYnflZY02w3/+qGU13IgdWyFB62yGDqfFW3yuXFlFhoh3
+         LydQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=p6Y2SMTy/DLvibQn4rvUxUkItMt4BibJMOVwHTLlWdU=;
-        b=ZSzuudNG79tIiGyXSKS3ZcnWeU+SHNjNRrOtdVHvBcNZEWHob23xUB021V3yU03DNC
-         pKTWVLMk3CRkiOMlxHm5vC5i2CuhOytPJOSI/MibCnI+1UgvwnRlNmc4mzoJofzHFlgA
-         vi1dUauB9dTl9cFWix2zmy8ikCUuKFRMqHxkz4ne72X7mcGw/VPiHhmgD9x1oSFJ1y/r
-         bMFu7i9dJqpnpLZMlQZAq2w+CigZwrn3/Sfav9c8YaAmpuPRnxc3fN5AZJEidOA+3xZs
-         H61XPEkbxziIRJiSEMuKHtZ6P2FWg9dQlq+NjFyN3Zitvap0xIZAT95cS5HDHqtgw/mO
-         Yx7w==
-X-Gm-Message-State: AHQUAuaiF9CgZAKggosRIgj0gBbmUdiZOmJR81jzbdtSwuvUU5+4h6Ss
-        dJetd9f+iMqNSCHdpHYV4DwozXb6
-X-Google-Smtp-Source: AHgI3IbaC79tVu2cysKHDMF2+VL/07n1GVWjaK9l5UrvDjye5z1Wu1z71oRh9U3hGfVjJLDZE3m4ZA==
-X-Received: by 2002:a63:5e43:: with SMTP id s64mr12165266pgb.101.1549497802790;
-        Wed, 06 Feb 2019 16:03:22 -0800 (PST)
+        bh=SWqatzBoLVZPIIbjTL1UeI0Wg+QJBI2JUsh0P/6kqdI=;
+        b=ZIh6qDGfNmp7s/ljCnFUWZ5ViW8cad42+Nz7JwcZBH+E7GzYd7XKPIgBIuGXabg/vw
+         HhAeNMnGeKp6PTid6aeqKh9aOaZ6BUv8BYpinLmRJ/kipLHPjfM5RKoyjhhGvXPBW4q0
+         KwiUD8JQCikZgg9BU4juTpgbBoEvsp+yrI9jmCiCM3cn+s8s2wgWPbp6l/0E3SsWHgAm
+         9WtWZ1ohJTATvt6bwFvSOGKhbQyQUky26NMeCi5kXeIvdEQTgvIKflSyst3hvV1oLNvX
+         DQflYwRU08EQAXoTsW715vdsCoNsxuX9q7c60I18nN9nAm9X0cjKCo51pApvjMoB3pkv
+         RbVA==
+X-Gm-Message-State: AHQUAubaOeCZNfKiGc/iGjV+7bJfkCshXguP0fUc9gy/Oair/qqy7GAc
+        DIOMvct8bg2cvXSat1FYLmqAy7Lu
+X-Google-Smtp-Source: AHgI3Ia1uiFMIgktyxqzjXtc1MUatCEu+12TRv66bY27MU1ASOEHp+n+kVxjCdO5ZcEOOR7PEzTTeQ==
+X-Received: by 2002:a65:6496:: with SMTP id e22mr11940257pgv.7.1549497818632;
+        Wed, 06 Feb 2019 16:03:38 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id p2sm11615974pgc.94.2019.02.06.16.03.21
+        by smtp.gmail.com with ESMTPSA id q187sm18316927pfq.128.2019.02.06.16.03.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 16:03:21 -0800 (PST)
+        Wed, 06 Feb 2019 16:03:37 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] xhci: Convert xhci_handshake() to use readl_poll_timeout()
-Date:   Wed,  6 Feb 2019 16:03:08 -0800
-Message-Id: <20190207000308.7051-1-andrew.smirnov@gmail.com>
+Subject: [PATCH] xhci: Drop superfluous initialization in xhci_queue_ctrl_tx()
+Date:   Wed,  6 Feb 2019 16:03:31 -0800
+Message-Id: <20190207000331.7547-1-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -73,9 +74,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xhci_handshake() implements the algorithm already captured by
-readl_poll_timeout(). Convert the former to use the latter to avoid
-repetition.
+Simplify filed's initialization by directly assigning its final value
+instead of initializing the variable to sero and then bitwise or-ing
+it.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Mathias Nyman <mathias.nyman@intel.com>
@@ -83,57 +84,23 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-usb@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/usb/host/xhci.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/usb/host/xhci-ring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 005e65922608..1b5306001340 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -9,6 +9,7 @@
-  */
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 40fa25c4d041..91e592bfb80d 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -3379,8 +3379,7 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+ 	/* Queue setup TRB - see section 6.4.1.2.1 */
+ 	/* FIXME better way to translate setup_packet into two u32 fields? */
+ 	setup = (struct usb_ctrlrequest *) urb->setup_packet;
+-	field = 0;
+-	field |= TRB_IDT | TRB_TYPE(TRB_SETUP);
++	field = TRB_IDT | TRB_TYPE(TRB_SETUP);
+ 	if (start_cycle == 0)
+ 		field |= 0x1;
  
- #include <linux/pci.h>
-+#include <linux/iopoll.h>
- #include <linux/irq.h>
- #include <linux/log2.h>
- #include <linux/module.h>
-@@ -52,7 +53,6 @@ static bool td_on_ring(struct xhci_td *td, struct xhci_ring *ring)
- 	return false;
- }
- 
--/* TODO: copied from ehci-hcd.c - can this be refactored? */
- /*
-  * xhci_handshake - spin reading hc until handshake completes or fails
-  * @ptr: address of hc register to be read
-@@ -69,18 +69,16 @@ static bool td_on_ring(struct xhci_td *td, struct xhci_ring *ring)
- int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
- {
- 	u32	result;
-+	int	ret;
- 
--	do {
--		result = readl(ptr);
--		if (result == ~(u32)0)		/* card removed */
--			return -ENODEV;
--		result &= mask;
--		if (result == done)
--			return 0;
--		udelay(1);
--		usec--;
--	} while (usec > 0);
--	return -ETIMEDOUT;
-+	ret = readl_poll_timeout(ptr, result,
-+				 (result & mask) == done ||
-+				 result == U32_MAX,
-+				 1, usec);
-+	if (result == U32_MAX)		/* card removed */
-+		return -ENODEV;
-+
-+	return ret;
- }
- 
- /*
 -- 
 2.20.1
 
