@@ -2,51 +2,52 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFE1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771E0C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C248721904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21EAF21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:23:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m/KDnUqs"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AaogncLy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfBGMW7 (ORCPT
+        id S1727116AbfBGMXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:22:59 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51033 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbfBGMW6 (ORCPT
+        Thu, 7 Feb 2019 07:23:01 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55632 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbfBGMW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:22:58 -0500
+        Thu, 7 Feb 2019 07:22:59 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190207122256euoutp014dea84a02d7fbd4e0d7e05021f105aee~BFGZlcVNm0270302703euoutp01f;
-        Thu,  7 Feb 2019 12:22:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190207122256euoutp014dea84a02d7fbd4e0d7e05021f105aee~BFGZlcVNm0270302703euoutp01f
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190207122257euoutp02cbfebf6b5bd20ea9d4ed0f3cc5f3c4f1~BFGZ5fANu2881428814euoutp02H;
+        Thu,  7 Feb 2019 12:22:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190207122257euoutp02cbfebf6b5bd20ea9d4ed0f3cc5f3c4f1~BFGZ5fANu2881428814euoutp02H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549542176;
-        bh=H6Y7wC3toDL3M1M0Y0eIc6JpT2LapMqMXG+qsTve8bE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=m/KDnUqs2lnwxsJLbfY2Yolry85e0CLx/BQqOjtTNOlDRcYR9VYi7/iEM2TIzaXEx
-         PQYnuV/PD2AkxWlAvVUy1SLIPcPPXQuU7zqybXJMc6qSiXFl9ANEzicqYF0IckdgqP
-         hICYgSbfKqD1HAyl6n2QraQqs10V87iPIqJSBhe4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190207122256eucas1p1b5ec134933d6597575a36fa746b1be4f~BFGZLSMX50912409124eucas1p1Z;
+        s=mail20170921; t=1549542177;
+        bh=kUWpkcVUcFwPK5XCeCJZ6CkDivsKpEZ5CoD7EVd/0M0=;
+        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
+        b=AaogncLy2WC6gEpHaOVPS3Fxjx6jYCPDBAr9Uy2WvjELI+f1T/HYTGx0B8VCWvJDO
+         /ObSFbk+L3p/sGrSKB1w77swcpIvK1PhCnJPVWgFZac+56enaprgB+JXc1AkYh7AAc
+         ReDhfDvaTPAXVhDn8wptcjBm1i+62HFjMc08WLqg=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190207122256eucas1p28a198b56a9a4a7925cf73a42ff389cab~BFGZcFbnL3266632666eucas1p2H;
         Thu,  7 Feb 2019 12:22:56 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 43.F0.04294.F132C5C5; Thu,  7
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 79.11.04441.0232C5C5; Thu,  7
         Feb 2019 12:22:56 +0000 (GMT)
 Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190207122255eucas1p1cdebed838c799eca46cce6a654a26187~BFGYfLkmd0362003620eucas1p1L;
+        20190207122255eucas1p1444023f01217a43cfb958fe0bd48ef4d~BFGYwQHup0912409124eucas1p1Y;
         Thu,  7 Feb 2019 12:22:55 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-a9-5c5c231f7a16
+X-AuditID: cbfec7f2-5e3ff70000001159-3b-5c5c23209155
 Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id B0.26.04128.F132C5C5; Thu,  7
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 91.26.04128.F132C5C5; Thu,  7
         Feb 2019 12:22:55 +0000 (GMT)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
@@ -62,147 +63,328 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Dave Gerlach <d-gerlach@ti.com>,
         Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 0/2] cpufreq/opp: rework regulator initialization
-Date:   Thu, 07 Feb 2019 13:22:25 +0100
-Message-id: <20190207122227.19873-1-m.szyprowski@samsung.com>
+Subject: [PATCH 1/2] cpufreq: dt/ti/opp: move regulators initialization to
+ the drivers
+Date:   Thu, 07 Feb 2019 13:22:26 +0100
+Message-id: <20190207122227.19873-2-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsWy7djP87oKyjExBgfvMllsnLGe1eLm1w5W
+In-reply-to: <20190207122227.19873-1-m.szyprowski@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7djP87oKyjExBvseiVhsnLGe1eLm1w5W
         i8u75rBZfO49wmgx4/w+Jou1R+6yW7z5cZbJ4szpS6wW/65tZLHY+NXDYuWJWcwO3B6bVnWy
-        edy5tofNY8vVdhaPvi2rGD1OnnrC4nH8xnYmj8+b5ALYo7hsUlJzMstSi/TtErgyTlzbxVTQ
-        pVnx9NwPtgbGz0pdjJwcEgImEp/3/GbtYuTiEBJYwSix7vwcdgjnM6NE0+1jLDBV13+sZ4JI
-        LGOUaFiwngXCaWCSeDP/NhNIFZuAoUTX2y42EFtEwEriRfsrsFHMAk+YJHbe+MkOkhAWcJTY
-        8ukeM4jNIqAqsf9qEyOIzStgK3Hg1wGodfISqzccYAZplhCYwSZx6P0vRoiEi8TGW5+YIGwZ
-        icuTu1kgipoZJdpnzGKHcHoYJbbO2cEGUWUtcfj4RVYQm1mAT2LStulAYzmA4rwSHW1CECUe
-        EusXHAIrFxKIlfg+ewrTBEbxBYwMqxjFU0uLc9NTi43yUsv1ihNzi0vz0vWS83M3MQLj8fS/
-        4192MO76k3SIUYCDUYmHN+BWVIwQa2JZcWXuIUYJDmYlEV4xuZgYId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYz58bJqd+JfO/Oy7Zl6Pf5FmN33KXVl
-        M5S95DtiYs55pSxXfsefFj1TrECTyfVG3iO9ix432OOeJH/hY7901GoHd1TAvwcPOTvL+rse
-        fny50vaqh+1CrgOnvmdzCTfxLFOZc2ZXlBqHXp33ciOvzsArFW0vyg+msm3imh137PHs0/wv
-        QnfsOKLEUpyRaKjFXFScCAC3YvDHwwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42I5/e/4ZV155ZgYg/+9YhYbZ6xntbj5tYPV
-        4vKuOWwWn3uPMFrMOL+PyWLtkbvsFm9+nGWyOHP6EqvFv2sbWSw2fvWwWHliFrMDt8emVZ1s
-        Hneu7WHz2HK1ncWjb8sqRo+Tp56weBy/sZ3J4/MmuQD2KC6blNSczLLUIn27BK6ME9d2MRV0
-        aVY8PfeDrYHxs1IXIyeHhICJxPUf65m6GLk4hASWMErMuXIRymlikpj46w4bSBWbgKFE19su
-        MFtEwEriRfsrdpAiZoEnTBIPHqxlAkkICzhKbPl0jxnEZhFQldh/tYkRxOYVsJU48OsAC8Q6
-        eYnVGw4wT2DkWsDIsIpRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwkLYd+7llB2PXu+BDjAIc
-        jEo8vD+uR8UIsSaWFVfmHmKU4GBWEuEVk4uJEeJNSaysSi3Kjy8qzUktPsQozcGiJM573qAy
-        SkggPbEkNTs1tSC1CCbLxMEp1cB4cIPHVvejs03m3r8w+d9ai9s68QGCj5+nODrVTSt6vI7f
-        s2Q9c2X01W96k/tsdst4ZNhvnH2+it8mye39lKSm3ZLMZ9JyO5atX/lFyNP0gVpWmXjvhh7B
-        N4+W3Cl/8pLNe2fFks3LvzllPBfc+e/Sv3eF+sKi5xLeK33ff8HtyiWmf79/i7g5K7EUZyQa
-        ajEXFScCAG94BXQgAgAA
-X-CMS-MailID: 20190207122255eucas1p1cdebed838c799eca46cce6a654a26187
+        edy5tofNY8vVdhaPvi2rGD1OnnrC4nH8xnYmj8+b5ALYo7hsUlJzMstSi/TtErgyHt07y17Q
+        7VEx8eUVpgbGpdZdjJwcEgImEpcPvWXvYuTiEBJYwSjRN/E2lPOZUeLQtjPsMFWLN95ihUgs
+        Y5S4eX8hVFUDk8Sb+beZQKrYBAwlut52sYHYIgJWEi/aX4EVMQs8YZLYeeMn2ChhgQiJbd8n
+        g9ksAqoSN6ZdA7I5OHgFbCX6jwZCbJOXWL3hADOIzSlgJ9F0+jLYZgmBDWwSF//eZoMocpFY
+        8HIuI4QtI3F5cjcLRFEzo0T7jFnsEE4Po8TWOTugOqwlDh+/yApiMwvwSUzaNp0ZZLOEAK9E
+        R5sQRImHxKS+21B/TmSU2PT6KtsERokFjAyrGMVTS4tz01OLDfNSy/WKE3OLS/PS9ZLzczcx
+        AuP09L/jn3Ywfr2UdIhRgINRiYc34FZUjBBrYllxZe4hRgkOZiURXjG5mBgh3pTEyqrUovz4
+        otKc1OJDjNIcLErivNUMD6KFBNITS1KzU1MLUotgskwcnFINjKm/vqzZ/Wjur92P/I5JlHxV
+        n6y5qMc330XP/fzZLeqP2QVl/UOn6mZvsViSNbnfTVwyf0l6zZxpj/uPcFdekjwtejdiyvQG
+        fbU5/ooTvhT897ItsNlXva6Qy3jrl89tWkwON3t27+nv4DaawFc3PWuz7uQZ14tDj+qu8Fve
+        90hK2mbz3+SPZUosxRmJhlrMRcWJAIFsLqvPAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsVy+t/xy7ryyjExBtuPmllsnLGe1eLm1w5W
+        i8u75rBZfO49wmgx4/w+Jou1R+6yW7z5cZbJ4szpS6wW/65tZLHY+NXDYuWJWcwO3B6bVnWy
+        edy5tofNY8vVdhaPvi2rGD1OnnrC4nH8xnYmj8+b5ALYo7hsUlJzMstSi/TtErgyHt07y17Q
+        7VEx8eUVpgbGpdZdjJwcEgImEos33mLtYuTiEBJYwihx59ApZginiUli4q87bCBVbAKGEl1v
+        u8BsEQEriRftr9hBipgFnjBJPHiwlgkkISwQIdG16SM7iM0ioCpxY9o1IJuDg1fAVqL/aCDE
+        NnmJ1RsOMIPYnAJ2Ek2nL7OC2EJAJXv+dLFMYORZwMiwilEktbQ4Nz232EivODG3uDQvXS85
+        P3cTIzDsth37uWUHY9e74EOMAhyMSjy8P65HxQixJpYVV+YeYpTgYFYS4RWTi4kR4k1JrKxK
+        LcqPLyrNSS0+xCjNwaIkznveoDJKSCA9sSQ1OzW1ILUIJsvEwSnVwOg0Kd98nnZSaMNM1T9/
+        6+Muztsfs3yGn3Igs6bz75rFnp+/7dRpzX7lvijnd2m65sy9t2b23RVukgxN3SuxK21erXlV
+        o5hyPFNsy/9DAhXX1x+Q3JvkVNfUvqgk53LPKua1Cps7j0nmvWfyqHHrygp5eOVES2fRlcUc
+        QSaNmf873DWWTPxWp8RSnJFoqMVcVJwIAC+PtUQ3AgAA
+X-CMS-MailID: 20190207122255eucas1p1444023f01217a43cfb958fe0bd48ef4d
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20190207122255eucas1p1cdebed838c799eca46cce6a654a26187
-References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20190207122255eucas1p1444023f01217a43cfb958fe0bd48ef4d
+References: <20190207122227.19873-1-m.szyprowski@samsung.com>
+        <CGME20190207122255eucas1p1444023f01217a43cfb958fe0bd48ef4d@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear All,
+dev_pm_opp_set_regulators() helper is used to assign the regulators to
+the used operation points. This helper however only got the names of the
+passed regulators and performs their initialization on its own.
 
-Recent commit 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for
-i2c adapters") added a visible warning for an attempt to do i2c transfer
-over a suspended i2c bus. This revealed a long standing issue in the
-cpufreq-dt driver, which gives a following warning during system
-suspend/resume cycle:
+Change this by requiring proper regulator objects and move regulator
+gathering to the client drivers. This will be later needed to avoid
+regulator initialization in forbidden context (i.e. during early system
+resume, when no irqs are available yet). Both clients of the
+dev_pm_opp_set_regulators() function are adapted to the new signature.
 
---->8---
-Enabling non-boot CPUs ...
-CPU1 is up
-CPU2 is up
-CPU3 is up
-------------[ cut here ]------------
-WARNING: CPU: 4 PID: 29 at drivers/i2c/i2c-core-base.c:1869 __i2c_transfer+0x6f8/0xa50
-Modules linked in:
-CPU: 4 PID: 29 Comm: cpuhp/4 Tainted: G        W         5.0.0-rc4-next-20190131-00024-g54b06b29cc65 #5324
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[<c01110e8>] (unwind_backtrace) from [<c010d11c>] (show_stack+0x10/0x14)
-[<c010d11c>] (show_stack) from [<c09a2584>] (dump_stack+0x90/0xc8)
-[<c09a2584>] (dump_stack) from [<c0120bd0>] (__warn+0xf8/0x124)
-[<c0120bd0>] (__warn) from [<c0120c3c>] (warn_slowpath_null+0x40/0x48)
-[<c0120c3c>] (warn_slowpath_null) from [<c065cda0>] (__i2c_transfer+0x6f8/0xa50)
-[<c065cda0>] (__i2c_transfer) from [<c065d168>] (i2c_transfer+0x70/0xe4)
-[<c065d168>] (i2c_transfer) from [<c053ce4c>] (regmap_i2c_read+0x48/0x64)
-[<c053ce4c>] (regmap_i2c_read) from [<c0536f1c>] (_regmap_raw_read+0xf8/0x450)
-[<c0536f1c>] (_regmap_raw_read) from [<c053772c>] (_regmap_bus_read+0x38/0x68)
-[<c053772c>] (_regmap_bus_read) from [<c05365a0>] (_regmap_read+0x60/0x250)
-[<c05365a0>] (_regmap_read) from [<c05367cc>] (regmap_read+0x3c/0x5c)
-[<c05367cc>] (regmap_read) from [<c047cfc0>] (regulator_is_enabled_regmap+0x20/0x90)
-[<c047cfc0>] (regulator_is_enabled_regmap) from [<c0477660>] (_regulator_is_enabled+0x34/0x40)
-[<c0477660>] (_regulator_is_enabled) from [<c0478674>] (create_regulator+0x1a4/0x25c)
-[<c0478674>] (create_regulator) from [<c047c818>] (_regulator_get+0xe4/0x278)
-[<c047c818>] (_regulator_get) from [<c068f1dc>] (dev_pm_opp_set_regulators+0xa0/0x1c0)
-[<c068f1dc>] (dev_pm_opp_set_regulators) from [<c0698cc8>] (cpufreq_init+0x98/0x2d0)
-[<c0698cc8>] (cpufreq_init) from [<c06959e4>] (cpufreq_online+0xc8/0x71c)
-[<c06959e4>] (cpufreq_online) from [<c06960fc>] (cpuhp_cpufreq_online+0x8/0x10)
-[<c06960fc>] (cpuhp_cpufreq_online) from [<c01213d4>] (cpuhp_invoke_callback+0xf4/0xebc)
-[<c01213d4>] (cpuhp_invoke_callback) from [<c0122e4c>] (cpuhp_thread_fun+0x1d8/0x320)
-[<c0122e4c>] (cpuhp_thread_fun) from [<c0149858>] (smpboot_thread_fn+0x194/0x340)
-[<c0149858>] (smpboot_thread_fn) from [<c014573c>] (kthread+0x124/0x160)
-[<c014573c>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-Exception stack(0xe897dfb0 to 0xe897dff8)
-dfa0:                                     00000000 00000000 00000000 00000000
-dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-irq event stamp: 3865
-hardirqs last  enabled at (3873): [<c0186dec>] vprintk_emit+0x228/0x2a4
-hardirqs last disabled at (3880): [<c0186cf0>] vprintk_emit+0x12c/0x2a4
-softirqs last  enabled at (3052): [<c0102564>] __do_softirq+0x3a4/0x66c
-softirqs last disabled at (3043): [<c0128464>] irq_exit+0x140/0x168
----[ end trace db48b455d924fec2 ]---
-CPU4 is up
-CPU5 is up
-CPU6 is up
-CPU7 is up
---->8---
+ti-cpufreq driver is also marked with 'suppress_bind_attrs', as it really
+doesn't properly support driver removal.
 
-This is a scenario that triggers the above issue:
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/cpufreq/cpufreq-dt.c | 39 ++++++++++++++++++++++-----------
+ drivers/cpufreq/ti-cpufreq.c | 42 ++++++++++++++++++++++++++++++------
+ drivers/opp/core.c           | 40 ++++------------------------------
+ include/linux/pm_opp.h       |  2 +-
+ 4 files changed, 67 insertions(+), 56 deletions(-)
 
-1. system disables non-boot cpu's at the end of system suspend procedure,
-2. this in turn deinitializes cpufreq drivers for the disabled cpus,
-3. early in the system resume procedure all cpus are got back to online
-   state,
-4. this in turn causes cpufreq to be initialized for the newly onlined
-   cpus,
-5. cpufreq-dt acquires all its resources (clocks, regulators) during
-   ->init() callback,
-6. getting regulator require to check its state, what in turn requires
-   i2c transfer,
-7. during system early resume stage this is not really possible.
-
-The issue is caused by cpufreq-dt driver not keeping its resources for
-the whole driver lifetime and relying that they can be always acquired
-at any system context. This problem has been observed on Samsung
-Exynos based Odroid XU3/XU4 boards, but it happens on all boards, which
-have separate regulators for different CPU clusters.
-
-To fix this issue I've rewritten resources (clock and regulators)
-handling in cpufreq-dt driver. Now the driver gathers them in its
-->probe() and keeps using them until the ->remove() happens. This
-required also some rework in common opp regulators handling code.
-Namely, regulators are no longer assigned by name, instead the caller
-has to pass proper regulator object. The side-effect of this work
-is also a removal of the FIXME item and correct handling of deferred
-probe caused by lack of non-CPU0 regulator.
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Marek Szyprowski (2):
-  cpufreq: dt/ti/opp: move regulators initialization to the drivers
-  cpufreq: dt: rework resources initialization
-
- drivers/cpufreq/cpufreq-dt.c | 127 +++++++++++++++--------------------
- drivers/cpufreq/ti-cpufreq.c |  42 ++++++++++--
- drivers/opp/core.c           |  40 ++---------
- include/linux/pm_opp.h       |   2 +-
- 4 files changed, 96 insertions(+), 115 deletions(-)
-
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 36a011ea0039..02a344e9d818 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -30,6 +30,7 @@ struct private_data {
+ 	struct opp_table *opp_table;
+ 	struct device *cpu_dev;
+ 	const char *reg_name;
++	struct regulator *reg;
+ 	bool have_static_opps;
+ };
+ 
+@@ -153,6 +154,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	struct cpufreq_frequency_table *freq_table;
+ 	struct opp_table *opp_table = NULL;
+ 	struct private_data *priv;
++	struct regulator *reg;
+ 	struct device *cpu_dev;
+ 	struct clk *cpu_clk;
+ 	unsigned int transition_latency;
+@@ -188,27 +190,34 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 			fallback = true;
+ 	}
+ 
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv) {
++		ret = -ENOMEM;
++		goto out_put_clk;
++	}
++
+ 	/*
+-	 * OPP layer will be taking care of regulators now, but it needs to know
+-	 * the name of the regulator first.
++	 * OPP layer will be taking care of regulators.
+ 	 */
+ 	name = find_supply_name(cpu_dev);
+ 	if (name) {
+-		opp_table = dev_pm_opp_set_regulators(cpu_dev, &name, 1);
++		reg = regulator_get_optional(cpu_dev, name);
++		ret = PTR_ERR_OR_ZERO(reg);
++		if (ret) {
++			dev_err(cpu_dev, "Failed to get regulator for cpu%d: %d\n",
++				policy->cpu, ret);
++			goto out_free_priv;
++		}
++		priv->reg = reg;
++		opp_table = dev_pm_opp_set_regulators(cpu_dev, &priv->reg, 1);
+ 		if (IS_ERR(opp_table)) {
+ 			ret = PTR_ERR(opp_table);
+ 			dev_err(cpu_dev, "Failed to set regulator for cpu%d: %d\n",
+ 				policy->cpu, ret);
+-			goto out_put_clk;
++			goto out_put_regulator;
+ 		}
+ 	}
+ 
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto out_put_regulator;
+-	}
+-
+ 	priv->reg_name = name;
+ 	priv->opp_table = opp_table;
+ 
+@@ -287,10 +296,14 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ out_free_opp:
+ 	if (priv->have_static_opps)
+ 		dev_pm_opp_of_cpumask_remove_table(policy->cpus);
+-	kfree(priv);
+-out_put_regulator:
++out_put_opp_regulator:
+ 	if (name)
+ 		dev_pm_opp_put_regulators(opp_table);
++out_put_regulator:
++	if (priv->reg)
++		regulator_put(priv->reg);
++out_free_priv:
++	kfree(priv);
+ out_put_clk:
+ 	clk_put(cpu_clk);
+ 
+@@ -306,6 +319,8 @@ static int cpufreq_exit(struct cpufreq_policy *policy)
+ 		dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+ 	if (priv->reg_name)
+ 		dev_pm_opp_put_regulators(priv->opp_table);
++	if (priv->reg)
++		regulator_put(priv->reg);
+ 
+ 	clk_put(policy->clk);
+ 	kfree(priv);
+diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+index 22b53bf26817..623ae7fa34f9 100644
+--- a/drivers/cpufreq/ti-cpufreq.c
++++ b/drivers/cpufreq/ti-cpufreq.c
+@@ -23,6 +23,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/pm_opp.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ 
+ #define REVISION_MASK				0xF
+@@ -213,13 +214,43 @@ static const struct of_device_id *ti_cpufreq_match_node(void)
+ 	return match;
+ }
+ 
++#define TI_MULTIREGULATOR_COUNT 2
++static struct regulator *multi_regulators[TI_MULTIREGULATOR_COUNT];
++
++static int ti_setup_multi_regulators(struct device *cpu_dev)
++{
++	struct opp_table *ti_opp_table;
++	int ret = 0;
++
++	multi_regulators[0] = regulator_get(cpu_dev, "vdd");
++	if (IS_ERR(multi_regulators[0]))
++		return PTR_ERR(multi_regulators[0]);
++	multi_regulators[1] = regulator_get(cpu_dev, "vbb");
++	if (IS_ERR(multi_regulators[1])) {
++		ret = PTR_ERR(multi_regulators[1]);
++		goto free0;
++	}
++
++	ti_opp_table = dev_pm_opp_set_regulators(cpu_dev, multi_regulators,
++						 TI_MULTIREGULATOR_COUNT);
++	if (IS_ERR(ti_opp_table)) {
++		ret = PTR_ERR(ti_opp_table);
++		goto free1;
++	}
++	return 0;
++free1:
++	regulator_put(multi_regulators[1]);
++free0:
++	regulator_put(multi_regulators[0]);
++	return ret;
++}
++
+ static int ti_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	u32 version[VERSION_COUNT];
+ 	const struct of_device_id *match;
+ 	struct opp_table *ti_opp_table;
+ 	struct ti_cpufreq_data *opp_data;
+-	const char * const reg_names[] = {"vdd", "vbb"};
+ 	int ret;
+ 
+ 	match = dev_get_platdata(&pdev->dev);
+@@ -273,14 +304,10 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	opp_data->opp_table = ti_opp_table;
+-
+ 	if (opp_data->soc_data->multi_regulator) {
+-		ti_opp_table = dev_pm_opp_set_regulators(opp_data->cpu_dev,
+-							 reg_names,
+-							 ARRAY_SIZE(reg_names));
+-		if (IS_ERR(ti_opp_table)) {
++		ret = ti_setup_multi_regulators(opp_data->cpu_dev);
++		if (ret) {
+ 			dev_pm_opp_put_supported_hw(opp_data->opp_table);
+-			ret =  PTR_ERR(ti_opp_table);
+ 			goto fail_put_node;
+ 		}
+ 	}
+@@ -316,6 +343,7 @@ static struct platform_driver ti_cpufreq_driver = {
+ 	.driver = {
+ 		.name = "ti-cpufreq",
+ 	},
++	.suppress_bind_attrs = true,
+ };
+ builtin_platform_driver(ti_cpufreq_driver);
+ 
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index d7f97167cac3..fc143a38fe8d 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1477,11 +1477,10 @@ static void _free_set_opp_data(struct opp_table *opp_table)
+  * This must be called before any OPPs are initialized for the device.
+  */
+ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+-					    const char * const names[],
++					    struct regulator **regulators,
+ 					    unsigned int count)
+ {
+ 	struct opp_table *opp_table;
+-	struct regulator *reg;
+ 	int ret, i;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+@@ -1498,41 +1497,14 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
+ 	if (opp_table->regulators)
+ 		return opp_table;
+ 
+-	opp_table->regulators = kmalloc_array(count,
+-					      sizeof(*opp_table->regulators),
+-					      GFP_KERNEL);
+-	if (!opp_table->regulators) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
+-
+-	for (i = 0; i < count; i++) {
+-		reg = regulator_get_optional(dev, names[i]);
+-		if (IS_ERR(reg)) {
+-			ret = PTR_ERR(reg);
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(dev, "%s: no regulator (%s) found: %d\n",
+-					__func__, names[i], ret);
+-			goto free_regulators;
+-		}
+-
+-		opp_table->regulators[i] = reg;
+-	}
+-
++	opp_table->regulators = regulators;
+ 	opp_table->regulator_count = count;
+ 
+ 	/* Allocate block only once to pass to set_opp() routines */
+ 	ret = _allocate_set_opp_data(opp_table);
+-	if (ret)
+-		goto free_regulators;
+-
+-	return opp_table;
+-
+-free_regulators:
+-	while (i != 0)
+-		regulator_put(opp_table->regulators[--i]);
++	if (ret == 0)
++		return opp_table;
+ 
+-	kfree(opp_table->regulators);
+ 	opp_table->regulators = NULL;
+ 	opp_table->regulator_count = -1;
+ err:
+@@ -1556,12 +1528,8 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
+ 
+-	for (i = opp_table->regulator_count - 1; i >= 0; i--)
+-		regulator_put(opp_table->regulators[i]);
+-
+ 	_free_set_opp_data(opp_table);
+ 
+-	kfree(opp_table->regulators);
+ 	opp_table->regulators = NULL;
+ 	opp_table->regulator_count = -1;
+ 
+diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+index 24c757a32a7b..3cf24c2c4969 100644
+--- a/include/linux/pm_opp.h
++++ b/include/linux/pm_opp.h
+@@ -123,7 +123,7 @@ struct opp_table *dev_pm_opp_set_supported_hw(struct device *dev, const u32 *ver
+ void dev_pm_opp_put_supported_hw(struct opp_table *opp_table);
+ struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name);
+ void dev_pm_opp_put_prop_name(struct opp_table *opp_table);
+-struct opp_table *dev_pm_opp_set_regulators(struct device *dev, const char * const names[], unsigned int count);
++struct opp_table *dev_pm_opp_set_regulators(struct device *dev, struct regulator **regulators, unsigned int count);
+ void dev_pm_opp_put_regulators(struct opp_table *opp_table);
+ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
+ void dev_pm_opp_put_clkname(struct opp_table *opp_table);
 -- 
 2.17.1
 
