@@ -2,164 +2,132 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD43C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A863C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064EB2175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:47:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34DB21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:50:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AB3+HXd7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfBGSq4 (ORCPT
+        id S1726824AbfBGSuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:46:56 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60946 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfBGSqx (ORCPT
+        Thu, 7 Feb 2019 13:50:15 -0500
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:32899 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfBGSuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:46:53 -0500
-Received: from 79.184.254.36.ipv4.supernova.orange.pl (79.184.254.36) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 9fea27cacdebb27e; Thu, 7 Feb 2019 19:46:51 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 1/2] PM-runtime: Take suppliers into account in __pm_runtime_set_status()
-Date:   Thu, 07 Feb 2019 19:38:56 +0100
-Message-ID: <1634058.cXDNg15SOd@aspire.rjw.lan>
-In-Reply-To: <3917694.ab5GGAjohB@aspire.rjw.lan>
-References: <3917694.ab5GGAjohB@aspire.rjw.lan>
+        Thu, 7 Feb 2019 13:50:15 -0500
+Received: by mail-lf1-f53.google.com with SMTP id q12so714963lfm.0;
+        Thu, 07 Feb 2019 10:50:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+J+e0a/vJbdxod41KsemvmUeFjLyEw3km+wgDgJZtXs=;
+        b=AB3+HXd72JxmrO2zYm62/gsiTmQLI4CLey3XY9t8MQpaK3daHu2uTdLQRzi72xWBow
+         GB3GjKBOJKqv+ySWxbXWPouzTjnpgfBBpZELBYOBo3rr0IXr1VxsiugATdg3P90TtDnd
+         638yX2IOYSJq+Ivh+YeNX+QuZsweSDtkRLAgq4akP8ri5dqFZQIOoCsEt02ZcI3EhNBZ
+         hRCn0cK1Ek3k0GPnHyNeyiiaswZ8/o4WYR9jtnLE7UiRkb7q4Zos83MEur8oIzxlwarc
+         ajRyUyglcdWQDm2Yssay5wMGZzNGPCvlfLGjAYOFXLQOURfrf3OlDK2BhDKQaN19nYAe
+         N4eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+J+e0a/vJbdxod41KsemvmUeFjLyEw3km+wgDgJZtXs=;
+        b=ZD1C205IIJ1jI7kspZb/hnMxh4o9/QhHcAJ256XyZSalfJHF+KH/18kBzw/O0Q+dmu
+         KJ1rZxmf2pZ+Y5c17cKmcU4bg35qv/+8B1C7Xa2o84f8VSCOHf2pHXbF6U1Czjz3CYd+
+         gBIR6owizaR3qDKxiGyLXD0s8uZ22Kt9wY9paAPENm/qNWw11iMC+EvgFzvv4EtkexPl
+         /wAHmd5lPM1JgZWw1tMd13QKUoVRS0c4roNLoRRKj8pzHsUhG1ztj/iy+AZoAASzcIsO
+         ZeGaM3smYx0rJKoQ0eXnOmwBXNcySjjh2pINDDx05HjY99XbfdxLLIUtBp/0AYF222x6
+         P6AQ==
+X-Gm-Message-State: AHQUAuavEKERhRckGWRRi0b8qh1SXcfLXxjfQLi4UQG5K8ZZCrdO6gHY
+        jKRmymsAoULG2eG+ao0xGr3CnGM4
+X-Google-Smtp-Source: AHgI3IbDq3vwkgS69o9ZZSl7sRk6yVlsUDi8U4k3ofJsAt8vfMHYEiBV298Lu3+Pbb8Ylrw4q65Ang==
+X-Received: by 2002:a19:1cd3:: with SMTP id c202mr11002991lfc.33.1549565412209;
+        Thu, 07 Feb 2019 10:50:12 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id w16-v6sm4485261ljw.11.2019.02.07.10.50.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 10:50:11 -0800 (PST)
+Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
+ <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e09062b7-9c74-6aee-477a-72fb72bbd5d3@gmail.com>
+Date:   Thu, 7 Feb 2019 21:50:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+06.02.2019 22:16, Sowjanya Komatineni пишет:
+> @@ -920,6 +1238,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+>  	.has_mst_fifo = false,
+>  	.quirks = &tegra_i2c_quirks,
+>  	.supports_bus_clear = false,
+> +	.has_apb_dma = true,
+>  };
+>  
+>  static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+> @@ -935,6 +1254,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+>  	.has_mst_fifo = false,
+>  	.quirks = &tegra_i2c_quirks,
+>  	.supports_bus_clear = false,
+> +	.has_apb_dma = true,
+>  };
+>  
+>  static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+> @@ -950,6 +1270,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+>  	.has_mst_fifo = false,
+>  	.quirks = &tegra_i2c_quirks,
+>  	.supports_bus_clear = true,
+> +	.has_apb_dma = true,
+>  };
+>  
+>  static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+> @@ -965,6 +1286,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+>  	.has_mst_fifo = false,
+>  	.quirks = &tegra_i2c_quirks,
+>  	.supports_bus_clear = true,
+> +	.has_apb_dma = true,
+>  };
+>  
+>  static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+> @@ -980,6 +1302,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+>  	.has_mst_fifo = false,
+>  	.quirks = &tegra_i2c_quirks,
+>  	.supports_bus_clear = true,
+> +	.has_apb_dma = true,
+>  };
 
-If the target device has any suppliers, as reflected by device links
-to them, __pm_runtime_set_status() does not take them into account,
-which is not consistent with the other parts of the PM-runtime
-framework and may lead to programming mistakes.
+T186 is missed here.
 
-Modify __pm_runtime_set_status() to take suppliers into account by
-activating them upfront if the new status is RPM_ACTIVE and
-deactivating them on exit if the new status is RPM_SUSPENDED.
-
-If the activation of one of the suppliers fails, the new status
-will be RPM_SUSPENDED and the (remaining) suppliers will be
-deactivated on exit (the child count of the device's parent
-will be dropped too then).
-
-Of course, adding device links locking to __pm_runtime_set_status()
-means that it cannot be run fron interrupt context, so make it use
-spin_lock_irq() and spin_unlock_irq() instead of spin_lock_irqsave()
-and spin_unlock_irqrestore(), respectively.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/power/runtime.c |   45 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
-
-Index: linux-pm/drivers/base/power/runtime.c
-===================================================================
---- linux-pm.orig/drivers/base/power/runtime.c
-+++ linux-pm/drivers/base/power/runtime.c
-@@ -1102,20 +1102,43 @@ EXPORT_SYMBOL_GPL(pm_runtime_get_if_in_u
-  * and the device parent's counter of unsuspended children is modified to
-  * reflect the new status.  If the new status is RPM_SUSPENDED, an idle
-  * notification request for the parent is submitted.
-+ *
-+ * If @dev has any suppliers (as reflected by device links to them), and @status
-+ * is RPM_ACTIVE, they will be activated upfront and if the activation of one
-+ * of them fails, the status of @dev will be changed to RPM_SUSPENDED (instead
-+ * of the @status value) and the suppliers will be deacticated on exit.  The
-+ * error returned by the failing supplier activation will be returned in that
-+ * case.
-  */
- int __pm_runtime_set_status(struct device *dev, unsigned int status)
- {
- 	struct device *parent = dev->parent;
--	unsigned long flags;
- 	bool notify_parent = false;
- 	int error = 0;
- 
- 	if (status != RPM_ACTIVE && status != RPM_SUSPENDED)
- 		return -EINVAL;
- 
--	spin_lock_irqsave(&dev->power.lock, flags);
-+	/*
-+	 * If the new status is RPM_ACTIVE, the suppliers can be activated
-+	 * upfront regardless of the current status, because next time
-+	 * rpm_put_suppliers() runs, the rpm_active refcounts of the links
-+	 * involved will be dropped down to one anyway.
-+	 */
-+	if (status == RPM_ACTIVE) {
-+		int idx = device_links_read_lock();
-+
-+		error = rpm_get_suppliers(dev);
-+		if (error)
-+			status = RPM_SUSPENDED;
-+
-+		device_links_read_unlock(idx);
-+	}
-+
-+	spin_lock_irq(&dev->power.lock);
- 
- 	if (!dev->power.runtime_error && !dev->power.disable_depth) {
-+		status = dev->power.runtime_status;
- 		error = -EAGAIN;
- 		goto out;
- 	}
-@@ -1147,19 +1170,31 @@ int __pm_runtime_set_status(struct devic
- 
- 		spin_unlock(&parent->power.lock);
- 
--		if (error)
-+		if (error) {
-+			status = RPM_SUSPENDED;
- 			goto out;
-+		}
- 	}
- 
-  out_set:
- 	__update_runtime_status(dev, status);
--	dev->power.runtime_error = 0;
-+	if (!error)
-+		dev->power.runtime_error = 0;
-+
-  out:
--	spin_unlock_irqrestore(&dev->power.lock, flags);
-+	spin_unlock_irq(&dev->power.lock);
- 
- 	if (notify_parent)
- 		pm_request_idle(parent);
- 
-+	if (status == RPM_SUSPENDED) {
-+		int idx = device_links_read_lock();
-+
-+		rpm_put_suppliers(dev);
-+
-+		device_links_read_unlock(idx);
-+	}
-+
- 	return error;
- }
- EXPORT_SYMBOL_GPL(__pm_runtime_set_status);
+>  
+>  static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+> @@ -995,6 +1318,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+>  	.has_mst_fifo = true,
+>  	.quirks = &tegra194_i2c_quirks,
+>  	.supports_bus_clear = true,
+> +	.has_apb_dma = false,
+>  };
 
