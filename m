@@ -2,92 +2,73 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DF1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE77C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F5C2175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549547888;
-	bh=ql2kZK1LekoC4t5pOZXv7zKdHUi7q0D2YrztATb1mzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iWW+7Y3JWgF6LqiBATbK0RjpPQzn1Eg4vJfDHIbM23XMzXr2Mn0uqN9h4PDcTbZS0
-	 lDp6IqFTx/TutTbDhXW2ygUAai+YAQleef98l1QAdpQx3nk9ZZYMZSeueiZ022QJN/
-	 Vz5MYctkBk0aNKJAUJIZwbp6v2tc0YduYUP262Zg=
+	by mail.kernel.org (Postfix) with ESMTP id 0B49F2175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:59:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Obd6U6sB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfBGN6G (ORCPT
+        id S1727074AbfBGN7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:58:06 -0500
-Received: from mail-lf1-f50.google.com ([209.85.167.50]:33345 "EHLO
-        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBGN6G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:58:06 -0500
-Received: by mail-lf1-f50.google.com with SMTP id q12so247541lfm.0;
-        Thu, 07 Feb 2019 05:58:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ql2kZK1LekoC4t5pOZXv7zKdHUi7q0D2YrztATb1mzk=;
-        b=BS9XFK8MPrXWXOVNXPBcbYf86OQlJXaQBlq5yXtUu+xS2U8S8m3MMgKHRel3J2hIEj
-         /RodHzj6v2LzrQlYIkLHfrGCZVT+sbbnnTXExDE8QVL2qu0oV4YIqwEdhWz6+N9Kegk8
-         w7e7b3AEMXw7MzHftatoIrMzxQp1fleu9txbR5XLq+SAQMogrJ9rM3G4CS7xcQdrGMuo
-         dopmC69wYs/vAHKyIm5iCgoEkGawlJmb1bXjhECmQ8iEGiH4IxqZ/Y4TLwvpygEfhTK5
-         MbSFciYEmkjOkpCai6EgTbiO8RJna+ZXsSco8+z1Qa0kf6Y8xscpT7wS8POFKtvqoecH
-         6RsA==
-X-Gm-Message-State: AHQUAuZyScPA478VeSDJAY/me2P8FxODYSHDXuPLnYV7kfQF/xdNZiCo
-        C7DFLQLsF7B6PFlI0CtJNkXFBY8K
-X-Google-Smtp-Source: AHgI3IZIX5sYzgLaR/FC1PJ/fMMFviwJ1qt7oWPWRC5ka2I6WjHJ1TuTt+R7TJdfSM/ATTIUvPZb3g==
-X-Received: by 2002:ac2:4116:: with SMTP id b22mr9947385lfi.19.1549547883752;
-        Thu, 07 Feb 2019 05:58:03 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id d70sm2682550lfe.14.2019.02.07.05.58.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 05:58:02 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1grkBj-0005yo-Tw; Thu, 07 Feb 2019 14:57:59 +0100
-Date:   Thu, 7 Feb 2019 14:57:59 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: cp210x: Fix GPIO in autosuspend
-Message-ID: <20190207135759.GL4686@localhost>
-References: <20190204160944.GH4686@localhost>
- <20190115085743.GL3691@localhost>
- <20190114194352.4579-1-pados@pados.hu>
- <15f71a61af66817847d4b11b9e2e60e8@pados.hu>
- <20190115092607.GN3691@localhost>
- <20190115102942.GO3691@localhost>
- <7af148c7c37e625525141bfa7d23754a@pados.hu>
+        Thu, 7 Feb 2019 08:59:42 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:42426 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726782AbfBGN7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:59:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=MHHtCsoQdBIpDqpQB8CcP8mcYGHnSvU4DJ9anatzKPE=; b=Obd6U6sBiWm1B6RyOFtp8V4v98
+        1JeO/avOG2Aqag5sW3q8apaLY8ui22TkzlD7DUXkDdR7zHihd423f0cqy4Wrjg544bJB890hf1c/X
+        k/M7Y3B05VhW50sfaB5dMS9DQUtlTdECxmblCj9mACbV5qdO7tJay2PyfVaThDVNM44E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1grkDK-0006qj-7U; Thu, 07 Feb 2019 14:59:38 +0100
+Date:   Thu, 7 Feb 2019 14:59:38 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next v2 02/10] net: phy: Mask-out non-compatible
+ modes when setting the max-speed
+Message-ID: <20190207135938.GG32483@lunn.ch>
+References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
+ <20190207094939.27369-3-maxime.chevallier@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7af148c7c37e625525141bfa7d23754a@pados.hu>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190207094939.27369-3-maxime.chevallier@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 09:43:36PM +0000, Karoly Pados wrote:
-> Uhm, yes, sorry, it kind of went out of my head. I am doing a lot of
-> travelling lately (in the past 48 hours I've been on 3 airplanes), and
-> I had travels on earlier weeks too, mixed with some project releases
-> and family celebrations. So my head is just somewhere else.
-> Realistically, I'll submit something by the weekend when I'm home
-> again.
+On Thu, Feb 07, 2019 at 10:49:31AM +0100, Maxime Chevallier wrote:
+> When setting a PHY's max speed using either the max-speed DT property
+> or ethtool, we should mask-out all non-compatible modes according to the
+> settings table, instead of just the 10/100BASET modes.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
 
-Sounds good. Just want to make sure this gets fixed in 5.1 (i.e. before
-5.0 is released).
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-And just let me know if you can't find the time.
-
-Johan
+    Andrew
