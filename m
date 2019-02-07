@@ -2,175 +2,115 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DB2C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA37DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9530F21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549576931;
-	bh=SrGQtSRwp7rdI7Pn1+ONFD6lQT2q2uoDnk5SazLE9kY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=L5dZBO9hAo/NHb5x1QDwsZhchcHNHV9C80ny/a7BDQN76UhdEHALSBjIlXBYW8OEP
-	 EpbZp32sK/v1n7C804O0gNCXkeEoqtL9Ft71tjFdfanZsiNPljGrdgzRGmFlzIeYjo
-	 z638YktJOM1ZANI/jHeY8FJC9vDQm98jmom7iL4w=
+	by mail.kernel.org (Postfix) with ESMTP id B734D21721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NjzqXAPv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfBGWCK (ORCPT
+        id S1727083AbfBGWCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:02:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726576AbfBGWCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:02:09 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8667221721;
-        Thu,  7 Feb 2019 22:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549576928;
-        bh=SrGQtSRwp7rdI7Pn1+ONFD6lQT2q2uoDnk5SazLE9kY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EDnugmESFHVNnH8NkIoeNXzfZtWsQBX2ejQynqs1ryVAi0wdoailGUxVlHc3SdW7f
-         fpENkzt8A1aTc8RWpt0gHxocOcJs+d675QZh/3nXqAt6M/u2CGYS2qbTRaW9S0jYmY
-         QfkiPS1MTPWgxZ1vfDJcnVT61i54w/6ooZqKlQeo=
-Date:   Thu, 7 Feb 2019 16:02:05 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 1/5] genirq/affinity: move allocation of
- 'node_to_cpumask' to irq_build_affinity_masks
-Message-ID: <20190207220204.GP7268@google.com>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
- <20190125095347.17950-2-ming.lei@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125095347.17950-2-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 7 Feb 2019 17:02:31 -0500
+Received: from mail-it1-f202.google.com ([209.85.166.202]:41080 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfBGWCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:02:30 -0500
+Received: by mail-it1-f202.google.com with SMTP id 71so2301150ita.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:02:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=MqLuibBHajEelET2gmxRQFU5+ervUm+M6PMMM0jIz+k=;
+        b=NjzqXAPv2Gw8MbNmaKl8Irqy4dtdTyhJaKdWzaw4RP1C7HT2CI16fy8ualj7GapIKe
+         xUFEeAmjG0112J8IFKsNdet7r3fKZ0/bKmkZJHuesmNFEmJbrRdmF5gK4Gn3ciG/rDEP
+         ZWZ2JVO7WQqtuTlFrvinw01+LGNXX2gGOvPmc5TDylF1MGJNGuX8jVtQt9NbjtztdFGX
+         uBhO1DP9kUuWcl7gGnTRZH9wV0K0p7K6Q2GgsBnlsS2NMW8P/+Wpk+PbF2ld1SxoojoB
+         fX9y4ed58VzKk/6+uFwRM5nsRpzZAJ5V5vQB2Bs9C+nm8a//QWSJ+dqZRKHF4Wc3jB34
+         yM0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=MqLuibBHajEelET2gmxRQFU5+ervUm+M6PMMM0jIz+k=;
+        b=VqC6P0XE2H7WL2XaBV7BvOSdyXLuW1EuGJqJKjPJRGsVYad5YsWi2gZv5vNXnvI4Tl
+         lN88DXSeI4q/9zPiy3DOh436DhjK/wRaw9mkc5iOUTFTJXPCKrLew85tHrqxFJbjJmS6
+         rcFTVtHdjv5x5zMKyHCtxRCRoiYA/CTMzsyw8THuFKWVl/xAGbPfZtzNiuyRTmkoxaOq
+         EjBS4kdZeR6ceB+Jz63PVAp7wjEpSuzMIuTiDIO/lFfK7NkDS1chUf4aQbARXec49IQx
+         IoRhrO4y0dOEitBm8ukbEPk7hvVHSLYjgMJu5A4Gy9YqhdsCam3GCq6lpKXvTKDkiYjd
+         wDRQ==
+X-Gm-Message-State: AHQUAubhyl2WiKqakY1cG+sD74C6eHWB/21UeD2hTOynoNc0x21D7hxt
+        wFxmAPjdt1EXQMm8iKNEvUIvDM/VRFTGJkVD6P0=
+X-Google-Smtp-Source: AHgI3IbzAB08Nd8K+rw+XS37VTuAC7piX0ErADL9L1+p2KSX5VtiIPHG/x6FtX4a94kQGQFtcnBDnQq+Yp+9LGZ8bvg=
+X-Received: by 2002:a24:5e90:: with SMTP id h138mr7648078itb.27.1549576950026;
+ Thu, 07 Feb 2019 14:02:30 -0800 (PST)
+Date:   Thu,  7 Feb 2019 14:01:49 -0800
+Message-Id: <20190207220155.81351-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+Subject: [PATCH 1/4] init/Kconfig: add config support for detecting linker
+From:   ndesaulniers@google.com
+To:     yamada.masahiro@socionext.com
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 05:53:43PM +0800, Ming Lei wrote:
-> 'node_to_cpumask' is just one temparay variable for irq_build_affinity_masks(),
-> so move it into irq_build_affinity_masks().
-> 
-> No functioanl change.
+Similar to how we differentiate between CONFIG_CC_IS_GCC and
+CONFIG_CC_IS_CLANG, add CONFIG_LD_IS_BFD, CONFIG_LD_IS_GOLD, and
+CONFIG_LD_IS_LLD.
 
-s/temparay/temporary/
-s/functioanl/functional/
+This simiplifies patches to Makefiles that need to do different things
+for different linkers.
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+ init/Kconfig | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Nice patch, this is much cleaner.
+diff --git a/init/Kconfig b/init/Kconfig
+index c9386a365eea..b6046dcf7794 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -26,6 +26,15 @@ config CLANG_VERSION
+ config CC_HAS_ASM_GOTO
+ 	def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+ 
++config LD_IS_BFD
++	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU ld')
++
++config LD_IS_GOLD
++	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU gold')
++
++config LD_IS_LLD
++	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'LLD')
++
+ config CONSTRUCTORS
+ 	bool
+ 	depends on !UML
+-- 
+2.20.1.791.gb4d0f1c61a-goog
 
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-
-> ---
->  kernel/irq/affinity.c | 27 +++++++++++++--------------
->  1 file changed, 13 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> index 45b68b4ea48b..118b66d64a53 100644
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -175,18 +175,22 @@ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
->   */
->  static int irq_build_affinity_masks(const struct irq_affinity *affd,
->  				    int startvec, int numvecs, int firstvec,
-> -				    cpumask_var_t *node_to_cpumask,
->  				    struct irq_affinity_desc *masks)
->  {
->  	int curvec = startvec, nr_present, nr_others;
->  	int ret = -ENOMEM;
->  	cpumask_var_t nmsk, npresmsk;
-> +	cpumask_var_t *node_to_cpumask;
->  
->  	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
->  		return ret;
->  
->  	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
-> -		goto fail;
-> +		goto fail_nmsk;
-> +
-> +	node_to_cpumask = alloc_node_to_cpumask();
-> +	if (!node_to_cpumask)
-> +		goto fail_npresmsk;
->  
->  	ret = 0;
->  	/* Stabilize the cpumasks */
-> @@ -217,9 +221,12 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
->  	if (nr_present < numvecs)
->  		WARN_ON(nr_present + nr_others < numvecs);
->  
-> +	free_node_to_cpumask(node_to_cpumask);
-> +
-> + fail_npresmsk:
->  	free_cpumask_var(npresmsk);
->  
-> - fail:
-> + fail_nmsk:
->  	free_cpumask_var(nmsk);
->  	return ret;
->  }
-> @@ -236,7 +243,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  {
->  	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
->  	int curvec, usedvecs;
-> -	cpumask_var_t *node_to_cpumask;
->  	struct irq_affinity_desc *masks = NULL;
->  	int i, nr_sets;
->  
-> @@ -247,13 +253,9 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	if (nvecs == affd->pre_vectors + affd->post_vectors)
->  		return NULL;
->  
-> -	node_to_cpumask = alloc_node_to_cpumask();
-> -	if (!node_to_cpumask)
-> -		return NULL;
-> -
->  	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
->  	if (!masks)
-> -		goto outnodemsk;
-> +		return NULL;
->  
->  	/* Fill out vectors at the beginning that don't need affinity */
->  	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
-> @@ -271,11 +273,10 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  		int ret;
->  
->  		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
-> -						curvec, node_to_cpumask, masks);
-> +						curvec, masks);
->  		if (ret) {
->  			kfree(masks);
-> -			masks = NULL;
-> -			goto outnodemsk;
-> +			return NULL;
->  		}
->  		curvec += this_vecs;
->  		usedvecs += this_vecs;
-> @@ -293,8 +294,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
->  		masks[i].is_managed = 1;
->  
-> -outnodemsk:
-> -	free_node_to_cpumask(node_to_cpumask);
->  	return masks;
->  }
->  
-> -- 
-> 2.9.5
-> 
