@@ -2,136 +2,334 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE693C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D725C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC51A21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:42:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3417xV9"
+	by mail.kernel.org (Postfix) with ESMTP id EB27821872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfBGPmd (ORCPT
+        id S1726728AbfBGPoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:42:33 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37538 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGPmc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:42:32 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so104101plr.4;
-        Thu, 07 Feb 2019 07:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NIgsqiuQR28DVR70vS/tR7cqO2gKsSLJxdOnp0Nf0dg=;
-        b=h3417xV9nJRVKTGENqUROxdGpMPdwb4oZiIiJsujek4PMRDVtghhyD8VVgLODyfytN
-         oDg+OB+gqmr92oNlQjtjjOlk2ySWEGo4cyD/H6rU8EH8FenTQQF+bIQ1fcJLsCyi+YZl
-         qXxdiDm9mvwiXeHlFzqFBUW7PP+A4wuAC+9dNQr7WUfcVc9l0pf+Cey8BmiSeDA143lQ
-         pkeU8UpPAKT2O//+OqW7IWgkUW3uqUDhULdZUFxQu7KHpjHa7FP131oP+aaQsRJs/Xoc
-         wLauU0+l1YQsklC/7lwRpqGiL4KaNoxZV3k1py7CiD/rVZ3Y+ts4SurntkU480nbhQb5
-         acTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NIgsqiuQR28DVR70vS/tR7cqO2gKsSLJxdOnp0Nf0dg=;
-        b=RhThiEqkwsiN6PGOOrKyufRrZn9IEHVQFq2035sJUHztIn/9FMofGTKK8sllWiPhv2
-         3KuVLffSAh5ZrN36GmAMCk8ihOU09TklfK/AC/ICZ8mYdwwKjHQ1TJ+/jJxdoJpUmkz9
-         495KDm6roDWhCBmiXgMOy/git5fUiVCIG2yVE3JJF4S+iojV8qvKBQ1JEGrmTx5k1yUB
-         g27vXQ1oXgQMkVKUOoPxvHCE8w2/tAIWQ7k3OBOgmqs2ip9SmQmn+WX4AFV/hIzt925e
-         XrQJiwJEcxY0DkxQdAaq5UNlX8gAmzYVTOuMAX1DaSBMiamBT4tnsS6/X/nNfEQaE711
-         8r/g==
-X-Gm-Message-State: AHQUAuaxCbIbVonhenNaxo74dvnIndFFW1/OgOcrbSAio1vIJhPMuNVj
-        r8Ix6lTcbDg47wgsMFFOUJE=
-X-Google-Smtp-Source: AHgI3IbicIP2yZbeFS7vGVKcZD3eNkaLdqvKjCk8gW7D89GUHUyn97SDf16i6XfIN2pgJBN0SgK7MQ==
-X-Received: by 2002:a17:902:9691:: with SMTP id n17mr17534229plp.9.1549554151522;
-        Thu, 07 Feb 2019 07:42:31 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e2sm13088357pga.92.2019.02.07.07.42.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 07:42:30 -0800 (PST)
-Date:   Thu, 7 Feb 2019 07:42:29 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Matti Vaittinen <mazziesaccount@gmail.com>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 4/8] devicetree: bindings: Document first ROHM BD70528
- bindings
-Message-ID: <20190207154229.GA19277@roeck-us.net>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <52b17ed2599b21f4b93665ac689113ce3f8816b7.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <20190207140418.GH20638@dell>
- <20190207153600.GA1920@localhost.localdomain>
+        Thu, 7 Feb 2019 10:44:25 -0500
+Received: from foss.arm.com ([217.140.101.70]:39086 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfBGPoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:44:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE2EBA78;
+        Thu,  7 Feb 2019 07:44:23 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 714323F719;
+        Thu,  7 Feb 2019 07:44:22 -0800 (PST)
+Date:   Thu, 7 Feb 2019 15:44:19 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/9] PCI: keystone: Add separate functions for
+ configuring MSI and legacy interrupt
+Message-ID: <20190207154419.GB21111@e107981-ln.cambridge.arm.com>
+References: <20190207110924.30716-1-kishon@ti.com>
+ <20190207110924.30716-4-kishon@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190207153600.GA1920@localhost.localdomain>
+In-Reply-To: <20190207110924.30716-4-kishon@ti.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 05:36:00PM +0200, Matti Vaittinen wrote:
-> Hello Lee,
+On Thu, Feb 07, 2019 at 04:39:18PM +0530, Kishon Vijay Abraham I wrote:
+> ks_pcie_get_irq_controller_info() was used to configure both MSI and
+> legacy interrupt. This will prevent MSI or legacy interrupt specific
+> intializations. Add separate functions to configure MSI and legacy
+> interrupts.
 > 
-> Thanks for the reviews!
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 188 +++++++++++-----------
+>  1 file changed, 96 insertions(+), 92 deletions(-)
 > 
-> On Thu, Feb 07, 2019 at 02:04:18PM +0000, Lee Jones wrote:
-> > On Thu, 07 Feb 2019, Matti Vaittinen wrote:
-> > 
-> > > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> > > drivers) and 4 GPIO pins which can be configured for I/O or
-> > > as interrupt sources withe configurable trigger levels.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > > ---
-> > >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++++++++++++++++++++
-> > >  1 file changed, 102 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > new file mode 100644
-> > > index 000000000000..f80be7e40184
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> > > @@ -0,0 +1,102 @@
-> > > +* ROHM BD70528 Power Management Integrated Circuit bindings
-> > > +
-> > > +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
-> > 
-> > What's an Iq?
-> 
-> http://www.ti.com/lit/an/slyt412/slyt412.pdf
-> Iq is an abbreviation of quiescet current. Do you think it's worth
-> writing the whole words instead of an abbreviation?
-> 
-https://acronyms.thefreedictionary.com/IQ lists 23 definitions.
-This one is not listed. Yes, I think it would be beneficial to use
-the whole word.
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 4cf9849d5a1d..b1d01751c1af 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -87,11 +87,8 @@ struct keystone_pcie {
+>  	struct dw_pcie		*pci;
+>  	/* PCI Device ID */
+>  	u32			device_id;
+> -	int			num_legacy_host_irqs;
+> -	int			legacy_host_irqs[PCI_NUM_INTX];
+>  	struct			device_node *legacy_intc_np;
+>  
+> -	int			num_msi_host_irqs;
+>  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
+>  	int			num_lanes;
+>  	u32			num_viewport;
+> @@ -201,14 +198,6 @@ static int ks_pcie_msi_host_init(struct pcie_port *pp)
+>  	return dw_pcie_allocate_domains(pp);
+>  }
+>  
+> -static void ks_pcie_enable_legacy_irqs(struct keystone_pcie *ks_pcie)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < PCI_NUM_INTX; i++)
+> -		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), 0x1);
+> -}
+> -
+>  static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+>  				      int offset)
+>  {
+> @@ -490,17 +479,6 @@ static int __init ks_pcie_dw_host_init(struct keystone_pcie *ks_pcie)
+>  
+>  	ks_pcie->app = *res;
+>  
+> -	/* Create legacy IRQ domain */
+> -	ks_pcie->legacy_irq_domain =
+> -			irq_domain_add_linear(ks_pcie->legacy_intc_np,
+> -					      PCI_NUM_INTX,
+> -					      &ks_pcie_legacy_irq_domain_ops,
+> -					      NULL);
+> -	if (!ks_pcie->legacy_irq_domain) {
+> -		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	return dw_pcie_host_init(pp);
+>  }
+>  
+> @@ -624,85 +602,117 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+>  	chained_irq_exit(chip, desc);
+>  }
+>  
+> -static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
+> -					   char *controller, int *num_irqs)
+> +static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
+>  {
+> -	int temp, max_host_irqs, legacy = 1, *host_irqs;
+>  	struct device *dev = ks_pcie->pci->dev;
+> -	struct device_node *np_pcie = dev->of_node, **np_temp;
+> -
+> -	if (!strcmp(controller, "msi-interrupt-controller"))
+> -		legacy = 0;
+> -
+> -	if (legacy) {
+> -		np_temp = &ks_pcie->legacy_intc_np;
+> -		max_host_irqs = PCI_NUM_INTX;
+> -		host_irqs = &ks_pcie->legacy_host_irqs[0];
+> -	} else {
+> -		np_temp = &ks_pcie->msi_intc_np;
+> -		max_host_irqs = MAX_MSI_HOST_IRQS;
+> -		host_irqs =  &ks_pcie->msi_host_irqs[0];
+> -	}
+> +	struct device_node *np = ks_pcie->np;
+> +	struct device_node *intc_np;
+> +	int irq_count;
+> +	int irq;
+> +	int ret;
+> +	int i;
 
-Guenter
+Nit: all int can be in one line.
 
-> Thanks for the rest of the corrections, I'll fix them in next version.
+> -	/* interrupt controller is in a child node */
+> -	*np_temp = of_get_child_by_name(np_pcie, controller);
+> -	if (!(*np_temp)) {
+> -		dev_err(dev, "Node for %s is absent\n", controller);
+> -		return -EINVAL;
+> -	}
+> +	if (!IS_ENABLED(CONFIG_PCI_MSI))
+> +		return 0;
+>  
+> -	temp = of_irq_count(*np_temp);
+> -	if (!temp) {
+> -		dev_err(dev, "No IRQ entries in %s\n", controller);
+> -		of_node_put(*np_temp);
+> +	intc_np = of_get_child_by_name(np, "msi-interrupt-controller");
+> +	if (!intc_np) {
+> +		dev_WARN(dev, "msi-interrupt-controller node is absent\n");
+
+I do not think you can justify a backtrace for this error path, so
+convert it to a dev_warn() please.
+
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (temp > max_host_irqs)
+> -		dev_warn(dev, "Too many %s interrupts defined %u\n",
+> -			(legacy ? "legacy" : "MSI"), temp);
+> +	irq_count = of_irq_count(intc_np);
+> +	if (!irq_count) {
+> +		dev_err(dev, "No IRQ entries in msi-interrupt-controller\n");
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+>  
+> -	/*
+> -	 * support upto max_host_irqs. In dt from index 0 to 3 (legacy) or 0 to
+> -	 * 7 (MSI)
+> -	 */
+> -	for (temp = 0; temp < max_host_irqs; temp++) {
+> -		host_irqs[temp] = irq_of_parse_and_map(*np_temp, temp);
+> -		if (!host_irqs[temp])
+> -			break;
+> +	if (irq_count > MAX_MSI_HOST_IRQS) {
+> +		dev_warn(dev, "Too many MSI interrupt lines defined %u\n",
+> +			 irq_count);
+> +		irq_count = MAX_MSI_HOST_IRQS;
+>  	}
+>  
+> -	of_node_put(*np_temp);
+> +	for (i = 0; i < irq_count; i++) {
+> +		irq = irq_of_parse_and_map(intc_np, i);
+> +		if (!irq) {
+> +			ret = -EINVAL;
+> +			goto err;
+> +		}
+> +		ks_pcie->msi_host_irqs[i] = irq;
+>  
+> -	if (temp) {
+> -		*num_irqs = temp;
+> -		return 0;
+> +		irq_set_chained_handler_and_data(irq, ks_pcie_msi_irq_handler,
+> +						 ks_pcie);
+>  	}
+>  
+> -	return -EINVAL;
+> +	of_node_put(intc_np);
+> +	return 0;
+> +
+> +err:
+> +	of_node_put(intc_np);
+> +	return ret;
+>  }
+>  
+> -static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
+> +static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
+>  {
+> +	struct device *dev = ks_pcie->pci->dev;
+> +	struct irq_domain *legacy_irq_domain;
+> +	struct device_node *np = ks_pcie->np;
+> +	struct device_node *intc_np;
+> +	int irq_count;
+> +	int irq;
+> +	int ret;
+>  	int i;
+>  
+> -	/* Legacy IRQ */
+> -	for (i = 0; i < ks_pcie->num_legacy_host_irqs; i++) {
+> -		irq_set_chained_handler_and_data(ks_pcie->legacy_host_irqs[i],
+> +	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
+> +	if (!intc_np) {
+> +		dev_WARN(dev, "legacy-interrupt-controller node is absent\n");
+
+Likewise.
+
+Lorenzo
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	irq_count = of_irq_count(intc_np);
+> +	if (!irq_count) {
+> +		dev_err(dev, "No IRQ entries in legacy-interrupt-controller\n");
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+> +
+> +	for (i = 0; i < irq_count; i++) {
+> +		irq = irq_of_parse_and_map(intc_np, i);
+> +		if (!irq) {
+> +			ret = -EINVAL;
+> +			goto err;
+> +		}
+> +		irq_set_chained_handler_and_data(irq,
+>  						 ks_pcie_legacy_irq_handler,
+>  						 ks_pcie);
+>  	}
+> -	ks_pcie_enable_legacy_irqs(ks_pcie);
+> -
+> -	/* MSI IRQ */
+> -	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> -		for (i = 0; i < ks_pcie->num_msi_host_irqs; i++) {
+> -			irq_set_chained_handler_and_data(ks_pcie->msi_host_irqs[i],
+> -							 ks_pcie_msi_irq_handler,
+> -							 ks_pcie);
+> -		}
+> +
+> +	legacy_irq_domain =
+> +		irq_domain_add_linear(intc_np, PCI_NUM_INTX,
+> +				      &ks_pcie_legacy_irq_domain_ops, NULL);
+> +	if (!legacy_irq_domain) {
+> +		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
+> +		ret = -EINVAL;
+> +		goto err;
+>  	}
+> +	ks_pcie->legacy_irq_domain = legacy_irq_domain;
+> +
+> +	for (i = 0; i < PCI_NUM_INTX; i++)
+> +		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), INTx_EN);
+> +
+> +	of_node_put(intc_np);
+> +
+> +	return 0;
+> +
+> +err:
+> +	of_node_put(intc_np);
+> +	return ret;
+> +}
+>  
+> +static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
+> +{
+>  	if (ks_pcie->error_irq > 0)
+>  		ks_pcie_enable_error_irq(ks_pcie);
+>  }
+> @@ -756,6 +766,14 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
+>  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+>  	int ret;
+>  
+> +	ret = ks_pcie_config_legacy_irq(ks_pcie);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ks_pcie_config_msi_irq(ks_pcie);
+> +	if (ret)
+> +		return ret;
+> +
+>  	dw_pcie_setup_rc(pp);
+>  
+>  	ks_pcie_establish_link(ks_pcie);
+> @@ -805,20 +823,6 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
+>  	struct device *dev = &pdev->dev;
+>  	int ret;
+>  
+> -	ret = ks_pcie_get_irq_controller_info(ks_pcie,
+> -					"legacy-interrupt-controller",
+> -					&ks_pcie->num_legacy_host_irqs);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> -		ret = ks_pcie_get_irq_controller_info(ks_pcie,
+> -						"msi-interrupt-controller",
+> -						&ks_pcie->num_msi_host_irqs);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	/*
+>  	 * Index 0 is the platform interrupt for error interrupt
+>  	 * from RC.  This is optional.
+> -- 
+> 2.17.1
 > 
-> Br,
-> 	Matti Vaittinen
