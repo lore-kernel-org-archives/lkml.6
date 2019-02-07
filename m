@@ -2,87 +2,107 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0044C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 467EDC282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED5B218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9B2218FE
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549518342;
+	bh=DRfV4szs40ya1bPVdGMiDE25rLGT0suhLe2d7FVAIxM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=x5FrqWOvW+s7u7u2adksB+zXxpb7M9ew25wKGcaFrf8SoPnPLGX6ZMlnyEpWPpb0k
+	 3GTeJc0I/tDCIyRdNLpwWGpYTBl3i29Qx26s14a2ti4U0Wv7FfiJGh7WcJUb8lJWx5
+	 4EUGE+8+sX8vWFerX97PYl6dcqLdg2H4vLkixUBk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfBGFil (ORCPT
+        id S1726764AbfBGFpk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 00:38:41 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:39334 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbfBGFij (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 7 Feb 2019 00:38:39 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 07 Feb 2019 06:38:37 +0100
-Received: from localhost.localdomain (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Thu, 07 Feb 2019 05:38:05 +0000
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, dave@stgolabs.net,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 2/2] MIPS/c-r4k: do no use mmap_sem for gup_fast()
-Date:   Wed,  6 Feb 2019 21:37:40 -0800
-Message-Id: <20190207053740.26915-3-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190207053740.26915-1-dave@stgolabs.net>
-References: <20190207053740.26915-1-dave@stgolabs.net>
+        Thu, 7 Feb 2019 00:45:40 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33045 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbfBGFpj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 00:45:39 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z8so1674544plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 21:45:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1/XuKC06w0o2tfOG+IZnGnEkIbmY1Io4BgDh5iGJOPY=;
+        b=Y5Xsv+tS0rV5IBZHCHPK6KvVNSKng94MA/BvC7/GQ7sBGTSsKNaPTF44A+5k88l+sO
+         XCTSxIMHh4QTwCVRav5Q1FYI0esF+XNkZs9INkpx29ddE2QHIjEjOZn8QOj3qD7ki2bN
+         u5M1Bzkf4Dyz22V4UcaJBG2JeDG/eqdqIOpsWgLdIgaLVuh2gdS6PC2HODAQbKFxHJsY
+         VJ35rmANQj5dTBqBdQdxgWkaMqRkPF6dZRXXNhuoc+1weciNWdD8BFo+I9xmjKJZuV4L
+         vGjXxExUuPJo3t8CLWHl+pRyROUQ/7Rf7PKSA+59nII5V0sAUfbRY38nATtLFd8olt/f
+         SMPw==
+X-Gm-Message-State: AHQUAuaPZkpsIMLyg5yluF0YIhj3Ib2YlmkY5sixRdVAD/Jrww3apouK
+        fBlpxuY4QqzUXRiBrRSMDwuMHw==
+X-Google-Smtp-Source: AHgI3IbUDAOfIEn43rGSI5w0tZaQ96eaAsFZkda7/euF95HRQPbL5Oc26Rpo0HSHB9LiOLPumuxuhA==
+X-Received: by 2002:a17:902:be11:: with SMTP id r17mr14824848pls.308.1549518338861;
+        Wed, 06 Feb 2019 21:45:38 -0800 (PST)
+Received: from localhost ([2601:647:4700:93d:6db5:e35d:dacd:7872])
+        by smtp.gmail.com with ESMTPSA id t3sm11702771pfa.50.2019.02.06.21.45.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 21:45:38 -0800 (PST)
+From:   Moritz Fischer <mdf@kernel.org>
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, davem@davemloft.net,
+        hkallweit1@gmail.com, f.fainelli@gmail.com, andrew@lunn.ch,
+        moritz@ettus.com, Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH v2 net-next] net: phy: fixed_phy: Fix fixed_phy not checking GPIO
+Date:   Wed,  6 Feb 2019 21:45:29 -0800
+Message-Id: <20190207054529.2865-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is well known that because the mm can internally
-call the regular gup_unlocked if the lockless approach
-fails and take the sem there, the caller must not hold
-the mmap_sem already.
+Fix fixed_phy not checking GPIO if no link_update callback
+is registered.
 
-Fixes: e523f289fe4d (MIPS: c-r4k: Fix sigtramp SMP call to use kmap)
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+In the original version all users registered a link_update
+callback so the issue was masked.
+
+Fixes: a5597008dbc2 ("phy: fixed_phy: Add gpio to determine link up/down.")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
 ---
- arch/mips/mm/c-r4k.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
-index cc4e17caeb26..38fe86928837 100644
---- a/arch/mips/mm/c-r4k.c
-+++ b/arch/mips/mm/c-r4k.c
-@@ -1034,11 +1034,9 @@ static void r4k_flush_cache_sigtramp(unsigned long addr)
- 	struct flush_cache_sigtramp_args args;
- 	int npages;
+Changes from v1:
+- Added Andrew's Reviewed-by: tag
+- Added Fixes: tag (Thanks for digging, Andrew!)
+
+---
+ drivers/net/phy/fixed_phy.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/phy/fixed_phy.c b/drivers/net/phy/fixed_phy.c
+index f136a23c1a35..d810f914aaa4 100644
+--- a/drivers/net/phy/fixed_phy.c
++++ b/drivers/net/phy/fixed_phy.c
+@@ -85,11 +85,11 @@ static int fixed_mdio_read(struct mii_bus *bus, int phy_addr, int reg_num)
+ 				s = read_seqcount_begin(&fp->seqcount);
+ 				fp->status.link = !fp->no_carrier;
+ 				/* Issue callback if user registered it. */
+-				if (fp->link_update) {
++				if (fp->link_update)
+ 					fp->link_update(fp->phydev->attached_dev,
+ 							&fp->status);
+-					fixed_phy_update(fp);
+-				}
++				/* Check the GPIO for change in status */
++				fixed_phy_update(fp);
+ 				state = fp->status;
+ 			} while (read_seqcount_retry(&fp->seqcount, s));
  
--	down_read(&current->mm->mmap_sem);
--
- 	npages = get_user_pages_fast(addr, 1, 0, &args.page);
- 	if (npages < 1)
--		goto out;
-+		return;
- 
- 	args.mm = current->mm;
- 	args.addr = addr;
-@@ -1046,8 +1044,6 @@ static void r4k_flush_cache_sigtramp(unsigned long addr)
- 	r4k_on_each_cpu(R4K_HIT, local_r4k_flush_cache_sigtramp, &args);
- 
- 	put_page(args.page);
--out:
--	up_read(&current->mm->mmap_sem);
- }
- 
- static void r4k_flush_icache_all(void)
 -- 
-2.16.4
+2.20.1
 
