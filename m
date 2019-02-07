@@ -2,175 +2,155 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720C8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3357C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:56:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B75E20818
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:56:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WRCA8n8p"
+	by mail.kernel.org (Postfix) with ESMTP id B227D218FE
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:56:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfBGI4k (ORCPT
+        id S1726774AbfBGI4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 03:56:40 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14533 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfBGI4k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 03:56:40 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5bf2a60000>; Thu, 07 Feb 2019 00:56:06 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 07 Feb 2019 00:56:38 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 07 Feb 2019 00:56:38 -0800
-Received: from localhost (10.124.1.5) by HQMAIL101.nvidia.com (172.20.187.10)
- with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 7 Feb 2019 08:56:37
- +0000
-Date:   Thu, 7 Feb 2019 09:56:35 +0100
-From:   Thierry Reding <treding@nvidia.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     Timo Alho <talho@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] firmware: tegra: Refactor BPMP driver
-Message-ID: <20190207085634.GC8741@ulmo>
-References: <20190206221711.GA21703@roeck-us.net>
+        Thu, 7 Feb 2019 03:56:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:33704 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfBGI4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 03:56:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0B8DEBD;
+        Thu,  7 Feb 2019 00:56:43 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB3A13F589;
+        Thu,  7 Feb 2019 00:56:39 -0800 (PST)
+Subject: Re: [PATCH] irqchip/i8259: fix shutdown order by moving syscore_ops
+ registration
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     linux-kernel@vger.kernel.org, tomli@tomli.me,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+References: <20190206212608.27189-1-aaro.koskinen@iki.fi>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <8492440b-b489-0ce1-865c-4505042cb061@arm.com>
+Date:   Thu, 7 Feb 2019 08:56:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190206221711.GA21703@roeck-us.net>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KN5l+BnMqAQyZLvT"
-Content-Disposition: inline
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549529766; bh=lt8i385N5xjPw1bdISWWwucorrPM8A8Y2P3Tq77IeXk=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:In-Reply-To:X-NVConfidentiality:User-Agent:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:
-         Content-Disposition;
-        b=WRCA8n8p/ALpCgINH9Yj1a9lgx/Eq6ZRLj/lt5hwG/6BSS5i/TZSu225hJy9snmnP
-         x815CYuMRqGxFhxiCgKojneUhVmL+MZF+EL10Twpeeedq74p2TDY+yTSV++pBpsFVP
-         MvJPOgdOVqFdpX7LHvcRIpc5B9A/ujZlp8can6zqjZgRIABQ4IiI9IYo+xRHeXXtdL
-         u3lGgAPXgAH2QlqYtAjyjAzaBTsEwCH0Tr3TAKSo2uuHchYsrzUnS8mlapEqdl6Ug9
-         jf9WqpuRVHsWOg9vRI/xJR9biU5x2+b7R/joSnUTT4+90c9i+Psx27mHU+aFLIwGet
-         VpgaoKIFegOlg==
+In-Reply-To: <20190206212608.27189-1-aaro.koskinen@iki.fi>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---KN5l+BnMqAQyZLvT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[Adding the MIPS folks]
 
-On Wed, Feb 06, 2019 at 02:17:11PM -0800, Guenter Roeck wrote:
-> On Thu, Jan 24, 2019 at 07:03:53PM +0200, Timo Alho wrote:
-> > Split BPMP driver into common and chip specific parts to facilitate
-> > adding support for previous and future Tegra chips that are using BPMP
-> > as co-processor.
-> >=20
-> > Signed-off-by: Timo Alho <talho@nvidia.com>
-> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> arm:allmodconfig in linux-next:
->=20
-> drivers/firmware/tegra/bpmp.o:(.rodata+0x280): undefined reference to `te=
-gra210_bpmp_ops'
-> drivers/firmware/tegra/bpmp.o:(.rodata+0x2ac): undefined reference to `te=
-gra186_bpmp_ops'
+On 06/02/2019 21:26, Aaro Koskinen wrote:
+> When using cpufreq on Loongson 2F MIPS platform, "poweroff"
+> command gets frequently stuck in syscore_shutdown(). The reason is
+> that i8259A_shutdown() gets called before cpufreq_suspend(), and if we
+> have pending work then irq_work_sync() in cpufreq_dbs_governor_stop()
+> gets stuck forever as we have all interrupts masked already.
+> 
+> irq-i8259 is registering syscore_ops using device_initcall(),
+> while cpufreq uses core_initcall(). Fix the shutdown order simply
+> by registering the irq syscore_ops during the early IRQ init instead
+> of using a separate initcall at later stage.
+> 
+> Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> ---
+>  drivers/irqchip/irq-i8259.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-i8259.c b/drivers/irqchip/irq-i8259.c
+> index b0d4aab1a58c..d000870d9b6b 100644
+> --- a/drivers/irqchip/irq-i8259.c
+> +++ b/drivers/irqchip/irq-i8259.c
+> @@ -225,14 +225,6 @@ static struct syscore_ops i8259_syscore_ops = {
+>  	.shutdown = i8259A_shutdown,
+>  };
+>  
+> -static int __init i8259A_init_sysfs(void)
+> -{
+> -	register_syscore_ops(&i8259_syscore_ops);
+> -	return 0;
+> -}
+> -
+> -device_initcall(i8259A_init_sysfs);
+> -
+>  static void init_8259A(int auto_eoi)
+>  {
+>  	unsigned long flags;
+> @@ -332,6 +324,7 @@ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+>  		panic("Failed to add i8259 IRQ domain");
+>  
+>  	setup_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, &irq2);
+> +	register_syscore_ops(&i8259_syscore_ops);
+>  	return domain;
+>  }
+>  
+> 
 
-Hi Guenter,
+Given that this is a change of behaviour that is likely to affect other
+platforms (I see at least another 6 MIPS machines using the i8259),
+could someone make sure that this doesn't cause any regression? This is
+unlikely to affect the SGI boxes, as they predate any notion of power
+management, but something like Malta could potentially be affected.
 
-this should be fixed by the below patch. Running build tests now.
+Please let me know.
 
-Thierry
---- >8 ---
-diff --git a/drivers/firmware/tegra/bpmp-private.h b/drivers/firmware/tegra=
-/bpmp-private.h
-index 07c3d46abb87..cc343f4ebafb 100644
---- a/drivers/firmware/tegra/bpmp-private.h
-+++ b/drivers/firmware/tegra/bpmp-private.h
-@@ -23,7 +23,11 @@ struct tegra_bpmp_ops {
- 	int (*resume)(struct tegra_bpmp *bpmp);
- };
-=20
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
- extern const struct tegra_bpmp_ops tegra186_bpmp_ops;
-+#endif
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
- extern const struct tegra_bpmp_ops tegra210_bpmp_ops;
-+#endif
-=20
- #endif
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 8e3f79959d48..6498c848c82c 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -813,6 +813,7 @@ static int __maybe_unused tegra_bpmp_resume(struct devi=
-ce *dev)
-=20
- static SIMPLE_DEV_PM_OPS(tegra_bpmp_pm_ops, NULL, tegra_bpmp_resume);
-=20
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
- static const struct tegra_bpmp_soc tegra186_soc =3D {
- 	.channels =3D {
- 		.cpu_tx =3D {
-@@ -832,7 +833,9 @@ static const struct tegra_bpmp_soc tegra186_soc =3D {
- 	.ops =3D &tegra186_bpmp_ops,
- 	.num_resets =3D 193,
- };
-+#endif
-=20
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
- static const struct tegra_bpmp_soc tegra210_soc =3D {
- 	.channels =3D {
- 		.cpu_tx =3D {
-@@ -853,10 +856,15 @@ static const struct tegra_bpmp_soc tegra210_soc =3D {
- 	},
- 	.ops =3D &tegra210_bpmp_ops,
- };
-+#endif
-=20
- static const struct of_device_id tegra_bpmp_match[] =3D {
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC)
- 	{ .compatible =3D "nvidia,tegra186-bpmp", .data =3D &tegra186_soc },
-+#endif
-+#if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
- 	{ .compatible =3D "nvidia,tegra210-bpmp", .data =3D &tegra210_soc },
-+#endif
- 	{ }
- };
-=20
-
---KN5l+BnMqAQyZLvT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxb8sIACgkQ3SOs138+
-s6EDgA//V+zfQTeTEaLxmv8OuK0/W8+oaQ/gcK43P3WDbud1NLka65b8cfd+qVoF
-mp71mm3FabYKPeeTEtYfkQM3IItFBQqsqTGgo9Q0MPQi2isDYvIAvWFhrRdqxuwj
-IzUL4go+FSjMrTQ6mkZuoY5XzgDrs+Vi9eR70tES7dnD00GcU1ygXZpXfTT1zwCD
-9EkqQ6oKe1opb3Nkr3I3u6zPzfgrImTAvVKMAn6Oum7wkesDO7YOxW3DLXnyZhyA
-rpkrxxDjjric5EjCrm2Wj29/bEq4Nts00ezbCLfdaama0LVJS93wkPyZFtn2IIWE
-NfzCqLPSMmU7WyTrQhptocOGTIHjuDJMHzGZqTy9Ijn7Jws0+lbJT4uK7Qb7GO9G
-T1z8DAchVNIePoeyhx421tSRfMty839joW2p2lkQRcK/ASlakoatXU+KzLG8RZ8K
-PIjlRtDDyIQJ69gRJ8B+Ql2t98opjKLCRayVFs2Wx3j4NrxVnkNme/jXmZMXLsEL
-pD42hFL/G4mh1ArQYk03D8tu4NI0OAE9jUcN+y+eZhqr3XQ7QfbYmkk3u07cda0Q
-U/3JkFVsAqIFlnU4aZOab8NaPdVlKZPVvP7l3dy+sOfDrdRA0LuG/pymmeN339U/
-A2s89Li/rzGH02i1d1lTk/3qZQfW1Gcpi4sZWsdFrMK90688MNc=
-=aBrE
------END PGP SIGNATURE-----
-
---KN5l+BnMqAQyZLvT--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
