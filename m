@@ -2,758 +2,236 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5297C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B88C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7463A2146E
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:49:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8a3sbHy"
+	by mail.kernel.org (Postfix) with ESMTP id 1A9C12146E
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfBGUtU (ORCPT
+        id S1727516AbfBGUuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:49:20 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38839 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbfBGUtT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:49:19 -0500
-Received: by mail-qt1-f193.google.com with SMTP id 2so1528517qtb.5;
-        Thu, 07 Feb 2019 12:49:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6e08VZ6dQzy58kKja8qKqyD+F9Z+im62OKKYNKJtGeY=;
-        b=N8a3sbHyMpHg9rMzDJGDn3283r+4UPNJfdytE3wwIKYy6mwGL8O1lxObuJwUBdxt/3
-         sMKkrhBDtOUDRBmQ/qflJUeklsvThfVH+NFy2N9OQfNGzR2JABi5M87S9y32rCFP9qBe
-         vHI1l0Tp4scLfuElLep2LHRPFEdGLxIOCDUaPVyrWgQRKMi/2nCnya+8v6z1qYr7j+T0
-         K5ngp0ZPVOXv9z33UOQXbYZoomvLaL7YD3QyO8UmrrR6BPKhqyhyIf/XYrTob3KcS6GP
-         CieqgVd6Zka/exviTQX0H8x7ERMztJVhSh5CjuhcwJJBc1t72kFFLm0lWsHRsv4LkciE
-         IK4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6e08VZ6dQzy58kKja8qKqyD+F9Z+im62OKKYNKJtGeY=;
-        b=ezE0PAwyOoMKnevmu/KyCeHdS+3bHVbXDaoVWgcOx+zxm4XwfgVxkiKbhNrlTi1vFY
-         Gus4j+oTw6nwB4sTREc+UtGQIGsFpDeXkPOhOGjivc3meZjfZr5ofKh/HGCg8tWhtwGh
-         0S0JuxnT/wRVpX51eakUdoneQ55BeJvLLHRWbhBKbJqle1T6APhlvqp/B4x1/C7mAhvX
-         pAHkAv/d88pl24k56UUaymtLrb2ttXBdKbcliMX5INVNUitbbx5iyY/YXiTXGyFixRYe
-         IeC1uDuPUNzRVdmORB+pMAzx3OzlBiNlCHHW6jLIiPahwJabnFD3YNYdLDUYEAljtKKn
-         3q0Q==
-X-Gm-Message-State: AHQUAubptfIjWn24euq7aCQx9Y8LWPhjzj0oLkSwdPi9j/TvaCZEi0L6
-        8pvWCiiSWGbNLlkF9a3rRB/u2DRZiwM=
-X-Google-Smtp-Source: AHgI3IbwVu3/f820WJDdJjTSSJsUvMO3pQ92xf7TSWdwg67qsamOOlk+xm9vCD78dIxuSL+Izxfh0A==
-X-Received: by 2002:ac8:e43:: with SMTP id j3mr9568947qti.239.1549572557266;
-        Thu, 07 Feb 2019 12:49:17 -0800 (PST)
-Received: from localhost.localdomain ([177.194.44.253])
-        by smtp.gmail.com with ESMTPSA id k185sm2695qkd.62.2019.02.07.12.49.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 12:49:16 -0800 (PST)
-From:   "Lucas A. M. Magalhaes" <lucmaga@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     helen.koike@collabora.com, hverkuil@xs4all.nl, mchehab@kernel.org,
-        lkcamp@lists.libreplanetbr.org, linux-kernel@vger.kernel.org,
-        "Lucas A . M . Magalhaes" <lucmaga@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v5] media: vimc: Add vimc-streamer for stream control
-Date:   Thu,  7 Feb 2019 18:48:44 -0200
-Message-Id: <20190207204844.15644-1-lucmaga@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 7 Feb 2019 15:50:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51316 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbfBGUuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 15:50:20 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E9DB12D7FD;
+        Thu,  7 Feb 2019 20:50:18 +0000 (UTC)
+Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6F79101962A;
+        Thu,  7 Feb 2019 20:50:05 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
+ free pages
+To:     Alexander Duyck <alexander.duyck@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>, riel@surriel.com,
+        david@redhat.com, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-7-nitesh@redhat.com>
+ <20190205153607-mutt-send-email-mst@kernel.org>
+ <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
+ <20190205165514-mutt-send-email-mst@kernel.org>
+ <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <ab03c35e-b2bb-cb96-4701-436a4e2770d1@redhat.com>
+Date:   Thu, 7 Feb 2019 15:50:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="Ap5ABYvzzX70JdDbWmp50N1oSp8VGQhFh"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 07 Feb 2019 20:50:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a linear pipeline logic for the stream control. It's created by
-walking backwards on the entity graph. When the stream starts it will
-simply loop through the pipeline calling the respective process_frame
-function of each entity.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--Ap5ABYvzzX70JdDbWmp50N1oSp8VGQhFh
+Content-Type: multipart/mixed; boundary="AeVANRcNT1h5gVoi0tgysK58tOu3mh1zQ";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+ pagupta@redhat.com, wei.w.wang@intel.com,
+ Yang Zhang <yang.zhang.wz@gmail.com>, riel@surriel.com, david@redhat.com,
+ dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Message-ID: <ab03c35e-b2bb-cb96-4701-436a4e2770d1@redhat.com>
+Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
+ free pages
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-7-nitesh@redhat.com>
+ <20190205153607-mutt-send-email-mst@kernel.org>
+ <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
+ <20190205165514-mutt-send-email-mst@kernel.org>
+ <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
+In-Reply-To: <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
 
-Fixes: f2fe89061d797 ("vimc: Virtual Media Controller core, capture
-and sensor")
-Cc: stable@vger.kernel.org # for v4.20
-Signed-off-by: Lucas A. M. Magalhães <lucmaga@gmail.com>
----
+--AeVANRcNT1h5gVoi0tgysK58tOu3mh1zQ
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-The actual approach for streaming frames on vimc uses a recursive
-logic[1]. This algorithm may cause problems as the stack usage
-increases a with the topology. For the actual topology almost 1Kb of
-stack is used if compiled with KASAN on a 64bit architecture. However
-the topology is fixed and hard-coded on vimc-core[2]. So it's a
-controlled situation if used as is.
 
-[1]
-The stream starts on vim-sensor's thread
-https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-sensor.c#n204
-It proceeds calling successively vimc_propagate_frame
-https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-common.c#n210
-Then processes_frame on the next entity
-https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-scaler.c#n349
-https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-debayer.c#n483
-This goes until the loop ends on a vimc-capture device
-https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-capture.c#n358
+On 2/7/19 12:43 PM, Alexander Duyck wrote:
+> On Tue, Feb 5, 2019 at 3:21 PM Michael S. Tsirkin <mst@redhat.com> wrot=
+e:
+>> On Tue, Feb 05, 2019 at 04:54:03PM -0500, Nitesh Narayan Lal wrote:
+>>> On 2/5/19 3:45 PM, Michael S. Tsirkin wrote:
+>>>> On Mon, Feb 04, 2019 at 03:18:53PM -0500, Nitesh Narayan Lal wrote:
+>>>>> This patch enables the kernel to scan the per cpu array and
+>>>>> compress it by removing the repetitive/re-allocated pages.
+>>>>> Once the per cpu array is completely filled with pages in the
+>>>>> buddy it wakes up the kernel per cpu thread which re-scans the
+>>>>> entire per cpu array by acquiring a zone lock corresponding to
+>>>>> the page which is being scanned. If the page is still free and
+>>>>> present in the buddy it tries to isolate the page and adds it
+>>>>> to another per cpu array.
+>>>>>
+>>>>> Once this scanning process is complete and if there are any
+>>>>> isolated pages added to the new per cpu array kernel thread
+>>>>> invokes hyperlist_ready().
+>>>>>
+>>>>> In hyperlist_ready() a hypercall is made to report these pages to
+>>>>> the host using the virtio-balloon framework. In order to do so
+>>>>> another virtqueue 'hinting_vq' is added to the balloon framework.
+>>>>> As the host frees all the reported pages, the kernel thread returns=
 
-[2]https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-core.c#n80
+>>>>> them back to the buddy.
+>>>>>
+>>>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+>>>> This looks kind of like what early iterations of Wei's patches did.
+>>>>
+>>>> But this has lots of issues, for example you might end up with
+>>>> a hypercall per a 4K page.
+>>>> So in the end, he switched over to just reporting only
+>>>> MAX_ORDER - 1 pages.
+>>> You mean that I should only capture/attempt to isolate pages with ord=
+er
+>>> MAX_ORDER - 1?
+>>>> Would that be a good idea for you too?
+>>> Will it help if we have a threshold value based on the amount of memo=
+ry
+>>> captured instead of the number of entries/pages in the array?
+>> This is what Wei's patches do at least.
+> So in the solution I had posted I was looking more at
+> HUGETLB_PAGE_ORDER and above as the size of pages to provide the hints
+> on [1]. The advantage to doing that is that you can also avoid
+> fragmenting huge pages which in turn can cause what looks like a
+> memory leak as the memory subsystem attempts to reassemble huge
+> pages[2]. In my mind a 2MB page makes good sense in terms of the size
+> of things to be performing hints on as anything smaller than that is
+> going to just end up being a bunch of extra work and end up causing a
+> bunch of fragmentation.
+As per my opinion, in any implementation which page size to store before
+reporting depends on the allocation pattern of the workload running in
+the guest.
 
-Chaged from v4:
-* Fix variable unused but set
+I am also planning to try Michael's suggestion of using MAX_ORDER - 1.
+However I am still thinking about a workload which I can use to test its
+effectiveness.
 
- drivers/media/platform/vimc/Makefile        |   3 +-
- drivers/media/platform/vimc/vimc-capture.c  |  18 +-
- drivers/media/platform/vimc/vimc-common.c   |  35 ----
- drivers/media/platform/vimc/vimc-common.h   |  15 +-
- drivers/media/platform/vimc/vimc-debayer.c  |  26 +--
- drivers/media/platform/vimc/vimc-scaler.c   |  28 +--
- drivers/media/platform/vimc/vimc-sensor.c   |  51 +-----
- drivers/media/platform/vimc/vimc-streamer.c | 188 ++++++++++++++++++++
- drivers/media/platform/vimc/vimc-streamer.h |  38 ++++
- 9 files changed, 254 insertions(+), 148 deletions(-)
- create mode 100644 drivers/media/platform/vimc/vimc-streamer.c
- create mode 100644 drivers/media/platform/vimc/vimc-streamer.h
+>
+> The only issue with limiting things on an arbitrary boundary like that
+> is that you have to hook into the buddy allocator to catch the cases
+> where a page has been merged up into that range.
+I don't think, I understood your comment completely. In any case, we
+have to rely on the buddy for merging the pages.
+>
+> [1] https://lkml.org/lkml/2019/2/4/903
+> [2] https://blog.digitalocean.com/transparent-huge-pages-and-alternativ=
+e-memory-allocators/
+--=20
+Regards
+Nitesh
 
-diff --git a/drivers/media/platform/vimc/Makefile b/drivers/media/platform/vimc/Makefile
-index 4b2e3de7856e..c4fc8e7d365a 100644
---- a/drivers/media/platform/vimc/Makefile
-+++ b/drivers/media/platform/vimc/Makefile
-@@ -5,6 +5,7 @@ vimc_common-objs := vimc-common.o
- vimc_debayer-objs := vimc-debayer.o
- vimc_scaler-objs := vimc-scaler.o
- vimc_sensor-objs := vimc-sensor.o
-+vimc_streamer-objs := vimc-streamer.o
- 
- obj-$(CONFIG_VIDEO_VIMC) += vimc.o vimc_capture.o vimc_common.o vimc-debayer.o \
--				vimc_scaler.o vimc_sensor.o
-+			    vimc_scaler.o vimc_sensor.o vimc_streamer.o
-diff --git a/drivers/media/platform/vimc/vimc-capture.c b/drivers/media/platform/vimc/vimc-capture.c
-index aaeddf24b042..93837d9eecd2 100644
---- a/drivers/media/platform/vimc/vimc-capture.c
-+++ b/drivers/media/platform/vimc/vimc-capture.c
-@@ -24,6 +24,7 @@
- #include <media/videobuf2-vmalloc.h>
- 
- #include "vimc-common.h"
-+#include "vimc-streamer.h"
- 
- #define VIMC_CAP_DRV_NAME "vimc-capture"
- 
-@@ -44,7 +45,7 @@ struct vimc_cap_device {
- 	spinlock_t qlock;
- 	struct mutex lock;
- 	u32 sequence;
--	struct media_pipeline pipe;
-+	struct vimc_stream stream;
- };
- 
- static const struct v4l2_pix_format fmt_default = {
-@@ -248,14 +249,13 @@ static int vimc_cap_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	vcap->sequence = 0;
- 
- 	/* Start the media pipeline */
--	ret = media_pipeline_start(entity, &vcap->pipe);
-+	ret = media_pipeline_start(entity, &vcap->stream.pipe);
- 	if (ret) {
- 		vimc_cap_return_all_buffers(vcap, VB2_BUF_STATE_QUEUED);
- 		return ret;
- 	}
- 
--	/* Enable streaming from the pipe */
--	ret = vimc_pipeline_s_stream(&vcap->vdev.entity, 1);
-+	ret = vimc_streamer_s_stream(&vcap->stream, &vcap->ved, 1);
- 	if (ret) {
- 		media_pipeline_stop(entity);
- 		vimc_cap_return_all_buffers(vcap, VB2_BUF_STATE_QUEUED);
-@@ -273,8 +273,7 @@ static void vimc_cap_stop_streaming(struct vb2_queue *vq)
- {
- 	struct vimc_cap_device *vcap = vb2_get_drv_priv(vq);
- 
--	/* Disable streaming from the pipe */
--	vimc_pipeline_s_stream(&vcap->vdev.entity, 0);
-+	vimc_streamer_s_stream(&vcap->stream, &vcap->ved, 0);
- 
- 	/* Stop the media pipeline */
- 	media_pipeline_stop(&vcap->vdev.entity);
-@@ -355,8 +354,8 @@ static void vimc_cap_comp_unbind(struct device *comp, struct device *master,
- 	kfree(vcap);
- }
- 
--static void vimc_cap_process_frame(struct vimc_ent_device *ved,
--				   struct media_pad *sink, const void *frame)
-+static void *vimc_cap_process_frame(struct vimc_ent_device *ved,
-+				    const void *frame)
- {
- 	struct vimc_cap_device *vcap = container_of(ved, struct vimc_cap_device,
- 						    ved);
-@@ -370,7 +369,7 @@ static void vimc_cap_process_frame(struct vimc_ent_device *ved,
- 					    typeof(*vimc_buf), list);
- 	if (!vimc_buf) {
- 		spin_unlock(&vcap->qlock);
--		return;
-+		return ERR_PTR(-EAGAIN);
- 	}
- 
- 	/* Remove this entry from the list */
-@@ -391,6 +390,7 @@ static void vimc_cap_process_frame(struct vimc_ent_device *ved,
- 	vb2_set_plane_payload(&vimc_buf->vb2.vb2_buf, 0,
- 			      vcap->format.sizeimage);
- 	vb2_buffer_done(&vimc_buf->vb2.vb2_buf, VB2_BUF_STATE_DONE);
-+	return NULL;
- }
- 
- static int vimc_cap_comp_bind(struct device *comp, struct device *master,
-diff --git a/drivers/media/platform/vimc/vimc-common.c b/drivers/media/platform/vimc/vimc-common.c
-index 867e24dbd6b5..c1a74bb2df58 100644
---- a/drivers/media/platform/vimc/vimc-common.c
-+++ b/drivers/media/platform/vimc/vimc-common.c
-@@ -207,41 +207,6 @@ const struct vimc_pix_map *vimc_pix_map_by_pixelformat(u32 pixelformat)
- }
- EXPORT_SYMBOL_GPL(vimc_pix_map_by_pixelformat);
- 
--int vimc_propagate_frame(struct media_pad *src, const void *frame)
--{
--	struct media_link *link;
--
--	if (!(src->flags & MEDIA_PAD_FL_SOURCE))
--		return -EINVAL;
--
--	/* Send this frame to all sink pads that are direct linked */
--	list_for_each_entry(link, &src->entity->links, list) {
--		if (link->source == src &&
--		    (link->flags & MEDIA_LNK_FL_ENABLED)) {
--			struct vimc_ent_device *ved = NULL;
--			struct media_entity *entity = link->sink->entity;
--
--			if (is_media_entity_v4l2_subdev(entity)) {
--				struct v4l2_subdev *sd =
--					container_of(entity, struct v4l2_subdev,
--						     entity);
--				ved = v4l2_get_subdevdata(sd);
--			} else if (is_media_entity_v4l2_video_device(entity)) {
--				struct video_device *vdev =
--					container_of(entity,
--						     struct video_device,
--						     entity);
--				ved = video_get_drvdata(vdev);
--			}
--			if (ved && ved->process_frame)
--				ved->process_frame(ved, link->sink, frame);
--		}
--	}
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(vimc_propagate_frame);
--
- /* Helper function to allocate and initialize pads */
- struct media_pad *vimc_pads_init(u16 num_pads, const unsigned long *pads_flag)
- {
-diff --git a/drivers/media/platform/vimc/vimc-common.h b/drivers/media/platform/vimc/vimc-common.h
-index f491c33c7c14..84539430b5e7 100644
---- a/drivers/media/platform/vimc/vimc-common.h
-+++ b/drivers/media/platform/vimc/vimc-common.h
-@@ -115,23 +115,12 @@ struct vimc_pix_map {
- struct vimc_ent_device {
- 	struct media_entity *ent;
- 	struct media_pad *pads;
--	void (*process_frame)(struct vimc_ent_device *ved,
--			      struct media_pad *sink, const void *frame);
-+	void * (*process_frame)(struct vimc_ent_device *ved,
-+				const void *frame);
- 	void (*vdev_get_format)(struct vimc_ent_device *ved,
- 			      struct v4l2_pix_format *fmt);
- };
- 
--/**
-- * vimc_propagate_frame - propagate a frame through the topology
-- *
-- * @src:	the source pad where the frame is being originated
-- * @frame:	the frame to be propagated
-- *
-- * This function will call the process_frame callback from the vimc_ent_device
-- * struct of the nodes directly connected to the @src pad
-- */
--int vimc_propagate_frame(struct media_pad *src, const void *frame);
--
- /**
-  * vimc_pads_init - initialize pads
-  *
-diff --git a/drivers/media/platform/vimc/vimc-debayer.c b/drivers/media/platform/vimc/vimc-debayer.c
-index 77887f66f323..7d77c63b99d2 100644
---- a/drivers/media/platform/vimc/vimc-debayer.c
-+++ b/drivers/media/platform/vimc/vimc-debayer.c
-@@ -321,7 +321,6 @@ static void vimc_deb_set_rgb_mbus_fmt_rgb888_1x24(struct vimc_deb_device *vdeb,
- static int vimc_deb_s_stream(struct v4l2_subdev *sd, int enable)
- {
- 	struct vimc_deb_device *vdeb = v4l2_get_subdevdata(sd);
--	int ret;
- 
- 	if (enable) {
- 		const struct vimc_pix_map *vpix;
-@@ -351,22 +350,10 @@ static int vimc_deb_s_stream(struct v4l2_subdev *sd, int enable)
- 		if (!vdeb->src_frame)
- 			return -ENOMEM;
- 
--		/* Turn the stream on in the subdevices directly connected */
--		ret = vimc_pipeline_s_stream(&vdeb->sd.entity, 1);
--		if (ret) {
--			vfree(vdeb->src_frame);
--			vdeb->src_frame = NULL;
--			return ret;
--		}
- 	} else {
- 		if (!vdeb->src_frame)
- 			return 0;
- 
--		/* Disable streaming from the pipe */
--		ret = vimc_pipeline_s_stream(&vdeb->sd.entity, 0);
--		if (ret)
--			return ret;
--
- 		vfree(vdeb->src_frame);
- 		vdeb->src_frame = NULL;
- 	}
-@@ -480,9 +467,8 @@ static void vimc_deb_calc_rgb_sink(struct vimc_deb_device *vdeb,
- 	}
- }
- 
--static void vimc_deb_process_frame(struct vimc_ent_device *ved,
--				   struct media_pad *sink,
--				   const void *sink_frame)
-+static void *vimc_deb_process_frame(struct vimc_ent_device *ved,
-+				    const void *sink_frame)
- {
- 	struct vimc_deb_device *vdeb = container_of(ved, struct vimc_deb_device,
- 						    ved);
-@@ -491,7 +477,7 @@ static void vimc_deb_process_frame(struct vimc_ent_device *ved,
- 
- 	/* If the stream in this node is not active, just return */
- 	if (!vdeb->src_frame)
--		return;
-+		return ERR_PTR(-EINVAL);
- 
- 	for (i = 0; i < vdeb->sink_fmt.height; i++)
- 		for (j = 0; j < vdeb->sink_fmt.width; j++) {
-@@ -499,12 +485,8 @@ static void vimc_deb_process_frame(struct vimc_ent_device *ved,
- 			vdeb->set_rgb_src(vdeb, i, j, rgb);
- 		}
- 
--	/* Propagate the frame through all source pads */
--	for (i = 1; i < vdeb->sd.entity.num_pads; i++) {
--		struct media_pad *pad = &vdeb->sd.entity.pads[i];
-+	return vdeb->src_frame;
- 
--		vimc_propagate_frame(pad, vdeb->src_frame);
--	}
- }
- 
- static void vimc_deb_comp_unbind(struct device *comp, struct device *master,
-diff --git a/drivers/media/platform/vimc/vimc-scaler.c b/drivers/media/platform/vimc/vimc-scaler.c
-index b0952ee86296..39b2a73dfcc1 100644
---- a/drivers/media/platform/vimc/vimc-scaler.c
-+++ b/drivers/media/platform/vimc/vimc-scaler.c
-@@ -217,7 +217,6 @@ static const struct v4l2_subdev_pad_ops vimc_sca_pad_ops = {
- static int vimc_sca_s_stream(struct v4l2_subdev *sd, int enable)
- {
- 	struct vimc_sca_device *vsca = v4l2_get_subdevdata(sd);
--	int ret;
- 
- 	if (enable) {
- 		const struct vimc_pix_map *vpix;
-@@ -245,22 +244,10 @@ static int vimc_sca_s_stream(struct v4l2_subdev *sd, int enable)
- 		if (!vsca->src_frame)
- 			return -ENOMEM;
- 
--		/* Turn the stream on in the subdevices directly connected */
--		ret = vimc_pipeline_s_stream(&vsca->sd.entity, 1);
--		if (ret) {
--			vfree(vsca->src_frame);
--			vsca->src_frame = NULL;
--			return ret;
--		}
- 	} else {
- 		if (!vsca->src_frame)
- 			return 0;
- 
--		/* Disable streaming from the pipe */
--		ret = vimc_pipeline_s_stream(&vsca->sd.entity, 0);
--		if (ret)
--			return ret;
--
- 		vfree(vsca->src_frame);
- 		vsca->src_frame = NULL;
- 	}
-@@ -346,26 +333,19 @@ static void vimc_sca_fill_src_frame(const struct vimc_sca_device *const vsca,
- 			vimc_sca_scale_pix(vsca, i, j, sink_frame);
- }
- 
--static void vimc_sca_process_frame(struct vimc_ent_device *ved,
--				   struct media_pad *sink,
--				   const void *sink_frame)
-+static void *vimc_sca_process_frame(struct vimc_ent_device *ved,
-+				    const void *sink_frame)
- {
- 	struct vimc_sca_device *vsca = container_of(ved, struct vimc_sca_device,
- 						    ved);
--	unsigned int i;
- 
- 	/* If the stream in this node is not active, just return */
- 	if (!vsca->src_frame)
--		return;
-+		return ERR_PTR(-EINVAL);
- 
- 	vimc_sca_fill_src_frame(vsca, sink_frame);
- 
--	/* Propagate the frame through all source pads */
--	for (i = 1; i < vsca->sd.entity.num_pads; i++) {
--		struct media_pad *pad = &vsca->sd.entity.pads[i];
--
--		vimc_propagate_frame(pad, vsca->src_frame);
--	}
-+	return vsca->src_frame;
- };
- 
- static void vimc_sca_comp_unbind(struct device *comp, struct device *master,
-diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
-index 32ca9c6172b1..59195f262623 100644
---- a/drivers/media/platform/vimc/vimc-sensor.c
-+++ b/drivers/media/platform/vimc/vimc-sensor.c
-@@ -16,8 +16,6 @@
-  */
- 
- #include <linux/component.h>
--#include <linux/freezer.h>
--#include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-@@ -201,38 +199,20 @@ static const struct v4l2_subdev_pad_ops vimc_sen_pad_ops = {
- 	.set_fmt		= vimc_sen_set_fmt,
- };
- 
--static int vimc_sen_tpg_thread(void *data)
-+static void *vimc_sen_process_frame(struct vimc_ent_device *ved,
-+				    const void *sink_frame)
- {
--	struct vimc_sen_device *vsen = data;
--	unsigned int i;
--
--	set_freezable();
--	set_current_state(TASK_UNINTERRUPTIBLE);
--
--	for (;;) {
--		try_to_freeze();
--		if (kthread_should_stop())
--			break;
-+	struct vimc_sen_device *vsen = container_of(ved, struct vimc_sen_device,
-+						    ved);
- 
--		tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
--
--		/* Send the frame to all source pads */
--		for (i = 0; i < vsen->sd.entity.num_pads; i++)
--			vimc_propagate_frame(&vsen->sd.entity.pads[i],
--					     vsen->frame);
--
--		/* 60 frames per second */
--		schedule_timeout(HZ/60);
--	}
--
--	return 0;
-+	tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
-+	return vsen->frame;
- }
- 
- static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
- {
- 	struct vimc_sen_device *vsen =
- 				container_of(sd, struct vimc_sen_device, sd);
--	int ret;
- 
- 	if (enable) {
- 		const struct vimc_pix_map *vpix;
-@@ -258,26 +238,8 @@ static int vimc_sen_s_stream(struct v4l2_subdev *sd, int enable)
- 		/* configure the test pattern generator */
- 		vimc_sen_tpg_s_format(vsen);
- 
--		/* Initialize the image generator thread */
--		vsen->kthread_sen = kthread_run(vimc_sen_tpg_thread, vsen,
--					"%s-sen", vsen->sd.v4l2_dev->name);
--		if (IS_ERR(vsen->kthread_sen)) {
--			dev_err(vsen->dev, "%s: kernel_thread() failed\n",
--				vsen->sd.name);
--			vfree(vsen->frame);
--			vsen->frame = NULL;
--			return PTR_ERR(vsen->kthread_sen);
--		}
- 	} else {
--		if (!vsen->kthread_sen)
--			return 0;
--
--		/* Stop image generator */
--		ret = kthread_stop(vsen->kthread_sen);
--		if (ret)
--			return ret;
- 
--		vsen->kthread_sen = NULL;
- 		vfree(vsen->frame);
- 		vsen->frame = NULL;
- 		return 0;
-@@ -413,6 +375,7 @@ static int vimc_sen_comp_bind(struct device *comp, struct device *master,
- 	if (ret)
- 		goto err_free_hdl;
- 
-+	vsen->ved.process_frame = vimc_sen_process_frame;
- 	dev_set_drvdata(comp, &vsen->ved);
- 	vsen->dev = comp;
- 
-diff --git a/drivers/media/platform/vimc/vimc-streamer.c b/drivers/media/platform/vimc/vimc-streamer.c
-new file mode 100644
-index 000000000000..06b0765cd035
---- /dev/null
-+++ b/drivers/media/platform/vimc/vimc-streamer.c
-@@ -0,0 +1,188 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * vimc-streamer.c Virtual Media Controller Driver
-+ *
-+ * Copyright (C) 2018 Lucas A. M. Magalhães <lucmaga@gmail.com>
-+ *
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/freezer.h>
-+#include <linux/kthread.h>
-+
-+#include "vimc-streamer.h"
-+
-+/**
-+ * vimc_get_source_entity - get the entity connected with the first sink pad
-+ *
-+ * @ent:	reference media_entity
-+ *
-+ * Helper function that returns the media entity containing the source pad
-+ * linked with the first sink pad from the given media entity pad list.
-+ */
-+static struct media_entity *vimc_get_source_entity(struct media_entity *ent)
-+{
-+	struct media_pad *pad;
-+	int i;
-+
-+	for (i = 0; i < ent->num_pads; i++) {
-+		if (ent->pads[i].flags & MEDIA_PAD_FL_SOURCE)
-+			continue;
-+		pad = media_entity_remote_pad(&ent->pads[i]);
-+		return pad ? pad->entity : NULL;
-+	}
-+	return NULL;
-+}
-+
-+/*
-+ * vimc_streamer_pipeline_terminate - Disable stream in all ved in stream
-+ *
-+ * @stream: the pointer to the stream structure with the pipeline to be
-+ *	    disabled.
-+ *
-+ * Calls s_stream to disable the stream in each entity of the pipeline
-+ *
-+ */
-+static void vimc_streamer_pipeline_terminate(struct vimc_stream *stream)
-+{
-+	struct media_entity *entity;
-+	struct v4l2_subdev *sd;
-+
-+	while (stream->pipe_size) {
-+		stream->pipe_size--;
-+		entity = stream->ved_pipeline[stream->pipe_size]->ent;
-+		entity = vimc_get_source_entity(entity);
-+		stream->ved_pipeline[stream->pipe_size] = NULL;
-+
-+		if (!is_media_entity_v4l2_subdev(entity))
-+			continue;
-+
-+		sd = media_entity_to_v4l2_subdev(entity);
-+		v4l2_subdev_call(sd, video, s_stream, 0);
-+	}
-+}
-+
-+/*
-+ * vimc_streamer_pipeline_init - initializes the stream structure
-+ *
-+ * @stream: the pointer to the stream structure to be initialized
-+ * @ved:    the pointer to the vimc entity initializing the stream
-+ *
-+ * Initializes the stream structure. Walks through the entity graph to
-+ * construct the pipeline used later on the streamer thread.
-+ * Calls s_stream to enable stream in all entities of the pipeline.
-+ */
-+static int vimc_streamer_pipeline_init(struct vimc_stream *stream,
-+				       struct vimc_ent_device *ved)
-+{
-+	struct media_entity *entity;
-+	struct video_device *vdev;
-+	 struct v4l2_subdev *sd;
-+	int ret = 0;
-+
-+	stream->pipe_size = 0;
-+	while (stream->pipe_size < VIMC_STREAMER_PIPELINE_MAX_SIZE) {
-+		if (!ved) {
-+			vimc_streamer_pipeline_terminate(stream);
-+			return -EINVAL;
-+		}
-+		stream->ved_pipeline[stream->pipe_size++] = ved;
-+
-+		entity = vimc_get_source_entity(ved->ent);
-+		/* Check if the end of the pipeline was reached*/
-+		if (!entity)
-+			return 0;
-+
-+		if (is_media_entity_v4l2_subdev(entity)) {
-+			sd = media_entity_to_v4l2_subdev(entity);
-+			ret = v4l2_subdev_call(sd, video, s_stream, 1);
-+			if (ret && ret != -ENOIOCTLCMD) {
-+				vimc_streamer_pipeline_terminate(stream);
-+				return ret;
-+			}
-+			ved = v4l2_get_subdevdata(sd);
-+		} else {
-+			vdev = container_of(entity,
-+					    struct video_device,
-+					    entity);
-+			ved = video_get_drvdata(vdev);
-+		}
-+	}
-+
-+	vimc_streamer_pipeline_terminate(stream);
-+	return -EINVAL;
-+}
-+
-+static int vimc_streamer_thread(void *data)
-+{
-+	struct vimc_stream *stream = data;
-+	int i;
-+
-+	set_freezable();
-+	set_current_state(TASK_UNINTERRUPTIBLE);
-+
-+	for (;;) {
-+		try_to_freeze();
-+		if (kthread_should_stop())
-+			break;
-+
-+		for (i = stream->pipe_size - 1; i >= 0; i--) {
-+			stream->frame = stream->ved_pipeline[i]->process_frame(
-+					stream->ved_pipeline[i],
-+					stream->frame);
-+			if (!stream->frame)
-+				break;
-+			if (IS_ERR(stream->frame))
-+				break;
-+		}
-+		//wait for 60hz
-+		schedule_timeout(HZ / 60);
-+	}
-+
-+	return 0;
-+}
-+
-+int vimc_streamer_s_stream(struct vimc_stream *stream,
-+			   struct vimc_ent_device *ved,
-+			   int enable)
-+{
-+	int ret;
-+
-+	if (!stream || !ved)
-+		return -EINVAL;
-+
-+	if (enable) {
-+		if (stream->kthread)
-+			return 0;
-+
-+		ret = vimc_streamer_pipeline_init(stream, ved);
-+		if (ret)
-+			return ret;
-+
-+		stream->kthread = kthread_run(vimc_streamer_thread, stream,
-+					      "vimc-streamer thread");
-+
-+		if (IS_ERR(stream->kthread))
-+			return PTR_ERR(stream->kthread);
-+
-+	} else {
-+		if (!stream->kthread)
-+			return 0;
-+
-+		ret = kthread_stop(stream->kthread);
-+		if (ret)
-+			return ret;
-+
-+		stream->kthread = NULL;
-+
-+		vimc_streamer_pipeline_terminate(stream);
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(vimc_streamer_s_stream);
-+
-+MODULE_DESCRIPTION("Virtual Media Controller Driver (VIMC) Streamer");
-+MODULE_AUTHOR("Lucas A. M. Magalhães <lucmaga@gmail.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/media/platform/vimc/vimc-streamer.h b/drivers/media/platform/vimc/vimc-streamer.h
-new file mode 100644
-index 000000000000..752af2e2d5a2
---- /dev/null
-+++ b/drivers/media/platform/vimc/vimc-streamer.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * vimc-streamer.h Virtual Media Controller Driver
-+ *
-+ * Copyright (C) 2018 Lucas A. M. Magalhães <lucmaga@gmail.com>
-+ *
-+ */
-+
-+#ifndef _VIMC_STREAMER_H_
-+#define _VIMC_STREAMER_H_
-+
-+#include <media/media-device.h>
-+
-+#include "vimc-common.h"
-+
-+#define VIMC_STREAMER_PIPELINE_MAX_SIZE 16
-+
-+struct vimc_stream {
-+	struct media_pipeline pipe;
-+	struct vimc_ent_device *ved_pipeline[VIMC_STREAMER_PIPELINE_MAX_SIZE];
-+	unsigned int pipe_size;
-+	u8 *frame;
-+	struct task_struct *kthread;
-+};
-+
-+/**
-+ * vimc_streamer_s_streamer - start/stop the stream
-+ *
-+ * @stream:	the pointer to the stream to start or stop
-+ * @ved:	The last entity of the streamer pipeline
-+ * @enable:	any non-zero number start the stream, zero stop
-+ *
-+ */
-+int vimc_streamer_s_stream(struct vimc_stream *stream,
-+			   struct vimc_ent_device *ved,
-+			   int enable);
-+
-+#endif  //_VIMC_STREAMER_H_
--- 
-2.20.1
 
+--AeVANRcNT1h5gVoi0tgysK58tOu3mh1zQ--
+
+--Ap5ABYvzzX70JdDbWmp50N1oSp8VGQhFh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxcmfwACgkQo4ZA3AYy
+ozmcbxAA0bPiT1tMZ/E+yhmf2apUR9i5EzEkX8qohBUtF0FAvapWxBmvNkDM6AA/
+3ahI8QoemLxuw3J1CpzKb9pdL1b9j45KrHVu9YaV0OPQi76chdMhs3CYi7duTEoF
+rK/bc+2vpcLX/8Eh04WyE2YrSJaB6RAOmMGMGM3229bO8aiBB3rFjs+Gv3WXrZ5Y
+mTQe4yimTLAONiRhvlK7KMKb1SYIlePRtWoY0GyVu0VFIdy9MbyU+rcG1lt5LrIq
+0v1sjG6RFpLuBUTAcKwYMzw0zLBPNwcV/5KGokoboTmxHO4m7BmtFSZZ93gQ/Isk
+jn2xZf2u6P4XzqVUEwdCj0614z2jI6yOFgkhug/iRtBIOVnKN/ayh/gJp4XcQ9z+
+LLHmKr04fvGe0KUyS5S1I0SNIMtyn+mnHhG4vaigmvNKPl4jQCgUz0cxXduFeVkW
+j2vsn/lszQStsB8wWo2IQGEk7asPRx4FteBoMTEZJ+6Yu4ynC16DB7pFEt+/KM2P
+8dZDRozNVTPxz3FAIvPGyp2DXH7EJ4ux6iYxVhrYDDstQn5PrIK2ocZ2fZ/JnRuU
+6LbLJY+RAjtm2FLkRRlExDmdsSGW6yQXL1u1rchc3KrS3jcjM0udPFxWnsfO0w5J
+qFMBDrBob1A7GO0HoilRz10dB85yyNe9KH3FMrwvYvPjU2kdx8Q=
+=dj7S
+-----END PGP SIGNATURE-----
+
+--Ap5ABYvzzX70JdDbWmp50N1oSp8VGQhFh--
