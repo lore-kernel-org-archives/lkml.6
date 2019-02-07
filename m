@@ -2,106 +2,223 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6911EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F28C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 348FB21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aEZR8Px3"
+	by mail.kernel.org (Postfix) with ESMTP id C841C21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549578170;
+	bh=+S0HWjzFF0bkCAurrzo7b8npCJKlJiHsUY5c5VVDZDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Hc1EEmXXyyHLuFqGFQJTUN92pSCk6Kc7wctsNxg7wA/P6aPX4wrnlLUdX4DJQPboM
+	 IV1g//YL/fvUGNQ7GvHPMKEqYSnsjlghyGYEkooE41ixUaHL8i/nASsZd4vyLszxIe
+	 g12cW3HPtMXo3zoWv8rYbgc+6gJjZopdbfLnZgac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfBGWWZ (ORCPT
+        id S1727090AbfBGWWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:22:25 -0500
-Received: from ozlabs.org ([203.11.71.1]:56647 "EHLO ozlabs.org"
+        Thu, 7 Feb 2019 17:22:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfBGWWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:22:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726622AbfBGWWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:22:49 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wXqX6w4Bz9s7h;
-        Fri,  8 Feb 2019 09:22:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549578141;
-        bh=gG7Fl8IGeDyEyzxZlO+MOR7LI8w01mnLK07Bp5lc7XA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=aEZR8Px3S9cYe/9z81gKOOkg00HawwhCPVWjshspfKcAslb6gm/Hg3VOd7y8sA2A8
-         3eF5buKP1k2EDlprvqppoASIlJlQ3kFZGil+hGpyiqiDU9Xva5z6YV44IMUwttYVmJ
-         MlKdP6nd7M0Xmg+lzYcsGH25FgKQZrv13fcdMtnL/oMXJ9Twg6k1iEuQFa/YzmuPw5
-         wtilBFFt5GXIP2OVOs48DrlCqEzeNzWFF5GrzXWR2n+3LquJJ4LazMXr4ydgePQye5
-         VW90Ecx7tt367hl9yGZ+XRLX/OtINb2QBhZ5CzS+Vi7wlaBN0frysRktV84t2OmFHa
-         A0hzeys8FsK7Q==
-Date:   Fri, 8 Feb 2019 09:22:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Huang Pei <huangpei@loongson.cn>
-Subject: linux-next: manual merge of the mips tree with the mips-fixes tree
-Message-ID: <20190208092210.653a9bcf@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 383AC2147C;
+        Thu,  7 Feb 2019 22:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549578167;
+        bh=+S0HWjzFF0bkCAurrzo7b8npCJKlJiHsUY5c5VVDZDY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JDOjQa/cArkkc7VQhjY5RWYjgsni7kBaXiozB7ISiGTshZGO4hk4CnSzg5LkHPoU+
+         5ByVGq3aUxVOjDRajNa7CInblnqHRKJZXH+QMH1bGqpbeOM6x9CcgPQrpLc1eVH41Y
+         7vo/nhV2/zmQ4wuaGgYONGymC+E/Zn+X3oUBrXBY=
+Date:   Thu, 7 Feb 2019 16:22:46 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 5/5] genirq/affinity: remove support for allocating
+ interrupt sets
+Message-ID: <20190207222245.GR7268@google.com>
+References: <20190125095347.17950-1-ming.lei@redhat.com>
+ <20190125095347.17950-6-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rrF3iid0usznE6OR18/XudT"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125095347.17950-6-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rrF3iid0usznE6OR18/XudT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 25, 2019 at 05:53:47PM +0800, Ming Lei wrote:
+> Now allocating interrupt sets can be done via .setup_affinity()
+> easily, so remove the support for allocating interrupt sets.
+> 
+> With this change, we don't need the limit of 'minvec == maxvec'
+> any more in pci_alloc_irq_vectors_affinity().
+> 
+> Meantime irq_create_affinity_masks() gets simplified a lot.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
 
-Hi all,
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci/msi.c parts
 
-Today's linux-next merge of the mips tree got a conflict in:
-
-  arch/mips/include/asm/pgtable.h
-
-between commit:
-
-  e02e07e3127d ("MIPS: Loongson: Introduce and use loongson_llsc_mb()")
-
-from the mips-fixes tree and commit:
-
-  c7e2d71dda7a ("MIPS: Fix set_pte() for Netlogic XLR using cmpxchg64()")
-
-from the mips tree.
-
-I fixed it up (I just used the mips tree version) and can carry the fix
-as necessary. This is now fixed as far as linux-next is concerned, but
-any non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/rrF3iid0usznE6OR18/XudT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcr5IACgkQAVBC80lX
-0GwAfAf+OdzsNJWdkZsZAt0+mLS7IYyWB45KKDXCzrAwK/9i2b1MIjeECKheJUyE
-NRbJ6wBN//+b/XbgZq27/nPe0rasyzDCwN6SxOpgCNKpCSl5Ylcbjz97EPdUp1Z8
-m6o6mMz8qU/LDBf2khURAPUWO7lMmmj9zTU4RhZa1Rr08Crq1jo8227JEUSt3noS
-+d7Uni4EcWoA7J28L3qesoHCo+k31QAivlbkXtXW053lZ9uNWoXQAklWhXQC20Sy
-S4opS3eXReLA089SmE8r3O6f8go/56IclzGl76Oeh+tRiYfE65VH7/bpGmSjfueq
-4sNwTbG0HFPNCGt3wBy4L+Xygz/0XQ==
-=fmO3
------END PGP SIGNATURE-----
-
---Sig_/rrF3iid0usznE6OR18/XudT--
+> ---
+>  drivers/pci/msi.c         | 14 -------------
+>  include/linux/interrupt.h |  4 ----
+>  kernel/irq/affinity.c     | 52 +++++++++++------------------------------------
+>  3 files changed, 12 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> index 4c0b47867258..331483de1294 100644
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -1035,13 +1035,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+>  	if (maxvec < minvec)
+>  		return -ERANGE;
+>  
+> -	/*
+> -	 * If the caller is passing in sets, we can't support a range of
+> -	 * vectors. The caller needs to handle that.
+> -	 */
+> -	if (affd && affd->nr_sets && minvec != maxvec)
+> -		return -EINVAL;
+> -
+>  	if (WARN_ON_ONCE(dev->msi_enabled))
+>  		return -EINVAL;
+>  
+> @@ -1093,13 +1086,6 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
+>  	if (maxvec < minvec)
+>  		return -ERANGE;
+>  
+> -	/*
+> -	 * If the caller is passing in sets, we can't support a range of
+> -	 * supported vectors. The caller needs to handle that.
+> -	 */
+> -	if (affd && affd->nr_sets && minvec != maxvec)
+> -		return -EINVAL;
+> -
+>  	if (WARN_ON_ONCE(dev->msix_enabled))
+>  		return -EINVAL;
+>  
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index b820b07f3b55..a035e165f405 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -260,8 +260,6 @@ struct irq_affinity_desc {
+>   * 			and driver has to handle pre_vectors & post_vectors
+>   * 			correctly, set 'is_managed' flag correct too
+>   * @priv:		Private data of @setup_affinity
+> - * @nr_sets:		Length of passed in *sets array
+> - * @sets:		Number of affinitized sets
+>   */
+>  struct irq_affinity {
+>  	int	pre_vectors;
+> @@ -270,8 +268,6 @@ struct irq_affinity {
+>  				  struct irq_affinity_desc *,
+>  				  unsigned int);
+>  	void    *priv;
+> -	int	nr_sets;
+> -	int	*sets;
+>  };
+>  
+>  #if defined(CONFIG_SMP)
+> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> index 524fdcda9f85..e8fea65325d9 100644
+> --- a/kernel/irq/affinity.c
+> +++ b/kernel/irq/affinity.c
+> @@ -269,9 +269,9 @@ struct irq_affinity_desc *
+>  irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+>  {
+>  	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+> -	int curvec, usedvecs;
+> +	int curvec;
+>  	struct irq_affinity_desc *masks = NULL;
+> -	int i, nr_sets;
+> +	int i;
+>  
+>  	/*
+>  	 * If there aren't any vectors left after applying the pre/post
+> @@ -293,34 +293,14 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+>  	/* Fill out vectors at the beginning that don't need affinity */
+>  	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+>  		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
+> -	/*
+> -	 * Spread on present CPUs starting from affd->pre_vectors. If we
+> -	 * have multiple sets, build each sets affinity mask separately.
+> -	 */
+> -	nr_sets = affd->nr_sets;
+> -	if (!nr_sets)
+> -		nr_sets = 1;
+> -
+> -	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
+> -		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
+> -		int ret;
+> -
+> -		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+> -						curvec, masks);
+> -		if (ret) {
+> -			kfree(masks);
+> -			return NULL;
+> -		}
+> -		curvec += this_vecs;
+> -		usedvecs += this_vecs;
+> +
+> +	if (irq_build_affinity_masks(affd, curvec, affvecs, curvec, masks)) {
+> +		kfree(masks);
+> +		return NULL;
+>  	}
+>  
+>  	/* Fill out vectors at the end that don't need affinity */
+> -	if (usedvecs >= affvecs)
+> -		curvec = affd->pre_vectors + affvecs;
+> -	else
+> -		curvec = affd->pre_vectors + usedvecs;
+> -	for (; curvec < nvecs; curvec++)
+> +	for (curvec = affd->pre_vectors + affvecs; curvec < nvecs; curvec++)
+>  		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
+>  
+>  	/* Mark the managed interrupts */
+> @@ -340,21 +320,13 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
+>  {
+>  	int resv = affd->pre_vectors + affd->post_vectors;
+>  	int vecs = maxvec - resv;
+> -	int set_vecs;
+> +	int ret;
+>  
+>  	if (resv > minvec)
+>  		return 0;
+>  
+> -	if (affd->nr_sets) {
+> -		int i;
+> -
+> -		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
+> -			set_vecs += affd->sets[i];
+> -	} else {
+> -		get_online_cpus();
+> -		set_vecs = cpumask_weight(cpu_possible_mask);
+> -		put_online_cpus();
+> -	}
+> -
+> -	return resv + min(set_vecs, vecs);
+> +	get_online_cpus();
+> +	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
+> +	put_online_cpus();
+> +	return ret;
+>  }
+> -- 
+> 2.9.5
+> 
