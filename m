@@ -2,113 +2,88 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6043DC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE49C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:36:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2400F2147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:30:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oE/sQ61e"
+	by mail.kernel.org (Postfix) with ESMTP id 8D5CE2147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfBGSaG (ORCPT
+        id S1726916AbfBGSg1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:30:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38539 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfBGSaG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:30:06 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q1so317785pfi.5;
-        Thu, 07 Feb 2019 10:30:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yjhoqzPlyk5EPIUhC1bEZzo7yr2zRqeq3BZG9xotq2A=;
-        b=oE/sQ61edFbIM86XAQfyPsLb/re6N40kunwLtWCI4+m42qW00CWWbwWwe5E5BCrdS3
-         Oipoqv2Z+A1jU3k0KYjrO75Z5KBpkM1rpZpTuJEsnEi6urbg8gWnR2gM+eHElQBkXb2I
-         U0XICDL3u2mLtlJ98v2UycHsb0oPCReVtzBbMEF60DAf64lXvUpBZuLiMXVTdOBCGyE2
-         ropJ6EErCfgxwYdZeBDtrRN6XYOdOEpspk+i9ZhKKeLBI8885DXjgRCfFX6GxZNgwBIR
-         IsS8QJIGvC+IhBd+gYhzscRv/HLyo1Q6FyJlmaXIVsr2+7xjut4jghnJzTGMiXyZK9Bh
-         j+pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yjhoqzPlyk5EPIUhC1bEZzo7yr2zRqeq3BZG9xotq2A=;
-        b=blaig1LDyYcQd1XQEz6x7+AKZUFx8ZNqTRq/tEme6XnVfixyEVVdBHhiIsF+uta+bZ
-         2uSp1CiwgaQvb0inafP+3yNu4sWno5+Ildtj+2w6CRNuqC/9rlE4SZHQ1dYPN7Y7se/O
-         KmDAUMMhSIb0YP+N6lpPhf6BgFcqcs011tqGnAWJzkD60X7MokPUKbbq5y9GOm+mCM56
-         QYe4cDC5AVlNSlIiiThRuAVnlEFuT0q2QzdEBMmgoKebidSrNT0osKGb1Nu0AfqOLiDj
-         ysMcHbdMfmLTtPL429DY5JxqJC5/wAb+jxVn92RXpFcJ3cJsh/+lFn9NG55sQN2+b0/b
-         O1kA==
-X-Gm-Message-State: AHQUAuYDLPzpQRRVJO3F2Com+4qEcSOgaPwJzRJBXBQVCIttTsG1xkQF
-        U2t6cbVaEk99Tm8XpPT96Bwk2X+N
-X-Google-Smtp-Source: AHgI3IYhXfyRuQZ2zafmt76iKoS24Uow3RHr3oJgV1PAaj2ROBHvjNG/rGQuYgLvfZdEvqIy92DNaA==
-X-Received: by 2002:aa7:8802:: with SMTP id c2mr17509820pfo.20.1549564205055;
-        Thu, 07 Feb 2019 10:30:05 -0800 (PST)
-Received: from [10.69.52.190] ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id g20sm10015073pfg.85.2019.02.07.10.30.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 10:30:04 -0800 (PST)
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Thu, 7 Feb 2019 13:36:27 -0500
+Received: from mail.us.es ([193.147.175.20]:55660 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726442AbfBGSgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 13:36:25 -0500
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 400DB209906
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 19:36:23 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 3126DDA85E
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 19:36:23 +0100 (CET)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 23B99DA846; Thu,  7 Feb 2019 19:36:23 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 3D5CCDA796;
+        Thu,  7 Feb 2019 19:36:21 +0100 (CET)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Thu, 07 Feb 2019 19:36:21 +0100 (CET)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id 1B25A4265A4E;
+        Thu,  7 Feb 2019 19:36:21 +0100 (CET)
+Date:   Thu, 7 Feb 2019 19:36:20 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Ewan D. Milne" <emilne@redhat.com>
-References: <20190207154446.3f48c496@canb.auug.org.au>
-From:   James Smart <jsmart2021@gmail.com>
-Message-ID: <eea2211e-6342-1949-5a3e-2c08b87db0d9@gmail.com>
-Date:   Thu, 7 Feb 2019 10:30:02 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Guy Shattah <sguy@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20190207183620.7h4i4fdl4g7kgkjz@salvia>
+References: <20190207115425.61c3708a@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190207154446.3f48c496@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190207115425.61c3708a@canb.auug.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/2019 8:44 PM, Stephen Rothwell wrote:
+Hi Stephen,
+
+On Thu, Feb 07, 2019 at 11:54:24AM +1100, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
->    drivers/scsi/lpfc/lpfc_nvme.c
+>   drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
 > 
 > between commit:
 > 
->    7961cba6f7d8 ("scsi: lpfc: nvme: avoid hang / use-after-free when destroying localport")
+>   1651925d403e ("net/mlx5e: Use the inner headers to determine tc/pedit offload limitation on decap flows")
 > 
-> from Linus' tree and commit:
+> from the net tree and commit:
 > 
->    4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to hardware queue structures")
+>   738678817573 ("drivers: net: use flow action infrastructure")
 > 
-> from the scsi-mkp tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> from the net-next tree.
 
+This conflict resolution when merging net into net-next looks good to me.
 
-Thank You. The fixup patch looks correct.
-
-Martin, let me know if there's anything else you'd like me to do.
-
--- james
-
-Signed-off-by:  James Smart <james.smart@broadcom.com>
+Thanks.
