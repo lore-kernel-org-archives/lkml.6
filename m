@@ -2,99 +2,127 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EF4C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A39C7C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9B042175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549563674;
-	bh=RNa9sasZ7hVGgEMX1Olz+kRqmPeVvzt4KRlydM+hRJA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=d/HSFbPJrZMsye4wnkTawk0k4xdn1mGTmG1Ukpx17EqyYXkUBYa0Cqsk1C8YC7Kjs
-	 ja44GH4GLjj3EnTctUyPcygZ3o28ze53B5DG/CZKJOTyaxxVCyW/VhZaHqNDWvwJA3
-	 WPxXMTuCil9OgE8ohYj8GF/IcwPnbZaum5E/0I78=
+	by mail.kernel.org (Postfix) with ESMTP id 713332086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:21:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILYdGyWP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfBGSVM (ORCPT
+        id S1727119AbfBGSV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:21:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbfBGSVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:21:11 -0500
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E62CF21916;
-        Thu,  7 Feb 2019 18:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549563671;
-        bh=RNa9sasZ7hVGgEMX1Olz+kRqmPeVvzt4KRlydM+hRJA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IXHXFUC6Z1dGxgcheDhikZs4AzRy9Falv2j1ToEoPnzcqcpQAkBqr1MPbKActW2yI
-         zkx4qAf0xNowA6fV7V31/DrSAoO9cJxF+6Y0RQ9SzE6BgclKS/VzPML7A03slqjeqy
-         5E7FsgFgGZdFT4AbBshZemJ2h68E/TpCF8RH0Olk=
-Received: by mail-vs1-f49.google.com with SMTP id e16so521943vsq.6;
-        Thu, 07 Feb 2019 10:21:10 -0800 (PST)
-X-Gm-Message-State: AHQUAuYFlKVxteVHOLXg6fi4X4iLHKmVihxsgmsS7gjYe8HoMEnXuPfN
-        vRjXy6Gw+2Eo/SEwfU8UVypNVTs1dCHpGDfl/0o=
-X-Google-Smtp-Source: AHgI3IZYuwyuIhdyRBueDJfzck8FGFzKZnY1JC/5UBZznuMHYLGukZoR3ovxjb1HoCVuLa9RL/EROp8cXFovCYOwgcE=
-X-Received: by 2002:a67:f085:: with SMTP id i5mr7117716vsl.198.1549563670029;
- Thu, 07 Feb 2019 10:21:10 -0800 (PST)
+        Thu, 7 Feb 2019 13:21:27 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35510 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfBGSV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 13:21:27 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t200so918610wmt.0;
+        Thu, 07 Feb 2019 10:21:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/4eJDqA94YOxwyYuAVdf957HOJ8fq4Zyj/OTXBZpY6I=;
+        b=ILYdGyWPNg7Jmf1YFNeQGePEKg+FrwekjejZqKtS9yU7tOMdyQ8ufIkKMrFgybpdbM
+         f3jRIxtavTtAFtYIWzX2ccgII23Um94o291GNE6tlxUwXT4H0B6CEspm+7IJMTT2zqo0
+         YKl59MrarKO9vRmdFQ7y76D1xcIRpLVn48fZlkN1jDx2fzoZWjbogdhE/euz7uXi0ZpE
+         MzMKaqJtOfEhDQZC8JfQ01u+5Hm9eDwQXvmnfTpZ3rPmnS2GpRhJ01PBgEd1Y8uZo2Pg
+         n2Mxd2EOPQBQwiPTQ6os6G0YYwktIoJXGZe6ltZ7Zbx7kblJz4/Ca2F9KiqhdbcEeJBz
+         6r4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/4eJDqA94YOxwyYuAVdf957HOJ8fq4Zyj/OTXBZpY6I=;
+        b=hX62OQ0KNpw09p3GPku9qi+mKlES9CMUbhiYzE5a6XXgwRVmMDaZYyggJE87A9JDe1
+         PsPbXwh8S6uqR3gJ5motKBLJNeznv8O/rbPzmOPR9X7s2Ct0xhPcd2KbktMrgCktKBfp
+         m3Bw+zqeblnpKfX3Tf2dt7bMPvmU5aGW72a4nUo+cbFRprfY3hWKwaE0Y6KytpxHLAkL
+         DTD+0ejb53AZ0P0myBltcqKFWF0Ep/1Hc2yrwaDFG3nGQAzKAf9zi6EZ2DfKQlUQONqH
+         62yGRPmozRsoyWmUBf8w1BoMVZ9Vs/4BoUyDq5vc0s3RMWI9TuL5yRU66fYvG1axnpw4
+         VSuQ==
+X-Gm-Message-State: AHQUAuZ3vZlKyrCiY/L+Hn5cqQx+HRSi7+smcx/Ss46sDdkEaDeekNe5
+        lw0UVL8fHmSExcF0y5vSSGU=
+X-Google-Smtp-Source: AHgI3Ib61XOgR122rX9iEEeLLHS77YKwedYL6f5PQA0Rjajzw0x+7aByR5DGXYCSOOiI0ne6eMcbjw==
+X-Received: by 2002:a1c:9692:: with SMTP id y140mr8704335wmd.67.1549563685141;
+        Thu, 07 Feb 2019 10:21:25 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bf1:e200:a906:e81:1a0f:97bd? (p200300EA8BF1E200A9060E811A0F97BD.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:a906:e81:1a0f:97bd])
+        by smtp.googlemail.com with ESMTPSA id b14sm33043657wrx.36.2019.02.07.10.21.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 10:21:24 -0800 (PST)
+Subject: Re: [PATCH net-next v2 01/10] net: phy: Update PHY linkmodes after
+ config_init
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
+ <20190207094939.27369-2-maxime.chevallier@bootlin.com>
+ <20190207134807.GD23970@lunn.ch> <20190207145517.08bb8975@bootlin.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <349385df-3de6-63e0-f1bb-6085c50b9840@gmail.com>
+Date:   Thu, 7 Feb 2019 19:21:18 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20181127031218.24419-1-dan.rue@linaro.org> <20181127031218.24419-2-dan.rue@linaro.org>
- <20181130023732.GO4922@garbanzo.do-not-panic.com> <20181205204341.7fd4ob5c6pwx375m@xps.therub.org>
-In-Reply-To: <20181205204341.7fd4ob5c6pwx375m@xps.therub.org>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Thu, 7 Feb 2019 12:20:57 -0600
-X-Gmail-Original-Message-ID: <CAB=NE6Wtfe_TafSTU+=0S-n9_vQXaT3FKOrcDrzHBNzj3bY47w@mail.gmail.com>
-Message-ID: <CAB=NE6Wtfe_TafSTU+=0S-n9_vQXaT3FKOrcDrzHBNzj3bY47w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] selftests: firmware: remove use of non-standard diff
- -Z option
-To:     Dan Rue <dan.rue@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190207145517.08bb8975@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 5, 2018 at 2:43 PM Dan Rue <dan.rue@linaro.org> wrote:
->
-> On Thu, Nov 29, 2018 at 06:37:32PM -0800, Luis Chamberlain wrote:
-> > On Mon, Nov 26, 2018 at 09:12:15PM -0600, Dan Rue wrote:
-> > > diff -Z is used to trim the trailing whitespace when comparing the
-> > > loaded firmware file with the source firmware file. However, per the
-> > > comment in the source code, -Z should not be necessary. In testing, the
-> > > input and output files are identical.
-> > >
-> > > Additionally, -Z is not a standard option and is not available in
-> > > environments such as busybox. When -Z is not supported, diff fails with
-> > > a usage error, which is suppressed, but then causes read_firmwares() to
-> > > exit with a false failure message.
-> >
-> > NACK -- this breaks testing on debian:
-> >
-> > Testing with the file present...
-> > Batched request_firmware() try #1: Files
-> > /tmp/tmp.8GWkoSo5jZ/test-firmware.bin and
-> > /sys/devices/virtual/misc/test_firmware/read_firmware differ
-> > request #0: firmware was not loaded
-> >
-> > Please add a quirks check, enable it by default, and remove it for
-> > Busybox.
->
-> Thanks for the review. Shuah, can you please drop this one?
+On 07.02.2019 14:55, Maxime Chevallier wrote:
+> Hello Andrew,
+> 
+> On Thu, 7 Feb 2019 14:48:07 +0100
+> Andrew Lunn <andrew@lunn.ch> wrote:
+> 
+>> On Thu, Feb 07, 2019 at 10:49:30AM +0100, Maxime Chevallier wrote:
+>>> We want to be able to update a PHY's supported list in the config_init
+>>> callback, so move the Pause parameters settings from phydrv->features
+>>> after calling config_init to make sure these  parameters aren't
+>>> overwritten.  
+>>
+>> Hi Maxime
+>>
+>> I have a patch which makes some core changes to support PHY doing
+>> runtime feature detection. I would prefer to use them, than this.
+>>
+>> Either I or Heiner will post them soon.
+> 
+> Sure, no problem, thanks for doing this. I'll be happy to review and
+> test that on my side.
+> 
+The second version of the patch set comes in time because I was just
+about to submit parts of it on Maxime's behalf. We may have some
+dependencies between adding the get_features callback in phy_driver
+and this patch set. Maybe the patch set needs to be splitted.
+I think tomorrow or the day after I can have a closer look at this.
 
-So much for review. This patch was still merged. I'll have to request
-this to be reverted now too.
+> As I said, I lack the big picture view on that part so my approach was
+> pretty naive, I'm glad you can take care of this :)
+> 
+Don't be so self-effacing, it's good work :)
 
-  Luis
+> Thanks,
+> 
+> Maxime
+> 
+Heiner
