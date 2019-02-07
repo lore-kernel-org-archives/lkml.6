@@ -2,143 +2,100 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85806C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 971B2C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00792084D
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 618612084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:08:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="Uy8WU77U"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kCsh2wOs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfBGEFx (ORCPT
+        id S1726789AbfBGEIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 23:05:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:49945 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbfBGEFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 23:05:52 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 43w4VN4X0rz9sMM; Thu,  7 Feb 2019 15:05:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1549512348;
-        bh=S0S2dS1LjBuRUTG1clDNgaI7KgE8nTVNnjiFR2NoXvA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uy8WU77U9A/eXG5/Tke+Th5k5aHqKg5W+2moFJQjgjPHb3RSlMEuVovTfo8MMeXy+
-         ZS027npk5ZEFGdNzoPEtlqN/puV9sDHDOrhEpRMs04p31S0QgEc/sL49zR/Qb3JstF
-         IibSO4sRi3Suy2Ne1zLAV0+Kp5RA6umM7QcvMa/c=
-Date:   Thu, 7 Feb 2019 14:03:05 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Laurent Vivier <lvivier@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: Re: [PATCH v2] powerpc/mm: move a KERN_WARNING message to pr_debug()
-Message-ID: <20190207030305.GA518@umbus.fritz.box>
-References: <20190205202133.5048-1-lvivier@redhat.com>
+        Wed, 6 Feb 2019 23:08:10 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36700 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfBGEII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 23:08:08 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so4188818plo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 20:08:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Oe6CHy5kVVxLnzuV/JO6wOHCV2blRstih5wPBxrJ8o0=;
+        b=kCsh2wOs8jp8h+ZOJhfvTVfG07C8yWJrNOBx3ZTwwptp6bmL8VoxgOkovzTJEKu6k/
+         /8wjVei/dMPiXtEzT8DddaQUKWAhP/jMgaPfIeeTLvdJ73XXJkuNIqjOMlUl0uiu6L+O
+         R0TM7RmSD5XzDb9YPpRMm0PDJ0PGv3ksbOeoopBG5dzzAZduzm48O8s+cBdUK2i3fxO1
+         L84HQUWc4CExz77UH4M+TtjWJdQuftp6zdNGMNeph0lELyGruDwLifDL0KmTTwcEgzjE
+         PmaowDpLpp/v2L6GVEEZPTE+fGDhXo0sd4p75RlVAi8whyGYjMxEKTlsrRsAokNkyb8n
+         cPCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Oe6CHy5kVVxLnzuV/JO6wOHCV2blRstih5wPBxrJ8o0=;
+        b=AFAJadiPjfhvrE2mz0pWFtMCRxWafya0exWtJig4QMhU4JrKIvxOVLfHKtDxe7ThYI
+         4e65VJ/pWN9ZVa1ByWGdeBqodH/SWkX8GJ4u4uJ5tM4cJPoJJCTpBGFoy65d2v/OPWKF
+         0L78jwxHkTfkViYClp0ZOrZj+X9NYBOdjkhv4sUjLr+e3QLfw5JqgW3dIH5VmsnN+fEC
+         n0MB6G2uq2zgh29hZDMB8H46ffMBufSOn+1Nzx4bv1oRa2pA9V4Topu6N7ObeEyFKrWB
+         VjCnKOeGIeZuTUXHeISzH/K2E6HSlxeBRd4EjxFj7B6zak6T52SIiSCgG/J67an816GG
+         jUag==
+X-Gm-Message-State: AHQUAuZ8OVA9nt20xz3apSnC2ZnGLtGSmBSrWlhhAPoZq1MVnkIbL1Ua
+        tgFbu/wL7I8OP2WyxoPeT8/g0Q==
+X-Google-Smtp-Source: AHgI3IYBrG4YfPCSVfMNpwUv4aEIummWC8IQbiiR9AFRu4hbiwXG3SfHj8Iv4v/j5MwpXnpOr4xZxQ==
+X-Received: by 2002:a17:902:9a04:: with SMTP id v4mr14668526plp.34.1549512487925;
+        Wed, 06 Feb 2019 20:08:07 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id 125sm10293184pfg.39.2019.02.06.20.08.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 20:08:07 -0800 (PST)
+Date:   Thu, 7 Feb 2019 09:38:05 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Quentin Perret <quentin.perret@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Taniya Das <tdas@codeaurora.org>, CK Hu <ck.hu@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/2] cpufreq: mediatek: Register an Energy Model
+Message-ID: <20190207040805.og4t2s5ycuy6hqab@vireshk-i7>
+References: <20190205175225.25923-1-mka@chromium.org>
+ <20190205175225.25923-2-mka@chromium.org>
+ <20190206101316.fr7z4ffr4ck4l4aj@queper01-lin>
+ <20190206181659.GI117604@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190205202133.5048-1-lvivier@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190206181659.GI117604@google.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06-02-19, 10:16, Matthias Kaehlcke wrote:
+> You are prefectly right, I missed the obvious and didn't get my hands
+> on hardware yet for testing.
+> 
+> So much for screwing up a one-liner ... I'll send a fix.
+> 
+> I thought Viresh already applied the patch, however in opp/linux-next
+> I currently only see the other one of this series for qcom-hw, so it
+> seems sending a new version rather than a fix-up patch is the way to
+> go.
 
---Kj7319i9nmIyA2yE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, I dropped it after Quentin reported the issue.
 
-On Tue, Feb 05, 2019 at 09:21:33PM +0100, Laurent Vivier wrote:
-> resize_hpt_for_hotplug() reports a warning when it cannot
-> increase the hash page table ("Unable to resize hash page
-> table to target order") but this is not blocking and
-> can make user thinks something has not worked properly.
-> As we move the message to the debug area, report again the
-> ENODEV error.
->=20
-> If the operation cannot be done the real error message
-> will be reported by arch_add_memory() if create_section_mapping()
-> fails.
->=20
-> Fixes: 7339390d772dd
->        powerpc/pseries: Don't give a warning when HPT resizing isn't avai=
-lable
-> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-
-Sorry, I'm pretty dubious about this.  It's true that in the case for
-which this bug was filed this is a harmless situation which deserves a
-pr_debug() at most.
-
-But that's not necessarily true in all paths leading to this message.
-It will also trip if we fail to reshrink the HPT after genuinely
-hotunplugging a bunch of memory, in which case failing to release
-expected resources does deserve a warning.
-
-> ---
->=20
-> Notes:
->     v2:
->      - use pr_debug instead of printk(KERN_DEBUG
->      - remove check for ENODEV
->=20
->  arch/powerpc/mm/hash_utils_64.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->=20
-> diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils=
-_64.c
-> index 0cc7fbc3bd1c..6a0cc4eb2c83 100644
-> --- a/arch/powerpc/mm/hash_utils_64.c
-> +++ b/arch/powerpc/mm/hash_utils_64.c
-> @@ -777,10 +777,9 @@ void resize_hpt_for_hotplug(unsigned long new_mem_si=
-ze)
->  		int rc;
-> =20
->  		rc =3D mmu_hash_ops.resize_hpt(target_hpt_shift);
-> -		if (rc && (rc !=3D -ENODEV))
-> -			printk(KERN_WARNING
-> -			       "Unable to resize hash page table to target order %d: %d\n",
-> -			       target_hpt_shift, rc);
-> +		if (rc)
-> +			pr_debug("Unable to resize hash page table to target order %d: %d\n",
-> +				 target_hpt_shift, rc);
->  	}
->  }
-> =20
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---Kj7319i9nmIyA2yE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlxbn+cACgkQbDjKyiDZ
-s5L2uA//d3kL73x/E6LZ0sRh7aylcIfnRBlPzYmX787L4LZfSSlFGDscIhjj4EWx
-cWArmrwR62zv2H9pcgj2oKz9C1cZQPfC8wHTJuAOPiRb8oVWic1KysbJhDLPfeRp
-LwoCoocxdob69Li45NysjHTEtnoBKt9flllkNcieyPRz92mhCdYiTyjyuVkyg9hd
-Sl2EXEqZpt+eq2+vr3l26nC0Y4IdgzmnY8GqELpbqhLCWX7XXvokUrx8uXfxzCc+
-xHiE72FQhtTcj3aShI1DYt8doJFVUP0i5441UhQUImQzahC3Oo8i7N3kRJfcZNYd
-S75JnBrm0RAzd4jOyRsqiDADeDqjPhzo4Hq7D3i5KMKT2pHa37VUEmCRIGYEjpea
-A9aYlhVbdvDdCyy5LQs/6/A6FNk8pfccNMCG8AxStR7cYQdo8Babz+F4jutfigTB
-F+ZBtFWmAwvKE18ClErfOzE+GgOHvh2FIWLH2biwArPEc7PON9VzaWP8K41CQEfs
-9zJjvEgp4fofadFimPr2hUmkfvWmngy+6vbHm48Y/kdf6LnEBIlS+322YncEalTW
-ABKAllKMxkYxXig6ORHwBW8j+wGCRM+dYvPJ2ZFwspGxWXIzMkKIeD9YhUiP/mvN
-4ZXSy1mt1IFikkgfko2u/yCSzsR9/WYC7M7j1gXBTlI1FuflB/M=
-=UPqI
------END PGP SIGNATURE-----
-
---Kj7319i9nmIyA2yE--
+-- 
+viresh
