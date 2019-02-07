@@ -2,117 +2,85 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AC6C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F52C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DFDB21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FF092147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:15:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cuVlkzRy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfBGOKc (ORCPT
+        id S1727019AbfBGOPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:10:32 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:38614 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBGOKc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:10:32 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1grkNn-0002nU-G7; Thu, 07 Feb 2019 15:10:27 +0100
-Date:   Thu, 7 Feb 2019 15:10:27 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 17/22] x86/fpu: Prepare copy_fpstate_to_sigframe() for
- TIF_NEED_FPU_LOAD
-Message-ID: <20190207141027.ig3vjozwndspuwiw@linutronix.de>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-18-bigeasy@linutronix.de>
- <20190130115614.GF18383@zn.tnic>
- <20190130122820.qyyn4vbtkqelmp54@linutronix.de>
- <20190130125351.GH18383@zn.tnic>
+        Thu, 7 Feb 2019 09:15:43 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:42478 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbfBGOPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 09:15:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=i8wpvOeWaWs47XPtdzw6kdYnPH8LLtVL8HntV08+VZA=; b=cuVlkzRyzb1PgRMsfyLuC+xaSH
+        lWEBYOnqC1e16FDYGRULhhu0dTDcLWfJ0uwrsXTAQ7DHE/VETwLZw3WnUwfuKcmcciKrsvZ+HywX0
+        kYmgP06pJ05UOigIJ4AzwMU+raERdiHBX/SU6ZIhKWBMWQqE6KmZXO0TS7J+FLO9Po5E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1grkSp-000728-4R; Thu, 07 Feb 2019 15:15:39 +0100
+Date:   Thu, 7 Feb 2019 15:15:39 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next v2 07/10] net: phy: marvell10g: Add support for
+ 2.5GBASET
+Message-ID: <20190207141539.GJ32483@lunn.ch>
+References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
+ <20190207094939.27369-8-maxime.chevallier@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190130125351.GH18383@zn.tnic>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190207094939.27369-8-maxime.chevallier@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-30 13:53:51 [+0100], Borislav Petkov wrote:
-> > I've been asked to add comment above the sequence so it is understood. I
-> > think the general approach is easy to follow once the concept is
-> > understood. I don't mind renaming the TIF_ thingy once again (it
-> > happend once or twice and I think the current one was suggested by Andy
-> > unless I mixed things up).
-> > The problem I have with the above is that
-> > 
-> > 	if (test_thread_flag(TIF_NEED_FPU_LOAD))
-> > 		do_that()
-> > 
-> > becomes
-> > 	if (!test_thread_flag(TIF_FPU_REGS_VALID))
-> > 		do_that()
-> 
-> Err, above it becomes
-> 
-> 	if (test_thread_flag(TIF_FPU_REGS_VALID))
-> 		copy_fpregs_to_fpstate(fpu);
+>  		if (phydev->speed == SPEED_10000)
+>  			phydev->interface = PHY_INTERFACE_MODE_10GKR;
+> +		else if (phydev->speed == SPEED_2500)
+> +			phydev->interface = PHY_INTERFACE_MODE_2500BASEX;
+>  		else if (phydev->speed >= SPEED_10 &&
+> -			 phydev->speed < SPEED_10000)
+> +			 phydev->speed < SPEED_2500)
+>  			phydev->interface = PHY_INTERFACE_MODE_SGMII;
+>  	}
 
-The (your) above example yes. But the reverse state
- 	if (test_thread_flag(TIF_NEED_FPU_LOAD))
- 		do_that()
+Maybe swap to a switch statement?
 
-becomes
- 	if (!test_thread_flag(TIF_FPU_REGS_VALID))
- 		do_that()
+>  static struct phy_driver mv3310_drivers[] = {
+>  	{
+> -		.phy_id		= 0x002b09aa,
+> +		.phy_id		= MARVELL_PHY_ID_88X3310,
 
-> without the "!". I.e., CPU's FPU regs are valid and we need to save them.
-> 
-> Or am I misreading the comment above?
+What does the datasheet say about the lower nibble? Often it is a
+silicon revision field, so you don't match on it. But 0xa is a rather
+odd revision.
 
-Your example is correct. But in the opposite case, when ! was not there
-then we have to add it.
-
-> > and you could argue again the other way around. So do we want NEED_LOAD
-> > or NEED_SAVE flag which is another way of saying REGS_VALID?
-> 
-> All fine and dandy except NEED_FPU_LOAD is ambiguous to me: we need to
-> load them where? Into the CPU? Or into the FPU state save area?
-
-if you need to LOAD then task-saved-area into CPU-state. If you need to
-save it then CPU-state into task-saved-area.
-
-> TIF_FPU_REGS_VALID is clearer in the sense that the CPU's FPU registers
-> are currently valid for the current task. As there are no other FPU
-> registers except the CPU's.
-
-hmmm. I think it is just taste / habit.
-
-> > More importantly the logic is changed when the bit is set and this
-> > requires more thinking than just doing sed on the patch series.
-> 
-> Sure.
-> 
-> And I'll get accustomed to the logic whatever the name is - this is just
-> a "wouldn't it be better" thing.
-
-If it would be just a name thing then I probably wouldn't mind. But
-swapping the logic might break things so I try to avoid that.
-
-> Thx.
-> 
-
-Sebastian
+Thanks
+	Andrew
