@@ -2,298 +2,235 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0AAC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6C5C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED7021904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:25:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F5052175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:25:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vbB/dBUX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfBGQZl (ORCPT
+        id S1726876AbfBGQZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:25:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51214 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726442AbfBGQZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:25:41 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1B2AC432AB;
-        Thu,  7 Feb 2019 16:25:40 +0000 (UTC)
-Received: from haswell-e.nc.xsintricity.com (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 93E205C22D;
-        Thu,  7 Feb 2019 16:25:37 +0000 (UTC)
-Message-ID: <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-From:   Doug Ledford <dledford@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Date:   Thu, 07 Feb 2019 11:25:35 -0500
-In-Reply-To: <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
-         <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
-         <20190206175233.GN21860@bombadil.infradead.org>
-         <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
-         <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
-         <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
-         <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
-         <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-um3ENeAUEAAEn9LYnNJ1"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 07 Feb 2019 16:25:40 +0000 (UTC)
+        Thu, 7 Feb 2019 11:25:52 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37315 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfBGQZv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:25:51 -0500
+Received: by mail-pg1-f196.google.com with SMTP id c25so148063pgb.4;
+        Thu, 07 Feb 2019 08:25:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JMDqOaHFvdSU02EbGG2Qepxv7+TSB9P9RpLYROaZ1nE=;
+        b=vbB/dBUXK0H/gmlZGufYLW4LTPdmmYIIo7WH11pupTw5mOhlhjBnAZGs+m2hh3cMLP
+         v6kRwuQ2u/lAkLXeCyZJPcbKXAnM4nWCLjHJAlpuYcxpc+aeHvR0UhOiW5Z9edJqlEjf
+         foM2VBJMwbXmHXuMQNZLAEMR/X3C2J8MaSqD4USvVRhPqXCH8Obbc674QUr603t+zXvd
+         rBZNsiWmUjjAk3DWD6i+MuF4v6q47cnNTg5TlieuBRpO3OQc3uSr6KteQCkNDhb6atMz
+         dUpZZp/bWLJUmpJTZHRMhXaEyymX/oWHOPJaYi1x+KN1pJXnxdRCdEKsZriG6BECN+Vm
+         eooQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=JMDqOaHFvdSU02EbGG2Qepxv7+TSB9P9RpLYROaZ1nE=;
+        b=HSgm6iTuTc8iZsInjT9TTDC0MDnSfU7ONw0Ij1l9nzJeCh6CLlL9VtsxL7QIyQFLz2
+         BIYZPnmNr/WJkkps03SipBzJUc0u1LxGGQXq1RJPK+IgmSN3n5T3Ad+7iwL+QJlxHKbo
+         0fD440I+MmgBWO9iYYuIkM2Cf2P/MUymoiTGdWij3vXwfY5AKKQn0W2ssItBW+bO4zAG
+         WOGU2xD0J6rpkb+AyZ+mBgoJLrqnE7vSoZwLQrq/cP6EvXziw2p65lYNJXqYr5yV0eK0
+         Dxwby1P09F5huDZKzedvu5GkC5Fw+vgrHS31eKxRPNpteM5klJggCYkFMvXmJSc7b5iu
+         BDyw==
+X-Gm-Message-State: AHQUAubR9pcQJvDc4ogdSKfPz7j4QlaW3RJz1UEeLqpHBkfkmx3qcjB+
+        NJBSKDIJj6nUCHyPBtOt4Hu12nkOSfE=
+X-Google-Smtp-Source: AHgI3IY4LHW/InNazTHbthtwZdKzxmGbHzMVQWM39kIyeKIPyi17Tao+cIfXzsB4yilLVOHEHRbRGA==
+X-Received: by 2002:a63:ea56:: with SMTP id l22mr64713pgk.391.1549556749751;
+        Thu, 07 Feb 2019 08:25:49 -0800 (PST)
+Received: from ziggy.stardust ([62.31.71.171])
+        by smtp.gmail.com with ESMTPSA id t6sm11869767pgu.46.2019.02.07.08.25.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 08:25:48 -0800 (PST)
+Subject: Re: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
+To:     Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20190109055724.184692-1-pihsun@chromium.org>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <1d292090-414a-e500-f2e3-db3b0891812d@gmail.com>
+Date:   Thu, 7 Feb 2019 17:25:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20190109055724.184692-1-pihsun@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-um3ENeAUEAAEn9LYnNJ1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-I think I've finally wrapped my head around all of this.  Let's see if I
-have this right:
+On 09/01/2019 06:57, Pi-Hsun Shih wrote:
+> The mtk_thermal struct contains a 'struct mtk_thermal_bank banks[];',
+> but the allocation only allocates sizeof(struct mtk_thermal) bytes,
+> which cause out of bound access with the ->banks[] member. Change it to
+> a fixed size array instead.
+> 
+> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 
-* People are using filesystem DAX to expose byte addressable persistent
-memory because putting a filesystem on the memory makes an easy way to
-organize the data in the memory and share it between various processes.=20
-It's worth noting that this is not the only way to share this memory,
-and arguably not even the best way, but it's what people are doing.=20
-However, to get byte level addressability on the remote side, we must
-create files on the server side, mmap those files, then give a handle to
-the memory region to the client side that the client then addresses on a
-byte by byte basis.  This is because all of the normal kernel based
-device sharing mechanisms are block based and don't provide byte level
-addressability.
+For the next time, please don't forget to provide a fixes tag so that it can get
+into stable trees automatically.
 
-* People are asking for thin allocations, reflinks, deduplication,
-whatever else because persistent memory is still small in terms of size
-compared to the amount of data people want to put on it, so these
-techniques stretch its usefulness.
-
-* Because there is no kernel level mechanism for sharing byte
-addressable memory, this only works with specific applications that have
-been written to create files on byte addressable memory, mmap them, then
-share them out via RDMA.  I bring this up because in the video linked in
-this email, Oracle is gushing about how great this feature is.  But it's
-important to understand that this only works because the Oracle
-processes themselves are the filesystem sharing entity.  That means at
-other points in this conversation where we've talked about the need for
-forward progress, and non-ODP hardware, and the talk has come down to
-sending SIGKILL to a process in order to free memory reservations, I
-feel confident in saying that Oracle would *never* agree to this.  If
-you kill an Oracle process to make forward progress, you are probably
-also killing the very process that needed you to make progress in the
-first place.  I'm pretty confident that Oracle will have no problem
-what-so-ever saying that ODP capable hardware is a hard requirement for
-using their software with DAX.
-
-* So if Oracle is likely to demand ODP hardware, period, are there other
-scenarios that might be more accepting of a more limited FS on top of
-DAX that doesn't support reflinks and deduplication?  I can think of a
-possible yes to that answer rather easily.  Message brokerage servers
-(amqp, qpid) have strict requirements about receiving a message and then
-making sure that it makes it once, and only once, to all subscribed
-receivers.  A natural way of organizing this sort of thing is to create
-a persistent ring buffer for incoming messages, one per each connecting
-client that is sending messages.  Then a log file for each client you
-are sending messages back out to.  Putting these files on persistent
-memory and then mapping the ring buffer to the clients, and writing your
-own transmission journals to the persistent memory, would allow the
-program to be very robust in the face of a program or system crash.=20
-This sort of usage would not require any thin allocations, reflinks, or
-other such features, and yet would still find the filesystem
-organization useful.  Therefore I think the answer is yes, there are at
-least some use cases that would find a less featureful filesystem that
-works with persistent memory and RDMA but without ODP to be of value.
-
-* Really though, as I said in my email to Tom Talpey, this entire
-situation is simply screaming that we are doing DAX networking wrong.=20
-We shouldn't be writing the networking code once in every single
-application that wants to do this.  If we had a memory segment that we
-shared from server to client(s), and in that memory segment we
-implemented a clustered filesystem, then applications would simply mmap
-local files and be done with it.  If the file needed to move, the kernel
-would update the mmap in the application, done.  If you ask me, it is
-the attempt to do this the wrong way that is resulting in all this
-heartache.  That said, for today, my recommendation would be to require
-ODP hardware for XFS filesystem with the DAX option, but allow ext2
-filesystems to mount DAX filesystems on non-ODP hardware, and go in and
-modify the ext2 filesystem so that on DAX mounts, it disables hole punch
-and ftrunctate any time they would result in the forced removal of an
-established mmap.
+For the records, it fixes commit (v4.9):
+b7cf0053738c ("thermal: Add Mediatek thermal driver for mt2701.")
 
 
-On Wed, 2019-02-06 at 14:44 -0800, Dan Williams wrote:
-> On Wed, Feb 6, 2019 at 2:25 PM Doug Ledford <dledford@redhat.com> wrote:
-> > On Wed, 2019-02-06 at 15:08 -0700, Jason Gunthorpe wrote:
-> > > On Thu, Feb 07, 2019 at 08:03:56AM +1100, Dave Chinner wrote:
-> > > > On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote=
-:
-> > > > > On Wed, 6 Feb 2019, Doug Ledford wrote:
-> > > > >=20
-> > > > > > > Most of the cases we want revoke for are things like truncate=
-().
-> > > > > > > Shouldn't happen with a sane system, but we're trying to avoi=
-d users
-> > > > > > > doing awful things like being able to DMA to pages that are n=
-ow part of
-> > > > > > > a different file.
-> > > > > >=20
-> > > > > > Why is the solution revoke then?  Is there something besides tr=
-uncate
-> > > > > > that we have to worry about?  I ask because EBUSY is not curren=
-tly
-> > > > > > listed as a return value of truncate, so extending the API to i=
-nclude
-> > > > > > EBUSY to mean "this file has pinned pages that can not be freed=
-" is not
-> > > > > > (or should not be) totally out of the question.
-> > > > > >=20
-> > > > > > Admittedly, I'm coming in late to this conversation, but did I =
-miss the
-> > > > > > portion where that alternative was ruled out?
-> > > > >=20
-> > > > > Coming in late here too but isnt the only DAX case that we are co=
-ncerned
-> > > > > about where there was an mmap with the O_DAX option to do direct =
-write
-> > > > > though? If we only allow this use case then we may not have to wo=
-rry about
-> > > > > long term GUP because DAX mapped files will stay in the physical =
-location
-> > > > > regardless.
-> > > >=20
-> > > > No, that is not guaranteed. Soon as we have reflink support on XFS,
-> > > > writes will physically move the data to a new physical location.
-> > > > This is non-negotiatiable, and cannot be blocked forever by a gup
-> > > > pin.
-> > > >=20
-> > > > IOWs, DAX on RDMA requires a) page fault capable hardware so that
-> > > > the filesystem can move data physically on write access, and b)
-> > > > revokable file leases so that the filesystem can kick userspace out
-> > > > of the way when it needs to.
-> > >=20
-> > > Why do we need both? You want to have leases for normal CPU mmaps too=
-?
-> > >=20
-> > > > Truncate is a red herring. It's definitely a case for revokable
-> > > > leases, but it's the rare case rather than the one we actually care
-> > > > about. We really care about making copy-on-write capable filesystem=
-s like
-> > > > XFS work with DAX (we've got people asking for it to be supported
-> > > > yesterday!), and that means DAX+RDMA needs to work with storage tha=
-t
-> > > > can change physical location at any time.
-> > >=20
-> > > Then we must continue to ban longterm pin with DAX..
-> > >=20
-> > > Nobody is going to want to deploy a system where revoke can happen at
-> > > any time and if you don't respond fast enough your system either lock=
-s
-> > > with some kind of FS meltdown or your process gets SIGKILL.
-> > >=20
-> > > I don't really see a reason to invest so much design work into
-> > > something that isn't production worthy.
-> > >=20
-> > > It *almost* made sense with ftruncate, because you could architect to
-> > > avoid ftruncate.. But just any FS op might reallocate? Naw.
-> > >=20
-> > > Dave, you said the FS is responsible to arbitrate access to the
-> > > physical pages..
-> > >=20
-> > > Is it possible to have a filesystem for DAX that is more suited to
-> > > this environment? Ie designed to not require block reallocation (no
-> > > COW, no reflinks, different approach to ftruncate, etc)
-> >=20
-> > Can someone give me a real world scenario that someone is *actually*
-> > asking for with this?
->=20
-> I'll point to this example. At the 6:35 mark Kodi talks about the
-> Oracle use case for DAX + RDMA.
->=20
-> https://youtu.be/ywKPPIE8JfQ?t=3D395
->=20
-> Currently the only way to get this to work is to use ODP capable
-> hardware, or Device-DAX. Device-DAX is a facility to map persistent
-> memory statically through device-file. It's great for statically
-> allocated use cases, but loses all the nice things (provisioning,
-> permissions, naming) that a filesystem gives you. This debate is what
-> to do about non-ODP capable hardware and Filesystem-DAX facility. The
-> current answer is "no RDMA for you".
->=20
-> > Are DAX users demanding xfs, or is it just the
-> > filesystem of convenience?
->=20
-> xfs is the only Linux filesystem that supports DAX and reflink.
->=20
-> > Do they need to stick with xfs?
->=20
-> Can you clarify the motivation for that question? This problem exists
-> for any filesystem that implements an mmap that where the physical
-> page backing the mapping is identical to the physical storage location
-> for the file data. I don't see it as an xfs specific problem. Rather,
-> xfs is taking the lead in this space because it has already deployed
-> and demonstrated that leases work for the pnfs4 block-server case, so
-> it seems logical to attempt to extend that case for non-ODP-RDMA.
->=20
-> > Are they
-> > really trying to do COW backed mappings for the RDMA targets?  Or do
-> > they want a COW backed FS but are perfectly happy if the specific RDMA
-> > targets are *not* COW and are statically allocated?
->=20
-> I would expect the COW to be broken at registration time. Only ODP
-> could possibly support reflink + RDMA. So I think this devolves the
-> problem back to just the "what to do about truncate/punch-hole"
-> problem in the specific case of non-ODP hardware combined with the
-> Filesystem-DAX facility.
-
-
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-um3ENeAUEAAEn9LYnNJ1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlxcW/8ACgkQuCajMw5X
-L91/3RAAn/t0azp+g0ydwFXoYi7Glyb8+kYEztIcXGo2gFnCTyTT32j4YlcZYeQY
-+sb7jSH2fkBbAj69y5pXzuGGg52NvcaGMi8ZzDkxaHxNYIwGXVcT89uNJ5Jri+jD
-RbCD4MnreNx8+YTPy/K9NZGwrG2jemXaN+8Ln0g3UOSV+pBbMTOD6xYXOgPwxmPG
-0sgd2a+Lj5hou8kRIjGk7sbAWCV0kg5Ss4M3gKGt80ny+9CagJHyD49ffhxzU679
-of9gegyRRVBJrFD4zh+qZNEUhhITv3+11kIYU0CwFiwAXT3eMQwhEHL70YwWALuJ
-dOSy1Hy9hDpUqcrkBV2pB9KyaYpDKd84Yt0aS++wNI85i4oZNgjxwtGMmyFb8Fbf
-4S9HePUn5oJarlwzJJYm8pjMWO0daESEqKqIaP9IN1VDp/Mjvw51e1TOmoygshyU
-6zxeaCIfeaJ76EZj1pajXKiA2wE/ONQhIuEsemPthbMxz9py920tOQHlGg39kbys
-rcqym6ZACGXA7Z4myCnpCxTNm5aaEk7isXe4i56GkohCFRostUsqeDBLdr2aqQ0f
-m2TbCHxEuHh6HmhklrHg81w7MJeKl7dOSK71gLwFJoyWZJ3NgSS5OEwwA3kL2TG5
-pBCerjLCZbPYrjgFMod6p+1C8IGNSUMvLycrNscgTn5nfiwjur0=
-=H0zA
------END PGP SIGNATURE-----
-
---=-um3ENeAUEAAEn9LYnNJ1--
-
+> ---
+>  drivers/thermal/mtk_thermal.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
+> index 0691f260f6eabe..ea11edb3fcced6 100644
+> --- a/drivers/thermal/mtk_thermal.c
+> +++ b/drivers/thermal/mtk_thermal.c
+> @@ -159,6 +159,9 @@
+>  #define MT7622_NUM_SENSORS_PER_ZONE	1
+>  #define MT7622_TS1	0
+>  
+> +/* The maximum number of banks */
+> +#define MAX_NUM_ZONES		8
+> +
+>  struct mtk_thermal;
+>  
+>  struct thermal_bank_cfg {
+> @@ -178,7 +181,7 @@ struct mtk_thermal_data {
+>  	const int *sensor_mux_values;
+>  	const int *msr;
+>  	const int *adcpnp;
+> -	struct thermal_bank_cfg bank_data[];
+> +	struct thermal_bank_cfg bank_data[MAX_NUM_ZONES];
+>  };
+>  
+>  struct mtk_thermal {
+> @@ -197,7 +200,7 @@ struct mtk_thermal {
+>  	s32 vts[MT8173_NUM_SENSORS];
+>  
+>  	const struct mtk_thermal_data *conf;
+> -	struct mtk_thermal_bank banks[];
+> +	struct mtk_thermal_bank banks[MAX_NUM_ZONES];
+>  };
+>  
+>  /* MT8173 thermal sensor data */
+> 
