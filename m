@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2379C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D4CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91E562080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E2EB2080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539859;
-	bh=i1a7MoRb9G6dWfmh4oa0sPO8Elk5wvKoOJOdDQSYk8k=;
+	s=default; t=1549539883;
+	bh=fvebzdf+Je28WQcKrr02Iy1scI+QCZ/VtBQQDGO5VvE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hp0ygWtyyzs7On7hBiYn0MyNz7HJNA99x5W/G3keNOfE1YFMoIVzF0wCMrqTAOPo8
-	 oFKX6NlJKFnwl/MkagkYatI3Juw0oPbwBlHw2OMHYyz+/mvqcZGxyLfGyIcqmwGdVA
-	 rxmqNiA9TcNQyfCLcPEZF4eLr708YNwGUj65n31o=
+	b=OthUzp54o8qfv3lRAI0H29cUfbssYdwyls4mtlxGHxRxAAn9NUVNHLmh2UUaONXLC
+	 vp4m6wWgQLFDvL1wizO2CJEOIiQQWuF5gPbTeCH66wclaA0Hrl8hFzxdbURwiIoo7S
+	 Gn9TMhlFdiLEAn1YCqXuGBx4S1La2B+dyqE0S/Qk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfBGLoS (ORCPT
+        id S1727211AbfBGLol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:44:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34754 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:44:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbfBGLoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:44:09 -0500
+        id S1727497AbfBGLne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:43:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30EC02080F;
-        Thu,  7 Feb 2019 11:44:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A99DF21917;
+        Thu,  7 Feb 2019 11:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539848;
-        bh=i1a7MoRb9G6dWfmh4oa0sPO8Elk5wvKoOJOdDQSYk8k=;
+        s=default; t=1549539814;
+        bh=fvebzdf+Je28WQcKrr02Iy1scI+QCZ/VtBQQDGO5VvE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n/LeSV5uXv4vMq1mCSrrpFa/NkmaUUbdcNT1EckiN6J7zwhmzTSyyqLRTrAd1pzbL
-         w2fOIH1HfcDsN2z+z18PD5sKQrgAzVcyRW+5ZZmxZHGEsccUF6YKg8mA9tP/OuCgbx
-         /hP3gDlddOE12r0SbnmEY16OP6l8aBBYCMFqhbIs=
+        b=fQOmzLOXlMZKshrpj2r72ft7B8djibK6bzV5pWKlvhoGuSJ8uJghUNWiIxfEWA1op
+         jGhq3+vA9oKsdxdwMlKX0imvRyFVUCNcgeRk8FvFx30Z6iadyhsPA1Ce/rirETGMap
+         L92ZHhiZfbAXgyDrPKHu9/guTKZdoRGJYd8tSLXQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 25/34] net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
-Date:   Thu,  7 Feb 2019 12:42:07 +0100
-Message-Id: <20190207113026.543590357@linuxfoundation.org>
+Subject: [PATCH 4.4 17/34] ipv6: frags: rewrite ip6_expire_frag_queue()
+Date:   Thu,  7 Feb 2019 12:41:59 +0100
+Message-Id: <20190207113026.249602528@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -68,71 +67,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 88078d98d1bb085d72af8437707279e203524fa5 upstream.
+commit 05c0b86b9696802fd0ce5676a92a63f1b455bdf3 upstream.
 
-After working on IP defragmentation lately, I found that some large
-packets defeat CHECKSUM_COMPLETE optimization because of NIC adding
-zero paddings on the last (small) fragment.
-
-While removing the padding with pskb_trim_rcsum(), we set skb->ip_summed
-to CHECKSUM_NONE, forcing a full csum validation, even if all prior
-fragments had CHECKSUM_COMPLETE set.
-
-We can instead compute the checksum of the part we are trimming,
-usually smaller than the part we keep.
+Make it similar to IPv4 ip_expire(), and release the lock
+before calling icmp functions.
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 4.4: adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/skbuff.h |    5 ++---
- net/core/skbuff.c      |   14 ++++++++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ net/ipv6/reassembly.c |   24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2796,6 +2796,7 @@ static inline unsigned char *skb_push_rc
- 	return skb->data;
- }
- 
-+int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
- /**
-  *	pskb_trim_rcsum - trim received skb and update checksum
-  *	@skb: buffer to trim
-@@ -2810,9 +2811,7 @@ static inline int pskb_trim_rcsum(struct
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -92,7 +92,9 @@ EXPORT_SYMBOL(ip6_frag_init);
+ void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq)
  {
- 	if (likely(len >= skb->len))
- 		return 0;
--	if (skb->ip_summed == CHECKSUM_COMPLETE)
--		skb->ip_summed = CHECKSUM_NONE;
--	return __pskb_trim(skb, len);
-+	return pskb_trim_rcsum_slow(skb, len);
- }
+ 	struct net_device *dev = NULL;
++	struct sk_buff *head;
  
- #define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1502,6 +1502,20 @@ done:
- }
- EXPORT_SYMBOL(___pskb_trim);
++	rcu_read_lock();
+ 	spin_lock(&fq->q.lock);
  
-+/* Note : use pskb_trim_rcsum() instead of calling this directly
-+ */
-+int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
-+{
-+	if (skb->ip_summed == CHECKSUM_COMPLETE) {
-+		int delta = skb->len - len;
+ 	if (fq->q.flags & INET_FRAG_COMPLETE)
+@@ -100,28 +102,34 @@ void ip6_expire_frag_queue(struct net *n
+ 
+ 	inet_frag_kill(&fq->q);
+ 
+-	rcu_read_lock();
+ 	dev = dev_get_by_index_rcu(net, fq->iif);
+ 	if (!dev)
+-		goto out_rcu_unlock;
++		goto out;
+ 
+ 	IP6_INC_STATS_BH(net, __in6_dev_get(dev), IPSTATS_MIB_REASMFAILS);
+ 	IP6_INC_STATS_BH(net, __in6_dev_get(dev), IPSTATS_MIB_REASMTIMEOUT);
+ 
+ 	/* Don't send error if the first segment did not arrive. */
+-	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !fq->q.fragments)
+-		goto out_rcu_unlock;
++	head = fq->q.fragments;
++	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !head)
++		goto out;
+ 
+ 	/* But use as source device on which LAST ARRIVED
+ 	 * segment was received. And do not use fq->dev
+ 	 * pointer directly, device might already disappeared.
+ 	 */
+-	fq->q.fragments->dev = dev;
+-	icmpv6_send(fq->q.fragments, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
+-out_rcu_unlock:
+-	rcu_read_unlock();
++	head->dev = dev;
++	skb_get(head);
++	spin_unlock(&fq->q.lock);
 +
-+		skb->csum = csum_sub(skb->csum,
-+				     skb_checksum(skb, len, delta, 0));
-+	}
-+	return __pskb_trim(skb, len);
-+}
-+EXPORT_SYMBOL(pskb_trim_rcsum_slow);
++	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
++	kfree_skb(head);
++	goto out_rcu_unlock;
 +
- /**
-  *	__pskb_pull_tail - advance tail of skb header
-  *	@skb: buffer to reallocate
+ out:
+ 	spin_unlock(&fq->q.lock);
++out_rcu_unlock:
++	rcu_read_unlock();
+ 	inet_frag_put(&fq->q);
+ }
+ EXPORT_SYMBOL(ip6_expire_frag_queue);
 
 
