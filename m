@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624F8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E579C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A52A2147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EBF52147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfBGOXP (ORCPT
+        id S1727192AbfBGOWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:23:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727194AbfBGOWU (ORCPT
+        Thu, 7 Feb 2019 09:22:19 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726967AbfBGOWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:22:20 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17EHIZr018743
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 09:22:19 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qgmp4w9sj-1
+        Thu, 7 Feb 2019 09:22:18 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17EJ4bH077992
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 09:22:17 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qgmy7cr2w-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:22:19 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:22:16 -0500
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 7 Feb 2019 14:22:18 -0000
+        Thu, 7 Feb 2019 14:22:15 -0000
 Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Thu, 7 Feb 2019 14:22:12 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17EMB8M23199888
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17EMBxn19202286
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 7 Feb 2019 14:22:11 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 746A9B2070;
-        Thu,  7 Feb 2019 14:22:11 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EBEC7B206B;
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4AB33B2068;
-        Thu,  7 Feb 2019 14:22:11 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id C1EC5B206E;
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.235.4])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Feb 2019 14:22:11 +0000 (GMT)
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1449B16C6B7D; Thu,  7 Feb 2019 06:18:25 -0800 (PST)
+        id 31B8416C042F; Thu,  7 Feb 2019 06:18:25 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -59,20 +59,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH v2 tip/core/rcu 14/19] linux/rcutiny: Convert to SPDX license identifier
-Date:   Thu,  7 Feb 2019 06:18:18 -0800
+Subject: [PATCH v2 tip/core/rcu 19/19] locking/locktorture: Convert to SPDX license identifier
+Date:   Thu,  7 Feb 2019 06:18:23 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190207141700.GA11106@linux.ibm.com>
 References: <20190207141700.GA11106@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19020714-0072-0000-0000-000003F65677
+x-cbid: 19020714-0060-0000-0000-000003072AB0
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010554; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000279; SDB=6.01157626; UDB=6.00603959; IPR=6.00938157;
- MB=3.00025480; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 14:22:16
+ MB=3.00025480; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 14:22:15
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020714-0073-0000-0000-00004B180126
-Message-Id: <20190207141823.12311-14-paulmck@linux.ibm.com>
+x-cbparentid: 19020714-0061-0000-0000-00004836C698
+Message-Id: <20190207141823.12311-19-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -89,19 +89,18 @@ Replace the license boiler plate with a SPDX license identifier.
 While in the area, update an email address.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-[ paulmck: Update .h SPDX format per Joe Perches. ]
 ---
- include/linux/rcutiny.h | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ kernel/locking/locktorture.c | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
-index af65d1f36ddb..8e727f57d814 100644
---- a/include/linux/rcutiny.h
-+++ b/include/linux/rcutiny.h
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index 7d0b0ed74404..d163c5b75d72 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
 @@ -1,23 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++// SPDX-License-Identifier: GPL-2.0+
  /*
-  * Read-Copy Update mechanism for mutual exclusion, the Bloatwatch edition.
+  * Module-based torture test facility for locking
   *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -117,13 +116,22 @@ index af65d1f36ddb..8e727f57d814 100644
 - * along with this program; if not, you can access it online at
 - * http://www.gnu.org/licenses/gpl-2.0.html.
 - *
-  * Copyright IBM Corporation, 2008
+  * Copyright (C) IBM Corporation, 2014
   *
-- * Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-+ * Author: Paul E. McKenney <paulmck@linux.ibm.com>
-  *
-  * For detailed explanation of Read-Copy Update mechanism see -
-  *		Documentation/RCU
+- * Authors: Paul E. McKenney <paulmck@us.ibm.com>
++ * Authors: Paul E. McKenney <paulmck@linux.ibm.com>
+  *          Davidlohr Bueso <dave@stgolabs.net>
+  *	Based on kernel/rcu/torture.c.
+  */
+@@ -45,7 +32,7 @@
+ #include <linux/torture.h>
+ 
+ MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Paul E. McKenney <paulmck@us.ibm.com>");
++MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
+ 
+ torture_param(int, nwriters_stress, -1,
+ 	     "Number of write-locking stress-test threads");
 -- 
 2.17.1
 
