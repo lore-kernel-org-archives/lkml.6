@@ -2,157 +2,164 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698F7C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1181C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4294F2147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89C392080F
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfBGJRT (ORCPT
+        id S1726728AbfBGJXf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 04:17:19 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:33805 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfBGJRT (ORCPT
+        Thu, 7 Feb 2019 04:23:35 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36333 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfBGJXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 04:17:19 -0500
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 306DA100007;
-        Thu,  7 Feb 2019 09:17:15 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 10:17:14 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Rafal Ciepiela <rafalc@cadence.com>,
-        Krzysztof Witos <kwitos@cadence.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] phy: Add configuration interface for MIPI D-PHY
- devices
-Message-ID: <20190207091714.2rhdprl56pz32nbo@flea>
-References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
- <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
- <20190205084620.GW3271@phenom.ffwll.local>
- <4177fba5-279d-3283-88f0-c681f72e5951@ti.com>
- <20190206122546.7zucalixgcm4ph36@flea>
- <f3a70714-5538-d6fa-201f-16b70e9d062c@ti.com>
+        Thu, 7 Feb 2019 04:23:34 -0500
+X-Originating-IP: 90.88.22.177
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id ED4991BF206;
+        Thu,  7 Feb 2019 09:23:29 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 10:23:29 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Wen Yang <yellowriver2010@hotmail.com>
+Cc:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] mtd: rawnand: atmel: fix possible object
+ reference leak
+Message-ID: <20190207102329.1b137198@xps13>
+In-Reply-To: <HK0PR02MB363495256F9ADB049C795D7DB2680@HK0PR02MB3634.apcprd02.prod.outlook.com>
+References: <HK0PR02MB363495256F9ADB049C795D7DB2680@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="m6gy2mzxdt6zex7g"
-Content-Disposition: inline
-In-Reply-To: <f3a70714-5538-d6fa-201f-16b70e9d062c@ti.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Wen,
 
---m6gy2mzxdt6zex7g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Wen Yang <yellowriver2010@hotmail.com> wrote on Thu, 7 Feb 2019
+03:50:55 +0000:
 
-Hi Kishon,
+> of_find_device_by_node() takes a reference to the struct device
+> when it finds a match via get_device, there is no need to call
+> get_device() twice.
+> We also should make sure to drop the reference to the device
+> taken by of_find_device_by_node() on driver unbind.
+> 
+> Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
 
-On Wed, Feb 06, 2019 at 06:00:19PM +0530, Kishon Vijay Abraham I wrote:
-> On 06/02/19 5:55 PM, Maxime Ripard wrote:
-> > On Wed, Feb 06, 2019 at 05:43:12PM +0530, Kishon Vijay Abraham I wrote:
-> >> On 05/02/19 2:16 PM, Daniel Vetter wrote:
-> >>> On Mon, Feb 04, 2019 at 03:33:31PM +0530, Kishon Vijay Abraham I wrot=
-e:
-> >>>>
-> >>>>
-> >>>> On 21/01/19 9:15 PM, Maxime Ripard wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> Here is a set of patches to allow the phy framework consumers to te=
-st and
-> >>>>> apply runtime configurations.
-> >>>>>
-> >>>>> This is needed to support more phy classes that require tuning base=
-d on
-> >>>>> parameters depending on the current use case of the device, in addi=
-tion to
-> >>>>> the power state management already provided by the current function=
-s.
-> >>>>>
-> >>>>> A first test bed for that API are the MIPI D-PHY devices. There's a=
- number
-> >>>>> of solutions that have been used so far to support these phy, most =
-of the
-> >>>>> time being an ad-hoc driver in the consumer.
-> >>>>>
-> >>>>> That approach has a big shortcoming though, which is that this is q=
-uite
-> >>>>> difficult to deal with consumers integrated with multiple variants =
-of phy,
-> >>>>> of multiple consumers integrated with the same phy.
-> >>>>>
-> >>>>> The latter case can be found in the Cadence DSI bridge, and the CSI
-> >>>>> transceiver and receivers. All of them are integrated with the same=
- phy, or
-> >>>>> can be integrated with different phy, depending on the implementati=
-on.
-> >>>>>
-> >>>>> I've looked at all the MIPI DSI drivers I could find, and gathered =
-all the
-> >>>>> parameters I could find. The interface should be complete, and most=
- of the
-> >>>>> drivers can be converted in the future. The current set converts tw=
-o of
-> >>>>> them: the above mentionned Cadence DSI driver so that the v4l2 driv=
-ers can
-> >>>>> use them, and the Allwinner MIPI-DSI driver.
-> >>>>
-> >>>> Can the PHY changes go independently of the consumer drivers? or els=
-e I'll need
-> >>>> ACKs from the GPU MAINTAINER.
-> >>>
-> >>> Maxime is a gpu maintainer, so you're all good :-)
-> >>
-> >> cool.. I've merged all the patches except drm/bridge.
-> >>
-> >> Please see if everything looks okay once it shows up in phy -next (giv=
-e a day)
-> >=20
-> > Thanks!
-> >=20
-> > If possible (and if that's still an option), it would be better if the
-> > sun6i related patches (patches 4 and 5) would go through the DRM tree
-> > (with your Acked-by of course).
-> >=20
-> > We have a number of patches in flight that have a decent chance to
-> > conflict with patch 4.
->=20
-> Sure. Dropped patches 4 and 5 from my tree.
+Suggested-by means that Boris suggested you to write this patch in the
+first place. If he just made a review, you should drop this tag.
 
-Thanks! I've pushed the rest into drm-misc.
+> Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Maxime
+None of us gave our Reviewed-by officially, so you can drop these lines.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
---m6gy2mzxdt6zex7g
-Content-Type: application/pgp-signature; name="signature.asc"
+I gave my Acked-by because I though Boris would take the patch, but
+actually he will not, so you can drop the Ack.
 
------BEGIN PGP SIGNATURE-----
+> Cc: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Cc: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFv3mgAKCRDj7w1vZxhR
-xaT7AQCbpyYDlkUTwHaNt7PKEBc2Hddmw0gPY0T1mPEGyJC6gAEA2fGM/nYiqK4P
-wm1rEMgJOCVIIdPDt853CqByp4ZrjwM=
-=Ly7a
------END PGP SIGNATURE-----
+Please add people in Cc when you send the series and remove all these
+Cc: lines.
 
---m6gy2mzxdt6zex7g--
+> ---
+> v4->v3: Avoid two times of calling grtform_get_drvdata()
+> v3->v2: Change the commit message.
+> v2->v1: Add missing Fixes tag
+> 
+>  drivers/mtd/nand/raw/atmel/pmecc.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/atmel/pmecc.c b/drivers/mtd/nand/raw/atmel/pmecc.c
+> index 555a74e..9d39978 100644
+> --- a/drivers/mtd/nand/raw/atmel/pmecc.c
+> +++ b/drivers/mtd/nand/raw/atmel/pmecc.c
+> @@ -876,23 +876,32 @@ static struct atmel_pmecc *atmel_pmecc_get_by_node(struct device *userdev,
+>  {
+>  	struct platform_device *pdev;
+>  	struct atmel_pmecc *pmecc, **ptr;
+> +	int ret;
+>  
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev || !platform_get_drvdata(pdev))
+> +	if (!pdev)
+>  		return ERR_PTR(-EPROBE_DEFER);
+
+New line missing here
+
+> +	pmecc = platform_get_drvdata(pdev);
+> +	if (!pmecc) {
+> +		ret = -EPROBE_DEFER;
+> +		goto err_put_device;
+> +	}
+>  
+>  	ptr = devres_alloc(devm_atmel_pmecc_put, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	get_device(&pdev->dev);
+> -	pmecc = platform_get_drvdata(pdev);
+> +	if (!ptr) {
+> +		ret = -ENOMEM;
+> +		goto err_put_device;
+> +	}
+>  
+>  	*ptr = pmecc;
+>  
+>  	devres_add(userdev, ptr);
+>  
+>  	return pmecc;
+> +
+> +err_put_device:
+> +	put_device(&pdev->dev);
+> +	return ERR_PTR(ret);
+>  }
+>  
+>  static const int atmel_pmecc_strengths[] = { 2, 4, 8, 12, 24, 32 };
+
+All the comments apply to the two other patches.
+
+Otherwise looks good.
+
+
+Thanks,
+Miquèl
