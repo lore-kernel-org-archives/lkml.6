@@ -2,68 +2,97 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBED5C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD6DC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C19520818
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549540506;
-	bh=f8YO7V6Svg33ESgGNiJVH1MFoD2mCccDKYYh7X+qbG4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=p/R16MnqULPjSDJc+NyRiJIrQr4CA4rqFOGzGWQ0mTSJBifgZxiQ50i4r+sdDvuj9
-	 vDKu5SJbCct/bpBkBHQN667Khcrgxs/VUqmu6o23lVb6GhNhbyI4Pyba7i3mg07hJd
-	 uybuRPo9G8vpOBnAfurb5JkmGpnA4wqlu5PZP0lI=
+	by mail.kernel.org (Postfix) with ESMTP id 998AB21902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfBGLzF (ORCPT
+        id S1726967AbfBGL7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:55:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40126 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:59:23 -0500
+Received: from 8bytes.org ([81.169.241.247]:38768 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfBGLzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:55:04 -0500
-Subject: Re: [GIT PULL] HID fix
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549540504;
-        bh=f8YO7V6Svg33ESgGNiJVH1MFoD2mCccDKYYh7X+qbG4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YZgBV/pD7wdYHOl4nNhEDyBKm0IAbortyZmF0QIRRNoIGDQC5M2+SxI9BH3NnZHyr
-         mK7WeyW4cCUEoPUTGJkz8TAQgJalsESLVVq7pJFHMKB0hQQwmAMrOE411Fx/gnwTKX
-         dme1P4CoqipYEB5evjBVDLnh75WsWrhIxwt6RS4M=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <nycvar.YFH.7.76.1902071106510.11598@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1902071106510.11598@cbobk.fhfr.pm>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <nycvar.YFH.7.76.1902071106510.11598@cbobk.fhfr.pm>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
-X-PR-Tracked-Commit-Id: 13054abbaa4f1fd4e6f3b4b63439ec033b4c8035
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d47e3da1759230e394096fd742aad423c291ba48
-Message-Id: <154954050430.23568.17019251447925230289.pr-tracker-bot@kernel.org>
-Date:   Thu, 07 Feb 2019 11:55:04 +0000
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
+        id S1726579AbfBGL7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:59:22 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 3C5CE273; Thu,  7 Feb 2019 12:59:21 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, joro@8bytes.org,
+        jroedel@suse.de, Thomas.Lendacky@amd.com
+Subject: [PATCH v7 1/5] swiotlb: Introduce swiotlb_max_mapping_size()
+Date:   Thu,  7 Feb 2019 12:59:13 +0100
+Message-Id: <20190207115917.20535-2-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190207115917.20535-1-joro@8bytes.org>
+References: <20190207115917.20535-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 7 Feb 2019 11:09:31 +0100 (CET):
+From: Joerg Roedel <jroedel@suse.de>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-linus
+The function returns the maximum size that can be remapped
+by the SWIOTLB implementation. This function will be later
+exposed to users through the DMA-API.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d47e3da1759230e394096fd742aad423c291ba48
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ include/linux/swiotlb.h | 5 +++++
+ kernel/dma/swiotlb.c    | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-Thank you!
-
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 7c007ed7505f..d3980aeed4a0 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -76,6 +76,7 @@ bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
+ 		size_t size, enum dma_data_direction dir, unsigned long attrs);
+ void __init swiotlb_exit(void);
+ unsigned int swiotlb_max_segment(void);
++size_t swiotlb_max_mapping_size(struct device *dev);
+ #else
+ #define swiotlb_force SWIOTLB_NO_FORCE
+ static inline bool is_swiotlb_buffer(phys_addr_t paddr)
+@@ -95,6 +96,10 @@ static inline unsigned int swiotlb_max_segment(void)
+ {
+ 	return 0;
+ }
++static inline size_t swiotlb_max_mapping_size(struct device *dev)
++{
++	return SIZE_MAX;
++}
+ #endif /* CONFIG_SWIOTLB */
+ 
+ extern void swiotlb_print_info(void);
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 1fb6fd68b9c7..9cb21259cb0b 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -662,3 +662,8 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
+ {
+ 	return __phys_to_dma(hwdev, io_tlb_end - 1) <= mask;
+ }
++
++size_t swiotlb_max_mapping_size(struct device *dev)
++{
++	return ((size_t)1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
++}
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.1
+
