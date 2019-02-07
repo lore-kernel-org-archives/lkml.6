@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E40C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5902EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3B32147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D7921908
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfBGOYG (ORCPT
+        id S1727237AbfBGOYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:24:06 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38228 "EHLO
+        Thu, 7 Feb 2019 09:24:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49842 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727135AbfBGOWT (ORCPT
+        by vger.kernel.org with ESMTP id S1727041AbfBGOWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 7 Feb 2019 09:22:19 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17EH5oA043018
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17EHIAU018775
         for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 09:22:18 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qgncykemp-1
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qgmp4w9r9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:22:18 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:22:17 -0500
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Thu, 7 Feb 2019 14:22:17 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Feb 2019 14:22:13 -0000
+        Thu, 7 Feb 2019 14:22:12 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17EMCCU22675528
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17EMBoZ19202288
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Feb 2019 14:22:12 GMT
+        Thu, 7 Feb 2019 14:22:11 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35815B206A;
-        Thu,  7 Feb 2019 14:22:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0E3F7B2079;
+        Thu,  7 Feb 2019 14:22:11 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D6DFB2066;
-        Thu,  7 Feb 2019 14:22:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id E1CB2B2065;
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.235.4])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Feb 2019 14:22:12 +0000 (GMT)
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0EA5316C6B7C; Thu,  7 Feb 2019 06:18:25 -0800 (PST)
+        id C6E8E16C6B6E; Thu,  7 Feb 2019 06:18:24 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -59,20 +59,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH v2 tip/core/rcu 13/19] linux/rcu_sync: Convert to SPDX license identifier
-Date:   Thu,  7 Feb 2019 06:18:17 -0800
+Subject: [PATCH v2 tip/core/rcu 02/19] rcu/rcuperf: Convert to SPDX license identifier
+Date:   Thu,  7 Feb 2019 06:18:06 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190207141700.GA11106@linux.ibm.com>
 References: <20190207141700.GA11106@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19020714-0072-0000-0000-000003F65675
+x-cbid: 19020714-0052-0000-0000-00000385AAA5
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010554; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000279; SDB=6.01157626; UDB=6.00603959; IPR=6.00938157;
  MB=3.00025480; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 14:22:16
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020714-0073-0000-0000-00004B180127
-Message-Id: <20190207141823.12311-13-paulmck@linux.ibm.com>
+x-cbparentid: 19020714-0053-0000-0000-00005FC106B6
+Message-Id: <20190207141823.12311-2-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,21 +86,21 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Replace the license boiler plate with a SPDX license identifier.
+While in the area, update an email address.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-[ paulmck: Update .h SPDX format per Joe Perches. ]
 ---
- include/linux/rcu_sync.h | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ kernel/rcu/rcuperf.c | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/rcu_sync.h b/include/linux/rcu_sync.h
-index ece7ed9a4a70..6fc53a1345b3 100644
---- a/include/linux/rcu_sync.h
-+++ b/include/linux/rcu_sync.h
-@@ -1,20 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index b459da70b4fc..83c411cb09bd 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -1,23 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0+
  /*
-  * RCU-based infrastructure for lightweight reader-writer locking
+  * Read-Copy Update module-based performance-test facility
   *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -116,9 +116,22 @@ index ece7ed9a4a70..6fc53a1345b3 100644
 - * along with this program; if not, you can access it online at
 - * http://www.gnu.org/licenses/gpl-2.0.html.
 - *
-  * Copyright (c) 2015, Red Hat, Inc.
+  * Copyright (C) IBM Corporation, 2015
   *
-  * Author: Oleg Nesterov <oleg@redhat.com>
+- * Authors: Paul E. McKenney <paulmck@us.ibm.com>
++ * Authors: Paul E. McKenney <paulmck@linux.ibm.com>
+  */
+ 
+ #define pr_fmt(fmt) fmt
+@@ -54,7 +41,7 @@
+ #include "rcu.h"
+ 
+ MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.vnet.ibm.com>");
++MODULE_AUTHOR("Paul E. McKenney <paulmck@linux.ibm.com>");
+ 
+ #define PERF_FLAG "-perf:"
+ #define PERFOUT_STRING(s) \
 -- 
 2.17.1
 
