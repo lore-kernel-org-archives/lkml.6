@@ -2,104 +2,150 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9320AC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB90CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F86C21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8612821905
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:43:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfBGKm0 (ORCPT
+        id S1727061AbfBGKna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:42:26 -0500
-Received: from mga18.intel.com ([134.134.136.126]:4773 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbfBGKmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:42:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 02:42:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,343,1544515200"; 
-   d="scan'208";a="317049811"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Feb 2019 02:42:22 -0800
-Subject: Re: [PATCH] xhci: Use ffs() to find page size in xhci_mem_init()
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-usb@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20190207000349.7816-1-andrew.smirnov@gmail.com>
- <1ecb0604-3e27-810e-9fae-18d9d1bf7ff9@linux.intel.com>
- <87mun8klxj.fsf@linux.intel.com>
-From:   Mathias Nyman <mathias.nyman@intel.com>
-Message-ID: <74208350-eba5-c299-376e-9df194fe71b5@intel.com>
-Date:   Thu, 7 Feb 2019 12:46:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 7 Feb 2019 05:43:30 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:37690 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfBGKna (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 05:43:30 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1grh9R-0006cb-Cy; Thu, 07 Feb 2019 11:43:25 +0100
+Date:   Thu, 7 Feb 2019 11:43:25 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 09/22] x86/fpu: Add (__)make_fpregs_active helpers
+Message-ID: <20190207104325.ai5fzaxa7xy7yydv@linutronix.de>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-10-bigeasy@linutronix.de>
+ <20190128182349.GG20487@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <87mun8klxj.fsf@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190128182349.GG20487@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.02.2019 11:06, Felipe Balbi wrote:
+On 2019-01-28 19:23:49 [+0100], Borislav Petkov wrote:
+> > diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+> > index b56d504af6545..31b66af8eb914 100644
+> > --- a/arch/x86/include/asm/fpu/api.h
+> > +++ b/arch/x86/include/asm/fpu/api.h
+> > @@ -10,6 +10,7 @@
+> >  
+> >  #ifndef _ASM_X86_FPU_API_H
+> >  #define _ASM_X86_FPU_API_H
+> > +#include <linux/preempt.h>
+> >  
+> >  /*
+> >   * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
+> > @@ -22,6 +23,16 @@ extern void kernel_fpu_begin(void);
+> >  extern void kernel_fpu_end(void);
+> >  extern bool irq_fpu_usable(void);
+> >  
+> > +static inline void __fpregs_changes_begin(void)
+> > +{
+> > +	preempt_disable();
+> > +}
+> > +
+> > +static inline void __fpregs_changes_end(void)
 > 
-> Hi,
+> How am I to understand that "fpregs_changes" thing? That FPU registers
+> changes will begin and end respectively?
+
+correct.
+
+> I probably would call them fpregs_lock and fpregs_unlock even if
+> it isn't doing any locking to denote that FPU regs are locked and
+> inaccessible inside the region.
+
+They are accessible inside the region. But they should not be touched by
+context switch code (and later BH).
+Is that what you meant?
+
+> And why the "__" prefix? Is there a counterpart without the "__" coming?
+
+No. I picked up the patches, that function was named like that. I kept
+it. That __ probably denotes that it is an internal function but then it
+has to be used outside (KVM) if they plan to "reload" registers (which
+happens if they switch between host/guest registers).
+
+> > +{
+> > +	preempt_enable();
+> > +}
+> > +
+> >  /*
+> >   * Query the presence of one or more xfeatures. Works on any legacy CPU as well.
+> >   *
+> > diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+> > index 03acb9aeb32fc..795a0a2df135e 100644
+> > --- a/arch/x86/include/asm/fpu/internal.h
+> > +++ b/arch/x86/include/asm/fpu/internal.h
+> > @@ -515,6 +515,15 @@ static inline void fpregs_activate(struct fpu *fpu)
+> >  	trace_x86_fpu_regs_activated(fpu);
+> >  }
+> >  
+> > +static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
+> > +{
+> > +	if (!fpregs_state_valid(fpu, cpu)) {
+> > +		if (current->mm)
+> > +			copy_kernel_to_fpregs(&fpu->state);
+> > +		fpregs_activate(fpu);
+> > +	}
+> > +}
+> > +
+> >  /*
+> >   * FPU state switching for scheduling.
+> >   *
+> > @@ -550,14 +559,8 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+> >   */
+> >  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+> >  {
+> > -	if (static_cpu_has(X86_FEATURE_FPU)) {
+> > -		if (!fpregs_state_valid(new_fpu, cpu)) {
+> > -			if (current->mm)
+> > -				copy_kernel_to_fpregs(&new_fpu->state);
+> > -		}
+> > -
+> > -		fpregs_activate(new_fpu);
+> > -	}
+> > +	if (static_cpu_has(X86_FEATURE_FPU))
+> > +		__fpregs_load_activate(new_fpu, cpu);
 > 
-> Mathias Nyman <mathias.nyman@linux.intel.com> writes:
->> On 07.02.2019 02:03, Andrey Smirnov wrote:
->>> Get page size order using ffs() instead of open coding it with a loop.
->>>
->>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
->>> Cc: Mathias Nyman <mathias.nyman@intel.com>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: linux-usb@vger.kernel.org
->>> Cc: linux-kernel@vger.kernel.org
->>> ---
->>>    drivers/usb/host/xhci-mem.c | 6 +-----
->>>    1 file changed, 1 insertion(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
->>> index 36a3eb8849f1..44b43c3d819f 100644
->>> --- a/drivers/usb/host/xhci-mem.c
->>> +++ b/drivers/usb/host/xhci-mem.c
->>> @@ -2362,11 +2362,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
->>>    	page_size = readl(&xhci->op_regs->page_size);
->>>    	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
->>>    			"Supported page size register = 0x%x", page_size);
->>> -	for (i = 0; i < 16; i++) {
->>> -		if ((0x1 & page_size) != 0)
->>> -			break;
->>> -		page_size = page_size >> 1;
->>> -	}
->>> +	i = ffs(page_size);
->>>    	if (i < 16)
->>>    		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
->>>    			"Supported page size of %iK", (1 << (i+12)) / 1024);
->>
->> Hi
->>
->> using ffs() is a welcome change, but it will give different a result than the loop.
->>
->> *old loop
->>     valid page_size value if i < 16
->> *ffs()
->>     valid page_size value if i >= 1 and i < 17
-> 
-> off-by-one, just use i = ffs() - 1. Or use __ffs().
+> And that second part of a cleanup looks strange in this patch. Why isn't
+> it in a separate patch or how is it related to the addition of the
+> helpers?
+
+Two helpers are added:
+- __fpregs_changes_{begin|end}()
+  new.
+
+- __fpregs_load_activate()
+  refactored from switch_fpu_finish(),
+
+> Thx.
 > 
 
-and handle the page_size == 0 case.
-
--Mathias  
+Sebastian
