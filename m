@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC1AC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E33BC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A703E20823
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1429B21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 09:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfBGJuV (ORCPT
+        id S1727182AbfBGJuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 04:50:21 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:35591 "EHLO
+        Thu, 7 Feb 2019 04:50:23 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:55949 "EHLO
         relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfBGJuR (ORCPT
+        with ESMTP id S1727132AbfBGJuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 04:50:17 -0500
+        Thu, 7 Feb 2019 04:50:21 -0500
 Received: from mc-bl-xps13.lan (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
         (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 48852100014;
-        Thu,  7 Feb 2019 09:50:12 +0000 (UTC)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id E4A13100022;
+        Thu,  7 Feb 2019 09:50:17 +0000 (UTC)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -37,9 +37,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         mw@semihalf.com
-Subject: [PATCH net-next v2 06/10] net: phy: Add generic support for 2.5GBaseT and 5GBaseT
-Date:   Thu,  7 Feb 2019 10:49:35 +0100
-Message-Id: <20190207094939.27369-7-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v2 08/10] net: phy: marvell10g: Force reading of 2.5/5G
+Date:   Thu,  7 Feb 2019 10:49:37 +0100
+Message-Id: <20190207094939.27369-9-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
 References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
@@ -50,176 +50,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 802.3bz specification, based on previous by the NBASET alliance,
-defines the 2.5GBaseT and 5GBaseT link modes for ethernet traffic on
-cat5e, cat6 and cat7 cables.
+As per 802.3bz, if bit 14 of (1.11) "PMA Extended Abilities" indicates
+whether or not we should read register (1.21) "2.52/5G PMA Extended
+Abilities", which contains information on the support of 2.5GBASET and
+5GBASET.
 
-These mode integrate with the already defined C45 MDIO PMA/PMD registers
-set that added 10G support, by defining some previously reserved bits,
-and adding a new register (2.5G/5G Extended abilities).
+After testing on several variants of PHYS of this family, it appears
+that bit 14 in (1.11) isn't always set when it should be.
 
-This commit adds the required definitions in include/uapi/linux/mdio.h
-to support these modes, and detect when a link-partner advertises them.
+PHYs 88X3310 (on MacchiatoBin) and 88E2010 do support 2.5G and 5GBASET,
+but don't have 1.11.14 set. Their register 1.21 is filled with the
+correct values, indicating 2.5G and 5G support.
 
-It also adds support for these mode in the generic C45 PHY
-infrastructure.
+PHYs 88E2110 do have their 1.11.14 bit set, as it should.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
-V1 -> V2: Merged in code for reading 2.5G/5G abilities.
+V1 -> V2: Use the PMA device id to identify which devices need this
+	  quirk, based on Andrew's idea.
 
- drivers/net/phy/phy-c45.c    | 37 ++++++++++++++++++++++++++++++++++++
- drivers/net/phy/phy_device.c |  2 ++
- include/uapi/linux/mdio.h    | 16 ++++++++++++++++
- 3 files changed, 55 insertions(+)
+ drivers/net/phy/marvell10g.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/net/phy/phy-c45.c b/drivers/net/phy/phy-c45.c
-index 32e72b170ea9..92897cb26557 100644
---- a/drivers/net/phy/phy-c45.c
-+++ b/drivers/net/phy/phy-c45.c
-@@ -47,6 +47,16 @@ int genphy_c45_pma_setup_forced(struct phy_device *phydev)
- 		/* Assume 1000base-T */
- 		ctrl2 |= MDIO_PMA_CTRL2_1000BT;
- 		break;
-+	case SPEED_2500:
-+		ctrl1 |= MDIO_CTRL1_SPEED2_5G;
-+		/* Assume 2.5Gbase-T */
-+		ctrl2 |= MDIO_PMA_CTRL2_2_5GBT;
-+		break;
-+	case SPEED_5000:
-+		ctrl1 |= MDIO_CTRL1_SPEED5G;
-+		/* Assume 5Gbase-T */
-+		ctrl2 |= MDIO_PMA_CTRL2_5GBT;
-+		break;
- 	case SPEED_10000:
- 		ctrl1 |= MDIO_CTRL1_SPEED10G;
- 		/* Assume 10Gbase-T */
-@@ -179,6 +189,12 @@ int genphy_c45_read_lpa(struct phy_device *phydev)
- 	if (val < 0)
- 		return val;
+diff --git a/drivers/net/phy/marvell10g.c b/drivers/net/phy/marvell10g.c
+index 581b4b6e31e9..2593db608af7 100644
+--- a/drivers/net/phy/marvell10g.c
++++ b/drivers/net/phy/marvell10g.c
+@@ -232,6 +232,23 @@ static int mv3310_resume(struct phy_device *phydev)
+ 	return mv3310_hwmon_config(phydev, true);
+ }
  
-+	if (val & MDIO_AN_10GBT_STAT_LP2_5G)
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-+				 phydev->lp_advertising);
-+	if (val & MDIO_AN_10GBT_STAT_LP5G)
-+		linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-+				 phydev->lp_advertising);
- 	if (val & MDIO_AN_10GBT_STAT_LP10G)
- 		linkmode_set_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
- 				 phydev->lp_advertising);
-@@ -209,6 +225,12 @@ int genphy_c45_read_pma(struct phy_device *phydev)
- 	case MDIO_PMA_CTRL1_SPEED1000:
- 		phydev->speed = SPEED_1000;
- 		break;
-+	case MDIO_CTRL1_SPEED2_5G:
-+		phydev->speed = SPEED_2500;
-+		break;
-+	case MDIO_CTRL1_SPEED5G:
-+		phydev->speed = SPEED_5000;
-+		break;
- 	case MDIO_CTRL1_SPEED10G:
- 		phydev->speed = SPEED_10000;
- 		break;
-@@ -324,6 +346,21 @@ int genphy_c45_pma_read_abilities(struct phy_device *phydev)
- 		linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
- 				 phydev->supported,
- 				 val & MDIO_PMA_EXTABLE_10BT);
++/* Some PHYs in the Alaska family such as the 88X3310 and the 88E2010
++ * don't set bit 14 in PMA Extended Abilities (1.11), although they do
++ * support 2.5GBASET and 5GBASET. For these models, we can still read their
++ * 2.5G/5G extended abilities register (1.21). We detect these models based on
++ * the PMA device identifier, with a mask matching models known to have this
++ * issue
++ */
++static bool mv3310_has_pma_ngbaset_quirk(struct phy_device *phydev)
++{
++	if (!(phydev->c45_ids.devices_in_package & MDIO_DEVS_PMAPMD))
++		return false;
 +
-+		if (val & MDIO_PMA_EXTABLE_NBT) {
-+			val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
-+					   MDIO_PMA_NG_EXTABLE);
-+			if (val < 0)
-+				return val;
++	/* Only some revisions of the 88X3310 family PMA seem to be impacted */
++	return (phydev->c45_ids.device_ids[MDIO_MMD_PMAPMD] & 0xfffffffe) ==
++	       (MARVELL_PHY_ID_88X3310 & 0xfffffffe);
++}
 +
-+			linkmode_mod_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-+					 phydev->supported,
-+					 val & MDIO_PMA_NG_EXTABLE_2_5GBT);
-+
-+			linkmode_mod_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
-+					 phydev->supported,
-+					 val & MDIO_PMA_NG_EXTABLE_5GBT);
-+		}
- 	}
+ static int mv3310_config_init(struct phy_device *phydev)
+ {
+ 	int ret, val;
+@@ -261,6 +278,20 @@ static int mv3310_config_init(struct phy_device *phydev)
+ 	if (ret)
+ 		return ret;
  
++	if (mv3310_has_pma_ngbaset_quirk(phydev)) {
++		val = phy_read_mmd(phydev, MDIO_MMD_PMAPMD,
++				   MDIO_PMA_NG_EXTABLE);
++		if (val < 0)
++			return val;
++
++		if (val & MDIO_PMA_NG_EXTABLE_2_5GBT)
++			__set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
++				  phydev->supported);
++		if (val & MDIO_PMA_NG_EXTABLE_5GBT)
++			__set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
++				  phydev->supported);
++	}
++
  	return 0;
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 942cfa7548c4..13ac4bdb9b69 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -1085,6 +1085,8 @@ static void phy_update_linkmodes(struct phy_device *phydev)
- 		ETHTOOL_LINK_MODE_100baseT_Full_BIT,
- 		ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
- 		ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-+		ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
-+		ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
- 		ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
- 	};
+ }
  
-diff --git a/include/uapi/linux/mdio.h b/include/uapi/linux/mdio.h
-index d435b00d64ad..546509898867 100644
---- a/include/uapi/linux/mdio.h
-+++ b/include/uapi/linux/mdio.h
-@@ -45,6 +45,7 @@
- #define MDIO_AN_ADVERTISE	16	/* AN advertising (base page) */
- #define MDIO_AN_LPA		19	/* AN LP abilities (base page) */
- #define MDIO_PCS_EEE_ABLE	20	/* EEE Capability register */
-+#define MDIO_PMA_NG_EXTABLE	21	/* 2.5G/5G PMA/PMD extended ability */
- #define MDIO_PCS_EEE_WK_ERR	22	/* EEE wake error counter */
- #define MDIO_PHYXS_LNSTAT	24	/* PHY XGXS lane state */
- #define MDIO_AN_EEE_ADV		60	/* EEE advertisement */
-@@ -92,6 +93,10 @@
- #define MDIO_CTRL1_SPEED10G		(MDIO_CTRL1_SPEEDSELEXT | 0x00)
- /* 10PASS-TS/2BASE-TL */
- #define MDIO_CTRL1_SPEED10P2B		(MDIO_CTRL1_SPEEDSELEXT | 0x04)
-+/* 2.5 Gb/s */
-+#define MDIO_CTRL1_SPEED2_5G		(MDIO_CTRL1_SPEEDSELEXT | 0x18)
-+/* 5 Gb/s */
-+#define MDIO_CTRL1_SPEED5G		(MDIO_CTRL1_SPEEDSELEXT | 0x1c)
- 
- /* Status register 1. */
- #define MDIO_STAT1_LPOWERABLE		0x0002	/* Low-power ability */
-@@ -142,6 +147,8 @@
- #define MDIO_PMA_CTRL2_1000BKX		0x000d	/* 1000BASE-KX type */
- #define MDIO_PMA_CTRL2_100BTX		0x000e	/* 100BASE-TX type */
- #define MDIO_PMA_CTRL2_10BT		0x000f	/* 10BASE-T type */
-+#define MDIO_PMA_CTRL2_2_5GBT		0x0030  /* 2.5GBaseT type */
-+#define MDIO_PMA_CTRL2_5GBT		0x0031  /* 5GBaseT type */
- #define MDIO_PCS_CTRL2_TYPE		0x0003	/* PCS type selection */
- #define MDIO_PCS_CTRL2_10GBR		0x0000	/* 10GBASE-R type */
- #define MDIO_PCS_CTRL2_10GBX		0x0001	/* 10GBASE-X type */
-@@ -195,6 +202,7 @@
- #define MDIO_PMA_EXTABLE_1000BKX	0x0040	/* 1000BASE-KX ability */
- #define MDIO_PMA_EXTABLE_100BTX		0x0080	/* 100BASE-TX ability */
- #define MDIO_PMA_EXTABLE_10BT		0x0100	/* 10BASE-T ability */
-+#define MDIO_PMA_EXTABLE_NBT		0x4000  /* 2.5/5GBASE-T ability */
- 
- /* PHY XGXS lane state register. */
- #define MDIO_PHYXS_LNSTAT_SYNC0		0x0001
-@@ -231,9 +239,13 @@
- #define MDIO_PCS_10GBRT_STAT2_BER	0x3f00
- 
- /* AN 10GBASE-T control register. */
-+#define MDIO_AN_10GBT_CTRL_ADV2_5G	0x0080	/* Advertise 2.5GBASE-T */
-+#define MDIO_AN_10GBT_CTRL_ADV5G	0x0100	/* Advertise 5GBASE-T */
- #define MDIO_AN_10GBT_CTRL_ADV10G	0x1000	/* Advertise 10GBASE-T */
- 
- /* AN 10GBASE-T status register. */
-+#define MDIO_AN_10GBT_STAT_LP2_5G	0x0020  /* LP is 2.5GBT capable */
-+#define MDIO_AN_10GBT_STAT_LP5G		0x0040  /* LP is 5GBT capable */
- #define MDIO_AN_10GBT_STAT_LPTRR	0x0200	/* LP training reset req. */
- #define MDIO_AN_10GBT_STAT_LPLTABLE	0x0400	/* LP loop timing ability */
- #define MDIO_AN_10GBT_STAT_LP10G	0x0800	/* LP is 10GBT capable */
-@@ -262,6 +274,10 @@
- #define MDIO_EEE_10GKX4		0x0020	/* 10G KX4 EEE cap */
- #define MDIO_EEE_10GKR		0x0040	/* 10G KR EEE cap */
- 
-+/* 2.5G/5G Extended abilities register. */
-+#define MDIO_PMA_NG_EXTABLE_2_5GBT	0x0001	/* 2.5GBASET ability */
-+#define MDIO_PMA_NG_EXTABLE_5GBT	0x0002	/* 5GBASET ability */
-+
- /* LASI RX_ALARM control/status registers. */
- #define MDIO_PMA_LASI_RX_PHYXSLFLT	0x0001	/* PHY XS RX local fault */
- #define MDIO_PMA_LASI_RX_PCSLFLT	0x0008	/* PCS RX local fault */
 -- 
 2.19.2
 
