@@ -2,139 +2,113 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE046C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5865C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9039218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDD73218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBGRc2 convert rfc822-to-8bit (ORCPT
+        id S1727039AbfBGRdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:32:28 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:39646 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726707AbfBGRc1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:32:27 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-94-qx625B0bMLilwntCzMblcw-1; Thu, 07 Feb 2019 17:32:25 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
- 7 Feb 2019 17:33:07 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 7 Feb 2019 17:33:07 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>,
-        Julien Gomes <julien@arista.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "nhorman@tuxdriver.com" <nhorman@tuxdriver.com>,
-        "vyasevich@gmail.com" <vyasevich@gmail.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>
-Subject: RE: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
- the option length
-Thread-Topic: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Thread-Index: AQHUvmASGkCaWibVqE6iK21f5qVrJKXUlzwQ
-Date:   Thu, 7 Feb 2019 17:33:07 +0000
-Message-ID: <1257941619984a2a992af8d801855c04@AcuMS.aculab.com>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
-In-Reply-To: <20190206210723.GD13621@localhost.localdomain>
-Accept-Language: en-GB, en-US
+        Thu, 7 Feb 2019 12:33:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:40444 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726873AbfBGRdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:33:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 09:33:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
+   d="scan'208";a="298013818"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by orsmga005.jf.intel.com with ESMTP; 07 Feb 2019 09:33:38 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.62]) by
+ ORSMSX104.amr.corp.intel.com ([169.254.4.11]) with mapi id 14.03.0415.000;
+ Thu, 7 Feb 2019 09:33:38 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "rostedt@goodmis.org" <rostedt@goodmis.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "rusty@rustcorp.com.au" <rusty@rustcorp.com.au>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH 16/17] Plug in new special vfree flag
+Thread-Topic: [PATCH 16/17] Plug in new special vfree flag
+Thread-Index: AQHUrfxTN/9E5iQS/ECuiIskA2n60aXTmtoAgAGlzAA=
+Date:   Thu, 7 Feb 2019 17:33:37 +0000
+Message-ID: <16a2ac45ceef5b6f310f816d696ad2ea8df3b45c.camel@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+         <20190117003259.23141-17-rick.p.edgecombe@intel.com>
+         <20190206112356.64cc5f0d@gandalf.local.home>
+In-Reply-To: <20190206112356.64cc5f0d@gandalf.local.home>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+x-originating-ip: [10.54.75.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CA377F3CE86CB84DB34EDE487645D269@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MC-Unique: qx625B0bMLilwntCzMblcw-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcelo Ricardo Leitner
-> Sent: 06 February 2019 21:07
-> 
-> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
-> >
-> >
-> > On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
-> > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
-> > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
-> > >> structures longer than the current definitions.
-> > >>
-> > >> This should prevent unjustified setsockopt() failures due to struct
-> > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
-> > >> binaries that should be compatible, but were built with later kernel
-> > >> uapi headers.
-> > >
-> > > Not sure if we support backwards compatibility like this?
-> > >
-> > > My issue with this change is that by doing this, application will have
-> > > no clue if the new bits were ignored or not and it may think that an
-> > > event is enabled while it is not.
-> > >
-> > > A workaround would be to do a getsockopt and check the size that was
-> > > returned. But then, it might as well use the right struct here in the
-> > > first place.
-> > >
-> > > I'm seeing current implementation as an implicitly versioned argument:
-> > > it will always accept setsockopt calls with an old struct (v4.11 or
-> > > v4.12), but if the user tries to use v3 on a v1-only system, it will
-> > > be rejected. Pretty much like using a newer setsockopt on an old
-> > > system.
-> >
-> > With the current implementation, given sources that say are supposed to
-> > run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
-> > we can't rebuild the exact same sources on a 4.19 kernel and still run
-> > them on 4.9 without messing with structures re-definition.
-> 
-> Maybe what we want(ed) here then is explicit versioning, to have the 3
-> definitions available. Then the application is able to use, say struct
-> sctp_event_subscribe, and be happy with it, while there is struct
-> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
-> 
-> But it's too late for that now because that would break applications
-> already using the new fields in sctp_event_subscribe.
-
-It is probably better to break the recompilation of the few programs
-that use the new fields (and have them not work on old kernels)
-than to stop recompilations of old programs stop working on old
-kernels or have requested new options silently ignored.
-
-There are all sorts of reasons why programs get built on systems that
-are newer than the ones they need to run on.
-I'm currently planning to get around the glibc 'memcpy()' fubar so I
-can retire some very old build systems before their disks die.
-
-Fortunately our sctp code is in the kernel - so has to be compiled
-with the correct headers.
-
-> > I understand your point, but this still looks like a sort of uapi
-> > breakage to me.
-> 
-> Not disagreeing. I really just don't know how supported that is.
-> Willing to know so I can pay more attention to this on future changes.
-
-Agreed, these structures should never be changed.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+T24gV2VkLCAyMDE5LTAyLTA2IGF0IDExOjIzIC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
+Cj4gT24gV2VkLCAxNiBKYW4gMjAxOSAxNjozMjo1OCAtMDgwMA0KPiBSaWNrIEVkZ2Vjb21iZSA8
+cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiBBZGQgbmV3IGZsYWcg
+Zm9yIGhhbmRsaW5nIGZyZWVpbmcgb2Ygc3BlY2lhbCBwZXJtaXNzaW9uZWQgbWVtb3J5IGluIHZt
+YWxsb2MNCj4gPiBhbmQgcmVtb3ZlIHBsYWNlcyB3aGVyZSBtZW1vcnkgd2FzIHNldCBSVyBiZWZv
+cmUgZnJlZWluZyB3aGljaCBpcyBubyBsb25nZXINCj4gPiBuZWVkZWQuDQo+ID4gDQo+ID4gSW4g
+a3Byb2JlcywgYnBmIGFuZCBmdHJhY2UgdGhpcyBqdXN0IGFkZHMgdGhlIGZsYWcsIGFuZCByZW1v
+dmVzIHRoZSBub3cNCj4gPiB1bm5lZWRlZCBzZXRfbWVtb3J5XyBjYWxscyBiZWZvcmUgY2FsbGlu
+ZyB2ZnJlZS4NCj4gPiANCj4gPiBJbiBtb2R1bGVzLCB0aGUgZnJlZWluZyBvZiBpbml0IHNlY3Rp
+b25zIGlzIG1vdmVkIHRvIGEgd29yayBxdWV1ZSwgc2luY2UNCj4gPiBmcmVlaW5nIG9mIFJPIG1l
+bW9yeSBpcyBub3Qgc3VwcG9ydGVkIGluIGFuIGludGVycnVwdCBieSB2bWFsbG9jLg0KPiA+IElu
+c3RlYWQgb2YgY2FsbF9yY3UsIGl0IG5vdyB1c2VzIHN5bmNocm9uaXplX3JjdSgpIGluIHRoZSB3
+b3JrIHF1ZXVlLg0KPiA+IA0KPiA+IENjOiBSdXN0eSBSdXNzZWxsIDxydXN0eUBydXN0Y29ycC5j
+b20uYXU+DQo+ID4gQ2M6IE1hc2FtaSBIaXJhbWF0c3UgPG1oaXJhbWF0QGtlcm5lbC5vcmc+DQo+
+ID4gQ2M6IERhbmllbCBCb3JrbWFubiA8ZGFuaWVsQGlvZ2VhcmJveC5uZXQ+DQo+ID4gQ2M6IEFs
+ZXhlaSBTdGFyb3ZvaXRvdiA8YXN0QGtlcm5lbC5vcmc+DQo+ID4gQ2M6IEplc3NpY2EgWXUgPGpl
+eXVAa2VybmVsLm9yZz4NCj4gPiBDYzogU3RldmVuIFJvc3RlZHQgPHJvc3RlZHRAZ29vZG1pcy5v
+cmc+DQo+ID4gQ2M6IFBhdWwgRS4gTWNLZW5uZXkgPHBhdWxtY2tAbGludXguaWJtLmNvbT4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBSaWNrIEVkZ2Vjb21iZSA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5j
+b20+DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9mdHJhY2UuYyAgICAgICB8ICA2ICst
+LQ0KPiANCj4gRm9yIHRoZSBmdHJhY2UgY29kZS4NCj4gDQo+IEFja2VkLWJ5OiBTdGV2ZW4gUm9z
+dGVkdCAoVk13YXJlKSA8cm9zdGVkdEBnb29kbWlzLm9yZz4NCj4gDQo+IC0tIFN0ZXZlDQo+IA0K
+VGhhbmtzIQ0KDQpSaWNrDQo+ID4gIGFyY2gveDg2L2tlcm5lbC9rcHJvYmVzL2NvcmUuYyB8ICA3
+ICstLS0NCj4gPiAgaW5jbHVkZS9saW51eC9maWx0ZXIuaCAgICAgICAgIHwgMTYgKystLS0tLQ0K
+PiA+ICBrZXJuZWwvYnBmL2NvcmUuYyAgICAgICAgICAgICAgfCAgMSAtDQo+ID4gIGtlcm5lbC9t
+b2R1bGUuYyAgICAgICAgICAgICAgICB8IDc3ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LS0tLS0NCj4gPiAgNSBmaWxlcyBjaGFuZ2VkLCA0NSBpbnNlcnRpb25zKCspLCA2MiBkZWxldGlv
+bnMoLSkNCj4gPiANCg==
