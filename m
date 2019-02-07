@@ -2,156 +2,159 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A28C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867EEC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFD821904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:23:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CA582173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:23:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U0QGcSR3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fdo6Zk9g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbfBGRXP (ORCPT
+        id S1726882AbfBGRXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:23:15 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:49297 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfBGRXP (ORCPT
+        Thu, 7 Feb 2019 12:23:48 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35483 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBGRXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:23:15 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190207172311epoutp02b45884a7fcd92e84ec0dd75c25c9ddb9~BJMjA6I7g1906919069epoutp02O;
-        Thu,  7 Feb 2019 17:23:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190207172311epoutp02b45884a7fcd92e84ec0dd75c25c9ddb9~BJMjA6I7g1906919069epoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549560191;
-        bh=L/k9LAJOAH/6jaNqfeViWvLDnTrbf4Vv2nefQELC7ps=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=U0QGcSR3qtshSjJERUJknXf8H7N26kxPle4zym8gSY2uLsQDrzVFeCRv36Ad3AFcu
-         vp475n2ZOHzl7J6REl9UGR0kJKi2r5GN401fHoOFATOQU6uBVykTuDxYFqXv2prmri
-         mh48Jr8Jszdr7zu6kmZp9YeCgYjle5KFND+lH2zc=
-Received: from epsmges1p3.samsung.com (unknown [182.195.42.55]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190207172311epcas1p3dc5c1bb6e0a2808e29a5c3ba134d99c6~BJMivTB1O3177831778epcas1p3S;
-        Thu,  7 Feb 2019 17:23:11 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9D.48.04069.F796C5C5; Fri,  8 Feb 2019 02:23:11 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe~BJMhmMBOu1937719377epcas1p4G;
-        Thu,  7 Feb 2019 17:23:09 +0000 (GMT)
-X-AuditID: b6c32a37-971ff70000000fe5-e3-5c5c697f99fb
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 8A.F8.04015.D796C5C5; Fri,  8 Feb
-        2019 02:23:09 +0900 (KST)
-Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PMK00KKMGAAD880@mmp2.samsung.com>; Fri, 08 Feb 2019
-        02:23:09 +0900 (KST)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     broonie@kernel.org
-Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: doc: Fix typos in dpcm.rst
-Date:   Thu, 07 Feb 2019 18:22:56 +0100
-Message-id: <20190207172256.1972-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.20.1
-MIME-version: 1.0
-Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsWy7bCmvm59ZkyMwbMVbBZXLh5istg4Yz2r
-        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
-        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6M/XPuMhb8F6r4OXkucwNjL38XIweH
-        hICJxKpfsV2MXBxCAjsYJZ4tb2WCcL4zSpyedh7I4QQr+njgKitEYgOjxLWj7cwQzi9GiacH
-        7rODVLEJGEr0Hu1jBLFFBMQkbs/pBCtiFmhhkpgzdykzSEIYqOjL50ksIDaLgKrE+b3zwFbw
-        ClhJPOjaxwaxTl7ifO86doi4oMSPyffA6pmB4gevPGcBGSohsIJNYsXnb8wQDS4Sz67fY4N4
-        SFri0lFbiHC1xK7t3cwQ9R2MEi0XtkPVW0scPn6RFWIon8S7rz2sEL28Eh1tQhAlHhKLd7wF
-        e0ZIIFZiyePZTBMYJWchOWkWkpMWMDKtYhRLLSjOTU8tNiww1itOzC0uzUvXS87P3cQIjmUt
-        8x2MG875HGIU4GBU4uHV0IuJEWJNLCuuzD3EKMHBrCTC65gKFOJNSaysSi3Kjy8qzUktPsQo
-        zcGiJM673sE5RkggPbEkNTs1tSC1CCbLxMEp1cAooa+i+OOXZZ14T7pb+U5e+crw83tnbC0p
-        X7Jr2uQZG2Ne8Dx9Jr249/Nh336RJZxn3/Es/VOT+qphk+qxbypTFL70BViKCoo9z3K7Lz1p
-        qpu3fKFgVmyuvW725vcV/eF6fO9vsnyI51+vfWOF4JaIE9yL+Ro3hQQ9f/pwFlfvkm3ljgxc
-        LkeUWIozEg21mIuKEwEttva04QIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsVy+t9jQd3azJgYgydTjCyuXDzEZLFxxnpW
-        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
-        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZ++fcZSz4L1Txc/Jc5gbGXv4uRk4O
-        CQETiY8HrrJ2MXJxCAmsY5T48+wAM4Tzi1HiXPdjFpAqNgFDid6jfYwgtoiAmMTtOZ1gRcwC
-        TUwSu25fZAdJCAMVffk8CayBRUBV4vzeeUwgNq+AlcSDrn1sEOvkJc73rmOHiAtK/Jh8D6ye
-        GSh+8MpzlgmMPLOQpGYhSS1gZFrFKJlaUJybnltsVGCYl1quV5yYW1yal66XnJ+7iREYltsO
-        a/XtYLy/JP4QowAHoxIP7wXtmBgh1sSy4srcQ4wSHMxKIryOqUAh3pTEyqrUovz4otKc1OJD
-        jNIcLErivLfzjkUKCaQnlqRmp6YWpBbBZJk4OKUaGHeUT1hQd7lequb097bFpg+lVmVwmvCw
-        vj2+RKM3REQ7+fC/Y9zTjZVm86i/lt9a/EFJOfIq70ueBtd/Lrtt92q/6smZvLTnRf3Hxqwd
-        Bx0uB3+sP7I80vpC1/6Ly0Sm/tBe4ZT42JE/SmSWrkLAwy8LPI+aTPv4RHP9/+VeGUtOS+5M
-        4Ga3OqPEUpyRaKjFXFScCABOkYLdRwIAAA==
-X-CMS-MailID: 20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe
-References: <CGME20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe@epcas1p4.samsung.com>
+        Thu, 7 Feb 2019 12:23:48 -0500
+Received: by mail-it1-f194.google.com with SMTP id r6so1699052itk.0;
+        Thu, 07 Feb 2019 09:23:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=clhLtWnBcok1FmHpjAAYMn6otLqYg8XV8C+zAhPQ1Tw=;
+        b=fdo6Zk9g7g7EfVEf/3RIGE04zgWulg0MOtZGm7Nzchn+oHHQyj4gYG05+jEQNaXCrK
+         GG51Pdtkqd8UF/PTX+7HJrDOjtbHsOlTivVoW6SaxobTcoQ86VX2WKFSr/Sghr8w80Cq
+         +/V6Cs1DHTdqkIMI62WO4wKuKVzMrYfz2YoHsQnDHl49Hl7icLz9Rs4iwOx7gdKQaH2l
+         BgVpTYYyC2gcy8gnguDGg9Z1JMYbJFH9V9B/8jVJmXD9D3UbPeWQt320iFA8W1xfGWUm
+         tgas69UnvDXQeoqKucZXywn1PYXJf3aVcVNU7085K8n3bDrXjiAaUGfJTKI9zBfgbU2m
+         JCwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=clhLtWnBcok1FmHpjAAYMn6otLqYg8XV8C+zAhPQ1Tw=;
+        b=AJ+WdR8RNjEEW6bBQIEBW/wjlK2tMlKz6P/ewxhUVqpiNfVEm/Dhe2PiPI7TyLFdKx
+         7oz+Dif6d2eVTlfH2MJRqKojlcHcwYAxbw1MIhJYzlHP6Sh0FIIRuLwTlPDs62Z/9+MZ
+         ej8P0iNV3rbACemajxQlzWO6TbSQ3xJ0zTefq1Qg0HGaq0bBbw6gHXDylRXBOD7D0zkR
+         6OPZL5+5Mx6QTYbT9ZKy3cZLs65vsOLtpWLKopHro0BgZATPU6sQYJFq41Hi2TxkkBTQ
+         JlHJNaOfadNPEGK77HhQ3QH60MlLkpVRaAgP09Xpk70dnTBf+iLTmm0nfFLkA1zLVoaa
+         GdiQ==
+X-Gm-Message-State: AHQUAuaRBz9eyT0vd+ErSAdu4LpLcrRYEoRNzO+cG3qlInkQSX3iSJvY
+        28nGEiWnsUDFa40C4dd/JPkb0WmfQUuEikQ43/g=
+X-Google-Smtp-Source: AHgI3IbuU+fmzuD3j99Lt5eBj7G9dN9+JLGjXVuOB5qP5YO3fYuD+NnpB2z2I+pn7j9wuYvgGzlicK2zpWG/IabCtDk=
+X-Received: by 2002:a5e:8c14:: with SMTP id n20mr359163ioj.200.1549560226974;
+ Thu, 07 Feb 2019 09:23:46 -0800 (PST)
+MIME-Version: 1.0
+References: <20190204201854.2328-1-nitesh@redhat.com> <20190204201854.2328-5-nitesh@redhat.com>
+In-Reply-To: <20190204201854.2328-5-nitesh@redhat.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Thu, 7 Feb 2019 09:23:35 -0800
+Message-ID: <CAKgT0Ud0-A8MmbSFQTd81X5-ezwtsi67qPLa0uC_MUs4r+bxqw@mail.gmail.com>
+Subject: Re: [RFC][Patch v8 4/7] KVM: Disabling page poisoning to prevent corruption
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>, riel@surriel.com,
+        david@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>,
+        dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a few typos in the DPCM documentation.
+On Mon, Feb 4, 2019 at 2:11 PM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>
+> This patch disables page poisoning if guest page hinting is enabled.
+> It is required to avoid possible guest memory corruption errors.
+> Page Poisoning is a feature in which the page is filled with a specific
+> pattern of (0x00 or 0xaa) after arch_free_page and the same is verified
+> before arch_alloc_page to prevent following issues:
+>     *information leak from the freed data
+>     *use after free bugs
+>     *memory corruption
+> Selection of the pattern depends on the CONFIG_PAGE_POISONING_ZERO
+> Once the guest pages which are supposed to be freed are sent to the
+> hypervisor it frees them. After freeing the pages in the global list
+> following things may happen:
+>     *Hypervisor reallocates the freed memory back to the guest
+>     *Hypervisor frees the memory and maps a different physical memory
+> In order to prevent any information leak hypervisor before allocating
+> memory to the guest fills it with zeroes.
+> The issue arises when the pattern used for Page Poisoning is 0xaa while
+> the newly allocated page received from the hypervisor by the guest is
+> filled with the pattern 0x00. This will result in memory corruption errors.
+>
+> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- Documentation/sound/soc/dpcm.rst | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+This seems kind of backwards to me. Why disable page poisoning instead
+of just not hinting about the free pages? There shouldn't be that many
+instances when page poisoning is enabled, and when it is it would make
+more sense to leave it enabled rather than silently disable it.
 
-diff --git a/Documentation/sound/soc/dpcm.rst b/Documentation/sound/soc/dpcm.rst
-index f6845b2278ea..77f67ded53de 100644
---- a/Documentation/sound/soc/dpcm.rst
-+++ b/Documentation/sound/soc/dpcm.rst
-@@ -13,7 +13,7 @@ drivers that expose several ALSA PCMs and can route to multiple DAIs.
- The DPCM runtime routing is determined by the ALSA mixer settings in the same
- way as the analog signal is routed in an ASoC codec driver. DPCM uses a DAPM
- graph representing the DSP internal audio paths and uses the mixer settings to
--determine the patch used by each ALSA PCM.
-+determine the path used by each ALSA PCM.
- 
- DPCM re-uses all the existing component codec, platform and DAI drivers without
- any modifications.
-@@ -101,7 +101,7 @@ The audio driver processes this as follows :-
- 
- 4. Machine driver or audio HAL enables the speaker path.
- 
--5. DPCM runs the PCM ops for startup(), hw_params(), prepapre() and
-+5. DPCM runs the PCM ops for startup(), hw_params(), prepare() and
-    trigger(start) for DAI1 Speakers since the path is enabled.
- 
- In this example, the machine driver or userspace audio HAL can alter the routing
-@@ -221,7 +221,7 @@ like a BT phone call :-
- This allows the host CPU to sleep while the DSP, MODEM DAI and the BT DAI are
- still in operation.
- 
--A BE DAI link can also set the codec to a dummy device if the code is a device
-+A BE DAI link can also set the codec to a dummy device if the codec is a device
- that is managed externally.
- 
- Likewise a BE DAI can also set a dummy cpu DAI if the CPU DAI is managed by the
-@@ -249,7 +249,7 @@ configuration.
- 	struct snd_interval *channels = hw_param_interval(params,
- 						SNDRV_PCM_HW_PARAM_CHANNELS);
- 
--	/* The DSP will covert the FE rate to 48k, stereo */
-+	/* The DSP will convert the FE rate to 48k, stereo */
- 	rate->min = rate->max = 48000;
- 	channels->min = channels->max = 2;
- 
-@@ -386,5 +386,3 @@ This means creating a new FE that is connected with a virtual path to both
- DAI links. The DAI links will be started when the FE PCM is started and stopped
- when the FE PCM is stopped. Note that the FE PCM cannot read or write data in
- this configuration.
--
--
--- 
-2.20.1
+> ---
+>  include/linux/page_hinting.h | 8 ++++++++
+>  mm/page_poison.c             | 2 +-
+>  virt/kvm/page_hinting.c      | 1 +
+>  3 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
+> index 2d7ff59f3f6a..e800c6b07561 100644
+> --- a/include/linux/page_hinting.h
+> +++ b/include/linux/page_hinting.h
+> @@ -19,7 +19,15 @@ struct hypervisor_pages {
+>  extern int guest_page_hinting_flag;
+>  extern struct static_key_false guest_page_hinting_key;
+>  extern struct smp_hotplug_thread hinting_threads;
+> +extern bool want_page_poisoning;
+>
+>  int guest_page_hinting_sysctl(struct ctl_table *table, int write,
+>                               void __user *buffer, size_t *lenp, loff_t *ppos);
+>  void guest_free_page(struct page *page, int order);
+> +
+> +static inline void disable_page_poisoning(void)
+> +{
+> +#ifdef CONFIG_PAGE_POISONING
+> +       want_page_poisoning = 0;
+> +#endif
+> +}
+> diff --git a/mm/page_poison.c b/mm/page_poison.c
+> index f0c15e9017c0..9af96021133b 100644
+> --- a/mm/page_poison.c
+> +++ b/mm/page_poison.c
+> @@ -7,7 +7,7 @@
+>  #include <linux/poison.h>
+>  #include <linux/ratelimit.h>
+>
+> -static bool want_page_poisoning __read_mostly;
+> +bool want_page_poisoning __read_mostly;
+>
+>  static int __init early_page_poison_param(char *buf)
+>  {
+> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
+> index 636990e7fbb3..be529f6f2bc0 100644
+> --- a/virt/kvm/page_hinting.c
+> +++ b/virt/kvm/page_hinting.c
+> @@ -103,6 +103,7 @@ void guest_free_page(struct page *page, int order)
+>
+>         local_irq_save(flags);
+>         if (page_hinting_obj->kvm_pt_idx != MAX_FGPT_ENTRIES) {
+> +               disable_page_poisoning();
+>                 page_hinting_obj->kvm_pt[page_hinting_obj->kvm_pt_idx].pfn =
+>                                                         page_to_pfn(page);
+>                 page_hinting_obj->kvm_pt[page_hinting_obj->kvm_pt_idx].zonenum =
 
+At a minimum it seems like you should have some sort of warning
+message that you are disabling page poisoning rather than just
+silently turning it off.
