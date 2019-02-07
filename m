@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C10D4C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B57DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 843632080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 052902080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539900;
-	bh=m2REHVcuVdu4YuIakkijT1jPpuXGl2KrH1+tyXxk6m0=;
+	s=default; t=1549539911;
+	bh=1Xir3KdwxWicQi09zZcXYjGKnuhghIUtrJ/oA7gHGSA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HJmlGfxEpQ2zTA7nTQR6LME9nhB5GSPXYfewoGyW12uO4ImHVfY1bQfn2UwSmFXec
-	 AnMqyn+0hEWTpp6cwHANKoSlZy9fAh0mMoN91FVE3g2QGgbiQfhcZGTrqYLznyE/04
-	 3hAkxbN/nCOg7sA4ExclUtXHWrPj+wWu8nLnGvLg=
+	b=2tc3BxYAlJBaEE2SwuE2cHhhhJ/JH8u8yS4Sg5thHtUQtvx8v2JzM09wd7Zg1w1VH
+	 Gd3j7zODQODLKCgQP4IKYjOSgOw1j+M10ZmNOqJPRyS0bdIAeQy0wqRiJQKPXbpBfZ
+	 sqCOU+V3vGfXzug2tT1c6PtW6xQg6pOUU61C9e58=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbfBGLo7 (ORCPT
+        id S1727263AbfBGLnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:44:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33340 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:43:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727338AbfBGLnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:43:10 -0500
+        id S1727234AbfBGLmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:42:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B72B021904;
-        Thu,  7 Feb 2019 11:43:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB8EF21907;
+        Thu,  7 Feb 2019 11:42:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539790;
-        bh=m2REHVcuVdu4YuIakkijT1jPpuXGl2KrH1+tyXxk6m0=;
+        s=default; t=1549539775;
+        bh=1Xir3KdwxWicQi09zZcXYjGKnuhghIUtrJ/oA7gHGSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1klxN4Y6kLFQLci2bEFf9nvavKlrHDxCHY0WqrDDHPWDTqTut+Hh4rgzBz4xVSQ/w
-         92zRpNlgHWok4YaB3nTSH26T02U0i7PpeUbFffo5En7IpaJ29ZWGnJcrkMuZE6Uq1p
-         Wy7EdAPybR2wu6DC5usMFNvcb0MKFpzknQjAGsyA=
+        b=UJezqUG8kp48QXEGYTEvvvxEdQ0f2xk/tMgvoyMnCcnEPgOifHSsIR3TDfXqAoDd1
+         JYHF0gQTsqQFmTZGO0qGjAuZT7bkvr9c/kSFUhkYZZlTZTe8RHBog7VgH/UNWg/y7Z
+         2vP6r4AMUqZxLZsOIVW/Vjhizrty5F8VA5Jp979E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Oskolkov <posk@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Mao Wenan <maowenan@huawei.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 24/34] ipv6: defrag: drop non-last frags smaller than min mtu
-Date:   Thu,  7 Feb 2019 12:42:06 +0100
-Message-Id: <20190207113026.506757266@linuxfoundation.org>
+Subject: [PATCH 4.4 19/34] inet: frags: reorganize struct netns_frags
+Date:   Thu,  7 Feb 2019 12:42:01 +0100
+Message-Id: <20190207113026.325520813@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -69,58 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 0ed4229b08c13c84a3c301a08defdc9e7f4467e6 upstream.
+commit c2615cf5a761b32bf74e85bddc223dfff3d9b9f0 upstream.
 
-don't bother with pathological cases, they only waste cycles.
-IPv6 requires a minimum MTU of 1280 so we should never see fragments
-smaller than this (except last frag).
+Put the read-mostly fields in a separate cache line
+at the beginning of struct netns_frags, to reduce
+false sharing noticed in inet_frag_kill()
 
-v3: don't use awkward "-offset + len"
-v2: drop IPv4 part, which added same check w. IPV4_MIN_MTU (68).
-    There were concerns that there could be even smaller frags
-    generated by intermediate nodes, e.g. on radio networks.
-
-Cc: Peter Oskolkov <posk@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-[bwh: Backported to 4.4: In nf_ct_frag6_gather() use clone instead of skb,
- and goto ret_orig in case of error]
+[bwh: Backported to 4.4: adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/netfilter/nf_conntrack_reasm.c |    4 ++++
- net/ipv6/reassembly.c                   |    4 ++++
- 2 files changed, 8 insertions(+)
+ include/net/inet_frag.h |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -574,6 +574,10 @@ struct sk_buff *nf_ct_frag6_gather(struc
- 	hdr = ipv6_hdr(clone);
- 	fhdr = (struct frag_hdr *)skb_transport_header(clone);
+--- a/include/net/inet_frag.h
++++ b/include/net/inet_frag.h
+@@ -4,15 +4,16 @@
+ #include <linux/rhashtable.h>
  
-+	if (clone->len - skb_network_offset(clone) < IPV6_MIN_MTU &&
-+	    fhdr->frag_off & htons(IP6_MF))
-+		goto ret_orig;
+ struct netns_frags {
+-	struct rhashtable       rhashtable ____cacheline_aligned_in_smp;
+-
+-	/* Keep atomic mem on separate cachelines in structs that include it */
+-	atomic_long_t		mem ____cacheline_aligned_in_smp;
+ 	/* sysctls */
+ 	long			high_thresh;
+ 	long			low_thresh;
+ 	int			timeout;
+ 	struct inet_frags	*f;
 +
- 	skb_orphan(skb);
- 	fq = fq_find(net, fhdr->identification, user, hdr,
- 		     skb->dev ? skb->dev->ifindex : 0);
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -515,6 +515,10 @@ static int ipv6_frag_rcv(struct sk_buff
- 		return 1;
- 	}
++	struct rhashtable       rhashtable ____cacheline_aligned_in_smp;
++
++	/* Keep atomic mem on separate cachelines in structs that include it */
++	atomic_long_t		mem ____cacheline_aligned_in_smp;
+ };
  
-+	if (skb->len - skb_network_offset(skb) < IPV6_MIN_MTU &&
-+	    fhdr->frag_off & htons(IP6_MF))
-+		goto fail_hdr;
-+
- 	iif = skb->dev ? skb->dev->ifindex : 0;
- 	fq = fq_find(net, fhdr->identification, hdr, iif);
- 	if (fq) {
+ /**
 
 
