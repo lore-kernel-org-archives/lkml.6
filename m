@@ -2,365 +2,191 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD2DC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C0EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52FA62173B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FD982173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:17:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bF6lvl3O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfBGRPx (ORCPT
+        id S1726873AbfBGRRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:15:53 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35245 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGRPw (ORCPT
+        Thu, 7 Feb 2019 12:17:40 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43697 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfBGRRj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:15:52 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z18so709840wrh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:15:50 -0800 (PST)
+        Thu, 7 Feb 2019 12:17:39 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so209650pfk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:17:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PqlMHd6xLDlAcNc8B30K9u3FyPa4y27/C9zdAZrVqEA=;
+        b=bF6lvl3OIEJ4mNLeHShgdKndstBHIdZ+678WDi7EJO7vLsb/hKdw7Ja0/uy1/lHSDk
+         qDpWQH/ReJvGv7F6Vdt0JqCz+89mzCy37JNqoCOYJmMOKZYtGaba6kfrZZw62kadSlf8
+         vGO4eYUG5o8fsb0QQCAThBbFzdTjhFeRzRKBfHxpgeptKev92+187E03kgKzrFQJvNxQ
+         RyUF0akf8yOM9IinzYaUQmqTAAXHiI50T3P5aGMwG5eQT2qZqoQdlm02Pg0D2GR5AKZP
+         KKDNrvdkJr+bwk57YsYtJ/tm+0IfhklIEhX6oXXoKva7a/dOUbc6RX+WUNkA9X/OgQUb
+         coeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=ojvx6Ih0v9ZF6n3qBmBOFBhNU6qB1XfCz/HbuX6IHu0=;
-        b=HitlDOO834yBMvl9tOqRl1Vv6xHbT+AyvdUol9Wr0wSUe1E9jFx9PF8slILggqS+V/
-         fFvcR7/jIIczMYmnKH8JFPeojQ2fMsiA4RVkvz5Pf3zXL3dh/7hBDcwmAxJe7VkKgsfc
-         JP6baroO4ib4NeEJESQrhJcyFzYM6TKPTfq0Mdl2vkCRavPK07uJR9FEqJvIvw06dRzm
-         DT9tj8iOxUg5s/wf6RBfVyz+YWY75O0ojq8iBiPmsRqmi4lu49IPW7f1bPSsK6aJnH8e
-         A64+6zOJFhIpK0acexJmOymT2E4iqGwYhYQM1JuXjH3gC+N8bbNlLsKH9fKOsmfjKGqp
-         eSdw==
-X-Gm-Message-State: AHQUAuagjf6GeIHkrIdFz/LjMz34jLL4/mF0KPEWtvABDC7Q5UDCshX3
-        lmCBY1k43dDiE2GZ/aQpx6lWJQ==
-X-Google-Smtp-Source: AHgI3IZuF86nKHliplhpURE1PFwLECmgbmB19MhUv8/AoT7wCtxtv2K8Xrz7mNMa/wUmTxqejw3P6w==
-X-Received: by 2002:adf:f411:: with SMTP id g17mr11069772wro.160.1549559749871;
-        Thu, 07 Feb 2019 09:15:49 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id r12sm11256352wrt.76.2019.02.07.09.15.48
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PqlMHd6xLDlAcNc8B30K9u3FyPa4y27/C9zdAZrVqEA=;
+        b=NqG8gZL9lmExu427p7DGO9vK5JDa3AiwMGJlIdZHBQpDdvErMLGqzVkVlj4Lh/BU5+
+         C4Rua8ACMMB6wmUHpAJKeUcaQ6dRLC77MLInIDIdQaur0UT/+qPaKgOnCKJ8lUg1qNoc
+         0X5nBDCY++tlNsc62cXwXVL600lxoOS1h/zHEeen7AukDwa1TcjkvwmU56HDVjCujyeZ
+         uj6vsZLHUEVL4blg8ik74sJCaTuK6C3CuwoRTJIGYzzHr8W03q+xHJqeJv9W9HHhQx10
+         W6uJ7az7r6o2RocfGrnaTg3rMk09u+Av5yIP6uYc0BaH5ORF47NGGzei4tbjVEWJuSUY
+         eirQ==
+X-Gm-Message-State: AHQUAuZFToc2zbXCE5+jdHvcHf40O/qteQ08M0fRSjbqg7S0G3G5FWxW
+        FRErad5eVcRR2wv3WFd/6Bgg+Q==
+X-Google-Smtp-Source: AHgI3IYr+OpwrNiUTeYSdY/v8ElKyIb+GxbENEW6Q/NCm5CooT4Qqmf9VKbCvH+1cb7V0xRsxI466g==
+X-Received: by 2002:a63:6ac5:: with SMTP id f188mr15925675pgc.165.1549559858718;
+        Thu, 07 Feb 2019 09:17:38 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id k15sm16852694pfb.147.2019.02.07.09.17.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 09:15:49 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, joro@8bytes.org,
-        mchehab+samsung@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, alex.williamson@redhat.com, sashal@kernel.org,
-        dan.carpenter@oracle.com
-Subject: Re: [PATCH V3 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
-In-Reply-To: <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com>
-References: <1549553629-8414-1-git-send-email-Tianyu.Lan@microsoft.com> <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com>
-Date:   Thu, 07 Feb 2019 18:15:47 +0100
-Message-ID: <87a7j7wmd8.fsf@vitty.brq.redhat.com>
+        Thu, 07 Feb 2019 09:17:37 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1grnIu-0001lq-SV; Thu, 07 Feb 2019 10:17:36 -0700
+Date:   Thu, 7 Feb 2019 10:17:36 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190207171736.GD22726@ziepe.ca>
+References: <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <20190207035258.GD6173@dastard>
+ <20190207052310.GA22726@ziepe.ca>
+ <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lantianyu1986@gmail.com writes:
+On Wed, Feb 06, 2019 at 10:00:28PM -0800, Dan Williams wrote:
 
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
->
-> On the bare metal, enabling X2APIC mode requires interrupt remapping
-> function which helps to deliver irq to cpu with 32-bit APIC ID.
-> Hyper-V doesn't provide interrupt remapping function so far and Hyper-V
-> MSI protocol already supports to deliver interrupt to the CPU whose
-> virtual processor index is more than 255. IO-APIC interrupt still has
-> 8-bit APIC ID limitation.
->
-> This patch is to add Hyper-V stub IOMMU driver in order to enable
-> X2APIC mode successfully in Hyper-V Linux guest. The driver returns X2APIC
-> interrupt remapping capability when X2APIC mode is available. Otherwise,
-> it creates a Hyper-V irq domain to limit IO-APIC interrupts' affinity
-> and make sure cpus assigned with IO-APIC interrupt have 8-bit APIC ID.
->
-> Define 24 IO-APIC remapping entries because Hyper-V only expose one
-> single IO-APIC and one IO-APIC has 24 pins according IO-APIC spec(
-> https://pdos.csail.mit.edu/6.828/2016/readings/ia32/ioapic.pdf).
->
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
-> Change since v2:
->        - Improve comment about why save IO-APIC entry in the irq chip data.
->        - Some code improvement.
->        - Improve statement in the IOMMU Kconfig.
->
-> Change since v1:
->       - Remove unused pr_fmt
->       - Make ioapic_ir_domain as static variable
->       - Remove unused variables cfg and entry in the hyperv_irq_remapping_alloc()
->       - Fix comments
-> ---
->  drivers/iommu/Kconfig         |   8 ++
->  drivers/iommu/Makefile        |   1 +
->  drivers/iommu/hyperv-iommu.c  | 194 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/iommu/irq_remapping.c |   3 +
->  drivers/iommu/irq_remapping.h |   1 +
->  5 files changed, 207 insertions(+)
->  create mode 100644 drivers/iommu/hyperv-iommu.c
->
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 45d7021..6090935 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -437,4 +437,12 @@ config QCOM_IOMMU
->  	help
->  	  Support for IOMMU on certain Qualcomm SoCs.
->  
-> +config HYPERV_IOMMU
-> +	bool "Hyper-V x2APIC IRQ Handling"
-> +	depends on HYPERV
-> +	select IOMMU_API
-> +	help
-> +	  Stub IOMMU driver to handle IRQs as to allow Hyper-V Linux
-> +	  guests to run with x2APIC mode enabled.
-> +
->  endif # IOMMU_SUPPORT
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index a158a68..8c71a15 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -32,3 +32,4 @@ obj-$(CONFIG_EXYNOS_IOMMU) += exynos-iommu.o
->  obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
->  obj-$(CONFIG_S390_IOMMU) += s390-iommu.o
->  obj-$(CONFIG_QCOM_IOMMU) += qcom_iommu.o
-> +obj-$(CONFIG_HYPERV_IOMMU) += hyperv-iommu.o
-> diff --git a/drivers/iommu/hyperv-iommu.c b/drivers/iommu/hyperv-iommu.c
-> new file mode 100644
-> index 0000000..d8572c5
-> --- /dev/null
-> +++ b/drivers/iommu/hyperv-iommu.c
-> @@ -0,0 +1,194 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Hyper-V stub IOMMU driver.
-> + *
-> + * Copyright (C) 2019, Microsoft, Inc.
-> + *
-> + * Author : Lan Tianyu <Tianyu.Lan@microsoft.com>
-> + */
-> +
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/iommu.h>
-> +#include <linux/module.h>
-> +
-> +#include <asm/hw_irq.h>
-> +#include <asm/io_apic.h>
-> +#include <asm/irq_remapping.h>
-> +#include <asm/hypervisor.h>
-> +
-> +#include "irq_remapping.h"
-> +
-> +#ifdef CONFIG_IRQ_REMAP
-> +
-> +/*
-> + * According 82093AA IO-APIC spec , IO APIC has a 24-entry Interrupt
-> + * Redirection Table. Hyper-V exposes one single IO-APIC and so define
-> + * 24 IO APIC remmapping entries.
-> + */
-> +#define IOAPIC_REMAPPING_ENTRY 24
-> +
-> +static cpumask_t ioapic_max_cpumask = { CPU_BITS_NONE };
-> +static struct irq_domain *ioapic_ir_domain;
-> +
-> +static int hyperv_ir_set_affinity(struct irq_data *data,
-> +		const struct cpumask *mask, bool force)
-> +{
-> +	struct irq_data *parent = data->parent_data;
-> +	struct irq_cfg *cfg = irqd_cfg(data);
-> +	struct IO_APIC_route_entry *entry;
-> +	int ret;
-> +
-> +	/* Return error If new irq affinity is out of ioapic_max_cpumask. */
-> +	if (!cpumask_subset(mask, &ioapic_max_cpumask))
-> +		return -EINVAL;
-> +
-> +	ret = parent->chip->irq_set_affinity(parent, mask, force);
-> +	if (ret < 0 || ret == IRQ_SET_MASK_OK_DONE)
-> +		return ret;
-> +
-> +	entry = data->chip_data;
-> +	entry->dest = cfg->dest_apicid;
-> +	entry->vector = cfg->vector;
-> +	send_cleanup_vector(cfg);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct irq_chip hyperv_ir_chip = {
-> +	.name			= "HYPERV-IR",
-> +	.irq_ack		= apic_ack_irq,
-> +	.irq_set_affinity	= hyperv_ir_set_affinity,
-> +};
-> +
-> +static int hyperv_irq_remapping_alloc(struct irq_domain *domain,
-> +				     unsigned int virq, unsigned int nr_irqs,
-> +				     void *arg)
-> +{
-> +	struct irq_alloc_info *info = arg;
-> +	struct irq_data *irq_data;
-> +	struct irq_desc *desc;
-> +	int ret = 0;
-> +
-> +	if (!info || info->type != X86_IRQ_ALLOC_TYPE_IOAPIC || nr_irqs > 1)
-> +		return -EINVAL;
-> +
-> +	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, arg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	irq_data = irq_domain_get_irq_data(domain, virq);
-> +	if (!irq_data) {
-> +		irq_domain_free_irqs_common(domain, virq, nr_irqs);
-> +		return -EINVAL;
-> +	}
-> +
-> +	irq_data->chip = &hyperv_ir_chip;
-> +
-> +	/*
-> +	 * If there is interrupt remapping function of IOMMU, setting irq
-> +	 * affinity only needs to change IRTE of IOMMU. But Hyper-V doesn't
-> +	 * support interrupt remapping function, setting irq affinity of IO-APIC
-> +	 * interrupts still needs to change IO-APIC registers. But ioapic_
-> +	 * configure_entry() will ignore value of cfg->vector and cfg->
-> +	 * dest_apicid when IO-APIC's parent irq domain is not the vector
-> +	 * domain.(See ioapic_configure_entry()) In order to setting vector
-> +	 * and dest_apicid to IO-APIC register, IO-APIC entry pointer is saved
-> +	 * in the chip_data and hyperv_irq_remapping_activate()/hyperv_ir_set_
-> +	 * affinity() set vector and dest_apicid directly into IO-APIC entry.
-> +	 */
-> +	irq_data->chip_data = info->ioapic_entry;
-> +
-> +	/*
-> +	 * Hypver-V IO APIC irq affinity should be in the scope of
-> +	 * ioapic_max_cpumask because no irq remapping support.
-> +	 */
-> +	desc = irq_data_to_desc(irq_data);
-> +	cpumask_copy(desc->irq_common_data.affinity, &ioapic_max_cpumask);
-> +
-> +	return 0;
-> +}
-> +
-> +static void hyperv_irq_remapping_free(struct irq_domain *domain,
-> +				 unsigned int virq, unsigned int nr_irqs)
-> +{
-> +	irq_domain_free_irqs_common(domain, virq, nr_irqs);
-> +}
-> +
-> +static int hyperv_irq_remapping_activate(struct irq_domain *domain,
-> +			  struct irq_data *irq_data, bool reserve)
-> +{
-> +	struct irq_cfg *cfg = irqd_cfg(irq_data);
-> +	struct IO_APIC_route_entry *entry = irq_data->chip_data;
-> +
-> +	entry->dest = cfg->dest_apicid;
-> +	entry->vector = cfg->vector;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct irq_domain_ops hyperv_ir_domain_ops = {
-> +	.alloc = hyperv_irq_remapping_alloc,
-> +	.free = hyperv_irq_remapping_free,
-> +	.activate = hyperv_irq_remapping_activate,
-> +};
-> +
-> +static int __init hyperv_prepare_irq_remapping(void)
-> +{
-> +	struct fwnode_handle *fn;
-> +	int i;
-> +
-> +	if (!hypervisor_is_type(x86_hyper_type) ||
+> > > If your argument is that "existing RDMA apps don't have a recall
+> > > mechanism" then that's what they are going to need to implement to
+> > > work with DAX+RDMA. Reliable remote access arbitration is required
+> > > for DAX+RDMA, regardless of what filesysetm the data is hosted on.
+> >
+> > My argument is that is a toy configuration that no production user
+> > would use. It either has the ability to wait for the lease to revoke
+> > 'forever' without consequence or the application will be critically
+> > de-stablized by the kernel's escalation to time bound the response.
+> > (or production systems never get revoke)
+> 
+> I think we're off track on the need for leases for anything other than
+> non-ODP hardware.
+> 
+> Otherwise this argument seems to be saying there is absolutely no safe
+> way to recall a memory registration from hardware, which does not make
+> sense because SIGKILL needs to work as a last resort.
 
-I think this should be 
+SIGKILL destroys all the process's resources. This is supported.
 
-if (hypervisor_is_type(X86_HYPER_MS_HYPERV))
+You are asking for some way to do a targeted *disablement* (we can't
+do destroy) of a single resource.
 
-> +	    !x2apic_supported())
-> +		return -ENODEV;
-> +
-> +	fn = irq_domain_alloc_named_id_fwnode("HYPERV-IR", 0);
-> +	if (!fn)
-> +		return -ENOMEM;
-> +
-> +	ioapic_ir_domain =
-> +		irq_domain_create_hierarchy(arch_get_ir_parent_domain(),
-> +				0, IOAPIC_REMAPPING_ENTRY, fn,
-> +				&hyperv_ir_domain_ops, NULL);
-> +
-> +	irq_domain_free_fwnode(fn);
-> +
-> +	/*
-> +	 * Hyper-V doesn't provide irq remapping function for
-> +	 * IO-APIC and so IO-APIC only accepts 8-bit APIC ID.
-> +	 * Cpu's APIC ID is read from ACPI MADT table and APIC IDs
-> +	 * in the MADT table on Hyper-v are sorted monotonic increasingly.
-> +	 * APIC ID reflects cpu topology. There maybe some APIC ID
-> +	 * gaps when cpu number in a socket is not power of two. Prepare
-> +	 * max cpu affinity for IOAPIC irqs. Scan cpu 0-255 and set cpu
-> +	 * into ioapic_max_cpumask if its APIC ID is less than 256.
-> +	 */
-> +	for (i = 0; i < 256; i++)
-> +		if (cpu_physical_id(i) < 256)
-> +			cpumask_set_cpu(i, &ioapic_max_cpumask);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init hyperv_enable_irq_remapping(void)
-> +{
-> +	return IRQ_REMAP_X2APIC_MODE;
-> +}
-> +
-> +static struct irq_domain *hyperv_get_ir_irq_domain(struct irq_alloc_info *info)
-> +{
-> +	if (info->type == X86_IRQ_ALLOC_TYPE_IOAPIC)
-> +		return ioapic_ir_domain;
-> +	else
-> +		return NULL;
-> +}
-> +
-> +struct irq_remap_ops hyperv_irq_remap_ops = {
-> +	.prepare		= hyperv_prepare_irq_remapping,
-> +	.enable			= hyperv_enable_irq_remapping,
-> +	.get_ir_irq_domain	= hyperv_get_ir_irq_domain,
-> +};
-> +
-> +#endif
-> diff --git a/drivers/iommu/irq_remapping.c b/drivers/iommu/irq_remapping.c
-> index b94ebd4..81cf290 100644
-> --- a/drivers/iommu/irq_remapping.c
-> +++ b/drivers/iommu/irq_remapping.c
-> @@ -103,6 +103,9 @@ int __init irq_remapping_prepare(void)
->  	else if (IS_ENABLED(CONFIG_AMD_IOMMU) &&
->  		 amd_iommu_irq_ops.prepare() == 0)
->  		remap_ops = &amd_iommu_irq_ops;
-> +	else if (IS_ENABLED(CONFIG_HYPERV_IOMMU) &&
-> +		 hyperv_irq_remap_ops.prepare() == 0)
-> +		remap_ops = &hyperv_irq_remap_ops;
->  	else
->  		return -ENOSYS;
->  
-> diff --git a/drivers/iommu/irq_remapping.h b/drivers/iommu/irq_remapping.h
-> index 0afef6e..f8609e9 100644
-> --- a/drivers/iommu/irq_remapping.h
-> +++ b/drivers/iommu/irq_remapping.h
-> @@ -64,6 +64,7 @@ struct irq_remap_ops {
->  
->  extern struct irq_remap_ops intel_irq_remap_ops;
->  extern struct irq_remap_ops amd_iommu_irq_ops;
-> +extern struct irq_remap_ops hyperv_irq_remap_ops;
->  
->  #else  /* CONFIG_IRQ_REMAP */
+There is an optional operation that could do what you want
+'rereg_user_mr'- however only 3 out of 17 drivers implement it, one of
+those drivers supports ODP, and one is supporting old hardware nearing
+its end of life.
 
--- 
-Vitaly
+Of the two that are left, it looks like you might be able to use
+IB_MR_REREG_PD to basically disable the MR. Maybe. The spec for this
+API is not as a fence - the application is supposed to quiet traffic
+before invoking it. So even if it did work, it may not be synchronous
+enough to be safe for DAX.
+
+But lets imagine the one driver where this is relavents gets updated
+FW that makes this into a fence..
+
+Then the application's communication would more or less explode in a
+very strange and unexpected way, but perhaps it could learn to put the
+pieces back together, reconnect and restart from scratch.
+
+So, we could imagine doing something here, but it requires things we
+don't have, more standardization, and drivers to implement new
+functionality. This is not likely to happen.
+
+Thus any lease mechanism is essentially stuck with SIGKILL as the
+escalation.
+
+> > The arguing here is that there is certainly a subset of people that
+> > don't want to use ODP. If we tell them a hard 'no' then the
+> > conversation is done.
+> 
+> Again, SIGKILL must work the RDMA target can't survive that, so it's
+> not impossible, or are you saying not even SIGKILL can guarantee an
+> RDMA registration goes idle? Then I can see that "hard no" having real
+> teeth otherwise it's a matter of software.
+
+Resorting to SIGKILL makes this into a toy, no real production user
+would operate in that world.
+
+> > I don't like the idea of building toy leases just for this one,
+> > arguably baroque, case.
+> 
+> What makes it a toy and baroque? Outside of RDMA registrations being
+> irretrievable I have a gap in my understanding of what makes this
+> pointless to even attempt?
+
+Insisting to run RDMA & DAX without ODP and building an elaborate
+revoke mechanism to support non-ODP HW is inherently baroque. 
+
+Use the HW that supports ODP.
+
+Since no HW can do disable of a MR, the escalation path is SIGKILL
+which makes it a non-production toy.
+
+What you keep missing is that for people doing this - the RDMA is a
+critical compoment of the system, you can't just say the kernel will
+randomly degrade/kill RDMA processes - that is a 'toy' configuration
+that is not production worthy.
+
+Especially since this revoke idea is basically a DOS engine for the
+RDMA protocol if another process can do actions to trigger revoke. Now
+we have a new class of security problems. (again, screams non
+production toy)
+
+The only production worthy way is to have the FS be a partner in
+making this work without requiring revoke, so the critical RDMA
+traffic can operate safely.
+
+Otherwise we need to stick to ODP.
+
+Jason
