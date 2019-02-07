@@ -2,106 +2,93 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CDAC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590B8C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC322081B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239BA2081B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:47:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3xZHURi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a3w+mGLw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfBGUqX (ORCPT
+        id S1727487AbfBGUrd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:46:23 -0500
-Received: from mail-lf1-f53.google.com ([209.85.167.53]:41319 "EHLO
-        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfBGUqX (ORCPT
+        Thu, 7 Feb 2019 15:47:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37226 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbfBGUrd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:46:23 -0500
-Received: by mail-lf1-f53.google.com with SMTP id e27so922355lfj.8;
-        Thu, 07 Feb 2019 12:46:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=T8XqTDdy1nyL1cjqyV8sGNfLGR/fB83nxBQQQVGEOfw=;
-        b=j3xZHURiaXCHWCXP8UwGHMOiEegL90kbZDN6AgeZlybsHQY+28jBL1iAcKzHAELIgw
-         Y4tt7zQKE+pzW0Qq6PYEtKzbTuFyGd8tFyUJ5z/2V4zDNYcvVnJ7UxC0IAm6RQjeUqpK
-         tftoyFMmBD/8sABEyNzu+ZNmh7JFC3NEuhLTsJoKcj79b+mHQ4tAZBio91pVovONQL/W
-         oh0F0EkYN9XmWqLgmUEIUUEh6CwrwNaIZHFuSTt62661jD/xqXfmmNxDmysHLNYc4l8S
-         sUghVSQKPIkK1svkMKSuZPeUuTrhuqi8jCK1yqELsDlbEC7CFxsxUmPnxDMEqVnpV/HR
-         8qgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=T8XqTDdy1nyL1cjqyV8sGNfLGR/fB83nxBQQQVGEOfw=;
-        b=fPUUfEtC+P6isqMsPbnMl5ExGAvDyAly+r/PWoPJ6MSvQ3KZjBPgKTIEGH/92wMPnM
-         JBZ97SoP5dWtV831YuTEQbxUGDz2tcyjdGyc1z5km4AsaDhJNZ7Sk54/uZyZTGOOJw0Q
-         mk9ghia/e2onqUqXkip2Caa/XTCOGXsbgRCDbINca+mb8/5M2G7kbrehF2jaShYYLUty
-         c7jitdubr7Y5Km7vbUcJae3i1FAJZd3uBF6inPjoVS+Djh8nh4tVnDDABiOKiv03uBH8
-         pbuGad3TPBdA7EoH/QGKvYyDCUv7oahFQDfTQxp1q3iSPLgQyASKjR/VLXbQE6xX2NHT
-         Vwfw==
-X-Gm-Message-State: AHQUAuYnZTNXHw7feGqRpPB+vrpzj5AGknN2NOBXPswXjuuQzAzlcWc0
-        mmZi65IZd/X1P9CJkeno19l6sj4I
-X-Google-Smtp-Source: AHgI3IYLphtpcPn9XMxdKvRFmQNXUqQh27jHe0TN4MfBdk1JioFHbKOkCHKbUj/HNLjNIBlYEK5s9w==
-X-Received: by 2002:a19:5901:: with SMTP id n1mr11252537lfb.125.1549572380298;
-        Thu, 07 Feb 2019 12:46:20 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id 18-v6sm4428277ljg.83.2019.02.07.12.46.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 12:46:19 -0800 (PST)
-Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
- <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <59f39ee7-c7da-52ea-cc67-52c5af879c35@gmail.com>
-Date:   Thu, 7 Feb 2019 23:46:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 7 Feb 2019 15:47:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bEHNsOwIgj2itCnyGzcvVjHB+SGmRzUaNDbsBFafgJY=; b=a3w+mGLwkOd/LnmT1Kr17k8Ac
+        iiSGnFoBQOvfQLItyqgAN5qfcm7xBZ1vMohHj+l/Mb86wTUG5ei8jRwOKQQr19RHICdtX+XBgnSPm
+        ngWzQav+9byDRbJdC2L4Qt9dIA8BaiScsgkiNmCNFItcDrxdFfUL52noO6o/1wn/uMzK7HUaLlWpu
+        +xc6VTs+Hb9K7rp9XlNqEH0fSbhdA65dTkFojxq87skezQMas/XHUvr3wXBm0xyO0mMNUqsB7deR1
+        hv7BMXw4MXdmqNRRb0lxu2L+R8nxalxpbbSjt9wzmoLAHETncwDBKhlTMSEA3l9iJ3vDvY4yGYgoV
+        XgrmgX6dA==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grqa3-00060N-Hd; Thu, 07 Feb 2019 20:47:31 +0000
+Date:   Thu, 7 Feb 2019 12:47:30 -0800
+From:   Darren Hart <dvhart@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     stuart.w.hayes@gmail.com, andy@infradead.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mario_Limonciello@dell.com
+Subject: Re: [PATCH] dell_rbu: stop abusing the DMA API
+Message-ID: <20190207204730.GA21530@wrath>
+References: <20190129073409.7247-1-hch@lst.de>
+ <20190201231559.GC105752@fedora.eng.vmware.com>
+ <20190202171659.GA3324@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190202171659.GA3324@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2019 22:16, Sowjanya Komatineni пишет:
-> +	if (!i2c_dev->msg_read) {
-> +		if (dma) {
-> +			memcpy(buffer, msg->buf, msg->len);
-> +			dma_sync_single_for_device(i2c_dev->dev,
-> +						   i2c_dev->dma_phys,
-> +						   xfer_size,
-> +						   DMA_TO_DEVICE);
-> +			err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
-> +			if (err < 0) {
-> +				dev_err(i2c_dev->dev,
-> +					"starting TX DMA failed, err %d\n",
-> +					err);
-> +				goto unlock;
-> +			}
-> +
+On Sat, Feb 02, 2019 at 06:16:59PM +0100, Christoph Hellwig wrote:
+> On Fri, Feb 01, 2019 at 03:15:59PM -0800, Darren Hart wrote:
+> > On Tue, Jan 29, 2019 at 08:34:09AM +0100, Christoph Hellwig wrote:
+> > > For some odd reason dell_rbu actually seems to want the physical and
+> > > not a bus address for the allocated buffer.  Lets assume that actually
+> > > is correct given that it is BIOS-related and that is a good source
+> > > of insanity.  In that case we should not use dma_alloc_coherent with
+> > > a NULL device to allocate memory, but use GFP_DMA32 to stay under
+> > > the 32-bit BIOS limit.
+> > 
+> > + Mario re bios related physical address - is Christoph's assumption
+> > correct?
+> > 
+> > Christoph, did you observe a failure? If so, we should probably also
+> > tag for stable.
+> 
+> No, I've been auditing for DMA API (ab-)users that don't pass a
+> struct device.  Generally the fix was to just pass a struct device
+> that is easily available.  But dell_rbu doesn't actually seem to
+> be a "device" in the traditional sense, and the way it uses the
+> DMA API is really, really odd - it first does a virt_to_phys on
+> memory allocated from the page allocator (so works with physical
+> addresses in that case) and the retries with a dma_alloc_coherent
+> with a NULL argument, which in no way is guaranteed to you give
+> you something else, although for the current x86 implementation
+> will give you the equivalent of a GFP_DMA32 page allocator allocation
+> plus virt_to_phys.
+> 
 
-This newline is not really needed here.
+Thanks Christoph, merged to for-next.
 
-> +		} else {
-> +			tegra_i2c_fill_tx_fifo(i2c_dev);
-> +		}
-> +	}
 
-That's my last comment for v14. Looking forward for v15!
+-- 
+Darren Hart
+VMware Open Source Technology Center
