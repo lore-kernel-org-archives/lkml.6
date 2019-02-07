@@ -2,152 +2,101 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF43EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9687DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FEB62080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6027F2080F
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:47:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="meojyJGy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uO1/ctVP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfBGLpv (ORCPT
+        id S1726983AbfBGLrH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:45:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:53479 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbfBGLpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:45:50 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wGj71Hy5z9s7h;
-        Thu,  7 Feb 2019 22:45:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549539947;
-        bh=P9LUtkTDZkoyCQ+IWmhAONy5i1RAK1rZjOqTETyLytk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=meojyJGyXEJ45e5YRh6iz6JhFT5mAkS+ZBW8a9TzFLBYeRacWOPH78xolwET/Q/aV
-         e/rHqPhkvOOlSyzjuB3+E98uNr1J+kwS7N37CxmmxE1OcV+pQVMPONwBkVgILz1vX7
-         qvHP9sUf9Boisr4eveMq2B+BHJgO45N0z2xCJ2GwJOIYnjc5FktgmX3vKUMxKayO1s
-         ywkt0xMaXBEPL3BdR9I4DbLnGu/TWDhvPZPNP2Zd5Wn0xEu3JNHcnWrSqeGM2rwcfZ
-         z5/cLLc1J4cDyYdZGc5RMfJRpeakBI8XmVx7jXA9yqZxYa5pUJ7JFeO8WxrR14ZHjK
-         Q148mF/KOftxQ==
-Date:   Thu, 7 Feb 2019 22:45:39 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Rawat <drawat@vmware.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: Fixes tags need some work in the drm-fixes tree
-Message-ID: <20190207224539.52b5e209@canb.auug.org.au>
+        Thu, 7 Feb 2019 06:47:07 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39453 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfBGLrG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:47:06 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so13994623itl.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:47:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iGIpsAOp2ZkP8f1uYr7gzKe7RmqNpD38V7qhwyf7+EM=;
+        b=uO1/ctVP1eNoxZJ4CKZNBNRYYnxQd8QOEgXVV5WKaoRS7yKzUPdaK4kUtejxjsiifL
+         i3rRHsTYcidSpK5Pxw6zXyMfer7HOl3FqKdM7mp9+WZVbdDfeUflBi1lJTxWk4ApN8pt
+         aFymCHwWXJQQ4jtjM0EywmHY9PsP1FKWAD9fW+a2yits7XmB+3bcFRQenCWT2S/GWaG/
+         eru2r4WEbySd0Y63rNjONbH81o1mpXtyEvcyv8azANnMiX0r/juiVWqk8I5JGhv/GFvo
+         XLHg/0YTExU7Lb+t55Q4oI+sAh1+oxRdasscOdCJ+mVBLYUM8JsXGmg08OcdfbKTWt1/
+         rSdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iGIpsAOp2ZkP8f1uYr7gzKe7RmqNpD38V7qhwyf7+EM=;
+        b=f71Y3/T4iQSVnTLdmA4DY/yJnHerN9yLRAGmNKs36DwvSKfL/GrOtLzt4EikHxNsaO
+         iwHwJpvTHlKetH7GtCfWUDLH7BhH/fCBzpz3+kN9OT86LQ+rKSzH5GFHse7F3zunu7aI
+         1cvgNKIh8xiQkVekinSYn1KhZLg5V60460PvhuZ9/cPVQx+yiX0eB30H9/f6OWJl3pVw
+         yXBGU3fEyrKtQuPF5voOaZ2wHz3vVWZXMIA67lf+56nv+zlajR788NKGxJnTbdZSs3Ns
+         uLBEgZ/nFL6GzGJLYercBP7SAreYV8cOb1TaCAZEWb7ai3DZOg23dEGwYlF5A+1crX+7
+         d2Gg==
+X-Gm-Message-State: AHQUAuaS5BbVC+5ZKE40YLESSK9Aw+td7BPk540A7zWlanxvFGaQmLrs
+        avgqsgUeZyEhwwlbnTVlMe6MqvXkfcoWsOqJqiCn7Q==
+X-Google-Smtp-Source: AHgI3IbLyiFj4uqkBPuVle1FEYE1/GMvSLqkv6r8/Q03/OKj8TJC2rl3mjElVvj0cTqd0quIwowynU/gdKn4lNKAZmg=
+X-Received: by 2002:a24:7351:: with SMTP id y78mr4428546itb.12.1549540025572;
+ Thu, 07 Feb 2019 03:47:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XbE+LumaCv.tsn1t1Jv3L5C"; protocol="application/pgp-signature"
+References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
+ <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
+ <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
+ <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
+ <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
+ <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
+ <87tvhi4vl7.fsf@xmission.com> <87o97q1cky.fsf_-_@xmission.com>
+ <20190206180754.GA23476@redhat.com> <87imxwv9jp.fsf@xmission.com> <875ztwt7yy.fsf_-_@xmission.com>
+In-Reply-To: <875ztwt7yy.fsf_-_@xmission.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 7 Feb 2019 12:46:52 +0100
+Message-ID: <CACT4Y+ZuJ5N03FsGn1cj9KUy6b_VZcNWfU3kFJFZugcyyi13zg@mail.gmail.com>
+Subject: Re: [PATCH 0/2]: Fixing unkillable processes caused by SIGHUP timers
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XbE+LumaCv.tsn1t1Jv3L5C
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Feb 7, 2019 at 7:43 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+>
+> Dmitry,
+>
+> Can you please verify the follow two patches.  The first one is a
+> simplification of the one you have already tested and makes the
+> processes killable.  The second patch improves our heuristic for
+> detecting synchronous like SIGSEGV when the stack overflows allowing us
+> to process them before SIGHUP.
+>
+> Eric W. Biederman (2):
+>       signal: Always notice exiting tasks
+>       signal: Better detection of synchronous signals
 
-Hi all,
-
-In commit
-
-  4cbfa1e6c09e ("drm/vmwgfx: Fix setting of dma masks")
-
-Fixes tag
-
-  Fixes: 0d00c488f3de: ("drm/vmwgfx: Fix the driver for large dma addresses=
-")
-
-has these problem(s):
-
-  - ':' unexpected after SHA1
-
-In commit
-
-  479d59026fe4 ("drm/vmwgfx: Also check for crtc status while checking for =
-DU active")
-
-Fixes tag
-
-  Fixes: 9da6e26c0aae: ("drm/vmwgfx: Fix a layout race condition")
-
-has these problem(s):
-
-  - ':' unexpected after SHA1
-
-In commit
-
-  51fdbeb4ca1a ("drm/vmwgfx: Fix an uninitialized fence handle value")
-
-Fixes tag
-
-  Fixes: 2724b2d54cda: ("drm/vmwgfx: Use new validation interface for the m=
-odesetting code v2")
-
-has these problem(s):
-
-  - ':' unexpected after SHA1
-
-In commit
-
-  728354c005c3 ("drm/vmwgfx: Return error code from vmw_execbuf_copy_fence_=
-user")
-
-Fixes tag
-
-  Fixes: ae2a104058e2: ("vmwgfx: Implement fence objects")
-
-has these problem(s):
-
-  - ':' unexpected after SHA1
-
-In commit
-
-  2b3cd6249b14 ("drm/vmwgfx: fix the check when to use dma_alloc_coherent")
-
-Fixes tags
-
-  Fixes: 55897af630 ("dma-direct: merge swiotlb_dma_ops into the dma_direct=
- code")
-  Fixes: 356da6d0cd ("dma-mapping: bypass indirect calls for dma-direct")
-
-have these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XbE+LumaCv.tsn1t1Jv3L5C
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcGmMACgkQAVBC80lX
-0GzMbwf9Eqn6EMPk90DAYlTKjiETaUj5FekiVfWV6sb9N05gB3oAjzMYrlS7nRkB
-yd+q75RAJ4HPNeV17jSy1PZ5hCVHT6NeQBuj32moKg/dVyypyzjkwzEoRsJU33g2
-8ArCwwCFxszYrdHyB/UGXDbuyyM0IryDC6aKxYfqXejMtf730jLRFY3YPgmcaJH/
-FjmY7kH7mEM4ENjf1KeFtcka7Gtr50i29zBUJrWsjUL2+n+D7QfVotTyrSSbAGH6
-CyD6g0hh8cu8p1fMnxczJDdHCHBSM+aokbbQnwSfCAH34aERAyOEo/Jndpsa1QAP
-W3Yb2Bke81rabUnvK4LhnxG86rG/jg==
-=ligY
------END PGP SIGNATURE-----
-
---Sig_/XbE+LumaCv.tsn1t1Jv3L5C--
+With these 2 patches applied the test program immediately exits with
+"Segmentation fault".
+Tested-by: Dmitry Vyukov <dvyukov@google.com>
