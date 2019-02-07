@@ -2,150 +2,141 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB8BC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9D6C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E97CB21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:23:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D2021721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QNWX3uWE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JndamBC4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfBGUX4 (ORCPT
+        id S1727418AbfBGUYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:23:56 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39241 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbfBGUXz (ORCPT
+        Thu, 7 Feb 2019 15:24:14 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:38196 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfBGUYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:23:55 -0500
-Received: by mail-it1-f196.google.com with SMTP id a6so3146438itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:23:55 -0800 (PST)
+        Thu, 7 Feb 2019 15:24:14 -0500
+Received: by mail-vk1-f195.google.com with SMTP id w72so300048vkd.5;
+        Thu, 07 Feb 2019 12:24:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=riL4aeMftZuDVY32mI/ge9A/S6BebOCGCnHi7iOKIiE=;
-        b=QNWX3uWEZqSGHcRLpY4B1BGQaviXUBpnwRUuQ7dG4mLUjiiQr9jc4DiGsCJ2LtT/r6
-         T3lbX+GvvR9x+4xVwMHc8lgBagTaVZlEKf0LeRQfA3KZE2D7sg9jc6/5h+vyoli+Od3l
-         yERijrIkAr2sdIosEjrAqzuBbddsHNI1dppWDWYU6LZeCHAoFeHOBnxNwj2AxIEKyjdS
-         WKxnNPx0cMyHaU09M0BYB3is6TtK1xwlGllvoM0JPe4Rdt6fymWp9nugBEdXQMXSVjB+
-         dwan7kKpAntN2ivv2Nqb9j2G9BNRv046QHvwqqTa/vFESEk0eM2FjVD8mRqQD6YHbqN2
-         4YnA==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=bYIL8cQreU3apb8WuK9wGn1i33FCMHOWR7pnhH11HHE=;
+        b=JndamBC4se21TPTPoG6UTyo/qW/8CkptGF/uwsCBDQmT3TQ+bNIAzIKYbaH9Hd6b8G
+         lLs5fFtT28eAnGJPdORK3+2ZB4IiZBHn9PpPYZFthegW0oZf+lzvbGCSYiSDnLfTimFL
+         3TImx08QuNjS6BHVKHIgB3cTvB7x7mnDcGIeQ+J7Mzo8rAnkBm3CAl38FGLF9Yv109pY
+         kA+IobuQbEPhukhThsHR7x5+yQ8xzj8X3d7FlV/O2/kzxPS9JrtkupL+FMsmGV3FDDBl
+         ugyae4qXS0vqGN4LP8FMFp68vaKzz9z7aG1ydR+UQIjZerMx8aunflb2GrW7+ILOxVUl
+         XbqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=riL4aeMftZuDVY32mI/ge9A/S6BebOCGCnHi7iOKIiE=;
-        b=S+WTpW9bJBHyIXPeuk3ATMizpN0jGlItRyJf+lRXxgBigzka51q66n4NuUQgFXvfiV
-         8laBvatePMjn9kCG/r1RaLBl9QsrMInj2p5xK/W8IbhYmhTd/luLyMrDbPGhKTf188/E
-         AbuHFP9GOA+3zF5bMGGQI3DVA0AuIwYzONMkXgmtpwh6+8yW95Tt3+JPAaUAGg8YT+Yw
-         XHgjj4iYdUqzcu2mgNmJMztFoZ9b0v6x+EdslAzpcIb+fqSa+n+9/EusJh4RctoKKIeF
-         HPVQjDeZelNa39VIEnp2Z7pss6PNoXQ+P6vliBs7HrauI/s0h8yPTSYi5TH1LDihNbqG
-         x1iw==
-X-Gm-Message-State: AHQUAua+V7dyuGIPui3kxR/TWqjqamD2hdDIAHmYKYBRzju63WFSnPJZ
-        AdOj+oUKiBk/cBr/xAyIer8EG0fG1ziXM09yXvxibA==
-X-Google-Smtp-Source: AHgI3Iabjx4wq+Co5s+X0CHwdrtDxpzfMrJe50WGxdf3XpiGAUHw3ZZ3/1ISLL179jtUAvmQTT/1XBWgaqUcNcNnPQk=
-X-Received: by 2002:a5d:960e:: with SMTP id w14mr8738373iol.86.1549571035185;
- Thu, 07 Feb 2019 12:23:55 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=bYIL8cQreU3apb8WuK9wGn1i33FCMHOWR7pnhH11HHE=;
+        b=R5AcOcmubza8JAZNwvw+CgIHuneSUxCfzQISDaMkeZylqfm/+pNQiSrcPRZ8BYXEfH
+         1v3INLUF9dhsTg7rsD/vv/FImfNFFA2uSO18fpFWgyIrwB+/5G1zySsJ56b1NVHd6ovn
+         rGp7nzpCiQw2XJQVJiHH983+zjc6ZId//GFVbajzacwDarZvYudENQPe3ATuOM1jFhBZ
+         ZN6rUW+Te2MW0WfUA3jSv5VfMQEnFdSL0b4QDiLM+IaQsgxMVeOgBBR6Oww4PRKGE8A+
+         lznhfe+xi//O7z8aJMCLpg3p+9RfKb+UbFRpuZU4woq9tsuvoEJL1ryLPYm/jRxXTHlt
+         PyyQ==
+X-Gm-Message-State: AHQUAuZ+xc5Cz8WUWsDJbWYhnzTJ+9dvv3cS6ey5ouUXZGifldesMyR5
+        AAVZJu1eILVsFQqq+lWQhlnWpuBjX5wG8LiyaDZHzGCp
+X-Google-Smtp-Source: AHgI3IahF63LR5J8Bn96uINN9wKb2DnTVWLLNts8BGokOW0Ww4SDydZKvS0gOqEVABQ6PjaTPY7DznJ13/2nrGJ2KhE=
+X-Received: by 2002:a1f:c041:: with SMTP id q62mr7319805vkf.50.1549571052727;
+ Thu, 07 Feb 2019 12:24:12 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org> <f5712a48f499d3b2e89f58a43eb30d3dff8b1103.1548981329.git.saiprakash.ranjan@codeaurora.org>
-In-Reply-To: <f5712a48f499d3b2e89f58a43eb30d3dff8b1103.1548981329.git.saiprakash.ranjan@codeaurora.org>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Thu, 7 Feb 2019 13:23:44 -0700
-Message-ID: <CANLsYkzUwii1NrAPGUr3A-odSLe+L63sDErvRnym0MDg0Hkt0g@mail.gmail.com>
-Subject: Re: [PATCHv7 4/6] coresight: etm4x: Add support to enable ETMv4.2
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+From:   Gerlando Falauto <gerlando.falauto@gmail.com>
+Date:   Thu, 7 Feb 2019 21:24:00 +0100
+Message-ID: <CABMprFit_4dv7FjjOUfFPSZgoL8AMM594qwi1SyB+x6iTcJpEg@mail.gmail.com>
+Subject: debugging irq threaded handler not getting called
+To:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 at 17:54, Sai Prakash Ranjan
-<saiprakash.ranjan@codeaurora.org> wrote:
->
-> SDM845 has ETMv4.2 and can use the existing etm4x driver.
-> But the current etm driver checks only for ETMv4.0 and
-> errors out for other etm4x versions. This patch adds this
-> missing support to enable SoC's with ETMv4x to use same
-> driver by checking only the ETM architecture major version
-> number.
->
-> Without this change, we get below error during etm probe:
->
-> / # dmesg | grep etm
-> [    6.660093] coresight-etm4x: probe of 7040000.etm failed with error -22
-> [    6.666902] coresight-etm4x: probe of 7140000.etm failed with error -22
-> [    6.673708] coresight-etm4x: probe of 7240000.etm failed with error -22
-> [    6.680511] coresight-etm4x: probe of 7340000.etm failed with error -22
-> [    6.687313] coresight-etm4x: probe of 7440000.etm failed with error -22
-> [    6.694113] coresight-etm4x: probe of 7540000.etm failed with error -22
-> [    6.700914] coresight-etm4x: probe of 7640000.etm failed with error -22
-> [    6.707717] coresight-etm4x: probe of 7740000.etm failed with error -22
->
-> With this change, etm probe is successful:
->
-> / # dmesg | grep etm
-> [    6.659198] coresight-etm4x 7040000.etm: CPU0: ETM v4.2 initialized
-> [    6.665848] coresight-etm4x 7140000.etm: CPU1: ETM v4.2 initialized
-> [    6.672493] coresight-etm4x 7240000.etm: CPU2: ETM v4.2 initialized
-> [    6.679129] coresight-etm4x 7340000.etm: CPU3: ETM v4.2 initialized
-> [    6.685770] coresight-etm4x 7440000.etm: CPU4: ETM v4.2 initialized
-> [    6.692403] coresight-etm4x 7540000.etm: CPU5: ETM v4.2 initialized
-> [    6.699024] coresight-etm4x 7640000.etm: CPU6: ETM v4.2 initialized
-> [    6.705646] coresight-etm4x 7740000.etm: CPU7: ETM v4.2 initialized
->
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-etm4x.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-> index dd9b9b5ebb84..08ce37c9475d 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-> @@ -55,7 +55,8 @@ static void etm4_os_unlock(struct etmv4_drvdata *drvdata)
->
->  static bool etm4_arch_supported(u8 arch)
->  {
-> -       switch (arch) {
-> +       /* Mask out the minor version number */
-> +       switch (arch & 0xf0) {
->         case ETM_ARCH_V4:
->                 break;
->         default:
+Hi,
 
-Applied.
+I'm having a hard time debugging a custom SPI device with multiple
+interrupt GPIO pins, connected to a Samsung Artik 710 SoC module.
 
-Thanks,
-Mathieu
+The device is a microcontroller acting as an SPI-CAN bridge (emulating
+the hi3110, so SPI slave device) for two separate can busses.
+[The idea was to make it emulate two separate hi3110 devices, each
+with its own interrupt pin, and tweak the hi311x.c driver].
+So I have 2 instances of the same device in the device tree, each with
+its own GPIO as interrupt source:
 
-> --
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
->
+    can0: can@0 {
+      /*.... */
+        interrupts = <26 IRQ_TYPE_LEVEL_HIGH>;
+    }
+
+    can1: can@1 {
+      /*.... */
+        interrupts = <27 IRQ_TYPE_LEVEL_HIGH>;
+    }
+
+Interrupts are requested as threaded and one-shot, on HIGH level:
+
+    unsigned long flags = IRQF_ONESHOT | IRQF_TRIGGER_HIGH;
+    ret = request_threaded_irq(spi->irq, NULL, hi3110_can_ist,
+                   flags, DEVICE_NAME, priv);
+
+
+The threaded IRQ handler essentially does its job and always returns
+IRQ_HANDLED:
+
+    static irqreturn_t hi3110_can_ist(int irq, void *dev_id) {
+
+      /* Does its business */
+      return IRQ_HANDLED;
+    }
+
+I understand having a level trigger with ONESHOT should just re-enable
+the interrupt at the end of the threaded handler.
+Two interrupts could occur at mostly the same time, and this approach
+seems to handle concurrency correctly with their locks.
+The SPI bus is shared, but transactions look just fine.
+
+What happens is that under moderately heavy load (100+100 irq/s),
+after some minutes one of the two interrupts is not served anymore.
+On a logic analyzer, the interrupt pin stays high forever with no
+interaction with the SPI bus.
+What's weird is that it's always the second instance to expose this
+behavior. The first instance keeps working just fine, serving its
+interrupts nicely.
+
+I traced execution of the threaded handler on the analyzer, driving a
+GPIO high/low at the very start/end of the handler.
+You can see it go high right after the interrupt goes high, and go low
+afterwards.
+So the handler code always returns, and IRQ_HANDLED is the only
+possible return value.
+
+When this issue happens, the interrupt pin goes high but the driven
+GPIO stays low -- this means the threaded handler never gets called.
+I assume there's nothing more I should do other than just returning
+IRQ_HANDLED to get the interrupt to get re-enabled, but I suspect
+this doesn't really happen for some reason.
+
+I also tried swapping the two interrupt lines, but again it's always
+the second instance to get disabled, even though it's now on a
+different pin.
+
+Any suggestion on how I can dynamically inspect whether (and WHY?) the
+interrupt was left disabled?
+I saw some interesting entries in sysfs to inspect irq status
+(https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-kernel-irq)
+but I'm running a custom 4.4 kernel so that's unfortunately not available.
+Any idea would be highly appreciated!
+
+Thank you,
+Gerlando
