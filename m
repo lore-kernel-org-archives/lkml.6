@@ -2,133 +2,86 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F053C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BD7C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4154E2175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C89992175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:09:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfBGVIo (ORCPT
+        id S1727664AbfBGVJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 16:08:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38514 "EHLO mx1.redhat.com"
+        Thu, 7 Feb 2019 16:09:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:54093 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbfBGVIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 16:08:43 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA6001BD946;
-        Thu,  7 Feb 2019 21:08:42 +0000 (UTC)
-Received: from redhat.com (ovpn-123-55.rdu2.redhat.com [10.10.123.55])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 215F65DF49;
-        Thu,  7 Feb 2019 21:08:32 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 16:08:32 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
-        dhildenb@redhat.com, aarcange@redhat.com
-Subject: Re: [RFC][Patch v8 4/7] KVM: Disabling page poisoning to prevent
- corruption
-Message-ID: <20190207160506-mutt-send-email-mst@kernel.org>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-5-nitesh@redhat.com>
+        id S1727485AbfBGVJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 16:09:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 13:09:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
+   d="scan'208";a="116081329"
+Received: from otc-nc-03.jf.intel.com (HELO otc-nc-03) ([10.54.39.48])
+  by orsmga008.jf.intel.com with ESMTP; 07 Feb 2019 13:09:36 -0800
+Date:   Thu, 7 Feb 2019 13:09:36 -0800
+From:   "Raj, Ashok" <ashok.raj@intel.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     sathyanarayanan.kuppuswamy@linux.intel.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>
+Subject: Re: [PATCH v1 1/1] iommu/vt-d: Enable PRI only if the device enables
+ PASID.
+Message-ID: <20190207210936.GH103220@otc-nc-03>
+References: <142748f6a00153f9926fe2a9dc30cf3cd89164cd.1549408090.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <0faf4f6a5bbd8cbee84aa78c40ab15216c2b8f0e.camel@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204201854.2328-5-nitesh@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 07 Feb 2019 21:08:42 +0000 (UTC)
+In-Reply-To: <0faf4f6a5bbd8cbee84aa78c40ab15216c2b8f0e.camel@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 03:18:51PM -0500, Nitesh Narayan Lal wrote:
-> This patch disables page poisoning if guest page hinting is enabled.
-> It is required to avoid possible guest memory corruption errors.
-> Page Poisoning is a feature in which the page is filled with a specific
-> pattern of (0x00 or 0xaa) after arch_free_page and the same is verified
-> before arch_alloc_page to prevent following issues:
->     *information leak from the freed data
->     *use after free bugs
->     *memory corruption
-> Selection of the pattern depends on the CONFIG_PAGE_POISONING_ZERO
-> Once the guest pages which are supposed to be freed are sent to the
-> hypervisor it frees them. After freeing the pages in the global list
-> following things may happen:
->     *Hypervisor reallocates the freed memory back to the guest
->     *Hypervisor frees the memory and maps a different physical memory
-> In order to prevent any information leak hypervisor before allocating
-> memory to the guest fills it with zeroes.
-> The issue arises when the pattern used for Page Poisoning is 0xaa while
-> the newly allocated page received from the hypervisor by the guest is
-> filled with the pattern 0x00. This will result in memory corruption errors.
+On Thu, Feb 07, 2019 at 08:08:06PM +0000, David Woodhouse wrote:
+> On Thu, 2019-02-07 at 10:44 -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > 
+> > Intel IOMMU Page Request Services (PRS) only works with devices which
+> > supports/uses PASID. So enable PRI only if the device also enables
+> > PASID support. For more details, Please check the implementation of PRQ
+> > handler(prq_event_thread()) in intel-svm driver.
+> > 
+> > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Cc: Ashok Raj <ashok.raj@intel.com>
+> > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 > 
-> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
-
-IMHO it's better to take the approach of the existing balloon code
-and just send the poison value to host. Host can then avoid filling
-memory with zeroes.
-
-
-> ---
->  include/linux/page_hinting.h | 8 ++++++++
->  mm/page_poison.c             | 2 +-
->  virt/kvm/page_hinting.c      | 1 +
->  3 files changed, 10 insertions(+), 1 deletion(-)
+> Hm, that shouldn't be true. PRI and PASID support are orthogonal.
 > 
-> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
-> index 2d7ff59f3f6a..e800c6b07561 100644
-> --- a/include/linux/page_hinting.h
-> +++ b/include/linux/page_hinting.h
-> @@ -19,7 +19,15 @@ struct hypervisor_pages {
->  extern int guest_page_hinting_flag;
->  extern struct static_key_false guest_page_hinting_key;
->  extern struct smp_hotplug_thread hinting_threads;
-> +extern bool want_page_poisoning;
->  
->  int guest_page_hinting_sysctl(struct ctl_table *table, int write,
->  			      void __user *buffer, size_t *lenp, loff_t *ppos);
->  void guest_free_page(struct page *page, int order);
-> +
-> +static inline void disable_page_poisoning(void)
-> +{
-> +#ifdef CONFIG_PAGE_POISONING
-> +	want_page_poisoning = 0;
-> +#endif
-> +}
-> diff --git a/mm/page_poison.c b/mm/page_poison.c
-> index f0c15e9017c0..9af96021133b 100644
-> --- a/mm/page_poison.c
-> +++ b/mm/page_poison.c
-> @@ -7,7 +7,7 @@
->  #include <linux/poison.h>
->  #include <linux/ratelimit.h>
->  
-> -static bool want_page_poisoning __read_mostly;
-> +bool want_page_poisoning __read_mostly;
->  
->  static int __init early_page_poison_param(char *buf)
->  {
-> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
-> index 636990e7fbb3..be529f6f2bc0 100644
-> --- a/virt/kvm/page_hinting.c
-> +++ b/virt/kvm/page_hinting.c
-> @@ -103,6 +103,7 @@ void guest_free_page(struct page *page, int order)
->  
->  	local_irq_save(flags);
->  	if (page_hinting_obj->kvm_pt_idx != MAX_FGPT_ENTRIES) {
-> +		disable_page_poisoning();
->  		page_hinting_obj->kvm_pt[page_hinting_obj->kvm_pt_idx].pfn =
->  							page_to_pfn(page);
->  		page_hinting_obj->kvm_pt[page_hinting_obj->kvm_pt_idx].zonenum =
-> -- 
-> 2.17.2
+> If we get a PRI request without PASID, we should currently report it as
+> non-serviced which is the right thing to do. We can hook this up to KVM
+> etc. to actually allow paging of guests with devices attached, *if* the
+> devices attached to those guests support PRI.
+> 
+> Nothing fundamentally stops us using PRI without PASID support.
+
+You are right.. they are completely orthogonal. We just don't have
+a way to handle the page-requests for request without PASID's.
+
+There are some of the vIOMMU work to pass the PRI to who owns
+the device, and we can certainly relax it then. This is just to reflect
+what support exists today. FWIW, even the native driver maybe be able
+to resolve this if supported.
+
+> 
+> 
+
+
