@@ -6,71 +6,83 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16353C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D77E4C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43A821721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7C3721924
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfBGWLr (ORCPT
+        id S1726793AbfBGWRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:11:47 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37998 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGWLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:11:47 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so634806plb.5;
-        Thu, 07 Feb 2019 14:11:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IJ4mz0w10OFINyYWvX/VHaEdIoKahzYqBX9QIEaXvH0=;
-        b=RHwgy5FbtHaIfAVdGN4G6ZR3bAL+6Iufl9JXDfhX8QiDefBiSi3dyzBnaLbKrixJ40
-         GzR+iKEay2YVsq0omTNWoGaoR5FrR5rI5t+oL+8UPvt/N0fstfxVJSMwrzWf/Wcp3rh3
-         Z8R1Wyssl09HV0R3Nhf/HpudpsBmuu6VwDQSf0ea4c/TCOFS7uKtnYCYcY1FN9M5bIs6
-         bUKEvTEf2FSo/4+vu1369oMzCcDlnq6K6KphRwr/wDS4C9eKJuC7sDNQjhZVN6tgy7uE
-         /PCW01ctb0flVNbYucI4cfmIhwk/7fWzXd+WpcabyAyrkKaxwx3ziwxNE1zR8sIR4WhN
-         PgZQ==
-X-Gm-Message-State: AHQUAubQQI+uEXa6pmsH0V9F90GnPUiBxhIjbay5V7JuaSnQ4pL4yLPs
-        pA/nX1AZZaMaYY/vKseEwW8=
-X-Google-Smtp-Source: AHgI3IawoDcM/Pzl0vMaoREy8aAPwBYVuJu1zIFoLwCeuinlp98Dj0cjCrxdr1A1Hfm0iKC0uGB41w==
-X-Received: by 2002:a17:902:2aaa:: with SMTP id j39mr19330897plb.335.1549577506194;
-        Thu, 07 Feb 2019 14:11:46 -0800 (PST)
-Received: from [10.178.123.65] ([192.55.54.60])
-        by smtp.gmail.com with ESMTPSA id y184sm121370pgd.71.2019.02.07.14.11.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 14:11:45 -0800 (PST)
-Message-ID: <1549577503.153283.0.camel@acm.org>
-Subject: Re: [PATCH v2 1/2] loop: Report EOPNOTSUPP properly
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Evan Green <evgreen@chromium.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Martin K Petersen <martin.petersen@oracle.com>,
-        Alexis Savery <asavery@chromium.org>,
-        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 07 Feb 2019 14:11:43 -0800
-In-Reply-To: <20190207205730.199332-2-evgreen@chromium.org>
-References: <20190207205730.199332-1-evgreen@chromium.org>
-         <20190207205730.199332-2-evgreen@chromium.org>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 7 Feb 2019 17:17:33 -0500
+Received: from mga07.intel.com ([134.134.136.100]:57815 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726622AbfBGWRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:17:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 14:17:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
+   d="scan'208";a="114531980"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 07 Feb 2019 14:17:32 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 93F8C5802E1;
+        Thu,  7 Feb 2019 14:17:32 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v1 1/2] PCI: ATS: Add function to check ATS page aligned
+ request status.
+To:     Sinan Kaya <okaya@kernel.org>, bhelgaas@google.com,
+        joro@8bytes.org, dwmw2@infradead.org
+Cc:     linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>
+References: <cover.1549478584.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <91bfae8b1d4b424219e3ce3c1fc03559c73f1ae7.1549478584.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <5d55e369-355f-b710-0594-03465aa985da@kernel.org>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <a5a29eee-2e33-ba0c-67a6-69983fd0796d@linux.intel.com>
+Date:   Thu, 7 Feb 2019 14:16:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <5d55e369-355f-b710-0594-03465aa985da@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-07 at 12:57 -0800, Evan Green wrote:
-+AD4 Properly plumb out EOPNOTSUPP from loop driver operations, which may
-+AD4 get returned when for instance a discard operation is attempted but not
-+AD4 supported by the underlying block device. Before this change, everything
-+AD4 was reported in the log as an I/O error, which is scary and not
-+AD4 helpful in debugging.
 
-Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
-
+On 2/7/19 12:38 PM, Sinan Kaya wrote:
+>
+> On 2/7/2019 1:41 PM, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> + * As per PCI spec, If page aligned request bit is set, it indicates
+>> + * the untranslated address is always aligned to a 4096 byte boundary.
+>> + */
+>> +int pci_ats_page_aligned(struct pci_dev *pdev)
+>> +{
+>> +    u16 cap;
+>> +
+>> +    if (!pdev->ats_cap)
+>> +        return 0;
+>> +
+>> +    pci_read_config_word(pdev, pdev->ats_cap + PCI_ATS_CAP, &cap);
+>
+> If I remember this right, aligned request is only supported on ATS v1.1
+> but not supported on v1.0.
+Its added in v1.1.
+>
+> Can you please check the spec?
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
