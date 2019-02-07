@@ -2,73 +2,81 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A259C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E783EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB03A21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549538839;
-	bh=BZFClE1FZmNqJi6eVi+lYGKeWxDiKJ/CLagJLam3MSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VdQncx13A4MHOiZWjV2Bu0bRc3m1Ycuq0MBP3sD99ASm9ARfCtwpi9b39z9ifkuqh
-	 pwp2zumd04KFtDO6/B7wjj5g+oj+YA6isKPjhL/PxxVwpI8hY2N97YLOb8EVT+Dyuc
-	 EcYftP7yQH0TOhHjlJE6Z5nD2OZPwbsgPxO4Mxmk=
+	by mail.kernel.org (Postfix) with ESMTP id BC3BA21904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:27:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfBGL1S (ORCPT
+        id S1727141AbfBGL16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:27:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbfBGL1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:27:17 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 715E221872;
-        Thu,  7 Feb 2019 11:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549538836;
-        bh=BZFClE1FZmNqJi6eVi+lYGKeWxDiKJ/CLagJLam3MSU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pFFkVElz1Z2oJB85Qogi28MvoWj3gIDxKn/kUdLJF/r+UyE8cW6/Z/Ov8Lwj34l/I
-         356QJBC/V1vJKO5y1Z9id/eOisDcXj4Jiujqto7sR0/5UY3EX+f2he1fpuRyRRADGJ
-         ZMpdOcsf3tFfgLa5bVOxJaQPQyMJrjkPBP9TtQkA=
-Date:   Thu, 7 Feb 2019 12:27:14 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: 4.4 "rcu: Force boolean subscript for expedited stall warnings"
-Message-ID: <20190207112714.GB3120@kroah.com>
-References: <25bfaa1ef3f24272b7351f409e69f2f6a05f11c8.camel@nokia.com>
+        Thu, 7 Feb 2019 06:27:58 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:37828 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfBGL16 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:27:58 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1grhqP-0007ow-3T; Thu, 07 Feb 2019 12:27:49 +0100
+Date:   Thu, 7 Feb 2019 12:27:49 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 12/22] x86/fpu: Only write PKRU if it is different from
+ current
+Message-ID: <20190207112748.kzjd3cagqgecamp7@linutronix.de>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-13-bigeasy@linutronix.de>
+ <c4a862a0-b29f-b511-9cde-d7f609792940@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <25bfaa1ef3f24272b7351f409e69f2f6a05f11c8.camel@nokia.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <c4a862a0-b29f-b511-9cde-d7f609792940@intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 11:51:50AM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
-> Hi,
+On 2019-01-23 10:09:24 [-0800], Dave Hansen wrote:
+> On 1/9/19 3:47 AM, Sebastian Andrzej Siewior wrote:
+> > +static inline void __write_pkru(u32 pkru)
+> > +{
+> > +	/*
+> > +	 * Writting PKRU is expensive. Only write the PKRU value if it is
+> > +	 * different from the current one.
+> > +	 */
 > 
-> Can you pick this tiny one-liner patch to 4.4.y?
-> Fixes unexpected null byte in RCU "expedited stall" message.
+> I'd say:
 > 
+> 	WRPKRU is relatively expensive compared to RDPKRU.
+> 	Avoid WRPKRU when it would not change the value.
 > 
-> commit ec3833ed02ae6ef2a933ece9de7cbab0c64c699e
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Mon Jan 11 16:29:29 2016 -0800
-> 
->     rcu: Force boolean subscript for expedited stall warnings
+> In the grand scheme of things, WRPKRU is cheap.  It's certainly not an
+> "expensive instruction" compared to things like WBINVD.
 
-Now queued up, thanks.
+Okay.
 
-greg k-h
+> > +	if (pkru == __read_pkru())
+> > +		return;
+> > +	__write_pkru_insn(pkru);
+> > +}
+> 
+> Is there a case where we need __write_pkru_insn() directly?  Why not
+> just put the inline assembly in here?
+
+There is no user of __write_pkru_insn(). I had one in the past I think.
+Let me merge it for now.
+
+Sebastian
