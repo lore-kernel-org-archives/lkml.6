@@ -2,102 +2,101 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD98CC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B80BC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6E321908
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E258721872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbfBGQ4B (ORCPT
+        id S1726860AbfBGQ57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:56:01 -0500
-Received: from mga18.intel.com ([134.134.136.126]:36635 "EHLO mga18.intel.com"
+        Thu, 7 Feb 2019 11:57:59 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58682 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbfBGQ4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:56:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726196AbfBGQ56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:57:58 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 08:56:00 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 08:57:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="113169778"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga007.jf.intel.com with ESMTP; 07 Feb 2019 08:56:00 -0800
-Message-ID: <d28e5bc95cfc18ca8c97e28459692fdd967d52d3.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 0/4] kvm: Report unused guest pages to host
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
-        akpm@linux-foundation.org,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        David Hildenbrand <david@redhat.com>
-Date:   Thu, 07 Feb 2019 08:56:00 -0800
-In-Reply-To: <e0bf61d2-c315-ae4f-6ddb-93b7882fd13f@redhat.com>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <e0bf61d2-c315-ae4f-6ddb-93b7882fd13f@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="318468274"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga005.fm.intel.com with ESMTP; 07 Feb 2019 08:57:57 -0800
+Date:   Thu, 7 Feb 2019 08:57:41 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Tom Talpey <tom@talpey.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190207165740.GB29531@iweiny-DESK2.sc.intel.com>
+References: <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <20190207035258.GD6173@dastard>
+ <20190207052310.GA22726@ziepe.ca>
+ <CC414509-F046-49E3-9D0C-F66FD488AC64@oracle.com>
+ <6b260348-966a-bc95-162b-44ae8265cf03@talpey.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b260348-966a-bc95-162b-44ae8265cf03@talpey.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-07 at 09:48 -0500, Nitesh Narayan Lal wrote:
-> On 2/4/19 1:15 PM, Alexander Duyck wrote:
-> > This patch set provides a mechanism by which guests can notify the host of
-> > pages that are not currently in use. Using this data a KVM host can more
-> > easily balance memory workloads between guests and improve overall system
-> > performance by avoiding unnecessary writing of unused pages to swap.
+On Thu, Feb 07, 2019 at 10:28:05AM -0500, Tom Talpey wrote:
+> On 2/7/2019 10:04 AM, Chuck Lever wrote:
 > > 
-> > In order to support this I have added a new hypercall to provided unused
-> > page hints and made use of mechanisms currently used by PowerPC and s390
-> > architectures to provide those hints. To reduce the overhead of this call
-> > I am only using it per huge page instead of of doing a notification per 4K
-> > page. By doing this we can avoid the expense of fragmenting higher order
-> > pages, and reduce overall cost for the hypercall as it will only be
-> > performed once per huge page.
 > > 
-> > Because we are limiting this to huge pages it was necessary to add a
-> > secondary location where we make the call as the buddy allocator can merge
-> > smaller pages into a higher order huge page.
+> > > On Feb 7, 2019, at 12:23 AM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > 
+> > > On Thu, Feb 07, 2019 at 02:52:58PM +1100, Dave Chinner wrote:
+> > > 
+> > > > Requiring ODP capable hardware and applications that control RDMA
+> > > > access to use file leases and be able to cancel/recall client side
+> > > > delegations (like NFS is already able to do!) seems like a pretty
+> > > 
+> > > So, what happens on NFS if the revoke takes too long?
 > > 
-> > This approach is not usable in all cases. Specifically, when KVM direct
-> > device assignment is used, the memory for a guest is permanently assigned
-> > to physical pages in order to support DMA from the assigned device. In
-> > this case we cannot give the pages back, so the hypercall is disabled by
-> > the host.
-> > 
-> > Another situation that can lead to issues is if the page were accessed
-> > immediately after free. For example, if page poisoning is enabled the
-> > guest will populate the page *after* freeing it. In this case it does not
-> > make sense to provide a hint about the page being freed so we do not
-> > perform the hypercalls from the guest if this functionality is enabled.
+> > NFS distinguishes between "recall" and "revoke". Dave used "recall"
+> > here, it means that the server recalls the client's delegation. If
+> > the client doesn't respond, the server revokes the delegation
+> > unilaterally and other users are allowed to proceed.
 > 
-> Hi Alexander,
+> The SMB3 protocol has a similar "lease break" mechanism, btw.
 > 
-> Did you get a chance to look at my v8 posting of Guest Free Page Hinting
-> [1]?
-> Considering both the solutions are trying to solve the same problem. It
-> will be great if we can collaborate and come up with a unified solution.
+> SMB3 "push mode" has long-expected to allow DAX mapping of files
+> only when an exclusive lease is held by the requesting client.
+> The server may recall the lease if the DAX mapping needs to change.
 > 
-> [1] https://lkml.org/lkml/2019/2/4/993
+> Once local (MMU) and remote (RDMA) mappings are dropped, the
+> client may re-request that the server reestablish them. No
+> connection or process is terminated, and no data is silently lost.
 
-I haven't had a chance to review these yet.
+How long does one wait for these remote mappings to be dropped?
 
-I'll try to take a look later today and provide review notes based on
-what I find.
-
-Thanks.
-
-- Alex
+Ira
 
