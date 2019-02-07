@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29CBC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95388C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6B32080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F04E21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539840;
-	bh=hxNgexCr6k6tvbn5Wx9EM4jkdhVvq14u5rsoIFeMp0w=;
+	s=default; t=1549539845;
+	bh=C28zICoe2dVahHfh/YL/ZNq/RIFwpoHWQakcrismqKk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s1uIvQAujsYrbTkvYCJKmYFh5RmoVyXYBWEIaWAuPZvqRj2/zrDkOjSNJRzAyfTIZ
-	 flsSTxOoE9dGZRQrUSyZZnISIKi4eBMJNFBfXig7S4/aZlL/u35T6a4nXs1fTsrmWr
-	 q0YoJbxqdpfSxcjEWsGDv/URTZT4GDHgjqd0UsEM=
+	b=V0qDwSAOnr7AbHubuncMkumPMxlrD+owlzu6ZoiREHclRpsjTy5LY+PpobvlsOaHz
+	 LcV9FAWHe2eza0XH79hKKQPtC+z8NLw8Ul482lzuw/p3yotBvjkc9J+CgBEdwNcOp/
+	 y7aNZ1dmzoc/+AvzC8iJlvLh8kH7TrYTZVD6FaoI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbfBGLn7 (ORCPT
+        id S1727668AbfBGLoD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:43:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:44:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727622AbfBGLn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:43:56 -0500
+        id S1727652AbfBGLn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:43:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC04121917;
-        Thu,  7 Feb 2019 11:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B63CF21928;
+        Thu,  7 Feb 2019 11:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539835;
-        bh=hxNgexCr6k6tvbn5Wx9EM4jkdhVvq14u5rsoIFeMp0w=;
+        s=default; t=1549539839;
+        bh=C28zICoe2dVahHfh/YL/ZNq/RIFwpoHWQakcrismqKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PnFRMmcIO3lEj463M3hkmeT3kJuADrAVVTx71kaOE16lJS6+P4KyUcEtya/OLUAfh
-         Sgu5d/gcef7o+KVikx6RwZDfRmWJaZuxmKpovCIcc+mfK1YmQ3YEXjEBW90fdFQcNl
-         +jJ2BEzHEK8nRDXBIZOCrJ+aCz5YVVz+gelDedR4=
+        b=pVZVc4GNd83JTxZj+6Evx3wEmS+q0dv1qTiE+ED89t97R96fjzSob9av9un9FG2oB
+         O+GsPBpQVAI9FHZvrQve7etaTUSZs/6kOQrJUATOEMkJZ1Whg13MoJ12SszKcF40AD
+         dIfma2Dd+B/nAS17FS5EcLUdi2KI10yqM1b960+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
+        stable@vger.kernel.org, Dimitris Michailidis <dmichail@google.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 31/34] inet: frags: better deal with smp races
-Date:   Thu,  7 Feb 2019 12:42:13 +0100
-Message-Id: <20190207113026.757970660@linuxfoundation.org>
+Subject: [PATCH 4.4 32/34] net: fix pskb_trim_rcsum_slow() with odd trim offset
+Date:   Thu,  7 Feb 2019 12:42:14 +0100
+Message-Id: <20190207113026.792795469@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -67,85 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dimitris Michailidis <dmichail@google.com>
 
-commit 0d5b9311baf27bb545f187f12ecfd558220c607d upstream.
+commit d55bef5059dd057bd077155375c581b49d25be7e upstream.
 
-Multiple cpus might attempt to insert a new fragment in rhashtable,
-if for example RPS is buggy, as reported by 배석진 in
-https://patchwork.ozlabs.org/patch/994601/
+We've been getting checksum errors involving small UDP packets, usually
+59B packets with 1 extra non-zero padding byte. netdev_rx_csum_fault()
+has been complaining that HW is providing bad checksums. Turns out the
+problem is in pskb_trim_rcsum_slow(), introduced in commit 88078d98d1bb
+("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends").
 
-We use rhashtable_lookup_get_insert_key() instead of
-rhashtable_insert_fast() to let cpus losing the race
-free their own inet_frag_queue and use the one that
-was inserted by another cpu.
+The source of the problem is that when the bytes we are trimming start
+at an odd address, as in the case of the 1 padding byte above,
+skb_checksum() returns a byte-swapped value. We cannot just combine this
+with skb->csum using csum_sub(). We need to use csum_block_sub() here
+that takes into account the parity of the start address and handles the
+swapping.
 
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: 배석진 <soukjin.bae@samsung.com>
+Matches existing code in __skb_postpull_rcsum() and esp_remove_trailer().
+
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
+Signed-off-by: Dimitris Michailidis <dmichail@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |   28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ net/core/skbuff.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -188,21 +188,22 @@ static struct inet_frag_queue *inet_frag
- }
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1509,8 +1509,9 @@ int pskb_trim_rcsum_slow(struct sk_buff
+ 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
+ 		int delta = skb->len - len;
  
- static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
--						void *arg)
-+						void *arg,
-+						struct inet_frag_queue **prev)
- {
- 	struct inet_frags *f = nf->f;
- 	struct inet_frag_queue *q;
--	int err;
- 
- 	q = inet_frag_alloc(nf, f, arg);
--	if (!q)
-+	if (!q) {
-+		*prev = ERR_PTR(-ENOMEM);
- 		return NULL;
--
-+	}
- 	mod_timer(&q->timer, jiffies + nf->timeout);
- 
--	err = rhashtable_insert_fast(&nf->rhashtable, &q->node,
--				     f->rhash_params);
--	if (err < 0) {
-+	*prev = rhashtable_lookup_get_insert_key(&nf->rhashtable, &q->key,
-+						 &q->node, f->rhash_params);
-+	if (*prev) {
- 		q->flags |= INET_FRAG_COMPLETE;
- 		inet_frag_kill(q);
- 		inet_frag_destroy(q);
-@@ -215,17 +216,18 @@ EXPORT_SYMBOL(inet_frag_create);
- /* TODO : call from rcu_read_lock() and no longer use refcount_inc_not_zero() */
- struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key)
- {
--	struct inet_frag_queue *fq;
-+	struct inet_frag_queue *fq = NULL, *prev;
- 
- 	rcu_read_lock();
--	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
--	if (fq) {
-+	prev = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
-+	if (!prev)
-+		fq = inet_frag_create(nf, key, &prev);
-+	if (prev && !IS_ERR(prev)) {
-+		fq = prev;
- 		if (!atomic_inc_not_zero(&fq->refcnt))
- 			fq = NULL;
--		rcu_read_unlock();
--		return fq;
+-		skb->csum = csum_sub(skb->csum,
+-				     skb_checksum(skb, len, delta, 0));
++		skb->csum = csum_block_sub(skb->csum,
++					   skb_checksum(skb, len, delta, 0),
++					   len);
  	}
- 	rcu_read_unlock();
--	return inet_frag_create(nf, key);
-+	return fq;
+ 	return __pskb_trim(skb, len);
  }
- EXPORT_SYMBOL(inet_frag_find);
 
 
