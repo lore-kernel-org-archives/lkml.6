@@ -2,363 +2,137 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E78BC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E51C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68BA21721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 393102083B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2jpRUgj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfBGRij (ORCPT
+        id S1726793AbfBGRn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:38:39 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:49318 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726319AbfBGRii (ORCPT
+        Thu, 7 Feb 2019 12:43:57 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39148 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfBGRn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:38:38 -0500
-Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17HZjuU032723;
-        Thu, 7 Feb 2019 17:38:15 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qgq3eh9jn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Feb 2019 17:38:15 +0000
-Received: from sarge.linuxathome.me (unknown [16.99.168.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id 24BC757;
-        Thu,  7 Feb 2019 17:38:11 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 17:38:08 +0000
-From:   Hedi Berriche <hedi.berriche@hpe.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [Patch v2 1/4] efi/x86: turn EFI runtime semaphore into a global
- lock
-Message-ID: <20190207173808.GE6398@sarge.linuxathome.me>
-Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, stable <stable@vger.kernel.org>
-References: <20190207042234.25109-1-hedi.berriche@hpe.com>
- <20190207042234.25109-2-hedi.berriche@hpe.com>
- <CAKv+Gu_7yb2tf86G1f-kA3g5TVb4imQFTeL9S5qwGhJHVsmgQw@mail.gmail.com>
+        Thu, 7 Feb 2019 12:43:56 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so1775095itl.4;
+        Thu, 07 Feb 2019 09:43:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WhjpOCaRGJ47Jru+1Y0Y9pBWdlzLAEjZyKH9CjcaAFU=;
+        b=G2jpRUgjBx3m+6omUpc3AnoC923ff5wg3f9M7QrvYsunfLJ9/3isc4WcnhzquH8ui6
+         24KAJ3vyqzrOLvZx66CgJjPsCMZehLQhXeHc/YoOihGei7VNL0oMtY+35+lSSNwfnp0L
+         DsyxdmJamOlelPMk9Msxvy3H3zg6Hr7qw8Vkb+BNdMR3qpHVSudYe6Vtwv2tdEuEXerq
+         ZHlS8WxJ9wuRjE3UBmbVzHvcsMZSGQStFNxdOiv/5CJ5uRVkY8pMsufTxFuhhiBnYaA3
+         dIqxsuV++nHIw3QqM+2NGHD/ShHWN2KSNndVWxQKYHYakfG4ybIyLUqfB0SgvNbviNIS
+         5nWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WhjpOCaRGJ47Jru+1Y0Y9pBWdlzLAEjZyKH9CjcaAFU=;
+        b=ZOzGeDNg85rEXbQ6uLiOgbvYkmbYj/1gHYiK67pY3MA5tgVc3Zc2510qq1Vt/33F9i
+         hvOwTKCy9p1Hb5ATylLhoWaZ5MYhRdPFU9n1G8HHmlCWFoA/okxeBUdXTuxf5UvUoNmZ
+         SgSci3ZJxQB+/j9Uq1Wes0Wpo06x7EuNg3sjY4is+nFRQIzA2M4ukQI7be+zQxF5Df+w
+         Mwj5Cfp/1TMhHkmIzLNr8lIyKEfp17X7UrR5O58ksA7vjTd6pDXI8D434cvx9Zo5INsr
+         M9Yxlqh4sZ0aVToYhMWkFYuB07KQOcXbe7YU9SsQJU4pJN9Lkl/UwlbUefrm7weg6u6f
+         bV1Q==
+X-Gm-Message-State: AHQUAuYAgtpfv6fNlh8ihVGQ+mM7LOCyXTWKGaKR7kHWHFGlzo/bz1ct
+        A1ChWMQgj8caslerwif9/gNtowvslsc4LJan8+U=
+X-Google-Smtp-Source: AHgI3IZrF6BB+2mC2ckm1TlhBHWaFrB9/xgXMK1K0Xz/cr+pKIJmRYznaplHap8GBtVJGLbIKL5UQ+HiEO81rQNX/KQ=
+X-Received: by 2002:a24:2ed3:: with SMTP id i202mr5363608ita.89.1549561435408;
+ Thu, 07 Feb 2019 09:43:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_7yb2tf86G1f-kA3g5TVb4imQFTeL9S5qwGhJHVsmgQw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902070133
+References: <20190204201854.2328-1-nitesh@redhat.com> <20190204201854.2328-7-nitesh@redhat.com>
+ <20190205153607-mutt-send-email-mst@kernel.org> <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
+ <20190205165514-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190205165514-mutt-send-email-mst@kernel.org>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Thu, 7 Feb 2019 09:43:44 -0800
+Message-ID: <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
+Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
+ free pages
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>, riel@surriel.com,
+        david@redhat.com, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 16:05 Ard Biesheuvel wrote:
->On Thu, 7 Feb 2019 at 05:23, Hedi Berriche <hedi.berriche@hpe.com> wrote:
->>
->> Make efi_runtime_lock semaphore global so that it can be used by EFI
->> runtime callers that may be defined outside efi/runtime-wrappers.c.
->>
->> Also now that efi_runtime_lock semaphore is no longer static, rename it
->> to efi_runtime_sem so it doesn't clash with the efi_runtime_lock spinlock
->> defined in arch/x86/platform/efi/efi_64.c when CONFIG_EFI_MIXED is
->> enabled.
->>
->> The immediate motivation of this change is to serialise UV platform BIOS
->> calls using the efi_runtime_sem semaphore.
->>
->> No functional changes.
->>
->> Cc: Russ Anderson <rja@hpe.com>
->> Cc: Mike Travis <mike.travis@hpe.com>
->> Cc: Dimitri Sivanich <sivanich@hpe.com>
->> Cc: Steve Wahl <steve.wahl@hpe.com>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+On Tue, Feb 5, 2019 at 3:21 PM Michael S. Tsirkin <mst@redhat.com> wrote:
 >
->Hello Hedi,
+> On Tue, Feb 05, 2019 at 04:54:03PM -0500, Nitesh Narayan Lal wrote:
+> >
+> > On 2/5/19 3:45 PM, Michael S. Tsirkin wrote:
+> > > On Mon, Feb 04, 2019 at 03:18:53PM -0500, Nitesh Narayan Lal wrote:
+> > >> This patch enables the kernel to scan the per cpu array and
+> > >> compress it by removing the repetitive/re-allocated pages.
+> > >> Once the per cpu array is completely filled with pages in the
+> > >> buddy it wakes up the kernel per cpu thread which re-scans the
+> > >> entire per cpu array by acquiring a zone lock corresponding to
+> > >> the page which is being scanned. If the page is still free and
+> > >> present in the buddy it tries to isolate the page and adds it
+> > >> to another per cpu array.
+> > >>
+> > >> Once this scanning process is complete and if there are any
+> > >> isolated pages added to the new per cpu array kernel thread
+> > >> invokes hyperlist_ready().
+> > >>
+> > >> In hyperlist_ready() a hypercall is made to report these pages to
+> > >> the host using the virtio-balloon framework. In order to do so
+> > >> another virtqueue 'hinting_vq' is added to the balloon framework.
+> > >> As the host frees all the reported pages, the kernel thread returns
+> > >> them back to the buddy.
+> > >>
+> > >> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+> > >
+> > > This looks kind of like what early iterations of Wei's patches did.
+> > >
+> > > But this has lots of issues, for example you might end up with
+> > > a hypercall per a 4K page.
+> > > So in the end, he switched over to just reporting only
+> > > MAX_ORDER - 1 pages.
+> > You mean that I should only capture/attempt to isolate pages with order
+> > MAX_ORDER - 1?
+> > >
+> > > Would that be a good idea for you too?
+> > Will it help if we have a threshold value based on the amount of memory
+> > captured instead of the number of entries/pages in the array?
+>
+> This is what Wei's patches do at least.
 
-Hi Ard,
+So in the solution I had posted I was looking more at
+HUGETLB_PAGE_ORDER and above as the size of pages to provide the hints
+on [1]. The advantage to doing that is that you can also avoid
+fragmenting huge pages which in turn can cause what looks like a
+memory leak as the memory subsystem attempts to reassemble huge
+pages[2]. In my mind a 2MB page makes good sense in terms of the size
+of things to be performing hints on as anything smaller than that is
+going to just end up being a bunch of extra work and end up causing a
+bunch of fragmentation.
 
->Same feedback as on v1: please don't rename the lock.
+The only issue with limiting things on an arbitrary boundary like that
+is that you have to hook into the buddy allocator to catch the cases
+where a page has been merged up into that range.
 
-With the efi_runtime_lock semaphore being no longer static, not renaming it
-will cause a compile failure as it will clash with the declaration of the
-efi_runtime_lock *spinlock* in arch/x86/platform/efi/efi_64.c in the
-CONFIG_EFI_MIXED case.
-
->> ---
->>  drivers/firmware/efi/runtime-wrappers.c | 60 ++++++++++++-------------
->>  include/linux/efi.h                     |  3 ++
->>  2 files changed, 33 insertions(+), 30 deletions(-)
->>
->> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
->> index 8903b9ccfc2b..ec60d6227925 100644
->> --- a/drivers/firmware/efi/runtime-wrappers.c
->> +++ b/drivers/firmware/efi/runtime-wrappers.c
->> @@ -53,7 +53,7 @@ struct efi_runtime_work efi_rts_work;
->>   * @rts_arg<1-5>:      efi_runtime_service() function arguments
->>   *
->>   * Accesses to efi_runtime_services() are serialized by a binary
->> - * semaphore (efi_runtime_lock) and caller waits until the work is
->> + * semaphore (efi_runtime_sem) and caller waits until the work is
->>   * finished, hence _only_ one work is queued at a time and the caller
->>   * thread waits for completion.
->>   */
->> @@ -144,7 +144,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
->>   * none of the remaining functions are actually ever called at runtime.
->>   * So let's just use a single lock to serialize all Runtime Services calls.
->>   */
->> -static DEFINE_SEMAPHORE(efi_runtime_lock);
->> +DEFINE_SEMAPHORE(efi_runtime_sem);
->>
->>  /*
->>   * Calls the appropriate efi_runtime_service() with the appropriate
->> @@ -233,10 +233,10 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -244,10 +244,10 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -257,11 +257,11 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
->>                                 NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -269,11 +269,11 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
->>                                 NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -285,11 +285,11 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
->>                                 data);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -299,11 +299,11 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
->>                                 NULL, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -315,11 +315,11 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
->>                                 data);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -330,12 +330,12 @@ virt_efi_set_variable_nonblocking(efi_char16_t *name, efi_guid_t *vendor,
->>  {
->>         efi_status_t status;
->>
->> -       if (down_trylock(&efi_runtime_lock))
->> +       if (down_trylock(&efi_runtime_sem))
->>                 return EFI_NOT_READY;
->>
->>         status = efi_call_virt(set_variable, name, vendor, attr, data_size,
->>                                data);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -350,11 +350,11 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
->>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
->>                 return EFI_UNSUPPORTED;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
->>                                 remaining_space, max_variable_size, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -369,12 +369,12 @@ virt_efi_query_variable_info_nonblocking(u32 attr,
->>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
->>                 return EFI_UNSUPPORTED;
->>
->> -       if (down_trylock(&efi_runtime_lock))
->> +       if (down_trylock(&efi_runtime_sem))
->>                 return EFI_NOT_READY;
->>
->>         status = efi_call_virt(query_variable_info, attr, storage_space,
->>                                remaining_space, max_variable_size);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -382,11 +382,11 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
->>  {
->>         efi_status_t status;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
->>                                 NULL, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -395,14 +395,14 @@ static void virt_efi_reset_system(int reset_type,
->>                                   unsigned long data_size,
->>                                   efi_char16_t *data)
->>  {
->> -       if (down_interruptible(&efi_runtime_lock)) {
->> +       if (down_interruptible(&efi_runtime_sem)) {
->>                 pr_warn("failed to invoke the reset_system() runtime service:\n"
->>                         "could not get exclusive access to the firmware\n");
->>                 return;
->>         }
->>         efi_rts_work.efi_rts_id = RESET_SYSTEM;
->>         __efi_call_virt(reset_system, reset_type, status, data_size, data);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>  }
->>
->>  static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
->> @@ -414,11 +414,11 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
->>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
->>                 return EFI_UNSUPPORTED;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
->>                                 NULL, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> @@ -432,11 +432,11 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
->>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
->>                 return EFI_UNSUPPORTED;
->>
->> -       if (down_interruptible(&efi_runtime_lock))
->> +       if (down_interruptible(&efi_runtime_sem))
->>                 return EFI_ABORTED;
->>         status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
->>                                 max_size, reset_type, NULL);
->> -       up(&efi_runtime_lock);
->> +       up(&efi_runtime_sem);
->>         return status;
->>  }
->>
->> diff --git a/include/linux/efi.h b/include/linux/efi.h
->> index 45ff763fba76..930cd20842b8 100644
->> --- a/include/linux/efi.h
->> +++ b/include/linux/efi.h
->> @@ -1745,6 +1745,9 @@ extern struct efi_runtime_work efi_rts_work;
->>  /* Workqueue to queue EFI Runtime Services */
->>  extern struct workqueue_struct *efi_rts_wq;
->>
->> +/* EFI runtime semaphore */
->> +extern struct semaphore efi_runtime_sem;
->> +
->>  struct linux_efi_memreserve {
->>         int             size;                   // allocated size of the array
->>         atomic_t        count;                  // number of entries used
->> --
->> 2.20.1
->>
-
--- 
-Be careful of reading health books, you might die of a misprint.
-	-- Mark Twain
+[1] https://lkml.org/lkml/2019/2/4/903
+[2] https://blog.digitalocean.com/transparent-huge-pages-and-alternative-memory-allocators/
