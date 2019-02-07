@@ -2,139 +2,77 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099C6C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A29C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA62B21928
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kv/OBBi8"
+	by mail.kernel.org (Postfix) with ESMTP id 4EF2A21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfBGRE7 (ORCPT
+        id S1726994AbfBGRFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:04:59 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55673 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfBGRE6 (ORCPT
+        Thu, 7 Feb 2019 12:05:36 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:47853 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfBGRFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:04:58 -0500
-Received: by mail-it1-f196.google.com with SMTP id m62so1434087ith.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:04:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+UungPTGvNyXucoF8vGb02MG0uot3poQft8jVKChgKA=;
-        b=Kv/OBBi8WLCbPKXTO32dfKZ+CeQh7Um1B/LmLHcz5YZcFmJaF4hxn53RjsprzUlORo
-         7V31blyjal2dqJmC2srAEqdbzuXEuK2Dh9A5pOtzO0tIaPn8C6ySP0CUyfryxXBfPuIj
-         uRWM3y4PNBOh8MKmfZ+cqOS9XCjjLFRV3bOAw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+UungPTGvNyXucoF8vGb02MG0uot3poQft8jVKChgKA=;
-        b=E7R08gUgO/snmD/ac4udqR6A/J19c3uDyZjW1tA8GhhAYqBB1WJaCxPdrfHGHWxXM3
-         xpxSUPyod/gDqvZf0xyZs+lWg3JkAFiPqGMfN1+l7StLus3cV7l3zpjecDNOLuLqPXHh
-         67A4HSVzHPGEwg99eftdpJuDR7NAg9yJZ4DdVUyqatzhndPZLiuMQeMIw2zQQiGz/6E+
-         v2o2XgxoQF/q8369cEL5vJH8+crqbyKCywn9rlAGdv9z8ZinYG96zG248o8oedf3upqM
-         /+CgNMQaC63jD3KIBevQnSydZID4hGGDRQBXDtgEivMvgkp9AYoNtSDuueHTuJ6LYZX5
-         PzmQ==
-X-Gm-Message-State: AHQUAubQ9Xr79SuiJj6Z4rj2YcSlNCwTXIdZBqOqgmCTBGFC+k82I23D
-        B37mFmI73BYAFwlDF7P4WOXp2fd5pqE=
-X-Google-Smtp-Source: AHgI3IbCtCkM1JxxNnJufsLLHn0013xxqW3qMfgQ6cscqq04eyZ4cmj1xhPCSDbGIB5eOinIlHnE/A==
-X-Received: by 2002:a6b:c386:: with SMTP id t128mr9035108iof.304.1549559098125;
-        Thu, 07 Feb 2019 09:04:58 -0800 (PST)
-Received: from mail-it1-f178.google.com (mail-it1-f178.google.com. [209.85.166.178])
-        by smtp.gmail.com with ESMTPSA id 197sm5802364itx.21.2019.02.07.09.04.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 09:04:56 -0800 (PST)
-Received: by mail-it1-f178.google.com with SMTP id h193so1434067ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:04:56 -0800 (PST)
-X-Received: by 2002:a24:3987:: with SMTP id l129mr5488578ita.45.1549559096311;
- Thu, 07 Feb 2019 09:04:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-3-thgarnie@chromium.org>
- <20190207121729.GE2414@zn.tnic>
-In-Reply-To: <20190207121729.GE2414@zn.tnic>
-From:   Thomas Garnier <thgarnie@chromium.org>
-Date:   Thu, 7 Feb 2019 09:04:45 -0800
-X-Gmail-Original-Message-ID: <CAJcbSZFe+Cn9+gEa4iv56sZE+WXXiHjeR8Mcte9s_HYr8QBrsw@mail.gmail.com>
-Message-ID: <CAJcbSZFe+Cn9+gEa4iv56sZE+WXXiHjeR8Mcte9s_HYr8QBrsw@mail.gmail.com>
-Subject: Re: [PATCH v6 02/27] x86: Use symbol name in jump table for PIE support
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nadav Amit <namit@vmware.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 7 Feb 2019 12:05:36 -0500
+Received: from orion.localdomain ([77.2.6.87]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mdv2u-1hQZhb406o-00b6Dt; Thu, 07 Feb 2019 18:05:34 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-input@vger.kernel.org, dmitry.torokhov@gmail.com
+Subject: [PATCH] input: keyboard: gpio-keys-polled: use input name from pdata if available
+Date:   Thu,  7 Feb 2019 18:05:31 +0100
+Message-Id: <1549559131-7423-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:o/bJtBDVg/nz+HvTddHfXCLT6w0T/Ro5emGw+ibhZpKu1WvN3nr
+ +gix8ATNP09B1I0McgkmxVm1iiTQlPz137e+ucw0/3bued7oYkjerfTzDMfcg9pt6Fjph72
+ TV5bli4erTuQu/+Jc9fYgnemloBCtRgfv6hEtAjzw+lWgd2UPHLn8oZ9jM3cmIZKFhykyIE
+ GciqOuWd8k3lvfzcQpZ/A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:04JJmCySCww=:24R3lQIKbIHmjPglMEyLJO
+ UXQiw/mZf5ezSRYZa4G65xn5efu9jLbJ3qwjjym149jbcHuFr1xXMq8aoJLT6MNYmwdY+ShA5
+ fZtVggciihOnc0Oo4pEgfKrakhkcOEwJWHS1JRxUz3pG64kI32IMi1y3UNSzKBjUKIsM/iq+2
+ wj//I4ba0Cc8DO6IanBRVC8cQoZq3CuI6r97zslG9/LB6MNmPi+sCBgagXvhbNx3tYC2rfVeD
+ 7+EaEfKad+FMWhxq466U4/4cMtVfyT2Bqh00LIjtEt90ZReD1JrYCde36DqrsMuAW5bBzM9Yx
+ tu1OginIkTmfAaoUDuA5mLRU7XdWMjgrF8XC+iYXO75cVwM0YJVC0lFeXv/jitlzD4GPARXkD
+ ZvgAoZcArZnFe4/U0XaLuSo5Fcnvs2P/xKH11udlLVfX+SVOLGht034CccUkwU2xtNsgOe4K3
+ szlC8/Hi7WLdCiRe2ClkG2mnmZK6DThwbkpv/PVALglGhp24dLZp5bRhmfbWOjZUe2EJOR66y
+ 4UkZHUw3fs6Heeyc6oRbcXuZat8pW1ZrY1STyD63OtuIe+qHtJbm7mxQ96dDavSBD7Bjmdi+d
+ vIkzyRWHBBozMeLYRMbBAQx0vLVTKBM4VDEYdv9vtjueoCeFaJFZpR7hLRnPcTOV7mb5AErCJ
+ NLnVCZ6A0GjeAVpC6On9FqyNkCLw7hxBD33wz7QYKfdAAMl2Syyo4ZbnRtBb0ESMpX959pI/n
+ lU84WYJ86K5klXfV2p/NLxKESTUcMzyhP0dRwA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 4:17 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Jan 31, 2019 at 11:24:09AM -0800, Thomas Garnier wrote:
-> > Replace the %c constraint with %P. The %c is incompatible with PIE
-> > because it implies an immediate value whereas %P reference a symbol.
->
-> How so?
->
-> AFAIK, %c requires a constant operand and if %P is used to print a
-> constant, it simply drops syntax-specific prefixes and does a bare
-> constant.
->
-> I guess that here
->
-> https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#x86Operandmodifiers
->
-> is not entirely correct as it should not say "If used for a constant"
-> for %P but say "symbol or constant".
->
-> But before/after asm doesn't show any difference. So what gives?
+Instead of hardcoding the input name to the driver name ('gpio-keys-polled'),
+allow the passing a name via platform data ('name' field was already present),
+but default to old behaviour in case of NULL.
 
-I assume that's an optimisation done by gcc later. The P modifier in
-the documentation does state that it is used to generate PIC code.
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/input/keyboard/gpio_keys_polled.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> before:
-> # 39 "./arch/x86/include/asm/jump_label.h" 1
->         1:
->         .byte 0xe9
->          .long .L241 - 2f       #
->         2:
->         .pushsection __jump_table,  "aw"
->          .balign 8
->         .long 1b - ., .L241 - .         #
->          .quad __use_tsc + 1 - .        #,
->         .popsection
->
-> after:
-> # 39 "./arch/x86/include/asm/jump_label.h" 1
->         1:
->         .byte 0xe9
->          .long .L241 - 2f       #
->         2:
->         .pushsection __jump_table,  "aw"
->          .balign 8
->         .long 1b - ., .L241 - .         #
->          .quad __use_tsc+1 - .  #
->         .popsection
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+index edc7262..3312186 100644
+--- a/drivers/input/keyboard/gpio_keys_polled.c
++++ b/drivers/input/keyboard/gpio_keys_polled.c
+@@ -272,7 +272,7 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+ 
+ 	input = poll_dev->input;
+ 
+-	input->name = pdev->name;
++	input->name = (pdata->name ? pdata->name : pdev->name);
+ 	input->phys = DRV_NAME"/input0";
+ 
+ 	input->id.bustype = BUS_HOST;
+-- 
+1.9.1
+
