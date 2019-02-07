@@ -2,138 +2,90 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B03E7C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA69CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3C42147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:37:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="LwDJBnIj"
+	by mail.kernel.org (Postfix) with ESMTP id 7D907218FE
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfBGKhy (ORCPT
+        id S1726809AbfBGKlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:37:54 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44916 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726549AbfBGKhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:37:54 -0500
-Received: from zn.tnic (p200300EC2BD1880034901D79874D129C.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8800:3490:1d79:874d:129c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BA29B1EC0375;
-        Thu,  7 Feb 2019 11:37:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549535872;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=OV84EKrVai5e1TV0CCbpF43jg+fUXWVTwRSCP6uBfNg=;
-        b=LwDJBnIjQx/au0YlHL3JF2c1rP1AEDrV71TueklOiYVbEbXBSWqWmlJjHrXJx5lzlEXpxn
-        SIw/7bcpKJn3Ub7v8TRpzHmeC6C3hnckx9jkcr2dLia9+b2Li+8Ckqqf2zoWunn9Gbyurj
-        9gpVsB0cMjUYR+Foy7BK6mn14yUz/0M=
-Date:   Thu, 7 Feb 2019 11:37:42 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 07/22] x86/fpu: Remove fpu->initialized
-Message-ID: <20190207103742.GC2414@zn.tnic>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-8-bigeasy@linutronix.de>
- <20190124133449.GC11554@zn.tnic>
- <20190205180336.smegi6rz7waprfaf@linutronix.de>
- <20190206140114.GD7314@zn.tnic>
- <20190207101301.vlaiikyqweftemxu@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190207101301.vlaiikyqweftemxu@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 7 Feb 2019 05:41:44 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45193 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfBGKln (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 05:41:43 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1grh7g-00089V-6p; Thu, 07 Feb 2019 11:41:36 +0100
+Message-ID: <1549536094.4557.8.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] dt-bindings: reset: Add HI3670 reset controller
+ binding
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        xuwei5@hisilicon.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, guodong.xu@linaro.org
+Date:   Thu, 07 Feb 2019 11:41:34 +0100
+In-Reply-To: <20190201153841.21903-2-manivannan.sadhasivam@linaro.org>
+References: <20190201153841.21903-1-manivannan.sadhasivam@linaro.org>
+         <20190201153841.21903-2-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 11:13:01AM +0100, Sebastian Andrzej Siewior wrote:
-> and I *think* that this is enough. This *what* we do and not *why*. I
-> don't have an answer towards *why*.
+Hi Manivannan,
 
-Well, it is a start.
-
-You now have everything in your L1 and it is all clear but I'm sure all
-the details will be LRU-evicted out soon :) and then you'd wish you'd
-written down at least a small hint explaining the grand scheme at least.
-
+On Fri, 2019-02-01 at 21:08 +0530, Manivannan Sadhasivam wrote:
+> HI3670 SoC is architecturally same as the HI3660 SoC. Hence, the same
+> driver is reused for HI3670 SoC and the binding is documented here.
 > 
-> > Considering that in this very thread we ourselves encountered the fact
-> > that stuff is not documented and we complained that it wasn't!
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../devicetree/bindings/reset/hisilicon,hi3660-reset.txt     | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Yes. We had no idea why we save the FPU registers on user's stack during
-> signal handling. Was this an implementation detail on kernel side as
-> part of signal handling or is this required/ expected by the user as
-> part of a use case?
+> diff --git a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> index 2bf3344b2a02..5d60ec541331 100644
+> --- a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> +++ b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> @@ -5,11 +5,12 @@ Please also refer to reset.txt in this directory for common reset
+>  controller binding usage.
+>  
+>  The reset controller registers are part of the system-ctl block on
+> -hi3660 SoC.
+> +hi3660 and hi3670 SoCs.
+>  
+>  Required properties:
+> -- compatible: should be
+> +- compatible: should be one of the following:
+>  		 "hisilicon,hi3660-reset"
+> +		 "hisilicon,hi3670-reset"
 
-Well, at least a comment over get_sigframe() would've helped a long way,
-right?
+If the HI3670 reset controller is compatible to the HI3660 reset
+controller, this could be:
 
-Instead of scratching heads why is this being done this way.
+- compatible: should be one of the following:
+              "hisilicon,hi3660-reset" for HI3660
+              "hisilicon,hi3670-reset", "hisilicon,hi3660-reset" for HI3670
 
-> We have now the explanation that signals may cascade. Do we know by
-> now if userland is supposed to use it or it accessed the register
-> because they were available? The MPX code did access the MPX part of
-> the xsave area (others do it for "testing/debug" as per my I google
-> research). This kind of things should be part of the ABI document and
-> not only a comment in the kernel.
+That way there would be no need to change the driver and it would be
+documented that the two reset controllers are compatible.
 
-Absolutely agreed.
-
-> Are the MAGIC constants only in-kernel use (to check if the user
-> accidentally overwrote its stack) or should be checked by the user
-> during signal handling to ensure that the xsave area is available.
-
-I don't think the user should care but what do I know?!
-
-> The part you referred to was:
-> |-       /* Update the thread's fxstate to save the fsave header. */
-> |-       if (ia32_fxstate) 
-> |-               copy_fxregs_to_kernel(fpu);
-> 
-> and it is not helping because it does not explain why it is done. I can
-> see based on the code that the FXstate is saved in case of a 32bit
-> frame. It is saved into thread's state. It does not explain why it
-> needs to be done. That is the "not helping" part.
-
-This is *exactly* why I propose that we should have a
-"grand-scheme-of-things" explanation somewhere about what we're doing
-with the FPU context.
-
-Figuring out what exactly to do in which context should be easier then.
-I hope.
-
-> I can forward you the IRC pieces offlist if you like. He said I can
-> remove it if there are no users and I am not aware of any. He pointed
-> out that sched_wakeup had a "success" member which was relied on by
-> tools so it remained in order not to break them. So we have
-> 	__entry->success        = 1; /* rudiment, kill when possible */
-> 
-> in the tree now. I can loop him in if this is not enough.
-
-So you're replacing the old member with the new, AFAICT and I guess
-that doesn't change offsets so even tools which don't use libtraceevent
-should be fine but we better make sure before we break userspace because
-we don't break userpace :)
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+regards
+Philipp
