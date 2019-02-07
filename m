@@ -2,88 +2,239 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED71C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 01:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8245BC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 01:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996B4217F9
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 01:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 502BC2175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 01:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfBGBhU (ORCPT
+        id S1726733AbfBGB53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 20:37:20 -0500
-Received: from mout.gmx.net ([212.227.17.21]:43351 "EHLO mout.gmx.net"
+        Wed, 6 Feb 2019 20:57:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58702 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726161AbfBGBhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 20:37:20 -0500
-Received: from [10.8.11.6] ([196.52.84.14]) by mail.gmx.com (mrgmx101
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0LvQkh-1hH5np1Mln-010ead for
- <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 02:37:18 +0100
-To:     linux-kernel@vger.kernel.org
-From:   "Artem S. Tashkinov" <ultrafine@gmx.com>
-Subject: On the issue of CPU model-specific registers write protection in UEFI
- secure boot mode
-Message-ID: <8d1f8adc-222b-40df-4573-67f28819126c@gmx.com>
-Date:   Thu, 7 Feb 2019 01:37:16 +0000
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:MFmXOgcNerOfqqeHVRvWtqTF7kjbBWUR82moBWcaj9ZhJPVTXOn
- xbFV7jIcqN4QcANZl7OSwh96+QfN6EpriVLFEuv8eygabe2JmMtjCWMf0ueQEQznamS1Ehi
- GYn+oeD8ne+Pnq4sl77YX2caEVL4FXBzc+QvJRMePsi+fASL+p8tUW1btXCD5p9m4qUbumI
- B1ev7qH24acTtYeGx634g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ijCAaFBmPrc=:Y3OlgEQr+6c/1gRYnnsJvN
- j7DRKiWYkODTBt+LnTKtW/+g1fXVnzj/X+OzmsMEZIsxRezG1/tLFD/Mz1P8Q9RFWrnrh6wDS
- S9lxgqSbiO/5seUEFdprVDy8A3K23MrqIHnQhgHVhyvl04mZsg9tFyf1MML5Fl6P5ewDtPP5b
- zRTnjt6ieYiw15EpcqNhppKxBbmKV32zNjsgwYSymLekTzWziXJjZT1/cvYF4Q7OK3f50GM2f
- EPaJkwP6N1D4HnBx/hezaKZOvIZHONYQWBjNDybE82NV7tWh4svoHnhxqngiTIOkxxzs9U0Jq
- 61vk6hErL5fgdTfdsWpXsgxqAV7oDchs3BE7CFlUl65p53LTQ3I75rNI1zkgIM0VIcp93H9sa
- oInesG0Yiemyh3oUUO7WrayOrIE/KO9vFkfcZPnd/fYAC905CgEy0jbZxGUzJfMycc3Sr1Kj4
- Hoh0LUPhZEgooCL7rUkad07cHeNsD0J/QKVWVO2vPq8iYAuJLVT35MYBMD3swevGjHzzFCxHt
- MxovydmrJP2SOKKxP+zzEP4foXvydJz3pSc8VltbYTNNtGapc7a2zXvS8WDiFBy08A++pojO2
- YP709Rfz7fUPY+QUEjJ3Dp7EqaYtxhnkjqYLeO7IHiHt1QUW3tDGw6jgdaCe0Eq18UIDrIM/Q
- 8ljWlgCAGPT0ya+rYQua1i01dan59Iz4YosXM2l5oSxi0p2EP2bFwl6zjoMN4bHLVC2yKk1yF
- MwmIUCQniRdquzDscd2dAUIdZ4qAdA5OPC9Jg0wskqVWuvppTHv5vtWcl8RbZwrW7GIdFbjQ5
- 1Q1Yz7oDaIs9k1UeCQPjVkVTmWB0W8EbmOxjyV53uakpqBwTyZwlTMwIXTnFdQnI4FPycEnjp
- adc1K0ZMu5oTcvxcOgNvoqz55o155KYJrrJeVOt17qHnhZF15Xry9Kbja9Vrga4KCHieVQJ46
- b+VXnQAkq/Q==
+        id S1726465AbfBGB53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 20:57:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E915619CF24;
+        Thu,  7 Feb 2019 01:57:27 +0000 (UTC)
+Received: from haswell-e.nc.xsintricity.com (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 29F6B691BA;
+        Thu,  7 Feb 2019 01:57:24 +0000 (UTC)
+Message-ID: <645c5e11b28ff10d354ae17ed3016bc895c9028b.camel@redhat.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+From:   Doug Ledford <dledford@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Date:   Wed, 06 Feb 2019 20:57:22 -0500
+In-Reply-To: <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+         <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
+         <20190206175233.GN21860@bombadil.infradead.org>
+         <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+         <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+         <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
+         <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+         <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-wpk6Y1FXNFOa7iPpHSPR"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 07 Feb 2019 01:57:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello LKML,
 
-Is there a serious reason why CPU MSR is write protected in UEFI secure 
-boot mode in Linux?
+--=-wpk6Y1FXNFOa7iPpHSPR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  * In order to even use MSR you have to be root to `modprobe msr`.
-  * In order to read/write from/to MSR you have to be root as 
-/dev/cpu/*/msr is accessible only by root.
-  * CPU registers don't survive reboot/power cycles.
-  * I'm not a CPU designer but if I'm not mistaken MSR cannot be used to 
-create any sort of stealth malware.
+On Wed, 2019-02-06 at 14:44 -0800, Dan Williams wrote:
+> On Wed, Feb 6, 2019 at 2:25 PM Doug Ledford <dledford@redhat.com> wrote:
+> > On Wed, 2019-02-06 at 15:08 -0700, Jason Gunthorpe wrote:
+> > > On Thu, Feb 07, 2019 at 08:03:56AM +1100, Dave Chinner wrote:
+> > > > On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote=
+:
+> > > > > On Wed, 6 Feb 2019, Doug Ledford wrote:
+> > > > >=20
+> > > > > > > Most of the cases we want revoke for are things like truncate=
+().
+> > > > > > > Shouldn't happen with a sane system, but we're trying to avoi=
+d users
+> > > > > > > doing awful things like being able to DMA to pages that are n=
+ow part of
+> > > > > > > a different file.
+> > > > > >=20
+> > > > > > Why is the solution revoke then?  Is there something besides tr=
+uncate
+> > > > > > that we have to worry about?  I ask because EBUSY is not curren=
+tly
+> > > > > > listed as a return value of truncate, so extending the API to i=
+nclude
+> > > > > > EBUSY to mean "this file has pinned pages that can not be freed=
+" is not
+> > > > > > (or should not be) totally out of the question.
+> > > > > >=20
+> > > > > > Admittedly, I'm coming in late to this conversation, but did I =
+miss the
+> > > > > > portion where that alternative was ruled out?
+> > > > >=20
+> > > > > Coming in late here too but isnt the only DAX case that we are co=
+ncerned
+> > > > > about where there was an mmap with the O_DAX option to do direct =
+write
+> > > > > though? If we only allow this use case then we may not have to wo=
+rry about
+> > > > > long term GUP because DAX mapped files will stay in the physical =
+location
+> > > > > regardless.
+> > > >=20
+> > > > No, that is not guaranteed. Soon as we have reflink support on XFS,
+> > > > writes will physically move the data to a new physical location.
+> > > > This is non-negotiatiable, and cannot be blocked forever by a gup
+> > > > pin.
+> > > >=20
+> > > > IOWs, DAX on RDMA requires a) page fault capable hardware so that
+> > > > the filesystem can move data physically on write access, and b)
+> > > > revokable file leases so that the filesystem can kick userspace out
+> > > > of the way when it needs to.
+> > >=20
+> > > Why do we need both? You want to have leases for normal CPU mmaps too=
+?
+> > >=20
+> > > > Truncate is a red herring. It's definitely a case for revokable
+> > > > leases, but it's the rare case rather than the one we actually care
+> > > > about. We really care about making copy-on-write capable filesystem=
+s like
+> > > > XFS work with DAX (we've got people asking for it to be supported
+> > > > yesterday!), and that means DAX+RDMA needs to work with storage tha=
+t
+> > > > can change physical location at any time.
+> > >=20
+> > > Then we must continue to ban longterm pin with DAX..
+> > >=20
+> > > Nobody is going to want to deploy a system where revoke can happen at
+> > > any time and if you don't respond fast enough your system either lock=
+s
+> > > with some kind of FS meltdown or your process gets SIGKILL.
+> > >=20
+> > > I don't really see a reason to invest so much design work into
+> > > something that isn't production worthy.
+> > >=20
+> > > It *almost* made sense with ftruncate, because you could architect to
+> > > avoid ftruncate.. But just any FS op might reallocate? Naw.
+> > >=20
+> > > Dave, you said the FS is responsible to arbitrate access to the
+> > > physical pages..
+> > >=20
+> > > Is it possible to have a filesystem for DAX that is more suited to
+> > > this environment? Ie designed to not require block reallocation (no
+> > > COW, no reflinks, different approach to ftruncate, etc)
+> >=20
+> > Can someone give me a real world scenario that someone is *actually*
+> > asking for with this?
+>=20
+> I'll point to this example. At the 6:35 mark Kodi talks about the
+> Oracle use case for DAX + RDMA.
+>=20
+> https://youtu.be/ywKPPIE8JfQ?t=3D395
 
-So, I'm asking this question because these registers allow to fine tune 
-Intel CPU power parameters ( https://github.com/georgewhewell/undervolt 
-) like voltage and others and make it possible to run your system both 
-faster and cooler and right now it's not possible under Linux and 
-perfectly possible under competing proprietary OSes.
+Thanks for the link, I'll review the panel.
 
-Of course, the user can
+> Currently the only way to get this to work is to use ODP capable
+> hardware, or Device-DAX. Device-DAX is a facility to map persistent
+> memory statically through device-file. It's great for statically
+> allocated use cases, but loses all the nice things (provisioning,
+> permissions, naming) that a filesystem gives you. This debate is what
+> to do about non-ODP capable hardware and Filesystem-DAX facility. The
+> current answer is "no RDMA for you".
+>=20
+> > Are DAX users demanding xfs, or is it just the
+> > filesystem of convenience?
+>=20
+> xfs is the only Linux filesystem that supports DAX and reflink.
 
-  * fetch his distro kernel sources
-  * apply a patch from ( 
-https://github.com/intel/intel-cmt-cat/wiki/UEFI-Secure-Boot-Compatibility )
-  * install his own UEFI certificate
-  * compile, sign and install a patched MSR kernel module
+Is it going to be clear from the link above why reflink + DAX + RDMA is
+a good/desirable thing?
 
-However this all has to be done for each new kernel release and many 
-Linux users just cannot do anything on this list.
+> > Do they need to stick with xfs?
+>=20
+> Can you clarify the motivation for that question?
 
-Best regards,
-Artem
+I did a little googling and research before I asked that question.=20
+According to the documentation, other FSes can work with DAX too (namely
+ext2 and ext4).  The question was more or less pondering whether or not
+ext2 or ext4 + RDMA + DAX would solve people's problems without the
+issues that xfs brings.
+
+>  This problem exists
+> for any filesystem that implements an mmap that where the physical
+> page backing the mapping is identical to the physical storage location
+> for the file data. I don't see it as an xfs specific problem. Rather,
+> xfs is taking the lead in this space because it has already deployed
+> and demonstrated that leases work for the pnfs4 block-server case, so
+> it seems logical to attempt to extend that case for non-ODP-RDMA.
+>=20
+> > Are they
+> > really trying to do COW backed mappings for the RDMA targets?  Or do
+> > they want a COW backed FS but are perfectly happy if the specific RDMA
+> > targets are *not* COW and are statically allocated?
+>=20
+> I would expect the COW to be broken at registration time. Only ODP
+> could possibly support reflink + RDMA. So I think this devolves the
+> problem back to just the "what to do about truncate/punch-hole"
+> problem in the specific case of non-ODP hardware combined with the
+> Filesystem-DAX facility.
+
+If that's the case, then we are back to EBUSY *could* work (despite the
+objections made so far).
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
+--=-wpk6Y1FXNFOa7iPpHSPR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlxbkIIACgkQuCajMw5X
+L91Evg//SBibnwgXwOjP007M0LvpMBWOIkoB9F+nU3UqhTEPFeMUlyf2En8+5NvK
++HW7QW68QNt5kEcEVnWDB0ixvcEiaO4ma/RQeTODtB5ARtiduHXa6IFo/ndVVuwf
+t8DAqtLamKEaORgQ52Km2a1QXDgIDGZzs6LrJMTIsv9NBh8hFmjA2CdgX1xk79lL
+gxqdZupI18nTyzj91VaKeYUhSJSB160w2xtkfosZlx58mlrKocEOm+7irNQsj5xj
+ElIDIVhcToRUROd0Qy14KNnQZWsjFcU2CDNpojGiXbHzF5I1aAcnU2WPurEMXKJ8
+rl090f8TA33e1OM1ZDwpMuieE/b5IESS31KTQ06gFdtGUll+Suyr+2Ra6grEi1s6
+8bc6vv1Fd2Dq7+JAISo2T1O94nTK0E1YdpyxCsuPBr/Av2Np02tpByIxND+vz7Ay
+Ut52Xy5R3unsEnONn/XxkYRsXt06EMaVnd1cTZUdnvTVoiMz7P/+bbK310NzYnDL
+5LSL+9W7ee5UWOngJ2Rme2p9+lZE8zzEwMr84kwzHpPfLYFLswT2FZ7ICGF3B/K+
+hdowtSBW9MngzFsEfj4zUrz+wfyRa/+WHszt/CorYRkrpV7u7KQvHssoGpMVyzut
+1QHb+rmYsKFwlqNDJ/Pbe+dARCq/RYvZ3UXCW6AQ+fNJjipOMVw=
+=0el0
+-----END PGP SIGNATURE-----
+
+--=-wpk6Y1FXNFOa7iPpHSPR--
+
