@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5F5C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AFCC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A3FF2190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:57:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB1F2190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:57:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UW9DDb/p"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L1bQ4mXV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbfBGM5G (ORCPT
+        id S1727383AbfBGM5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:57:06 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45137 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfBGM5E (ORCPT
+        Thu, 7 Feb 2019 07:57:10 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36890 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbfBGM5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:57:04 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so4441705pgc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 04:57:04 -0800 (PST)
+        Thu, 7 Feb 2019 07:57:08 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so4742791plr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 04:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=wVxETCRj9csXkr178RqwaQ70WDjkLA5uLcl3mAGgLOI=;
-        b=UW9DDb/pi65Xvl3Vz6Dw/OUA3Fl59q2P8ug5ik4Lqrdku78njfs4S7lYoVItyoKwSS
-         0Jki7sO0+S3jNoH006zE3qz+5wKYGMmrzS5X5ddkHMtPV322cM/zL/bsSZP5t8iII9n8
-         l2mf+IDhm+NGDwIuFQ3JP2bmyNVO2NtB3ldcuMT0pFfuDVmv8fsojOhgkwOdMGZ0sF5J
-         YvckbF/fXCv0PBXq3dYxqBNjrD7+P3qDvZ6h2mSsqjBd73D0T6tECYz9Cqb8+QtChgSI
-         FVODwGrNHYkr6u9xokCGlkRK5tC1GJkoMfms/w8fpwfbFTUEWQpFTU/7HxNIwXcSMwuO
-         6aKw==
+        bh=F38/1f+iUBZrVnisIpGjF3Hp0h3BqeGBxfZgCYkmLmo=;
+        b=L1bQ4mXVizD1Xxwy0FWGbtUwpPj9kj0ohpkP/IduUWPdiXE2UmcW+s3FTFOaABsenA
+         iuklS8oBX0ipYWtzacQXGYeJ9zp4BiGWEmH0ZxgxzatybXiNCshzE9LlAot8yOszXhR7
+         tnEJsLwttLm8nnlhpz67Yd9Ty0xscHjwM4fuMMzKG+eyofMdNynrVIRS1MEfmYA0cTJ9
+         Hols7WCAd+kzqHaQnUIs0p1Rc7q9qP9iuL63EFcG7g+WWEzf7SCBhxzgtGpHYDtc9N4H
+         2yl2pEhJY4mZA1eUbh5QUmuYhG1pORp0GZxsWGnXOzMmbmm15r1RXJyYU8PFInGnUMI2
+         Djlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=wVxETCRj9csXkr178RqwaQ70WDjkLA5uLcl3mAGgLOI=;
-        b=DUeDF0T5tOPEHfDityLvNfrjrGcsrTJkqTZfYOABqEbu7YS7GCArtNjboMR0yFntPM
-         RqEsvLfEU2sPjIrNbYMHVQr9dJAG3g2Nte82Wir9RwoZv8NB/M00/DUGLyBAskFYwKiw
-         10WOF25b72SoMaRRSa0Ewh7QvjojuG7NBi4AWYAiaSdp/E8wcvq7Jy9gfHNkHycX/K5S
-         DU9LpWsMleLS5j7zSxRvNKrG1NopknLpoQvRZrlITk8lH+tUb+TkHFeA68iX7xu23Z9r
-         obgHO+BRJU4xG4w6tPY3EJQTc0vjZuK4dVrCqXgEZEpIZ+OrI72blU3voC7aR1QEdYov
-         RiLg==
-X-Gm-Message-State: AHQUAuZtIAEi0Hs/zXcn5LZ3YqlZR6bgi+N0TjU1g6WXuGlBa84lQuab
-        eEMtW9mnE69C6rA7+ldotEQQcvD25ic=
-X-Google-Smtp-Source: AHgI3IZr/oJ97iPLgE5/4pLR/BPeSCbmoogs1PFg2iKQi3hqj9FIYA0Mt7NU3poy6wgKCcYOSkNi9A==
-X-Received: by 2002:a63:4d22:: with SMTP id a34mr12920642pgb.432.1549544223702;
-        Thu, 07 Feb 2019 04:57:03 -0800 (PST)
+        bh=F38/1f+iUBZrVnisIpGjF3Hp0h3BqeGBxfZgCYkmLmo=;
+        b=iwotzztEV3x2sHKtdtbdU78fHVaWxunrjdUH7vXhPVtoSoeVogw8733yTzbEOKBrbt
+         GKkK1JxlLE12yCxPFghYX9G4jGyWyJV9m6/6mNxbKFUSu//lMrOVX3zTPIu7wH1TDpZG
+         wWAXKbppkfN5fLhiLXyyUvLz98fIwGG1+eBwciLMms4hnva0FLf+t0fTwTv1Sq0bOWLi
+         BwCvr7ylY8QbB7jydyFjG3h74co+J3dqFiDiDmAQ0aUPgE/f9lUBGFGc5YYfVLO3kDwi
+         BY0YRNK0ub567q8UtAWPqyagh9ThYSvjBxAtKeaNCiSQJMiLhXYolID4l16xqumHWNVX
+         yXIg==
+X-Gm-Message-State: AHQUAuZsf5AyCkSs1WEu/hIQ/Bbd40cMiaNJzHqJiiED/8UDrPq9PwzP
+        sOaoY8KbAMUC69qTdZqQIx+oen8D/rQ=
+X-Google-Smtp-Source: AHgI3IbATsGowqoBjtJT9aUwjz/Db4/oHdHiS21hw0UGDNauUI7D8sgOD7G2WD2c3WnMx7DJ4L7suQ==
+X-Received: by 2002:a17:902:1745:: with SMTP id i63mr16055283pli.145.1549544227583;
+        Thu, 07 Feb 2019 04:57:07 -0800 (PST)
 Received: from localhost ([2402:3a80:c80:4138:75dd:3900:1d90:762f])
-        by smtp.gmail.com with ESMTPSA id l74sm19418631pfb.145.2019.02.07.04.57.02
+        by smtp.gmail.com with ESMTPSA id y5sm42218744pge.49.2019.02.07.04.57.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 04:57:03 -0800 (PST)
+        Thu, 07 Feb 2019 04:57:07 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         bjorn.andersson@linaro.org, edubezval@gmail.com,
@@ -63,9 +63,9 @@ To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         Zhang Rui <rui.zhang@intel.com>
 Cc:     linux-pm@vger.kernel.org
-Subject: [PATCH v1 18/24] drivers: thermal: tsens: Move get_temp_tsens_v2 to allow sharing
-Date:   Thu,  7 Feb 2019 16:19:36 +0530
-Message-Id: <461cc91a35b5766fe1b44a5fae647c40e4de7f80.1549525708.git.amit.kucheria@linaro.org>
+Subject: [PATCH v1 19/24] drivers: thermal: tsens: Common get_temp() learns to do ADC conversion
+Date:   Thu,  7 Feb 2019 16:19:37 +0530
+Message-Id: <187981aec80d2695c6cb4765600d2fe979122805.1549525708.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1549525708.git.amit.kucheria@linaro.org>
 References: <cover.1549525708.git.amit.kucheria@linaro.org>
@@ -76,129 +76,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just rename the function and move it to allow code sharing with future
-versions of TSENS IP
+get_temp() learns to return temperature regardless of whether it is
+returned as ADC code or direct temperature.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- drivers/thermal/qcom/tsens-common.c | 35 +++++++++++++++++++++++++++
- drivers/thermal/qcom/tsens-v2.c     | 37 +----------------------------
- drivers/thermal/qcom/tsens.h        |  1 +
- 3 files changed, 37 insertions(+), 36 deletions(-)
+ drivers/thermal/qcom/tsens-common.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-index d981effed493..ed975a2430d9 100644
+index ed975a2430d9..a935d2335eea 100644
 --- a/drivers/thermal/qcom/tsens-common.c
 +++ b/drivers/thermal/qcom/tsens-common.c
-@@ -102,6 +102,41 @@ static inline int code_to_degc(u32 adc_code, const struct tsens_sensor *s)
- 	return degc;
- }
+@@ -129,10 +129,15 @@ int get_temp_tsens_valid(struct tsens_priv *priv, int i, int *temp)
+ 	if (ret)
+ 		return ret;
  
-+int get_temp_tsens_valid(struct tsens_priv *priv, int i, int *temp)
-+{
-+	struct tsens_sensor *s = &priv->sensor[i];
-+	u32 temp_idx = LAST_TEMP_0 + s->hw_id;
-+	u32 valid_idx = VALID_0 + s->hw_id;
-+	u32 last_temp = 0, valid, mask;
-+	int ret;
-+
-+	ret = regmap_field_read(priv->rf[valid_idx], &valid);
-+	if (ret)
-+		return ret;
-+	while (!valid) {
-+		/* Valid bit is 0 for 6 AHB clock cycles.
-+		 * At 19.2MHz, 1 AHB clock is ~60ns.
-+		 * We should enter this loop very, very rarely.
-+		 */
-+		ndelay(400);
-+		ret = regmap_field_read(priv->rf[valid_idx], &valid);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Valid bit is set, OK to read the temperature */
-+	ret = regmap_field_read(priv->rf[temp_idx], &last_temp);
-+	if (ret)
-+		return ret;
-+
-+	mask = GENMASK(priv->fields[LAST_TEMP_0].msb,
-+		       priv->fields[LAST_TEMP_0].lsb);
-+	/* Convert temperature from deciCelsius to milliCelsius */
-+	*temp = sign_extend32(last_temp, fls(mask) - 1) * 100;
-+
-+	return 0;
-+}
-+
- int get_temp_common(struct tsens_priv *priv, int i, int *temp)
- {
- 	struct tsens_sensor *s = &priv->sensor[i];
-diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-index 0ea93b89bc65..d436b96a6f18 100644
---- a/drivers/thermal/qcom/tsens-v2.c
-+++ b/drivers/thermal/qcom/tsens-v2.c
-@@ -25,41 +25,6 @@
- #define TM_Sn_STATUS_OFF		0x00a0
- #define TM_TRDY_OFF			0x00e4
- 
--static int get_temp_tsens_v2(struct tsens_priv *priv, int i, int *temp)
--{
--	struct tsens_sensor *s = &priv->sensor[i];
--	u32 temp_idx = LAST_TEMP_0 + s->hw_id;
--	u32 valid_idx = VALID_0 + s->hw_id;
--	u32 last_temp = 0, valid, mask;
--	int ret;
--
--	ret = regmap_field_read(priv->rf[valid_idx], &valid);
--	if (ret)
--		return ret;
--	while (!valid) {
--		/* Valid bit is 0 for 6 AHB clock cycles.
--		 * At 19.2MHz, 1 AHB clock is ~60ns.
--		 * We should enter this loop very, very rarely.
--		 */
--		ndelay(400);
--		ret = regmap_field_read(priv->rf[valid_idx], &valid);
--		if (ret)
--			return ret;
--	}
--
--	/* Valid bit is set, OK to read the temperature */
--	ret = regmap_field_read(priv->rf[temp_idx], &last_temp);
--	if (ret)
--		return ret;
--
 -	mask = GENMASK(priv->fields[LAST_TEMP_0].msb,
 -		       priv->fields[LAST_TEMP_0].lsb);
 -	/* Convert temperature from deciCelsius to milliCelsius */
 -	*temp = sign_extend32(last_temp, fls(mask) - 1) * 100;
--
--	return 0;
--}
--
- /* v2.x: 8996, 8998, sdm845 */
++	if (priv->feat->adc) {
++		/* Convert temperature from ADC code to milliCelsius */
++		*temp = code_to_degc(last_temp, s) * 1000;
++	} else {
++		mask = GENMASK(priv->fields[LAST_TEMP_0].msb,
++			       priv->fields[LAST_TEMP_0].lsb);
++		/* Convert temperature from deciCelsius to milliCelsius */
++		*temp = sign_extend32(last_temp, fls(mask) - 1) * 100;
++	}
  
- const struct tsens_features tsens_v2_feat = {
-@@ -136,7 +101,7 @@ const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
- 
- static const struct tsens_ops ops_generic_v2 = {
- 	.init		= init_common,
--	.get_temp	= get_temp_tsens_v2,
-+	.get_temp	= get_temp_tsens_valid,
- };
- 
- const struct tsens_plat_data data_tsens_v2 = {
-diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
-index 9db89dffb719..4b3d71b26c97 100644
---- a/drivers/thermal/qcom/tsens.h
-+++ b/drivers/thermal/qcom/tsens.h
-@@ -255,6 +255,7 @@ struct tsens_priv {
- char *qfprom_read(struct device *dev, const char *cname);
- void compute_intercept_slope(struct tsens_priv *priv, u32 *pt1, u32 *pt2, u32 mode);
- int init_common(struct tsens_priv *priv);
-+int get_temp_tsens_valid(struct tsens_priv *priv, int i, int *temp);
- int get_temp_common(struct tsens_priv *priv, int i, int *temp);
- bool is_sensor_enabled(struct tsens_priv *priv, u32 hw_id);
- 
+ 	return 0;
+ }
 -- 
 2.17.1
 
