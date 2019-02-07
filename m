@@ -2,101 +2,173 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02735C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10887C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44ED21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D31DB2190C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:35:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ut7SJDrM"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="v7wRl+42"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfBGPeY (ORCPT
+        id S1727057AbfBGPfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:34:24 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45068 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfBGPeX (ORCPT
+        Thu, 7 Feb 2019 10:35:11 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39009 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfBGPfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:34:23 -0500
-Received: by mail-pf1-f194.google.com with SMTP id j3so70422pfi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:34:22 -0800 (PST)
+        Thu, 7 Feb 2019 10:35:11 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so89660pld.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:35:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vHVmlgopHIx0N72f92t2Wp+YYgILXvePaeg84jVpJQw=;
-        b=Ut7SJDrMi/leeSOl/+NZOCMvJsnB6wCh7ACgQEGX4C5gJk8KVJE4NnXMW+q2U62bSm
-         aBTa85Vxagzl9U2vxEccea5tJzC8ncGd2Grng/1PbQSl+cgzzR/pd6udSggTZQnyJrPo
-         hptDzeM3qE0t4hMl/eZFWYwWLtf2m5zu4GmugkxgLDqVvf3mw1MjeuLI/u8rExsQEUTv
-         wHnJICY6wOZ14h8veg1/0QNpfnnU+ANa72o8afr6KAFGtMpYQrGcydThdVAsuxGWa/Qa
-         r/Fh7ERbw70pxpWBr7x8cpF42x71vJLZSyPmvdzKPjEfQPKVuPUSa8tPNIEVnVGzE0Xl
-         JIfg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=vfrucWasRxu8wXy8I+OWsttiphZ78Pxa89vVhirKE38=;
+        b=v7wRl+42sRdc90Xr3bwo4dY+lG2m08Os2TWzjMUluAmfAXx53mYWdZk9xDGg4xBjPe
+         phtFtdx9z2YZiuseCKwB6wNwa2/fqva9NyZ/nXkNtJdZkrPOwVxZqDxmIo7EDYTmH3Qq
+         EfZciWgD188NKkDlMzfjm1CPZHfI3m7W3YENaMgUJ9FH2VmtbKk6zehcK6lMjIi8mU50
+         03SS12dLlPCftTfVBHVWEfc7hYSNgDG9nxXsw24l4ylQkYFKvZ7/qiNoOuwpy+z58d7u
+         U51cvcKmneEnevbHXoLNmee3w5yw8/Cv/Yx5uRByM2pPq3Omm2b0gH8pr4GItIQ84SfK
+         aySg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vHVmlgopHIx0N72f92t2Wp+YYgILXvePaeg84jVpJQw=;
-        b=jWPAJCBO8RLRT6vZMGBM3XB2ibmviKNNjHYqpnhlwWxi6tn2WEtchXHKuH5J4XQxds
-         PFZ2xiUh5L5ojf9CvelKYZAof4ZtcIJYNszcFmAp1lhSczuP0Y77873Hawztq5xAiH+9
-         6LBymsofReHyN77OsxSYVeiosSjXm1+TWW4qtKmsx0F0N9jRfsuIqXYRjBQ7xfGjyYMz
-         yMO7RKukpEwouuRhkFYan9Tygzkco0X48WBSODgW7qJEfO6a1kGK9xQ6fiPRpC9Cnipm
-         lCUCeCVpIuPx0cTBErK/tLOsKuMKw6RTyfQ+otsho+W8HuR09ytIDCprw4S1Zl9XugBl
-         2Tww==
-X-Gm-Message-State: AHQUAuZG7CpnHC1CvRCR4M0AcdHMFCAXBhIoMBLWmcC2b6yU2Dd38eab
-        rcTOGtG2KKLrSKLvKComiQE=
-X-Google-Smtp-Source: AHgI3IZDNX6Z5Oxg532YzbYjudTQ51L7iQgJQGq2CYVoEILCVVsWPWVbPyjdNh+Kyge6U162UuMCFA==
-X-Received: by 2002:a63:cf48:: with SMTP id b8mr358861pgj.17.1549553662714;
-        Thu, 07 Feb 2019 07:34:22 -0800 (PST)
-Received: from tianyukernel.corp.microsoft.com ([167.220.255.93])
-        by smtp.googlemail.com with ESMTPSA id j6sm16493945pfg.126.2019.02.07.07.34.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Feb 2019 07:34:21 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, mchehab+samsung@kernel.org,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        nicolas.ferre@microchip.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com, alex.williamson@redhat.com,
-        joro@8bytes.org, sashal@kernel.org, dan.carpenter@oracle.com
-Subject: [PATCH V3 3/3] MAINTAINERS: Add Hyper-V IOMMU driver into Hyper-V CORE AND DRIVERS scope
-Date:   Thu,  7 Feb 2019 23:33:49 +0800
-Message-Id: <1549553629-8414-4-git-send-email-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549553629-8414-1-git-send-email-Tianyu.Lan@microsoft.com>
-References: <1549553629-8414-1-git-send-email-Tianyu.Lan@microsoft.com>
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=vfrucWasRxu8wXy8I+OWsttiphZ78Pxa89vVhirKE38=;
+        b=MswMDqzgiHp29qSxfHItXmtjXGruJ+/z42QLKxnk6Lx4O6UPvQpxNYanDIKGa6diT+
+         Lb/5uh2QlOGouN3WrXYssur/0cXmzmRmB9RLRM/Nac5cNVlnPKBYzPNGr/TXLln54PUP
+         rWer+yR09/04qkn69Ro2/1HWP9+34uf662s8Kl5CYX3dhenYN2XApg9RTx0UXaGRnevF
+         hr9RSZfBUd0RyScm/lr9U4xTH7KxU/g2gVOEHiCwnOTgDcaWaHIxaJ1ri0n8+NtEORXg
+         gKNT6SwbyCQ3S9XVDBZv16u9g9FjNmeL0IaTkd9sEE+LoF0kYbhahGtG4qULzdlG7QmV
+         O+xg==
+X-Gm-Message-State: AHQUAuaQ9IMRHOH2ayv/1E91CCiL5BPPh7UzIp3AMusJAG2mRa3kPamp
+        tTbmAtTWxymBvmkf8fEtBkNSNA==
+X-Google-Smtp-Source: AHgI3IaVoMYYKhs8M27q2ZqhI+OfSw6Mv04jJk+GiXW7+JfxddzpCbSEEmMoiRDT4kfCHGPvz5JH/Q==
+X-Received: by 2002:a17:902:7c8a:: with SMTP id y10mr16635068pll.71.1549553710158;
+        Thu, 07 Feb 2019 07:35:10 -0800 (PST)
+Received: from ?IPv6:2600:380:7712:367d:9d7:f8fb:d4f4:2531? ([2600:380:7712:367d:9d7:f8fb:d4f4:2531])
+        by smtp.gmail.com with ESMTPSA id s2sm12302582pfa.167.2019.02.07.07.35.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 07:35:09 -0800 (PST)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: LSF/MM 2019: Call for Proposals (UPDATED!)
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        IDE/ATA development list <linux-ide@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>, bpf@vger.kernel.org,
+        ast@kernel.org
+Message-ID: <4f5a15c1-4f9e-acae-5094-2f38c8eebd96@kernel.dk>
+Date:   Thu, 7 Feb 2019 08:35:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+Hi,
 
-This patch is to add Hyper-V IOMMU driver file into Hyper-V CORE and
-DRIVERS scope.
+This is an important UPDATE to the previous LSF/MM announcement:
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+https://lore.kernel.org/linux-block/51b4b263-a0f2-113d-7bdc-f7960b540929@kernel.dk/
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9f64f8d..5fb6306 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7015,6 +7015,7 @@ F:	drivers/net/hyperv/
- F:	drivers/scsi/storvsc_drv.c
- F:	drivers/uio/uio_hv_generic.c
- F:	drivers/video/fbdev/hyperv_fb.c
-+F:	drivers/iommu/hyperv_iommu.c
- F:	net/vmw_vsock/hyperv_transport.c
- F:	include/linux/hyperv.h
- F:	include/uapi/linux/hyperv.h
+A BPF track will join the annual LSF/MM Summit this year! Please read
+the updated description and CFP information below.
+
+It will be held from April 30 - May 2 at the Sheraton Puerto Rico Hotel &
+Casino Lodges in San Juan, Puerto Rico.
+LSF/MM is an invitation-only technical workshop to map out improvements to
+the Linux storage, filesystem, memory management, and bpf subsystems that
+will make their way into the mainline kernel within the coming years.
+
+https://events.linuxfoundation.org/events/linux-storage-filesystem-mm-summit-2019/
+
+LSF/MM 2019 will be a three day, stand-alone conference with three
+subsystem-specific tracks, cross-track discussions, as well as BoF and
+hacking sessions.
+
+On behalf of the committee I am issuing a call for agenda proposals
+that are suitable for cross-track discussion as well as technical
+subjects for the breakout sessions.
+
+If advance notice is required for visa applications then please point
+that out in your proposal or request to attend, and submit the topic
+as soon as possible.
+
+1) Proposals for agenda topics should be sent before February 22th,
+2019 to:
+
+	lsf-pc@lists.linux-foundation.org
+
+and CC the mailing lists that are relevant for the topic in question:
+
+	FS:	linux-fsdevel@vger.kernel.org
+	MM:	linux-mm@kvack.org
+	Block:	linux-block@vger.kernel.org
+	ATA:	linux-ide@vger.kernel.org
+	SCSI:	linux-scsi@vger.kernel.org
+	NVMe:	linux-nvme@lists.infradead.org
+        BPF:    bpf@vger.kernel.org
+
+Note that we have extended the original deadline by a week, to
+accommodate the late arrival of the BPF track.
+
+Please tag your proposal with [LSF/MM TOPIC] to make it easier to
+track. In addition, please make sure to start a new thread for each
+topic rather than following up to an existing one. Agenda topics and
+attendees will be selected by the program committee, but the final
+agenda will be formed by consensus of the attendees on the day.
+
+2) Requests to attend the summit for those that are not proposing a
+topic should be sent to:
+
+	lsf-pc@lists.linux-foundation.org
+
+Please summarize what expertise you will bring to the meeting, and
+what you would like to discuss. Please also tag your email with
+[LSF/MM ATTEND] and send it as a new thread so there is less chance of
+it getting lost.
+
+We will try to cap attendance at around 25-30 per track to facilitate
+discussions although the final numbers will depend on the room sizes
+at the venue. Note that BPF track will be limited to 10-15 attendees.
+
+For discussion leaders, slides and visualizations are encouraged to
+outline the subject matter and focus the discussions. Please refrain
+from lengthy presentations and talks; the sessions are supposed to be
+interactive, inclusive discussions.
+
+In particular BPF topics are encouraged to be storage, fs, mm, tracing,
+security related or advancing the state of the art of BPF core.
+BPF and networking related topics are recommended to be submitted for
+Linux Plumbers Conference and corresponding Networking and BPF microconf
+later this year.
+
+Thank you on behalf of the program committee:
+
+	Anna Schumaker (Filesystems)
+	Josef Bacik (Filesystems)
+	Martin K. Petersen (Storage)
+	Jens Axboe (Storage)
+	Michal Hocko (MM)
+	Rik van Riel (MM)
+	Johannes Weiner (MM)
+        Alexei Starovoitov (BPF)
+
 -- 
-2.7.4
+Jens Axboe
 
