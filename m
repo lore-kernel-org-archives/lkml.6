@@ -2,128 +2,101 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6877C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCDEC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73C721721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A224121721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:02:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="08ftx0rA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfBGUAm (ORCPT
+        id S1727181AbfBGUC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:00:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58672 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbfBGUAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:00:41 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7771DE6A91;
-        Thu,  7 Feb 2019 20:00:39 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-35.bos.redhat.com [10.18.17.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DAE305C22D;
-        Thu,  7 Feb 2019 20:00:33 +0000 (UTC)
-Subject: Re: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new
- rwsem features
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1549566446-27967-1-git-send-email-longman@redhat.com>
- <20190207195119.lglz4lb7cnf4ndn2@linux-r8p5>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <45b7bbb8-c953-9951-ae6f-e2c3202e5cf2@redhat.com>
-Date:   Thu, 7 Feb 2019 15:00:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 7 Feb 2019 15:02:27 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45884 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbfBGUC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 15:02:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N4kppCYUcUOnlVR0x/xZGUmpasOnSvYhF6T1O8btqEk=; b=08ftx0rAKEGoamzTHb1LM8m2D
+        cC5592p9NtKw5oJGo2vb8llaHnpio+ghLsi7OMbTQaFy17Ts92xZmBD0S1UsT7BW/v21QGGQYkrKA
+        B7CDAmg0fG95YqSdnqmGRXoIm/qiuR9Wb/nw7QRzc+MI7OH8tOsmoAFk4nhQE659vGIFD0GsNYyDg
+        SrIg6+by3Kqt5e5/E4DaS4x0O4yW08jkKN7PoRIu3kDV8qI6x/2FZzUDL44r0umfjbzaXK5fijXTE
+        PHV+0awC7jwoSuzgVTll7U98/34PET0qPvI9pw66ihF0ai6GXHhdMvxDqYlcqI8kfttWNiq0jgbDW
+        Yv6iUwthw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grpsC-0007Al-Ta; Thu, 07 Feb 2019 20:02:14 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 845142029E062; Thu,  7 Feb 2019 21:02:11 +0100 (CET)
+Date:   Thu, 7 Feb 2019 21:02:11 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] perf, bpf: Retain kernel executable code in memory
+ to aid Intel PT tracing
+Message-ID: <20190207200211.GG32477@hirez.programming.kicks-ass.net>
+References: <20190207111901.2399-1-adrian.hunter@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190207195119.lglz4lb7cnf4ndn2@linux-r8p5>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 07 Feb 2019 20:00:40 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207111901.2399-1-adrian.hunter@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/07/2019 02:51 PM, Davidlohr Bueso wrote:
-> On Thu, 07 Feb 2019, Waiman Long wrote:
->> 30 files changed, 1197 insertions(+), 1594 deletions(-)
->
-> Performance numbers on numerous workloads, pretty please.
->
-> I'll go and throw this at my mmap_sem intensive workloads
-> I've collected.
->
-> Thanks,
-> Davidlohr
+On Thu, Feb 07, 2019 at 01:19:01PM +0200, Adrian Hunter wrote:
+> Subject to memory pressure and other limits, retain executable code, such
+> as JIT-compiled bpf, in memory instead of freeing it immediately it is no
+> longer needed for execution.
+> 
+> While perf is primarily aimed at statistical analysis, tools like Intel
+> PT can aim to provide a trace of exactly what happened. As such, corner
+> cases that can be overlooked statistically need to be addressed. For
+> example, there is a gap where JIT-compiled bpf can be freed from memory
+> before a tracer has a chance to read it out through the bpf syscall.
+> While that can be ignored statistically, it contributes to a death by
+> 1000 cuts for tracers attempting to assemble exactly what happened. This is
+> a bit gratuitous given that retaining the executable code is relatively
+> simple, and the amount of memory involved relatively small. The retained
+> executable code is then available in memory images such as /proc/kcore.
+> 
+> This facility could perhaps be extended also to init sections.
+> 
+> Note that this patch is compile tested only and, at present, is missing
+> the ability to retain symbols.
 
-Thanks for getting some of the performance numbers. This is the initial
-draft after more than 1 years of hibernation. I will also get other
-performance numbers in subsequent revision of the patch.
+You don't need the symbols; you already have them through
+PERF_RECORD_KSYMBOL.
 
-Cheers,
-Longman
+Also; afaict this patch guarantees exactly nothing. It registers a
+shrinker which will (given enough memory pressure) happily free your
+text before we get around to copying it out.
 
+Did you read this proposal?
+
+  https://lkml.kernel.org/r/20190109101808.GG1900@hirez.programming.kicks-ass.net
+
+(also: s/KCORE_QC/KCORE_QS/ for quiescent state)
+
+That would create an RCU like interface to /proc/kcore and give you the
+guarantees you need, while also allowing the memory to get freed once
+you've obtained a copy.
