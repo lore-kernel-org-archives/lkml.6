@@ -2,195 +2,145 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1CAC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0012BC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF0221721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFE0221721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:37:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AeBFBGHM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfBGXhH (ORCPT
+        id S1727080AbfBGXhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:37:07 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39298 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726401AbfBGXhH (ORCPT
+        Thu, 7 Feb 2019 18:37:13 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:49966 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGXhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:37:07 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17NSphq126110
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 18:37:06 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qgvekn2w9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 18:37:05 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Thu, 7 Feb 2019 23:37:05 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Feb 2019 23:37:01 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17Nb00B28246100
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Feb 2019 23:37:00 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE5B77805E;
-        Thu,  7 Feb 2019 23:37:00 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D5627805F;
-        Thu,  7 Feb 2019 23:36:59 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Feb 2019 23:36:59 +0000 (GMT)
-Subject: Re: [PATCH v11 08/16] tpm: clean up tpm_try_transmit() error handling
- flow
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
- <20190205224723.19671-9-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Thu, 7 Feb 2019 18:36:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 7 Feb 2019 18:37:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ju5+vYpJoZF1xS6C9OLI61WX5FiyHVFYeX6XMvTY2ns=; b=AeBFBGHMda5J9s/ynjOI/Qv9+
+        FbNAmhatmnFz1lYq0j6b09eAWld2lZ/tHy6PrJXmngfBf9uTOX7XzYM291YSQCNUFyU8aEWWWGHFb
+        3XJrgBaaahv8gl6W1ke1LBN50WR1H3qYPkFxJr1GJIfxQRp2NisqaxNAZBsds+JM9Jt1A=;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:36614)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1grtEA-0004dD-Kf; Thu, 07 Feb 2019 23:37:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1grtE4-0006YS-OC; Thu, 07 Feb 2019 23:37:00 +0000
+Date:   Thu, 7 Feb 2019 23:37:00 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of
+ 2.5/5G PMA extended abilities
+Message-ID: <20190207233700.ftw4cyilc2tzzqmb@shell.armlinux.org.uk>
+References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
+ <20190118152352.26417-6-maxime.chevallier@bootlin.com>
+ <20190120190809.GB19714@lunn.ch>
+ <20190121113531.7a8b5b51@bootlin.com>
+ <20190121105206.mxxxosytk5qiysc2@e5254000004ec.dyn.armlinux.org.uk>
+ <20190121132945.6e6dee23@bootlin.com>
+ <20190121130030.i5kkjb55gwttobvq@e5254000004ec.dyn.armlinux.org.uk>
+ <20190128152621.2aec96c1@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20190205224723.19671-9-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020723-0012-0000-0000-00001706CB6A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010556; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01157811; UDB=6.00604070; IPR=6.00938342;
- MB=3.00025484; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 23:37:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020723-0013-0000-0000-0000561E826A
-Message-Id: <5203f941-9516-0e91-7dc7-d5b9892c82ec@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902070168
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128152621.2aec96c1@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 5:47 PM, Jarkko Sakkinen wrote:
-> Move locking, locality handling and power management to tpm_transmit()
-> in order to simplify the flow.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Tested-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->   drivers/char/tpm/tpm-interface.c | 94 +++++++++++++++-----------------
->   drivers/char/tpm/tpm.h           |  1 +
->   drivers/char/tpm/tpm2-space.c    |  2 +-
->   3 files changed, 45 insertions(+), 52 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index c28ffef92f1a..f5f5224f68b0 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -167,7 +167,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	ssize_t len = 0;
->   	u32 count, ordinal;
->   	unsigned long stop;
-> -	bool need_locality;
->
->   	rc = tpm_validate_command(chip, space, buf, bufsiz);
->   	if (rc == -EINVAL)
-> @@ -197,37 +196,16 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   		return -E2BIG;
->   	}
->
-> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
-> -		mutex_lock(&chip->tpm_mutex);
-> -
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, true);
-> -
-> -	/* Store the decision as chip->locality will be changed. */
-> -	need_locality = chip->locality == -1;
-> -
-> -	if (need_locality) {
-> -		rc = tpm_request_locality(chip, flags);
-> -		if (rc < 0) {
-> -			need_locality = false;
-> -			goto out_locality;
-> -		}
-> -	}
-> -
-> -	rc = tpm_cmd_ready(chip, flags);
-> -	if (rc)
-> -		goto out_locality;
-> -
->   	rc = tpm2_prepare_space(chip, space, ordinal, buf);
->   	if (rc)
-> -		goto out;
-> +		return rc;
->
->   	rc = chip->ops->send(chip, buf, count);
->   	if (rc < 0) {
->   		if (rc != -EPIPE)
->   			dev_err(&chip->dev,
->   				"%s: tpm_send: error %d\n", __func__, rc);
-> -		goto out;
-> +		goto out_rc;
->   	}
->
->   	if (chip->flags & TPM_CHIP_FLAG_IRQ)
-> @@ -243,7 +221,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   		if (chip->ops->req_canceled(chip, status)) {
->   			dev_err(&chip->dev, "Operation Canceled\n");
->   			rc = -ECANCELED;
-> -			goto out;
-> +			goto out_rc;
->   		}
->
->   		tpm_msleep(TPM_TIMEOUT_POLL);
-> @@ -253,40 +231,20 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	chip->ops->cancel(chip);
->   	dev_err(&chip->dev, "Operation Timed out\n");
->   	rc = -ETIME;
-> -	goto out;
-> +	goto out_rc;
->
->   out_recv:
->   	len = chip->ops->recv(chip, buf, bufsiz);
->   	if (len < 0) {
->   		rc = len;
-> -		dev_err(&chip->dev,
-> -			"tpm_transmit: tpm_recv: error %d\n", rc);
-> -		goto out;
-> -	} else if (len < TPM_HEADER_SIZE) {
-> +		dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
-> +	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
->   		rc = -EFAULT;
-> -		goto out;
-> -	}
+On Mon, Jan 28, 2019 at 03:26:21PM +0100, Maxime Chevallier wrote:
+> Hello Russell,
+> 
+> On Mon, 21 Jan 2019 13:00:30 +0000
+> Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
+> 
+> >On Mon, Jan 21, 2019 at 01:29:45PM +0100, Maxime Chevallier wrote:
+> >> Hello Russell,
+> >> 
+> >> On Mon, 21 Jan 2019 10:52:06 +0000
+> >> Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:  
+> >> >It's entirely possible that the 3310 switches to different hardware
+> >> >blocks for 2.5G and 5G speeds, and reading _just_ the 1.4 register
+> >> >is not sufficient.  
+> >> 
+> >> I agree with you but in that particular case, I think we are reading
+> >> from the correct device. The datasheet itself says that we should be
+> >> reading 1.4 and 1.11 as we expect, with 2.5G/5G support being set (these
+> >> registers are read-only, and the datasheet's values aren't what we
+> >> actually read).  
+> >
+> >No, you missed what I was saying.
+> >
+> >The 88x3310 is a hybrid device.  It contains multiple instances of
+> >each individual device at different offsets in each MMD address space.
+> 
+> Ah I see, I indeed thought you refered to the MMDs. 
+> 
+> [...]
+> 
+> >The exception seems to be the PMA/PMD MMD which I've only discovered
+> >a single instance.
+> 
+> Yes there only seems to be one. There are some other registers in the
+> 1.0xCxxx range, but those who are documented don't help a lot with
+> determing wether or not these modes are supported.
+> 
+> I wonder if these values are correctly reported in newer PHY firmware
+> revisions.
+> 
+> I've checked other PCS instances, but it seems the one at 3.0x0xxx is
+> the one used in 2.5/5GBASET.
 
+In the following, I use "subdevice N" to mean instance "N + 1".  So
+the instance at address 0 is the main device and the following instance
+is subdevice 1.
 
-Add an else branch here for 'rc = 0' because it is otherwise set from 
-'rc = chip->ops->send(chip, buf, count);'. Or add it further above...
+Looking at the PCS, none of them have the 2.5G/5G bits set in the 3310
+which is rather interesting, except the one at 3.0 has the EEE bits
+set in 3.21.  You are quite correct that the first instance is used
+for 2.5G copper, but PCS subdevice 2 also changes as a result of
+switching down to 2.5G (its transmit fault status clears.)
 
+It looks like PhyXS subdevice 3 is used (which is a SGMII/1000base-X
+MAC facing PHY), is switched to fixed speed mode.  It doesn't have
+what looks like a sensible advertisement either, so my guess is that
+this will need the MAC side to be configured _not_ to expect the
+in-band control word in this mode.  In other words, it may be SGMII
+or 1000base-X upclocked to 2.5G speeds - which it is doesn't matter
+because the difference is in the control word which looks like it's
+omitted, or if it isn't, doesn't contain useful information.
 
+Note that mvpp2 is slightly buggy in this area, and I have a patch
+set that fixes it up - patches can be found in my "mvpp2" branch,
+which I'm waiting for my problem reporter to report back after his
+testing.  If you use this patch set, as long as you don't use
+in-band mode, it should be fine.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
