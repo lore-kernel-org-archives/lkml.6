@@ -2,82 +2,82 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42234C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02373C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F1772080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF2452173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfBGXXZ (ORCPT
+        id S1726894AbfBGX0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:23:25 -0500
-Received: from mga12.intel.com ([192.55.52.136]:30212 "EHLO mga12.intel.com"
+        Thu, 7 Feb 2019 18:26:16 -0500
+Received: from anholt.net ([50.246.234.109]:58870 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbfBGXXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:23:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 15:23:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
-   d="scan'208";a="136766309"
-Received: from meisenhu-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.43.220])
-  by orsmga001.jf.intel.com with ESMTP; 07 Feb 2019 15:23:20 -0800
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id EC61C21D9A; Fri,  8 Feb 2019 01:23:16 +0200 (EET)
-Date:   Fri, 8 Feb 2019 01:23:16 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Jian Xu Zheng <jian.xu.zheng@intel.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190207232316.3min76e2xy3aqrxh@kekkonen.localdomain>
-References: <20190104223531.GA1705@ziepe.ca>
+        id S1726822AbfBGX0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 18:26:15 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id F30F910A2BFC;
+        Thu,  7 Feb 2019 15:26:14 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id tVHdxSERm-th; Thu,  7 Feb 2019 15:26:14 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id ED8FB10A0353;
+        Thu,  7 Feb 2019 15:26:13 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 8745C2FE464C; Thu,  7 Feb 2019 15:26:13 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, david.emett@broadcom.com,
+        thomas.spurden@broadcom.com, Eric Anholt <eric@anholt.net>
+Subject: [PATCH] drm/v3d: Fix BO stats accounting for dma-buf-imported buffers.
+Date:   Thu,  7 Feb 2019 15:26:13 -0800
+Message-Id: <20190207232613.24981-1-eric@anholt.net>
+X-Mailer: git-send-email 2.20.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104223531.GA1705@ziepe.ca>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 10:35:43PM +0000, Jason Gunthorpe wrote:
-> Commit 2db76d7c3c6d ("lib/scatterlist: sg_page_iter: support sg lists w/o
-> backing pages") introduced the sg_page_iter_dma_address() function without
-> providing a way to use it in the general case. If the sg_dma_len is not
-> equal to the dma_length callers cannot safely use the
-> for_each_sg_page/sg_page_iter_dma_address combination.
-> 
-> Resolve this API mistake by providing a DMA specific iterator,
-> for_each_sg_dma_page(), that uses the right length so
-> sg_page_iter_dma_address() works as expected with all sglists. A new
-> iterator type is introduced to provide compile-time safety against wrongly
-> mixing accessors and iterators.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+We always decrement at GEM free, so make sure we increment at GEM
+creation for dma-bufs.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com> (ipu3-cio2)
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/gpu/drm/v3d/v3d_bo.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+index a08766d39eab..b1766f096c4b 100644
+--- a/drivers/gpu/drm/v3d/v3d_bo.c
++++ b/drivers/gpu/drm/v3d/v3d_bo.c
+@@ -282,6 +282,7 @@ v3d_prime_import_sg_table(struct drm_device *dev,
+ 			  struct dma_buf_attachment *attach,
+ 			  struct sg_table *sgt)
+ {
++	struct v3d_dev *v3d = to_v3d_dev(dev);
+ 	struct drm_gem_object *obj;
+ 	struct v3d_bo *bo;
+ 
+@@ -296,6 +297,11 @@ v3d_prime_import_sg_table(struct drm_device *dev,
+ 	obj->import_attach = attach;
+ 	v3d_bo_get_pages(bo);
+ 
++	mutex_lock(&v3d->bo_lock);
++	v3d->bo_stats.num_allocated++;
++	v3d->bo_stats.pages_allocated += obj->size >> PAGE_SHIFT;
++	mutex_unlock(&v3d->bo_lock);
++
+ 	v3d_mmu_insert_ptes(bo);
+ 
+ 	return obj;
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.20.0.rc1
+
