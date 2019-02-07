@@ -2,76 +2,81 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CE9C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3880C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9D821904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:48:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EhFhh6bX"
+	by mail.kernel.org (Postfix) with ESMTP id C8CC221907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbfBGNsN (ORCPT
+        id S1727057AbfBGNuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:48:13 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:42403 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726965AbfBGNsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:48:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=c+9GPMiYERMCdd54OZlooO0rwEN3WXZpUf2E80UO/Jw=; b=EhFhh6bX79M//hCtJi42vDpoh5
-        BMIZY9PIJxRasy5PmsmXF1bpMQ4RfCWPtMVZvWLGJTPpspS6mkHQGiP5a2nw4V2+eJYxMZgKmX/gJ
-        PszqsoTj+uj0bacyf0/QriAwJB0pWcCrnyr7Js/DT4Y8jgIlxn16/j7wBHPu7fQJSRSc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1grk2B-0006bk-VJ; Thu, 07 Feb 2019 14:48:07 +0100
-Date:   Thu, 7 Feb 2019 14:48:07 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next v2 01/10] net: phy: Update PHY linkmodes after
- config_init
-Message-ID: <20190207134807.GD23970@lunn.ch>
-References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
- <20190207094939.27369-2-maxime.chevallier@bootlin.com>
+        Thu, 7 Feb 2019 08:50:06 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:36614 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfBGNuG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:50:06 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1grk3g-0004Hh-6E; Thu, 07 Feb 2019 13:49:40 +0000
+Date:   Thu, 7 Feb 2019 13:49:40 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Denis Efremov <efremov@ispras.ru>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/10] security: fix documentation for the path_chmod hook
+Message-ID: <20190207134939.GA2217@ZenIV.linux.org.uk>
+References: <cover.1549540487.git.efremov@ispras.ru>
+ <0275d06334cdb1d2a87384d7971924a70776b3cb.1549540487.git.efremov@ispras.ru>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190207094939.27369-2-maxime.chevallier@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <0275d06334cdb1d2a87384d7971924a70776b3cb.1549540487.git.efremov@ispras.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 10:49:30AM +0100, Maxime Chevallier wrote:
-> We want to be able to update a PHY's supported list in the config_init
-> callback, so move the Pause parameters settings from phydrv->features
-> after calling config_init to make sure these  parameters aren't
-> overwritten.
+On Thu, Feb 07, 2019 at 03:44:54PM +0300, Denis Efremov wrote:
+> The path_chmod hook was changed in the commit
+> "switch security_path_chmod() to struct path *" (cdcf116d44e7).
+> The argument @mnt was removed from the hook, @dentry was changed
+> to @path. This patch updates the documentation accordingly.
+> 
+> Signed-off-by: Denis Efremov <efremov@ispras.ru>
+> ---
+>  include/linux/lsm_hooks.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index cb93972257be..5d6428d0027b 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -304,8 +304,7 @@
+>   *	Return 0 if permission is granted.
+>   * @path_chmod:
+>   *	Check for permission to change DAC's permission of a file or directory.
+> - *	@dentry contains the dentry structure.
+> - *	@mnt contains the vfsmnt structure.
+> + *	@path contains the path structure.
 
-Hi Maxime
+May I politely inquire about the value of these comments?  How much information
+is provided by refering to an argument as "the dentry structure" or "the path
+structure", especially when there's nothing immediately above that would introduce
+either.  "Type of 'dentry' argument is somehow related to struct dentry,
+try and guess what the value might be - we don't care, we just need every
+argument commented"?
 
-I have a patch which makes some core changes to support PHY doing
-runtime feature detection. I would prefer to use them, than this.
-
-Either I or Heiner will post them soon.
-
-       Andrew
+Who needs that crap in the first place?
