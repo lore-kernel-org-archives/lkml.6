@@ -2,164 +2,139 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C5C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099C6C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F4421872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA62B21928
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="E1cC3KC5"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kv/OBBi8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfBGREl (ORCPT
+        id S1726915AbfBGRE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:04:41 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39850 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGREk (ORCPT
+        Thu, 7 Feb 2019 12:04:59 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55673 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBGRE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:04:40 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so628410wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:04:40 -0800 (PST)
+        Thu, 7 Feb 2019 12:04:58 -0500
+Received: by mail-it1-f196.google.com with SMTP id m62so1434087ith.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:04:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=bfb6XdLQBuwV8OQUhWtqHzyKLHZ6Wl3/PspPxQktHO4=;
-        b=E1cC3KC5QRuzfMjm1loXWevDg4KYVtgl3C0NpApKqGDrPpTX+j6U8q4W2Gru3QJgMi
-         KbWkVGm25qOxJkitEwOi2Adso7QZat2OA4xqSR66ywHFhgAxKVYi340a56QJiS6Mh5oK
-         7OCp+o77YsLTMqyv8/p3/eU8XHoBm3Nbb9jsFGnhg+z0a6mpU5dMP0V4ZkDRdVHLMdxr
-         0s5CnDv6H+TPcYldNp3dcHf8DX0rsyvfvSn6fDTh6rFzb5UVAuhNY7pvQAJPNOB6azz4
-         +ulsoy72uQhm+MW7BRqD169R2LzOcM2/ERBAo54dPVjmpk/iNoT9XAkSTAmArloFUd6I
-         MOrw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+UungPTGvNyXucoF8vGb02MG0uot3poQft8jVKChgKA=;
+        b=Kv/OBBi8WLCbPKXTO32dfKZ+CeQh7Um1B/LmLHcz5YZcFmJaF4hxn53RjsprzUlORo
+         7V31blyjal2dqJmC2srAEqdbzuXEuK2Dh9A5pOtzO0tIaPn8C6ySP0CUyfryxXBfPuIj
+         uRWM3y4PNBOh8MKmfZ+cqOS9XCjjLFRV3bOAw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=bfb6XdLQBuwV8OQUhWtqHzyKLHZ6Wl3/PspPxQktHO4=;
-        b=cTBM4mEThgWXLzLrlbPQTvvOlzg+pfwTmZbLmuq5Ls649opzxYIlbFGTFCsnH35Kw5
-         9UDApArTnIC4NibtBTvILqrbeoDUGOnckmJutHJsQPtvE8iTTBbyEnjQNP9knvMxOEfo
-         kD6oTsqIVbNRsoxrEvQWpRSoMr9ssR++YkOldSLTao2chS3agkVk/UP4a6LjYyow4t72
-         XirTnGWKRP47apOUJ2hX1EhmSqL/RU74qZlLy+U/Tc5lM0KrChK5hcVZPzVUOAvBWBRD
-         24JL/KfYLBZorXditJAj+QSpd/5Ng7ARXrd+xf7Ghf9eIx0gt0jl4pEvGGUgB7mcZ3nY
-         FJ9w==
-X-Gm-Message-State: AHQUAuajlrwVxpqCyQboTbL9NpnlKjvw5Ndx+ZyyhBc8+cdk49yoc6//
-        0wuFb+wF3UIzYPVw1xj43h/rhg==
-X-Google-Smtp-Source: AHgI3Ia5ui10ccrWbMmNQ/NJuuZmQ4YiNUr8ipyoy9mGTvpoCHQmNJubTEfhMAbo16y4L3UcRANGiQ==
-X-Received: by 2002:a5d:558a:: with SMTP id i10mr12577380wrv.287.1549559079224;
-        Thu, 07 Feb 2019 09:04:39 -0800 (PST)
-Received: from localhost ([2620:10d:c092:180::1:a0f9])
-        by smtp.gmail.com with ESMTPSA id g67sm38726172wmd.38.2019.02.07.09.04.37
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+UungPTGvNyXucoF8vGb02MG0uot3poQft8jVKChgKA=;
+        b=E7R08gUgO/snmD/ac4udqR6A/J19c3uDyZjW1tA8GhhAYqBB1WJaCxPdrfHGHWxXM3
+         xpxSUPyod/gDqvZf0xyZs+lWg3JkAFiPqGMfN1+l7StLus3cV7l3zpjecDNOLuLqPXHh
+         67A4HSVzHPGEwg99eftdpJuDR7NAg9yJZ4DdVUyqatzhndPZLiuMQeMIw2zQQiGz/6E+
+         v2o2XgxoQF/q8369cEL5vJH8+crqbyKCywn9rlAGdv9z8ZinYG96zG248o8oedf3upqM
+         /+CgNMQaC63jD3KIBevQnSydZID4hGGDRQBXDtgEivMvgkp9AYoNtSDuueHTuJ6LYZX5
+         PzmQ==
+X-Gm-Message-State: AHQUAubQ9Xr79SuiJj6Z4rj2YcSlNCwTXIdZBqOqgmCTBGFC+k82I23D
+        B37mFmI73BYAFwlDF7P4WOXp2fd5pqE=
+X-Google-Smtp-Source: AHgI3IbCtCkM1JxxNnJufsLLHn0013xxqW3qMfgQ6cscqq04eyZ4cmj1xhPCSDbGIB5eOinIlHnE/A==
+X-Received: by 2002:a6b:c386:: with SMTP id t128mr9035108iof.304.1549559098125;
+        Thu, 07 Feb 2019 09:04:58 -0800 (PST)
+Received: from mail-it1-f178.google.com (mail-it1-f178.google.com. [209.85.166.178])
+        by smtp.gmail.com with ESMTPSA id 197sm5802364itx.21.2019.02.07.09.04.56
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 09:04:38 -0800 (PST)
-References: <1549015162-17418-1-git-send-email-jmasson@baylibre.com> <20190201101056.GA10039@Red>
-User-agent: mu4e 1.1.0; emacs 26.1.50
-From:   "Masson\, Julien" <jmasson@baylibre.com>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc:     Julien Masson <jmasson@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] tty: serial: meson_uart: Add support for kernel debugger
-In-reply-to: <20190201101056.GA10039@Red>
-Date:   Thu, 07 Feb 2019 18:04:36 +0100
-Message-ID: <86lg2rv8bf.fsf@baylibre.com>
+        Thu, 07 Feb 2019 09:04:56 -0800 (PST)
+Received: by mail-it1-f178.google.com with SMTP id h193so1434067ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:04:56 -0800 (PST)
+X-Received: by 2002:a24:3987:: with SMTP id l129mr5488578ita.45.1549559096311;
+ Thu, 07 Feb 2019 09:04:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-3-thgarnie@chromium.org>
+ <20190207121729.GE2414@zn.tnic>
+In-Reply-To: <20190207121729.GE2414@zn.tnic>
+From:   Thomas Garnier <thgarnie@chromium.org>
+Date:   Thu, 7 Feb 2019 09:04:45 -0800
+X-Gmail-Original-Message-ID: <CAJcbSZFe+Cn9+gEa4iv56sZE+WXXiHjeR8Mcte9s_HYr8QBrsw@mail.gmail.com>
+Message-ID: <CAJcbSZFe+Cn9+gEa4iv56sZE+WXXiHjeR8Mcte9s_HYr8QBrsw@mail.gmail.com>
+Subject: Re: [PATCH v6 02/27] x86: Use symbol name in jump table for PIE support
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nadav Amit <namit@vmware.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Fri 01 Feb 2019 at 11:10, Corentin Labbe <clabbe.montjoie@gmail.com> wrote:
-
-> On Fri, Feb 01, 2019 at 10:59:22AM +0100, Julien Masson wrote:
->> The kgdb invokes the poll_put_char and poll_get_char when communicating
->> with the host. This patch implement the serial polling hooks for the
->> meson_uart to be used for KGDB debugging over serial line.
->> 
->> Signed-off-by: Julien Masson <jmasson@baylibre.com>
->> ---
->> It has been tested on "Le Potato" board:
->> https://libre.computer/products/boards/aml-s905x-cc/
->> 
->> Kernel command line arguments:
->> kgdboc=ttyAML0,115200 kgdbretry=4 nokaslr kgdbcon
->> 
->> Kernel modules:
->> CONFIG_DEBUG_INFO=y
->> CONFIG_DEBUG_KERNEL=y
->> CONFIG_FRAME_POINTER=y
->> CONFIG_KGDB=y
->> CONFIG_KGDB_SERIAL_CONSOLE=y
->> 
->> Warning: for single step instruction I had to apply this patch:
->> https://lore.kernel.org/patchwork/patch/562423/
->> 
->>  drivers/tty/serial/meson_uart.c | 46 +++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 46 insertions(+)
->> 
->> diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
->> index 8a84259..49b20da 100644
->> --- a/drivers/tty/serial/meson_uart.c
->> +++ b/drivers/tty/serial/meson_uart.c
->> @@ -426,6 +426,48 @@ static void meson_uart_config_port(struct uart_port *port, int flags)
->>  	}
->>  }
->>  
->> +#ifdef CONFIG_CONSOLE_POLL
->> +/*
->> + * Console polling routines for writing and reading from the uart while
->> + * in an interrupt or debug context (i.e. kgdb).
->> + */
->> +
->> +static int meson_uart_poll_get_char(struct uart_port *port)
->> +{
->> +	u32 c;
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&port->lock, flags);
->> +
->> +	if (readl(port->membase + AML_UART_STATUS) & AML_UART_RX_EMPTY)
->> +		c = NO_POLL_CHAR;
->> +	else
->> +		c = readl(port->membase + AML_UART_RFIFO);
->> +
->> +	spin_unlock_irqrestore(&port->lock, flags);
->> +
->> +	return c;
->> +}
->> +
->> +static void meson_uart_poll_put_char(struct uart_port *port, unsigned char c)
->> +{
->> +	unsigned long flags;
->> +
->> +	spin_lock_irqsave(&port->lock, flags);
->> +
->> +	while (!(readl(port->membase + AML_UART_STATUS) & AML_UART_TX_EMPTY))
->> +		cpu_relax();
+On Thu, Feb 7, 2019 at 4:17 AM Borislav Petkov <bp@alien8.de> wrote:
 >
-> Hello
+> On Thu, Jan 31, 2019 at 11:24:09AM -0800, Thomas Garnier wrote:
+> > Replace the %c constraint with %P. The %c is incompatible with PIE
+> > because it implies an immediate value whereas %P reference a symbol.
 >
-> Perhaps you could use read_poll_timeout() ?
-> This will also permit to handle the timeout case.
+> How so?
 >
-> Regards
+> AFAIK, %c requires a constant operand and if %P is used to print a
+> constant, it simply drops syntax-specific prefixes and does a bare
+> constant.
+>
+> I guess that here
+>
+> https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#x86Operandmodifiers
+>
+> is not entirely correct as it should not say "If used for a constant"
+> for %P but say "symbol or constant".
+>
+> But before/after asm doesn't show any difference. So what gives?
 
-Thanks for the tips Corentin.
+I assume that's an optimisation done by gcc later. The P modifier in
+the documentation does state that it is used to generate PIC code.
 
-I tested with a poll of 5 usec and 1 msec of timeout.
-I had to use readl_poll_timeout_atomic(...) since I'm in atomic context
-(spinlock).
-
-I'll send a v2 of this patch.
-
-Regards
+>
+> before:
+> # 39 "./arch/x86/include/asm/jump_label.h" 1
+>         1:
+>         .byte 0xe9
+>          .long .L241 - 2f       #
+>         2:
+>         .pushsection __jump_table,  "aw"
+>          .balign 8
+>         .long 1b - ., .L241 - .         #
+>          .quad __use_tsc + 1 - .        #,
+>         .popsection
+>
+> after:
+> # 39 "./arch/x86/include/asm/jump_label.h" 1
+>         1:
+>         .byte 0xe9
+>          .long .L241 - 2f       #
+>         2:
+>         .pushsection __jump_table,  "aw"
+>          .balign 8
+>         .long 1b - ., .L241 - .         #
+>          .quad __use_tsc+1 - .  #
+>         .popsection
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> Good mailing practices for 400: avoid top-posting and trim the reply.
