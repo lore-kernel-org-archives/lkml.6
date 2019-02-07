@@ -2,115 +2,104 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1C7C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9759C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C94218B0
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFE28218B0
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfBGHoM (ORCPT
+        id S1726876AbfBGHqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 02:44:12 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:33262 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726410AbfBGHoM (ORCPT
+        Thu, 7 Feb 2019 02:46:34 -0500
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:44252 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726410AbfBGHqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 02:44:12 -0500
-X-Greylist: delayed 12056 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Feb 2019 02:44:11 EST
-Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x174KgpE010422;
-        Thu, 7 Feb 2019 04:23:03 GMT
-Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qg6k7jet2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Feb 2019 04:23:03 +0000
-Received: from sarge.linuxathome.me (unknown [16.99.168.108])
-        by g2t2354.austin.hpe.com (Postfix) with ESMTP id 4014D83;
-        Thu,  7 Feb 2019 04:23:00 +0000 (UTC)
-From:   Hedi Berriche <hedi.berriche@hpe.com>
-To:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
-        x86@kernel.org, Hedi Berriche <hedi.berriche@hpe.com>,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
-Subject: [Patch v2 2/4] x86/platform/UV: kill uv_bios_call_reentrant() as it has no callers
-Date:   Thu,  7 Feb 2019 04:22:32 +0000
-Message-Id: <20190207042234.25109-3-hedi.berriche@hpe.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190207042234.25109-1-hedi.berriche@hpe.com>
-References: <20190207042234.25109-1-hedi.berriche@hpe.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=375 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902070032
+        Thu, 7 Feb 2019 02:46:34 -0500
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from eli@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 7 Feb 2019 09:46:31 +0200
+Received: from nps-server-21.mtl.labs.mlnx (nps-server-21.mtl.labs.mlnx [10.137.240.120])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id x177kVDu026569;
+        Thu, 7 Feb 2019 09:46:31 +0200
+Received: from nps-server-21.mtl.labs.mlnx (localhost [127.0.0.1])
+        by nps-server-21.mtl.labs.mlnx (8.14.7/8.14.7) with ESMTP id x177kV0c030213;
+        Thu, 7 Feb 2019 09:46:31 +0200
+Received: (from eli@localhost)
+        by nps-server-21.mtl.labs.mlnx (8.14.7/8.14.7/Submit) id x177kPdV030210;
+        Thu, 7 Feb 2019 09:46:25 +0200
+From:   Eli Cohen <eli@mellanox.com>
+To:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     simon.horman@netronome.com, jakub.kicinski@netronome.com,
+        dirk.vandermerwe@netronome.com, francois.theron@netronome.com,
+        quentin.monnet@netronome.com, john.hurley@netronome.com,
+        edwin.peer@netronome.com, Eli Cohen <eli@mellanox.com>
+Subject: [PATCH net-next 0/2] Change tc action identifiers to be more consistent
+Date:   Thu,  7 Feb 2019 09:45:47 +0200
+Message-Id: <20190207074549.29861-1-eli@mellanox.com>
+X-Mailer: git-send-email 2.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-uv_bios_call_reentrant() has no callers nor is it exported, kill it.
+This two patch series modifies TC actions identifiers to be more consistent and
+also puts them in one place so new identifiers numbers can be chosen more
+easily.
 
-Cc: Russ Anderson <rja@hpe.com>
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Dimitri Sivanich <sivanich@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
----
- arch/x86/include/asm/uv/bios.h |  1 -
- arch/x86/platform/uv/bios_uv.c | 12 ------------
- 2 files changed, 13 deletions(-)
+Eli Cohen (2):
+  net: Move all TC actions identifiers to one place
+  net: Change TCA_ACT_* to TCA_ID_* to match that of TCA_ID_POLICE
 
-diff --git a/arch/x86/include/asm/uv/bios.h b/arch/x86/include/asm/uv/bios.h
-index e652a7cc6186..4eee646544b2 100644
---- a/arch/x86/include/asm/uv/bios.h
-+++ b/arch/x86/include/asm/uv/bios.h
-@@ -140,7 +140,6 @@ enum uv_memprotect {
-  */
- extern s64 uv_bios_call(enum uv_bios_cmd, u64, u64, u64, u64, u64);
- extern s64 uv_bios_call_irqsave(enum uv_bios_cmd, u64, u64, u64, u64, u64);
--extern s64 uv_bios_call_reentrant(enum uv_bios_cmd, u64, u64, u64, u64, u64);
- 
- extern s64 uv_bios_get_sn_info(int, int *, long *, long *, long *, long *);
- extern s64 uv_bios_freq_base(u64, u64 *);
-diff --git a/arch/x86/platform/uv/bios_uv.c b/arch/x86/platform/uv/bios_uv.c
-index 4a6a5a26c582..cd05af157763 100644
---- a/arch/x86/platform/uv/bios_uv.c
-+++ b/arch/x86/platform/uv/bios_uv.c
-@@ -66,18 +66,6 @@ s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
- 	return ret;
- }
- 
--s64 uv_bios_call_reentrant(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
--					u64 a4, u64 a5)
--{
--	s64 ret;
--
--	preempt_disable();
--	ret = uv_bios_call(which, a1, a2, a3, a4, a5);
--	preempt_enable();
--
--	return ret;
--}
--
- 
- long sn_partition_id;
- EXPORT_SYMBOL_GPL(sn_partition_id);
+ include/net/act_api.h                     |  2 +-
+ include/net/tc_act/tc_csum.h              |  2 +-
+ include/net/tc_act/tc_gact.h              |  2 +-
+ include/net/tc_act/tc_mirred.h            |  4 +--
+ include/net/tc_act/tc_pedit.h             |  2 +-
+ include/net/tc_act/tc_sample.h            |  2 +-
+ include/net/tc_act/tc_skbedit.h           |  2 +-
+ include/net/tc_act/tc_tunnel_key.h        |  4 +--
+ include/net/tc_act/tc_vlan.h              |  2 +-
+ include/uapi/linux/pkt_cls.h              | 45 ++++++++++++++++++++++++++++---
+ include/uapi/linux/tc_act/tc_bpf.h        |  2 --
+ include/uapi/linux/tc_act/tc_connmark.h   |  2 --
+ include/uapi/linux/tc_act/tc_csum.h       |  2 --
+ include/uapi/linux/tc_act/tc_gact.h       |  1 -
+ include/uapi/linux/tc_act/tc_ife.h        |  1 -
+ include/uapi/linux/tc_act/tc_ipt.h        |  3 ---
+ include/uapi/linux/tc_act/tc_mirred.h     |  1 -
+ include/uapi/linux/tc_act/tc_nat.h        |  2 --
+ include/uapi/linux/tc_act/tc_pedit.h      |  2 --
+ include/uapi/linux/tc_act/tc_sample.h     |  2 --
+ include/uapi/linux/tc_act/tc_skbedit.h    |  2 --
+ include/uapi/linux/tc_act/tc_skbmod.h     |  2 --
+ include/uapi/linux/tc_act/tc_tunnel_key.h |  2 --
+ include/uapi/linux/tc_act/tc_vlan.h       |  2 --
+ net/sched/act_api.c                       |  2 +-
+ net/sched/act_bpf.c                       |  2 +-
+ net/sched/act_connmark.c                  |  2 +-
+ net/sched/act_csum.c                      |  2 +-
+ net/sched/act_gact.c                      |  2 +-
+ net/sched/act_ife.c                       |  2 +-
+ net/sched/act_ipt.c                       |  4 +--
+ net/sched/act_mirred.c                    |  2 +-
+ net/sched/act_nat.c                       |  2 +-
+ net/sched/act_pedit.c                     |  2 +-
+ net/sched/act_police.c                    |  2 +-
+ net/sched/act_sample.c                    |  2 +-
+ net/sched/act_simple.c                    |  4 +--
+ net/sched/act_skbedit.c                   |  2 +-
+ net/sched/act_skbmod.c                    |  2 +-
+ net/sched/act_tunnel_key.c                |  2 +-
+ net/sched/act_vlan.c                      |  2 +-
+ tools/include/uapi/linux/tc_act/tc_bpf.h  |  2 --
+ 42 files changed, 70 insertions(+), 63 deletions(-)
+
 -- 
-2.20.1
+1.8.3.1
 
