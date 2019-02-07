@@ -2,68 +2,49 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70E1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7414CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B372175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F64E2147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:30:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXSjT1Hk"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EVWIc01U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfBGW1o (ORCPT
+        id S1726844AbfBGWaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:27:44 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43770 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbfBGW1n (ORCPT
+        Thu, 7 Feb 2019 17:30:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41036 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGWaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:27:43 -0500
-Received: by mail-pl1-f194.google.com with SMTP id f90so411005plb.10;
-        Thu, 07 Feb 2019 14:27:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=lb7ocCcoTVCzqHwnwbLdIJbHy25WuLw1BTbro070VbQ=;
-        b=HXSjT1HkvYwU4vOsDKPiUM+//gFc/MqvxJXUZHYsi9lBPil04qLGFEeeEpvNu8Zd67
-         1t1Pr959GHVKGcusbAJXxng/iCM7zvXa54lEMBmtXHepJLcZlKOciZYqV7fnr3tuvcGV
-         e/Z+Ve3RJc9wqxR7bOdfO6hvMg4S1WjD42cGqwdCFVVd6Oe8iZo/RnhZrdL0tRayVaC2
-         IFUObpcmpojCD2Kw1XiRezEEfrG3guwggLBtL9VbYtNzkmPPHsLHlDp8FZJJr+H2RI6a
-         jhWtDKiE/5Q/lgo3h89WzUY04zLwB0DCsLayLoAawSHEdhBLu32Smqln6NioyCMkHCrT
-         l+/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=lb7ocCcoTVCzqHwnwbLdIJbHy25WuLw1BTbro070VbQ=;
-        b=czQjQKSGxFNhP6AuOK18Hh0eE5VGIJEbtVTflMTI70/eQzpNUi2AOGKN1IU+KUi4/2
-         /7MT2qHbHxj1YWXQq9JZWtuGX/7AetqUjgegUBaqa7S/2G1LZssaeWKRJaQjyPRwhfrj
-         Wj42mY2sFDBiFTuEpmZlduRnn0XsruEiZsLzxk5zjynZv7gOWEiUsoDfuwAjQcl8NF2S
-         Zk1+ABqanqWzr4/9cNCBO3ht6mInY1snbYIwmhNhxTewbdID+dLMBVI+VjScbGji+ZzF
-         xEuxeU5oHn88ZTdJ1ylQSygPLx8M1773tTOVun7+ukolhH03enOJoNRh/DlqDgjI1sTW
-         OVDA==
-X-Gm-Message-State: AHQUAubNV1g+Wxe3944c44QodVt6c3g+vkpPo7U78Ba4WzGSSITnYYwW
-        Xg7+N/u96HiN9CkIoCvhpc7tiOA8
-X-Google-Smtp-Source: AHgI3IYy/PE8CV2AqWJXpMS4ctzJ/inJqU+kylmbxGkil/p/ceMyczCLnAcqLQD2x3abQVvFWYD9HA==
-X-Received: by 2002:a17:902:be10:: with SMTP id r16mr19100022pls.304.1549578462617;
-        Thu, 07 Feb 2019 14:27:42 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id e21sm317746pfh.45.2019.02.07.14.27.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 14:27:41 -0800 (PST)
-Date:   Thu, 7 Feb 2019 14:27:40 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
-        Danilo Krummrich <danilokrummrich@dk-develop.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: ps2-gpio - flush TX work when closing port
-Message-ID: <20190207222740.GA38612@dtor-ws>
+        Thu, 7 Feb 2019 17:30:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=iLtooaSkEDgcosX1XSHC15t66y2mjw+jQsXju6D9jgI=; b=EVWIc01UpI+zycT5Vtp4yD7DPM
+        K60nkrKooVyG4AWc4PDZHvU5lzyoAEP/rdTJqAMkPIG1u8UKSemFu5cm+ZYdduGrm1XbBKvEw0NM2
+        eS5vK5dw1tJhw2SFBFkpHnem98VRpbW4KggsBhjT6yp9myWikoMY3X1EnDnSEcfzbB7QpV1DEib+k
+        6jxGa72yOE6Nblh2KbhN2e59mR8hGYewXqpjj+9HNd8/BfMWi3C6jB7LH8HOxX9GW/JNF03PVp43i
+        aTkkv+ZGQZ2NynUlXGi7Y/yBx0p7EDZEZQfe1lzMW+JZY3ef8kJeFqF4VNRz3ddVolTzGO5LiTB+y
+        85cFlg5Q==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grsBY-0004AH-56; Thu, 07 Feb 2019 22:30:20 +0000
+Date:   Thu, 7 Feb 2019 14:30:17 -0800
+From:   Darren Hart <dvhart@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 5.0-2
+Message-ID: <20190207223017.GA27814@wrath>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -73,30 +54,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To ensure that TX work is not running after serio port has been torn down,
-let's flush it when closing the port.
+Hi Linus,
 
-Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/serio/ps2-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
+The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
 
-diff --git a/drivers/input/serio/ps2-gpio.c b/drivers/input/serio/ps2-gpio.c
-index c62cceb97bb1..9e1dbde2e15b 100644
---- a/drivers/input/serio/ps2-gpio.c
-+++ b/drivers/input/serio/ps2-gpio.c
-@@ -76,6 +76,7 @@ static void ps2_gpio_close(struct serio *serio)
- {
- 	struct ps2_gpio_data *drvdata = serio->port_data;
- 
-+	flush_work(&drvdata->tx_work.work);
- 	disable_irq(drvdata->irq);
- }
- 
+  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v5.0-2
+
+for you to fetch changes up to 6a730fcb9cb472ba2d42b26a50ac65dacdd68882:
+
+  Documentation/ABI: Correct mlxreg-io KernelVersion for 5.0 (2019-01-26 11:30:26 -0800)
+
+Thanks,
+
+Darren Hart
+VMware Open Source Technology Center
+
+----------------------------------------------------------------
+platform-drivers-x86 for v5.0-2
+
+Correct Documentation/ABI 4.21 KernelVersion to 5.0.
+
+The following is an automated git shortlog grouped by driver:
+
+Documentation/ABI:
+ -  Correct mlxreg-io KernelVersion for 5.0
+
+----------------------------------------------------------------
+Darren Hart (VMware) (1):
+      Documentation/ABI: Correct mlxreg-io KernelVersion for 5.0
+
+ Documentation/ABI/stable/sysfs-driver-mlxreg-io | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
 -- 
-2.20.1.611.gfbb209baf1-goog
-
-
--- 
-Dmitry
+Darren Hart
+VMware Open Source Technology Center
