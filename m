@@ -2,129 +2,116 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92853C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2382C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5882B21904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 931A521904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Jm0NxIGV"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="GPVCVZAg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfBGPLR (ORCPT
+        id S1726930AbfBGPLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:11:17 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:28673 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726048AbfBGPLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:11:17 -0500
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5c4a920000>; Thu, 07 Feb 2019 23:11:14 +0800
-Received: from HKMAIL103.nvidia.com ([10.18.16.12])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 07 Feb 2019 07:11:12 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Thu, 07 Feb 2019 07:11:12 -0800
-Received: from HKMAIL104.nvidia.com (10.18.16.13) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 7 Feb
- 2019 15:11:10 +0000
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (104.47.41.52) by
- HKMAIL104.nvidia.com (10.18.16.13) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Thu, 7 Feb 2019 15:11:10 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3494.namprd12.prod.outlook.com (20.178.196.220) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Thu, 7 Feb 2019 15:11:07 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Thu, 7 Feb 2019
- 15:11:07 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Thread-Topic: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Thread-Index: AQHUvlB3grXi65/4z0qjAfijKk4nv6XUbM4AgAADlOA=
-Date:   Thu, 7 Feb 2019 15:11:06 +0000
-Message-ID: <BYAPR12MB3398712D185CCCB345EB2B5BC2680@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
- <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
- <a6b1acbd-9be0-62b7-29bb-081d93ee92fb@gmail.com>
-In-Reply-To: <a6b1acbd-9be0-62b7-29bb-081d93ee92fb@gmail.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3494;6:/7Ze7xQSZu+XbG/haxhxv4Gf+NNEVBpnKQ7gnMm+BmYS4Escf0yXXLb3FCKN4/tmlkYpZOZUwxMlzbWp5xeyGnLnYpfIkkP+v+jCqwIL+cqaykMQ8rv4dPx7Mvya6hfTpSHl3Q/NX8Tz/orN2E1ErV+F154Ctcvb734vcx5WPhE8ym1nT7bjjk2XDAF0vwk4Yledq8y8xl+1QTilw3/oa0nFHTz2SMnk+wrQAAQ0p4maX8YocTsDSearo3VqW2aTiFL3cIuRKgznyafCrd9noVXYwah0a8HcUae2PGt2NcDCW19fLVKobP2y2bj2wt4DrseVZS5cW1lmHG3c692DgsimciX9pQXX4/ZnixcJMU/tAL9pMjrVYezj2utFrgQqFu+zONvj61E8hS0LV/7jKiUZ3HZ9EFoNyshBSsBWXSU9d50PZdF2ESsMndZEukIwaDjdtJsLqP41RojQXVFDrw==;5:ZofSVbeTcxGQB+6UDl2OYhIc3pJHSq1CW0yMdPQGhG8s5Q8DwATt2yHlZjdkTqHH06FYaPVU7pA3eErLZLuAL90Mye6gOHQL95tq527TV+Yb7MllR2TA4VS98EHGxe+vnGW1HcSe7jJoblEA3gFy+jw+1dE43+sASBejeBwxAWS7C1ENGXSzLIjAUoapLy+kYXN3ZMxO/ET6ryB1TR9FUg==;7:44dlVQcgWVZUqRBoyn0gZXGPdyFgyD3jiop0iMufKScqGTkIqvz10DDjn37iPeon/0E+9sZWhK+pUZnxkZtBizFerTHlyEAbHuvGyk8J0fmR+GdY4MFP7Pc8993w0F5HM6p3YaAKOf1Dl6U11znKQw==
-x-ms-office365-filtering-correlation-id: fe0d1116-51c3-430b-adaa-08d68d0e7c3e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3494;
-x-ms-traffictypediagnostic: BYAPR12MB3494:
-x-microsoft-antispam-prvs: <BYAPR12MB3494A5E53D510020767E5E93C2680@BYAPR12MB3494.namprd12.prod.outlook.com>
-x-forefront-prvs: 0941B96580
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39850400004)(346002)(376002)(366004)(136003)(189003)(199004)(76176011)(476003)(110136005)(106356001)(14454004)(74316002)(446003)(229853002)(486006)(2906002)(54906003)(11346002)(68736007)(6506007)(33656002)(256004)(97736004)(316002)(105586002)(71200400001)(14444005)(478600001)(305945005)(7736002)(71190400001)(26005)(81156014)(8676002)(186003)(81166006)(9686003)(55016002)(66066001)(8936002)(4744005)(102836004)(7696005)(2501003)(6636002)(6246003)(4326008)(86362001)(6116002)(3846002)(6436002)(25786009)(99286004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3494;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Lih734UKGec6el2qJHRI/546Gg10PE+PSe2zLWAMc7UECfijbQ1UYErFtOsCt2G2SGieaTVBc+BCPzQm6XPDSduHfcwKFDwtu2hiUEVi6CoViIaIhBF3UnSASE1OhkHfAi5CW8PcxwYyAi1mHR8OS7infwJagxdqKmHnEjIS+UUSFlLapL/YRnuMbenzoAUXcJKrb/I0kQXnJbPlk2qr6nrrCQLKHhmYZQPCDKJfvassCUf/Sc7oqRm0khdlstBve/BHI1RDfmOt3AjAooX0hbfKIxvVVecHM46KJQXZKHeu+pyK5+JinAN02+APECT6acm6Ma9mUfC+VVXEOsrKnuXnBBvGcowbhbu+xuYmMTvIKQnmOnygzGaWG5gvzzcnKZLr8nlUwE78Ty5kQ0oRPFsYP81OQK8OjNpONcdsJtQ=
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe0d1116-51c3-430b-adaa-08d68d0e7c3e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 15:11:07.0433
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3494
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549552274; bh=oqWAkA2A0JfguHY7lArmcLPq68sX8ySyoNmjjQRYe/8=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=Jm0NxIGVfSHgS+oT6Z6MdPZeSU45tCzBqTnXJZ03DgPrHk1Y2xMGd0h+pnBx44uls
-         G2liU0WMjPXarOtUMd+5T5dIoveUqgvUbBLcLe/dKYNno4FG5UC/p1bJYtwXvC2Bm/
-         48l8Jyiw4/yDVuZqk5pIkYF1ig105K6MoncSyCHYvKsJLx4nDTU5gad79viSeHkFSS
-         LcxWnWHf4gIpfb503aKEf8cdwjlCMgQM6wjFVtIsfta1We4mWaWaEZQ22VxT1BQxHI
-         g+oGZLJDD5zmdrmPpEWqLa+gNBNHoj1SgYPPTQdV2yU/KOnnhbw9hIqG6R7dgBsYfG
-         V8DDUtmeYR9vg==
+        Thu, 7 Feb 2019 10:11:39 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52972 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBGPLi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:11:38 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so219210wml.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:11:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=1Uwwg9nLiHV0sNyKWuMQpb+u5rQNp1/DEHna6HgOtUk=;
+        b=GPVCVZAg+/LBCFmAt8FdqOl+kCQ7bzQRHivENkHLLDsXGkoXC4EQ14tXsuHiUqLykR
+         a4hZ78G7aYUrskEfXf15t+Ex0JFQurVWskpEfIawYwZhZKzCj10cuWdfP9kCcoj/jIc4
+         5N+SzUHnvujLph6chwQjom2J+G6jX9LZvy8aVMtq8gW8vOu9NwW1JW7+hI6hDfTmyNtt
+         cgDdWcOl6p6Bx0ImZl0IiiFrGGQ/iF0HjIYEhqczWhJ2qB9WSajNlyLbdVB/WqHmoclr
+         OGQmnluAvyYbyn3iXl780ufioptvQ8xSAukXxXcgSuz0/bCu+vPTUiGh9j4DcSGr32bl
+         YHOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=1Uwwg9nLiHV0sNyKWuMQpb+u5rQNp1/DEHna6HgOtUk=;
+        b=beQ+ad6+o+esvh1+NS+KpAesLI0+YOSBVgu1lEEDAmltagkFTD3MZg5C0b+ro9rc5K
+         2+2w5EO0SVbVBZhGRsvyjgJA4LIwjqXjKWxMrSdxiAfhwk7BbWkpJ6yWJOwsq1s19HQ1
+         KdxPRxh1FUbCuOwN9icET9vPztcEqsp/mxRl1zP5O0EnJVLuvxU8CIsEq/xbLpCLejGB
+         3tNnzjPubIkGpZmCkgNzLJSJlXAoxbh0QxFSqRdJW2QTuBGkcrupe7XHS0QfmX41bEtA
+         ZDRYN713c6JfA30aQSckVGMX2vpVyXuvHP3j88dCYuy/mIhprdvhNdql2wuaAb8+7lN1
+         0ldA==
+X-Gm-Message-State: AHQUAuYK2s15HrnhWVg9al/pKNa6MX6QxkpQNFg6uUWh4ulYZJiqvdKE
+        ENoZqtvi6YYsnpPh2eHvXi3MPA==
+X-Google-Smtp-Source: AHgI3IZrWNwrZmdcBEdPshlxOJzdBIXDneiPR4oAfp+6+6a8rdHXFSZimNdpaGcmEe/TgVWu5yhRmw==
+X-Received: by 2002:a1c:ef11:: with SMTP id n17mr7733770wmh.112.1549552296549;
+        Thu, 07 Feb 2019 07:11:36 -0800 (PST)
+Received: from boomer.baylibre.com ([2a04:cec0:1103:b081:462c:a008:349b:2f3a])
+        by smtp.gmail.com with ESMTPSA id z11sm37119374wmb.45.2019.02.07.07.11.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 07 Feb 2019 07:11:35 -0800 (PST)
+Message-ID: <8852692ccf2903e93459e3347a0a072d37e5a84c.camel@baylibre.com>
+Subject: Re: [PATCH 0/2] clk: meson: Add G12A AO Clock + Reset Controller
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 07 Feb 2019 16:11:33 +0100
+In-Reply-To: <20190204091331.9298-1-narmstrong@baylibre.com>
+References: <20190204091331.9298-1-narmstrong@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gDQo+ID4gQEAgLTExMjQsNiArMTQ1MywxMCBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY19w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICAJCX0NCj4gPiAgCX0NCj4g
-PiAgDQo+ID4gKwlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWEoaTJjX2Rldik7DQo+ID4gKwlpZiAo
-cmV0IDwgMCkNCj4gPiArCQlnb3RvIGRpc2FibGVfZGl2X2NsazsNCj4gPiArDQo+ID4gIAlyZXQg
-PSB0ZWdyYV9pMmNfaW5pdChpMmNfZGV2KTsNCj4gPiAgCWlmIChyZXQpIHsNCj4gPiAgCQlkZXZf
-ZXJyKCZwZGV2LT5kZXYsICJGYWlsZWQgdG8gaW5pdGlhbGl6ZSBpMmMgY29udHJvbGxlclxuIik7
-DQo+DQo+DQo+IE1pc3NpbmcgRE1BIHJlc291cmNpbmcgcmVsZWFzZSBvbiBwcm9iZSBmYWlsdXJl
-Lg0KDQpJZiBwcm9iZSBmYWlscyBkdWUgdG8gb3RoZXIgcmVhc29ucywgdGhlbiBJMkMgaW50ZXJm
-YWNlIHdpbGwgbm90IGJlIGF2YWlsYWJsZSBhbmQgYm9vdCB3aWxsIG5vdCBldmVuIGhhcHBlbi4N
-CkRvIHdlIG5lZWQgRE1BIHJlc291cmNpbmcgcmVsZWFzZT8NCg0K
+On Mon, 2019-02-04 at 10:13 +0100, Neil Armstrong wrote:
+> This patchset add support for the Amlogic G12A SoC family Always-On
+> clock and reset controller.
+> 
+> This adds support for clocks on the Always-On domain like :
+> - Always-On UARTS & I2C Controllers
+> - CEC Controllers
+> - SARADC source and bus clock
+> - Infrared Decoder/Encoder bus clock
+> - USB 32K reference clock
+> 
+> This also adds resets lines for :
+> - Always-On UARTS & I2C Controllers
+> - SARADC, Infrared Decoder/Encoder
+> 
+> This patchset depends on the ("clk: meson: rework drivers dependencies")
+> from Jerome Brunet at [1].
+> 
+> [1] https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
+> 
+> Neil Armstrong (2):
+>   dt-bindings: clk: add G12A AO Clock and Reset Bindings
+>   clk: meson: Add G12A AO Clock + Reset Controller
+> 
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+>  drivers/clk/meson/Kconfig                     |   2 +
+>  drivers/clk/meson/Makefile                    |   2 +-
+>  drivers/clk/meson/g12a-aoclk.c                | 448 ++++++++++++++++++
+>  drivers/clk/meson/g12a-aoclk.h                |  15 +
+>  include/dt-bindings/clock/g12a-aoclkc.h       |  43 ++
+>  include/dt-bindings/reset/g12a-aoclkc.h       |  18 +
+>  7 files changed, 528 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/meson/g12a-aoclk.c
+>  create mode 100644 drivers/clk/meson/g12a-aoclk.h
+>  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
+>  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
+
+Nothing out the ordinary, just a minor comment on the bindings.
+
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+
+
