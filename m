@@ -2,143 +2,96 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BB2C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BB7C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D5C2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:15:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 731812086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:17:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="B47/aMZw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbfBGSPR (ORCPT
+        id S1726956AbfBGSRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:15:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47272 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbfBGSPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:15:17 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2908634CC;
-        Thu,  7 Feb 2019 18:15:16 +0000 (UTC)
-Received: from w520.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EC4076012D;
-        Thu,  7 Feb 2019 18:15:14 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 11:15:14 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, joro@8bytes.org,
-        mchehab+samsung@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com, sashal@kernel.org,
-        dan.carpenter@oracle.com
-Subject: Re: [PATCH V3 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
-Message-ID: <20190207111514.425d137b@w520.home>
-In-Reply-To: <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com>
-References: <1549553629-8414-1-git-send-email-Tianyu.Lan@microsoft.com>
-        <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com>
+        Thu, 7 Feb 2019 13:17:48 -0500
+Received: from a9-36.smtp-out.amazonses.com ([54.240.9.36]:38788 "EHLO
+        a9-36.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726319AbfBGSRr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 13:17:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549563466;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=0VffAsrUHZUiZ63MsIfnIIlVBW7/RgvsuDezdKupRM8=;
+        b=B47/aMZwpGCuvge66yAeFJ1YIM+i7xuALx1AU+6y+BctQkRsA7s32uTkotT6ixxR
+        vRbR+yOqW3PfCcHyIw/t1tgS5858WaLW0Xvd8Cy13zvdjhKQdEvTXRV4aC+QXAUOURh
+        MjDzJiPT3clgimtKm27lFmPphToHGq2F8d0JBoLA=
+Date:   Thu, 7 Feb 2019 18:17:46 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Ira Weiny <ira.weiny@intel.com>
+cc:     Doug Ledford <dledford@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
+ usage by RDMA
+In-Reply-To: <20190207173504.GD29531@iweiny-DESK2.sc.intel.com>
+Message-ID: <01000168c92e1220-36386b5d-66f7-4ba5-ba0e-d314b1d26cf8-000000@email.amazonses.com>
+References: <20190206173114.GB12227@ziepe.ca> <20190206175233.GN21860@bombadil.infradead.org> <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com> <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com> <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca> <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com> <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com> <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+ <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com> <20190207173504.GD29531@iweiny-DESK2.sc.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 07 Feb 2019 18:15:16 +0000 (UTC)
+X-SES-Outgoing: 2019.02.07-54.240.9.36
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  7 Feb 2019 23:33:48 +0800
-lantianyu1986@gmail.com wrote:
+On Thu, 7 Feb 2019, Ira Weiny wrote:
 
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> 
-> On the bare metal, enabling X2APIC mode requires interrupt remapping
-> function which helps to deliver irq to cpu with 32-bit APIC ID.
-> Hyper-V doesn't provide interrupt remapping function so far and Hyper-V
-> MSI protocol already supports to deliver interrupt to the CPU whose
-> virtual processor index is more than 255. IO-APIC interrupt still has
-> 8-bit APIC ID limitation.
-> 
-> This patch is to add Hyper-V stub IOMMU driver in order to enable
-> X2APIC mode successfully in Hyper-V Linux guest. The driver returns X2APIC
-> interrupt remapping capability when X2APIC mode is available. Otherwise,
-> it creates a Hyper-V irq domain to limit IO-APIC interrupts' affinity
-> and make sure cpus assigned with IO-APIC interrupt have 8-bit APIC ID.
-> 
-> Define 24 IO-APIC remapping entries because Hyper-V only expose one
-> single IO-APIC and one IO-APIC has 24 pins according IO-APIC spec(
-> https://pdos.csail.mit.edu/6.828/2016/readings/ia32/ioapic.pdf).
-> 
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
-> Change since v2:
->        - Improve comment about why save IO-APIC entry in the irq chip data.
->        - Some code improvement.
->        - Improve statement in the IOMMU Kconfig.
-> 
-> Change since v1:
->       - Remove unused pr_fmt
->       - Make ioapic_ir_domain as static variable
->       - Remove unused variables cfg and entry in the hyperv_irq_remapping_alloc()
->       - Fix comments
-> ---
->  drivers/iommu/Kconfig         |   8 ++
->  drivers/iommu/Makefile        |   1 +
->  drivers/iommu/hyperv-iommu.c  | 194 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/iommu/irq_remapping.c |   3 +
->  drivers/iommu/irq_remapping.h |   1 +
->  5 files changed, 207 insertions(+)
->  create mode 100644 drivers/iommu/hyperv-iommu.c
-...
-> diff --git a/drivers/iommu/hyperv-iommu.c b/drivers/iommu/hyperv-iommu.c
-> new file mode 100644
-> index 0000000..d8572c5
-> --- /dev/null
-> +++ b/drivers/iommu/hyperv-iommu.c
-...
-> +static int __init hyperv_prepare_irq_remapping(void)
-> +{
-> +	struct fwnode_handle *fn;
-> +	int i;
-> +
-> +	if (!hypervisor_is_type(x86_hyper_type) ||
-> +	    !x2apic_supported())
-> +		return -ENODEV;
-> +
-> +	fn = irq_domain_alloc_named_id_fwnode("HYPERV-IR", 0);
-> +	if (!fn)
-> +		return -ENOMEM;
-> +
-> +	ioapic_ir_domain =
-> +		irq_domain_create_hierarchy(arch_get_ir_parent_domain(),
-> +				0, IOAPIC_REMAPPING_ENTRY, fn,
-> +				&hyperv_ir_domain_ops, NULL);
-> +
-> +	irq_domain_free_fwnode(fn);
-> +
-> +	/*
-> +	 * Hyper-V doesn't provide irq remapping function for
-> +	 * IO-APIC and so IO-APIC only accepts 8-bit APIC ID.
-> +	 * Cpu's APIC ID is read from ACPI MADT table and APIC IDs
-> +	 * in the MADT table on Hyper-v are sorted monotonic increasingly.
-> +	 * APIC ID reflects cpu topology. There maybe some APIC ID
-> +	 * gaps when cpu number in a socket is not power of two. Prepare
-> +	 * max cpu affinity for IOAPIC irqs. Scan cpu 0-255 and set cpu
-> +	 * into ioapic_max_cpumask if its APIC ID is less than 256.
-> +	 */
-> +	for (i = 0; i < 256; i++)
-> +		if (cpu_physical_id(i) < 256)
-> +			cpumask_set_cpu(i, &ioapic_max_cpumask);
+> On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
+> > One approach that may be a clean way to solve this:
+> >
+> > 1. Long term GUP usage requires the virtual mapping to the pages be fixed
+> >    for the duration of the GUP Map. There never has been a way to break
+> >    the pinnning and thus this needs to be preserved.
+>
+> How does this fit in with the changes John is making?
+>
+> >
+> > 2. Page Cache Long term pins are not allowed since regular filesystems
+> >    depend on COW and other tricks which are incompatible with a long term
+> >    pin.
+>
+> Unless the hardware supports ODP or equivalent functionality.  Right?
 
-This looks sketchy.  What if NR_CPUS is less than 256?  Thanks,
+Ok we could make an exception there. But that is not required as a first
+step and only some hardware would support it.
 
-Alex
+> > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
+> >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
+> >    on the longterm pinned range until the long term pin is removed.
+> >    Hardware may do its job (like for persistent memory) but no data
+> >    consistency on the NVDIMM medium is guaranteed until the long term pin
+> >    is removed  and the filesystems regains control over the area.
+>
+> I believe Dan attempted something like this and it became pretty difficult.
 
-> +
-> +	return 0;
-> +}
+What is difficult about leaving things alone that are pinned? We already
+have to do that currently because the refcount is elevated.
+
