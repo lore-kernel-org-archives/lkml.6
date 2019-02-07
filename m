@@ -2,136 +2,164 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FA4C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C5C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE5F21917
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45F4421872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:04:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X2sEsIpK"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="E1cC3KC5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbfBGRCy (ORCPT
+        id S1726822AbfBGREl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:02:54 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:46975 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGRCx (ORCPT
+        Thu, 7 Feb 2019 12:04:41 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39850 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfBGREk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:02:53 -0500
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190207170251epoutp024f250e9dcd5174868bfbdf066908210d~BI6yjA48C0594405944epoutp02L;
-        Thu,  7 Feb 2019 17:02:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190207170251epoutp024f250e9dcd5174868bfbdf066908210d~BI6yjA48C0594405944epoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549558971;
-        bh=4BtKSXjyFABIOkbv9PZbmRs71Y9FKXhmWxqvv2v/ukY=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=X2sEsIpKS6rXIondiO2s2h26PWBV7P/GJIYLFW3fC/qPTgTZk5irdWGTE8P6KEI4p
-         Wn6mYIYTw7kLUQbJSjbSIdsDgGzlWsCntP9eo8Y/OP26rTMsM7udhEOJe6BqERFKNM
-         S5310aLXDsxYcS+79onPW9ZHU9ntupoW0kVoM6Hg=
-Received: from epsmges2p1.samsung.com (unknown [182.195.42.69]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190207170250epcas2p33d3f59e286f844df3ea271ea9b8c5c26~BI6xfrRia2816128161epcas2p3c;
-        Thu,  7 Feb 2019 17:02:50 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        05.A7.04138.9B46C5C5; Fri,  8 Feb 2019 02:02:49 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190207170249epcas2p3ece5f4f132365051527cb0d3a5d80b02~BI6xRxv4t0502405024epcas2p32;
-        Thu,  7 Feb 2019 17:02:49 +0000 (GMT)
-X-AuditID: b6c32a45-60bff7000000102a-49-5c5c64b98e3a
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 7C.C8.03689.9B46C5C5; Fri,  8 Feb
-        2019 02:02:49 +0900 (KST)
-Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PMK00KT6FC5GS70@mmp2.samsung.com>; Fri, 08 Feb 2019
-        02:02:49 +0900 (KST)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     krzk@kernel.org
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 22/22] ARM: dts: exynos5422-odroidxu4: Add support for
- secondary DAI
-Date:   Thu, 07 Feb 2019 18:02:18 +0100
-Message-id: <20190207170218.851-2-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.20.1
-In-reply-to: <20190207170218.851-1-s.nawrocki@samsung.com>
-MIME-version: 1.0
-Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsWy7bCmhe7OlJgYg/NLrC2uXDzEZLFxxnpW
-        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
-        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZV45KFpxhr9j7+RNjA+M0ti5GTg4J
-        AROJ3XO/s3cxcnEICexglFi1vIkRwvnOKPF97Td2mKrnC3uZIRIbGCUevdkLVfWLUeLtz9eM
-        IFVsAoYSvUf7wGwRAWGJe0uXg81lFmhnklh76RozSEJYIEziydV3LF2MHBwsAqoSLefB6nkF
-        LCWuf37MArFNXuJ87zqwzZwCVhJrt05kgagRlPgx+R6YzQxUc/DKc6j6PWwSfQ1yELaLRMPL
-        lUwQtrTEs1UbGSHsaold27vBPpAQ6GCUaLmwnRkiYS1x+PhFVoihfBIdh/+yg9wmIcAr0dEm
-        BFHiITF/cS/Uw72MEtueH2adwCg1C8lNs5DctICRaRWjWGpBcW56arFRgaFecWJucWleul5y
-        fu4mRnCMa7nuYJxxzucQowAHoxIP7wXtmBgh1sSy4srcQ4wSHMxKIryyCUAh3pTEyqrUovz4
-        otKc1OJDjNIcLErivI+k50YLCaQnlqRmp6YWpBbBZJk4OKUaGNlO1sgsn7rgrvm9JVu92hfv
-        sD115dsHpoxXb6+rb+va8Mn450bRzuS5V+TEllw6NOtL+eMvHEvE0pb0Fx91ypoSdNNWNoHP
-        Wtqm6uKmxkqG1T7xHe6s/t+Dbtz5oRvu52sc9pjzRye/a3pJRFLLzBQB9lUmPbmzdp8Rmnz5
-        0NKGdqXIKcWKXUosxRmJhlrMRcWJACe0U27tAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jQd2dKTExBmtfaFlcuXiIyWLjjPWs
-        FlMfPmGzOH9+A7vFtysdTBaXd81hs5hxfh+Txdojd9ktDr9pZ7W4uOILkwOXx4bPTWweO2fd
-        ZffYtKqTzaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyrhyVLDjDXrH38yfGBsZpbF2MnBwS
-        AiYSzxf2MncxcnEICaxjlFh6vpsdwvnFKHHsaRtYFZuAoUTv0T5GEFtEQFji3tLlYEXMAq1M
-        Emter2QHSQgLhEk8ufqOpYuRg4NFQFWi5TxYPa+ApcT1z49ZILbJS5zvXQdWzilgJbF260Sw
-        uBBQzb1zE1kh6gUlfky+BxZnBqo/eOU5ywRGvllIUrOQpBYwMq1ilEwtKM5Nzy02KjDKSy3X
-        K07MLS7NS9dLzs/dxAgM4W2Htfp3MD5eEn+IUYCDUYmH94J2TIwQa2JZcWXuIUYJDmYlEV7Z
-        BKAQb0piZVVqUX58UWlOavEhRmkOFiVxXv78Y5FCAumJJanZqakFqUUwWSYOTqkGxlkd574J
-        1r62inppZ1idEul889RSbZbbZqtVTD8eC8x08E/Y8Tn2a1Q8x27tlkf/6taZRP3w+vjusKNw
-        8f7DwTFX5/7IX9vPLXp/gaM/92GrJ0F8QmGTkyMdtd34C7TeecY6L4/59sNO5N0Hj84Ipmi3
-        TbO/bZBcNp1VyK4wVH4F/551/orRSizFGYmGWsxFxYkAzAGNyV0CAAA=
-X-CMS-MailID: 20190207170249epcas2p3ece5f4f132365051527cb0d3a5d80b02
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190207170249epcas2p3ece5f4f132365051527cb0d3a5d80b02
-References: <20190207170218.851-1-s.nawrocki@samsung.com>
-        <CGME20190207170249epcas2p3ece5f4f132365051527cb0d3a5d80b02@epcas2p3.samsung.com>
+        Thu, 7 Feb 2019 12:04:40 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so628410wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:04:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=bfb6XdLQBuwV8OQUhWtqHzyKLHZ6Wl3/PspPxQktHO4=;
+        b=E1cC3KC5QRuzfMjm1loXWevDg4KYVtgl3C0NpApKqGDrPpTX+j6U8q4W2Gru3QJgMi
+         KbWkVGm25qOxJkitEwOi2Adso7QZat2OA4xqSR66ywHFhgAxKVYi340a56QJiS6Mh5oK
+         7OCp+o77YsLTMqyv8/p3/eU8XHoBm3Nbb9jsFGnhg+z0a6mpU5dMP0V4ZkDRdVHLMdxr
+         0s5CnDv6H+TPcYldNp3dcHf8DX0rsyvfvSn6fDTh6rFzb5UVAuhNY7pvQAJPNOB6azz4
+         +ulsoy72uQhm+MW7BRqD169R2LzOcM2/ERBAo54dPVjmpk/iNoT9XAkSTAmArloFUd6I
+         MOrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=bfb6XdLQBuwV8OQUhWtqHzyKLHZ6Wl3/PspPxQktHO4=;
+        b=cTBM4mEThgWXLzLrlbPQTvvOlzg+pfwTmZbLmuq5Ls649opzxYIlbFGTFCsnH35Kw5
+         9UDApArTnIC4NibtBTvILqrbeoDUGOnckmJutHJsQPtvE8iTTBbyEnjQNP9knvMxOEfo
+         kD6oTsqIVbNRsoxrEvQWpRSoMr9ssR++YkOldSLTao2chS3agkVk/UP4a6LjYyow4t72
+         XirTnGWKRP47apOUJ2hX1EhmSqL/RU74qZlLy+U/Tc5lM0KrChK5hcVZPzVUOAvBWBRD
+         24JL/KfYLBZorXditJAj+QSpd/5Ng7ARXrd+xf7Ghf9eIx0gt0jl4pEvGGUgB7mcZ3nY
+         FJ9w==
+X-Gm-Message-State: AHQUAuajlrwVxpqCyQboTbL9NpnlKjvw5Ndx+ZyyhBc8+cdk49yoc6//
+        0wuFb+wF3UIzYPVw1xj43h/rhg==
+X-Google-Smtp-Source: AHgI3Ia5ui10ccrWbMmNQ/NJuuZmQ4YiNUr8ipyoy9mGTvpoCHQmNJubTEfhMAbo16y4L3UcRANGiQ==
+X-Received: by 2002:a5d:558a:: with SMTP id i10mr12577380wrv.287.1549559079224;
+        Thu, 07 Feb 2019 09:04:39 -0800 (PST)
+Received: from localhost ([2620:10d:c092:180::1:a0f9])
+        by smtp.gmail.com with ESMTPSA id g67sm38726172wmd.38.2019.02.07.09.04.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 09:04:38 -0800 (PST)
+References: <1549015162-17418-1-git-send-email-jmasson@baylibre.com> <20190201101056.GA10039@Red>
+User-agent: mu4e 1.1.0; emacs 26.1.50
+From:   "Masson\, Julien" <jmasson@baylibre.com>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     Julien Masson <jmasson@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] tty: serial: meson_uart: Add support for kernel debugger
+In-reply-to: <20190201101056.GA10039@Red>
+Date:   Thu, 07 Feb 2019 18:04:36 +0100
+Message-ID: <86lg2rv8bf.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch extends DAPM routing and adds secondary CPU DAI entry
-to support the secondary audio PCM interface on Odroid XU4.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos5422-odroidxu4.dts | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Fri 01 Feb 2019 at 11:10, Corentin Labbe <clabbe.montjoie@gmail.com> wrote:
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu4.dts b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-index 122174ea9e0a..892d389d6d09 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu4.dts
-@@ -33,6 +33,8 @@
- 		compatible = "samsung,odroid-xu3-audio";
- 		model = "Odroid-XU4";
- 
-+		samsung,audio-routing = "I2S Playback", "Mixer DAI TX";
-+
- 		assigned-clocks = <&clock CLK_MOUT_EPLL>,
- 				<&clock CLK_MOUT_MAU_EPLL>,
- 				<&clock CLK_MOUT_USER_MAU_EPLL>,
-@@ -58,7 +60,7 @@
- 				<196608000>;
- 
- 		cpu {
--			sound-dai = <&i2s0 0>;
-+			sound-dai = <&i2s0 0>, <&i2s0 1>;
- 		};
- 
- 		codec {
--- 
-2.20.1
+> On Fri, Feb 01, 2019 at 10:59:22AM +0100, Julien Masson wrote:
+>> The kgdb invokes the poll_put_char and poll_get_char when communicating
+>> with the host. This patch implement the serial polling hooks for the
+>> meson_uart to be used for KGDB debugging over serial line.
+>> 
+>> Signed-off-by: Julien Masson <jmasson@baylibre.com>
+>> ---
+>> It has been tested on "Le Potato" board:
+>> https://libre.computer/products/boards/aml-s905x-cc/
+>> 
+>> Kernel command line arguments:
+>> kgdboc=ttyAML0,115200 kgdbretry=4 nokaslr kgdbcon
+>> 
+>> Kernel modules:
+>> CONFIG_DEBUG_INFO=y
+>> CONFIG_DEBUG_KERNEL=y
+>> CONFIG_FRAME_POINTER=y
+>> CONFIG_KGDB=y
+>> CONFIG_KGDB_SERIAL_CONSOLE=y
+>> 
+>> Warning: for single step instruction I had to apply this patch:
+>> https://lore.kernel.org/patchwork/patch/562423/
+>> 
+>>  drivers/tty/serial/meson_uart.c | 46 +++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 46 insertions(+)
+>> 
+>> diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+>> index 8a84259..49b20da 100644
+>> --- a/drivers/tty/serial/meson_uart.c
+>> +++ b/drivers/tty/serial/meson_uart.c
+>> @@ -426,6 +426,48 @@ static void meson_uart_config_port(struct uart_port *port, int flags)
+>>  	}
+>>  }
+>>  
+>> +#ifdef CONFIG_CONSOLE_POLL
+>> +/*
+>> + * Console polling routines for writing and reading from the uart while
+>> + * in an interrupt or debug context (i.e. kgdb).
+>> + */
+>> +
+>> +static int meson_uart_poll_get_char(struct uart_port *port)
+>> +{
+>> +	u32 c;
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&port->lock, flags);
+>> +
+>> +	if (readl(port->membase + AML_UART_STATUS) & AML_UART_RX_EMPTY)
+>> +		c = NO_POLL_CHAR;
+>> +	else
+>> +		c = readl(port->membase + AML_UART_RFIFO);
+>> +
+>> +	spin_unlock_irqrestore(&port->lock, flags);
+>> +
+>> +	return c;
+>> +}
+>> +
+>> +static void meson_uart_poll_put_char(struct uart_port *port, unsigned char c)
+>> +{
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&port->lock, flags);
+>> +
+>> +	while (!(readl(port->membase + AML_UART_STATUS) & AML_UART_TX_EMPTY))
+>> +		cpu_relax();
+>
+> Hello
+>
+> Perhaps you could use read_poll_timeout() ?
+> This will also permit to handle the timeout case.
+>
+> Regards
 
+Thanks for the tips Corentin.
+
+I tested with a poll of 5 usec and 1 msec of timeout.
+I had to use readl_poll_timeout_atomic(...) since I'm in atomic context
+(spinlock).
+
+I'll send a v2 of this patch.
+
+Regards
