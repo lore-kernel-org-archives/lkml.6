@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0074FC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3473C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F212080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9084F2080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539834;
-	bh=8yuKyb1wz+9Q9tq2lfmGDqb0KsqhA4B6SMjlMev/kF0=;
+	s=default; t=1549539838;
+	bh=SZcAUdsRzD+RqM2rrERHs5pwbqW0DPb3JG/fXt+DuSI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kAIAwZT+XeeKeFn6ZF/lETThbToSK3j6i4obuOKf+rTJZjKLk2MWG5ctlquP2wY6T
-	 vlTpxaWvd6ZQ0uD59ZPVufUL+QCMKCRv+jIvzHCLIku9wg6neCTfkaTLpBC6esN5rk
-	 WvTx7eDKm5WW1i8u8HIsKAboSRX2vnaRXq4EJUuk=
+	b=xzP56lT5S+mbwGcVOMttqwRaVxqzPJY2RzsHLl6fAxuVQLVaJmg8uOR/KJDxsDyJQ
+	 RwGOF8KbuQJQ3/ksjBPyoW0Arev1BdVih/212hfci9NY+nn6+Uipqx5PBu/Qstth+x
+	 CgqsOB+OpixG7wl9nlgqkPmUEx0xH7x04zgPEJQ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfBGLnw (ORCPT
+        id S1727632AbfBGLn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:43:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34252 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:43:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbfBGLnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:43:49 -0500
+        id S1726799AbfBGLnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:43:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD81E21907;
-        Thu,  7 Feb 2019 11:43:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C03DD2080F;
+        Thu,  7 Feb 2019 11:43:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539829;
-        bh=8yuKyb1wz+9Q9tq2lfmGDqb0KsqhA4B6SMjlMev/kF0=;
+        s=default; t=1549539832;
+        bh=SZcAUdsRzD+RqM2rrERHs5pwbqW0DPb3JG/fXt+DuSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rkY0BQnV1YTGGY1BKZcnDvMpoDXBcgwlbkpxoU1bDQ3TPld4g6W8EeoyLduioYNk6
-         XNUqhuao9C7QHrnrUG2mbWx4E7JHlsJgQqlcRKiwtq59Z2e7qrzuBLucTqyMdcgKTi
-         mCK10yjru13rt/hnPI3IM7++eq9TyMyOFlTktEj8=
+        b=r3DUJ5ezNnhscSi8Ppg+pbcpuhWGPpsRsUvzmzT89YzRV2KCaEhZCnmM4Y5Il2WjD
+         LA7HqSQAsKTF6KsCZKpRXg5Lj97U01HYuFmitKIK3BmdUmpD2IJ/lxxfqr9VqcHB8K
+         D1h/+MF+l/DN5HjUkHC9xhb7tmTGDMR2HYkr0gwY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Taehee Yoo <ap420073@gmail.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>,
         Mao Wenan <maowenan@huawei.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 29/34] ip: frags: fix crash in ip_do_fragment()
-Date:   Thu,  7 Feb 2019 12:42:11 +0100
-Message-Id: <20190207113026.687432481@linuxfoundation.org>
+Subject: [PATCH 4.4 30/34] ipv4: frags: precedence bug in ip_expire()
+Date:   Thu,  7 Feb 2019 12:42:12 +0100
+Message-Id: <20190207113026.725752897@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -68,110 +67,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 5d407b071dc369c26a38398326ee2be53651cfe4 upstream.
+commit 70837ffe3085c9a91488b52ca13ac84424da1042 upstream.
 
-A kernel crash occurrs when defragmented packet is fragmented
-in ip_do_fragment().
-In defragment routine, skb_orphan() is called and
-skb->ip_defrag_offset is set. but skb->sk and
-skb->ip_defrag_offset are same union member. so that
-frag->sk is not NULL.
-Hence crash occurrs in skb->sk check routine in ip_do_fragment() when
-defragmented packet is fragmented.
-
-test commands:
-   %iptables -t nat -I POSTROUTING -j MASQUERADE
-   %hping3 192.168.4.2 -s 1000 -p 2000 -d 60000
-
-splat looks like:
-[  261.069429] kernel BUG at net/ipv4/ip_output.c:636!
-[  261.075753] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  261.083854] CPU: 1 PID: 1349 Comm: hping3 Not tainted 4.19.0-rc2+ #3
-[  261.100977] RIP: 0010:ip_do_fragment+0x1613/0x2600
-[  261.106945] Code: e8 e2 38 e3 fe 4c 8b 44 24 18 48 8b 74 24 08 e9 92 f6 ff ff 80 3c 02 00 0f 85 da 07 00 00 48 8b b5 d0 00 00 00 e9 25 f6 ff ff <0f> 0b 0f 0b 44 8b 54 24 58 4c 8b 4c 24 18 4c 8b 5c 24 60 4c 8b 6c
-[  261.127015] RSP: 0018:ffff8801031cf2c0 EFLAGS: 00010202
-[  261.134156] RAX: 1ffff1002297537b RBX: ffffed0020639e6e RCX: 0000000000000004
-[  261.142156] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff880114ba9bd8
-[  261.150157] RBP: ffff880114ba8a40 R08: ffffed0022975395 R09: ffffed0022975395
-[  261.158157] R10: 0000000000000001 R11: ffffed0022975394 R12: ffff880114ba9ca4
-[  261.166159] R13: 0000000000000010 R14: ffff880114ba9bc0 R15: dffffc0000000000
-[  261.174169] FS:  00007fbae2199700(0000) GS:ffff88011b400000(0000) knlGS:0000000000000000
-[  261.183012] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  261.189013] CR2: 00005579244fe000 CR3: 0000000119bf4000 CR4: 00000000001006e0
-[  261.198158] Call Trace:
-[  261.199018]  ? dst_output+0x180/0x180
-[  261.205011]  ? save_trace+0x300/0x300
-[  261.209018]  ? ip_copy_metadata+0xb00/0xb00
-[  261.213034]  ? sched_clock_local+0xd4/0x140
-[  261.218158]  ? kill_l4proto+0x120/0x120 [nf_conntrack]
-[  261.223014]  ? rt_cpu_seq_stop+0x10/0x10
-[  261.227014]  ? find_held_lock+0x39/0x1c0
-[  261.233008]  ip_finish_output+0x51d/0xb50
-[  261.237006]  ? ip_fragment.constprop.56+0x220/0x220
-[  261.243011]  ? nf_ct_l4proto_register_one+0x5b0/0x5b0 [nf_conntrack]
-[  261.250152]  ? rcu_is_watching+0x77/0x120
-[  261.255010]  ? nf_nat_ipv4_out+0x1e/0x2b0 [nf_nat_ipv4]
-[  261.261033]  ? nf_hook_slow+0xb1/0x160
-[  261.265007]  ip_output+0x1c7/0x710
-[  261.269005]  ? ip_mc_output+0x13f0/0x13f0
-[  261.273002]  ? __local_bh_enable_ip+0xe9/0x1b0
-[  261.278152]  ? ip_fragment.constprop.56+0x220/0x220
-[  261.282996]  ? nf_hook_slow+0xb1/0x160
-[  261.287007]  raw_sendmsg+0x21f9/0x4420
-[  261.291008]  ? dst_output+0x180/0x180
-[  261.297003]  ? sched_clock_cpu+0x126/0x170
-[  261.301003]  ? find_held_lock+0x39/0x1c0
-[  261.306155]  ? stop_critical_timings+0x420/0x420
-[  261.311004]  ? check_flags.part.36+0x450/0x450
-[  261.315005]  ? _raw_spin_unlock_irq+0x29/0x40
-[  261.320995]  ? _raw_spin_unlock_irq+0x29/0x40
-[  261.326142]  ? cyc2ns_read_end+0x10/0x10
-[  261.330139]  ? raw_bind+0x280/0x280
-[  261.334138]  ? sched_clock_cpu+0x126/0x170
-[  261.338995]  ? check_flags.part.36+0x450/0x450
-[  261.342991]  ? __lock_acquire+0x4500/0x4500
-[  261.348994]  ? inet_sendmsg+0x11c/0x500
-[  261.352989]  ? dst_output+0x180/0x180
-[  261.357012]  inet_sendmsg+0x11c/0x500
-[ ... ]
-
-v2:
- - clear skb->sk at reassembly routine.(Eric Dumarzet)
+We accidentally removed the parentheses here, but they are required
+because '!' has higher precedence than '&'.
 
 Fixes: fa0f527358bd ("ip: use rb trees for IP frag queue.")
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Mao Wenan <maowenan@huawei.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_fragment.c                  |    1 +
- net/ipv6/netfilter/nf_conntrack_reasm.c |    1 +
- 2 files changed, 2 insertions(+)
+ net/ipv4/ip_fragment.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/net/ipv4/ip_fragment.c
 +++ b/net/ipv4/ip_fragment.c
-@@ -599,6 +599,7 @@ static int ip_frag_reasm(struct ipq *qp,
- 			nextp = &fp->next;
- 			fp->prev = NULL;
- 			memset(&fp->rbnode, 0, sizeof(fp->rbnode));
-+			fp->sk = NULL;
- 			head->data_len += fp->len;
- 			head->len += fp->len;
- 			if (head->ip_summed != fp->ip_summed)
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -427,6 +427,7 @@ nf_ct_frag6_reasm(struct frag_queue *fq,
- 		else if (head->ip_summed == CHECKSUM_COMPLETE)
- 			head->csum = csum_add(head->csum, fp->csum);
- 		head->truesize += fp->truesize;
-+		fp->sk = NULL;
- 	}
- 	sub_frag_mem_limit(fq->q.net, head->truesize);
+@@ -205,7 +205,7 @@ static void ip_expire(unsigned long arg)
+ 	IP_INC_STATS_BH(net, IPSTATS_MIB_REASMFAILS);
+ 	IP_INC_STATS_BH(net, IPSTATS_MIB_REASMTIMEOUT);
  
+-	if (!qp->q.flags & INET_FRAG_FIRST_IN)
++	if (!(qp->q.flags & INET_FRAG_FIRST_IN))
+ 		goto out;
+ 
+ 	/* sk_buff::dev and sk_buff::rbnode are unionized. So we
 
 
