@@ -2,129 +2,121 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A75CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B699CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D112086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:02:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 814F02086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549566152;
+	bh=fACLnY8u/wJRnIcjZlG/bAS2Rz9fNq/sl1iZ7KkRbW4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=XsmsufTc708ySPaMdJZvSCNmlJV9y4cwGcXAnlWiNJQ9TfJLUmk3dYiEvPn4RXnYC
+	 NnZeQRVBfJgPw/5Up0kX5bQqXtWQzt9K5gCUemziaZqJMv0nupUTpQDIy+jC5viOr0
+	 jIvmCYdVGn3Ao3MsTqYfiZkmHPONKYH+ICKzU0H4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfBGTCC (ORCPT
+        id S1726974AbfBGTCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 14:02:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbfBGTCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 14:02:01 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90D8010FA7;
-        Thu,  7 Feb 2019 19:02:00 +0000 (UTC)
-Received: from redhat.com (ovpn-123-55.rdu2.redhat.com [10.10.123.55])
-        by smtp.corp.redhat.com (Postfix) with SMTP id EC60060BE0;
-        Thu,  7 Feb 2019 19:01:43 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 14:01:43 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>, riel@surriel.com,
-        david@redhat.com, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and
- report free pages
-Message-ID: <20190207135511-mutt-send-email-mst@kernel.org>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-7-nitesh@redhat.com>
- <20190205153607-mutt-send-email-mst@kernel.org>
- <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
- <20190205165514-mutt-send-email-mst@kernel.org>
- <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
+        Thu, 7 Feb 2019 14:02:31 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35894 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfBGTCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 14:02:30 -0500
+Received: by mail-ot1-f67.google.com with SMTP id k98so1702165otk.3;
+        Thu, 07 Feb 2019 11:02:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ATuQNtfQB+jx0mV+gxdxKVmlgyEl4yf6a8d+axcKEzM=;
+        b=NZddSPwNpYjMIj7dDjtqYM2hbZB+rQcyQSWPKM5kH0+yDYwXY5aPpQfQt8u8wVl+6x
+         mqSGYtakkdxTeVmtxHO8d/BjR6G1DZrDe5J24xYhoMPAiMHFiXU0Zv8I3p81SpYvOAea
+         5r61zMcVxBZBM+ZrmY1Xcf6lMc895BcPpjsoT9o1wZATI95dZVVEjjPe8OoDjuuVfw2v
+         E8R+zyAbpY0GhQClo1vO8pRfUz3+Yfq9ai/aHVhNi6DX8AJBtpz2655iWx7+QmYrWWg3
+         wSln4RBb8eCj/y0WoEipgJxeH439qRJ8NLg3fePsoplW17mK2nAqvCTEovo46FOEaFbx
+         25Dw==
+X-Gm-Message-State: AHQUAuZ52+44UbU+Fwa2U1HYiZ76pRxgIbI0H29uGW0MizOAdN8/0hOe
+        TO2PKz4lHcWlR71MQFw/A0Izj4IiUFhfwpmcOBE=
+X-Google-Smtp-Source: AHgI3Ibw5mOsny1Sy3JVL8cnx3XgpRnmQnBXSUvcJzcMjNcndLhbqgG97pL213guOjLD+wdCu8IW94wwwMgAwiStDUo=
+X-Received: by 2002:aca:c591:: with SMTP id v139mr1159294oif.76.1549566149850;
+ Thu, 07 Feb 2019 11:02:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 07 Feb 2019 19:02:00 +0000 (UTC)
+References: <20190207185917.167829-1-egranata@google.com>
+In-Reply-To: <20190207185917.167829-1-egranata@google.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 7 Feb 2019 20:02:18 +0100
+Message-ID: <CAJZ5v0jFqkTS__oOfPNvatHOa6OA++uRNLx1-PhiPvS1VnPVXg@mail.gmail.com>
+Subject: Re: [PATCH] driver: platform: Add support for GpioInt() ACPI to platform_get_irq()
+To:     egranata@google.com
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gwendal@chromium.org, Dmitry Torokhov <dtor@chromium.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Enrico Granata <egranata@chromium.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 09:43:44AM -0800, Alexander Duyck wrote:
-> On Tue, Feb 5, 2019 at 3:21 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Feb 05, 2019 at 04:54:03PM -0500, Nitesh Narayan Lal wrote:
-> > >
-> > > On 2/5/19 3:45 PM, Michael S. Tsirkin wrote:
-> > > > On Mon, Feb 04, 2019 at 03:18:53PM -0500, Nitesh Narayan Lal wrote:
-> > > >> This patch enables the kernel to scan the per cpu array and
-> > > >> compress it by removing the repetitive/re-allocated pages.
-> > > >> Once the per cpu array is completely filled with pages in the
-> > > >> buddy it wakes up the kernel per cpu thread which re-scans the
-> > > >> entire per cpu array by acquiring a zone lock corresponding to
-> > > >> the page which is being scanned. If the page is still free and
-> > > >> present in the buddy it tries to isolate the page and adds it
-> > > >> to another per cpu array.
-> > > >>
-> > > >> Once this scanning process is complete and if there are any
-> > > >> isolated pages added to the new per cpu array kernel thread
-> > > >> invokes hyperlist_ready().
-> > > >>
-> > > >> In hyperlist_ready() a hypercall is made to report these pages to
-> > > >> the host using the virtio-balloon framework. In order to do so
-> > > >> another virtqueue 'hinting_vq' is added to the balloon framework.
-> > > >> As the host frees all the reported pages, the kernel thread returns
-> > > >> them back to the buddy.
-> > > >>
-> > > >> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
-> > > >
-> > > > This looks kind of like what early iterations of Wei's patches did.
-> > > >
-> > > > But this has lots of issues, for example you might end up with
-> > > > a hypercall per a 4K page.
-> > > > So in the end, he switched over to just reporting only
-> > > > MAX_ORDER - 1 pages.
-> > > You mean that I should only capture/attempt to isolate pages with order
-> > > MAX_ORDER - 1?
-> > > >
-> > > > Would that be a good idea for you too?
-> > > Will it help if we have a threshold value based on the amount of memory
-> > > captured instead of the number of entries/pages in the array?
-> >
-> > This is what Wei's patches do at least.
-> 
-> So in the solution I had posted I was looking more at
-> HUGETLB_PAGE_ORDER and above as the size of pages to provide the hints
-> on [1]. The advantage to doing that is that you can also avoid
-> fragmenting huge pages which in turn can cause what looks like a
-> memory leak as the memory subsystem attempts to reassemble huge
-> pages[2]. In my mind a 2MB page makes good sense in terms of the size
-> of things to be performing hints on as anything smaller than that is
-> going to just end up being a bunch of extra work and end up causing a
-> bunch of fragmentation.
++Mika Westerberg
++Andy Shevchenko
++Hans de Goede
 
-Yes MAX_ORDER-1 is 4M. So not a lot of difference on x86.
-
-The idea behind keying off MAX_ORDER is that CPU hugepages isn't
-the only reason to avoid fragmentation, there's other
-hardware that benefits from linear physical addresses.
-And there are weird platforms where HUGETLB_PAGE_ORDER exceeds
-MAX_ORDER - 1. So from that POV keying it off MAX_ORDER
-makes more sense.
-
-
-> The only issue with limiting things on an arbitrary boundary like that
-> is that you have to hook into the buddy allocator to catch the cases
-> where a page has been merged up into that range.
-> 
-> [1] https://lkml.org/lkml/2019/2/4/903
-> [2] https://blog.digitalocean.com/transparent-huge-pages-and-alternative-memory-allocators/
+On Thu, Feb 7, 2019 at 7:59 PM <egranata@google.com> wrote:
+>
+> From: Enrico Granata <egranata@chromium.org>
+>
+> ACPI 5 added support for GpioInt resources as a way to provide
+> information about interrupts mediated via a GPIO controller.
+>
+> Several device buses (e.g. SPI, I2C) have support for retrieving
+> an IRQ specified via this type of resource, and providing it
+> directly to the driver as an IRQ number.
+> This is not currently done for the platform drivers, as platform_get_irq()
+> does not try to parse GpioInt() resources.
+>
+> This commit adds that functionality.
+>
+> Signed-off-by: Enrico Granata <egranata@chromium.org>
+> ---
+>  drivers/base/platform.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 1c958eb33ef4d..c50c4f9033aef 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -127,7 +127,17 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+>                 irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
+>         }
+>
+> -       return r ? r->start : -ENXIO;
+> +       if (r)
+> +               return r->start;
+> +
+> +       /*
+> +        * If no IRQ was found, try to parse ACPI GpioInt resources
+> +        * as a last resort.
+> +        */
+> +       if (has_acpi_companion(&dev->dev))
+> +               return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
+> +
+> +       return -ENXIO;
+>  #endif
+>  }
+>  EXPORT_SYMBOL_GPL(platform_get_irq);
+> --
+> 2.20.1.611.gfbb209baf1-goog
+>
