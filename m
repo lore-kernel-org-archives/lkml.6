@@ -2,81 +2,85 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFABEC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E35C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7B621904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2E0621904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:01:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mjhg6qky";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OX5H6i7z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfBGPAc (ORCPT
+        id S1726822AbfBGPB4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:00:32 -0500
-Received: from verein.lst.de ([213.95.11.211]:37235 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfBGPAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:00:31 -0500
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id 419F568C8E; Thu,  7 Feb 2019 16:00:29 +0100 (CET)
-Date:   Thu, 7 Feb 2019 16:00:29 +0100
-From:   Torsten Duwe <duwe@lst.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
-Message-ID: <20190207150029.GB19818@lst.de>
-References: <20190118163736.6A99268CEB@newverein.lst.de> <20190118163908.E338E68D93@newverein.lst.de> <e206e229-7813-2d37-d5c6-7a9785e311c9@arm.com> <20190206150524.GA28892@lst.de> <198550d8-78d4-6e30-0179-b5e07dd140f8@arm.com> <20190207095157.3dea1086@gandalf.local.home>
+        Thu, 7 Feb 2019 10:01:56 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36826 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfBGPBz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:01:55 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EBA7B6030D; Thu,  7 Feb 2019 15:01:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549551715;
+        bh=7JQWRwavZIe2xdjZ6I2Rm6ZPPaLICGfk09NTkfMitGw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Mjhg6qkypVgMOJLYW/z3Q8dCkIUEgZnWMi5JeqwPtY7MC0D/s5IDhLIkjTEnTW+4z
+         zW+Wu7wzapOsglyIpDKP09xlzCOGk9LruG163jcCzwrc3cBe8lc/YLa1To9Ga/U842
+         kR95+3Qny7uUx4Pt/A+vuNloEFdKZCzLXLp5o7CA=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CB1D2605FC;
+        Thu,  7 Feb 2019 15:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549551714;
+        bh=7JQWRwavZIe2xdjZ6I2Rm6ZPPaLICGfk09NTkfMitGw=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=OX5H6i7zAN45MvwCYgSRhpv5e6yzzHABOA+KcqoApYhaOXbJhkt5F53Gf+mLwjnSU
+         KhjIL9ceV7qu9d+R6e7Iob1L9bxAA7BHpLLmHRJb5jRi7Vg3IG80F1AyXN0Rzx5KCT
+         cVhxpxSBjApymn7X4yTuTE9hIJh9bqqZgPOzUXA8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB1D2605FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207095157.3dea1086@gandalf.local.home>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath: move spin_lock_bh to spin_lock in tasklet
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190122163033.51095-1-qq282012236@gmail.com>
+References: <20190122163033.51095-1-qq282012236@gmail.com>
+To:     Zhiwei Jiang <qq282012236@gmail.com>
+Cc:     qq282012236@gmail.com, ath9k-devel@qca.qualcomm.com,
+        davem@davemloft.net, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190207150154.EBA7B6030D@smtp.codeaurora.org>
+Date:   Thu,  7 Feb 2019 15:01:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 09:51:57AM -0500, Steven Rostedt wrote:
-> On Thu, 7 Feb 2019 10:33:50 +0000
-> Julien Thierry <julien.thierry@arm.com> wrote:
+Zhiwei Jiang <qq282012236@gmail.com> wrote:
+
+> as you are already in a tasklet, it is unnecessary to call
+> spin_lock_bh, because softirq already disable BH.
 > 
-> > I don't see really much documentation on that function. As far as I can
-> > tell it is only called once for each site (and if it didn't, we'd always
-> > be placing the same instruction, but I agree it wouldn't be nice). It
-> > could depend on how far you can expand the notion of "adjusting" :) .
-> > 
-> > Steven, do you have an opinion on whether it would be acceptable to
-> > modify function entry code in ftrace_call_adjust() ?
-> 
-> Just to make sure I'm on the same page as you are. You want to modify
-> the function entry code at the time of the ftrace_call_adjust()?
+> Signed-off-by: Zhiwei Jiang <qq282012236@gmail.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Yes, this was the fiendish plan ;-)
+Patch applied to ath-next branch of ath.git, thanks.
 
-> I would update the rec->ip to the offset you want at
-> ftrace_call_adjust() but not do any modifications. It really isn't safe
-> to do it there. But right after that is called, you will have the arch
-> specific call of ftrace_make_nop() called with MCOUNT_ADDR as the
-> second parameter to let you know that this is the first time the call
-> is made at this address. This is where you can do that initial
-> modifications.
+b789f333d7ac ath: move spin_lock_bh to spin_lock in tasklet
 
-Ok, so just substitute REC_IP_BRANCH_OFFSET arithmetic with
-ftrace_call_adjust() and keep the MCOUNT_ADDR logic.
-Thanks for the clarification.
+-- 
+https://patchwork.kernel.org/patch/10775865/
 
-	Torsten
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
