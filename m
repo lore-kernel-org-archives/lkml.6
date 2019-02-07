@@ -2,90 +2,111 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCB2C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EDBC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9664D2147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 433BD2173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJyvUcvq"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="Rvpcn8sD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfBGWcR (ORCPT
+        id S1726997AbfBGWjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:32:17 -0500
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:44680 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGWcR (ORCPT
+        Thu, 7 Feb 2019 17:39:24 -0500
+Received: from server.eikelenboom.it ([91.121.65.215]:60950 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbfBGWjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:32:17 -0500
-Received: by mail-ot1-f46.google.com with SMTP id e24so2648394otp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:32:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xprK3DO2dgIPaLc0GaBQ1orSs+O0lP1cFE8b0GoujoE=;
-        b=JJyvUcvqjIqq+EHUvbRAP7b8IECA3YDNfpg13OCTPcGoGkOqUcu11ouHiX540x/u6x
-         1UkI+ARtPKPdwBgfU1GtOv5Un0I9VRfF72Y81WlolHMEbCr7UgKXgb613Qo+S7MRDmRU
-         x9AwfZgxQ4DYJm8hApx78/g9PHgzICD1Yv3BwZUSGm3LJ6C233apHVOXffkcyI00ZXHL
-         4msvrioLtIcQxnDhp3MeggKq54zhowPtgTbwdP9oRUiDiwpaamtv23/pE4HyuFHcqHyF
-         OJpLuvZYJjkwhwScFQh3rk0wvonHlPTW2X/hS5OnEHJwOGMzQu6cTFW6bJ6uA4yrHVo/
-         FKmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xprK3DO2dgIPaLc0GaBQ1orSs+O0lP1cFE8b0GoujoE=;
-        b=L0KJQDi7cmPyZ5crIVdTMXOIHmxHfnKM22m+q9W2ozhGFe7yYjCQen7Xy3KRwdlX65
-         WfktHQMRAKUa7RznZ31Pl1G21Ntdi0xVvNw1obng41wisXgYgGvWgV6brMKA2D5mUQgF
-         3pLXeXuVs4a9GzHifOSmOYv1XIRfVM9OUIjNJPocEFyEPGxmdn5etvEIu0l50ByyNHao
-         1s841DEbFhKtJLo9EVn45bJCCkFzjlckGD1qZzNrsS/mWLSMFsWn2rtfKnqS4CzqRNgX
-         j/R1TCuU2LqiizxECE+Y4NSHRQflPa/G66WvRnby5293h6S2UfV+8rtADGguQzEi4Pt4
-         JV0Q==
-X-Gm-Message-State: AHQUAuYlFnU4QJPWRaUOpQd+TWTQdKYSpu30sSlXA21FSl8BIYhGf+hf
-        YVkqxzrZc5PNt21Zor/VqTLJaciueVXED0BYQOJGd4bt
-X-Google-Smtp-Source: AHgI3IaZJRCdPv9e0lYFbyLSZoHd/6qeVuPeV575vqPbeaE+E8lbry260xEqNKNMK603nvah/YuTHjo566NhCC+t9J8=
-X-Received: by 2002:a9d:61c8:: with SMTP id h8mr9547289otk.279.1549578736731;
- Thu, 07 Feb 2019 14:32:16 -0800 (PST)
+        Thu, 7 Feb 2019 17:39:23 -0500
+X-Greylist: delayed 1505 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Feb 2019 17:39:22 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=kFEpf5w44ybqCRJ0hp7WnrAaT8XA3YBS6zPD+17pLs0=; b=Rvpcn8sDRXVPQIOKxIA+9tfRcB
+        ug+i2FAUFwcWRaBaGu6R4M5pBZDpESLxuDqh6+ilpk/aiu6Ioz56sDuIIrl9WTvRvp7KglJCdSN92
+        n6ROqqaal/UPCfu8ZkAyvz4LUhhUhC70sKgkNPqmWsG50yfReCUGqfZ5AqYsrvEJR/RU=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:43398 helo=[172.16.1.50])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1grrw9-0001sV-FY; Thu, 07 Feb 2019 23:14:25 +0100
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Kernel 5.0-rc5 regression with NAT, bisected to: netfilter: nat:
+ remove l4proto->manip_pkt
+Message-ID: <40b70892-daf5-28d7-28b5-869911faf2bb@eikelenboom.it>
+Date:   Thu, 7 Feb 2019 23:15:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
- <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
- <CAGngYiUTJ0TjdTu=UB9yXRJ_mXG8LPmcuBQBDha+T5RHoRUvcQ@mail.gmail.com> <CAKdAkRS3mxXO9+60Lu7_3gqN9XN1CYQJGM5fcta1pG8qXm9wqw@mail.gmail.com>
-In-Reply-To: <CAKdAkRS3mxXO9+60Lu7_3gqN9XN1CYQJGM5fcta1pG8qXm9wqw@mail.gmail.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Thu, 7 Feb 2019 17:32:05 -0500
-Message-ID: <CAGngYiWBdXc0VzpjBQmVyKi+E2rVaO2WsoiPLho0bxHnrdiDKw@mail.gmail.com>
-Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 5:21 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> > ./drivers//input/keyboard/matrix_keypad.c:512:1-18: missing clean-up
-> > of INIT_WORK/INIT_DELAYED_WORK initialized here
->
-> This is not as simple.
->
+L.S.,
 
-PS If you change
-flush_work(&keypad->work.work);
-to
-flush_delayed_work(&keypad->work);
+While trying out a 5.0-RC5 kernel I seem to have stumbled over a regression with NAT.
+(using an nftables firewall with NAT and connection tracking).
 
-then the Coccinelle script works correctly, and does not flag
-this driver.
+Unfortunately it isn't too obvious since no errors are logged, but on clients it
+causes symptoms like firefox intermittently not being able to load pages with:
+    Network Protocol Error
+    An error occurred during a connection to www.example.com
+    The page you are trying to view cannot be shown because an error in the network protocol was detected.
+    Please contact the website owners to inform them of this problem.
+
+But it's only intermittently, so i can still visit some webpages with clients, 
+could be that packet size and or fragments are at play ?
+
+So I tried testing with git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git with 
+e8c32c32b48c2e889704d8ca0872f92eb027838e as last commit, to be sure to have the latest netdev has to offer,
+but to no avail. 
+
+After that I tried to git bisect and ended up with:
+
+faec18dbb0405c7d4dda025054511dc3a6696918 is the first bad commit
+commit faec18dbb0405c7d4dda025054511dc3a6696918
+Author: Florian Westphal <fw@strlen.de>
+Date:   Thu Dec 13 16:01:33 2018 +0100
+
+    netfilter: nat: remove l4proto->manip_pkt
+    
+    This removes the last l4proto indirection, the two callers, the l3proto
+    packet mangling helpers for ipv4 and ipv6, now call the
+    nf_nat_l4proto_manip_pkt() helper.
+    
+    nf_nat_proto_{dccp,tcp,sctp,gre,icmp,icmpv6} are left behind, even though
+    they contain no functionality anymore to not clutter this patch.
+    
+    Next patch will remove the empty files and the nf_nat_l4proto
+    struct.
+    
+    nf_nat_proto_udp.c is renamed to nf_nat_proto.c, as it now contains the
+    other nat manip functionality as well, not just udp and udplite.
+    
+    Signed-off-by: Florian Westphal <fw@strlen.de>
+    Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+
+:040000 040000 22d8706921e03cbd6d78a6ebcc5f253ccfd2bf0c b6f8ab2779215b4495dfe641f50e798da73859ac M  include
+:040000 040000 af212a756f1acf00cbe45c3be5b71f38f01f1d34 165c440f9e6f2e05738628a19b51f7603f95752a M  net
+
+Any ideas or debugging hints ?
+
+--
+Sander
