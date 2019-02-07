@@ -7,122 +7,116 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39C7C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBC0C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713332086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F0D72086C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILYdGyWP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2rlsooW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfBGSV1 (ORCPT
+        id S1727127AbfBGSWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:21:27 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35510 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfBGSV1 (ORCPT
+        Thu, 7 Feb 2019 13:22:08 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39966 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbfBGSWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:21:27 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t200so918610wmt.0;
-        Thu, 07 Feb 2019 10:21:26 -0800 (PST)
+        Thu, 7 Feb 2019 13:22:08 -0500
+Received: by mail-lf1-f65.google.com with SMTP id t14so615916lfk.7;
+        Thu, 07 Feb 2019 10:22:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/4eJDqA94YOxwyYuAVdf957HOJ8fq4Zyj/OTXBZpY6I=;
-        b=ILYdGyWPNg7Jmf1YFNeQGePEKg+FrwekjejZqKtS9yU7tOMdyQ8ufIkKMrFgybpdbM
-         f3jRIxtavTtAFtYIWzX2ccgII23Um94o291GNE6tlxUwXT4H0B6CEspm+7IJMTT2zqo0
-         YKl59MrarKO9vRmdFQ7y76D1xcIRpLVn48fZlkN1jDx2fzoZWjbogdhE/euz7uXi0ZpE
-         MzMKaqJtOfEhDQZC8JfQ01u+5Hm9eDwQXvmnfTpZ3rPmnS2GpRhJ01PBgEd1Y8uZo2Pg
-         n2Mxd2EOPQBQwiPTQ6os6G0YYwktIoJXGZe6ltZ7Zbx7kblJz4/Ca2F9KiqhdbcEeJBz
-         6r4w==
+        bh=n6gNQy3qqvdmMYAWH6t15CIwErBxvMQ0etpWdbmoly4=;
+        b=U2rlsooW9OC01te/NUo/dNN1gCg3lLfrmeZKIqFOj0vAlrKlDMZiAjUv5+8Gr2DIot
+         /FhkSzTVr4ET0rZOR2baEttwNtsfbrMW0DolwFX7WLK/62QWB057Pt18cWRR8uyMDsp9
+         2QtDcOCz7yy1fHRK71Y+Hb0GwN4PPu8ak7HhzQXG8OeY0u169YF6jUgjdj7Spi659Q2e
+         uN7KDdFTuiQn6JA8ZeJF0pIKvevYF7c8tKZnvJhn1zEVLzLi6OMTXtLt6zvrge7pNX60
+         +vOiC3EbtgwN2U3tOGUulDyhHEeOjGiBIXJxsmpkjOGhlUGzyOZy7R4zf70C74x5Wp8Y
+         VG0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=/4eJDqA94YOxwyYuAVdf957HOJ8fq4Zyj/OTXBZpY6I=;
-        b=hX62OQ0KNpw09p3GPku9qi+mKlES9CMUbhiYzE5a6XXgwRVmMDaZYyggJE87A9JDe1
-         PsPbXwh8S6uqR3gJ5motKBLJNeznv8O/rbPzmOPR9X7s2Ct0xhPcd2KbktMrgCktKBfp
-         m3Bw+zqeblnpKfX3Tf2dt7bMPvmU5aGW72a4nUo+cbFRprfY3hWKwaE0Y6KytpxHLAkL
-         DTD+0ejb53AZ0P0myBltcqKFWF0Ep/1Hc2yrwaDFG3nGQAzKAf9zi6EZ2DfKQlUQONqH
-         62yGRPmozRsoyWmUBf8w1BoMVZ9Vs/4BoUyDq5vc0s3RMWI9TuL5yRU66fYvG1axnpw4
-         VSuQ==
-X-Gm-Message-State: AHQUAuZ3vZlKyrCiY/L+Hn5cqQx+HRSi7+smcx/Ss46sDdkEaDeekNe5
-        lw0UVL8fHmSExcF0y5vSSGU=
-X-Google-Smtp-Source: AHgI3Ib61XOgR122rX9iEEeLLHS77YKwedYL6f5PQA0Rjajzw0x+7aByR5DGXYCSOOiI0ne6eMcbjw==
-X-Received: by 2002:a1c:9692:: with SMTP id y140mr8704335wmd.67.1549563685141;
-        Thu, 07 Feb 2019 10:21:25 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bf1:e200:a906:e81:1a0f:97bd? (p200300EA8BF1E200A9060E811A0F97BD.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:a906:e81:1a0f:97bd])
-        by smtp.googlemail.com with ESMTPSA id b14sm33043657wrx.36.2019.02.07.10.21.23
+        bh=n6gNQy3qqvdmMYAWH6t15CIwErBxvMQ0etpWdbmoly4=;
+        b=F22923paGUo2hwNTzA9x/7UVPLXD7hTexCdASefhCWu0Ge457AkmEoAhRUsXFm4yhL
+         EyuNdM75qmem2PkLiwC3MwPTnBmixoV7f8R8KBoYLDiaNQvBdjrXvT1OkPWN81ObcTRi
+         ZwA5pL6zDmRgEFotjXMC2Bon73nUrVbgYZQ3wTGiCfFPEyB0Ysh1Nakz4YxZ9VfEPCXv
+         +yoHcTI8TVuChcWg8rvo66R5eyfC7l6vpj0k6qC5NesUav+/lTD0TKrSsjm1PuTZOs9e
+         4wVaY/vghubW8tuO6TFPpCjYZS7oOySTDrnHehYx86ivqYcJzcuOGnxJ/n0o+hMKuyNH
+         hnQg==
+X-Gm-Message-State: AHQUAuagMbuvgemucDDMBcapwptSKUeFHjZr7B/rvRCe3eh0e5DjMUYf
+        a5p/e8AJJpfmLcI36MZEecGe3ZsH
+X-Google-Smtp-Source: AHgI3IZMfK8I830MVjdgUi7rno7tMzROwvdusmg5AjkcsWw3heWDsdsn+mR3BjyZrDPAjlWEjMkhXw==
+X-Received: by 2002:ac2:51a2:: with SMTP id f2mr10764313lfk.161.1549563725490;
+        Thu, 07 Feb 2019 10:22:05 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id j12-v6sm4386344ljh.66.2019.02.07.10.22.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 10:21:24 -0800 (PST)
-Subject: Re: [PATCH net-next v2 01/10] net: phy: Update PHY linkmodes after
- config_init
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
- <20190207094939.27369-2-maxime.chevallier@bootlin.com>
- <20190207134807.GD23970@lunn.ch> <20190207145517.08bb8975@bootlin.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <349385df-3de6-63e0-f1bb-6085c50b9840@gmail.com>
-Date:   Thu, 7 Feb 2019 19:21:18 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 07 Feb 2019 10:22:04 -0800 (PST)
+Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
+ <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
+ <32b0b694-f912-044e-1a50-55b9c355d0c3@gmail.com>
+ <BYAPR12MB3398350797241F90AE347FB5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <0a7d62c4-9dcd-08dd-4e3f-877184848daa@gmail.com>
+ <20190207160630.GB17445@ulmo>
+ <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <0b7963a4-ee9c-7296-1478-38235af7cd40@gmail.com>
+ <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <646d9963-ec2d-5210-d645-2b05da61d8cb@gmail.com>
+Date:   Thu, 7 Feb 2019 21:22:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190207145517.08bb8975@bootlin.com>
+In-Reply-To: <BYAPR12MB33983F916E6DE23228B4EBD0C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.02.2019 14:55, Maxime Chevallier wrote:
-> Hello Andrew,
+07.02.2019 21:02, Sowjanya Komatineni пишет:
 > 
-> On Thu, 7 Feb 2019 14:48:07 +0100
-> Andrew Lunn <andrew@lunn.ch> wrote:
-> 
->> On Thu, Feb 07, 2019 at 10:49:30AM +0100, Maxime Chevallier wrote:
->>> We want to be able to update a PHY's supported list in the config_init
->>> callback, so move the Pause parameters settings from phydrv->features
->>> after calling config_init to make sure these  parameters aren't
->>> overwritten.  
+>>>>>>> It became apparent to me that there is a problem here. The size of dma_buf is 4096 bytes and maximum message length is 4096 too, we have pushed 12 bytes packet_header to the buffer >and now there are 4084 bytes left for the message in the buffer. Hence transfer of 4KB will cause buffer overflow and either crash kernel or corrupt memory. One solution is to just always >push packet_header using PIO, other to reduce max_write_len or increase dma_buf size.
+>>>>>>
+>>>>>> Yes, This is known to me and I will add separate patch for this to 
+>>>>>> update quirks to take care for t186 and t194 to exclude packet hdr lengths There was separate patch when quirks were added and it got merged already from 5.0-rc1 but don’t want to sneak that here. Will send separate patch to take care of this.
+>>>>>> Need to update quirk to exclude packet header
+>>>>>>
+>>>>>
+>>>>> No. This is a bug of this patch, it must be fixed in this patch as well. 
+>>>>>
+>>>>
+>>>>
+>>>> I'm not sure we actually need this. My understanding is that it's really the payload size that's 4 KiB and 64 KiB, respectively. I don't think that includes the header.
+>>>>
+>>>> Thierry
+>>>
+>>> As per the design, Yes that’s including the HEADER. Its total transfer per packet including header.
+>>>
 >>
->> Hi Maxime
+>> My understanding that I2C's max read/write sizes quirks are the payload limits, and so excluding the header size. Hence I'm not sure what you are trying to say, Thierry.
 >>
->> I have a patch which makes some core changes to support PHY doing
->> runtime feature detection. I would prefer to use them, than this.
->>
->> Either I or Heiner will post them soon.
+>> Sowjanya, also.. it should be fine if you'll include the separate patch into this series, placing it before this DMA-patch. I just read your message as "patch separately from this series".
 > 
-> Sure, no problem, thanks for doing this. I'll be happy to review and
-> test that on my side.
+> OK, Will add that prior to DMA patch. V15 will include max transfer limit update, dma resource releases on probe faiures, and other minor errors in V14 feedback.
+> Will wait for any more feedbacks before releasing V15...
 > 
-The second version of the patch set comes in time because I was just
-about to submit parts of it on Maxime's behalf. We may have some
-dependencies between adding the get_features callback in phy_driver
-and this patch set. Maybe the patch set needs to be splitted.
-I think tomorrow or the day after I can have a closer look at this.
 
-> As I said, I lack the big picture view on that part so my approach was
-> pretty naive, I'm glad you can take care of this :)
-> 
-Don't be so self-effacing, it's good work :)
-
-> Thanks,
-> 
-> Maxime
-> 
-Heiner
+Thanks, I'll add couple more minor comments then.
