@@ -2,93 +2,94 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B91BC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06085C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E7921908
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:09:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3KSY7zRy"
+	by mail.kernel.org (Postfix) with ESMTP id C0AB621872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfBGOJp (ORCPT
+        id S1727139AbfBGOKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:09:45 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:42468 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726732AbfBGOJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:09:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=UW1DS7PxkZzJbujwgy3uj1+cDFSwJ+CbXVbjWYszkO8=; b=3KSY7zRy20kjGRJiO6yC30ZhAC
-        Z4NyPAdkTuUG0aDgz1EH/PEKBigmqJZ7IELFDilxOf6WJq7vlAZ2b6HR4l2116cjiQ5Z647vSSpUk
-        /wtKTPvZKB5iuJVvFuMklFzNIKsNgCYn3KYVd9L1pLgS/Yq7xO/WJDHcLZS9R9q4eQVk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1grkN1-0006ys-Hm; Thu, 07 Feb 2019 15:09:39 +0100
-Date:   Thu, 7 Feb 2019 15:09:39 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next v2 04/10] net: phy: Automatically fill the
- generic TP, FIBRE and Backplane modes
-Message-ID: <20190207140939.GI32483@lunn.ch>
-References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
- <20190207094939.27369-5-maxime.chevallier@bootlin.com>
+        Thu, 7 Feb 2019 09:10:00 -0500
+Received: from mail.emypeople.net ([216.220.167.73]:34423 "EHLO
+        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbfBGOJ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 09:09:59 -0500
+Received: from Shop7 ([166.182.241.52])
+        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201902070909555932;
+        Thu, 07 Feb 2019 09:09:55 -0500
+From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
+To:     "'Al Viro'" <viro@zeniv.linux.org.uk>,
+        "'Denis Efremov'" <efremov@ispras.ru>
+Cc:     "'Casey Schaufler'" <casey@schaufler-ca.com>,
+        "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        "'Eric Paris'" <eparis@parisplace.org>,
+        "'Kees Cook'" <keescook@chromium.org>,
+        "'John Johansen'" <john.johansen@canonical.com>,
+        "'James Morris'" <jmorris@namei.org>,
+        "'Serge E. Hallyn'" <serge@hallyn.com>,
+        "'Paul Moore'" <paul@paul-moore.com>,
+        "'Kentaro Takeda'" <takedakn@nttdata.co.jp>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <cover.1549540487.git.efremov@ispras.ru> <0275d06334cdb1d2a87384d7971924a70776b3cb.1549540487.git.efremov@ispras.ru> <20190207134939.GA2217@ZenIV.linux.org.uk>
+In-Reply-To: <20190207134939.GA2217@ZenIV.linux.org.uk>
+Subject: RE: [PATCH 06/10] security: fix documentation for the path_chmod hook
+Date:   Thu, 7 Feb 2019 09:09:49 -0500
+Message-ID: <000001d4beee$caa8eff0$5ffacfd0$@211mainstreet.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207094939.27369-5-maxime.chevallier@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHt/nb8gz5bVEVBhRHqG/14fbqxbAHJyUheAmdZodmlgFWToA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 10:49:33AM +0100, Maxime Chevallier wrote:
-> PHY advertised and supported linkmodes contain both specific modes such
-> as 1000BASET Half/Full and generic ones such as TP that represent a
-> class of modes.
+On Thursday, February 07, 2019 8:50 AM Al Viro wrote:
+> On Thu, Feb 07, 2019 at 03:44:54PM +0300, Denis Efremov wrote:
+> > The path_chmod hook was changed in the commit
+> > "switch security_path_chmod() to struct path *" (cdcf116d44e7).
+> > The argument @mnt was removed from the hook, @dentry was changed
+> > to @path. This patch updates the documentation accordingly.
+> >
+> > Signed-off-by: Denis Efremov <efremov@ispras.ru>
+> > ---
+> >  include/linux/lsm_hooks.h | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index cb93972257be..5d6428d0027b 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -304,8 +304,7 @@
+> >   *	Return 0 if permission is granted.
+> >   * @path_chmod:
+> >   *	Check for permission to change DAC's permission of a file or directory.
+> > - *	@dentry contains the dentry structure.
+> > - *	@mnt contains the vfsmnt structure.
+> > + *	@path contains the path structure.
 > 
-> Since some modes such as Fibre, TP or Backplane match a wide range of
-> specific modes, we can automatically set these bits if one of the
-> specific modes it corresponds to is present in the list.
+> May I politely inquire about the value of these comments?  How much information
+> is provided by refering to an argument as "the dentry structure" or "the path
+> structure", especially when there's nothing immediately above that would introduce
+> either.  "Type of 'dentry' argument is somehow related to struct dentry,
+> try and guess what the value might be - we don't care, we just need every
+> argument commented"?
 > 
-> The 'TP' bit is set whenever there's a BaseT linkmode in
-> phydev->supported.
-> 
-> The 'FIBRE' bit is set for BaseL, BaseS and BaseE linkmodes.
-> 
-> Finally, the 'Backplane' is set whenever a BaseK mode is supported.
+> Who needs that crap in the first place?
 
-Hi Maxime
+The comments fill a valuable place to folks like me who are new to the linux security modules.
+In my spare time, I'm writing a new LSM specifically geared for parental controls uses, and the
+comments in lsm_hooks.h have helped me out more than once.  Perhaps the comments could
+be inproved by changing them to something like this:
+"@[arg] contains the [type] structure, defined in linux/[?].h"
 
-Interesting idea.
-
-But what exactly are we supposed to be representing here?  That PHY
-can do these modes, or that the port exists on the device? The
-marvell10g can do fibre, but do all boards have an SFP/SFF, or do some
-only have an RJ-45 for TP? Are there boards without TP and just
-SFP/SFF?
-
-Is there documentation in ethtool which gives a clue as to what is
-expected?
-
-Thanks
-	Andrew
