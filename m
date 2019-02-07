@@ -2,103 +2,91 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD215C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8292C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE4F21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549551253;
-	bh=QZ8eZseL12DgHER1z1Mmbg6u/2uiYfQcbMHSdmr9/6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dwGxz/cikhtEe2kqOwQcer6uBcqG2yiSFqgNDLa0pjqVFGlj7xw/+L4X/389SMyq2
-	 aeOw7COYwkHEjFoY3707m/QBxpN3X+oPP3j8iWbDsLihO/6dElb58PTeYteJTx4/QA
-	 mHjuRSJuBmmufnS2w+D0Y6nEzFTQv2QnxXk8eNM8=
+	by mail.kernel.org (Postfix) with ESMTP id 9BEDB21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="akvbrlok";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zz4AgPtD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfBGOyM (ORCPT
+        id S1726956AbfBGOyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:54:12 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52372 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGOyL (ORCPT
+        Thu, 7 Feb 2019 09:54:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58318 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfBGOyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:54:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QZ8eZseL12DgHER1z1Mmbg6u/2uiYfQcbMHSdmr9/6I=; b=cPeZnbPg1TVvSijmlU5DkkmdM
-        FM6WzQQcJWtkpPAZgkIVfdbZkrxs0awpKVrMTQSlvwmLhXmEyIhv6bFNROd8SoLByjwCCEUEtwysK
-        1Yys9abzwHYTfPxEXfHH5A9pV+eyztMpF2PZeOhY/vgIEf4Y+0W9IGo9B0PZNbllB/wSw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1grl42-00069n-Nc; Thu, 07 Feb 2019 14:54:06 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 270241127EF9; Thu,  7 Feb 2019 14:54:06 +0000 (GMT)
-Date:   Thu, 7 Feb 2019 14:54:06 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] ASoC: samsung: Prevent clk_get_rate() calls in atomic
- context
-Message-ID: <20190207145406.GD6190@sirena.org.uk>
-References: <CGME20190207142052epcas1p22f1dc03c371674434ff40150cf376b6a@epcas1p2.samsung.com>
- <20190207142041.19394-1-s.nawrocki@samsung.com>
- <20190207143214.GC6190@sirena.org.uk>
- <21b8ccd7-e379-b4aa-3257-c9644ce3664c@samsung.com>
+        Thu, 7 Feb 2019 09:54:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9A3586087B; Thu,  7 Feb 2019 14:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549551289;
+        bh=Lz7Z40n7NqPwkFyza//GAsnAYwkTB4hWx3P42HitWok=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=akvbrlokXaFz4yvpKDUaSItgCOWHPn8NGF2yr4c1h2264T9sX8El45fD0YUFdkhhY
+         TslpNi4VM4dVJD9PV/7AWaFKxlH25qXTKaXWAhbKdZ7rYvVJvr5VDKls2Nhm5xfgqg
+         L78/jcY1fHt85dBqRZz1yytxpxNUTehBFMzET2u0=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 789A060247;
+        Thu,  7 Feb 2019 14:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549551289;
+        bh=Lz7Z40n7NqPwkFyza//GAsnAYwkTB4hWx3P42HitWok=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=Zz4AgPtDv8Q8YoUL9n/b7YHK0zy6stBgyEVywhcjbKJOzYGLUWVNYxtb+k+Sp8Imm
+         Vp5+I5P5+ME6qYE43D3ya74wnUznGF4T/Eq3nXmN+aS5oVQkWawSWCZXNTJPcHzxAX
+         575rC6zK4y5KiSXKVJwygqp4RHIXIlg47UdmvmcU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 789A060247
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="F8dlzb82+Fcn6AgP"
-Content-Disposition: inline
-In-Reply-To: <21b8ccd7-e379-b4aa-3257-c9644ce3664c@samsung.com>
-X-Cookie: A day without sunshine is like night.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][RESEND] ath10k: snoc: remove set but not used variable
+ 'ar_snoc'
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190130030900.18764-1-yuehaibing@huawei.com>
+References: <20190130030900.18764-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <davem@davemloft.net>, <ath10k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190207145449.9A3586087B@smtp.codeaurora.org>
+Date:   Thu,  7 Feb 2019 14:54:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+YueHaibing <yuehaibing@huawei.com> wrote:
 
---F8dlzb82+Fcn6AgP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/wireless/ath/ath10k/snoc.c: In function 'ath10k_snoc_tx_pipe_cleanup':
+> drivers/net/wireless/ath/ath10k/snoc.c:681:22: warning:
+>  variable 'ar_snoc' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-On Thu, Feb 07, 2019 at 03:47:14PM +0100, Sylwester Nawrocki wrote:
-> On 2/7/19 15:32, Mark Brown wrote:
+Patch applied to ath-next branch of ath.git, thanks.
 
-> > Please think hard before including complete backtraces in upstream
-> > reports, they are very large and contain almost no useful information
-> > relative to their size so often obscure the relevant content in your
-> > message. If part of the backtrace is usefully illustrative then it's
-> > usually better to pull out the relevant sections.
+f9a4b7f45ff5 ath10k: snoc: remove set but not used variable 'ar_snoc'
 
-> OK, let me trim the backtrace some more and resend.
+-- 
+https://patchwork.kernel.org/patch/10787609/
 
-It's fine, I already applied.
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
---F8dlzb82+Fcn6AgP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxcRo0ACgkQJNaLcl1U
-h9BwYgf8C1wS4SbsPYJfIJffKguSMIG2PsJNdhD6sjPzrZy8INW/8DEB/oJWpFbo
-U4YTznjK0tz/aLPGm7XS4qliocS6x1QcK4dq+E1DhtUGg5WUoehyS0pxJJnc6Mn/
-lX62rgFrCbHz3g9CGh/IxsNdLtkRTeh2jS64tmK/Mp/gLJ/I1Xv6AtsPtjWnZXIe
-6b6Wo047tPUHcOto0Ud4yZcf9rUeVYNDSU8dU1/EJVMQdRc7Qs54OCa0mo4KpTW7
-07dmJNqCaj3RBt1T8WBpy2uMfoYkghpow9N6XnnpDMwlovAbS52oxDzlmNALZ9wJ
-5+fLAdrwdirSHTp2Sg9+4dnutCl53Q==
-=9x5Y
------END PGP SIGNATURE-----
-
---F8dlzb82+Fcn6AgP--
