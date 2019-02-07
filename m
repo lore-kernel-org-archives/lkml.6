@@ -2,88 +2,98 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA091C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C32C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 702082175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Jnq8Fldc"
+	by mail.kernel.org (Postfix) with ESMTP id 4564B2175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549548044;
+	bh=dtf7KLR1v/GNxKVdL6hwWl0Zptxytb7CclxItOW9Y50=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=O3M5KZQ380qXgM+2Fci35KcNWc2AX6I52CT+pcQI0avjZbZHnX9Bzay11uXMRQQCE
+	 p/anEXLR0RdRyTW6J7ssrFsjHoUoqqvuCBojrJgNSIoKmZ9bKnj0WUD/OvA7WUottP
+	 9qYwTOrHT2smtZZGZkXUZ+D4tWD2RL2KpU+nSOEE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfBGOAM (ORCPT
+        id S1727134AbfBGOAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:00:12 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46782 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726782AbfBGOAL (ORCPT
+        Thu, 7 Feb 2019 09:00:42 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47274 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbfBGOAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:00:11 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17Dxn3l002204;
-        Thu, 7 Feb 2019 07:59:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549547989;
-        bh=DgjEiq4VXCwk7Ur6pzRLw4YvGQ91iUg2RFN5d26onDs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Jnq8FldchJ84VscgPIU1WyubtglgFgIQqxvNE/bZAUGfdtzVoO0Va5Krvb2KfWTTd
-         JlUKxBHfpcupZNk93lAxh2/Q8iOM7GagOc4B1qA3uIeNItGOUPU0jcUgsaSFDE4PNI
-         1q9cXLbmP66IQXIVT7tmWl4/gqfAA60shyxsIMgg=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17DxnT9088177
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Feb 2019 07:59:49 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
- Feb 2019 07:59:49 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 7 Feb 2019 07:59:49 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17Dxkmq021436;
-        Thu, 7 Feb 2019 07:59:47 -0600
-Subject: Re: [PATCH 25/35] ARM: davinci: cp-intc: use the new-style config
- structure
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-26-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <993a6550-5167-4385-f799-8b19107f7b37@ti.com>
-Date:   Thu, 7 Feb 2019 19:29:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 7 Feb 2019 09:00:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6WysUK9ReRUXs6kzcHd/rDMxUSHx3K+UoSnlX42mIqA=; b=j0+pddZZmowAH6f/GUX7BSaQR
+        fCkMkQUF4eOeqxxSyZUHQ6cB3bv+U/pOngyMtBNyjJcYe/wgRD7lLocxRzubdODD2SQnxHgHm+3NJ
+        2o8a6cpm3JvKq1Rux6Bs+7749nSaodquwvYcsWScgU54UlKKWV+lpz3vA4IRtBDCHVvYI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1grkEB-0005qG-SK; Thu, 07 Feb 2019 14:00:31 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6123E1127EF9; Thu,  7 Feb 2019 14:00:31 +0000 (GMT)
+Date:   Thu, 7 Feb 2019 14:00:31 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: sound: Document jz4740-codec bindings
+Message-ID: <20190207140031.GB6190@sirena.org.uk>
+References: <20190207133143.5232-1-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-26-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
+Content-Disposition: inline
+In-Reply-To: <20190207133143.5232-1-paul@crapouillou.net>
+X-Cookie: A day without sunshine is like night.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/19 7:09 PM, Bartosz Golaszewski wrote:
-> +static int __init davinci_cp_intc_of_init(struct device_node *node,
-> +					  struct device_node *parent)
-> +{
-> +	struct davinci_cp_intc_config config = { };
-> +	int rv;
 
-I think you agreed to use 'ret' elsewhere. If yes, please change this
-too for consistency.
+--uZ3hkaAS1mZxFaxD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Sekhar
+On Thu, Feb 07, 2019 at 10:31:38AM -0300, Paul Cercueil wrote:
+> Add documentation about how to probe the jz4740-codec driver from
+> devicetree.
+
+Please do not submit new versions of already applied patches, please
+submit incremental updates to the existing code.  Modifying existing
+commits creates problems for other users building on top of those
+commits so it's best practice to only change pubished git commits if
+absolutely essential.
+
+--uZ3hkaAS1mZxFaxD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxcOf4ACgkQJNaLcl1U
+h9BCKAf/UxTyiQiKVJAGlJ01QhgnGsVSha+VJSRvllTopSzPMhz1TXqEQHyUnFP7
+A849Njc1YCAr5BKPJ3aujPh/I2tOj+z7NGxVmcKwtugwu0M/IqaGFIs9iYKafIoW
+aHo0PrySKCCnH6b6tqGXXToVlEy3GxlOzHnpslLDXBB5ifNFPUZvW7qQPjEewTFU
+j4kUgB8r6t0bkIXbqm/0LPUG7HTNKsDhbC2MBKHnia2PZYdwPSaakF0NXn1BuKop
+YlfP3gDwjk9YPnr6W9HJaIAauh6PrPOk7hv2grZ1slmP5qWXsQIyZQN8WyTbbOr8
+RTuqMBveOcEsWoV9gEicNu/jZc3l/Q==
+=/Tjd
+-----END PGP SIGNATURE-----
+
+--uZ3hkaAS1mZxFaxD--
