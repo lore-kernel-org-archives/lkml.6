@@ -2,112 +2,123 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E01E0C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F97BC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40352175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:59:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22BF52175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d5MpIJPc"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="jF2XO5hx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBGS70 (ORCPT
+        id S1726952AbfBGTAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:59:26 -0500
-Received: from mail-it1-f201.google.com ([209.85.166.201]:43319 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfBGS70 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:59:26 -0500
-Received: by mail-it1-f201.google.com with SMTP id p124so1409520itd.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 10:59:26 -0800 (PST)
+        Thu, 7 Feb 2019 14:00:13 -0500
+Received: from mail-eopbgr750098.outbound.protection.outlook.com ([40.107.75.98]:23046
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726474AbfBGTAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 14:00:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=bM4jn6lNIwgT6TBV8rTyAb6ZLmRRecodhu/3Jy2aaug=;
-        b=d5MpIJPcqlgMXmneISZg91mRfxrq2EDmGkrYAdP4raJhgIH7h/CyJDN30VAy7vY3bn
-         86dKbtqOzfKvVdH1x9mZhKyB2N0u1sfDf8I4qH9YvZIakIN4Z9oDWWyA3WL0Ejre6mG+
-         GJ6xuSoIcsoYCzpR88wwzkWEclrH9qVD43QFL36mF8+x21jBz1yoklkeBfKecsKLbf7m
-         kiFU5yrU9tD2mZJtz7oCTUfqKCe7SnSZR8oUAgnRPgyg+b0PbsczyMMN/+S8k/VrECl1
-         R3D6cSpHCndzFQ9YEMAl07f48L/5wf6DSKvphTQ034lAOrJE2SrQpuJHgS7uL1Y76ibZ
-         j5SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=bM4jn6lNIwgT6TBV8rTyAb6ZLmRRecodhu/3Jy2aaug=;
-        b=UTpdYCOZ1WFW/FfYwplbjgvPXcHvHKpY24XGPufJ+gy5IS4apoeH7QFML/QDCV3LmL
-         ufF+snVcx88fQAgAPsxMNfUDRFi1MrqWd2E9tdn5lftYqr+44DcdISjMx02O8alzL9Hz
-         eknUp61bDKnLsPwVkNNrOo7eF8f27m2hHJOITAXPqLBwO2jcxiWL8cMoTvODfU9PP6p4
-         PL7kpkcoZrERcOCrvfpMbID9qSVIgEoo46quPeze/KNsvgr6LohPIVTgCaiS9Qg6ukIi
-         tJbWpjw3OXFDiR2uFXBSnOuzAm5FSLFwxfm4ryLEDDTPqkyDMWEY8BxRe3MQQVnAdFV5
-         YNcg==
-X-Gm-Message-State: AHQUAubVK0QObUFFhIJGF4hQUnVAM7hPqfIZEMFforEm9Yo44j9mLU87
-        j6srUt9qKBGhahRiLZ7RTOgvW43BxBGfVA==
-X-Google-Smtp-Source: AHgI3IYf+pX+ukt4U8SVjRz8Zmj/akNha+InGq7PtUN7tJfthIOXXOssY7ov/Ny/gk6rw0O/FzAqWYxLQqS6wA==
-X-Received: by 2002:a24:6852:: with SMTP id v79mr6984263itb.29.1549565965674;
- Thu, 07 Feb 2019 10:59:25 -0800 (PST)
-Date:   Thu,  7 Feb 2019 10:59:17 -0800
-Message-Id: <20190207185917.167829-1-egranata@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
-Subject: [PATCH] driver: platform: Add support for GpioInt() ACPI to platform_get_irq()
-From:   egranata@google.com
-To:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        enric.balletbo@collabora.com
-Cc:     linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        dtor@chromium.org, linux-acpi@vger.kernel.org,
-        briannorris@chromium.org, Enrico Granata <egranata@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mdLCWm/y+1EwdazVy0gpYpMrY5LIQZMeyNsI1Ir0wI4=;
+ b=jF2XO5hxPNRvvoZ1sA6WgfQXUGNaUML8zEexZjFRlFFyu8ixJ8Ai5+sk/7M9Glk0LaoVb2IXPgclwMag8VVVzNo/y//zxPELx7+vKEZ2FPJfe/XRi7Xh/JMzbJ1yMDgDRVzKifTkKpppz1NQx/BhS8ZweMVcEBbvTdkgVU0gsrU=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1391.namprd22.prod.outlook.com (10.172.63.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Thu, 7 Feb 2019 19:00:09 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::7d5e:f3b0:4a5:4636]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::7d5e:f3b0:4a5:4636%9]) with mapi id 15.20.1580.019; Thu, 7 Feb 2019
+ 19:00:09 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 2/2] MIPS/c-r4k: do no use mmap_sem for gup_fast()
+Thread-Topic: [PATCH 2/2] MIPS/c-r4k: do no use mmap_sem for gup_fast()
+Thread-Index: AQHUvqdibN/VJXh0p0CcjWrTW3p8AqXUsWAA
+Date:   Thu, 7 Feb 2019 19:00:09 +0000
+Message-ID: <20190207190007.jz4rz6e6qxwazxm7@pburton-laptop>
+References: <20190207053740.26915-1-dave@stgolabs.net>
+ <20190207053740.26915-3-dave@stgolabs.net>
+In-Reply-To: <20190207053740.26915-3-dave@stgolabs.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR02CA0027.namprd02.prod.outlook.com
+ (2603:10b6:a02:ee::40) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.99.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1391;6:ls39BYP+zaS44uQFrRD23ArLAkMSTg/w0CLWKxRrAJX3mnIuXpHt80ptJj15Xdi1C0aoYEfgADrVF/JnPvpXZzQMWL1t0SUPBAAdCLRJIhEnnZJWJbRRvlbTjlOjUJ7GShdDwZX5M/EmU/5ay5nmSRMmNemwIu//48Mbfg8GBgZA0KIKBEFN/grkIJ5Cp1p9bxCXnJAJoyDfpW8O9NrxkwIkWWRgcZnaaaCNgWco417acoc8pRwSuA1/PLDPQF7Cn8T0OE4sRpdmMOVSJxcQAZZe9sKU9DlZImwCPQx1rW9A198JaoEHcFN0y48CnyGQB2rvCiCAAh1KbuYb9R0WaJvnZesPLA+YmDNlSILA5cZCw5IFBgOcjqTIyVUXSloR7cqRWNPGcZchHU1pkRTGWRcN/owRbdtioLGKwQpgqm1I+7qP4RHnAhmPoTA5XAFmFGYf18hFnFwzNBrDReN9NQ==;5:jnz9jjdQJyel2v3AY5NETiYkOCy8O0CGU9wtpwW04M5fXxhG+ETSNWlncE5zHjQ79UvMsRAuSr++/VOe4jmmWbwHEVsWoL81LxYmzGgo/EgwByizQpktXdGG1HY6NuiBc97DMWM6gZlghXNCkuIBTv+AikfXvP+ZkNmL683pt0WvWaWXB40SpN7eBDOaHYTVwGsVj/LNVgWxMUCgHVfqJA==;7:ZOYcPcK/u+SijvFOKaTQzlX9kdoCoOtgKyhvVthq/ppvGtifrAdmG2GVy3CjWoWJaIEAu6dlQJAjza4lZfFIxqe7gfx8oP1Ka8YpGJP06lS5/LZEt+g4FZj6rSwAD24uCXq69IpZ+kmF4p2kgmbsbw==
+x-ms-office365-filtering-correlation-id: 8183cfbf-3a91-49a7-e4e9-08d68d2e7b24
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1391;
+x-ms-traffictypediagnostic: MWHPR2201MB1391:
+x-microsoft-antispam-prvs: <MWHPR2201MB139168B3154F0FAB077FEFE7C1680@MWHPR2201MB1391.namprd22.prod.outlook.com>
+x-forefront-prvs: 0941B96580
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(376002)(136003)(39850400004)(346002)(366004)(199004)(189003)(97736004)(68736007)(305945005)(4326008)(8936002)(6246003)(14444005)(7736002)(99286004)(81156014)(6916009)(8676002)(256004)(2906002)(81166006)(6512007)(9686003)(6486002)(478600001)(186003)(229853002)(66066001)(71190400001)(71200400001)(4744005)(14454004)(26005)(386003)(44832011)(6436002)(6506007)(25786009)(54906003)(58126008)(316002)(52116002)(76176011)(33896004)(53936002)(33716001)(102836004)(105586002)(106356001)(486006)(42882007)(3846002)(6116002)(1076003)(446003)(476003)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1391;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UzUxSDcix+Y2r26Gsq5Okh1ymaWeedUI299LyhBWkPt3z/FXReSrf2GNHYk4Rl7bUgY5lCPLMPafWHsRlI9gGycS7esvbfenePR/76W4QZx7lHWBu2/uhVbhP4v/iNuaByeYZMe8FQcsToWaw6Ec3YzMJGrKvYil3FWh6D40YPgiYZzex97DswfeosIs1mPcCVbh/TjedA2PC7m68Fa9wq24izUQyqUZBrCxDeeAgd8uz1NNMv20nfxf6Be+v8DGMuLt+UNhw9+jMwqbsXbjAodRsbQdxGE7OoejGP1I7LIKt5INx17lIpg7nccaesFtj0b6wnaGxy+ytAubsvp8z4BurpVZ9nCkNo0ik8HNyrWPvpj3qYVvrDNMMAqOQ9ErSTlLNrvD3h7kui3NaXAOi3+oQuCbymhkQyXs8Ub9daI=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <71A7310B61D4C846AF3BC8DAE9D665F4@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8183cfbf-3a91-49a7-e4e9-08d68d2e7b24
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 19:00:08.8667
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1391
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Granata <egranata@chromium.org>
+Hi Davidlohr,
 
-ACPI 5 added support for GpioInt resources as a way to provide
-information about interrupts mediated via a GPIO controller.
+On Wed, Feb 06, 2019 at 09:37:40PM -0800, Davidlohr Bueso wrote:
+> It is well known that because the mm can internally
+> call the regular gup_unlocked if the lockless approach
+> fails and take the sem there, the caller must not hold
+> the mmap_sem already.
+>=20
+> Fixes: e523f289fe4d (MIPS: c-r4k: Fix sigtramp SMP call to use kmap)
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Paul Burton <paul.burton@mips.com>
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: linux-mips@vger.kernel.org
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 
-Several device buses (e.g. SPI, I2C) have support for retrieving
-an IRQ specified via this type of resource, and providing it
-directly to the driver as an IRQ number.
-This is not currently done for the platform drivers, as platform_get_irq()
-does not try to parse GpioInt() resources.
+Thanks - this looks good, but:
 
-This commit adds that functionality.
+ 1) The problem it fixes was introduced in v4.8.
 
-Signed-off-by: Enrico Granata <egranata@chromium.org>
----
- drivers/base/platform.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ 2) Commit adcc81f148d7 ("MIPS: math-emu: Write-protect delay slot
+    emulation pages") actually left flush_cache_sigtramp unused, and has
+    been backported to stable kernels also as far as v4.8.
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 1c958eb33ef4d..c50c4f9033aef 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -127,7 +127,17 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
- 		irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
- 	}
- 
--	return r ? r->start : -ENXIO;
-+	if (r)
-+		return r->start;
-+
-+	/*
-+	 * If no IRQ was found, try to parse ACPI GpioInt resources
-+	 * as a last resort.
-+	 */
-+	if (has_acpi_companion(&dev->dev))
-+		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
-+
-+	return -ENXIO;
- #endif
- }
- EXPORT_SYMBOL_GPL(platform_get_irq);
--- 
-2.20.1.611.gfbb209baf1-goog
+Therefore this will just fix code that never gets called, and I'll go
+delete the whole thing instead.
 
+Thanks,
+    Paul
