@@ -2,146 +2,270 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDA6C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D746C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F97620818
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:42:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB751218FE
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:44:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfBGImL (ORCPT
+        id S1726924AbfBGIow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 03:42:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41654 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbfBGImL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 03:42:11 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1599C66976;
-        Thu,  7 Feb 2019 08:42:10 +0000 (UTC)
-Received: from [10.36.112.44] (ovpn-112-44.ams2.redhat.com [10.36.112.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2E4A6155B;
-        Thu,  7 Feb 2019 08:42:04 +0000 (UTC)
-Subject: Re: [PATCH 2/3] perf/x86/intel/pt: Inject PMI for KVM guest
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, songliubraving@fb.com,
-        rkrcmar@redhat.com, zsm@chromium.org,
-        alexander.shishkin@linux.intel.com, konrad.wilk@oracle.com,
-        ak@linux.intel.com
-References: <1547928284-2915-1-git-send-email-luwei.kang@intel.com>
- <1547928284-2915-3-git-send-email-luwei.kang@intel.com>
- <94fdce1b-9c42-e551-3099-ef7c4071a6ba@redhat.com>
- <20190206163423.GI17564@hirez.programming.kicks-ass.net>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <d78063c8-8f0d-31ec-0626-a4a4ab013d5b@redhat.com>
-Date:   Thu, 7 Feb 2019 09:42:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 7 Feb 2019 03:44:52 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:58309 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbfBGIov (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 03:44:51 -0500
+X-Originating-IP: 90.88.22.177
+Received: from aptenodytes (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 2B4181BF20B;
+        Thu,  7 Feb 2019 08:44:47 +0000 (UTC)
+Message-ID: <1d6fb3d0f97880d829a88b6da5aa71456f50507f.camel@bootlin.com>
+Subject: Re: [PATCH v5 6/9] drm/bridge: cdns: Separate DSI and D-PHY
+ configuration
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Date:   Thu, 07 Feb 2019 09:44:46 +0100
+In-Reply-To: <0b3bea44e05745b65c23af7926ca546bc80a1bcc.1548085432.git-series.maxime.ripard@bootlin.com>
+References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
+         <0b3bea44e05745b65c23af7926ca546bc80a1bcc.1548085432.git-series.maxime.ripard@bootlin.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 
 MIME-Version: 1.0
-In-Reply-To: <20190206163423.GI17564@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 07 Feb 2019 08:42:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/02/19 17:34, Peter Zijlstra wrote:
-> 
-> How about we extend perf_guest_info_callback with an arch section and
-> add:
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 5aeb4c74fb99..76ce804e72c1 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -5835,6 +5835,9 @@ struct perf_guest_info_callbacks *perf_guest_cbs;
->  
->  int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
->  {
-> +	if (WARN_ON_ONCE(perf_guest_cbs))
-> +		return -EBUSY;
-> +
->  	perf_guest_cbs = cbs;
->  	return 0;
->  }
-> @@ -5842,6 +5845,9 @@ EXPORT_SYMBOL_GPL(perf_register_guest_info_callbacks);
->  
->  int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
->  {
-> +	if (WARN_ON_ONCE(perf_guest_cbs != cbs))
-> +		return -EINVAL;
-> +
->  	perf_guest_cbs = NULL;
->  	return 0;
->  }
+Hi,
 
-Makes total sense.
+On Mon, 2019-01-21 at 16:45 +0100, Maxime Ripard wrote:
+> The current configuration of the DSI bridge and its associated D-PHY is
+> intertwined. In order to ease the future conversion to the phy framework
+> for the D-PHY part, let's split the configuration in two.
 
-Paolo
+See below about a silly mistake when refactoring. Looks good otherwise,
+so with that fixed:
+
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  drivers/gpu/drm/bridge/cdns-dsi.c | 101 ++++++++++++++++++++++---------
+>  1 file changed, 73 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
+> index ce9496d13986..796874e76308 100644
+> --- a/drivers/gpu/drm/bridge/cdns-dsi.c
+> +++ b/drivers/gpu/drm/bridge/cdns-dsi.c
+> @@ -545,6 +545,15 @@ bridge_to_cdns_dsi_input(struct drm_bridge *bridge)
+>  	return container_of(bridge, struct cdns_dsi_input, bridge);
+>  }
+>  
+> +static unsigned int mode_to_dpi_hfp(const struct drm_display_mode *mode,
+> +				    bool mode_valid_check)
+> +{
+> +	if (mode_valid_check)
+> +		return mode->hsync_start - mode->hdisplay;
+> +
+> +	return mode->crtc_hsync_start - mode->crtc_hdisplay;
+> +}
+> +
+>  static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
+>  				     struct cdns_dphy_cfg *cfg,
+>  				     unsigned int dpi_htotal,
+> @@ -731,14 +740,12 @@ static unsigned int dpi_to_dsi_timing(unsigned int dpi_timing,
+>  static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+>  			     const struct drm_display_mode *mode,
+>  			     struct cdns_dsi_cfg *dsi_cfg,
+> -			     struct cdns_dphy_cfg *dphy_cfg,
+>  			     bool mode_valid_check)
+>  {
+> -	unsigned long dsi_htotal = 0, dsi_hss_hsa_hse_hbp = 0;
+>  	struct cdns_dsi_output *output = &dsi->output;
+> -	unsigned int dsi_hfp_ext = 0, dpi_hfp, tmp;
+> +	unsigned int tmp;
+>  	bool sync_pulse = false;
+> -	int bpp, nlanes, ret;
+> +	int bpp, nlanes;
+>  
+>  	memset(dsi_cfg, 0, sizeof(*dsi_cfg));
+>  
+> @@ -757,8 +764,6 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+>  		       mode->crtc_hsync_end : mode->crtc_hsync_start);
+>  
+>  	dsi_cfg->hbp = dpi_to_dsi_timing(tmp, bpp, DSI_HBP_FRAME_OVERHEAD);
+> -	dsi_htotal += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+> -	dsi_hss_hsa_hse_hbp += dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+>  
+>  	if (sync_pulse) {
+>  		if (mode_valid_check)
+> @@ -768,49 +773,91 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
+>  
+>  		dsi_cfg->hsa = dpi_to_dsi_timing(tmp, bpp,
+>  						 DSI_HSA_FRAME_OVERHEAD);
+> -		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+> -		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+>  	}
+>  
+>  	dsi_cfg->hact = dpi_to_dsi_timing(mode_valid_check ?
+>  					  mode->hdisplay : mode->crtc_hdisplay,
+>  					  bpp, 0);
+> -	dsi_htotal += dsi_cfg->hact;
+> +	dsi_cfg->hfp = dpi_to_dsi_timing(mode_to_dpi_hfp(mode, mode_valid_check),
+> +					 bpp, DSI_HFP_FRAME_OVERHEAD);
+>  
+> -	if (mode_valid_check)
+> -		dpi_hfp = mode->hsync_start - mode->hdisplay;
+> -	else
+> -		dpi_hfp = mode->crtc_hsync_start - mode->crtc_hdisplay;
+> +	return 0;
+> +}
+> +
+> +static int cdns_dphy_validate(struct cdns_dsi *dsi,
+> +			      struct cdns_dsi_cfg *dsi_cfg,
+> +			      struct cdns_dphy_cfg *dphy_cfg,
+> +			      const struct drm_display_mode *mode,
+> +			      bool mode_valid_check)
+> +{
+> +	struct cdns_dsi_output *output = &dsi->output;
+> +	unsigned long dsi_htotal;
+> +	unsigned int dsi_hfp_ext = 0;
+> +
+> +	int ret;
+> +
+> +	dsi_htotal = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+> +		dsi_htotal += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+>  
+> -	dsi_cfg->hfp = dpi_to_dsi_timing(dpi_hfp, bpp, DSI_HFP_FRAME_OVERHEAD);
+> +	dsi_htotal += dsi_cfg->hact;
+>  	dsi_htotal += dsi_cfg->hfp + DSI_HFP_FRAME_OVERHEAD;
+>  
+>  	if (mode_valid_check)
+>  		ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
+> -						mode->htotal, bpp,
+> +						mode->htotal,
+>  						mode->clock * 1000,
+> -						dsi_htotal, nlanes,
+> +						mipi_dsi_pixel_format_to_bpp(output->dev->format),
+
+The bpp argument sits between htotal and clock, this puts it after
+clock which looks incorrect.
+
+Cheers,
+
+Paul
+
+> +						dsi_htotal,
+> +						output->dev->lanes,
+>  						&dsi_hfp_ext);
+>  	else
+>  		ret = cdns_dsi_get_dphy_pll_cfg(dsi->dphy, dphy_cfg,
+> -						mode->crtc_htotal, bpp,
+> +						mode->crtc_htotal,
+> +						mipi_dsi_pixel_format_to_bpp(output->dev->format),
+>  						mode->crtc_clock * 1000,
+> -						dsi_htotal, nlanes,
+> +						dsi_htotal,
+> +						output->dev->lanes,
+>  						&dsi_hfp_ext);
+> -
+>  	if (ret)
+>  		return ret;
+>  
+>  	dsi_cfg->hfp += dsi_hfp_ext;
+> -	dsi_htotal += dsi_hfp_ext;
+> -	dsi_cfg->htotal = dsi_htotal;
+> +	dsi_cfg->htotal = dsi_htotal + dsi_hfp_ext;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
+> +			       const struct drm_display_mode *mode,
+> +			       struct cdns_dsi_cfg *dsi_cfg,
+> +			       struct cdns_dphy_cfg *dphy_cfg,
+> +			       bool mode_valid_check)
+> +{
+> +	struct cdns_dsi_output *output = &dsi->output;
+> +	unsigned long dsi_hss_hsa_hse_hbp;
+> +	unsigned int nlanes = output->dev->lanes;
+> +	int ret;
+> +
+> +	ret = cdns_dsi_mode2cfg(dsi, mode, dsi_cfg, mode_valid_check);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cdns_dphy_validate(dsi, dsi_cfg, dphy_cfg, mode, mode_valid_check);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dsi_hss_hsa_hse_hbp = dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD;
+> +	if (output->dev->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+> +		dsi_hss_hsa_hse_hbp += dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD;
+>  
+>  	/*
+>  	 * Make sure DPI(HFP) > DSI(HSS+HSA+HSE+HBP) to guarantee that the FIFO
+>  	 * is empty before we start a receiving a new line on the DPI
+>  	 * interface.
+>  	 */
+> -	if ((u64)dphy_cfg->lane_bps * dpi_hfp * nlanes <
+> +	if ((u64)dphy_cfg->lane_bps *
+> +	    mode_to_dpi_hfp(mode, mode_valid_check) * nlanes <
+>  	    (u64)dsi_hss_hsa_hse_hbp *
+>  	    (mode_valid_check ? mode->clock : mode->crtc_clock) * 1000)
+>  		return -EINVAL;
+> @@ -842,7 +889,7 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+>  	struct cdns_dsi_output *output = &dsi->output;
+>  	struct cdns_dphy_cfg dphy_cfg;
+>  	struct cdns_dsi_cfg dsi_cfg;
+> -	int bpp, nlanes, ret;
+> +	int bpp, ret;
+>  
+>  	/*
+>  	 * VFP_DSI should be less than VFP_DPI and VFP_DSI should be at
+> @@ -860,11 +907,9 @@ cdns_dsi_bridge_mode_valid(struct drm_bridge *bridge,
+>  	if ((mode->hdisplay * bpp) % 32)
+>  		return MODE_H_ILLEGAL;
+>  
+> -	nlanes = output->dev->lanes;
+> -
+> -	ret = cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg, true);
+> +	ret = cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg, true);
+>  	if (ret)
+> -		return MODE_CLOCK_RANGE;
+> +		return MODE_BAD;
+>  
+>  	return MODE_OK;
+>  }
+> @@ -990,7 +1035,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+>  	bpp = mipi_dsi_pixel_format_to_bpp(output->dev->format);
+>  	nlanes = output->dev->lanes;
+>  
+> -	WARN_ON_ONCE(cdns_dsi_mode2cfg(dsi, mode, &dsi_cfg, &dphy_cfg, false));
+> +	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, &dphy_cfg, false));
+>  
+>  	cdns_dsi_hs_init(dsi, &dphy_cfg);
+>  	cdns_dsi_init_link(dsi);
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
