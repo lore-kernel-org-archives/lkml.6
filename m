@@ -2,109 +2,185 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8E3C4151A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC44C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA862218D3
+	by mail.kernel.org (Postfix) with ESMTP id AAADD2073F
 	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rYm3pwTq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqCKR6Ou"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726624AbfBGAPM (ORCPT
+        id S1726567AbfBGANU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:15:12 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44078 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfBGAPM (ORCPT
+        Wed, 6 Feb 2019 19:13:20 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41842 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfBGANT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:15:12 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p4so3906359plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 16:15:11 -0800 (PST)
+        Wed, 6 Feb 2019 19:13:19 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so3910898pfi.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 16:13:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yje4amOcq5mO6LIgG8ElJEar7nMZ/c/udNFZT9sHtWk=;
-        b=rYm3pwTqyB/byqalgLbzHR4GMWJvAH+wWxmY/4wty0tnnkXuo+14gHxt+0AEmqRpCn
-         IqdJwHRiUQbil/ooSUjvVCPvbayGMlHWEleuJiiVXYCiDKo+p5FK2Tt4NQNjq2Iy+cXy
-         yXwnkdcNAnFcD+5y1PK1uo3+uD6VbWdgdNIo5IXSw/Wjg0HNLlvczFzufmBF/e1fn5PM
-         zz2TT0bcLdl9gXca5zaSwyCMxzA2UsIKcG21OZVfOnQUTM0GiiwwyqIJdawGYyrsbC+X
-         yn/OUTUCADZI5K46fFKQeQDXHAfIC+aBfT4byKC7b+/X12cr3dadoxXJsYpZm1iI/DMu
-         sSoA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=48Lg5cdIe9wRbTnv/tNdejkqN45TMVAk+WqGnyWGTjA=;
+        b=HqCKR6OuBcQt97rlsYoAQcvEO7RRrWJcdoGLSBqM1fSolA8O19r91tORH0nIWQoQc5
+         nTgeB2LDP/jhzUtZrSQBzUS6oVqWWJ9/02Pri1CpGMAO9NVvvqfQre3xc8w4Eh6KF1pj
+         Q1l6LmgFj34P1XN8qSblJVSe+zptFrOpoyWYUEk0Z3Z5pGyDxDqxmVR+D0yXMMXn++hm
+         HZNnPzvkzRoqTR11iDQYn0QOgEuvgATonUCFMmd0VXTthKGBu6kna79KpYhbT3mRUYLW
+         4Bf7mncPiv9DzbQY2SRQ8IE01jBP9XNiIFzQHQU7r3tv0cCWxV2EDMif6HJaQXEJTCbs
+         WqJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yje4amOcq5mO6LIgG8ElJEar7nMZ/c/udNFZT9sHtWk=;
-        b=ldGHGgslIYrAMWp0kwNV/Nnl6wz0FG1YAa4J/A/lwyTt9hT340sgafasAUXJV+omrC
-         fJMSRCRiKBh5GPOPHn3RNWKSZnxQao0tj6zWzNQWAZW170PRsdLKh9lUD/GG0Esm4ac/
-         u8zxjdr+mRHwBnang5pFJo3eNy9Pr1XsJKxOhw9g5Wv0EsELN5Xm+TIwfILykBAOBsvO
-         b/sPXou0ba4iBVtsRlV4IAGkvOGo4bRDDPohSDph5G7C8KO6Z2I7KxRMYVpN//B46BhM
-         MyD3FSLbJqV03QtbcGMKbPCCQ5ORnLqz7F/XNUrJd3waLCnGDqFrABtyEkRa54/+nDSn
-         YxCw==
-X-Gm-Message-State: AHQUAua5+VReY9/ua8XGXEs0xtZ2lHmHMv0QK5Ix2psV7sN2tnyJRgpc
-        RhErO6OGKmJX+3isyVdid2EOutb2lT31d0tLuCBe5A==
-X-Google-Smtp-Source: AHgI3IaWcd2w98GkwBwvt/3LkH+xQt/k++85mYSNhzxzzSUvTRx5K5UsZtkpbMPo8U1IkJJgIQH/c6UZ02xAd2qa8DI=
-X-Received: by 2002:a17:902:4464:: with SMTP id k91mr13673903pld.13.1549498510952;
- Wed, 06 Feb 2019 16:15:10 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=48Lg5cdIe9wRbTnv/tNdejkqN45TMVAk+WqGnyWGTjA=;
+        b=d34UiEELoRjzRMnPs2y8PnAm5pHiRvrS+aDL1s9OSCcxibxd9NyF8DCMpjHCf3DoA2
+         0TUL8qsIDdejNL03wFbD+RWg7aqwufKmGhxVna+FhvsrQ8+5Orm7J+awL+kWpb+u5iSw
+         i7ooA+HcgYOghObuyA9AuFX6UgzLP5bq0/WEyQPqPWT2urngQRnEMxwABjLo2/xmMdPd
+         eNjMOgbwbFiyJbX5F0weygIq8y+4yt5vMk2NBe8mTcO48FBJOAbnv4w9QSKi5LeDnBhX
+         WzfmC2IqJYWAQT095x5KjvGYdQ0AN0iRMv60mSbCNF68oYhHLnh4pNrm2MwR9E3PDG3x
+         syAQ==
+X-Gm-Message-State: AHQUAuZaj8mWwMq2W07jeFSZ94p+t39uI4gxMXTxSUQPbrIHWhoRxRwz
+        H1gqPy0mRWuIMSktxTMrRIo=
+X-Google-Smtp-Source: AHgI3IZPPSigw1TjlI3b2LqynBuNEQvZITJgdbJE9uG0tHKErmdtRl0F/p38eJPUpnYLcgOfoKzw+w==
+X-Received: by 2002:a63:da18:: with SMTP id c24mr2384970pgh.318.1549498398589;
+        Wed, 06 Feb 2019 16:13:18 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id z15sm10149790pgc.77.2019.02.06.16.13.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 16:13:17 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-nvme@lists.infradead.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org
+Subject: [PATCH] nvme-core: Share code between nvme_wait_ready() and nvme_shutdown_ctrl()
+Date:   Wed,  6 Feb 2019 16:13:12 -0800
+Message-Id: <20190207001312.13672-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
- <CAK7LNAQqHgLTJU1tBU+oU+1CrWBrDpnui=dQCrNpzW4N2R-Omw@mail.gmail.com> <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
-In-Reply-To: <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 6 Feb 2019 16:14:55 -0800
-Message-ID: <CAKwvOdn0ssTmUue3YVU_2VJKR=56X4j2JJxNAoZ6x3-inCwwhQ@mail.gmail.com>
-Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 1:38 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 05/02/2019 09.05, Masahiro Yamada wrote:
-> > On Mon, Feb 4, 2019 at 4:24 AM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
-> >> +#define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__,=
- #expr)
-> >> +#define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "=
-")
-> >
-> > What is the "" "" for?
->
-> Good point. It's a leftover from when I had a fallback-implementation of
-> _Static_assert for gcc < 4.6, where I wanted to ensure that the second
-> argument was a string literal, even if my fallback implementation
-> ignored that argument. Now it's actually a little harmful, because
+Code polling NVME_CSTS_SHST_CMPLT in nvme_shutdown_ctrl() is very
+similar to polling loop in nvme_wait_ready(). Move shared polling loop
+code into __nvme_wait_ready() and re-implement both
+nvme_shutdown_ctrl() and nvme_wait_ready() on top of it to avoid code
+repetition.
 
-I had assumed it was for the "optional" part of the error message,
-since whether you pass a string error message or not, the C
-preprocessor should join them all together?
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-nvme@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/nvme/host/core.c | 54 ++++++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 24 deletions(-)
 
->
-> foobar.c:5:34: error: expected string literal before =E2=80=98expected=E2=
-=80=99
->  static_assert(sizeof(long) =3D=3D 8, expected 64 bit machine);
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index b47c59f0cbd8..633fbc21425c 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1797,28 +1797,41 @@ const struct block_device_operations nvme_ns_head_ops = {
+ };
+ #endif /* CONFIG_NVME_MULTIPATH */
+ 
+-static int nvme_wait_ready(struct nvme_ctrl *ctrl, u64 cap, bool enabled)
++static int __nvme_wait_ready(struct nvme_ctrl *ctrl, u32 mask, u32 value,
++			     unsigned long timeout)
+ {
+-	unsigned long timeout =
+-		((NVME_CAP_TIMEOUT(cap) + 1) * HZ / 2) + jiffies;
+-	u32 csts, bit = enabled ? NVME_CSTS_RDY : 0;
++	u32 csts;
+ 	int ret;
+ 
+ 	while ((ret = ctrl->ops->reg_read32(ctrl, NVME_REG_CSTS, &csts)) == 0) {
+ 		if (csts == ~0)
+ 			return -ENODEV;
+-		if ((csts & NVME_CSTS_RDY) == bit)
++		if ((csts & mask) == value)
+ 			break;
+ 
+ 		msleep(100);
+ 		if (fatal_signal_pending(current))
+ 			return -EINTR;
+-		if (time_after(jiffies, timeout)) {
+-			dev_err(ctrl->device,
+-				"Device not ready; aborting %s\n", enabled ?
+-						"initialisation" : "reset");
+-			return -ENODEV;
+-		}
++		if (time_after(jiffies, timeout))
++			return -ETIMEDOUT;
++	}
++
++	return ret;
++}
++
++static int nvme_wait_ready(struct nvme_ctrl *ctrl, u64 cap, bool enabled)
++{
++	unsigned long timeout =
++		((NVME_CAP_TIMEOUT(cap) + 1) * HZ / 2) + jiffies;
++	u32 bit = enabled ? NVME_CSTS_RDY : 0;
++	int ret;
++
++	ret = __nvme_wait_ready(ctrl, NVME_CSTS_RDY, bit, timeout);
++	if (ret == -ETIMEDOUT) {
++		dev_err(ctrl->device,
++			"Device not ready; aborting %s\n", enabled ?
++			"initialisation" : "reset");
++		ret = -ENODEV;
+ 	}
+ 
+ 	return ret;
+@@ -1883,7 +1896,6 @@ EXPORT_SYMBOL_GPL(nvme_enable_ctrl);
+ int nvme_shutdown_ctrl(struct nvme_ctrl *ctrl)
+ {
+ 	unsigned long timeout = jiffies + (ctrl->shutdown_timeout * HZ);
+-	u32 csts;
+ 	int ret;
+ 
+ 	ctrl->ctrl_config &= ~NVME_CC_SHN_MASK;
+@@ -1893,18 +1905,12 @@ int nvme_shutdown_ctrl(struct nvme_ctrl *ctrl)
+ 	if (ret)
+ 		return ret;
+ 
+-	while ((ret = ctrl->ops->reg_read32(ctrl, NVME_REG_CSTS, &csts)) == 0) {
+-		if ((csts & NVME_CSTS_SHST_MASK) == NVME_CSTS_SHST_CMPLT)
+-			break;
+-
+-		msleep(100);
+-		if (fatal_signal_pending(current))
+-			return -EINTR;
+-		if (time_after(jiffies, timeout)) {
+-			dev_err(ctrl->device,
+-				"Device shutdown incomplete; abort shutdown\n");
+-			return -ENODEV;
+-		}
++	ret = __nvme_wait_ready(ctrl, NVME_CSTS_SHST_MASK,
++				NVME_CSTS_SHST_CMPLT, timeout);
++	if (ret == -ETIMEDOUT) {
++		dev_err(ctrl->device,
++			"Device shutdown incomplete; abort shutdown\n");
++		ret = -ENODEV;
+ 	}
+ 
+ 	return ret;
+-- 
+2.20.1
 
-Hopefully you'd put `expected` in double quotes?
-
-Note: I'm _very_ happy to see this being added.  Once it's landed, I
-too can think of some places that it would work better than
-BUILD_BUG_ON().
---=20
-Thanks,
-~Nick Desaulniers
