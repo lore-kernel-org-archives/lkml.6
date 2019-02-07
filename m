@@ -6,65 +6,62 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497B2C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F4AC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A8621900
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC91E20818
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549527007;
-	bh=9B4+2Gcoim0DDwEi5cMs5xQTPbqQuw+Qu26BDTk6OqI=;
+	s=default; t=1549527019;
+	bh=YZp5j7NcO6TIgrN/26hsf/EJcqoGLDCSBqRqUYLZj3k=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=V6YhcbQ1Vx88TDRoUvpJTtspBkN+CPO518B9g2hW0pdYWRiquXHBqnbTsama1OPLB
-	 0qvPOsy+TXcf7zzVDjY7tKQDH96l0AAjemSoBWRvWOr04wWv4ZWD0JmUjAuFCziIVp
-	 1CuK74whA4sfGMkTKUFADEpzb2TTs69FTWQLORKA=
+	b=XVOwy1AuowhHLRqrhBNkyxmtTiFuFcKTsrZtpi+bbb0z43os4zk4kKhQgWTzf6Wtg
+	 QonogjF3+3QF2T7BTIEhHXwQ9nWo7BNlC9bemIsH87NtpnigYic0MtXP2tUbQhUuCQ
+	 o3trIyVfOKEdegGE0H1hmiUWT6LPcWZ+2pEwe7kg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfBGIKF (ORCPT
+        id S1727045AbfBGIKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 03:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38734 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 03:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbfBGIKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 03:10:04 -0500
-Subject: Re: [GIT PULL] pin control fixes for v5.0-rc
+        id S1726780AbfBGIKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 03:10:05 -0500
+Subject: Re: [PULL] virtio: fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549527004;
-        bh=9B4+2Gcoim0DDwEi5cMs5xQTPbqQuw+Qu26BDTk6OqI=;
+        s=default; t=1549527005;
+        bh=YZp5j7NcO6TIgrN/26hsf/EJcqoGLDCSBqRqUYLZj3k=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=M8fdoJtwxO5siGL2JBwboW5WFoi2tucbugYuH2V5I/NPxszVWvjuBnr4UpNMy//L0
-         /q4b5DHVsFtvHuxFnI5Y7w+fK+hT16mqiXMU7QqdZMgmyvNsuireVr9wtCHt8zWip8
-         nQ4dACflhsUoQ9nQuGl7jllCE5fiW351cBcCqIn0=
+        b=NvdtPsaY8d5Mvp3DxTO6n2LGpvk1FhxrrAKqNJq2zA3jN/kteIeNFAo24XLPwZbFj
+         xGlHEa81tDkWyziBL9D7chNosoaHqfyySL+DpC/gffSYMZf4/vC0bU2MarhRphbtwJ
+         Ny1FOJwg/+NWFHcL1dzjyirkZMf40jcb7Ftz+NfY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdYfCT9eBfrKZBA_Do3PcCwvTCX9odD1uHDyZQKdJ4KsNg@mail.gmail.com>
-References: <CACRpkdYfCT9eBfrKZBA_Do3PcCwvTCX9odD1uHDyZQKdJ4KsNg@mail.gmail.com>
+In-Reply-To: <20190206143256-mutt-send-email-mst@kernel.org>
+References: <20190206143256-mutt-send-email-mst@kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdYfCT9eBfrKZBA_Do3PcCwvTCX9odD1uHDyZQKdJ4KsNg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- tags/pinctrl-v5.0-2
-X-PR-Tracked-Commit-Id: 10098709b4ee6f6f19f25ba81d9c6f83518c584c
+X-PR-Tracked-Message-Id: <20190206143256-mutt-send-email-mst@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+X-PR-Tracked-Commit-Id: 9c0644ee4aa8792f1e60a2b014b4710faaddafeb
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b66bc7776748c97a6dc013c8d06e10ebf1c14307
-Message-Id: <154952700402.18479.15641626487708151430.pr-tracker-bot@kernel.org>
-Date:   Thu, 07 Feb 2019 08:10:04 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
+X-PR-Merge-Commit-Id: b0314565da2b95e73feab484467ad171fcce6dff
+Message-Id: <154952700528.18479.7285608057704274288.pr-tracker-bot@kernel.org>
+Date:   Thu, 07 Feb 2019 08:10:05 +0000
+To:     "Michael S. Tsirkin" <mst@redhat.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jason Kridner <jdk@ti.com>, Chen-Yu Tsai <wens@csie.org>
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mst@redhat.com, tiwei.bie@intel.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 6 Feb 2019 09:09:39 +0100:
+The pull request you sent on Wed, 6 Feb 2019 14:32:56 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.0-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b66bc7776748c97a6dc013c8d06e10ebf1c14307
+https://git.kernel.org/torvalds/c/b0314565da2b95e73feab484467ad171fcce6dff
 
 Thank you!
 
