@@ -2,180 +2,77 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C2AC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA389C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 813432175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F0C52175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 06:45:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfBGGoN (ORCPT
+        id S1726880AbfBGGpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 01:44:13 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:43449 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbfBGGoM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 01:44:12 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1grdPv-0003BN-4n; Wed, 06 Feb 2019 23:44:11 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1grdPu-0002H9-5R; Wed, 06 Feb 2019 23:44:10 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
-        <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
-        <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
-        <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
-        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
-        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
-        <87tvhi4vl7.fsf@xmission.com> <87o97q1cky.fsf_-_@xmission.com>
-        <20190206180754.GA23476@redhat.com> <87imxwv9jp.fsf@xmission.com>
-        <875ztwt7yy.fsf_-_@xmission.com>
-Date:   Thu, 07 Feb 2019 00:44:01 -0600
-In-Reply-To: <875ztwt7yy.fsf_-_@xmission.com> (Eric W. Biederman's message of
-        "Thu, 07 Feb 2019 00:42:45 -0600")
-Message-ID: <87tvhgrtce.fsf_-_@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 7 Feb 2019 01:45:47 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:34038 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbfBGGpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 01:45:44 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id A6C875FD5E; Thu,  7 Feb 2019 14:45:39 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [RFT PATCH 3/9] power: supply: axp20x_usb_power: allow disabling input current limiting
+Date:   Thu,  7 Feb 2019 14:45:29 +0800
+Message-Id: <20190207064535.9226-4-wens@csie.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190207064535.9226-1-wens@csie.org>
+References: <20190207064535.9226-1-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1grdPu-0002H9-5R;;;mid=<87tvhgrtce.fsf_-_@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/mO/uJ3+xmJOKgPbMhhVyRlN/JhaW7QnA=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [PATCH 2/2] signal: Better detection of synchronous signals
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The AXP PMICs allow the user to disable current limiting on the VBUS
+input. While read-out of this setting was already supported by the
+driver, it did not allow the user to configure the PMIC to disable
+current limiting.
 
-Recently syzkaller was able to create unkillablle processes by
-creating a timer that is delivered as a thread local signal on SIGHUP,
-and receiving SIGHUP SA_NODEFERER.  Ultimately causing a loop failing
-to deliver SIGHUP but always trying.
+Add support for this.
 
-When the stack overflows delivery of SIGHUP fails and force_sigsegv is
-called.  Unfortunately because SIGSEGV is numerically higher than
-SIGHUP next_signal tries again to deliver a SIGHUP.
-
-From a quality of implementation standpoint attempting to deliver the
-timer SIGHUP signal is wrong.  We should attempt to deliver the
-synchronous SIGSEGV signal we just forced.
-
-We can make that happening in a fairly straight forward manner by
-instead of just looking at the signal number we also look at the
-si_code.  In particular for exceptions (aka synchronous signals) the
-si_code is always greater than 0.
-
-That still has the potential to pick up a number of asynchronous
-signals as in a few cases the same si_codes that are used
-for synchronous signals are also used for asynchronous signals,
-and SI_KERNEL is also included in the list of possible si_codes.
-
-Still the heuristic is much better and timer signals are definitely
-excluded.  Which is enough to prevent all known ways for someone
-sending a process signals fast enough to cause unexpected and
-arguably incorrect behavior.
-
-Cc: stable@vger.kernel.org
-Fixes: a27341cd5fcb ("Prioritize synchronous signals over 'normal' signals")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- kernel/signal.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
+ drivers/power/supply/axp20x_usb_power.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 5424cb0006bc..99fa8ff06fd9 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -688,6 +688,48 @@ int dequeue_signal(struct task_struct *tsk, sigset_t *mask, kernel_siginfo_t *in
- }
- EXPORT_SYMBOL_GPL(dequeue_signal);
- 
-+static int dequeue_synchronous_signal(kernel_siginfo_t *info)
-+{
-+	struct task_struct *tsk = current;
-+	struct sigpending *pending = &tsk->pending;
-+	struct sigqueue *q, *sync = NULL;
-+
-+	/*
-+	 * Might a synchronous signal be in the queue?
-+	 */
-+	if (!((pending->signal.sig[0] & ~tsk->blocked.sig[0]) & SYNCHRONOUS_MASK))
-+		return 0;
-+
-+	/*
-+	 * Return the first synchronous signal in the queue.
-+	 */
-+	list_for_each_entry(q, &pending->list, list) {
-+		/* Synchronous signals have a postive si_code */
-+		if ((q->info.si_code > SI_USER) &&
-+		    (sigmask(q->info.si_signo) & SYNCHRONOUS_MASK)) {
-+			sync = q;
-+			goto next;
-+		}
-+	}
-+	return 0;
-+next:
-+	/*
-+	 * Check if there is another siginfo for the same signal.
-+	 */
-+	list_for_each_entry_continue(q, &pending->list, list) {
-+		if (q->info.si_signo == sync->info.si_signo)
-+			goto still_pending;
-+	}
-+
-+	sigdelset(&pending->signal, sync->info.si_signo);
-+	recalc_sigpending();
-+still_pending:
-+	list_del_init(&sync->list);
-+	copy_siginfo(info, &sync->info);
-+	__sigqueue_free(sync);
-+	return info->si_signo;
-+}
-+
- /*
-  * Tell a process that it has a new active signal..
-  *
-@@ -2411,7 +2453,15 @@ bool get_signal(struct ksignal *ksig)
- 			goto relock;
- 		}
- 
--		signr = dequeue_signal(current, &current->blocked, &ksig->info);
-+		/*
-+		 * Signals generated by the execution of an instruction
-+		 * need to be delivered before any other pending signals
-+		 * so that the instruction pointer in the signal stack
-+		 * frame points to the faulting instruction.
-+		 */
-+		signr = dequeue_synchronous_signal(&ksig->info);
-+		if (!signr)
-+			signr = dequeue_signal(current, &current->blocked, &ksig->info);
- 
- 		if (!signr)
- 			break; /* will return 0 */
+diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
+index cd9b90d79839..e2f353906bb1 100644
+--- a/drivers/power/supply/axp20x_usb_power.c
++++ b/drivers/power/supply/axp20x_usb_power.c
+@@ -230,6 +230,11 @@ static int axp20x_usb_power_set_current_max(struct axp20x_usb_power *power,
+ 		return regmap_update_bits(power->regmap,
+ 					  AXP20X_VBUS_IPSOUT_MGMT,
+ 					  AXP20X_VBUS_CLIMIT_MASK, val);
++	case -1:
++		return regmap_update_bits(power->regmap,
++					  AXP20X_VBUS_IPSOUT_MGMT,
++					  AXP20X_VBUS_CLIMIT_MASK,
++					  AXP20X_VBUS_CLIMIT_NONE);
+ 	default:
+ 		return -EINVAL;
+ 	}
 -- 
-2.17.1
+2.20.1
 
