@@ -2,178 +2,78 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD84C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E93C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1480F21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:47:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BWDwkpes"
+	by mail.kernel.org (Postfix) with ESMTP id B8DFA21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfBGKrz (ORCPT
+        id S1726930AbfBGKs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:47:55 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:31531 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbfBGKry (ORCPT
+        Thu, 7 Feb 2019 05:48:57 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50038 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfBGKs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:47:54 -0500
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x17AlVBb028830
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 19:47:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x17AlVBb028830
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549536452;
-        bh=a2aQCf6e/pUnLAtj49zQo5bkjXwLnat9d9gPY5wUf8Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BWDwkpesDBLq4J9825dVQvbzQ81NlpqQ3apdx0Txm7+z7xnIFeI0lWIopNMmEK9cp
-         KnCVAQgbaU52G7e2/AV62MX63U9rSmz+Zv6/asR5fJpqpQ2serVxzjvNreYrbjCl8v
-         8NzzFs46US3njx3Y0bPkhDLb9InAL+Qk8+mjlJwftLDVD/2CZlnCvSpEk3lyMXpo0K
-         V6Y14x2fCzq4hcUnVHeRbA+03kB7g/OcnskD1REskaoD14hHbA9Dh8ixVt/yIM/MRS
-         x64oJLwGwLsGkJG0NIqBu4xsym/cJIcnbK7mhhpsc7lEzdr3G3Xur8a1ujjGm5U13P
-         /ZyZIIcuvacCA==
-X-Nifty-SrcIP: [209.85.217.42]
-Received: by mail-vs1-f42.google.com with SMTP id e7so6400331vsc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 02:47:32 -0800 (PST)
-X-Gm-Message-State: AHQUAuaTMx61dbW+XIJApCi454FTK41Tge0ADTl5kcIXwNTa3QMzHIMQ
-        i1iNW2/0MvfEO52KiKgaAYc4/7glOD19bDzwYcA=
-X-Google-Smtp-Source: AHgI3IYuFgv5h28FgTK86AZ8dE+Yn/nyTZDPvR37FvR0IDjHeSc1koRWapyaYEuOfmhrffkLIAzIRvEfKfCJnKvO5LY=
-X-Received: by 2002:a67:485:: with SMTP id 127mr6529702vse.54.1549536450853;
- Thu, 07 Feb 2019 02:47:30 -0800 (PST)
+        Thu, 7 Feb 2019 05:48:56 -0500
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id CAB9927E636;
+        Thu,  7 Feb 2019 10:48:54 +0000 (GMT)
+Date:   Thu, 7 Feb 2019 11:48:50 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <frieder.schrempf@kontron.de>, <marek.vasut@gmail.com>,
+        <richard@nod.at>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <computersforpeace@gmail.com>,
+        <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/2] mtd: spi-nor: Add support for EN25Q80A
+Message-ID: <20190207114843.01c431dd@kernel.org>
+In-Reply-To: <5bdbd64f-bacd-8192-b7eb-6ec4c06baec0@microchip.com>
+References: <20190123075538.12681-1-frieder.schrempf@kontron.de>
+        <f0b2c97b-419a-1e3e-4624-52c60fe32065@microchip.com>
+        <52338dfe-aca1-503d-6871-c4be09f1f3ac@kontron.de>
+        <5bdbd64f-bacd-8192-b7eb-6ec4c06baec0@microchip.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <1549533476-3742-1-git-send-email-yamada.masahiro@socionext.com> <20190207111606.6b72dc34@xps13>
-In-Reply-To: <20190207111606.6b72dc34@xps13>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 7 Feb 2019 19:46:54 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASEvAUeJsBcp4eh+XW+gaVp921SU-d1m-DEs+Hs+YA8TA@mail.gmail.com>
-Message-ID: <CAK7LNASEvAUeJsBcp4eh+XW+gaVp921SU-d1m-DEs+Hs+YA8TA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: rawnand: call onfi_fill_data_interface() once again
- after nand_detect
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <bbrezillon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 7:16 PM Miquel Raynal <miquel.raynal@bootlin.com> wr=
-ote:
->
-> Hi Masahiro,
->
-> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Thu,  7 Feb
-> 2019 18:57:56 +0900:
->
-> > nand_scan_ident() calls onfi_fill_data_interface() at its entry
-> > to set up the initial timing parameters.
-> >
-> > The timing parameters are needed not only for ->setup_data_interface(),
-> > but also for giving the correct delay to NAND_OP_WAIT_RDY, for example.
-> >
-> > If the driver sets the NAND_KEEP_TIMINGS flag, or does not support
-> > ->setup_data_interface() hook, those parameters will never updated.
->
->                                                             ^ be
+On Thu, 7 Feb 2019 10:16:05 +0000
+<Tudor.Ambarus@microchip.com> wrote:
 
-Will fix (if v2 is welcome)
+> Hi, Frieder,
+> 
+> On 02/07/2019 12:06 PM, Schrempf Frieder wrote:
+> > Hi Tudor,
+> > 
+> > On 03.02.19 14:33, Tudor.Ambarus@microchip.com wrote:  
+> >> Hi, Frieder,
+> >>
+> >> On 01/23/2019 09:56 AM, Schrempf Frieder wrote:  
+> >>> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> >>>
+> >>> This adds support for the EON EN25Q80A, a 8Mb SPI NOR chip.  
+> >> I would suggest to specify who is using this flash and how did you test it. This
+> >> way we will not end up with support for flashes that are not actually used.  
+> > Ok. The flash is used by a board that I plan to upstream. Maybe I should 
+> > just resubmit this together with the actual board support patches?
 
+No need to wait for the board patches, they'll be applied independently
+anyway. Just mention the board you tested it on in the commit message
+(even if it's not upstream yet) and we should be good.
 
-> >
-> > Before nand_detect(), we never know whether the chip is ONFi or not.
-> > So, onfi_fill_data_interface() has to assume the worst case, i.e.
-> > non-ONFi.
->
-> s/ONFi/ONFI/?
+Thanks,
 
-Will fix.
-
-Looks like I was misunderstanding
-maybe because the letter 'I' in the logo
-(http://www.onfi.org/)
-looks like a lowercase...
-
-
-
-
->
-> >
-> > After nand_detect(), if the chip turns out to be ONFi-compliant,
-> > we can optimize tPROG_max, tBERS_max, etc.
-> >
-> > Call onfi_fill_data_interface() once again.
->
-> Sorry but I don't get why this is needed as there is the same call at
-> the top of this function. Can you be more specific on where/when the
-> missing call produces a failure?
-
-
-onfi_fill_data_interface() sets different values
-for tPROG_max, tBER_max, tR_max, tCCS_min
-depending on whether the chip is ONFI or not.
-
-For the first call, onfi_fill_data_interface()
-chooses the else-part since we never know
-the chip specification at this point.
-
-If we call onfi_fill_data_interface() once again
-after nand_detect(), it may choose the if-part.
-
-
-If a driver supports ->setup_data_interface(),
-nand_init_data_interface() will set the optimal
-timing parameters anyway.
-
-But, if a driver does not support ->setup_data_interface(),
-it will not happen since nand_has_setup_data_iface() returns false.
-
-
-
-
-
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >  drivers/mtd/nand/raw/nand_base.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/na=
-nd_base.c
-> > index 9b3d7ff..35e543c 100644
-> > --- a/drivers/mtd/nand/raw/nand_base.c
-> > +++ b/drivers/mtd/nand/raw/nand_base.c
-> > @@ -5040,6 +5040,9 @@ static int nand_scan_ident(struct nand_chip *chip=
-, unsigned int maxchips,
-> >
-> >       nand_deselect_target(chip);
-> >
-> > +     /* If the chip turns out ONFi, we can optimize timing parameters.=
- */
-> > +     onfi_fill_data_interface(chip, NAND_SDR_IFACE, 0);
-> > +
-> >       /* Check for a chip array */
-> >       for (i =3D 1; i < maxchips; i++) {
-> >               u8 id[2];
->
->
-> Thanks,
-> Miqu=C3=A8l
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Boris
