@@ -6,39 +6,41 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E0CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB31C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBCC2080F
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E335820857
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:10:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfBGUKJ (ORCPT
+        id S1727424AbfBGUKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:10:09 -0500
-Received: from anholt.net ([50.246.234.109]:57746 "EHLO anholt.net"
+        Thu, 7 Feb 2019 15:10:08 -0500
+Received: from anholt.net ([50.246.234.109]:57728 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbfBGUKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:10:07 -0500
+        id S1726512AbfBGUKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 15:10:05 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id CD54D10A2C1C;
-        Thu,  7 Feb 2019 12:10:06 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id 4FF7310A2C1C;
+        Thu,  7 Feb 2019 12:10:05 -0800 (PST)
 X-Virus-Scanned: Debian amavisd-new at anholt.net
 Received: from anholt.net ([127.0.0.1])
         by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id hCk3v6E7ytGA; Thu,  7 Feb 2019 12:10:05 -0800 (PST)
+        with LMTP id 5D1dcuANe3oy; Thu,  7 Feb 2019 12:10:02 -0800 (PST)
 Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id A6C0210A2C21;
+        by anholt.net (Postfix) with ESMTP id 8C67410A0353;
         Thu,  7 Feb 2019 12:10:02 -0800 (PST)
 Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 9BB142FE464C; Thu,  7 Feb 2019 12:10:01 -0800 (PST)
+        id 9E9082FE464B; Thu,  7 Feb 2019 12:10:01 -0800 (PST)
 From:   Eric Anholt <eric@anholt.net>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-kernel@vger.kernel.org, david.emett@broadcom.com,
         thomas.spurden@broadcom.com, Eric Anholt <eric@anholt.net>
-Subject: [PATCH 1/4] drm/v3d: Update top-level kerneldoc for the addition of TFU.
-Date:   Thu,  7 Feb 2019 12:09:58 -0800
-Message-Id: <20190207201001.5730-1-eric@anholt.net>
+Subject: [PATCH 2/4] drm/v3d: Add support for V3D v4.2.
+Date:   Thu,  7 Feb 2019 12:09:59 -0800
+Message-Id: <20190207201001.5730-2-eric@anholt.net>
 X-Mailer: git-send-email 2.20.0.rc1
+In-Reply-To: <20190207201001.5730-1-eric@anholt.net>
+References: <20190207201001.5730-1-eric@anholt.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,28 +48,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+No compatible string for it yet, just the version-dependent changes.
+They've now tied the hub and the core interrupt lines into a single
+interrupt line coming out of the block.  It also turns out I made a
+mistake in modeling the V3D v3.3 and v4.1 bridge as a part of V3D
+itself -- the bridge is going away in favor of an external reset
+controller in a larger HW module.
+
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/gpu/drm/v3d/v3d_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/v3d/v3d_drv.c | 18 ++++++++++++++----
+ drivers/gpu/drm/v3d/v3d_drv.h |  1 +
+ drivers/gpu/drm/v3d/v3d_gem.c | 12 +++++++++++-
+ drivers/gpu/drm/v3d/v3d_irq.c | 27 +++++++++++++++++++++------
+ 4 files changed, 47 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-index 22fff0d3aecd..1f22ce542a04 100644
+index 1f22ce542a04..8b2f156bdd30 100644
 --- a/drivers/gpu/drm/v3d/v3d_drv.c
 +++ b/drivers/gpu/drm/v3d/v3d_drv.c
-@@ -7,9 +7,9 @@
-  * This driver supports the Broadcom V3D 3.3 and 4.1 OpenGL ES GPUs.
-  * For V3D 2.x support, see the VC4 driver.
-  *
-- * Currently only single-core rendering using the binner and renderer
-- * is supported.  The TFU (texture formatting unit) and V3D 4.x's CSD
-- * (compute shader dispatch) are not yet supported.
-+ * Currently only single-core rendering using the binner and renderer,
-+ * along with TFU (texture formatting unit) rendering is supported.
-+ * V3D 4.x's CSD (compute shader dispatch) is not yet supported.
-  */
+@@ -19,6 +19,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_fb_helper.h>
+@@ -496,10 +497,6 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
+ 	v3d->pdev = pdev;
+ 	drm = &v3d->drm;
  
- #include <linux/clk.h>
+-	ret = map_regs(v3d, &v3d->bridge_regs, "bridge");
+-	if (ret)
+-		goto dev_free;
+-
+ 	ret = map_regs(v3d, &v3d->hub_regs, "hub");
+ 	if (ret)
+ 		goto dev_free;
+@@ -514,6 +511,19 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
+ 	v3d->cores = V3D_GET_FIELD(ident1, V3D_HUB_IDENT1_NCORES);
+ 	WARN_ON(v3d->cores > 1); /* multicore not yet implemented */
+ 
++	if (v3d->ver < 42) {
++		ret = map_regs(v3d, &v3d->bridge_regs, "bridge");
++		if (ret)
++			goto dev_free;
++	} else {
++		v3d->reset = devm_reset_control_get_exclusive(dev, NULL);
++		if (IS_ERR(v3d->reset)) {
++			dev_err(dev, "Failed to get reset control: %ld\n",
++				PTR_ERR(v3d->reset));
++			return PTR_ERR(v3d->reset);
++		}
++	}
++
+ 	if (v3d->ver < 41) {
+ 		ret = map_regs(v3d, &v3d->gca_regs, "gca");
+ 		if (ret)
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+index 239b56d76f3e..b5732cf897fe 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.h
++++ b/drivers/gpu/drm/v3d/v3d_drv.h
+@@ -48,6 +48,7 @@ struct v3d_dev {
+ 	void __iomem *bridge_regs;
+ 	void __iomem *gca_regs;
+ 	struct clk *clk;
++	struct reset_control *reset;
+ 
+ 	/* Virtual and DMA addresses of the single shared page table. */
+ 	volatile u32 *pt;
+diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+index 803f31467ec1..3ee3ae4d3cac 100644
+--- a/drivers/gpu/drm/v3d/v3d_gem.c
++++ b/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -6,6 +6,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/sched/signal.h>
+@@ -69,7 +70,7 @@ v3d_idle_gca(struct v3d_dev *v3d)
+ }
+ 
+ static void
+-v3d_reset_v3d(struct v3d_dev *v3d)
++v3d_reset_by_bridge(struct v3d_dev *v3d)
+ {
+ 	int version = V3D_BRIDGE_READ(V3D_TOP_GR_BRIDGE_REVISION);
+ 
+@@ -89,6 +90,15 @@ v3d_reset_v3d(struct v3d_dev *v3d)
+ 				 V3D_TOP_GR_BRIDGE_SW_INIT_1_V3D_CLK_108_SW_INIT);
+ 		V3D_BRIDGE_WRITE(V3D_TOP_GR_BRIDGE_SW_INIT_1, 0);
+ 	}
++}
++
++static void
++v3d_reset_v3d(struct v3d_dev *v3d)
++{
++	if (v3d->reset)
++		reset_control_reset(v3d->reset);
++	else
++		v3d_reset_by_bridge(v3d);
+ 
+ 	v3d_init_hw_state(v3d);
+ }
+diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
+index 69338da70ddc..98dd77acf512 100644
+--- a/drivers/gpu/drm/v3d/v3d_irq.c
++++ b/drivers/gpu/drm/v3d/v3d_irq.c
+@@ -27,6 +27,9 @@
+ 			    V3D_HUB_INT_MMU_CAP |	\
+ 			    V3D_HUB_INT_TFUC))
+ 
++static irqreturn_t
++v3d_hub_irq(int irq, void *arg);
++
+ static void
+ v3d_overflow_mem_work(struct work_struct *work)
+ {
+@@ -112,6 +115,12 @@ v3d_irq(int irq, void *arg)
+ 	if (intsts & V3D_INT_GMPV)
+ 		dev_err(v3d->dev, "GMP violation\n");
+ 
++	/* V3D 4.2 wires the hub and core IRQs together, so if we &
++	 * didn't see the common one then check hub for MMU IRQs.
++	 */
++	if (v3d->ver >= 42 && status == IRQ_NONE)
++		return v3d_hub_irq(irq, arg);
++
+ 	return status;
+ }
+ 
+@@ -170,12 +179,18 @@ v3d_irq_init(struct v3d_dev *v3d)
+ 		V3D_CORE_WRITE(core, V3D_CTL_INT_CLR, V3D_CORE_IRQS);
+ 	V3D_WRITE(V3D_HUB_INT_CLR, V3D_HUB_IRQS);
+ 
+-	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 0),
+-			       v3d_hub_irq, IRQF_SHARED,
+-			       "v3d_hub", v3d);
+-	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 1),
+-			       v3d_irq, IRQF_SHARED,
+-			       "v3d_core0", v3d);
++	if (v3d->ver <= 41) {
++		ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 0),
++				       v3d_hub_irq, IRQF_SHARED,
++				       "v3d_hub", v3d);
++		ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 1),
++				       v3d_irq, IRQF_SHARED,
++				       "v3d_core0", v3d);
++	} else {
++		ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 0),
++				       v3d_irq, IRQF_SHARED,
++				       "v3d", v3d);
++	}
+ 	if (ret)
+ 		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
+ 
 -- 
 2.20.0.rc1
 
