@@ -2,191 +2,156 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C0EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A28C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FD982173B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CFD821904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:23:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bF6lvl3O"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U0QGcSR3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfBGRRk (ORCPT
+        id S1726781AbfBGRXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:17:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43697 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfBGRRj (ORCPT
+        Thu, 7 Feb 2019 12:23:15 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:49297 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfBGRXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:17:39 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so209650pfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:17:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PqlMHd6xLDlAcNc8B30K9u3FyPa4y27/C9zdAZrVqEA=;
-        b=bF6lvl3OIEJ4mNLeHShgdKndstBHIdZ+678WDi7EJO7vLsb/hKdw7Ja0/uy1/lHSDk
-         qDpWQH/ReJvGv7F6Vdt0JqCz+89mzCy37JNqoCOYJmMOKZYtGaba6kfrZZw62kadSlf8
-         vGO4eYUG5o8fsb0QQCAThBbFzdTjhFeRzRKBfHxpgeptKev92+187E03kgKzrFQJvNxQ
-         RyUF0akf8yOM9IinzYaUQmqTAAXHiI50T3P5aGMwG5eQT2qZqoQdlm02Pg0D2GR5AKZP
-         KKDNrvdkJr+bwk57YsYtJ/tm+0IfhklIEhX6oXXoKva7a/dOUbc6RX+WUNkA9X/OgQUb
-         coeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PqlMHd6xLDlAcNc8B30K9u3FyPa4y27/C9zdAZrVqEA=;
-        b=NqG8gZL9lmExu427p7DGO9vK5JDa3AiwMGJlIdZHBQpDdvErMLGqzVkVlj4Lh/BU5+
-         C4Rua8ACMMB6wmUHpAJKeUcaQ6dRLC77MLInIDIdQaur0UT/+qPaKgOnCKJ8lUg1qNoc
-         0X5nBDCY++tlNsc62cXwXVL600lxoOS1h/zHEeen7AukDwa1TcjkvwmU56HDVjCujyeZ
-         uj6vsZLHUEVL4blg8ik74sJCaTuK6C3CuwoRTJIGYzzHr8W03q+xHJqeJv9W9HHhQx10
-         W6uJ7az7r6o2RocfGrnaTg3rMk09u+Av5yIP6uYc0BaH5ORF47NGGzei4tbjVEWJuSUY
-         eirQ==
-X-Gm-Message-State: AHQUAuZFToc2zbXCE5+jdHvcHf40O/qteQ08M0fRSjbqg7S0G3G5FWxW
-        FRErad5eVcRR2wv3WFd/6Bgg+Q==
-X-Google-Smtp-Source: AHgI3IYr+OpwrNiUTeYSdY/v8ElKyIb+GxbENEW6Q/NCm5CooT4Qqmf9VKbCvH+1cb7V0xRsxI466g==
-X-Received: by 2002:a63:6ac5:: with SMTP id f188mr15925675pgc.165.1549559858718;
-        Thu, 07 Feb 2019 09:17:38 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id k15sm16852694pfb.147.2019.02.07.09.17.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 09:17:37 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1grnIu-0001lq-SV; Thu, 07 Feb 2019 10:17:36 -0700
-Date:   Thu, 7 Feb 2019 10:17:36 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190207171736.GD22726@ziepe.ca>
-References: <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <20190207035258.GD6173@dastard>
- <20190207052310.GA22726@ziepe.ca>
- <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 7 Feb 2019 12:23:15 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190207172311epoutp02b45884a7fcd92e84ec0dd75c25c9ddb9~BJMjA6I7g1906919069epoutp02O;
+        Thu,  7 Feb 2019 17:23:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190207172311epoutp02b45884a7fcd92e84ec0dd75c25c9ddb9~BJMjA6I7g1906919069epoutp02O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549560191;
+        bh=L/k9LAJOAH/6jaNqfeViWvLDnTrbf4Vv2nefQELC7ps=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=U0QGcSR3qtshSjJERUJknXf8H7N26kxPle4zym8gSY2uLsQDrzVFeCRv36Ad3AFcu
+         vp475n2ZOHzl7J6REl9UGR0kJKi2r5GN401fHoOFATOQU6uBVykTuDxYFqXv2prmri
+         mh48Jr8Jszdr7zu6kmZp9YeCgYjle5KFND+lH2zc=
+Received: from epsmges1p3.samsung.com (unknown [182.195.42.55]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190207172311epcas1p3dc5c1bb6e0a2808e29a5c3ba134d99c6~BJMivTB1O3177831778epcas1p3S;
+        Thu,  7 Feb 2019 17:23:11 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        9D.48.04069.F796C5C5; Fri,  8 Feb 2019 02:23:11 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe~BJMhmMBOu1937719377epcas1p4G;
+        Thu,  7 Feb 2019 17:23:09 +0000 (GMT)
+X-AuditID: b6c32a37-971ff70000000fe5-e3-5c5c697f99fb
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 8A.F8.04015.D796C5C5; Fri,  8 Feb
+        2019 02:23:09 +0900 (KST)
+Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PMK00KKMGAAD880@mmp2.samsung.com>; Fri, 08 Feb 2019
+        02:23:09 +0900 (KST)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: doc: Fix typos in dpcm.rst
+Date:   Thu, 07 Feb 2019 18:22:56 +0100
+Message-id: <20190207172256.1972-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.20.1
+MIME-version: 1.0
+Content-transfer-encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsWy7bCmvm59ZkyMwbMVbBZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6M/XPuMhb8F6r4OXkucwNjL38XIweH
+        hICJxKpfsV2MXBxCAjsYJZ4tb2WCcL4zSpyedh7I4QQr+njgKitEYgOjxLWj7cwQzi9GiacH
+        7rODVLEJGEr0Hu1jBLFFBMQkbs/pBCtiFmhhkpgzdykzSEIYqOjL50ksIDaLgKrE+b3zwFbw
+        ClhJPOjaxwaxTl7ifO86doi4oMSPyffA6pmB4gevPGcBGSohsIJNYsXnb8wQDS4Sz67fY4N4
+        SFri0lFbiHC1xK7t3cwQ9R2MEi0XtkPVW0scPn6RFWIon8S7rz2sEL28Eh1tQhAlHhKLd7wF
+        e0ZIIFZiyePZTBMYJWchOWkWkpMWMDKtYhRLLSjOTU8tNiww1itOzC0uzUvXS87P3cQIjmUt
+        8x2MG875HGIU4GBU4uHV0IuJEWJNLCuuzD3EKMHBrCTC65gKFOJNSaysSi3Kjy8qzUktPsQo
+        zcGiJM673sE5RkggPbEkNTs1tSC1CCbLxMEp1cAooa+i+OOXZZ14T7pb+U5e+crw83tnbC0p
+        X7Jr2uQZG2Ne8Dx9Jr249/Nh336RJZxn3/Es/VOT+qphk+qxbypTFL70BViKCoo9z3K7Lz1p
+        qpu3fKFgVmyuvW725vcV/eF6fO9vsnyI51+vfWOF4JaIE9yL+Ro3hQQ9f/pwFlfvkm3ljgxc
+        LkeUWIozEg21mIuKEwEttva04QIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCLMWRmVeSWpSXmKPExsVy+t9jQd3azJgYgydTjCyuXDzEZLFxxnpW
+        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
+        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZ++fcZSz4L1Txc/Jc5gbGXv4uRk4O
+        CQETiY8HrrJ2MXJxCAmsY5T48+wAM4Tzi1HiXPdjFpAqNgFDid6jfYwgtoiAmMTtOZ1gRcwC
+        TUwSu25fZAdJCAMVffk8CayBRUBV4vzeeUwgNq+AlcSDrn1sEOvkJc73rmOHiAtK/Jh8D6ye
+        GSh+8MpzlgmMPLOQpGYhSS1gZFrFKJlaUJybnltsVGCYl1quV5yYW1yal66XnJ+7iREYltsO
+        a/XtYLy/JP4QowAHoxIP7wXtmBgh1sSy4srcQ4wSHMxKIryOqUAh3pTEyqrUovz4otKc1OJD
+        jNIcLErivLfzjkUKCaQnlqRmp6YWpBbBZJk4OKUaGHeUT1hQd7lequb097bFpg+lVmVwmvCw
+        vj2+RKM3REQ7+fC/Y9zTjZVm86i/lt9a/EFJOfIq70ueBtd/Lrtt92q/6smZvLTnRf3Hxqwd
+        Bx0uB3+sP7I80vpC1/6Ly0Sm/tBe4ZT42JE/SmSWrkLAwy8LPI+aTPv4RHP9/+VeGUtOS+5M
+        4Ga3OqPEUpyRaKjFXFScCABOkYLdRwIAAA==
+X-CMS-MailID: 20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe
+References: <CGME20190207172309epcas1p411f0d5d58ee8aee8d47bd836641d07fe@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 10:00:28PM -0800, Dan Williams wrote:
+This patch fixes a few typos in the DPCM documentation.
 
-> > > If your argument is that "existing RDMA apps don't have a recall
-> > > mechanism" then that's what they are going to need to implement to
-> > > work with DAX+RDMA. Reliable remote access arbitration is required
-> > > for DAX+RDMA, regardless of what filesysetm the data is hosted on.
-> >
-> > My argument is that is a toy configuration that no production user
-> > would use. It either has the ability to wait for the lease to revoke
-> > 'forever' without consequence or the application will be critically
-> > de-stablized by the kernel's escalation to time bound the response.
-> > (or production systems never get revoke)
-> 
-> I think we're off track on the need for leases for anything other than
-> non-ODP hardware.
-> 
-> Otherwise this argument seems to be saying there is absolutely no safe
-> way to recall a memory registration from hardware, which does not make
-> sense because SIGKILL needs to work as a last resort.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ Documentation/sound/soc/dpcm.rst | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-SIGKILL destroys all the process's resources. This is supported.
+diff --git a/Documentation/sound/soc/dpcm.rst b/Documentation/sound/soc/dpcm.rst
+index f6845b2278ea..77f67ded53de 100644
+--- a/Documentation/sound/soc/dpcm.rst
++++ b/Documentation/sound/soc/dpcm.rst
+@@ -13,7 +13,7 @@ drivers that expose several ALSA PCMs and can route to multiple DAIs.
+ The DPCM runtime routing is determined by the ALSA mixer settings in the same
+ way as the analog signal is routed in an ASoC codec driver. DPCM uses a DAPM
+ graph representing the DSP internal audio paths and uses the mixer settings to
+-determine the patch used by each ALSA PCM.
++determine the path used by each ALSA PCM.
+ 
+ DPCM re-uses all the existing component codec, platform and DAI drivers without
+ any modifications.
+@@ -101,7 +101,7 @@ The audio driver processes this as follows :-
+ 
+ 4. Machine driver or audio HAL enables the speaker path.
+ 
+-5. DPCM runs the PCM ops for startup(), hw_params(), prepapre() and
++5. DPCM runs the PCM ops for startup(), hw_params(), prepare() and
+    trigger(start) for DAI1 Speakers since the path is enabled.
+ 
+ In this example, the machine driver or userspace audio HAL can alter the routing
+@@ -221,7 +221,7 @@ like a BT phone call :-
+ This allows the host CPU to sleep while the DSP, MODEM DAI and the BT DAI are
+ still in operation.
+ 
+-A BE DAI link can also set the codec to a dummy device if the code is a device
++A BE DAI link can also set the codec to a dummy device if the codec is a device
+ that is managed externally.
+ 
+ Likewise a BE DAI can also set a dummy cpu DAI if the CPU DAI is managed by the
+@@ -249,7 +249,7 @@ configuration.
+ 	struct snd_interval *channels = hw_param_interval(params,
+ 						SNDRV_PCM_HW_PARAM_CHANNELS);
+ 
+-	/* The DSP will covert the FE rate to 48k, stereo */
++	/* The DSP will convert the FE rate to 48k, stereo */
+ 	rate->min = rate->max = 48000;
+ 	channels->min = channels->max = 2;
+ 
+@@ -386,5 +386,3 @@ This means creating a new FE that is connected with a virtual path to both
+ DAI links. The DAI links will be started when the FE PCM is started and stopped
+ when the FE PCM is stopped. Note that the FE PCM cannot read or write data in
+ this configuration.
+-
+-
+-- 
+2.20.1
 
-You are asking for some way to do a targeted *disablement* (we can't
-do destroy) of a single resource.
-
-There is an optional operation that could do what you want
-'rereg_user_mr'- however only 3 out of 17 drivers implement it, one of
-those drivers supports ODP, and one is supporting old hardware nearing
-its end of life.
-
-Of the two that are left, it looks like you might be able to use
-IB_MR_REREG_PD to basically disable the MR. Maybe. The spec for this
-API is not as a fence - the application is supposed to quiet traffic
-before invoking it. So even if it did work, it may not be synchronous
-enough to be safe for DAX.
-
-But lets imagine the one driver where this is relavents gets updated
-FW that makes this into a fence..
-
-Then the application's communication would more or less explode in a
-very strange and unexpected way, but perhaps it could learn to put the
-pieces back together, reconnect and restart from scratch.
-
-So, we could imagine doing something here, but it requires things we
-don't have, more standardization, and drivers to implement new
-functionality. This is not likely to happen.
-
-Thus any lease mechanism is essentially stuck with SIGKILL as the
-escalation.
-
-> > The arguing here is that there is certainly a subset of people that
-> > don't want to use ODP. If we tell them a hard 'no' then the
-> > conversation is done.
-> 
-> Again, SIGKILL must work the RDMA target can't survive that, so it's
-> not impossible, or are you saying not even SIGKILL can guarantee an
-> RDMA registration goes idle? Then I can see that "hard no" having real
-> teeth otherwise it's a matter of software.
-
-Resorting to SIGKILL makes this into a toy, no real production user
-would operate in that world.
-
-> > I don't like the idea of building toy leases just for this one,
-> > arguably baroque, case.
-> 
-> What makes it a toy and baroque? Outside of RDMA registrations being
-> irretrievable I have a gap in my understanding of what makes this
-> pointless to even attempt?
-
-Insisting to run RDMA & DAX without ODP and building an elaborate
-revoke mechanism to support non-ODP HW is inherently baroque. 
-
-Use the HW that supports ODP.
-
-Since no HW can do disable of a MR, the escalation path is SIGKILL
-which makes it a non-production toy.
-
-What you keep missing is that for people doing this - the RDMA is a
-critical compoment of the system, you can't just say the kernel will
-randomly degrade/kill RDMA processes - that is a 'toy' configuration
-that is not production worthy.
-
-Especially since this revoke idea is basically a DOS engine for the
-RDMA protocol if another process can do actions to trigger revoke. Now
-we have a new class of security problems. (again, screams non
-production toy)
-
-The only production worthy way is to have the FS be a partner in
-making this work without requiring revoke, so the critical RDMA
-traffic can operate safely.
-
-Otherwise we need to stick to ODP.
-
-Jason
