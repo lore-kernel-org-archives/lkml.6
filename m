@@ -2,84 +2,86 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A50A1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DF2C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF0D21721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:17:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vsLAuHKR"
+	by mail.kernel.org (Postfix) with ESMTP id 27EFA21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfBGVRi (ORCPT
+        id S1726788AbfBGVTV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 16:17:38 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40893 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbfBGVRi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 16:17:38 -0500
-Received: by mail-it1-f194.google.com with SMTP id h193so3565270ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 13:17:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hqqxov8gRyPq/xhODXY8JWNy05W7l38l172yYtTHsN8=;
-        b=vsLAuHKRpl058OVYjYTv275eyLPGTIfCFAwmNiFzYmD6lveC1ATrDFYCLrKT1j7ss7
-         k/rUGjQAYTq5p4w3MDn56vlMXRH3FpOugB7wtrg6zzM/qtbpElJ/Ii/hh1p/R2w5rwoQ
-         TZXCkOgic/d3PrJO6FEJ2gyzXcCy8TbH/KCeEwwtImDPD8N4uhjPjoClLXf1WzooeaJF
-         NkahjrP4xhzNq17l+olwBEvv6nwMxjjsx/CS+BdNuQDeH0Qv5jw0AX8T1pQBvgD9ds0q
-         3pdTacd+q2HDzuv1LIBmJEAyCrE0lWuyFI8pksdSXStC4KP9o4LgJmfRLunSsml9VnJ/
-         KVHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hqqxov8gRyPq/xhODXY8JWNy05W7l38l172yYtTHsN8=;
-        b=P/RPf198ydmuiU2O5Fk5RDBgvjwaqgVAtxFqUQIQ/VzwXIdjJ8n36RDo1ZSMwXBOOm
-         AuNxYQi461VSk8T6juqD5cB8F3JxFIlvPuuERZ71Q5IA1rTeKtDqi/K2ENI94fSyEpCD
-         kjNuAjSLXLsmjPZj6VPlynK+m6ME+c1w+VPtKEJsyywa0cffuyFkFZWCXN3E+wbifLzS
-         zma+y69aeru+MRvqPRs47eHBaFc4gpKltBaRWetjZJKjpAFA/NTQltCtZk/lzlrs2H0L
-         FWqOeV91kpWoaMRni7IRS0+4pB9EkSWZ6gpORay1MC9NQpdb0eTVsjGLnkFi2BSxuvtE
-         wakw==
-X-Gm-Message-State: AHQUAuasorgWPNV0BN0V/m0GFDSa4RR3FPVb7YhcdqTtAaRGU+zox2Zx
-        F/onatVUzkB+hAGIJqqzVDJDzLI/uI+C3RiWTsSYBQ==
-X-Google-Smtp-Source: AHgI3IagPpjpuV6oLVpFimiyCjvFG66fPRBSB4fTbe/T8N90BMmcP9Y4JUravLl6LAG/NLGh1TxzFldC3DT0WY3s8Q8=
-X-Received: by 2002:a6b:9355:: with SMTP id v82mr10814958iod.40.1549574256958;
- Thu, 07 Feb 2019 13:17:36 -0800 (PST)
+        Thu, 7 Feb 2019 16:19:21 -0500
+Received: from mga02.intel.com ([134.134.136.20]:29625 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbfBGVTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 16:19:21 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 13:19:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
+   d="scan'208";a="142493359"
+Received: from mwesterb-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
+  by fmsmga004.fm.intel.com with ESMTP; 07 Feb 2019 13:19:17 -0800
+Date:   Thu, 7 Feb 2019 23:19:16 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] tpm: Fix some name collisions with drivers/char/tpm.h
+Message-ID: <20190207211916.GB23906@linux.intel.com>
+References: <20190205091400.29019-1-jarkko.sakkinen@linux.intel.com>
+ <20190207163159.A30D12190A@mail.kernel.org>
 MIME-Version: 1.0
-References: <20190207104214.8142-1-vkuznets@redhat.com>
-In-Reply-To: <20190207104214.8142-1-vkuznets@redhat.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Thu, 7 Feb 2019 13:17:26 -0800
-Message-ID: <CALMp9eQXUWjde5_7HNsDN=xx9WeccQ1Hp0_hGOWKd+Sjv4bbfg@mail.gmail.com>
-Subject: Re: [PATCH] x86/kvm/nVMX: read from MSR_IA32_VMX_PROCBASED_CTLS2 only
- when it is available
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207163159.A30D12190A@mail.kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 2:42 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> SDM says MSR_IA32_VMX_PROCBASED_CTLS2 is only available "If
-> (CPUID.01H:ECX.[5] && IA32_VMX_PROCBASED_CTLS[63])". It was found that
-> some old cpus (namely "Intel(R) Core(TM)2 CPU 6600 @ 2.40GHz (family: 0x6,
-> model: 0xf, stepping: 0x6") don't have it. Add the missing check.
->
-> Reported-by: Zdenek Kaspar <zkaspar82@gmail.com>
-> Tested-by: Zdenek Kaspar <zkaspar82@gmail.com>
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+On Thu, Feb 07, 2019 at 04:31:58PM +0000, Sasha Levin wrote:
+> Hi,
+> 
+> [This is an automated email]
+> 
+> This commit has been processed because it contains a "Fixes:" tag,
+> fixing commit: bf38b8710892 tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy).
+> 
+> The bot has tested the following trees: v4.20.6, v4.19.19, v4.14.97, v4.9.154, v4.4.172.
+> 
+> v4.20.6: Build OK!
+> v4.19.19: Build OK!
+> v4.14.97: Build OK!
+> v4.9.154: Build OK!
+> v4.4.172: Failed to apply! Possible dependencies:
+>     036bb38ffb3e ("tpm_tis: Ensure interrupts are disabled when the driver starts")
+>     23d06ff700f5 ("tpm: drop tpm_atmel specific fields from tpm_vendor_specific")
+>     25112048cd59 ("tpm: rework tpm_get_timeouts()")
+>     4d627e672bd0 ("tpm_tis: Do not fall back to a hardcoded address for TPM2")
+>     4eea703caaac ("tpm: drop 'iobase' from struct tpm_vendor_specific")
+>     51dd43dff74b ("tpm_tis: Use devm_ioremap_resource")
+>     55a889c2cb13 ("tpm_crb: Use the common ACPI definition of struct acpi_tpm2")
+>     56671c893e0e ("tpm: drop 'locality' from struct tpm_vendor_specific")
+>     570a36097f30 ("tpm: drop 'irq' from struct tpm_vendor_specific")
+>     7ab4032fa579 ("tpm_tis: Get rid of the duplicate IRQ probing code")
+>     d30b8e4f68ef ("tpm: cleanup tpm_tis_remove()")
+>     d4956524f1b0 ("tpm: drop manufacturer_id from struct tpm_vendor_specific")
+>     e3837e74a06d ("tpm_tis: Refactor the interrupt setup")
+>     ee1779840d09 ("tpm: drop 'base' from struct tpm_vendor_specific")
+>     ef7b81dc7864 ("tpm_tis: Disable interrupt auto probing on a per-device basis")
+> 
+> 
+> How should we proceed with this patch?
+
+I'll look into this next week.
+
+/Jarkko
