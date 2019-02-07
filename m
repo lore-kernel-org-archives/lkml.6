@@ -2,25 +2,25 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA984C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60D4C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B210C21902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9400521902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfBGL7k (ORCPT
+        id S1726892AbfBGL7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:59:40 -0500
-Received: from 8bytes.org ([81.169.241.247]:38792 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfBGL7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 7 Feb 2019 06:59:23 -0500
+Received: from 8bytes.org ([81.169.241.247]:38750 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726561AbfBGL7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:59:22 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 590E241A; Thu,  7 Feb 2019 12:59:21 +0100 (CET)
+        id 2E0A03A2; Thu,  7 Feb 2019 12:59:21 +0100 (CET)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     "Michael S . Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
@@ -32,71 +32,65 @@ Cc:     Jens Axboe <axboe@kernel.dk>,
         iommu@lists.linux-foundation.org, jfehlig@suse.com,
         jon.grimm@amd.com, brijesh.singh@amd.com, joro@8bytes.org,
         jroedel@suse.de, Thomas.Lendacky@amd.com
-Subject: [PATCH v7 2/5] swiotlb: Add is_swiotlb_active() function
-Date:   Thu,  7 Feb 2019 12:59:14 +0100
-Message-Id: <20190207115917.20535-3-joro@8bytes.org>
+Subject: [PATCH v7 0/5] Fix virtio-blk issue with SWIOTLB 
+Date:   Thu,  7 Feb 2019 12:59:12 +0100
+Message-Id: <20190207115917.20535-1-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190207115917.20535-1-joro@8bytes.org>
-References: <20190207115917.20535-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+Hi,
 
-This function will be used from dma_direct code to determine
-the maximum segment size of a dma mapping.
+here is the next version of this patch-set. Previous
+versions can be found here:
 
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- include/linux/swiotlb.h | 6 ++++++
- kernel/dma/swiotlb.c    | 9 +++++++++
- 2 files changed, 15 insertions(+)
+	V1: https://lore.kernel.org/lkml/20190110134433.15672-1-joro@8bytes.org/
 
-diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-index d3980aeed4a0..29bc3a203283 100644
---- a/include/linux/swiotlb.h
-+++ b/include/linux/swiotlb.h
-@@ -77,6 +77,7 @@ bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
- void __init swiotlb_exit(void);
- unsigned int swiotlb_max_segment(void);
- size_t swiotlb_max_mapping_size(struct device *dev);
-+bool is_swiotlb_active(void);
- #else
- #define swiotlb_force SWIOTLB_NO_FORCE
- static inline bool is_swiotlb_buffer(phys_addr_t paddr)
-@@ -100,6 +101,11 @@ static inline size_t swiotlb_max_mapping_size(struct device *dev)
- {
- 	return SIZE_MAX;
- }
-+
-+static inline bool is_swiotlb_active(void)
-+{
-+	return false;
-+}
- #endif /* CONFIG_SWIOTLB */
- 
- extern void swiotlb_print_info(void);
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 9cb21259cb0b..c873f9cc2146 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -667,3 +667,12 @@ size_t swiotlb_max_mapping_size(struct device *dev)
- {
- 	return ((size_t)1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
- }
-+
-+bool is_swiotlb_active(void)
-+{
-+	/*
-+	 * When SWIOTLB is initialized, even if io_tlb_start points to physical
-+	 * address zero, io_tlb_end surely doesn't.
-+	 */
-+	return io_tlb_end != 0;
-+}
+	V2: https://lore.kernel.org/lkml/20190115132257.6426-1-joro@8bytes.org/
+
+	V3: https://lore.kernel.org/lkml/20190123163049.24863-1-joro@8bytes.org/
+
+	V4: https://lore.kernel.org/lkml/20190129084342.26030-1-joro@8bytes.org/
+
+	V5: https://lore.kernel.org/lkml/20190130164007.26497-1-joro@8bytes.org/
+
+	V6: https://lore.kernel.org/lkml/20190131163403.11363-1-joro@8bytes.org/
+
+The problem solved here is a limitation of the SWIOTLB implementation,
+which does not support allocations larger than 256kb.  When the
+virtio-blk driver tries to read/write a block larger than that, the
+allocation of the dma-handle fails and an IO error is reported.
+
+Changes to v6 are:
+
+	- Fix build errors with CONFIG_SWIOTLB=n
+
+Please review.
+
+Thanks,
+
+	Joerg
+
+Joerg Roedel (5):
+  swiotlb: Introduce swiotlb_max_mapping_size()
+  swiotlb: Add is_swiotlb_active() function
+  dma: Introduce dma_max_mapping_size()
+  virtio: Introduce virtio_max_dma_size()
+  virtio-blk: Consider virtio_max_dma_size() for maximum segment size
+
+ Documentation/DMA-API.txt    |  8 ++++++++
+ drivers/block/virtio_blk.c   | 10 ++++++----
+ drivers/virtio/virtio_ring.c | 11 +++++++++++
+ include/linux/dma-mapping.h  |  8 ++++++++
+ include/linux/swiotlb.h      | 11 +++++++++++
+ include/linux/virtio.h       |  2 ++
+ kernel/dma/direct.c          | 11 +++++++++++
+ kernel/dma/mapping.c         | 14 ++++++++++++++
+ kernel/dma/swiotlb.c         | 14 ++++++++++++++
+ 9 files changed, 85 insertions(+), 4 deletions(-)
+
 -- 
 2.17.1
 
