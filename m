@@ -2,334 +2,139 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D725C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B635BC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB27821872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C7C821872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:45:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="SuENbLwo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfBGPoZ (ORCPT
+        id S1726793AbfBGPpJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:44:25 -0500
-Received: from foss.arm.com ([217.140.101.70]:39086 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfBGPoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:44:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE2EBA78;
-        Thu,  7 Feb 2019 07:44:23 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 714323F719;
-        Thu,  7 Feb 2019 07:44:22 -0800 (PST)
-Date:   Thu, 7 Feb 2019 15:44:19 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Murali Karicheri <m-karicheri2@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] PCI: keystone: Add separate functions for
- configuring MSI and legacy interrupt
-Message-ID: <20190207154419.GB21111@e107981-ln.cambridge.arm.com>
-References: <20190207110924.30716-1-kishon@ti.com>
- <20190207110924.30716-4-kishon@ti.com>
+        Thu, 7 Feb 2019 10:45:09 -0500
+Received: from mail-eopbgr30045.outbound.protection.outlook.com ([40.107.3.45]:57472
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbfBGPpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:45:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LTloccA7TFcyy8Nbgeahr8+nIXkacik22JJ0R0DNCpA=;
+ b=SuENbLwos0pJM9P8QzkEFH41pCbG+tNLc30/D57GyOwwDq6ybpLNa+Lm5gn8njtyfNqR4S0o1akJBhlrEaWEZEKaIXl/eDnfg+mnz0lzyxCmGbS54Q2x/cZCTaBulz6d7yj9XHhbPxUbvZFQW7yuLforiqduwg2x8qc4ueTUlJs=
+Received: from AM6PR08MB3175.eurprd08.prod.outlook.com (52.135.164.24) by
+ AM6PR08MB4296.eurprd08.prod.outlook.com (20.179.5.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Thu, 7 Feb 2019 15:45:06 +0000
+Received: from AM6PR08MB3175.eurprd08.prod.outlook.com
+ ([fe80::41ac:8166:9e93:9721]) by AM6PR08MB3175.eurprd08.prod.outlook.com
+ ([fe80::41ac:8166:9e93:9721%3]) with mapi id 15.20.1601.016; Thu, 7 Feb 2019
+ 15:45:06 +0000
+From:   =?iso-8859-1?Q?=D8rjan_Eide?= <Orjan.Eide@arm.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Brian Starkey <Brian.Starkey@arm.com>,
+        Liam Mark <lmark@codeaurora.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "tkjos@android.com" <tkjos@android.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        "arve@android.com" <arve@android.com>,
+        "joel@joelfernandes.org" <joel@joelfernandes.org>, nd <nd@arm.com>,
+        "maco@android.com" <maco@android.com>,
+        "christian@brauner.io" <christian@brauner.io>
+Subject: Re: [Linaro-mm-sig] [PATCH 2/4] staging: android: ion: Restrict cache
+ maintenance to dma mapped memory
+Thread-Topic: [Linaro-mm-sig] [PATCH 2/4] staging: android: ion: Restrict
+ cache maintenance to dma mapped memory
+Thread-Index: AQHUuI9lns/3+YiToUC0S+cImvhCrKXS82qAgAEJoQCAAIoDAA==
+Date:   Thu, 7 Feb 2019 15:45:05 +0000
+Message-ID: <20190207154502.GD3768@e106893-lin.trondheim.arm.com>
+References: <1547836667-13695-1-git-send-email-lmark@codeaurora.org>
+ <1547836667-13695-3-git-send-email-lmark@codeaurora.org>
+ <69b18f39-8ce0-3c4d-3528-dfab8399f24f@ti.com>
+ <alpine.DEB.2.10.1901181316380.9328@lmark-linux.qualcomm.com>
+ <alpine.DEB.2.10.1901291544001.19412@lmark-linux.qualcomm.com>
+ <20190130113122.fipxgcmgrqggozcm@DESKTOP-E1NTVVP.localdomain>
+ <20190206154021.GC3768@e106893-lin.trondheim.arm.com>
+ <20190207073104.GA16222@infradead.org>
+In-Reply-To: <20190207073104.GA16222@infradead.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [217.140.106.39]
+user-agent: Mutt/1.5.21 (2010-09-15)
+x-clientproxiedby: CWXP265CA0095.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:39::35) To AM6PR08MB3175.eurprd08.prod.outlook.com
+ (2603:10a6:209:46::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Orjan.Eide@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR08MB4296;6:dhte3nDh+vCAxTKoG5xwAtOZzSxr5QRuxPewMq5p5Gn0UeQD18Qin95AetTVJvD6pJzuVwHsWqqT8ZgBHfF7bCY5bIy08/Vl7heHNgEukI0864U/mhB3JIHg9dh/F4SPaOhw2V/U36iR1kFVEzIbOY0ubXPwtEiyAzPy6e0CvhYqcrVYmCIG4HPo3wF0SwY6ou2KI+WlPcWp0u+B97dcWa1yJqrzlARXioCRxuFZWV+/oGQlsZjbhM4Jk9lMUb2PjgzjgYJ86RhUYGrkMEcJNbYa8ekG/MkfkVLSoFwQdYnNyC7KLKqJTEfrUwluxObiJeOvQKk4xIZH7z6ywvH5WMgsN+zY4X/8SL81FdDkNfp32AN2K3Que0skOsb4FFFUlRhmvR5Qk1/N8FUjJtE8RO+TSye9hI9KeFovyaOEavQo77HfD/3VbdPwt8PgC0oQvcaYmHOGWKSk2vNWhGLgeQ==;5:Rxohra7cxaQzK1NRwNEKaw7sA/d6ZyJTQSxmjilQvHntDVw5HhIftdkkRirbQ9gvWbyJYm9a8vT4xfnH8Z4BNKY3rJJpa5L4oiXbZBcddYacq/RDlkz9CoFnx1Mg0xGwhU34lausPWFAeoojh39imqcJaq8eiKOo3MWPWnCEUXDPoRiLi1X2MqCAEFG55Z40l/Z0M170Z9rghXNs4d/t0g==;7:bPDDwv8uBC+TqdCe+qNWxLQJHMXfv2KOhLae6YxiGBTknOSTsTt7+/gk2zyKDiyGRd8RdggEBWHKAAliIL2EH4FpKJqITvK/L9JtdpNjAHEv2Oa/Gar1NlLDmIWMBg8kv1KDR0U/FFA+k0LGV6mg1g==
+x-ms-office365-filtering-correlation-id: a767c6fc-3113-4465-70fe-08d68d133b25
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB4296;
+x-ms-traffictypediagnostic: AM6PR08MB4296:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM6PR08MB42963EF80B057D7DE617ACA190680@AM6PR08MB4296.eurprd08.prod.outlook.com>
+x-forefront-prvs: 0941B96580
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(136003)(39860400002)(376002)(189003)(199004)(81156014)(25786009)(105586002)(68736007)(106356001)(6486002)(6246003)(6436002)(14454004)(72206003)(4326008)(99286004)(33656002)(76176011)(52116002)(6116002)(3846002)(386003)(478600001)(6506007)(81166006)(8936002)(8676002)(93886005)(14444005)(5024004)(2906002)(256004)(486006)(446003)(1076003)(6916009)(71200400001)(71190400001)(476003)(11346002)(66066001)(305945005)(316002)(86362001)(58126008)(229853002)(53936002)(6512007)(97736004)(7416002)(7736002)(54906003)(186003)(26005)(102836004)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB4296;H:AM6PR08MB3175.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nZWbiUWCLqcsozA0CcHZwvmLQMjeVjwTn9JgOjAL9ALT0eUYPgtOLezuj+/TxrSaRaLa9w1m75xMJvZSO1FM04jfmmXv3tIUYZSxwTBu5m8wM4oCAL4D37Brjy4oFw2MwDigYv+S0ckczWygLPO80mRW7LIpFoQSYJEGhTuGFFuOGfbx4sfm+XdDGSw20MMk1Uw3pV6yR/PBG9DvZTi7lP/C0D4gjL2mZoDpmBb/VS61PDS60zN2p11A0S3DMRTB1OResmeEBpNkPeKr5BwRx9xWP7fS07tBNTVySdnZ/zBRigT4UOFJD70+mhH4vRKfxsm11Ywt+3WDWuWc3EGedVfTkruLXZ1kvV62tXZOEk1pq4we2Lxa4kHt6KikM6/eA3yqrOpljQQKOx9EKXQ0touMIb/XfFv8pgLCjl7gPnI=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <C6EE633CDBF53240AA19547B5E6776CC@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207110924.30716-4-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a767c6fc-3113-4465-70fe-08d68d133b25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 15:45:04.6561
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB4296
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:39:18PM +0530, Kishon Vijay Abraham I wrote:
-> ks_pcie_get_irq_controller_info() was used to configure both MSI and
-> legacy interrupt. This will prevent MSI or legacy interrupt specific
-> intializations. Add separate functions to configure MSI and legacy
-> interrupts.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/dwc/pci-keystone.c | 188 +++++++++++-----------
->  1 file changed, 96 insertions(+), 92 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 4cf9849d5a1d..b1d01751c1af 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -87,11 +87,8 @@ struct keystone_pcie {
->  	struct dw_pcie		*pci;
->  	/* PCI Device ID */
->  	u32			device_id;
-> -	int			num_legacy_host_irqs;
-> -	int			legacy_host_irqs[PCI_NUM_INTX];
->  	struct			device_node *legacy_intc_np;
->  
-> -	int			num_msi_host_irqs;
->  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
->  	int			num_lanes;
->  	u32			num_viewport;
-> @@ -201,14 +198,6 @@ static int ks_pcie_msi_host_init(struct pcie_port *pp)
->  	return dw_pcie_allocate_domains(pp);
->  }
->  
-> -static void ks_pcie_enable_legacy_irqs(struct keystone_pcie *ks_pcie)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < PCI_NUM_INTX; i++)
-> -		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), 0x1);
-> -}
-> -
->  static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
->  				      int offset)
->  {
-> @@ -490,17 +479,6 @@ static int __init ks_pcie_dw_host_init(struct keystone_pcie *ks_pcie)
->  
->  	ks_pcie->app = *res;
->  
-> -	/* Create legacy IRQ domain */
-> -	ks_pcie->legacy_irq_domain =
-> -			irq_domain_add_linear(ks_pcie->legacy_intc_np,
-> -					      PCI_NUM_INTX,
-> -					      &ks_pcie_legacy_irq_domain_ops,
-> -					      NULL);
-> -	if (!ks_pcie->legacy_irq_domain) {
-> -		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	return dw_pcie_host_init(pp);
->  }
->  
-> @@ -624,85 +602,117 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
->  	chained_irq_exit(chip, desc);
->  }
->  
-> -static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
-> -					   char *controller, int *num_irqs)
-> +static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
->  {
-> -	int temp, max_host_irqs, legacy = 1, *host_irqs;
->  	struct device *dev = ks_pcie->pci->dev;
-> -	struct device_node *np_pcie = dev->of_node, **np_temp;
-> -
-> -	if (!strcmp(controller, "msi-interrupt-controller"))
-> -		legacy = 0;
-> -
-> -	if (legacy) {
-> -		np_temp = &ks_pcie->legacy_intc_np;
-> -		max_host_irqs = PCI_NUM_INTX;
-> -		host_irqs = &ks_pcie->legacy_host_irqs[0];
-> -	} else {
-> -		np_temp = &ks_pcie->msi_intc_np;
-> -		max_host_irqs = MAX_MSI_HOST_IRQS;
-> -		host_irqs =  &ks_pcie->msi_host_irqs[0];
-> -	}
-> +	struct device_node *np = ks_pcie->np;
-> +	struct device_node *intc_np;
-> +	int irq_count;
-> +	int irq;
-> +	int ret;
-> +	int i;
+On Wed, Feb 06, 2019 at 11:31:04PM -0800, Christoph Hellwig wrote:
+> The CPU may only access DMA mapped memory if ownership has been
+> transferred back to the CPU using dma_sync_{single,sg}_to_cpu, and then
+> before the device can access it again ownership needs to be transferred
+> back to the device using dma_sync_{single,sg}_to_device.
+>=20
+> > I've run some testing, and this patch does indeed fix the crash in
+> > dma_sync_sg_for_cpu when it tried to use the 0 dma_address from the sg
+> > list.
+> >=20
+> > Tested-by: =D8rjan Eide <orjan.eide@arm.com>
+> >=20
+> > I tested this on an older kernel, v4.14, since the dma-mapping code
+> > moved, in v4.19, to ignore the dma_address and instead use sg_phys() to
+> > get a valid address from the page, which is always valid in the ion sg
+> > lists. While this wouldn't crash on newer kernels, it's still good to
+> > avoid the unnecessary work when no CMO is needed.
+>=20
+> Can you also test is with CONFIG_DMA_API_DEBUG enabled, as that should
+> catch all the usual mistakes in DMA API usage, including the one found?
 
-Nit: all int can be in one line.
+I checked again with CONFIG_DMA_API_DEBUG=3Dy, both with and without this
+patch, and I didn't get any dma-mapping errors.=20
 
-> -	/* interrupt controller is in a child node */
-> -	*np_temp = of_get_child_by_name(np_pcie, controller);
-> -	if (!(*np_temp)) {
-> -		dev_err(dev, "Node for %s is absent\n", controller);
-> -		return -EINVAL;
-> -	}
-> +	if (!IS_ENABLED(CONFIG_PCI_MSI))
-> +		return 0;
->  
-> -	temp = of_irq_count(*np_temp);
-> -	if (!temp) {
-> -		dev_err(dev, "No IRQ entries in %s\n", controller);
-> -		of_node_put(*np_temp);
-> +	intc_np = of_get_child_by_name(np, "msi-interrupt-controller");
-> +	if (!intc_np) {
-> +		dev_WARN(dev, "msi-interrupt-controller node is absent\n");
+The issue I hit, without this patch, is when a CPU access starts after a
+device have attached, which caused ion to create a copy of the buffer's
+sg list with dma_address zeroed, but before the device have mapped the
+buffer.
 
-I do not think you can justify a backtrace for this error path, so
-convert it to a dev_warn() please.
-
->  		return -EINVAL;
->  	}
->  
-> -	if (temp > max_host_irqs)
-> -		dev_warn(dev, "Too many %s interrupts defined %u\n",
-> -			(legacy ? "legacy" : "MSI"), temp);
-> +	irq_count = of_irq_count(intc_np);
-> +	if (!irq_count) {
-> +		dev_err(dev, "No IRQ entries in msi-interrupt-controller\n");
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
->  
-> -	/*
-> -	 * support upto max_host_irqs. In dt from index 0 to 3 (legacy) or 0 to
-> -	 * 7 (MSI)
-> -	 */
-> -	for (temp = 0; temp < max_host_irqs; temp++) {
-> -		host_irqs[temp] = irq_of_parse_and_map(*np_temp, temp);
-> -		if (!host_irqs[temp])
-> -			break;
-> +	if (irq_count > MAX_MSI_HOST_IRQS) {
-> +		dev_warn(dev, "Too many MSI interrupt lines defined %u\n",
-> +			 irq_count);
-> +		irq_count = MAX_MSI_HOST_IRQS;
->  	}
->  
-> -	of_node_put(*np_temp);
-> +	for (i = 0; i < irq_count; i++) {
-> +		irq = irq_of_parse_and_map(intc_np, i);
-> +		if (!irq) {
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +		ks_pcie->msi_host_irqs[i] = irq;
->  
-> -	if (temp) {
-> -		*num_irqs = temp;
-> -		return 0;
-> +		irq_set_chained_handler_and_data(irq, ks_pcie_msi_irq_handler,
-> +						 ks_pcie);
->  	}
->  
-> -	return -EINVAL;
-> +	of_node_put(intc_np);
-> +	return 0;
-> +
-> +err:
-> +	of_node_put(intc_np);
-> +	return ret;
->  }
->  
-> -static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
-> +static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
->  {
-> +	struct device *dev = ks_pcie->pci->dev;
-> +	struct irq_domain *legacy_irq_domain;
-> +	struct device_node *np = ks_pcie->np;
-> +	struct device_node *intc_np;
-> +	int irq_count;
-> +	int irq;
-> +	int ret;
->  	int i;
->  
-> -	/* Legacy IRQ */
-> -	for (i = 0; i < ks_pcie->num_legacy_host_irqs; i++) {
-> -		irq_set_chained_handler_and_data(ks_pcie->legacy_host_irqs[i],
-> +	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
-> +	if (!intc_np) {
-> +		dev_WARN(dev, "legacy-interrupt-controller node is absent\n");
-
-Likewise.
-
-Lorenzo
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	irq_count = of_irq_count(intc_np);
-> +	if (!irq_count) {
-> +		dev_err(dev, "No IRQ entries in legacy-interrupt-controller\n");
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-> +
-> +	for (i = 0; i < irq_count; i++) {
-> +		irq = irq_of_parse_and_map(intc_np, i);
-> +		if (!irq) {
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +		irq_set_chained_handler_and_data(irq,
->  						 ks_pcie_legacy_irq_handler,
->  						 ks_pcie);
->  	}
-> -	ks_pcie_enable_legacy_irqs(ks_pcie);
-> -
-> -	/* MSI IRQ */
-> -	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> -		for (i = 0; i < ks_pcie->num_msi_host_irqs; i++) {
-> -			irq_set_chained_handler_and_data(ks_pcie->msi_host_irqs[i],
-> -							 ks_pcie_msi_irq_handler,
-> -							 ks_pcie);
-> -		}
-> +
-> +	legacy_irq_domain =
-> +		irq_domain_add_linear(intc_np, PCI_NUM_INTX,
-> +				      &ks_pcie_legacy_irq_domain_ops, NULL);
-> +	if (!legacy_irq_domain) {
-> +		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
-> +		ret = -EINVAL;
-> +		goto err;
->  	}
-> +	ks_pcie->legacy_irq_domain = legacy_irq_domain;
-> +
-> +	for (i = 0; i < PCI_NUM_INTX; i++)
-> +		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), INTx_EN);
-> +
-> +	of_node_put(intc_np);
-> +
-> +	return 0;
-> +
-> +err:
-> +	of_node_put(intc_np);
-> +	return ret;
-> +}
->  
-> +static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
-> +{
->  	if (ks_pcie->error_irq > 0)
->  		ks_pcie_enable_error_irq(ks_pcie);
->  }
-> @@ -756,6 +766,14 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
->  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
->  	int ret;
->  
-> +	ret = ks_pcie_config_legacy_irq(ks_pcie);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ks_pcie_config_msi_irq(ks_pcie);
-> +	if (ret)
-> +		return ret;
-> +
->  	dw_pcie_setup_rc(pp);
->  
->  	ks_pcie_establish_link(ks_pcie);
-> @@ -805,20 +823,6 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
->  	struct device *dev = &pdev->dev;
->  	int ret;
->  
-> -	ret = ks_pcie_get_irq_controller_info(ks_pcie,
-> -					"legacy-interrupt-controller",
-> -					&ks_pcie->num_legacy_host_irqs);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> -		ret = ks_pcie_get_irq_controller_info(ks_pcie,
-> -						"msi-interrupt-controller",
-> -						&ks_pcie->num_msi_host_irqs);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
->  	/*
->  	 * Index 0 is the platform interrupt for error interrupt
->  	 * from RC.  This is optional.
-> -- 
-> 2.17.1
-> 
+--=20
+=D8rjan
