@@ -2,121 +2,96 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9239FC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2AEC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B572217F9
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:53:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PB8rm1Ht"
+	by mail.kernel.org (Postfix) with ESMTP id 25B6F217F9
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfBGAxL (ORCPT
+        id S1726728AbfBGAx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:53:11 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44616 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfBGAxK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:53:10 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p4so3949176plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 16:53:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1gX5DWBQE0VrtFnTcpfav0a1htXROoYyWvirJBXeojg=;
-        b=PB8rm1HtKJ6kJUE+ft+hqKaiIl8VDIsjqYNswocEba8eHRpl9VzqgdkNWREgrW9LZl
-         4Dob8ZCEeQ3gTr3mtk+Xfr8NUmDeeiGwjnSddyd/yvnr+oSYtRMfSX8JubMtQ83my3/3
-         l/L4Q93JpPkiUN5uUxpXNdylrWENwUGcTsU2nu3u59khpTlR5rUjoYIFHxlDdPsU2nsH
-         LPJAk4+ajtSIONJ+3KC9Y4yErZXUhV3WsopIEVu7owZm7R+BAl0HY/sQaGasgbLkZhLp
-         jiKlWVdOxuVSXyEnrwoIOiPunuEHxM1YMqSPaUzPnmZ+URtljtxlzrJ5fCLx5o0U16UH
-         DyuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1gX5DWBQE0VrtFnTcpfav0a1htXROoYyWvirJBXeojg=;
-        b=CyaGJp/1GFIQG9U6u1OaKVWqf7KjEmGW+sts/vpMXki0zLsqSuIBrVFD6L397HeMFX
-         PJgk27/Pvexmms9Nv1JzaauA6cbZqhouoVNtsNDe7L5r6/WC8JT08NYr4TH5beUBHS2G
-         jhDoz5pYv02CA7CQX6Da3ZNhjsaXKaC/9AZ1Vr2OqJg3EJLWboVFa46r1eXpMvj+IYV+
-         KJGtXA4LTfTpi/HxrJBNiJZMacFMlIlKeeRjcqvlBfqDnKboLXwGkg7hzpUmUWjHX9S+
-         S0UGtued4vvN4t+qOW63i7irgpbTlSeS7OUNE3Tl/2KwuflgM81vmDrGavyjitheObet
-         RQTw==
-X-Gm-Message-State: AHQUAuYrZfkev/CWFce+q51gUHeAt6OXFnYgLWC6ktOfhayprzgxtIRM
-        WWvKumcjSjiBYrxBCkhlLqE15K8ZEEwtsBV6oFFbnA==
-X-Google-Smtp-Source: AHgI3IbhGJaLaRguSzWT4yuVONPO/oxyLUSy7WnDME8fW10p6mjsMhqvPyU4MC0jyQrK6Eyt9rlBtsrDyWK9Sx6kWdo=
-X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr13616022plb.238.1549500789630;
- Wed, 06 Feb 2019 16:53:09 -0800 (PST)
+        Wed, 6 Feb 2019 19:53:56 -0500
+Received: from mx.gwdg.de ([134.76.10.20]:46075 "EHLO mx.gwdg.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725959AbfBGAx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 19:53:56 -0500
+X-Greylist: delayed 1767 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Feb 2019 19:53:55 EST
+Received: from mailgw.tuebingen.mpg.de ([192.124.27.5] helo=tuebingen.mpg.de)
+        by mailer.gwdg.de with esmtp (Exim 4.90_1)
+        (envelope-from <maan@tuebingen.mpg.de>)
+        id 1grXUQ-0006yD-PV; Thu, 07 Feb 2019 01:24:26 +0100
+Received: from [10.37.80.2] (HELO mailhost.tuebingen.mpg.de)
+  by tuebingen.mpg.de (CommuniGate Pro SMTP 6.2.6)
+  with SMTP id 21667922; Thu, 07 Feb 2019 01:25:26 +0100
+Received: by mailhost.tuebingen.mpg.de (sSMTP sendmail emulation); Thu, 07 Feb 2019 01:24:25 +0100
+Date:   Thu, 7 Feb 2019 01:24:25 +0100
+From:   Andre Noll <maan@tuebingen.mpg.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Nix <nix@esperi.org.uk>, linux-bcache@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Coly Li <colyli@suse.de>
+Subject: Re: bcache on XFS: metadata I/O (dirent I/O?) not getting cached at
+ all?
+Message-ID: <20190207002425.GX24140@tuebingen.mpg.de>
+References: <87h8dgefee.fsf@esperi.org.uk>
+ <20190206234328.GH14116@dastard>
 MIME-Version: 1.0
-References: <20190122233749.42220-1-trong@android.com>
-In-Reply-To: <20190122233749.42220-1-trong@android.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 6 Feb 2019 16:52:58 -0800
-Message-ID: <CAKwvOdm1+P-8YqtgZV65EAMnVN-n1mkpOOX0yp-qEbuCH5F9Rw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] gcov: add Clang support
-To:     Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc:     Greg Hackmann <ghackmann@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tri Vo <trong@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="/T5g/TLNXpBPJeG6"
+Content-Disposition: inline
+In-Reply-To: <20190206234328.GH14116@dastard>
+User-Agent: Mutt/1.11.3 (eeed901d) (2019-02-01)
+X-Virus-Scanned: (clean) by clamav
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 3:38 PM Tri Vo <trong@android.com> wrote:
->
-> This patch series adds Clang supoprt for gcov.
->
-> Patch 1 refactors existing code in preparation for Clang support.
-> Patch 2 implements necessary LLVM runtime hooks and gcov kernel interfaces.
-> Patch 3 updates documentation.
->
-> Greg Hackmann (2):
->   gcov: Clang: move common GCC code into gcc_base.c
->   gcov: Clang support
->
-> Tri Vo (1):
->   gcov: docs: add a note on GCC vs Clang differences
->
->  Documentation/dev-tools/gcov.rst |  18 +-
->  kernel/gcov/Kconfig              |   3 +-
->  kernel/gcov/Makefile             |   5 +-
->  kernel/gcov/base.c               |  84 +----
->  kernel/gcov/clang.c              | 555 +++++++++++++++++++++++++++++++
->  kernel/gcov/gcc_base.c           |  86 +++++
->  kernel/gcov/gcov.h               |   3 +
->  7 files changed, 665 insertions(+), 89 deletions(-)
->  create mode 100644 kernel/gcov/clang.c
->  create mode 100644 kernel/gcov/gcc_base.c
->
-> v2:
-> - Reorganized config dependencies, as per Masahiro.
->
-> v3:
-> - Squashed patches 2-4 of v2, as per Nick, Masahiro, and Peter.
-> Addressed comments by Peter:
-> - Moved __gcov_exit() to gcc_base.c
-> - Added missing header to gcc_base.c
-> - Removed unnecessary boundary checks in gcov_info_add().
-> - Changed counters' allocation to use vmalloc().
-> - Added check for failed allocation of filename.
-> - Changed list_for_each_entry_safe to list_for_each_entry when traversing
->   without modifying.
-> - Updated Documentation/dev-tools/gcov.rst
->
-> --
-> 2.20.1.321.g9e740568ce-goog
->
 
-Bumping this thread for review.
+--/T5g/TLNXpBPJeG6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Thanks,
-~Nick Desaulniers
+On Thu, Feb 07, 10:43, Dave Chinner wrote
+> File data readahead: REQ_RAHEAD
+> Metadata readahead: REQ_META | REQ_RAHEAD
+>=20
+> drivers/md/bcache/request.c::check_should_bypass():
+>=20
+>         /*
+>          * Flag for bypass if the IO is for read-ahead or background,
+>          * unless the read-ahead request is for metadata (eg, for gfs2).
+>          */
+>         if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
+>             !(bio->bi_opf & REQ_PRIO))
+>                 goto skip;
+>=20
+> bcache needs fixing - it thinks REQ_PRIO means metadata IO. That's
+> wrong - REQ_META means it's metadata IO, and so this is a bcache
+> bug.
+
+Do you think 752f66a75abad is bad (ha!) and should be reverted?
+
+Thanks
+Andre
+--=20
+Max Planck Institute for Developmental Biology
+Max-Planck-Ring 5, 72076 T=C3=BCbingen, Germany. Phone: (+49) 7071 601 829
+http://people.tuebingen.mpg.de/maan/
+
+--/T5g/TLNXpBPJeG6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSHtF/cbZGyylvqq1Ra2jVAMQCTDwUCXFt6tgAKCRBa2jVAMQCT
+D6DyAKCR1mgnr+k1DigFJ3ecqGlOH6enywCggXSpPLjRVepKu8maddVQk5KMF9I=
+=1sEJ
+-----END PGP SIGNATURE-----
+
+--/T5g/TLNXpBPJeG6--
