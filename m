@@ -6,133 +6,114 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D99C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A918C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D329A218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64A7C218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:28:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfBGO2D (ORCPT
+        id S1727239AbfBGO23 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:28:03 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42965 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfBGO2C (ORCPT
+        Thu, 7 Feb 2019 09:28:29 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45278 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfBGO22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:28:02 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1grkei-0007al-Q9; Thu, 07 Feb 2019 15:27:56 +0100
-Message-ID: <1549549676.2544.79.camel@pengutronix.de>
-Subject: Re: [RFC 4/5] arm64: dts: Add nodes for PCIe IP blocks
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 07 Feb 2019 15:27:56 +0100
-In-Reply-To: <20190131204333.31846-5-andrew.smirnov@gmail.com>
-References: <20190131204333.31846-1-andrew.smirnov@gmail.com>
-         <20190131204333.31846-5-andrew.smirnov@gmail.com>
+        Thu, 7 Feb 2019 09:28:28 -0500
+Received: by mail-ed1-f66.google.com with SMTP id t6so7890092edw.12;
+        Thu, 07 Feb 2019 06:28:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=w9xKQ32ph7UtzCcF4cmYK0+JplXRCzoSm/i8W1X1Cq4=;
+        b=AQ/n2Vb8p7wzJhvDTXkHlWWb1+coXE2LPtCHn1ATQhZ8kcFWTghyHp1vXgSG5YlLQl
+         nvlXHmhtVaMxJLjcq+YtzYl1kJVcXvYQJG0GQanywmCf9oYZRTlCeNxaEiJc5RH5f852
+         LuZG5ZgpRK2LNlHhUoOzhpikzH0TGALf54gkbhbwhP91wKBK7vFJplmtQiJdXUjx9yd0
+         Gh5ezx08s03dT8VyyODg/wdU9jvYzQQlIViy44VhmRd9ux0QjttS6fTl6cQtZCniHJQj
+         jJINMMzU1sSyAXMmcEWRMBV8+BBP6+8EDGJY0l+gC+51sFgKSk0C81AZvFaYTP46Zqy1
+         aFLg==
+X-Gm-Message-State: AHQUAuZT3jriTRY0wTKL0A0IA3DgAYsGu7aew87iMr6NWkIfMgV6+Lx0
+        pvlsPKtcZsW4mKOtGdP/XeHDtUU7OUw=
+X-Google-Smtp-Source: AHgI3IbJKHNAiealI4BpK/wPv8gjxWHhK8rARfyixJW1dewiMXGmWQp6JDB2IbNTOjg8TKRDLbE4UA==
+X-Received: by 2002:a50:be44:: with SMTP id b4mr12009441edi.41.1549549705996;
+        Thu, 07 Feb 2019 06:28:25 -0800 (PST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com. [209.85.128.42])
+        by smtp.gmail.com with ESMTPSA id f38sm2073603edd.97.2019.02.07.06.28.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 06:28:25 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id y185so4510199wmd.1;
+        Thu, 07 Feb 2019 06:28:25 -0800 (PST)
+X-Received: by 2002:a1c:f605:: with SMTP id w5mr7967974wmc.116.1549549705221;
+ Thu, 07 Feb 2019 06:28:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20190207064535.9226-1-wens@csie.org> <20190207064535.9226-8-wens@csie.org>
+ <20190207110247.GE20638@dell>
+In-Reply-To: <20190207110247.GE20638@dell>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 7 Feb 2019 22:28:12 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66uC=ZUj3S3ceVHABg68WMuyfHPcG77CV1DjCNn9ff71A@mail.gmail.com>
+Message-ID: <CAGb2v66uC=ZUj3S3ceVHABg68WMuyfHPcG77CV1DjCNn9ff71A@mail.gmail.com>
+Subject: Re: [RFT PATCH 7/9] mfd: axp20x: add USB power supply mfd cell to AXP813
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Hans de Goede <hdegoede@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 31.01.2019, 12:43 -0800 schrieb Andrey Smirnov:
-> Add nodes for two PCIe controllers found on i.MX8MQ.
-> 
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: Chris Healy <cphealy@gmail.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 68 +++++++++++++++++++++++
->  1 file changed, 68 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> index 89babc531380..d20e5c7e21a3 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> @@ -6,6 +6,7 @@
->  
->  #include <dt-bindings/clock/imx8mq-clock.h>
->  #include <dt-bindings/power/imx8mq-power.h>
-> +#include <dt-bindings/reset/imx8mq-reset.h>
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include "imx8mq-pinfunc.h"
-> @@ -539,6 +540,73 @@
->  			};
->  	
-> 	};
->  
-> +		pcie0: pcie@33800000 {
-> +			compatible = "fsl,imx8mq-pcie";
-> +			reg = <0x33800000 0x400000>,
-> +			      <0x1ff00000 0x80000>;
-> +			reg-names = "dbi", "config";
-> +			#address-cells = <3>;
-> +			#size-cells = <2>;
-> +			device_type = "pci";
-> +			bus-range = <0x00 0xff>;
-> +			ranges = <0x81000000 0 0x00000000 0x1ff80000 0 0x00010000 /* downstream I/O 64KB */
-> +			          0x82000000 0 0x18000000 0x18000000 0 0x07f00000>; /* non-prefetchable memory */
-> +			num-lanes = <1>;
-> +			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +			             <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>; /* eDMA */
+On Thu, Feb 7, 2019 at 7:02 PM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Thu, 07 Feb 2019, Chen-Yu Tsai wrote:
+>
+> > From: Quentin Schulz <quentin.schulz@bootlin.com>
+> >
+> > The AXP813 has a VBUS power input. Now that the axp20x_usb_power driver
+> > supports this variant, we can add an mfd cell for it to use it.
+> >
+> > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> > [wens@csie.org: add commit message]
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  drivers/mfd/axp20x.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+> > index 3c97f2c0fdfe..17b115845993 100644
+> > --- a/drivers/mfd/axp20x.c
+> > +++ b/drivers/mfd/axp20x.c
+> > @@ -198,6 +198,12 @@ static const struct resource axp22x_usb_power_supply_resources[] = {
+> >       DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
+> >  };
+> >
+> > +/* AXP803 and AXP813/AXP818 share the same interrupts */
+> > +static struct resource axp803_usb_power_supply_resources[] = {
+> > +     DEFINE_RES_IRQ_NAMED(AXP803_IRQ_VBUS_PLUGIN, "VBUS_PLUGIN"),
+> > +     DEFINE_RES_IRQ_NAMED(AXP803_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
+>
+> Nit: Why 2 spaces here?                              ^
 
-I don't think this IRQ is documented in any binding yet.
+2 spaces? I'm only seeing one.
 
-> +			interrupt-names = "msi";
-> +			#interrupt-cells = <1>;
-> +			interrupt-map-mask = <0 0 0 0x7>;
-> +			interrupt-map = <0 0 0 1 &gic GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-> +			                <0 0 0 2 &gic GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-> +			                <0 0 0 3 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> +			                <0 0 0 4 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clk IMX8MQ_CLK_PCIE1_ROOT>,
-> +			         <&clk IMX8MQ_CLK_PCIE1_AUX>,
-
-This is not the PCIe bus clock. The bus clock is whatever drives the
-ref clock of the external bus. So on the i.MX8M-EVK this would be the
-fixed clock generated by U1302.
-
-The right thing to properly describe the HW is to extend the PCIe
-driver to look for the aux clock on i.MX8M, just like we do with the
-axi_inbound_clk on i.MX6SX.
-
-Regards,
-Lucas
-
-> +			         <&clk IMX8MQ_CLK_PCIE1_PHY>;
-> +			clock-names = "pcie", "pcie_bus", "pcie_phy";
-> +			fsl,max-link-speed = <2>;
-> +			power-domains = <&pgc_pcie>;
-> +			resets = <&src IMX8MQ_RESET_PCIEPHY>,
-> +			         <&src IMX8MQ_RESET_PCIE_CTRL_APPS_EN>,
-> +			         <&src IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF>;
-> +			reset-names = "pciephy", "apps", "turnoff";
-> +			status = "disabled";
-> +		};
-> 
+> With that fixed, you can add my:
+>
+> For my own reference:
+>   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+>
+> --
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
