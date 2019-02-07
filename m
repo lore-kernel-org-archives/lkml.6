@@ -2,123 +2,131 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD156C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909ACC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2282175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="S5Da9fZB"
+	by mail.kernel.org (Postfix) with ESMTP id 68AEB21902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfBGN0a (ORCPT
+        id S1727045AbfBGN2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:26:30 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40621 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbfBGN02 (ORCPT
+        Thu, 7 Feb 2019 08:28:06 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:50265 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfBGN2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:26:28 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q1so1550817wrp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 05:26:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=irDAtFzSD44qLeuz7xjCo1buACjRBJTzikViM/uGxI0=;
-        b=S5Da9fZBJtEVAWWpk+jta2WSGqpAaCJdGgrZTstXL7WFAb2jyq8mKFO41p2tZoHp7d
-         jHxRFGxUHbmWUhrOXy80xupoIv1ONEALGDpqgyPhNbZAc7wpS/B40GqfLttcMqguAo72
-         a23fq+kqTsWDfAClOwNS73XURxWD1cJ7xbhCBpRjCZWw7XrxOzRtHsY+WSs3JVtvWU3k
-         7+D4uMk3IRvN25RuVMScTUnwxHTpT1XJQiwUwy+LYpqkZZ2uC94WLRBiqvMGhBvVv4cB
-         A8cJMnI5lBAO9ZGgN/DDYKjEN1z0YZevqJuvpqJUpm2n4yLiIChMUy66fMDZpzzPIcZn
-         4sag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=irDAtFzSD44qLeuz7xjCo1buACjRBJTzikViM/uGxI0=;
-        b=pWhBO23oOOjryKhoPIc1ScHyM/jakSoOz6ThkCLSbkaPHTnGxusu9KECC9yGIWKCUL
-         bEG94Jsg4bplYqF3+FDL2FVx9Pqk8Bbu8brOePb2gBQ5Y6oQZ/dYqMPRy0TXcK4oQE2y
-         xQmcusz9wNobbkfYTqDPersUwGlvsAbTZ80KehUaqhWNsflznJBQkn87F7cvrLvyymVw
-         PVmC4H30vh06w0lbKJLWzRX31Xg9kvB3swD5LxXsuMu2CM9PJ2GJ4e2/OvSJyLPyQn7u
-         7gWH+CkBet3OB38djWkH6rzOfPHZ2jVCOw8+Pan2RtageYvU6hZcTT5XOKB01CynBxBx
-         bwPw==
-X-Gm-Message-State: AHQUAuaKVVt+PumR6gG4CTbPOb06obxUXQFd8Qd1yWO94G9TLlnC9RqV
-        FWaktxKnCHlEwObhO0JCoM3qnA==
-X-Google-Smtp-Source: AHgI3Ib7ZCQFroZzzM/u4zeLJ/0xQRPB/GHYwz8CzjqiGhLq8Xhb8jSxRw/MQHEcZ1VgEmBPLTGRag==
-X-Received: by 2002:a5d:6b05:: with SMTP id v5mr3684072wrw.76.1549545986212;
-        Thu, 07 Feb 2019 05:26:26 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id v22sm11061612wml.37.2019.02.07.05.26.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 05:26:25 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/2] soc: amlogic: clk-measure: fix-up some clock definitions
-Date:   Thu,  7 Feb 2019 14:26:03 +0100
-Message-Id: <20190207132603.694-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190207132603.694-1-jbrunet@baylibre.com>
-References: <20190207132603.694-1-jbrunet@baylibre.com>
+        Thu, 7 Feb 2019 08:28:06 -0500
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id BF0F81BF212;
+        Thu,  7 Feb 2019 13:28:01 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 14:28:01 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Hartman <ghartman@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] sched/wait: use freezable_schedule when possible
+Message-ID: <20190207132801.GA2284@behemoth.owl.eu.com.local>
+References: <cover.1548998323.git.hle@owl.eu.com>
+ <d9b2ed186ed6fcacaaecd876bb66dca8fa329d8b.1548998323.git.hle@owl.eu.com>
+ <20190202183743.GA229953@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Content-Disposition: inline
+In-Reply-To: <20190202183743.GA229953@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As pointed out in review, a few clock are not properly defined.
 
-Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Fixes: 2a4c63e080cd ("soc: amlogic: clk-measure: add axg and g12a support")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/soc/amlogic/meson-clk-measure.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index 5570180b94a1..19d4cbc93a17 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -202,7 +202,7 @@ static struct meson_msr_id clk_msr_axg[CLK_MSR_MAX] = {
- 	CLK_MSR_ID(71, "audio_slv_sclk_a"),
- 	CLK_MSR_ID(72, "pwm_d"),
- 	CLK_MSR_ID(73, "pwm_c"),
--	CLK_MSR_ID(73, "wifi_beacon"),
-+	CLK_MSR_ID(74, "wifi_beacon"),
- 	CLK_MSR_ID(75, "tdmin_lb_lrcl"),
- 	CLK_MSR_ID(76, "tdmin_lb_sclk"),
- 	CLK_MSR_ID(77, "rng_ring_osc_0"),
-@@ -268,6 +268,8 @@ static struct meson_msr_id clk_msr_g12a[CLK_MSR_MAX] = {
- 	CLK_MSR_ID(26, "sc_int"),
- 	CLK_MSR_ID(27, "in_mac"),
- 	CLK_MSR_ID(28, "sar_adc"),
-+	CLK_MSR_ID(29, "pcie_inp"),
-+	CLK_MSR_ID(30, "pcie_inn"),
- 	CLK_MSR_ID(31, "mpll_test_out"),
- 	CLK_MSR_ID(32, "vdec"),
- 	CLK_MSR_ID(33, "sys_cpu_ring_osc_1"),
-@@ -303,8 +305,8 @@ static struct meson_msr_id clk_msr_g12a[CLK_MSR_MAX] = {
- 	CLK_MSR_ID(65, "spicc_0"),
- 	CLK_MSR_ID(66, "vid_lock"),
- 	CLK_MSR_ID(67, "dsi_phy"),
--	CLK_MSR_ID(68, "hdcp22_skp"),
--	CLK_MSR_ID(69, "hdcp22_esm"),
-+	CLK_MSR_ID(68, "hdcp22_esm"),
-+	CLK_MSR_ID(69, "hdcp22_skp"),
- 	CLK_MSR_ID(70, "pwm_f"),
- 	CLK_MSR_ID(71, "pwm_e"),
- 	CLK_MSR_ID(72, "pwm_d"),
--- 
-2.20.1
+> > The result is a potential performance gain during freeze, since less
+> > tasks have to be awaken.
+>=20
+> I'm curious did you try the freezing process and see if pointless wakeups=
+ are
+> reduced?  That would be an added bonus if you did.
 
+Test env: fresh Debian QEMU vm with 4.19 stable kernel.
+
+Test process:
+
+- Added two debug logs to freeze_task:
+
+    bool freeze_task(struct task_struct *p)
+    {
+        unsigned long flags;
+    [snip]
+        pr_info("freezing a task");
+    [snip]
+        if (freezer_should_skip(p)) {
+            pr_info("skeeping a task");
+            return false;
+        }
+    [snip]
+    }
+
+- Triggered manual freeze:
+
+# echo freezer > /sys/power/pm_test
+# echo test_resume > /sys/power/disk
+# echo disk > /sys/power/state
+
+- grep -c to get the number of "freezing a task" and "skeeping a task"
+lines in kern.log.
+
+Results:
+
+Without my patch: 448 calls freeze_task, 12 skipped.
+With my patch: 448 calls, 32 skipped.
+
+2.6x more tasks skipped.
+
+Not sure this is the best way to test this patch, though. Any advice?
+
+regards,
+ Hugo
+
+--=20
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxcMlkACgkQZYVUZx9w
+0DTCzAf+LqBnqXSONA0VtCYHAEfgiS/gjTtAhZBNzyl0S+42tbMMH1IG7ZYheBqh
+DSIBoyNQICOhXtRPgt1SVZQyojoT/wIEMT7HZjeIuo1o7gFWk0XXj+Hg3LfLQ77j
+ycE2bq+tO7CUyoKFTWOtlDTb8fTE3S2Q7nDXUOGZ1NfQ3AaFXox6J7J+BnxrAZ8g
+kwpLblEc8294UNtG6YKVuqx0lxh3KFujuxmvW7ma6ykmNgiQDNYf8S6ZFpTpCVBf
+4zGkcrMKqd5lwQqeRa95WkQm0mFRvXG5U6JUAghyBxNE63JhNPlwe6I5nrE0Pz+A
+fRlVbvMt47uRIdWDF0KAkZPqwOPuUQ==
+=2HBS
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
