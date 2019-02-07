@@ -2,99 +2,158 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C51EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE2EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3F72147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55D212147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 05:53:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gAOmtWfz"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="hopdn+gB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfBGFvi (ORCPT
+        id S1726855AbfBGFxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 00:51:38 -0500
-Received: from ozlabs.org ([203.11.71.1]:43441 "EHLO ozlabs.org"
+        Thu, 7 Feb 2019 00:53:32 -0500
+Received: from mx6.ucr.edu ([138.23.62.71]:43392 "EHLO mx6.ucr.edu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbfBGFvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 00:51:38 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43w6rR1ZXwz9s7h;
-        Thu,  7 Feb 2019 16:51:35 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549518695;
-        bh=FaDbHwc9wvPfmp1mLfEBKaW3I+kxhy1hYCXJ5bNFUuc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gAOmtWfzUXOEOfNcPBRJ31KH3891meGKgHzJb44GUvCNpCunkKWsPboqDYDOTNssf
-         li7zcVsSl5PTQoKIv0XaQAh6rxOfZURrHVf/8tOlMLSWGwU0xptdj17B81EI+kYE0V
-         /tO5RNIEBUkz3aD1/DkA0Y5Lo3OqIAcAbTve5mXWJ71O8PSjhkxKv9e+j8HrTHlE6U
-         YVeIh0XLtCXYexQpFV2Kwh6mury35nn7mFPI2qf95mUMpa2/cJTbmnHSsF4pQOevBB
-         6s9SplDIwop7PdYeTs7x/wP4LKaerfYj9DRiIAMKdt4mSjWG2T3b3UY1iDYaUrXj43
-         qwMNdDCjxSDJg==
-Date:   Thu, 7 Feb 2019 16:51:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the fixes
- tree
-Message-ID: <20190207165134.57c853dd@canb.auug.org.au>
-In-Reply-To: <20190207154747.03209c75@canb.auug.org.au>
-References: <20190207154747.03209c75@canb.auug.org.au>
+        id S1726436AbfBGFxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 00:53:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1549518811; x=1581054811;
+  h=mime-version:references:in-reply-to:from:date:message-id:
+   subject:to:cc;
+  bh=VcVhiERyGKHily5ypTgS5H29A4FBtKsk1pDYCwypsi4=;
+  b=hopdn+gB/BnEGqxCSRTeCqHiXfA69E4RLUSliUNWHNpXZ4FzPDErMjXi
+   9p5hpuQDe2Xbl/EuMH7wqpQr5kxpO+7kZze4xoNQTp4BbY40XSscnX1aT
+   6O8vGGDfygLUf6qFz9m5B8/QYNOE5YCTQTtaVAiJvH0I76T3Bv08Ww1UJ
+   Tnwgi+F8ddM2c+7NAv+RVCUwsmdWovSEDisjeQ20yUW8LwxfKSGEzk5Cx
+   W9TouVRcn9+9ycIHEkuwuQy9Y1xXn98njocPxUoFGTtR9dPWejGoqAY1E
+   /m5ogqtFLW5vufkcz3WOv5tpkwDRZuhIhp6DJOodB7j1b4cg0sx3UQYes
+   Q==;
+IronPort-PHdr: =?us-ascii?q?9a23=3AH/aaMRFAA55f38CReIncKJ1GYnF86YWxBRYc798d?=
+ =?us-ascii?q?s5kLTJ78ociwAkXT6L1XgUPTWs2DsrQY07qQ6/iocFdDyK7JiGoFfp1IWk1Nou?=
+ =?us-ascii?q?QttCtkPvS4D1bmJuXhdS0wEZcKflZk+3amLRodQ56mNBXdrXKo8DEdBAj0OxZr?=
+ =?us-ascii?q?KeTpAI7SiNm82/yv95HJbAhEmDmwbaluIBmqsA7cqtQYjYx+J6gr1xDHuGFIe+?=
+ =?us-ascii?q?NYxWNpIVKcgRPx7dqu8ZBg7ipdpesv+9ZPXqvmcas4S6dYDCk9PGAu+MLrrxjD?=
+ =?us-ascii?q?QhCR6XYaT24bjwBHAwnB7BH9Q5fxri73vfdz1SWGIcH7S60/VC+85Kl3VhDnlC?=
+ =?us-ascii?q?YHNyY48G7JjMxwkLlbqw+lqxBm3oLYfJ2ZOP94c6jAf90VWHBBU95eWCxPAIyy?=
+ =?us-ascii?q?b4UBAekcM+hGs4bwvEcOoQekCAWwGO/j1j1Fi3nr1qM6yeQhFgTG0RQiENIPsX?=
+ =?us-ascii?q?XUrMj1NKAPWu+2zKnH1zTDZO5R1Db96YnIcgouofCQUb5sf8fc0lQvGB/fjlmK?=
+ =?us-ascii?q?t4PqIi6V2/0LvmOG7ORgTfqih3A7pwx1uDSixcchhpPUio8UyF3I7yd0zJgzKN?=
+ =?us-ascii?q?alUkB0e8SkH4FVtyyCMot2Rd4tTH9wtSYhz70GpYa7fC8XyJQ73xLfa+KIc4yP?=
+ =?us-ascii?q?4h/7UeaeOzZ4hHZ8dLK7iRa+7FGsyuP+W8WqylpKoS1Fkt7DtnAJyRPf8NSISv?=
+ =?us-ascii?q?x4/ku52DaP0R7c6v1cLEwqiabWL4Qtz70wm5YJrEjOHy37lF/0gaOIbkkk//Kn?=
+ =?us-ascii?q?6+XjYrXovJ+cMIp0hxn+M6UvmsywG+U4PhQSU2WV4um8yaHs/VfjTLpUk/I2j7?=
+ =?us-ascii?q?HVsIrGKsQDuq65HwhV354n6xa+CTemzdsZkWAELF1bYhKHiZbmO1XVLfDmAvew?=
+ =?us-ascii?q?nU6snC1ox//YJL3hBIvCLnzZnLfmZ7Z95B0U9A1m4dlB5p4cL7AFJP/pEhv9vc?=
+ =?us-ascii?q?LVCzc1OhK5xuLgBsk70I4CDzGhGKicZZLTo1+V4aodI+CNLNsEqjb0KqB9vNbz?=
+ =?us-ascii?q?hmV/lFMAK/r6laALYWy1S6w1a36SZmDh15JYST8H?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AfAAC4x1tcgEinVdFkHQEBBQEHBQGBU?=
+ =?us-ascii?q?gcBCwGDOjMnhAOUCIINkwKFD4F7AQyEbAKDGiI1CA0BAwEBAgEBAgETAQEJDQk?=
+ =?us-ascii?q?IJzGCOikBgmYBAQEEIwRSEAsLAwYBAwICHwcCAiISAQUBHAYTCIUeBaB5PIsbf?=
+ =?us-ascii?q?DOIWQEHgUsSeYs4ghaEI4gKglcCgSwBAQGKUIU7kU8BBgIBgWWQYBmBbIkCh2E?=
+ =?us-ascii?q?tm2MPIYEnA4IJMxolfwZngU6CUo4sITCOegEB?=
+X-IPAS-Result: =?us-ascii?q?A2AfAAC4x1tcgEinVdFkHQEBBQEHBQGBUgcBCwGDOjMnhAO?=
+ =?us-ascii?q?UCIINkwKFD4F7AQyEbAKDGiI1CA0BAwEBAgEBAgETAQEJDQkIJzGCOikBgmYBA?=
+ =?us-ascii?q?QEEIwRSEAsLAwYBAwICHwcCAiISAQUBHAYTCIUeBaB5PIsbfDOIWQEHgUsSeYs?=
+ =?us-ascii?q?4ghaEI4gKglcCgSwBAQGKUIU7kU8BBgIBgWWQYBmBbIkCh2Etm2MPIYEnA4IJM?=
+ =?us-ascii?q?xolfwZngU6CUo4sITCOegEB?=
+X-IronPort-AV: E=Sophos;i="5.58,342,1544515200"; 
+   d="scan'208";a="27151015"
+Received: from mail-lf1-f72.google.com ([209.85.167.72])
+  by smtpmx6.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 06 Feb 2019 21:53:29 -0800
+Received: by mail-lf1-f72.google.com with SMTP id g16so1330546lfb.22
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 21:53:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OuxZLL8UNbVQzWmaxCNdMvTP4WXTa93NPRnjzawF7/s=;
+        b=rqo7bqK/PviqtaHTXw10qt3enF0V0FTrM55vEUHd6zhiZrrrMTvEOz7Wxdgm9EP8zy
+         Lg0nJ4UGje1NtPlYFf/+Hqn1Xan9Kcgz1ph2x9b6XLM1vEmK1Pl706VvU97MTHoRDKmc
+         2tN4FBPm61jYKGmC2nIMenVW/0kzToJ4KfpG57wmCAyApujwX3MIIBHOezpU1Yua8E1L
+         WsNnVOjRj2bgV5e6MDbMgfwqjF8X1SzipI5AgGfxXvIclnlaErsVB2PNcRxxAg9n9L7/
+         oRSQoqqpQPWlh19SVyFBjLLyN13ZYsMvmWKQPfp8brYF95i+/sAZk6QRbEVvgLOz84Ch
+         AUlw==
+X-Gm-Message-State: AHQUAuYEWeZ/lZ83iMJdb+vp2lY8w6xpoZGQt8ouHOZdsEE7dKyqAXSJ
+        OFETky6csAzHt3u4yfJ8CCbA2MFfYvUidMI4ovrlcUmvvmQN2xY5vlgi7EXJXqYrAOebKCSHmPf
+        KJzm91i66lshKppq48c3+ONhbze7Fiwy/yY8b5F8K2Q==
+X-Received: by 2002:ac2:5230:: with SMTP id i16mr9363076lfl.54.1549518807246;
+        Wed, 06 Feb 2019 21:53:27 -0800 (PST)
+X-Google-Smtp-Source: AHgI3IadxvbDND8MVfG27lQv3DRXo1BjCd90b9Zx/Nd0gufYIjmXU1K/Fcm5NdhEj+YyxeekYEbWramdvbOF7CR0gnQ=
+X-Received: by 2002:ac2:5230:: with SMTP id i16mr9363057lfl.54.1549518806961;
+ Wed, 06 Feb 2019 21:53:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zhjP8pP+wY8MDPJD_.E6Trc"; protocol="application/pgp-signature"
+References: <20190205221559.17545-1-yzhai003@ucr.edu> <20190206.201736.1146228626076916564.davem@davemloft.net>
+ <CABvMjLQ6MYtGYeLxwceZsvcyn4oScgMo+BGQMHw7SkZ1uxFmHQ@mail.gmail.com>
+In-Reply-To: <CABvMjLQ6MYtGYeLxwceZsvcyn4oScgMo+BGQMHw7SkZ1uxFmHQ@mail.gmail.com>
+From:   Yizhuo Zhai <yzhai003@ucr.edu>
+Date:   Wed, 6 Feb 2019 21:53:16 -0800
+Message-ID: <CABvMjLTymaszPdX5afOHFfFBS1AueVzRVra5_QUr144GahH5gQ@mail.gmail.com>
+Subject: Re: [PATCH] net: stmmac: Variable "val" in function
+ sun8i_dwmac_set_syscon() could be uninitialized
+To:     David Miller <davem@davemloft.net>
+Cc:     Chengyu Song <csong@cs.ucr.edu>, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/zhjP8pP+wY8MDPJD_.E6Trc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Thanks, but why initialization matters here? Is performance the main concern?
 
-Hi all,
 
-On Thu, 7 Feb 2019 15:47:47 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Wed, Feb 6, 2019 at 9:52 PM Yizhuo Zhai <yzhai003@ucr.edu> wrote:
 >
-> Today's linux-next merge of the scsi-mkp tree got a conflict in:
->=20
->   drivers/scsi/osd/osd_initiator.c
->=20
-> between commit:
->=20
->   24648908acac ("scsi: osd: osd_initiator: mark expected switch fall-thro=
-ughs")
+> Thanks, but why initialization matters here? Is performance the main concern?
+>
+> On Wed, Feb 6, 2019 at 8:17 PM David Miller <davem@davemloft.net> wrote:
+>>
+>> From: Yizhuo <yzhai003@ucr.edu>
+>> Date: Tue,  5 Feb 2019 14:15:59 -0800
+>>
+>> > @@ -639,9 +639,14 @@ static int sun8i_dwmac_set_syscon(struct stmmac_priv *priv)
+>> >       struct sunxi_priv_data *gmac = priv->plat->bsp_priv;
+>> >       struct device_node *node = priv->device->of_node;
+>> >       int ret;
+>> > -     u32 reg, val;
+>> > +     u32 reg, val = 0;
+>> > +
+>> > +     ret = regmap_read(gmac->regmap, SYSCON_EMAC_REG, &val);
+>> > +     if (ret) {
+>> > +             dev_err(priv->device, "Fail to read SYSCON_EMAC_REG.\n");
+>> > +             return ret;
+>> > +     }
+>>
+>> I agree with the other reviewer that since you check 'ret' the initialization of
+>> 'val' is no longer needed.
+>
+>
+>
+> --
+> Kind Regards,
+>
+> Yizhuo Zhai
+>
+> Computer Science, Graduate Student
+> University of California, Riverside
 
-I will remove that from my fixes tree for tomorrow.
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/zhjP8pP+wY8MDPJD_.E6Trc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+Kind Regards,
 
------BEGIN PGP SIGNATURE-----
+Yizhuo Zhai
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbx2YACgkQAVBC80lX
-0GxA1wgAl/Qtbkkm35Dx6RvtTmePkDkFHN7zv6zTN2P2vxsM3K5hxZx+iU5Xs0uc
-Jyy8MW9jt+TNrFeT0qasK+wL4toEkk/FrJJJeh0PnysPmETWRB7UUmeR3VuFni7N
-zziFNsrbmjJK1okPMQbHAv29wjR66pSPKxsd205CZa06O56RvZtWxd4E9EwVLaMq
-Dq8EIsK8QMw3sZcI2Hyc6HXMdl7fF+h2nUWXk7Om0mi5ECNQ2Z5PQ8Hpq5YTjMZH
-kIsQQup+GnpfyGsGdk02h0q0UVQYykTeyGAgO/Byg6a1/vbQveYi0HLcDSH+532f
-g3Fk3stnhA+bWaUpmXtSELIqnUgVxA==
-=AW2Q
------END PGP SIGNATURE-----
-
---Sig_/zhjP8pP+wY8MDPJD_.E6Trc--
+Computer Science, Graduate Student
+University of California, Riverside
