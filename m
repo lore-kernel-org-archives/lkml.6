@@ -2,127 +2,88 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EA3C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF81FC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8DE2190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:33:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5BB2190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:34:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5DUpj/I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfBGOdQ (ORCPT
+        id S1727169AbfBGOe3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:33:16 -0500
-Received: from mga07.intel.com ([134.134.136.100]:19576 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbfBGOdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:33:16 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 06:33:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="136642324"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga001.jf.intel.com with ESMTP; 07 Feb 2019 06:33:13 -0800
-Received: from andy by smile with local (Exim 4.92-RC5)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1grkjo-0006Te-J6; Thu, 07 Feb 2019 16:33:12 +0200
-Date:   Thu, 7 Feb 2019 16:33:12 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 13/28] thunderbolt: Add helper function to iterate
- from one port to another
-Message-ID: <20190207143312.GI9224@smile.fi.intel.com>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
- <20190206131738.43696-14-mika.westerberg@linux.intel.com>
+        Thu, 7 Feb 2019 09:34:29 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41645 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbfBGOe2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 09:34:28 -0500
+Received: by mail-lf1-f67.google.com with SMTP id e27so21700lfj.8;
+        Thu, 07 Feb 2019 06:34:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bi14hRYWHC7upKJfIV9T588ZuWq3hnId+F+5PsFU1Sk=;
+        b=e5DUpj/I5jpz6S1Co6SUTj+fhbhgZTXu6bH/P//wlQ3CS9ye/UEUD1jgKLPK26ca6V
+         1dq/h1WN3T0he2T4wHejtKBBXvefQLJLWxnxsCqUH5uS3Dqg/OuRYVecFTrIifai2n8s
+         8PE2ELPsw6kzRneMGQNhumQE9I+Bt4uQA8QL6tkhaBAm7t+hSo+xdoObmjF4CQHk8c7y
+         EecLom4Sx6T3klOcBVOcRswzZMGV15sGHwsdEKHjOd2rnaZDoAHXT9iIGagCjso+HoCV
+         U/O50uGEynlzIN9Q+xkF++8WzSbLElrmZh6JPTjpWMq1+7ZAJv5MHErF/zKqyzaHvzgR
+         6HEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bi14hRYWHC7upKJfIV9T588ZuWq3hnId+F+5PsFU1Sk=;
+        b=lL3iKjtixx3zuLf2P/UzMheUb8jDqMdmO0SGNS/NYXJYneIcQEzx28iKurgK15HA8c
+         ksUnGw2+DwXNu2TEtfJRAhlUhwWbpZZ4asz8xOFaO261PGH5IuWAW+h3iou4OAyulPAz
+         aWVeWjpYH/DJRM5hpiNAzhPbuIhCaBwGyQxjUeLBqKvRZ8nJWtWB16bMvXwGZUTbE4e7
+         TzlA9icYnCBjObzVUmqaZc7VROlyeU7u2MKHJwpFNSvyqGmTIJsz/60WOu99hV4F27ek
+         n1hUPORw41s2NgX2/byXZESoo7eJtFpR4a11K5gYErg0v+9bPFSpzYNq8S3sLLZnlFYQ
+         A9kg==
+X-Gm-Message-State: AHQUAuZi0PH4aAefinJ/c/+j9MX9/l8hZhKY88br+/2easG6y2YADCDP
+        z6WZgBq/kuQ3GmDyOHD2Lewpvo55
+X-Google-Smtp-Source: AHgI3IZM5T4WHxJ1crjmU23oFSw8hWYaRMBcSb9LyBBLdUYBfWwq05ZvPp02cIQruQt74ovDJ+TPTQ==
+X-Received: by 2002:a19:9a8c:: with SMTP id c134mr10108230lfe.152.1549550066086;
+        Thu, 07 Feb 2019 06:34:26 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id j25-v6sm4257256lji.77.2019.02.07.06.34.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 06:34:25 -0800 (PST)
+Subject: Re: [PATCH V14 5/5] i2c: tegra: add i2c interface timing support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
+ <1549480569-24860-5-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f4c5cfac-6063-b5e3-e2bf-817a5b6b505a@gmail.com>
+Date:   Thu, 7 Feb 2019 17:34:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206131738.43696-14-mika.westerberg@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1549480569-24860-5-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:17:23PM +0300, Mika Westerberg wrote:
-> We need to be able to walk from one port to another when we are creating
-> paths where there are multiple switches between two ports. For this
-> reason introduce a new function tb_port_get_next() and a new macro
-> tb_for_each_port().
+06.02.2019 22:16, Sowjanya Komatineni пишет:
+> This patch adds I2C interface timing registers support for
+> proper bus rate configuration along with meeting the i2c spec
 
-> +struct tb_port *tb_port_get_next(struct tb_port *start, struct tb_port *end,
-> +				 struct tb_port *prev)
-> +{
-> +	struct tb_port *port, *next;
-> +
-> +	if (!prev)
-> +		return start;
-> +
-> +	if (prev->sw == end->sw) {
+Capitals for "I2C spec", please.
 
-> +		if (prev != end)
-> +			return end;
-> +		return NULL;
-
-I would prefer to see the similar pattern as you used below, i.e. when we have
-an "bail out" condition, check for it.
-
-		if (prev == end)
-			return NULL;
-		return end;
-
-
-> +	}
-> +
-> +	/* Switch back to use primary links for walking */
-> +	if (prev->dual_link_port && prev->link_nr)
-> +		port = prev->dual_link_port;
-> +	else
-> +		port = prev;
-> +
-> +	if (start->sw->config.depth < end->sw->config.depth) {
-> +		if (port->remote &&
-> +		    port->remote->sw->config.depth > port->sw->config.depth)
-> +			next = port->remote;
-> +		else
-> +			next = tb_port_at(tb_route(end->sw), port->sw);
-> +	} else if (start->sw->config.depth > end->sw->config.depth) {
-> +		if (tb_is_upstream_port(port))
-> +			next = port->remote;
-> +		else
-> +			next = tb_upstream_port(port->sw);
-> +	} else {
-
-> +		/* Must be the same switch then */
-> +		if (start->sw != end->sw)
-> +			return NULL;
-> +		return end;
-
-Here is a good pattern.
-
-> +	}
-> +
-> +	/* If prev was dual link return another end of that link then */
-> +	if (next->dual_link_port && next->link_nr != prev->link_nr)
-> +		return next->dual_link_port;
-> +
-> +	return next;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+[snip]
