@@ -2,162 +2,114 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C022C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07ECC282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1641F2175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B6E52175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 18:45:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="MtdOJoNu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfBGSoN (ORCPT
+        id S1726943AbfBGSpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:44:13 -0500
-Received: from mga07.intel.com ([134.134.136.100]:41509 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726512AbfBGSoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:44:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 10:44:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
-   d="scan'208";a="298032527"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga005.jf.intel.com with ESMTP; 07 Feb 2019 10:44:11 -0800
-Message-ID: <34c93e5a05a7dc93e38364733f8832f2e1b2dcb3.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
- hints
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Luiz Capitulino <lcapitulino@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, rkrcmar@redhat.com, x86@kernel.org,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
-        tglx@linutronix.de, akpm@linux-foundation.org
-Date:   Thu, 07 Feb 2019 10:44:11 -0800
-In-Reply-To: <20190207132104.17a296da@doriath>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <20190204181552.12095.46287.stgit@localhost.localdomain>
-         <20190207132104.17a296da@doriath>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 7 Feb 2019 13:45:38 -0500
+Received: from mail-eopbgr790117.outbound.protection.outlook.com ([40.107.79.117]:9181
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726512AbfBGSph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 13:45:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ogK8PJCWrRmTGGLX05NwNaxXwnQRfZrQWSgqJDClqP4=;
+ b=MtdOJoNuaFy+bML4wTF4sygroRbryBaNx8NrD/Z5KKxAGh+Nw0NTxL5gkFWtrNQj2y3iLah9d2Q488P0XJI/Gns4NPnCP1XF9DZAF4l/GQutfXI1qKrwjA0HVPFBzbsareBe4pPI4HnCdDxsyZ0YbhYSqsVcMnpLnLMFwwsUXQg=
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
+ MWHPR0601MB3771.namprd06.prod.outlook.com (10.167.236.152) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Thu, 7 Feb 2019 18:45:34 +0000
+Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::ac0c:a03e:77c7:fa85]) by MWHPR0601MB3708.namprd06.prod.outlook.com
+ ([fe80::ac0c:a03e:77c7:fa85%5]) with mapi id 15.20.1601.016; Thu, 7 Feb 2019
+ 18:45:34 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "kishon@ti.com" <kishon@ti.com>,
+        "m-karicheri2@ti.com" <m-karicheri2@ti.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
+CC:     "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 8/9] PCI: dwc: Remove Keystone specific
+ dw_pcie_host_ops
+Thread-Topic: [PATCH v2 8/9] PCI: dwc: Remove Keystone specific
+ dw_pcie_host_ops
+Thread-Index: AQHUvtjusOUgN2+phkW0ohl7bu9V7qXUrOqA
+Date:   Thu, 7 Feb 2019 18:45:34 +0000
+Message-ID: <1549565133.3075.53.camel@impinj.com>
+References: <20190207110924.30716-1-kishon@ti.com>
+         <20190207110924.30716-9-kishon@ti.com>
+In-Reply-To: <20190207110924.30716-9-kishon@ti.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3771;6:4D4lrA854c7G+0dHHrT+q7ffv07cIuJCOKaew2PrejLjQY3NdUU1D3PYtk5KJ3BXFX2t7le4+zubQicNsfFWDD9g+VVivW4y9NinAQB0eIvi8K1OQ/lPOHTHn2e26vpcDkoi+sI6eWy8CT04g21y8HsJY2cUj7VE5zmR2UHLesECMxz1V+8mdSakX5uKkn16EageV/BIUtXfyIZxtvJwGyStJWMaglyKkQ7pwSUBpRsHXULl0DlEt/Iy81gsmDHZ9YEz20klHR4SQzU0b/NE4ls4q2Xnk2WvP/12PZwAL11GYz+WSIp8ZNN+Kx8OTPBo/BJn2x7fRx5C4bljLf2OTR9DYk0eSWkwnVxW4fRfpNkKK/eFonEuv9okkvpAVFALC2vUa8DHxvTktA9rMu3WfixFVakpMHqpHSizqKGqbBifEzPOhnfojRxU4rImgysqkywyQWE2r3eBGrqZ9kuY0Q==;5:AAlFoiFxmVpbn6fsOasnJuYz4z2f3FU5GvWghjvTd+Rgh2qGX0rf2RiXVY0Yd7Gt4ciws/zNEDa6uEuS42cKTJF5djywG5jFo+6mXIIac//k9KypSgsP0LPUJgvJSywhE8ZAomXYPsiT1e+Mc50o9k6eUd+oEchQcuH7FG7mJyjOkxzD9zCe7Yqq8gCGGbbZKAm9BiFYSWVIyxLshShlAA==;7:5LmJLF21U1YVL1LifBnualGmn6RK+zcHkQ1PjFfJ0+KMTiiNdJ6PdiKrc6+leyNbBolgtnZ8he8sY/NdiL6a3GOdBA+KeUykYUqEgRtIto7rm9jRm7jQ8nbcAqdrYev1f3JVW4CnSGhE2wPTs5TSIQ==
+x-ms-office365-filtering-correlation-id: fd4c9f55-6da3-4f3a-7787-08d68d2c71ac
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3771;
+x-ms-traffictypediagnostic: MWHPR0601MB3771:
+x-microsoft-antispam-prvs: <MWHPR0601MB3771D869331D9EDDB951F9A7D3680@MWHPR0601MB3771.namprd06.prod.outlook.com>
+x-forefront-prvs: 0941B96580
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(136003)(366004)(39850400004)(189003)(199004)(76176011)(486006)(305945005)(2501003)(25786009)(186003)(6512007)(71200400001)(26005)(71190400001)(99286004)(6436002)(2616005)(6246003)(476003)(446003)(11346002)(68736007)(7736002)(2201001)(53936002)(229853002)(6486002)(66066001)(4326008)(8936002)(2906002)(97736004)(54906003)(14454004)(110136005)(6506007)(3846002)(81156014)(8676002)(105586002)(102836004)(81166006)(106356001)(36756003)(6116002)(14444005)(316002)(256004)(478600001)(103116003)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3771;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: PWh3C31cbKSXtYmJ9s4t0dfDjo9aPBOkzf23EPa4aQNTSI29RInAnGO/snqB75eGkfPPLUEypVXe6sGu5AM6HQwj2va7I4VYSF+1RawWt3IyMA9cK1ETbv32ub74vDkm4DpvV/E+UyKNWWGl8iuqsZyjnGl3/gQymotWabYRV42Lnha378ocgqE/y5JhTdOWEjp7MnGP0sjXbdtbroQNNGVB35npbN7dGXpgqqvfiiB1KWbAcwdkb53ehcGf3VPMnXj5Jn8hPm/2B7FSdwwehI59Si+JmF0Ow+p35ijFJRkMN5ZkXXhFmj2sWqcExMcdmiWl1DhxK7HUSba7K3/wk331dIPr3jvbEGOxyRe6z/Jue7KUfEn9xE86yetbkGvriwpWZQCYVOE1BR02PKiv+qhHDlr4YCPh5or/qydQcwI=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A5FC425849E5474AA3C97681FF948F57@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd4c9f55-6da3-4f3a-7787-08d68d2c71ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 18:45:34.3498
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3771
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-07 at 13:21 -0500, Luiz Capitulino wrote:
-> On Mon, 04 Feb 2019 10:15:52 -0800
-> Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> 
-> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > Add guest support for providing free memory hints to the KVM hypervisor for
-> > freed pages huge TLB size or larger. I am restricting the size to
-> > huge TLB order and larger because the hypercalls are too expensive to be
-> > performing one per 4K page. Using the huge TLB order became the obvious
-> > choice for the order to use as it allows us to avoid fragmentation of higher
-> > order memory on the host.
-> > 
-> > I have limited the functionality so that it doesn't work when page
-> > poisoning is enabled. I did this because a write to the page after doing an
-> > MADV_DONTNEED would effectively negate the hint, so it would be wasting
-> > cycles to do so.
-> > 
-> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > ---
-> >  arch/x86/include/asm/page.h |   13 +++++++++++++
-> >  arch/x86/kernel/kvm.c       |   23 +++++++++++++++++++++++
-> >  2 files changed, 36 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> > index 7555b48803a8..4487ad7a3385 100644
-> > --- a/arch/x86/include/asm/page.h
-> > +++ b/arch/x86/include/asm/page.h
-> > @@ -18,6 +18,19 @@
-> >  
-> >  struct page;
-> >  
-> > +#ifdef CONFIG_KVM_GUEST
-> > +#include <linux/jump_label.h>
-> > +extern struct static_key_false pv_free_page_hint_enabled;
-> > +
-> > +#define HAVE_ARCH_FREE_PAGE
-> > +void __arch_free_page(struct page *page, unsigned int order);
-> > +static inline void arch_free_page(struct page *page, unsigned int order)
-> > +{
-> > +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> > +		__arch_free_page(page, order);
-> > +}
-> > +#endif
-> > +
-> >  #include <linux/range.h>
-> >  extern struct range pfn_mapped[];
-> >  extern int nr_pfn_mapped;
-> > diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> > index 5c93a65ee1e5..09c91641c36c 100644
-> > --- a/arch/x86/kernel/kvm.c
-> > +++ b/arch/x86/kernel/kvm.c
-> > @@ -48,6 +48,7 @@
-> >  #include <asm/tlb.h>
-> >  
-> >  static int kvmapf = 1;
-> > +DEFINE_STATIC_KEY_FALSE(pv_free_page_hint_enabled);
-> >  
-> >  static int __init parse_no_kvmapf(char *arg)
-> >  {
-> > @@ -648,6 +649,15 @@ static void __init kvm_guest_init(void)
-> >  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-> >  		apic_set_eoi_write(kvm_guest_apic_eoi_write);
-> >  
-> > +	/*
-> > +	 * The free page hinting doesn't add much value if page poisoning
-> > +	 * is enabled. So we only enable the feature if page poisoning is
-> > +	 * no present.
-> > +	 */
-> > +	if (!page_poisoning_enabled() &&
-> > +	    kvm_para_has_feature(KVM_FEATURE_PV_UNUSED_PAGE_HINT))
-> > +		static_branch_enable(&pv_free_page_hint_enabled);
-> > +
-> >  #ifdef CONFIG_SMP
-> >  	smp_ops.smp_prepare_cpus = kvm_smp_prepare_cpus;
-> >  	smp_ops.smp_prepare_boot_cpu = kvm_smp_prepare_boot_cpu;
-> > @@ -762,6 +772,19 @@ static __init int kvm_setup_pv_tlb_flush(void)
-> >  }
-> >  arch_initcall(kvm_setup_pv_tlb_flush);
-> >  
-> > +void __arch_free_page(struct page *page, unsigned int order)
-> > +{
-> > +	/*
-> > +	 * Limit hints to blocks no smaller than pageblock in
-> > +	 * size to limit the cost for the hypercalls.
-> > +	 */
-> > +	if (order < KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
-> > +		return;
-> > +
-> > +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
-> > +		       PAGE_SIZE << order);
-> 
-> Does this mean that the vCPU executing this will get stuck
-> here for the duration of the hypercall? Isn't that too long,
-> considering that the zone lock is taken and madvise in the
-> host block on semaphores?
-
-I'm pretty sure the zone lock isn't held when this is called. The lock
-isn't acquired until later in the path. This gets executed just before
-the page poisoning call which would take time as well since it would
-have to memset an entire page. This function is called as a part of
-free_pages_prepare, the zone locks aren't acquired until we are calling
-into either free_one_page and a few spots before calling
-__free_one_page.
-
-My other function in patch 4 which does this from inside of
-__free_one_page does have to release the zone lock since it is taken
-there.
-
+T24gVGh1LCAyMDE5LTAyLTA3IGF0IDE2OjM5ICswNTMwLCBLaXNob24gVmlqYXkgQWJyYWhhbSBJ
+IHdyb3RlOg0KPiBOb3cgdGhhdCBLZXlzdG9uZSBzdGFydGVkIHVzaW5nIGl0J3Mgb3duIG1zaV9p
+cnFfY2hpcCwgcmVtb3ZlDQo+IEtleXN0b25lIHNwZWNpZmljIGNhbGxiYWNrIGZ1bmN0aW9uIGRl
+ZmluZWQgaW4gZHdfcGNpZV9ob3N0X29wcy4NCj4gDQo+IEBAIC0yMDksOSArMTk1LDYgQEAgc3Rh
+dGljIHZvaWQgZHdfcGNpX2JvdHRvbV9hY2soc3RydWN0IGlycV9kYXRhICpkKQ0KPiAgDQo+ICAJ
+ZHdfcGNpZV93cl9vd25fY29uZihwcCwgUENJRV9NU0lfSU5UUjBfU1RBVFVTICsgcmVzLCA0LCAx
+IDw8IGJpdCk7DQo+ICANCj4gLQlpZiAocHAtPm9wcy0+bXNpX2lycV9hY2spDQo+IC0JCXBwLT5v
+cHMtPm1zaV9pcnFfYWNrKGQtPmh3aXJxLCBwcCk7DQo+IC0NCj4gIAlyYXdfc3Bpbl91bmxvY2tf
+aXJxcmVzdG9yZSgmcHAtPmxvY2ssIGZsYWdzKTsNCj4gIH0NCg0KQWZ0ZXIgdGhpcyBwYXRjaCwg
+dGhlIGVudGlyZSBmdW5jdGlvbiBub3cgbG9va3MgbGlrZToNCg0KZHdfcGNpX2JvdHRvbV9hY2so
+c3RydWN0IGlycV9kYXRhICpkKQ0Kew0KICAgICAgICBzdHJ1Y3QgcGNpZV9wb3J0ICpwcCAgPSBp
+cnFfZGF0YV9nZXRfaXJxX2NoaXBfZGF0YShkKTsNCiAgICAgICAgdW5zaWduZWQgaW50IHJlcywg
+Yml0LCBjdHJsOw0KICAgICAgICB1bnNpZ25lZCBsb25nIGZsYWdzOw0KDQogICAgICAgIGN0cmwg
+PSBkLT5od2lycSAvIE1BWF9NU0lfSVJRU19QRVJfQ1RSTDsNCiAgICAgICAgcmVzID0gY3RybCAq
+IE1TSV9SRUdfQ1RSTF9CTE9DS19TSVpFOw0KICAgICAgICBiaXQgPSBkLT5od2lycSAlIE1BWF9N
+U0lfSVJRU19QRVJfQ1RSTDsNCg0KICAgICAgICByYXdfc3Bpbl9sb2NrX2lycXNhdmUoJnBwLT5s
+b2NrLCBmbGFncyk7DQoNCiAgICAgICAgZHdfcGNpZV93cl9vd25fY29uZihwcCwgUENJRV9NU0lf
+SU5UUjBfU1RBVFVTICsgcmVzLCA0LCAxIDw8IGJpdCk7DQoNCiAgICAgICAgcmF3X3NwaW5fdW5s
+b2NrX2lycXJlc3RvcmUoJnBwLT5sb2NrLCBmbGFncyk7DQp9DQoNClRoZSBzcGluIGxvY2sgaXNu
+J3QgbmVjZXNzYXJ5IGFueW1vcmUgc2luY2UgdGhlcmUgaXMgbm90aGluZyBidXQgYQ0Kc2luZ2xl
+IHJlZ2lzdGVyIHdyaXRlIGluc2lkZSB0aGUgY3JpdGljYWwgc2VjdGlvbi4NCg0K
