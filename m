@@ -6,86 +6,79 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89244C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320C1C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C45B21928
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0588C2173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfBGQla (ORCPT
+        id S1727050AbfBGQlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:41:30 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:39471 "EHLO
+        Thu, 7 Feb 2019 11:41:37 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:59325 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfBGQlU (ORCPT
+        with ESMTP id S1726442AbfBGQlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 7 Feb 2019 11:41:20 -0500
 Received: from orion.localdomain ([77.2.6.87]) by mrelayeu.kundenserver.de
  (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MuUza-1hA04p3n4U-00rULW; Thu, 07 Feb 2019 17:41:13 +0100
+ 1MTiDV-1gfudw2iFh-00U1Af; Thu, 07 Feb 2019 17:41:13 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org,
         yamada.masahiro@socionext.com, michal.lkml@markovi.net
-Subject: [PATCH 2/4] scripts: mkdebian: allow renaming generated debian/rules
-Date:   Thu,  7 Feb 2019 17:40:57 +0100
-Message-Id: <1549557659-19137-3-git-send-email-info@metux.net>
+Subject: [PATCH 1/4] Makefile: add kernelarch rule that prints the kernel architecture and localversion
+Date:   Thu,  7 Feb 2019 17:40:56 +0100
+Message-Id: <1549557659-19137-2-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1549557659-19137-1-git-send-email-info@metux.net>
 References: <1549557659-19137-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:gZVyorJExdgvq4+yfy3xJptj6yVCO8rrang2FIp9enttiF2MdP0
- tcGbz5GD1safIVbONoZBljE5SZiCRkrfHr/jYaE5keKsywwM+8Ya8mE8vZRTBoclBa0P4bp
- rRPH90XgRfVqsGmPB3tv0JIoU1g7B27Ggg5BFTOe6yvAzRdYyQhusoj7hjmK6fbqrXL8/Av
- ho2vsFrhg23V+yRSC5g1w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:oHyUN9qFUO0=:a7ZgNNLHVevVCAYhuTGjwP
- EYU573iU8yHxYRbwv/pBF8jV5eL8z4v8/xC6xPoWSDFwHf+dIjgRCS52XQEMksnBzkSCiRylo
- +HNVUdz9qMduBHfMJkDd3KOkxmst4rq9UCFAzpyUGFOLaZP6l4VVZ1J/M/2bhF6Ynrw33v3aO
- GM1iNEnBBuJOJEBeviODuRNG4qhlYxAgL8yIno9bYzviYZ7T72QddCr7fDMdMVJy8P1U8VQ3B
- HhDj+WpDxN+jBiAkIjvdpaIcCiErhDYHgHqZIVxkGxccDEWVdU2W0VS3Wu1QU78X1hVGLYSVQ
- AmrXyyUYH67NXyWUN68SWb6wPtrcLxoQhfyOIstg254ZvuEdw48i7MKaA2GtjZ/LjP7QAJz1w
- cWrAUlOptCFcOjCi82MxfnI91PKOePWnkUR2xTElKYJIrDtJtThjMpBaj3Yw+E88cLMKSR+pn
- fXPIPK2smkSeEAtjFE/V8vufhCJASxsbTnEG+6wKAuo1in9vxy4uH2lFq5/9nZWE5Hu7s9OeX
- fmXpITLnkG4IvY5NEyYQYRcGeRcsB052iArCJOvvJdRGamG14py8JgLyjLztcqWoTBiGX7u/Z
- Yx3uEiNs6ueSTh3ifDEkz2muKsj6/Mdnve7KB+MCm0DC5QooVTq8cE8EaqWVc08Qjsu/0LHt8
- y2Yd+ztIZzO8SaFcZBSPMqm422tPhrPZbFWWBFxKSdsgXD0abe2Erk3Q5vMYAHpsaDhLIA5EX
- 6nUNObsi2G7uz42roeIn8Kj9oD2oDBkytu4Qeg==
+X-Provags-ID: V03:K1:KBgiOyufyzzLNwZNiHBO7KmwXZdh1eooc8JnKds2YVePoQmyQT1
+ cyPEpIRzdKG/KXORaIKDU+9LF0CLQxZ4P57QIuJ7cJnck/Iucav36PEF/aonqoP51eDEBcE
+ 210zYOcm288prCm2pYGmLSAMAXSju6PnwtWfqjRiOGx3CEenSdpu1a33IkwZ6nB3HO3saZH
+ wMa6zeJoO6yjK3ljrwEfQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KkDDF+JZuzQ=:hzZb60WOTKwvzk8LbjZ7qG
+ cMjRBYGsT3SyBXyzuEiiYBMUj5dlfxo6rI3lxBwFNuL/b4t3Xqx8oxfD0V447cZU9s22r/4Id
+ itJ0cJhv5il62lGbkl6G1Wx2D0HnnIE7JblDkJJZiSdgKgwmb36mjjUqpv4h7nJG2VUibWHLx
+ kQOUDkFTMH8PrKSyANnYpRuP3C1xcmUj8SaX4xxSYo1UYH2aTD/kJxwnrpRSgFXE3U6C7vcZe
+ DZgGx4O0LQzO3okwaq2QzJ0HL2tr+VetfdavK67Adi/Awy2MFtcds9U1UOS4MvU97DcgFE2Zw
+ 4NirqCxbqAxMkYdP2wKxbtYRgbDl1IJAo8/er8QCWODQ2suY88D06c0ide9nd7wSYOGDiD3Ka
+ FtgLDkqiBCobACsOYzatjFoM1aeFV1blOM3tjNysDyZVNaBUA9wzPkpbWKnxdv7ca8cQI+HxS
+ 7dnLxuSUzahDRJgHqTL8qTSbqZkkdmtr+TLn+Py/GTEW0Su512QmnOSZC7b11VF4uq3OGd1TR
+ golEKX8DgTPf8HAV2+JqtuTGmiu/6QPkwo0cs3t7u3j5cA2XV/g+6QIpD2aCE//DFn+DHb6pW
+ FesJzuCp0rXLxaecIxp7IQR6UkzjXpdFgvrVb94R1/P4iYmuESB+IGU2DD3NfDb/XfK2PIdi6
+ uUwzlHTpTVZcvzAsmyt/hmQ244w5iH2uFXDfeDtXVIMdrA8VN+FQC7DT8u5oijQv3un0Fvqvx
+ LT0Pn4FeqMixcM92ZWIv8Apqal7VHT933QA81A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new environment variable KDEB_RULES for controlling where the
-generated debian rules are written to. By defaults, it's debian/rules,
-but packagers might override it for providing their own rules file.
+trivial rule to print out the kernel arch and localversion, so external tools,
+like distro packagers, can easily get it.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- scripts/package/mkdebian | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index edcad61..ff226be 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -99,6 +99,9 @@ kernel_headers_packagename=linux-headers-$version
- dbg_packagename=$packagename-dbg
- debarch=
- set_debarch
-+if [ -z "$KDEB_RULES" ]; then
-+    KDEB_RULES=debian/rules
-+fi
+diff --git a/Makefile b/Makefile
+index 3142e67..2719907 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1664,6 +1664,12 @@ kernelrelease:
+ kernelversion:
+ 	@echo $(KERNELVERSION)
  
- if [ "$ARCH" = "um" ] ; then
- 	packagename=user-mode-linux-$version
-@@ -202,7 +205,7 @@ Description: Linux kernel debugging symbols for $version
-  all the necessary debug symbols for the kernel and its modules.
- EOF
++kernellocalversion:
++	@$(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree) | sed -e 's~^\-~~'
++
++kernelarch:
++	@echo $(ARCH)
++
+ image_name:
+ 	@echo $(KBUILD_IMAGE)
  
--cat <<EOF > debian/rules
-+cat <<EOF > $KDEB_RULES
- #!$(command -v $MAKE) -f
- 
- build:
 -- 
 1.9.1
 
