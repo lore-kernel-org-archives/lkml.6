@@ -2,256 +2,154 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20529C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E91F7C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A16206DD
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="cPlTDEwC"
+	by mail.kernel.org (Postfix) with ESMTP id BE2A9206DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfBGNgQ (ORCPT
+        id S1727277AbfBGNgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:36:16 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:55601 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfBGNgP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:36:15 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2541725B7E2;
-        Fri,  8 Feb 2019 00:36:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549546570; bh=UmnSDGx9AZJkqmAobrpuFFnf/+wQbmMB7rXMTWi0QUM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cPlTDEwC6UzdWMh/lFgGZPNmNaeasUHODkAIdm4W2LfnBglZDtVTobYpZS/27gG2P
-         xMtzIxeZC1i0iVpAOXtfK5EQbwfz8x4TLxu8/I03M0LNFUORak7YshNjtTKYUK4Sn9
-         4MU+nHTN7kBZFQ3Ue7h4lxq2zq99J5KjcWmsQ7Yw=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 512999401DB; Thu,  7 Feb 2019 14:36:07 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 0/5] clk: renesas: r8a77990, r8a774c0: Add Z2 clock
-Date:   Thu,  7 Feb 2019 14:35:45 +0100
-Message-Id: <20190207133550.13967-1-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
+        Thu, 7 Feb 2019 08:36:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37254 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbfBGNgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:36:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 655E5EBD;
+        Thu,  7 Feb 2019 05:36:16 -0800 (PST)
+Received: from e110176-lin.kfn.arm.com (e110176-lin.kfn.arm.com [10.50.4.178])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7BC7F3F675;
+        Thu,  7 Feb 2019 05:36:14 -0800 (PST)
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Ofir Drag <ofir.drang@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        stable@kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [BUGFIX PATCH] crypto: ccree: fix resume race condition on init
+Date:   Thu,  7 Feb 2019 15:36:11 +0200
+Message-Id: <20190207133612.31836-1-gilad@benyossef.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+We were enabling autosuspend, which is using data set by the
+hash module, prior to the hash module being inited, casuing
+a crash on resume as part of the startup sequence if the race
+was lost.
 
-this series adds the Z2 clock as a clock with both a fixed and variable
-divisor with a parent of PLL0 to the CPG-MSSR drivers for the R-Car E3
-(r8a77990) and RZ/G2E (r8a774c0) SoCs.
+This was never a real problem because the PM infra was using low
+res timers so we were always winning the race, until commit 8234f6734c5d
+("PM-runtime: Switch autosuspend over to using hrtimers") changed that :-)
 
-In order to do so this series:
+Fix this by seperating the PM setup and enablement and doing the
+latter only at the end of the init sequence.
 
-1. Parameterise Z and Z2 clock fixed divisor in shared Gen-3 CPG
-   driver code to allow fixed divisors other than 2 - the E3 Z2
-   clock has a fixed divisor of 4
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: stable@kernel.org # v4.20
+---
+Herbert, could you please take this for 5.0-rc6 ? thanks.
 
-2. Parameterise offset of Z and Z2 clock control bits -
-   the offsets on E3 differ to other R-Car Gen 3 SoCs
+ drivers/crypto/ccree/cc_driver.c |  7 ++++---
+ drivers/crypto/ccree/cc_pm.c     | 13 ++++++-------
+ drivers/crypto/ccree/cc_pm.h     |  3 +++
+ 3 files changed, 13 insertions(+), 10 deletions(-)
 
-3. Support Z and Z2 clocks with high frequency parents.
-   The parent of the E3 Z2 clock, PLL0, is 4.8GHz and thus
-   when expressed in HZ must be treated as a 64bit value.
-
-4. Actually add the Z2 clocks
-
-Changes since v3
-----------------
-* Add and use DIV64_U64_ROUND_CLOSEST in the patch to allow
-  high frequency parents. This corrects the patch for 32bit platforms.
-* Accumulate review and testing tags.
-
-Changes since v2
-----------------
-* Parameterise control bit offset rather than using a quirk
-* Revised RZ/G2E patch - I was confused and updating the file for
-  the wrong part number
-
-
-Testing Overview
-----------------
-
-This patchset has been tested on Ebisu-4D/E3 with
-top of renesas-devel-20190207-v5.0-rc5. This allowed CPUFreq
-to be successfully exercised, showing scaling of the Z2 clock as per the
-results below.
-
-This patchset was also tested for regressions Salvator-X/M3-W ES1.0.
-As per the results below CPUFreq was used to show that with these
-patches applied Z and Z2 clocks still scale as expected.
-
-This v3 of this patchset has been independently tested RZ/G2E.
-It is not expected that v4 will have any behavioural differences
-on that (or any other 64bit) platform.
-
-
-Patches List by Author
-----------------------
-
-Simon Horman (3):
-  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock offset
-  clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency
-    parents
-  clk: renesas: r8a774c0: Add Z2 clock
-
-Takeshi Kihara (2):
-  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor
-  clk: renesas: r8a77990: Add Z2 clock
-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c |  4 ++--
- drivers/clk/renesas/r8a774c0-cpg-mssr.c |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c  |  5 +++--
- drivers/clk/renesas/r8a7796-cpg-mssr.c  |  5 +++--
- drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 +-
- drivers/clk/renesas/r8a77990-cpg-mssr.c |  1 +
- drivers/clk/renesas/rcar-gen3-cpg.c     | 27 +++++++++++++--------------
- drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++++
- include/linux/math64.h                  | 13 +++++++++++++
- 9 files changed, 41 insertions(+), 21 deletions(-)
-
-Ebisu-4D/E3 Test Results
-------------------------
-
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-performance
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-800000 1000000 1200000 
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z2/clk_rate:975000000
-# echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z2/clk_rate:787500000
-# echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-
-
-Salvator-X/M3-W ES1 Test Results
---------------------------------
-
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-performance
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-500000 1000000 1500000 
-# cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_available_frequencies
-800000 1000000 1200000 
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z/clk_rate:1499999940
-/sys/kernel/debug/clk/z2/clk_rate:1199999952
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z/clk_rate:984374961
-/sys/kernel/debug/clk/z2/clk_rate:1199999952
-# echo 1000000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z/clk_rate:984374961
-/sys/kernel/debug/clk/z2/clk_rate:974999961
-# echo 500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# echo 800000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:468749
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:500000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:468749
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:500000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z/clk_rate:468749981
-/sys/kernel/debug/clk/z2/clk_rate:787499969
-# echo 1500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# echo 1200000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z/clk_rate:1499999940
-/sys/kernel/debug/clk/z2/clk_rate:1199999952
-
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index 210cc86605e9..3bcc6c76e090 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -380,7 +380,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 	rc = cc_ivgen_init(new_drvdata);
+ 	if (rc) {
+ 		dev_err(dev, "cc_ivgen_init failed\n");
+-		goto post_power_mgr_err;
++		goto post_buf_mgr_err;
+ 	}
+ 
+ 	/* Allocate crypto algs */
+@@ -403,6 +403,9 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 		goto post_hash_err;
+ 	}
+ 
++	/* All set, we can allow autosuspend */
++	cc_pm_go(new_drvdata);
++
+ 	/* If we got here and FIPS mode is enabled
+ 	 * it means all FIPS test passed, so let TEE
+ 	 * know we're good.
+@@ -417,8 +420,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 	cc_cipher_free(new_drvdata);
+ post_ivgen_err:
+ 	cc_ivgen_fini(new_drvdata);
+-post_power_mgr_err:
+-	cc_pm_fini(new_drvdata);
+ post_buf_mgr_err:
+ 	 cc_buffer_mgr_fini(new_drvdata);
+ post_req_mgr_err:
+diff --git a/drivers/crypto/ccree/cc_pm.c b/drivers/crypto/ccree/cc_pm.c
+index d990f472e89f..6ff7e75ad90e 100644
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -100,20 +100,19 @@ int cc_pm_put_suspend(struct device *dev)
+ 
+ int cc_pm_init(struct cc_drvdata *drvdata)
+ {
+-	int rc = 0;
+ 	struct device *dev = drvdata_to_dev(drvdata);
+ 
+ 	/* must be before the enabling to avoid resdundent suspending */
+ 	pm_runtime_set_autosuspend_delay(dev, CC_SUSPEND_TIMEOUT);
+ 	pm_runtime_use_autosuspend(dev);
+ 	/* activate the PM module */
+-	rc = pm_runtime_set_active(dev);
+-	if (rc)
+-		return rc;
+-	/* enable the PM module*/
+-	pm_runtime_enable(dev);
++	return pm_runtime_set_active(dev);
++}
+ 
+-	return rc;
++/* enable the PM module*/
++void cc_pm_go(struct cc_drvdata *drvdata)
++{
++	pm_runtime_enable(drvdata_to_dev(drvdata));
+ }
+ 
+ void cc_pm_fini(struct cc_drvdata *drvdata)
+diff --git a/drivers/crypto/ccree/cc_pm.h b/drivers/crypto/ccree/cc_pm.h
+index 020a5403c58b..f62624357020 100644
+--- a/drivers/crypto/ccree/cc_pm.h
++++ b/drivers/crypto/ccree/cc_pm.h
+@@ -16,6 +16,7 @@
+ extern const struct dev_pm_ops ccree_pm;
+ 
+ int cc_pm_init(struct cc_drvdata *drvdata);
++void cc_pm_go(struct cc_drvdata *drvdata);
+ void cc_pm_fini(struct cc_drvdata *drvdata);
+ int cc_pm_suspend(struct device *dev);
+ int cc_pm_resume(struct device *dev);
+@@ -29,6 +30,8 @@ static inline int cc_pm_init(struct cc_drvdata *drvdata)
+ 	return 0;
+ }
+ 
++static void cc_pm_go(struct cc_drvdata *drvdata) {}
++
+ static inline void cc_pm_fini(struct cc_drvdata *drvdata) {}
+ 
+ static inline int cc_pm_suspend(struct device *dev)
 -- 
-2.11.0
+2.20.1
+
