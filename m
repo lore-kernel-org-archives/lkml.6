@@ -2,105 +2,100 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DF7C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4DBC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD2921721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 922A321721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:04:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hT0sOTj7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EnGWdxvR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfBGWCz (ORCPT
+        id S1726934AbfBGWEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:02:55 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:43184 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbfBGWCy (ORCPT
+        Thu, 7 Feb 2019 17:04:42 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:54511 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfBGWEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:02:54 -0500
-Received: by mail-qk1-f201.google.com with SMTP id z126so1388603qka.10
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:02:53 -0800 (PST)
+        Thu, 7 Feb 2019 17:04:41 -0500
+Received: by mail-pf1-f202.google.com with SMTP id t72so925755pfi.21
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 14:04:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=o+AJ8QXrg2DBnZGy5ZK6HlHEP2OPjBoRWVCrnuFEEho=;
-        b=hT0sOTj7b3PLD8UwlhjluEWCgaUqFcwBupSFo+rIsarXYKEEWRH8u5FdyH7Xyl9LMI
-         BzEnQsTHoKZJRQxb6hXGp7lQh0jmZm3p0FYgvxRFytFo6ty1cwfFm3I+I4L4j+PNQH3a
-         gz33UvMVgKqYwpyW7oeYb8bcxcbe+sOBeFgWf5nnPwdONZq/izCL3HqA4tP4mhgnqGAq
-         se5QlTXVg+Jfy5sonuqLJR4zqRK768Pt6ayAIESLzTLDpKkHDCxl1BGzCjwCOHsVcQfN
-         RR8BQfIeBGdlTq30stNQ0Oi8PfTYdErpUaW/zDoFT+nFtJGLGkHwP73oPrd4SRZzqhLI
-         dKWg==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=5JLckgKkr76wjKMwFcPTZOX/ShIJHQQgUEe+KdEi75o=;
+        b=EnGWdxvRGKR1ZVhkEmElViQRj8gpZT2njMXkACv/O5+o/VViTgBfPMHVGHWWd2xOL0
+         ITDUdq7sZY/JjiZ3vAACRuzxBzZc9/a0CPInO0eMh2esiMo0Q2Eakunyyna2T2PUFK0g
+         wEpf1qG+O893d9ibpt3uZ2yLpy7FTqpN+fhWOaES3AVzUDgYxlWurgeP5ZXsxxVaw5Ve
+         gPnSXv6AdZf45oMDeqS/ayGapoXb6LUC5grf5xU3DRrk8vzpFaelsxyG25zbYgaGnbWe
+         Htlx7pGqoEnoCN+tWl8gLWAvVQ8cqMgUYuCMpPaeAmYKAgjhgG5btE3N+XoP8YWuV2uD
+         mFGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=o+AJ8QXrg2DBnZGy5ZK6HlHEP2OPjBoRWVCrnuFEEho=;
-        b=qstcMYN0NtGEHUTffHYmohaPqcgZntJPo8T755339nlkMsC5WrpXJJWy7Pba8xf7rp
-         HKkyV+p1IN/vrNKqM2a5klX64Re17YeN8UIWK1tYlBCrlnabTAdN/hGiTtLoVPnuvgr2
-         W+gJsQbZsAt1JG40o2mHTQdqU6jtTm4laX9OgxR9p/2uFG6YBV6pBmu2kdZZb3fWwCUe
-         0Qd3izQSCH7+m0qZDoa7hDkWiPgjYu7/ZnOwudR+56zCwqz5gSmY+if++BfZfunu9CZp
-         IUl0FvdYv7cd8CNsZJaLMY7pYNyouT+c6YMdmagouROq/xkh0q01FBIScgZhdsbYM20T
-         2iPw==
-X-Gm-Message-State: AHQUAuZfljyP4f15rkaFB7UP9Np6DWGxorw+Bw1z6FXKrHUIZISYxa05
-        5rNsZmeGR6WE8d5xPi8Nc4lSZHmSzzou2+N3iJw=
-X-Google-Smtp-Source: AHgI3IZpSTvveps4gw9Ymi9LhC8L0aj58ECu2QXXZgpry+dP6rog7BE3nXSvtl0Om6ewMCVDLY3yy1gx+yqMFm/NSvc=
-X-Received: by 2002:a0c:b0b6:: with SMTP id o51mr10787701qvc.40.1549576972858;
- Thu, 07 Feb 2019 14:02:52 -0800 (PST)
-Date:   Thu,  7 Feb 2019 14:01:52 -0800
-In-Reply-To: <20190207220155.81351-1-ndesaulniers@google.com>
-Message-Id: <20190207220155.81351-4-ndesaulniers@google.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=5JLckgKkr76wjKMwFcPTZOX/ShIJHQQgUEe+KdEi75o=;
+        b=otPo6sb5Q117YuH5xeddMiNEXeDuIcjmVKFYnwxkflBzej3bIJjlU3A/bJ9svllPrj
+         LDYodHgvYJBq5QbWEx5qZulAaNxx4qhs6/zhcHd+MHYf6PfonvM7ORYW0KC38K2EQv2O
+         CXO0JqzbZm4wUajBwZQ8WBwmgQ5Pb8mDLK7ST1egVt9VNc7zlkWyqOZG0FoPn145DIXx
+         vR9paOzIKAHzMoMDXqaGz0lIoxjHVy1A/xlPKE4lr7ssZIjYxXe7BJNi+awxyx99bSOh
+         ueufKrOEzB8xMwXe9RGv9a/MWrmqnXkKadjC5gx+cReYqfZ0MxDpHxZnWXZWMoF9+iiT
+         Mj9Q==
+X-Gm-Message-State: AHQUAuZmfxEcR1VV2jRYfu68C/Puej3/zjBNdmZfXM4TlfHa19cT2Zl1
+        nU0aADSDztx/7NO0weTKHGFksU3gGPkPbEryMcU=
+X-Google-Smtp-Source: AHgI3IY5vFyrwXax0/lAAYKlGCPQvQbMYQa96f8SrTz1Q4uND6CM6LFsAOdkUGcaVpWF9jKzO5jFf+BauSV7E799tR8=
+X-Received: by 2002:a17:902:6b0c:: with SMTP id o12mr5432816plk.132.1549577080724;
+ Thu, 07 Feb 2019 14:04:40 -0800 (PST)
+Date:   Thu,  7 Feb 2019 14:04:35 -0800
+Message-Id: <20190207220435.85367-1-ndesaulniers@google.com>
 Mime-Version: 1.0
-References: <20190207220155.81351-1-ndesaulniers@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-Subject: [PATCH 4/4] Makefile: lld: set -O2 linker flag when linking with LLD
+Subject: [PATCH 0/4] Improve kernel LLD support
 From:   ndesaulniers@google.com
 To:     yamada.masahiro@socionext.com
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Rui Ueyama <ruiu@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     natechancellor@gmail.com, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--O2 enables tail merging of string table strings.
+This patch cleans up a few places in the Makefile to make way for
+landing LLD support in the kernel.  There are still a few arch specific
+fixes that need to get upstreamed, but this core set of patches should
+be arch independent.
 
-For arm64:
-0.34% size improvement with lld -O2 over lld for vmlinux.
-3.30% size improvement with lld -O2 over lld for Image.lz4-dtb.
+Some very rough numbers: LLD is improving the overall build time of
+Google Pixel kernels by about 9%.  The build is mostly dominated by
+compilation, but LLD is able to shave off quite a bit of time.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/343
-Suggested-by: Rui Ueyama <ruiu@google.com>
-Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
+One of the included patches helps get LLD linked kernels to competitive
+binary size, but there still some bugs in LLD causing it not to discard
+certain sections.  Once that's fixed, I estimate an LLD linked kernel to
+be just barely smaller than a BFD linked kernel (less than 1%).
 
-diff --git a/Makefile b/Makefile
-index 6307c17259ea..c07208ec49d4 100644
---- a/Makefile
-+++ b/Makefile
-@@ -718,6 +718,10 @@ else
- KBUILD_CFLAGS += -Wno-unused-but-set-variable
- endif
- 
-+ifdef CONFIG_LD_IS_LLD
-+KBUILD_LDFLAGS += -O2
-+endif
-+
- KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
- ifdef CONFIG_FRAME_POINTER
- KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+Folks looking to test should use LLD built from source, as I recently
+fixed a bug in LLD that prevented LLD linked kernel modules from being
+loadable.
+
+$ make LD=ld.lld
+
+Nick Desaulniers (4):
+  init/Kconfig: add config support for detecting linker
+  Makefile: clang: choose GCC_TOOLCHAIN_DIR not on LD
+  Makefile: lld: tell clang to use lld
+  Makefile: lld: set -O2 linker flag when linking with LLD
+
+ Makefile     | 9 ++++++++-
+ init/Kconfig | 9 +++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
