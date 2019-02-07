@@ -2,85 +2,124 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E35C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 677C8C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2E0621904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:01:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mjhg6qky";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OX5H6i7z"
+	by mail.kernel.org (Postfix) with ESMTP id 3E61D21904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:02:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbfBGPB4 (ORCPT
+        id S1726889AbfBGPCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:01:56 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36826 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGPBz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:01:55 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EBA7B6030D; Thu,  7 Feb 2019 15:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549551715;
-        bh=7JQWRwavZIe2xdjZ6I2Rm6ZPPaLICGfk09NTkfMitGw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=Mjhg6qkypVgMOJLYW/z3Q8dCkIUEgZnWMi5JeqwPtY7MC0D/s5IDhLIkjTEnTW+4z
-         zW+Wu7wzapOsglyIpDKP09xlzCOGk9LruG163jcCzwrc3cBe8lc/YLa1To9Ga/U842
-         kR95+3Qny7uUx4Pt/A+vuNloEFdKZCzLXLp5o7CA=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CB1D2605FC;
-        Thu,  7 Feb 2019 15:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549551714;
-        bh=7JQWRwavZIe2xdjZ6I2Rm6ZPPaLICGfk09NTkfMitGw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=OX5H6i7zAN45MvwCYgSRhpv5e6yzzHABOA+KcqoApYhaOXbJhkt5F53Gf+mLwjnSU
-         KhjIL9ceV7qu9d+R6e7Iob1L9bxAA7BHpLLmHRJb5jRi7Vg3IG80F1AyXN0Rzx5KCT
-         cVhxpxSBjApymn7X4yTuTE9hIJh9bqqZgPOzUXA8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB1D2605FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 7 Feb 2019 10:02:34 -0500
+Received: from mga03.intel.com ([134.134.136.65]:17898 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfBGPCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:02:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 07:02:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
+   d="scan'208";a="317104420"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Feb 2019 07:02:30 -0800
+Subject: Re: [PATCH 2/2] drivers: xhci: Add quirk to reset xHCI port PHY
+To:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1549347534-11320-1-git-send-email-srinath.mannam@broadcom.com>
+ <1549347534-11320-3-git-send-email-srinath.mannam@broadcom.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <6392f206-9db2-5506-9e5d-cdf2b784d32e@linux.intel.com>
+Date:   Thu, 7 Feb 2019 17:06:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <1549347534-11320-3-git-send-email-srinath.mannam@broadcom.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath: move spin_lock_bh to spin_lock in tasklet
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190122163033.51095-1-qq282012236@gmail.com>
-References: <20190122163033.51095-1-qq282012236@gmail.com>
-To:     Zhiwei Jiang <qq282012236@gmail.com>
-Cc:     qq282012236@gmail.com, ath9k-devel@qca.qualcomm.com,
-        davem@davemloft.net, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190207150154.EBA7B6030D@smtp.codeaurora.org>
-Date:   Thu,  7 Feb 2019 15:01:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhiwei Jiang <qq282012236@gmail.com> wrote:
-
-> as you are already in a tasklet, it is unnecessary to call
-> spin_lock_bh, because softirq already disable BH.
+On 05.02.2019 08:18, Srinath Mannam wrote:
+> Add a quirk to reset xHCI port PHY on port disconnect event.
+> Stingray USB HS PHY has an issue, that USB High Speed device detected
+> at Full Speed after the same port has connected to Full speed device.
+> This problem can be resolved with that port PHY reset on disconnect.
 > 
-> Signed-off-by: Zhiwei Jiang <qq282012236@gmail.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+>   drivers/usb/core/hcd.c       |  6 ++++++
+>   drivers/usb/core/phy.c       | 21 +++++++++++++++++++++
+>   drivers/usb/core/phy.h       |  1 +
+>   drivers/usb/host/xhci-plat.c |  3 +++
+>   drivers/usb/host/xhci-ring.c |  9 ++++++---
+>   drivers/usb/host/xhci.h      |  1 +
+>   include/linux/usb/hcd.h      |  1 +
+>   7 files changed, 39 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index 015b126..e2b87a6 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -2663,6 +2663,12 @@ int usb_hcd_find_raw_port_number(struct usb_hcd *hcd, int port1)
+>   	return hcd->driver->find_raw_port_number(hcd, port1);
+>   }
+>   
+> +int usb_hcd_phy_port_reset(struct usb_hcd *hcd, int port)
+> +{
+> +	return usb_phy_roothub_port_reset(hcd->phy_roothub, port);
+> +}
+> +EXPORT_SYMBOL_GPL(usb_hcd_phy_port_reset);
+> +
+>   static int usb_hcd_request_irqs(struct usb_hcd *hcd,
+>   		unsigned int irqnum, unsigned long irqflags)
+>   {
+> diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
+> index 38b2c77..c64767d 100644
+> --- a/drivers/usb/core/phy.c
+> +++ b/drivers/usb/core/phy.c
+> @@ -162,6 +162,27 @@ void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub)
+>   }
+>   EXPORT_SYMBOL_GPL(usb_phy_roothub_power_off);
+>   
+> +int usb_phy_roothub_port_reset(struct usb_phy_roothub *phy_roothub, int port)
+> +{
+> +	struct usb_phy_roothub *roothub_entry;
+> +	struct list_head *head;
+> +	int i = 0;
+> +
+> +	if (!phy_roothub)
+> +		return -EINVAL;
+> +
+> +	head = &phy_roothub->list;
+> +
+> +	list_for_each_entry(roothub_entry, head, list) {
+> +		if (i == port)
+> +			return phy_reset(roothub_entry->phy);
+> +		i++;
+> +	}
 
-Patch applied to ath-next branch of ath.git, thanks.
+I'm not that familiar with SoC's that have several PHYs per controller,
+but this looks odd.
 
-b789f333d7ac ath: move spin_lock_bh to spin_lock in tasklet
+For the above code to work wouldn't it require that each port has their own PHY,
+and the PHYs are added to the list of usb_phy_roothub is in the same order as usb ports?
 
--- 
-https://patchwork.kernel.org/patch/10775865/
+Or is there something I don't understand here?
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+-Mathias
 
