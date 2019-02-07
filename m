@@ -2,145 +2,193 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0012BC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877FFC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE0221721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:37:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 507A02085A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="AeBFBGHM"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Nz81abuW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfBGXhN (ORCPT
+        id S1726892AbfBGXjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:37:13 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49966 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGXhN (ORCPT
+        Thu, 7 Feb 2019 18:39:06 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40313 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGXjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:37:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ju5+vYpJoZF1xS6C9OLI61WX5FiyHVFYeX6XMvTY2ns=; b=AeBFBGHMda5J9s/ynjOI/Qv9+
-        FbNAmhatmnFz1lYq0j6b09eAWld2lZ/tHy6PrJXmngfBf9uTOX7XzYM291YSQCNUFyU8aEWWWGHFb
-        3XJrgBaaahv8gl6W1ke1LBN50WR1H3qYPkFxJr1GJIfxQRp2NisqaxNAZBsds+JM9Jt1A=;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:36614)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1grtEA-0004dD-Kf; Thu, 07 Feb 2019 23:37:06 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1grtE4-0006YS-OC; Thu, 07 Feb 2019 23:37:00 +0000
-Date:   Thu, 7 Feb 2019 23:37:00 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 5/7] net: phy: marvell10g: Force reading of
- 2.5/5G PMA extended abilities
-Message-ID: <20190207233700.ftw4cyilc2tzzqmb@shell.armlinux.org.uk>
-References: <20190118152352.26417-1-maxime.chevallier@bootlin.com>
- <20190118152352.26417-6-maxime.chevallier@bootlin.com>
- <20190120190809.GB19714@lunn.ch>
- <20190121113531.7a8b5b51@bootlin.com>
- <20190121105206.mxxxosytk5qiysc2@e5254000004ec.dyn.armlinux.org.uk>
- <20190121132945.6e6dee23@bootlin.com>
- <20190121130030.i5kkjb55gwttobvq@e5254000004ec.dyn.armlinux.org.uk>
- <20190128152621.2aec96c1@bootlin.com>
+        Thu, 7 Feb 2019 18:39:05 -0500
+Received: by mail-qt1-f194.google.com with SMTP id j36so2002277qta.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:39:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2XnrAy6YnHFz9HrPjyh/wZzHeOBeBqHUpkLz+64XGAM=;
+        b=Nz81abuWvxYZmdsXzP1Biib2wDMxyaVq5Yq8Me6Rhn/JFruGzY47yMPGP06h/Ep0nC
+         PNN3MXQNfk6QLgITf9vaDfhBFrBullOvTWk28ok/uDUeHiFPV20a2DL6JCaBaa8dmEpr
+         GuyNs6wXA87HuIDZ3X70SNl/IL4YfQaw25YKk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2XnrAy6YnHFz9HrPjyh/wZzHeOBeBqHUpkLz+64XGAM=;
+        b=sdk6NUJplOrIZnd009AD8VIMvMmC7S53gA2K3p5MdWkLhBlHMq0uUr+E5qSEQffnlh
+         unHwxfRl+UcH4J+afo2nU0OeNRRfU2W+FC0+dsLWEMh6ytYsIVZHb6oeNcPifn77byoe
+         m2w3QJm1TEs5zgAhGgVjGtzVAKYr4VYc0jnN1j1lgUXN3aMbrE3UlfrpBlx4SpmlWU4C
+         xqZfmvrbAHlRO8qZUlAVo0cRV2ZQivaTWzK+GiGR/ovJLOIIF09hPZsRJBbf72xlZrzu
+         kVF9VMXLgfJynCMcucSBRMq9/QDEl6fpsoy4wDhknKAJbB1qJIAKf9GAQr7vHbZqA6FB
+         qTXQ==
+X-Gm-Message-State: AHQUAuYQ3w1Num0SunTN8StvpUnQwbyrWWIn9da7rC+7Khy8zugRQEyP
+        svuDv65WcB8PEDyaj//quZ9oXg==
+X-Google-Smtp-Source: AHgI3Ibve4ApL0O7bTS9O10kFgM9lMKCDuM/GSoR8G51GLFRhVq1wL/++MX96FZKECSh44sK+zarFg==
+X-Received: by 2002:ac8:4882:: with SMTP id i2mr14116293qtq.225.1549582744391;
+        Thu, 07 Feb 2019 15:39:04 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id q195sm370955qke.58.2019.02.07.15.39.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 15:39:03 -0800 (PST)
+Date:   Thu, 7 Feb 2019 18:39:02 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atishp04@gmail.com, dancol@google.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        gregkh@linuxfoundation.org, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, karim.yaghmour@opersys.com,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        paulmck@linux.vnet.ibm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        rdunlap@infradead.org, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        yhs@fb.com
+Subject: Re: [PATCH 1/2] Provide in-kernel headers for making it easy to
+ extend the kernel
+Message-ID: <20190207233902.GA193818@google.com>
+References: <20190207211102.154634-1-joel@joelfernandes.org>
+ <20190207175239.0607f5eb@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190128152621.2aec96c1@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190207175239.0607f5eb@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 03:26:21PM +0100, Maxime Chevallier wrote:
-> Hello Russell,
-> 
-> On Mon, 21 Jan 2019 13:00:30 +0000
-> Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
-> 
-> >On Mon, Jan 21, 2019 at 01:29:45PM +0100, Maxime Chevallier wrote:
-> >> Hello Russell,
-> >> 
-> >> On Mon, 21 Jan 2019 10:52:06 +0000
-> >> Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:  
-> >> >It's entirely possible that the 3310 switches to different hardware
-> >> >blocks for 2.5G and 5G speeds, and reading _just_ the 1.4 register
-> >> >is not sufficient.  
-> >> 
-> >> I agree with you but in that particular case, I think we are reading
-> >> from the correct device. The datasheet itself says that we should be
-> >> reading 1.4 and 1.11 as we expect, with 2.5G/5G support being set (these
-> >> registers are read-only, and the datasheet's values aren't what we
-> >> actually read).  
-> >
-> >No, you missed what I was saying.
-> >
-> >The 88x3310 is a hybrid device.  It contains multiple instances of
-> >each individual device at different offsets in each MMD address space.
-> 
-> Ah I see, I indeed thought you refered to the MMDs. 
-> 
-> [...]
-> 
-> >The exception seems to be the PMA/PMD MMD which I've only discovered
-> >a single instance.
-> 
-> Yes there only seems to be one. There are some other registers in the
-> 1.0xCxxx range, but those who are documented don't help a lot with
-> determing wether or not these modes are supported.
-> 
-> I wonder if these values are correctly reported in newer PHY firmware
-> revisions.
-> 
-> I've checked other PCS instances, but it seems the one at 3.0x0xxx is
-> the one used in 2.5/5GBASET.
+Hi Steve,
 
-In the following, I use "subdevice N" to mean instance "N + 1".  So
-the instance at address 0 is the main device and the following instance
-is subdevice 1.
+On Thu, Feb 07, 2019 at 05:52:39PM -0500, Steven Rostedt wrote:
+> On Thu,  7 Feb 2019 16:11:01 -0500
+> "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
+> 
+> > +
+> > +# Build a list of in-kernel headers for building kernel modules
+> > +# Any other files will be stored in IKH_EXTRA variable.
+> > +ikh_file_list := include/
+> > +ikh_file_list += arch/$(ARCH)/Makefile
+> > +ikh_file_list += arch/$(ARCH)/include/
+> > +ikh_file_list += $(IKH_EXTRA)
+> > +ikh_file_list += scripts/
+> > +ikh_file_list += Makefile
+> > +ikh_file_list += Module.symvers
+> > +ifeq ($(CONFIG_STACK_VALIDATION), y)
+> > +ikh_file_list += $(objtree)/tools/objtool/objtool
+> > +endif
+> > +
+> > +$(obj)/kheaders.o: $(obj)/kheaders_data.h
+> > +
+> > +targets += kheaders_data.txz
+> > +
+> > +quiet_cmd_genikh = GEN     $(obj)/kheaders_data.txz
+> > +cmd_genikh = $(srctree)/scripts/gen_ikh_data.sh $@ $^ >/dev/null 2>&1
+> > +$(obj)/kheaders_data.txz: $(ikh_file_list) FORCE
+> > +	$(call cmd,genikh)
+> > +
+> > +filechk_ikheadersxz = (echo "static const char kernel_headers_data[] __used = KH_MAGIC_START"; cat $< | scripts/bin2c; echo "KH_MAGIC_END;")
+> > +
+> > +targets += kheaders_data.h
+> > +$(obj)/kheaders_data.h: $(obj)/kheaders_data.txz FORCE
+> > +	$(call filechk,ikheadersxz)
+> > diff --git a/scripts/gen_ikh_data.sh b/scripts/gen_ikh_data.sh
+> > new file mode 100755
+> > index 000000000000..609196b5cea2
+> > --- /dev/null
+> > +++ b/scripts/gen_ikh_data.sh
+> > @@ -0,0 +1,19 @@
+> > +#!/bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +spath="$(dirname "$(readlink -f "$0")")"
+> > +
+> > +rm -rf $1.tmp
+> > +mkdir $1.tmp
+> > +
+> > +for f in "${@:2}";
+> > +	do find "$f" ! -name "*.c" ! -name "*.o" ! -name "*.cmd" ! -name ".*";
+> 
+> I wonder if it is a good idea to pick all files in the directories
+> defined in ikh_file_list, and not just explicitly list what we want,
+> with a '*.h' and such?
 
-Looking at the PCS, none of them have the 2.5G/5G bits set in the 3310
-which is rather interesting, except the one at 3.0 has the EEE bits
-set in 3.21.  You are quite correct that the first instance is used
-for 2.5G copper, but PCS subdevice 2 also changes as a result of
-switching down to 2.5G (its transmit fault status clears.)
+I also need few files in the archive that are not .h, these don't take up
+much space but are needed to make an out-of-tree kernel module build succeed.
 
-It looks like PhyXS subdevice 3 is used (which is a SGMII/1000base-X
-MAC facing PHY), is switched to fixed speed mode.  It doesn't have
-what looks like a sensible advertisement either, so my guess is that
-this will need the MAC side to be configured _not_ to expect the
-in-band control word in this mode.  In other words, it may be SGMII
-or 1000base-X upclocked to 2.5G speeds - which it is doesn't matter
-because the difference is in the control word which looks like it's
-omitted, or if it isn't, doesn't contain useful information.
+One of my goals with this was to make a self-contained module that could be
+loaded to build other modules. Majority of the files are kernel headers, but
+some are not, such as Module.symvers and other scripts. Then one can run
+systemtap on Android which can be made to build modules using the embedded
+headers.
 
-Note that mvpp2 is slightly buggy in this area, and I have a patch
-set that fixes it up - patches can be found in my "mvpp2" branch,
-which I'm waiting for my problem reporter to report back after his
-testing.  If you use this patch set, as long as you don't use
-in-band mode, it should be fine.
+> > +done | cpio -pd $1.tmp
+> > +
+> > +for f in $(find $1.tmp); do
+> > +	$spath/strip-comments.pl $f
+> > +done
+> > +
+> > +tar -Jcf $1 -C $1.tmp/ . > /dev/null
+> > +
+> > +rm -rf $1.tmp
+> > diff --git a/scripts/strip-comments.pl b/scripts/strip-comments.pl
+> > new file mode 100755
+> > index 000000000000..f8ada87c5802
+> > --- /dev/null
+> > +++ b/scripts/strip-comments.pl
+> > @@ -0,0 +1,8 @@
+> > +#!/usr/bin/perl -pi
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +# This script removes /**/ comments from a file, unless such comments
+> > +# contain "SPDX". It is used when building compressed in-kernel headers.
+> > +
+> > +BEGIN {undef $/;}
+> > +s/\/\*((?!SPDX).)*?\*\///smg;
+> 
+> Hmm, I'm also wondering if we could us the C pre-processor for the
+> stripping of everything from the header file. We would then even get
+> the header files only having what is necessary for the running kernel.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+I thought about this too. An issue with that is it is going to be really slow
+due to the large number of headers. The other is, I think it will actually
+make the headers bigger and take up more space - because all the include
+directives will also be expanded and have more duplication. Let me know if I
+missed something though.
+
+thanks,
+
+ - Joel
+
