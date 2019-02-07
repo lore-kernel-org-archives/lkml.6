@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3473C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29CBC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9084F2080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6B32080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539838;
-	bh=SZcAUdsRzD+RqM2rrERHs5pwbqW0DPb3JG/fXt+DuSI=;
+	s=default; t=1549539840;
+	bh=hxNgexCr6k6tvbn5Wx9EM4jkdhVvq14u5rsoIFeMp0w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xzP56lT5S+mbwGcVOMttqwRaVxqzPJY2RzsHLl6fAxuVQLVaJmg8uOR/KJDxsDyJQ
-	 RwGOF8KbuQJQ3/ksjBPyoW0Arev1BdVih/212hfci9NY+nn6+Uipqx5PBu/Qstth+x
-	 CgqsOB+OpixG7wl9nlgqkPmUEx0xH7x04zgPEJQ8=
+	b=s1uIvQAujsYrbTkvYCJKmYFh5RmoVyXYBWEIaWAuPZvqRj2/zrDkOjSNJRzAyfTIZ
+	 flsSTxOoE9dGZRQrUSyZZnISIKi4eBMJNFBfXig7S4/aZlL/u35T6a4nXs1fTsrmWr
+	 q0YoJbxqdpfSxcjEWsGDv/URTZT4GDHgjqd0UsEM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfBGLn4 (ORCPT
+        id S1726732AbfBGLn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:43:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34368 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:43:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbfBGLnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:43:52 -0500
+        id S1727622AbfBGLn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:43:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C03DD2080F;
-        Thu,  7 Feb 2019 11:43:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC04121917;
+        Thu,  7 Feb 2019 11:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539832;
-        bh=SZcAUdsRzD+RqM2rrERHs5pwbqW0DPb3JG/fXt+DuSI=;
+        s=default; t=1549539835;
+        bh=hxNgexCr6k6tvbn5Wx9EM4jkdhVvq14u5rsoIFeMp0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r3DUJ5ezNnhscSi8Ppg+pbcpuhWGPpsRsUvzmzT89YzRV2KCaEhZCnmM4Y5Il2WjD
-         LA7HqSQAsKTF6KsCZKpRXg5Lj97U01HYuFmitKIK3BmdUmpD2IJ/lxxfqr9VqcHB8K
-         D1h/+MF+l/DN5HjUkHC9xhb7tmTGDMR2HYkr0gwY=
+        b=PnFRMmcIO3lEj463M3hkmeT3kJuADrAVVTx71kaOE16lJS6+P4KyUcEtya/OLUAfh
+         Sgu5d/gcef7o+KVikx6RwZDfRmWJaZuxmKpovCIcc+mfK1YmQ3YEXjEBW90fdFQcNl
+         +jJ2BEzHEK8nRDXBIZOCrJ+aCz5YVVz+gelDedR4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Mao Wenan <maowenan@huawei.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 30/34] ipv4: frags: precedence bug in ip_expire()
-Date:   Thu,  7 Feb 2019 12:42:12 +0100
-Message-Id: <20190207113026.725752897@linuxfoundation.org>
+Subject: [PATCH 4.4 31/34] inet: frags: better deal with smp races
+Date:   Thu,  7 Feb 2019 12:42:13 +0100
+Message-Id: <20190207113026.757970660@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -67,33 +67,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 70837ffe3085c9a91488b52ca13ac84424da1042 upstream.
+commit 0d5b9311baf27bb545f187f12ecfd558220c607d upstream.
 
-We accidentally removed the parentheses here, but they are required
-because '!' has higher precedence than '&'.
+Multiple cpus might attempt to insert a new fragment in rhashtable,
+if for example RPS is buggy, as reported by 배석진 in
+https://patchwork.ozlabs.org/patch/994601/
 
-Fixes: fa0f527358bd ("ip: use rb trees for IP frag queue.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+We use rhashtable_lookup_get_insert_key() instead of
+rhashtable_insert_fast() to let cpus losing the race
+free their own inet_frag_queue and use the one that
+was inserted by another cpu.
+
+Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: 배석진 <soukjin.bae@samsung.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_fragment.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/inet_fragment.c |   28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -205,7 +205,7 @@ static void ip_expire(unsigned long arg)
- 	IP_INC_STATS_BH(net, IPSTATS_MIB_REASMFAILS);
- 	IP_INC_STATS_BH(net, IPSTATS_MIB_REASMTIMEOUT);
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -188,21 +188,22 @@ static struct inet_frag_queue *inet_frag
+ }
  
--	if (!qp->q.flags & INET_FRAG_FIRST_IN)
-+	if (!(qp->q.flags & INET_FRAG_FIRST_IN))
- 		goto out;
+ static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
+-						void *arg)
++						void *arg,
++						struct inet_frag_queue **prev)
+ {
+ 	struct inet_frags *f = nf->f;
+ 	struct inet_frag_queue *q;
+-	int err;
  
- 	/* sk_buff::dev and sk_buff::rbnode are unionized. So we
+ 	q = inet_frag_alloc(nf, f, arg);
+-	if (!q)
++	if (!q) {
++		*prev = ERR_PTR(-ENOMEM);
+ 		return NULL;
+-
++	}
+ 	mod_timer(&q->timer, jiffies + nf->timeout);
+ 
+-	err = rhashtable_insert_fast(&nf->rhashtable, &q->node,
+-				     f->rhash_params);
+-	if (err < 0) {
++	*prev = rhashtable_lookup_get_insert_key(&nf->rhashtable, &q->key,
++						 &q->node, f->rhash_params);
++	if (*prev) {
+ 		q->flags |= INET_FRAG_COMPLETE;
+ 		inet_frag_kill(q);
+ 		inet_frag_destroy(q);
+@@ -215,17 +216,18 @@ EXPORT_SYMBOL(inet_frag_create);
+ /* TODO : call from rcu_read_lock() and no longer use refcount_inc_not_zero() */
+ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key)
+ {
+-	struct inet_frag_queue *fq;
++	struct inet_frag_queue *fq = NULL, *prev;
+ 
+ 	rcu_read_lock();
+-	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
+-	if (fq) {
++	prev = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
++	if (!prev)
++		fq = inet_frag_create(nf, key, &prev);
++	if (prev && !IS_ERR(prev)) {
++		fq = prev;
+ 		if (!atomic_inc_not_zero(&fq->refcnt))
+ 			fq = NULL;
+-		rcu_read_unlock();
+-		return fq;
+ 	}
+ 	rcu_read_unlock();
+-	return inet_frag_create(nf, key);
++	return fq;
+ }
+ EXPORT_SYMBOL(inet_frag_find);
 
 
