@@ -2,124 +2,121 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C958C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9239FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6FF218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:47:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B572217F9
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:53:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pDmW+M8Y"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PB8rm1Ht"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbfBGArb (ORCPT
+        id S1726547AbfBGAxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:47:31 -0500
-Received: from ozlabs.org ([203.11.71.1]:43851 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbfBGAra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:47:30 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43w05X1G7zz9s3q;
-        Thu,  7 Feb 2019 11:47:28 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549500448;
-        bh=Zp+p0jHWtgs5UWtPK1b2zEWNffhb8e5+dEXNeJCnCmc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pDmW+M8YOnuvyEfFF4H/RXxxG0jRCHBT0qf75igj5HbpK9Rz/gx53o2/yfTvA9kP2
-         1dsmZ/pr8q+D1kLTW3XWMdN77ygxkhzkHel0+AK045VhKkd7JbzSC9vmehiVE4bwWk
-         6McgFWx7S2LglXgNiTZgvKJfC1S3L87pdFUinvOFuTLl8qbpt5muYMLSxQaIj5n60N
-         Q5HYSputAb8EqpX2kbfqmhEAmIF2YkrdRxzvflXxm2HEmf2544xc6/7v9tiET1KKi6
-         Axahd/nr1VRnE9H1rhsTlY4sXTnn0s1qxgeYdQIneNWmRrfvChRY0ROIZGWkuSfF0S
-         3aLDdEkdIJWWw==
-Date:   Thu, 7 Feb 2019 11:47:26 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: linux-next: manual merge of the opp tree with the cpufreq-arm tree
-Message-ID: <20190207114726.741da653@canb.auug.org.au>
+        Wed, 6 Feb 2019 19:53:11 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44616 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfBGAxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 19:53:10 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p4so3949176plq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 16:53:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1gX5DWBQE0VrtFnTcpfav0a1htXROoYyWvirJBXeojg=;
+        b=PB8rm1HtKJ6kJUE+ft+hqKaiIl8VDIsjqYNswocEba8eHRpl9VzqgdkNWREgrW9LZl
+         4Dob8ZCEeQ3gTr3mtk+Xfr8NUmDeeiGwjnSddyd/yvnr+oSYtRMfSX8JubMtQ83my3/3
+         l/L4Q93JpPkiUN5uUxpXNdylrWENwUGcTsU2nu3u59khpTlR5rUjoYIFHxlDdPsU2nsH
+         LPJAk4+ajtSIONJ+3KC9Y4yErZXUhV3WsopIEVu7owZm7R+BAl0HY/sQaGasgbLkZhLp
+         jiKlWVdOxuVSXyEnrwoIOiPunuEHxM1YMqSPaUzPnmZ+URtljtxlzrJ5fCLx5o0U16UH
+         DyuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1gX5DWBQE0VrtFnTcpfav0a1htXROoYyWvirJBXeojg=;
+        b=CyaGJp/1GFIQG9U6u1OaKVWqf7KjEmGW+sts/vpMXki0zLsqSuIBrVFD6L397HeMFX
+         PJgk27/Pvexmms9Nv1JzaauA6cbZqhouoVNtsNDe7L5r6/WC8JT08NYr4TH5beUBHS2G
+         jhDoz5pYv02CA7CQX6Da3ZNhjsaXKaC/9AZ1Vr2OqJg3EJLWboVFa46r1eXpMvj+IYV+
+         KJGtXA4LTfTpi/HxrJBNiJZMacFMlIlKeeRjcqvlBfqDnKboLXwGkg7hzpUmUWjHX9S+
+         S0UGtued4vvN4t+qOW63i7irgpbTlSeS7OUNE3Tl/2KwuflgM81vmDrGavyjitheObet
+         RQTw==
+X-Gm-Message-State: AHQUAuYrZfkev/CWFce+q51gUHeAt6OXFnYgLWC6ktOfhayprzgxtIRM
+        WWvKumcjSjiBYrxBCkhlLqE15K8ZEEwtsBV6oFFbnA==
+X-Google-Smtp-Source: AHgI3IbhGJaLaRguSzWT4yuVONPO/oxyLUSy7WnDME8fW10p6mjsMhqvPyU4MC0jyQrK6Eyt9rlBtsrDyWK9Sx6kWdo=
+X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr13616022plb.238.1549500789630;
+ Wed, 06 Feb 2019 16:53:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nV2JY/799zyzBbiIdh3+g1k"; protocol="application/pgp-signature"
+References: <20190122233749.42220-1-trong@android.com>
+In-Reply-To: <20190122233749.42220-1-trong@android.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 6 Feb 2019 16:52:58 -0800
+Message-ID: <CAKwvOdm1+P-8YqtgZV65EAMnVN-n1mkpOOX0yp-qEbuCH5F9Rw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] gcov: add Clang support
+To:     Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc:     Greg Hackmann <ghackmann@android.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tri Vo <trong@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/nV2JY/799zyzBbiIdh3+g1k
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 22, 2019 at 3:38 PM Tri Vo <trong@android.com> wrote:
+>
+> This patch series adds Clang supoprt for gcov.
+>
+> Patch 1 refactors existing code in preparation for Clang support.
+> Patch 2 implements necessary LLVM runtime hooks and gcov kernel interfaces.
+> Patch 3 updates documentation.
+>
+> Greg Hackmann (2):
+>   gcov: Clang: move common GCC code into gcc_base.c
+>   gcov: Clang support
+>
+> Tri Vo (1):
+>   gcov: docs: add a note on GCC vs Clang differences
+>
+>  Documentation/dev-tools/gcov.rst |  18 +-
+>  kernel/gcov/Kconfig              |   3 +-
+>  kernel/gcov/Makefile             |   5 +-
+>  kernel/gcov/base.c               |  84 +----
+>  kernel/gcov/clang.c              | 555 +++++++++++++++++++++++++++++++
+>  kernel/gcov/gcc_base.c           |  86 +++++
+>  kernel/gcov/gcov.h               |   3 +
+>  7 files changed, 665 insertions(+), 89 deletions(-)
+>  create mode 100644 kernel/gcov/clang.c
+>  create mode 100644 kernel/gcov/gcc_base.c
+>
+> v2:
+> - Reorganized config dependencies, as per Masahiro.
+>
+> v3:
+> - Squashed patches 2-4 of v2, as per Nick, Masahiro, and Peter.
+> Addressed comments by Peter:
+> - Moved __gcov_exit() to gcc_base.c
+> - Added missing header to gcc_base.c
+> - Removed unnecessary boundary checks in gcov_info_add().
+> - Changed counters' allocation to use vmalloc().
+> - Added check for failed allocation of filename.
+> - Changed list_for_each_entry_safe to list_for_each_entry when traversing
+>   without modifying.
+> - Updated Documentation/dev-tools/gcov.rst
+>
+> --
+> 2.20.1.321.g9e740568ce-goog
+>
 
-Hi Viresh,
+Bumping this thread for review.
 
-Today's linux-next merge of the opp tree got a conflict in:
-
-  drivers/cpufreq/qcom-cpufreq-hw.c
-
-between commit:
-
-  5471b2c9bd08 ("cpufreq: qcom: Read voltage LUT and populate OPP")
-
-from the cpufreq-arm tree and commit:
-
-  597457d7e054 ("cpufreq: qcom-hw: Register an Energy Model")
-
-from the opp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/cpufreq/qcom-cpufreq-hw.c
-index 15f31e8c09c2,a16b9dca7ea3..000000000000
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@@ -224,13 -205,8 +224,15 @@@ static int qcom_cpufreq_hw_cpu_init(str
-  		goto error;
-  	}
- =20
- +	ret =3D dev_pm_opp_get_opp_count(cpu_dev);
- +	if (ret <=3D 0) {
- +		dev_err(cpu_dev, "Failed to add OPPs\n");
- +		ret =3D -ENODEV;
- +		goto error;
- +	}
- +
-+ 	dev_pm_opp_of_register_em(policy->cpus);
-+=20
-  	policy->fast_switch_possible =3D true;
- =20
-  	return 0;
-
---Sig_/nV2JY/799zyzBbiIdh3+g1k
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbgB4ACgkQAVBC80lX
-0GzyXQf/TTJt2einDltTe1wTkY7UAEDMMKYZblGBnjigwEerH+Efyj6vfNzuhZRM
-rqmKONIVCyxhMeJj5r2WXhjB7bmuwk6HpMDaK4v+S1ZKBDbwkzLT67ZbAaaIPKiB
-jw++xPFL0cHIMH1H2qDbX99I04Q5uv4VFKoaVkC8JTM16ZF9Qsim9No0/uvNBCOp
-SHDnV/XC15Ne7Q+SjcJQeFkOLrrBq3SgWzMOqrZSYoklVm6ETBRNdfTjI2/wqxSB
-ZdThB2bhECDElj7s6Zc4DxJSQqUlQdERW2WooyHTUZ9Lko+hqUKv1zCqiboZt2W8
-LrtT+Ehwn0K2BKryKfhWxc5dGMPeUw==
-=lCoA
------END PGP SIGNATURE-----
-
---Sig_/nV2JY/799zyzBbiIdh3+g1k--
+-- 
+Thanks,
+~Nick Desaulniers
