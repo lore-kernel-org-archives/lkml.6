@@ -2,89 +2,120 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D59C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84638C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC4072146E
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:50:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYenkfTR"
+	by mail.kernel.org (Postfix) with ESMTP id 5B86F2146E
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfBGUu5 (ORCPT
+        id S1727591AbfBGUvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:50:57 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:56280 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbfBGUu5 (ORCPT
+        Thu, 7 Feb 2019 15:51:37 -0500
+Received: from icebox.esperi.org.uk ([81.187.191.129]:42044 "EHLO
+        mail.esperi.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727471AbfBGUvh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:50:57 -0500
-Received: by mail-it1-f193.google.com with SMTP id m62so3345780ith.5;
-        Thu, 07 Feb 2019 12:50:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hO9LKfL1892BakhneVS6wEyee5Ldym6m5VVQx8Fbp7I=;
-        b=nYenkfTRi/hiXjr5Bztao6vgR9eWzRsbunZxpoPfuCC18dQSrfvkCo0V9aCY4w/KbU
-         yYJ5De5YtIqXbGa8mtMrxSnAA1KdPLx5xE/ZyQMV6dZ7kpYLNQEUArm/9TVKczcxtFMM
-         6p1fZClqRFegr94aOrO7fcFVsgqsGlDxT2LFZHxjVgl/1S1V2MWp94FTPi4a+6U5/U0r
-         Faw36d3hJTar/KU7fKdZ2XnG+s08GqZScKm9yiv4WA4eV0tT1cyOH1onrAlhFlFq9sUe
-         QsAX3krUEEIf1LbZ78XtFCnwtDiWrncNZuwhZinbzEwa+yoD6YaXETL5qYj2tIeV5B33
-         y/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hO9LKfL1892BakhneVS6wEyee5Ldym6m5VVQx8Fbp7I=;
-        b=XA5rLgP3TdDnyHH1PRX/kav4sL7e7UKnyk6TLG56nnKOwyiXas4LHlQ+YVQi6mypUS
-         NCDAp3OTKh+cU9rxg4vG+tpx677QKknDRf/4rWKDZF2shJNF5GlvKhzDAEi95on0cwLL
-         49NlKPmOFsz4R+dTQf1KklCuFMphu8DW91l9ZKpEqyrEgJOiFxhCqDxAA+NvJU7he44K
-         wCJxSiLHtyPyTDTKiMZjjRHY5P5UfHs4gagKBn5iqehJJ46ahK6c2VnApsBmC9f/NXXA
-         6+we4MujW/ZYfds6MUIbuSKxkfSuB3TIoqsCfoQd49l6r9oIoPoYBFxuJxtKx3ZnJyUq
-         Wt1g==
-X-Gm-Message-State: AHQUAuZq51EpMM4SByE3v/+jQEDQjLFX0HonMeG5QHemluSqfrSuJrw2
-        84kcWWiH0aixSlIYw+OBUexEycNG4tAz5TxD7ds=
-X-Google-Smtp-Source: AHgI3Ia8INPy6OdFJ0yMvXIEHWwPnwIHwGPtsYWoyluU1Y/TnRBD/SSZB0AXMB8cDw8Mn2N9dnAKO1xX+Cna15vdnTU=
-X-Received: by 2002:a6b:c544:: with SMTP id v65mr9784991iof.118.1549572656318;
- Thu, 07 Feb 2019 12:50:56 -0800 (PST)
+        Thu, 7 Feb 2019 15:51:37 -0500
+Received: from loom (nix@sidle.srvr.nix [192.168.14.8])
+        by mail.esperi.org.uk (8.15.2/8.15.2) with ESMTP id x17K8V1F017784;
+        Thu, 7 Feb 2019 20:08:31 GMT
+From:   Nix <nix@esperi.org.uk>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-bcache@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Andre Noll <maan@tuebingen.mpg.de>
+Subject: Re: bcache on XFS: metadata I/O (dirent I/O?) not getting cached at all?
+References: <87h8dgefee.fsf@esperi.org.uk>
+        <64f32487-5b8f-f6c2-37a9-84bb0717a9e1@suse.de>
+Emacs:  ballast for RAM.
+Date:   Thu, 07 Feb 2019 20:51:26 +0000
+In-Reply-To: <64f32487-5b8f-f6c2-37a9-84bb0717a9e1@suse.de> (Coly Li's message
+        of "Thu, 7 Feb 2019 16:16:48 +0800")
+Message-ID: <87k1ib8gq9.fsf@esperi.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.50 (gnu/linux)
 MIME-Version: 1.0
-References: <20190122010501.15933-1-lucmaga@gmail.com> <e2359d6c-5f14-14d1-fbba-7fcd8d66de5f@xs4all.nl>
-In-Reply-To: <e2359d6c-5f14-14d1-fbba-7fcd8d66de5f@xs4all.nl>
-From:   =?UTF-8?Q?Lucas_Magalh=C3=A3es?= <lucmaga@gmail.com>
-Date:   Thu, 7 Feb 2019 18:50:45 -0200
-Message-ID: <CAK0xOaEDhHfdpM5BaOcACQhXH1_Xt3+208ZAGpEqn1SdwJTbDQ@mail.gmail.com>
-Subject: Re: [PATCH v4] media: vimc: Add vimc-streamer for stream control
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org,
-        Helen Koike <helen.koike@collabora.com>, mchehab@kernel.org,
-        lkcamp@lists.libreplanetbr.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-DCC--Metrics: loom 1102; Body=6 Fuz1=6 Fuz2=6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+On 7 Feb 2019, Coly Li uttered the following:
+> On 2019/2/7 6:11 上午, Nix wrote:
+>> As it is, this seems to render bcache more or less useless with XFS,
+>> since bcache's primary raison d'etre is precisely to cache seeky stuff
+>> like metadata. :(
+>
+> Hi Nix,
+>
+> Could you please to try whether the attached patch makes things better ?
 
->
-> frame_size is set, but not used:
->
-> vimc-sensor.c:208:15: warning: variable 'frame_size' set but not used [-W=
-unused-but-set-variable]
->
-> Can you make a patch fixing this?
->
-> I'm not sure how I missed this sparse warning, weird.
+Looks good! Before huge tree cp -al:
 
-Sorry about that. I will be more careful next time with this warnings.
-Just sent the next version.
+loom:~# bcache-stats 
+stats_total/bypassed: 1.0G
+stats_total/cache_bypass_hits: 16
+stats_total/cache_bypass_misses: 26436
+stats_total/cache_hit_ratio: 46
+stats_total/cache_hits: 24349
+stats_total/cache_miss_collisions: 8
+stats_total/cache_misses: 27898
+stats_total/cache_readaheads: 0
 
-Regards,
-Lucas A. M. Magalh=C3=A3es
+After:
+
+stats_total/bypassed: 1.1G
+stats_total/cache_bypass_hits: 16
+stats_total/cache_bypass_misses: 27176
+stats_total/cache_hit_ratio: 43
+stats_total/cache_hits: 24443
+stats_total/cache_miss_collisions: 9
+stats_total/cache_misses: 32152           <----
+stats_total/cache_readaheads: 0
+
+So loads of new misses. (A bunch of bypassed misses too. Not sure where
+those came from, maybe some larger sequential reads somewhere, but a lot
+is getting cached now, and every bit of metadata that gets cached means
+things get a bit faster.)
+
+
+btw I have ported ewheeler's ioprio-based cache hinting patch to 4.20;
+I/O below the ioprio threshold bypasses everything, even metadata and
+REQ_PRIO stuff. It was trivial, but I was able to spot and fix a tiny
+bypass accounting bug in the patch in the process): see
+http://www.esperi.org.uk/~nix/bundles/bcache-ioprio.bundle. (I figured
+you didn't want almost exactly the same patch series as before posted to
+the list, but I can do that if you prefer.)
+
+
+Put this all together and it seems to work very well: my test massive
+compile triggered 500MiB of metadata writes at the start and then the
+actual compile (being entirely sequential reads) hardly wrote anything
+out and was almost entirely bypassed: meanwhile a huge git push I ran at
+idle priority didn't pollute the cache at all. Excellent!
+
+(I'm also keeping write volumes down by storing transient things like
+objdirs that just sit in the page cache and then get deleted on a
+separate non-bcached, non-journalled ext4 fs at the start of the the
+spinning rust disk, with subdirs of this fs bind-mounted into various
+places as needed. I should make the scripts that do that public because
+they seem likely to be useful to bcache users...)
+
+
+Semi-unrelated side note: after my most recent reboot, which involved a
+bcache journal replay even though my shutdown was clean, the stats_total
+reset; the cache device's bcache/written and
+bcache/set/cache_available_percent also flipped to 0 and 100%,. I
+suspect this is merely a stats bug of some sort, because the boot was
+notably faster than before and cache_hits was about 6000 by the time it
+was done. bcache/priority_stats *does* say that the cache is "only" 98%
+unused, like it did before. Maybe cache_available_percent doesn't mean
+what I thought it did.
+
+-- 
+NULL && (void)
