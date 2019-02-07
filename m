@@ -2,76 +2,77 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C03C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B354FC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D0FA2175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:49:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iY/rfZKu"
+	by mail.kernel.org (Postfix) with ESMTP id 8776F2080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbfBGLtF (ORCPT
+        id S1727061AbfBGLtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:49:05 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55136 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbfBGLtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:49:05 -0500
-Received: from zn.tnic (p200300EC2BD1880034901D79874D129C.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8800:3490:1d79:874d:129c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0B821EC01AF;
-        Thu,  7 Feb 2019 12:49:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549540143;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=1oaCwids/ogA12gzWD1AZmEg7ljig8TuAyv9JTN29dQ=;
-        b=iY/rfZKupPqyX4zuqXt9E8eMfSHn264rs+wqrvwqt6U/tfc1TdZXscujcvskWq8I122m5M
-        eLWK3xtpiSvhe08HxMbjx9ssYXVXUfl0rdea79RKGzl8lRqQBkNPrJwr52FNS7mx4DD0Gh
-        jYhm6Z6C6EqxSuLT80vFJwv3mIv9rUQ=
-Date:   Thu, 7 Feb 2019 12:48:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Garnier <thgarnie@chromium.org>
-Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 01/27] x86/crypto: Adapt assembly for PIE support
-Message-ID: <20190207114850.GD2414@zn.tnic>
-References: <20190131192533.34130-1-thgarnie@chromium.org>
- <20190131192533.34130-2-thgarnie@chromium.org>
+        Thu, 7 Feb 2019 06:49:49 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:37883 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfBGLtt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:49:49 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1griBa-0008I5-An; Thu, 07 Feb 2019 12:49:42 +0100
+Date:   Thu, 7 Feb 2019 12:49:42 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 15/22] x86/entry: Add TIF_NEED_FPU_LOAD
+Message-ID: <20190207114941.jzydrry5xpjngyiv@linutronix.de>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-16-bigeasy@linutronix.de>
+ <20190130115507.GE18383@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190131192533.34130-2-thgarnie@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190130115507.GE18383@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:24:08AM -0800, Thomas Garnier wrote:
-> Change the assembly code to use only relative references of symbols for the
-> kernel to be PIE compatible.
+On 2019-01-30 12:55:07 [+0100], Borislav Petkov wrote:
+> This definitely needs to be written somewhere in
 > 
-> Position Independent Executable (PIE) support will allow to extend the
-> KASLR randomization range below 0xffffffff80000000.
+> arch/x86/include/asm/fpu/internal.h
+> 
+> or where we decide to put the FPU handling rules.
 
-This sentence is auto-sprinkled in a bunch of commit messages. Sounds to
-me it should be rather somewhere in the 0/n message as a justification
-for the feature but not in every other commit message...?
+Added:
 
--- 
-Regards/Gruss,
-    Boris.
+Index: staging/arch/x86/include/asm/fpu/internal.h
+===================================================================
+--- staging.orig/arch/x86/include/asm/fpu/internal.h
++++ staging/arch/x86/include/asm/fpu/internal.h
+@@ -537,6 +537,12 @@ static inline void __fpregs_load_activat
+  *
+  * The FPU context is only stored/restore for user task and ->mm is used to
+  * distinguish between kernel and user threads.
++ *
++ * If TIF_NEED_FPU_LOAD is cleared then CPU's FPU registers are holding the
++ * current content of current()'s FPU register state.
++ * If TIF_NEED_FPU_LOAD is set then CPU's FPU registers may not hold current()'s
++ * FPU registers. It is required to load the register before returning to
++ * userland or using the content otherwise.
+  */
+ static inline void
+ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Sebastian
