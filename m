@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67669C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D663CC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251942190C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5BC921919
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:16:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549541766;
-	bh=TfFfDZEXutV1GqbzqEtgV8HDvmv3sRn41kTqSnoeiyo=;
+	s=default; t=1549541770;
+	bh=qIjngaDAQgA5t8faX/UbXQvmE3MVjNXt93MjBrOYiPY=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=iGp4vy7BMBhC+/ttao8aNzI0mXGCJazMbOkKghAf292MNckrARz9KK4oiYLDCwD6Z
-	 DYREAgx/rKdVPnDi5mtqqLiPaQajYwQRTlP8i8zjbNQVP5SKQJfZttMAvbvDm/DFIz
-	 sf4Hhr9rr952zCXnK6ZtP0JwpgCQjd/waM7Eyu2g=
+	b=eEjilJrb5+Lx3c4V9DFRxcLi5HMib1LcwH5BViEEcbAw3PjY6gLna4od+GXBeH16o
+	 osf2Dsi20mH0p0HGpfBNadqFD58CYpMVZbqgHCAnyQDf6oVFS+b+73Qmpj0WMnIz3P
+	 aaVI2zxNDiRuQXrW/zIwtb9P79SEYQMu50Swr0O0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfBGMQE (ORCPT
+        id S1726949AbfBGMQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:16:04 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41008 "EHLO
+        Thu, 7 Feb 2019 07:16:09 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41106 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfBGMQE (ORCPT
+        with ESMTP id S1726448AbfBGMQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:16:04 -0500
+        Thu, 7 Feb 2019 07:16:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=J1iv1qMi9nR9rEypeqgwcZSI3LEdHU1azLZOvWsG3yw=; b=XRupUlkfTx6R
-        UhygqRrppmPcxlKpq+n7bQERXv5hVW8NSJRtKsVAK3PjbXxx4xE/+UVbSVH0vN1Q5exEZZedP3sI7
-        dfuk7l+OnPTWVfciTSHnf+6PChCrJf4J+KZYxiT6ePpVuGPVOzGbZfMIAbOP3Nrg1iuaTlWtAQiap
-        WsEBI=;
+        List-Archive; bh=bf46GNpglyGMcK4ZqqZxL5F2J1YqMPKaCsn5qPkDrMQ=; b=SewiX49BiS8L
+        cG6umJLQbWNhx6FpXxkqKbb8H3BIeHS8zxf4KSi8LPZw7QFAZLWA5BuaiziJltWqP5RTrpAfo6Ie9
+        jJFS10QsJl+4VUtPyGaQUkGVG8CA2n+H+DgiekdybcATVUuT+FHe4zGdL28pgeipS8GMmi2PBHwYZ
+        6BNAE=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1griaq-0004uH-Mw; Thu, 07 Feb 2019 12:15:48 +0000
+        id 1griay-0004ul-RW; Thu, 07 Feb 2019 12:15:56 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 07A861127EF9; Thu,  7 Feb 2019 12:15:48 +0000 (GMT)
+        id 7FA641127EF9; Thu,  7 Feb 2019 12:15:56 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Danny Milosavljevic <dannym@scratchpost.org>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -55,11 +55,11 @@ Cc:     Mark Brown <broonie@kernel.org>,
         Chen-Yu Tsai <wens@csie.org>, alsa-devel@alsa-project.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: sun4i-codec: Add Line Playback Volume, Line Boost Volume, Line Right, Line Left, Line Playback Switch" to the asoc tree
-In-Reply-To:  <20190130103945.26692-9-dannym@scratchpost.org>
+Subject: Applied "ASoC: sun4i-codec: Add Mic1 Boost Volume, Mic2 Boost Volume" to the asoc tree
+In-Reply-To:  <20190130103945.26692-5-dannym@scratchpost.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190207121548.07A861127EF9@debutante.sirena.org.uk>
-Date:   Thu,  7 Feb 2019 12:15:48 +0000 (GMT)
+Message-Id: <20190207121556.7FA641127EF9@debutante.sirena.org.uk>
+Date:   Thu,  7 Feb 2019 12:15:56 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-codec: Add Line Playback Volume, Line Boost Volume, Line Right, Line Left, Line Playback Switch
+   ASoC: sun4i-codec: Add Mic1 Boost Volume, Mic2 Boost Volume
 
 has been applied to the asoc tree at
 
@@ -92,120 +92,87 @@ to this mail.
 Thanks,
 Mark
 
-From 67690c286de6afa0dc954b19a9878e3623153cb7 Mon Sep 17 00:00:00 2001
+From b329c78eb0c80bf17e877edde6d42c0793f19024 Mon Sep 17 00:00:00 2001
 From: Danny Milosavljevic <dannym@scratchpost.org>
-Date: Wed, 30 Jan 2019 11:39:44 +0100
-Subject: [PATCH] ASoC: sun4i-codec: Add Line Playback Volume, Line Boost
- Volume, Line Right, Line Left, Line Playback Switch
+Date: Wed, 30 Jan 2019 11:39:40 +0100
+Subject: [PATCH] ASoC: sun4i-codec: Add Mic1 Boost Volume, Mic2 Boost Volume
 
-Add Line Playback Volume for Allwinner A10 and Allwinner A20.
-Add Line Boost Volume for Allwinner A10 and Allwinner A20.
-Add Line Right, Line Left, Line Playback Switch for Allwinner A10 and
+Add Mic1 Boost Volume and Mic2 Boost Volume for Allwinner A10 and for
 Allwinner A20.
+
+Those controls are in different registers per chip model, so put the
+Allwinner A10 controls and the Allwinner A20 controls into the newly
+split sun4i_codec_controls and sun7i_codec_controls, respectively.
 
 Signed-off-by: Danny Milosavljevic <dannym@scratchpost.org>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-codec.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ sound/soc/sunxi/sun4i-codec.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 2ec7a43975f6..15d08e343b47 100644
+index 52453c46b409..9d509ede22c7 100644
 --- a/sound/soc/sunxi/sun4i-codec.c
 +++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -64,8 +64,11 @@
- #define SUN4I_CODEC_DAC_ACTL_DACAENR			(31)
- #define SUN4I_CODEC_DAC_ACTL_DACAENL			(30)
- #define SUN4I_CODEC_DAC_ACTL_MIXEN			(29)
-+#define SUN4I_CODEC_DAC_ACTL_LNG			(26)
- #define SUN4I_CODEC_DAC_ACTL_FMG			(23)
- #define SUN4I_CODEC_DAC_ACTL_MICG			(20)
-+#define SUN4I_CODEC_DAC_ACTL_LLNS			(19)
-+#define SUN4I_CODEC_DAC_ACTL_RLNS			(18)
- #define SUN4I_CODEC_DAC_ACTL_LFMS			(17)
- #define SUN4I_CODEC_DAC_ACTL_RFMS			(16)
- #define SUN4I_CODEC_DAC_ACTL_LDACLMIXS			(15)
-@@ -106,6 +109,7 @@
- #define SUN4I_CODEC_ADC_ACTL_PREG2			(23)
+@@ -95,6 +95,8 @@
+ #define SUN4I_CODEC_ADC_ACTL_PREG1EN			(29)
+ #define SUN4I_CODEC_ADC_ACTL_PREG2EN			(28)
+ #define SUN4I_CODEC_ADC_ACTL_VMICEN			(27)
++#define SUN4I_CODEC_ADC_ACTL_PREG1			(25)
++#define SUN4I_CODEC_ADC_ACTL_PREG2			(23)
  #define SUN4I_CODEC_ADC_ACTL_VADCG			(20)
  #define SUN4I_CODEC_ADC_ACTL_ADCIS			(17)
-+#define SUN4I_CODEC_ADC_ACTL_LNPREG			(13)
  #define SUN4I_CODEC_ADC_ACTL_PA_EN			(4)
- #define SUN4I_CODEC_ADC_ACTL_DDE			(3)
- #define SUN4I_CODEC_ADC_DEBUG			(0x2c)
-@@ -686,6 +690,10 @@ static const struct snd_kcontrol_new sun4i_codec_pa_mute =
- 			SUN4I_CODEC_DAC_ACTL_PA_MUTE, 1, 0);
+@@ -111,6 +113,9 @@
+ /* Microphone controls (sun7i only) */
+ #define SUN7I_CODEC_AC_MIC_PHONE_CAL		(0x3c)
  
++#define SUN7I_CODEC_AC_MIC_PHONE_CAL_PREG1		(29)
++#define SUN7I_CODEC_AC_MIC_PHONE_CAL_PREG2		(26)
++
+ /*
+  * sun6i specific registers
+  *
+@@ -676,6 +681,12 @@ static const struct snd_kcontrol_new sun4i_codec_pa_mute =
  static DECLARE_TLV_DB_SCALE(sun4i_codec_pa_volume_scale, -6300, 100, 1);
-+static DECLARE_TLV_DB_SCALE(sun4i_codec_linein_loopback_gain_scale, -150, 150,
-+			    0);
-+static DECLARE_TLV_DB_SCALE(sun4i_codec_linein_preamp_gain_scale, -1200, 300,
-+			    0);
- static DECLARE_TLV_DB_SCALE(sun4i_codec_fmin_loopback_gain_scale, -450, 150,
- 			    0);
  static DECLARE_TLV_DB_SCALE(sun4i_codec_micin_loopback_gain_scale, -450, 150,
-@@ -701,6 +709,12 @@ static const struct snd_kcontrol_new sun4i_codec_controls[] = {
- 	SOC_SINGLE_TLV("Power Amplifier Volume", SUN4I_CODEC_DAC_ACTL,
- 		       SUN4I_CODEC_DAC_ACTL_PA_VOL, 0x3F, 0,
- 		       sun4i_codec_pa_volume_scale),
-+	SOC_SINGLE_TLV("Line Playback Volume", SUN4I_CODEC_DAC_ACTL,
-+		       SUN4I_CODEC_DAC_ACTL_LNG, 1, 0,
-+		       sun4i_codec_linein_loopback_gain_scale),
-+	SOC_SINGLE_TLV("Line Boost Volume", SUN4I_CODEC_ADC_ACTL,
-+		       SUN4I_CODEC_ADC_ACTL_LNPREG, 7, 0,
-+		       sun4i_codec_linein_preamp_gain_scale),
- 	SOC_SINGLE_TLV("FM Playback Volume", SUN4I_CODEC_DAC_ACTL,
- 		       SUN4I_CODEC_DAC_ACTL_FMG, 3, 0,
- 		       sun4i_codec_fmin_loopback_gain_scale),
-@@ -719,6 +733,12 @@ static const struct snd_kcontrol_new sun7i_codec_controls[] = {
- 	SOC_SINGLE_TLV("Power Amplifier Volume", SUN4I_CODEC_DAC_ACTL,
- 		       SUN4I_CODEC_DAC_ACTL_PA_VOL, 0x3F, 0,
- 		       sun4i_codec_pa_volume_scale),
-+	SOC_SINGLE_TLV("Line Playback Volume", SUN4I_CODEC_DAC_ACTL,
-+		       SUN4I_CODEC_DAC_ACTL_LNG, 1, 0,
-+		       sun4i_codec_linein_loopback_gain_scale),
-+	SOC_SINGLE_TLV("Line Boost Volume", SUN4I_CODEC_ADC_ACTL,
-+		       SUN4I_CODEC_ADC_ACTL_LNPREG, 7, 0,
-+		       sun4i_codec_linein_preamp_gain_scale),
- 	SOC_SINGLE_TLV("FM Playback Volume", SUN4I_CODEC_DAC_ACTL,
- 		       SUN4I_CODEC_DAC_ACTL_FMG, 3, 0,
- 		       sun4i_codec_fmin_loopback_gain_scale),
-@@ -743,6 +763,9 @@ static const struct snd_kcontrol_new sun4i_codec_mixer_controls[] = {
- 	SOC_DAPM_SINGLE("Right Mixer Left DAC Playback Switch",
- 			SUN4I_CODEC_DAC_ACTL,
- 			SUN4I_CODEC_DAC_ACTL_LDACRMIXS, 1, 0),
-+	SOC_DAPM_DOUBLE("Line Playback Switch", SUN4I_CODEC_DAC_ACTL,
-+			SUN4I_CODEC_DAC_ACTL_LLNS,
-+			SUN4I_CODEC_DAC_ACTL_RLNS, 1, 0),
- 	SOC_DAPM_DOUBLE("FM Playback Switch", SUN4I_CODEC_DAC_ACTL,
- 			SUN4I_CODEC_DAC_ACTL_LFMS,
- 			SUN4I_CODEC_DAC_ACTL_RFMS, 1, 0),
-@@ -814,6 +837,8 @@ static const struct snd_soc_dapm_widget sun4i_codec_codec_dapm_widgets[] = {
- 	SND_SOC_DAPM_SWITCH("Power Amplifier Mute", SND_SOC_NOPM, 0, 0,
- 			    &sun4i_codec_pa_mute),
+ 			    0);
++static DECLARE_TLV_DB_RANGE(sun4i_codec_micin_preamp_gain_scale,
++			    0, 0, TLV_DB_SCALE_ITEM(0, 0, 0),
++			    1, 7, TLV_DB_SCALE_ITEM(3500, 300, 0));
++static DECLARE_TLV_DB_RANGE(sun7i_codec_micin_preamp_gain_scale,
++			    0, 0, TLV_DB_SCALE_ITEM(0, 0, 0),
++			    1, 7, TLV_DB_SCALE_ITEM(2400, 300, 0));
  
-+	SND_SOC_DAPM_INPUT("Line Right"),
-+	SND_SOC_DAPM_INPUT("Line Left"),
- 	SND_SOC_DAPM_INPUT("FM Right"),
- 	SND_SOC_DAPM_INPUT("FM Left"),
- 	SND_SOC_DAPM_INPUT("Mic1"),
-@@ -836,6 +861,7 @@ static const struct snd_soc_dapm_route sun4i_codec_codec_dapm_routes[] = {
- 	{ "Right Mixer", NULL, "Mixer Enable" },
- 	{ "Right Mixer", "Right Mixer Left DAC Playback Switch", "Left DAC" },
- 	{ "Right Mixer", "Right Mixer Right DAC Playback Switch", "Right DAC" },
-+	{ "Right Mixer", "Line Playback Switch", "Line Right" },
- 	{ "Right Mixer", "FM Playback Switch", "FM Right" },
- 	{ "Right Mixer", "Mic1 Playback Switch", "MIC1 Pre-Amplifier" },
- 	{ "Right Mixer", "Mic2 Playback Switch", "MIC2 Pre-Amplifier" },
-@@ -843,6 +869,7 @@ static const struct snd_soc_dapm_route sun4i_codec_codec_dapm_routes[] = {
- 	/* Left Mixer Routes */
- 	{ "Left Mixer", NULL, "Mixer Enable" },
- 	{ "Left Mixer", "Left Mixer Left DAC Playback Switch", "Left DAC" },
-+	{ "Left Mixer", "Line Playback Switch", "Line Left" },
- 	{ "Left Mixer", "FM Playback Switch", "FM Left" },
- 	{ "Left Mixer", "Mic1 Playback Switch", "MIC1 Pre-Amplifier" },
- 	{ "Left Mixer", "Mic2 Playback Switch", "MIC2 Pre-Amplifier" },
+ static const struct snd_kcontrol_new sun4i_codec_controls[] = {
+ 	SOC_SINGLE_TLV("Power Amplifier Volume", SUN4I_CODEC_DAC_ACTL,
+@@ -684,6 +695,12 @@ static const struct snd_kcontrol_new sun4i_codec_controls[] = {
+ 	SOC_SINGLE_TLV("Mic Playback Volume", SUN4I_CODEC_DAC_ACTL,
+ 		       SUN4I_CODEC_DAC_ACTL_MICG, 7, 0,
+ 		       sun4i_codec_micin_loopback_gain_scale),
++	SOC_SINGLE_TLV("Mic1 Boost Volume", SUN4I_CODEC_ADC_ACTL,
++		       SUN4I_CODEC_ADC_ACTL_PREG1, 3, 0,
++		       sun4i_codec_micin_preamp_gain_scale),
++	SOC_SINGLE_TLV("Mic2 Boost Volume", SUN4I_CODEC_ADC_ACTL,
++		       SUN4I_CODEC_ADC_ACTL_PREG2, 3, 0,
++		       sun4i_codec_micin_preamp_gain_scale),
+ };
+ 
+ static const struct snd_kcontrol_new sun7i_codec_controls[] = {
+@@ -693,6 +710,12 @@ static const struct snd_kcontrol_new sun7i_codec_controls[] = {
+ 	SOC_SINGLE_TLV("Mic Playback Volume", SUN4I_CODEC_DAC_ACTL,
+ 		       SUN4I_CODEC_DAC_ACTL_MICG, 7, 0,
+ 		       sun4i_codec_micin_loopback_gain_scale),
++	SOC_SINGLE_TLV("Mic1 Boost Volume", SUN7I_CODEC_AC_MIC_PHONE_CAL,
++		       SUN7I_CODEC_AC_MIC_PHONE_CAL_PREG1, 7, 0,
++		       sun7i_codec_micin_preamp_gain_scale),
++	SOC_SINGLE_TLV("Mic2 Boost Volume", SUN7I_CODEC_AC_MIC_PHONE_CAL,
++		       SUN7I_CODEC_AC_MIC_PHONE_CAL_PREG2, 7, 0,
++		       sun7i_codec_micin_preamp_gain_scale),
+ };
+ 
+ static const struct snd_kcontrol_new sun4i_codec_left_mixer_controls[] = {
 -- 
 2.20.1
 
