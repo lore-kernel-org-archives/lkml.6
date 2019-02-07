@@ -2,116 +2,118 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAC9C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B18FC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE4D218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:34:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRbXSN19"
+	by mail.kernel.org (Postfix) with ESMTP id E9AE621908
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:35:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfBGReN (ORCPT
+        id S1726969AbfBGRfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:34:13 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:32920 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfBGReM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:34:12 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z8so258079plo.0;
-        Thu, 07 Feb 2019 09:34:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PCYhZyNInpjLjW+q/t1SME/ASaPkda8cIIIuXHBmTU8=;
-        b=eRbXSN19cx98TfnL4TmLQemVkDnp2Yu8dCaoXDVqAtlwmnRFAuN5Hdzi4X8Yi3nTr5
-         HYqpgZdYvVrnoA/nqG/hCaqGEWbw8oi8l9DYONET8CBZrZeOMyRMJp5rv9KZrNtRJoow
-         gc/Y1tP4hv5gb3ywBo4BFbqM8YOjVyssdG1b0eHcSkh4vOkQ86yy/vnN3EqCu8ztYIrZ
-         airIzMGppyOjXoeHZxYHWaXrrNQ7ZWzwt3KAV7or8RbPnP03TuohHMVDm1+ILqzuB4My
-         tYXgSzvJ4gaWrVH8K0+OBzqMz9aRFMpC7Ehw65Z0zAtFBI7RfIcRdx5tmjuRCtKaZ34e
-         hzUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PCYhZyNInpjLjW+q/t1SME/ASaPkda8cIIIuXHBmTU8=;
-        b=j+zBal/b+jy8bRBXVVsY7XGMRMlh4OpRAc5paX8LM6+gA09oP8vXvrO483tbvWbukV
-         5XfcSMPU2cTAne2DuuapJZxsQIQKVwJtHgAk260luiSpDKk2TtE5GcdtQxlcINufCmcZ
-         JWIQ1Y5qqn06vK1wkxk4ODJSCpYBsAxrDVawr3mTdPMsTIhFbpbXHztsKg+FvWBkkGB2
-         vZfkhbwK8xdUmbkN9s4vqKGOyV1gQ+UfwFUCrHtlIqVVe093mDtdzQVmhO5Kpnemqfzd
-         FgCbb/9795BZdetvKzRXV9tyY1z5MbG1lxJMGo6WMN1hcp5p2MT4pQGX+m3KRr9hDiV/
-         Qd7Q==
-X-Gm-Message-State: AHQUAuZOorY+rgCH+KZSVp2KYLLYamceI8VWRppKptNyYYLX2NB4fif/
-        E5AeqyeajARhConsyuJSxts=
-X-Google-Smtp-Source: AHgI3IZiY6IHULVNBZi6wIvad/+CLDo+lEcAcQSm9hdlSPf6sNeWeugsHczfcQ1PCXJ5xJV8+73Y4w==
-X-Received: by 2002:a17:902:b60e:: with SMTP id b14mr17131793pls.301.1549560852023;
-        Thu, 07 Feb 2019 09:34:12 -0800 (PST)
-Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.gmail.com with ESMTPSA id e16sm12034426pfn.46.2019.02.07.09.34.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 09:34:11 -0800 (PST)
-Date:   Thu, 7 Feb 2019 09:34:07 -0800
-From:   Myungho Jung <mhjungk@gmail.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] Bluetooth: Add NULL check for tiocmget() and
- tiocmset()
-Message-ID: <20190207173406.GA32315@myunghoj-Precision-5530>
-References: <cover.1549346039.git.mhjungk@gmail.com>
- <0D421861-FCD6-4AFF-8A0F-DBEE520DB64B@holtmann.org>
- <20190206063533.GA7402@myunghoj-Precision-5530>
- <AD78221A-2ABE-4BC2-A63A-F706FD5BC2FE@holtmann.org>
+        Thu, 7 Feb 2019 12:35:22 -0500
+Received: from mga01.intel.com ([192.55.52.88]:35955 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbfBGRfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:35:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 09:35:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
+   d="scan'208";a="136687393"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga001.jf.intel.com with ESMTP; 07 Feb 2019 09:35:20 -0800
+Date:   Thu, 7 Feb 2019 09:35:04 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190207173504.GD29531@iweiny-DESK2.sc.intel.com>
+References: <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+ <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+ <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AD78221A-2ABE-4BC2-A63A-F706FD5BC2FE@holtmann.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 08:06:54AM +0100, Marcel Holtmann wrote:
-> Hi Myungho,
+On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
+> One approach that may be a clean way to solve this:
 > 
-> >>> tiocmget() and tiocmset() operations are optional and some tty drivers
-> >>> like pty miss the operations. Add NULL checks to prevent from
-> >>> dereference.
-> >>> 
-> >>> Myungho Jung (2):
-> >>> Bluetooth: hci_ath: Add NULL check for tiocmget() and tiocmset() in
-> >>>   ath_setup()
-> >>> Bluetooth: hci_ldisc: Add NULL check for tiocmget() and tiocmset() in
-> >>>   hci_uart_set_flow_control()
-> >>> 
-> >>> drivers/bluetooth/hci_ath.c   | 6 ++++++
-> >>> drivers/bluetooth/hci_ldisc.c | 4 ++++
-> >>> 2 files changed, 10 insertions(+)
-> >> 
-> >> why are we not enforcing the availability of these in the hci_uart_tty_open?
-> > 
-> > Are the operations required on any HCI UART drivers? For now, I found only 5
-> > drivers (ath, bcm, intel, mrvl, and qca) are explicitly calling them. So, I'm
-> > not sure whether it breaks any existing code with other drivers if returning
-> > error in open().
-> 
-> the H:4 spec requires setting flow control. In some cases this is done by the hciattach or btattach utility, but it still means that it is required. So failing on TTYs that don’t support it is just fine.
-> 
-> Regards
-> 
-> Marcel
-> 
-Ok, let me make a change on hci_uart_tty_open().
+> 1. Long term GUP usage requires the virtual mapping to the pages be fixed
+>    for the duration of the GUP Map. There never has been a way to break
+>    the pinnning and thus this needs to be preserved.
 
-Thanks,
-Myungho
+How does this fit in with the changes John is making?
+
+> 
+> 2. Page Cache Long term pins are not allowed since regular filesystems
+>    depend on COW and other tricks which are incompatible with a long term
+>    pin.
+
+Unless the hardware supports ODP or equivalent functionality.  Right?
+
+> 
+> 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
+>    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
+>    on the longterm pinned range until the long term pin is removed.
+>    Hardware may do its job (like for persistent memory) but no data
+>    consistency on the NVDIMM medium is guaranteed until the long term pin
+>    is removed  and the filesystems regains control over the area.
+
+I believe Dan attempted something like this and it became pretty difficult.
+
+> 
+> 4. Long term pin means that the mapped sections are an actively used part
+>    of the file (like a filesystem write) and it cannot be truncated for
+>    the duration of the pin. It can be thought of as if the truncate is
+>    immediate followed by a write extending the file again. The mapping
+>    by RDMA implies after all that remote writes can occur at anytime
+>    within the area pinned long term.
+>
+
+This is a very interesting idea.  I've never quite thought of it that way.
+
+That would be essentially like failing the truncate but without actually
+failing it...  sneaky.  ;-)
+
+What if user space then writes to the end of the file?  Does that write end
+up at the point they truncated to or off the end of the mmaped area (old
+length)?
+
+I can see the behavior being defined either way.  But one interferes with the
+RDMA data and the other does not.  Not sure which is easier for the FS to
+handle either.
+
+Ira
+
