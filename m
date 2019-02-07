@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF64AC282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C14C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A486421902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E96421916
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:47:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfBGMq4 (ORCPT
+        id S1727450AbfBGMrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:46:56 -0500
-Received: from ozlabs.org ([203.11.71.1]:46827 "EHLO ozlabs.org"
+        Thu, 7 Feb 2019 07:47:00 -0500
+Received: from ozlabs.org ([203.11.71.1]:56077 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726844AbfBGMqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:46:54 -0500
+        id S1727430AbfBGMq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 07:46:58 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43wJ3b6Jzkz9s6w; Thu,  7 Feb 2019 23:46:51 +1100 (AEDT)
+        id 43wJ3g4cNBz9sNJ; Thu,  7 Feb 2019 23:46:55 +1100 (AEDT)
 From:   Michael Ellerman <mpe@ellerman.id.au>
 To:     linuxppc-dev@ozlabs.org
 Cc:     akpm@linux-foundation.org, tj@kernel.org,
         linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com
-Subject: [PATCH v3 2/7] powerpc: Add PVR & CPU name to dump stack arch description
-Date:   Thu,  7 Feb 2019 23:46:30 +1100
-Message-Id: <20190207124635.3885-2-mpe@ellerman.id.au>
+Subject: [PATCH v3 6/7] powerpc/powernv: Add opal details to dump stack arch description
+Date:   Thu,  7 Feb 2019 23:46:34 +1100
+Message-Id: <20190207124635.3885-6-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207124635.3885-1-mpe@ellerman.id.au>
 References: <20190207124635.3885-1-mpe@ellerman.id.au>
@@ -39,44 +39,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As soon as we've done some basic setup, add the PVR and CPU name to
-the dump stack arch description, which is printed in case of an oops.
+Once we have unflattened the device tree we can easily grab these opal
+version details and add them to dump stack arch description, which is
+printed in case of an oops.
 
-eg: Hardware name: ... POWER8E (raw) pvr:0x4b0201
+eg: Hardware name: ... opal:v6.2
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- arch/powerpc/kernel/cputable.c | 1 +
- arch/powerpc/kernel/prom.c     | 4 ++++
- 2 files changed, 5 insertions(+)
+ arch/powerpc/platforms/powernv/setup.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/powerpc/kernel/cputable.c b/arch/powerpc/kernel/cputable.c
-index 1eab54bc6ee9..8b4520a84612 100644
---- a/arch/powerpc/kernel/cputable.c
-+++ b/arch/powerpc/kernel/cputable.c
-@@ -16,6 +16,7 @@
- #include <linux/init.h>
- #include <linux/export.h>
- #include <linux/jump_label.h>
-+#include <linux/printk.h>
+diff --git a/arch/powerpc/platforms/powernv/setup.c b/arch/powerpc/platforms/powernv/setup.c
+index 14befee4b3f1..1bfb422436fb 100644
+--- a/arch/powerpc/platforms/powernv/setup.c
++++ b/arch/powerpc/platforms/powernv/setup.c
+@@ -156,8 +156,33 @@ static void __init pnv_setup_arch(void)
+ 	/* XXX PMCS */
+ }
  
- #include <asm/oprofile_impl.h>
- #include <asm/cputable.h>
-diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
-index 4181ec715f88..ea2c3498067d 100644
---- a/arch/powerpc/kernel/prom.c
-+++ b/arch/powerpc/kernel/prom.c
-@@ -761,6 +761,10 @@ void __init early_init_devtree(void *params)
- 
- 	dt_cpu_ftrs_scan();
- 
-+	/* We can now set the CPU name & PVR for the oops output */
-+	dump_stack_add_arch_desc("%s pvr:0x%04lx", cur_cpu_spec->cpu_name,
-+				 mfspr(SPRN_PVR));
++static void __init pnv_add_dump_stack_arch_desc(void)
++{
++	struct device_node *dn;
++	const char *version;
 +
- 	/* Retrieve CPU related informations from the flat tree
- 	 * (altivec support, boot CPU ID, ...)
- 	 */
++	dn = of_find_node_by_path("/ibm,opal/firmware");
++	if (!dn)
++		return;
++
++	version = of_get_property(dn, "version", NULL);
++	if (!version)
++		version = of_get_property(dn, "git-id", NULL);
++
++	if (version)
++		dump_stack_add_arch_desc("opal:%s", version);
++
++	version = of_get_property(dn, "mi-version", NULL);
++	if (version)
++		dump_stack_add_arch_desc("mi:%s", version);
++
++	of_node_put(dn);
++}
++
+ static void __init pnv_init(void)
+ {
++	pnv_add_dump_stack_arch_desc();
++
+ 	/*
+ 	 * Initialize the LPC bus now so that legacy serial
+ 	 * ports can be found on it
 -- 
 2.20.1
 
