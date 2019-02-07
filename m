@@ -2,114 +2,363 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E635EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E78BC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B571C218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:37:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549561021;
-	bh=LsHh7f264VtIE54XseSwqZ4PI7lsN01WloF3xrRlp/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UM151xE7miywLYmxV1Jyv+dCJF4Aumb4J9wNW7/vhqHfKXDuMyuHyAzZASuDDWx/3
-	 gfy+XLCCFYbogqJvDan8dGSSOXmpq8vEZ8MzORwESirsIX+bsUObZJmGkyqTGN7QIv
-	 hh6I+i/GvwD30Wsdw+UHX8+olg7mIlhqbulVn78U=
+	by mail.kernel.org (Postfix) with ESMTP id C68BA21721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:38:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfBGRhA (ORCPT
+        id S1726858AbfBGRij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:37:00 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:36693 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfBGRg7 (ORCPT
+        Thu, 7 Feb 2019 12:38:39 -0500
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:49318 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726319AbfBGRii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:36:59 -0500
-Received: by mail-yw1-f67.google.com with SMTP id 189so280965ywi.3;
-        Thu, 07 Feb 2019 09:36:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xIGj793GRzU67XK3Xz3Gpm1A+PlOBAW0CxTkOcYDMqM=;
-        b=l/n15mi11mxRKx4U4ick0PWITAe6njscGz8UdUrftAKD8sqe/fwOE8zMu4A1PvoX+X
-         rH9vPYT8oDn0eULYXht6XLvrTNnwuoIMGK8EzUQkuTNAKFA3viBPk0ykbNSnllwmDlx7
-         pt/Jc6srg3rZZaJZn5lqPfUIhgQd6EvXZovEqCjVyFmTSRzMASE9VV9z6mP5MMsbvptU
-         A1UyX6vj1+HBTz3qTY3GLdLYi1xHGn+OeXiLgUugCMp9tWXuA6J/MyKKiBIhe1bdibsb
-         IM5xvM5DzV39W+phQHDr5JdCVoCeNcYO4k7bBpYDhQP4ZO49iIaZXKpHVUSo9Z0Ejnmx
-         BudQ==
-X-Gm-Message-State: AHQUAubB979s3MTqzd1pI27tr7ZTZdLPJwq3XMNFuhjrqQba4QrYCzpM
-        ay6/+nShwLV0ldDP4AP8mA8=
-X-Google-Smtp-Source: AHgI3IYvcLPtr/tbJCF+uCFn2dgEV6iS4uOpob19oblf7IaaqtxN0Gq+pfpbODdhUJmj508cIeiVUw==
-X-Received: by 2002:a81:5f84:: with SMTP id t126mr14018296ywb.452.1549561018566;
-        Thu, 07 Feb 2019 09:36:58 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::4:bab5])
-        by smtp.gmail.com with ESMTPSA id w6sm2744464ywi.55.2019.02.07.09.36.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 09:36:57 -0800 (PST)
-Date:   Thu, 7 Feb 2019 12:36:54 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] btrfs: add zstd compression level support
-Message-ID: <20190207173654.GA27942@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190204202008.51652-1-dennis@kernel.org>
- <20190207165925.GJ2900@twin.jikos.cz>
+        Thu, 7 Feb 2019 12:38:38 -0500
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17HZjuU032723;
+        Thu, 7 Feb 2019 17:38:15 GMT
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2qgq3eh9jn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Feb 2019 17:38:15 +0000
+Received: from sarge.linuxathome.me (unknown [16.99.168.108])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g9t5008.houston.hpe.com (Postfix) with ESMTPS id 24BC757;
+        Thu,  7 Feb 2019 17:38:11 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 17:38:08 +0000
+From:   Hedi Berriche <hedi.berriche@hpe.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [Patch v2 1/4] efi/x86: turn EFI runtime semaphore into a global
+ lock
+Message-ID: <20190207173808.GE6398@sarge.linuxathome.me>
+Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>, stable <stable@vger.kernel.org>
+References: <20190207042234.25109-1-hedi.berriche@hpe.com>
+ <20190207042234.25109-2-hedi.berriche@hpe.com>
+ <CAKv+Gu_7yb2tf86G1f-kA3g5TVb4imQFTeL9S5qwGhJHVsmgQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190207165925.GJ2900@twin.jikos.cz>
+In-Reply-To: <CAKv+Gu_7yb2tf86G1f-kA3g5TVb4imQFTeL9S5qwGhJHVsmgQw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902070133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 05:59:26PM +0100, David Sterba wrote:
-> On Mon, Feb 04, 2019 at 03:19:56PM -0500, Dennis Zhou wrote:
-> > Dennis Zhou (12):
-> >   btrfs: add helpers for compression type and level
-> >   btrfs: rename workspaces_list to workspace_manager
-> >   btrfs: manage heuristic workspace as index 0
-> >   btrfs: unify compression ops with workspace_manager
-> >   btrfs: add helper methods for workspace manager init and cleanup
-> >   btrfs: add compression interface in (get/put)_workspace()
-> >   btrfs: move to fn pointers for get/put workspaces
-> >   btrfs: plumb level through the compression interface
-> >   btrfs: change set_level() to bound the level passed in
-> >   btrfs: zstd use the passed through level instead of default
-> >   btrfs: make zstd memory requirements monotonic
-> >   btrfs: add zstd compression level support
-> 
-> The patchset has been added to msic-next, scheduled for 5.1. I've left
-> out the changes to warn on wrong level, so currently it falls back to
-> the default. I don't want to make a last minute change of that sort, so
-> this needs to go as a separate patch.
+On Thu, Feb 07, 2019 at 16:05 Ard Biesheuvel wrote:
+>On Thu, 7 Feb 2019 at 05:23, Hedi Berriche <hedi.berriche@hpe.com> wrote:
+>>
+>> Make efi_runtime_lock semaphore global so that it can be used by EFI
+>> runtime callers that may be defined outside efi/runtime-wrappers.c.
+>>
+>> Also now that efi_runtime_lock semaphore is no longer static, rename it
+>> to efi_runtime_sem so it doesn't clash with the efi_runtime_lock spinlock
+>> defined in arch/x86/platform/efi/efi_64.c when CONFIG_EFI_MIXED is
+>> enabled.
+>>
+>> The immediate motivation of this change is to serialise UV platform BIOS
+>> calls using the efi_runtime_sem semaphore.
+>>
+>> No functional changes.
+>>
+>> Cc: Russ Anderson <rja@hpe.com>
+>> Cc: Mike Travis <mike.travis@hpe.com>
+>> Cc: Dimitri Sivanich <sivanich@hpe.com>
+>> Cc: Steve Wahl <steve.wahl@hpe.com>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+>
+>Hello Hedi,
 
-Regarding the bug report from Dan, do you want me to send you a patch
-for it on top of the topic branch or do you mind fixing the missing:
+Hi Ard,
 
-unsigned int level = 0;
+>Same feedback as on v1: please don't rename the lock.
 
-> 
-> I also did a last pass through all patches and made some trivial changes
-> like reformatting comments or minor style updates, nothing functional.
-> The inter-branch diff can be found at
-> https://github.com/kdave/btrfs-devel/compare/ext/dzhou/compr-workspaces-v2..kdave:ext/dzhou/compr-workspaces
-> 
-> The feature should be ready to use, though as mentioned before some fine
-> tuning might be necessary to make the memory requirements more
-> efficient. The code could be simplified or cleaned up now that there are
-> 3 compressors, at this point stabilization fixes are preferred.
-> 
-> Thanks.
+With the efi_runtime_lock semaphore being no longer static, not renaming it
+will cause a compile failure as it will clash with the declaration of the
+efi_runtime_lock *spinlock* in arch/x86/platform/efi/efi_64.c in the
+CONFIG_EFI_MIXED case.
 
-Thanks David!
-Dennis
+>> ---
+>>  drivers/firmware/efi/runtime-wrappers.c | 60 ++++++++++++-------------
+>>  include/linux/efi.h                     |  3 ++
+>>  2 files changed, 33 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+>> index 8903b9ccfc2b..ec60d6227925 100644
+>> --- a/drivers/firmware/efi/runtime-wrappers.c
+>> +++ b/drivers/firmware/efi/runtime-wrappers.c
+>> @@ -53,7 +53,7 @@ struct efi_runtime_work efi_rts_work;
+>>   * @rts_arg<1-5>:      efi_runtime_service() function arguments
+>>   *
+>>   * Accesses to efi_runtime_services() are serialized by a binary
+>> - * semaphore (efi_runtime_lock) and caller waits until the work is
+>> + * semaphore (efi_runtime_sem) and caller waits until the work is
+>>   * finished, hence _only_ one work is queued at a time and the caller
+>>   * thread waits for completion.
+>>   */
+>> @@ -144,7 +144,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
+>>   * none of the remaining functions are actually ever called at runtime.
+>>   * So let's just use a single lock to serialize all Runtime Services calls.
+>>   */
+>> -static DEFINE_SEMAPHORE(efi_runtime_lock);
+>> +DEFINE_SEMAPHORE(efi_runtime_sem);
+>>
+>>  /*
+>>   * Calls the appropriate efi_runtime_service() with the appropriate
+>> @@ -233,10 +233,10 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -244,10 +244,10 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -257,11 +257,11 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
+>>                                 NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -269,11 +269,11 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
+>>                                 NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -285,11 +285,11 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
+>>                                 data);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -299,11 +299,11 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
+>>                                 NULL, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -315,11 +315,11 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
+>>                                 data);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -330,12 +330,12 @@ virt_efi_set_variable_nonblocking(efi_char16_t *name, efi_guid_t *vendor,
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_trylock(&efi_runtime_lock))
+>> +       if (down_trylock(&efi_runtime_sem))
+>>                 return EFI_NOT_READY;
+>>
+>>         status = efi_call_virt(set_variable, name, vendor, attr, data_size,
+>>                                data);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -350,11 +350,11 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
+>>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+>>                 return EFI_UNSUPPORTED;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
+>>                                 remaining_space, max_variable_size, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -369,12 +369,12 @@ virt_efi_query_variable_info_nonblocking(u32 attr,
+>>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+>>                 return EFI_UNSUPPORTED;
+>>
+>> -       if (down_trylock(&efi_runtime_lock))
+>> +       if (down_trylock(&efi_runtime_sem))
+>>                 return EFI_NOT_READY;
+>>
+>>         status = efi_call_virt(query_variable_info, attr, storage_space,
+>>                                remaining_space, max_variable_size);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -382,11 +382,11 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
+>>  {
+>>         efi_status_t status;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
+>>                                 NULL, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -395,14 +395,14 @@ static void virt_efi_reset_system(int reset_type,
+>>                                   unsigned long data_size,
+>>                                   efi_char16_t *data)
+>>  {
+>> -       if (down_interruptible(&efi_runtime_lock)) {
+>> +       if (down_interruptible(&efi_runtime_sem)) {
+>>                 pr_warn("failed to invoke the reset_system() runtime service:\n"
+>>                         "could not get exclusive access to the firmware\n");
+>>                 return;
+>>         }
+>>         efi_rts_work.efi_rts_id = RESET_SYSTEM;
+>>         __efi_call_virt(reset_system, reset_type, status, data_size, data);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>  }
+>>
+>>  static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
+>> @@ -414,11 +414,11 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
+>>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+>>                 return EFI_UNSUPPORTED;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
+>>                                 NULL, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> @@ -432,11 +432,11 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+>>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+>>                 return EFI_UNSUPPORTED;
+>>
+>> -       if (down_interruptible(&efi_runtime_lock))
+>> +       if (down_interruptible(&efi_runtime_sem))
+>>                 return EFI_ABORTED;
+>>         status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
+>>                                 max_size, reset_type, NULL);
+>> -       up(&efi_runtime_lock);
+>> +       up(&efi_runtime_sem);
+>>         return status;
+>>  }
+>>
+>> diff --git a/include/linux/efi.h b/include/linux/efi.h
+>> index 45ff763fba76..930cd20842b8 100644
+>> --- a/include/linux/efi.h
+>> +++ b/include/linux/efi.h
+>> @@ -1745,6 +1745,9 @@ extern struct efi_runtime_work efi_rts_work;
+>>  /* Workqueue to queue EFI Runtime Services */
+>>  extern struct workqueue_struct *efi_rts_wq;
+>>
+>> +/* EFI runtime semaphore */
+>> +extern struct semaphore efi_runtime_sem;
+>> +
+>>  struct linux_efi_memreserve {
+>>         int             size;                   // allocated size of the array
+>>         atomic_t        count;                  // number of entries used
+>> --
+>> 2.20.1
+>>
+
+-- 
+Be careful of reading health books, you might die of a misprint.
+	-- Mark Twain
