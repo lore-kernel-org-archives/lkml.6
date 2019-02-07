@@ -2,107 +2,101 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBA3C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7BAC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F268721904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:52:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVut03Jt"
+	by mail.kernel.org (Postfix) with ESMTP id 84FB021904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:53:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfBGPw5 (ORCPT
+        id S1726902AbfBGPx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:52:57 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42986 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGPw5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:52:57 -0500
-Received: by mail-qt1-f194.google.com with SMTP id b8so338633qtr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:52:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=N3sRoWnV8l9cuish6xpPYCWFViw68bxZ7EA3iVa8O1s=;
-        b=CVut03Jtn8IM+EcNxiK6siZZHgvwBNTkWRJ/DbHXGHeW9XZieuz3U0QMflo32eYDCK
-         YZEcpTmOw1oqbwkZlcKXedeRksRe0eh0m9p/SKFp0FS8500yGKQQ8fcVkUgMCka2qGRQ
-         Z5ipqvZYbTmYvTZdRQgkfccPZRTgx7C3hW/U77eveMpRGCxHcoeoiQJ4Bt1V6RrnqLId
-         +qx/sqtI38t+RH3KVicP2dqX4/FZDcp4FYktDb/Z+H1IpU5Pws84DxQ/a+rdpnfNOuyy
-         FyFWnvYkuJlFUgkT7icdrXuXysr0ntTcgTLoZtO9Ulc7kLaH6lOnmmOz8F7WvASmDkOB
-         mCQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=N3sRoWnV8l9cuish6xpPYCWFViw68bxZ7EA3iVa8O1s=;
-        b=klZRzo5KkyUoa7jlP3YEPprrbWf3yyCjz3Lbv9Ayb5pUl76glu/rq6A1jpcLzfGGgs
-         AOYZy5Tq9ngFOrgMNj1aSS2tuhMNWSDQkRix0pLTrt29puxEgBUAnSm7lXePCjECJdqk
-         i7tbdvPeKAeb0a4Q866/+fA6b5Qn1OoWRwfAng8Yw0VcWdch8rCcwEWQMEFsJVWL5vba
-         jAurxK9ZUYflxun1iBmyPwwiJOwTSB6002JiLTC46KiitjR9/XGH1TQvINZR4ZEOB4c2
-         3qRtOGICcdDHfQoSShX4Hp6JSGLcojjyhBGnunwEbRR87JTExdJce76MsiFc+IXwebQC
-         D5wQ==
-X-Gm-Message-State: AHQUAubiRSxGr82pmim+YCVXRodK7ExDC3YfAHJu2X4FQRtESFQ0udWn
-        z94VwKrVB/RLON9AR73zt/Od8g==
-X-Google-Smtp-Source: AHgI3IYAZcgvr8QUtHv1ptPc4VTZhVvVqb5q9Kbmz3qvexxqneYJ9T8n8UmA1DHR9y0+pYQ9X4xtMA==
-X-Received: by 2002:aed:23a3:: with SMTP id j32mr12241830qtc.205.1549554775825;
-        Thu, 07 Feb 2019 07:52:55 -0800 (PST)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id e35sm4744164qte.8.2019.02.07.07.52.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 07:52:55 -0800 (PST)
-Date:   Thu, 7 Feb 2019 10:52:53 -0500 (EST)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Stefan Agner <stefan@agner.ch>
-cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        ndesaulniers@google.com, natechancellor@gmail.com,
-        Arnd Bergmann <arnd@arndb.de>, ard.biesheuvel@linaro.org,
-        thierry.reding@gmail.com, Will Deacon <will.deacon@arm.com>,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/5] ARM: use unified assembler in macros
-In-Reply-To: <5b710816f634307d6a67ffcf7e4b538818dcb2a3.1549532513.git.stefan@agner.ch>
-Message-ID: <nycvar.YSQ.7.76.1902071051030.2213@knanqh.ubzr>
-References: <cover.1549532513.git.stefan@agner.ch> <5b710816f634307d6a67ffcf7e4b538818dcb2a3.1549532513.git.stefan@agner.ch>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Thu, 7 Feb 2019 10:53:29 -0500
+Received: from sauhun.de ([88.99.104.3]:48758 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbfBGPx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:53:29 -0500
+Received: from localhost (p54B33308.dip0.t-ipconnect.de [84.179.51.8])
+        by pokefinder.org (Postfix) with ESMTPSA id 68ED84A16EA;
+        Thu,  7 Feb 2019 16:53:27 +0100 (CET)
+Date:   Thu, 7 Feb 2019 16:53:27 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Elie Morisse <syniurge@gmail.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com,
+        sandeep.singh@amd.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v15] i2c: Add drivers for the AMD PCIe MP2 I2C controller
+Message-ID: <20190207155326.GC4796@kunai>
+References: <20181226232258.GA23526@syn-yoga530>
+ <20190205120545.GA1045@kunai>
+ <CAErSpo5kvFVwo-DCLYT_7UmRQKS1jHahFXawvnZUtZ=ApHKz1Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
+Content-Disposition: inline
+In-Reply-To: <CAErSpo5kvFVwo-DCLYT_7UmRQKS1jHahFXawvnZUtZ=ApHKz1Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019, Stefan Agner wrote:
 
-> Use unified assembler syntax (UAL) in macros. Divided syntax is
-> considered depricated. This will also allow to build the kernel
-> using LLVM's integrated assembler.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  arch/arm/lib/copy_from_user.S | 2 +-
->  arch/arm/lib/copy_to_user.S   | 2 +-
->  arch/arm/lib/memcpy.S         | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/lib/copy_from_user.S b/arch/arm/lib/copy_from_user.S
-> index 0d4c189c7f4f..712ca399f559 100644
-> --- a/arch/arm/lib/copy_from_user.S
-> +++ b/arch/arm/lib/copy_from_user.S
-> @@ -91,7 +91,7 @@
->  	.endm
->  
->  	.macro str1b ptr reg cond=al abort
-> -	str\cond\()b \reg, [\ptr], #1
-> +	strb\cond\() \reg, [\ptr], #1
+--LwW0XdcUbUexiWVK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-You don't need the \() any longer. This was used simply to separate the 
-b suffix from the cond parameter name. 
+Hi Bjorn,
+
+thanks a lot for your additional information!
+
+> IMHO the split into two drivers is a bit of a mess and doesn't really
+> correspond with the hardware, as I mentioned at [1].  The PCI device
+> is the real hardware and the driver should claim that.  AFAICT the
+> ACPI device exists only to pass some config information to the PCI
+> driver.  I think the natural approach would be for the PCI driver to
+> directly search the ACPI namespace for that config information.
+
+AFAIR the AMD folks insisted on the two driver setup because they need
+it in the future? Maybe they can explain again here?
+
+> The fact that driver_find_device() is essentially unused except for a
+> few very special cases is a good clue that there's probably a better
+> way.
+
+Excactly this thinking made me recommend something else, too. Let's see
+what we can come up with.
+
+Thanks,
+
+   Wolfram
 
 
-Nicolas
+--LwW0XdcUbUexiWVK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxcVHYACgkQFA3kzBSg
+KbbKUg/+PJomClPceiLS2KRwNbNrlsyyrzpU/NmDQhCRtTVswOm0z/li4Mb0kj4X
+TwcLUFjZAYe8tyX/8K6QeTEsG+5iPPWKmlA1AoEy+sX7vl/OX8kRdVAcSoGOx5/8
+0jNc+1m3mTF/woaiDHEwMPHo178SQpaYC5kyvvnvyoH3PZY1uMVMOwCUzTMsfuWu
+imW08ROvQoW/T0zSiW9v3OSsaaapCdQuBzq+qXBeEpaGyYCqaDZIj++ZMS7QIpoI
++YBEtiHDRzSNyBo2Qr7rOsDwD38BvHBd1QI1mYzifaf26P2YbDB97IceTMVBS4Ru
+Vp9Fp6gVgcPZWjv47ilsgz8YFyXCPiPVICJyMLsadAOYcwz/Mu1sE4vruweq8j6c
+ahAgtlXvA083CXe8aXxuQUp50gSvo1AMyFGmZLxhUXrdz/ci67jnupU0RxqiLmkC
+EFPyMeELKfOy5ubWij9MPb+gA6j5vMuqhvsCuuzJArdcMVsBxPbU9KvfnIf6dKT/
+rcH76sULNbv5Ygr4z5EUTAXJSRS0LWy9lu2YfzKg+WFRh4PrpQazmwjEmE36cB6E
+E9m5dhkCuyWjAtCPmM0k0Dki8jTS9K47EtQOXTkXcFgD+lnl7ffkQrc5bcismsKv
+47u2jjhCEHFG3XiVkhaZmeXgydqlZ8O2YKImmTSZ5RrSfjqSEII=
+=ib+6
+-----END PGP SIGNATURE-----
+
+--LwW0XdcUbUexiWVK--
