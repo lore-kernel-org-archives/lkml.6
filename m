@@ -2,392 +2,291 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC58C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E92EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C9F21721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549582242;
-	bh=UzrJH70RihoLsMJ7KZpC8J3w2y5zo0RHm9uDNSD55zk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MXs7ILsIX5scbN3z9XF4YS35gK6FKewJUDSvQMJZQ9/+wXMQw9jCCu7hRvuwejmhb
-	 1gzOyqlFahWO8zXxmO0ulnCGWhoeAPN1HrTQeZ/qqf+2iSZNefb01CCSNhA3Ze4FYV
-	 lOzCBX/i8bf6GlJLHC8mxbfSUu+AZp0iHhLklT4A=
+	by mail.kernel.org (Postfix) with ESMTP id 119C121907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBGXak (ORCPT
+        id S1726882AbfBGXc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:30:40 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38584 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfBGXaj (ORCPT
+        Thu, 7 Feb 2019 18:32:27 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726781AbfBGXc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:30:39 -0500
-Received: by mail-ot1-f68.google.com with SMTP id e12so2954145otl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:30:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dhu+PaPuqqBEvleA2oHaND12G2hKxUrm28uYH3dUrCA=;
-        b=L20dWtsB4xEsWmusoithe3p7t2gBrdOc/9yJMiFI8MF4KVezQHZMvWVKFpAHxnMOhR
-         e9SIbGC2v6R6zN23kdHG9rzkiXnKXQIWSIMPUVhXC5EkCS/oMJV6apNR0UqGm6MBKYWB
-         qcm2rkhYIwansy8KNI9hI7LVjZ4FuDCDHW7lEp6arBIdbiOqgVuPNXvbldhVnt7DMrfy
-         UC4Hks/aNyNXCzCeG/i0KtQHhC9NfKi7+kzrqa1braQQZLujnNUGewsfi5HfxRH1e+DJ
-         PKb3hoWbPvpQW7rBa/xFReGh7J3Mg+/Z/TGFm208LBNc4+H3WkeEJ2xfGaAHfBJ5RL/7
-         qM6Q==
-X-Gm-Message-State: AHQUAuZV30dq/Kjx5NYxtLaxNoYZ4prmQiWRf2YKvywn+dzAX6jCyw6s
-        rKFXV2l5ayuwN/31EEzDs4Yv+I+/bBsV/A4dRTU=
-X-Google-Smtp-Source: AHgI3IaJfwXLaz1ejVYiVJ99M5EQ/pAhu6ROohS+ll7xUFm9eK5zkBKPpn1ndEyzUYH5F+hqsUhqNZLpSR3DgN1LrE4=
-X-Received: by 2002:aca:c591:: with SMTP id v139mr378556oif.76.1549582238616;
- Thu, 07 Feb 2019 15:30:38 -0800 (PST)
+        Thu, 7 Feb 2019 18:32:26 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17NSnlE151877
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 18:32:25 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qgx2pgvfb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 18:32:24 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 7 Feb 2019 23:32:24 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Feb 2019 23:32:20 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17NWIqH5898256
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Feb 2019 23:32:19 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A99CC78069;
+        Thu,  7 Feb 2019 23:32:18 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC04778066;
+        Thu,  7 Feb 2019 23:32:17 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Feb 2019 23:32:17 +0000 (GMT)
+Subject: Re: [PATCH v11 15/16] tpm: take TPM chip power gating out of
+ tpm_transmit()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
+ <20190205224723.19671-16-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 7 Feb 2019 18:32:17 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190207232759.14553-1-daniel.vetter@ffwll.ch> <20190207232759.14553-2-daniel.vetter@ffwll.ch>
-In-Reply-To: <20190207232759.14553-2-daniel.vetter@ffwll.ch>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 8 Feb 2019 00:30:27 +0100
-Message-ID: <CAJZ5v0hqfitWiuLO4PEedyhbkp3wWs9gA74PXcF=cRe_W6w0wg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] components: multiple components for a device
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190205224723.19671-16-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020723-8235-0000-0000-00000E584CB9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010556; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01157809; UDB=6.00604069; IPR=6.00938340;
+ MB=3.00025484; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 23:32:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020723-8236-0000-0000-000044619E9D
+Message-Id: <dfb224e4-82b8-26c0-e69a-c72d19712d48@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=891 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902070168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 12:28 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+On 2/5/19 5:47 PM, Jarkko Sakkinen wrote:
+> Call tpm_chip_start() and tpm_chip_stop() in
 >
-> Component framework is extended to support multiple components for
-> a struct device. These will be matched with different masters based on
-> its sub component value.
+> * tpm_try_get_ops() and tpm_put_ops()
+> * tpm_chip_register()
+> * tpm2_del_space()
 >
-> We are introducing this, as I915 needs two different components
-> with different subcomponent value, which will be matched to two
-> different component masters(Audio and HDCP) based on the subcomponent
-> values.
+> And remove these calls from tpm_transmit(). The core reason for this
+> change is that in tpm_vtpm_proxy a locality change requires a virtual
+> TPM command (a command made up just for that driver).
 >
-> v2: Add documenation.
+> The consequence of this is that this commit removes the remaining nested
+> calls.
 >
-> v3: Rebase on top of updated documenation.
->
-> v4: Review from Rafael:
-> - Remove redundant "This" from kerneldoc (also in the previous patch)
-> - Streamline the logic in find_component() a bit.
->
-> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1 code)
-> Signed-off-by: Ramalingam C <ramalingam.c@intel.com> (v1 commit message)
-> Cc: Ramalingam C <ramalingam.c@intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Cc: Jaroslav Kysela <perex@perex.cz>
-> Cc: Takashi Iwai <tiwai@suse.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 > ---
->  drivers/base/component.c  | 158 +++++++++++++++++++++++++++++---------
->  include/linux/component.h |  10 ++-
->  2 files changed, 129 insertions(+), 39 deletions(-)
+>   drivers/char/tpm/tpm-chip.c       | 25 ++++++++++++-------------
+>   drivers/char/tpm/tpm-interface.c  |  6 ------
+>   drivers/char/tpm/tpm.h            |  9 ---------
+>   drivers/char/tpm/tpm2-space.c     |  5 ++++-
+>   drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
+>   5 files changed, 17 insertions(+), 31 deletions(-)
 >
-> diff --git a/drivers/base/component.c b/drivers/base/component.c
-> index 1624c2a892a5..7dbc41cccd58 100644
-> --- a/drivers/base/component.c
-> +++ b/drivers/base/component.c
-> @@ -47,6 +47,7 @@ struct component;
->  struct component_match_array {
->         void *data;
->         int (*compare)(struct device *, void *);
-> +       int (*compare_typed)(struct device *, int, void *);
->         void (*release)(struct device *, void *);
->         struct component *component;
->         bool duplicate;
-> @@ -74,6 +75,7 @@ struct component {
->         bool bound;
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 65f1561eba81..7ad4d9045e4c 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+>   {
+>   	int rc;
 >
->         const struct component_ops *ops;
-> +       int subcomponent;
->         struct device *dev;
->  };
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>   	if (!chip->ops->request_locality)
+>   		return 0;
 >
-> @@ -158,7 +160,7 @@ static struct master *__master_find(struct device *dev,
->  }
+> @@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+>   {
+>   	int rc;
 >
->  static struct component *find_component(struct master *master,
-> -       int (*compare)(struct device *, void *), void *compare_data)
-> +       struct component_match_array *mc)
->  {
->         struct component *c;
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return;
+> -
+>   	if (!chip->ops->relinquish_locality)
+>   		return;
 >
-> @@ -166,7 +168,11 @@ static struct component *find_component(struct master *master,
->                 if (c->master && c->master != master)
->                         continue;
+> @@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
 >
-> -               if (compare(c->dev, compare_data))
-> +               if (mc->compare && mc->compare(c->dev, mc->data))
-> +                       return c;
+>   static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+>   {
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>   	if (!chip->ops->cmd_ready)
+>   		return 0;
+>
+> @@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+>
+>   static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+>   {
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>   	if (!chip->ops->go_idle)
+>   		return 0;
+>
+> @@ -166,11 +154,17 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>
+>   	down_read(&chip->ops_sem);
+>   	if (!chip->ops)
+> -		goto out_lock;
+> +		goto out_ops;
+>
+>   	mutex_lock(&chip->tpm_mutex);
+> +	rc = tpm_chip_start(chip, 0);
+> +	if (rc)
+> +		goto out_lock;
 > +
-> +               if (mc->compare_typed &&
-> +                   mc->compare_typed(c->dev, c->subcomponent, mc->data))
->                         return c;
->         }
+>   	return 0;
+>   out_lock:
+> +	mutex_unlock(&chip->tpm_mutex);
+> +out_ops:
+>   	up_read(&chip->ops_sem);
+>   	put_device(&chip->dev);
+>   	return rc;
+> @@ -186,6 +180,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+>    */
+>   void tpm_put_ops(struct tpm_chip *chip)
+>   {
+> +	tpm_chip_stop(chip, 0);
+>   	mutex_unlock(&chip->tpm_mutex);
+>   	up_read(&chip->ops_sem);
+>   	put_device(&chip->dev);
+> @@ -563,7 +558,11 @@ int tpm_chip_register(struct tpm_chip *chip)
+>   {
+>   	int rc;
 >
-> @@ -192,7 +198,7 @@ static int find_components(struct master *master)
->                 if (match->compare[i].component)
->                         continue;
+> +	rc = tpm_chip_start(chip, 0);
+> +	if (rc)
+> +		return rc;
+>   	rc = tpm_auto_startup(chip);
+> +	tpm_chip_stop(chip, 0);
+>   	if (rc)
+>   		return rc;
 >
-> -               c = find_component(master, mc->compare, mc->data);
-> +               c = find_component(master, mc);
->                 if (!c) {
->                         ret = -ENXIO;
->                         break;
-> @@ -327,29 +333,12 @@ static int component_match_realloc(struct device *dev,
->         return 0;
->  }
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index f7b7e4e75fcf..f20c78055731 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -168,13 +168,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   	memcpy(save, buf, save_size);
+>
+>   	for (;;) {
+> -		ret = tpm_chip_start(chip, flags);
+> -		if (ret)
+> -			return ret;
+> -
+>   		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
+> -
+> -		tpm_chip_stop(chip, flags);
+>   		if (ret < 0)
+>   			break;
+>   		rc = be32_to_cpu(header->return_code);
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 2d6d934f1c8b..53e4208759ee 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -485,15 +485,6 @@ extern const struct file_operations tpm_fops;
+>   extern const struct file_operations tpmrm_fops;
+>   extern struct idr dev_nums_idr;
 >
 > -/**
-> - * component_match_add_release - add a component match with release callback
-> - * @master: device with the aggregate driver
-> - * @matchptr: pointer to the list of component matches
-> - * @release: release function for @compare_data
-> - * @compare: compare function to match against all components
-> - * @compare_data: opaque pointer passed to the @compare function
+> - * enum tpm_transmit_flags - flags for tpm_transmit()
 > - *
-> - * Adds a new component match to the list stored in @matchptr, which the @master
-> - * aggregate driver needs to function. The list of component matches pointed to
-> - * by @matchptr must be initialized to NULL before adding the first match.
-> - *
-> - * The allocated match list in @matchptr is automatically released using devm
-> - * actions, where upon @release will be called to free any references held by
-> - * @compare_data, e.g. when @compare_data is a &device_node that must be
-> - * released with of_node_put().
-> - *
-> - * See also component_match_add().
+> - * %TPM_TRANSMIT_NESTED:	discard setup steps (power management, locality)
 > - */
-> -void component_match_add_release(struct device *master,
-> +static void __component_match_add(struct device *master,
->         struct component_match **matchptr,
->         void (*release)(struct device *, void *),
-> -       int (*compare)(struct device *, void *), void *compare_data)
-> +       int (*compare)(struct device *, void *),
-> +       int (*compare_typed)(struct device *, int, void *),
-> +       void *compare_data)
->  {
->         struct component_match *match = *matchptr;
+> -enum tpm_transmit_flags {
+> -	TPM_TRANSMIT_NESTED      = BIT(0),
+> -};
+> -
+>   ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   		     unsigned int flags);
+>   ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index 9c9ccf2c0681..6c6ad2d4d31b 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)
+>   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
+>   {
+>   	mutex_lock(&chip->tpm_mutex);
+> -	tpm2_flush_sessions(chip, space);
+> +	if (!tpm_chip_start(chip, 0)) {
+> +		tpm2_flush_sessions(chip, space);
+> +		tpm_chip_stop(chip, 0);
+> +	}
+>   	mutex_unlock(&chip->tpm_mutex);
+>   	kfree(space->context_buf);
+>   	kfree(space->session_buf);
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index e8a1da2810a9..a4bb60e163cc 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
 >
-> @@ -381,13 +370,69 @@ void component_match_add_release(struct device *master,
->         }
+>   	proxy_dev->state |= STATE_DRIVER_COMMAND;
 >
->         match->compare[match->num].compare = compare;
-> +       match->compare[match->num].compare_typed = compare_typed;
->         match->compare[match->num].release = release;
->         match->compare[match->num].data = compare_data;
->         match->compare[match->num].component = NULL;
->         match->num++;
->  }
-> +
-> +/**
-> + * component_match_add_release - add a component match with release callback
-> + * @master: device with the aggregate driver
-> + * @matchptr: pointer to the list of component matches
-> + * @release: release function for @compare_data
-> + * @compare: compare function to match against all components
-> + * @compare_data: opaque pointer passed to the @compare function
-> + *
-> + * Adds a new component match to the list stored in @matchptr, which the @master
-> + * aggregate driver needs to function. The list of component matches pointed to
-> + * by @matchptr must be initialized to NULL before adding the first match. This
-> + * only matches against components added with component_add().
-> + *
-> + * The allocated match list in @matchptr is automatically released using devm
-> + * actions, where upon @release will be called to free any references held by
-> + * @compare_data, e.g. when @compare_data is a &device_node that must be
-> + * released with of_node_put().
-> + *
-> + * See also component_match_add() and component_match_add_typed().
-> + */
-> +void component_match_add_release(struct device *master,
-> +       struct component_match **matchptr,
-> +       void (*release)(struct device *, void *),
-> +       int (*compare)(struct device *, void *), void *compare_data)
-> +{
-> +       __component_match_add(master, matchptr, release, compare, NULL,
-> +                             compare_data);
-> +}
->  EXPORT_SYMBOL(component_match_add_release);
+> -	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
+> -			      "attempting to set locality");
+> +	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
 >
-> +/**
-> + * component_match_add_typed - add a compent match for a typed component
-> + * @master: device with the aggregate driver
-> + * @matchptr: pointer to the list of component matches
-> + * @compare_typed: compare function to match against all typed components
-> + * @compare_data: opaque pointer passed to the @compare function
-> + *
-> + * Adds a new component match to the list stored in @matchptr, which the @master
-> + * aggregate driver needs to function. The list of component matches pointed to
-> + * by @matchptr must be initialized to NULL before adding the first match. This
-> + * only matches against components added with component_add_typed().
-> + *
-> + * The allocated match list in @matchptr is automatically released using devm
-> + * actions.
-> + *
-> + * See also component_match_add_release() and component_match_add_typed().
-> + */
-> +void component_match_add_typed(struct device *master,
-> +       struct component_match **matchptr,
-> +       int (*compare_typed)(struct device *, int, void *), void *compare_data)
-> +{
-> +       __component_match_add(master, matchptr, NULL, NULL, compare_typed,
-> +                             compare_data);
-> +}
-> +EXPORT_SYMBOL(component_match_add_typed);
-> +
->  static void free_master(struct master *master)
->  {
->         struct component_match *match = master->match;
-> @@ -616,19 +661,8 @@ int component_bind_all(struct device *master_dev, void *data)
->  }
->  EXPORT_SYMBOL_GPL(component_bind_all);
+>   	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
 >
-> -/**
-> - * component_add - register a component
-> - * @dev: component device
-> - * @ops: component callbacks
-> - *
-> - * Register a new component for @dev. Functions in @ops will be called when the
-> - * aggregate driver is ready to bind the overall driver by calling
-> - * component_bind_all(). See also &struct component_ops.
-> - *
-> - * The component needs to be unregistered at driver unload/disconnect by calling
-> - * component_del().
-> - */
-> -int component_add(struct device *dev, const struct component_ops *ops)
-> +static int __component_add(struct device *dev, const struct component_ops *ops,
-> +       int subcomponent)
->  {
->         struct component *component;
->         int ret;
-> @@ -639,6 +673,7 @@ int component_add(struct device *dev, const struct component_ops *ops)
->
->         component->ops = ops;
->         component->dev = dev;
-> +       component->subcomponent = subcomponent;
->
->         dev_dbg(dev, "adding component (ops %ps)\n", ops);
->
-> @@ -657,6 +692,55 @@ int component_add(struct device *dev, const struct component_ops *ops)
->
->         return ret < 0 ? ret : 0;
->  }
-> +
-> +/**
-> + * component_add_typed - register a component
-> + * @dev: component device
-> + * @ops: component callbacks
-> + * @subcomponent: nonzero identifier for subcomponents
-> + *
-> + * Register a new component for @dev. Functions in @ops will be call when the
-> + * aggregate driver is ready to bind the overall driver by calling
-> + * component_bind_all(). See also &struct component_ops.
-> + *
-> + * @subcomponent must be nonzero and is used to differentiate between multiple
-> + * components registerd on the same device @dev. These components are match
-> + * using component_match_add_typed().
-> + *
-> + * The component needs to be unregistered at driver unload/disconnect by
-> + * calling component_del().
-> + *
-> + * See also component_add().
-> + */
-> +int component_add_typed(struct device *dev, const struct component_ops *ops,
-> +       int subcomponent)
-> +{
-> +       if (WARN_ON(subcomponent == 0))
-> +               return -EINVAL;
-> +
-> +       return __component_add(dev, ops, subcomponent);
-> +}
-> +EXPORT_SYMBOL_GPL(component_add_typed);
-> +
-> +/**
-> + * component_add - register a component
-> + * @dev: component device
-> + * @ops: component callbacks
-> + *
-> + * Register a new component for @dev. Functions in @ops will be called when the
-> + * aggregate driver is ready to bind the overall driver by calling
-> + * component_bind_all(). See also &struct component_ops.
-> + *
-> + * The component needs to be unregistered at driver unload/disconnect by
-> + * calling component_del().
-> + *
-> + * See also component_add_typed() for a variant that allows multipled different
-> + * components on the same device.
-> + */
-> +int component_add(struct device *dev, const struct component_ops *ops)
-> +{
-> +       return __component_add(dev, ops, 0);
-> +}
->  EXPORT_SYMBOL_GPL(component_add);
->
->  /**
-> diff --git a/include/linux/component.h b/include/linux/component.h
-> index 83da25bdf59c..30bcc7e590eb 100644
-> --- a/include/linux/component.h
-> +++ b/include/linux/component.h
-> @@ -34,6 +34,8 @@ struct component_ops {
->  };
->
->  int component_add(struct device *, const struct component_ops *);
-> +int component_add_typed(struct device *dev, const struct component_ops *ops,
-> +       int subcomponent);
->  void component_del(struct device *, const struct component_ops *);
->
->  int component_bind_all(struct device *master, void *master_data);
-> @@ -91,6 +93,9 @@ void component_match_add_release(struct device *master,
->         struct component_match **matchptr,
->         void (*release)(struct device *, void *),
->         int (*compare)(struct device *, void *), void *compare_data);
-> +void component_match_add_typed(struct device *master,
-> +       struct component_match **matchptr,
-> +       int (*compare_typed)(struct device *, int, void *), void *compare_data);
->
->  /**
->   * component_match_add - add a compent match
-> @@ -101,12 +106,13 @@ void component_match_add_release(struct device *master,
->   *
->   * Adds a new component match to the list stored in @matchptr, which the @master
->   * aggregate driver needs to function. The list of component matches pointed to
-> - * by @matchptr must be initialized to NULL before adding the first match.
-> + * by @matchptr must be initialized to NULL before adding the first match. This
-> + * only matches against components added with component_add().
->   *
->   * The allocated match list in @matchptr is automatically released using devm
->   * actions.
->   *
-> - * See also component_match_add_release().
-> + * See also component_match_add_release() and component_match_add_typed().
->   */
->  static inline void component_match_add(struct device *master,
->         struct component_match **matchptr,
-> --
-> 2.20.1
->
+This patch seems to be missing a hunk along these lines here
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index e74c5b7b64bf..52afe20cc8a1 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -799,7 +799,9 @@ int tpm2_probe(struct tpm_chip *chip)
+      tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
+      tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
+      tpm_buf_append_u32(&buf, 1);
++    tpm_chip_start(chip, 0);
+      rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
++    tpm_chip_stop(chip, 0);
+      /* We ignore TPM return codes on purpose. */
+      if (rc >=  0) {
+          out = (struct tpm_header *)buf.data;
+
+
+Of course you need to check the error from tpm_chip_start().
+
