@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE96C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28531C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A24221907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C6C21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539847;
-	bh=1q6ACRP4drC5sRnQIE1+3l8VTZnWbOW28my+CDcCFCs=;
+	s=default; t=1549539852;
+	bh=udosWZycVKCmAzWF5oS75tmvz342lbikJ3DehgwMCmg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZJYMXaaEzhoTAck5CY8tU0qbxSqiBBqrL8Ci0T4FqoHVkYxXYpx8HJ6usygJshy8W
-	 1JgtK3NYjvZOlhl0ylaj/GXKRmbvfeZXXu0wzyvc33V9wpa3JnIaLpnGhWjIU/CPx4
-	 Ksu76jdP4d38dqzcnTKULlX0eGLhLcNoeIuqpvH8=
+	b=q3sfaSowDhQctFWZBqXSt8Xx2LOhyF28OtM/y+Ve6OuCdc2K5qS+5RgpRgFe1e+DZ
+	 U/L47rJTHKlQgjSC47I/GRjQUFia2hcvKunAyd+UX53vEHverMlWrrM9vxSDMUCw45
+	 dTlVVMsjWmoZP7hgCyW5P6knbxVmMTCzIPH2QECc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfBGLoG (ORCPT
+        id S1727702AbfBGLoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:44:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34608 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:44:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727662AbfBGLoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:44:03 -0500
+        id S1727677AbfBGLoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:44:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C98FD2080A;
-        Thu,  7 Feb 2019 11:44:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5C702080F;
+        Thu,  7 Feb 2019 11:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539842;
-        bh=1q6ACRP4drC5sRnQIE1+3l8VTZnWbOW28my+CDcCFCs=;
+        s=default; t=1549539845;
+        bh=udosWZycVKCmAzWF5oS75tmvz342lbikJ3DehgwMCmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L7vkpUcInwf71H/lFFJmXbcjEIcz+VzsoYXRr0lREzt0iI+2Ww6E4JYKQ4NHtxxLz
-         +93kxcA68xcJNXu/ftr36Et5ZeYZ9mnTQGjGiiPMzxMbqzo+U2CiPRkUrRKPqt4eui
-         6H/s9R4+CaIyKALM+pj7Jt1ABURXki/H7qailgWY=
+        b=Exavx/wGawBXL50PDh7VgqEvHtVSBrm9oBjfTvcZmEtxSXHqyt4cCz9ecpZLMf9G5
+         G18qPmrrL1HR5wKY4B8goFpXgIO+RplWBGKauSKLfcmF51A2y/E+6MxTJdZ/b8+qC9
+         DpE5PxPaCMknsbpwGZDwVbhGTINXIkPoU1qWlJ3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mao Wenan <maowenan@huawei.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 33/34] net: ipv4: do not handle duplicate fragments as overlapping
-Date:   Thu,  7 Feb 2019 12:42:15 +0100
-Message-Id: <20190207113026.832381171@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Rantala, Tommi" <tommi.t.rantala@nokia.com>
+Subject: [PATCH 4.4 34/34] rcu: Force boolean subscript for expedited stall warnings
+Date:   Thu,  7 Feb 2019 12:42:16 +0100
+Message-Id: <20190207113026.866667243@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -66,98 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Kubecek <mkubecek@suse.cz>
+From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-commit ade446403bfb79d3528d56071a84b15351a139ad upstream.
+commit ec3833ed02ae6ef2a933ece9de7cbab0c64c699e upstream.
 
-Since commit 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping
-segments.") IPv4 reassembly code drops the whole queue whenever an
-overlapping fragment is received. However, the test is written in a way
-which detects duplicate fragments as overlapping so that in environments
-with many duplicate packets, fragmented packets may be undeliverable.
+The cpu_online() function can return values other than 0 and 1, which
+can result in subscript overflow when applied to a two-element array.
+This commit allows for this behavior by using "!!" on the return value
+from cpu_online() when used as a subscript.
 
-Add an extra test and for (potentially) duplicate fragment, only drop the
-new fragment rather than the whole queue. Only starting offset and length
-are checked, not the contents of the fragments as that would be too
-expensive. For similar reason, linear list ("run") of a rbtree node is not
-iterated, we only check if the new fragment is a subset of the interval
-covered by existing consecutive fragments.
-
-v2: instead of an exact check iterating through linear list of an rbtree
-node, only check if the new fragment is subset of the "run" (suggested
-by Eric Dumazet)
-
-Fixes: 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping segments.")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-[bwh: Backported to 4.4:
- - goto discard_qp, not err, in case of overlap
- - Set err earlier variable, as done upstream in commit 0ff89efb5246
-   "ip: fail fast on IP defrag errors"]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: "Rantala, Tommi" <tommi.t.rantala@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_fragment.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
 
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -347,10 +347,10 @@ static int ip_frag_queue(struct ipq *qp,
- 	struct net *net = container_of(qp->q.net, struct net, ipv4.frags);
- 	struct rb_node **rbn, *parent;
- 	struct sk_buff *skb1, *prev_tail;
-+	int ihl, end, skb1_run_end;
- 	struct net_device *dev;
- 	unsigned int fragsize;
- 	int flags, offset;
--	int ihl, end;
- 	int err = -ENOENT;
- 	u8 ecn;
- 
-@@ -420,9 +420,12 @@ static int ip_frag_queue(struct ipq *qp,
- 	 *   overlapping fragment, the entire datagram (and any constituent
- 	 *   fragments) MUST be silently discarded.
- 	 *
--	 * We do the same here for IPv4 (and increment an snmp counter).
-+	 * We do the same here for IPv4 (and increment an snmp counter) but
-+	 * we do not want to drop the whole queue in response to a duplicate
-+	 * fragment.
- 	 */
- 
-+	err = -EINVAL;
- 	/* Find out where to put this fragment.  */
- 	prev_tail = qp->q.fragments_tail;
- 	if (!prev_tail)
-@@ -444,13 +447,17 @@ static int ip_frag_queue(struct ipq *qp,
- 		do {
- 			parent = *rbn;
- 			skb1 = rb_to_skb(parent);
-+			skb1_run_end = skb1->ip_defrag_offset +
-+				       FRAG_CB(skb1)->frag_run_len;
- 			if (end <= skb1->ip_defrag_offset)
- 				rbn = &parent->rb_left;
--			else if (offset >= skb1->ip_defrag_offset +
--						FRAG_CB(skb1)->frag_run_len)
-+			else if (offset >= skb1_run_end)
- 				rbn = &parent->rb_right;
--			else /* Found an overlap with skb1. */
--				goto discard_qp;
-+			else if (offset >= skb1->ip_defrag_offset &&
-+				 end <= skb1_run_end)
-+				goto err; /* No new data, potential duplicate */
-+			else
-+				goto discard_qp; /* Found an overlap */
- 		} while (*rbn);
- 		/* Here we have parent properly set, and rbn pointing to
- 		 * one of its NULL left/right children. Insert skb.
-@@ -495,7 +502,6 @@ static int ip_frag_queue(struct ipq *qp,
- 
- discard_qp:
- 	inet_frag_kill(&qp->q);
--	err = -EINVAL;
- 	IP_INC_STATS_BH(net, IPSTATS_MIB_REASM_OVERLAPS);
- err:
- 	kfree_skb(skb);
+---
+ kernel/rcu/tree.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3817,7 +3817,7 @@ static void synchronize_sched_expedited_
+ 					continue;
+ 				rdp = per_cpu_ptr(rsp->rda, cpu);
+ 				pr_cont(" %d-%c%c%c", cpu,
+-					"O."[cpu_online(cpu)],
++					"O."[!!cpu_online(cpu)],
+ 					"o."[!!(rdp->grpmask & rnp->expmaskinit)],
+ 					"N."[!!(rdp->grpmask & rnp->expmaskinitnext)]);
+ 			}
 
 
