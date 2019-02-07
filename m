@@ -2,167 +2,116 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63A2C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58401C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F6A2075D
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:18:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cWKXI3j6"
+	by mail.kernel.org (Postfix) with ESMTP id 32B1A2084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfBGKSw (ORCPT
+        id S1726732AbfBGKXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:18:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54974 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbfBGKSw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:18:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zsBJCjqzCHb+jAJAJgavx5TZ6nri+z4/DkXqLVivWkc=; b=cWKXI3j6GsF42yHcIj45metbB
-        TotxBY+ejoQJ8LpzmWOaPoXnhuIO7zbgz57T+6DasIh3kgsuQjDuw2+++H+85+xvpfnMxp9e4Mm4q
-        gY6rfeAiShhfInb07evKMSWQ292sdJ+3lLgfQ2Tu6c63OJ/K9s5D1H2H+Bmhs0Xc/69dfdXJij2AA
-        9YsIpTTbaXoVvJgVfnbSutefwWAdxXvgJegE2Tr5fjkBu9HG/ksUvInYQwDDiaYy4ukteO/XFVaN0
-        5o3jBCCZgLbrHnK000VjOZNXLuh9TzwxMya28ZwYeIrPtRiSbcwbMGRM32opVOdxKPnJLdaiR/fwf
-        IZUHfYdQg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1grglb-0005qs-KX; Thu, 07 Feb 2019 10:18:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2281E201476F0; Thu,  7 Feb 2019 11:18:46 +0100 (CET)
-Date:   Thu, 7 Feb 2019 11:18:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [GIT PULL] x86/mm changes for v4.21
-Message-ID: <20190207101846.GB32511@hirez.programming.kicks-ass.net>
-References: <20181224231106.GA27438@gmail.com>
- <20190207001737.GA32096@agluck-desk>
+        Thu, 7 Feb 2019 05:23:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43900 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726186AbfBGKXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 05:23:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 337C0AD23;
+        Thu,  7 Feb 2019 10:23:51 +0000 (UTC)
+Subject: Re: bcache on XFS: metadata I/O (dirent I/O?) not getting cached at
+ all?
+To:     Andre Noll <maan@tuebingen.mpg.de>
+Cc:     Nix <nix@esperi.org.uk>, linux-bcache@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>
+References: <87h8dgefee.fsf@esperi.org.uk>
+ <64f32487-5b8f-f6c2-37a9-84bb0717a9e1@suse.de>
+ <20190207094138.GZ24140@tuebingen.mpg.de>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Labs
+Message-ID: <41fef785-1e38-87ea-115a-4cdb7e86ed18@suse.de>
+Date:   Thu, 7 Feb 2019 18:23:44 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207001737.GA32096@agluck-desk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190207094138.GZ24140@tuebingen.mpg.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:17:42PM -0800, Luck, Tony wrote:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-> fe0937b24ff5 ("x86/mm/cpa: Fold cpa_flush_range() and cpa_flush_array() into a single cpa_flush() function")
+On 2019/2/7 5:41 下午, Andre Noll wrote:
+> On Thu, Feb 07, 16:16, Coly Li wrote
+>> From: Coly Li <colyli@suse.de> Date: Thu, 7 Feb 2019 15:54:24
+>> +0800 Subject: [PATCH] bcache: use (REQ_META|REQ_PRIO) to
+>> indicate bio for metadata
+>> 
+>> In 'commit 752f66a75aba ("bcache: use REQ_PRIO to indicate bio
+>> for metadata")' REQ_META is replaced by REQ_PRIO to indicate
+>> metadata bio. This assumption is not always correct, e.g. XFS
+>> uses REQ_META to mark metadata bio other than REQ_PRIO. This is
+>> why Nix reports a regression that bcache does not cache metadata
+>> for XFS after the above commit.
+> 
+> maybe s/reports a regression/noticed
+> 
+>> Thanks to Dave Chinner, he explains the difference between
+>> REQ_META and REQ_PRIO from view of file system developer. Here I
+>> quote part of his explanation from mailing list, REQ_META is used
+>> for metadata. REQ_PRIO is used to communicate to the lower layers
+>> that the submitter considers this IO to be more important that
+>> non REQ_PRIO IO and so dispatch should be expedited.
+>> 
+>> IOWs, if the filesystem considers metadata IO to be more
+>> important that user data IO, then it will use REQ_PRIO | REQ_META
+>> rather than just REQ_META.
+>> 
+>> Then it seems bios with REQ_META or REQ_PRIO should both be
+>> cached for performance optimation, because they are all probably
+>> low I/O latency demand by upper layer (e.g. file system).
+>> 
+>> So in this patch, when we want to check whether a bio is
+>> metadata related, REQ_META and REQ_PRIO are both checked. Then
+>> both metadata and high priority I/O requests will be handled
+>> properly.
+> 
+> s/check whether a bio is metadata related/decide whether to bypass
+> the cache
+> 
+> Apart from these two nitpicks, feel free to add my Reviewed-by.
 
-Boris pointed me at this gem:
+Hi Andre,
 
-  c7486104a5ce ("x86/mce: Fix set_mce_nospec() to avoid #GP fault")
+Thanks for your review :-)
 
-(can I just revel at the pure awesome grossness of that)
+- -- 
 
-But we then see my above commit having:
+Coly Li
+-----BEGIN PGP SIGNATURE-----
 
-@@ -1732,11 +1685,6 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
-			 */
-			WARN_ON_ONCE(1);
-		}
--               /*
--                * Save address for cache flush. *addr is modified in the call
--                * to __change_page_attr_set_clr() below.
--                */
--               baddr = make_addr_canonical_again(*addr);
-
-Where I clearly got distracted by that excellent comment..
-
-
-So now the question is where to put it back in, I'm thinking this might
-want to be in __cpa_addr().
-
-Something like so?
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 4f8972311a77..319b767484fb 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -230,6 +230,28 @@ static bool __cpa_pfn_in_highmap(unsigned long pfn)
- 
- #endif
- 
-+/*
-+ * Machine check recovery code needs to change cache mode of poisoned
-+ * pages to UC to avoid speculative access logging another error. But
-+ * passing the address of the 1:1 mapping to set_memory_uc() is a fine
-+ * way to encourage a speculative access. So we cheat and flip the top
-+ * bit of the address. This works fine for the code that updates the
-+ * page tables. But at the end of the process we need to flush the cache
-+ * and the non-canonical address causes a #GP fault when used by the
-+ * CLFLUSH instruction.
-+ *
-+ * But in the common case we already have a canonical address. This code
-+ * will fix the top bit if needed and is a no-op otherwise.
-+ */
-+static inline unsigned long make_addr_canonical_again(unsigned long addr)
-+{
-+#ifdef CONFIG_X86_64
-+	return (long)(addr << 1) >> 1;
-+#else
-+	return addr;
-+#endif
-+}
-+
- static unsigned long __cpa_addr(struct cpa_data *cpa, unsigned long idx)
- {
- 	if (cpa->flags & CPA_PAGES_ARRAY) {
-@@ -244,7 +266,7 @@ static unsigned long __cpa_addr(struct cpa_data *cpa, unsigned long idx)
- 	if (cpa->flags & CPA_ARRAY)
- 		return cpa->vaddr[idx];
- 
--	return *cpa->vaddr + idx * PAGE_SIZE;
-+	return make_addr_canonical_again(*cpa->vaddr + idx * PAGE_SIZE);
- }
- 
- /*
-@@ -1627,29 +1649,6 @@ static int __change_page_attr_set_clr(struct cpa_data *cpa, int checkalias)
- 	return ret;
- }
- 
--/*
-- * Machine check recovery code needs to change cache mode of poisoned
-- * pages to UC to avoid speculative access logging another error. But
-- * passing the address of the 1:1 mapping to set_memory_uc() is a fine
-- * way to encourage a speculative access. So we cheat and flip the top
-- * bit of the address. This works fine for the code that updates the
-- * page tables. But at the end of the process we need to flush the cache
-- * and the non-canonical address causes a #GP fault when used by the
-- * CLFLUSH instruction.
-- *
-- * But in the common case we already have a canonical address. This code
-- * will fix the top bit if needed and is a no-op otherwise.
-- */
--static inline unsigned long make_addr_canonical_again(unsigned long addr)
--{
--#ifdef CONFIG_X86_64
--	return (long)(addr << 1) >> 1;
--#else
--	return addr;
--#endif
--}
--
--
- static int change_page_attr_set_clr(unsigned long *addr, int numpages,
- 				    pgprot_t mask_set, pgprot_t mask_clr,
- 				    int force_split, int in_flag,
+iQIzBAEBCAAdFiEE6j5FL/T5SGCN6PrQxzkHk2t9+PwFAlxcBy0ACgkQxzkHk2t9
++PxmeRAAnIh3KzGx13lmpj/0sDlellc02eawvooSDE8zTNsqo/UzqAB1lzUvtJx1
+SQXYepoM4hPjrGzDKBe+oaMWuzG6WO08kI0dMT1Q1cfKX2eucExa8G9oRHQqxxBq
+wRChl4HKScqvyCy0XTQYet8QJwFAeBAdBzM2L0VOuulsRjLKBSfpcH+jr9fdNt/S
+wWGv9KVlJDq3BZrRA0TA1ovDl4wohyvtXM4OL27ahUMlmj4cI0XlaoketaAVM8QS
+z7uK+9sRdemW3cvfkl76wfIkiSN43Pk6RZcKRAHzlSgwF1L3xY7ZPxhFz187bFzI
+ANpTLVXiv1JNx+jnceV4O7UVZyj06hQhh1VFLedqpAVvzgYNp8RRSaiWucNH7m5d
+6qzw5+ob5jMEI2vdXooYC8hVwNaXa+3XfVU5QLlKVG9Al1kZxgkE3e8s28pjj3Df
+WJXaqkOCnal12FZ9Hz+Ev/Jp/1wmN3TagPJyeVlc/0vQTIXfBFuSssL+n/1RrKjd
+wTc2WuWBf2x7BLnuCX6z4fDvPLuW8LOJCrCYsqr4z5s7YI6mb0B4qDSqli8dN2TB
+vxnY1K1WQW/9BhE/QQpXHKBD2nRbPYcaAZEhk3UvIdV2dvafdQpcD4FgrEXGKXV8
+MmkaeTcQ4NcSNvGWgG9vaiY0acE8YGtqNsBDAtjOglJrP/tJjJA=
+=kG5J
+-----END PGP SIGNATURE-----
