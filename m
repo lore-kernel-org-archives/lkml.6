@@ -2,77 +2,139 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A29C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D765CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF2A21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A421421872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:06:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZaIUrpTB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfBGRFg (ORCPT
+        id S1726925AbfBGRGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:05:36 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:47853 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGRFg (ORCPT
+        Thu, 7 Feb 2019 12:06:36 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:40165 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfBGRGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:05:36 -0500
-Received: from orion.localdomain ([77.2.6.87]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1Mdv2u-1hQZhb406o-00b6Dt; Thu, 07 Feb 2019 18:05:34 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-input@vger.kernel.org, dmitry.torokhov@gmail.com
-Subject: [PATCH] input: keyboard: gpio-keys-polled: use input name from pdata if available
-Date:   Thu,  7 Feb 2019 18:05:31 +0100
-Message-Id: <1549559131-7423-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:o/bJtBDVg/nz+HvTddHfXCLT6w0T/Ro5emGw+ibhZpKu1WvN3nr
- +gix8ATNP09B1I0McgkmxVm1iiTQlPz137e+ucw0/3bued7oYkjerfTzDMfcg9pt6Fjph72
- TV5bli4erTuQu/+Jc9fYgnemloBCtRgfv6hEtAjzw+lWgd2UPHLn8oZ9jM3cmIZKFhykyIE
- GciqOuWd8k3lvfzcQpZ/A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:04JJmCySCww=:24R3lQIKbIHmjPglMEyLJO
- UXQiw/mZf5ezSRYZa4G65xn5efu9jLbJ3qwjjym149jbcHuFr1xXMq8aoJLT6MNYmwdY+ShA5
- fZtVggciihOnc0Oo4pEgfKrakhkcOEwJWHS1JRxUz3pG64kI32IMi1y3UNSzKBjUKIsM/iq+2
- wj//I4ba0Cc8DO6IanBRVC8cQoZq3CuI6r97zslG9/LB6MNmPi+sCBgagXvhbNx3tYC2rfVeD
- 7+EaEfKad+FMWhxq466U4/4cMtVfyT2Bqh00LIjtEt90ZReD1JrYCde36DqrsMuAW5bBzM9Yx
- tu1OginIkTmfAaoUDuA5mLRU7XdWMjgrF8XC+iYXO75cVwM0YJVC0lFeXv/jitlzD4GPARXkD
- ZvgAoZcArZnFe4/U0XaLuSo5Fcnvs2P/xKH11udlLVfX+SVOLGht034CccUkwU2xtNsgOe4K3
- szlC8/Hi7WLdCiRe2ClkG2mnmZK6DThwbkpv/PVALglGhp24dLZp5bRhmfbWOjZUe2EJOR66y
- 4UkZHUw3fs6Heeyc6oRbcXuZat8pW1ZrY1STyD63OtuIe+qHtJbm7mxQ96dDavSBD7Bjmdi+d
- vIkzyRWHBBozMeLYRMbBAQx0vLVTKBM4VDEYdv9vtjueoCeFaJFZpR7hLRnPcTOV7mb5AErCJ
- NLnVCZ6A0GjeAVpC6On9FqyNkCLw7hxBD33wz7QYKfdAAMl2Syyo4ZbnRtBb0ESMpX959pI/n
- lU84WYJ86K5klXfV2p/NLxKESTUcMzyhP0dRwA==
+        Thu, 7 Feb 2019 12:06:35 -0500
+Received: by mail-vk1-f194.google.com with SMTP id v70so137683vkv.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:06:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vNu3eDgy3bRGyE1H97kpUSLRr9SUCp+FnqhdYfyDr/g=;
+        b=ZaIUrpTBfoKsDD64nCPoMRr7fXNhGIsDwHSHjH70ZvG/xspGEZkZ95sLvlvI7wrchq
+         R16YsRPZGsQg619mFMZtid5ntZSufx+6ZZ2D++WXo3UZXVBMF4oKxWrDEkFWonlbHEOn
+         oXTZ4eWK/t+/7wIWLJAgYMgExxGqv+mcJt+cc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vNu3eDgy3bRGyE1H97kpUSLRr9SUCp+FnqhdYfyDr/g=;
+        b=JGdyKKC+YX8KYHc/Ai0Ukr6bZcfF7zw9QzQYcQrEKi2v1gb3/xWiZJAjMS3/gxTe43
+         PH6SZ2lt71NOvQx7p4c8W7OdGnncn9was5xcudx4Ymi1pSKRwiF0MoemRzXtjHb4C+80
+         mKR91n808HeN0DWHpVc7iHVvLCFRNwTaQEh1UOoCaPkEMJTbN1WJqH/27ZbfEB38qx1V
+         JFDBiw/37/njafM+mqLeIGXJe/3NLp8hfWKT2IKZ+xHuQq3gwn09CsZYbX7vavME9HRt
+         JYDTlTksikQ/VfYTXwAUZb+hUUU0m5KZUXv2AB3SwTuGreaDPaIe75Ie6gVjXn1m+5Im
+         DjeQ==
+X-Gm-Message-State: AHQUAuaVNDmkqNYAdsaeF3VbKXqiAbiVRclayAy9AOlWsVKGcosSqQwv
+        i5e8sGbylIlPZWu8WZiIY0OrWfuBE/8=
+X-Google-Smtp-Source: AHgI3IYJZh4M8eTfJ5lgAhKRHJEGD5BPi/fUgFH8UABoGvj65mb+W93nhJkYmscd8mVoC2r1ckFqnw==
+X-Received: by 2002:a1f:834f:: with SMTP id f76mr7031261vkd.25.1549559194306;
+        Thu, 07 Feb 2019 09:06:34 -0800 (PST)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id 67sm3230759vko.0.2019.02.07.09.06.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 09:06:34 -0800 (PST)
+Received: by mail-vk1-f177.google.com with SMTP id r127so147511vkf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:06:33 -0800 (PST)
+X-Received: by 2002:a1f:e807:: with SMTP id f7mr6758385vkh.16.1549559192689;
+ Thu, 07 Feb 2019 09:06:32 -0800 (PST)
+MIME-Version: 1.0
+References: <20190208004721.129a9eb7@canb.auug.org.au>
+In-Reply-To: <20190208004721.129a9eb7@canb.auug.org.au>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 7 Feb 2019 09:06:19 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=U07_E6O96o4KrJGPaKvE4aSGb9OT6kCy7x40Q_-kGGOA@mail.gmail.com>
+Message-ID: <CAD=FV=U07_E6O96o4KrJGPaKvE4aSGb9OT6kCy7x40Q_-kGGOA@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the qcom tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of hardcoding the input name to the driver name ('gpio-keys-polled'),
-allow the passing a name via platform data ('name' field was already present),
-but default to old behaviour in case of NULL.
+Hi,
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+On Thu, Feb 7, 2019 at 5:47 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Andy,
+>
+> In commit
+>
+>   761f63b2ff21 ("arm64: dts: sdm845: Add clocks and iommus to WCN3990 WLAN node")
+>
+> Fixes tag
+>
+>   Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device node")
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+> Did you mean:
+>
+>   022bccb840b7 ("arm64: dts: sdm845: Add WCN3990 WLAN module device node")
+
++Bjorn
+
+Looks like someone reorganized and/or rebased the tree after I sent
+out my fix.  When I check locally I have the old commit still and the
+new:
+
+commit be7019103469e6ccb997f932d3e0dce0141a0eda
+Author:     Govind Singh <govinds@codeaurora.org>
+AuthorDate: Mon Nov 5 18:38:37 2018 +0530
+Commit:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CommitDate: Wed Jan 16 14:13:41 2019 -0800
+
+    dts: arm64/sdm845: Add WCN3990 WLAN module device node
+
+    Add device node for the ath10k SNOC platform driver probe
+    and add resources required for WCN3990 on SDM845 soc.
+
+    Reviewed-by: Brian Norris <briannorris@chromium.org>
+    Tested-by: Brian Norris <briannorris@chromium.org>
+    Signed-off-by: Govind Singh <govinds@codeaurora.org>
+    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 ---
- drivers/input/keyboard/gpio_keys_polled.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index edc7262..3312186 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -272,7 +272,7 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
- 
- 	input = poll_dev->input;
- 
--	input->name = pdev->name;
-+	input->name = (pdata->name ? pdata->name : pdev->name);
- 	input->phys = DRV_NAME"/input0";
- 
- 	input->id.bustype = BUS_HOST;
--- 
-1.9.1
+commit 022bccb840b7ff9c64a70e81ac017d4d10bb8a9c
+Author:     Govind Singh <govinds@codeaurora.org>
+AuthorDate: Mon Nov 5 18:38:37 2018 +0530
+Commit:     Andy Gross <andy.gross@linaro.org>
+CommitDate: Thu Jan 24 22:19:20 2019 -0600
 
+    arm64: dts: sdm845: Add WCN3990 WLAN module device node
+
+    Add device node for the ath10k SNOC platform driver probe
+    and add resources required for WCN3990 on SDM845 soc.
+
+    Reviewed-by: Brian Norris <briannorris@chromium.org>
+    Tested-by: Brian Norris <briannorris@chromium.org>
+    Signed-off-by: Govind Singh <govinds@codeaurora.org>
+    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+    Signed-off-by: Andy Gross <andy.gross@linaro.org>
