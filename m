@@ -2,93 +2,144 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FC8C4151A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BDFC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622972190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:00:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="n6EQosBN"
+	by mail.kernel.org (Postfix) with ESMTP id A383521904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:01:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfBGNAm (ORCPT
+        id S1727347AbfBGNBl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:00:42 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53075 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfBGNAm (ORCPT
+        Thu, 7 Feb 2019 08:01:41 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:37423 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbfBGNBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:00:42 -0500
-Received: by mail-it1-f194.google.com with SMTP id d11so14552000itf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 05:00:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jdwtFVHtqcTomwKecTvSfX3MWcOsI2t00sw8LWYIymc=;
-        b=n6EQosBNT26TT+SF8OI320OBiRfw6S2DKdjf16oDZkYk21d1HPHOYKB3/t/L4+4Fvp
-         pVk0biAY+8U0RYMzhi+trHo4LENjkluh48Bkua9qxOPFRjolLau+nF2kLTac2dhG2tBt
-         KUCAr5NnUCOA1uesxyZWkVB+a2iPSKXPMAeF/i90RsAGzM5022EPT9qgyIUpT+pujjxZ
-         STds0gAELmwoZ+JN845gHwlFPNpfAarf2wJV40/DBFpeXTuT2XK0sOazUGkRVrTtLyZ1
-         OA6Gf/DHOKQ+GD/U2AlIiAr8dM+TCnoIYuZG9ZFN+3q5+oVubpVc3apoup4kbg9AWIIY
-         JBQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jdwtFVHtqcTomwKecTvSfX3MWcOsI2t00sw8LWYIymc=;
-        b=MUkCZJ25972gjI8k1rPKREDPMnvdLXQnzr8DmEO821vVk8MN7hcI7tsRBGtzF1E6Pi
-         l7wnFl+IJNMdzQmmZd1V//eypeRQY18ouwg0acJCEzJuWDj/3IHcLAFEgVHl3/APidbq
-         y/YUfBazJ4Ik63mHfVu5KQaE1LuFIyOjcvgCpwdD0nqUBuuljV59pfI8hnfvnlCHXuF/
-         JRf3fdDG3e0+tpqdKRLcXhan8oGO1zf0WRw2lkylLtAEi+ePO9Un716GQd3nZzyuMAcy
-         D6y+ARJq5hoAVGM9i9c9XcCKuXrouGm+pM9noOoq8iKVYcc7WK5ViaBGL1U4rzi1J2+h
-         9dDg==
-X-Gm-Message-State: AHQUAubA+2pJZnQJaNOZsJzHvi3KtjjQjagl/wfzq+3f+KuIP7HAEZx+
-        UA8pNmRTrJZORmQ00twT3ZyPQA==
-X-Google-Smtp-Source: AHgI3IagHFVnIw7L7pxm0p26JsUWreHsDih0Q5lotVAp408L7IHAFpUKkG3xzuItCCrEW7W1Vm6cOg==
-X-Received: by 2002:a24:710:: with SMTP id f16mr4396585itf.121.1549544441327;
-        Thu, 07 Feb 2019 05:00:41 -0800 (PST)
-Received: from [10.0.0.135] (24-212-162-241.cable.teksavvy.com. [24.212.162.241])
-        by smtp.googlemail.com with ESMTPSA id z133sm5748342itb.36.2019.02.07.05.00.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 05:00:40 -0800 (PST)
-Subject: Re: [PATCH net-next 0/2] Change tc action identifiers to be more
- consistent
-To:     Eli Cohen <eli@mellanox.com>, xiyou.wangcong@gmail.com,
-        jiri@resnulli.us, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     simon.horman@netronome.com, jakub.kicinski@netronome.com,
-        dirk.vandermerwe@netronome.com, francois.theron@netronome.com,
-        quentin.monnet@netronome.com, john.hurley@netronome.com,
-        edwin.peer@netronome.com
-References: <20190207074549.29861-1-eli@mellanox.com>
-From:   Jamal Hadi Salim <jhs@mojatatu.com>
-Message-ID: <7a113460-5a0f-85c6-b42d-42468967b6f6@mojatatu.com>
-Date:   Thu, 7 Feb 2019 08:00:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 7 Feb 2019 08:01:40 -0500
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 587DC100002;
+        Thu,  7 Feb 2019 13:01:36 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 14:01:36 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: Re: [PATCH] mtd: rawnand: call onfi_fill_data_interface() once
+ again after nand_detect
+Message-ID: <20190207140136.2ae62982@xps13>
+In-Reply-To: <CAK7LNASEvAUeJsBcp4eh+XW+gaVp921SU-d1m-DEs+Hs+YA8TA@mail.gmail.com>
+References: <1549533476-3742-1-git-send-email-yamada.masahiro@socionext.com>
+        <20190207111606.6b72dc34@xps13>
+        <CAK7LNASEvAUeJsBcp4eh+XW+gaVp921SU-d1m-DEs+Hs+YA8TA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190207074549.29861-1-eli@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-07 2:45 a.m., Eli Cohen wrote:
-> This two patch series modifies TC actions identifiers to be more consistent and
-> also puts them in one place so new identifiers numbers can be chosen more
-> easily.
+Hi Masahiro,
+
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Thu, 7 Feb
+2019 19:46:54 +0900:
+
+> On Thu, Feb 7, 2019 at 7:16 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >
+> > Hi Masahiro,
+> >
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Thu,  7 Feb
+> > 2019 18:57:56 +0900:
+> >  
+> > > nand_scan_ident() calls onfi_fill_data_interface() at its entry
+> > > to set up the initial timing parameters.
+> > >
+> > > The timing parameters are needed not only for ->setup_data_interface(),
+> > > but also for giving the correct delay to NAND_OP_WAIT_RDY, for example.
+> > >
+> > > If the driver sets the NAND_KEEP_TIMINGS flag, or does not support  
+> > > ->setup_data_interface() hook, those parameters will never updated.  
+> >
+> >                                                             ^ be  
+> 
+> Will fix (if v2 is welcome)
+> 
+> 
+> > >
+> > > Before nand_detect(), we never know whether the chip is ONFi or not.
+> > > So, onfi_fill_data_interface() has to assume the worst case, i.e.
+> > > non-ONFi.  
+> >
+> > s/ONFi/ONFI/?  
+> 
+> Will fix.
+> 
+> Looks like I was misunderstanding
+> maybe because the letter 'I' in the logo
+> (http://www.onfi.org/)
+> looks like a lowercase...
+> 
 > 
 
-For the series:
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Oh right. I don't know what's best. Pick your favorite :)
 
-cheers,
-jamal
+> 
+> 
+> >  
+> > >
+> > > After nand_detect(), if the chip turns out to be ONFi-compliant,
+> > > we can optimize tPROG_max, tBERS_max, etc.
+> > >
+> > > Call onfi_fill_data_interface() once again.  
+> >
+> > Sorry but I don't get why this is needed as there is the same call at
+> > the top of this function. Can you be more specific on where/when the
+> > missing call produces a failure?  
+> 
+> 
+> onfi_fill_data_interface() sets different values
+> for tPROG_max, tBER_max, tR_max, tCCS_min
+> depending on whether the chip is ONFI or not.
+> 
+> For the first call, onfi_fill_data_interface()
+> chooses the else-part since we never know
+> the chip specification at this point.
+> 
+> If we call onfi_fill_data_interface() once again
+> after nand_detect(), it may choose the if-part.
+> 
+> 
+> If a driver supports ->setup_data_interface(),
+> nand_init_data_interface() will set the optimal
+> timing parameters anyway.
+> 
+> But, if a driver does not support ->setup_data_interface(),
+> it will not happen since nand_has_setup_data_iface() returns false.
+
+And I think this is the expected behavior. Calling again
+onfi_fill_data_interface() would probably enhance a bit the timings.
+The effect is that later exchanges with the NAND chip would be just a
+bit faster. But if you care about performance, then why not implementing
+->setup_data_interface()? Even a dummy implementation would do the
+trick: only accept timing mode 0 without any changes on the controller
+side.
+
+Unless you give me a use case where this is not possible, I don't think
+it is worth changing this path.
+
+
+Thanks,
+Miquèl
