@@ -2,404 +2,89 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC1CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF93C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA88921908
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF8B4206DD
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:34:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cHzmNosn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfBGNcj (ORCPT
+        id S1727169AbfBGNeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:32:39 -0500
-Received: from mga04.intel.com ([192.55.52.120]:53724 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726786AbfBGNcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:32:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 05:32:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="141474005"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Feb 2019 05:32:38 -0800
-Received: from [10.125.252.152] (abudanko-mobl.ccr.corp.intel.com [10.125.252.152])
-        by linux.intel.com (Postfix) with ESMTP id 2FE115800E0;
-        Thu,  7 Feb 2019 05:32:32 -0800 (PST)
-Subject: [PATCH v2 4/4] perf-security: wrap paragraphs on 72 columns
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+        Thu, 7 Feb 2019 08:34:06 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:48226 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfBGNeF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:34:05 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17DXjA1003261;
+        Thu, 7 Feb 2019 07:33:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549546425;
+        bh=zbIBpB2cXOPS50zV+IiiAYMqsawrEfJjK71p7GmuO/I=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cHzmNosn0eB+HjFkQBuuyEk+SUUPMPImGP/gtFZBPUH7tb2wgT3Luz2qvzSGFhaxO
+         DBjFy0PCd97qKQ4N1ZCmMgjOxE4e9Olj3GZN4VEWY3mzZlSMwcIoBxovKEasSIKWXq
+         8G78Nn+NVlzn1WZpQQInJpgpBMigSLKkBB/dfY4U=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17DXj6U012696
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Feb 2019 07:33:45 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
+ Feb 2019 07:33:45 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 7 Feb 2019 07:33:45 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17DXgnI017184;
+        Thu, 7 Feb 2019 07:33:43 -0600
+Subject: Re: [PATCH 13/35] ARM: davinci: aintc: add a new config structure
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <4858caa3-6f53-fb51-984e-369571f71793@linux.intel.com>
-Date:   Thu, 7 Feb 2019 16:32:31 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-14-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <286bc0df-2f43-53c4-025d-d042d0b4884a@ti.com>
+Date:   Thu, 7 Feb 2019 19:03:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190131133928.17985-14-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 31/01/19 7:09 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add a config structure that will be used by aintc-based platforms.
+> It contains the register range resource, number of interrupts and
+> a list of priorities.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Implemented formatting of paragraphs to be not wider than 72 columns.
+Subject prefix needs to be adjusted (not a mach-davinci patch)
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- Documentation/admin-guide/perf-security.rst | 276 +++++++++++---------
- 1 file changed, 148 insertions(+), 128 deletions(-)
-
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-index f27a62805651..6a26067f5fd6 100644
---- a/Documentation/admin-guide/perf-security.rst
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -6,84 +6,94 @@ Perf Events and tool security
- Overview
- --------
- 
--Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_ can
--impose a considerable risk of leaking sensitive data accessed by monitored
--processes. The data leakage is possible both in scenarios of direct usage of
--perf_events system call API [2]_ and over data files generated by Perf tool user
--mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
--perf_events performance monitoring units (PMU) [2]_ and Perf collect and expose
--for performance analysis. Collected system and performance data may be split into
--several categories:
--
--1. System hardware and software configuration data, for example: a CPU model and
--   its cache configuration, an amount of available memory and its topology, used
--   kernel and Perf versions, performance monitoring setup including experiment
--   time, events configuration, Perf command line parameters, etc.
--
--2. User and kernel module paths and their load addresses with sizes, process and
--   thread names with their PIDs and TIDs, timestamps for captured hardware and
--   software events.
--
--3. Content of kernel software counters (e.g., for context switches, page faults,
--   CPU migrations), architectural hardware performance counters (PMC) [8]_ and
--   machine specific registers (MSR) [9]_ that provide execution metrics for
--   various monitored parts of the system (e.g., memory controller (IMC), interconnect
--   (QPI/UPI) or peripheral (PCIe) uncore counters) without direct attribution to any
--   execution context state.
--
--4. Content of architectural execution context registers (e.g., RIP, RSP, RBP on
--   x86_64), process user and kernel space memory addresses and data, content of
--   various architectural MSRs that capture data from this category.
--
--Data that belong to the fourth category can potentially contain sensitive process
--data. If PMUs in some monitoring modes capture values of execution context registers
--or data from process memory then access to such monitoring capabilities requires
--to be ordered and secured properly. So, perf_events/Perf performance monitoring
--is the subject for security access control management [5]_ .
-+Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_
-+can impose a considerable risk of leaking sensitive data accessed by
-+monitored processes. The data leakage is possible both in scenarios of
-+direct usage of perf_events system call API [2]_ and over data files
-+generated by Perf tool user mode utility (Perf) [3]_ , [4]_ . The risk
-+depends on the nature of data that perf_events performance monitoring
-+units (PMU) [2]_ and Perf collect and expose for performance analysis.
-+Collected system and performance data may be split into several
-+categories:
-+
-+1. System hardware and software configuration data, for example: a CPU
-+   model and its cache configuration, an amount of available memory and
-+   its topology, used kernel and Perf versions, performance monitoring
-+   setup including experiment time, events configuration, Perf command
-+   line parameters, etc.
-+
-+2. User and kernel module paths and their load addresses with sizes,
-+   process and thread names with their PIDs and TIDs, timestamps for
-+   captured hardware and software events.
-+
-+3. Content of kernel software counters (e.g., for context switches, page
-+   faults, CPU migrations), architectural hardware performance counters
-+   (PMC) [8]_ and machine specific registers (MSR) [9]_ that provide
-+   execution metrics for various monitored parts of the system (e.g.,
-+   memory controller (IMC), interconnect (QPI/UPI) or peripheral (PCIe)
-+   uncore counters) without direct attribution to any execution context
-+   state.
-+
-+4. Content of architectural execution context registers (e.g., RIP, RSP,
-+   RBP on x86_64), process user and kernel space memory addresses and
-+   data, content of various architectural MSRs that capture data from
-+   this category.
-+
-+Data that belong to the fourth category can potentially contain
-+sensitive process data. If PMUs in some monitoring modes capture values
-+of execution context registers or data from process memory then access
-+to such monitoring capabilities requires to be ordered and secured
-+properly. So, perf_events/Perf performance monitoring is the subject for
-+security access control management [5]_ .
- 
- perf_events/Perf access control
- -------------------------------
- 
--To perform security checks, the Linux implementation splits processes into two
--categories [6]_ : a) privileged processes (whose effective user ID is 0, referred
--to as superuser or root), and b) unprivileged processes (whose effective UID is
--nonzero). Privileged processes bypass all kernel security permission checks so
--perf_events performance monitoring is fully available to privileged processes
--without access, scope and resource restrictions.
--
--Unprivileged processes are subject to a full security permission check based on
--the process's credentials [5]_ (usually: effective UID, effective GID, and
--supplementary group list).
--
--Linux divides the privileges traditionally associated with superuser into
--distinct units, known as capabilities [6]_ , which can be independently enabled
--and disabled on per-thread basis for processes and files of unprivileged users.
--
--Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated as
--privileged processes with respect to perf_events performance monitoring and
--bypass *scope* permissions checks in the kernel.
--
--Unprivileged processes using perf_events system call API is also subject for
--PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose outcome
--determines whether monitoring is permitted. So unprivileged processes provided
--with CAP_SYS_PTRACE capability are effectively permitted to pass the check.
--
--Other capabilities being granted to unprivileged processes can effectively
--enable capturing of additional data required for later performance analysis of
--monitored processes or a system. For example, CAP_SYSLOG capability permits
--reading kernel space memory addresses from /proc/kallsyms file.
-+To perform security checks, the Linux implementation splits processes
-+into two categories [6]_ : a) privileged processes (whose effective user
-+ID is 0, referred to as superuser or root), and b) unprivileged
-+processes (whose effective UID is nonzero). Privileged processes bypass
-+all kernel security permission checks so perf_events performance
-+monitoring is fully available to privileged processes without access,
-+scope and resource restrictions.
-+
-+Unprivileged processes are subject to a full security permission check
-+based on the process's credentials [5]_ (usually: effective UID,
-+effective GID, and supplementary group list).
-+
-+Linux divides the privileges traditionally associated with superuser
-+into distinct units, known as capabilities [6]_ , which can be
-+independently enabled and disabled on per-thread basis for processes and
-+files of unprivileged users.
-+
-+Unprivileged processes with enabled CAP_SYS_ADMIN capability are treated
-+as privileged processes with respect to perf_events performance
-+monitoring and bypass *scope* permissions checks in the kernel.
-+
-+Unprivileged processes using perf_events system call API is also subject
-+for PTRACE_MODE_READ_REALCREDS ptrace access mode check [7]_ , whose
-+outcome determines whether monitoring is permitted. So unprivileged
-+processes provided with CAP_SYS_PTRACE capability are effectively
-+permitted to pass the check.
-+
-+Other capabilities being granted to unprivileged processes can
-+effectively enable capturing of additional data required for later
-+performance analysis of monitored processes or a system. For example,
-+CAP_SYSLOG capability permits reading kernel space memory addresses from
-+/proc/kallsyms file.
- 
- perf_events/Perf privileged users
- ---------------------------------
- 
--Mechanisms of capabilities, privileged capability-dumb files [6]_ and file system
--ACLs [10]_ can be used to create a dedicated group of perf_events/Perf privileged
--users who are permitted to execute performance monitoring without scope limits.
--The following steps can be taken to create such a group of privileged Perf users.
-+Mechanisms of capabilities, privileged capability-dumb files [6]_ and
-+file system ACLs [10]_ can be used to create a dedicated group of
-+perf_events/Perf privileged users who are permitted to execute
-+performance monitoring without scope limits. The following steps can be
-+taken to create such a group of privileged Perf users.
- 
--1. Create perf_users group of privileged Perf users, assign perf_users group to
--   Perf tool executable and limit access to the executable for other users in the
--   system who are not in the perf_users group:
-+1. Create perf_users group of privileged Perf users, assign perf_users
-+   group to Perf tool executable and limit access to the executable for
-+   other users in the system who are not in the perf_users group:
- 
- ::
- 
-@@ -97,8 +107,9 @@ The following steps can be taken to create such a group of privileged Perf users
-    # ls -alhF
-    -rwxr-x---  2 root perf_users  11M Oct 19 15:12 perf
- 
--2. Assign the required capabilities to the Perf tool executable file and enable
--   members of perf_users group with performance monitoring privileges [6]_ :
-+2. Assign the required capabilities to the Perf tool executable file and
-+   enable members of perf_users group with performance monitoring
-+   privileges [6]_ :
- 
- ::
- 
-@@ -108,83 +119,92 @@ The following steps can be taken to create such a group of privileged Perf users
-    # getcap perf
-    perf = cap_sys_ptrace,cap_sys_admin,cap_syslog+ep
- 
--As a result, members of perf_users group are capable of conducting performance
--monitoring by using functionality of the configured Perf tool executable that,
--when executes, passes perf_events subsystem scope checks.
-+As a result, members of perf_users group are capable of conducting
-+performance monitoring by using functionality of the configured Perf
-+tool executable that, when executes, passes perf_events subsystem scope
-+checks.
- 
--This specific access control management is only available to superuser or root
--running processes with CAP_SETPCAP, CAP_SETFCAP [6]_ capabilities.
-+This specific access control management is only available to superuser
-+or root running processes with CAP_SETPCAP, CAP_SETFCAP [6]_
-+capabilities.
- 
- perf_events/Perf unprivileged users
- -----------------------------------
- 
--perf_events/Perf *scope* and *access* control for unprivileged processes is
--governed by perf_event_paranoid [2]_ setting:
-+perf_events/Perf *scope* and *access* control for unprivileged processes
-+is governed by perf_event_paranoid [2]_ setting:
- 
- -1:
--     Impose no *scope* and *access* restrictions on using perf_events performance
--     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
--     ignored when allocating memory buffers for storing performance data.
--     This is the least secure mode since allowed monitored *scope* is
--     maximized and no perf_events specific limits are imposed on *resources*
--     allocated for performance monitoring.
-+     Impose no *scope* and *access* restrictions on using perf_events
-+     performance monitoring. Per-user per-cpu perf_event_mlock_kb [2]_
-+     locking limit is ignored when allocating memory buffers for storing
-+     performance data. This is the least secure mode since allowed
-+     monitored *scope* is maximized and no perf_events specific limits
-+     are imposed on *resources* allocated for performance monitoring.
- 
- >=0:
-      *scope* includes per-process and system wide performance monitoring
--     but excludes raw tracepoints and ftrace function tracepoints monitoring.
--     CPU and system events happened when executing either in user or
--     in kernel space can be monitored and captured for later analysis.
--     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
--     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
-+     but excludes raw tracepoints and ftrace function tracepoints
-+     monitoring. CPU and system events happened when executing either in
-+     user or in kernel space can be monitored and captured for later
-+     analysis. Per-user per-cpu perf_event_mlock_kb locking limit is
-+     imposed but ignored for unprivileged processes with CAP_IPC_LOCK
-+     [6]_ capability.
- 
- >=1:
--     *scope* includes per-process performance monitoring only and excludes
--     system wide performance monitoring. CPU and system events happened when
--     executing either in user or in kernel space can be monitored and
--     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
--     locking limit is imposed but ignored for unprivileged processes with
--     CAP_IPC_LOCK capability.
-+     *scope* includes per-process performance monitoring only and
-+     excludes system wide performance monitoring. CPU and system events
-+     happened when executing either in user or in kernel space can be
-+     monitored and captured for later analysis. Per-user per-cpu
-+     perf_event_mlock_kb locking limit is imposed but ignored for
-+     unprivileged processes with CAP_IPC_LOCK capability.
- 
- >=2:
--     *scope* includes per-process performance monitoring only. CPU and system
--     events happened when executing in user space only can be monitored and
--     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
--     locking limit is imposed but ignored for unprivileged processes with
--     CAP_IPC_LOCK capability.
-+     *scope* includes per-process performance monitoring only. CPU and
-+     system events happened when executing in user space only can be
-+     monitored and captured for later analysis. Per-user per-cpu
-+     perf_event_mlock_kb locking limit is imposed but ignored for
-+     unprivileged processes with CAP_IPC_LOCK capability.
- 
- perf_events/Perf resource control
- ---------------------------------
- 
--The perf_events system call API [2]_ allocates file descriptors for every configured
--PMU event. Open file descriptors are a per-process accountable resource governed
--by the RLIMIT_NOFILE [11]_ limit (ulimit -n), which is usually derived from the login
--shell process. When configuring Perf collection for a long list of events on a
--large server system, this limit can be easily hit preventing required monitoring
--configuration. RLIMIT_NOFILE limit can be increased on per-user basis modifying
--content of the limits.conf file [12]_ on some systems. Ordinarily, a Perf sampling session
--(perf record) requires an amount of open perf_event file descriptors that is not
--less than a number of monitored events multiplied by a number of monitored CPUs.
--
--An amount of memory available to user processes for capturing performance monitoring
--data is governed by the perf_event_mlock_kb [2]_ setting. This perf_event specific
--resource setting defines overall per-cpu limits of memory allowed for mapping
--by the user processes to execute performance monitoring. The setting essentially
--extends the RLIMIT_MEMLOCK [11]_ limit, but only for memory regions mapped specially
-+The perf_events system call API [2]_ allocates file descriptors for
-+every configured PMU event. Open file descriptors are a per-process
-+accountable resource governed by the RLIMIT_NOFILE [11]_ limit
-+(ulimit -n), which is usually derived from the login shell process. When
-+configuring Perf collection for a long list of events on a large server
-+system, this limit can be easily hit preventing required monitoring
-+configuration. RLIMIT_NOFILE limit can be increased on per-user basis
-+modifying content of the limits.conf file [12]_ on some systems.
-+Ordinarily, a Perf sampling session (perf record) requires an amount of
-+open perf_event file descriptors that is not less than a number of
-+monitored events multiplied by a number of monitored CPUs.
-+
-+An amount of memory available to user processes for capturing
-+performance monitoring data is governed by the perf_event_mlock_kb [2]_
-+setting. This perf_event specific resource setting defines overall
-+per-cpu limits of memory allowed for mapping by the user processes to
-+execute performance monitoring. The setting essentially extends the
-+RLIMIT_MEMLOCK [11]_ limit, but only for memory regions mapped specially
- for capturing monitored performance events and related data.
- 
--For example, if a machine has eight cores and perf_event_mlock_kb limit is set
--to 516 KiB, then a user process is provided with 516 KiB * 8 = 4128 KiB of memory
--above the RLIMIT_MEMLOCK limit (ulimit -l) for perf_event mmap buffers. In particular,
--this means that, if the user wants to start two or more performance monitoring
--processes, the user is required to manually distribute available 4128 KiB between the
--monitoring processes, for example, using the --mmap-pages Perf record mode option.
--Otherwise, the first started performance monitoring process allocates all available
--4128 KiB and the other processes will fail to proceed due to the lack of memory.
--
--RLIMIT_MEMLOCK and perf_event_mlock_kb resource costraints are ignored for
--processes with the CAP_IPC_LOCK capability. Thus, perf_events/Perf privileged users
--can be provided with memory above the constraints for perf_events/Perf performance
--monitoring purpose by providing the Perf executable with CAP_IPC_LOCK capability.
-+For example, if a machine has eight cores and perf_event_mlock_kb limit
-+is set to 516 KiB, then a user process is provided with 516 KiB * 8 =
-+4128 KiB of memory above the RLIMIT_MEMLOCK limit (ulimit -l) for
-+perf_event mmap buffers. In particular, this means that, if the user
-+wants to start two or more performance monitoring processes, the user is
-+required to manually distribute available 4128 KiB between the
-+monitoring processes, for example, using the --mmap-pages Perf record
-+mode option. Otherwise, the first started performance monitoring process
-+allocates all available 4128 KiB and the other processes will fail to
-+proceed due to the lack of memory.
-+
-+RLIMIT_MEMLOCK and perf_event_mlock_kb resource costraints are ignored
-+for processes with the CAP_IPC_LOCK capability. Thus, perf_events/Perf
-+privileged users can be provided with memory above the constraints for
-+perf_events/Perf performance monitoring purpose by providing the Perf
-+executable with CAP_IPC_LOCK capability.
- 
- Bibliography
- ------------
+Thanks,
+Sekhar
