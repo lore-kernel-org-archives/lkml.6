@@ -2,59 +2,60 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7774C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D798C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42FA21902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD2021916
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kn9CL5fJ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xekeLArv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbfBGLRm (ORCPT
+        id S1727127AbfBGLRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:17:42 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35300 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfBGLRl (ORCPT
+        Thu, 7 Feb 2019 06:17:46 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45241 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfBGLRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:17:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z18so10345449wrh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:17:40 -0800 (PST)
+        Thu, 7 Feb 2019 06:17:42 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q15so11040561wro.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:17:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TSwUXwstcS5MWZYT0KETNDOkJuSS6swPSFLDu7aeu/g=;
-        b=kn9CL5fJEF03kKdsiiWjtrbYh/EQ3PwowcBDMnq3ARppJstAw47yqeGmHewMvE8oX0
-         C4lKQg1MD+ydEH0Yl8brbE+V1rh/x6V6bkXTdisNeTcJXiqoafu2G+82hBsRJxh78MJh
-         lb7WNfuGngQ8cDeanvnkx9c0P9yMB9hftMEzYUiAEfad0CdV18pseFQDaQTHkSu8GhPY
-         BGeTGPdAADmjU5rOaT6eS7hcNUahGU+IiWl6l9VTIRkV6/wTj0pFM8/YRGkQo0zmXfUE
-         PEKn56ILQoJIT2tsM73XRqD4BqvneIltz0zfNxkQG7o818TJoUFqMYQRpAEQcrGUpTW1
-         DCjA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=LbpoBRsypdTGREkLevfYOmN/+f576KJEExTxTQozG1I=;
+        b=xekeLArv2SqmtefnkYskRI5SOxiZlgYE/u+IpxrKpPoL9f4dMAk+VWS9YMso+XSKso
+         RtzyKMM9rVn9ZnzMy7bBBDx7zPGDa3lVhbbddrjV5QgRscd3qxa0HO5ar6PFMsgOvBH7
+         Fp3FyHFPlNBqHO6NqpFw85H/QIXQBE2q1gg/rpq32Pr7YyPFSi5i+cXclkMBSdaSPu+N
+         WDCOrIEuvVP60iD2Fzqxx04lYuwvFCAIFdV0Iq7+Mo4LIbbWT02GTpVoLBhfPuWgQrrH
+         rSwP/BIsTPKM32+B9mvzgOgDGho6IUV6MvlJlcnnRTsaiS2oRxh2VYlm9/Wr5tKfvDU2
+         A0VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TSwUXwstcS5MWZYT0KETNDOkJuSS6swPSFLDu7aeu/g=;
-        b=X4Ra8LvrHDmD66uTfVXxzZLBs7druyrIEU1DvGcg8GEURrEUlbiSShmqRZ5KsWx6GE
-         4WTGthFAYkRpsgUJqH/i9IKV8YMHjH6PklOQRv8fV+ukCyAkPPioRncgNmR275YxjcSN
-         lr+0rP3QFUOkcC73zN4iieFsANsA7uNDp5vT4b3oFfi+WU0IOcZHFFZastXNjn2VCHQb
-         ZmweJVm/XDq05/jKaY24KtFJeHAeM5a87JynI+46NqRg/EjqZytAl6qss64bkPacP3Lq
-         aDJ5WawLPIonY8z0cpuOJeJA6SxKzTBIzfAMPPtxZL9ECU58X+euynfPm+49KJJwMiSr
-         qvoQ==
-X-Gm-Message-State: AHQUAuZAUHOaS0MKlJZHXi6/FpzsHUVF1vWGknyqE3SpEDvKrTBv0bJ5
-        6LNC9VJv7XBXw9AjZ7XQeeBn+A==
-X-Google-Smtp-Source: AHgI3IbvcffGVQufgjI0mYmCMR2I7H2v4pzY3Qvf07ELBqRF/OvgNF4BNaNWWaXs/g858dlWMppdsQ==
-X-Received: by 2002:a5d:4ecd:: with SMTP id s13mr3720855wrv.110.1549538259754;
-        Thu, 07 Feb 2019 03:17:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=LbpoBRsypdTGREkLevfYOmN/+f576KJEExTxTQozG1I=;
+        b=i97NUMAA5Ez9lxwH5HUWE3EhYnGLig0s3wSKIocl6VDB4+Na9VDmPFvJNKm7uHpAfo
+         iEl3nsq8l2WeGhJKPxTRiTav0V9gLbH+L1+YJczhcdBG0LjOUeO09/kYEneMfBIa0KcL
+         kd+imV40klSZ0RqCaleAtwBjcxx7tlPwI1NrHGmbRqmof+T8H9aEvEwq6mz6sd/fqejE
+         jp+l7qkj/89hRaSG0dQzz5F9Qj4AfAmuVIn1fyN638X93cOy/8FYvRymH5CefIqxQ0ny
+         AxpCZLCAK07VtnGEBSR89G37bUoiRbP/SVpkM8HhwJt52KntHUUuKqhX0y5KbQxAVzDB
+         vJWA==
+X-Gm-Message-State: AHQUAuYhct5o6spjfjoER+NXg/MImkhFg5f/sqW0tDU/s50+q07Qb5CE
+        q+RppM6D2qBiq3USQJ5iZx4jdA==
+X-Google-Smtp-Source: AHgI3Ibyx9sci/B29k7DCAhPNZF6PlgRln+oZkpPg2znflAAlKybEU+QoLbKXKr0XAj6mQA6iRhgJw==
+X-Received: by 2002:adf:9123:: with SMTP id j32mr12508598wrj.122.1549538261159;
+        Thu, 07 Feb 2019 03:17:41 -0800 (PST)
 Received: from localhost.localdomain (42.red-95-121-90.dynamicip.rima-tde.net. [95.121.90.42])
-        by smtp.gmail.com with ESMTPSA id a62sm24490224wmf.47.2019.02.07.03.17.38
+        by smtp.gmail.com with ESMTPSA id a62sm24490224wmf.47.2019.02.07.03.17.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 07 Feb 2019 03:17:39 -0800 (PST)
+        Thu, 07 Feb 2019 03:17:40 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh@kernel.org,
         bjorn.andersson@linaro.org
@@ -64,10 +65,12 @@ Cc:     swboyd@chromium.org, andy.gross@linaro.org, shawn.guo@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         khasim.mohammed@linaro.org
-Subject: [PATCH v4 0/4] USB SS PHY for Qualcomm's QCS404
-Date:   Thu,  7 Feb 2019 12:17:30 +0100
-Message-Id: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH v4 1/4] dt-bindings: phy: remove qcom-dwc3-usb-phy
+Date:   Thu,  7 Feb 2019 12:17:31 +0100
+Message-Id: <20190207111734.24171-2-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
+References: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,60 +78,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This set adds USB SS PHY support to Qualcomm's QCS404 SoC
-The PHY is implemented using Synopsys' SS PHY IP
+This binding is not used by any driver.
 
-The code is losely based on Sriharsha Allenki's
-<sallenki@codeaurora.org> original implementation.
-
-v2:
-  enable OTG mode detection
-  move vdd voltage levels to driver
-  use bulk_ control interfaces
-  ss-phy-bindings [1]
-
-v3:
-  remove clk/regulator counters
-  vdd constrains in device tree
-  update error labels
-  fix get_optional vbus
-  allocate arrays statically
-  fix typos in bindings
-
-v4:
- dts:
-   make compatible tag more specific to the driver
-   define a connector node to contain the vbus regulator
-   fix the resets definition
-   fix example node
-   remove unused binding (qcom-dwc3-usb-phy)
-   connector: add optional property vbus-supply
- driver:
-   vbus regulator is no longer optional
-   
-[1] ss-phy-binding discussion:
- - qcom,dwc3-ss-usb-phy exist for a generic usb2/usb3 phy driver that
- was never merged. Rather than trying to re-use these bindings I chose
- to delete them for simplicity
- 
-
-Jorge Ramirez-Ortiz (4):
-  dt-bindings: phy: remove qcom-dwc3-usb-phy
-  dt-bindings: connector: Add vbus-supply property
-  dt-bindings: Add Qualcomm USB SuperSpeed PHY bindings
-  phy: qualcomm: usb: Add SuperSpeed PHY driver
-
- .../bindings/connector/usb-connector.txt      |   4 +
- .../bindings/phy/qcom,snps-usb-ssphy.txt      |  79 +++++
- .../bindings/phy/qcom-dwc3-usb-phy.txt        |  37 --
- drivers/phy/qualcomm/Kconfig                  |  11 +
- drivers/phy/qualcomm/Makefile                 |   1 +
- drivers/phy/qualcomm/phy-qcom-usb-ss.c        | 322 ++++++++++++++++++
- 6 files changed, 417 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ .../bindings/phy/qcom-dwc3-usb-phy.txt        | 37 -------------------
+ 1 file changed, 37 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
- create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-ss.c
 
+diff --git a/Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt b/Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
+deleted file mode 100644
+index a1697c27aecd..000000000000
+--- a/Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
++++ /dev/null
+@@ -1,37 +0,0 @@
+-Qualcomm DWC3 HS AND SS PHY CONTROLLER
+---------------------------------------
+-
+-DWC3 PHY nodes are defined to describe on-chip Synopsis Physical layer
+-controllers.  Each DWC3 PHY controller should have its own node.
+-
+-Required properties:
+-- compatible: should contain one of the following:
+-	- "qcom,dwc3-hs-usb-phy" for High Speed Synopsis PHY controller
+-	- "qcom,dwc3-ss-usb-phy" for Super Speed Synopsis PHY controller
+-- reg: offset and length of the DWC3 PHY controller register set
+-- #phy-cells: must be zero
+-- clocks: a list of phandles and clock-specifier pairs, one for each entry in
+-  clock-names.
+-- clock-names: Should contain "ref" for the PHY reference clock
+-
+-Optional clocks:
+-  "xo"		External reference clock
+-
+-Example:
+-		phy@100f8800 {
+-			compatible = "qcom,dwc3-hs-usb-phy";
+-			reg = <0x100f8800 0x30>;
+-			clocks = <&gcc USB30_0_UTMI_CLK>;
+-			clock-names = "ref";
+-			#phy-cells = <0>;
+-
+-		};
+-
+-		phy@100f8830 {
+-			compatible = "qcom,dwc3-ss-usb-phy";
+-			reg = <0x100f8830 0x30>;
+-			clocks = <&gcc USB30_0_MASTER_CLK>;
+-			clock-names = "ref";
+-			#phy-cells = <0>;
+-
+-		};
 -- 
 2.20.1
 
