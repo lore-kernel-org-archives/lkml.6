@@ -2,94 +2,186 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D129C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D795C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3926720857
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:31:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AKlzO0rF"
+	by mail.kernel.org (Postfix) with ESMTP id 471C221721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:35:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549571752;
+	bh=2MzJld4j6HNnmPdZQtxAwolfBTJ/b9uQc0fC7nuFfGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bVNHYkmGt9TD68lQ1HYZ6YAN2VDa0u6RyAO9dOwCGtrAlQ2ogUfbwnQBhXek2fFoF
+	 IY1CrBIKkGP99RkGsMWf24/xl9CFmDevoTlGs+vIT4s8BksCi7jYAr7Q2zu+0VgCS8
+	 PwIy80Kg3GjFfZTG+Ql0VphYYNwezSFzBdNwQRA8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfBGUbb (ORCPT
+        id S1727361AbfBGUfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:31:31 -0500
-Received: from ozlabs.org ([203.11.71.1]:57683 "EHLO ozlabs.org"
+        Thu, 7 Feb 2019 15:35:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfBGUbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:31:31 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726614AbfBGUfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 15:35:50 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wVMh3LSRz9s4Z;
-        Fri,  8 Feb 2019 07:31:28 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549571488;
-        bh=AnRp2/679A/u+ch6HJZf+s7c0fRA+khtBdq33mWAVag=;
-        h=Date:From:To:Cc:Subject:From;
-        b=AKlzO0rFhv+SWAUvmgpxBhD6R7OdI8sTQykwk9FnTMfeRZ//gicZ5RBmlDw4Igvp5
-         xtdzaEt3kwX4sO7AJZZdPaYK81TF4qh1NoABFM9GFbZRSmlEvYOO9W0JxUUbicx4K2
-         buUZNfZ/5OD+uTDZm9bbwKLIqgXunMnUtLSZXWbMkdvkc+/rpkoQCw8SNDkErTqp1T
-         Y1/kDXK+VY5kxeXkSARpfwgUMYgjG5W3DxXFTRNcoEFzDOB5/ypni8oyqR7Wknz/jc
-         BxH9wj8okVXJ/dS+sP/mx0fioiXlSjEagVj6OqBTv9/Ym3Aw0N7MPq1p5BJf7HtxXk
-         8Dih94AIW96HA==
-Date:   Fri, 8 Feb 2019 07:31:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiada Wang <jiada_wang@mentor.com>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
-Message-ID: <20190208073113.0043c41b@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id DCBE620663;
+        Thu,  7 Feb 2019 20:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549571748;
+        bh=2MzJld4j6HNnmPdZQtxAwolfBTJ/b9uQc0fC7nuFfGA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hFvH+ljmWPslk9Bh2QpC5Hc08JhhYZ4ZpaiL2dDWGLBT1Ncgs5KDPIrI6xjt7DL28
+         G9ZhJMeWNoJ4n7c0AtlYQ/RPxQ+v0jqHLuJq9wrJA44PWy1HHY7TP0Nkqt6tLlr03O
+         Ri4SLyMmIw86q2Vv8z1+n+mhDz5t6r+5j3uCx5SY=
+Date:   Thu, 7 Feb 2019 14:35:46 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     sathyanarayanan.kuppuswamy@linux.intel.com
+Cc:     joro@8bytes.org, dwmw2@infradead.org, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, jacob.jun.pan@intel.com,
+        keith.busch@intel.com, Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v1 1/2] PCI: ATS: Add function to check PRG response
+ PASID bit status.
+Message-ID: <20190207203546.GL7268@google.com>
+References: <cover.1549479043.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <2be716037209f722304e94da6df39aec5a37f236.1549479043.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rWI=/q4=d0Ydc7drSuSVCOv"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2be716037209f722304e94da6df39aec5a37f236.1549479043.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rWI=/q4=d0Ydc7drSuSVCOv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+"PCI/ATS: Add pci_pggrp_rsp_need_pasid() interface"
 
-In commit
+On Thu, Feb 07, 2019 at 10:37:58AM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+> Add a new function to return the status of PRG response PASID
+> required bit in PRI status register. This function will be used by
 
-  76379dfbfd7c ("ASoC: rsnd: ssiu: correct shift bit for ssiu9")
+"return the PRG Response PASID Required bit in the Page Request Status
+Register".
 
-Fixes tag
+That's just to make it clear exactly what the name of the bit is.
+Without the capitalization, you can't tell where the name itself
+begins.
 
-  Fixes: commit b7169ddea2f2 ("ASoC: rsnd: remove RSND_REG_ from rsnd_reg")
+> drivers like IOMMU, if it is required to enforce the PASID required for
+> page-group responses.
 
-has these problem(s):
+If I'm reading the spec (PCIe r4.0, sec 10.5.2.3) correctly, when this bit
+is set, it means the Function expects a PASID on responses it receives
+from the host.  It's not so much that the IOMMU "enforces" anything;
+it's just that when this bit is set, the IOMMU must supply the PASID
+in its responses to that Function.
 
-  - leading word 'commit' unexpected
+s/page-group responses/PRG (Page Request Group) Response Messages/
 
---=20
-Cheers,
-Stephen Rothwell
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Suggested-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> ---
+>  drivers/pci/ats.c             | 27 +++++++++++++++++++++++++++
+>  include/linux/pci-ats.h       |  5 +++++
+>  include/uapi/linux/pci_regs.h |  1 +
+>  3 files changed, 33 insertions(+)
+> 
+> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+> index 5b78f3b1b918..666d03332944 100644
+> --- a/drivers/pci/ats.c
+> +++ b/drivers/pci/ats.c
+> @@ -368,6 +368,33 @@ int pci_pasid_features(struct pci_dev *pdev)
+>  }
+>  EXPORT_SYMBOL_GPL(pci_pasid_features);
+>  
+> +/**
+> + * pci_pggrp_rsp_need_pasid - Return PRG response PASID required bit status.
 
---Sig_/rWI=/q4=d0Ydc7drSuSVCOv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+pci_prg_resp_pasid_required()?
 
------BEGIN PGP SIGNATURE-----
+"PRG" seems to be the standard spec terminology, so I think using
+"pggrp" muddies the water a little bit.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxclZoACgkQAVBC80lX
-0GxYhwf+Kho1PKVJTzRqm4LQGZu/vgljgR5TyvU330rZOmyUxQCo15Xo99RAk9Qn
-FluaxERc+LdXcaYnF5sZOUAzb3f0qNL9smSGFJnXhxBJJR8pQRJz8CP+ODPRmeeh
-tbZMgMZOE/RofEjcb8ncSbyiTyRg/4+ozoouDu1HY3OFyHAweQVaSWSi9L5s6gQq
-KP4uu/Xv3MAjkXGpVqbZ7jFno2n3Wof0vg4LY1vUdByL0ADV3HA/sCNxBqkzPAa3
-9fccRoH65WKWTfAfS4kXSxPohAKpH72/cVLESC/UzOF9BXI3RPuB8dziTzWsUvdT
-ldZAWmxNQOopgIHLPuirACil+b501Q==
-=dj9V
------END PGP SIGNATURE-----
+> + * @pdev: PCI device structure
+> + *
+> + * Returns positive if PASID is required, 0 otherwise.
+> + *
+> + * Eventhough the PRG response PASID status is read from PRI status
+> + * register, Since this API will mainly be used by PASID users, this
+> + * function is defined within #ifdef CONFIG_PCI_PASID instead of
+> + * CONFIG_PCI_PRI.
 
---Sig_/rWI=/q4=d0Ydc7drSuSVCOv--
+s/Eventhough/Even though/
+s/Since/since/
+
+> + *
+> + */
+> +int pci_pggrp_rsp_need_pasid(struct pci_dev *pdev)
+> +{
+> +	u16 status;
+> +	int pos;
+> +
+> +	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
+> +	if (!pos)
+> +		return 0;
+> +
+> +	pci_read_config_word(pdev, pos + PCI_PRI_STATUS, &status);
+> +
+> +	return status & PCI_PRI_STATUS_PASID;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_pggrp_rsp_need_pasid);
+> +
+>  #define PASID_NUMBER_SHIFT	8
+>  #define PASID_NUMBER_MASK	(0x1f << PASID_NUMBER_SHIFT)
+>  /**
+> diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
+> index 7c4b8e27268c..ea29c7c64482 100644
+> --- a/include/linux/pci-ats.h
+> +++ b/include/linux/pci-ats.h
+> @@ -40,6 +40,7 @@ void pci_disable_pasid(struct pci_dev *pdev);
+>  void pci_restore_pasid_state(struct pci_dev *pdev);
+>  int pci_pasid_features(struct pci_dev *pdev);
+>  int pci_max_pasids(struct pci_dev *pdev);
+> +int pci_pggrp_rsp_need_pasid(struct pci_dev *pdev);
+>  
+>  #else  /* CONFIG_PCI_PASID */
+>  
+> @@ -66,6 +67,10 @@ static inline int pci_max_pasids(struct pci_dev *pdev)
+>  	return -EINVAL;
+>  }
+>  
+> +static int pci_pggrp_rsp_need_pasid(struct pci_dev *pdev)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_PCI_PASID */
+>  
+>  
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index e1e9888c85e6..898be572b010 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -880,6 +880,7 @@
+>  #define  PCI_PRI_STATUS_RF	0x001	/* Response Failure */
+>  #define  PCI_PRI_STATUS_UPRGI	0x002	/* Unexpected PRG index */
+>  #define  PCI_PRI_STATUS_STOPPED	0x100	/* PRI Stopped */
+> +#define  PCI_PRI_STATUS_PASID	0x8000	/* PRG Response PASID Required */
+>  #define PCI_PRI_MAX_REQ		0x08	/* PRI max reqs supported */
+>  #define PCI_PRI_ALLOC_REQ	0x0c	/* PRI max reqs allowed */
+>  #define PCI_EXT_CAP_PRI_SIZEOF	16
+> -- 
+> 2.20.1
+> 
