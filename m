@@ -2,135 +2,123 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F6BC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDD5C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1457921916
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549552974;
-	bh=GoPmwo8g3fAlN59U/SM3KKvdXY/afU1d4m1A7ry0mIk=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=rh8RR/BF1W906LmM53IS6eEeelyNay2BUgs/TWbK1EjK2F7NJjVUtRzXsDhfr2uVT
-	 htZJ+r7WWymiCIuEzhzp7NR8hDx3XJFDEoo6GGwpNKwxs/sG20OBYIa9mP7RfQ/a4q
-	 vSEFUsfkNGaZpde1Yw24dgmC2ExRUNi22hjJ5B5k=
+	by mail.kernel.org (Postfix) with ESMTP id 8C13521916
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:22:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="MX6TWWQw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfBGPWw (ORCPT
+        id S1727141AbfBGPWz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:22:52 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44038 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfBGPWv (ORCPT
+        Thu, 7 Feb 2019 10:22:55 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:57085 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfBGPWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:22:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Dgzz07QSRvIT7sO+VX+hSWiVCx8UC4VPe2OpSyOLgzI=; b=w/dBjj+CugED
-        61uvo03EOOHVqTC35nibgqsCv7jzX9zJOUeLF5+QlnkDsAicCgVPi7Q+SqFBTM+GUAbcJs0N5u06m
-        OqbN7ODdjrehejsUoUDurr5pwzXZ+iF5h+AXxJ8YV6XQnlIFWcMl581gePkFNm3W4QBfz7jcnO4FX
-        dsC2s=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1grlVg-0006OX-Vq; Thu, 07 Feb 2019 15:22:41 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9A3251127EF9; Thu,  7 Feb 2019 15:22:35 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: codecs: jz4740: Use SPDX license notifier" to the asoc tree
-In-Reply-To:  <20190207133143.5232-3-paul@crapouillou.net>
-X-Patchwork-Hint: ignore
-Message-Id: <20190207152235.9A3251127EF9@debutante.sirena.org.uk>
-Date:   Thu,  7 Feb 2019 15:22:35 +0000 (GMT)
+        Thu, 7 Feb 2019 10:22:52 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 772D525B7E2;
+        Fri,  8 Feb 2019 02:22:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1549552968; bh=0Gg+/3ZS/T5JMLaXR2tKuPZLfBl6dZRemVfHwM4Rw/Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MX6TWWQwhgjTNzcV8CcbAvZC1UH+MEyg+7At1XdP7APfv8YYeO67mw7ZG7bK1XR7J
+         E/QyizHlAYm055380he/Vkvc6DkIKqQutLRWhr4xYIIsBldvLrGFKdOQU2CbGQrgBq
+         jMgzLsg6/w8qNffmSmb7p+iacPL70OMacsfOEQso=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 816829444AA; Thu,  7 Feb 2019 16:22:46 +0100 (CET)
+Date:   Thu, 7 Feb 2019 16:22:46 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/5] clk: renesas: rcar-gen3: Support Z and Z2 clocks
+ with high frequency parents
+Message-ID: <20190207152242.xzxfvojyyvsqhmtt@verge.net.au>
+References: <20190207133550.13967-1-horms+renesas@verge.net.au>
+ <20190207133550.13967-4-horms+renesas@verge.net.au>
+ <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, Feb 07, 2019 at 04:05:58PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Feb 7, 2019 at 2:36 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
+> > (~4.29GHz).
+> >
+> > The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
+> > divisor. This leads to truncation of the dividend, which is the Z or Z2
+> 
+> truncation of the divisor.
+> 
+> > parent clock frequency in HZ, on platforms where frequency of that clock is
+> > greater than UINT32_MAX Hz.
+> >
+> > To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which an
+> 
+> which takes an
+> 
+> > unsigned 32bit dividend and divisor, is introduced.
+> 
+> 64-bit
+> 
+> > An earlier version of this patch made use of the existing
+> > DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
+> > dividend and divisor. However, this does not compile on 32bit systems, such
+> > as i386 and mips, when called with the types used at this callsite, an
+> > unsigned long long dividend and unsigned long divisor.
+> 
+> Thanks for fixing this!
+> 
+> > This work is in preparation for supporting the Z2 cloco on the R-Car Gen3
+> > E3 (r8a77990) SoC which has a 4.8GHz parent clock.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> With the above fixed:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> > ---
+> > v4: Add and use DIV64_U64_ROUND_CLOSEST
+> >
+> > v2: New patch
+> > ---
+> >  drivers/clk/renesas/rcar-gen3-cpg.c |  4 ++--
+> >  include/linux/math64.h              | 13 +++++++++++++
+> 
+> While I have no issue taking this change through the clk-renesas tree if
+> Andrew provides his Acked-by, I think the introduction of
+> DIV64_U64_ROUND_CLOSEST() should be a separate patch.
+> 
+> However, given commit 68600f623d69da42 ("mm: don't miss the last page
+> because of round-off error") added both DIV64_U64_ROUND_UP() and its
+> user under mm/, there's precedence for not splitting it off...
 
-   ASoC: codecs: jz4740: Use SPDX license notifier
+I also assumed a separate patch would be better,
+but I found little evidence of that practice being
+recently used in math64.h.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 06a334ae98d15c3e32ae4ef8ce18a241a12f3dff Mon Sep 17 00:00:00 2001
-From: Paul Cercueil <paul@crapouillou.net>
-Date: Thu, 7 Feb 2019 10:31:40 -0300
-Subject: [PATCH] ASoC: codecs: jz4740: Use SPDX license notifier
-
-Add license information as a standard SPDX license notifier instead of
-custom text.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/jz4740.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
-index 9395b583432c..9b3e1227a971 100644
---- a/sound/soc/codecs/jz4740.c
-+++ b/sound/soc/codecs/jz4740.c
-@@ -1,15 +1,8 @@
--/*
-- * Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- *  You should have received a copy of the  GNU General Public License along
-- *  with this program; if not, write  to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// JZ4740 CODEC driver
-+//
-+// Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
--- 
-2.20.1
-
+In any case, as I need to respin I'll break it out into
+a separate patch.
