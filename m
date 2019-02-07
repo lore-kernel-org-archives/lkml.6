@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28531C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2379C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C6C21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91E562080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539852;
-	bh=udosWZycVKCmAzWF5oS75tmvz342lbikJ3DehgwMCmg=;
+	s=default; t=1549539859;
+	bh=i1a7MoRb9G6dWfmh4oa0sPO8Elk5wvKoOJOdDQSYk8k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q3sfaSowDhQctFWZBqXSt8Xx2LOhyF28OtM/y+Ve6OuCdc2K5qS+5RgpRgFe1e+DZ
-	 U/L47rJTHKlQgjSC47I/GRjQUFia2hcvKunAyd+UX53vEHverMlWrrM9vxSDMUCw45
-	 dTlVVMsjWmoZP7hgCyW5P6knbxVmMTCzIPH2QECc=
+	b=hp0ygWtyyzs7On7hBiYn0MyNz7HJNA99x5W/G3keNOfE1YFMoIVzF0wCMrqTAOPo8
+	 oFKX6NlJKFnwl/MkagkYatI3Juw0oPbwBlHw2OMHYyz+/mvqcZGxyLfGyIcqmwGdVA
+	 rxmqNiA9TcNQyfCLcPEZF4eLr708YNwGUj65n31o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfBGLoK (ORCPT
+        id S1727129AbfBGLoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:44:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34660 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:44:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727677AbfBGLoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:44:06 -0500
+        id S1726748AbfBGLoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:44:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5C702080F;
-        Thu,  7 Feb 2019 11:44:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30EC02080F;
+        Thu,  7 Feb 2019 11:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539845;
-        bh=udosWZycVKCmAzWF5oS75tmvz342lbikJ3DehgwMCmg=;
+        s=default; t=1549539848;
+        bh=i1a7MoRb9G6dWfmh4oa0sPO8Elk5wvKoOJOdDQSYk8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Exavx/wGawBXL50PDh7VgqEvHtVSBrm9oBjfTvcZmEtxSXHqyt4cCz9ecpZLMf9G5
-         G18qPmrrL1HR5wKY4B8goFpXgIO+RplWBGKauSKLfcmF51A2y/E+6MxTJdZ/b8+qC9
-         DpE5PxPaCMknsbpwGZDwVbhGTINXIkPoU1qWlJ3I=
+        b=n/LeSV5uXv4vMq1mCSrrpFa/NkmaUUbdcNT1EckiN6J7zwhmzTSyyqLRTrAd1pzbL
+         w2fOIH1HfcDsN2z+z18PD5sKQrgAzVcyRW+5ZZmxZHGEsccUF6YKg8mA9tP/OuCgbx
+         /hP3gDlddOE12r0SbnmEY16OP6l8aBBYCMFqhbIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Rantala, Tommi" <tommi.t.rantala@nokia.com>
-Subject: [PATCH 4.4 34/34] rcu: Force boolean subscript for expedited stall warnings
-Date:   Thu,  7 Feb 2019 12:42:16 +0100
-Message-Id: <20190207113026.866667243@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 25/34] net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
+Date:   Thu,  7 Feb 2019 12:42:07 +0100
+Message-Id: <20190207113026.543590357@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -66,33 +66,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit ec3833ed02ae6ef2a933ece9de7cbab0c64c699e upstream.
+commit 88078d98d1bb085d72af8437707279e203524fa5 upstream.
 
-The cpu_online() function can return values other than 0 and 1, which
-can result in subscript overflow when applied to a two-element array.
-This commit allows for this behavior by using "!!" on the return value
-from cpu_online() when used as a subscript.
+After working on IP defragmentation lately, I found that some large
+packets defeat CHECKSUM_COMPLETE optimization because of NIC adding
+zero paddings on the last (small) fragment.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: "Rantala, Tommi" <tommi.t.rantala@nokia.com>
+While removing the padding with pskb_trim_rcsum(), we set skb->ip_summed
+to CHECKSUM_NONE, forcing a full csum validation, even if all prior
+fragments had CHECKSUM_COMPLETE set.
+
+We can instead compute the checksum of the part we are trimming,
+usually smaller than the part we keep.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/rcu/tree.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/skbuff.h |    5 ++---
+ net/core/skbuff.c      |   14 ++++++++++++++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3817,7 +3817,7 @@ static void synchronize_sched_expedited_
- 					continue;
- 				rdp = per_cpu_ptr(rsp->rda, cpu);
- 				pr_cont(" %d-%c%c%c", cpu,
--					"O."[cpu_online(cpu)],
-+					"O."[!!cpu_online(cpu)],
- 					"o."[!!(rdp->grpmask & rnp->expmaskinit)],
- 					"N."[!!(rdp->grpmask & rnp->expmaskinitnext)]);
- 			}
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2796,6 +2796,7 @@ static inline unsigned char *skb_push_rc
+ 	return skb->data;
+ }
+ 
++int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len);
+ /**
+  *	pskb_trim_rcsum - trim received skb and update checksum
+  *	@skb: buffer to trim
+@@ -2810,9 +2811,7 @@ static inline int pskb_trim_rcsum(struct
+ {
+ 	if (likely(len >= skb->len))
+ 		return 0;
+-	if (skb->ip_summed == CHECKSUM_COMPLETE)
+-		skb->ip_summed = CHECKSUM_NONE;
+-	return __pskb_trim(skb, len);
++	return pskb_trim_rcsum_slow(skb, len);
+ }
+ 
+ #define rb_to_skb(rb) rb_entry_safe(rb, struct sk_buff, rbnode)
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1502,6 +1502,20 @@ done:
+ }
+ EXPORT_SYMBOL(___pskb_trim);
+ 
++/* Note : use pskb_trim_rcsum() instead of calling this directly
++ */
++int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
++{
++	if (skb->ip_summed == CHECKSUM_COMPLETE) {
++		int delta = skb->len - len;
++
++		skb->csum = csum_sub(skb->csum,
++				     skb_checksum(skb, len, delta, 0));
++	}
++	return __pskb_trim(skb, len);
++}
++EXPORT_SYMBOL(pskb_trim_rcsum_slow);
++
+ /**
+  *	__pskb_pull_tail - advance tail of skb header
+  *	@skb: buffer to reallocate
 
 
