@@ -2,106 +2,109 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C07C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8E3C4151A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120B2218E0
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA862218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZNzDxOk"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rYm3pwTq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfBGAD5 (ORCPT
+        id S1726624AbfBGAPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:03:57 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37577 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfBGAD5 (ORCPT
+        Wed, 6 Feb 2019 19:15:12 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44078 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfBGAPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:03:57 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y126so3913530pfb.4;
-        Wed, 06 Feb 2019 16:03:56 -0800 (PST)
+        Wed, 6 Feb 2019 19:15:12 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p4so3906359plq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 16:15:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V0ERADXv9Gz9O1kdLx7xVCP5bUz3nHAwpxglz9jFLK4=;
-        b=mZNzDxOk4VnC/9IPoKhWZFCbKZOYo2fSLji9eYT2NUenK0LrEyNAQLLijd7RAoHnGZ
-         ZVE+Q2GTrWdt21x1OHU4cU7qtax+r4t1sFfqG9FxSjgErsqSmitmN7NTmtRIW+kk63Xk
-         55+TiliE+d6A5dGTTOsfLR2RaWSQsMzD0QuTEh9ru7MLhwqzvzoFeOsvv9v7Lg1Uv5sa
-         TLZtw0ifSgeC0BfknaF5FOC2MWsnJrCyj8ij/v+P24o4cSOjsv0BowVUFFG2UeupLhFM
-         IpDggL/TD6XfZoRsyVLrMp+3rADMFJFkHTzubvEA29ZkG8y15Fmf5vLkZZu5u7vc9R5j
-         HTtw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=yje4amOcq5mO6LIgG8ElJEar7nMZ/c/udNFZT9sHtWk=;
+        b=rYm3pwTqyB/byqalgLbzHR4GMWJvAH+wWxmY/4wty0tnnkXuo+14gHxt+0AEmqRpCn
+         IqdJwHRiUQbil/ooSUjvVCPvbayGMlHWEleuJiiVXYCiDKo+p5FK2Tt4NQNjq2Iy+cXy
+         yXwnkdcNAnFcD+5y1PK1uo3+uD6VbWdgdNIo5IXSw/Wjg0HNLlvczFzufmBF/e1fn5PM
+         zz2TT0bcLdl9gXca5zaSwyCMxzA2UsIKcG21OZVfOnQUTM0GiiwwyqIJdawGYyrsbC+X
+         yn/OUTUCADZI5K46fFKQeQDXHAfIC+aBfT4byKC7b+/X12cr3dadoxXJsYpZm1iI/DMu
+         sSoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V0ERADXv9Gz9O1kdLx7xVCP5bUz3nHAwpxglz9jFLK4=;
-        b=s8eKEYPenzZdIa9XAVc8H7jPw27kYrE2hmpUtleihF3eBCl3Gq6kdI+gMeUVXebcQt
-         mKFkCsTQOirFmCkBQMXkh6Ci6BHs9IlglceChZnOWQMQ8R6FjdCjoc992un+wwjAiWHd
-         05SfWuqLl7mkEJi/nFix08nZkI5oi1QXhoWCosxqEJyVvuC1Ds5Ox3MkPoBC159OPaoy
-         QI9kEnQYMBJckH8ZdVaVQxTO++c7Zwvuf7zWheHD4oWgd4SNbUeXtqoRmwxFnd2Tbgp7
-         xNmZuLpTwLrDD/iwmPAMLnfYdOyKgDIDONSLjMTr1ePfGAE40j8W5+xGuTA5BwhX4d5S
-         tnVA==
-X-Gm-Message-State: AHQUAubGVA9vQJmMqi827O9kOEyKE3/u4D+qKOEaA0opYfNVpZsJACq1
-        JU8oEkuyXE6CJEE8FiwyQJTJTRsW
-X-Google-Smtp-Source: AHgI3IbLTENHgEyPwbcpt0zk5zZlU/018G2eGFtA3OKPnNhjDdRaNPlld0Q66eIQ1jmq97lF4JFRLA==
-X-Received: by 2002:a63:374e:: with SMTP id g14mr12361159pgn.59.1549497836082;
-        Wed, 06 Feb 2019 16:03:56 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id f8sm5639853pga.24.2019.02.06.16.03.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 16:03:55 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-usb@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] xhci: Use ffs() to find page size in xhci_mem_init()
-Date:   Wed,  6 Feb 2019 16:03:49 -0800
-Message-Id: <20190207000349.7816-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=yje4amOcq5mO6LIgG8ElJEar7nMZ/c/udNFZT9sHtWk=;
+        b=ldGHGgslIYrAMWp0kwNV/Nnl6wz0FG1YAa4J/A/lwyTt9hT340sgafasAUXJV+omrC
+         fJMSRCRiKBh5GPOPHn3RNWKSZnxQao0tj6zWzNQWAZW170PRsdLKh9lUD/GG0Esm4ac/
+         u8zxjdr+mRHwBnang5pFJo3eNy9Pr1XsJKxOhw9g5Wv0EsELN5Xm+TIwfILykBAOBsvO
+         b/sPXou0ba4iBVtsRlV4IAGkvOGo4bRDDPohSDph5G7C8KO6Z2I7KxRMYVpN//B46BhM
+         MyD3FSLbJqV03QtbcGMKbPCCQ5ORnLqz7F/XNUrJd3waLCnGDqFrABtyEkRa54/+nDSn
+         YxCw==
+X-Gm-Message-State: AHQUAua5+VReY9/ua8XGXEs0xtZ2lHmHMv0QK5Ix2psV7sN2tnyJRgpc
+        RhErO6OGKmJX+3isyVdid2EOutb2lT31d0tLuCBe5A==
+X-Google-Smtp-Source: AHgI3IaWcd2w98GkwBwvt/3LkH+xQt/k++85mYSNhzxzzSUvTRx5K5UsZtkpbMPo8U1IkJJgIQH/c6UZ02xAd2qa8DI=
+X-Received: by 2002:a17:902:4464:: with SMTP id k91mr13673903pld.13.1549498510952;
+ Wed, 06 Feb 2019 16:15:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
+ <CAK7LNAQqHgLTJU1tBU+oU+1CrWBrDpnui=dQCrNpzW4N2R-Omw@mail.gmail.com> <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
+In-Reply-To: <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 6 Feb 2019 16:14:55 -0800
+Message-ID: <CAKwvOdn0ssTmUue3YVU_2VJKR=56X4j2JJxNAoZ6x3-inCwwhQ@mail.gmail.com>
+Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get page size order using ffs() instead of open coding it with a loop.
+On Tue, Feb 5, 2019 at 1:38 AM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> On 05/02/2019 09.05, Masahiro Yamada wrote:
+> > On Mon, Feb 4, 2019 at 4:24 AM Rasmus Villemoes
+> > <linux@rasmusvillemoes.dk> wrote:
+> >> +#define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__,=
+ #expr)
+> >> +#define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "=
+")
+> >
+> > What is the "" "" for?
+>
+> Good point. It's a leftover from when I had a fallback-implementation of
+> _Static_assert for gcc < 4.6, where I wanted to ensure that the second
+> argument was a string literal, even if my fallback implementation
+> ignored that argument. Now it's actually a little harmful, because
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/usb/host/xhci-mem.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+I had assumed it was for the "optional" part of the error message,
+since whether you pass a string error message or not, the C
+preprocessor should join them all together?
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 36a3eb8849f1..44b43c3d819f 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -2362,11 +2362,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
- 	page_size = readl(&xhci->op_regs->page_size);
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Supported page size register = 0x%x", page_size);
--	for (i = 0; i < 16; i++) {
--		if ((0x1 & page_size) != 0)
--			break;
--		page_size = page_size >> 1;
--	}
-+	i = ffs(page_size);
- 	if (i < 16)
- 		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Supported page size of %iK", (1 << (i+12)) / 1024);
--- 
-2.20.1
+>
+> foobar.c:5:34: error: expected string literal before =E2=80=98expected=E2=
+=80=99
+>  static_assert(sizeof(long) =3D=3D 8, expected 64 bit machine);
 
+Hopefully you'd put `expected` in double quotes?
+
+Note: I'm _very_ happy to see this being added.  Once it's landed, I
+too can think of some places that it would work better than
+BUILD_BUG_ON().
+--=20
+Thanks,
+~Nick Desaulniers
