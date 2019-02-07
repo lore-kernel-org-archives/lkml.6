@@ -2,117 +2,103 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5170C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC232C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A166F2073F
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F4A21721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nduG4CPS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GtwkA+xQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfBGXzu (ORCPT
+        id S1726832AbfBGX7z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:55:50 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36492 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbfBGXzu (ORCPT
+        Thu, 7 Feb 2019 18:59:55 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46135 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGX7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:55:50 -0500
-Received: by mail-it1-f194.google.com with SMTP id c9so4709147itj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:55:49 -0800 (PST)
+        Thu, 7 Feb 2019 18:59:54 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q1so1078593qkf.13;
+        Thu, 07 Feb 2019 15:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QMradZ8y8bj4nP1jg/AeFwYhEQ1GVuc8QuX5QQgsHpc=;
-        b=nduG4CPS5kfR2KxTCsaUmPZ8azuN/6/pOvCpH5S96naFwJed4RZa6P7N4ns9Q93SRe
-         sqFDMqp54k3wdIe3n47Z1awOej9wyUGobIqgrAOtorM8onUXpHaEnDiuEQ3GAInVPXsG
-         xE2wnuyw6xYZKc9YfBzizRTfwjbvoBZX2ay3w=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QIQy8UA2s3N6eKseWTIkLkpwPJxb2oawnJMhaA2ueEk=;
+        b=GtwkA+xQaymPlGV1dsBU1zjqynglrY1SJROabYWuZ9gwNVZ1dXU+y5L62Ex7RPh4zD
+         mlOxK8GzpOoAXyNTzXyY1sqTLgPa5a9zoqHGdLVj2B9cmHymY+0R3vq6faZPXE0fTmEM
+         Cn8t/dOnV+kchD+oDrL9WOI6iibC+akXhuGupxvwG6jUx8uLTIpwbvMznwiwojWwmSs8
+         fttiVIIfHg93kl5Dmjs/bcDBI4VOWEY1D4U70gfE3ThUasaHAIYPfAOocVvroDdi8sFP
+         FA17IvR1jw9Ma1n+3aS43wC+XlmSmLlN4KTZVXoqjkHA9ko7QYq+uWMAs58Z0Rr/4kav
+         V89g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QMradZ8y8bj4nP1jg/AeFwYhEQ1GVuc8QuX5QQgsHpc=;
-        b=SWycnCNm+u3YOoVUthCe3498vqzWneh4bijSkuw39d9BoYh2Rk0AYZfni9xwKJeqpw
-         tr3FePE4ovJW+b9o3kZO1xgBsDbpUBWeYT8TDhXW3bDCAnjfJUZg4i5L19eCENt7vwOZ
-         OZ07ijxvldUiy0NUZjJ5gXw17A0y8l246Xj4nttTyIM4Ig092AX3TRPMrC+uA6g88JQo
-         5pvcN4y8tUsFgizkFlWiLnTKeClBe/rovxfgl/xTxaRJPKwyipJ8hTIc+WjOyAWzMqIT
-         8mVD816rTKZc0Qa5aZXJb2pnVJ9jldlvJ52Lj6veD+5LmNM+1qNXz0YRfoy6UgFsvzb6
-         0c9Q==
-X-Gm-Message-State: AHQUAuaxKqXDMiZ3ok9CQOIv1CXZQxz//tAP1Q+GqWsZqlZM6TdhixVw
-        I01afC+yY8hi/sejmZ7KTYb0cuXXrb0=
-X-Google-Smtp-Source: AHgI3IaZ/WAAZDxVFizR+qg/NQT8eXhH/ugYuFF5lweAARELF/3/LScV5gx/KKckm8T0xLng/TiKsw==
-X-Received: by 2002:a05:660c:4c5:: with SMTP id v5mr2823860itk.104.1549583749019;
-        Thu, 07 Feb 2019 15:55:49 -0800 (PST)
-Received: from mail-it1-f181.google.com (mail-it1-f181.google.com. [209.85.166.181])
-        by smtp.gmail.com with ESMTPSA id q5sm218921ioh.22.2019.02.07.15.55.47
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QIQy8UA2s3N6eKseWTIkLkpwPJxb2oawnJMhaA2ueEk=;
+        b=cD9rlj2Uu+G2CAZdJOKHSP7ospZDLYRP2dHXg8fF+EDlx9S0yyZv26ToLIb0TLPsjZ
+         x5bwmtylmU3FIyd1/fSKTJg26QlmvcUT4t63f1BEsp/OcTGSZ6agOcdjmxNc/OPC5Pox
+         c7et90uQ9mg1F41dT7c5ojbKuRpi+PAPEtJVyvSof+jqo5XsDfS7cicbuzwyQC/UO7d+
+         8hH/ojsNV5hqss11ZD8Z8jiFTxZLHw7KzTDu2LwgqZlmMcww+IjgiWH7EAJ6adj35x/K
+         IvR5o7etVO7WgDT7CFMYrsHZ2pkiqm+dOG05dK4KGaDr8Ef5MetgxfTQsN9dtZ7mpC+d
+         mMLg==
+X-Gm-Message-State: AHQUAuaOIQATBNFS6R58enjOBim1Hq0kjLpPU94EuBcAP+4EEqM9IIzu
+        uyX761iOuCRomGj42298YpmN3hvD3GFZnA==
+X-Google-Smtp-Source: AHgI3IZF7Ku0pjH9dhIo25ezlhzqeWurBApmNzt5aRGWR1Mkf+xLNBELNkUvL5FfKLimxbWFd2a3Yg==
+X-Received: by 2002:a37:7442:: with SMTP id p63mr13688599qkc.320.1549583993144;
+        Thu, 07 Feb 2019 15:59:53 -0800 (PST)
+Received: from localhost.localdomain ([177.194.44.253])
+        by smtp.gmail.com with ESMTPSA id f36sm303310qtb.67.2019.02.07.15.59.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 15:55:47 -0800 (PST)
-Received: by mail-it1-f181.google.com with SMTP id c9so4708982itj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:55:47 -0800 (PST)
-X-Received: by 2002:a5e:a60f:: with SMTP id q15mr5385992ioi.140.1549583746746;
- Thu, 07 Feb 2019 15:55:46 -0800 (PST)
+        Thu, 07 Feb 2019 15:59:52 -0800 (PST)
+From:   "Lucas A. M. Magalhaes" <lucmaga@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     helen.koike@collabora.com, hverkuil@xs4all.nl, mchehab@kernel.org,
+        lkcamp@lists.libreplanetbr.org, linux-kernel@vger.kernel.org,
+        "Lucas A. M. Magalhaes" <lucmaga@gmail.com>
+Subject: [PATCH] media: vimc: Remove unused but set variables
+Date:   Thu,  7 Feb 2019 21:59:41 -0200
+Message-Id: <20190207235941.6600-1-lucmaga@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-3-thgarnie@chromium.org>
- <20190207121729.GE2414@zn.tnic> <CAJcbSZFe+Cn9+gEa4iv56sZE+WXXiHjeR8Mcte9s_HYr8QBrsw@mail.gmail.com>
- <20190207171145.GH2414@zn.tnic>
-In-Reply-To: <20190207171145.GH2414@zn.tnic>
-From:   Thomas Garnier <thgarnie@chromium.org>
-Date:   Thu, 7 Feb 2019 15:55:35 -0800
-X-Gmail-Original-Message-ID: <CAJcbSZFTiHcRM8gy8LbVMQYM2b7H=Gngbsf6bMGKmkDo7mKbjg@mail.gmail.com>
-Message-ID: <CAJcbSZFTiHcRM8gy8LbVMQYM2b7H=Gngbsf6bMGKmkDo7mKbjg@mail.gmail.com>
-Subject: Re: [PATCH v6 02/27] x86: Use symbol name in jump table for PIE support
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nadav Amit <namit@vmware.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 9:11 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Feb 07, 2019 at 09:04:45AM -0800, Thomas Garnier wrote:
-> > I assume that's an optimisation done by gcc later.
->
-> So why is that change even needed? Where does it break?
->
-> > The P modifier in the documentation does state that it is used to
-> > generate PIC code.
->
-> The documentation says:
->
-> "If used for a function, print the PLT suffix and generate PIC code. For
-> example, emit foo@PLT instead of =E2=80=99foo=E2=80=99 for the function f=
-oo()."
->
-> when you use %P for a function. Which is not how it is used here.
+Remove unused but set variables to clean up the code and avoid
+warning.
 
-I did more checks about that. I think Ard's patch to make jump label
-relative actually fixed the issue I had with them.
+Signed-off-by: Lucas A. M. Magalhães <lucmaga@gmail.com>
+---
+ drivers/media/platform/vimc/vimc-sensor.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-Thanks for spotting this, I will do additional checks and look at
-removing this change.
+diff --git a/drivers/media/platform/vimc/vimc-sensor.c b/drivers/media/platform/vimc/vimc-sensor.c
+index 93961a1e694f..59195f262623 100644
+--- a/drivers/media/platform/vimc/vimc-sensor.c
++++ b/drivers/media/platform/vimc/vimc-sensor.c
+@@ -204,13 +204,6 @@ static void *vimc_sen_process_frame(struct vimc_ent_device *ved,
+ {
+ 	struct vimc_sen_device *vsen = container_of(ved, struct vimc_sen_device,
+ 						    ved);
+-	const struct vimc_pix_map *vpix;
+-	unsigned int frame_size;
+-
+-	/* Calculate the frame size */
+-	vpix = vimc_pix_map_by_code(vsen->mbus_format.code);
+-	frame_size = vsen->mbus_format.width * vpix->bpp *
+-		     vsen->mbus_format.height;
+ 
+ 	tpg_fill_plane_buffer(&vsen->tpg, 0, 0, vsen->frame);
+ 	return vsen->frame;
+-- 
+2.20.1
 
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
