@@ -2,146 +2,113 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324D8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E08C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09B1A20863
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31B942190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:17:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LASn+pgJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfBGQPI (ORCPT
+        id S1726685AbfBGQRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:15:08 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39592 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfBGQPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:15:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77532A78;
-        Thu,  7 Feb 2019 08:15:07 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F15133F675;
-        Thu,  7 Feb 2019 08:15:05 -0800 (PST)
-Date:   Thu, 7 Feb 2019 16:15:02 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Murali Karicheri <m-karicheri2@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] PCI: keystone: Modify legacy_irq_handler to check
- the IRQ_STATUS of INTA/B/C/D
-Message-ID: <20190207161502.GC21111@e107981-ln.cambridge.arm.com>
-References: <20190207110924.30716-1-kishon@ti.com>
- <20190207110924.30716-3-kishon@ti.com>
+        Thu, 7 Feb 2019 11:17:46 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34728 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfBGQRq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:17:46 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p6so332743lfc.1;
+        Thu, 07 Feb 2019 08:17:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uXXFSfS3qwAfrpAOQHAXOdwBdRY3+psDP0LE0+4iPvE=;
+        b=LASn+pgJ6rRz8uzjm5NItLQdaWbIrsMCTwbjd3GXJ97BEEZf67oMtlTxN51c7l2TwQ
+         oAup8FVYyFS9INnIBsM3aloF122dNjXOWriV4Kc8+uULLWjwnnQtwtC2T/kjLhocZVry
+         TXzCXmsEj+S3zne5mc6qCau/uSRUIuYJ9mAJrJuoZmfb573q9tLrizqWThlgUt8P35tb
+         aorHz9ATygSNzNgb6XOBMzGQ3YFxWXdqy/wK9n+fCy+5dVRyDoqbbZbBBAKQPe3h/7Vo
+         cBYgDPICzIMmsAcL3AyzVmuDQR1H8sq+VuXzuoBV9T3Zd07QC5N/j0M9TALPQuGvuR1+
+         +PNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uXXFSfS3qwAfrpAOQHAXOdwBdRY3+psDP0LE0+4iPvE=;
+        b=VihRFcN5sjw/skdYT3FjHMxrZbnCZI8OU0kqEjbAERkJa41FIa/LTYJCp26+eIAn/N
+         uD/GV0DSVVzEe5cT5k27NeTitH51k1tQGSECQLjniqfooYfNHUBULpW7GPC1g4LYz+8c
+         LtSPkmcLBu5W+QcpCQVJJcpROqxpeK+XITiGoEsRUmVlqKPfeCIBWBy47qbu6/B2TtEe
+         RvgZtGO5jiaWpYD2tUDqQu8Vl9ET2H4jfANXya79D4hmn6oBKkpzYd56SoKWJHb+KFBq
+         KDldnzKj2MSq4qx15IIQRDSz4FhKIjaP4zm/LlMVcFKE/A0xxcwC4aZA3L0tvvX/bsQo
+         pZKw==
+X-Gm-Message-State: AHQUAuaqZipWaf2djkoC1Ui2t0W1Hg1sRhFbqCpfPSkOswOvVQueyikL
+        jIRkf5DXeqtRhszfuCrDpUZazGL1
+X-Google-Smtp-Source: AHgI3IYvVCMCXegkIxjxCLLHFl4x+iMCagyN0S/zFlL8eT+XiNoAmVnnQGK8BakT184KFjuEyu762Q==
+X-Received: by 2002:ac2:5551:: with SMTP id l17mr11273565lfk.24.1549556263778;
+        Thu, 07 Feb 2019 08:17:43 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id z4-v6sm1062542ljz.15.2019.02.07.08.17.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 08:17:43 -0800 (PST)
+Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
+ <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
+ <32b0b694-f912-044e-1a50-55b9c355d0c3@gmail.com>
+ <BYAPR12MB3398350797241F90AE347FB5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <0a7d62c4-9dcd-08dd-4e3f-877184848daa@gmail.com>
+ <20190207160630.GB17445@ulmo>
+ <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0b7963a4-ee9c-7296-1478-38235af7cd40@gmail.com>
+Date:   Thu, 7 Feb 2019 19:17:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207110924.30716-3-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:39:17PM +0530, Kishon Vijay Abraham I wrote:
-> The legacy interrupt handler directly checks the IRQ_STATUS register
-> corresponding to a interrupt line inorder to invoke generic_handle_irq.
+07.02.2019 19:08, Sowjanya Komatineni пишет:
 > 
-> While this is okay for K2G platform which has separate interrupt line for
-> each of the 4 legacy interrupts, AM654 which uses the same PCIe wrapper
-> has a single interrupt line for all the legacy interrupts. So for AM654
-> the interrupt handler won't be able to directly check the IRQ_STATUS
-> register corresponding to the interrupt line.
+>>>>> It became apparent to me that there is a problem here. The size of dma_buf is 4096 bytes and maximum message length is 4096 too, we have pushed 12 bytes packet_header to the buffer >and now there are 4084 bytes left for the message in the buffer. Hence transfer of 4KB will cause buffer overflow and either crash kernel or corrupt memory. One solution is to just always >push packet_header using PIO, other to reduce max_write_len or increase dma_buf size.
+>>>>
+>>>> Yes, This is known to me and I will add separate patch for this to 
+>>>> update quirks to take care for t186 and t194 to exclude packet hdr lengths There was separate patch when quirks were added and it got merged already from 5.0-rc1 but don’t want to sneak that here. Will send separate patch to take care of this.
+>>>> Need to update quirk to exclude packet header
+>>>>
+>>>
+>>> No. This is a bug of this patch, it must be fixed in this patch as well. 
+>>>
+>>
+>>
+>> I'm not sure we actually need this. My understanding is that it's really the payload size that's 4 KiB and 64 KiB, respectively. I don't think that includes the header.
+>>
+>> Thierry
 > 
-> Also the legacy interrupt handler uses 'virq' obtained from
-> irq_of_parse_and_map to find the correct interrupt line which raised the
-> interrupt. There is no guarantee that virq assigned for contiguous hardware
-> irq will be contiguous and the interrupt handler might end up checking
-> the wrong IRQ_STATUS register.
+> As per the design, Yes that’s including the HEADER. Its total transfer per packet including header.
 > 
-> In order to overcome the above issues, read the IRQ_STATUS register of
-> all the 4 legacy interrupts to determine which interrupt was raised.
-> 
-> Link: https://lkml.kernel.org/r/bb081d21-7c03-0357-4294-7e92d95d838c@arm.com
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 5286a480f76b..4cf9849d5a1d 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -214,16 +214,11 @@ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
->  {
->  	struct dw_pcie *pci = ks_pcie->pci;
->  	struct device *dev = pci->dev;
-> -	u32 pending;
->  	int virq;
->  
-> -	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
-> -
-> -	if (BIT(0) & pending) {
-> -		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
-> -		dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
-> -		generic_handle_irq(virq);
-> -	}
-> +	virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
-> +	dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
-> +	generic_handle_irq(virq);
->  
->  	/* EOI the INTx interrupt */
->  	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
-> @@ -607,8 +602,9 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
->  	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
->  	struct dw_pcie *pci = ks_pcie->pci;
->  	struct device *dev = pci->dev;
-> -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	unsigned int irq_no;
-> +	u32 reg;
->  
->  	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
->  
-> @@ -618,7 +614,13 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
->  	 * ack operation.
->  	 */
->  	chained_irq_enter(chip, desc);
-> -	ks_pcie_handle_legacy_irq(ks_pcie, irq_offset);
-> +	for (irq_no = 0; irq_no < PCI_NUM_INTX; irq_no++) {
 
-I understand the aim of this code but now on platforms where there
-is a 1:1 relationship between Linux IRQ and INTX this loop has
-steps carried out for nothing.
+My understanding that I2C's max read/write sizes quirks are the payload limits, and so excluding the header size. Hence I'm not sure what you are trying to say, Thierry.
 
-If I understand the code correctly what this code does is force
-looping over INTX status regs regardless of what linux IRQ number was
-actually active.
-
-You could do something faster by creating a matrix LinuxIRQ x INTx to
-detect what INTx status register should actually be checked.
-
-This seems overkill to me but it is not that complicated to implement
-and may clarify the code (and avoid reading up to three registers for
-nothing on the IRQ code path, which can make things faster too).
-
-Lorenzo
-
-> +		reg = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(irq_no));
-> +		if (!(reg & INTx_EN))
-> +			continue;
-> +		ks_pcie_handle_legacy_irq(ks_pcie, irq_no);
-> +	}
-> +
->  	chained_irq_exit(chip, desc);
->  }
->  
-> -- 
-> 2.17.1
-> 
+Sowjanya, also.. it should be fine if you'll include the separate patch into this series, placing it before this DMA-patch. I just read your message as "patch separately from this series".
