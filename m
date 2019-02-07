@@ -2,87 +2,114 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E2AC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E635EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC2421721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B571C218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549561021;
+	bh=LsHh7f264VtIE54XseSwqZ4PI7lsN01WloF3xrRlp/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UM151xE7miywLYmxV1Jyv+dCJF4Aumb4J9wNW7/vhqHfKXDuMyuHyAzZASuDDWx/3
+	 gfy+XLCCFYbogqJvDan8dGSSOXmpq8vEZ8MzORwESirsIX+bsUObZJmGkyqTGN7QIv
+	 hh6I+i/GvwD30Wsdw+UHX8+olg7mIlhqbulVn78U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfBGRgB (ORCPT
+        id S1726989AbfBGRhA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:36:01 -0500
-Received: from mga12.intel.com ([192.55.52.136]:2626 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbfBGRgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:36:01 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 09:36:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="141533042"
-Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Feb 2019 09:35:59 -0800
-Date:   Thu, 7 Feb 2019 09:36:00 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: [GIT PULL] x86/mm changes for v4.21
-Message-ID: <20190207173600.GA15682@agluck-desk>
-References: <20181224231106.GA27438@gmail.com>
- <20190207001737.GA32096@agluck-desk>
- <20190207101846.GB32511@hirez.programming.kicks-ass.net>
- <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com>
- <20190207140131.GB32477@hirez.programming.kicks-ass.net>
+        Thu, 7 Feb 2019 12:37:00 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:36693 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726319AbfBGRg7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:36:59 -0500
+Received: by mail-yw1-f67.google.com with SMTP id 189so280965ywi.3;
+        Thu, 07 Feb 2019 09:36:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xIGj793GRzU67XK3Xz3Gpm1A+PlOBAW0CxTkOcYDMqM=;
+        b=l/n15mi11mxRKx4U4ick0PWITAe6njscGz8UdUrftAKD8sqe/fwOE8zMu4A1PvoX+X
+         rH9vPYT8oDn0eULYXht6XLvrTNnwuoIMGK8EzUQkuTNAKFA3viBPk0ykbNSnllwmDlx7
+         pt/Jc6srg3rZZaJZn5lqPfUIhgQd6EvXZovEqCjVyFmTSRzMASE9VV9z6mP5MMsbvptU
+         A1UyX6vj1+HBTz3qTY3GLdLYi1xHGn+OeXiLgUugCMp9tWXuA6J/MyKKiBIhe1bdibsb
+         IM5xvM5DzV39W+phQHDr5JdCVoCeNcYO4k7bBpYDhQP4ZO49iIaZXKpHVUSo9Z0Ejnmx
+         BudQ==
+X-Gm-Message-State: AHQUAubB979s3MTqzd1pI27tr7ZTZdLPJwq3XMNFuhjrqQba4QrYCzpM
+        ay6/+nShwLV0ldDP4AP8mA8=
+X-Google-Smtp-Source: AHgI3IYvcLPtr/tbJCF+uCFn2dgEV6iS4uOpob19oblf7IaaqtxN0Gq+pfpbODdhUJmj508cIeiVUw==
+X-Received: by 2002:a81:5f84:: with SMTP id t126mr14018296ywb.452.1549561018566;
+        Thu, 07 Feb 2019 09:36:58 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::4:bab5])
+        by smtp.gmail.com with ESMTPSA id w6sm2744464ywi.55.2019.02.07.09.36.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 09:36:57 -0800 (PST)
+Date:   Thu, 7 Feb 2019 12:36:54 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] btrfs: add zstd compression level support
+Message-ID: <20190207173654.GA27942@dennisz-mbp.dhcp.thefacebook.com>
+References: <20190204202008.51652-1-dennis@kernel.org>
+ <20190207165925.GJ2900@twin.jikos.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190207140131.GB32477@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190207165925.GJ2900@twin.jikos.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 03:01:31PM +0100, Peter Zijlstra wrote:
-> On Thu, Feb 07, 2019 at 11:50:52AM +0000, Linus Torvalds wrote:
-> > If you re-generate the canonical address in __cpa_addr(), now we'll
-> > actually have the real virtual address around for a lot of code-paths
-> > (pte lookup etc), which was what people wanted to avoid in the first
-> > place.
+On Thu, Feb 07, 2019 at 05:59:26PM +0100, David Sterba wrote:
+> On Mon, Feb 04, 2019 at 03:19:56PM -0500, Dennis Zhou wrote:
+> > Dennis Zhou (12):
+> >   btrfs: add helpers for compression type and level
+> >   btrfs: rename workspaces_list to workspace_manager
+> >   btrfs: manage heuristic workspace as index 0
+> >   btrfs: unify compression ops with workspace_manager
+> >   btrfs: add helper methods for workspace manager init and cleanup
+> >   btrfs: add compression interface in (get/put)_workspace()
+> >   btrfs: move to fn pointers for get/put workspaces
+> >   btrfs: plumb level through the compression interface
+> >   btrfs: change set_level() to bound the level passed in
+> >   btrfs: zstd use the passed through level instead of default
+> >   btrfs: make zstd memory requirements monotonic
+> >   btrfs: add zstd compression level support
 > 
-> Note that it's an 'unsigned long' address, not an actual pointer, and
-> (afaict) non of the code paths use it as a pointer. This _should_ avoid
-> the CPU from following said pointer and doing a deref on it.
+> The patchset has been added to msic-next, scheduled for 5.1. I've left
+> out the changes to warn on wrong level, so currently it falls back to
+> the default. I don't want to make a last minute change of that sort, so
+> this needs to go as a separate patch.
 
-The type doesn't matter. You want to avoid having the
-true value in the register as long as possible. Ideal
-spot would be the instruction before the TLB is flushed.
+Regarding the bug report from Dan, do you want me to send you a patch
+for it on top of the topic branch or do you mind fixing the missing:
 
-The speculative issue is that any branch you encounter
-while you have the address in a register may be mispredicted.
-You might also get a bogus hit in the branch target cache
-and speculatively jump into the weeds. While there you
-could find an instruction that loads using that register, and
-even though it is speculative and the instruction won't
-retire, a machine check log will be created in a bank (no
-machine check is signalled).
+unsigned int level = 0;
 
-Once the TLB is updated, you are safe. A speculative
-access to an uncached address will not load or log anything.
+> 
+> I also did a last pass through all patches and made some trivial changes
+> like reformatting comments or minor style updates, nothing functional.
+> The inter-branch diff can be found at
+> https://github.com/kdave/btrfs-devel/compare/ext/dzhou/compr-workspaces-v2..kdave:ext/dzhou/compr-workspaces
+> 
+> The feature should be ready to use, though as mentioned before some fine
+> tuning might be necessary to make the memory requirements more
+> efficient. The code could be simplified or cleaned up now that there are
+> 3 compressors, at this point stabilization fixes are preferred.
+> 
+> Thanks.
 
--Tony
+Thanks David!
+Dennis
