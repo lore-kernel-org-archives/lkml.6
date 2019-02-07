@@ -2,103 +2,130 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F662C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1EAC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453932147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:21:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BWYF90HK"
+	by mail.kernel.org (Postfix) with ESMTP id 304132147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfBGOVd (ORCPT
+        id S1727261AbfBGOWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:21:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39512 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfBGOVd (ORCPT
+        Thu, 7 Feb 2019 09:22:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43656 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727132AbfBGOWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:21:33 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f16so17272wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 06:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gz2dPntIwgNYepmZg5UEJH0ebbq1Vw9WirU9NneIHWE=;
-        b=BWYF90HK1l3yNFv0M4SA9VIcu9Ul2U3Y/J6A3uMg1VNT/AFu60W99A4GrvuLVP6wJI
-         3IGaCKBhCHnZl7IaYV2S9FAQiLinTwOwrbFIh954BNQGDI9YZcDp/zDbVLLFpPkV0lPV
-         y55TDENE+cEYQq1Zfp0+fWliWLe6o2iCbDhtQs7ZavBYDyAYcAW9YzD17S4CG5ULNptb
-         i3H6ZtfJBn2K3zTzFpAMaz/bZjxma9OIE+v0pHWmlh8AJLO5nCxgqLwOqHU7p5M/W/xH
-         wBcJ09m4SwK79+I14pue3Tcg+UnvRINmXtmCy16Ji/r6TpannFmIxmiOvSQjbFSJVrCF
-         p+Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gz2dPntIwgNYepmZg5UEJH0ebbq1Vw9WirU9NneIHWE=;
-        b=Nbfhe55SVuYb9SEMwop/xHUQZuZQWCtOuZjWY7b0IpJRpHQEbquOEBR3OFyhVkZc9H
-         YSgaEffMLIVAkPYij5bXBK363jcxIYgu1Tn4nDzU+MtFfl9GqxM6E6C6Anumu3v+DhXE
-         A1+2CiqEFlkpF/5s6I0+SZUD8Eb7I1m8+0zrwPwW8o9VWhFX/iQ/L4yr/S42UY8apDkV
-         ci6K5/u0RA8s+mwc3wIedxI5oER5jrsf3Hk4TNrApznYfVUC0Dyf7kGJjSyqmhpEY7MV
-         B2A3f7QxjzOxTNIW0RizxAaG57Ir4Ajuq8wy/Ls71SiAUexdkamV8RdAZwAhFleMPIf2
-         HKtA==
-X-Gm-Message-State: AHQUAuZofov/DadMCbnM0Eh4zWyfvauD/0US32n+L47lQB/NdVqUhpl6
-        kEXl101Y5fl4+43gZSh3VhttAg==
-X-Google-Smtp-Source: AHgI3IbyNn6jHLOmwmrqSWwF69QL8KRFYNT79r1quOGgvIBj4O21mSqu3Htj3rovHnqsrRqMUIrXTQ==
-X-Received: by 2002:a7b:c92d:: with SMTP id h13mr7479890wml.96.1549549291195;
-        Thu, 07 Feb 2019 06:21:31 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id f187sm21405314wma.4.2019.02.07.06.21.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 06:21:29 -0800 (PST)
-Date:   Thu, 7 Feb 2019 14:21:27 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com, will.deacon@arm.com,
-        mark.rutland@arm.com
-Subject: Re: [PATCH v10 00/25] arm64: provide pseudo NMI with GICv3
-Message-ID: <20190207142127.he2vbe4ts5fmhtmy@holly.lan>
-References: <1548946743-38979-1-git-send-email-julien.thierry@arm.com>
- <20190206102706.GA92291@C02TF0J2HF1T.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206102706.GA92291@C02TF0J2HF1T.cambridge.arm.com>
-User-Agent: NeoMutt/20180716
+        Thu, 7 Feb 2019 09:22:19 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17EGnds086418
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 09:22:18 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qgntnj1j4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:22:17 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 7 Feb 2019 14:22:16 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Feb 2019 14:22:12 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17EMB0Y14745786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Feb 2019 14:22:11 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1722FB2071;
+        Thu,  7 Feb 2019 14:22:11 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB723B2068;
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.235.4])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Feb 2019 14:22:10 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id EC3AF16C6B78; Thu,  7 Feb 2019 06:18:24 -0800 (PST)
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH v2 tip/core/rcu 09/19] rcu/update: Convert to SPDX license identifier
+Date:   Thu,  7 Feb 2019 06:18:13 -0800
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190207141700.GA11106@linux.ibm.com>
+References: <20190207141700.GA11106@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19020714-2213-0000-0000-0000034BDA4B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010554; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01157626; UDB=6.00603959; IPR=6.00938157;
+ MB=3.00025480; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 14:22:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020714-2214-0000-0000-00005D440256
+Message-Id: <20190207141823.12311-9-paulmck@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902070111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 10:27:07AM +0000, Catalin Marinas wrote:
-> Hi Julien,
-> 
-> On Thu, Jan 31, 2019 at 02:58:38PM +0000, Julien Thierry wrote:
-> > This series is a continuation of the work started by Daniel [1]. The goal
-> > is to use GICv3 interrupt priorities to simulate an NMI.
-> > 
-> > The patches depend on the core API for NMIs patches [2]. Both series can
-> > be found on this branch:
-> > git clone http://linux-arm.org/linux-jt.git -b v5.0-pseudo-nmi
-> 
-> I queued these patches in the arm64 for-next/core, on top of Marc's
-> generic-nmi branch:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms irq/generic-nmi
-> 
-> I'll push the changes out later today, once my tests finished.
-> 
-> Thanks for pushing this series through.
+Replace the license boiler plate with a SPDX license identifier.
+While in the area, update an email address.
 
-Absolutely! Very excited to see you carry it so far.
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+---
+ kernel/rcu/update.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 1971869c4072..e3c6395c9b4c 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -1,26 +1,13 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Read-Copy Update mechanism for mutual exclusion
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, you can access it online at
+- * http://www.gnu.org/licenses/gpl-2.0.html.
+- *
+  * Copyright IBM Corporation, 2001
+  *
+  * Authors: Dipankar Sarma <dipankar@in.ibm.com>
+  *	    Manfred Spraul <manfred@colorfullife.com>
+  *
+- * Based on the original work by Paul McKenney <paulmck@us.ibm.com>
++ * Based on the original work by Paul McKenney <paulmck@linux.ibm.com>
+  * and inputs from Rusty Russell, Andrea Arcangeli and Andi Kleen.
+  * Papers:
+  * http://www.rdrop.com/users/paulmck/paper/rclockpdcsproof.pdf
+-- 
+2.17.1
 
-Daniel.
