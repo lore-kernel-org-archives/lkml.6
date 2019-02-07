@@ -2,77 +2,71 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4CDC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1315EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1786A21904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD0512147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfBGK1x (ORCPT
+        id S1726769AbfBGKbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:27:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44864 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726186AbfBGK1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:27:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 87F11ACC7;
-        Thu,  7 Feb 2019 10:27:51 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C6B041E3DB5; Thu,  7 Feb 2019 11:27:50 +0100 (CET)
-Date:   Thu, 7 Feb 2019 11:27:50 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
- pages"
-Message-ID: <20190207102750.GA4570@quack2.suse.cz>
-References: <20190130041707.27750-1-david@fromorbit.com>
- <20190130041707.27750-2-david@fromorbit.com>
- <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
- <20190131013403.GI4205@dastard>
- <20190131091011.GP18811@dhcp22.suse.cz>
- <20190131185704.GA8755@castle.DHCP.thefacebook.com>
- <20190131221904.GL4205@dastard>
+        Thu, 7 Feb 2019 05:31:52 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:55359 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726549AbfBGKbv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 05:31:51 -0500
+Received: from bootlin.com (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 8ED7210000F;
+        Thu,  7 Feb 2019 10:31:47 +0000 (UTC)
+Date:   Thu, 7 Feb 2019 11:31:46 +0100
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next v2 01/10] net: phy: Update PHY linkmodes after
+ config_init
+Message-ID: <20190207113146.4a033fd4@bootlin.com>
+In-Reply-To: <20190207094939.27369-2-maxime.chevallier@bootlin.com>
+References: <20190207094939.27369-1-maxime.chevallier@bootlin.com>
+        <20190207094939.27369-2-maxime.chevallier@bootlin.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131221904.GL4205@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 01-02-19 09:19:04, Dave Chinner wrote:
-> Maybe for memcgs, but that's exactly the oppose of what we want to
-> do for global caches (e.g. filesystem metadata caches). We need to
-> make sure that a single, heavily pressured cache doesn't evict small
-> caches that lower pressure but are equally important for
-> performance.
-> 
-> e.g. I've noticed recently a significant increase in RMW cycles in
-> XFS inode cache writeback during various benchmarks. It hasn't
-> affected performance because the machine has IO and CPU to burn, but
-> on slower machines and storage, it will have a major impact.
+Hello everyone,
 
-Just as a data point, our performance testing infrastructure has bisected
-down to the commits discussed in this thread as the cause of about 40%
-regression in XFS file delete performance in bonnie++ benchmark.
+On Thu,  7 Feb 2019 10:49:30 +0100
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>We want to be able to update a PHY's supported list in the config_init
+>callback, so move the Pause parameters settings from phydrv->features
+>after calling config_init to make sure these  parameters aren't
+>overwritten.
+
+I realised that I did not include updating the modes according to the
+limitations imposed by of_set_phy_supported in this series. If there's
+a speed limitation set in the DT, it could be overwritten by
+config_init.
+
+I'll respin the series with this addition, sorry about that.
+
+Maxime
