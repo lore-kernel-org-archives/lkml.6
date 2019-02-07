@@ -2,237 +2,401 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29568C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F6DC282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC0E218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A84662175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:38:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmEQNXbX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfBGThU (ORCPT
+        id S1727057AbfBGTi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 14:37:20 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:35872 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBGThQ (ORCPT
+        Thu, 7 Feb 2019 14:38:57 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53083 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfBGTi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 14:37:16 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id ZvdB1z0043XaVaC01vdBiQ; Thu, 07 Feb 2019 20:37:13 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1grpTz-0001g3-4Q; Thu, 07 Feb 2019 20:37:11 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1grpTz-0004lC-1h; Thu, 07 Feb 2019 20:37:11 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>
-Cc:     iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC] driver core: Postpone DMA tear-down until after devres release
-Date:   Thu,  7 Feb 2019 20:36:53 +0100
-Message-Id: <20190207193653.18221-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Thu, 7 Feb 2019 14:38:56 -0500
+Received: by mail-it1-f195.google.com with SMTP id d11so2815398itf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 11:38:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=1D1C4Hb4rsA2WfLhrsPOD8CGtk8a213Z+w+LdUam84E=;
+        b=TmEQNXbXyOS9s9+F63s9ktGaxRM8ZIyLf6Ht5Z/LY1b/9ML0rHgJPFQAdH1ou0kwAO
+         Ih3GbiTHRXPEa3FrdvGeVsmuhUwPRHP+slR8rRqcPsnEQYNgG4sc0gMoqO7Lk9RFYJ2H
+         QgmSMUYZhYI74a8reD3oQsK1Jwpm25fM9wpSIE6odMovRxES1CmHDqOvcfS0kOR+59C7
+         bd7PLA+rZaVd84iP1rSUKk7TWfm2BKtZVKIHcqMv/9UTMNFpRP6gJ6BOl4xzJPX+pMa4
+         C5cN51A4WhT5R0XF8MuRdhC6LSZBq1gDOtT/mfXmat1m5GreyM4jkn6UPK6GoUuhOBje
+         J6jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=1D1C4Hb4rsA2WfLhrsPOD8CGtk8a213Z+w+LdUam84E=;
+        b=ZVwrY/xie7YkLaw0O5V10tFhuvWqso/c+jiYEhudG1CbTXhosAGDYEJ0RvxIdLHNiv
+         QLeMrzrleiGwCl0AYNtFaCQdGA2SQAY0cy/jLqTprSqXI1zy67nnUmmgxDZKanWzFFpU
+         smd6dKnsTfmdQvnw1wx3RD2yuh4CgkabvQn2u242ytYgZccqZQL/DMoh6O9dcrAP4R8W
+         iArTp9SF6C36UwnedAsYrEPnkOG4pcBkhiF/e9G568Zw8WK9jTX1+jTLGgFskv8beieY
+         J0WT/s7Bkr/cFyqx7j89D2DxWBkgQV7LkTBji6vNgbfnwF9pSKvRlY1VgZhdlWAaIz1I
+         rTWg==
+X-Gm-Message-State: AHQUAuZGjuQ99a4GOUMOt0/Mp+FQ9uNNoM+L1cEqOytqWLPZKmnQjeZE
+        0QcC4cazbhl6DMDok+m759oai02gAphgEooNB5irBg==
+X-Google-Smtp-Source: AHgI3IY2KGPuxLf10UzXbwb1QshzpAB5wv0BeuBjp6p/NWPjnjRC7SwkbPinNjOnGzpTlSYgzjKYBpwOvSIan3Dn0Kw=
+X-Received: by 2002:a02:bb81:: with SMTP id g1mr4016911jan.130.1549568335528;
+ Thu, 07 Feb 2019 11:38:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190207042234.25109-1-hedi.berriche@hpe.com> <20190207042234.25109-2-hedi.berriche@hpe.com>
+ <CAKv+Gu_7yb2tf86G1f-kA3g5TVb4imQFTeL9S5qwGhJHVsmgQw@mail.gmail.com> <20190207173808.GE6398@sarge.linuxathome.me>
+In-Reply-To: <20190207173808.GE6398@sarge.linuxathome.me>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 7 Feb 2019 20:38:42 +0100
+Message-ID: <CAKv+Gu90BQ8ZAtu5K7FHTto7uGM3974Dtcch07B+8QvWJwwQFg@mail.gmail.com>
+Subject: Re: [Patch v2 1/4] efi/x86: turn EFI runtime semaphore into a global lock
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When unbinding the (IOMMU-enabled) R-Car SATA device on Salvator-XS
-(R-Car H3 ES2.0), in preparation of rebinding against vfio-platform for
-device pass-through for virtualization:
+On Thu, 7 Feb 2019 at 18:38, Hedi Berriche <hedi.berriche@hpe.com> wrote:
+>
+> On Thu, Feb 07, 2019 at 16:05 Ard Biesheuvel wrote:
+> >On Thu, 7 Feb 2019 at 05:23, Hedi Berriche <hedi.berriche@hpe.com> wrote:
+> >>
+> >> Make efi_runtime_lock semaphore global so that it can be used by EFI
+> >> runtime callers that may be defined outside efi/runtime-wrappers.c.
+> >>
+> >> Also now that efi_runtime_lock semaphore is no longer static, rename it
+> >> to efi_runtime_sem so it doesn't clash with the efi_runtime_lock spinlock
+> >> defined in arch/x86/platform/efi/efi_64.c when CONFIG_EFI_MIXED is
+> >> enabled.
+> >>
+> >> The immediate motivation of this change is to serialise UV platform BIOS
+> >> calls using the efi_runtime_sem semaphore.
+> >>
+> >> No functional changes.
+> >>
+> >> Cc: Russ Anderson <rja@hpe.com>
+> >> Cc: Mike Travis <mike.travis@hpe.com>
+> >> Cc: Dimitri Sivanich <sivanich@hpe.com>
+> >> Cc: Steve Wahl <steve.wahl@hpe.com>
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+> >
+> >Hello Hedi,
+>
+> Hi Ard,
+>
+> >Same feedback as on v1: please don't rename the lock.
+>
+> With the efi_runtime_lock semaphore being no longer static, not renaming it
+> will cause a compile failure as it will clash with the declaration of the
+> efi_runtime_lock *spinlock* in arch/x86/platform/efi/efi_64.c in the
+> CONFIG_EFI_MIXED case.
+>
 
-    echo ee300000.sata > /sys/bus/platform/drivers/sata_rcar/unbind
+Ah right, it's in the commit log, as requested. Apologies for not spotting that.
 
-the kernel crashes with:
+Given how UV is a bit of an outlier, I'd prefer it if we could make
+this functionality a bit more light weight, by only exposing the lock
+if needed, and not create a global symbol for an internal lock if we
+can avoid it.
 
-    Unable to handle kernel paging request at virtual address ffffffbf029ffffc
-    Mem abort info:
-      ESR = 0x96000006
-      Exception class = DABT (current EL), IL = 32 bits
-      SET = 0, FnV = 0
-      EA = 0, S1PTW = 0
-    Data abort info:
-      ISV = 0, ISS = 0x00000006
-      CM = 0, WnR = 0
-    swapper pgtable: 4k pages, 39-bit VAs, pgdp = 000000007e8c586c
-    [ffffffbf029ffffc] pgd=000000073bfc6003, pud=000000073bfc6003, pmd=0000000000000000
-    Internal error: Oops: 96000006 [#1] SMP
-    Modules linked in:
-    CPU: 0 PID: 1098 Comm: bash Not tainted 5.0.0-rc5-salvator-x-00452-g37596f884f4318ef #287
-    Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
-    pstate: 60400005 (nZCv daif +PAN -UAO)
-    pc : __free_pages+0x8/0x58
-    lr : __dma_direct_free_pages+0x50/0x5c
-    sp : ffffff801268baa0
-    x29: ffffff801268baa0 x28: 0000000000000000
-    x27: ffffffc6f9c60bf0 x26: ffffffc6f9c60bf0
-    x25: ffffffc6f9c60810 x24: 0000000000000000
-    x23: 00000000fffff000 x22: ffffff8012145000
-    x21: 0000000000000800 x20: ffffffbf029fffc8
-    x19: 0000000000000000 x18: ffffffc6f86c42c8
-    x17: 0000000000000000 x16: 0000000000000070
-    x15: 0000000000000003 x14: 0000000000000000
-    x13: ffffff801103d7f8 x12: 0000000000000028
-    x11: ffffff8011117604 x10: 0000000000009ad8
-    x9 : ffffff80110126d0 x8 : ffffffc6f7563000
-    x7 : 6b6b6b6b6b6b6b6b x6 : 0000000000000018
-    x5 : ffffff8011cf3cc8 x4 : 0000000000004000
-    x3 : 0000000000080000 x2 : 0000000000000001
-    x1 : 0000000000000000 x0 : ffffffbf029fffc8
-    Process bash (pid: 1098, stack limit = 0x00000000c38e3e32)
-    Call trace:
-     __free_pages+0x8/0x58
-     __dma_direct_free_pages+0x50/0x5c
-     arch_dma_free+0x1c/0x98
-     dma_direct_free+0x14/0x24
-     dma_free_attrs+0x9c/0xdc
-     dmam_release+0x18/0x20
-     release_nodes+0x25c/0x28c
-     devres_release_all+0x48/0x4c
-     device_release_driver_internal+0x184/0x1f0
-     device_release_driver+0x14/0x1c
-     unbind_store+0x70/0xb8
-     drv_attr_store+0x24/0x34
-     sysfs_kf_write+0x4c/0x64
-     kernfs_fop_write+0x154/0x1c4
-     __vfs_write+0x34/0x164
-     vfs_write+0xb4/0x16c
-     ksys_write+0x5c/0xbc
-     __arm64_sys_write+0x14/0x1c
-     el0_svc_common+0x98/0x114
-     el0_svc_handler+0x1c/0x24
-     el0_svc+0x8/0xc
-    Code: d51b4234 17fffffa a9bf7bfd 910003fd (b9403404)
-    ---[ end trace 8c564cdd3a1a840f ]---
+Could you please try something along the lines of
 
-While I've bisected this to commit e8e683ae9a736407 ("iommu/of: Fix
-probe-deferral"), and reverting that commit on post-v5.0-rc4 kernels
-does fix the problem, this turned out to be a red herring.
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -146,6 +146,10 @@
+  */
+ static DEFINE_SEMAPHORE(efi_runtime_lock);
 
-On arm64, arch_teardown_dma_ops() resets dev->dma_ops to NULL.
-Hence if a driver has used a managed DMA allocation API, the allocated
-DMA memory will be freed using the direct DMA ops, while it may have
-been allocated using a custom DMA ops (iommu_dma_ops in this case).
++#ifdef CONFIG_X86_UV
++extern struct semaphore __efi_uv_runtime_lock __alias(efi_runtime_lock);
++#endif
++
+ /*
+  * Calls the appropriate efi_runtime_service() with the appropriate
+  * arguments.
 
-Fix this by reversing the order of the calls to devres_release_all() and
-arch_teardown_dma_ops().
+and add a declaration
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Question:
-Is this safe on arm32, which calls arm_teardown_iommu_dma_ops() instead
-of resetting dev->dma_ops?
+extern struct semaphore __efi_uv_runtime_lock;
 
----
-Adding some debug code, and comparing before/after commit
-e8e683ae9a736407:
+to bios_uv.c itself rather than to a header file? You can combine this
+with your changes in patch #4 (and drop the first patch entirely)
 
-     sata_rcar ee300000.sata: of_iommu_configure:227: err = -517
-    -sata_rcar ee300000.sata: of_iommu_configure:230: calling iommu_probe_device()
-    -sata_rcar ee300000.sata: iommu_probe_device:122: Calling ipmmu_add_device
-    -sata_rcar ee300000.sata: ipmmu_add_device:893
-    -sata_rcar ee300000.sata: of_iommu_configure:232: iommu_probe_device() returned -19
-    -sata_rcar ee300000.sata: dma_alloc_attrs:257: size 2048, ops =           (null)
-    -sata_rcar ee300000.sata: __dma_direct_alloc_pages:104: size 4096
-    -sata_rcar ee300000.sata: __dma_direct_alloc_pages:115: trying dma_alloc_from_contiguous()
-    -sata_rcar ee300000.sata: dma_alloc_from_contiguous:202: cma_alloc(1) returned page ffffffbf00d20e00
-    -sata_rcar ee300000.sata: dma_alloc_attrs:271: allocated using dma_direct_alloc()
-    -sata_rcar ee300000.sata: dmam_alloc_attrs:98: size 2048 vaddr ffffff8011e95000 dma_handle 0x0x000000007c040000 attrs 0x0
-    -scsi host0: sata_rcar
-    -ata1: SATA max UDMA/133 irq 172
-    -ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+Also, I noticed that there is some CONFIG_EFI guarded code in
+bios_uv.c while the whole file already depends on CONFIG_EFI via the
+Kconfig symbol. Perhaps you could include a patch to clean that up as
+well? Thanks.
 
-DMA memory used to be allocated from CMA, dma_map_ops = NULL.
-The SATA driver was probed and initialized.
 
-    +sata_rcar ee300000.sata: of_iommu_configure:234: skipping iommu_probe_device()
 
-SATA driver initialization is now deferred.
-Later, it is retried:
 
-    +sata_rcar ee300000.sata: of_iommu_configure:227: err = 0
-    +sata_rcar ee300000.sata: of_iommu_configure:230: calling iommu_probe_device()
-    +sata_rcar ee300000.sata: iommu_probe_device:122: Calling ipmmu_add_device
-    +sata_rcar ee300000.sata: ipmmu_add_device:893
-    +sata_rcar ee300000.sata: Using IPMMU context 1
-    +iommu: Adding device ee300000.sata to group 0
-    +sata_rcar ee300000.sata: ipmmu_add_device:908: Success
-    +sata_rcar ee300000.sata: of_iommu_configure:232: iommu_probe_device() returned 0
-    +sata_rcar ee300000.sata: dma_alloc_attrs:257: size 2048, ops = iommu_dma_ops
-    +sata_rcar ee300000.sata: dma_alloc_attrs:274: allocated using __iommu_alloc_attrs()
-    +sata_rcar ee300000.sata: dmam_alloc_attrs:98: size 2048 vaddr ffffff8012135000 dma_handle 0x0x00000000fffff000 attrs 0x0
-    +scsi host0: sata_rcar
-    +ata1: SATA max UDMA/133 irq 172
-    +ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
 
-DMA memory is now allocated using __iommu_alloc_attrs(), as dma_map_ops
-= iommu_dma_ops.
-
-Unbind:
-
-    -sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8011e95000 dma_handle 0x0x000000007c040000 attrs 0x0
-    +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012135000 dma_handle 0x0x00000000fffff000 attrs 0x0
-     sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops =           (null)
-
-dma_map_ops = NULL, both before/after!
-
-     sata_rcar ee300000.sata: dma_free_attrs:308: calling dma_direct_free()
-    -sata_rcar ee300000.sata: __dma_direct_free_pages:189: size 2048 page ffffffbf00d20e00
-    -sata_rcar ee300000.sata: dma_release_from_contiguous:223: cma_release(1) freed
-    -sata_rcar ee300000.sata: __dma_direct_free_pages:194: skipping __free_pages()
-
-DMA memory was correctly freed using CMA.
-
-    +sata_rcar ee300000.sata: __dma_direct_free_pages:189: size 2048 page ffffffbf029fffc8
-    +sata_rcar ee300000.sata: dma_release_from_contiguous:225: cma_release(1) failed, cma area ffffff8011cf5530
-    +sata_rcar ee300000.sata: __dma_direct_free_pages:191: calling __free_pages()
-    +Unable to handle kernel paging request at virtual address ffffffbf029ffffc
-
-Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
-Oops...
-
-After reversing the order of the calls to arch_teardown_dma_ops() and
-devres_release_all(), dma_map_ops is still valid, and the DMA memory is
-now released using __iommu_free_attrs():
-
-    +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
-    +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
-    +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
----
- drivers/base/dd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 8ac10af17c0043a3..d62487d024559620 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
- 			drv->remove(dev);
- 
- 		device_links_driver_cleanup(dev);
--		arch_teardown_dma_ops(dev);
- 
- 		devres_release_all(dev);
-+		arch_teardown_dma_ops(dev);
- 		dev->driver = NULL;
- 		dev_set_drvdata(dev, NULL);
- 		if (dev->pm_domain && dev->pm_domain->dismiss)
--- 
-2.17.1
-
+> >> ---
+> >>  drivers/firmware/efi/runtime-wrappers.c | 60 ++++++++++++-------------
+> >>  include/linux/efi.h                     |  3 ++
+> >>  2 files changed, 33 insertions(+), 30 deletions(-)
+> >>
+> >> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+> >> index 8903b9ccfc2b..ec60d6227925 100644
+> >> --- a/drivers/firmware/efi/runtime-wrappers.c
+> >> +++ b/drivers/firmware/efi/runtime-wrappers.c
+> >> @@ -53,7 +53,7 @@ struct efi_runtime_work efi_rts_work;
+> >>   * @rts_arg<1-5>:      efi_runtime_service() function arguments
+> >>   *
+> >>   * Accesses to efi_runtime_services() are serialized by a binary
+> >> - * semaphore (efi_runtime_lock) and caller waits until the work is
+> >> + * semaphore (efi_runtime_sem) and caller waits until the work is
+> >>   * finished, hence _only_ one work is queued at a time and the caller
+> >>   * thread waits for completion.
+> >>   */
+> >> @@ -144,7 +144,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
+> >>   * none of the remaining functions are actually ever called at runtime.
+> >>   * So let's just use a single lock to serialize all Runtime Services calls.
+> >>   */
+> >> -static DEFINE_SEMAPHORE(efi_runtime_lock);
+> >> +DEFINE_SEMAPHORE(efi_runtime_sem);
+> >>
+> >>  /*
+> >>   * Calls the appropriate efi_runtime_service() with the appropriate
+> >> @@ -233,10 +233,10 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -244,10 +244,10 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -257,11 +257,11 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
+> >>                                 NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -269,11 +269,11 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
+> >>                                 NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -285,11 +285,11 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
+> >>                                 data);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -299,11 +299,11 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
+> >>                                 NULL, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -315,11 +315,11 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
+> >>                                 data);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -330,12 +330,12 @@ virt_efi_set_variable_nonblocking(efi_char16_t *name, efi_guid_t *vendor,
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_trylock(&efi_runtime_lock))
+> >> +       if (down_trylock(&efi_runtime_sem))
+> >>                 return EFI_NOT_READY;
+> >>
+> >>         status = efi_call_virt(set_variable, name, vendor, attr, data_size,
+> >>                                data);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -350,11 +350,11 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
+> >>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+> >>                 return EFI_UNSUPPORTED;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
+> >>                                 remaining_space, max_variable_size, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -369,12 +369,12 @@ virt_efi_query_variable_info_nonblocking(u32 attr,
+> >>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+> >>                 return EFI_UNSUPPORTED;
+> >>
+> >> -       if (down_trylock(&efi_runtime_lock))
+> >> +       if (down_trylock(&efi_runtime_sem))
+> >>                 return EFI_NOT_READY;
+> >>
+> >>         status = efi_call_virt(query_variable_info, attr, storage_space,
+> >>                                remaining_space, max_variable_size);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -382,11 +382,11 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
+> >>  {
+> >>         efi_status_t status;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
+> >>                                 NULL, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -395,14 +395,14 @@ static void virt_efi_reset_system(int reset_type,
+> >>                                   unsigned long data_size,
+> >>                                   efi_char16_t *data)
+> >>  {
+> >> -       if (down_interruptible(&efi_runtime_lock)) {
+> >> +       if (down_interruptible(&efi_runtime_sem)) {
+> >>                 pr_warn("failed to invoke the reset_system() runtime service:\n"
+> >>                         "could not get exclusive access to the firmware\n");
+> >>                 return;
+> >>         }
+> >>         efi_rts_work.efi_rts_id = RESET_SYSTEM;
+> >>         __efi_call_virt(reset_system, reset_type, status, data_size, data);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>  }
+> >>
+> >>  static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
+> >> @@ -414,11 +414,11 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
+> >>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+> >>                 return EFI_UNSUPPORTED;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
+> >>                                 NULL, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> @@ -432,11 +432,11 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+> >>         if (efi.runtime_version < EFI_2_00_SYSTEM_TABLE_REVISION)
+> >>                 return EFI_UNSUPPORTED;
+> >>
+> >> -       if (down_interruptible(&efi_runtime_lock))
+> >> +       if (down_interruptible(&efi_runtime_sem))
+> >>                 return EFI_ABORTED;
+> >>         status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
+> >>                                 max_size, reset_type, NULL);
+> >> -       up(&efi_runtime_lock);
+> >> +       up(&efi_runtime_sem);
+> >>         return status;
+> >>  }
+> >>
+> >> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> >> index 45ff763fba76..930cd20842b8 100644
+> >> --- a/include/linux/efi.h
+> >> +++ b/include/linux/efi.h
+> >> @@ -1745,6 +1745,9 @@ extern struct efi_runtime_work efi_rts_work;
+> >>  /* Workqueue to queue EFI Runtime Services */
+> >>  extern struct workqueue_struct *efi_rts_wq;
+> >>
+> >> +/* EFI runtime semaphore */
+> >> +extern struct semaphore efi_runtime_sem;
+> >> +
+> >>  struct linux_efi_memreserve {
+> >>         int             size;                   // allocated size of the array
+> >>         atomic_t        count;                  // number of entries used
+> >> --
+> >> 2.20.1
+> >>
+>
+> --
+> Be careful of reading health books, you might die of a misprint.
+>         -- Mark Twain
