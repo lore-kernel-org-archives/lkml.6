@@ -2,187 +2,129 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AA5C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92853C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AA5521904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5882B21904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:11:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UAdPGrQj"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Jm0NxIGV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfBGPKS (ORCPT
+        id S1726801AbfBGPLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:10:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39161 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfBGPKS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:10:18 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t27so188526wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:10:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=h5y4FDODq872pLT04GyZ8UAR5pFINUnNPPRuvtTI9MA=;
-        b=UAdPGrQj/s2L6OGgGR700XCgw2OTQBDJ99f36Gke7+JFlUhBX5xakn2DMYKwlJvnTR
-         KFUvWjJEgYwHrcGjUZVHvDdhVC38ZdlrQnhQNjyqYicS4/eXCU7DKsXUI6S50tc5bWlx
-         ANMRuMXqxBACmrpvcuqsFNU/ZMNMByOKhhUohHw03RycsDfHW1XzwNbbpxrfBGaxtfXq
-         eKbSlfPOKa8HVeNuFGdvg2XF2Fps6HJBglWncWEJ0aAb+7kHcLc01B2dgEy0Q9nD5Dm2
-         sF0xqbUoMnfSVcoAdmIlgmUBU28zXwg+IjvG1CsKL90MkpUn/6oZRkszSI9FA3xmuqYM
-         XDqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=h5y4FDODq872pLT04GyZ8UAR5pFINUnNPPRuvtTI9MA=;
-        b=iOY9nBh2x6tNzBQu2Hf8roWQtodgIQUcK0De79F9aYysbR0ps3YvaYJdc9myC3VphU
-         L0Oa8iKhOiIk7kHwlAJwN3lXpD/5/etZ/fLvNDbbJOer26rQIDiH5k6AUnVkHO5dd+xA
-         Ml5Jz0tumsePMslDIIdVRX6H2GVHgahMxJcuA+CZNwDmJGgKNfYmqFvAYEQZl/TBskUf
-         XT61rgQoeHV4rlpfq2CKece3adpfl/Pg2On/waBmTQr7qtHWAIMudJrRT76uKtF8lO0y
-         7oCizv+fYiqzZESjWhBZMopYsN6TO8ik3E8gUPWSTv8xSN2iHLv3DcIUd73cKApwsRky
-         UtNA==
-X-Gm-Message-State: AHQUAubmcWEGBOauIfVdq2OepOTQBlE88y7rcRUkTLzemypwZ7TJYT3W
-        8ashafzQoKRHvmKUvzComgR7Sg==
-X-Google-Smtp-Source: AHgI3IY4Hde8uCVrST3qqGUSTIECToaeQzPsgPSz1Sg4cXrjB7VguBuyvXTKgeH2AXnnpIZ0CAn7Hg==
-X-Received: by 2002:adf:a58a:: with SMTP id g10mr12625907wrc.3.1549552215547;
-        Thu, 07 Feb 2019 07:10:15 -0800 (PST)
-Received: from boomer.baylibre.com ([2a04:cec0:1103:b081:462c:a008:349b:2f3a])
-        by smtp.gmail.com with ESMTPSA id f134sm20032540wme.31.2019.02.07.07.10.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 07 Feb 2019 07:10:14 -0800 (PST)
-Message-ID: <2f03298e4d1ca0aa08d683d6db14bc194607b974.camel@baylibre.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clk: add G12A AO Clock and Reset
- Bindings
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        devicetree@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 07 Feb 2019 16:10:12 +0100
-In-Reply-To: <20190204091331.9298-2-narmstrong@baylibre.com>
-References: <20190204091331.9298-1-narmstrong@baylibre.com>
-         <20190204091331.9298-2-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 7 Feb 2019 10:11:17 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:28673 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726048AbfBGPLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 10:11:17 -0500
+Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5c4a920000>; Thu, 07 Feb 2019 23:11:14 +0800
+Received: from HKMAIL103.nvidia.com ([10.18.16.12])
+  by hkpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 07 Feb 2019 07:11:12 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate102.nvidia.com on Thu, 07 Feb 2019 07:11:12 -0800
+Received: from HKMAIL104.nvidia.com (10.18.16.13) by HKMAIL103.nvidia.com
+ (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 7 Feb
+ 2019 15:11:10 +0000
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (104.47.41.52) by
+ HKMAIL104.nvidia.com (10.18.16.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Thu, 7 Feb 2019 15:11:10 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB3494.namprd12.prod.outlook.com (20.178.196.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Thu, 7 Feb 2019 15:11:07 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Thu, 7 Feb 2019
+ 15:11:07 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V14 3/5] i2c: tegra: Add DMA support
+Thread-Topic: [PATCH V14 3/5] i2c: tegra: Add DMA support
+Thread-Index: AQHUvlB3grXi65/4z0qjAfijKk4nv6XUbM4AgAADlOA=
+Date:   Thu, 7 Feb 2019 15:11:06 +0000
+Message-ID: <BYAPR12MB3398712D185CCCB345EB2B5BC2680@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
+ <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
+ <a6b1acbd-9be0-62b7-29bb-081d93ee92fb@gmail.com>
+In-Reply-To: <a6b1acbd-9be0-62b7-29bb-081d93ee92fb@gmail.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3494;6:/7Ze7xQSZu+XbG/haxhxv4Gf+NNEVBpnKQ7gnMm+BmYS4Escf0yXXLb3FCKN4/tmlkYpZOZUwxMlzbWp5xeyGnLnYpfIkkP+v+jCqwIL+cqaykMQ8rv4dPx7Mvya6hfTpSHl3Q/NX8Tz/orN2E1ErV+F154Ctcvb734vcx5WPhE8ym1nT7bjjk2XDAF0vwk4Yledq8y8xl+1QTilw3/oa0nFHTz2SMnk+wrQAAQ0p4maX8YocTsDSearo3VqW2aTiFL3cIuRKgznyafCrd9noVXYwah0a8HcUae2PGt2NcDCW19fLVKobP2y2bj2wt4DrseVZS5cW1lmHG3c692DgsimciX9pQXX4/ZnixcJMU/tAL9pMjrVYezj2utFrgQqFu+zONvj61E8hS0LV/7jKiUZ3HZ9EFoNyshBSsBWXSU9d50PZdF2ESsMndZEukIwaDjdtJsLqP41RojQXVFDrw==;5:ZofSVbeTcxGQB+6UDl2OYhIc3pJHSq1CW0yMdPQGhG8s5Q8DwATt2yHlZjdkTqHH06FYaPVU7pA3eErLZLuAL90Mye6gOHQL95tq527TV+Yb7MllR2TA4VS98EHGxe+vnGW1HcSe7jJoblEA3gFy+jw+1dE43+sASBejeBwxAWS7C1ENGXSzLIjAUoapLy+kYXN3ZMxO/ET6ryB1TR9FUg==;7:44dlVQcgWVZUqRBoyn0gZXGPdyFgyD3jiop0iMufKScqGTkIqvz10DDjn37iPeon/0E+9sZWhK+pUZnxkZtBizFerTHlyEAbHuvGyk8J0fmR+GdY4MFP7Pc8993w0F5HM6p3YaAKOf1Dl6U11znKQw==
+x-ms-office365-filtering-correlation-id: fe0d1116-51c3-430b-adaa-08d68d0e7c3e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3494;
+x-ms-traffictypediagnostic: BYAPR12MB3494:
+x-microsoft-antispam-prvs: <BYAPR12MB3494A5E53D510020767E5E93C2680@BYAPR12MB3494.namprd12.prod.outlook.com>
+x-forefront-prvs: 0941B96580
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39850400004)(346002)(376002)(366004)(136003)(189003)(199004)(76176011)(476003)(110136005)(106356001)(14454004)(74316002)(446003)(229853002)(486006)(2906002)(54906003)(11346002)(68736007)(6506007)(33656002)(256004)(97736004)(316002)(105586002)(71200400001)(14444005)(478600001)(305945005)(7736002)(71190400001)(26005)(81156014)(8676002)(186003)(81166006)(9686003)(55016002)(66066001)(8936002)(4744005)(102836004)(7696005)(2501003)(6636002)(6246003)(4326008)(86362001)(6116002)(3846002)(6436002)(25786009)(99286004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3494;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Lih734UKGec6el2qJHRI/546Gg10PE+PSe2zLWAMc7UECfijbQ1UYErFtOsCt2G2SGieaTVBc+BCPzQm6XPDSduHfcwKFDwtu2hiUEVi6CoViIaIhBF3UnSASE1OhkHfAi5CW8PcxwYyAi1mHR8OS7infwJagxdqKmHnEjIS+UUSFlLapL/YRnuMbenzoAUXcJKrb/I0kQXnJbPlk2qr6nrrCQLKHhmYZQPCDKJfvassCUf/Sc7oqRm0khdlstBve/BHI1RDfmOt3AjAooX0hbfKIxvVVecHM46KJQXZKHeu+pyK5+JinAN02+APECT6acm6Ma9mUfC+VVXEOsrKnuXnBBvGcowbhbu+xuYmMTvIKQnmOnygzGaWG5gvzzcnKZLr8nlUwE78Ty5kQ0oRPFsYP81OQK8OjNpONcdsJtQ=
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe0d1116-51c3-430b-adaa-08d68d0e7c3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2019 15:11:07.0433
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3494
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549552274; bh=oqWAkA2A0JfguHY7lArmcLPq68sX8ySyoNmjjQRYe/8=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=Jm0NxIGVfSHgS+oT6Z6MdPZeSU45tCzBqTnXJZ03DgPrHk1Y2xMGd0h+pnBx44uls
+         G2liU0WMjPXarOtUMd+5T5dIoveUqgvUbBLcLe/dKYNno4FG5UC/p1bJYtwXvC2Bm/
+         48l8Jyiw4/yDVuZqk5pIkYF1ig105K6MoncSyCHYvKsJLx4nDTU5gad79viSeHkFSS
+         LcxWnWHf4gIpfb503aKEf8cdwjlCMgQM6wjFVtIsfta1We4mWaWaEZQ22VxT1BQxHI
+         g+oGZLJDD5zmdrmPpEWqLa+gNBNHoj1SgYPPTQdV2yU/KOnnhbw9hIqG6R7dgBsYfG
+         V8DDUtmeYR9vg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-04 at 10:13 +0100, Neil Armstrong wrote:
-> Add bindings for the Amlogic G12A AO Clock and Reset controllers.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |  1 +
->  include/dt-bindings/clock/g12a-aoclkc.h       | 43 +++++++++++++++++++
->  include/dt-bindings/reset/g12a-aoclkc.h       | 18 ++++++++
->  3 files changed, 62 insertions(+)
->  create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
->  create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt 
-> b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-> index 79511d7bb321..c41f0be5d438 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-> @@ -10,6 +10,7 @@ Required Properties:
->  	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
->  	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
->  	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
-> +	- G12A (S905X2, S905D2, S905Y2) : "amlogic,meson-g12a-aoclkc"
->  	followed by the common "amlogic,meson-gx-aoclkc"
->  - clocks: list of clock phandle, one for each entry clock-names.
->  - clock-names: should contain the following:
-> diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-
-> bindings/clock/g12a-aoclkc.h
-> new file mode 100644
-> index 000000000000..997aca16c94f
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/g12a-aoclkc.h
-> @@ -0,0 +1,43 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-> +/*
-> + * Copyright (c) 2016 BayLibre, SAS
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-> + */
-> +
-> +#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-> +#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-> +
-> +#define CLKID_AO_AHB		0
-> +#define CLKID_AO_IR_IN		1
-> +#define CLKID_AO_I2C_M0		2
-> +#define CLKID_AO_I2C_S0		3
-> +#define CLKID_AO_UART		4
-> +#define CLKID_AO_PROD_I2C	5
-> +#define CLKID_AO_UART2		6
-> +#define CLKID_AO_IR_OUT		7
-> +#define CLKID_AO_SAR_ADC	8
-> +#define CLKID_AO_MAILBOX	9
-> +#define CLKID_AO_M3		10
-> +#define CLKID_AO_AHB_SRAM	11
-> +#define CLKID_AO_RTI		12
-> +#define CLKID_AO_M4_FCLK	13
-> +#define CLKID_AO_M4_HCLK	14
-> +#define CLKID_AO_CLK81		15
-> +#define CLKID_AO_SAR_ADC_SEL	16
-> +#define CLKID_AO_SAR_ADC_DIV	17
-
-Do we need to export the internal part of these composite clock ?
-I know the other AO controller do it but it would be nice to avoid it, like
-for the EE controllers ... unless there is good reason of course.
-
-Same for the others below.
-
-> +#define CLKID_AO_SAR_ADC_CLK	18
-> +#define CLKID_AO_CTS_OSCIN	19
-> +#define CLKID_AO_32K_PRE	20
-> +#define CLKID_AO_32K_DIV	21
-> +#define CLKID_AO_32K_SEL	22
-> +#define CLKID_AO_32K		23
-> +#define CLKID_AO_CEC_PRE	24
-> +#define CLKID_AO_CEC_DIV	25
-> +#define CLKID_AO_CEC_SEL	26
-> +#define CLKID_AO_CEC		27
-> +#define CLKID_AO_CTS_RTC_OSCIN	28
-> +
-> +#endif
-> diff --git a/include/dt-bindings/reset/g12a-aoclkc.h b/include/dt-
-> bindings/reset/g12a-aoclkc.h
-> new file mode 100644
-> index 000000000000..bd2e2337135c
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/g12a-aoclkc.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-> +/*
-> + * Copyright (c) 2016 BayLibre, SAS
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + */
-> +
-> +#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_G12A_AOCLK
-> +#define DT_BINDINGS_RESET_AMLOGIC_MESON_G12A_AOCLK
-> +
-> +#define RESET_AO_IR_IN		0
-> +#define RESET_AO_UART		1
-> +#define RESET_AO_I2C_M		2
-> +#define RESET_AO_I2C_S		3
-> +#define RESET_AO_SAR_ADC	4
-> +#define RESET_AO_UART2		5
-> +#define RESET_AO_IR_OUT		6
-> +
-> +#endif
-
-
+PiANCj4gDQo+ID4gQEAgLTExMjQsNiArMTQ1MywxMCBAQCBzdGF0aWMgaW50IHRlZ3JhX2kyY19w
+cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICAJCX0NCj4gPiAgCX0NCj4g
+PiAgDQo+ID4gKwlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWEoaTJjX2Rldik7DQo+ID4gKwlpZiAo
+cmV0IDwgMCkNCj4gPiArCQlnb3RvIGRpc2FibGVfZGl2X2NsazsNCj4gPiArDQo+ID4gIAlyZXQg
+PSB0ZWdyYV9pMmNfaW5pdChpMmNfZGV2KTsNCj4gPiAgCWlmIChyZXQpIHsNCj4gPiAgCQlkZXZf
+ZXJyKCZwZGV2LT5kZXYsICJGYWlsZWQgdG8gaW5pdGlhbGl6ZSBpMmMgY29udHJvbGxlclxuIik7
+DQo+DQo+DQo+IE1pc3NpbmcgRE1BIHJlc291cmNpbmcgcmVsZWFzZSBvbiBwcm9iZSBmYWlsdXJl
+Lg0KDQpJZiBwcm9iZSBmYWlscyBkdWUgdG8gb3RoZXIgcmVhc29ucywgdGhlbiBJMkMgaW50ZXJm
+YWNlIHdpbGwgbm90IGJlIGF2YWlsYWJsZSBhbmQgYm9vdCB3aWxsIG5vdCBldmVuIGhhcHBlbi4N
+CkRvIHdlIG5lZWQgRE1BIHJlc291cmNpbmcgcmVsZWFzZT8NCg0K
