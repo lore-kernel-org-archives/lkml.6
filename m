@@ -2,125 +2,220 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1967C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF80DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FD821872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:41:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPhkRuDx"
+	by mail.kernel.org (Postfix) with ESMTP id 91A2421904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549539744;
+	bh=8GJQ6K8i8b2i9RUOR5rhXCJl7zECUdrLoSVF0mlLcsg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Ih+F97x2Ifkq/woEMLizFFew5Ko+aTJh1/6LD5pQzF9wiDE6hQInqhk2eQjeX8HUw
+	 9JMqc6R34oGM5M4Gx4OKxaM/rprC5qViOvsUcJPCuCoVNmJxDFxjOYhNyIrNVZJuTt
+	 ebki6uOnVMA+dHspC2R6b+ENNcvqD9Uwm59gowW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfBGLlI (ORCPT
+        id S1726930AbfBGLmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:41:08 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52850 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726782AbfBGLlI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:41:08 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so5755475wml.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:41:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CjnvclVyKeLBTw1SQbK4p0yaTy2NU4lox4zdRpAQ4MY=;
-        b=xPhkRuDxRZs9kMkzugyDMMCiA88+9vP82WGmqzDAOd8PaQypsyv+qp+qIV9kpfsElc
-         WPAur3i/Bqgbfjg4BlfdCI7AvcBZ83JfHUgUKOAn+q4aZIzOUExEuXHAh0xGmcbRBoJT
-         hOuZT+fijBYxlWWCeJNZdCzGCALJ0SNaT4kCw4evlnwehR4ma/cA0QD9iEX3o25aOJ63
-         Ou6B5++f5aux6qP30pDu6dOLUU6ogdvddu7oSC2KPL56xYVaVFkAJb//uRpM7E5RA0VJ
-         BFRPeWctSTPu3jMxvPcLXzagfFWQU2v+nT46kZqAjsL3avWhsF3y8Uv2KFCvY1L6iKck
-         MMPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=CjnvclVyKeLBTw1SQbK4p0yaTy2NU4lox4zdRpAQ4MY=;
-        b=MokXvJiMbNMoZQBmvtgObMi9iRje90EYNjJfFCwHwLGn+Jgb/h7AjqFjIbw5dZmhf2
-         0hOcC8h8+9PTL3ApXqeOwbME+eAXPWJFNdonUXJp7y9MHvarZ803dQ3eNHX3DjWm0BdK
-         qurPiwS0NwKlWmXywZQ5UN9meUZ3VqHZly/oYcUf4VTeI2oAbI4wVpafwjDE8iF4Sa3u
-         dcrrrrUS4XPgd6d8ivxzzzRB5l2TxsheXBX24U30+c+kLvTSAWJ+PPzwjUKxehxjb/yv
-         KsowHNgrnOdhmmVVGrxdp96SDUmQPf7JxfNY/p6ixWMekcdiVSUg6p/6XlfudwOIf69v
-         YW4g==
-X-Gm-Message-State: AHQUAuZFdTYxZo/bfw2PaFzVh88MNB5owL1/DGnQUunyHr9dULc1w1zS
-        q8zhbYQeZKxBnVdBBYHNIHfy0w==
-X-Google-Smtp-Source: AHgI3IbrwSRDDzIAMqfkz0BdySTvQrzRe4tzFZhjEbeopuT0V9slkyeC+zQO7Yc7j2MwJa01GKk0Vw==
-X-Received: by 2002:a1c:2686:: with SMTP id m128mr6801157wmm.52.1549539665724;
-        Thu, 07 Feb 2019 03:41:05 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id s3sm15678284wmj.23.2019.02.07.03.41.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 03:41:05 -0800 (PST)
-Date:   Thu, 7 Feb 2019 11:41:03 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v8 1/8] mfd: regulator: clk: split rohm-bd718x7.h
-Message-ID: <20190207114103.GF20638@dell>
-References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
- <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 7 Feb 2019 06:42:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726691AbfBGLmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:42:22 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25656218FE;
+        Thu,  7 Feb 2019 11:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549539740;
+        bh=8GJQ6K8i8b2i9RUOR5rhXCJl7zECUdrLoSVF0mlLcsg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xg25pfbHhSYHKVqwhpnNJGg0ijcYVTij1SchyCxceODY3UzxhYDNXrhf4NPYZuewR
+         x3mNVpmOl0i63gnc+TdnftsCQ152DcYsA1csOou4h3PI4wKXPP2/6QVG15eOCrVgMG
+         cIS6DJmwb6Suf6p82wNJTkGUTVhPYvbQjRq/yAdU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/34] 4.4.174-stable review
+Date:   Thu,  7 Feb 2019 12:41:42 +0100
+Message-Id: <20190207113025.552605181@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.174-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.174-rc1
+X-KernelTest-Deadline: 2019-02-09T11:30+00:00
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 07 Feb 2019, Matti Vaittinen wrote:
+This is the start of the stable review cycle for the 4.4.174 release.
+There are 34 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-> Split the bd718x7.h to ROHM common and bd718x7 specific parts
-> so that we do not need to add same things in every new ROHM
-> PMIC header. Please note that this change requires changes also
-> in bd718x7 sub-device drivers for regulators and clk.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> Please note that I maintained the acks from Mark and Stephen even
-> though this is a squash of 3 commits and both Mark and Stephen had
-> only acked one of the patches. (The patch which touched their area
-> clk for Stephen, regulators for Mark). I interpreted their acks as
-> 'the split is in general Ok and portion I am interested in is fine'
-> and thus maintained the acks. Please let me know if this is not Ok.
-> 
->  drivers/clk/clk-bd718x7.c             |  6 +++---
->  drivers/mfd/rohm-bd718x7.c            | 23 ++++++++++++-----------
->  drivers/regulator/bd718x7-regulator.c | 24 ++++++++++++------------
->  include/linux/mfd/rohm-bd718x7.h      | 22 ++++++++--------------
->  include/linux/mfd/rohm-generic.h      | 20 ++++++++++++++++++++
->  5 files changed, 55 insertions(+), 40 deletions(-)
->  create mode 100644 include/linux/mfd/rohm-generic.h
+Responses should be made by Sat Feb  9 11:30:10 UTC 2019.
+Anything received after that time might be too late.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.174-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.174-rc1
+
+Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+    rcu: Force boolean subscript for expedited stall warnings
+
+Michal Kubecek <mkubecek@suse.cz>
+    net: ipv4: do not handle duplicate fragments as overlapping
+
+Dimitris Michailidis <dmichail@google.com>
+    net: fix pskb_trim_rcsum_slow() with odd trim offset
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: better deal with smp races
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    ipv4: frags: precedence bug in ip_expire()
+
+Taehee Yoo <ap420073@gmail.com>
+    ip: frags: fix crash in ip_do_fragment()
+
+Peter Oskolkov <posk@google.com>
+    ip: process in-order fragments efficiently
+
+Peter Oskolkov <posk@google.com>
+    ip: add helpers to process in-order fragments faster.
+
+Peter Oskolkov <posk@google.com>
+    ip: use rb trees for IP frag queue.
+
+Eric Dumazet <edumazet@google.com>
+    net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends
+
+Florian Westphal <fw@strlen.de>
+    ipv6: defrag: drop non-last frags smaller than min mtu
+
+Peter Oskolkov <posk@google.com>
+    net: modify skb_rbtree_purge to return the truesize of all purged skbs.
+
+Peter Oskolkov <posk@google.com>
+    ip: discard IPv4 datagrams with overlapping segments.
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: fix ip6frag_low_thresh boundary
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: get rid of ipfrag_skb_cb/FRAG_CB
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: reorganize struct netns_frags
+
+Eric Dumazet <edumazet@google.com>
+    rhashtable: reorganize struct rhashtable layout
+
+Eric Dumazet <edumazet@google.com>
+    ipv6: frags: rewrite ip6_expire_frag_queue()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: do not clone skb in ip_expire()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: break the 2GB limit for frags storage
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: remove inet_frag_maybe_warn_overflow()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: get rif of inet_frag_evicting()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: remove some helpers
+
+Paolo Abeni <pabeni@redhat.com>
+    ipfrag: really prevent allocation on netns exit
+
+Alexander Aring <aring@mojatatu.com>
+    net: ieee802154: 6lowpan: fix frag reassembly
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: use rhashtables for reassembly units
+
+Eric Dumazet <edumazet@google.com>
+    rhashtable: add schedule points
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    rhashtable: Add rhashtable_lookup()
+
+Pablo Neira Ayuso <pablo@netfilter.org>
+    rhashtable: add rhashtable_lookup_get_insert_key()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: refactor lowpan_net_frag_init()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: refactor ipv6_frag_init()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: refactor ipfrag_init()
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: add a pointer to struct netns_frags
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: change inet_frags_init_net() return value
+
+
+-------------
+
+Diffstat:
+
+ Documentation/networking/ip-sysctl.txt  |  13 +-
+ Makefile                                |   4 +-
+ include/linux/rhashtable.h              | 143 ++++++--
+ include/linux/skbuff.h                  |  16 +-
+ include/net/inet_frag.h                 | 133 ++++----
+ include/net/ip.h                        |   1 -
+ include/net/ipv6.h                      |  26 +-
+ include/uapi/linux/snmp.h               |   1 +
+ kernel/rcu/tree.c                       |   2 +-
+ lib/rhashtable.c                        |  15 +-
+ net/core/skbuff.c                       |  21 +-
+ net/ieee802154/6lowpan/6lowpan_i.h      |  26 +-
+ net/ieee802154/6lowpan/reassembly.c     | 148 ++++-----
+ net/ipv4/inet_fragment.c                | 389 +++++-----------------
+ net/ipv4/ip_fragment.c                  | 571 ++++++++++++++++++--------------
+ net/ipv4/proc.c                         |   7 +-
+ net/ipv6/netfilter/nf_conntrack_reasm.c | 100 +++---
+ net/ipv6/proc.c                         |   5 +-
+ net/ipv6/reassembly.c                   | 209 ++++++------
+ 19 files changed, 868 insertions(+), 962 deletions(-)
+
+
