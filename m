@@ -2,156 +2,156 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87E1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FEDC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B507321872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2438E21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:52:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9w/m4JR"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bL5LtIcP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JX4a2fgY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfBGOwV (ORCPT
+        id S1726941AbfBGOwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:52:21 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35756 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfBGOwU (ORCPT
+        Thu, 7 Feb 2019 09:52:36 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56614 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfBGOwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:52:20 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l142so98546lfe.2;
-        Thu, 07 Feb 2019 06:52:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=raiyBvxmbYM9e83/F8N9dhGooSKmxudcowTBfDqbEGM=;
-        b=h9w/m4JR/3ds29SZRyfNO8RL4xFYyMdr6i3EkxyBZmbIEPbB8eQXN8mlNb+B/NUPZn
-         MV1V4UU1vq7PoueTnAbv0M/4W2Nml9/UbQHb/raxajvBQG2ntXoxHNCePIXd4J9p6kay
-         PpUosF/Iux/hFCMq/ozJ8pLie4Jc1yGKIkX+pdTW9f1ecbM7Nh6alR4a9d2fdIqMtDGD
-         QpxU86OSE/OJ2eZVeDB/wjJr8mT/VKJrLMaCrVMxtGU7O6k4LTJTQcQhll6ep5wKuUR3
-         2A8y62MeFTj4IZeFrUA8D7JS2wvZs/PKwM64eocXHK8OHY7vmCGZqQwrLPe+AaO/gr7l
-         K4jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=raiyBvxmbYM9e83/F8N9dhGooSKmxudcowTBfDqbEGM=;
-        b=hmsYj/a0RL73G1HkoAyleqhRi3ByssifqRZl/zWDNnDpocHtVfgZWGoGzU4YxRfgrQ
-         3e6jxvhyXawtYAZvY9WKDO7Jpkksu/kaXqNwPc20uzsUoM8WzrstDCYQJrSwc0UV2WaA
-         7ZQBk8/vejyIPGoeYV+DkmVU9wWDYWldOL7Cb4GJiE9ZNHWOvG34XddRfdrPAck2zsKb
-         gwdOR7cc6kMLwzmhyzDy1SYxhDu4aSW8m7BzWpgoP4/CAc34TPLh2zgzowmnRG5sjF5a
-         Se8C4L/wdfbOjJwD/lmV1DcFNPD9WQLEt7cI0Mdw0YdBWxaFgPBcPs+ZnuDPXLUzyB+Y
-         gYvw==
-X-Gm-Message-State: AHQUAuaY5v5eDhNdKBxipvTEkPSJjEpOKJzaUMaJrHquTkPmoGUpSmRH
-        wujRQi3eNrJN0RC9nPHdqFvMUruC
-X-Google-Smtp-Source: AHgI3Ib0VjXOJmLZYxyxOsDmwsmm8757MZe+10UOnIXMwlUAEiGEU422rwZs5zjCKTPfu55VyhBbFA==
-X-Received: by 2002:a19:e601:: with SMTP id d1mr10991730lfh.71.1549551137843;
-        Thu, 07 Feb 2019 06:52:17 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id c12sm4243073lfh.48.2019.02.07.06.52.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 06:52:17 -0800 (PST)
-Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
- <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a6b1acbd-9be0-62b7-29bb-081d93ee92fb@gmail.com>
-Date:   Thu, 7 Feb 2019 17:52:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thu, 7 Feb 2019 09:52:36 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 80187609F2; Thu,  7 Feb 2019 14:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549551154;
+        bh=+nzxc04tUhQn0k/G5HzDrhtUxVWAMj5peml7H0f4hT4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=bL5LtIcPEdDmKfQeB7sf4pGp2TwWmKzgwKOAAQLes9AqLv/rSptW/3ocT0l4fq1+Z
+         uzjYBqdHnO6QXra4hoA2PEblJyNH9URH4HYijtS0CIif16o3gI2blg4NFEchbSJkG4
+         KCUQf91oDQoTg5prOzkDl2yySYMphu6UyrYL1cxc=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8A83860264;
+        Thu,  7 Feb 2019 14:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549551149;
+        bh=+nzxc04tUhQn0k/G5HzDrhtUxVWAMj5peml7H0f4hT4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JX4a2fgYXlroC2QvHPVHhtRzhDhPJy3qm9Z01JymckC0MlesaNwZQ9/rKgeNBLHnp
+         aIdMxGsfRcbK/9Xv1I0rOjXSCvE2vUcfRKLETfFjIqKO5+RltW+nYJSj3ex+kXjjxY
+         3k2JUY3SLc0807JQsoM4gwldPdRIzBntdjxeW0r8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A83860264
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v3 5/5] Revert "scsi: ufs: disable vccq if it's not needed
+ by UFS device"
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        SCSI <linux-scsi@vger.kernel.org>, Hannes Reinecke <hare@suse.de>
+References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
+ <CGME20190204174549epcas4p4682667176f55101f69cc24cc455c9f3c@epcas4p4.samsung.com>
+ <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
+ <5f2a8378-1f22-6a52-356d-56d3b393ab1d@samsung.com>
+ <05d2d193-4181-12ce-b4fb-4e8dec5aef27@free.fr>
+ <7610c262-1451-9bb2-48a6-4daf6f534f6c@free.fr>
+ <42c86292-22e9-4c5e-d64d-bc6107af45bf@free.fr>
+ <740e6332-b54f-ab62-915a-0aec6be450d3@samsung.com>
+ <2a59c11a-037f-c8c3-235a-9b21183a0801@free.fr>
+ <90f24b35-89b0-cea0-1ab3-13c2a419b138@samsung.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <81b85f39-49b5-901b-ec79-19708509965e@codeaurora.org>
+Date:   Thu, 7 Feb 2019 07:52:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <90f24b35-89b0-cea0-1ab3-13c2a419b138@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.02.2019 22:16, Sowjanya Komatineni пишет:
-> This patch adds DMA support for Tegra I2C.
+On 2/7/2019 1:50 AM, Alim Akhtar wrote:
+> Hi Marc,
 > 
-> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
-> transfer size of the max FIFO depth and DMA mode is used for
-> transfer size higher than max FIFO depth to save CPU overhead.
-> 
-> PIO mode needs full intervention of CPU to fill or empty FIFO's
-> and also need to service multiple data requests interrupt for the
-> same transaction. This adds delay between data bytes of the same
-> transfer when CPU is fully loaded and some slave devices has
-> internal timeout for no bus activity and stops transaction to
-> avoid bus hang. DMA mode is helpful in such cases.
-> 
-> DMA mode is also helpful for Large transfers during downloading or
-> uploading FW over I2C to some external devices.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
+> On 06/02/19 9:22 PM, Marc Gonzalez wrote:
+>> On 06/02/2019 16:27, Alim Akhtar wrote:
+>>
+>>> On 06/02/19 8:29 PM, Marc Gonzalez wrote:
+>>>
+>>>> [    2.405734] regulator_disable: ENTER vdd_l26
+>>>> [    2.405958] regulator_disable: EXIT vdd_l26
+>>>> [    2.406032]   regulator_set_load: vdd_l26 = 0 uA
+>>>> [    3.930447] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode 0x04 for idn 13 failed, index 0, err = -11
+>>>> [    5.434358] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode 0x04 for idn 13 failed, index 0, err = -11
+>>>> [    6.938318] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode 0x04 for idn 13 failed, index 0, err = -11
+>>>> [    6.938414] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr_retry: query attribute, idn 13, failed with error -11 after 3 retires
+>>>> [    6.946959] ufshcd-qcom 1da4000.ufshc: ufshcd_disable_auto_bkops: failed to enable exception event -11
+>>>> [    6.958523] ufshcd-qcom 1da4000.ufshc: dme-peer-get: attr-id 0x1587 failed 3 retries
+>>>> [    6.967730] ufshcd-qcom 1da4000.ufshc: dme-peer-get: attr-id 0x1586 failed 3 retries
+>>>> [    6.975576] ufshcd-qcom 1da4000.ufshc: ufshcd_get_max_pwr_mode: invalid max pwm tx gear read = 0
+>>>> [    6.983306] ufshcd-qcom 1da4000.ufshc: ufshcd_probe_hba: Failed getting max supported power mode
+>>>> [    8.506314] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 3 failed, err = -11
+>>>> [   10.010352] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 3 failed, err = -11
+>>>> [   11.514313] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag: Sending flag query for idn 3 failed, err = -11
+>>>> [   11.514412] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry: query attribute, opcode 5, idn 3, failed with error -11 after 3 retires
+>>>> [   13.050354] ufshcd-qcom 1da4000.ufshc: __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0, err = -11
+>>>> [   14.554313] ufshcd-qcom 1da4000.ufshc: __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0, err = -11
+>>>> [   16.058313] ufshcd-qcom 1da4000.ufshc: __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0, err = -11
+>>>> [   16.058421] ufshcd-qcom 1da4000.ufshc: ufshcd_read_desc_param: Failed reading descriptor. desc_id 8, desc_index 0, param_offset 0, ret -11
+>>>> [   16.067654] ufshcd-qcom 1da4000.ufshc: ufshcd_init_icc_levels: Failed reading power descriptor.len = 98 ret = -11
+>>>> [   37.074334] ufshcd-qcom 1da4000.ufshc: link startup failed 1
+>>>
+>>> Can you check if your UFS device RESET_N is asserted correctly. It might
+>>> be connected to some regulator and may be you can try keeping that
+>>> regulator as "regulator-always-on" from your DT node.
+>>
+>> How do I check RESET_N? In software or hardware?
+>>
+> RST_N is the reset logic for UFS device core logic and it is input to
+> the device from UFS host controller.So, in your platform please check if
+> this line somehow connected to (pulled up) a PMIC supply. If that is the
+> case, please keep that regulator ON and see if this issue is resolved.
 
+The reset line is routed though the global clock controller (GCC), and 
+must be explicitly asserted within the GCC to trigger a reset.  As far 
+as I am aware, Linux is not touching this.
 
-[snip]
+Additionally, I fail to see how if this was a reset issue, reverting 
+60f0187031c0 would have any impact (which doing so addresses our issue)
 
-> @@ -1124,6 +1453,10 @@ static int tegra_i2c_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	ret = tegra_i2c_init_dma(i2c_dev);
-> +	if (ret < 0)
-> +		goto disable_div_clk;
-> +
->  	ret = tegra_i2c_init(i2c_dev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
+>> Do you think it is not a good idea to revert 60f0187031c05e04cbadffb62f557d0ff3564490 ?
+>>
+> Please hold on till we understand the real cause of this issue. Or we
+> have a consensuses for reverting the said commit.
+> Thanks!
 
+Did you see https://lkml.org/lkml/2019/2/5/659 where I indicated VCCQ 
+powers components within the host controller, and by not setting load on 
+the regulator properly, we are likely undervolting those components due 
+to the current draw?
 
-Missing DMA resourcing release on probe failure.
-
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 7921d3e6237d..11f25357b843 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1612,14 +1612,14 @@ static int tegra_i2c_probe(struct platform_device *pdev)
-        ret = tegra_i2c_init(i2c_dev, false);
-        if (ret) {
-                dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
--               goto disable_div_clk;
-+               goto release_dma;
-        }
- 
-        ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
-                        tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
-        if (ret) {
-                dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
--               goto disable_div_clk;
-+               goto release_dma;
-        }
- 
-        i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
-@@ -1633,10 +1633,13 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 
-        ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
-        if (ret)
--               goto disable_div_clk;
-+               goto release_dma;
- 
-        return 0;
- 
-+release_dma:
-+       tegra_i2c_release_dma(i2c_dev);
-+
- disable_div_clk:
-        if (i2c_dev->is_multimaster_mode)
-                clk_disable(i2c_dev->div_clk);
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
