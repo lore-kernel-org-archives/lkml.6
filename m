@@ -2,174 +2,194 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AA8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E585C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D230F2175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2FB02175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:48:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="v5W5j5qR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfBGCr4 (ORCPT
+        id S1726914AbfBGCsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 21:47:56 -0500
-Received: from ozlabs.org ([203.11.71.1]:56119 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbfBGCrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 21:47:55 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43w2mR6TKRz9s7h;
-        Thu,  7 Feb 2019 13:47:51 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Build regressions/improvements in v5.0-rc5
-In-Reply-To: <fba03b4d-0086-21f9-d38c-3e22d44b5ce3@infradead.org>
-References: <20190204134234.13636-1-geert@linux-m68k.org> <33e58393-97f1-321e-5ee0-a1242c7c7a26@infradead.org> <5ccff302-3986-5892-d072-5c334484f990@infradead.org> <87zhr9kza2.fsf@concordia.ellerman.id.au> <fba03b4d-0086-21f9-d38c-3e22d44b5ce3@infradead.org>
-Date:   Thu, 07 Feb 2019 13:47:49 +1100
-Message-ID: <87a7j8l3fu.fsf@concordia.ellerman.id.au>
+        Wed, 6 Feb 2019 21:48:31 -0500
+Received: from mail-ot1-f46.google.com ([209.85.210.46]:44330 "EHLO
+        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbfBGCsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 21:48:30 -0500
+Received: by mail-ot1-f46.google.com with SMTP id e24so6525440otp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 18:48:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S1gfzfUI9BE0fAwOfXXQyL9WoxcMnzqN0DkgLCe8v/4=;
+        b=v5W5j5qRfGbhnpQve2Z6iJunE7ux98b4KIYF8viNI4KQwF9TOOnUr3ZR7jS6SP0Tpz
+         s8WCvWE+hD7y+UQmg2GPEVh3uC/qek6B4BN6omMyKvu/J2SI0r+3JVgL573ELXy0t+lQ
+         5s0o7SrutnzM3tEFqld2te87jGnQWKpi01oKQnxeoajrAe6lEMXFKjLqZEPm4ZCGMJYT
+         ooHNkORg17gyjYN+WoIo0Ny4/h4bEG1ozw9S3orIPCuoKRH3Hsp2FrZ1fifkzv66yoN0
+         8l7c6svrwcr/CGhewZ2YH5SrJLwSYqVMAhXPa0QiK+DY0s+137eyziz56Z41qVMwXs1h
+         bNtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S1gfzfUI9BE0fAwOfXXQyL9WoxcMnzqN0DkgLCe8v/4=;
+        b=i9bcUpuCt12KYlPywfZEHSJ6la7tRTAsGT9J52sbCukebwNK7or86+uPhWQxGhmlEK
+         blkD6hgYDPssNeFCP/w8rSZJzE4ssVbyLth9eFilq2haO/UD5eCN8/b/gXTrYmVWLzvR
+         T9APZz+A8mQ/4g0d9YOW1qRIynrXiPHG2AMiOo2AovVkNgrDjyKk1e6AXiljw0aj25vZ
+         rvBhV6EkA6tjVAlDtAWk7Fqh5LDsK5ubDN+KznWwttjLfL+N8vkiXX1I9DhmRb47qyjx
+         w5/mMK7kSr59/14w5U6jVcomgfUNqtGeUhRb8QJXm6KnosKR7cquD9ldINO9glVnLd4w
+         2fcA==
+X-Gm-Message-State: AHQUAuZZ0VrqMYgWBGkk2AgBoT2TQbAq4bZpMZVQFDcwGOF85B7NZ9RC
+        6lSZ8PNTmSwJKXf6RchccF9yvBgGAreK/xPf58NtoA==
+X-Google-Smtp-Source: AHgI3IYHdPDAfXO42UmaIzX1oz8WtVXjlhhrABCRynQ0OiT8MNXsNAJzAdRff2iHvJIptHd2Vf4LciWVb1NliENIU4Q=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr7512480oti.367.1549507709581;
+ Wed, 06 Feb 2019 18:48:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org> <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com> <645c5e11b28ff10d354ae17ed3016bc895c9028b.camel@redhat.com>
+In-Reply-To: <645c5e11b28ff10d354ae17ed3016bc895c9028b.camel@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 6 Feb 2019 18:48:18 -0800
+Message-ID: <CAPcyv4i-sW9gu4nrRvvb24=uAUQms9=+Yx5=EQSj+CxpmoNkSw@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+To:     Doug Ledford <dledford@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
-> On 2/6/19 2:05 AM, Michael Ellerman wrote:
->> Randy Dunlap <rdunlap@infradead.org> writes:
->>> On 2/4/19 9:46 AM, Randy Dunlap wrote:
->>>> On 2/4/19 5:42 AM, Geert Uytterhoeven wrote:
->>>>> Below is the list of build error/warning regressions/improvements in
->>>>> v5.0-rc5[1] compared to v4.20[2].
->>>>>
->>>>> Summarized:
->>>>>   - build errors: +2/-4
->>>>>   - build warnings: +113/-14843
->>>>>
->>>>> JFYI, when comparing v5.0-rc5[1] to v5.0-rc4[3], the summaries are:
->>>>>   - build errors: +0/-0
->>>>>   - build warnings: +56/-59
->>>>>
->>>>> Note that there may be false regressions, as some logs are incomplete.
->>>>> Still, they're build errors/warnings.
->>>>>
->>>>> Happy fixing! ;-)
->>>>>
->>>>> Thanks to the linux-next team for providing the build service.
->>>>>
->>>>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/ (238 out of 240 configs)
->>>>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8fe28cb58bcb235034b64cbbb7550a8a43fd88be/ (all 240 configs)
->>>>> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/f17b5f06cb92ef2250513a1e154c47b78df07d40/ (238 out of 240 configs)
->>>>>
->>>>>
->>>>>
->>>>> *** WARNINGS ***
->>>>>
->>>>> 113 warning regressions:
->>>>
->>>>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS:  => N/A
->>>>
->>>> Hi Geert,
->>>>
->>>> I am trying to find the above warning (needle) in the haystack.
->>>> Can you please direct me to which config/build it is in?
->>>>
->>>> Is there a good way for me to find it?
->>>>
->>>> thanks.
->>>>
->>>
->>> Working backwards, it probably comes from this:
->>>
->>> config CURRITUCK
->>> 	bool "IBM Currituck (476fpe) Support"
->>> 	depends on PPC_47x
->>> 	select SWIOTLB
->>> 	select 476FPE
->>> 	select PPC4xx_PCI_EXPRESS
->>>
->>> This is the only similar Kconfig segment that does not select FORCE_PCI
->>> but PPC4xx_PCI_EXPRESS depends on PCI but
->>> # CONFIG_PCI is not set
->>>
->>> This could be related to a recent series of patches that allows ACPI to
->>> be built without having PCI enabled.
->>>
->>> Michael?
->> 
->> There isn't really an easy way to do it sorry.
->> 
->> If you download the page for the revision:
->>   http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/
->> 
->> With a lot of grep/sed/awk you can get a list of the URLs for all the
->> builds eg. one would be:
->> 
->>   http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/
->> 
->> And then you can just tack on "log/" to get:
->> 
->>   http://kisskb.ellerman.id.au/kisskb/buildresult/13676551/log/
->> 
->> Which you can wget and grep.
->> 
->> But that's all a bit of a pain.
->> 
->> I have on my todo list to add json formatted build results and revision
->> pages, which would make it quite a bit simpler. But of course I haven't
->> had time to do it yet :/
+On Wed, Feb 6, 2019 at 5:57 PM Doug Ledford <dledford@redhat.com> wrote:
+[..]
+> > > > Dave, you said the FS is responsible to arbitrate access to the
+> > > > physical pages..
+> > > >
+> > > > Is it possible to have a filesystem for DAX that is more suited to
+> > > > this environment? Ie designed to not require block reallocation (no
+> > > > COW, no reflinks, different approach to ftruncate, etc)
+> > >
+> > > Can someone give me a real world scenario that someone is *actually*
+> > > asking for with this?
+> >
+> > I'll point to this example. At the 6:35 mark Kodi talks about the
+> > Oracle use case for DAX + RDMA.
+> >
+> > https://youtu.be/ywKPPIE8JfQ?t=395
 >
-> No problem.
+> Thanks for the link, I'll review the panel.
 >
-> However, I was trying to ask you about the kconfig problem above:
+> > Currently the only way to get this to work is to use ODP capable
+> > hardware, or Device-DAX. Device-DAX is a facility to map persistent
+> > memory statically through device-file. It's great for statically
+> > allocated use cases, but loses all the nice things (provisioning,
+> > permissions, naming) that a filesystem gives you. This debate is what
+> > to do about non-ODP capable hardware and Filesystem-DAX facility. The
+> > current answer is "no RDMA for you".
+> >
+> > > Are DAX users demanding xfs, or is it just the
+> > > filesystem of convenience?
+> >
+> > xfs is the only Linux filesystem that supports DAX and reflink.
 >
->>>>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS
+> Is it going to be clear from the link above why reflink + DAX + RDMA is
+> a good/desirable thing?
 >
-> and not the "search the build results" problem.  ;)
 
-Haha, oops :)
+No, unfortunately it will only clarify the DAX + RDMA use case, but
+you don't need to look very far to see that the trend for storage
+management is more COW / reflink / thin-provisioning etc in more
+places. Users want the flexibility to be able delay, change, and
+consolidate physical storage allocation decisions, otherwise
+device-dax would have solved all these problems and we would not be
+having this conversation.
 
-A result of the recent rework of the PCI config symbols:
+> > > Do they need to stick with xfs?
+> >
+> > Can you clarify the motivation for that question?
+>
+> I did a little googling and research before I asked that question.
+> According to the documentation, other FSes can work with DAX too (namely
+> ext2 and ext4).  The question was more or less pondering whether or not
+> ext2 or ext4 + RDMA + DAX would solve people's problems without the
+> issues that xfs brings.
 
-eb01d42a77785ff96b6e66a2a2e7027fc6d78e4a is the first bad commit
-commit eb01d42a77785ff96b6e66a2a2e7027fc6d78e4a
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Thu Nov 15 20:05:32 2018 +0100
+No, ext4 also supports hole punch, and the ext2 support is a toy. We
+went through quite a bit of work to solve this problem for the
+O_DIRECT pinned page case.
 
-    PCI: consolidate PCI config entry in drivers/pci
-    
-    There is no good reason to duplicate the PCI menu in every architecture.
-    Instead provide a selectable HAVE_PCI symbol that indicates availability
-    of PCI support, and a FORCE_PCI symbol to for PCI on and the handle the
-    rest in drivers/pci.
-    
-    Signed-off-by: Christoph Hellwig <hch@lst.de>
-    Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
-    Acked-by: Max Filippov <jcmvbkbc@gmail.com>
-    Acked-by: Thomas Gleixner <tglx@linutronix.de>
-    Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-    Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-    Acked-by: Paul Burton <paul.burton@mips.com>
-    Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+6b2bb7265f0b sched/wait: Introduce wait_var_event()
+d6dc57e251a4 xfs, dax: introduce xfs_break_dax_layouts()
+69eb5fa10eb2 xfs: prepare xfs_break_layouts() for another layout type
+c63a8eae63d3 xfs: prepare xfs_break_layouts() to be called with
+XFS_MMAPLOCK_EXCL
+5fac7408d828 mm, fs, dax: handle layout changes to pinned dax mappings
+b1f382178d15 ext4: close race between direct IO and ext4_break_layouts()
+430657b6be89 ext4: handle layout changes to pinned DAX mappings
+cdbf8897cb09 dax: dax_layout_busy_page() warn on !exceptional
 
+So the fs is prepared to notify RDMA applications of the need to
+evacuate a mapping (layout change), and the timeout to respond to that
+notification can be configured by the administrator. The debate is
+about what to do when the platform owner needs to get a mapping out of
+the way in bounded time.
 
-But that patch really just exposed an existing problem. CURRITUCK
-selects PPC4xx_PCI_EXPRESS which depends on PCI, and PCI is user
-selectable in that config.
+> >  This problem exists
+> > for any filesystem that implements an mmap that where the physical
+> > page backing the mapping is identical to the physical storage location
+> > for the file data. I don't see it as an xfs specific problem. Rather,
+> > xfs is taking the lead in this space because it has already deployed
+> > and demonstrated that leases work for the pnfs4 block-server case, so
+> > it seems logical to attempt to extend that case for non-ODP-RDMA.
+> >
+> > > Are they
+> > > really trying to do COW backed mappings for the RDMA targets?  Or do
+> > > they want a COW backed FS but are perfectly happy if the specific RDMA
+> > > targets are *not* COW and are statically allocated?
+> >
+> > I would expect the COW to be broken at registration time. Only ODP
+> > could possibly support reflink + RDMA. So I think this devolves the
+> > problem back to just the "what to do about truncate/punch-hole"
+> > problem in the specific case of non-ODP hardware combined with the
+> > Filesystem-DAX facility.
+>
+> If that's the case, then we are back to EBUSY *could* work (despite the
+> objections made so far).
 
-Previously the powerpc PCI symbol was default y for CURRITUCK so it was
-enabled by default and we didn't see a warning.
+I linked it in my response to Jason [1], but the entire reason ext2,
+ext4, and xfs scream "experimental" when DAX is enabled is because DAX
+makes typical flows fail that used to work in the page-cache backed
+mmap case. The failure of a data space management command like
+fallocate(punch_hole) is more risky than just not allowing the memory
+registration to happen in the first place. Leases result in a system
+that has a chance at making forward progress.
 
-But a user could always just turn it off and then they'd get the same
-warning we're seeing now.
+The current state of disallowing RDMA for FS-DAX is one of the "if
+(dax) goto fail;" conditions that needs to be solved before filesystem
+developers graduate DAX from experimental status.
 
-I'll send a patch to force PCI on for CURRITUCK.
-
-cheers
+[1]: https://lists.01.org/pipermail/linux-nvdimm/2019-February/019884.html
