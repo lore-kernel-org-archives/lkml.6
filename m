@@ -2,343 +2,368 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B734EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A365C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6874D21900
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jccbRGRd"
+	by mail.kernel.org (Postfix) with ESMTP id 26D682175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 07:35:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfBGHdo (ORCPT
+        id S1726844AbfBGHfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 02:33:44 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40651 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfBGHdn (ORCPT
+        Thu, 7 Feb 2019 02:35:05 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34764 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726499AbfBGHfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 02:33:43 -0500
-Received: by mail-ot1-f67.google.com with SMTP id s5so16672544oth.7
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 23:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vSUKBKl/Tf8DmzOVa470mD+o12FsuzjdLmZpv/qYgOQ=;
-        b=jccbRGRdlpiKI+ibbgBNUiwbar2gkgub2YCzqJepTgyFPuMl/ZMMGcOmwUG2vril+O
-         Rz46SGaIuSUaxK22Wkt1guUPC15GqqGD9Bobphvp5ZQyFms1bVcyBeiSfhtRmW0Bgc6k
-         8qsp6qtkHCrGfOiE+7FmDcudh4tJOx+UH17rI=
+        Thu, 7 Feb 2019 02:35:04 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v14-v6so5619643ljv.1;
+        Wed, 06 Feb 2019 23:35:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vSUKBKl/Tf8DmzOVa470mD+o12FsuzjdLmZpv/qYgOQ=;
-        b=PqDhzCNt2Znv35yJzK2khkDNgqI27XzPRuQ49DIcxSSvOFZDRaqJqzLDdd/5RsEz+W
-         6zQql9ajl0Tv8i2oV4A49mgHpYc6VtibWCxvthXLtDEooxp2oPCsHyIy3IbK2Fzj1ZZn
-         /L12GZZufZOfgPiVnk8Eq3mxXrg+Cvs1kaw+WKZnipSHOKo4Xzitg66je4ENC8SAWRcA
-         hdZCC0mPGqCjHp7NCMRsfqHq9WDYEgSkX5AMkGrVexGEq5miN9230rxf6DvCsZppu4OS
-         xBB07R7Fz2ZC9zUHSHJyodvbvySiLeLv9Rnftdg5IyhKFbitQ49sHFnfm3HtZGgVYho3
-         E/0A==
-X-Gm-Message-State: AHQUAuYMT9JMRWJkvYVGPMrmsyJk0cskEaWc3HdqGrgNMEcQdQ7+Mkbw
-        zU+XqMiL1G2qA4fxOHgXhumQn7MHMCE=
-X-Google-Smtp-Source: AHgI3Ibg2Puk31VxodwWyiavXvFcOduOeOMe/1ntQxC5l2LHR+DYd5rRHtBQ31bnPwB4XeWBSQ3lAg==
-X-Received: by 2002:a9d:1ea7:: with SMTP id n36mr7978210otn.217.1549524822205;
-        Wed, 06 Feb 2019 23:33:42 -0800 (PST)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
-        by smtp.gmail.com with ESMTPSA id w20sm2384654oth.4.2019.02.06.23.33.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 23:33:40 -0800 (PST)
-Received: by mail-ot1-f53.google.com with SMTP id u16so16651610otk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 23:33:40 -0800 (PST)
-X-Received: by 2002:a54:4d03:: with SMTP id v3mr1851551oix.173.1549524819832;
- Wed, 06 Feb 2019 23:33:39 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VrZm+iNdgdzmDIqE5wauCIyIfE70c1FVaDAKetwmTfg=;
+        b=mphMjMJlJDJB9s8SXrRcOchbZn7X1fSN9YsRHskOsSZXnxMt9isK73OvGk1qFP+HGS
+         GWw1dQ/oNVHo4fSh/89ySOhXXJQebdUgz38kh7GzF7B9B47JdbfJukhtodbtgStRlbz5
+         3PrL4JHFWdlLvaF0Fi3lwbSdB+4JoASV2fY6NGOpVt2f9AQV938pM1TjCPqIHBKj1qnk
+         pgl0DYu0+3P540fyg8ifZXOC9Nt80DRut65yx+NEPqGJbJQgv+Esh+V6/zrQ8b+3DTa4
+         l8+vTQr8WZnLnAHYr2T6XoZbKWtnmXRufOO4qsuS1gctlQadaKiQj1SKZrA2rS6Vasqk
+         3BtA==
+X-Gm-Message-State: AHQUAuZGXclMg7MlhLfHl7EtRZhJG3JmIXH7a50F7fWaXlQ82FCCw9F3
+        qCIpl83QSPmSX/5UEfWILfk=
+X-Google-Smtp-Source: AHgI3Iafaq3BZRAt3NPATySAoTjSpctEhXbsoBO3aea2AptdKNEl75GBvJXByx/kevK++uiaMnQU7w==
+X-Received: by 2002:a2e:9dc3:: with SMTP id x3-v6mr8603021ljj.195.1549524899900;
+        Wed, 06 Feb 2019 23:34:59 -0800 (PST)
+Received: from localhost.localdomain (82-203-157-3.bb.dnainternet.fi. [82.203.157.3])
+        by smtp.gmail.com with ESMTPSA id p10-v6sm4053236ljh.59.2019.02.06.23.34.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 23:34:59 -0800 (PST)
+Date:   Thu, 7 Feb 2019 09:34:19 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: [PATCH v8 1/8] mfd: regulator: clk: split rohm-bd718x7.h
+Message-ID: <58a56ac25564baa221d471e878a3e4f5d9081f36.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-11-stanimir.varbanov@linaro.org> <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
- <28069a44-b188-6b89-2687-542fa762c00e@linaro.org> <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
- <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
- <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
- <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
- <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
- <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
- <1548938556.4585.1.camel@pengutronix.de> <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
- <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
- <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
- <f1e9dc99-4fcb-dee1-4279-ac0cf1d1fd6e@xs4all.nl> <CAAFQd5B+bt3SV_WRw1=2agZk=Q+Enbkv=nXCrbXX=+MNpeSpCg@mail.gmail.com>
- <cb8cda5d-e714-6019-4a76-3853ea49c4a6@xs4all.nl>
-In-Reply-To: <cb8cda5d-e714-6019-4a76-3853ea49c4a6@xs4all.nl>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 7 Feb 2019 16:33:28 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BZhhX6Cjj7GhbaY_G7ERksyKne6hxKFCuTJoOnamoQ=A@mail.gmail.com>
-Message-ID: <CAAFQd5BZhhX6Cjj7GhbaY_G7ERksyKne6hxKFCuTJoOnamoQ=A@mail.gmail.com>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1549523718.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 7:35 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 2/5/19 10:31 AM, Tomasz Figa wrote:
-> > On Tue, Feb 5, 2019 at 6:00 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >>
-> >> On 2/5/19 7:26 AM, Tomasz Figa wrote:
-> >>> On Fri, Feb 1, 2019 at 12:18 AM Nicolas Dufresne <nicolas@ndufresne.c=
-a> wrote:
-> >>>>
-> >>>> Le jeudi 31 janvier 2019 =C3=A0 22:34 +0900, Tomasz Figa a =C3=A9cri=
-t :
-> >>>>> On Thu, Jan 31, 2019 at 9:42 PM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
-> >>>>>> Hi Nicolas,
-> >>>>>>
-> >>>>>> On Wed, 2019-01-30 at 10:32 -0500, Nicolas Dufresne wrote:
-> >>>>>>> Le mercredi 30 janvier 2019 =C3=A0 15:17 +0900, Tomasz Figa a =C3=
-=A9crit :
-> >>>>>>>>> I don't remember saying that, maybe I meant to say there might =
-be a
-> >>>>>>>>> workaround ?
-> >>>>>>>>>
-> >>>>>>>>> For the fact, here we queue the headers (or first frame):
-> >>>>>>>>>
-> >>>>>>>>> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
-master/sys/v4l2/gstv4l2videodec.c#L624
-> >>>>>>>>>
-> >>>>>>>>> Then few line below this helper does G_FMT internally:
-> >>>>>>>>>
-> >>>>>>>>> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
-master/sys/v4l2/gstv4l2videodec.c#L634
-> >>>>>>>>> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
-master/sys/v4l2/gstv4l2object.c#L3907
-> >>>>>>>>>
-> >>>>>>>>> And just plainly fails if G_FMT returns an error of any type. T=
-his was
-> >>>>>>>>> how Kamil designed it initially for MFC driver. There was no ot=
-her
-> >>>>>>>>> alternative back then (no EAGAIN yet either).
-> >>>>>>>>
-> >>>>>>>> Hmm, was that ffmpeg then?
-> >>>>>>>>
-> >>>>>>>> So would it just set the OUTPUT width and height to 0? Does it m=
-ean
-> >>>>>>>> that gstreamer doesn't work with coda and mtk-vcodec, which don'=
-t have
-> >>>>>>>> such wait in their g_fmt implementations?
-> >>>>>>>
-> >>>>>>> I don't know for MTK, I don't have the hardware and didn't integr=
-ate
-> >>>>>>> their vendor pixel format. For the CODA, I know it works, if ther=
-e is
-> >>>>>>> no wait in the G_FMT, then I suppose we are being really lucky wi=
-th the
-> >>>>>>> timing (it would be that the drivers process the SPS/PPS synchron=
-ously,
-> >>>>>>> and a simple lock in the G_FMT call is enough to wait). Adding Ph=
-ilipp
-> >>>>>>> in CC, he could explain how this works, I know they use GStreamer=
- in
-> >>>>>>> production, and he would have fixed GStreamer already if that was
-> >>>>>>> causing important issue.
-> >>>>>>
-> >>>>>> CODA predates the width/height=3D0 rule on the coded/OUTPUT queue.
-> >>>>>> It currently behaves more like a traditional mem2mem device.
-> >>>>>
-> >>>>> The rule in the latest spec is that if width/height is 0 then CAPTU=
-RE
-> >>>>> format is determined only after the stream is parsed. Otherwise it'=
-s
-> >>>>> instantly deduced from the OUTPUT resolution.
-> >>>>>
-> >>>>>> When width/height is set via S_FMT(OUT) or output crop selection, =
-the
-> >>>>>> driver will believe it and set the same (rounded up to macroblock
-> >>>>>> alignment) on the capture queue without ever having seen the SPS.
-> >>>>>
-> >>>>> That's why I asked whether gstreamer sets width and height of OUTPU=
-T
-> >>>>> to non-zero values. If so, there is no regression, as the specs mim=
-ic
-> >>>>> the coda behavior.
-> >>>>
-> >>>> I see, with Philipp's answer it explains why it works. Note that
-> >>>> GStreamer sets the display size on the OUTPUT format (in fact we pas=
-s
-> >>>> as much information as we have, because a) it's generic code and b) =
-it
-> >>>> will be needed someday when we enable pre-allocation (REQBUFS before
-> >>>> SPS/PPS is passed, to avoid the setup delay introduce by allocation,
-> >>>> mostly seen with CMA base decoder). In any case, the driver reported
-> >>>> display size should always be ignored in GStreamer, the only
-> >>>> information we look at is the G_SELECTION for the case the x/y or th=
-e
-> >>>> cropping rectangle is non-zero.
-> >>>>
-> >>>> Note this can only work if the capture queue is not affected by the
-> >>>> coded size, or if the round-up made by the driver is bigger or equal=
- to
-> >>>> that coded size. I believe CODA falls into the first category, since
-> >>>> the decoding happens in a separate set of buffers and are then de-ti=
-led
-> >>>> into the capture buffers (if understood correctly).
-> >>>
-> >>> Sounds like it would work only if coded size is equal to the visible
-> >>> size (that GStreamer sets) rounded up to full macroblocks. Non-zero x
-> >>> or y in the crop could be problematic too.
-> >>>
-> >>> Hans, what's your view on this? Should we require G_FMT(CAPTURE) to
-> >>> wait until a format becomes available or the OUTPUT queue runs out of
-> >>
-> >> You mean CAPTURE queue? If not, then I don't understand that part.
-> >
-> > No, I exactly meant the OUTPUT queue. The behavior of s5p-mfc in case
-> > of the format not being detected yet is to waits for any pending
-> > bitstream buffers to be processed by the decoder before returning an
-> > error.
-> >
-> > See https://elixir.bootlin.com/linux/v5.0-rc5/source/drivers/media/plat=
-form/s5p-mfc/s5p_mfc_dec.c#L329
->
-> It blocks?! That shouldn't happen. Totally against the spec.
->
+Split the bd718x7.h to ROHM common and bd718x7 specific parts
+so that we do not need to add same things in every new ROHM
+PMIC header. Please note that this change requires changes also
+in bd718x7 sub-device drivers for regulators and clk.
 
-Yeah and that's what this patch tries to implement in venus as well
-and is seemingly required for compatibility with gstreamer...
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
 
-> > .
-> >
-> >>
-> >>> buffers?
-> >>
-> >> First see my comment here regarding G_FMT returning an error:
-> >>
-> >> https://www.spinics.net/lists/linux-media/msg146505.html
-> >>
-> >> In my view that is a bad idea.
-> >
-> > I don't like it either, but it seemed to be the most consistent and
-> > compatible behavior, but I'm not sure anymore.
-> >
-> >>
-> >> What G_FMT should return between the time a resolution change was
-> >> detected and the CAPTURE queue being drained (i.e. the old or the new
-> >> resolution?) is something I am not sure about.
-> >
-> > Note that we're talking here about the initial stream information
-> > detection, when the driver doesn't have any information needed to
-> > determine the CAPTURE format yet.
->
-> IMHO the driver should just start off with some default format, it
-> really doesn't matter what that is.
->
+Please note that I maintained the acks from Mark and Stephen even
+though this is a squash of 3 commits and both Mark and Stephen had
+only acked one of the patches. (The patch which touched their area
+clk for Stephen, regulators for Mark). I interpreted their acks as
+'the split is in general Ok and portion I am interested in is fine'
+and thus maintained the acks. Please let me know if this is not Ok.
 
-I guess that's fine indeed.
+ drivers/clk/clk-bd718x7.c             |  6 +++---
+ drivers/mfd/rohm-bd718x7.c            | 23 ++++++++++++-----------
+ drivers/regulator/bd718x7-regulator.c | 24 ++++++++++++------------
+ include/linux/mfd/rohm-bd718x7.h      | 22 ++++++++--------------
+ include/linux/mfd/rohm-generic.h      | 20 ++++++++++++++++++++
+ 5 files changed, 55 insertions(+), 40 deletions(-)
+ create mode 100644 include/linux/mfd/rohm-generic.h
 
-> This initial situation is really just a Seek operation: you have a format=
-,
-> you seek to a new position and when you find the resolution of the
-> first frame in the bitstream it triggers a SOURCE_CHANGE event. Actually,
-> to be really consistent with the Seek: you only need to trigger this even=
-t
-> if 1) the new resolution is different from the current format, or 2) the
-> capture queue is empty. 2) will never happen during a normal Seek, so
-> that's a little bit special to this initial situation.
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 60422c72d142..461228ebf703 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -17,7 +17,7 @@ struct bd718xx_clk {
+ 	u8 reg;
+ 	u8 mask;
+ 	struct platform_device *pdev;
+-	struct bd718xx *mfd;
++	struct rohm_regmap_dev *mfd;
+ };
+ 
+ static int bd71837_clk_set(struct clk_hw *hw, int status)
+@@ -68,7 +68,7 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	int rval = -ENOMEM;
+ 	const char *parent_clk;
+ 	struct device *parent = pdev->dev.parent;
+-	struct bd718xx *mfd = dev_get_drvdata(parent);
++	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
+ 	struct clk_init_data init = {
+ 		.name = "bd718xx-32k-out",
+ 		.ops = &bd71837_clk_ops,
+@@ -119,5 +119,5 @@ static struct platform_driver bd71837_clk = {
+ module_platform_driver(bd71837_clk);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837 chip clk driver");
++MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+index a29d529a96f4..7beb444a57cb 100644
+--- a/drivers/mfd/rohm-bd718x7.c
++++ b/drivers/mfd/rohm-bd718x7.c
+@@ -98,18 +98,19 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 		return -ENOMEM;
+ 
+ 	bd718xx->chip_irq = i2c->irq;
+-	bd718xx->chip_type = (unsigned int)(uintptr_t)
++	bd718xx->chip.chip_type = (unsigned int)(uintptr_t)
+ 				of_device_get_match_data(&i2c->dev);
+-	bd718xx->dev = &i2c->dev;
++	bd718xx->chip.dev = &i2c->dev;
+ 	dev_set_drvdata(&i2c->dev, bd718xx);
+ 
+-	bd718xx->regmap = devm_regmap_init_i2c(i2c, &bd718xx_regmap_config);
+-	if (IS_ERR(bd718xx->regmap)) {
++	bd718xx->chip.regmap = devm_regmap_init_i2c(i2c,
++						    &bd718xx_regmap_config);
++	if (IS_ERR(bd718xx->chip.regmap)) {
+ 		dev_err(&i2c->dev, "regmap initialization failed\n");
+-		return PTR_ERR(bd718xx->regmap);
++		return PTR_ERR(bd718xx->chip.regmap);
+ 	}
+ 
+-	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->regmap,
++	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->chip.regmap,
+ 				       bd718xx->chip_irq, IRQF_ONESHOT, 0,
+ 				       &bd718xx_irq_chip, &bd718xx->irq_data);
+ 	if (ret) {
+@@ -118,7 +119,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	/* Configure short press to 10 milliseconds */
+-	ret = regmap_update_bits(bd718xx->regmap,
++	ret = regmap_update_bits(bd718xx->chip.regmap,
+ 				 BD718XX_REG_PWRONCONFIG0,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+@@ -129,7 +130,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	/* Configure long press to 10 seconds */
+-	ret = regmap_update_bits(bd718xx->regmap,
++	ret = regmap_update_bits(bd718xx->chip.regmap,
+ 				 BD718XX_REG_PWRONCONFIG1,
+ 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
+ 				 BD718XX_PWRBTN_LONG_PRESS_10S);
+@@ -149,7 +150,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ 
+ 	button.irq = ret;
+ 
+-	ret = devm_mfd_add_devices(bd718xx->dev, PLATFORM_DEVID_AUTO,
++	ret = devm_mfd_add_devices(bd718xx->chip.dev, PLATFORM_DEVID_AUTO,
+ 				   bd718xx_mfd_cells,
+ 				   ARRAY_SIZE(bd718xx_mfd_cells), NULL, 0,
+ 				   regmap_irq_get_domain(bd718xx->irq_data));
+@@ -162,11 +163,11 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
+ static const struct of_device_id bd718xx_of_match[] = {
+ 	{
+ 		.compatible = "rohm,bd71837",
+-		.data = (void *)BD718XX_TYPE_BD71837,
++		.data = (void *)ROHM_CHIP_TYPE_BD71837,
+ 	},
+ 	{
+ 		.compatible = "rohm,bd71847",
+-		.data = (void *)BD718XX_TYPE_BD71847,
++		.data = (void *)ROHM_CHIP_TYPE_BD71847,
+ 	},
+ 	{ }
+ };
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index ccea133778c8..524a87b991f3 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1017,12 +1017,12 @@ static int bd718xx_probe(struct platform_device *pdev)
+ {
+ 	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+-	struct bd718xx_pmic_inits pmic_regulators[] = {
+-		[BD718XX_TYPE_BD71837] = {
++	struct bd718xx_pmic_inits pmic_regulators[ROHM_CHIP_TYPE_AMOUNT] = {
++		[ROHM_CHIP_TYPE_BD71837] = {
+ 			.r_datas = bd71837_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71837_regulators),
+ 		},
+-		[BD718XX_TYPE_BD71847] = {
++		[ROHM_CHIP_TYPE_BD71847] = {
+ 			.r_datas = bd71847_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71847_regulators),
+ 		},
+@@ -1037,15 +1037,15 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[mfd->chip_type].r_datas) {
++	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+ 
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+@@ -1065,7 +1065,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	 * for all reset types because OTP loading at READY will clear SEL
+ 	 * bit allowing HW defaults for power rails to be used
+ 	 */
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
++	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_TRANS_COND1,
+ 				 BD718XX_ON_REQ_POWEROFF_MASK |
+ 				 BD718XX_SWRESET_POWEROFF_MASK |
+ 				 BD718XX_WDOG_POWEROFF_MASK |
+@@ -1078,17 +1078,17 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &pmic_regulators[mfd->chip_type].r_datas[i];
++		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-		config.regmap = mfd->regmap;
++		config.regmap = mfd->chip.regmap;
+ 
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+@@ -1104,7 +1104,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->chip.regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
+@@ -1113,7 +1113,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(mfd->regmap,
++			err = regmap_update_bits(mfd->chip.regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index fd194bfc836f..7f2dbde402a1 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -4,14 +4,9 @@
+ #ifndef __LINUX_MFD_BD718XX_H__
+ #define __LINUX_MFD_BD718XX_H__
+ 
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/regmap.h>
+ 
+-enum {
+-	BD718XX_TYPE_BD71837 = 0,
+-	BD718XX_TYPE_BD71847,
+-	BD718XX_TYPE_AMOUNT
+-};
+-
+ enum {
+ 	BD718XX_BUCK1 = 0,
+ 	BD718XX_BUCK2,
+@@ -321,18 +316,17 @@ enum {
+ 	BD718XX_PWRBTN_LONG_PRESS_15S
+ };
+ 
+-struct bd718xx_clk;
+-
+ struct bd718xx {
+-	unsigned int chip_type;
+-	struct device *dev;
+-	struct regmap *regmap;
+-	unsigned long int id;
++	/*
++	 * Please keep this as the first member here as some
++	 * drivers (clk) supporting more than one chip may only know this
++	 * generic struct 'struct rohm_regmap_dev' and assume it is
++	 * the first chunk of parent device's private data.
++	 */
++	struct rohm_regmap_dev chip;
+ 
+ 	int chip_irq;
+ 	struct regmap_irq_chip_data *irq_data;
+-
+-	struct bd718xx_clk *clk;
+ };
+ 
+ #endif /* __LINUX_MFD_BD718XX_H__ */
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+new file mode 100644
+index 000000000000..bff15ac26f2c
+--- /dev/null
++++ b/include/linux/mfd/rohm-generic.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Copyright (C) 2018 ROHM Semiconductors */
++
++#ifndef __LINUX_MFD_ROHM_H__
++#define __LINUX_MFD_ROHM_H__
++
++enum {
++	ROHM_CHIP_TYPE_BD71837 = 0,
++	ROHM_CHIP_TYPE_BD71847,
++	ROHM_CHIP_TYPE_BD70528,
++	ROHM_CHIP_TYPE_AMOUNT
++};
++
++struct rohm_regmap_dev {
++	unsigned int chip_type;
++	struct device *dev;
++	struct regmap *regmap;
++};
++
++#endif
+-- 
+2.14.3
 
-Having the error returned allowed the applications to handle the
-initial parsing without the event, though. It could have waited for
-all the OUTPUT buffers to be dequeued and then call G_FMT to check if
-that was enough data to obtain the format.
 
->
-> The only open question is what should be done with any CAPTURE buffers
-> that the application may have queued? Return one buffer with bytesused
-> set to 0 and the LAST flag set? I think that would be consistent with
-> the specification. I think this situation can happen during a regular
-> seek operation as well.
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-Yes, that would be reasonably consistent.
-
->
-> >
-> >>
-> >> On the one hand it is desirable to have the new resolution asap, on
-> >> the other hand, returning the new resolution would mean that the
-> >> returned format is inconsistent with the capture buffer sizes.
-> >>
-> >> I'm leaning towards either returning the new resolution.
-> >
-> > Is the "or ..." part of the sentence missing?
->
-> Sorry, 'either' should be dropped from that sentence.
->
-
-Got it, thanks for clarification.
-
-> >
-> > One of the major concerns was that we needed to completely stall the
-> > pipeline in case of a resolution change, which made it hard to deliver
-> > a seamless transition to the users. An idea that comes to my mind
-> > would be extending the source change event to actually include the
-> > v4l2_format struct describing the new format. Then the CAPTURE queue
-> > could keep the old format until it is drained, which should work fine
-> > for existing applications, while the new ones could use the new event
-> > data to determine if the buffers need to be reallocated.
->
-> In my opinion G_FMT should return the new resolution after the
-> SOURCE_CHANGE event was sent. So you know the new resolution at that
-> point even though there may still be capture buffers pending with the
-> old resolution.
-
-Agreed. That's how it's defined in current version.
-
->
-> What would be nice to have though is that the resolution could be part
-> of v4l2_buffer. So as long as the new resolution would still fit inside
-> the allocated buffers, you could just continue decoding without having
-> to send a SOURCE_CHANGE event.
-
-Hmm, I'm not sure I follow. What we effectively care about when
-deciding if we can continue decoding is whether the new sizeimage is
-less or equal to the current buffer size. However we still need to
-tell the application that the geometry changed. Otherwise it would
-have to call G_FMT and G_SELECTION every frame and compare with
-previous frame.
-
->
-> > <pipe dream>Ideally we would have all the metadata, including formats,
-> > unified into a single property (or control) -like interface and tied
-> > to buffers using Request API...</pipe dream>
->
-> We will very likely create replacement streaming I/O ioctls later this
-> year using a new v4l2_ext_buffer struct. I already had plans to store
-> things like the colorspace info and resolution into that struct.
->
-> So a perfectly doable solution would be that when the application starts
-> to use these new ioctls, then the SOURCE_CHANGE event would only have
-> to be sent if the new resolution would no longer fit inside the buffers.
-> I.e., they would need to be reallocated.
->
-> But we're not there yet.
-
-I know. Just trying to put some significance on this API redesign. :)
-
-Best regards,
-Tomasz
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
