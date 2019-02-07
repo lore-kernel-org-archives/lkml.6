@@ -1,131 +1,150 @@
 Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9452AC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0B7C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6007C2147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:28:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u7STcRyN"
+	by mail.kernel.org (Postfix) with ESMTP id C1453218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 02:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfBGC2y (ORCPT
+        id S1726718AbfBGCae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 21:28:54 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38291 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbfBGC2y (ORCPT
+        Wed, 6 Feb 2019 21:30:34 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:43646 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfBGCad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 21:28:54 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e5so4075867plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 18:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h32GDro9lZ6guonD1IJq6TP1NK4GW6mkOkPyNLpNVos=;
-        b=u7STcRyN25ve0CVT5EAHWtAgMekWjXDGm7rjJeoQJ1rIDOdbEsOgRzQWXzctyxq8BF
-         JcWJV9032OBxUUrmEoRC0K7/b0O4mcWseycRBLEIZJV+mhnZeCvmdKoAZzH6cZ7R2KGR
-         tj81s61rvzmZwQgUoSWozr9DVdkddcNZ+OOcJTbsk6FF5y56nGR80E6IIfqMeaJ+/jiD
-         9OQ8GCbMv2jTrwaEMEh7wERgS6fCh4bmIeVMRJ+uQKPFfK2zXNVRclaokVGki+tqkkma
-         lSVRgXenEiKPzE5A5/s9tpf888NuyXD4Q1TF3eltoCba+EGH72NTOQu5nXI49W6c/wBt
-         FzXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h32GDro9lZ6guonD1IJq6TP1NK4GW6mkOkPyNLpNVos=;
-        b=Kf3AU5z3rS1KqQZfcU7yqqEAYWTEeaOxZXolWjy+x7dNu8yBKk827BiDvUwP5adkLB
-         7XFqKFb+eXPiGPf+Da9iEEeUg8TdUBHRXiWxFBuD6wVlxtPaZWT8KqiNmTNehufVFiLq
-         RXb4k7h6pCqXhOkKwTX/4ovCv4KEjEAHZGbn0qJeoKFWNSA+yYDSLHVND3hLHGafDFjO
-         2EPdmi+ODqxHCcgpvx2Z4Nazqx6YEnYa5WTaXsUjTovCtND2ph4n/qxcZMOqi0AzvsqI
-         W6C3bMNzHa0E2C1pE33xRZN7scSSIabZOyTm1WZ56b3sOXfx6io8aL97k8fLD8lqUxSc
-         X/HA==
-X-Gm-Message-State: AHQUAubRYNeppaud6+5ejE4WFFljJx+MkD1v89Ol/DftePpygClwEz4g
-        Ei3yF/50GxUIjXBox0/V2y5A2e5h
-X-Google-Smtp-Source: AHgI3IaBvJIcLt1J6+tMAUVbJReppXD+xESCdrvHhGADXzXAmIKJXKJn83pY7dCL1fZK0FwwrA3Zfw==
-X-Received: by 2002:a17:902:8303:: with SMTP id bd3mr6049358plb.10.1549506533544;
-        Wed, 06 Feb 2019 18:28:53 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id u123sm10641854pfb.1.2019.02.06.18.28.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 18:28:53 -0800 (PST)
-Date:   Wed, 6 Feb 2019 18:28:49 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     m.szyprowski@samsung.com, robin.murphy@arm.com, vdumpa@nvidia.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dma-direct: do not allocate a single page from CMA
- area
-Message-ID: <20190207022848.GA5581@Asurada-Nvidia.nvidia.com>
-References: <20190115215140.1545-1-nicoleotsuka@gmail.com>
- <20190204082307.GA5916@lst.de>
- <20190205230514.GA21515@Asurada-Nvidia.nvidia.com>
- <20190206070726.GE23392@lst.de>
+        Wed, 6 Feb 2019 21:30:33 -0500
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x172UUxi002092;
+        Thu, 7 Feb 2019 11:30:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Thu, 07 Feb 2019 11:30:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x172UUOe002088;
+        Thu, 7 Feb 2019 11:30:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x172UUG6002087;
+        Thu, 7 Feb 2019 11:30:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201902070230.x172UUG6002087@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore =?ISO-2022-JP?B?c2VjdXJpdHk9IHBh?=
+ =?ISO-2022-JP?B?cmFtZXRlci4=?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@vger.kernel.org>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206070726.GE23392@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date:   Thu, 07 Feb 2019 11:30:30 +0900
+References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp> <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
+In-Reply-To: <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
-
-On Wed, Feb 06, 2019 at 08:07:26AM +0100, Christoph Hellwig wrote:
-> On Tue, Feb 05, 2019 at 03:05:30PM -0800, Nicolin Chen wrote:
-> > > And my other concern is that this skips allocating from the per-device
-> > > pool, which drivers might rely on.
-> > 
-> > Actually Robin had the same concern at v1 and suggested that we could
-> > always use DMA_ATTR_FORCE_CONTIGUOUS to enforce into per-device pool.
+Casey Schaufler wrote:
+> On 2/6/2019 2:23 AM, Tetsuo Handa wrote:
+> > But as I update the documentation ( https://tomoyo.osdn.jp/2.6/chapter-3.html.en#3.6 ),
+> > I came to think that we should ignore security= parameter when lsm= parameter is specified.
+> >
+> > Currently, it is possible to enable TOMOYO and only one of SELinux/Smack/AppArmor. Therefore,
+> > it is possible to disable only TOMOYO by specifying security=selinux when we want to enable
+> > only SELinux, by specifying security=smack when we want to enable only Smack, by specifying
+> > security=apparmor when we want to enable only AppArmor. That is, we can use security= parameter
+> > in order to specify the other LSM module which should not be disabled.
+> >
+> > But when it becomes possible to enable TOMOYO and more than one of SELinux/Smack/AppArmor,
+> > we will no longer be able to selectively disable one LSM module using security= parameter, for
+> > security= parameter is intended for specifying only one LSM module which should be enabled.
+> > That is, we will need to use lsm= parameter in order to selectively disable LSM modules.
 > 
-> That is both against the documented behavior of DMA_ATTR_FORCE_CONTIGUOUS
-> and doesn't help existing drivers that specify their CMA area in DT.
+> Yes. That is correct. The existing behavior of security= is maintained.
 
-OK. I will drop it.
+But the existing behavior of CONFIG_DEFAULT_SECURITY is not maintained.
+This might cause a problem like
 
-> > > To be honest I'm not sure there is
-> > > much of a point in the per-device CMA pool vs the traditional per-device
-> > > coherent pool, but I'd rather change that behavior in a clearly documented
-> > > commit with intentions rather as a side effect from a random optimization.
-> > 
-> > Hmm..sorry, I don't really follow this suggestion. Is it possible for
-> > you to make it clear that what should I do for the change?
+  commit e5a3b95f581da62e2054ef79d3be2d383e9ed664
+  Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+  Date:   Sat Feb 14 11:46:56 2009 +0900
+
+      TOMOYO: Don't create securityfs entries unless registered.
+
+      TOMOYO should not create /sys/kernel/security/tomoyo/ interface unless
+      TOMOYO is registered.
+
+for Ubuntu users because Ubuntu kernels are built with
+
+  CONFIG_SECURITY_SELINUX=y
+  CONFIG_SECURITY_SMACK=y
+  CONFIG_SECURITY_TOMOYO=y
+  CONFIG_SECURITY_APPARMOR=y
+  CONFIG_SECURITY_YAMA=y
+  CONFIG_DEFAULT_SECURITY="apparmor"
+
+. Due to CONFIG_DEFAULT_SECURITY="apparmor", majority of Ubuntu users are enabling
+only AppArmor without explicitly specifying "security=apparmor".
+
+Currently default CONFIG_LSM setting is
+
+  "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
+
+but Ubuntu kernels would have to be built with non-default CONFIG_LSM setting like
+
+  "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
+
+in order to make sure that AppArmor is by default chosen for the LSM_FLAG_EXCLUSIVE module.
+
+Now that TOMOYO becomes a !LSM_FLAG_EXCLUSIVE module, not specifying "security=apparmor" will
+automatically enable TOMOYO. And majority of Ubuntu users will unexpectedly encounter TOMOYO
+messages. But removing "tomoyo" from CONFIG_LSM setting in order to save majority of Ubuntu
+users from unexpectedly encountering TOMOYO messages also has a problem; Ubuntu users who want
+to enable only TOMOYO from LSM_FLAG_LEGACY_MAJOR modules can specify "security=tomoyo", but
+Ubuntu users who want to enable TOMOYO and one of SELinux,Smack,AppArmor (including syzbot)
+will have to explicitly specify "lsm=" because "security=" can't allow enabling multiple
+LSM_FLAG_LEGACY_MAJOR modules.
+
+> The new behavior of lsm= is provided to allow general handling of a list
+> of security modules. It uses the same form of data as CONFIG_LSM.
 > 
-> Something like this (plus proper comments):
+> > Then, I think that it is straightforward (and easier to manage) to ignore security= parameter
+> > when lsm= parameter is specified.
 > 
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index b2a87905846d..789d734f0f77 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -192,10 +192,19 @@ int __init dma_contiguous_reserve_area(phys_addr_t size, phys_addr_t base,
->  struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
->  				       unsigned int align, bool no_warn)
->  {
-> +	struct cma *cma;
-> +
->  	if (align > CONFIG_CMA_ALIGNMENT)
->  		align = CONFIG_CMA_ALIGNMENT;
->  
-> -	return cma_alloc(dev_get_cma_area(dev), count, align, no_warn);
-> +	if (dev && dev->cma_area)
-> +		cma = dev->cma_area;
-> +	else if (count > PAGE_SIZE)
-> +		cma = dma_contiguous_default_area;
-> +	else
-> +		return NULL;
+> That reduces flexibility somewhat. If I am debugging security modules
+> I may want to use lsm= to specify the order while using security= to
+> identify a specific exclusive module. I could do that using lsm= by
+> itself, but habits die hard.
 
-So we will keep allocating single pages in dev->cma_area if it's
-present, in order to address your previous concern?
+"lsm=" can be used for identifying a specific exclusive module, and Ubuntu kernels would
+have to use CONFIG_LSM (or "lsm=") for identifying the default exclusive module (in order
+to allow enabling both TOMOYO and one of SELinux,Smack,AppArmor at the same time).
 
-Thanks
-Nicolin
+Since "security=" can't be used for selectively enable/disable more than one of
+SELinux,Smack,TOMOYO,AppArmor, I think that recommending users to migrate to "lsm=" is the
+better direction. And ignoring "security=" when "lsm=" is specified is easier to understand.
