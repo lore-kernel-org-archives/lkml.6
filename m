@@ -2,193 +2,314 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877FFC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF02C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507A02085A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793222173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Nz81abuW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga1IsA3f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfBGXjG (ORCPT
+        id S1726836AbfBGXnE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:39:06 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40313 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGXjF (ORCPT
+        Thu, 7 Feb 2019 18:43:04 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40824 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGXnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:39:05 -0500
-Received: by mail-qt1-f194.google.com with SMTP id j36so2002277qta.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:39:04 -0800 (PST)
+        Thu, 7 Feb 2019 18:43:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so703408pgp.7;
+        Thu, 07 Feb 2019 15:43:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2XnrAy6YnHFz9HrPjyh/wZzHeOBeBqHUpkLz+64XGAM=;
-        b=Nz81abuWvxYZmdsXzP1Biib2wDMxyaVq5Yq8Me6Rhn/JFruGzY47yMPGP06h/Ep0nC
-         PNN3MXQNfk6QLgITf9vaDfhBFrBullOvTWk28ok/uDUeHiFPV20a2DL6JCaBaa8dmEpr
-         GuyNs6wXA87HuIDZ3X70SNl/IL4YfQaw25YKk=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ey/x5vrn4CizUUmXBv4+fgMvrzWraMv0zuIa3QCSm84=;
+        b=ga1IsA3fHg8/0gR7tlFT8D7e/A5Phoy3Z5g+k/w3M2S4OpuzUswpnyP3bGmmG3aCF+
+         j+ukUU2ufzZMKfzmvkr75hVlEe8F6Qbx+vm6oL/+Km0ULeHBwpIYn/OilmUpnwxcDI8H
+         MsDtf5fdhVqk64MaPP+KeEtdDeB1FtJIh9j/pqQni5ODXxTk5ZlXs6rfWmukvAfyfugO
+         ed8/ubmDjrKPCv0sMiqfOU3XqXIEcnBBbnZwXFUYsb4r+mJOwG3QwlH5SIp2+dCglymh
+         jYkethbxI06IdX5jVG4dXQmnv7QjnOvnONp22ScVkpYZEfEPuIC646f8Df+FgA78J/2G
+         Pn5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2XnrAy6YnHFz9HrPjyh/wZzHeOBeBqHUpkLz+64XGAM=;
-        b=sdk6NUJplOrIZnd009AD8VIMvMmC7S53gA2K3p5MdWkLhBlHMq0uUr+E5qSEQffnlh
-         unHwxfRl+UcH4J+afo2nU0OeNRRfU2W+FC0+dsLWEMh6ytYsIVZHb6oeNcPifn77byoe
-         m2w3QJm1TEs5zgAhGgVjGtzVAKYr4VYc0jnN1j1lgUXN3aMbrE3UlfrpBlx4SpmlWU4C
-         xqZfmvrbAHlRO8qZUlAVo0cRV2ZQivaTWzK+GiGR/ovJLOIIF09hPZsRJBbf72xlZrzu
-         kVF9VMXLgfJynCMcucSBRMq9/QDEl6fpsoy4wDhknKAJbB1qJIAKf9GAQr7vHbZqA6FB
-         qTXQ==
-X-Gm-Message-State: AHQUAuYQ3w1Num0SunTN8StvpUnQwbyrWWIn9da7rC+7Khy8zugRQEyP
-        svuDv65WcB8PEDyaj//quZ9oXg==
-X-Google-Smtp-Source: AHgI3Ibve4ApL0O7bTS9O10kFgM9lMKCDuM/GSoR8G51GLFRhVq1wL/++MX96FZKECSh44sK+zarFg==
-X-Received: by 2002:ac8:4882:: with SMTP id i2mr14116293qtq.225.1549582744391;
-        Thu, 07 Feb 2019 15:39:04 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id q195sm370955qke.58.2019.02.07.15.39.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 15:39:03 -0800 (PST)
-Date:   Thu, 7 Feb 2019 18:39:02 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
-        atishp04@gmail.com, dancol@google.com,
-        Dan Williams <dan.j.williams@intel.com>,
-        gregkh@linuxfoundation.org, Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, karim.yaghmour@opersys.com,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Manoj Rao <linux@manojrajarao.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        paulmck@linux.vnet.ibm.com,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        rdunlap@infradead.org, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        yhs@fb.com
-Subject: Re: [PATCH 1/2] Provide in-kernel headers for making it easy to
- extend the kernel
-Message-ID: <20190207233902.GA193818@google.com>
-References: <20190207211102.154634-1-joel@joelfernandes.org>
- <20190207175239.0607f5eb@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207175239.0607f5eb@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ey/x5vrn4CizUUmXBv4+fgMvrzWraMv0zuIa3QCSm84=;
+        b=AIkMXcUPDNU6O0Rhiz4+cY8A28a3Bpgh59IBPRR6k7lTdbQGxDOiO5fWnXRBRQsUar
+         rDKd+yQ2YP9nTvxWosFisGRQxgGIOr5djfZAB+GdhIvHmiz6ZKtIAUEk9hRi6+gKf+YQ
+         /kohC+ATPYY7sNsRkuGGvYatjyPdWP7RIht3/iCw0QiaxbK167UrvBfaVbtr4M6VmjHt
+         1NvKnR8w8TUONCS20FBiHBLYIRr5OaDaBVOoFFw014gmWTziOh5oW+p2ixXpC4HfcaOM
+         vg0ADKwXk9OR8UyCwQBd6GJ8KX1uJuTP8ggj2P2XgmnzRiC1OMWUqxBVD0BPGU08vm3J
+         ZFxg==
+X-Gm-Message-State: AHQUAuYC0uj/OgWy+o6/OWENSD95BNca3O3f0fm6MoQtrDDKWM8Svbyf
+        mapqSyWLfM6LLf/+MgrrXZZkBliMDck=
+X-Google-Smtp-Source: AHgI3Iav8GpcknzfRRoCkuqusVJaH5EYitky9oQeyv7iBHOw3oMJCr45Ebj7aX8Tx8Hu7KzfcbmdgQ==
+X-Received: by 2002:a63:2d46:: with SMTP id t67mr17721261pgt.140.1549582981766;
+        Thu, 07 Feb 2019 15:43:01 -0800 (PST)
+Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
+        by smtp.googlemail.com with ESMTPSA id y16sm291488pgk.22.2019.02.07.15.43.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 15:43:00 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] media: imx: Set capture compose rectangle in capture_device_set_format
+Date:   Thu,  7 Feb 2019 15:42:55 -0800
+Message-Id: <20190207234255.25994-1-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-On Thu, Feb 07, 2019 at 05:52:39PM -0500, Steven Rostedt wrote:
-> On Thu,  7 Feb 2019 16:11:01 -0500
-> "Joel Fernandes (Google)" <joel@joelfernandes.org> wrote:
-> 
-> > +
-> > +# Build a list of in-kernel headers for building kernel modules
-> > +# Any other files will be stored in IKH_EXTRA variable.
-> > +ikh_file_list := include/
-> > +ikh_file_list += arch/$(ARCH)/Makefile
-> > +ikh_file_list += arch/$(ARCH)/include/
-> > +ikh_file_list += $(IKH_EXTRA)
-> > +ikh_file_list += scripts/
-> > +ikh_file_list += Makefile
-> > +ikh_file_list += Module.symvers
-> > +ifeq ($(CONFIG_STACK_VALIDATION), y)
-> > +ikh_file_list += $(objtree)/tools/objtool/objtool
-> > +endif
-> > +
-> > +$(obj)/kheaders.o: $(obj)/kheaders_data.h
-> > +
-> > +targets += kheaders_data.txz
-> > +
-> > +quiet_cmd_genikh = GEN     $(obj)/kheaders_data.txz
-> > +cmd_genikh = $(srctree)/scripts/gen_ikh_data.sh $@ $^ >/dev/null 2>&1
-> > +$(obj)/kheaders_data.txz: $(ikh_file_list) FORCE
-> > +	$(call cmd,genikh)
-> > +
-> > +filechk_ikheadersxz = (echo "static const char kernel_headers_data[] __used = KH_MAGIC_START"; cat $< | scripts/bin2c; echo "KH_MAGIC_END;")
-> > +
-> > +targets += kheaders_data.h
-> > +$(obj)/kheaders_data.h: $(obj)/kheaders_data.txz FORCE
-> > +	$(call filechk,ikheadersxz)
-> > diff --git a/scripts/gen_ikh_data.sh b/scripts/gen_ikh_data.sh
-> > new file mode 100755
-> > index 000000000000..609196b5cea2
-> > --- /dev/null
-> > +++ b/scripts/gen_ikh_data.sh
-> > @@ -0,0 +1,19 @@
-> > +#!/bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +spath="$(dirname "$(readlink -f "$0")")"
-> > +
-> > +rm -rf $1.tmp
-> > +mkdir $1.tmp
-> > +
-> > +for f in "${@:2}";
-> > +	do find "$f" ! -name "*.c" ! -name "*.o" ! -name "*.cmd" ! -name ".*";
-> 
-> I wonder if it is a good idea to pick all files in the directories
-> defined in ikh_file_list, and not just explicitly list what we want,
-> with a '*.h' and such?
+The capture compose rectangle was not getting updated when setting
+the source subdevice's source pad format. This causes the compose window
+to be zero (or not updated) at stream start unless the capture device
+format was set explicitly at the capture device node.
 
-I also need few files in the archive that are not .h, these don't take up
-much space but are needed to make an out-of-tree kernel module build succeed.
+Fix by moving the calculation of the capture compose rectangle to
+imx_media_mbus_fmt_to_pix_fmt(), and pass the rectangle to
+imx_media_capture_device_set_format().
 
-One of my goals with this was to make a self-contained module that could be
-loaded to build other modules. Majority of the files are kernel headers, but
-some are not, such as Module.symvers and other scripts. Then one can run
-systemtap on Android which can be made to build modules using the embedded
-headers.
+Fixes: 439d8186fb23 ("media: imx: add capture compose rectangle")
 
-> > +done | cpio -pd $1.tmp
-> > +
-> > +for f in $(find $1.tmp); do
-> > +	$spath/strip-comments.pl $f
-> > +done
-> > +
-> > +tar -Jcf $1 -C $1.tmp/ . > /dev/null
-> > +
-> > +rm -rf $1.tmp
-> > diff --git a/scripts/strip-comments.pl b/scripts/strip-comments.pl
-> > new file mode 100755
-> > index 000000000000..f8ada87c5802
-> > --- /dev/null
-> > +++ b/scripts/strip-comments.pl
-> > @@ -0,0 +1,8 @@
-> > +#!/usr/bin/perl -pi
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +# This script removes /**/ comments from a file, unless such comments
-> > +# contain "SPDX". It is used when building compressed in-kernel headers.
-> > +
-> > +BEGIN {undef $/;}
-> > +s/\/\*((?!SPDX).)*?\*\///smg;
-> 
-> Hmm, I'm also wondering if we could us the C pre-processor for the
-> stripping of everything from the header file. We would then even get
-> the header files only having what is necessary for the running kernel.
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+---
+ drivers/staging/media/imx/imx-ic-prpencvf.c   |  5 ++--
+ drivers/staging/media/imx/imx-media-capture.c | 24 +++++++++----------
+ drivers/staging/media/imx/imx-media-csi.c     |  5 ++--
+ drivers/staging/media/imx/imx-media-utils.c   | 20 ++++++++++++----
+ drivers/staging/media/imx/imx-media.h         |  6 +++--
+ 5 files changed, 37 insertions(+), 23 deletions(-)
 
-I thought about this too. An issue with that is it is going to be really slow
-due to the large number of headers. The other is, I think it will actually
-make the headers bigger and take up more space - because all the include
-directives will also be expanded and have more duplication. Let me know if I
-missed something though.
-
-thanks,
-
- - Joel
+diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+index 376b504e8a42..5c8e6ad8c025 100644
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -912,6 +912,7 @@ static int prp_set_fmt(struct v4l2_subdev *sd,
+ 	const struct imx_media_pixfmt *cc;
+ 	struct v4l2_pix_format vdev_fmt;
+ 	struct v4l2_mbus_framefmt *fmt;
++	struct v4l2_rect vdev_compose;
+ 	int ret = 0;
+ 
+ 	if (sdformat->pad >= PRPENCVF_NUM_PADS)
+@@ -953,11 +954,11 @@ static int prp_set_fmt(struct v4l2_subdev *sd,
+ 	priv->cc[sdformat->pad] = cc;
+ 
+ 	/* propagate output pad format to capture device */
+-	imx_media_mbus_fmt_to_pix_fmt(&vdev_fmt,
++	imx_media_mbus_fmt_to_pix_fmt(&vdev_fmt, &vdev_compose,
+ 				      &priv->format_mbus[PRPENCVF_SRC_PAD],
+ 				      priv->cc[PRPENCVF_SRC_PAD]);
+ 	mutex_unlock(&priv->lock);
+-	imx_media_capture_device_set_format(vdev, &vdev_fmt);
++	imx_media_capture_device_set_format(vdev, &vdev_fmt, &vdev_compose);
+ 
+ 	return 0;
+ out:
+diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
+index f92edee63aa6..9703c85b19c4 100644
+--- a/drivers/staging/media/imx/imx-media-capture.c
++++ b/drivers/staging/media/imx/imx-media-capture.c
+@@ -205,7 +205,8 @@ static int capture_g_fmt_vid_cap(struct file *file, void *fh,
+ 
+ static int __capture_try_fmt_vid_cap(struct capture_priv *priv,
+ 				     struct v4l2_subdev_format *fmt_src,
+-				     struct v4l2_format *f)
++				     struct v4l2_format *f,
++				     struct v4l2_rect *compose)
+ {
+ 	const struct imx_media_pixfmt *cc, *cc_src;
+ 
+@@ -245,7 +246,8 @@ static int __capture_try_fmt_vid_cap(struct capture_priv *priv,
+ 		}
+ 	}
+ 
+-	imx_media_mbus_fmt_to_pix_fmt(&f->fmt.pix, &fmt_src->format, cc);
++	imx_media_mbus_fmt_to_pix_fmt(&f->fmt.pix, compose,
++				      &fmt_src->format, cc);
+ 
+ 	return 0;
+ }
+@@ -263,7 +265,7 @@ static int capture_try_fmt_vid_cap(struct file *file, void *fh,
+ 	if (ret)
+ 		return ret;
+ 
+-	return __capture_try_fmt_vid_cap(priv, &fmt_src, f);
++	return __capture_try_fmt_vid_cap(priv, &fmt_src, f, NULL);
+ }
+ 
+ static int capture_s_fmt_vid_cap(struct file *file, void *fh,
+@@ -271,6 +273,7 @@ static int capture_s_fmt_vid_cap(struct file *file, void *fh,
+ {
+ 	struct capture_priv *priv = video_drvdata(file);
+ 	struct v4l2_subdev_format fmt_src;
++	struct v4l2_rect compose;
+ 	int ret;
+ 
+ 	if (vb2_is_busy(&priv->q)) {
+@@ -284,17 +287,14 @@ static int capture_s_fmt_vid_cap(struct file *file, void *fh,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = __capture_try_fmt_vid_cap(priv, &fmt_src, f);
++	ret = __capture_try_fmt_vid_cap(priv, &fmt_src, f, &compose);
+ 	if (ret)
+ 		return ret;
+ 
+ 	priv->vdev.fmt.fmt.pix = f->fmt.pix;
+ 	priv->vdev.cc = imx_media_find_format(f->fmt.pix.pixelformat,
+ 					      CS_SEL_ANY, true);
+-	priv->vdev.compose.left = 0;
+-	priv->vdev.compose.top = 0;
+-	priv->vdev.compose.width = fmt_src.format.width;
+-	priv->vdev.compose.height = fmt_src.format.height;
++	priv->vdev.compose = compose;
+ 
+ 	return 0;
+ }
+@@ -655,7 +655,8 @@ static struct video_device capture_videodev = {
+ };
+ 
+ void imx_media_capture_device_set_format(struct imx_media_video_dev *vdev,
+-					 struct v4l2_pix_format *pix)
++					 const struct v4l2_pix_format *pix,
++					 const struct v4l2_rect *compose)
+ {
+ 	struct capture_priv *priv = to_capture_priv(vdev);
+ 
+@@ -663,6 +664,7 @@ void imx_media_capture_device_set_format(struct imx_media_video_dev *vdev,
+ 	priv->vdev.fmt.fmt.pix = *pix;
+ 	priv->vdev.cc = imx_media_find_format(pix->pixelformat, CS_SEL_ANY,
+ 					      true);
++	priv->vdev.compose = *compose;
+ 	mutex_unlock(&priv->mutex);
+ }
+ EXPORT_SYMBOL_GPL(imx_media_capture_device_set_format);
+@@ -768,10 +770,8 @@ int imx_media_capture_device_register(struct imx_media_video_dev *vdev)
+ 	}
+ 
+ 	vdev->fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+-	imx_media_mbus_fmt_to_pix_fmt(&vdev->fmt.fmt.pix,
++	imx_media_mbus_fmt_to_pix_fmt(&vdev->fmt.fmt.pix, &vdev->compose,
+ 				      &fmt_src.format, NULL);
+-	vdev->compose.width = fmt_src.format.width;
+-	vdev->compose.height = fmt_src.format.height;
+ 	vdev->cc = imx_media_find_format(vdev->fmt.fmt.pix.pixelformat,
+ 					 CS_SEL_ANY, false);
+ 
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index fb5307e2ca43..5265a2cc93bc 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -1502,6 +1502,7 @@ static int csi_set_fmt(struct v4l2_subdev *sd,
+ 	struct v4l2_pix_format vdev_fmt;
+ 	struct v4l2_mbus_framefmt *fmt;
+ 	struct v4l2_rect *crop, *compose;
++	struct v4l2_rect vdev_compose;
+ 	int ret;
+ 
+ 	if (sdformat->pad >= CSI_NUM_PADS)
+@@ -1557,11 +1558,11 @@ static int csi_set_fmt(struct v4l2_subdev *sd,
+ 	priv->cc[sdformat->pad] = cc;
+ 
+ 	/* propagate IDMAC output pad format to capture device */
+-	imx_media_mbus_fmt_to_pix_fmt(&vdev_fmt,
++	imx_media_mbus_fmt_to_pix_fmt(&vdev_fmt, &vdev_compose,
+ 				      &priv->format_mbus[CSI_SRC_PAD_IDMAC],
+ 				      priv->cc[CSI_SRC_PAD_IDMAC]);
+ 	mutex_unlock(&priv->lock);
+-	imx_media_capture_device_set_format(vdev, &vdev_fmt);
++	imx_media_capture_device_set_format(vdev, &vdev_fmt, &vdev_compose);
+ 
+ 	return 0;
+ out:
+diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/staging/media/imx/imx-media-utils.c
+index 5f110d90a4ef..e6f544528d31 100644
+--- a/drivers/staging/media/imx/imx-media-utils.c
++++ b/drivers/staging/media/imx/imx-media-utils.c
+@@ -577,7 +577,8 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+ EXPORT_SYMBOL_GPL(imx_media_fill_default_mbus_fields);
+ 
+ int imx_media_mbus_fmt_to_pix_fmt(struct v4l2_pix_format *pix,
+-				  struct v4l2_mbus_framefmt *mbus,
++				  struct v4l2_rect *compose,
++				  const struct v4l2_mbus_framefmt *mbus,
+ 				  const struct imx_media_pixfmt *cc)
+ {
+ 	u32 width;
+@@ -624,6 +625,17 @@ int imx_media_mbus_fmt_to_pix_fmt(struct v4l2_pix_format *pix,
+ 	pix->sizeimage = cc->planar ? ((stride * pix->height * cc->bpp) >> 3) :
+ 			 stride * pix->height;
+ 
++	/*
++	 * set capture compose rectangle, which is fixed to the
++	 * source subdevice mbus format.
++	 */
++	if (compose) {
++		compose->left = 0;
++		compose->top = 0;
++		compose->width = mbus->width;
++		compose->height = mbus->height;
++	}
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(imx_media_mbus_fmt_to_pix_fmt);
+@@ -635,13 +647,11 @@ int imx_media_mbus_fmt_to_ipu_image(struct ipu_image *image,
+ 
+ 	memset(image, 0, sizeof(*image));
+ 
+-	ret = imx_media_mbus_fmt_to_pix_fmt(&image->pix, mbus, NULL);
++	ret = imx_media_mbus_fmt_to_pix_fmt(&image->pix, &image->rect,
++					    mbus, NULL);
+ 	if (ret)
+ 		return ret;
+ 
+-	image->rect.width = mbus->width;
+-	image->rect.height = mbus->height;
+-
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(imx_media_mbus_fmt_to_ipu_image);
+diff --git a/drivers/staging/media/imx/imx-media.h b/drivers/staging/media/imx/imx-media.h
+index 7a0e658753f0..195e858913a3 100644
+--- a/drivers/staging/media/imx/imx-media.h
++++ b/drivers/staging/media/imx/imx-media.h
+@@ -180,7 +180,8 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+ 					struct v4l2_mbus_framefmt *fmt,
+ 					bool ic_route);
+ int imx_media_mbus_fmt_to_pix_fmt(struct v4l2_pix_format *pix,
+-				  struct v4l2_mbus_framefmt *mbus,
++				  struct v4l2_rect *compose,
++				  const struct v4l2_mbus_framefmt *mbus,
+ 				  const struct imx_media_pixfmt *cc);
+ int imx_media_mbus_fmt_to_ipu_image(struct ipu_image *image,
+ 				    struct v4l2_mbus_framefmt *mbus);
+@@ -261,7 +262,8 @@ void imx_media_capture_device_unregister(struct imx_media_video_dev *vdev);
+ struct imx_media_buffer *
+ imx_media_capture_device_next_buf(struct imx_media_video_dev *vdev);
+ void imx_media_capture_device_set_format(struct imx_media_video_dev *vdev,
+-					 struct v4l2_pix_format *pix);
++					 const struct v4l2_pix_format *pix,
++					 const struct v4l2_rect *compose);
+ void imx_media_capture_device_error(struct imx_media_video_dev *vdev);
+ 
+ /* subdev group ids */
+-- 
+2.17.1
 
