@@ -2,127 +2,207 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C993C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47109C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5451821902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:02:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jxHBv9Js"
+	by mail.kernel.org (Postfix) with ESMTP id 071DF21902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549541019;
+	bh=Wf1HXLhiPkqNBgk5wFtmBdA6hASO0S1zCmGUxC44c58=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TXFiq/IzABeCJUKq4LxMOTroOl34PpCmSERTlDK1PNa3jLCBSRIoJyYkT/UFcnoxI
+	 KEJ26rYjVxxBy6OEAyBrHoq9WAc2/nFIhdUPPuhnq7ahwFBOXdODUfFOkDAtX1Kklz
+	 Sxt8OiFu/fCDcd2dLAWMhaIjA0YPTwGlz+ZdZ94c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfBGMCz (ORCPT
+        id S1726952AbfBGMDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:02:55 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48130 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726691AbfBGMCz (ORCPT
+        Thu, 7 Feb 2019 07:03:37 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48310 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfBGMDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:02:55 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190207120253euoutp02dfa32b80005beb762e5c51eda199c56c~BE04frd_S1749017490euoutp02T
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 12:02:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190207120253euoutp02dfa32b80005beb762e5c51eda199c56c~BE04frd_S1749017490euoutp02T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549540973;
-        bh=xRplYe6/k+KXLGVJ1f9DiDQ2yQOcdpGL78LsT5esEug=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=jxHBv9JsDjzklIAZAxaGCjxMQUSqhVcKjYoH6gqoWijFboYWpR783rrcMZ2dj2dCI
-         NVJtVRStCNOU09xjLQFPxol0yVBX+feDyNm7+qV2biqkDKxZQdvLtsTuh2SE9yS3+V
-         CsxN72E1TXcgJFBKtjw/actzzdWG1EDAm02pb/qE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190207120252eucas1p2cb7f41925a5f111f81078190a19b721a~BE04II9Na0149501495eucas1p2X;
-        Thu,  7 Feb 2019 12:02:52 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 11.1E.04294.C6E1C5C5; Thu,  7
-        Feb 2019 12:02:52 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190207120251eucas1p2b877d3963a4e20b8bd29a9b00efa7b59~BE03USv9d0149501495eucas1p2W;
-        Thu,  7 Feb 2019 12:02:51 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190207120251eusmtrp1d7526fa32576e51a4e30ec5ce862e178~BE03F6cyk1580815808eusmtrp10;
-        Thu,  7 Feb 2019 12:02:51 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-82-5c5c1e6c1fcd
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D8.EB.04284.B6E1C5C5; Thu,  7
-        Feb 2019 12:02:51 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190207120251eusmtip1eead515d8f69a6802ac2718fc43c405c~BE02v9yvB1766517665eusmtip1j;
-        Thu,  7 Feb 2019 12:02:51 +0000 (GMT)
-Subject: Re: [PATCH] ata: macio: Use of_node_name_eq for node name
- comparisons
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <8c6cc6a1-dd37-c8cb-c85e-bcc514360597@samsung.com>
-Date:   Thu, 7 Feb 2019 13:02:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Thu, 7 Feb 2019 07:03:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Gm9K+i4NzBEWKyZUgxdC/mempUtOzUZgP4D0EegQEPg=; b=eTZbhfnCohFp/uEzQXKKUn8yW
+        rj37lPV03DeVirULHjHXbsJFuWpfBdQGcBLxIbd8Sd6lN53xAgDd86DLItW17UZh8spHLMmcJg/uL
+        j02bc9QsHGAXf60Sk7aqxo3FihzqAmQOjBNgPQkExsPHhB/n277jGMK+VM1t+XJj+iZyo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1griOo-0004s4-ML; Thu, 07 Feb 2019 12:03:22 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2A4BD1127EF9; Thu,  7 Feb 2019 12:03:22 +0000 (GMT)
+Date:   Thu, 7 Feb 2019 12:03:22 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        srv_heupstream@mediatek.com, tglx@linutronix.de,
+        jason@lakedaemon.net
+Subject: Re: [PATCH 4/6] mfd: Add support for the MediaTek MT6358 PMIC
+Message-ID: <20190207120322.GA6190@sirena.org.uk>
+References: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <1548839891-20932-5-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <20190207093450.GH4672@dell>
+ <345df368-b247-9c4b-a69d-e95f14bff8b6@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181205195050.4759-4-robh@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42LZduzned0cuZgYg38TRC1W3+1ns5h/5Byr
-        xbEdj5gsLu+aw2bxf88OdgdWj8tnSz02repk8/i8SS6AOYrLJiU1J7MstUjfLoErY23LEsaC
-        iSwVy5/dYWtg3MfcxcjJISFgInHu6CqWLkYuDiGBFYwSj7pOs4MkhAS+MEp0N1ZAJD4zSkxs
-        vMEC0/HhUgczRGI5o8SfE++gnPeMEj+PbWbrYuTgEBYIkDj4wgukQURAUeJ32zRWEJtZoFzi
-        6ZNuJhCbTcBKYmL7KkYQm1fATmLq/lVgJ7EIqEjsfPWbGWSMqECERP8ZdYgSQYmTM5+wgIQ5
-        gW44/psdYqKBxJFFc6Cmy0tsfzsH7BoJgWZ2iUUXT7BB3OwicfX7WlYIW1ji1fEt7BC2jMTp
-        yT0sEA3TGSXe/FoK5axnlFhz5hgTRJW1xOHjF1lBNksIOErcby6BMPkkbrwVhFjMJzFp23Rm
-        iDCvREebEESjmsSGZRvYYFZ17VwJDXQPidZD6xknMCrOQvLZLCTvzELyzgJG5lWM4qmlxbnp
-        qcVGeanlesWJucWleel6yfm5mxiB6eP0v+NfdjDu+pN0iFGAg1GJhzfgVlSMEGtiWXFl7iFG
-        CQ5mJRHeCKmYGCHelMTKqtSi/Pii0pzU4kOM0hwsSuK81QwPooUE0hNLUrNTUwtSi2CyTByc
-        Ug2MHKa3GmbfvRKpEbsgfep/t6On+J+tLD79++MO7S6Vj+r7xD+KSsxePUe3x0OvlEsg9Ix6
-        w1LTkosFl3+EMDBNOrzkxW1/Jm2OFunAKA1GFUVb9c0XBBtm2swK695zSdzpWM3coLlF+/js
-        9W85rgw51Jzc79ys8PV3zrTfWflMBfrWfsKzEi2VWIozEg21mIuKEwFxIIIjGwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42I5/e/4Xd1suZgYgwVHpSxW3+1ns5h/5Byr
-        xbEdj5gsLu+aw2bxf88OdgdWj8tnSz02repk8/i8SS6AOUrPpii/tCRVISO/uMRWKdrQwkjP
-        0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY23LEsaCiSwVy5/dYWtg3MfcxcjJISFg
-        IvHhUgeQzcUhJLCUUaLt0hHGLkYOoISMxPH1ZRA1whJ/rnWxQdS8ZZRY1f2ICSQhLOAn8e7Z
-        b7BBIgKKEr/bprGC2EIC7YwSV0/Zg8xhFiiXaDiSDBJmE7CSmNi+ihHE5hWwk5i6fxVYK4uA
-        isTOVxBjRAUiJG497GCBqBGUODnzCQvIGE6gO4//ZgcJMwvoSey4/osVwpaX2P52DvMERsFZ
-        SDpmISmbhaRsASPzKkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMCo2Hbs5+YdjJc2Bh9iFOBg
-        VOLhDbgVFSPEmlhWXJl7iFGCg1lJhDdCKiZGiDclsbIqtSg/vqg0J7X4EKMp0A8TmaVEk/OB
-        EZtXEm9oamhuYWlobmxubGahJM573qAySkggPbEkNTs1tSC1CKaPiYNTqoGxrHl2sPvuAJ3n
-        y5w3r1b7YP4zK4SVqyOYpzP326MHM99VuG4/eWlF4T71vLvav1Nvbjje9d/a+dqC8+H+Xffu
-        RYV1MrvMq7Sved2qcyrW9PnOpXOyhC2kdc4n/rE4tYJXweDvqf1TlWY/nbr2SrTsGxOlixOk
-        jql9TOoLCtvB0h17/lP7VjFTJZbijERDLeai4kQA0Xv/jKACAAA=
-X-CMS-MailID: 20190207120251eucas1p2b877d3963a4e20b8bd29a9b00efa7b59
-X-Msg-Generator: CA
-X-RootMTR: 20181205195131epcas3p3519c2452d1c90583338f098540e721ee
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181205195131epcas3p3519c2452d1c90583338f098540e721ee
-References: <CGME20181205195131epcas3p3519c2452d1c90583338f098540e721ee@epcas3p3.samsung.com>
-        <20181205195050.4759-4-robh@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Disposition: inline
+In-Reply-To: <345df368-b247-9c4b-a69d-e95f14bff8b6@arm.com>
+X-Cookie: A day without sunshine is like night.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 12/05/2018 08:50 PM, Rob Herring wrote:
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
-> 
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-ide@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+On Thu, Feb 07, 2019 at 10:04:50AM +0000, Marc Zyngier wrote:
+> On 07/02/2019 09:34, Lee Jones wrote:
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> >> +static struct irq_top_t mt6358_ints[] =3D {
+> >> +	MT6358_TOP_GEN(BUCK),
+> >> +	MT6358_TOP_GEN(LDO),
+> >> +	MT6358_TOP_GEN(PSC),
+> >> +	MT6358_TOP_GEN(SCK),
+> >> +	MT6358_TOP_GEN(BM),
+> >> +	MT6358_TOP_GEN(HK),
+> >> +	MT6358_TOP_GEN(AUD),
+> >> +	MT6358_TOP_GEN(MISC),
+> >> +};
+
+> > What is a 'top' IRQ?
+
+It looks like it's an intermediate parent IRQ controller; that's quite a
+common design for MFDs on slow buses to cut down on the number of status
+registers to poll.  IIRC there at least used to be some framework reason
+for not using normal chained interrupts for these but I can't remember
+it any more - possibly something to do with threaded handlers.
+
+This is all looking very famililar, I suspect it's based on other
+drivers dating back years rather than doing anything original.  There's
+certainly a bunch of other drivers with very similar patterns in tree,
+this doesn't look like it's got any problems over what most similar
+drivers are doing.  The patterns all predate drivers/irqchip and a lot
+of them will come from me.
+
+> >> +static void pmic_irq_enable(struct irq_data *data)
+> >> +{
+> >> +	unsigned int hwirq =3D irqd_to_hwirq(data);
+> >> +	struct mt6397_chip *chip =3D irq_data_get_irq_chip_data(data);
+> >> +	struct pmic_irq_data *irq_data =3D chip->irq_data;
+> >> +
+> >> +	irq_data->enable_hwirq[hwirq] =3D 1;
+> >> +}
+
+> > I see that you're doing your own caching operations.  Is that
+> > required?  I think I'm going to stop here and as for some IRQ guy's
+> > input on this.
+
+> Dunno either. I thought that's what regmap was for?
+
+IIRC from when I wrote drivers for chips like this these operations are
+called with interrupts disabled so you can't write to interrupt driven
+buses so you need to cache the write and flush in sync_unlock().  You
+can't do this with regmap as it stands since on a device that can't be
+accessed with interrupts disabled you'd need to disable the writes
+before going into the interrupts off section and there's a risk that
+having the device cache disabled would disrupt some other function on
+the chip that was expecting writes to get posted immediately. =20
+
+It would be possible to add per-register cache only behaviour but
+someone would need to do that and it's not clear that it's worth the
+effort, especially since for slow buses we currently lock the entire
+regmap including the cache with mutexes so you can't actually access the
+cache with interrupts off at the minute.
+
+> >> +	for (i =3D 0; i < irq_data->num_pmic_irqs; i++) {
+> >> +		if (irq_data->enable_hwirq[i] =3D=3D
+> >> +				irq_data->cache_hwirq[i])
+> >> +			continue;
+
+> Please explain what you are trying to do here. The unlock operation is
+> supposed to affect exactly one interrupt. Instead, you seem to deal with
+> a bunch of them at once. Operations are supposed to happen on the "leaf"
+> IRQs, not on the multiplexing interrupt.
+
+IIRC it was done this way because it wasn't altogether clear if
+operations on multiple interrupts could ever be batched or not and given
+that we're dealing with slow buses the cost of the loop is negligable.
+
+> Also, the whole cache thing seems pretty pointless. Why isn't regmap
+> doing that for you?
+
+See above.
+
+> >> +	for (i =3D 0; i < mt6358_irq_data->num_top; i++) {
+> >> +		if (top_int_status & BIT(mt6358_ints[i].top_offset))
+> >> +			mt6358_irq_sp_handler(chip, i);
+> >> +	}
+> >> +
+> >> +	return IRQ_HANDLED;
+> >> +}
+
+> Why isn't this a normal chained irq flow, instead of a homegrown irq
+> handler? Is that because this is a threaded handler?
+
+I think that's it but like I say I can't remember clearly any more, it's
+been a decade.
+
+> >> +	ret =3D devm_request_threaded_irq(chip->dev, chip->irq, NULL,
+> >> +					mt6358_irq_handler, IRQF_ONESHOT,
+> >> +					mt6358_irq_chip.name, chip);
+> >> +	if (ret) {
+> >> +		dev_err(chip->dev, "failed to register irq=3D%d; err: %d\n",
+> >> +			chip->irq, ret);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	enable_irq_wake(chip->irq);
+
+> Why is that decided at probe time, from kernel space?
+
+IIRC it's due to it being the main interrupt for the device and there
+being at some point issues with this getting propagated to parent
+interrupts so wake just got turned on all the time for the parent and we
+relied on controlling the children.  Making things be proper chained
+interrupt controllers would solve that I think.
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxcHocACgkQJNaLcl1U
+h9B9mAf/RuWwFpw3PPjPrnHv+xB/CJ53tlD3ne/pLesX3Dj2s5CJwyZ4IQSzAGFi
+B8KuBsT4410iudGgjRUBaa/S/CxDa+krUbCDhsSQJtYtKrnluYU0H8oxTCHklMJa
+TwOOY9wb3DHgtkfqpPW9rGYEh9QVf6eBBDwVdxFezg7L6zkpZo5jNhSn11bpfnQK
+XoEvqqNcQlUaPHQYxLO7UUwLjHwQf6RPJ7Apz+cq+Ba1PodachBYgorlmwpri1Uo
+rQoaK1gWRrhfYo6t5seS/boh1lh3UG8wcPsOCC8oUsK+slMnoh/JgMR12D1EMy0I
+Hab61OGqyBJKO3G+lhhm+xRtWYADHg==
+=wiwY
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
