@@ -4,49 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D4CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10D4C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2EB2080A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 843632080A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549539883;
-	bh=fvebzdf+Je28WQcKrr02Iy1scI+QCZ/VtBQQDGO5VvE=;
+	s=default; t=1549539900;
+	bh=m2REHVcuVdu4YuIakkijT1jPpuXGl2KrH1+tyXxk6m0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OthUzp54o8qfv3lRAI0H29cUfbssYdwyls4mtlxGHxRxAAn9NUVNHLmh2UUaONXLC
-	 vp4m6wWgQLFDvL1wizO2CJEOIiQQWuF5gPbTeCH66wclaA0Hrl8hFzxdbURwiIoo7S
-	 Gn9TMhlFdiLEAn1YCqXuGBx4S1La2B+dyqE0S/Qk=
+	b=HJmlGfxEpQ2zTA7nTQR6LME9nhB5GSPXYfewoGyW12uO4ImHVfY1bQfn2UwSmFXec
+	 AnMqyn+0hEWTpp6cwHANKoSlZy9fAh0mMoN91FVE3g2QGgbiQfhcZGTrqYLznyE/04
+	 3hAkxbN/nCOg7sA4ExclUtXHWrPj+wWu8nLnGvLg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfBGLol (ORCPT
+        id S1727305AbfBGLo7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:44:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33900 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 06:44:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727497AbfBGLne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:43:34 -0500
+        id S1727338AbfBGLnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:43:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A99DF21917;
-        Thu,  7 Feb 2019 11:43:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B72B021904;
+        Thu,  7 Feb 2019 11:43:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549539814;
-        bh=fvebzdf+Je28WQcKrr02Iy1scI+QCZ/VtBQQDGO5VvE=;
+        s=default; t=1549539790;
+        bh=m2REHVcuVdu4YuIakkijT1jPpuXGl2KrH1+tyXxk6m0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fQOmzLOXlMZKshrpj2r72ft7B8djibK6bzV5pWKlvhoGuSJ8uJghUNWiIxfEWA1op
-         jGhq3+vA9oKsdxdwMlKX0imvRyFVUCNcgeRk8FvFx30Z6iadyhsPA1Ce/rirETGMap
-         L92ZHhiZfbAXgyDrPKHu9/guTKZdoRGJYd8tSLXQ=
+        b=1klxN4Y6kLFQLci2bEFf9nvavKlrHDxCHY0WqrDDHPWDTqTut+Hh4rgzBz4xVSQ/w
+         92zRpNlgHWok4YaB3nTSH26T02U0i7PpeUbFffo5En7IpaJ29ZWGnJcrkMuZE6Uq1p
+         Wy7EdAPybR2wu6DC5usMFNvcb0MKFpzknQjAGsyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Peter Oskolkov <posk@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
         "David S. Miller" <davem@davemloft.net>,
+        Mao Wenan <maowenan@huawei.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 17/34] ipv6: frags: rewrite ip6_expire_frag_queue()
-Date:   Thu,  7 Feb 2019 12:41:59 +0100
-Message-Id: <20190207113026.249602528@linuxfoundation.org>
+Subject: [PATCH 4.4 24/34] ipv6: defrag: drop non-last frags smaller than min mtu
+Date:   Thu,  7 Feb 2019 12:42:06 +0100
+Message-Id: <20190207113026.506757266@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207113025.552605181@linuxfoundation.org>
 References: <20190207113025.552605181@linuxfoundation.org>
@@ -65,76 +69,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit 05c0b86b9696802fd0ce5676a92a63f1b455bdf3 upstream.
+commit 0ed4229b08c13c84a3c301a08defdc9e7f4467e6 upstream.
 
-Make it similar to IPv4 ip_expire(), and release the lock
-before calling icmp functions.
+don't bother with pathological cases, they only waste cycles.
+IPv6 requires a minimum MTU of 1280 so we should never see fragments
+smaller than this (except last frag).
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+v3: don't use awkward "-offset + len"
+v2: drop IPv4 part, which added same check w. IPV4_MIN_MTU (68).
+    There were concerns that there could be even smaller frags
+    generated by intermediate nodes, e.g. on radio networks.
+
+Cc: Peter Oskolkov <posk@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 4.4: adjust context]
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+[bwh: Backported to 4.4: In nf_ct_frag6_gather() use clone instead of skb,
+ and goto ret_orig in case of error]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/reassembly.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    4 ++++
+ net/ipv6/reassembly.c                   |    4 ++++
+ 2 files changed, 8 insertions(+)
 
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -574,6 +574,10 @@ struct sk_buff *nf_ct_frag6_gather(struc
+ 	hdr = ipv6_hdr(clone);
+ 	fhdr = (struct frag_hdr *)skb_transport_header(clone);
+ 
++	if (clone->len - skb_network_offset(clone) < IPV6_MIN_MTU &&
++	    fhdr->frag_off & htons(IP6_MF))
++		goto ret_orig;
++
+ 	skb_orphan(skb);
+ 	fq = fq_find(net, fhdr->identification, user, hdr,
+ 		     skb->dev ? skb->dev->ifindex : 0);
 --- a/net/ipv6/reassembly.c
 +++ b/net/ipv6/reassembly.c
-@@ -92,7 +92,9 @@ EXPORT_SYMBOL(ip6_frag_init);
- void ip6_expire_frag_queue(struct net *net, struct frag_queue *fq)
- {
- 	struct net_device *dev = NULL;
-+	struct sk_buff *head;
+@@ -515,6 +515,10 @@ static int ipv6_frag_rcv(struct sk_buff
+ 		return 1;
+ 	}
  
-+	rcu_read_lock();
- 	spin_lock(&fq->q.lock);
- 
- 	if (fq->q.flags & INET_FRAG_COMPLETE)
-@@ -100,28 +102,34 @@ void ip6_expire_frag_queue(struct net *n
- 
- 	inet_frag_kill(&fq->q);
- 
--	rcu_read_lock();
- 	dev = dev_get_by_index_rcu(net, fq->iif);
- 	if (!dev)
--		goto out_rcu_unlock;
-+		goto out;
- 
- 	IP6_INC_STATS_BH(net, __in6_dev_get(dev), IPSTATS_MIB_REASMFAILS);
- 	IP6_INC_STATS_BH(net, __in6_dev_get(dev), IPSTATS_MIB_REASMTIMEOUT);
- 
- 	/* Don't send error if the first segment did not arrive. */
--	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !fq->q.fragments)
--		goto out_rcu_unlock;
-+	head = fq->q.fragments;
-+	if (!(fq->q.flags & INET_FRAG_FIRST_IN) || !head)
-+		goto out;
- 
- 	/* But use as source device on which LAST ARRIVED
- 	 * segment was received. And do not use fq->dev
- 	 * pointer directly, device might already disappeared.
- 	 */
--	fq->q.fragments->dev = dev;
--	icmpv6_send(fq->q.fragments, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
--out_rcu_unlock:
--	rcu_read_unlock();
-+	head->dev = dev;
-+	skb_get(head);
-+	spin_unlock(&fq->q.lock);
++	if (skb->len - skb_network_offset(skb) < IPV6_MIN_MTU &&
++	    fhdr->frag_off & htons(IP6_MF))
++		goto fail_hdr;
 +
-+	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
-+	kfree_skb(head);
-+	goto out_rcu_unlock;
-+
- out:
- 	spin_unlock(&fq->q.lock);
-+out_rcu_unlock:
-+	rcu_read_unlock();
- 	inet_frag_put(&fq->q);
- }
- EXPORT_SYMBOL(ip6_expire_frag_queue);
+ 	iif = skb->dev ? skb->dev->ifindex : 0;
+ 	fq = fq_find(net, fhdr->identification, hdr, iif);
+ 	if (fq) {
 
 
