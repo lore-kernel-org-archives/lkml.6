@@ -2,92 +2,93 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC66C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FC8C4151A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D69AC21904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622972190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SArucJX4"
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="n6EQosBN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfBGNA1 (ORCPT
+        id S1727359AbfBGNAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:00:27 -0500
-Received: from mail-vk1-f180.google.com ([209.85.221.180]:35521 "EHLO
-        mail-vk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbfBGNA1 (ORCPT
+        Thu, 7 Feb 2019 08:00:42 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53075 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbfBGNAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:00:27 -0500
-Received: by mail-vk1-f180.google.com with SMTP id r127so1078576vkf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 05:00:26 -0800 (PST)
+        Thu, 7 Feb 2019 08:00:42 -0500
+Received: by mail-it1-f194.google.com with SMTP id d11so14552000itf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 05:00:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to:cc;
-        bh=SoPLEcxSb2fI/ZxbNtnw3pwiFiA2H4m5HstnGw76ni8=;
-        b=SArucJX4hrsliDuYxnBo1e3vFaW1QAwzaiCLuM/BzMOt2MzjceeRvpxDVGJorSfWmU
-         47D1npJv5YuaK/78+dCCNRFjZmCXKwnqhI5fQuzEjtnnZRm0uYavDGFXdUuXhD8C+gMm
-         tSn0h1+23dcYx49aZjFYr6FPSPn9FgkZb1ZGy0iI+FHIMv/4w9l1A12HXqk6gTVl0NiM
-         lrQaa4VwKTlsY/3dHIbR+NDivUIOq7pu1xPfcR4pFKorWG0M5FDs3jsbBYvF9RKnwuMW
-         KY28lMNuxz8MfvCz5atQn75yFwwWT0p6/ggRDvegMioOarxkIitUFisrEu7djhCX/ddC
-         TorQ==
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jdwtFVHtqcTomwKecTvSfX3MWcOsI2t00sw8LWYIymc=;
+        b=n6EQosBNT26TT+SF8OI320OBiRfw6S2DKdjf16oDZkYk21d1HPHOYKB3/t/L4+4Fvp
+         pVk0biAY+8U0RYMzhi+trHo4LENjkluh48Bkua9qxOPFRjolLau+nF2kLTac2dhG2tBt
+         KUCAr5NnUCOA1uesxyZWkVB+a2iPSKXPMAeF/i90RsAGzM5022EPT9qgyIUpT+pujjxZ
+         STds0gAELmwoZ+JN845gHwlFPNpfAarf2wJV40/DBFpeXTuT2XK0sOazUGkRVrTtLyZ1
+         OA6Gf/DHOKQ+GD/U2AlIiAr8dM+TCnoIYuZG9ZFN+3q5+oVubpVc3apoup4kbg9AWIIY
+         JBQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=SoPLEcxSb2fI/ZxbNtnw3pwiFiA2H4m5HstnGw76ni8=;
-        b=peAZ/FKNn/Yce81IECrSnbtgSEAe6yJP42Pl1UCpYiQ1XRwilr7/I2+aMfJzVPSPvf
-         M9nNYRCMBCzlWrUVW5ww1S5s80Az0cuXslTSNcyRxho6m/yRTr6aRBttatamnoulr7xK
-         /0PSzxra1pnUonq6hOfYVZ9stD0tfqawColNu3irpsboU+UXhTBZnqrkQT+I/cb/IigD
-         qU3Sk4e95pCs68IfYTkqcukPI3IfNb2gdGT8Zok15HcItNSWo1WTx8j1wsruCQ47SSwm
-         hj0r3eVF3vzVcMGjGzynDJAjnkcRU20U4qfZIW8AbhKy5hHDsX5uQ8lNZ8c0GAJSrv2n
-         pVcw==
-X-Gm-Message-State: AHQUAubcOCwUCUE44FKLr/G+5sLaGtcOqisqDstGjxvXjXsCNm+gCCSO
-        4+g7cvVEDS2+xR7LcjoFz+zJKVay6vDr6wvL4g==
-X-Google-Smtp-Source: AHgI3IYwXHLg0Uk6RF/i3IFfSNCzX5D1nPQjIjK/E5JNQg6U0g3XX+Qljv44j2W91cXx+/O0Y+GrIw2u2GoyxkgFOsw=
-X-Received: by 2002:a1f:dd45:: with SMTP id u66mr3040554vkg.10.1549544425656;
- Thu, 07 Feb 2019 05:00:25 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jdwtFVHtqcTomwKecTvSfX3MWcOsI2t00sw8LWYIymc=;
+        b=MUkCZJ25972gjI8k1rPKREDPMnvdLXQnzr8DmEO821vVk8MN7hcI7tsRBGtzF1E6Pi
+         l7wnFl+IJNMdzQmmZd1V//eypeRQY18ouwg0acJCEzJuWDj/3IHcLAFEgVHl3/APidbq
+         y/YUfBazJ4Ik63mHfVu5KQaE1LuFIyOjcvgCpwdD0nqUBuuljV59pfI8hnfvnlCHXuF/
+         JRf3fdDG3e0+tpqdKRLcXhan8oGO1zf0WRw2lkylLtAEi+ePO9Un716GQd3nZzyuMAcy
+         D6y+ARJq5hoAVGM9i9c9XcCKuXrouGm+pM9noOoq8iKVYcc7WK5ViaBGL1U4rzi1J2+h
+         9dDg==
+X-Gm-Message-State: AHQUAubA+2pJZnQJaNOZsJzHvi3KtjjQjagl/wfzq+3f+KuIP7HAEZx+
+        UA8pNmRTrJZORmQ00twT3ZyPQA==
+X-Google-Smtp-Source: AHgI3IagHFVnIw7L7pxm0p26JsUWreHsDih0Q5lotVAp408L7IHAFpUKkG3xzuItCCrEW7W1Vm6cOg==
+X-Received: by 2002:a24:710:: with SMTP id f16mr4396585itf.121.1549544441327;
+        Thu, 07 Feb 2019 05:00:41 -0800 (PST)
+Received: from [10.0.0.135] (24-212-162-241.cable.teksavvy.com. [24.212.162.241])
+        by smtp.googlemail.com with ESMTPSA id z133sm5748342itb.36.2019.02.07.05.00.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 05:00:40 -0800 (PST)
+Subject: Re: [PATCH net-next 0/2] Change tc action identifiers to be more
+ consistent
+To:     Eli Cohen <eli@mellanox.com>, xiyou.wangcong@gmail.com,
+        jiri@resnulli.us, davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     simon.horman@netronome.com, jakub.kicinski@netronome.com,
+        dirk.vandermerwe@netronome.com, francois.theron@netronome.com,
+        quentin.monnet@netronome.com, john.hurley@netronome.com,
+        edwin.peer@netronome.com
+References: <20190207074549.29861-1-eli@mellanox.com>
+From:   Jamal Hadi Salim <jhs@mojatatu.com>
+Message-ID: <7a113460-5a0f-85c6-b42d-42468967b6f6@mojatatu.com>
+Date:   Thu, 7 Feb 2019 08:00:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Reply-To: whiteheadm@acm.org
-From:   tedheadster <tedheadster@gmail.com>
-Date:   Thu, 7 Feb 2019 08:00:14 -0500
-Message-ID: <CAP8WD_YG_qirbSoVtyYoWRhZeON6p2RbN06B_yGQk1pA3==UTg@mail.gmail.com>
-Subject: [4.17 Regression]: x86/dma: Use DMA-direct
-To:     Christoph Hellwig <hch@infradead.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190207074549.29861-1-eli@mellanox.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph,
-  in the 4.17 cycle you submitted the patch "x86/dma: Use DMA-direct".
-This causes the VGA video on my laptop to stop working, but the system
-continues to be up and functioning. Video works until about 3/4 the
-way through boot, when I think it is loading a video driver, and then
-video hangs. I could ssh to it and the keyboard would respond to
-alt-sysrq commands.
+On 2019-02-07 2:45 a.m., Eli Cohen wrote:
+> This two patch series modifies TC actions identifiers to be more consistent and
+> also puts them in one place so new identifiers numbers can be chosen more
+> easily.
+> 
 
-Strangely, it started working again in the 4.20 cycle with the
-addition of Fenghua's patch "x86/cpufeatures: Enumerate MOVDIRI
-instruction". This is odd to me because it looks like a very simple
-patch.
+For the series:
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 
-I only have CONFIG_VGA_CONSOLE, CONFIG_FRAMEBUFFER_CONSOLE and
-CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY enabled, with no
-hardware-specific framebuffer config option set.
-
-lspci -nn of my VGA adapter gives the following:
-
-00:02.0 VGA compatible controller [0300]: Intel Corporation
-82852/855GM Integrated Graphics Device [8086:3582] (rev 02)
-
-Your thoughts? How can I help debug this?
-
-Reported-by: Matthew Whitehead <tedheadster@gmail.com>
+cheers,
+jamal
