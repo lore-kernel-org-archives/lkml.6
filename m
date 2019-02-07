@@ -6,134 +6,163 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A0AC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F505C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7729421902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 499AD21902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfBGMqW (ORCPT
+        id S1727184AbfBGMqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:46:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47456 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbfBGMqV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:46:21 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1grj2F-0001Nr-PZ; Thu, 07 Feb 2019 12:44:07 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt fusion: fix indentation issues
-Date:   Thu,  7 Feb 2019 12:44:07 +0000
-Message-Id: <20190207124407.2365-1-colin.king@canonical.com>
+        Thu, 7 Feb 2019 07:46:53 -0500
+Received: from ozlabs.org ([203.11.71.1]:35827 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726843AbfBGMqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 07:46:53 -0500
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 43wJ3Z65Stz9s4Z; Thu,  7 Feb 2019 23:46:50 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     linuxppc-dev@ozlabs.org
+Cc:     akpm@linux-foundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com
+Subject: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch description
+Date:   Thu,  7 Feb 2019 23:46:29 +1100
+Message-Id: <20190207124635.3885-1-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Arch code can set a "dump stack arch description string" which is
+displayed with oops output to describe the hardware platform.
 
-There are several statements and code blocks there are incorrectly
-indented. Fix these.
+It is useful to initialise this as early as possible, so that an early
+oops will have the hardware description.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+However in practice we discover the hardware platform in stages, so it
+would be useful to be able to incrementally fill in the hardware
+description as we discover it.
+
+This patch adds that ability, by creating dump_stack_add_arch_desc().
+
+If there is no existing string it behaves exactly like
+dump_stack_set_arch_desc(). However if there is an existing string it
+appends to it, with a leading space.
+
+This makes it easy to call it multiple times from different parts of the
+code and get a reasonable looking result.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- drivers/message/fusion/mptctl.c   |  2 +-
- drivers/message/fusion/mptsas.c   | 40 +++++++++++++++----------------
- drivers/message/fusion/mptscsih.c |  2 +-
- 3 files changed, 22 insertions(+), 22 deletions(-)
+ include/linux/printk.h |  5 ++++
+ lib/dump_stack.c       | 58 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
 
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 8d22d6134a89..0f73f95ba33a 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -565,7 +565,7 @@ mptctl_event_process(MPT_ADAPTER *ioc, EventNotificationReply_t *pEvReply)
- 	 * TODO - this define is not in MPI spec yet,
- 	 * but they plan to set it to 0x21
- 	 */
--	 if (event == 0x21 ) {
-+	if (event == 0x21) {
- 		ioc->aen_event_read_flag=1;
- 		dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "Raised SIGIO to application\n",
- 		    ioc->name));
-diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
-index 612cb5bc1333..e2de8ea17b95 100644
---- a/drivers/message/fusion/mptsas.c
-+++ b/drivers/message/fusion/mptsas.c
-@@ -2928,27 +2928,27 @@ mptsas_exp_repmanufacture_info(MPT_ADAPTER *ioc,
- 	if (ioc->sas_mgmt.status & MPT_MGMT_STATUS_RF_VALID) {
- 		u8 *tmp;
+v3: No change, just widened Cc list.
+
+v2: Add a smp_wmb() and comment.
+
+v1 is here for reference https://lore.kernel.org/lkml/1430824337-15339-1-git-send-email-mpe@ellerman.id.au/
+
+I'll take this series via the powerpc tree if no one minds?
+
+
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 77740a506ebb..d5fb4f960271 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -198,6 +198,7 @@ u32 log_buf_len_get(void);
+ void log_buf_vmcoreinfo_setup(void);
+ void __init setup_log_buf(int early);
+ __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...);
++__printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...);
+ void dump_stack_print_info(const char *log_lvl);
+ void show_regs_print_info(const char *log_lvl);
+ extern asmlinkage void dump_stack(void) __cold;
+@@ -256,6 +257,10 @@ static inline __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...)
+ {
+ }
  
--	smprep = (SmpPassthroughReply_t *)ioc->sas_mgmt.reply;
--	if (le16_to_cpu(smprep->ResponseDataLength) !=
--		sizeof(struct rep_manu_reply))
--			goto out_free;
--
--	manufacture_reply = data_out + sizeof(struct rep_manu_request);
--	strncpy(edev->vendor_id, manufacture_reply->vendor_id,
--		SAS_EXPANDER_VENDOR_ID_LEN);
--	strncpy(edev->product_id, manufacture_reply->product_id,
--		SAS_EXPANDER_PRODUCT_ID_LEN);
--	strncpy(edev->product_rev, manufacture_reply->product_rev,
--		SAS_EXPANDER_PRODUCT_REV_LEN);
--	edev->level = manufacture_reply->sas_format;
--	if (manufacture_reply->sas_format) {
--		strncpy(edev->component_vendor_id,
--			manufacture_reply->component_vendor_id,
-+		smprep = (SmpPassthroughReply_t *)ioc->sas_mgmt.reply;
-+		if (le16_to_cpu(smprep->ResponseDataLength) !=
-+		    sizeof(struct rep_manu_reply))
-+			goto out_free;
++static inline __printf(1, 2) void dump_stack_add_arch_desc(const char *fmt, ...)
++{
++}
 +
-+		manufacture_reply = data_out + sizeof(struct rep_manu_request);
-+		strncpy(edev->vendor_id, manufacture_reply->vendor_id,
-+			SAS_EXPANDER_VENDOR_ID_LEN);
-+		strncpy(edev->product_id, manufacture_reply->product_id,
-+			SAS_EXPANDER_PRODUCT_ID_LEN);
-+		strncpy(edev->product_rev, manufacture_reply->product_rev,
-+			SAS_EXPANDER_PRODUCT_REV_LEN);
-+		edev->level = manufacture_reply->sas_format;
-+		if (manufacture_reply->sas_format) {
-+			strncpy(edev->component_vendor_id,
-+				manufacture_reply->component_vendor_id,
- 				SAS_EXPANDER_COMPONENT_VENDOR_ID_LEN);
--		tmp = (u8 *)&manufacture_reply->component_id;
--		edev->component_id = tmp[0] << 8 | tmp[1];
--		edev->component_revision_id =
--			manufacture_reply->component_revision_id;
-+			tmp = (u8 *)&manufacture_reply->component_id;
-+			edev->component_id = tmp[0] << 8 | tmp[1];
-+			edev->component_revision_id =
-+				manufacture_reply->component_revision_id;
- 		}
- 	} else {
- 		printk(MYIOC_s_ERR_FMT
-diff --git a/drivers/message/fusion/mptscsih.c b/drivers/message/fusion/mptscsih.c
-index 6ba07c7feb92..587b5daf74b4 100644
---- a/drivers/message/fusion/mptscsih.c
-+++ b/drivers/message/fusion/mptscsih.c
-@@ -1934,7 +1934,7 @@ mptscsih_host_reset(struct scsi_cmnd *SCpnt)
- 	/*  If our attempts to reset the host failed, then return a failed
- 	 *  status.  The host will be taken off line by the SCSI mid-layer.
- 	 */
--    retval = mpt_Soft_Hard_ResetHandler(ioc, CAN_SLEEP);
-+	retval = mpt_Soft_Hard_ResetHandler(ioc, CAN_SLEEP);
- 	if (retval < 0)
- 		status = FAILED;
- 	else
+ static inline void dump_stack_print_info(const char *log_lvl)
+ {
+ }
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 5cff72f18c4a..69b710ff92b5 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -35,6 +35,64 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+ 	va_end(args);
+ }
+ 
++/**
++ * dump_stack_add_arch_desc - add arch-specific info to show with task dumps
++ * @fmt: printf-style format string
++ * @...: arguments for the format string
++ *
++ * See dump_stack_set_arch_desc() for why you'd want to use this.
++ *
++ * This version adds to any existing string already created with either
++ * dump_stack_set_arch_desc() or dump_stack_add_arch_desc(). If there is an
++ * existing string a space will be prepended to the passed string.
++ */
++void __init dump_stack_add_arch_desc(const char *fmt, ...)
++{
++	va_list args;
++	int pos, len;
++	char *p;
++
++	/*
++	 * If there's an existing string we snprintf() past the end of it, and
++	 * then turn the terminating NULL of the existing string into a space
++	 * to create one string separated by a space.
++	 *
++	 * If there's no existing string we just snprintf() to the buffer, like
++	 * dump_stack_set_arch_desc(), but without calling it because we'd need
++	 * a varargs version.
++	 */
++	len = strnlen(dump_stack_arch_desc_str, sizeof(dump_stack_arch_desc_str));
++	pos = len;
++
++	if (len)
++		pos++;
++
++	if (pos >= sizeof(dump_stack_arch_desc_str))
++		return; /* Ran out of space */
++
++	p = &dump_stack_arch_desc_str[pos];
++
++	va_start(args, fmt);
++	vsnprintf(p, sizeof(dump_stack_arch_desc_str) - pos, fmt, args);
++	va_end(args);
++
++	if (len) {
++		/*
++		 * Order the stores above in vsnprintf() vs the store of the
++		 * space below which joins the two strings. Note this doesn't
++		 * make the code truly race free because there is no barrier on
++		 * the read side. ie. Another CPU might load the uninitialised
++		 * tail of the buffer first and then the space below (rather
++		 * than the NULL that was there previously), and so print the
++		 * uninitialised tail. But the whole string lives in BSS so in
++		 * practice it should just see NULLs.
++		 */
++		smp_wmb();
++
++		dump_stack_arch_desc_str[len] = ' ';
++	}
++}
++
+ /**
+  * dump_stack_print_info - print generic debug info for dump_stack()
+  * @log_lvl: log level
 -- 
 2.20.1
 
