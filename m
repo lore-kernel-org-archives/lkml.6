@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5F1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE6FC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E057D21904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F0BF21872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:00:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rav/VNHj"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WASyGRPV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfBGRAx (ORCPT
+        id S1727116AbfBGRA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:00:53 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:10761 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfBGRAw (ORCPT
+        Thu, 7 Feb 2019 12:00:57 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:31989 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfBGRAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:00:52 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190207170049epoutp041ea4ce93b98be29dc12f6cec12cb3579~BI5BH5q5j0210902109epoutp04U;
-        Thu,  7 Feb 2019 17:00:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190207170049epoutp041ea4ce93b98be29dc12f6cec12cb3579~BI5BH5q5j0210902109epoutp04U
+        Thu, 7 Feb 2019 12:00:54 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190207170051epoutp03385fbb804a1734a55f99278db627a3f6~BI5DjIR9F2895028950epoutp03p;
+        Thu,  7 Feb 2019 17:00:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190207170051epoutp03385fbb804a1734a55f99278db627a3f6~BI5DjIR9F2895028950epoutp03p
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549558849;
-        bh=gGqXDjg8EoDzsbQ/KrZNphjC4zmgqj6Okx70I+0Rr0c=;
+        s=mail20170921; t=1549558852;
+        bh=Z3qp8NJqkxPTiayffdnOCrSlYTCyQwDLBEB9V7x+dYQ=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=rav/VNHjpDjiy3ksAE90bHp/5c1Bn/uExlIh9tKI312TijqTKMq7IqIQhWruiXvBr
-         EfZ2SAqllfNeVZXnViUfeo5i5nj6oskyBM5bYIuLFlnXz8J8R04IJfzQr4h8LOb46Z
-         g0jnO1pAugHFZ2x9DlN35GtJanjeY1TCbJLR7Vis=
-Received: from epsmges1p2.samsung.com (unknown [182.195.42.54]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190207170049epcas1p1a6d596368a87d7c0da822ebeedf56f67~BI5A42McB1636416364epcas1p1K;
-        Thu,  7 Feb 2019 17:00:49 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.C9.04173.0446C5C5; Fri,  8 Feb 2019 02:00:49 +0900 (KST)
+        b=WASyGRPVmOkbW7KACRzrVFc/4hNBEij2sjUWMX4QTpNCX9VaoNOwz8rDGh+B8dtcc
+         pp9vGNvKG0JijJfxbq5q44WvWyZQWuZLGFtK2mf+creJMsSohNww4mhOJ6EOoQjd6I
+         CeM8iuQPBtROZe2vv8odb0u8WiZdyw1EE6EbWSCE=
+Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190207170051epcas1p274507f06eabb8d4923bdb80a862458bc~BI5DUp2Xi1282112821epcas1p2B;
+        Thu,  7 Feb 2019 17:00:51 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8E.A3.04074.3446C5C5; Fri,  8 Feb 2019 02:00:51 +0900 (KST)
 Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190207170047epcas1p42d7ec4acfd976871c676efa5aecb33bc~BI4-y1_GT1456614566epcas1p4K;
-        Thu,  7 Feb 2019 17:00:47 +0000 (GMT)
-X-AuditID: b6c32a36-5c1ff7000000104d-f2-5c5c6440d8d9
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190207170051epcas1p37a1acaef52cffb01af00c8d34dd9b1dd~BI5C-PBW80868808688epcas1p3d;
+        Thu,  7 Feb 2019 17:00:51 +0000 (GMT)
+X-AuditID: b6c32a35-27fff70000000fea-38-5c5c64438eda
 Received: from epmmp1.local.host ( [203.254.227.16]) by
         epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C7.C8.04015.F346C5C5; Fri,  8 Feb 2019 02:00:47 +0900 (KST)
+        98.C8.04015.3446C5C5; Fri,  8 Feb 2019 02:00:51 +0900 (KST)
 Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp1.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PMK00MP9F8VXL10@mmp1.samsung.com>; Fri, 08 Feb 2019
-        02:00:47 +0900 (KST)
+        02:00:51 +0900 (KST)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     broonie@kernel.org
 Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
@@ -60,73 +60,87 @@ Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 01/22] ASoC: dmaengine: Improve of_node test in
- dmaengine_pcm_request_chan_of()
-Date:   Thu, 07 Feb 2019 18:00:09 +0100
-Message-id: <20190207170028.720-2-s.nawrocki@samsung.com>
+Subject: [PATCH 02/22] ASoC: dmaengine: Extend use of chan_names provided in
+ custom DMA config
+Date:   Thu, 07 Feb 2019 18:00:10 +0100
+Message-id: <20190207170028.720-3-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.20.1
 In-reply-to: <20190207170028.720-1-s.nawrocki@samsung.com>
 MIME-version: 1.0
 Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7bCmrq5jSkyMwbYmJosrFw8xWWycsZ7V
-        YurDJ2wW589vYLf4dqWDyeLyrjlsFjPO72OyWHvkLrvF4TftrBYXV3xhcuDy2PC5ic1j56y7
-        7B6bVnWyefRtWcXo8XmTXABrFJdNSmpOZllqkb5dAlfG9mO3WAp2clTs2KLTwNjD3sXIySEh
-        YCKx9chcxi5GLg4hgR2MEpMe34VyvjNKXHr/ghGm6u6dPUwQid2MEgeubWCHcH4xSmxvX8cC
-        UsUmYCjRe7QPrENEQEzi9pxOZpAiZoEWJok5c5cygySEBRIluj7dAytiEVCV2HUW4hBeAUuJ
-        d4ueQR0lL3G+dx2YzSlgJXFr/w4WiBpBiR+T74HZzEA1B688ZwFZICGwg01i8aWbULe6SLx8
-        cwHI5gCypSUuHbWFCFdL7NrezQxR38Eo0XJhOzNEwlri8PGLrBBD+STefe1hhejllehoE4Io
-        8ZBYse4TC8THvYwSO9ZNYZ3AKDULyU2zkNy0gJFpFaNYakFxbnpqsWGBkV5xYm5xaV66XnJ+
-        7iZGcJRrme1gXHTO5xCjAAejEg+vhl5MjBBrYllxZe4hRgkOZiURXtkEoBBvSmJlVWpRfnxR
-        aU5q8SFGaQ4WJXHe9Q7OMUIC6YklqdmpqQWpRTBZJg5OqQZGvWfrPuZJfZ5j/+PI+gdtM4yT
-        tQ6eDbK58NGD0SroUtDyiZ69dQnKR28JccVZM5SqGike3/citjb7ZOPmrqmPRRTeLVdx2Hsz
-        MPZYpLzAb/8t+X3qP4+Xqzg8yz+k1sm1wvXxPwfVgvfvFk2fOevaStZdz6Uq7+0+8I3rm+H2
-        dU9uaq3vz45hUmIpzkg01GIuKk4EAGMePsnuAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t9jAV37lJgYgx2f9SyuXDzEZLFxxnpW
-        i6kPn7BZnD+/gd3i25UOJovLu+awWcw4v4/JYu2Ru+wWh9+0s1pcXPGFyYHLY8PnJjaPnbPu
-        sntsWtXJ5tG3ZRWjx+dNcgGsUVw2Kak5mWWpRfp2CVwZ24/dYinYyVGxY4tOA2MPexcjJ4eE
-        gInE3Tt7mLoYuTiEBHYySqx4dZUNwvnFKDH1/1awKjYBQ4neo32MILaIgJjE7TmdzCBFzAJN
-        TBK7bl8EKxIWSJTo+nQPrIhFQFVi11mIFbwClhLvFj2DWicvcb53HZjNKWAlcWv/DhYQWwio
-        5sOEJlaIekGJH5PvgcWZgeoPXnnOMoGRbxaS1CwkqQWMTKsYJVMLinPTc4uNCgzzUsv1ihNz
-        i0vz0vWS83M3MQKDeNthrb4djPeXxB9iFOBgVOLhvaAdEyPEmlhWXJl7iFGCg1lJhFc2ASjE
-        m5JYWZValB9fVJqTWnyIUZqDRUmc93besUghgfTEktTs1NSC1CKYLBMHp1QDo9CEBc2H7qWJ
-        rbVbtvKD7aEIY4tnOawz59gldniEhz98K9D09tgJ/3uCtqWzt+7glZOyt1+1LpvZXzSacc+2
-        +3UPA9zONdfOYji29n9dQ2PHhx3b/iedsXp4OrXksfsEl+QzOutWTAlyDWUO02T47XeG+ZT9
-        12NNzi/Dar+/Pr1k8opKhV1TipVYijMSDbWYi4oTAacxVpxeAgAA
-X-CMS-MailID: 20190207170047epcas1p42d7ec4acfd976871c676efa5aecb33bc
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7bCmga5zSkyMwfWrqhZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MiT++Mhes4q14utymgXEmdxcjJ4eE
+        gInEhffnWbsYuTiEBHYwSny8c4wZwvnOKPFv3zJWmKov53dAVe1mlNi24x0bhPOLUWLfncks
+        IFVsAoYSvUf7GEFsEQExidtzOsFGMQu0MEnMmbuUGSQhLJAgsWnpVbAiFgFViVUtvUwgNq+A
+        pcTh5ZPZINbJS5zvXccOYnMKWEnc2r+DBaJGUOLH5HtgNjNQzcErz1lAFkgIHGCTOP19DdSt
+        LhJtbxqBmjmAbGmJS0dtIcLVEru2dzND1HcwSrRc2M4MkbCWOHz8IivEUD6Jd197WCF6eSU6
+        2oQgSjwknu7aCA2XXkaJ3iM/2ScwSs1CctMsJDctYGRaxSiWWlCcm55abFhgqFecmFtcmpeu
+        l5yfu4kRHOVapjsYp5zzOcQowMGoxMOroRcTI8SaWFZcmXuIUYKDWUmEVzYBKMSbklhZlVqU
+        H19UmpNafIhRmoNFSZx3vYNzjJBAemJJanZqakFqEUyWiYNTqoGxIOef0PuGNZt/lyh4fl3e
+        PPfUadX7Wy4luATxb/reVeJ/vu9j/r1s1UmCHGcFPokZiM4z7qh0jew9wDbzzxNLxqeyUyde
+        ezX37SZG5seVfQccnC9kKea9lg1h/7fMaEqs3YWTSuUmXHPvyh2M/1UntPn+f5VVebtT1aWe
+        5s3Vfvp5k/+K3aa3lViKMxINtZiLihMB057y7e4CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsVy+t9jAV3nlJgYg4blwhZXLh5istg4Yz2r
+        xdSHT9gszp/fwG7x7UoHk8XlXXPYLGac38dksfbIXXaLw2/aWS0urvjC5MDlseFzE5vHzll3
+        2T02repk8+jbsorR4/MmuQDWKC6blNSczLLUIn27BK6MiT++Mhes4q14utymgXEmdxcjJ4eE
+        gInEl/M7WLsYuTiEBHYySpz8OxPK+cUo8fbsSWaQKjYBQ4neo32MILaIgJjE7TmdzCBFzAJN
+        TBK7bl9kB0kICyRIbFp6FayIRUBVYlVLLxOIzStgKXF4+WQ2iHXyEud714HVcwpYSdzav4MF
+        xBYCqvkwoYkVol5Q4sfke2BxZqD6g1ees0xg5JuFJDULSWoBI9MqRsnUguLc9NxiowLDvNRy
+        veLE3OLSvHS95PzcTYzAIN52WKtvB+P9JfGHGAU4GJV4eC9ox8QIsSaWFVfmHmKU4GBWEuGV
+        TQAK8aYkVlalFuXHF5XmpBYfYpTmYFES572ddyxSSCA9sSQ1OzW1ILUIJsvEwSnVwJgsv9SP
+        5ebCF05H2Kcx892Uc0uO7Oz3ap+RUnd8ypNlVz49tinknMOjPH2Cur/3pjNMy956OrOd/yRo
+        Pt/36bfPeZff/97jH9KtIxBf+NTz0axePfOcfTaa+t8NFD7WPmc9KewxXXvppYU3X56cnFwq
+        NqngYbdnw/XHvSKaZQoxQVdPfJKyWqvEUpyRaKjFXFScCABmTR3CXgIAAA==
+X-CMS-MailID: 20190207170051epcas1p37a1acaef52cffb01af00c8d34dd9b1dd
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20190207170047epcas1p42d7ec4acfd976871c676efa5aecb33bc
+X-CMS-RootMailID: 20190207170051epcas1p37a1acaef52cffb01af00c8d34dd9b1dd
 References: <20190207170028.720-1-s.nawrocki@samsung.com>
-        <CGME20190207170047epcas1p42d7ec4acfd976871c676efa5aecb33bc@epcas1p4.samsung.com>
+        <CGME20190207170051epcas1p37a1acaef52cffb01af00c8d34dd9b1dd@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently when of_node of the "PCM" device is null
-dmaengine_pcm_request_chan_of() function will bail out, including cases
-when custom DMA device is intended to be used.  To have the channels
-properly requested when custom DMA device is provided extend the of_node
-test to also consider dma_dev->of_node.
+There are currently two ways to specify custom DMA channel names:
+ - through the SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag and
+   snd_dmaengine_dai_dma_data data structure,
+ - through chan_names field of struct snd_dmaengine_pcm_config.
+
+In order to replace the DAI DMA data method with the custom DMA config
+one on non-DT platforms the dmaengine_pcm_new() function is extended
+to also consider channel names specified in the custom DMA config.
+If both config->chan_names and dma_data->chan_name are provided
+the former will be used.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/soc-generic-dmaengine-pcm.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 30e791a53352..6d7638c1233d 100644
+index 6d7638c1233d..1b44e363c50c 100644
 --- a/sound/soc/soc-generic-dmaengine-pcm.c
 +++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -415,7 +415,8 @@ static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
+@@ -288,9 +288,16 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
+ 		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
  
- 	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
- 			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
--	    !dev->of_node)
-+	     (!dev->of_node && !(config && config->dma_dev &&
-+				config->dma_dev->of_node)))
- 		return 0;
+ 		if (!pcm->chan[i] &&
+-		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
++		    ((pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME) ||
++		     (config && config->chan_names[i]))) {
++			const char *chan_name = dma_data->chan_name;
++
++			if (config && config->chan_names[i])
++				chan_name = config->chan_names[i];
++
+ 			pcm->chan[i] = dma_request_slave_channel(dev,
+-				dma_data->chan_name);
++				chan_name);
++		}
  
- 	if (config && config->dma_dev) {
+ 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
+ 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
 -- 
 2.20.1
 
