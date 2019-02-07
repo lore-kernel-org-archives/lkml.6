@@ -2,120 +2,244 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F890C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DFAC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DCCE21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:47:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kYBkFpDW"
+	by mail.kernel.org (Postfix) with ESMTP id 308D82190C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfBGOrZ (ORCPT
+        id S1726675AbfBGOsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:47:25 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:44114 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfBGOrY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:47:24 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190207144721epoutp016a3d5d90b3eba83d76f2f6eeea6e4707~BHEfjGHxY0218602186epoutp01Y;
-        Thu,  7 Feb 2019 14:47:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190207144721epoutp016a3d5d90b3eba83d76f2f6eeea6e4707~BHEfjGHxY0218602186epoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549550841;
-        bh=jkeBw4rcxbZFyef6Ayrbbc1AtgC6olqg43Jn+SSYgHY=;
-        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
-        b=kYBkFpDWGKkqUEwqkfnPYy9GqThfdfd7dL5LShZd4Od8hLVDb2uwTyuVLQwR4Jofu
-         oMDarTCyy8aKaCA5Uh3e9Ak/Ec5+WIMKWIPM3CkH/X3h7XVjDUQgwuPgNI7lCxiJUd
-         tWyvKU7ZpiOhWUFmOizXYeRntDYJfFh1F8XJV8BA=
-Received: from epsmges1p4.samsung.com (unknown [182.195.42.56]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190207144720epcas1p37ed3d9d6600b17054f75ae28e93a20c9~BHEeiCrPe1322813228epcas1p3c;
-        Thu,  7 Feb 2019 14:47:20 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FD.34.04288.8F44C5C5; Thu,  7 Feb 2019 23:47:20 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190207144719epcas1p386c5b383683c34874e6dbb1c5660fd9d~BHEdVq17x1574315743epcas1p3S;
-        Thu,  7 Feb 2019 14:47:19 +0000 (GMT)
-X-AuditID: b6c32a38-bf7ff700000010c0-dc-5c5c44f8a33d
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 56.C7.04015.7F44C5C5; Thu,  7 Feb
-        2019 23:47:19 +0900 (KST)
-Received: from [106.116.147.40] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PMK00CST92RO690@mmp2.samsung.com>; Thu, 07 Feb 2019 23:47:19 +0900 (KST)
-Subject: Re: [PATCH] ASoC: samsung: Prevent clk_get_rate() calls in atomic
- context
-To:     Mark Brown <broonie@kernel.org>
-Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <21b8ccd7-e379-b4aa-3257-c9644ce3664c@samsung.com>
-Date:   Thu, 07 Feb 2019 15:47:14 +0100
+        Thu, 7 Feb 2019 09:48:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54122 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfBGOsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 09:48:36 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E44C859467;
+        Thu,  7 Feb 2019 14:48:34 +0000 (UTC)
+Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1526067639;
+        Thu,  7 Feb 2019 14:48:28 +0000 (UTC)
+Subject: Re: [RFC PATCH 0/4] kvm: Report unused guest pages to host
+To:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
+        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        David Hildenbrand <david@redhat.com>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <e0bf61d2-c315-ae4f-6ddb-93b7882fd13f@redhat.com>
+Date:   Thu, 7 Feb 2019 09:48:27 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
-MIME-version: 1.0
-In-reply-to: <20190207143214.GC6190@sirena.org.uk>
-Content-type: text/plain; charset="windows-1252"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleLIzCtJLcpLzFFi42LZdlhTX/eHS0yMwdJuHYsrFw8xWWycsZ7V
-        YurDJ2wW589vYLf4dqWDyeLyrjlsFjPO72OyWHvkLrvFxRVfmBw4PTZ8bmLz2DnrLrvHplWd
-        bB59W1YxenzeJBfAGsVlk5Kak1mWWqRvl8CV8fora8FFtopFvWwNjLtYuxg5OSQETCRmzTsF
-        ZHNxCAnsYJRYc/cfC0hCSOA7o8T8fiOYoq5FPWwQRRsYJU7vuc8C4dxnlLh18C8zSJWwQIjE
-        vN+dTCC2iICyxNXve8GKmAWuMkp8/DEPrIhNwFCi92gfI4jNK2AnseHLHrAGFgFViQUT1rKB
-        2KICERKHe99B1QhK/Jh8D+wkTgEjiXlnHoHVMAsYSMyYcpgJwhaXOHb/JiOELS+xec1bZpDF
-        EgK32STWTvrFCPGDi8S1c2uAHuUAsqUlLh21hQhXS+za3g1V38Eo0XJhOzNEwlri8PGLrBBD
-        +STefe2B6uWV6GgTgijxkNj84iA0uLYzSpy/WTiBUWYWkrNnITl1FpJTZyE5dQEjyypGsdSC
-        4tz01GLDAhO94sTc4tK8dL3k/NxNjOCkoWWxg3HPOZ9DjAIcjEo8vBe0Y2KEWBPLiitzDzFK
-        cDArifBK2AOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8653cI4REkhPLEnNTk0tSC2CyTJxcEo1
-        MPKYndUsLdt3dM18YbNgk8WWk6OYbi46GPe84lzW5a1fDDJfXTV+XeGtpKN4fO2SSXZX2u/l
-        fAlKDmE583kPzz3rydObp8/b9W7uE1fbQ01bXmZc8TbY+1Vn/c6V2y6oRAeo2d/5t1eje7Wn
-        a7CX4GQDDuUWx30neA3WNmqd+sHOOf/OvwuJf6cosRRnJBpqMRcVJwIADEBmsxYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCLMWRmVeSWpSXmKPExsVy+t9jQd3vLjExBucniltcuXiIyWLjjPWs
-        FlMfPmGzOH9+A7vFtysdTBaXd81hs5hxfh+Txdojd9ktLq74wuTA6bHhcxObx85Zd9k9Nq3q
-        ZPPo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujNdfWQsuslUs6mVrYNzF2sXIySEhYCLRtaiH
-        rYuRi0NIYB2jxPaVa1ggnIeMElOX/2EEqRIWCJGY97uTCcQWEVCWuPp9L1gRs8BVRomrLdug
-        2ncySqyZuQqsik3AUKL3aB9YN6+AncSGL3vA4iwCqhILJqxlA7FFBSIkPj7dxwRRIyjxY/I9
-        FhCbU8BIYt6ZR0A1HEAb9CTuX9QCCTMLiEscu3+TEcKWl9i85i3zBEaBWUi6ZyF0zELSMQtJ
-        xwJGllWMkqkFxbnpucVGBYZ5qeV6xYm5xaV56XrJ+bmbGIFxse2wVt8OxvtL4g8xCnAwKvHw
-        XtCOiRFiTSwrrsw9xCjBwawkwithDxTiTUmsrEotyo8vKs1JLT7EKM3BoiTOezvvWKSQQHpi
-        SWp2ampBahFMlomDU6qB0aBNf+m3L+9COs5cst3XOFPu9wKBCJHFV8+Grg5L/razrej2Hs30
-        NkeDb3uN3rbJ2zYEcNjqzXw0PZSvVf4z26VbcR3uur3sN+t7c1QUrNtvcW4qPJr9pbWDbZFq
-        rARzlrFoqvPHGrlpb+pfi/OWKPUkqSzmzYr1tjnvOf/dUcbzhltTOhiVWIozEg21mIuKEwHB
-        bUKnhwIAAA==
-X-CMS-MailID: 20190207144719epcas1p386c5b383683c34874e6dbb1c5660fd9d
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20190207142052epcas1p22f1dc03c371674434ff40150cf376b6a
-References: <CGME20190207142052epcas1p22f1dc03c371674434ff40150cf376b6a@epcas1p2.samsung.com>
-        <20190207142041.19394-1-s.nawrocki@samsung.com>
-        <20190207143214.GC6190@sirena.org.uk>
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190204181118.12095.38300.stgit@localhost.localdomain>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="u3whL6aquCy1ts4iceBw9JljlbrMn7YPA"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 07 Feb 2019 14:48:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/19 15:32, Mark Brown wrote:
-> On Thu, Feb 07, 2019 at 03:20:41PM +0100, Sylwester Nawrocki wrote:
-> 
->> [   82.109780] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:908
->> [   82.117009] in_atomic(): 1, irqs_disabled(): 128, pid: 1554, name: speaker-test
->> [   82.124235] 3 locks held by speaker-test/1554:
->> [   82.128653]  #0: cc8c5328 (snd_pcm_link_rwlock){...-}, at: snd_pcm_stream_lock_irq+0x20/0x38
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--u3whL6aquCy1ts4iceBw9JljlbrMn7YPA
+Content-Type: multipart/mixed; boundary="DOAx8TQ4zzvecILyQ2LYNZmFYya6XHM3o";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com, x86@kernel.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
+ tglx@linutronix.de, akpm@linux-foundation.org,
+ Luiz Capitulino <lcapitulino@redhat.com>,
+ David Hildenbrand <david@redhat.com>
+Message-ID: <e0bf61d2-c315-ae4f-6ddb-93b7882fd13f@redhat.com>
+Subject: Re: [RFC PATCH 0/4] kvm: Report unused guest pages to host
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+In-Reply-To: <20190204181118.12095.38300.stgit@localhost.localdomain>
 
-> Please think hard before including complete backtraces in upstream
-> reports, they are very large and contain almost no useful information
-> relative to their size so often obscure the relevant content in your
-> message. If part of the backtrace is usefully illustrative then it's
-> usually better to pull out the relevant sections.
+--DOAx8TQ4zzvecILyQ2LYNZmFYya6XHM3o
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-OK, let me trim the backtrace some more and resend.
+
+On 2/4/19 1:15 PM, Alexander Duyck wrote:
+> This patch set provides a mechanism by which guests can notify the host=
+ of
+> pages that are not currently in use. Using this data a KVM host can mor=
+e
+> easily balance memory workloads between guests and improve overall syst=
+em
+> performance by avoiding unnecessary writing of unused pages to swap.
+>
+> In order to support this I have added a new hypercall to provided unuse=
+d
+> page hints and made use of mechanisms currently used by PowerPC and s39=
+0
+> architectures to provide those hints. To reduce the overhead of this ca=
+ll
+> I am only using it per huge page instead of of doing a notification per=
+ 4K
+> page. By doing this we can avoid the expense of fragmenting higher orde=
+r
+> pages, and reduce overall cost for the hypercall as it will only be
+> performed once per huge page.
+>
+> Because we are limiting this to huge pages it was necessary to add a
+> secondary location where we make the call as the buddy allocator can me=
+rge
+> smaller pages into a higher order huge page.
+>
+> This approach is not usable in all cases. Specifically, when KVM direct=
+
+> device assignment is used, the memory for a guest is permanently assign=
+ed
+> to physical pages in order to support DMA from the assigned device. In
+> this case we cannot give the pages back, so the hypercall is disabled b=
+y
+> the host.
+>
+> Another situation that can lead to issues is if the page were accessed
+> immediately after free. For example, if page poisoning is enabled the
+> guest will populate the page *after* freeing it. In this case it does n=
+ot
+> make sense to provide a hint about the page being freed so we do not
+> perform the hypercalls from the guest if this functionality is enabled.=
+
+Hi Alexander,
+
+Did you get a chance to look at my v8 posting of Guest Free Page Hinting
+[1]?
+Considering both the solutions are trying to solve the same problem. It
+will be great if we can collaborate and come up with a unified solution.
+
+[1] https://lkml.org/lkml/2019/2/4/993
+>
+> My testing up till now has consisted of setting up 4 8GB VMs on a syste=
+m
+> with 32GB of memory and 4GB of swap. To stress the memory on the system=
+ I
+> would run "memhog 8G" sequentially on each of the guests and observe ho=
+w
+> long it took to complete the run. The observed behavior is that on the
+> systems with these patches applied in both the guest and on the host I =
+was
+> able to complete the test with a time of 5 to 7 seconds per guest. On a=
+
+> system without these patches the time ranged from 7 to 49 seconds per
+> guest. I am assuming the variability is due to time being spent writing=
+
+> pages out to disk in order to free up space for the guest.
+>
+> ---
+>
+> Alexander Duyck (4):
+>       madvise: Expose ability to set dontneed from kernel
+>       kvm: Add host side support for free memory hints
+>       kvm: Add guest side support for free memory hints
+>       mm: Add merge page notifier
+>
+>
+>  Documentation/virtual/kvm/cpuid.txt      |    4 ++
+>  Documentation/virtual/kvm/hypercalls.txt |   14 ++++++++
+>  arch/x86/include/asm/page.h              |   25 +++++++++++++++
+>  arch/x86/include/uapi/asm/kvm_para.h     |    3 ++
+>  arch/x86/kernel/kvm.c                    |   51 ++++++++++++++++++++++=
+++++++++
+>  arch/x86/kvm/cpuid.c                     |    6 +++-
+>  arch/x86/kvm/x86.c                       |   35 +++++++++++++++++++++
+>  include/linux/gfp.h                      |    4 ++
+>  include/linux/mm.h                       |    2 +
+>  include/uapi/linux/kvm_para.h            |    1 +
+>  mm/madvise.c                             |   13 +++++++-
+>  mm/page_alloc.c                          |    2 +
+>  12 files changed, 158 insertions(+), 2 deletions(-)
+>
+> --
+--=20
+Regards
+Nitesh
+
+
+--DOAx8TQ4zzvecILyQ2LYNZmFYya6XHM3o--
+
+--u3whL6aquCy1ts4iceBw9JljlbrMn7YPA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxcRTsACgkQo4ZA3AYy
+oznkYBAAxlLH2s8HfygIKMiuKDu6CPvf/Fk18SRuvBRIFJSSOyeC/qzlDoyn8By6
+tLRTpm7sAnrU1eCzfKq2GUSWrFPxAIHVe1ynU/gpaqE16ynC6TjENlSNeCyHUC1P
+r8QD5E+aNa2hIbkNcBmiMvS3a9fPJo9FyoWdY0S8hqABvpDMJ1r3E5Rawnrfw8EX
+qadktlGMdMRcyv9xepwf75fc7eRQmTHdXTJcUn0svqQTL89F6IZ4uXJmkfMtL9Gn
+7tVEbghXQlDuUaVQ8NgZwn0M2o5wg/PyC3mTX2kJL90Pi5uEX8/tNrRh/bay3o0Y
+izULYHVm4LizCGDtRoT6zX8N6lG/+VtO4FIaO+rcmhb1La4UCGTlZ/BToe/rH1+W
+Uy5FpfxmgrpJJ4S2/15lPUIXeAM4XlZjqqX0lHW8o0+cd4fQ3PsmjWQPPL6oIYAT
+L8vwgD80lUFvTi0Lvn8nWtXynTPH0Re8PVh3sP8GA0tiCtuDaYRGSblUHEjf5z1a
+KqpfSl+dq2IcQjAUd8Y34FKS/KSzRsNa1hseCr2aImWdpgrz2gQr6Q1rqmV0YXSg
+x4GDPp+syLtPdg200l+AJ/oPzg6heu+zVf83zn4m7O5W6pH71aIwS8sL5PLLjF2K
+mwpz4LNGlhuPey8ruTnnS4BZiV4kXSiUJOjFZZ2ZwYJvrccHFZI=
+=H1K3
+-----END PGP SIGNATURE-----
+
+--u3whL6aquCy1ts4iceBw9JljlbrMn7YPA--
