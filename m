@@ -2,102 +2,99 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FEDC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9033DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7680C21721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5389821907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:47:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bybu+W6u"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="qUD230Ad"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBGWqy (ORCPT
+        id S1726978AbfBGWrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:46:54 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40857 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGWqy (ORCPT
+        Thu, 7 Feb 2019 17:47:21 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:16335 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGWrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:46:54 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u18so677936plq.7;
-        Thu, 07 Feb 2019 14:46:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=bRm+DeA+dYc+/LF/LLY2nCch+/hS6OI43ZsdtxjCS1o=;
-        b=bybu+W6uLpYGRUybaiK1kYRLb9qnEC9cVhKFKyrWfJvOwAyhYT7AQAXvEnKT1QNkXZ
-         jl6UXNnb/RroTNsSG+P7UIzch0HGQw8OQAR5CexAmk4PUomPAge7f72hZU/+IuTkZCuY
-         N2beFUdePeMciapL/Wyg70qaqHT92MunZP4+iO0a50RWQuKjB8dba2KBaFbGDA0yOavY
-         anMlD0SFS5PKp5wEWFfd0vIayTjU4tICWkJYPgDonJnX2kY1pYw8QxD4GtEdb210LzmG
-         1ck2eo9zNcFbdKTjKrZkBOaiMdjQPNiuQc8gZb786mWiHlv2QA4yxtLlNOKSsOKQbe5P
-         hj6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=bRm+DeA+dYc+/LF/LLY2nCch+/hS6OI43ZsdtxjCS1o=;
-        b=W4YcIJTJhozxsivoAASjdRAiWQM+awT7VXzgNPr64kPQJJBBWiI/5DIzOx2sTiaslM
-         KA91Go7BTWkU3bWwycAudTm4wU7AKUes/wZByZftFmA3hQdtwUf5x37AtuFT5wTlhZjk
-         UIRolAkqQLHS3YvjOqDKfWgSCsWdRu+gpAU2CQEpAlsrXMfBRZ2aUSa5Mc9yzp/Tsc46
-         fEG6Poi7zO/dWhp8fVnajPhatfH+If+hiuUA3pDV7n1Y36eK4MJzuPNgCXc8U4mBw//4
-         nEMyZb41J1G4HLHv9Zfww0rV9w1+R+eEX8J6X9VP9eKxp30CQKqBvPsWRpu5HAhXYrxr
-         9FOA==
-X-Gm-Message-State: AHQUAubuii9IWuqvMh0tyn/pOnhFcf8rm8c9vBQ1JdtWaptwojh1TOsn
-        EHDpnqyWKAuNGeI8bQpBVItDyz6c
-X-Google-Smtp-Source: AHgI3IbDFp08RYf0wkR3b1vuaXvFedrzV3+Jt8yYKxZS+Q/UHrFFHwXmVnng74YY0WGFpJMGQYY0qg==
-X-Received: by 2002:a17:902:bc83:: with SMTP id bb3mr4212176plb.266.1549579612814;
-        Thu, 07 Feb 2019 14:46:52 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id r12sm154975pgv.83.2019.02.07.14.46.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 14:46:52 -0800 (PST)
-Date:   Thu, 7 Feb 2019 14:46:50 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Sven Van Asbroeck <thesven73@gmail.com>, tj@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: matrix_keypad - use flush_delayed_work()
-Message-ID: <20190207224650.GA49861@dtor-ws>
+        Thu, 7 Feb 2019 17:47:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1549579642; x=1581115642;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=w+SCEwgUybnuONj7QDPg4mrU5sjaWAW5sJxaJQa+js0=;
+  b=qUD230AdBJTtwC864CILaeX1AynQQAPbN5R6DTFKdfzBCnK0bNtkdUx2
+   fuWjmQEelpZDRKPZX9rMJv1x4SLjk/6AXkpdruKP640k9HYA9iVRyeWQw
+   uFJ2yB0DnddNshDATcARxtYyZEqTypvtDiKBDDnnIqIMR+qNGnLnW7NaG
+   Yl5gNiFaxtmrpnnz/4gne7k7+ErgjHVrJrm1DSy619VWJ8qptf8TXa27c
+   S+nXRdwu8uLFbtxtaLfd9wQUVZIGMszSRNwpCdcCmPp0kQB3OgLTu4tXI
+   HlwyXJ//B4KHrdOe04eQixTpO3roUSsNv7WQodApV8N6q6Bm8NAAxuPlO
+   w==;
+X-IronPort-AV: E=Sophos;i="5.58,345,1544457600"; 
+   d="scan'208";a="102523174"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Feb 2019 06:47:22 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 07 Feb 2019 14:28:05 -0800
+Received: from c02v91rdhtd5.sdcorp.global.sandisk.com (HELO [10.196.159.121]) ([10.196.159.121])
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2019 14:47:21 -0800
+Subject: Re: [PATCH] arch: riscv: fix logic error in parse_dtb
+To:     Andreas Schwab <schwab@suse.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "paul@pwsan.com" <paul@pwsan.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>
+References: <alpine.DEB.2.21.9999.1812171913510.29609@viisi.sifive.com>
+ <mvmr2cjy7xx.fsf@suse.de>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <893c55bd-07e1-6ea4-6d67-5d225d9f2db1@wdc.com>
+Date:   Thu, 7 Feb 2019 14:47:20 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <mvmr2cjy7xx.fsf@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should be using flush_delayed_work() instead of flush_work() in
-matrix_keypad_stop() to ensure that we are not missing work that is
-scheduled but not yet put in the workqueue (i.e. its delay timer has not
-expired yet).
+On 2/7/19 6:44 AM, Andreas Schwab wrote:
+> The function early_init_dt_scan returns true if a DTB was detected.
+> 
+> Fixes: 8fd6e05c7463 ("arch: riscv: support kernel command line forcing when no DTB passed")
+> Signed-off-by: Andreas Schwab <schwab@suse.de>
+> ---
+>   arch/riscv/kernel/setup.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> index 45e9a2f053dc..84f19ca6d88b 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -140,7 +140,7 @@ asmlinkage void __init setup_vm(void)
+>   
+>   void __init parse_dtb(unsigned int hartid, void *dtb)
+>   {
+> -	if (!early_init_dt_scan(__va(dtb)))
+> +	if (early_init_dt_scan(__va(dtb)))
+>   		return;
+>   
+>   	pr_err("No DTB passed to the kernel\n");
+> 
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/matrix_keypad.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good catch. I was surprised to see "No DTB passed.." message with rc5.
 
-diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
-index 403452ef00e6..3d1cb7bf5e35 100644
---- a/drivers/input/keyboard/matrix_keypad.c
-+++ b/drivers/input/keyboard/matrix_keypad.c
-@@ -222,7 +222,7 @@ static void matrix_keypad_stop(struct input_dev *dev)
- 	keypad->stopped = true;
- 	spin_unlock_irq(&keypad->lock);
- 
--	flush_work(&keypad->work.work);
-+	flush_delayed_work(&keypad->work);
- 	/*
- 	 * matrix_keypad_scan() will leave IRQs enabled;
- 	 * we should disable them now.
--- 
-2.20.1.611.gfbb209baf1-goog
+Reviewed-by: Atish Patra <atish.patra@wdc.com>
 
-
--- 
-Dmitry
+Regards,
+Atish
