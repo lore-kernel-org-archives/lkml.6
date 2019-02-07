@@ -2,96 +2,143 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAD8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 03:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85806C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1F920811
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 03:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00792084D
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 04:05:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CBqA5Wrr"
+	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="Uy8WU77U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbfBGD6H (ORCPT
+        id S1726775AbfBGEFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 22:58:07 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35564 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbfBGD6H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 22:58:07 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z9so4177013pfi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 19:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=4vE9BU00uVWm07pHSl9XmaBqTKJTzMk4dRaKirmkAwg=;
-        b=CBqA5Wrr5nQY0/io8LQVu2pwnh/AIGUtm3+pmy7XdGF2oStq4rizz1j9etGI1NO1Zn
-         XURTlghKfEjPqbAnIqd0hKGTfRW+xUZkz8k7qrY4KtEDxMTb+Vr3LcTu4TESmgHD4WO7
-         B8A5knEHG7wGmXGSBYchv80nJEPyX3aEen/9nb6AZRzBm0Ji3t42niAONu1H8MPo3BN5
-         nDh4lD+hhOLwCwzBctqmNUOv2Dh8JtJQq2XlHKZsWOw96fIeHxlJ1BDSCcBN8YPigmAr
-         BzpHDevJ1BPrAKUfbZjxz2j7n2AR8cBC2mbfKPXw4Yoei3/ahP60xJvYpJvwyiBtcgcC
-         irlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=4vE9BU00uVWm07pHSl9XmaBqTKJTzMk4dRaKirmkAwg=;
-        b=NEDQPsR2Rfoxh2KiN5EajB7Qv3qMj3vNtz/abZiz3engN48H9lplmlTDGiYdQr5z/3
-         t1Lu6CPbC+zyf7KH8AordGUI5HDvpXkUcsPuDPAdduIp0NdB87jdzoIKLcKfMXF+pReh
-         LbIwjKrszzn0WqYd1stJHp2kQorYks4Z1WACyO104i2z02ecvNDwx83y/dz1XcpZJmcm
-         YSWmXd1mXQ+bOJDpVyJLzXglnVU7QKQr4fmyGa+lDj6AbEvrWdAh7giS+ECmwnb9/655
-         nl/og5qsO/YAiuLi+RmQvatuZW6I9wanKRB8bvz5jwgYar6wpbz2otNYngeWgcFNSXle
-         gI6g==
-X-Gm-Message-State: AHQUAubVWxf5Q1EcAazCg3VCG8XrQV3EEXa3mMO2lw+JLggOUpekZE0H
-        HV9oo4CZRbYIP6gS7VcUlcq2aQ==
-X-Google-Smtp-Source: AHgI3IaFp5sgEjJOCrn46BYjHmUjilzFj3AdOVe9WGP1fBe+lpzmN8tIosQ11mVSNyJcFcSb5SlsPQ==
-X-Received: by 2002:a65:4784:: with SMTP id e4mr3129018pgs.12.1549511886237;
-        Wed, 06 Feb 2019 19:58:06 -0800 (PST)
-Received: from localhost ([2601:602:9200:a1a5:1818:ce94:f47:7c12])
-        by smtp.googlemail.com with ESMTPSA id d3sm9706256pgl.64.2019.02.06.19.58.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Feb 2019 19:58:05 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-Subject: Re: [PATCH v6 0/4] clk: meson-g12a: Add EE clock controller driver
-In-Reply-To: <5C55CDCE.9030502@baylibre.com>
-References: <20190201145345.6795-1-jbrunet@baylibre.com> <5C55CDCE.9030502@baylibre.com>
-Date:   Wed, 06 Feb 2019 19:58:04 -0800
-Message-ID: <7hbm3ogshf.fsf@baylibre.com>
+        Wed, 6 Feb 2019 23:05:53 -0500
+Received: from ozlabs.org ([203.11.71.1]:49945 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726676AbfBGEFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 23:05:52 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 43w4VN4X0rz9sMM; Thu,  7 Feb 2019 15:05:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1549512348;
+        bh=S0S2dS1LjBuRUTG1clDNgaI7KgE8nTVNnjiFR2NoXvA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Uy8WU77U9A/eXG5/Tke+Th5k5aHqKg5W+2moFJQjgjPHb3RSlMEuVovTfo8MMeXy+
+         ZS027npk5ZEFGdNzoPEtlqN/puV9sDHDOrhEpRMs04p31S0QgEc/sL49zR/Qb3JstF
+         IibSO4sRi3Suy2Ne1zLAV0+Kp5RA6umM7QcvMa/c=
+Date:   Thu, 7 Feb 2019 14:03:05 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Laurent Vivier <lvivier@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: Re: [PATCH v2] powerpc/mm: move a KERN_WARNING message to pr_debug()
+Message-ID: <20190207030305.GA518@umbus.fritz.box>
+References: <20190205202133.5048-1-lvivier@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
+Content-Disposition: inline
+In-Reply-To: <20190205202133.5048-1-lvivier@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> Le 01/02/2019 15:53, Jerome Brunet a =C3=A9crit :
->> This purpose of this patchset is to the main clock controller of the
->> g12a SoC family
->>=20
->> This patchset depends on the recent rework the meson clock directory [7].
+--Kj7319i9nmIyA2yE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[...]
+On Tue, Feb 05, 2019 at 09:21:33PM +0100, Laurent Vivier wrote:
+> resize_hpt_for_hotplug() reports a warning when it cannot
+> increase the hash page table ("Unable to resize hash page
+> table to target order") but this is not blocking and
+> can make user thinks something has not worked properly.
+> As we move the message to the debug area, report again the
+> ENODEV error.
+>=20
+> If the operation cannot be done the real error message
+> will be reported by arch_add_memory() if create_section_mapping()
+> fails.
+>=20
+> Fixes: 7339390d772dd
+>        powerpc/pseries: Don't give a warning when HPT resizing isn't avai=
+lable
+> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
 
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->
-> I'm applying these to next/drivers for Linux 5.1-rc1, is it necessary to
-> have a tag for the headers ?
+Sorry, I'm pretty dubious about this.  It's true that in the case for
+which this bug was filed this is a harmless situation which deserves a
+pr_debug() at most.
 
-Only if we have some users that we want to merge in the v5.1 cycle
-(which I haven't seen yet.)
+But that's not necessarily true in all paths leading to this message.
+It will also trip if we fail to reshrink the HPT after genuinely
+hotunplugging a bunch of memory, in which case failing to release
+expected resources does deserve a warning.
 
-Kevin
+> ---
+>=20
+> Notes:
+>     v2:
+>      - use pr_debug instead of printk(KERN_DEBUG
+>      - remove check for ENODEV
+>=20
+>  arch/powerpc/mm/hash_utils_64.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils=
+_64.c
+> index 0cc7fbc3bd1c..6a0cc4eb2c83 100644
+> --- a/arch/powerpc/mm/hash_utils_64.c
+> +++ b/arch/powerpc/mm/hash_utils_64.c
+> @@ -777,10 +777,9 @@ void resize_hpt_for_hotplug(unsigned long new_mem_si=
+ze)
+>  		int rc;
+> =20
+>  		rc =3D mmu_hash_ops.resize_hpt(target_hpt_shift);
+> -		if (rc && (rc !=3D -ENODEV))
+> -			printk(KERN_WARNING
+> -			       "Unable to resize hash page table to target order %d: %d\n",
+> -			       target_hpt_shift, rc);
+> +		if (rc)
+> +			pr_debug("Unable to resize hash page table to target order %d: %d\n",
+> +				 target_hpt_shift, rc);
+>  	}
+>  }
+> =20
+
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
+
+--Kj7319i9nmIyA2yE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlxbn+cACgkQbDjKyiDZ
+s5L2uA//d3kL73x/E6LZ0sRh7aylcIfnRBlPzYmX787L4LZfSSlFGDscIhjj4EWx
+cWArmrwR62zv2H9pcgj2oKz9C1cZQPfC8wHTJuAOPiRb8oVWic1KysbJhDLPfeRp
+LwoCoocxdob69Li45NysjHTEtnoBKt9flllkNcieyPRz92mhCdYiTyjyuVkyg9hd
+Sl2EXEqZpt+eq2+vr3l26nC0Y4IdgzmnY8GqELpbqhLCWX7XXvokUrx8uXfxzCc+
+xHiE72FQhtTcj3aShI1DYt8doJFVUP0i5441UhQUImQzahC3Oo8i7N3kRJfcZNYd
+S75JnBrm0RAzd4jOyRsqiDADeDqjPhzo4Hq7D3i5KMKT2pHa37VUEmCRIGYEjpea
+A9aYlhVbdvDdCyy5LQs/6/A6FNk8pfccNMCG8AxStR7cYQdo8Babz+F4jutfigTB
+F+ZBtFWmAwvKE18ClErfOzE+GgOHvh2FIWLH2biwArPEc7PON9VzaWP8K41CQEfs
+9zJjvEgp4fofadFimPr2hUmkfvWmngy+6vbHm48Y/kdf6LnEBIlS+322YncEalTW
+ABKAllKMxkYxXig6ORHwBW8j+wGCRM+dYvPJ2ZFwspGxWXIzMkKIeD9YhUiP/mvN
+4ZXSy1mt1IFikkgfko2u/yCSzsR9/WYC7M7j1gXBTlI1FuflB/M=
+=UPqI
+-----END PGP SIGNATURE-----
+
+--Kj7319i9nmIyA2yE--
