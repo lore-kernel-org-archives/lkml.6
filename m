@@ -2,71 +2,69 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDA7C282CC
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC60C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E555F21904
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFA621904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:10:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KL1wv0AE"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TliMbP9X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfBGNG5 (ORCPT
+        id S1726804AbfBGNKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:06:57 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41297 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfBGNG4 (ORCPT
+        Thu, 7 Feb 2019 08:10:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33830 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbfBGNKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:06:56 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so11437131wrs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 05:06:54 -0800 (PST)
+        Thu, 7 Feb 2019 08:10:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z15so9453458wrn.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 05:10:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=B0zTQ15P7Bd5RQCXJirxvYKNT1qa1KsdthP0kLsLFfU=;
-        b=KL1wv0AEWpRmMUD5Xd95fBxqeV2dRemRPVfW9DInvu3SN0PPrEUnozFwFUVrmnAKBN
-         BUd5g+s6Lb8aqGY2SE4TSG/nXeP7GlSWnq0WofHlrJEE4u16R2+DKYlCc+KQ/qstvmfM
-         vSfAeERqJW2y1s+1J76cUZHSC43DjruvYvTX5Z4XiQWvIjn/pMOsj2hEdsn3Vtc5IC7K
-         5n8gYsqIbS/7mKkat+2FikWPDO5ZfeWfAxBmx+pu0R/Hx4m7dHel3T6dEEaleayh4CBh
-         ekoKYwAbmXHHmvE1rOPZn3dpuourlmhsnspnXEbiWul0sJKg3IfLl77v+idgpt3IUmSS
-         p+Ag==
+        bh=PCPgj02ZmQU9UuSynuMjSlcHkBId7QqRwKFh7cQxKVM=;
+        b=TliMbP9XmFHOntwZVRS/xWA99nwGIyqoZfL3NQAyBz/2CCYcJAdeEsvG/moquDvdsW
+         2YsGTiu21ElJFM4GkdAdvjjDDaTrNIHjMn0Qs4nCga5zbQhohYkHiqNupr1FVVhYGr4m
+         aGW//gdnjo7k4eFtaSS9zKQgipPdCZCS53RAoEr8dlQHo6yh1FcKSffL5SKjsP7cmY+L
+         peB6zodOlRnh8AKgrQ/A2ahNo4S1CwzNipXA3d42mg4Xu93QGgvLVTfbofu67BlI50Ii
+         UXdVw28uYzJlfNZACp5w2/yRFq/hXu5uWgiDL9c0hr3QyTGx/946683U7QVrYKYhXBpG
+         6FWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=B0zTQ15P7Bd5RQCXJirxvYKNT1qa1KsdthP0kLsLFfU=;
-        b=udRFoFx/U4H6QGzK44M9Ktbl9z1ma169qOf0yi0lCQNL5M11KRUNWVjYqvNi/I6kF1
-         zhpjwkx9kHmN39RHO8pyBrkk3leZP4bCnLY962Zj/6tkpDKWIF094ZUoWOk9IMwmBkel
-         I06U+9ZYhZH4kDCbsioLPJQY9GDHDsI1RhmGFIC/Ic/QcZnBVoHw83Jwan8bnsV+/hPc
-         i4uGQXBD3IjjSF8EqPwAafamCn3K2Fby79IKf+6kEsuL2cKISK9uYyZ4zs6aZITrIx1z
-         Pn1bFNg/fgbjQuMp1jmY/VrgUZgxCP6mPNBXk148zQwq1vLevDmvbT0relpankzn1Y0A
-         NoKw==
-X-Gm-Message-State: AHQUAuZfuW/WYpAzCMpRmAMh/NM0OuCbC7W4lJfG2l6sb1RNyMjH1CDl
-        KQg3s653aywXWcAsb7t0CveImg==
-X-Google-Smtp-Source: AHgI3IaufuwsNvZXH9XiQDfcMmdyBB19pR9BS5jASdh80Ae6HQlFKSyDnO+F6SlOyFNizslbF65K9Q==
-X-Received: by 2002:a5d:5111:: with SMTP id s17mr11892324wrt.43.1549544813980;
-        Thu, 07 Feb 2019 05:06:53 -0800 (PST)
+        bh=PCPgj02ZmQU9UuSynuMjSlcHkBId7QqRwKFh7cQxKVM=;
+        b=F93Ih/i49V/6I2NG+2fMXkKw0PWRv4/reMoXSXxQTEH30q9FD9NFnuMb4VF5mZAHkE
+         9pYzrUpj7UtfZWM6iTdZZQUERvvIf31lgMvKEcpkxj550FoJaGfWTeQPixYHSH5QHRIp
+         /+fXu8+UB5kbqa1dDCg0AGQSmf+I/ZbW/ITibDpEfDol5ir04DqBsbgmplsJZTFiqepg
+         9Xzuo6ClTB7HyAVa2n1baMbzVThoSnhs/KajSEPdsLHbWBcpiuElRIkGENXgUaB8LtYR
+         DTemt0k5QtndIL3/rPFPjtBnQdaH+0zlDrSlYUDotG3KTAdAbrbKT3Po/RjSCLUkGmTo
+         dCDg==
+X-Gm-Message-State: AHQUAuahH4Ne78HT7BPq6HtXsuznlrdjVebIOpkBiBdlpZo49OGOaGP7
+        cx8MI7hViwP8/FlDpmzfZmZPGF2Cq8gvsA==
+X-Google-Smtp-Source: AHgI3Ia1kNytFuYGPx3NdUCDpQ80zSQ5jlgt7mb4NAcQKfnfm2In6DgXJpZq/lzZDguQJot1/JVJog==
+X-Received: by 2002:adf:c589:: with SMTP id m9mr12529108wrg.145.1549545021045;
+        Thu, 07 Feb 2019 05:10:21 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t5sm15537453wmg.43.2019.02.07.05.06.52
+        by smtp.gmail.com with ESMTPSA id n11sm18505925wrw.60.2019.02.07.05.10.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 05:06:53 -0800 (PST)
-Subject: Re: [PATCH v6 0/4] clk: meson-g12a: Add EE clock controller driver
-To:     Kevin Hilman <khilman@baylibre.com>,
+        Thu, 07 Feb 2019 05:10:20 -0800 (PST)
+Subject: Re: [PATCH v3] dt-bindings: reset: meson: add g12a bindings
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
         Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-References: <20190201145345.6795-1-jbrunet@baylibre.com>
- <5C55CDCE.9030502@baylibre.com> <7hbm3ogshf.fsf@baylibre.com>
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190201125003.25022-1-jbrunet@baylibre.com>
+ <1549535746.4557.3.camel@pengutronix.de>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -119,44 +117,205 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <00f67ab3-93a9-9663-586f-e50e69a20902@baylibre.com>
-Date:   Thu, 7 Feb 2019 14:06:52 +0100
+Message-ID: <6bdabea0-9870-66d1-a737-9695067ba8e6@baylibre.com>
+Date:   Thu, 7 Feb 2019 14:10:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <7hbm3ogshf.fsf@baylibre.com>
+In-Reply-To: <1549535746.4557.3.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/02/2019 04:58, Kevin Hilman wrote:
-> Neil Armstrong <narmstrong@baylibre.com> writes:
-> 
->> Le 01/02/2019 15:53, Jerome Brunet a écrit :
->>> This purpose of this patchset is to the main clock controller of the
->>> g12a SoC family
->>>
->>> This patchset depends on the recent rework the meson clock directory [7].
-> 
-> [...]
-> 
->> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->>
->> I'm applying these to next/drivers for Linux 5.1-rc1, is it necessary to
->> have a tag for the headers ?
-> 
-> Only if we have some users that we want to merge in the v5.1 cycle
-> (which I haven't seen yet.)
+Hi Philipp,
 
-Same, we will wait for next cycle then.
+On 07/02/2019 11:35, Philipp Zabel wrote:
+> Hi Jerome,
+> 
+> is there any public documentation for the G12A reset controller?
+> 
+> On Fri, 2019-02-01 at 13:50 +0100, Jerome Brunet wrote:
+>> Add device tree bindings for the reset controller of g12a SoC family.
+>>
+>> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>
+>> Changes since v2 [0]:
+>> * Dropped useless g12a compatible
+> 
+> What if in the future somebody notices that a g12a specific workaround
+> needs to be added to the driver? I agree that we don't have to list all
+> compatibles in the driver, but unless you are certain that the reset
+> controller is identical to the one from another SoC, it would be better
+> to have a SoC specific compatible in the device tree, even if the driver
+> only matches to a more generic compatible. For example:
+> 
+> 	compatible = "amlogic,meson-g12a-reset", "amlogic,meson8b-reset";
+> 
+> if the reset controller behaves identical to the one in meson8b.
+
+The controller is the exact same as Meson8, GXBB, and AXG.
+
+We had doubts since the previous datasheets were not clear, but for G12A we
+are sure it's 100% same to at least GXBB and AXG, thus using the same
+compatible as AXG since they share most of same architecture.
 
 Neil
 
 > 
-> Kevin
+>> [0]: https://lkml.kernel.org/r/20190128181316.30814-1-jbrunet@baylibre.com
+>>
+>>  .../reset/amlogic,meson-g12a-reset.h          | 134 ++++++++++++++++++
+>>  1 file changed, 134 insertions(+)
+>>  create mode 100644 include/dt-bindings/reset/amlogic,meson-g12a-reset.h
+>>
+>> diff --git a/include/dt-bindings/reset/amlogic,meson-g12a-reset.h b/include/dt-bindings/reset/amlogic,meson-g12a-reset.h
+>> new file mode 100644
+>> index 000000000000..8063e8314eef
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/amlogic,meson-g12a-reset.h
+>> @@ -0,0 +1,134 @@
+>> +/* SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause */
+>> +/*
+>> + * Copyright (c) 2019 BayLibre, SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + *
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_AMLOGIC_MESON_G12A_RESET_H
+>> +#define _DT_BINDINGS_AMLOGIC_MESON_G12A_RESET_H
+>> +
+>> +/*	RESET0					*/
+>> +#define RESET_HIU			0
+>> +/*					1	*/
+>> +#define RESET_DOS			2
+>> +/*					3-4	*/
+>> +#define RESET_VIU			5
+>> +#define RESET_AFIFO			6
+>> +#define RESET_VID_PLL_DIV		7
+>> +/*					8-9	*/
+>> +#define RESET_VENC			10
+>> +#define RESET_ASSIST			11
+>> +#define RESET_PCIE_CTRL_A		12
+>> +#define RESET_VCBUS			13
+>> +#define RESET_PCIE_PHY			14
+>> +#define RESET_PCIE_APB			15
+>> +#define RESET_GIC			16
+>> +#define RESET_CAPB3_DECODE		17
+>> +/*					18	*/
+>> +#define RESET_HDMITX_CAPB3		19
+>> +#define RESET_DVALIN_CAPB3		20
+>> +#define RESET_DOS_CAPB3			21
+>> +/*					22	*/
+>> +#define RESET_CBUS_CAPB3		23
+>> +#define RESET_AHB_CNTL			24
+>> +#define RESET_AHB_DATA			25
+>> +#define RESET_VCBUS_CLK81		26
+>> +/*					27-31	*/
+>> +/*	RESET1					*/
+>> +/*					32	*/
+>> +#define RESET_DEMUX			33
+>> +#define RESET_USB			34
+>> +#define RESET_DDR			35
+>> +/*					36	*/
+>> +#define RESET_BT656			37
+>> +#define RESET_AHB_SRAM			38
+>> +/*					39	*/
+>> +#define RESET_PARSER			40
+>> +/*					41	*/
+>> +#define RESET_ISA			42
+>> +#define RESET_ETHERNET			43
+>> +#define RESET_SD_EMMC_A			44
+>> +#define RESET_SD_EMMC_B			45
+>> +#define RESET_SD_EMMC_C			46
+>> +/*					47-60 */
+>> +#define RESET_AUDIO_CODEC		61
+>> +/*					62-63	*/
+>> +/*	RESET2					*/
+>> +/*					64	*/
+>> +#define RESET_AUDIO			65
+>> +#define RESET_HDMITX_PHY		66
+>> +/*					67	*/
+>> +#define RESET_MIPI_DSI_HOST		68
+>> +#define RESET_ALOCKER			69
+>> +#define RESET_GE2D			70
+>> +#define RESET_PARSER_REG		71
+>> +#define RESET_PARSER_FETCH		72
+>> +#define RESET_CTL			73
+>> +#define RESET_PARSER_TOP		74
+>> +/*					75-77	*/
+>> +#define RESET_DVALIN			78
+>> +#define RESET_HDMITX			79
+>> +/*					80-95	*/
+>> +/*	RESET3					*/
+>> +/*					96-95	*/
+>> +#define RESET_DEMUX_TOP			105
+>> +#define RESET_DEMUX_DES_PL		106
+>> +#define RESET_DEMUX_S2P_0		107
+>> +#define RESET_DEMUX_S2P_1		108
+>> +#define RESET_DEMUX_0			109
+>> +#define RESET_DEMUX_1			110
+>> +#define RESET_DEMUX_2			111
+>> +/*					112-127	*/
+>> +/*	RESET4					*/
+>> +/*					128-129	*/
+>> +#define RESET_MIPI_DSI_PHY		130
+>> +/*					131-132	*/
+>> +#define RESET_RDMA			133
+>> +#define RESET_VENCI			134
+>> +#define RESET_VENCP			135
+>> +/*					136	*/
+>> +#define RESET_VDAC			137
+>> +/*					138-139 */
+>> +#define RESET_VDI6			140
+>> +#define RESET_VENCL			141
+>> +#define RESET_I2C_M1			142
+>> +#define RESET_I2C_M2			143
+>> +/*					144-159	*/
+>> +/*	RESET5					*/
+>> +/*					160-191	*/
+>> +/*	RESET6					*/
+>> +#define RESET_GEN			192
+>> +#define RESET_SPICC0			193
+>> +#define RESET_SC			194
+>> +#define RESET_SANA_3			195
+>> +#define RESET_I2C_M0			196
+>> +#define RESET_TS_PLL			197
+>> +#define RESET_SPICC1			198
+>> +#define RESET_STREAM			199
+>> +#define RESET_TS_CPU			200
+>> +#define RESET_UART0			201
+>> +#define RESET_UART1_2			202
+>> +#define RESET_ASYNC0			203
+>> +#define RESET_ASYNC1			204
+>> +#define RESET_SPIFC0			205
+>> +#define RESET_I2C_M3			206
+>> +/*					207-223	*/
+>> +/*	RESET7					*/
+>> +#define RESET_USB_DDR_0			224
+>> +#define RESET_USB_DDR_1			225
+>> +#define RESET_USB_DDR_2			226
+>> +#define RESET_USB_DDR_3			227
+>> +#define RESET_TS_GPU			228
+>> +#define RESET_DEVICE_MMC_ARB		229
+>> +#define RESET_DVALIN_DMC_PIPL		230
+>> +#define RESET_VID_LOCK			231
+>> +#define RESET_NIC_DMC_PIPL		232
+>> +#define RESET_DMC_VPU_PIPL		233
+>> +#define RESET_GE2D_DMC_PIPL		234
+>> +#define RESET_HCODEC_DMC_PIPL		235
+>> +#define RESET_WAVE420_DMC_PIPL		236
+>> +#define RESET_HEVCF_DMC_PIPL		237
+>> +/*					238-255	*/
+>> +
+>> +#endif
+> 
+> regards
+> Philipp
 > 
 
