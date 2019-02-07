@@ -2,136 +2,112 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BFDC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 03:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CC5C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 03:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDAC8217F9
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 03:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48294217F9
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 03:11:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yKf2QFWQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfBGDKO (ORCPT
+        id S1726901AbfBGDL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 22:10:14 -0500
-Received: from ipmail02.adl2.internode.on.net ([150.101.137.139]:26986 "EHLO
-        ipmail02.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726610AbfBGDKO (ORCPT
+        Wed, 6 Feb 2019 22:11:26 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42082 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfBGDL0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 22:10:14 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail02.adl2.internode.on.net with ESMTP; 07 Feb 2019 13:40:09 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gra4m-0003gs-Nd; Thu, 07 Feb 2019 14:10:08 +1100
-Date:   Thu, 7 Feb 2019 14:10:08 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Coly Li <colyli@suse.de>
-Cc:     Andre Noll <maan@tuebingen.mpg.de>, Nix <nix@esperi.org.uk>,
-        linux-bcache@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        axboe@kernel.dk
-Subject: Re: bcache on XFS: metadata I/O (dirent I/O?) not getting cached at
- all?
-Message-ID: <20190207031008.GJ14116@dastard>
-References: <87h8dgefee.fsf@esperi.org.uk>
- <20190206234328.GH14116@dastard>
- <20190207002425.GX24140@tuebingen.mpg.de>
- <20190207022657.GI14116@dastard>
- <438851ef-ef77-b5f2-d46d-05762b6330b2@suse.de>
+        Wed, 6 Feb 2019 22:11:26 -0500
+Received: by mail-pf1-f193.google.com with SMTP id m6so682246pfa.9
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 19:11:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=F/+7rRTfbZwfbHmaF3iZzoY6bHWWxxmy6iraekkllWc=;
+        b=yKf2QFWQ9kNL+f5kHd3S7Jbm+JZ9GNbbas2UNL8rUF4HW2i/yx/ZHK5uAXAmxASN36
+         8M2vN5z7rG85IIAtaGes9APh2VE1TQ1jZbcaEDO8ENkpjR4ATsT3+NVMNWTAQuQgoCjr
+         pwbJwNKzZO+XLeKuq9apJxuW0+Lxp8RksBYKcSF/zE73ZX4rC9TD7sttRylR66Wt8tVW
+         ACe+KcKZkbc8UtsTqxSbmaqha/yXUDvFI0Nn9K9x02ritem9O+DdAF8OBg7hFHJn8s33
+         HiYefKiXf44FQNkLS3YIo0/EbxXOuBCc1N1SirBV6hYlwkKW6DBpBASldez4Y3StqVpq
+         J9CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=F/+7rRTfbZwfbHmaF3iZzoY6bHWWxxmy6iraekkllWc=;
+        b=rKtRC5g+R+ViOBDW88B/DWPvbHBBuVq6WMinYHddHnjdoJgH12dmQDdfnEEGFkD3kN
+         YUXRDcYOC9Fw1LUo/FRdxII+3RNMkhjbgEkI+1gQEPi8BQ36wGT5cHJgIzECKG7PiJZS
+         F5Qc4VT/onblU2yCAlmiLneQlxyYp84QzWNMSnHownVVMIav91WRLip1tuxdJ+moB90T
+         MlGJXMX9PxZZZ9YxkhtwsNSy5K+Vm9sBGLa3CJN7UU0dyQWwgk+LJ9xdpvsK3RvoiroF
+         7R0M+5BVqIST1k8boba5Rrj/NusdARdXx3x7L3J1mEEqkoW6stnMgNJrNzaHbvkqf/6L
+         x7hg==
+X-Gm-Message-State: AHQUAuZPu36GKP2wkhDf36uqVDj0yNpP5UZ1NsRVSGjM1I/dXpd6SQjN
+        oeCGKOF/Bm5+0Bb2JUsDr9DVHA==
+X-Google-Smtp-Source: AHgI3Ibo9yDr6Lr5sHfOOmyOps09J7HfOK77FkIyrpu/ogCE2IHiZ3zhz9WvNtI/TAcJcu+1aQb+Sg==
+X-Received: by 2002:a63:2ccb:: with SMTP id s194mr12774860pgs.214.1549509085280;
+        Wed, 06 Feb 2019 19:11:25 -0800 (PST)
+Received: from localhost ([2601:602:9200:a1a5:1818:ce94:f47:7c12])
+        by smtp.googlemail.com with ESMTPSA id l2sm7563903pgn.52.2019.02.06.19.11.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 19:11:24 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     "open list\:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list\:ARM\/Amlogic Meson..." 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
+In-Reply-To: <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
+References: <20190117102315.1833-1-jbrunet@baylibre.com> <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com> <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
+Date:   Wed, 06 Feb 2019 19:11:23 -0800
+Message-ID: <7h36p0i97o.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <438851ef-ef77-b5f2-d46d-05762b6330b2@suse.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 10:38:58AM +0800, Coly Li wrote:
-> On 2019/2/7 10:26 上午, Dave Chinner wrote:
-> > On Thu, Feb 07, 2019 at 01:24:25AM +0100, Andre Noll wrote:
-> >> On Thu, Feb 07, 10:43, Dave Chinner wrote
-> >>> File data readahead: REQ_RAHEAD
-> >>> Metadata readahead: REQ_META | REQ_RAHEAD
-> >>>
-> >>> drivers/md/bcache/request.c::check_should_bypass():
-> >>>
-> >>>         /*
-> >>>          * Flag for bypass if the IO is for read-ahead or background,
-> >>>          * unless the read-ahead request is for metadata (eg, for gfs2).
-> >>>          */
-> >>>         if (bio->bi_opf & (REQ_RAHEAD|REQ_BACKGROUND) &&
-> >>>             !(bio->bi_opf & REQ_PRIO))
-> >>>                 goto skip;
-> >>>
-> >>> bcache needs fixing - it thinks REQ_PRIO means metadata IO. That's
-> >>> wrong - REQ_META means it's metadata IO, and so this is a bcache
-> >>> bug.
-> >>
-> >> Do you think 752f66a75abad is bad (ha!) and should be reverted?
-> > 
-> > Yes, that change is just broken. From include/linux/blk_types.h:
-> > 
-> > 	__REQ_META,             /* metadata io request */
-> > 	__REQ_PRIO,             /* boost priority in cfq */
-> > 
-> > 
-> 
-> Hi Dave,
-> 
-> > i.e. REQ_META means that it is a metadata request, REQ_PRIO means it
-> > is a "high priority" request. Two completely different things, often
-> > combined, but not interchangeable.
-> 
-> I found in file system metadata IO, most of time REQ_META and REQ_PRIO
-> are tagged together for bio, but XFS seems not use REQ_PRIO.
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Yes, that's correct, because we don't specifically prioritise
-metadata IO over data IO.
+> On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
+>> On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>> 
+>> > This patchset fixes the initial pinctrl support added for th g12a SoC
+>> > family, which is mainly around the register regions claimed by the
+>> > driver.
+>> > 
+>> > Linus, would it possible for you to provide a tag with these changes to
+>> > Kevin ?
+>> 
+>> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
+>> 
+>> > ATM, we can only use the devices for which the pinmux is already set by
+>> > the bootloader. Enabling the broken pinctrl driver could cause regressions
+>> > in kernelCI. Having a tag, would allow us to start using pinctrl on this
+>> > SoC in this cycle, w/o regression. It would be nice :)
+>> 
+>> When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
+>> or next (v5.1) with these patches?
+>
+> I was referring to the 5.1 release but it is a good question, I did not really
+> think about 5.0.
+>
+> Those changes are mainly fixes, so guess it could go in the 5.0 but support
+> for this SoC is still in its early stages, so either way is fine by me. 
+>
+> Whatever is simpler for you I guess ;)
 
-> Is there any basic principle for when should these tags to be used or
-> not ?
+If it's not too late, v5.0-rc is simpler for me as it means not having
+to deal with this as a dependency branch/tag.
 
-Yes.
-
-> e.g. If REQ_META is enough for meta data I/O, why REQ_PRIO is used
-> too.
-
-REQ_META is used for metadata. REQ_PRIO is used to communicate to
-the lower layers that the submitter considers this IO to be more
-important that non REQ_PRIO IO and so dispatch should be expedited.
-
-IOWs, if the filesystem considers metadata IO to be more important
-that user data IO, then it will use REQ_PRIO | REQ_META rather than
-just REQ_META.
-
-Historically speaking, REQ_PRIO was a hack for CFQ to get it to
-dispatch journal IO from a different thread without waiting for a
-time slice to expire. In the XFs world, we just said "don't use CFQ,
-it's fundametnally broken for highly concurrent applications" and
-didn't bother trying to hack around the limitations of CFQ.
-
-These days REQ_PRIO is only used by the block layer writeback
-throttle, but unlike bcache it considers both REQ_META and REQ_PRIO
-to mean the same thing.
-
-REQ_META, OTOH, is used by BFQ and blk-cgroup to detect metadata
-IO and don't look at REQ_PRIO at all. So, really, REQ_META is for
-metadata, not REQ_PRIO. REQ_PRIO looks like it should just go away.
-
-> And if REQ_PRIO is necessary, why it is not used in fs/xfs/ code ?
-
-It's not necessary, it's just an /optimisation/ that some
-filesystems make and some IO schedulers used to pay attention to. It
-looks completely redundant now.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Kevin
