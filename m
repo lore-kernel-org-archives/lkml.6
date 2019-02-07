@@ -2,52 +2,53 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BDFC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DE5C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 915D821872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B067921872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:33:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E/rOYfLN"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hqc7pMwJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfBGLcz (ORCPT
+        id S1727061AbfBGLcV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:32:55 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53322 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbfBGLcw (ORCPT
+        Thu, 7 Feb 2019 06:32:21 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:59692 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbfBGLcU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:32:52 -0500
+        Thu, 7 Feb 2019 06:32:20 -0500
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17BWUmb094530;
-        Thu, 7 Feb 2019 05:32:30 -0600
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17BW6c8103799;
+        Thu, 7 Feb 2019 05:32:06 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549539150;
-        bh=zM9Td9IPdnQ4poiwQG4NpDYQ8HxesMv3eUNXS4tDPuQ=;
+        s=ti-com-17Q1; t=1549539126;
+        bh=GmaChAagvvR3BKGTtUPZxsSHjPP8U/j4RxXcXLkz7sg=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=E/rOYfLNiwIP+378pFcSfLSZNuirUeWe1V18HqDNf8oBwvFCwK/raYcj84h2UYonf
-         YrY9BBq2NjbLT0N9C+La+Ljim/ipVsCvd4PxpywBKtIVpcRwdtQFp5GkJOSpURgAol
-         GAi6OCOgSDTHyKroCD5jz5QUuuSfTfXTUVu7OeMI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17BWUdD073075
+        b=hqc7pMwJ4b6XG+qT73G5qm+xHApuPwCL+g5nay9WReFMPyxY64Q5IOdLOu3d+vx75
+         bpvDhpSF2Rq2qf0V+w7Gxtq9fMnSxNgKYEg9xQXwvmAmW1aT5QaI+DS+Jtn8DHO4et
+         O78Tu9UNM8fJ7+f7s0L6uQs48HhV8vWv516BosJU=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17BW6Rl072695
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Feb 2019 05:32:30 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 7 Feb 2019 05:32:06 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
- Feb 2019 05:32:30 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ Feb 2019 05:32:06 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 7 Feb 2019 05:32:30 -0600
+ Thu, 7 Feb 2019 05:32:06 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17BVxat026282;
-        Thu, 7 Feb 2019 05:32:27 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17BVxal026282;
+        Thu, 7 Feb 2019 05:32:03 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Murali Karicheri <m-karicheri2@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
@@ -58,9 +59,9 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 9/9] PCI: dwc: Do not write to MSI control registers if the platform doesn't use it
-Date:   Thu, 7 Feb 2019 16:39:24 +0530
-Message-ID: <20190207110924.30716-10-kishon@ti.com>
+Subject: [PATCH v2 1/9] PCI: keystone: Cleanup interrupt related macros
+Date:   Thu, 7 Feb 2019 16:39:16 +0530
+Message-ID: <20190207110924.30716-2-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190207110924.30716-1-kishon@ti.com>
 References: <20190207110924.30716-1-kishon@ti.com>
@@ -72,54 +73,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Platforms which populate msi_host_init, has it's own MSI controller
-logic. Writing to MSI control registers on platforms which doesn't use
-Designware's MSI controller logic might have side effects. To
-be safe, do not write to MSI control registers if the platform uses
-it's own MSI controller logic instead of Designware's MSI controller
-logic.
+No functional change. Change both MSI interrupt and legacy interrupt
+related macros to take an additional argument in order to return the
+correct register offset.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
- .../pci/controller/dwc/pcie-designware-host.c | 24 ++++++++++---------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 26 +++++++++++------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 9492b05e8ff0..d7184e1a7d92 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -647,17 +647,19 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 14f2b0b4ed5e..5286a480f76b 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -52,17 +52,17 @@
  
- 	dw_pcie_setup(pci);
+ /* IRQ register defines */
+ #define IRQ_EOI				0x050
+-#define IRQ_STATUS			0x184
+-#define IRQ_ENABLE_SET			0x188
+-#define IRQ_ENABLE_CLR			0x18c
  
--	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
--
--	/* Initialize IRQ Status array */
--	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
--		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
--					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
--				    4, ~0);
--		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
--					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
--				    4, ~0);
--		pp->irq_status[ctrl] = 0;
-+	if (!pp->ops->msi_host_init) {
-+		num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+ #define MSI_IRQ				0x054
+-#define MSI0_IRQ_STATUS			0x104
+-#define MSI0_IRQ_ENABLE_SET		0x108
+-#define MSI0_IRQ_ENABLE_CLR		0x10c
+-#define IRQ_STATUS			0x184
++#define MSI_IRQ_STATUS(n)		(0x104 + ((n) << 4))
++#define MSI_IRQ_ENABLE_SET(n)		(0x108 + ((n) << 4))
++#define MSI_IRQ_ENABLE_CLR(n)		(0x10c + ((n) << 4))
+ #define MSI_IRQ_OFFSET			4
+ 
++#define IRQ_STATUS(n)			(0x184 + ((n) << 4))
++#define IRQ_ENABLE_SET(n)		(0x188 + ((n) << 4))
++#define INTx_EN				BIT(0)
 +
-+		/* Initialize IRQ Status array */
-+		for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
-+			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
-+					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-+					    4, ~0);
-+			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
-+					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-+					    4, ~0);
-+			pp->irq_status[ctrl] = 0;
-+		}
- 	}
+ #define ERR_IRQ_STATUS			0x1c4
+ #define ERR_IRQ_ENABLE_SET		0x1c8
+ #define ERR_AER				BIT(5)	/* ECRC error */
+@@ -142,7 +142,7 @@ static void ks_pcie_handle_msi_irq(struct keystone_pcie *ks_pcie, int offset)
+ 	u32 pending, vector;
+ 	int src, virq;
  
- 	/* Setup RC BARs */
+-	pending = ks_pcie_app_readl(ks_pcie, MSI0_IRQ_STATUS + (offset << 4));
++	pending = ks_pcie_app_readl(ks_pcie, MSI_IRQ_STATUS(offset));
+ 
+ 	/*
+ 	 * MSI0 status bit 0-3 shows vectors 0, 8, 16, 24, MSI1 status bit
+@@ -169,7 +169,7 @@ static void ks_pcie_msi_irq_ack(int irq, struct pcie_port *pp)
+ 	ks_pcie = to_keystone_pcie(pci);
+ 	update_reg_offset_bit_pos(irq, &reg_offset, &bit_pos);
+ 
+-	ks_pcie_app_writel(ks_pcie, MSI0_IRQ_STATUS + (reg_offset << 4),
++	ks_pcie_app_writel(ks_pcie, MSI_IRQ_STATUS(reg_offset),
+ 			   BIT(bit_pos));
+ 	ks_pcie_app_writel(ks_pcie, IRQ_EOI, reg_offset + MSI_IRQ_OFFSET);
+ }
+@@ -181,7 +181,7 @@ static void ks_pcie_msi_set_irq(struct pcie_port *pp, int irq)
+ 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+ 
+ 	update_reg_offset_bit_pos(irq, &reg_offset, &bit_pos);
+-	ks_pcie_app_writel(ks_pcie, MSI0_IRQ_ENABLE_SET + (reg_offset << 4),
++	ks_pcie_app_writel(ks_pcie, MSI_IRQ_ENABLE_SET(reg_offset),
+ 			   BIT(bit_pos));
+ }
+ 
+@@ -192,7 +192,7 @@ static void ks_pcie_msi_clear_irq(struct pcie_port *pp, int irq)
+ 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+ 
+ 	update_reg_offset_bit_pos(irq, &reg_offset, &bit_pos);
+-	ks_pcie_app_writel(ks_pcie, MSI0_IRQ_ENABLE_CLR + (reg_offset << 4),
++	ks_pcie_app_writel(ks_pcie, MSI_IRQ_ENABLE_CLR(reg_offset),
+ 			   BIT(bit_pos));
+ }
+ 
+@@ -206,7 +206,7 @@ static void ks_pcie_enable_legacy_irqs(struct keystone_pcie *ks_pcie)
+ 	int i;
+ 
+ 	for (i = 0; i < PCI_NUM_INTX; i++)
+-		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET + (i << 4), 0x1);
++		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), 0x1);
+ }
+ 
+ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+@@ -217,7 +217,7 @@ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+ 	u32 pending;
+ 	int virq;
+ 
+-	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS + (offset << 4));
++	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
+ 
+ 	if (BIT(0) & pending) {
+ 		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
 -- 
 2.17.1
 
