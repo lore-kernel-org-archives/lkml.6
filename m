@@ -2,131 +2,114 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94FBC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5642BC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76F222175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549572981;
-	bh=+qD/0vK2NwX55tibQxtz477abYWFPSdoNl1+ZVnqe34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QifF1lBgcYE3V9gmzx6VUmDQNCRV+O86FrcWkF0zHhn/yZ050H5N3jT2ugEtYp0ME
-	 LO8znZR7H8d2o9Hia1SQYcsCHLJblnh6gTgdobMljwnaOCloK8uVt0l2nlA0fIPhHu
-	 tv8aonIVoapFw6UF3He7Dk8OeAy1D9HjC7xv8bYI=
+	by mail.kernel.org (Postfix) with ESMTP id 2135C2175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:57:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I/qIQQnj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbfBGU4U (ORCPT
+        id S1727557AbfBGU5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:56:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfBGU4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:56:19 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 617B12146E;
-        Thu,  7 Feb 2019 20:56:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549572978;
-        bh=+qD/0vK2NwX55tibQxtz477abYWFPSdoNl1+ZVnqe34=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qGY61ygy5zsTMBmxLbpgIbw3QWPzGSxsrkhCKIyX80A5Y4BPYuCbgjA2Tis2ExvXk
-         JRaS4V0S3lvOCK9VrCv7yZ4RnTzlJ4A/phrZlGTxpSolJm0CtVWg4RuTkdbD95qasJ
-         ESpbhYe2LHkZCP7zvU4/uxEpcscroSmxbqtQsyrs=
-Date:   Thu, 7 Feb 2019 14:56:17 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Murali Karicheri <m-karicheri2@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thu, 7 Feb 2019 15:57:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44660 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726691AbfBGU5q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 15:57:46 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p4so518008plq.11
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:57:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xawq7z+PV/ZeUtaPhAzsAhOVrlvuexv6AC5ScinQK0A=;
+        b=I/qIQQnjRV9FFCrMc7YME6bXm0jctteW4Ua54tUdFY1I/kwK9q6Z13N77e32dDxQl4
+         WoH4nzd9kv7WYPomUK04WbKYBmF21X9i1LtpjVRhYoVdMS8kPySxv+QZ2We1MsdMAeeK
+         kfYyoLb/PvSO3Z4NPGNYHv82L1hAdG6GCRbWs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xawq7z+PV/ZeUtaPhAzsAhOVrlvuexv6AC5ScinQK0A=;
+        b=uV/wEbhkUWnhZRCTRqR/9uuPNXaIIaYia0bJoRxzKaMpf3YNVv7H94vlE7bqazubKE
+         5QsOUjDoqoMLZ9ElZTXdfbkE4CvAcHIBbaEzI0sMhIDLbHkyFnqjfrzqLkTcH3J/Cj2p
+         np3mnIyAs6jjz7Kf1ah3/d2Q5ZApsKRlIEKZ/ndYjr2Dw5dO1AAlHHgDMF8mk8FCYxl7
+         2atGDyXva9qK+moRG6Z2GP9FJyuA6mIga71uU9dE56ogNvBcpI2B8GrcBAG/EF5v/V/A
+         UNEc12rN3zef1t5SH/y48S01j5WB83Q9YurqYrGPfXsnMCcnGpFPBNdN+1N2yAoxT1Lr
+         rEGA==
+X-Gm-Message-State: AHQUAubcIVjzx1+LGminSUtoy1L2Ti/XiniRRr/HSrm26JD/eAHOrIi3
+        DlgVLp11+LveZk1YxQewGevzTA==
+X-Google-Smtp-Source: AHgI3IYrkOimqveRulGTCpIkCCpDlDv9UFrr3WKuXnb8tZfu1DRmCUxwjG2qzBFsIs4Nhao3tPADbQ==
+X-Received: by 2002:a17:902:bd86:: with SMTP id q6mr18189270pls.16.1549573065734;
+        Thu, 07 Feb 2019 12:57:45 -0800 (PST)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id y9sm27199pfi.74.2019.02.07.12.57.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 07 Feb 2019 12:57:44 -0800 (PST)
+From:   Evan Green <evgreen@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        Evan Green <evgreen@chromium.org>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/9] PCI: dwc: Add support to use non default
- msi_irq_chip
-Message-ID: <20190207205617.GN7268@google.com>
-References: <20190207110924.30716-1-kishon@ti.com>
- <20190207110924.30716-7-kishon@ti.com>
+Subject: [PATCH v2 0/2] loop: Better discard for block devices
+Date:   Thu,  7 Feb 2019 12:57:27 -0800
+Message-Id: <20190207205730.199332-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207110924.30716-7-kishon@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:39:21PM +0530, Kishon Vijay Abraham I wrote:
-> Platforms using Designware IP uses dw_pci_msi_bottom_irq_chip for
-> configuring the MSI controller logic within the Designware IP. However
-> certain platforms like Keystone (K2G) which uses Desingware IP has
-> it's own MSI controller logic. For handling such platforms,
-> the irqchip ops uses msi_irq_ack, msi_set_irq, msi_clear_irq callback
-> functions.
+This series addresses some errors seen when using the loop
+device directly backed by a block device. The first change plumbs
+out the correct error message, and the second change prevents the
+error from occurring in many cases.
 
-s/IP uses/IP use/
-s/Desingware/DesignWare/
-s/Designware/DesignWare/ (several)
-s/IP has/IP have/
-s/it's own/their own/
-s/ops uses/ops use/
+The errors look like this:
+[   90.880875] print_req_error: I/O error, dev loop5, sector 0
 
-> Add support to use different msi_irq_chip with default as
-> dw_pci_msi_bottom_irq_chip. This is in preparation to get rid off
-> msi_irq_ack, msi_set_irq, msi_clear_irq and other Keystone specific
-> dw_pcie_host_ops. This will also help to get rid of get_msi_addr and
-> get_msi_data ops.
+The errors occur when trying to do a discard or write zeroes operation
+on a loop device backed by a block device that does not support discard.
+Firstly, the error itself is incorrectly reported as I/O error, but is
+actually EOPNOTSUPP. The first patch plumbs out EOPNOTSUPP to properly
+report the error.
 
-s/rid off/rid of/
+The second patch prevents these errors from occurring by mirroring the
+discard capabilities of the underlying block device into the loop device.
+Before this change, discard was always reported as being supported, and
+the loop device simply turns around and does a discard operation on the
+backing device. After this change, backing block devices that do support
+discard will continue to work as before, and continue to get all the
+benefits of doing that. Backing devices that do not support discard will
+fail earlier, avoiding hitting the loop device at all and ultimately
+avoiding this error in the logs.
 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 5 ++++-
->  drivers/pci/controller/dwc/pcie-designware.h      | 1 +
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 721d60a5d9e4..042de09b0451 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -245,7 +245,7 @@ static int dw_pcie_irq_domain_alloc(struct irq_domain *domain,
->  
->  	for (i = 0; i < nr_irqs; i++)
->  		irq_domain_set_info(domain, virq + i, bit + i,
-> -				    &dw_pci_msi_bottom_irq_chip,
-> +				    pp->msi_irq_chip,
->  				    pp, handle_edge_irq,
->  				    NULL, NULL);
->  
-> @@ -277,6 +277,9 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->  	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
->  
-> +	if (!pp->msi_irq_chip)
-> +		pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
-> +
->  	pp->irq_domain = irq_domain_create_linear(fwnode, pp->num_vectors,
->  					       &dw_pcie_msi_domain_ops, pp);
->  	if (!pp->irq_domain) {
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 1f56e6ae34ff..95e0c3c93f48 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -176,6 +176,7 @@ struct pcie_port {
->  	struct irq_domain	*irq_domain;
->  	struct irq_domain	*msi_domain;
->  	dma_addr_t		msi_data;
-> +	struct irq_chip		*msi_irq_chip;
->  	u32			num_vectors;
->  	u32			irq_status[MAX_MSI_CTRLS];
->  	raw_spinlock_t		lock;
-> -- 
-> 2.17.1
-> 
+I can also confirm that this fixes test block/003 in the blktests, when
+running blktests on a loop device backed by a block device.
+
+
+Changes in v2:
+- Unnested error if statement (Bart)
+
+Evan Green (2):
+  loop: Report EOPNOTSUPP properly
+  loop: Better discard support for block devices
+
+ drivers/block/loop.c | 70 ++++++++++++++++++++++++++++++--------------
+ 1 file changed, 48 insertions(+), 22 deletions(-)
+
+-- 
+2.20.1
+
