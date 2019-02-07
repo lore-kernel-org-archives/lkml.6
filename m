@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD0FC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A23C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F2E21902
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B7B821902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:45:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfBGMpd (ORCPT
+        id S1727284AbfBGMpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:45:33 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:60648 "EHLO mail.ispras.ru"
+        Thu, 7 Feb 2019 07:45:39 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:60670 "EHLO mail.ispras.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfBGMpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:45:32 -0500
+        id S1726769AbfBGMph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 07:45:37 -0500
 Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 6DFBB5400A9;
-        Thu,  7 Feb 2019 15:45:30 +0300 (MSK)
+        by mail.ispras.ru (Postfix) with ESMTPSA id D3B5A5400AE;
+        Thu,  7 Feb 2019 15:45:34 +0300 (MSK)
 From:   Denis Efremov <efremov@ispras.ru>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Denis Efremov <efremov@ispras.ru>,
         Casey Schaufler <casey@schaufler-ca.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -35,9 +35,9 @@ Cc:     Denis Efremov <efremov@ispras.ru>,
         Paul Moore <paul@paul-moore.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/10] security: fix documentation for the socket_getpeersec_dgram hook
-Date:   Thu,  7 Feb 2019 15:44:53 +0300
-Message-Id: <402a6bb32fac3dff3c71eb5400944dae14bfda9e.1549540487.git.efremov@ispras.ru>
+Subject: [PATCH 06/10] security: fix documentation for the path_chmod hook
+Date:   Thu,  7 Feb 2019 15:44:54 +0300
+Message-Id: <0275d06334cdb1d2a87384d7971924a70776b3cb.1549540487.git.efremov@ispras.ru>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1549540487.git.efremov@ispras.ru>
 References: <cover.1549540487.git.efremov@ispras.ru>
@@ -48,34 +48,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The socket_getpeersec_dgram hook was changed in the commit
-"[AF_UNIX]: Kernel memory leak fix for af_unix datagram
-getpeersec patch" (dc49c1f94e34). The arguments @secdata
-and @seclen were changed to @sock and @secid. This patch
-updates the documentation accordingly.
+The path_chmod hook was changed in the commit
+"switch security_path_chmod() to struct path *" (cdcf116d44e7).
+The argument @mnt was removed from the hook, @dentry was changed
+to @path. This patch updates the documentation accordingly.
 
 Signed-off-by: Denis Efremov <efremov@ispras.ru>
 ---
- include/linux/lsm_hooks.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/lsm_hooks.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 09223911876e..cb93972257be 100644
+index cb93972257be..5d6428d0027b 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -861,9 +861,9 @@
-  *	the IP_PASSSEC option via getsockopt.  It can then retrieve the
-  *	security state returned by this hook for a packet via the SCM_SECURITY
-  *	ancillary message type.
-- *	@skb is the skbuff for the packet being queried
-- *	@secdata is a pointer to a buffer in which to copy the security data
-- *	@seclen is the maximum length for @secdata
-+ *	@sock contains the socket structure.
-+ *	@skb is the skbuff for the packet being queried.
-+ *	@secid pointer to store the secid of the packet.
-  *	Return 0 on success, error on failure.
-  * @sk_alloc_security:
-  *	Allocate and attach a security structure to the sk->sk_security field,
+@@ -304,8 +304,7 @@
+  *	Return 0 if permission is granted.
+  * @path_chmod:
+  *	Check for permission to change DAC's permission of a file or directory.
+- *	@dentry contains the dentry structure.
+- *	@mnt contains the vfsmnt structure.
++ *	@path contains the path structure.
+  *	@mode contains DAC's mode.
+  *	Return 0 if permission is granted.
+  * @path_chown:
 -- 
 2.17.2
 
