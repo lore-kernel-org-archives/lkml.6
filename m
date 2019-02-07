@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31C8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BF6C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F012146E
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1958C21908
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:32:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="CFq90kkh"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="dbHRoKjN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfBGNcN (ORCPT
+        id S1727340AbfBGNcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:32:13 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:56082 "EHLO
+        Thu, 7 Feb 2019 08:32:17 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:56124 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbfBGNcL (ORCPT
+        with ESMTP id S1726786AbfBGNcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:32:11 -0500
+        Thu, 7 Feb 2019 08:32:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1549546329; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1549546333; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=0TYmKriPQWetiVQTiupkGvMhIDeyKodtmIfFaz7WP5E=;
-        b=CFq90kkhemNltECsgk3lLvGD3Ze8TVyazXO1GYcmE8vsf0Sal1ptprmGzBrG7GP5+JZ7QF
-        0jar96VjDSvMY+MjiE4SxD3IP1P8KRDlWjYd/HzNELRHIAmcMGRWeHeErImEd0+XmokkIV
-        azMHSTGGHAp1Htp4qayH8BXuk+tTIUw=
+        bh=xg9HBMe069822OGxItmgrwyx7QeXdc8BF1xKx7sr9Sk=;
+        b=dbHRoKjNKOwIR07z3kP4IqHuHzz2eGVxsb9pmM16Hxoahzrua7lVrV+rjru1LDlkepFb+g
+        JSq6CSLGs2rz1ohrU+/Ld6Mgcr0yBYZriQ7rUBvW9V6NjEDTXDeC8G8WIeVc9eelxREsYr
+        uYx1URdIb6kYX/BQ1vH2NUK1S+I7Gdo=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -38,9 +38,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 4/6] ASoC: codecs: jz4740: Add support for devicetree
-Date:   Thu,  7 Feb 2019 10:31:41 -0300
-Message-Id: <20190207133143.5232-4-paul@crapouillou.net>
+Subject: [PATCH v2 5/6] ASoC: codecs: Kconfig: Show knob, and depend on MIPS || COMPILE_TEST
+Date:   Thu,  7 Feb 2019 10:31:42 -0300
+Message-Id: <20190207133143.5232-5-paul@crapouillou.net>
 In-Reply-To: <20190207133143.5232-1-paul@crapouillou.net>
 References: <20190207133143.5232-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,7 +48,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for probing the driver from devicetree.
+Show the knob to enable or disable the jz4740-codec driver, add a
+proper description, and add a dependency on MIPS || COMPILE_TEST, as
+this driver is only useful on MIPS.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
@@ -57,33 +59,30 @@ Changes:
 
 v2: No change
 
- sound/soc/codecs/jz4740.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/soc/codecs/Kconfig | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
-index 9b3e1227a971..974e17fa1911 100644
---- a/sound/soc/codecs/jz4740.c
-+++ b/sound/soc/codecs/jz4740.c
-@@ -346,10 +346,19 @@ static int jz4740_codec_probe(struct platform_device *pdev)
- 	return ret;
- }
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index fec894c725d3..e6ce18c21b98 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -579,8 +579,15 @@ config SND_SOC_CX20442
+ 	depends on TTY
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id jz4740_codec_of_matches[] = {
-+	{ .compatible = "ingenic,jz4740-codec", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, jz4740_codec_of_matches);
-+#endif
+ config SND_SOC_JZ4740_CODEC
++	depends on MIPS || COMPILE_TEST
+ 	select REGMAP_MMIO
+-	tristate
++	tristate "Ingenic JZ4740 internal CODEC"
++	help
++	  Enable support for the internal CODEC found in the JZ4740 SoC
++	  from Ingenic.
 +
- static struct platform_driver jz4740_codec_driver = {
- 	.probe = jz4740_codec_probe,
- 	.driver = {
- 		.name = "jz4740-codec",
-+		.of_match_table = of_match_ptr(jz4740_codec_of_matches),
- 	},
- };
++	  This driver can also be built as a module. If so, the module
++	  will be called snd-soc-jz4740-codec.
  
+ config SND_SOC_JZ4725B_CODEC
+ 	depends on MIPS || COMPILE_TEST
 -- 
 2.11.0
 
