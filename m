@@ -2,139 +2,106 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D765CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D5AC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A421421872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA5D21904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 17:09:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZaIUrpTB"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Bc20ARP8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfBGRGg (ORCPT
+        id S1726792AbfBGRJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:06:36 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:40165 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbfBGRGf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:06:35 -0500
-Received: by mail-vk1-f194.google.com with SMTP id v70so137683vkv.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vNu3eDgy3bRGyE1H97kpUSLRr9SUCp+FnqhdYfyDr/g=;
-        b=ZaIUrpTBfoKsDD64nCPoMRr7fXNhGIsDwHSHjH70ZvG/xspGEZkZ95sLvlvI7wrchq
-         R16YsRPZGsQg619mFMZtid5ntZSufx+6ZZ2D++WXo3UZXVBMF4oKxWrDEkFWonlbHEOn
-         oXTZ4eWK/t+/7wIWLJAgYMgExxGqv+mcJt+cc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vNu3eDgy3bRGyE1H97kpUSLRr9SUCp+FnqhdYfyDr/g=;
-        b=JGdyKKC+YX8KYHc/Ai0Ukr6bZcfF7zw9QzQYcQrEKi2v1gb3/xWiZJAjMS3/gxTe43
-         PH6SZ2lt71NOvQx7p4c8W7OdGnncn9was5xcudx4Ymi1pSKRwiF0MoemRzXtjHb4C+80
-         mKR91n808HeN0DWHpVc7iHVvLCFRNwTaQEh1UOoCaPkEMJTbN1WJqH/27ZbfEB38qx1V
-         JFDBiw/37/njafM+mqLeIGXJe/3NLp8hfWKT2IKZ+xHuQq3gwn09CsZYbX7vavME9HRt
-         JYDTlTksikQ/VfYTXwAUZb+hUUU0m5KZUXv2AB3SwTuGreaDPaIe75Ie6gVjXn1m+5Im
-         DjeQ==
-X-Gm-Message-State: AHQUAuaVNDmkqNYAdsaeF3VbKXqiAbiVRclayAy9AOlWsVKGcosSqQwv
-        i5e8sGbylIlPZWu8WZiIY0OrWfuBE/8=
-X-Google-Smtp-Source: AHgI3IYJZh4M8eTfJ5lgAhKRHJEGD5BPi/fUgFH8UABoGvj65mb+W93nhJkYmscd8mVoC2r1ckFqnw==
-X-Received: by 2002:a1f:834f:: with SMTP id f76mr7031261vkd.25.1549559194306;
-        Thu, 07 Feb 2019 09:06:34 -0800 (PST)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id 67sm3230759vko.0.2019.02.07.09.06.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 09:06:34 -0800 (PST)
-Received: by mail-vk1-f177.google.com with SMTP id r127so147511vkf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 09:06:33 -0800 (PST)
-X-Received: by 2002:a1f:e807:: with SMTP id f7mr6758385vkh.16.1549559192689;
- Thu, 07 Feb 2019 09:06:32 -0800 (PST)
+        Thu, 7 Feb 2019 12:09:01 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46086 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726512AbfBGRJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 12:09:01 -0500
+Received: from zn.tnic (p200300EC2BD188009C13CA0C499330CD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8800:9c13:ca0c:4993:30cd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB8251EC014B;
+        Thu,  7 Feb 2019 18:08:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549559339;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ek1xVHCNXanCVTi3nzLrzlb8Mm9UH/bSEszIlu32D6Q=;
+        b=Bc20ARP8sJCfTfHve8fIAl3iqbog0LVwemZpCso2y5OtIWJrqUNwDeq/aESEQQMvS0yub4
+        y+ysXIk4HMbuKCIuGkUQy0ISJ92pCkU0aYi4KDmJ1bOpyl0OIWsPXIEUkObynOhCo/QuUq
+        r5X0D7XXxHF8AyWqxDwCmamQ8hMtgYQ=
+Date:   Thu, 7 Feb 2019 18:08:48 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check()
+ helper
+Message-ID: <20190207170848.GG2414@zn.tnic>
+References: <cover.1549308412.git.bristot@redhat.com>
+ <36237a0ee38d6c98d080d3fee2921501d8788e4d.1549308412.git.bristot@redhat.com>
+ <20190205072220.GD21801@zn.tnic>
+ <cb65e500-44dd-873c-622f-b49b9336b6a2@redhat.com>
+ <20190205211348.GV21801@zn.tnic>
+ <30b5ffc9-9794-874b-1544-d05034b55f1b@redhat.com>
+ <20190207140819.GF2414@zn.tnic>
+ <473c03b3-c5c3-7412-e2ad-3dedb413d165@redhat.com>
 MIME-Version: 1.0
-References: <20190208004721.129a9eb7@canb.auug.org.au>
-In-Reply-To: <20190208004721.129a9eb7@canb.auug.org.au>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 7 Feb 2019 09:06:19 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=U07_E6O96o4KrJGPaKvE4aSGb9OT6kCy7x40Q_-kGGOA@mail.gmail.com>
-Message-ID: <CAD=FV=U07_E6O96o4KrJGPaKvE4aSGb9OT6kCy7x40Q_-kGGOA@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the qcom tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <473c03b3-c5c3-7412-e2ad-3dedb413d165@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Feb 07, 2019 at 06:00:53PM +0100, Daniel Bristot de Oliveira wrote:
+> It is taking 95 characters. In this case, wouldn't be better to break?
+> 
+>         if (!kernel_text_address(jump_entry_code(entry))) {
+>                 WARN_ONCE(1, "can't patch jump_label at %pS",
+>                           (void *)jump_entry_code(entry));
+>                 return false;
+>         }
+> 
+> I agree your suggestion is better... just confirming that 95 is not too long...
 
-On Thu, Feb 7, 2019 at 5:47 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Andy,
->
-> In commit
->
->   761f63b2ff21 ("arm64: dts: sdm845: Add clocks and iommus to WCN3990 WLAN node")
->
-> Fixes tag
->
->   Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device node")
->
-> has these problem(s):
->
->   - Target SHA1 does not exist
->
-> Did you mean:
->
->   022bccb840b7 ("arm64: dts: sdm845: Add WCN3990 WLAN module device node")
+Well, current monitors are always > 80 cols unless someone has a tmux
+with a gazillion windows in it (yeah, I know of a couple people who do
+that :)) and at least to me, breaking the line like that looks less
+readable because I need to look at the two lines to parse what's going
+on.
 
-+Bjorn
+Vs when you have one long line, so you look at
 
-Looks like someone reorganized and/or rebased the tree after I sent
-out my fix.  When I check locally I have the old commit still and the
-new:
+	WARN_ONCE(...
 
-commit be7019103469e6ccb997f932d3e0dce0141a0eda
-Author:     Govind Singh <govinds@codeaurora.org>
-AuthorDate: Mon Nov 5 18:38:37 2018 +0530
-Commit:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CommitDate: Wed Jan 16 14:13:41 2019 -0800
+and go, oh, ok, we're warning here and nothing else. Without paying too
+much attention to the actual arguments of the WARN.
 
-    dts: arm64/sdm845: Add WCN3990 WLAN module device node
+But this is just me.
 
-    Add device node for the ath10k SNOC platform driver probe
-    and add resources required for WCN3990 on SDM845 soc.
+Thx.
 
-    Reviewed-by: Brian Norris <briannorris@chromium.org>
-    Tested-by: Brian Norris <briannorris@chromium.org>
-    Signed-off-by: Govind Singh <govinds@codeaurora.org>
-    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+-- 
+Regards/Gruss,
+    Boris.
 
----
-
-commit 022bccb840b7ff9c64a70e81ac017d4d10bb8a9c
-Author:     Govind Singh <govinds@codeaurora.org>
-AuthorDate: Mon Nov 5 18:38:37 2018 +0530
-Commit:     Andy Gross <andy.gross@linaro.org>
-CommitDate: Thu Jan 24 22:19:20 2019 -0600
-
-    arm64: dts: sdm845: Add WCN3990 WLAN module device node
-
-    Add device node for the ath10k SNOC platform driver probe
-    and add resources required for WCN3990 on SDM845 soc.
-
-    Reviewed-by: Brian Norris <briannorris@chromium.org>
-    Tested-by: Brian Norris <briannorris@chromium.org>
-    Signed-off-by: Govind Singh <govinds@codeaurora.org>
-    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-    Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Good mailing practices for 400: avoid top-posting and trim the reply.
