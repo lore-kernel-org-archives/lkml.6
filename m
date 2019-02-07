@@ -2,119 +2,130 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232C7C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A208C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44DD21872
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549536881;
-	bh=E3lSeFjpZUF6MJ2RhSuWQTiY9wElTj8VdCv6drTuuVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VL/6Xn9SRH7UAsfzCgnv+H8/ZoqllzJfQTD9Ixz+B8Rl3zaHGUPBCWadRec0ive/u
-	 NkfdR715xMn47o4ePA4tHPTC9Gdy7kbuvuk0qtcYGH/WdgMHMbfLZnZ9xvJgVcFiOB
-	 t1B5QWaPQI+LkV6xkNIZ4WvFR6xb+tWEVODK7izE=
+	by mail.kernel.org (Postfix) with ESMTP id 1810121872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HEI7GnxF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfBGKyi (ORCPT
+        id S1726997AbfBGKzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:54:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38524 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbfBGKyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:54:38 -0500
-Received: from linux-8ccs (ip5f5adbc2.dynamic.kabel-deutschland.de [95.90.219.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19E3D21872;
-        Thu,  7 Feb 2019 10:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549536877;
-        bh=E3lSeFjpZUF6MJ2RhSuWQTiY9wElTj8VdCv6drTuuVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EZP7FEC054fd9blizq9OocQp3UA9UG60LBGiVJdn6u8VFmNS67xUm5Et14j+ixJ4z
-         4ZpZWO4RP7Qg1PWbJ1n7twtodU9AoRRK+EbMWiH9dVd0GhLWEciMcY+dmXvzoy+Enc
-         lAJ75CdzFQS6ByS6UNULVEAHGosHIsit6a1CASKg=
-Date:   Thu, 7 Feb 2019 11:54:31 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] include/linux/module.h: mark init/cleanup_module
- aliases as __init/exit
-Message-ID: <20190207105431.GA26041@linux-8ccs>
-References: <20190206175627.GA20399@gmail.com>
- <CANiq72=gS7=G6WbZ4jqybMBh44FeF7UeVEfeb1hN8uMAMt_2bw@mail.gmail.com>
+        Thu, 7 Feb 2019 05:55:25 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47640 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfBGKzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 05:55:24 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17AtMcP085200;
+        Thu, 7 Feb 2019 04:55:22 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549536922;
+        bh=2bxrrISIoGGUEqxqDAh5JhOxJ38tUroms65YKkxiZ6M=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=HEI7GnxFXWgMnqpt5C2uk2Pk7A4JK6NfePGIzo4juCOsTnPMN2zWvqbrR+VLnXOcV
+         XzsabeKrZXO5gIqNi/cgfGgOP7r1zL8lOsvnG2s6FALhqkumxSY2nr+ugv/DoGspyR
+         wj2/bwPEpDNtUrHjbGLRVKQHQnT7XT+5ipbSZTnE=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17AtMwD035082
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Feb 2019 04:55:22 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
+ Feb 2019 04:55:19 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 7 Feb 2019 04:55:19 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17AtGOJ011014;
+        Thu, 7 Feb 2019 04:55:17 -0600
+Subject: Re: [PATCH v2 1/4] phy: core: Add *release* phy_ops invoked when the
+ consumer relinquishes PHY
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20190206110753.28738-1-kishon@ti.com>
+ <20190206110753.28738-2-kishon@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C5C0E94.4090401@ti.com>
+Date:   Thu, 7 Feb 2019 12:55:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CANiq72=gS7=G6WbZ4jqybMBh44FeF7UeVEfeb1hN8uMAMt_2bw@mail.gmail.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190206110753.28738-2-kishon@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Miguel Ojeda [06/02/19 22:19 +0100]:
->On Wed, Feb 6, 2019 at 6:56 PM Miguel Ojeda
-><miguel.ojeda.sandonis@gmail.com> wrote:
->>
->> diff --git a/include/linux/module.h b/include/linux/module.h
->> index 8fa38d3e7538..1b5e370f1bc0 100644
->> --- a/include/linux/module.h
->> +++ b/include/linux/module.h
->> @@ -129,13 +129,13 @@ extern void cleanup_module(void);
->>  #define module_init(initfn)                                    \
->>         static inline initcall_t __maybe_unused __inittest(void)                \
->>         { return initfn; }                                      \
->> -       int init_module(void) __attribute__((alias(#initfn)));
->> +       int init_module(void) __init __attribute__((alias(#initfn)));
->>
->>  /* This is only required if you want to be unloadable. */
->>  #define module_exit(exitfn)                                    \
->>         static inline exitcall_t __maybe_unused __exittest(void)                \
->>         { return exitfn; }                                      \
->> -       void cleanup_module(void) __attribute__((alias(#exitfn)));
->> +       void cleanup_module(void) __exit __attribute__((alias(#exitfn)));
->
->It turns out that there are some modules without __init/__exit marked
->functions, which GCC complains about, since now the alias is in a
->different section than the target:
->
->  * In some cases, this is due to a missing __init/__exit marking
->(e.g. drivers/connector/connector.c). These should be fixed in any
->case.
->  * In other cases, the cleanup function is not marked as such because
->it is called from another place in the TU, like the init function
->(e.g. arch/x86/kvm/vmx.c). We would need to create an actual cleanup
->function (marked as __exit) that simply calls the current exit static
->function.
+Kishon,
 
-Grr, I guess it was not so simple after all. :)
+On 06/02/19 13:07, Kishon Vijay Abraham I wrote:
+> Add a new phy_ops *release* invoked when the consumer relinquishes the
+> PHY using phy_put/devm_phy_put. The initializations done by the PHY
+> driver in of_xlate call back can be can be cleaned up here.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/phy/phy-core.c  | 5 +++++
+>  include/linux/phy/phy.h | 2 ++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> index 19b05e824ee4..d4bd85afdc91 100644
+> --- a/drivers/phy/phy-core.c
+> +++ b/drivers/phy/phy-core.c
+> @@ -564,6 +564,11 @@ void phy_put(struct phy *phy)
+>  	if (!phy || IS_ERR(phy))
+>  		return;
+>  
+> +	mutex_lock(&phy->mutex);
+> +	if (phy->ops->release)
+> +		phy->ops->release(phy);
+> +	mutex_unlock(&phy->mutex);
+> +
+>  	module_put(phy->ops->owner);
+>  	put_device(&phy->dev);
+>  }
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index e8e118d70fd7..feb8dce54ac2 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -63,6 +63,7 @@ union phy_configure_opts {
+>   * @set_mode: set the mode of the phy
+>   * @reset: resetting the phy
+>   * @calibrate: calibrate the phy
+> + * @release: ops to be performed while the consumer reliquishes the PHY
 
->So we have a few alternatives:
->
->  1) Going only with __cold.
->  2) Using the new __copy attribute (because then they are copied only
->in the cases they are actually used).
->  3) Fix and go for __init/__exit. While this requires some tweaking
->as explained above, it would be good if we can achieve it since then
->we are enforcing proper __init/__exit markings for all modules
->(whereas __copy wouldn't spot).
->
->I think it is worth achieving 3), but that will take a bit more of
->time. In that case, I suggest we push 1) or 2) for the moment (so that
->the warning is fixed) and then work on fixing all instances. As soon
->as that is done, we can push 3).
+s/reliquishes/relinquishes
 
-My order of preference would be 2, 1, striving for 3 eventually. 
+>   * @owner: the module owner containing the ops
+>   */
+>  struct phy_ops {
+> @@ -104,6 +105,7 @@ struct phy_ops {
+>  			    union phy_configure_opts *opts);
+>  	int	(*reset)(struct phy *phy);
+>  	int	(*calibrate)(struct phy *phy);
+> +	void	(*release)(struct phy *phy);
+>  	struct module *owner;
+>  };
+>  
+> 
 
-Thanks Miguel!
-
-Jessica
-
+cheers,
+-roger
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
