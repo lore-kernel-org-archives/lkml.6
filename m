@@ -2,131 +2,146 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB595C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EC6C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5CF21721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C6C21721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:26:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="K8qwLPwT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PxTyxHN1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfBGUYV (ORCPT
+        id S1727403AbfBGU02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:24:21 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37942 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfBGUYU (ORCPT
+        Thu, 7 Feb 2019 15:26:28 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40108 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbfBGU01 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:24:20 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so450146pgc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:24:20 -0800 (PST)
+        Thu, 7 Feb 2019 15:26:27 -0500
+Received: by mail-it1-f193.google.com with SMTP id h193so3154606ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 12:26:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=xSDbE82RQuhxtIOqN+QQMMwheps2PFZF9+GFCiEfYm0=;
-        b=K8qwLPwTfzQQVQR32xRkVo7RZG8QlfjEqdqZCWq9EI1tWwwOLvfwAiOGofDyQ20F2Z
-         RiAAxRxbQ5/j/7xQEKyU7GSKfZ1cA3MQGZPTxwiE/GrPVnD+9i6trl+pd86/8Jaa1bsd
-         XB9qpf9Y5fs9yFQx2ZG8I1cCi4DJXjv+cWBXxrreRqSW9bQFV1YJzCP79LrsKkX87e+w
-         fqmxTs8Yv19cuCzuGWdUEKO2qwryaHIQ0b1sffDdMe2fQLVXrZPUWsfCvIIgoPnb2D0a
-         Ut5wdsryhStftkoNV4buyvYH8VblVaNuN4QxiqEKfceWmyInBp+ksO4R5NyrW6T3H3Ty
-         4gmA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YYogv0ka9R4eviTDJxJgfktV/LLRttaROHsNpKGSpSM=;
+        b=PxTyxHN1hoesG4TBnAHUlMse5Rx1kOxDW0RujRmLvjkBFwEeMz5u4yT8I69L70ENnf
+         3g1+jSbFJtvkg9Js5jFe2GNFHbedkucDl9MqYG53NwtlLT/cBYr8q0wfw+RU2a9vAvSt
+         LUDYmOMjsd3uIe5PyrBLb5QVcT6bjeeJDQVUCeeR73mtv5200ufpsXReSoLb4TjcaEoG
+         KcZK03EWFWekB5RCjvyD3n6iYbY4yYYOPVRLdzYswpBlMa1fL2nqqhUqOMTSD8AMDXF/
+         NTDA1Ssk50W6NEZuP/C9CaGv/N/PNDcJpfmpjOJB1m5gx4QG/wM4w3XstEngvmf3dsl4
+         3ZAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=xSDbE82RQuhxtIOqN+QQMMwheps2PFZF9+GFCiEfYm0=;
-        b=Tslv0CVHOP6xlt0jGqyWuv4pAQcV9O+Zt7P4e7Enaecu7Sk1tuRTII7UOxZxa+dyO2
-         c7QtqYy6Arlh693S0/dMdVqcvLeMYJTflbJVQIGCd/fkYX1WutPrHoHlpBMICrsqK8zt
-         fM5sl2pUmFPE6wTsGUxKJhag2bV6McqA0DKWH0CXrZDDy3+vBqXgb3tkQRcN/IdTjP++
-         WfbqPp3NHnay06Jaj6J51aT/zhbh6uEDsPXa3Xzs3dsaYTT18VCIUEegbQL8drFJ1oMJ
-         V4dLl7uD5VXcIdif+hFEJrmfhSMoHocPSRbhKlkhH5hb1VW4HUpkMuZ1gk14lYMqoBBX
-         WOcA==
-X-Gm-Message-State: AHQUAuZtehbFt3NKTIu2UGxatguUnOfItF2QChqJ3Up6foUDAD967Jtc
-        E7mDkW4ct5cABerT1s3ZiicfAw==
-X-Google-Smtp-Source: AHgI3IZZuyXMz6ZjRvudA/tWG+CkO6REQSSQnoeXHKbnnwEL0CiLrHjfBkMBkjwsLOAQcPd06rSSig==
-X-Received: by 2002:a62:dbc2:: with SMTP id f185mr17992381pfg.235.1549571060197;
-        Thu, 07 Feb 2019 12:24:20 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:802a:c653:76a4:cb6c? ([2601:646:c200:7429:802a:c653:76a4:cb6c])
-        by smtp.gmail.com with ESMTPSA id 64sm13580437pff.101.2019.02.07.12.24.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 12:24:19 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [GIT PULL] x86/mm changes for v4.21
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <20190207184606.GB17049@agluck-desk>
-Date:   Thu, 7 Feb 2019 12:24:18 -0800
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@surriel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <22E08A6D-5180-42F1-B94B-6B6DB832F953@amacapital.net>
-References: <20181224231106.GA27438@gmail.com> <20190207001737.GA32096@agluck-desk> <20190207101846.GB32511@hirez.programming.kicks-ass.net> <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com> <20190207140131.GB32477@hirez.programming.kicks-ass.net> <20190207173600.GA15682@agluck-desk> <20190207175720.GE32511@hirez.programming.kicks-ass.net> <8D8DF81C-3331-4105-8594-9600281010EF@amacapital.net> <20190207184606.GB17049@agluck-desk>
-To:     "Luck, Tony" <tony.luck@intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YYogv0ka9R4eviTDJxJgfktV/LLRttaROHsNpKGSpSM=;
+        b=XLhHoB1aB5HGe2VyZvHO8SUGbSnhQOr86Cl0Ctj7lZcHLVi9qy7xqIZbPadSF5o/RA
+         VRqW9jjZKEHF+O4oX0LGR8hK+wmw4saI/HVThhV45muDalNOapHLuouwUGJc4uhpe+8R
+         lMXWhfnOuS4f8y3mRpa62hYtLAx3p2+7rwDoZd5Z9Cs03MoZqFugeyJ5pXJS0Tfa9zMt
+         0QLMjsE44snExcW7OO9iJeYUZ3pF+4V8b2fk9krb2h0rnU+QNOI7hDXp7uok+4OXZ8gg
+         ptHPDza4ugppgc73W/z5s9y1RDdd1w3sOspZ0ZSzIn8TfuDUaO2p1QC44KPpvLZRY4I5
+         Bj9w==
+X-Gm-Message-State: AHQUAuZNn+8Roc83hY6bbNxBnMGh2SMEKpEGwKMB8cfr47kBpIEpEghD
+        BMi7QhXgsPxySUO2bfSFxnCmc+Rm2fewHJbZoHAjcg==
+X-Google-Smtp-Source: AHgI3IaQ3+vJNfeCJ+W99aHeTHlZlgJ6d9QJM/gUgVMCJqkxMBpECb7Ts13bCba8MHs1MtIm3R9abENa/+xiFwL/iys=
+X-Received: by 2002:a24:db02:: with SMTP id c2mr6811884itg.137.1549571186682;
+ Thu, 07 Feb 2019 12:26:26 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org> <c050252dc8eb3fea03119cd5efc422ed6e48834e.1548981329.git.saiprakash.ranjan@codeaurora.org>
+In-Reply-To: <c050252dc8eb3fea03119cd5efc422ed6e48834e.1548981329.git.saiprakash.ranjan@codeaurora.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 7 Feb 2019 13:26:16 -0700
+Message-ID: <CANLsYkwoqOhtENkhhSY5Tv23-vgUst4oakWrmQsB97=gDTVQLA@mail.gmail.com>
+Subject: Re: [PATCHv7 5/6] coresight: etm4x: Add ETM PIDs for SDM845 and MSM8996
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 31 Jan 2019 at 17:54, Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> Instead of overriding the peripheral id(PID) check in AMBA
+> by hardcoding them in DT, add the PIDs to the ETM4x driver.
+> Here we use Unique Component Identifier(UCI) for MSM8996
+> since the ETM and CPU debug module shares the same PIDs.
+> SDM845 does not support CPU debug module.
+>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>
+> ---
+> For testing, all dependent patches are in below tree:
+>  * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
+>
+> This patch depends on UCI support by Mike Leach in below link:
+>  * https://lore.kernel.org/lkml/20190130234051.2294-1-mike.leach@linaro.org/
+> ---
+>  drivers/hwtracing/coresight/coresight-etm4x.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+> index 08ce37c9475d..5819ced2beec 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+> @@ -1078,11 +1078,15 @@ static struct amba_cs_uci_id uci_id_etm4[] = {
+>  };
+>
+>  static const struct amba_id etm4_ids[] = {
+> -       CS_AMBA_ID(0x000bb95d),         /* Cortex-A53 */
+> -       CS_AMBA_ID(0x000bb95e),         /* Cortex-A57 */
+> -       CS_AMBA_ID(0x000bb95a),         /* Cortex-A72 */
+> -       CS_AMBA_ID(0x000bb959),         /* Cortex-A73 */
+> -       CS_AMBA_UCI_ID(0x000bb9da, uci_id_etm4),        /* Cortex-A35 */
+> +       CS_AMBA_ID(0x000bb95d),                 /* Cortex-A53 */
+> +       CS_AMBA_ID(0x000bb95e),                 /* Cortex-A57 */
+> +       CS_AMBA_ID(0x000bb95a),                 /* Cortex-A72 */
+> +       CS_AMBA_ID(0x000bb959),                 /* Cortex-A73 */
+> +       CS_AMBA_UCI_ID(0x000bb9da, uci_id_etm4),/* Cortex-A35 */
+> +       CS_AMBA_UCI_ID(0x000f0205, uci_id_etm4),/* Qualcomm Kryo */
+> +       CS_AMBA_UCI_ID(0x000f0211, uci_id_etm4),/* Qualcomm Kryo */
+> +       CS_AMBA_ID(0x000bb802),                 /* Qualcomm Kryo 385 Cortex-A55 */
+> +       CS_AMBA_ID(0x000bb803),                 /* Qualcomm Kryo 385 Cortex-A75 */
 
+I am good with this patch but there isn't much I can do with it until
+Mike's patchset has been merged.  Please submit again when that has
+been done.
 
-> On Feb 7, 2019, at 10:46 AM, Luck, Tony <tony.luck@intel.com> wrote:
->=20
->> On Thu, Feb 07, 2019 at 10:07:28AM -0800, Andy Lutomirski wrote:
->> Joining this thread late...
->>=20
->> This is all IMO rather crazy.  How about we fiddle with CR0 to turn off
->> the cache, then fiddle with page tables, then turn caching on?  Or, heck,=
+Thanks,
+Mathieu
 
->> see if there=E2=80=99s some chicken bit we can set to improve the situati=
-on
->> while we=E2=80=99re in the MCE handler.
->=20
->> Also, since I don=E2=80=99t really want
->> to dig into the code to answer this, how exactly do we do a broadcast TLB=
-
->> flush from MCE context?  We=E2=80=99re super-duper-atomic, and locks migh=
-t be
->> held on various CPUs.  Shouldn=E2=80=99t we be telling the cpa code to sk=
-ip
->> the flush and then just have the MCE code do a full flush manually?
->> The MCE code has already taken over all CPUs on non-LMCE systems.
->=20
-> MCE code doesn't do this while still in MCE context. You helped
-> restructure this code so the recovery bits happen after we call
->=20
->    ist_begin_non_atomic(regs);
->=20
-> on just the CPU that hit the error (in the broadcast case we've
-> let the other out of MCE jail by this point).
->=20
-> So there is a small window where we know the broken page is still
-> mapped WB in the kernel 1:1 map. But we just live dangerously for
-> a few more microseconds until we can fix the map.
-
-Hmm.
-
-How bad would it be to set CR0.CD while fiddling with the page tables rather=
- than masking the address?
-
->=20
->> Or, better yet, get Intel to fix the hardware. A failed speculative
->> access while already in MCE context should just be ignored.
->=20
-> Good idea.
->=20
-> -Tony
+>         {},
+>  };
+>
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+>
