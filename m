@@ -2,164 +2,382 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A86FC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B036C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E662083B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:27:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6QXDntu"
+	by mail.kernel.org (Postfix) with ESMTP id D8B8E2083B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:28:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbfBGI15 (ORCPT
+        id S1727119AbfBGI2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 03:27:57 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41098 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbfBGI1z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 03:27:55 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so10475527wrs.8;
-        Thu, 07 Feb 2019 00:27:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ydm80avQtJ0vux7vXW2ZKgg9VQHP9bJ/GFDJpgVwwR8=;
-        b=G6QXDntuFvTPGrDIfbQ1+YNVkLuhdxkaXiFPSgGlsuV3M4OBY/iq4htvNqKzgNtl/P
-         66TavMtum9EK2tV1ZDQkIiVNpZXcWMwxGdjwQvwk/L+lMqi7s8sYi174lUtx6Wgc3OwS
-         k5ve2s+MQ1lzpVhHYinLezoZDvgyviMF2mPm8wru6rEe/rMvTWAiyqxZYgcmXvz4QPSM
-         CBFGnhOKOQZqx0HZdjP9m+2hcoNmc5X9zbeYxiwwNvGiq3GTylYr50JnqNRfZ2zbj6AM
-         eMFFK14uJxM7BV4vEqnscNzzE89Gu7zMPmSJQ/mI+dF0c/ASoNdG/ZipwGmrze7FIHSH
-         R0Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ydm80avQtJ0vux7vXW2ZKgg9VQHP9bJ/GFDJpgVwwR8=;
-        b=NaBrVHPk8ua6JtwhQsZYdPDGYvm+nCd9AI8B1gQrqx7e0qv3evS4dHEdwNqlBgTLYC
-         zQqCpmb9Bjk+ddiDVgcZ3NJTIElJEdWcKbaT238A9qE1FQeT5nAsiAX3T8JEifZTb0QY
-         6MTEHrwnUEFyEYUM8T5aLjv/gfZe7L7xj1BUi6LIAndVAgBP9omE95p8FTGeulkJW2b2
-         k2AZEpufffagSwd9+sbLAq5wWL3TGDwbEnkWVfPq366JudYfz+kPoa031lTeGTU7eDZY
-         wthShJ9+65bO0re3+thLLHnH95fjhZ0o2emk4fc+vT7ZFE2zx1z34A36FdYv/kRyxWO9
-         ytew==
-X-Gm-Message-State: AHQUAuav9GxNfhPnkVGY8pLCrTWGHmLSx/+YvGjkYsMQnLTdi4CxJwP7
-        5w0rXz7ZLouQHgDnpqlKupOovLgDiy8=
-X-Google-Smtp-Source: AHgI3IajyUZSRrt8THNOF4F8diUX1fFLmLaov1qfz4jdGoU5SSDQxVLnn+viXs4Z1drkuYinrQ3lJA==
-X-Received: by 2002:adf:c108:: with SMTP id r8mr11693041wre.233.1549528073095;
-        Thu, 07 Feb 2019 00:27:53 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id 126sm17050817wmd.1.2019.02.07.00.27.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 00:27:52 -0800 (PST)
-Date:   Thu, 7 Feb 2019 09:27:51 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] reset: Don't WARN if trying to get a used reset control
-Message-ID: <20190207082751.GA29438@ulmo>
-References: <20190128145836.GA31317@ulmo>
- <1548849808.3939.7.camel@pengutronix.de>
- <20190201140025.GB12829@ulmo>
- <1549389941.3929.14.camel@pengutronix.de>
- <20190205221300.GA1372@mithrandir>
- <1549448885.3338.4.camel@pengutronix.de>
- <20190206113849.GA21676@ulmo>
- <1549464390.3338.8.camel@pengutronix.de>
- <20190206160023.GA23805@ulmo>
- <1549476724.3338.10.camel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Content-Disposition: inline
-In-Reply-To: <1549476724.3338.10.camel@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 7 Feb 2019 03:28:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50744 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726781AbfBGI2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 03:28:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 099C9AE3E;
+        Thu,  7 Feb 2019 08:28:23 +0000 (UTC)
+Date:   Thu, 07 Feb 2019 09:28:22 +0100
+Message-ID: <s5htvhg9f4p.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 5.0-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+please pull sound fixes for v5.0-rc6 from:
 
-On Wed, Feb 06, 2019 at 07:12:04PM +0100, Philipp Zabel wrote:
-> On Wed, 2019-02-06 at 17:00 +0100, Thierry Reding wrote:
-[...]
-> > That way we operate on the same reset control, but we wouldn't need to
-> > iterate over all existing reset controls in order to determine whether
-> > we can acquire or not.
->=20
-> How could we decide in reset_control_assert whether the provided rstc is
-> allowed to change the reset line if both rstc handles point to the same
-> struct reset_control?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.0-rc6
 
-The idea was that acquire/release would basically act as lock/unlock for
-the reset control. So consumers would always have to call acquire()
-before assert()/deassert()/reset() and they would be allowed to continue
-only if acquire() returns success. Of course that's something you can
-only enforce during code review, but that's pretty much the same as with
-any type of locking.
+The topmost commit is c97617a81a7616d49bc3700959e08c6c6f447093
 
-So basically the idea is that if a consumers acquire() call succeeds,
-the acquired flag gets set on the reset control and that consumer
-becomes the only user allowed to modify the reset control. Any other
-consumers would call acquire() and fail because the acquired is already
-true.
+----------------------------------------------------------------
 
-But what you proposed works for me. We can always find constructive ways
-to optimize this later if we need or want to.
+sound fixes for 5.0-rc6
 
-Another possibility would be to keep an additional, separate list of the
-temporarily exclusive resets so that only that list would have to be
-iterated to find the ones that are relevant.
+A collection of a few small fixes.  The most significant one is the
+fix for the possible race at loading HD-audio drivers.  This has been
+present for long time and surfaced only in a rare occasion, but
+finally spotted out.
 
-> > >  			if (WARN_ON(!rstc->shared || !shared))
-> > >  				return ERR_PTR(-EBUSY);
-> >=20
-> > With the above I think we could just extend this list of conditions with
-> >=20
-> > 	|| acquired
-> >=20
-> > and things should work the same. Or perhaps I'm missing something.
-> >
-> > Other than that this really looks like a very nice solution.
->=20
-> Well, apart from the API function names...
-> devm_reset_control_get_optional_exclusive_released(dev, "id");
-> would be a mouthful.
+The rest are usual device-specific fixes for HD-audio and USB-audio.
 
-Yeah, the combinations are somewhat awkward. However, I would expect the
-temporarily exclusive resets to be required in most cases, so that would
-at least make the name a little shorter.
+----------------------------------------------------------------
 
-Thierry
+Charles Keepax (1):
+      ALSA: compress: Fix stop handling on compressed capture streams
 
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
+Jeremy Soller (1):
+      ALSA: hda/realtek - Headset microphone support for System76 darp5
 
------BEGIN PGP SIGNATURE-----
+Kailang Yang (1):
+      ALSA: hda/realtek - Fix lose hp_pins for disable auto mute
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxb7AAACgkQ3SOs138+
-s6E3ig//cmL5YmMqBFP5WPvj0gClgraWwofV1YrWgfDeos46JaOBlh8dcm0x2cvB
-OEYwn4MQ4P0kHgGis7UNmN7h85/TPHp1zEdDDp1xJPg0gJSZcoIDbQkXaVUWmH/o
-wkkDhNTZhv9idxCaq3IHZVPoAHkoK6O3NRM4Ji6zBX+izJkjtGNHJ0PzvAW3LqyY
-Hr9PMmfgolhlxYbIG2E0ubysOYrDdAMLhqSOj1YocMJtxtFOCyDEMHwlIiQZKhXC
-2CAz14MYnh6pv4sMuR1xhDIRXFQXMiBSBzeS2gEaUv7jsUl6X8EpBNpeEA8k0FvN
-lHujeGZp18q56sIgpdqdr947XZOJ5XYKoNgXN9fqhsUC9NjXPAt5sE7/xuEr+A2n
-fmXyDTRKf1wx4qBLr5YWWXf/+FpOom06UMFZlPXAbQdCEY2IWFOTGw/aoELHChbT
-y7I8thCuSSAu6qEPXgMR5EyCodTNeTarfvsQz0PVLKmBOWLRuYV6d8LBr9SvqvHV
-QOV2bVmT43qhKL0SZnqLhoucE3OPNTSYy2W9jWxf3cYHUzcpRnDNbzKM1NDrPuZN
-PZTgsOu/g1EICOyYX/gI9rdv32wukc+/rIX9rXuWxuYdr0yvwP246QHxFS3Mk3UI
-acxfpugZRzooaU/PkGfVOlpOFPehINMzk0LDcsOw2LU8IEBF98A=
-=62pi
------END PGP SIGNATURE-----
+Takashi Iwai (3):
+      ALSA: hda/realtek - Use a common helper for hp pin reference
+      ALSA: hda - Serialize codec registrations
+      ALSA: hda/ca0132 - Fix build error without CONFIG_PCI
 
---nFreZHaLTZJo0R7j--
+Udo Eberhardt (1):
+      ALSA: usb-audio: Add support for new T+A USB DAC
+
+---
+ include/sound/compress_driver.h |  6 +++-
+ include/sound/hda_codec.h       |  1 +
+ sound/pci/hda/hda_bind.c        |  3 +-
+ sound/pci/hda/hda_intel.c       |  2 ++
+ sound/pci/hda/patch_ca0132.c    |  4 ++-
+ sound/pci/hda/patch_realtek.c   | 62 +++++++++++++++++++++++------------------
+ sound/usb/quirks.c              |  1 +
+ 7 files changed, 49 insertions(+), 30 deletions(-)
+
+diff --git a/include/sound/compress_driver.h b/include/sound/compress_driver.h
+index 0cdc3999ecfa..c5188ff724d1 100644
+--- a/include/sound/compress_driver.h
++++ b/include/sound/compress_driver.h
+@@ -173,7 +173,11 @@ static inline void snd_compr_drain_notify(struct snd_compr_stream *stream)
+ 	if (snd_BUG_ON(!stream))
+ 		return;
+ 
+-	stream->runtime->state = SNDRV_PCM_STATE_SETUP;
++	if (stream->direction == SND_COMPRESS_PLAYBACK)
++		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
++	else
++		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
++
+ 	wake_up(&stream->runtime->sleep);
+ }
+ 
+diff --git a/include/sound/hda_codec.h b/include/sound/hda_codec.h
+index 7fa48b100936..cc7c8d42d4fd 100644
+--- a/include/sound/hda_codec.h
++++ b/include/sound/hda_codec.h
+@@ -68,6 +68,7 @@ struct hda_bus {
+ 	unsigned int response_reset:1;	/* controller was reset */
+ 	unsigned int in_reset:1;	/* during reset operation */
+ 	unsigned int no_response_fallback:1; /* don't fallback at RIRB error */
++	unsigned int bus_probing :1;	/* during probing process */
+ 
+ 	int primary_dig_out_type;	/* primary digital out PCM type */
+ 	unsigned int mixer_assigned;	/* codec addr for mixer name */
+diff --git a/sound/pci/hda/hda_bind.c b/sound/pci/hda/hda_bind.c
+index 9174f1b3a987..1ec706ced75c 100644
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -115,7 +115,8 @@ static int hda_codec_driver_probe(struct device *dev)
+ 	err = snd_hda_codec_build_controls(codec);
+ 	if (err < 0)
+ 		goto error_module;
+-	if (codec->card->registered) {
++	/* only register after the bus probe finished; otherwise it's racy */
++	if (!codec->bus->bus_probing && codec->card->registered) {
+ 		err = snd_card_register(codec->card);
+ 		if (err < 0)
+ 			goto error_module;
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index e784130ea4e0..e5c49003e75f 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2185,6 +2185,7 @@ static int azx_probe_continue(struct azx *chip)
+ 	int dev = chip->dev_index;
+ 	int err;
+ 
++	to_hda_bus(bus)->bus_probing = 1;
+ 	hda->probe_continued = 1;
+ 
+ 	/* bind with i915 if needed */
+@@ -2269,6 +2270,7 @@ static int azx_probe_continue(struct azx *chip)
+ 	if (err < 0)
+ 		hda->init_failed = 1;
+ 	complete_all(&hda->probe_wait);
++	to_hda_bus(bus)->bus_probing = 0;
+ 	return err;
+ }
+ 
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index e5bdbc245682..29882bda7632 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -8451,8 +8451,10 @@ static void ca0132_free(struct hda_codec *codec)
+ 	ca0132_exit_chip(codec);
+ 
+ 	snd_hda_power_down(codec);
+-	if (IS_ENABLED(CONFIG_PCI) && spec->mem_base)
++#ifdef CONFIG_PCI
++	if (spec->mem_base)
+ 		pci_iounmap(codec->bus->pci, spec->mem_base);
++#endif
+ 	kfree(spec->spec_init_verbs);
+ 	kfree(codec->spec);
+ }
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 4139aced63f8..6df758adff84 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -515,6 +515,15 @@ static void alc_auto_init_amp(struct hda_codec *codec, int type)
+ 	}
+ }
+ 
++/* get a primary headphone pin if available */
++static hda_nid_t alc_get_hp_pin(struct alc_spec *spec)
++{
++	if (spec->gen.autocfg.hp_pins[0])
++		return spec->gen.autocfg.hp_pins[0];
++	if (spec->gen.autocfg.line_out_type == AC_JACK_HP_OUT)
++		return spec->gen.autocfg.line_out_pins[0];
++	return 0;
++}
+ 
+ /*
+  * Realtek SSID verification
+@@ -725,9 +734,7 @@ static int alc_subsystem_id(struct hda_codec *codec, const hda_nid_t *ports)
+ 	 * 15   : 1 --> enable the function "Mute internal speaker
+ 	 *	        when the external headphone out jack is plugged"
+ 	 */
+-	if (!spec->gen.autocfg.hp_pins[0] &&
+-	    !(spec->gen.autocfg.line_out_pins[0] &&
+-	      spec->gen.autocfg.line_out_type == AUTO_PIN_HP_OUT)) {
++	if (!alc_get_hp_pin(spec)) {
+ 		hda_nid_t nid;
+ 		tmp = (ass >> 11) & 0x3;	/* HP to chassis */
+ 		nid = ports[tmp];
+@@ -2959,7 +2966,7 @@ static void alc282_restore_default_value(struct hda_codec *codec)
+ static void alc282_init(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 	int coef78;
+ 
+@@ -2996,7 +3003,7 @@ static void alc282_init(struct hda_codec *codec)
+ static void alc282_shutup(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 	int coef78;
+ 
+@@ -3074,14 +3081,9 @@ static void alc283_restore_default_value(struct hda_codec *codec)
+ static void alc283_init(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 
+-	if (!spec->gen.autocfg.hp_outs) {
+-		if (spec->gen.autocfg.line_out_type == AC_JACK_HP_OUT)
+-			hp_pin = spec->gen.autocfg.line_out_pins[0];
+-	}
+-
+ 	alc283_restore_default_value(codec);
+ 
+ 	if (!hp_pin)
+@@ -3115,14 +3117,9 @@ static void alc283_init(struct hda_codec *codec)
+ static void alc283_shutup(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 
+-	if (!spec->gen.autocfg.hp_outs) {
+-		if (spec->gen.autocfg.line_out_type == AC_JACK_HP_OUT)
+-			hp_pin = spec->gen.autocfg.line_out_pins[0];
+-	}
+-
+ 	if (!hp_pin) {
+ 		alc269_shutup(codec);
+ 		return;
+@@ -3156,7 +3153,7 @@ static void alc283_shutup(struct hda_codec *codec)
+ static void alc256_init(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 
+ 	if (!hp_pin)
+@@ -3192,7 +3189,7 @@ static void alc256_init(struct hda_codec *codec)
+ static void alc256_shutup(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 
+ 	if (!hp_pin) {
+@@ -3228,7 +3225,7 @@ static void alc256_shutup(struct hda_codec *codec)
+ static void alc225_init(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp1_pin_sense, hp2_pin_sense;
+ 
+ 	if (!hp_pin)
+@@ -3271,7 +3268,7 @@ static void alc225_init(struct hda_codec *codec)
+ static void alc225_shutup(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp1_pin_sense, hp2_pin_sense;
+ 
+ 	if (!hp_pin) {
+@@ -3315,7 +3312,7 @@ static void alc225_shutup(struct hda_codec *codec)
+ static void alc_default_init(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 
+ 	if (!hp_pin)
+@@ -3344,7 +3341,7 @@ static void alc_default_init(struct hda_codec *codec)
+ static void alc_default_shutup(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	bool hp_pin_sense;
+ 
+ 	if (!hp_pin) {
+@@ -3376,7 +3373,7 @@ static void alc_default_shutup(struct hda_codec *codec)
+ static void alc294_hp_init(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 	int i, val;
+ 
+ 	if (!hp_pin)
+@@ -4780,7 +4777,7 @@ static void alc_update_headset_mode(struct hda_codec *codec)
+ 	struct alc_spec *spec = codec->spec;
+ 
+ 	hda_nid_t mux_pin = spec->gen.imux_pins[spec->gen.cur_mux[0]];
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	hda_nid_t hp_pin = alc_get_hp_pin(spec);
+ 
+ 	int new_headset_mode;
+ 
+@@ -5059,7 +5056,7 @@ static void alc_fixup_tpt470_dock(struct hda_codec *codec,
+ static void alc_shutup_dell_xps13(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+-	int hp_pin = spec->gen.autocfg.hp_pins[0];
++	int hp_pin = alc_get_hp_pin(spec);
+ 
+ 	/* Prevent pop noises when headphones are plugged in */
+ 	snd_hda_codec_write(codec, hp_pin, 0,
+@@ -5152,7 +5149,7 @@ static void alc271_hp_gate_mic_jack(struct hda_codec *codec,
+ 
+ 	if (action == HDA_FIXUP_ACT_PROBE) {
+ 		int mic_pin = find_ext_mic_pin(codec);
+-		int hp_pin = spec->gen.autocfg.hp_pins[0];
++		int hp_pin = alc_get_hp_pin(spec);
+ 
+ 		if (snd_BUG_ON(!mic_pin || !hp_pin))
+ 			return;
+@@ -5634,6 +5631,7 @@ enum {
+ 	ALC294_FIXUP_ASUS_HEADSET_MIC,
+ 	ALC294_FIXUP_ASUS_SPK,
+ 	ALC225_FIXUP_HEADSET_JACK,
++	ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6580,6 +6578,15 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc_fixup_headset_jack,
+ 	},
++	[ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x1a, 0x01a1913c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6758,6 +6765,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1462, 0xb120, "MSI Cubi MS-B120", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1462, 0xb171, "Cubi N 8GL (MS-B171)", ALC283_FIXUP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x1558, 0x1325, "System76 Darter Pro (darp5)", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x17aa, 0x1036, "Lenovo P520", ALC233_FIXUP_LENOVO_MULTI_CODECS),
+ 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Thinkpad SL410/510", ALC269_FIXUP_SKU_IGNORE),
+ 	SND_PCI_QUIRK(0x17aa, 0x215e, "Thinkpad L512", ALC269_FIXUP_SKU_IGNORE),
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index bb8372833fc2..7e65fe853ee3 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -1567,6 +1567,7 @@ u64 snd_usb_interface_dsd_format_quirks(struct snd_usb_audio *chip,
+ 	case 0x20b1:  /* XMOS based devices */
+ 	case 0x152a:  /* Thesycon devices */
+ 	case 0x25ce:  /* Mytek devices */
++	case 0x2ab6:  /* T+A devices */
+ 		if (fp->dsd_raw)
+ 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
+ 		break;
