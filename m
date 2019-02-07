@@ -2,113 +2,123 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E08C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EAEC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B942190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:17:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LASn+pgJ"
+	by mail.kernel.org (Postfix) with ESMTP id 8960320863
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:21:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfBGQRq (ORCPT
+        id S1726707AbfBGQVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:17:46 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34728 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGQRq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:17:46 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p6so332743lfc.1;
-        Thu, 07 Feb 2019 08:17:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uXXFSfS3qwAfrpAOQHAXOdwBdRY3+psDP0LE0+4iPvE=;
-        b=LASn+pgJ6rRz8uzjm5NItLQdaWbIrsMCTwbjd3GXJ97BEEZf67oMtlTxN51c7l2TwQ
-         oAup8FVYyFS9INnIBsM3aloF122dNjXOWriV4Kc8+uULLWjwnnQtwtC2T/kjLhocZVry
-         TXzCXmsEj+S3zne5mc6qCau/uSRUIuYJ9mAJrJuoZmfb573q9tLrizqWThlgUt8P35tb
-         aorHz9ATygSNzNgb6XOBMzGQ3YFxWXdqy/wK9n+fCy+5dVRyDoqbbZbBBAKQPe3h/7Vo
-         cBYgDPICzIMmsAcL3AyzVmuDQR1H8sq+VuXzuoBV9T3Zd07QC5N/j0M9TALPQuGvuR1+
-         +PNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uXXFSfS3qwAfrpAOQHAXOdwBdRY3+psDP0LE0+4iPvE=;
-        b=VihRFcN5sjw/skdYT3FjHMxrZbnCZI8OU0kqEjbAERkJa41FIa/LTYJCp26+eIAn/N
-         uD/GV0DSVVzEe5cT5k27NeTitH51k1tQGSECQLjniqfooYfNHUBULpW7GPC1g4LYz+8c
-         LtSPkmcLBu5W+QcpCQVJJcpROqxpeK+XITiGoEsRUmVlqKPfeCIBWBy47qbu6/B2TtEe
-         RvgZtGO5jiaWpYD2tUDqQu8Vl9ET2H4jfANXya79D4hmn6oBKkpzYd56SoKWJHb+KFBq
-         KDldnzKj2MSq4qx15IIQRDSz4FhKIjaP4zm/LlMVcFKE/A0xxcwC4aZA3L0tvvX/bsQo
-         pZKw==
-X-Gm-Message-State: AHQUAuaqZipWaf2djkoC1Ui2t0W1Hg1sRhFbqCpfPSkOswOvVQueyikL
-        jIRkf5DXeqtRhszfuCrDpUZazGL1
-X-Google-Smtp-Source: AHgI3IYvVCMCXegkIxjxCLLHFl4x+iMCagyN0S/zFlL8eT+XiNoAmVnnQGK8BakT184KFjuEyu762Q==
-X-Received: by 2002:ac2:5551:: with SMTP id l17mr11273565lfk.24.1549556263778;
-        Thu, 07 Feb 2019 08:17:43 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id z4-v6sm1062542ljz.15.2019.02.07.08.17.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 08:17:43 -0800 (PST)
-Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
- <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
- <32b0b694-f912-044e-1a50-55b9c355d0c3@gmail.com>
- <BYAPR12MB3398350797241F90AE347FB5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
- <0a7d62c4-9dcd-08dd-4e3f-877184848daa@gmail.com>
- <20190207160630.GB17445@ulmo>
- <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0b7963a4-ee9c-7296-1478-38235af7cd40@gmail.com>
-Date:   Thu, 7 Feb 2019 19:17:42 +0300
+        Thu, 7 Feb 2019 11:21:41 -0500
+Received: from foss.arm.com ([217.140.101.70]:39770 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726196AbfBGQVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:21:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3543A78;
+        Thu,  7 Feb 2019 08:21:40 -0800 (PST)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A3233F675;
+        Thu,  7 Feb 2019 08:21:40 -0800 (PST)
+Subject: Re: [PATCH] ACPI/PPTT: Add acpi_pptt_warn_missing() to consolidate
+ logs
+To:     John Garry <john.garry@huawei.com>, rjw@rjwysocki.net,
+        lenb@kernel.org
+Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com
+References: <1549556061-107418-1-git-send-email-john.garry@huawei.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <05990286-4b66-2879-f066-b4ab558f7385@arm.com>
+Date:   Thu, 7 Feb 2019 10:21:35 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3398D9CA36FCFF81BBC8E7B5C2680@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1549556061-107418-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-07.02.2019 19:08, Sowjanya Komatineni пишет:
+Hi,
+
+On 2/7/19 10:14 AM, John Garry wrote:
+> For a system using ACPI-based FW without a PPTT, we may get many warnings
+> about the lack of a PPTT, as shown:
 > 
->>>>> It became apparent to me that there is a problem here. The size of dma_buf is 4096 bytes and maximum message length is 4096 too, we have pushed 12 bytes packet_header to the buffer >and now there are 4084 bytes left for the message in the buffer. Hence transfer of 4KB will cause buffer overflow and either crash kernel or corrupt memory. One solution is to just always >push packet_header using PIO, other to reduce max_write_len or increase dma_buf size.
->>>>
->>>> Yes, This is known to me and I will add separate patch for this to 
->>>> update quirks to take care for t186 and t194 to exclude packet hdr lengths There was separate patch when quirks were added and it got merged already from 5.0-rc1 but don’t want to sneak that here. Will send separate patch to take care of this.
->>>> Need to update quirk to exclude packet header
->>>>
->>>
->>> No. This is a bug of this patch, it must be fixed in this patch as well. 
->>>
->>
->>
->> I'm not sure we actually need this. My understanding is that it's really the payload size that's 4 KiB and 64 KiB, respectively. I don't think that includes the header.
->>
->> Thierry
+> root@(none)$ dmesg | grep -i pptt
+> [    0.010125] ACPI PPTT: No PPTT table found, cpu topology may be inaccurate
+> [    7.138339] ACPI PPTT: No PPTT table found, cache topology may be inaccurate
+> [    7.145368] ACPI PPTT: No PPTT table found, cache topology may be inaccurate
 > 
-> As per the design, Yes that’s including the HEADER. Its total transfer per packet including header.
+> These logs are generated with pr_warn_once(), so the intention was for a
+> single log, but the logs overlap, so consolidate them.
+> 
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> 
+> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> index da031b1df6f5..ad31c50de3be 100644
+> --- a/drivers/acpi/pptt.c
+> +++ b/drivers/acpi/pptt.c
+> @@ -451,6 +451,11 @@ static struct acpi_pptt_processor *acpi_find_processor_package_id(struct acpi_ta
+>   	return cpu;
+>   }
+>   
+> +static void acpi_pptt_warn_missing(void)
+> +{
+> +	pr_warn_once("No PPTT table found, cpu and cache topology may be inaccurate\n");
+> +}
+> +
+>   /**
+>    * topology_get_acpi_cpu_tag() - Find a unique topology value for a feature
+>    * @table: Pointer to the head of the PPTT table
+> @@ -498,7 +503,7 @@ static int find_acpi_cpu_topology_tag(unsigned int cpu, int level, int flag)
+>   
+>   	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
+>   	if (ACPI_FAILURE(status)) {
+> -		pr_warn_once("No PPTT table found, cpu topology may be inaccurate\n");
+> +		acpi_pptt_warn_missing();
+>   		return -ENOENT;
+>   	}
+>   	retval = topology_get_acpi_cpu_tag(table, cpu, level, flag);
+> @@ -531,7 +536,7 @@ int acpi_find_last_cache_level(unsigned int cpu)
+>   	acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+>   	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
+>   	if (ACPI_FAILURE(status)) {
+> -		pr_warn_once("No PPTT table found, cache topology may be inaccurate\n");
+> +		acpi_pptt_warn_missing();
+>   	} else {
+>   		number_of_levels = acpi_find_cache_levels(table, acpi_cpu_id);
+>   		acpi_put_table(table);
+> @@ -563,7 +568,7 @@ int cache_setup_acpi(unsigned int cpu)
+>   
+>   	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
+>   	if (ACPI_FAILURE(status)) {
+> -		pr_warn_once("No PPTT table found, cache topology may be inaccurate\n");
+> +		acpi_pptt_warn_missing();
+>   		return -ENOENT;
+>   	}
+>   
+> @@ -617,7 +622,7 @@ int find_acpi_cpu_cache_topology(unsigned int cpu, int level)
+>   
+>   	status = acpi_get_table(ACPI_SIG_PPTT, 0, &table);
+>   	if (ACPI_FAILURE(status)) {
+> -		pr_warn_once("No PPTT table found, topology may be inaccurate\n");
+> +		acpi_pptt_warn_missing();
+>   		return -ENOENT;
+>   	}
+>   
 > 
 
-My understanding that I2C's max read/write sizes quirks are the payload limits, and so excluding the header size. Hence I'm not sure what you are trying to say, Thierry.
+This all looks fine to me,
 
-Sowjanya, also.. it should be fine if you'll include the separate patch into this series, placing it before this DMA-patch. I just read your message as "patch separately from this series".
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+
+Thanks!
