@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E17C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A1BC282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253B521916
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C3121721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:50:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549579856;
-	bh=tK724BhYJI1b1ug6ERi3UiJ9FRi1HttrSLDyqGnwFgY=;
+	s=default; t=1549579859;
+	bh=oMe6vXkT+1BD6acEyXWgQwOYkTbpUjzso39Rr0KCQpc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pXkfgExXUfcLgPKsQ2G102Er3qWSGxd8/MDLLdfIjOOX66QXReFCeR+nF+2ggkhfe
-	 efnHZ2Kw7ISJuL29iJ2R2NqAwg7Cy8kfBdePZjUqQagqGuL+HVHwzMhExxfiy5/Na5
-	 IUIMT/0/y8rz/a0TrNjEIUjOs2C7ZU7hQip9qPFA=
+	b=K9ASaHm9rcBmmZxXuRARc7vpsRGC2P7eF2SJ3fa7flYriLmmG28gNU1jLZH8Lj8Xo
+	 MgBDbBvPRfwDHbDe4RveOduPqz7BIiLSOXuyvofHGpemq8PxhMc12QwHIUxJCmQSj3
+	 yLHo/pyDTCBg+h6QJ1ziUpqYP/svfZoasjGp/TZY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfBGWuy (ORCPT
+        id S1727134AbfBGWu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 17:50:54 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:51307 "EHLO
+        Thu, 7 Feb 2019 17:50:57 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:46623 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727058AbfBGWuv (ORCPT
+        by vger.kernel.org with ESMTP id S1727091AbfBGWuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 17:50:51 -0500
+        Thu, 7 Feb 2019 17:50:55 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id F25D721F49;
-        Thu,  7 Feb 2019 17:50:50 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 117832208C;
+        Thu,  7 Feb 2019 17:50:53 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 07 Feb 2019 17:50:50 -0500
+  by compute3.internal (MEProxy); Thu, 07 Feb 2019 17:50:53 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=2PLl/V120Makw5/D9oj8o1udfl+b3JNvXdyz9y+DaR0=; b=5gsJr4Fn
-        1LUW0R9O2N9hb/flq7PqxE+/Bo5+NqsKKr2RDzt7Twg8QLUMwdA7/9uMQXSwbWaT
-        vvApyvUv8MB93LCh99dclEzn25zXpa0QC6DFRPRK7GFNvhdk7Hw4YWtXUmrouOSC
-        LUtqP6uxgwFONrnTS+WsLSDK9/31DEKOclXbBf89Vz4g0MCwIy1hfNeXyQhxuqdH
-        qqnNGcOZIgO2zlafIa3QWSayrW/vA+9Kq5uStm48JkKjtyBAvM8JNbC2a0IZtdnE
-        3EFDSxOIu+bPOSm+ccLsPkIHs2HZP6aDJnMXv7HUuJolpC25B+7mb3buGN0hcS1G
-        nNhorXyrt7GGgw==
-X-ME-Sender: <xms:SrZcXFxMFEjwZ0RWMNhNBb_fEj_YJITaCMzLBtVSSQvUcauINMPPmw>
+        fm2; bh=rl9IOz7bUSqbOMyGkhPi6aRMwmI5d43wx7DRds0uh/4=; b=j//XwNNY
+        x67JRCHmIIU1wa4IoY4O5vgv0aGupjDmbAAT+hm+yqE+lz5ZbD1i4Tu6qqeC57uK
+        e4Zrnfly5CZsWHZ3K98wZY7axHfgSvLtObu2hk74++g6rozSN8HFcIEMaAudKSfC
+        3K9iCCa6fLfhyM/4wraKWrSgDvD7mTCLNBBMvukHv9cSNT+J31GMOQm7uQg0qYXD
+        0AqPDld20Nz77IKJ7Bte1apee7YJy8zSHBT37EeoecPCiIYxOeSb9GwGMoJmRO8T
+        8zXiI4TOK6mq70llkv4cjVJCHdkhrMkccGNTG2S1iy0rw9AO0h25svMh4Y1eKlg7
+        GCnJwhPI2G+/8Q==
+X-ME-Sender: <xms:TLZcXAF5-A2k8pRI7ALNJK33_Ep1RvGrxChlRLFFKc13N1OdJDCUWQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrledugddtudcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
     tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojg
@@ -52,20 +52,20 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrledugddtudcutefuodetggdote
     fdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukfhppeduvddurdeggedrudelle
     druddtleenucfrrghrrghmpehmrghilhhfrhhomhepthhosghinheskhgvrhhnvghlrdho
     rhhgnecuvehluhhsthgvrhfuihiivgepud
-X-ME-Proxy: <xmx:SrZcXGrCKXz1azCD54qTnudAbDXnZU-kw7KHTsltPNCOktILfq2J-g>
-    <xmx:SrZcXInC4SMCvGQScErvSNh1hohlw5xWs8aXjiXhAJxyNqegeESXpw>
-    <xmx:SrZcXPygKUR1eis9oWIgKlnZp73RcfgtMQB2cXwE8Zcl7c48EBfUUg>
-    <xmx:SrZcXA4Tb4Nv_zRyCTPmLcl5yPNR8hIlbxomh9SvpFCvXUx7X6u9ZQ>
+X-ME-Proxy: <xmx:TLZcXLauQuqu6qhWqrm2I61y9iNS4GXq3ih-N4enw9DzlsKbCpO_bQ>
+    <xmx:TLZcXITt-ANM7n7-oOWTNK-RIPNjlLKqEuI6Bn7Re205EdQclo1nCg>
+    <xmx:TLZcXHAt52_mcLkIXOMrg_4DQPQAu29aCll_HKDe0v-SAucBD3LJCQ>
+    <xmx:TbZcXGyZr7yNKXKjY9fXGv87AkMWhp5mzs5XXOKf5jfywBgM0JwbaQ>
 Received: from eros.localdomain (ppp121-44-199-109.bras1.syd2.internode.on.net [121.44.199.109])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1292AE41F3;
-        Thu,  7 Feb 2019 17:50:48 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 27E8DE4078;
+        Thu,  7 Feb 2019 17:50:50 -0500 (EST)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Tycho Andersen <tycho@tycho.ws>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] leaking_addresses: Completely remove --version flag
-Date:   Fri,  8 Feb 2019 09:50:25 +1100
-Message-Id: <20190207225026.11723-3-tobin@kernel.org>
+Subject: [PATCH 3/3] leaking_addresses: Expand tilde in output file name
+Date:   Fri,  8 Feb 2019 09:50:26 +1100
+Message-Id: <20190207225026.11723-4-tobin@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207225026.11723-1-tobin@kernel.org>
 References: <20190207225026.11723-1-tobin@kernel.org>
@@ -76,38 +76,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently attempt to remove the '--version' flag was made, badly.  I
-failed to remove mention of it from the help output.  And also I failed
-to actually remove the flag from the options list.
+Currently if user passes an output file to the script via
+--output-raw we do not handle expansion of tilde.
 
-_Completely_ remove --version flag.
+Use perl function glob() to expand tilde in output file name.
 
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
- scripts/leaking_addresses.pl | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ scripts/leaking_addresses.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-index 214c12be8c86..ef9e5b2a1614 100755
+index ef9e5b2a1614..ce545ca3fb70 100755
 --- a/scripts/leaking_addresses.pl
 +++ b/scripts/leaking_addresses.pl
-@@ -97,7 +97,7 @@ Options:
- 	--32-bit			Scan 32-bit kernel.
- 	--page-offset-32-bit=o		Page offset (for 32-bit kernel 0xABCD1234).
- 	-d, --debug			Display debugging output.
--	-h, --help, --version		Display this help and exit.
-+	-h, --help			Display this help and exit.
+@@ -150,7 +150,7 @@ if (!(is_supported_architecture() or $opt_32bit or $page_offset_32bit)) {
+ }
  
- Scans the running kernel for potential leaking addresses.
+ if ($output_raw) {
+-	open my $fh, '>', $output_raw or die "$0: $output_raw: $!\n";
++	open my $fh, '>', glob($output_raw) or die "$0: $output_raw: $!\n";
+ 	select $fh;
+ }
  
-@@ -108,7 +108,6 @@ EOM
- GetOptions(
- 	'd|debug'		=> \$debug,
- 	'h|help'		=> \$help,
--	'version'		=> \$help,
- 	'o|output-raw=s'        => \$output_raw,
- 	'i|input-raw=s'         => \$input_raw,
- 	'suppress-dmesg'        => \$suppress_dmesg,
 -- 
 2.20.1
 
