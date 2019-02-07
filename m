@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 267A2C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F39BC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A8E21907
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D656E21721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 23:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hcfqfo1T"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ho/8mP4o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfBGX2M (ORCPT
+        id S1727070AbfBGX2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:28:12 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33007 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfBGX2J (ORCPT
+        Thu, 7 Feb 2019 18:28:14 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42413 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbfBGX2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:28:09 -0500
-Received: by mail-ed1-f66.google.com with SMTP id a2so1354876edi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:28:07 -0800 (PST)
+        Thu, 7 Feb 2019 18:28:12 -0500
+Received: by mail-ed1-f67.google.com with SMTP id r15so1297601eds.9
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 15:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JhU8i/Jo4J5l8yYhXKPEjv7d6DGTXx5MiNg54waiqwU=;
-        b=hcfqfo1ThNxQmyPpdaGKkWfnwT2YDPc0B2XkYvkJw+9d7lTnP06P69gU+PfDSzpiD+
-         jVXAYAwo+UiWqtouA1l2j/FJHi5R6W4Wj+kXFz/Ve0U1oICQBrukJdlM+2QA4KwY0lUT
-         Nq/iifWurcrOp+tTVjvLTEnigYCuhO2833RuQ=
+        bh=szaf2uJAgssLbFJ9fk1DVjNOf7TVO+Qt3SlgBscvgUg=;
+        b=ho/8mP4oD9JLLci6xgsOGv2oUuUmPvlygcrW6DeXjX3C4OaeAajoMYwiJL3HrNxLP9
+         39WY2P0kcnKll+1Cn87DTr1b8b3o5GMrPRbsaqpqCJw6L3yoFZC4eIVgwGPoJrhekUqN
+         Peu4i5tkC9p39G7L71X+Fh4l4NuOOydX56e/s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JhU8i/Jo4J5l8yYhXKPEjv7d6DGTXx5MiNg54waiqwU=;
-        b=KJFo/Ry9QOrKLpj3mqeEaS2rNEfXBdYGjCCiTcLKjncvkGBHGIlmoMozoV9Te2HqIH
-         ydNRATvcKb0zLUlPIIAYXDNOC0JU7XaQRKQH5B9q8NAtGPAytyQWxHzBkfR5kovo7rnw
-         FBMxc/jDmuOPP9QlDqvMVo5Wr6qV7s1VVxyZAnXU7nQFpmKiwjE/YT9P7A6E4xQtJX01
-         yi9hJVTw9xd0mVgMJpp75lA9Kpd/VrLqBnmJRChB8OtXaLwIazDnzRhiXovM0NMVwy+l
-         ot6iYrEhv7SBHLt1J2ld+7QBINki8W9Kkc2TWN74rwtjZWMFjJcwpoyDepYWUOcvhHXe
-         yRNA==
-X-Gm-Message-State: AHQUAuZ2DQwEYJlyy+9zkDJ/wVby2aC++DzgpIwKjwHFBg42rKB743VJ
-        Y9OsXLRPp8xwstRGilT2SIcNvg==
-X-Google-Smtp-Source: AHgI3IZWo598fR1z/UvG8CePQRhTFdmZ9/S9QgHEcgwHK5PIJeEpc3liqSNCbXbijG/vRxdI7nh8JA==
-X-Received: by 2002:a17:906:2ec5:: with SMTP id s5mr11908776eji.63.1549582087182;
-        Thu, 07 Feb 2019 15:28:07 -0800 (PST)
+        bh=szaf2uJAgssLbFJ9fk1DVjNOf7TVO+Qt3SlgBscvgUg=;
+        b=CF97TK9n3yEKIVq7nUyWfqrK3jlO0y9sNan8fRdEGy+Su1akkQD+lxtQqtAkNdhI23
+         5JtihGiQUybF7cFx+K52XwiG6mMrRBLRDveAMutl4UNp31Y7ZGhM/bdXbesajE1ynV0g
+         JGte7kOeJ2ytqAy3sQlkFPFceIkYdS9ir2Kx/lZPdWIaUGD4xhii3rx7JGKu/JoViDUr
+         EzwFiRU1bNUL5NrZBWRwJnYy6Yqbtn+LUH5bRd76wNeFXKtinMpvS0jbKMIzpDkHx59I
+         gnnjKNrBIxCY/v6Qg7KDYwe8fIiLH1a8mRv26cmqJ1qWXW8Tv+ajap5LgfVuFQ6A5wWw
+         E39Q==
+X-Gm-Message-State: AHQUAuYF4CMDwIUFZmBy0GriUU32G0hLwzTdGiVz2cKoyv467VwwZggA
+        4TYViC4GMFnoSOG5gnqIq1SQgw==
+X-Google-Smtp-Source: AHgI3IYXAgN503ZSxMKhuvwqHplhBH92DvldEdTJCAXrcl5Wz1z92qKLqs6GOiGYsOON9UOGV8Lkbw==
+X-Received: by 2002:aa7:d41a:: with SMTP id z26mr4962957edq.224.1549582089990;
+        Thu, 07 Feb 2019 15:28:09 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id p7sm145079ejb.15.2019.02.07.15.28.05
+        by smtp.gmail.com with ESMTPSA id p7sm145079ejb.15.2019.02.07.15.28.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 15:28:06 -0800 (PST)
+        Thu, 07 Feb 2019 15:28:09 -0800 (PST)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Ramalingam C <ramalingam.c@intel.com>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ramalingam C <ramalinagm.c@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@arm.linux.org.uk>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
@@ -66,9 +67,9 @@ Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         Takashi Iwai <tiwai@suse.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Jani Nikula <jani.nikula@linux.intel.com>
-Subject: [PATCH 2/4] components: multiple components for a device
-Date:   Fri,  8 Feb 2019 00:27:57 +0100
-Message-Id: <20190207232759.14553-2-daniel.vetter@ffwll.ch>
+Subject: [PATCH 4/4] i915/snd_hdac: I915 subcomponent for the snd_hdac
+Date:   Fri,  8 Feb 2019 00:27:59 +0100
+Message-Id: <20190207232759.14553-4-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207232759.14553-1-daniel.vetter@ffwll.ch>
 References: <20190207232759.14553-1-daniel.vetter@ffwll.ch>
@@ -79,319 +80,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Component framework is extended to support multiple components for
-a struct device. These will be matched with different masters based on
-its sub component value.
+Since we need multiple components for I915 for different purposes
+(Audio & Mei_hdcp), we adopt the subcomponents methodology introduced
+by the previous patch (mentioned below).
 
-We are introducing this, as I915 needs two different components
-with different subcomponent value, which will be matched to two
-different component masters(Audio and HDCP) based on the subcomponent
-values.
+	Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+	Date:   Mon Jan 28 17:08:20 2019 +0530
 
-v2: Add documenation.
+	    components: multiple components for a device
 
-v3: Rebase on top of updated documenation.
-
-v4: Review from Rafael:
-- Remove redundant "This" from kerneldoc (also in the previous patch)
-- Streamline the logic in find_component() a bit.
-
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1 code)
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com> (v1 commit message)
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by-by: Ramalingam C <ramalinagm.c@intel.com> (commit message)
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch> (code)
+cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: Russell King <rmk+kernel@arm.linux.org.uk>
+cc: Rafael J. Wysocki <rafael@kernel.org>
+cc: Jaroslav Kysela <perex@perex.cz>
+cc: Takashi Iwai <tiwai@suse.com>
+cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+cc: Jani Nikula <jani.nikula@linux.intel.com>
 ---
- drivers/base/component.c  | 158 +++++++++++++++++++++++++++++---------
- include/linux/component.h |  10 ++-
- 2 files changed, 129 insertions(+), 39 deletions(-)
+ drivers/gpu/drm/i915/intel_audio.c | 4 +++-
+ include/drm/i915_component.h       | 4 ++++
+ include/sound/hda_component.h      | 5 +++--
+ sound/hda/hdac_component.c         | 4 ++--
+ sound/hda/hdac_i915.c              | 6 ++++--
+ 5 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index 1624c2a892a5..7dbc41cccd58 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -47,6 +47,7 @@ struct component;
- struct component_match_array {
- 	void *data;
- 	int (*compare)(struct device *, void *);
-+	int (*compare_typed)(struct device *, int, void *);
- 	void (*release)(struct device *, void *);
- 	struct component *component;
- 	bool duplicate;
-@@ -74,6 +75,7 @@ struct component {
- 	bool bound;
- 
- 	const struct component_ops *ops;
-+	int subcomponent;
- 	struct device *dev;
- };
- 
-@@ -158,7 +160,7 @@ static struct master *__master_find(struct device *dev,
- }
- 
- static struct component *find_component(struct master *master,
--	int (*compare)(struct device *, void *), void *compare_data)
-+	struct component_match_array *mc)
+diff --git a/drivers/gpu/drm/i915/intel_audio.c b/drivers/gpu/drm/i915/intel_audio.c
+index de26cd0a5497..5104c6bbd66f 100644
+--- a/drivers/gpu/drm/i915/intel_audio.c
++++ b/drivers/gpu/drm/i915/intel_audio.c
+@@ -984,7 +984,9 @@ void i915_audio_component_init(struct drm_i915_private *dev_priv)
  {
- 	struct component *c;
- 
-@@ -166,7 +168,11 @@ static struct component *find_component(struct master *master,
- 		if (c->master && c->master != master)
- 			continue;
- 
--		if (compare(c->dev, compare_data))
-+		if (mc->compare && mc->compare(c->dev, mc->data))
-+			return c;
-+
-+		if (mc->compare_typed &&
-+		    mc->compare_typed(c->dev, c->subcomponent, mc->data))
- 			return c;
- 	}
- 
-@@ -192,7 +198,7 @@ static int find_components(struct master *master)
- 		if (match->compare[i].component)
- 			continue;
- 
--		c = find_component(master, mc->compare, mc->data);
-+		c = find_component(master, mc);
- 		if (!c) {
- 			ret = -ENXIO;
- 			break;
-@@ -327,29 +333,12 @@ static int component_match_realloc(struct device *dev,
- 	return 0;
- }
- 
--/**
-- * component_match_add_release - add a component match with release callback
-- * @master: device with the aggregate driver
-- * @matchptr: pointer to the list of component matches
-- * @release: release function for @compare_data
-- * @compare: compare function to match against all components
-- * @compare_data: opaque pointer passed to the @compare function
-- *
-- * Adds a new component match to the list stored in @matchptr, which the @master
-- * aggregate driver needs to function. The list of component matches pointed to
-- * by @matchptr must be initialized to NULL before adding the first match.
-- *
-- * The allocated match list in @matchptr is automatically released using devm
-- * actions, where upon @release will be called to free any references held by
-- * @compare_data, e.g. when @compare_data is a &device_node that must be
-- * released with of_node_put().
-- *
-- * See also component_match_add().
-- */
--void component_match_add_release(struct device *master,
-+static void __component_match_add(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
--	int (*compare)(struct device *, void *), void *compare_data)
-+	int (*compare)(struct device *, void *),
-+	int (*compare_typed)(struct device *, int, void *),
-+	void *compare_data)
- {
- 	struct component_match *match = *matchptr;
- 
-@@ -381,13 +370,69 @@ void component_match_add_release(struct device *master,
- 	}
- 
- 	match->compare[match->num].compare = compare;
-+	match->compare[match->num].compare_typed = compare_typed;
- 	match->compare[match->num].release = release;
- 	match->compare[match->num].data = compare_data;
- 	match->compare[match->num].component = NULL;
- 	match->num++;
- }
-+
-+/**
-+ * component_match_add_release - add a component match with release callback
-+ * @master: device with the aggregate driver
-+ * @matchptr: pointer to the list of component matches
-+ * @release: release function for @compare_data
-+ * @compare: compare function to match against all components
-+ * @compare_data: opaque pointer passed to the @compare function
-+ *
-+ * Adds a new component match to the list stored in @matchptr, which the @master
-+ * aggregate driver needs to function. The list of component matches pointed to
-+ * by @matchptr must be initialized to NULL before adding the first match. This
-+ * only matches against components added with component_add().
-+ *
-+ * The allocated match list in @matchptr is automatically released using devm
-+ * actions, where upon @release will be called to free any references held by
-+ * @compare_data, e.g. when @compare_data is a &device_node that must be
-+ * released with of_node_put().
-+ *
-+ * See also component_match_add() and component_match_add_typed().
-+ */
-+void component_match_add_release(struct device *master,
-+	struct component_match **matchptr,
-+	void (*release)(struct device *, void *),
-+	int (*compare)(struct device *, void *), void *compare_data)
-+{
-+	__component_match_add(master, matchptr, release, compare, NULL,
-+			      compare_data);
-+}
- EXPORT_SYMBOL(component_match_add_release);
- 
-+/**
-+ * component_match_add_typed - add a compent match for a typed component
-+ * @master: device with the aggregate driver
-+ * @matchptr: pointer to the list of component matches
-+ * @compare_typed: compare function to match against all typed components
-+ * @compare_data: opaque pointer passed to the @compare function
-+ *
-+ * Adds a new component match to the list stored in @matchptr, which the @master
-+ * aggregate driver needs to function. The list of component matches pointed to
-+ * by @matchptr must be initialized to NULL before adding the first match. This
-+ * only matches against components added with component_add_typed().
-+ *
-+ * The allocated match list in @matchptr is automatically released using devm
-+ * actions.
-+ *
-+ * See also component_match_add_release() and component_match_add_typed().
-+ */
-+void component_match_add_typed(struct device *master,
-+	struct component_match **matchptr,
-+	int (*compare_typed)(struct device *, int, void *), void *compare_data)
-+{
-+	__component_match_add(master, matchptr, NULL, NULL, compare_typed,
-+			      compare_data);
-+}
-+EXPORT_SYMBOL(component_match_add_typed);
-+
- static void free_master(struct master *master)
- {
- 	struct component_match *match = master->match;
-@@ -616,19 +661,8 @@ int component_bind_all(struct device *master_dev, void *data)
- }
- EXPORT_SYMBOL_GPL(component_bind_all);
- 
--/**
-- * component_add - register a component
-- * @dev: component device
-- * @ops: component callbacks
-- *
-- * Register a new component for @dev. Functions in @ops will be called when the
-- * aggregate driver is ready to bind the overall driver by calling
-- * component_bind_all(). See also &struct component_ops.
-- *
-- * The component needs to be unregistered at driver unload/disconnect by calling
-- * component_del().
-- */
--int component_add(struct device *dev, const struct component_ops *ops)
-+static int __component_add(struct device *dev, const struct component_ops *ops,
-+	int subcomponent)
- {
- 	struct component *component;
  	int ret;
-@@ -639,6 +673,7 @@ int component_add(struct device *dev, const struct component_ops *ops)
  
- 	component->ops = ops;
- 	component->dev = dev;
-+	component->subcomponent = subcomponent;
+-	ret = component_add(dev_priv->drm.dev, &i915_audio_component_bind_ops);
++	ret = component_add_typed(dev_priv->drm.dev,
++				  &i915_audio_component_bind_ops,
++				  I915_COMPONENT_AUDIO);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to add audio component (%d)\n", ret);
+ 		/* continue with reduced functionality */
+diff --git a/include/drm/i915_component.h b/include/drm/i915_component.h
+index fca22d463e1b..72fbb037f9b3 100644
+--- a/include/drm/i915_component.h
++++ b/include/drm/i915_component.h
+@@ -26,6 +26,10 @@
  
- 	dev_dbg(dev, "adding component (ops %ps)\n", ops);
+ #include "drm_audio_component.h"
  
-@@ -657,6 +692,55 @@ int component_add(struct device *dev, const struct component_ops *ops)
- 
- 	return ret < 0 ? ret : 0;
- }
++enum i915_component_type {
++	I915_COMPONENT_AUDIO = 1,
++};
 +
-+/**
-+ * component_add_typed - register a component
-+ * @dev: component device
-+ * @ops: component callbacks
-+ * @subcomponent: nonzero identifier for subcomponents
-+ *
-+ * Register a new component for @dev. Functions in @ops will be call when the
-+ * aggregate driver is ready to bind the overall driver by calling
-+ * component_bind_all(). See also &struct component_ops.
-+ *
-+ * @subcomponent must be nonzero and is used to differentiate between multiple
-+ * components registerd on the same device @dev. These components are match
-+ * using component_match_add_typed().
-+ *
-+ * The component needs to be unregistered at driver unload/disconnect by
-+ * calling component_del().
-+ *
-+ * See also component_add().
-+ */
-+int component_add_typed(struct device *dev, const struct component_ops *ops,
-+	int subcomponent)
-+{
-+	if (WARN_ON(subcomponent == 0))
-+		return -EINVAL;
-+
-+	return __component_add(dev, ops, subcomponent);
-+}
-+EXPORT_SYMBOL_GPL(component_add_typed);
-+
-+/**
-+ * component_add - register a component
-+ * @dev: component device
-+ * @ops: component callbacks
-+ *
-+ * Register a new component for @dev. Functions in @ops will be called when the
-+ * aggregate driver is ready to bind the overall driver by calling
-+ * component_bind_all(). See also &struct component_ops.
-+ *
-+ * The component needs to be unregistered at driver unload/disconnect by
-+ * calling component_del().
-+ *
-+ * See also component_add_typed() for a variant that allows multipled different
-+ * components on the same device.
-+ */
-+int component_add(struct device *dev, const struct component_ops *ops)
-+{
-+	return __component_add(dev, ops, 0);
-+}
- EXPORT_SYMBOL_GPL(component_add);
- 
- /**
-diff --git a/include/linux/component.h b/include/linux/component.h
-index 83da25bdf59c..30bcc7e590eb 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -34,6 +34,8 @@ struct component_ops {
- };
- 
- int component_add(struct device *, const struct component_ops *);
-+int component_add_typed(struct device *dev, const struct component_ops *ops,
-+	int subcomponent);
- void component_del(struct device *, const struct component_ops *);
- 
- int component_bind_all(struct device *master, void *master_data);
-@@ -91,6 +93,9 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_add_typed(struct device *master,
-+	struct component_match **matchptr,
-+	int (*compare_typed)(struct device *, int, void *), void *compare_data);
- 
- /**
-  * component_match_add - add a compent match
-@@ -101,12 +106,13 @@ void component_match_add_release(struct device *master,
-  *
-  * Adds a new component match to the list stored in @matchptr, which the @master
-  * aggregate driver needs to function. The list of component matches pointed to
-- * by @matchptr must be initialized to NULL before adding the first match.
-+ * by @matchptr must be initialized to NULL before adding the first match. This
-+ * only matches against components added with component_add().
-  *
-  * The allocated match list in @matchptr is automatically released using devm
-  * actions.
-  *
-- * See also component_match_add_release().
-+ * See also component_match_add_release() and component_match_add_typed().
+ /* MAX_PORT is the number of port
+  * It must be sync with I915_MAX_PORTS defined i915_drv.h
   */
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
+diff --git a/include/sound/hda_component.h b/include/sound/hda_component.h
+index 2ec31b358950..d4804c72d959 100644
+--- a/include/sound/hda_component.h
++++ b/include/sound/hda_component.h
+@@ -20,7 +20,7 @@ int snd_hdac_acomp_get_eld(struct hdac_device *codec, hda_nid_t nid, int dev_id,
+ 			   bool *audio_enabled, char *buffer, int max_bytes);
+ int snd_hdac_acomp_init(struct hdac_bus *bus,
+ 			const struct drm_audio_component_audio_ops *aops,
+-			int (*match_master)(struct device *, void *),
++			int (*match_master)(struct device *, int, void *),
+ 			size_t extra_size);
+ int snd_hdac_acomp_exit(struct hdac_bus *bus);
+ int snd_hdac_acomp_register_notifier(struct hdac_bus *bus,
+@@ -47,7 +47,8 @@ static inline int snd_hdac_acomp_get_eld(struct hdac_device *codec, hda_nid_t ni
+ }
+ static inline int snd_hdac_acomp_init(struct hdac_bus *bus,
+ 				      const struct drm_audio_component_audio_ops *aops,
+-				      int (*match_master)(struct device *, void *),
++				      int (*match_master)(struct device *,
++							  int, void *),
+ 				      size_t extra_size)
+ {
+ 	return -ENODEV;
+diff --git a/sound/hda/hdac_component.c b/sound/hda/hdac_component.c
+index a6d37b9d6413..5c95933e739a 100644
+--- a/sound/hda/hdac_component.c
++++ b/sound/hda/hdac_component.c
+@@ -269,7 +269,7 @@ EXPORT_SYMBOL_GPL(snd_hdac_acomp_register_notifier);
+  */
+ int snd_hdac_acomp_init(struct hdac_bus *bus,
+ 			const struct drm_audio_component_audio_ops *aops,
+-			int (*match_master)(struct device *, void *),
++			int (*match_master)(struct device *, int, void *),
+ 			size_t extra_size)
+ {
+ 	struct component_match *match = NULL;
+@@ -288,7 +288,7 @@ int snd_hdac_acomp_init(struct hdac_bus *bus,
+ 	bus->audio_component = acomp;
+ 	devres_add(dev, acomp);
+ 
+-	component_match_add(dev, &match, match_master, bus);
++	component_match_add_typed(dev, &match, match_master, bus);
+ 	ret = component_master_add_with_match(dev, &hdac_component_master_ops,
+ 					      match);
+ 	if (ret < 0)
+diff --git a/sound/hda/hdac_i915.c b/sound/hda/hdac_i915.c
+index 617ff1aa818f..7aee090e3d27 100644
+--- a/sound/hda/hdac_i915.c
++++ b/sound/hda/hdac_i915.c
+@@ -82,9 +82,11 @@ void snd_hdac_i915_set_bclk(struct hdac_bus *bus)
+ }
+ EXPORT_SYMBOL_GPL(snd_hdac_i915_set_bclk);
+ 
+-static int i915_component_master_match(struct device *dev, void *data)
++static int i915_component_master_match(struct device *dev, int subcomponent,
++				       void *data)
+ {
+-	return !strcmp(dev->driver->name, "i915");
++	return !strcmp(dev->driver->name, "i915") &&
++	       subcomponent == I915_COMPONENT_AUDIO;
+ }
+ 
+ /* check whether intel graphics is present */
 -- 
 2.20.1
 
