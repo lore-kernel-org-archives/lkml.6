@@ -2,121 +2,245 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C015C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9865CC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64E5E20818
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50CA720818
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 08:51:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YVqYjp/6"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PQq0BYlJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbfBGIvf (ORCPT
+        id S1727050AbfBGIvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 03:51:35 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17113 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfBGIvf (ORCPT
+        Thu, 7 Feb 2019 03:51:49 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34564 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfBGIvs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 03:51:35 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5bf19a0000>; Thu, 07 Feb 2019 00:51:38 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 07 Feb 2019 00:51:34 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 07 Feb 2019 00:51:34 -0800
-Received: from localhost (10.124.1.5) by HQMAIL101.nvidia.com (172.20.187.10)
- with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 7 Feb 2019 08:51:33
- +0000
-Date:   Thu, 7 Feb 2019 09:51:31 +0100
-From:   Thierry Reding <treding@nvidia.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] gpu: host1x: Use direct DMA with IOMMU API usage
-Message-ID: <20190207085129.GB8741@ulmo>
-References: <20190206220833.GA20747@roeck-us.net>
+        Thu, 7 Feb 2019 03:51:48 -0500
+Received: by mail-ot1-f67.google.com with SMTP id t5so17028389otk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 00:51:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=67TqqQt2cMAQmgp7V/k3Hdqs/WwIh1qTEk8gB70lbIc=;
+        b=PQq0BYlJLY3tKUKboY4AsqTP74D06T1ebfDhMRI6scT73OZEYw5dxxNsVAioNYkONS
+         vf6OCiQxorR5o0UeAlerno/P1IY2Zf5l6m+VdN7iae9ToBUfpnr5A2pTQvDCJRS66tO3
+         PzEl2vMr5HEbIY2w9YWrwVRHaKkTa9obJr1nA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=67TqqQt2cMAQmgp7V/k3Hdqs/WwIh1qTEk8gB70lbIc=;
+        b=onIy4ZUeGo6TzOvDF9aAXGpSLJZ0yFxVumjcMOxfsZBDyrDtrQpaDPjMYOC4uz3awj
+         /NWqsXtOEcJdjAFzcTpt3gjl5jan6o/Q0NeFFCcdEbo2eVimjz8v/EsZuTgQVSmZF++2
+         34pe4mx5b88YQaASFGKD8/eBk7PEQCsgkMeSKwEuw/fI53s7vk27StDsK085flkDKEBm
+         0dtSr2BCd/EaS5pHqL57sGnjKLfnXldeskbAv1d5QTfNHGCniB4kAvuZUa4IlEo3tjB9
+         +ngPiajEFj9nsHNSSYX/uBHjJtLjWsBQAsfVwcHDK+tIXg4Hp5Uk8m9B8lDZDZsv8PAM
+         6OPQ==
+X-Gm-Message-State: AHQUAub34X6liLBn2lkxhRLqXxyA89EynWRYW5dvkqakw+iLrDweITgw
+        gpt92fKtrFgF1AoGNc18nwghCDlAUjJXkA==
+X-Google-Smtp-Source: AHgI3IZE6nAQLuQyLfwh2vBirVxw4UxOvVW3kGoLDDbplm1v2ktHLggr/FzOCdpwPErnp8i83pUqoA==
+X-Received: by 2002:a9d:7685:: with SMTP id j5mr8252391otl.150.1549529507218;
+        Thu, 07 Feb 2019 00:51:47 -0800 (PST)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id m133sm11511789oib.52.2019.02.07.00.51.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 00:51:45 -0800 (PST)
+Received: by mail-ot1-f52.google.com with SMTP id u16so16936392otk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 00:51:44 -0800 (PST)
+X-Received: by 2002:a9d:1b67:: with SMTP id l94mr430687otl.147.1549529504330;
+ Thu, 07 Feb 2019 00:51:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190206220833.GA20747@roeck-us.net>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yNb1oOkm5a9FJOVX"
-Content-Disposition: inline
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549529498; bh=/1A9iRrnKaJbvAc1fM4IfG7OpJDIk8c3X97/xuJFlp4=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:In-Reply-To:X-NVConfidentiality:User-Agent:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:
-         Content-Disposition;
-        b=YVqYjp/6yARt7Jz6cV3hA0tBZ5q+AiAgesfUmCQRL4LKI0VtcYMq++XiP5nD+p3pY
-         8F1XYDfCp7SZvpx6nV+MQE85ZvAxulSTz5cEjdE6HQSLCafyN9NmO5ve9TeJO7jKo/
-         6e8esgt6DlV7U2+dCpv537AtXBdyALVAWW6yM9pmokRE8eQhnbE3sHW2oPCVQevLo7
-         vnh2ubNYDa0cN5g/iRzsPcLDZWaX+wiyvuTfg8wg9P5MthfG31PdLHGTkd+tiNEwP1
-         S5Yj0/Jl+6jCmr7GuO0p2YqsNnYq2DMRolGkdInKYDMhxngibC6nwG2YZ3wUT2nllr
-         CcZwzPTIQhKcg==
+References: <20190124100419.26492-1-tfiga@chromium.org> <20190124100419.26492-2-tfiga@chromium.org>
+ <a3b1b650-94d7-bb84-41ef-dc4cab0cdae1@xs4all.nl> <54430438-33a3-2c52-b6c8-4000a4088906@xs4all.nl>
+ <1548938648.4585.3.camel@pengutronix.de> <6aa88094-068a-089d-2d52-3f9ade5a396c@xs4all.nl>
+In-Reply-To: <6aa88094-068a-089d-2d52-3f9ade5a396c@xs4all.nl>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 7 Feb 2019 17:51:33 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CU6YQsfTeZS68RdFSme_6YstcvVYOSdZyWMgnSejpdyQ@mail.gmail.com>
+Message-ID: <CAAFQd5CU6YQsfTeZS68RdFSme_6YstcvVYOSdZyWMgnSejpdyQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---yNb1oOkm5a9FJOVX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 31, 2019 at 10:19 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 1/31/19 1:44 PM, Philipp Zabel wrote:
+> > On Thu, 2019-01-31 at 13:30 +0100, Hans Verkuil wrote:
+> >> On 1/31/19 11:45 AM, Hans Verkuil wrote:
+> >>> On 1/24/19 11:04 AM, Tomasz Figa wrote:
+> >>>> Due to complexity of the video decoding process, the V4L2 drivers of
+> >>>> stateful decoder hardware require specific sequences of V4L2 API cal=
+ls
+> >>>> to be followed. These include capability enumeration, initialization=
+,
+> >>>> decoding, seek, pause, dynamic resolution change, drain and end of
+> >>>> stream.
+> >>>>
+> >>>> Specifics of the above have been discussed during Media Workshops at
+> >>>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+> >>>> Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API th=
+at
+> >>>> originated at those events was later implemented by the drivers we a=
+lready
+> >>>> have merged in mainline, such as s5p-mfc or coda.
+> >>>>
+> >>>> The only thing missing was the real specification included as a part=
+ of
+> >>>> Linux Media documentation. Fix it now and document the decoder part =
+of
+> >>>> the Codec API.
+> >>>>
+> >>>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> >>>> ---
+> >>>>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1076 ++++++++++++++=
++++
+> >>>>  Documentation/media/uapi/v4l/dev-mem2mem.rst  |    5 +
+> >>>>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
+> >>>>  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
+> >>>>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
+> >>>>  Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
+> >>>>  6 files changed, 1135 insertions(+), 15 deletions(-)
+> >>>>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+> >>>>
+> >>>
+> >>> <snip>
+> >>>
+> >>>> +4.  **This step only applies to coded formats that contain resoluti=
+on information
+> >>>> +    in the stream.** Continue queuing/dequeuing bitstream buffers t=
+o/from the
+> >>>> +    ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_=
+DQBUF`. The
+> >>>> +    buffers will be processed and returned to the client in order, =
+until
+> >>>> +    required metadata to configure the ``CAPTURE`` queue are found.=
+ This is
+> >>>> +    indicated by the decoder sending a ``V4L2_EVENT_SOURCE_CHANGE``=
+ event with
+> >>>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type.
+> >>>> +
+> >>>> +    * It is not an error if the first buffer does not contain enoug=
+h data for
+> >>>> +      this to occur. Processing of the buffers will continue as lon=
+g as more
+> >>>> +      data is needed.
+> >>>> +
+> >>>> +    * If data in a buffer that triggers the event is required to de=
+code the
+> >>>> +      first frame, it will not be returned to the client, until the
+> >>>> +      initialization sequence completes and the frame is decoded.
+> >>>> +
+> >>>> +    * If the client sets width and height of the ``OUTPUT`` format =
+to 0,
+> >>>> +      calling :c:func:`VIDIOC_G_FMT`, :c:func:`VIDIOC_S_FMT`,
+> >>>> +      :c:func:`VIDIOC_TRY_FMT` or :c:func:`VIDIOC_REQBUFS` on the `=
+`CAPTURE``
+> >>>> +      queue will return the ``-EACCES`` error code, until the decod=
+er
+> >>>> +      configures ``CAPTURE`` format according to stream metadata.
+> >>>
+> >>> I think this should also include the G/S_SELECTION ioctls, right?
+> >>
+> >> I've started work on adding compliance tests for codecs to v4l2-compli=
+ance and
+> >> I quickly discovered that this 'EACCES' error code is not nice at all.
+> >>
+> >> The problem is that it is really inconsistent with V4L2 behavior: the =
+basic
+> >> rule is that there always is a format defined, i.e. G_FMT will always =
+return
+> >> a format.
+> >>
+> >> Suddenly returning an error is actually quite painful to handle becaus=
+e it is
+> >> a weird exception just for the capture queue of a stateful decoder if =
+no
+> >> output resolution is known.
+> >>
+> >> Just writing that sentence is painful.
+> >>
+> >> Why not just return some default driver defined format? It will automa=
+tically
+> >> be updated once the decoder parsed the bitstream and knows the new res=
+olution.
+> >>
+> >> It really is just the same behavior as with a resolution change.
+> >>
+> >> It is also perfectly fine to request buffers for the capture queue for=
+ that
+> >> default format. It's pointless, but not a bug.
+> >>
+> >> Unless I am missing something I strongly recommend changing this behav=
+ior.
+> >
+> > I just wrote the same in my reply to Nicolas, the CODA driver currently
+> > sets the capture queue width/height to the output queue's crop rectangl=
+e
+> > (rounded to macroblock size) without ever having seen the SPS.
+>
+> And thinking about the initial 0x0 width/height for the output queue:
+>
+> that too is an exception, although less of a problem than the EACCES beha=
+vior.
+>
+> It should be fine for an application to set width/height to 0 when callin=
+g
+> S_FMT for the output queue of the decoder, but I would also prefer that i=
+t is
+> just replaced by the driver with some default resolution. It really doesn=
+'t
+> matter in practice, since you will wait for the SOURCE_CHANGE event regar=
+dless.
+>
+> Only then do you start to configure the CAPTURE queue.
+>
+> Using 0x0 and EACCES looks good on paper, but in the code it is a hassle =
+and
+> I'm not convinced there is any benefit.
+>
+> I like generic APIs and no where else do we ever return a 0 value for wid=
+th
+> or height, except in this corner case. It's just awkward.
 
-On Wed, Feb 06, 2019 at 02:08:33PM -0800, Guenter Roeck wrote:
-> On Fri, Feb 01, 2019 at 02:28:26PM +0100, Thierry Reding wrote:
-> > If we use the IOMMU API directly to map buffers into host1x' IOVA space,
-> > we must make sure that the DMA API doesn't already set up a mapping, or
-> > else translation will fail.
-> >=20
-> > The direct DMA API allows us to allocate memory that will not be mapped
-> > through an IOMMU automatically.
-> >=20
-> > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> arm64:defconfig:
->=20
-> ERROR: "dma_direct_free" [drivers/gpu/host1x/host1x.ko] undefined!
-> ERROR: "dma_direct_alloc" [drivers/gpu/host1x/host1x.ko] undefined!
+Agreed, although with some caveats I mentioned in my reply to the venus pat=
+ch.
 
-Hi Guenter,
-
-I sent out a fix to export dma_direct_alloc() and dma_direct_free() but
-Christoph preferred not to merge that, so I'm currently working on a
-different solution for this. I hope to have a fix for this by the end of
-the day, but if not I'll back out the above commit.
-
-Thanks,
-Thierry
-
---yNb1oOkm5a9FJOVX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxb8ZEACgkQ3SOs138+
-s6FtLg/+LnL4AhHtgPwa5FzeBJm2Muu3XyCNi0E/PFYLtlepTS0uD/YrowxXCNaz
-ibhWyh76YdbwyCwuR1OaRvEOwUHinG4FLETYr0TZaM/UMpVV1NqYpOg4+js5a7kR
-ymXtE0O3+8Yd1pwUjc63ehcoOQUKPJorwkFTR2K+0h1iJy2uSF+rNNz2pGoHr7zF
-ORvkm9k7OQFN02i2syelDAJMdjhYWcV3CCq6bhBt0S2AzBrzhzR8kmCi6NqY9fk2
-Tm1E/c+Up3HcgAkyb3qNxhzJqX28aUU/6JYyIIwn5DfXHoGRGLwjHx/36Gv5/fuS
-59pUn7sgMwE4KuM6PiE8o8tPGak0+btvZ6X7En4okjRG5Q91vgaV+JRsWntLS3pJ
-0uuvOo17QkQuQAlfhMQSXtlKwAp1RQNcljtFAXV7O1RcrZf98zyifHAkukd1HvjT
-lB+xrhzaUyKWhL4ByDcs++lUjFvb0Xjr4LUoulh+VjvCPXz2xYpFj+1xLNz4AGGI
-hMtZnCx6J7WosUVLuz2Yi2tvqq1wEvBl+8Kd+ZkHTNZvlCamHVSBar7Pfr2kyFVC
-o4gJtqpz87dTgKdVJI8dvFWndcDltOQv5De0VOB/u5rL0DRy8a/1vMYpsiwTGfOB
-tc56iGzi8XZhzxkVTCYcyROBJWc/PWY9+R+ZNvqlHYg2FAW1d2s=
-=hsue
------END PGP SIGNATURE-----
-
---yNb1oOkm5a9FJOVX--
+Best regards,
+Tomasz
