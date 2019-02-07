@@ -2,145 +2,176 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E48C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E177C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E452175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:02:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdF0Swko"
+	by mail.kernel.org (Postfix) with ESMTP id 1ABF22190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfBGQCc (ORCPT
+        id S1726902AbfBGQCr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:02:32 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53478 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGQCc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:02:32 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d15so399051wmb.3;
-        Thu, 07 Feb 2019 08:02:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GS4CC/2jT2E7yHXh+Rz7JzatxjeOauOkRt/Zu/kp9P4=;
-        b=WdF0SwkoeZCjNu5eDeIMLob8iP/5m5HXsw9KtlTxK3RjRYCmhp3OXP81LJfDp6tHtH
-         mbets4cZp4d30IxojnEtVGNe+tQwMbGFhlr5XBgvAPOfFV6iDLpEEa0zfIooswd61gGe
-         +mUF/GHo6zH2hVWd6k45ZVdXyHYEFkFxuk6ED93nWd05gofZlUMDLUQ3veF31/SSNuS/
-         Wa1DgMHXMfMzc37wv3JVB/bIfNl9gWJZj6e/sVZ+6hZ0s5nuwrpAeFICOUpfdHHBtaoK
-         1dDMRvSt5A5d44PPbGLXCsdYo9/p38+YQTI5S1lIT4mGKzLkhmz0LuyQZmvWi8gRJczh
-         3Slg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GS4CC/2jT2E7yHXh+Rz7JzatxjeOauOkRt/Zu/kp9P4=;
-        b=DZbthpI51AMb1akNvLa7DVJFAL+V0tSK2YGrrJfYRjLtuLxsUBvv5janZRlE/CxRgU
-         ZBVm139vIRAuHMdeyIMotlOmrAjnMdEWstlLg+mMsEoV8Ec/i3DnXxZBvZVy8RSjeF8j
-         BotHw4oU/7yEHUK7sslVlHK7a9KgpVM07B2wuKZ6iV/B0aoXqjykLSWLkDwquns2j7My
-         BsDpzedtushzXF3jth/0oYOhVTh0Eyqif1vl3gaXYJnLW5v8F63JJR5lTITi1lFp5g/A
-         PuR4NdxXS3ubUfDMsyXfHo219O7aNLsASOw0Xrx9m4B8VUWfchCZ7zatHVIDx3OJK7qr
-         6c6A==
-X-Gm-Message-State: AHQUAub6vj69d/OfNTQRT0MTtwdSh3+2J9AkenYQdvPm7dP48ml7CQnX
-        pSICH5UbGfn/jb22JGrCBBg=
-X-Google-Smtp-Source: AHgI3IaHVB0DKz23P7YFKJ7yhBa6Xf+eAB3aKsZfdLXChs4j4HxdyI9H/wbDAwt9WuwnDZqD7V8rwg==
-X-Received: by 2002:a1c:ed0b:: with SMTP id l11mr7373775wmh.43.1549555349120;
-        Thu, 07 Feb 2019 08:02:29 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id d9sm14044wrn.72.2019.02.07.08.02.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 08:02:28 -0800 (PST)
-Date:   Thu, 7 Feb 2019 17:02:27 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
-Message-ID: <20190207160227.GA17445@ulmo>
-References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
- <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
- <a6b1acbd-9be0-62b7-29bb-081d93ee92fb@gmail.com>
- <BYAPR12MB3398712D185CCCB345EB2B5BC2680@BYAPR12MB3398.namprd12.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB3398712D185CCCB345EB2B5BC2680@BYAPR12MB3398.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 7 Feb 2019 11:02:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59460 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfBGQCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:02:46 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B85CC89AD0;
+        Thu,  7 Feb 2019 16:02:45 +0000 (UTC)
+Received: from haswell-e.nc.xsintricity.com (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3266C972EF;
+        Thu,  7 Feb 2019 15:56:38 +0000 (UTC)
+Message-ID: <68c1e70d768922f6b1b4b833c433aff12a87336a.camel@redhat.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+From:   Doug Ledford <dledford@redhat.com>
+To:     Tom Talpey <tom@talpey.com>, Chuck Lever <chuck.lever@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+Date:   Thu, 07 Feb 2019 10:56:35 -0500
+In-Reply-To: <ea175620-3dc2-c7f0-1590-02080216edf8@talpey.com>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+         <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
+         <20190206175233.GN21860@bombadil.infradead.org>
+         <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+         <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+         <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
+         <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+         <20190207035258.GD6173@dastard> <20190207052310.GA22726@ziepe.ca>
+         <CC414509-F046-49E3-9D0C-F66FD488AC64@oracle.com>
+         <6b260348-966a-bc95-162b-44ae8265cf03@talpey.com>
+         <f000f699219a8f636dccfbe1fde3e17acdc674a4.camel@redhat.com>
+         <ea175620-3dc2-c7f0-1590-02080216edf8@talpey.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-G+f9gGSQ2dAX1z2qQpRX"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 07 Feb 2019 16:02:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-G+f9gGSQ2dAX1z2qQpRX
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 07, 2019 at 03:11:06PM +0000, Sowjanya Komatineni wrote:
+On Thu, 2019-02-07 at 10:41 -0500, Tom Talpey wrote:
+> On 2/7/2019 10:37 AM, Doug Ledford wrote:
+> > On Thu, 2019-02-07 at 10:28 -0500, Tom Talpey wrote:
+> > > On 2/7/2019 10:04 AM, Chuck Lever wrote:
+> > > > > On Feb 7, 2019, at 12:23 AM, Jason Gunthorpe <jgg@ziepe.ca> wrote=
+:
+> > > > >=20
+> > > > > On Thu, Feb 07, 2019 at 02:52:58PM +1100, Dave Chinner wrote:
+> > > > >=20
+> > > > > > Requiring ODP capable hardware and applications that control RD=
+MA
+> > > > > > access to use file leases and be able to cancel/recall client s=
+ide
+> > > > > > delegations (like NFS is already able to do!) seems like a pret=
+ty
+> > > > >=20
+> > > > > So, what happens on NFS if the revoke takes too long?
+> > > >=20
+> > > > NFS distinguishes between "recall" and "revoke". Dave used "recall"
+> > > > here, it means that the server recalls the client's delegation. If
+> > > > the client doesn't respond, the server revokes the delegation
+> > > > unilaterally and other users are allowed to proceed.
+> > >=20
+> > > The SMB3 protocol has a similar "lease break" mechanism, btw.
+> > >=20
+> > > SMB3 "push mode" has long-expected to allow DAX mapping of files
+> > > only when an exclusive lease is held by the requesting client.
+> > > The server may recall the lease if the DAX mapping needs to change.
+> > >=20
+> > > Once local (MMU) and remote (RDMA) mappings are dropped, the
+> > > client may re-request that the server reestablish them. No
+> > > connection or process is terminated, and no data is silently lost.
 > >=20
-> >=20
-> > > @@ -1124,6 +1453,10 @@ static int tegra_i2c_probe(struct platform_dev=
-ice *pdev)
-> > >  		}
-> > >  	}
-> > > =20
-> > > +	ret =3D tegra_i2c_init_dma(i2c_dev);
-> > > +	if (ret < 0)
-> > > +		goto disable_div_clk;
-> > > +
-> > >  	ret =3D tegra_i2c_init(i2c_dev);
-> > >  	if (ret) {
-> > >  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
-> >
-> >
-> > Missing DMA resourcing release on probe failure.
+> > Yeah, but you're referring to a situation where the communication agent
+> > and the filesystem agent are one and the same and they work
+> > cooperatively to resolve the issue.  With DAX under Linux, the
+> > filesystem agent and the communication agent are separate, and right
+> > now, to my knowledge, the filesystem agent doesn't tell the
+> > communication agent about a broken lease, it want's to be able to do
+> > things 100% transparently without any work on the communication agent's
+> > part.  That works for ODP, but not for anything else.  If the filesyste=
+m
+> > notified the communication agent of the need to drop the MMU region and
+> > rebuild it, the communication agent could communicate that to the remot=
+e
+> > host, and things would work.  But there's no POSIX message for "your
+> > file is moving on media, redo your mmap".
 >=20
-> If probe fails due to other reasons, then I2C interface will not be
-> available and boot will not even happen.
-> Do we need DMA resourcing release?
+> Indeed, the MMU notifier and the filesystem need to be integrated.
 
-It's also possible that probe will fail for one of the I2C controllers
-that is not critical to basic system functionality. You don't want to
-leak these resources because it's bad practice (other people reading the
-code may conclude that it's okay to leak resources).
+And right now, the method of sharing this across the network is:
 
-Also, if everyone is really careful about not leaking resources, it
-makes it much easier to track down leaks.
+persistent memory in machine
+  local filesystem supporting a DAX mount
+    custom application that knows how to mmap then rdma map files,
+    and can manage the connection long term
 
-Thierry
+The point being that every single method of sharing this stuff is a one
+off custom application (Oracle just being one).  I'm not really all that
+thrilled about the idea of writing the same mmap/rdma map/oob-management=
+=20
+code in every single app out there.  To me, this problem is screaming
+for a more general purpose kernel solution, just like NVMe over Fabrics.
+I'm thinking a clustered filesystem on top of a shared memory segment
+between hosts is a much more natural fit.  Then applications just mmap
+the files locally, and the kernel does the rest.
 
---VbJkn9YxBvnuCH5J
+> I'm unmoved by the POSIX argument. This stuff didn't happen in 1990.
+>=20
+> Tom.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
+--=-G+f9gGSQ2dAX1z2qQpRX
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxcVpAACgkQ3SOs138+
-s6Hoxw/+NcIdkyYd3PVqW2LsaKXT0vVD59qHSMamsVIWFn8cte8syifEDmFLDvi0
-uSLGliFbyPprH9xDtZd0ZZ8KwGlMe8XQbU22clpsvtZ+fj1qY1KymRfxrH8mfS4t
-114rQAcewGmpMJSWBmaV+g1kgp397E4FtwFUsdKZcWRrQXAFlNyqZFYQVKg1zUmV
-w28rJ9faQeWy3c5H9+LQhzJMC5kBGgN21J37sHwCchwnBtVPXnIojh+nfpDfwE5y
-tJG2m6T7YM8VGyvJUpJaz0iVYU3ELxqACCS7y4EPRefb5x9n0Wpm+7jbeSDo7nyK
-E9YQd2sqVBQz1qL4EApF7Y3pUyPs44Ch2FdsZwLnp/ynFkmP+s5hPWSLVw8yOGve
-5kq0G6uKATVYgy/79eXGynhBF6kLFtUiaEg38OAC5BPWtmk/Gpc75tVm5KMR1c65
-asW2hXb0Fa+4Jp4PZ83nHJNsj8DcQX+yRXPPsHnhddWsKmBU9lYIMZxWhQjEAAZ8
-54oRd67M4ceivxwut/ew1QOgMZhqQ6YDoDbX3VZ+0sFUXQPOUEsOYiDBOVuNw/cx
-tvhsohTL9OkrFKdFH2Y30ax8sO1nWstj1Vj5nIajZqVr5q47WEZRMqTaQ1ssHsrM
-wT7Xq7KRBQu3E1uBGVAlcLyiShce61ONjdgi+SckE0WlCJeqJsM=
-=TjFG
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlxcVTMACgkQuCajMw5X
+L90Z/w//W7vouBfKgeHWd7q/6pHaRFPVjV7bGkmFwaHGvrbnQU3Fnfcj8Ts8ShZW
+T4p4pJKmARkSPJqqR/hvH+Ln3SJCVf49tdhCbu7VaYkYk3iZJmWfdvF/oItdH7//
+g2iIbUEYujIF5ZsAEss93Ma3SXP8Bvre0Vq15GX8Zu7oogXtj6zypek+3t9kfbt9
+pQl63VTylLbxu4jAJz0VoLz5VpSe2uzR/piuQZpMp/of9t62a8OIQVRU1rC8O/rm
+20A9RkrHRNRbUNjC4EqMfv+4t6zVL4sC/QUCUx07rOYwWVLXgqYUv9GqzCkdl/fA
+3wJFMohDOW8V9dDg9LroWki2xdCCm22JVtDoQK/pMNhIONDxu5JqHbuSNKs/BcXc
+3MgPFSJueLey5j9u4VTGlLwhLSPPBdeUyPTx1MRuqaZInXDRJxDupajQ96MY7vfb
+Ckw6SXV1U51eXohXgGnXQRgt7K4JRS8SA6Iky7UyukxCevIIfvF8zD3HPv6wfho+
+IPwaUsbfH88HJzjwpnN4KV9RDB6irg4GfNsS1IGbuXOw+0lNGeG5zlfKlfY1y/Yr
+YARFzuESMq1ky2CRDntL7fbso2AWEhrrsvic1SycYvNTElztvwbXRQs1rDyvdaKZ
+DsU00Sq9PuwzmEosfsm18bYkKHD2SMPEtPR+7k2obc3RRPTjWxc=
+=LiqC
 -----END PGP SIGNATURE-----
 
---VbJkn9YxBvnuCH5J--
+--=-G+f9gGSQ2dAX1z2qQpRX--
+
