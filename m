@@ -2,107 +2,128 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E77C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476CBC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22D12175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 129BD2175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:12:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kYmcCNnk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t29cHPz1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfBGQKV (ORCPT
+        id S1726657AbfBGQME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:10:21 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43094 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGQKU (ORCPT
+        Thu, 7 Feb 2019 11:12:04 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37082 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfBGQMD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:10:20 -0500
-Received: by mail-qk1-f193.google.com with SMTP id z18so218899qkj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 08:10:19 -0800 (PST)
+        Thu, 7 Feb 2019 11:12:03 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g4so332475eds.4;
+        Thu, 07 Feb 2019 08:12:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=nLKu2Ce48SbsIOliZjWYYBEGchd5P2cptNKDEpsxe7A=;
-        b=kYmcCNnkuY2iAEyigKxDmit5+sQ0ZmcHHX2MwM9w1yNdosCIQBv/a1itlAepYXa13L
-         6CBHHD+WcFY4s6gwO/5j+dC9Mwqr8mXOCHnwAD4+/I7AQv06md31uLmxfDzRDzVn+XH9
-         9o0uFd3wx/1Oume2taJpqiAY2jAZmMI7kZwz95mYRrVWQoPUGsEAdZKeOjvBStVgNcwH
-         oXJy9vy2oICkAivcxtgacsxAhOsl3n7+OUADosxdaS4h3sj56EqXRpPvZ1VndcVcaXUv
-         rFrnHQ4gnnaCSnAjVn2d1PJphptAJQ5SajZUPlO8hOf/9y7n2H2EQfbGm+ekP8tmGQWs
-         pAdw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6nxVUppBpENDxTwe0cb9oFIh38FqM9pqwgAM/5LCXF4=;
+        b=t29cHPz1fcQXK2fKdPZLJ94j8pxbVIKTfbJNstO7/CgNFVfmyUL2fks7V9/lFlfcEU
+         h/O6Pbf+3gz5jpYwZHVIviUAOKVGXZOq4Wj/xlxbGJ6IYbe6VUtVbCjlKXWNUFcl7uds
+         WZYeJp8lSfbNulwo/4ymSJ4u13ZUnY4SHjGjG1/5DHmIlFfxyI0cHk/g1NBVfNRvt8nf
+         NKu5/LyxR6Jk7t4lijKtR8sJ+Fa5ir7O9h6cxTwtUNH02u4ZbsQe1vS831fGt2gloL4R
+         xtafXnwvwfScdDsdduBTMZQ3brKeJ5AjDodFDaa45oYK9H1MdwRvwCIhEsykkcbT6F0B
+         VqeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=nLKu2Ce48SbsIOliZjWYYBEGchd5P2cptNKDEpsxe7A=;
-        b=Mra1nNTk8kz2eCjvjxJDaMrM4f35Yy246jpwQRC8aFe+Fbej8+ZJRi5A6LlBCwByyK
-         x5ZL/5XTZPnpxpR7yu7Igjp2ZaklFfNmwrxAF+DbXKO/ASIFxaUHSEvCIhgpYukqHMYx
-         EesmToISjFfh+CQDmpuUtMIAm43z8IYQOEfNUm4GWNuHtd8jP4mptNIBOnD5bk02B0x9
-         Xsk8DmkpG1nLLZ98n8iBc07gV1KuhIpnsfcNdXxPdvnZjfPLXtv6kBBV6Ml2u6Lxf5UD
-         gadcZnqzmD9zV5U24ZPZWlHD/Ktflh1x9zcKTYxYS0RSNxEXTibFq5IV6PkpE6xXpiSX
-         xH3Q==
-X-Gm-Message-State: AHQUAua07RzePlBF7krgOtSw2Z0xIrJlYnvfN9XyHylWPLQDBnp1FANx
-        ScBPSbmarXDXI38cQYnPzB4plA==
-X-Google-Smtp-Source: AHgI3Ib8wHs2EOKVBWXcyiIIYAhB852YPrAyjvKSHZs1Vt2ESLuqCOGBW1yI+jCL2rTXi3mN81wLyA==
-X-Received: by 2002:a37:e406:: with SMTP id y6mr11995955qkf.216.1549555819238;
-        Thu, 07 Feb 2019 08:10:19 -0800 (PST)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id a185sm24550182qkb.1.2019.02.07.08.10.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 08:10:17 -0800 (PST)
-Date:   Thu, 7 Feb 2019 11:10:16 -0500 (EST)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Stefan Agner <stefan@agner.ch>
-cc:     linux@armlinux.org.uk, ndesaulniers@google.com,
-        natechancellor@gmail.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        thierry.reding@gmail.com, will.deacon@arm.com,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/5] ARM: use unified assembler in headers
-In-Reply-To: <b670feebd5e0bbc4c93d3f31f45bd0243b32425f.1549532513.git.stefan@agner.ch>
-Message-ID: <nycvar.YSQ.7.76.1902071055380.2213@knanqh.ubzr>
-References: <cover.1549532513.git.stefan@agner.ch> <b670feebd5e0bbc4c93d3f31f45bd0243b32425f.1549532513.git.stefan@agner.ch>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6nxVUppBpENDxTwe0cb9oFIh38FqM9pqwgAM/5LCXF4=;
+        b=f99Vf/kbReDKOk5laGUc1NA9XKi9IRrlVFmqGXiGVsRHgQoSRrr8EUvCHEALp7hH4E
+         QzT42bJfOPcuhxKDCG4OdPKZaPJxWbnOqOOS/y/dC7aXDD9kM9YU8aSEj49iQrTX3zx/
+         eke/tL8bHfqcCS0wR33JzBNr4QwaWEj4VLtBR4suXhARnZaVRGoZdWAUHy7Yomv+GST+
+         N9ZHEUcuZdWtfjQWUnQRQgLe1lqToK4Zn6d8pCHZtEOogLIK5Ub1HZzPHjEQlNQAFQkC
+         EsAaXRMLdc+8VIPhT7IUZ/17Iwg4y4Yfz1fIhfUykpwIJLYvuk8D247vLcT8dHoVon63
+         Pu1w==
+X-Gm-Message-State: AHQUAuZbBNdiboiPtvKRyewfIUHjibNokLDO5jXi40T1QTrwT04xRiea
+        BxUvWHNvOfvkjQ5s7FF8OiilQ2m2rHE=
+X-Google-Smtp-Source: AHgI3IZnNda4M/7xJsdRnOyiv4p5J2U6BWX+RC4+BPPePTKO/S1QICSllBqgeKnZu8s/rg6TDhlHlQ==
+X-Received: by 2002:a17:906:3ed0:: with SMTP id d16mr2094204ejj.138.1549555921961;
+        Thu, 07 Feb 2019 08:12:01 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id f12sm1239462edr.76.2019.02.07.08.12.00
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 08:12:01 -0800 (PST)
+Subject: Re: [PATCH 16/32] x86/vdso: Generate vdso{,32}-timens.lds
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Adrian Reber <adrian@lisas.de>, Andrei Vagin <avagin@openvz.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andy Tucker <agtucker@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+References: <20190206001107.16488-1-dima@arista.com>
+ <20190206001107.16488-17-dima@arista.com>
+ <a2bbe610-7553-0ba6-b58b-1013e034b8f6@rasmusvillemoes.dk>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <0ff2890b-b6f4-1fe6-bafb-1bdb7bd21d26@gmail.com>
+Date:   Thu, 7 Feb 2019 16:11:59 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <a2bbe610-7553-0ba6-b58b-1013e034b8f6@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019, Stefan Agner wrote:
+Hi Rasmus,
 
-> Use unified assembler syntax (UAL) in headers. Divided syntax is
-> considered depricated. This will also allow to build the kernel
-> using LLVM's integrated assembler.
+On 2/7/19 8:31 AM, Rasmus Villemoes wrote:
+> These (14-19, if I'm reading them right) seems to add quite a lot of
+> complexity and fragility to the build, and other architectures would
+> probably have to add something similar to their vdso builds.
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  arch/arm/include/asm/assembler.h | 8 ++++----
->  arch/arm/include/asm/vfpmacros.h | 8 ++++----
->  arch/arm/lib/bitops.h            | 8 ++++----
->  3 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
-> index 28a48e0d4cca..60465b55683c 100644
-> --- a/arch/arm/include/asm/assembler.h
-> +++ b/arch/arm/include/asm/assembler.h
-> @@ -376,7 +376,7 @@ THUMB(	orr	\reg , \reg , #PSR_T_BIT	)
->  	.macro	usraccoff, instr, reg, ptr, inc, off, cond, abort, t=TUSER()
->  9999:
->  	.if	\inc == 1
-> -	\instr\cond\()b\()\t\().w \reg, [\ptr, #\off]
-> +	\instr\()b\cond\()\t\().w \reg, [\ptr, #\off]
+> I'm wondering why not make the rule be that a timens takes effect on
+> next execve?
 
-Similar comment here: you added a \() between \instr and b as needed, 
-but the one between \cond and \t (which was already redundant before) 
-may go.
+I believe, it would make setns() syscall much tricker than wanted:
+At this moment the only exception is pidns which changes ns of the child
+and not the process-callee.
+If exec() would be required to join timens - it may be a challenging
+problem for container systems: in order to enter it one needs to
+exec("/proc/self/exe") and add some new arguments/options.
+Furthermore, it seems to me that to enter container with this semantics,
+one needs to enter timens before entering mountns.
 
+IOW, I believe, this would move complexity from kernel build time to
+userspace ABI. And I guess, it would require much more logic to
+re-create possibly nested namespaces hierarchy.
 
-Nicolas
+Rather I've considered using some kind of dynamic patching on vdso_init():
+o static_branch - it would add some nops to !timens vdso
+o something new like static_retpoline which would put RET over call to
+  clk_to_ns(), shouldn't be a rocket since.
+
+But in my point of view, if something can be done in compile time
+instead of patching code dynamically - than it reduces the complexity
+(lesser depends on what compiler/toolchain does).
+
+Thanks,
+          Dmitry
