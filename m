@@ -2,124 +2,101 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 982A8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6BCC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70EC72175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EF762175B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 00:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpWLXb2H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbfBGAdz (ORCPT
+        id S1726704AbfBGAhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 19:33:55 -0500
-Received: from mga02.intel.com ([134.134.136.20]:3800 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbfBGAdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 19:33:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 16:33:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,342,1544515200"; 
-   d="scan'208";a="114283075"
-Received: from rhuggaha-mobl.amr.corp.intel.com (HELO [10.254.84.32]) ([10.254.84.32])
-  by orsmga006.jf.intel.com with ESMTP; 06 Feb 2019 16:33:53 -0800
-Subject: Re: [GIT PULL] x86/mm changes for v4.21
-To:     "Luck, Tony" <tony.luck@intel.com>, Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@surriel.com>
-References: <20181224231106.GA27438@gmail.com>
- <20190207001737.GA32096@agluck-desk>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <8b0b85cb-c08e-3426-fe34-0b6dfc9c0cc4@intel.com>
-Date:   Wed, 6 Feb 2019 16:33:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 19:37:17 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42158 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbfBGAhR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 19:37:17 -0500
+Received: by mail-ed1-f65.google.com with SMTP id r15so6125592eds.9;
+        Wed, 06 Feb 2019 16:37:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5vBhoGQLZYAfDziwwXABntOkkRWdSCMRv+msmR1NKUU=;
+        b=KpWLXb2HmN1EdbNjkxvfbF29y1vqo/E24o70p6OeK6T9+EquMknbcN5YgPjHYJQL2N
+         RyOuy7IPSwUEU5dznkjRCTU1hewfxMcr4FeJ0V6PvVXTPpb4ipzlg3JUsob5YpW+5cuc
+         w+/ZXg6tU/BokFmtS51Nn49+zCNMV+oPJWAxqfvUJepF0XT8Qx6DSUiP+9ya8DXftbwJ
+         ypDTWh8Aai/QDG9/j5Xdc0l/8eqd9mWBCMxGZ+stQ5VHjTHmZped2iRUf4MI+qzVTk6/
+         HiO4ugheiBJCd7O3h4Pp4GDBWR817w6LkU5UcgkqRzGeXUJmOaqbGDetFo6vR0hJzlOY
+         TG8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5vBhoGQLZYAfDziwwXABntOkkRWdSCMRv+msmR1NKUU=;
+        b=OdeaZPyEOMP2pVkY8Me0EoGRLGeR1TJaiKmDaMrSBiJcd9Y48+i7lqITeEidmaLXMi
+         JbwAUd+zXoge/ZzMmgFQvd4RQkSQfx4AsaP3kBLa/O3f5ajOfl3XNRjE3L5ICEAcfrli
+         /9Gmm8EV85WfZVoHXW37mUBzdpCupyODFx+h5PixUEgJCHPjurgMecQdBA267a17v9nU
+         tdCGgBuOzeSRmjp1i6nhqA5bNsnSaNHQAPcD8+9WMbGe5akQ6hEYPnJYn4f+HW7oWTJV
+         +ElpepsdvnF5AY6vw8MVdV2uQ1nE4IvylLw93Bk/2FnxL9kSB3FBSWgcQN8LR837ZCNe
+         NxpQ==
+X-Gm-Message-State: AHQUAuaV4pCWtQ0T5k0hAUNV0bSer7tdV0R912E5741B6voUzseyIFTS
+        qUr7Y19wfzXCC4Tup6w3hPc=
+X-Google-Smtp-Source: AHgI3Ib78no6sHkyAvoWZJohuWYNnahWb/y/l+rokOcyVWbUWhuwSWyzyasQGQqMRQ1648WR3wMsqg==
+X-Received: by 2002:a17:906:64d:: with SMTP id t13mr9048814ejb.53.1549499835061;
+        Wed, 06 Feb 2019 16:37:15 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id j4sm2907663ejx.75.2019.02.06.16.37.13
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 06 Feb 2019 16:37:14 -0800 (PST)
+Date:   Wed, 6 Feb 2019 17:37:12 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>, g@archlinux-ryzen
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jon Flatley <jflat@chromium.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH] kbuild, LLVMLinux: Don't suppress format warnings
+Message-ID: <20190207003712.GA10692@archlinux-ryzen>
+References: <20190201210853.244043-1-jflat@chromium.org>
+ <CAK7LNAS5j6+o+wb8WL=8WP4r4fgqY1MDSGe0_u9Nri81_Eb3xw@mail.gmail.com>
+ <20190206164528.GA8925@archlinux-ryzen>
+ <CACJJ=pyLqhrxka2jXtby9CUqsAr=-_oQUraH5ua3PZpgXHgdOQ@mail.gmail.com>
+ <CAKwvOdm=dqScCDVTgQ71i0wtBSqezEzLr69Pxp3bZJFs+_mXsQ@mail.gmail.com>
+ <20190206174339.GA19743@archlinux-ryzen>
+ <CAK7LNAQ97h3RjKNy8f2abb7fnCaQS3TOoF2LFeGgNxeoCy0GwA@mail.gmail.com>
+ <CAK7LNATAdXh4d39VfNqmLX-V-46sLwVXK+YhE1AiMCDutvUr0w@mail.gmail.com>
+ <CAKwvOdk4cT=Ay2Xk4hYo4-x8=4ng9gF5rF=5RsV-Rp=q5UFNtg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190207001737.GA32096@agluck-desk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdk4cT=Ay2Xk4hYo4-x8=4ng9gF5rF=5RsV-Rp=q5UFNtg@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/19 4:17 PM, Luck, Tony wrote:
-> [   93.491692] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff99623f2c3f70
-> [   93.499658] RDX: 2e6b58da00000121 RSI: 0000000000000000 RDI: 7fff9981feeab000
-...
-> Potentially the problem might be a non-canonical address passed down
-> by the machine check recovery code to switch the page with the error
-> to uncacheable. Perhaps the refactored code is now using that in the
+On Wed, Feb 06, 2019 at 04:30:21PM -0800, Nick Desaulniers wrote:
+> On Wed, Feb 6, 2019 at 4:28 PM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> > BTW, it would be nice if kbuild test robot
+> > could test building with clang ...
 > 
-> 	invpcid (%rcx),%rax
-> 
-> instruction that gets the #GP fault?
+> Is "kbuild test robot" different than 0day, kernelCI, or ClangBuiltLinux's CI?
+> -- 
+> Thanks,
+> ~Nick Desaulniers
 
-That looks probable.  RDI even has the non-canonical address still in it
-(RCX is pointing to the stack, btw).
+kbuild test robot is 0day (that's the name the emails come under when
+reporting issues).
 
-I think there's an option to dump the trace buffers at panic time.  You
-might want to enable the TLB flush tracing:
-
-	/sys/kernel/debug/tracing/events/tlb/tlb_flush
-
-and see if we get a suspect flush captured just before the #GP.
-
-I wonder if the patches that you bisected to just changed the flushing
-from being CR3-based (and not taking an address) to being INVPCID-based,
-and taking an address that is sensitive to canonicality.
+Nathan
