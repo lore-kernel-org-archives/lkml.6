@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFA8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B7BC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF73221916
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2092D21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 12:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=bewilderbeest.net header.i=@bewilderbeest.net header.b="FrSk45/V"
+	dkim=pass (1024-bit key) header.d=bewilderbeest.net header.i=@bewilderbeest.net header.b="ko95gvjt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfBGMfK (ORCPT
+        id S1727120AbfBGMfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:35:10 -0500
-Received: from thorn.bewilderbeest.net ([71.19.156.171]:54383 "EHLO
+        Thu, 7 Feb 2019 07:35:17 -0500
+Received: from thorn.bewilderbeest.net ([71.19.156.171]:58548 "EHLO
         thorn.bewilderbeest.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbfBGMfK (ORCPT
+        with ESMTP id S1726561AbfBGMfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:35:10 -0500
+        Thu, 7 Feb 2019 07:35:15 -0500
 Received: from hatter.bewilderbeest.net (hatter.bewilderbeest.net [IPv6:2001:470:c3f4:1::1:1])
         (using TLSv1.2 with cipher DHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: zev)
-        by thorn.bewilderbeest.net (Postfix) with ESMTPSA id 8502180536;
-        Thu,  7 Feb 2019 04:35:08 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 thorn.bewilderbeest.net 8502180536
+        by thorn.bewilderbeest.net (Postfix) with ESMTPSA id 32DD280538;
+        Thu,  7 Feb 2019 04:35:14 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 thorn.bewilderbeest.net 32DD280538
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bewilderbeest.net;
-        s=thorn; t=1549542909;
-        bh=2wwHA0QHB28SNvQ+r2Roozq0NF3TvXfw/4tmHwOAb9Q=;
+        s=thorn; t=1549542915;
+        bh=WOacmMoSdbkCtFHgv8WIILsxSz4lEwJeayXiBWZmFac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrSk45/VZUn3J0CbGsLzTWmdymJlaJu6XS1EkN577Qi4IsPoptBZ3Ppps/AziQ1te
-         XtEs/X0t4x7+JtjyDiQMa2QaY59zBa5Zbda49uBZCBrL2zzhUfOuox/8WhCNoeS/Iq
-         yplb3K6mBl6ObTqXrHldwHuHiUuEB2OvSOMDKnxo=
+        b=ko95gvjtL+WExABkqoG5S7pJyi2E7JkXUOpAzK7GWWQ7OXKaJD079vI1iI8c08OId
+         bA4oJiPfA6JoBGVtFGpSvLPaSUKwk2SjcABmmnEMYHPiBD/ByFlBAeICW93nWXkbhw
+         iZCmP5FCyiFiSrxbBaTwo+Di6a3rmDxTJ5y4fL1Q=
 From:   Zev Weiss <zev@bewilderbeest.net>
 To:     Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>, yzaikin@google.com,
         brendanhiggins@google.com, Zev Weiss <zev@bewilderbeest.net>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 1/3] test_sysctl: add tests for >32-bit values written to 32-bit integers
-Date:   Thu,  7 Feb 2019 06:34:24 -0600
-Message-Id: <20190207123426.9202-2-zev@bewilderbeest.net>
+        stable@vger.kernel.org
+Subject: [PATCH v2 2/3] kernel/sysctl.c: add missing range check in do_proc_dointvec_minmax_conv
+Date:   Thu,  7 Feb 2019 06:34:25 -0600
+Message-Id: <20190207123426.9202-3-zev@bewilderbeest.net>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190207123426.9202-1-zev@bewilderbeest.net>
 References: <20190206195807.GG11489@garbanzo.do-not-panic.com>
@@ -58,101 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present this exposes a bug in do_proc_dointvec_minmax_conv() (it
-fails to check for values that are too wide to fit in an int).
+This bug has apparently existed since the introduction of this function
+in the pre-git era (4500e91754d3 in Thomas Gleixner's history.git,
+"[NET]: Add proc_dointvec_userhz_jiffies, use it for proper handling of
+neighbour sysctls.").  As a minimal fix we can simply duplicate the
+corresponding check in do_proc_dointvec_conv().
 
+Cc: <stable@vger.kernel.org> # v2.6.2+
 Signed-off-by: Zev Weiss <zev@bewilderbeest.net>
 ---
- tools/testing/selftests/sysctl/sysctl.sh | 55 ++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ kernel/sysctl.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index 584eb8ea780a..780ce7123374 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -290,6 +290,58 @@ run_numerictests()
- 	test_rc
- }
- 
-+check_failure()
-+{
-+	echo -n "Testing that $1 fails as expected..."
-+	reset_vals
-+	TEST_STR="$1"
-+	orig="$(cat $TARGET)"
-+	echo -n "$TEST_STR" > $TARGET 2> /dev/null
-+
-+	# write should fail and $TARGET should retain its original value
-+	if [ $? = 0 ] || [ "$(cat $TARGET)" != "$orig" ]; then
-+		echo "FAIL" >&2
-+		rc=1
-+	else
-+		echo "ok"
-+	fi
-+	test_rc
-+}
-+
-+run_wideint_tests()
-+{
-+	# sysctl conversion functions receive a boolean sign and ulong
-+	# magnitude; here we list the magnitudes we want to test (each of
-+	# which will be tested in both positive and negative forms).  Since
-+	# none of these values fit in 32 bits, writing them to an int- or
-+	# uint-typed sysctl should fail.
-+	local magnitudes=(
-+		# common boundary-condition values (zero, +1, -1, INT_MIN,
-+		# and INT_MAX respectively) if truncated to lower 32 bits
-+		# (potential for being falsely deemed in range)
-+		0x0000000100000000
-+		0x0000000100000001
-+		0x00000001ffffffff
-+		0x0000000180000000
-+		0x000000017fffffff
-+
-+		# these look like negatives, but without a leading '-' are
-+		# actually large positives (should be rejected as above
-+		# despite being zero/+1/-1/INT_MIN/INT_MAX in the lower 32)
-+		0xffffffff00000000
-+		0xffffffff00000001
-+		0xffffffffffffffff
-+		0xffffffff80000000
-+		0xffffffff7fffffff
-+	)
-+
-+	for sign in '' '-'; do
-+		for mag in "${magnitudes[@]}"; do
-+			check_failure "${sign}${mag}"
-+		done
-+	done
-+}
-+
- # Your test must accept digits 3 and 4 to use this
- run_limit_digit()
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5fc724e4e454..a71c4b3935bc 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2564,7 +2564,16 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
  {
-@@ -556,6 +608,7 @@ sysctl_test_0001()
- 	TEST_STR=$(( $ORIG + 1 ))
- 
- 	run_numerictests
-+	run_wideint_tests
- 	run_limit_digit
- }
- 
-@@ -580,6 +633,7 @@ sysctl_test_0003()
- 	TEST_STR=$(( $ORIG + 1 ))
- 
- 	run_numerictests
-+	run_wideint_tests
- 	run_limit_digit
- 	run_limit_digit_int
- }
-@@ -592,6 +646,7 @@ sysctl_test_0004()
- 	TEST_STR=$(( $ORIG + 1 ))
- 
- 	run_numerictests
-+	run_wideint_tests
- 	run_limit_digit
- 	run_limit_digit_uint
- }
+ 	struct do_proc_dointvec_minmax_conv_param *param = data;
+ 	if (write) {
+-		int val = *negp ? -*lvalp : *lvalp;
++		int val;
++		if (*negp) {
++			if (*lvalp > (unsigned long) INT_MAX + 1)
++				return -EINVAL;
++			val = -*lvalp;
++		} else {
++			if (*lvalp > (unsigned long) INT_MAX)
++				return -EINVAL;
++			val = *lvalp;
++		}
+ 		if ((param->min && *param->min > val) ||
+ 		    (param->max && *param->max < val))
+ 			return -EINVAL;
 -- 
 2.20.1
 
