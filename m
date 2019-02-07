@@ -2,127 +2,190 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DB6C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F92AC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 880A8218FE
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 10:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4500F21902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:02:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyLztQj5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfBGK6h (ORCPT
+        id S1726774AbfBGLB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:58:37 -0500
-Received: from mga18.intel.com ([134.134.136.126]:5921 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbfBGK6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:58:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 02:58:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,343,1544515200"; 
-   d="asc'?scan'208";a="132264301"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by orsmga002.jf.intel.com with ESMTP; 07 Feb 2019 02:58:30 -0800
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Mathias Nyman <mathias.nyman@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-usb@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xhci: Use ffs() to find page size in xhci_mem_init()
-In-Reply-To: <74208350-eba5-c299-376e-9df194fe71b5@intel.com>
-References: <20190207000349.7816-1-andrew.smirnov@gmail.com> <1ecb0604-3e27-810e-9fae-18d9d1bf7ff9@linux.intel.com> <87mun8klxj.fsf@linux.intel.com> <74208350-eba5-c299-376e-9df194fe71b5@intel.com>
-Date:   Thu, 07 Feb 2019 12:58:26 +0200
-Message-ID: <87k1iblval.fsf@linux.intel.com>
+        Thu, 7 Feb 2019 06:01:59 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54168 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfBGLB6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 06:01:58 -0500
+Received: by mail-wm1-f65.google.com with SMTP id d15so5636286wmb.3;
+        Thu, 07 Feb 2019 03:01:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lzQ23UDeK7PHEVRyyARuGg+OdrxkLivi2VV7NzIABrQ=;
+        b=JyLztQj5YqQrisLqhEJ3J/WitUl5U81LWFJILnIOGBbvvV+1se58Ln44NbS16ViHa6
+         4Gdz9CgmeviBxCkxsDMb3PVlJNWZPcyS0anG4QojADJY5+rjNWmM27hHkmv4dwYRCAje
+         Iez/91P1kuiVwI4wmr1C1ihf81I+OgaNfq8uQNtrdMCqcP3qi8LjZ0+Smcy+fsH7bRuu
+         IgQDDveN89M9ZCzLKSzhPtlvuKLGYBaUe4uwXUqpnT5aVGsOAK1uBmMbhwCqi7Zsc8Ir
+         2bmv2YtFNOaf92bLQ4JQXxxlwrA7cVgEUpYkuYkDDLO89uluCVF+2Av06vwQKe+/l7uQ
+         Ct8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lzQ23UDeK7PHEVRyyARuGg+OdrxkLivi2VV7NzIABrQ=;
+        b=JwV6qRs1K+AIIb2upBL3TDF53i91Tq02jAYOYwDouBo0lVb9kgZ2sP7YaJbOc1aNa4
+         GMtMPVot7UuKBUm1wH/K/843T5YsAiunHWhGPt7DSc/YoRvgKl2WVs8uW33ff2naHn5n
+         Yhed9WQwOPlqD2wUpQ4/Kxtf/rYhqT7iYvjHLXBS0rVbIEGMYIGFGlRp6ei5J2P7fINo
+         9wBpSmbeFGRT162H90aG60FqSd9fx8FGBTfBQzO6tT5+e63Ma7L7vvtwQc5cOXergQeX
+         HisB5uHJ+6C/K92ULQ3I31qHvYBeY36YMekeYlQUHbOpXhftTDa83h7jF+7o8ejJt3OB
+         ADUQ==
+X-Gm-Message-State: AHQUAuY7Iq9s9+ICDdtOqukTMg5g5LpitJEWclg4iV1dZ2KCAu21dB6s
+        Z5ZL8D5mFfU+A6C0mzrLkg82Oz60+0s=
+X-Google-Smtp-Source: AHgI3IZki8S5bYoKMQMQkYs92gfdqp7PeWyidqx9B6TSXQQsOW8BGAuPT2connvIwOv44QC5hrk7Jw==
+X-Received: by 2002:a7b:c854:: with SMTP id c20mr7408732wml.153.1549537315294;
+        Thu, 07 Feb 2019 03:01:55 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id b14sm31954088wrx.36.2019.02.07.03.01.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 03:01:54 -0800 (PST)
+Date:   Thu, 7 Feb 2019 12:01:53 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com,
+        talho@nvidia.com, digetx@gmail.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH V14 3/5] i2c: tegra: Add DMA support
+Message-ID: <20190207110153.GA18518@ulmo>
+References: <1549480569-24860-1-git-send-email-skomatineni@nvidia.com>
+ <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Disposition: inline
+In-Reply-To: <1549480569-24860-3-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+On Wed, Feb 06, 2019 at 11:16:07AM -0800, Sowjanya Komatineni wrote:
+> This patch adds DMA support for Tegra I2C.
+>=20
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
+>=20
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction. This adds delay between data bytes of the same
+> transfer when CPU is fully loaded and some slave devices has
+> internal timeout for no bus activity and stops transaction to
+> avoid bus hang. DMA mode is helpful in such cases.
+>=20
+> DMA mode is also helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V14] : Switched back to use dma_alloc_coherent as it guarentees contigu=
+ous device
+> 	 dma address space.
+> 	 Fixed FIFO Trigger level programming to construct value from scratch.
+> 	 Previous versions does register read-modify-write without masking.
+> 	 T20 has DVC offsets different to I2C. This version has fix to account D=
+VC
+> 	 offset during dma slave configuration.
+>  [V13] : T20 has DVC used for some power controls. This version has fix f=
+or using
+> 	 proper DVC register offsets for DMA programming incase when used in DMA
+> 	 mode.
+>  [V12] : Replaced dma_alloc_coherent with dma_alloc_attrs to force the al=
+located
+> 	 buffer to be contiguous also in physical memory as Tegra194 supports max
+> 	 64K and dma_alloc_coherent doesnt guarentee contiguous memory.
+> 	 Changed return code from EIO to EINVAL incase of failure to obtain dma
+> 	 descriptor.
+> 	 Fixed coding style check issues.	=20
+>  [V11] : Replaced deprecated dmaengine_terminate_all with dmaengine_termi=
+ne_async
+> 	 from non-atomic context and dmaengine_terminate_sync from atomic contex=
+t.
+> 	 Fixed to program fifo trigger levels properly when transfer falls back =
+to
+> 	 pio mode in case of dma slave configuration failure and other minor fix=
+es.
+>  [V10] : APBDMA is replaced with GPCDMA on Tegra186 and Tegra194 designs.
+> 	 Added apbdma hw support flag to now allow Tegra186 and later use
+> 	 APBDMA driver.
+> 	 Added explicit flow control enable for DMA slave config and error handl=
+ing.
+> 	 Moved releasing DMA resources to seperate function to reuse in
+> 	 multiple places.
+> 	 Updated to register tegra_i2c_driver from module level rather than subs=
+ys
+> 	 level.
+> 	 Other minor feedback
+>  [V9] :  Rebased to 5.0-rc4
+> 	 Removed dependency of APB DMA in Kconfig and added conditional check
+>  	 in I2C driver to decide on using DMA mode.
+> 	 Changed back the allocation of dma buffer during i2c probe.
+> 	 Fixed FIFO triggers depending on DMA Vs PIO.
+>  [V8] :  Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPL=
+ETE
+> 	 interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
+> 	 other fixes
+> 	 Updated Kconfig for APB_DMA dependency
+>  [V7] :  Same as V6
+>  [V6] :  Updated for proper buffer allocation/freeing, channel release.
+> 	 Updated to use exact xfer size for syncing dma buffer.
+>  [V5] :  Same as V4
+>  [V4] :  Updated to allocate DMA buffer only when DMA mode.
+> 	 Updated to fall back to PIO mode when DMA channel request or
+> 	 buffer allocation fails.
+>  [V3] :  Updated without additional buffer allocation.
+>  [V2] :  Updated based on V1 review feedback along with code cleanup for
+> 	 proper implementation of DMA.
+>=20
+>=20
+>  drivers/i2c/busses/i2c-tegra.c | 411 +++++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 367 insertions(+), 44 deletions(-)
 
-Hi,
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Mathias Nyman <mathias.nyman@intel.com> writes:
->>>> Get page size order using ffs() instead of open coding it with a loop.
->>>>
->>>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
->>>> Cc: Mathias Nyman <mathias.nyman@intel.com>
->>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> Cc: linux-usb@vger.kernel.org
->>>> Cc: linux-kernel@vger.kernel.org
->>>> ---
->>>>    drivers/usb/host/xhci-mem.c | 6 +-----
->>>>    1 file changed, 1 insertion(+), 5 deletions(-)
->>>>
->>>> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
->>>> index 36a3eb8849f1..44b43c3d819f 100644
->>>> --- a/drivers/usb/host/xhci-mem.c
->>>> +++ b/drivers/usb/host/xhci-mem.c
->>>> @@ -2362,11 +2362,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t =
-flags)
->>>>    	page_size =3D readl(&xhci->op_regs->page_size);
->>>>    	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
->>>>    			"Supported page size register =3D 0x%x", page_size);
->>>> -	for (i =3D 0; i < 16; i++) {
->>>> -		if ((0x1 & page_size) !=3D 0)
->>>> -			break;
->>>> -		page_size =3D page_size >> 1;
->>>> -	}
->>>> +	i =3D ffs(page_size);
->>>>    	if (i < 16)
->>>>    		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
->>>>    			"Supported page size of %iK", (1 << (i+12)) / 1024);
->>>
->>> Hi
->>>
->>> using ffs() is a welcome change, but it will give different a result th=
-an the loop.
->>>
->>> *old loop
->>>     valid page_size value if i < 16
->>> *ffs()
->>>     valid page_size value if i >=3D 1 and i < 17
->>=20
->> off-by-one, just use i =3D ffs() - 1. Or use __ffs().
->
-> and handle the page_size =3D=3D 0 case.
-
-Can it be zero in real life, or are you protecting against academic
-possibility that's never going to happen in HW?
-
-=2D-=20
-balbi
-
---=-=-=
+--mP3DRpeJDSE+ciuQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxcD1IACgkQzL64meEa
-mQY2KhAA1y4TsANVaNWuPVkIMk9b0q38i04ae6yOvGaMiozJ08hXh7rNEe2ZII3B
-YsEU9ML2pN820ROhA0KELrSV7/fgrJvvYbdpc7LrDjTSInYyUAQLP001GizFmnzI
-Z7XX1m3gevH5eZXkla9nYuuwbTVxIqGxb24BlUMpE2NqGDOC+p7hHpxAZuEa3Z2/
-12jJVXyQIVoHiJ0Mltd9utujQTFNfGTKlvIlr3g2yY8nfPfpzfLnAUcBXkSQ8uDp
-yjkWmp6AVMgoSASE7lHifEZq0J6Srosa12La8gvFlxVJ0N1NFlQD3ANg/yjZehqj
-tUPnfgEql/CcU565iUVf+ZhP7+o/aWs9rU0BbekjFekbxZy4clVqKyvl17sT9CEY
-yVNaVDyRqyv0j3ffhYPnNi0YWetRmH9221fGEL74BPW5qEZVFOGt8EDyHN7Wup79
-hNoh+IICU3Vqmw00lS/9Ldu2VGoaNrV1lYR3kNgigz5GljmgBhKDXIc64Rf8oGw6
-o6Wdk4zJFz4pVcqK4xEyFDzTMeFYSG2AcjGlSv1NgI/HNfH48pOFYvP+74xRKDT1
-JJwe9Nwgk7UuI8W/fgcJXjNKRoZao83euWu7sVJgm1+K3Jjp7E4n7RA7cJJ25+s6
-iVMVu8EsXKYV+iN7UsUFblRwQd8n8Yd5P1B2+VVpJGql/dBcKtI=
-=GWc2
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxcEBwACgkQ3SOs138+
+s6EU7w/8CEwyqm8AGe4LvzCTVthcN5L8+7m/yo1ffdW45DOXxVqTNA6j+8raC2Fw
+3u/egfWhOBpIuBSFTcUK+7rn5pSGxvWNG07BCJEYNr/dbYt8TZpZnZlop90opQoU
+AJh4Cj9Wo3u8//fdJScjkMJFdfkZkjXdvN4/7U4wwvLl4pDUDjwLhj9Zqdui2teO
+iIaW8CZ58SCfQOb04JLOLuh6s/2GPfsC89sRk9108WvYzRkolonRsFIc7fOARh9X
+x5COVGvfNoI2hNSYarqfbbEO/H1jVAG26s1i9DwAt7GGSHMNJ14NY46zptxZMaWV
+BZzjr3DGNBemUDKPFHGCrFYdjSW+QpXTYEfUoWY4bJuNU9/xNyok+DHnSKH62QtG
+HFlgUTqVW0wF7acPePyz4XyRHiBgjWIVtSMHe9Ju2V56A91ETcucAYGAzXaqHezs
+I6S8fNLLaFyPJlQsAs8UcizjW/lTzbS4UUDMAhS5MwcihxOuWvvDF9/G44BTJRwv
+h01EjrRxeyTjBk0IsCS/b6aOR6GX3esTrMLmyVnqroCacwwEaR48xkcrqMlMRS1z
+Kzk4Knq5kMl6ItvPfv/Dj8B6oQjRPMmjq0fJcwkDIR/Du0wsNjWMe+deQvujoPZF
+CDF4O/Ke5lHxPGUawKOBgwUX5oyTmsSYXbs7QXC5B04/Z9vjZgk=
+=gaQ3
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--mP3DRpeJDSE+ciuQ--
