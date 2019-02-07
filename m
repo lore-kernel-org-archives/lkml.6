@@ -2,176 +2,130 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AD1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C30AC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CB122147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027392147C
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oeItV7Oo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/6xiZvj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBGLQR (ORCPT
+        id S1727037AbfBGLRf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:16:17 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:50788 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfBGLQR (ORCPT
+        Thu, 7 Feb 2019 06:17:35 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33385 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfBGLRe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:16:17 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17BGFCT090211;
-        Thu, 7 Feb 2019 05:16:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549538175;
-        bh=LZGQUI8778U99WU69VM/Jpjo4IN9HrH2mbMO8T2vdrA=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=oeItV7Oov8D2cfSdjVjfg8YkXYkb6NGj1iN3ldw8LeIIQobiE0knGsBOpX3xj0EGC
-         fSS2lU4aFg8K3naFCeWJT7OjO/ZtRxr5LWxUDH5A6jmoQM2Ff1sdWI+HoNug4zvYC7
-         7c+XqgTl0DsekXR9CWwZ9CKtxTa4gpqPKKKpme5g=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17BGFfS005435
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Feb 2019 05:16:15 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
- Feb 2019 05:16:14 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 7 Feb 2019 05:16:14 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17BGD8m013988;
-        Thu, 7 Feb 2019 05:16:13 -0600
-Subject: Re: [PATCH v2 4/4] phy: ti: Add a new SERDES driver for TI's AM654x
- SoC
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190206110753.28738-1-kishon@ti.com>
- <20190206110753.28738-5-kishon@ti.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C5C137C.2040109@ti.com>
-Date:   Thu, 7 Feb 2019 13:16:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Thu, 7 Feb 2019 06:17:34 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c123so4634350pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:17:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q1Cia1wz+5mRCkHMYytkTgvIy7gLgYFs59E2XGQjZCc=;
+        b=Y/6xiZvjSdnJhM6j/zki8qil3Ybc/r8bO9vx8LtPIQBMuwcgJWVg17dqthEvGGnbbv
+         6v/hBI3qGAEiw02tmnm6d3FTjpa+yQMvzXeE1plc8IsQT4mZVhMf366l+ji79p1Cy3+W
+         EtBwsB3sG0wmQzlTX0FDmXsZtRdsIJK847l/GOm4wuYAOJS5riWrS5F1qeJRB2TrCsr/
+         Ivzd6bskDEBkexVtUYVO2ah0cMw7EAqBGN1i70aeYz49Rngq7bMPk1wHX/6YkzXK8wQ/
+         kDl+LDEHv/4Fw1GlBCSRqVHfbtON5UJcRs9pSfAx7NRaMM4BqvQLTF/XfYGo6W+h9XWR
+         nP6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q1Cia1wz+5mRCkHMYytkTgvIy7gLgYFs59E2XGQjZCc=;
+        b=Uth4vgIwfg2k1traTOljPdG34ckM7Po8FISPBhdJmN5jCFTQjiMvi6bJglohc5hBpX
+         vMbxOfmtmj0Uq1qkYfPVUUOCCnYEnhhyY/W3pwlvAIXWs0pWiHB5LRYtlFy/mbROS8GL
+         ZupC5OXolX4V6K4/FM0SSNvKEsq0NOXr2DDHdOqw2SUErMj5kX/kSkR4I7cAU21k1XNU
+         Scgn0tkA0g2MzNzEx0CcvQZ/F8NB7qpzT1EbJ8ILHcCFbE2l9n2s0aLVDkQPl47ijelQ
+         JRoNLsDnkk+Jodx9/CAJiVzDPtbSOeIl3xY7V0iVuag9BQFS0lbXXoaiXt+IeR58xfKD
+         1u1w==
+X-Gm-Message-State: AHQUAuaWQwDXU8fc4qn/dJVSw5Jj6JQCqqsKG01qEr4ENEhrnSED04tB
+        jAk/QIcjO3qSAqdnCGrSFmmX
+X-Google-Smtp-Source: AHgI3IaTolTllKJ7hnsFOVC1XuKkbhT6P2f8fyuUS5y1sZsQYBC8NV5IIlJx7k/NWQx/Q8ssBCUTkA==
+X-Received: by 2002:a63:4858:: with SMTP id x24mr14245500pgk.420.1549538253718;
+        Thu, 07 Feb 2019 03:17:33 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2405:204:730d:914e:a8b4:2532:ae24:7d86])
+        by smtp.gmail.com with ESMTPSA id l8sm21650875pfb.68.2019.02.07.03.17.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 03:17:32 -0800 (PST)
+Date:   Thu, 7 Feb 2019 16:47:26 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     xuwei5@hisilicon.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, guodong.xu@linaro.org
+Subject: Re: [PATCH 1/3] dt-bindings: reset: Add HI3670 reset controller
+ binding
+Message-ID: <20190207111726.GA30269@Mani-XPS-13-9360>
+References: <20190201153841.21903-1-manivannan.sadhasivam@linaro.org>
+ <20190201153841.21903-2-manivannan.sadhasivam@linaro.org>
+ <1549536094.4557.8.camel@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190206110753.28738-5-kishon@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549536094.4557.8.camel@pengutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Philipp,
 
-On 06/02/19 13:07, Kishon Vijay Abraham I wrote:
-> Add a new SERDES driver for TI's AM654x SoC which configures
-> the SERDES only for PCIe. Support fo USB3 will be added later.
+On Thu, Feb 07, 2019 at 11:41:34AM +0100, Philipp Zabel wrote:
+> Hi Manivannan,
 > 
-> SERDES in am654x has three input clocks (left input, externel reference
-> clock and right input) and two output clocks (left output and right
-> output) in addition to a PLL mux clock which the SERDES uses for Clock
-> Multiplier Unit (CMU refclock).
+> On Fri, 2019-02-01 at 21:08 +0530, Manivannan Sadhasivam wrote:
+> > HI3670 SoC is architecturally same as the HI3660 SoC. Hence, the same
+> > driver is reused for HI3670 SoC and the binding is documented here.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  .../devicetree/bindings/reset/hisilicon,hi3660-reset.txt     | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> > index 2bf3344b2a02..5d60ec541331 100644
+> > --- a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> > +++ b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> > @@ -5,11 +5,12 @@ Please also refer to reset.txt in this directory for common reset
+> >  controller binding usage.
+> >  
+> >  The reset controller registers are part of the system-ctl block on
+> > -hi3660 SoC.
+> > +hi3660 and hi3670 SoCs.
+> >  
+> >  Required properties:
+> > -- compatible: should be
+> > +- compatible: should be one of the following:
+> >  		 "hisilicon,hi3660-reset"
+> > +		 "hisilicon,hi3670-reset"
 > 
-> The PLL mux clock can select from one of the three input clocks.
-> The right output can select between left input and external reference
-> clock while the left output can select between the right input and
-> external reference clock.
+> If the HI3670 reset controller is compatible to the HI3660 reset
+> controller, this could be:
 > 
-> The driver has support to select PLL mux and left/right output mux as
-> specified in device tree.
+> - compatible: should be one of the following:
+>               "hisilicon,hi3660-reset" for HI3660
+>               "hisilicon,hi3670-reset", "hisilicon,hi3660-reset" for HI3670
 > 
-> [rogerq@ti.com: Fix boot lockup caused by accessing a structure member
-> (hw->init) allocated in stack of probe() and accessed in get_parent]
-> [rogerq@ti.com: Fix "Failed to find the parent" warnings]
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/phy/ti/Kconfig            |  11 +
->  drivers/phy/ti/Makefile           |   1 +
->  drivers/phy/ti/phy-am654-serdes.c | 539 ++++++++++++++++++++++++++++++
->  3 files changed, 551 insertions(+)
->  create mode 100644 drivers/phy/ti/phy-am654-serdes.c
+> That way there would be no need to change the driver and it would be
+> documented that the two reset controllers are compatible.
 > 
-> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
-> index f137e0107764..6357c32de115 100644
-> --- a/drivers/phy/ti/Kconfig
-> +++ b/drivers/phy/ti/Kconfig
-> @@ -20,6 +20,17 @@ config PHY_DM816X_USB
->  	help
->  	  Enable this for dm816x USB to work.
->  
-> +config PHY_AM654_SERDES
-> +	tristate "TI AM654 SERDES support"
-> +	depends on OF && ARCH_K3 || COMPILE_TEST
-> +	select GENERIC_PHY
-> +	select MULTIPLEXER
-> +	select REGMAP_MMIO
-> +	select MUX_MMIO
-> +	help
-> +	  This option enables support for TI AM654 SerDes PHY used for
-> +	  PCIe.
-> +
->  config OMAP_CONTROL_PHY
->  	tristate "OMAP CONTROL PHY Driver"
->  	depends on ARCH_OMAP2PLUS || COMPILE_TEST
-> diff --git a/drivers/phy/ti/Makefile b/drivers/phy/ti/Makefile
-> index bea8f25a137a..bff901eb0ecc 100644
-> --- a/drivers/phy/ti/Makefile
-> +++ b/drivers/phy/ti/Makefile
-> @@ -6,4 +6,5 @@ obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
->  obj-$(CONFIG_TI_PIPE3)			+= phy-ti-pipe3.o
->  obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
->  obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
-> +obj-$(CONFIG_PHY_AM654_SERDES)		+= phy-am654-serdes.o
->  obj-$(CONFIG_PHY_TI_GMII_SEL)		+= phy-gmii-sel.o
-> diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
-> new file mode 100644
-> index 000000000000..dfbd2d48503d
-> --- /dev/null
-> +++ b/drivers/phy/ti/phy-am654-serdes.c
-> @@ -0,0 +1,539 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/**
-> + * PCIe SERDES driver for AM654x SoC
-> + *
-> + * Copyright (C) 2018 Texas Instruments
 
-2018-2019.
+Yeah, I thought about the fallback approach initially but was unsure
+about which method to adopt. Will use fallback compatible in next
+revision.
 
-> + * Author: Kishon Vijay Abraham I <kishon@ti.com>
-> + */
-> +
-> +#include <dt-bindings/phy/phy.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/mux/consumer.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/syscon.h>
-> +
+Thanks,
+Mani
 
-<snip>
-
-cheers,
--roger
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> regards
+> Philipp
