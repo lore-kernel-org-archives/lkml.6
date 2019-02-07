@@ -2,99 +2,149 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7176C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7837BC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95F172190C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:47:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="B0JWQByW"
+	by mail.kernel.org (Postfix) with ESMTP id 420E821904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfBGNr1 (ORCPT
+        id S1727191AbfBGNrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:47:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:35737 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726732AbfBGNrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:47:25 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wKPQ67Zyz9s6w;
-        Fri,  8 Feb 2019 00:47:22 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549547243;
-        bh=9dUE7qdYt85IRChPaaPamNsiL4vYB0lWJRZejvsQJtg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=B0JWQByW92ktDP82JMR+hJ2zVXOPRFvYRjhoaXPQrSjrSaDbXKyYAzBnXVDawpaw1
-         J7MXQEfeHQQi8eLRocUBzCSZl7APfCCi3qgMQDMPfoF4nvUbvbuaCN+pML7JLIH9nu
-         gDaQQTHEEigb7Xi01QN1mCj58HN8zwth8u6XrVdfc8jKgoBXlv6835zJ4+XqfBb7Ei
-         /kHjUO36lzDzKbC1OmKva1zKycLnxHFeUtNXNFCtEkn8WMKSJn1M4+jnUSY1o6cZoB
-         BBxyN42bFPyrEP6h/k1OjXpCxAGrCh3QUHUaMLl1FMnOcSBcc8k1NBldD/H94EDic8
-         yEuFrb2HNzJtQ==
-Date:   Fri, 8 Feb 2019 00:47:21 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: linux-next: Fixes tag needs some work in the qcom tree
-Message-ID: <20190208004721.129a9eb7@canb.auug.org.au>
+        Thu, 7 Feb 2019 08:47:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37362 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727021AbfBGNri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:47:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77871EBD;
+        Thu,  7 Feb 2019 05:47:37 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3573F3F675;
+        Thu,  7 Feb 2019 05:47:33 -0800 (PST)
+Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+References: <20190118163736.6A99268CEB@newverein.lst.de>
+ <20190118163908.E338E68D93@newverein.lst.de>
+ <e206e229-7813-2d37-d5c6-7a9785e311c9@arm.com>
+ <20190206150524.GA28892@lst.de>
+ <198550d8-78d4-6e30-0179-b5e07dd140f8@arm.com>
+ <20190207125159.GA19818@lst.de>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <9bfb0506-5e8e-98d8-1946-9b6eaa4084b9@arm.com>
+Date:   Thu, 7 Feb 2019 13:47:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BjaIFSiDSbYLuTTzOa_Sn9a"; protocol="application/pgp-signature"
+In-Reply-To: <20190207125159.GA19818@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BjaIFSiDSbYLuTTzOa_Sn9a
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
 
-In commit
+On 07/02/2019 12:51, Torsten Duwe wrote:
+> On Thu, Feb 07, 2019 at 10:33:50AM +0000, Julien Thierry wrote:
+>>
+>>
+>> On 06/02/2019 15:05, Torsten Duwe wrote:
+>>> On Wed, Feb 06, 2019 at 08:59:44AM +0000, Julien Thierry wrote:
+>>>> Hi Torsten,
+>>>>
+>>>> On 18/01/2019 16:39, Torsten Duwe wrote:
+>>>>
+>>>>> --- a/arch/arm64/kernel/ftrace.c
+>>>>> +++ b/arch/arm64/kernel/ftrace.c
+>>>>> @@ -133,17 +163,45 @@ int ftrace_make_call(struct dyn_ftrace *
+>>>>>  	return ftrace_modify_code(pc, old, new, true);
+>>>>>  }
+>>>>>  
+>>>>> +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+>>>>> +int ftrace_modify_call(struct dyn_ftrace *rec, unsigned long old_addr,
+>>>>> +			unsigned long addr)
+>>>>> +{
+>>>>> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+>>>>> +	u32 old, new;
+>>>>> +
+>>>>> +	old = aarch64_insn_gen_branch_imm(pc, old_addr, true);
+>>>>> +	new = aarch64_insn_gen_branch_imm(pc, addr, true);
+>>>>> +
+>>>>> +	return ftrace_modify_code(pc, old, new, true);
+>>>>> +}
+>>>>> +#endif
+>>>>> +
+>>>>>  /*
+>>>>>   * Turn off the call to ftrace_caller() in instrumented function
+>>>>>   */
+>>>>>  int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec,
+>>>>>  		    unsigned long addr)
+>>>>>  {
+>>>>> -	unsigned long pc = rec->ip;
+>>>>> +	unsigned long pc = rec->ip + REC_IP_BRANCH_OFFSET;
+>>>>
+>>>> Sorry to come back on this patch again, but I was looking at the ftrace
+>>>> code a bit, and I see that when processing the ftrace call locations,
+>>>> ftrace calls ftrace_call_adjust() on every ip registered as mcount
+>>>> caller (or in our case patchable entries). This ftrace_call_adjust() is
+>>>> arch specific, so I was thinking we could place the offset in here once
+>>>> and for all so we don't have to worry about it in the future.
+>>>
+>>> Now that you mention it - yes indeed that's the correct facility to fix
+>>> the deviating address, as Steve has also confirmed. I had totally forgotten
+>>> about this hook.
+>>>
+>>>> Also, I'm unsure whether it would be safe, but we could patch the "mov
+>>>> x9, lr" there as well. In theory, this would be called at init time
+>>>> (before secondary CPUs are brought up) and when loading a module (so I'd
+>>>> expect no-one is executing that code *yet*.
+>>>>
+>>>> If this is possible, I think it would make things a bit cleaner.
+>>>
+>>> This is in fact very tempting, but it will introduce a nasty side effect
+>>> to ftrace_call_adjust. Is there any obvious documentation that specifies
+>>> guarantees about ftrace_call_adjust being called exactly once for each site?
+>>>
+>>
+>> I don't see really much documentation on that function. As far as I can
+>> tell it is only called once for each site (and if it didn't, we'd always
+>> be placing the same instruction, but I agree it wouldn't be nice). It
+>> could depend on how far you can expand the notion of "adjusting" :) .
+> 
+> I've been thinking this over and I'm considering to make an ftrace_modify_code
+> with verify and warn_once if it fails. Then read the insn back and bug_on
+> should it not be the lr saver. Any objections?
+> 
 
-  761f63b2ff21 ("arm64: dts: sdm845: Add clocks and iommus to WCN3990 WLAN =
-node")
+Hmmm, I'm not really convinced the read back + bug part would really be
+useful right after patching this instruction in. ftrace_modify_code()
+should already return an error if the instruction patching failed.
 
-Fixes tag
+A real issue would be if ftrace_call_adjust() would be called on a
+location where we shouldn't patch the instruction (i.e. a location that
+is not the first instruction of a patchable entry). But to me, it
+doesn't look like this function is intended to be called on something
+else than the "mcount callsites" (which in our case is that first
+patchable instruction).
 
-  Fixes: be7019103469 ("dts: arm64/sdm845: Add WCN3990 WLAN module device n=
-ode")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Did you mean:
-
-  022bccb840b7 ("arm64: dts: sdm845: Add WCN3990 WLAN module device node")
-
---=20
 Cheers,
-Stephen Rothwell
 
---Sig_/BjaIFSiDSbYLuTTzOa_Sn9a
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcNukACgkQAVBC80lX
-0GyegAgAmfcukKZOJpy0z7Ung0nahPqBX5T6Tb5PVnrPei0EY/d/9/EzSlNYR47n
-diYx6t/sdGC+5OnSy4Xqm18oX22bny8mqolIaf2DnTs1GIqUScssWAFNwuy/GNsI
-oEXZocBhE457HqEmch8rvLnTIZj/JWES1qwt98/QMbPh4Uo8Hfg0/HWDAK3LPpZ9
-4I+oGW9fm4NezXv543Hd5iNLtljRr+Pb3h5XbDwjA/1/L6C1izwLz9esRlGsAX1U
-1A/ixluZTaZ1DwhcB8X+bYzVLJp4o27Ox2YLSus0vsrkDmlRzyiHurHZAs7uWo5i
-ABmaMIsxek9VMf09YeTka+VCXubPPQ==
-=iq23
------END PGP SIGNATURE-----
-
---Sig_/BjaIFSiDSbYLuTTzOa_Sn9a--
+-- 
+Julien Thierry
