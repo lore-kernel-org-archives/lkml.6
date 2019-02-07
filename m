@@ -2,145 +2,142 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6E1C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C8DC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 727632173B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:55:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNsOwq+w"
+	by mail.kernel.org (Postfix) with ESMTP id C69BE2173B
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 19:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfBGTzg (ORCPT
+        id S1727260AbfBGTzm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 14:55:36 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39396 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfBGTzf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 14:55:35 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so2905439itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 11:55:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yuwb+5FOI6hWVyTZ/nLpjSNm5TPH0/gmq35Pv0UCtNk=;
-        b=HNsOwq+wJ8HKOEW3kDCnKXq7K11ens5V2X0pjzTUjS5uRiOA6xtWfWIAD8fiLLCZw1
-         x0BQLv5H9JyE7BWPW2f58U69j2bpEKSumwr4mxGPB9pufQg/ZnVwKpzVyMY9wLUjxMz0
-         Vy6I+yE2UNQ9GSE2R89qeglqTgkmoGm31hGaldUxePxJk0wMUEtye5DAnwNNOlTaci3n
-         8dgNERlOsn9wKIy2j2hGt1ZXeZ7P9cSABqCjw0fMzidbtG6OwS4s6IW14BvRazXjqjXF
-         hjhGm/77bdybLxzkEpz2/CCwOnr+k5dftZwg1o8ak5BhcTbFhUB99fIjlQKzEDcL2Vt7
-         wGZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yuwb+5FOI6hWVyTZ/nLpjSNm5TPH0/gmq35Pv0UCtNk=;
-        b=D0EdkBdTJZWuuSXp3zyvJM/QyNETpAu55BZa8OTnLR+zehtYuqltPzcsLGkrGwmBwI
-         3gY4fkK42kY0PWdAYKvhp9ChmQcQ5gOQUUDVFm94GFw45ZEyfZ1uk9D13ALIa0Bjpbfz
-         CsFObsX6TWL2x+ndtXBjyswNF0qPzMFFjv2DZLRl0ZGxS61XXw69utV+OP7/ELBXi1ZN
-         JhdKiy2zUSZ/89e/RmDX5j4bC5pjP93Z75kdqhxLIr1oGID1bHIGJdTFTiqT1FrBnNn4
-         90n3UwQ7Tq1gCouPBnR0ibfTkcCcCte8FV8Q1U7Svf/ZT1xvm6Z4rcdD6oZF5VDTZyCv
-         4Ogw==
-X-Gm-Message-State: AHQUAuZWAU5m1J2y/5yvHnMj3HHoKfTVGcnbEbVLx1IwPrrfOyFZNgXv
-        B2gKb/bkcpLIPO6vNOo2dRjzzCFHoFVLsjTFv1jQnw==
-X-Google-Smtp-Source: AHgI3IaKHd/NHuIDU+4Yyvf7byW07bRylK2p4NHS3AW6hF3cMHdPC9k3UGbBRdVprOULszcz0GRvkRnr9XgiFsVRWLk=
-X-Received: by 2002:a02:9549:: with SMTP id y67mr9885238jah.4.1549569334272;
- Thu, 07 Feb 2019 11:55:34 -0800 (PST)
+        Thu, 7 Feb 2019 14:55:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51752 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727122AbfBGTzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 14:55:41 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5909AC002965;
+        Thu,  7 Feb 2019 19:55:40 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-35.bos.redhat.com [10.18.17.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 194345C240;
+        Thu,  7 Feb 2019 19:55:38 +0000 (UTC)
+Subject: Re: [PATCH-tip 15/22] locking/rwsem: Merge owner into count on x86-64
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+References: <1549566446-27967-1-git-send-email-longman@redhat.com>
+ <1549566446-27967-16-git-send-email-longman@redhat.com>
+ <20190207194542.GG32511@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <7fb70e32-733b-8be5-11d7-655070161c6c@redhat.com>
+Date:   Thu, 7 Feb 2019 14:55:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190207185917.167829-1-egranata@google.com> <CAJZ5v0jFqkTS__oOfPNvatHOa6OA++uRNLx1-PhiPvS1VnPVXg@mail.gmail.com>
- <CAHp75Ve5nw-TD0MqFq6Rzbuhqz2SjyqmOCst1-U3QV=U7k3cbg@mail.gmail.com>
-In-Reply-To: <CAHp75Ve5nw-TD0MqFq6Rzbuhqz2SjyqmOCst1-U3QV=U7k3cbg@mail.gmail.com>
-From:   Enrico Granata <egranata@google.com>
-Date:   Thu, 7 Feb 2019 11:55:22 -0800
-Message-ID: <CAPR809svTVRJX-GrcSuBe+GmMOzzSHsoOTqHOCydWksEfetf=Q@mail.gmail.com>
-Subject: Re: [PATCH] driver: platform: Add support for GpioInt() ACPI to platform_get_irq()
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Enrico Granata <egranata@chromium.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190207194542.GG32511@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 07 Feb 2019 19:55:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resending as plain text; comments inlined.
+On 02/07/2019 02:45 PM, Peter Zijlstra wrote:
+> On Thu, Feb 07, 2019 at 02:07:19PM -0500, Waiman Long wrote:
+>> On 32-bit architectures, there aren't enough bits to hold both.
+>> 64-bit architectures, however, can have enough bits to do that. For
+>> x86-64, the physical address can use up to 52 bits. That is 4PB of
+>> memory. That leaves 12 bits available for other use. The task structure
+>> pointer is also aligned to the L1 cache size. That means another 6 bits
+>> (64 bytes cacheline) will be available. Reserving 2 bits for status
+>> flags, we will have 16 bits for the reader count.  That can supports
+>> up to (64k-1) readers.
+> *groan*...
+>
+> So take qrwlock's idea for a queue, then make the count value (similar
+> to the new mutex); that is have a bit0 be a r/w bit, when w bits 6-N are
+> owner, when r they are reader-count. bit1 can be a pending bit, bit2 a
+> handoff bit etc..
+>
+> That should fit and work on 32bit and 64bit without issue.
+>
+> I have a half-arsed rwsem-atomic.c somewhere that does just that. I just
+> never got around to doing all the optimistic spin and steal crap that
+> makes our current rwsem fly.
+>
+> And that nicely gets rid of that mind bending BIAS crud.
 
-On Thu, Feb 7, 2019 at 11:39 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Thu, Feb 7, 2019 at 9:04 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > +Mika Westerberg
-> > +Andy Shevchenko
-> > +Hans de Goede
->
-> Thanks, Rafael.
-> My comments below.
->
-> > On Thu, Feb 7, 2019 at 7:59 PM <egranata@google.com> wrote:
-> > >
-> > > From: Enrico Granata <egranata@chromium.org>
-> > >
-> > > ACPI 5 added support for GpioInt resources as a way to provide
-> > > information about interrupts mediated via a GPIO controller.
-> > >
-> > > Several device buses (e.g. SPI, I2C) have support for retrieving
-> > > an IRQ specified via this type of resource, and providing it
-> > > directly to the driver as an IRQ number.
->
-> > > This is not currently done for the platform drivers, as platform_get_irq()
-> > > does not try to parse GpioInt() resources.
->
-> And why is this a problem?
+Well, the reason for this compromise is to keep using xadd for readers.
+Your scheme will certainly work, but we have to use cmpxchg for readers
+too. That will have a performance impact especially with multiple
+readers contending which I am trying to avoid.
 
-In ChromeOS, we have a driver (cros_ec_lpc) which can run either on
-systems that directly expose the interrupt,
-or systems where the interrupt goes through a GPIO controller. On the
-former, firmware provides an Interrupt resource
-and platform_get_irq() finds it. On the latter, firmware provides a
-GpioInt resource and platform_get_irq does not
-find it. We could work around this in the driver by probing both
-paths, but since other subsystems seem to directly
-look for GpioInt resources, it seemed to us to make more sense to
-extend platform_get_irq() instead.
+Cheers,
+Longman
 
-> > > This commit adds that functionality.
->
-> How that can override the configuration / BIOS flavour when driver
-> needs to register an interrupt out of GpioIo() resource?
->
-> P.S. Have you looked at drivers/platform/x86/i2c-multi-instantiate.c
-> and intel_cht_int33fe.c?
 
-Those drivers seem to only ever expect a GpioInt(). Our case is one
-where both are possible,
-depending on the system we're running on. We are trying not to put
-ad-hoc logic in the driver,
-but if you think that doing so would be our best course of action,
-please do let us know.
-
-> They are the only drivers which needs something like this for now and
-> I would rather say it's a bad BIOS decision to write a table like
-> that.
-
-Do you have any suggestions to write proper firmware tables to avoid this issue?
-
->
-> --
-> With Best Regards,
-> Andy Shevchenko
