@@ -2,85 +2,99 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB879C282C4
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FD5C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3979218D3
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C72218D3
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:44:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="RMv41fVa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfBGQlT (ORCPT
+        id S1726758AbfBGQoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:41:19 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:54605 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGQlT (ORCPT
+        Thu, 7 Feb 2019 11:44:12 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33123 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfBGQoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:41:19 -0500
-Received: from orion.localdomain ([77.2.6.87]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MuUza-1hA04p1hfm-00rULW; Thu, 07 Feb 2019 17:41:13 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-kbuild@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net
-Subject: RFC: refactoring the deb build
-Date:   Thu,  7 Feb 2019 17:40:55 +0100
-Message-Id: <1549557659-19137-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:BO8Oml1s/BStYvQB3cgiVFSgPr9LkQ6nH8tulm8K5QWHWk2O0My
- n/AyqhLIMMkAwYilYX+zoC/kedbpGiVs37xmO/DyFskvfdJhSplhpYdmhtP5HtXopkxvR6D
- nfewISEqhOGWjko7x/hL5uM+Nx7HBkJ5Mbk7uM6pJEXAYfblqHEyJaHeeusmw/M3ORnljfw
- JeY3stKPRIbnpV4GodVog==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:XUJ4ERUZ5BM=:FStTOPzVj8R/7J+1MQbcDY
- 87uPfSXadzdsCOAheHZ6NM/QGaWU6A3wtQE1wX4fkoW+UCv9UpHi7QbxYKliVHpRCc5ekwvnp
- bFK/DOEaPEDhPZpGA1qZL4pJIvN8gihdBoohn13Q7GhYyylRAkpMRScU+JHkMnAPbT1BCcUvr
- EhdsZAx1E1g8fhJ7V2ICApPh/Dmo/6r570qSkME2lkOVGdIgI2QvZtVNPwAEKc4L6DuAKkCC6
- n13fKZDxh23+GNSXE2ag3PU2PgSu0DPotPIa2OhOfgUSZCTSRRByTTNLzklOMZno31sLn1Rwk
- YMi/1GaMBTIAVrmUPVZeXTHnEok54hkE+vS3pIczNw3/WM0gQBX/xLQFMwxBL2LBLKY0jGsOv
- mT1teauUJRpXTVqOnRKwsaI6At6tclR6k8Tl3sXDEUoAgbfokTAjGN/Bnz49mi+ojeMomrLZF
- hFkpLkEP3vX37Wv+S7sKJnEOjowPcw2UOT5lXFa4UYIU0euvR+2IcoRr0X/pxWiS1phqr67Aw
- MxQ7NY9rvYDI/674KmpxJpdqQJK6pz4P+AwimnW42i5jWPMpqfzhTjMqjGl2TsPTyXs8Jje2Y
- 4iNyPXel8APMFOrVmtxcxB0YUQ0W1BI4EatkP4hZdonNii2kmpZPBS/Ar0K2gizYDd2LFs+8W
- kGQrEz340Y4VuJFvyOTL3+bfEf3ifkqw+Xx42knPmEolt5tEeZBC/mf52Rtw3fEXYiCjn8WGz
- IZe99/ggQ8o267O9HVWi+b6mH4jKWzIdHteIxw==
+        Thu, 7 Feb 2019 11:44:11 -0500
+Received: by mail-lj1-f195.google.com with SMTP id f24-v6so480875ljk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 08:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MaJdyXbtST+oi2YkdRMDPor7bTOsnqXsbMtwI+h++Zk=;
+        b=RMv41fVaW5y+UPMQ9xlLOa02KR0e/seEq4KkSgkDoBuZOhGYxDrkAXmCg3F+JurRFu
+         GM+KoGk6BKg4tpE7KzANc2kVzcWdrfjSi3G+9qHql8NvI6S8Xh4pJeuKYtkw80oocUbc
+         jnpAsv5Drjv2cNeboiUr1WfH9Vdug6T18/BZUw9GsG0urq0xHlpUR6cOAeIsieyX7Pmx
+         yxb4ArOZF70VpPGDXXglnQ+a4Aon8XQDCvtsmTuCp3aQDu5dyXL+TvTDSEVaHaoPZ5Da
+         1r8t7wBikvD3u0y0EDI/J8iWFEKQTuWwBHve4z+78Y8r6GewcIa/R+T+l91HSZ5yvJiz
+         0Bbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MaJdyXbtST+oi2YkdRMDPor7bTOsnqXsbMtwI+h++Zk=;
+        b=VgnWxx4DoUi3RTVUt4LRy0rSYsulDaNA6b2a+aCGdDEvUyGRohhhblTS4Td5MJxhmS
+         ZLnxzWA+2TCWek/LP6iKtE9XC2g0KUJnQjsF5dhjqRFMcVXlItxQX3+NN76X8n1KymeX
+         F5UrSYKr91rupEl4TAQGHYkngpZxnbPcYGve03hUYC7SPHDModTlwLeNL9Ri8kBYsMQ+
+         Blkw48HS8G9qhYJPIyXgrhBzFIKZbb/4s87btVcOAHPYsmBwELJtewlTQDpsG1v0Vxso
+         DQowoJ0CBQQT5EsFOpzAqlO14fLCBzf46KhdJ87EklXv0Z86ru8UIB/oP11kBv8E3V7e
+         WBiA==
+X-Gm-Message-State: AHQUAuaX2fRTsr9COd9wQPiogW4/aPl29byiChsboRSa/b0pguLARw/L
+        KbNLOXejEh+WyASGF4Wqwu0uTM/1Tdg=
+X-Google-Smtp-Source: AHgI3Ib1SITA/aqEq+DQVG4fSy+9AYyp9SeOptueNllYYXf1GELo2aD2/XPyL6vgcNCVkWMg1XT6Ug==
+X-Received: by 2002:a2e:9b18:: with SMTP id u24-v6mr2080968lji.55.1549557849390;
+        Thu, 07 Feb 2019 08:44:09 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.84.191])
+        by smtp.gmail.com with ESMTPSA id c77sm2642932lfe.23.2019.02.07.08.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 08:44:08 -0800 (PST)
+Subject: Re: [PATCH] xhci: Drop superfluous initialization in
+ xhci_queue_ctrl_tx()
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-usb@vger.kernel.org
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20190207000331.7547-1-andrew.smirnov@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <1683ed6e-c798-3a5b-341d-c0a7901887d0@cogentembedded.com>
+Date:   Thu, 7 Feb 2019 19:43:58 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190207000331.7547-1-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello folks,
+Hello!
 
+On 07.02.2019 3:03, Andrey Smirnov wrote:
 
-here are some patches for build process that allow building debian packages
-right the usual canonical way (eg. via dpkg-buildpackage or dck-buildpackage),
-instead 'manually' setting up the build environment and calling make.
-So, from a debian native perspective, turning it from head onto feet ;-)
+> Simplify filed's initialization by directly assigning its final value
 
-dpkg-buildpackage + friends expect the debian/rules file being present in
-the unpacked source tree and driving the actual build (the 'deb-pkg' make
-target does that quite the opposite way). Obviously, 'make deb-pkg' can't
-be used directly, as it would destroy our debian/rules file ...
+    field's.
 
-To archieve this, I've done several things:
+> instead of initializing the variable to sero and then bitwise or-ing
+> it.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Mathias Nyman <mathias.nyman@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-usb@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+[...]
 
-* place .config file to the source tree (not in this patch queue)
-* add some helper targets to the toplevel makefile, so we can just ask
-  for certain things, eg. version, arch, etc, that we need later
-* fix some missing dependencies in the generated debian/control file
-* change scripts/package/mkdebian so that the name of the generated rules
-  file name can be changed via environment
-* a generic debian/rules file for driving the build
-
-The last patch isn't really meant to be merged yet (need to change the
-deb-pkg rule to not overwrite debian/rules anymore) - just including it
-for illustration.
-
-What do you think about this ?
-
-
---mtx
-
+MBR, Sergei
