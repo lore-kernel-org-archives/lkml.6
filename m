@@ -2,229 +2,133 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D848C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23904C282C4
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A6E2190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C283F21908
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 13:14:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iYyPBYBn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfBGNOm (ORCPT
+        id S1727165AbfBGNOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:14:42 -0500
-Received: from mga18.intel.com ([134.134.136.126]:16674 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbfBGNOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:14:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 05:14:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,344,1544515200"; 
-   d="scan'208";a="113124962"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 07 Feb 2019 05:14:41 -0800
-Received: from [10.125.252.152] (abudanko-mobl.ccr.corp.intel.com [10.125.252.152])
-        by linux.intel.com (Postfix) with ESMTP id 162E25800E0;
-        Thu,  7 Feb 2019 05:14:36 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v1 1/3] perf-security: document perf_events/Perf resource
- control
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <9cfbf7a1-72dd-f9d0-8137-0f120fa74d21@linux.intel.com>
- <bfd0e4bb-a4a5-e65d-e8e2-d2c9d03f3160@linux.intel.com>
- <20190206165858.19fdaf58@lwn.net>
-Organization: Intel Corp.
-Message-ID: <a4122ef0-011e-b667-b742-1b58cab187a6@linux.intel.com>
-Date:   Thu, 7 Feb 2019 16:14:35 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thu, 7 Feb 2019 08:14:47 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38900 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726836AbfBGNOp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 08:14:45 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x17DEGOr119510;
+        Thu, 7 Feb 2019 07:14:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549545256;
+        bh=TX1Zk8+x0qFV+UFcshZ5j4A7MCu1ghz39Z6e36rQ7uw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iYyPBYBn0TGe7IgzeDZWZTkqVTf9DMfL/3wCd03fGsMzyxAizakYR5G+NRsJoOnPh
+         BZeaIrd3RsnSqkS8duWlsjo0dFgIsdREAqlkra/qdfnykWtg4t/mW5ft+NH/4LvqR/
+         pWhwcdg1nQMjFCOuv0FjyshaLeNO4WLW2odFiycQ=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x17DEG9h118698
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Feb 2019 07:14:16 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
+ Feb 2019 07:14:16 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 7 Feb 2019 07:14:16 -0600
+Received: from [172.22.96.120] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x17DEFnq026845;
+        Thu, 7 Feb 2019 07:14:15 -0600
+Subject: Re: [PATCH] iio: adc: ads124s08: fix spelling mistake "converions" ->
+ "conversions"
+To:     Colin King <colin.king@canonical.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190207093902.7081-1-colin.king@canonical.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e083e2af-a00d-fb1f-a860-26c369ac5932@ti.com>
+Date:   Thu, 7 Feb 2019 07:14:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190206165858.19fdaf58@lwn.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190207093902.7081-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Colin
 
-On 07.02.2019 2:58, Jonathan Corbet wrote:
-> On Fri, 1 Feb 2019 10:29:11 +0300
-> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
-> 
->> Extend perf-security.rst file with perf_events/Perf resource control
->> section describing RLIMIT_NOFILE and perf_event_mlock_kb settings for
->> performance monitoring user processes.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> 
-> Overall these patches seem reasonable, though I have some nits to pick.
-> I'm happy to apply them but wouldn't mind an ack from the perf camp.
-> 
-> Alexey, could you wrap your paragraphs at 72-75 columns?
+Thanks for the patch
 
-Sure, let's have it as the forth patch in the series in order not to 
-mix the actual content with formatting.
-
+On 2/7/19 3:39 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
->> ---
->>  Documentation/admin-guide/perf-security.rst | 36 +++++++++++++++++++++
->>  1 file changed, 36 insertions(+)
->>
->> diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
->> index f73ebfe9bfe2..ff6832191577 100644
->> --- a/Documentation/admin-guide/perf-security.rst
->> +++ b/Documentation/admin-guide/perf-security.rst
->> @@ -84,6 +84,40 @@ governed by perf_event_paranoid [2]_ setting:
->>       locking limit is imposed but ignored for unprivileged processes with
->>       CAP_IPC_LOCK capability.
->>  
->> +perf_events/Perf resource control
->> +---------------------------------
->> +
->> +perf_events system call API [2]_ allocates file descriptors for every configured
+> There is a spelling mistake in several dev_err messages. Fix these.
 > 
-> *The* perf_events system call API
-
-Accepted.
-
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/iio/adc/ti-ads124s08.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->> +PMU event. Open file descriptors are a per-process accountable *resource* governed
->> +by RLIMIT_NOFILE [11]_ limit (ulimit -n), which is usually derived from the login
-> 
-> by *the* RLIMIT_NOFILE
-
-Accepted.
-
-> 
->> +shell process. When configuring Perf collection for a long list of events on a
->> +large server system, this limit can be easily hit preventing required monitoring
->> +configuration. RLIMIT_NOFILE limit can be increased on per-user basis modifying
->> +content of limits.conf file [12]_ on some systems. Ordinary Perf sampling session
-> 
-> of *the* limits.conf file
-> 
-> Ordinarily, a Perf
-
-Accepted.
-
-> 
->> +(perf record) requires an amount of open perf_event file descriptors that is not
->> +less than a number of monitored events multiplied by a number of monitored CPUs.
->> +
->> +An amount of memory available to user processes for capturing performance monitoring
->> +data is governed by perf_event_mlock_kb [2]_ setting. This perf_event specific
-> 
-> by *the* perf_event_mlock_kb
-
-Accepted.
-
-> 
->> +*resource* setting defines overall per-cpu limits of memory allowed for mapping
-> 
-> Why the *emphasis* here?
-
-Avoided emphasis here and in the other places of this paragraphs.
-
-> 
->> +by the user processes to execute performance monitoring. The setting essentially
->> +extends RLIMIT_MEMLOCK [11]_ limit but only for memory regions mapped specially
-> 
-> extends *the* RMLIMIT_MEMLOCK limit *,* but only
-
-Accepted.
-
-> 
->> +for capturing monitored performance events and related data.
->> +
->> +For example, if a machine has eight cores and perf_event_mlock_kb limit is set
->> +to 516 KiB then a user process is provided with 516 KiB * 8 = 4128 KiB of memory
-> 
-> Kib, then
-
-Comma accepted, Kib = 1024 bits and this is not what is meant here - KiB=1024 Bytes.
-
-> 
->> +above RLIMIT_MEMLOCK limit (ulimit -l) for perf_event mmap buffers. In particular
-> 
-> above *the* RLIMIT_MEMLOCK
-> 
-> particular,
-
-Accepted.
-
-> 
->> +this means that if the user wants to start two or more performance monitoring
-> 
-> that, if
-
-Accepted.
-
-> 
->> +processes, it is required to manually distribute available 4128 KiB between the
-> 
-> s/it is/they are/
-
-Not sure what you mean here. I want to say that the users is required to distribute 
-memory among the processes using --mmap-pages. Replaced 'it' with 'the user'.
-
-> 
->> +monitoring processes, for example, using --mmap-pages Perf record mode option.
-> 
-> using *the* --mmap-pages option
-
-Accepted.
-
-> 
->> +Otherwise, the first started performance monitoring process allocates all available
->> +4128 KiB and the other processes will fail to proceed due to the lack of memory.
->> +
->> +RLIMIT_MEMLOCK and perf_event_mlock_kb *resource* constraints are ignored for
->> +processes with CAP_IPC_LOCK capability. Thus, perf_events/Perf privileged users
-> 
-> with *the* CAP_IPC_LOCK
-
-Accepted.
-
-> 
->> +can be provided with memory above the constraints for perf_events/Perf performance
->> +monitoring purpose by providing the Perf executable with CAP_IPC_LOCK capability.
->> +
->>  Bibliography
->>  ------------
->>  
->> @@ -94,4 +128,6 @@ Bibliography
->>  .. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
->>  .. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
->>  .. [7] `<http://man7.org/linux/man-pages/man2/ptrace.2.html>`_
->> +.. [11] `<http://man7.org/linux/man-pages/man2/getrlimit.2.html>`_
->> +.. [12] `<http://man7.org/linux/man-pages/man5/limits.conf.5.html>`_
-> 
-> Thanks,
-> 
-> jon
+> diff --git a/drivers/iio/adc/ti-ads124s08.c b/drivers/iio/adc/ti-ads124s08.c
+> index c2cf58908fc8..53f17e4f2f23 100644
+> --- a/drivers/iio/adc/ti-ads124s08.c
+> +++ b/drivers/iio/adc/ti-ads124s08.c
+> @@ -232,7 +232,7 @@ static int ads124s_read_raw(struct iio_dev *indio_dev,
+>  
+>  		ret = ads124s_write_cmd(indio_dev, ADS124S08_START_CONV);
+>  		if (ret) {
+> -			dev_err(&priv->spi->dev, "Start converions failed\n");
+> +			dev_err(&priv->spi->dev, "Start conversions failed\n");
+>  			goto out;
+>  		}
+>  
+> @@ -246,7 +246,7 @@ static int ads124s_read_raw(struct iio_dev *indio_dev,
+>  
+>  		ret = ads124s_write_cmd(indio_dev, ADS124S08_STOP_CONV);
+>  		if (ret) {
+> -			dev_err(&priv->spi->dev, "Stop converions failed\n");
+> +			dev_err(&priv->spi->dev, "Stop conversions failed\n");
+>  			goto out;
+>  		}
+>  
+> @@ -283,12 +283,12 @@ static irqreturn_t ads124s_trigger_handler(int irq, void *p)
+>  
+>  		ret = ads124s_write_cmd(indio_dev, ADS124S08_START_CONV);
+>  		if (ret)
+> -			dev_err(&priv->spi->dev, "Start ADC converions failed\n");
+> +			dev_err(&priv->spi->dev, "Start ADC conversions failed\n");
+>  
+>  		buffer[j] = ads124s_read(indio_dev, scan_index);
+>  		ret = ads124s_write_cmd(indio_dev, ADS124S08_STOP_CONV);
+>  		if (ret)
+> -			dev_err(&priv->spi->dev, "Stop ADC converions failed\n");
+> +			dev_err(&priv->spi->dev, "Stop ADC conversions failed\n");
+>  
+>  		j++;
+>  	}
 > 
 
-Thanks,
-Alexey
+Acked-by: Dan Murphy <dmurphy@ti.com>
+
+-- 
+------------------
+Dan Murphy
