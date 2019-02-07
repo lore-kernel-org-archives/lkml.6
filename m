@@ -2,177 +2,307 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BC8C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA25C282CC
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656302190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48ED92190A
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 15:08:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jReqGrfe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfBGPHG (ORCPT
+        id S1726894AbfBGPIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:07:06 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:38995 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfBGPHG (ORCPT
+        Thu, 7 Feb 2019 10:08:20 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38172 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfBGPIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:07:06 -0500
-Received: by mail-it1-f199.google.com with SMTP id k133so267036ite.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 07:07:05 -0800 (PST)
+        Thu, 7 Feb 2019 10:08:20 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so57335pfi.5;
+        Thu, 07 Feb 2019 07:08:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dfU0pKg1NTJucRMIlSxa2N0XLCtOEs1yT5bK0KcghM8=;
+        b=jReqGrfeeg785CCKzcU2lrpeLHNUuStHo4LQyFXMHeHKrxHe+Ngh/UIw0tL7TAiPxP
+         SRB2zEoVmQlD5uOlBzFH3Hqy56aVUE2AcrWV+Hnt/Z7X4sWCfORNDh9ssaDsI+AQH6kj
+         PkheZfDSXAwn0c2Z0M/suofEzkR8KDlfCdMe8X1fMFELMvvEc56yhfliLnOT3X82+RBJ
+         Ccm2DGGEm6Cif1qZoYF1gYe6zLlszEUQCJdCdVmlt2cRy7woZCg/UVvnpV+W6vvDVv64
+         uidzUh64UbIMbaazNY1JFjGqYrWjM4mm9pd9HKUuJ+nDBudzJ6j60TGSMgK6r33Tnxff
+         L5TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=cCSfg4eNgTTY6CJXC6muoq9RLxe3Recu9IAjM4XX7Ck=;
-        b=tWaTPZMhxXT4RnIXtnU65vk8e+/ByEfvWBe0gwY4rhXuGzF3Qn5QHiODYFOS//bRVb
-         pDzx2cJYMG/H7K1vXWyTWMDe0MMwsee6NAyHDQtu91771WqbChWwxIB5b3u2/EzyTRhP
-         UdRqEvTcrHFh8t+bgv49w+ebV0VqhEm3nWZsEnmQL/WAM0aXExOJaC2oVR9x5YY0c95o
-         ohiax9XkibYU+cIGUNRhp62BzZ/PJmpCEIvPPshqZ4qCG6kG7l6NmVqT69jCw4XaCdfZ
-         lGOeU/wyCxG0cCySo84GwcYksvYSZXLT4EArZvkZU6QquIlllBIx25Teo5VYdopsIJLk
-         X9vg==
-X-Gm-Message-State: AHQUAuZVnmoT1ocKSDmTVe2JTyU66FQDpgANJxH2mcRfkk9wa0N9pU7A
-        Jc7Nh3ws+DNkL8jbVL9nzOs5scu/THrn52zQRUV0xW8up7+H
-X-Google-Smtp-Source: AHgI3IYsCkk9OZHfudi1NrVOef7C8a7+eT3B3+MVGtcGVNcAGjUiZH0pAtMpogUld+cCnyjITzJ0CDChkE5iI/EQYBgvplgNxBDV
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=dfU0pKg1NTJucRMIlSxa2N0XLCtOEs1yT5bK0KcghM8=;
+        b=OkDJTydzW0mezZn3zspkQ8xwL1g9ki2avfRO7RYnNF9bc2hAv4I3IGI+R2Gmx6REZT
+         k52OONTvJauzkSnQiiTVdO3xgAsBHggKCl2mKTYR22Pv8lNndzBzJPsSbxY3/xtKKv3i
+         QqcKBH50oKFCPenokk7X79tqWkw7GIrCxYamacK0LA5f4BKih+zmbXpN35TUasA5ntFL
+         LcVWRlPcaTtMfFDEa1lFqjjpCUvcG0bMVTHfmZ7UCP4MMfBcXU1RtB18vKggGh1Drxvq
+         Lnwcq9GF14tP2Jjew25gDm1Rk1vB9SQ/6Yv8sEPjFOkVHfRxSqMpE6sexQPQThGhJy2S
+         tqhg==
+X-Gm-Message-State: AHQUAuZOuM4wV8Nzi2g6HWrzPxL8WNpuJAqOU6UdgvZLIZdZtlJwSVn8
+        U1zIFrXYBikg9ZDqA0YRAqU=
+X-Google-Smtp-Source: AHgI3Ia1/W1S9Ao6TO/5es/lCyRm4v0rlcd+DX/1/vFbsSCydpoK2BoVVsqrKtbsulKQ8k8cgnKaNg==
+X-Received: by 2002:a63:451a:: with SMTP id s26mr15482085pga.150.1549552098516;
+        Thu, 07 Feb 2019 07:08:18 -0800 (PST)
+Received: from ziggy.stardust ([62.31.71.171])
+        by smtp.gmail.com with ESMTPSA id q127sm7358176pgq.39.2019.02.07.07.08.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 07:08:16 -0800 (PST)
+Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and evaluation
+ board dts and Makefile
+To:     Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Ben Ho <Ben.Ho@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Zhiyong Tao <Zhiyong.Tao@mediatek.com>
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+ <1548317240-44682-7-git-send-email-erin.lo@mediatek.com>
+ <20190130162204.GA1521@bogus> <1548902050.23230.4.camel@mtksdaap41>
+ <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
+ <1548992018.11367.8.camel@mtksdaap41> <1548997866.26127.4.camel@mtksdaap41>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ mQINBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
+ fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
+ OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
+ gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
+ 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
+ EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
+ fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
+ ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
+ HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
+ 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABtClNYXR0aGlhcyBC
+ cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPokCUgQTAQIAPAIbAwYLCQgHAwIGFQgC
+ CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
+ VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
+ ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
+ YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
+ c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
+ DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
+ 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
+ 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
+ aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
+ jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
+ wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyybkCDQRT9c4FARAAqdGWpdzcSM8q
+ 6I2oTPS5J4KXXIJS8O2jbUcxoNuaSBnUkhwp2eML/i30oLbEC+akmagcOLD0kOY46yRFeSEC
+ SPM9SWLxKvKUTQYGLX2sphPVZ3hEdFYKen3+cbvo6GyYTnm8ropHM9uqmXPZFFfLJDL76Nau
+ kFsRfPMQUuwMe3hFVLmF7ntvdX3Z3jKImoMWrgA/SnsT6K40n/GCl1HNz2T8PSnqAUQjvSoI
+ FAenxb23NtW6kg50xIxlb7DKbncnQGGTwoYn8u9Lgxkh8gJ03IMiSDHZ9o+wl21U8B3OXr1K
+ L08vXmdR70d6MJSmt6pKs7yTjxraF0ZS6gz+F2BTy080jxceZwEWIIbK7zU3tm1hnr7QIbj/
+ H6W2Pv9p5CXzQCIw17FXFXjpGPa9knzd4WMzJv2Rgx/m8/ZG91aKq+4Cbz9TLQ7OyRdXqhPJ
+ CopfKgZ2l/Fc5+AGhogJLxOopBoELIdHgB50Durx4YJLmQ1z/oimD0O/mUb5fJu0FUQ5Boc1
+ kHHJ8J8bZTuFrGAomfvnsek+dyenegqBpZCDniCSfdgeAx9oWNoXG4cgo8OVG7J/1YIWBHRa
+ Wnk+WyXGBfbY/8247Gy8oaXtQs1OnehbMKBHRIY0tgoyUlag3wXuUzeK+0PKtWC7ZYelKNC0
+ Fn+zL9XpnK3HLE5ckhBLgK8AEQEAAYkCHwQYAQIACQUCU/XOBQIbDAAKCRDZFAuyVhMC8Yyu
+ D/9g6+JZZ+oEy7HoGZ0Bawnlxu/xQrzaK/ltQhA2vtiMaxCN46gOvEF/x+IvFscAucm3q4Dy
+ bJJkW2qY30ISK9MDELnudPmHRqCxTj8koabvcI1cP8Z0Fw1reMNZVgWgVZJkwHuPYnkhY15u
+ 3vHDzcWnfnvmguKgYoJxkqqdp/acb0x/qpQgufrWGeYv2yb1YNidXBHTJSuelFcGp/oBXeJz
+ rQ2IP1JBbQmQfPSePZzWdSLlrR+3jcBJEP/A/73lSObOQpiYJomXPcla6dH+iyV0IiiZdYgU
+ Htwru4Stv/cFVFsUJk1fIOP1qjSa+L6Y0dWX6JMniqUXHhaXo6OPf7ArpVbBygMuzvy99LtS
+ FSkMcYXn359sXOYsRy4V+Yr7Bs0lzdnHnKdpVqHiDvNgrrLoPNrKTiYwTmzTVbb9u/BjUGhC
+ YUS705vcjBgXhdXS44kgO22kaB5c6Obg7WP7cucFomITovtZs5Rm1iaZZc31lzobfFPUwDSc
+ YXOj6ckS9bF9lDG26z3C/muyiifZeiQvvG1ygexrHtnKYTNxqisOGjjcXzDzpS8egIOtIEI/
+ arzlqK5RprMLVOl6n/npxEWmInjBetsBsaX/9kJNZFM4Yais5scOnP+tuTnFTW2K9xKySyuD
+ q/iLORJYRYMloJPaDAftiYfjFa8zuw1XnQyG17kCDQRT9gX3ARAAsL2UwyvSLQuMxOW2GRLv
+ CiZuxtIEoUuhaBWdC/Yq3c6rWpTu692lhLd4bRpKJkE4nE3saaTVxIHFF3tt3IHSa3Qf831S
+ lW39EkcFxr7DbO17kRThOyU1k7KDhUQqhRaUoT1NznrykvpTlNszhYNjA0CMYWH249MJXgck
+ iKOezSHbQ2bZWtFG3uTloWSKloFsjsmRsb7Vn2FlyeP+00PVC6j7CRqczxpkyYoHuqIS0w1z
+ Aq8HP5DDSH7+arijtPuJhVv9uaiD6YFLgSIQy4ZCZuMcdzKJz2j6KCw2kUXLehk4BU326O0G
+ r9+AojZT8J3qvZYBpvCmIhGliKhZ7pYDKZWVseRw7rJS5UFnst5OBukBIjOaSVdp6JMpe99o
+ caLjyow2By6DCEYgLCrquzuUxMQ8plEMfPD1yXBo00bLPatkuxIibM0G4IstKL5hSAKiaFCc
+ 2f73ppp7eby3ZceyF4uCIxN3ABjW9ZCEAcEwC40S3rnh2wZhscBFZ+7sO7+Fgsd0w67zjpt+
+ YHFNv/chRJiPnDGGRt0jPWryaasDnQtAAf59LY3qd4GVHu8RA1G0Rz4hVw27yssHGycc4+/Z
+ ZX7sPpgNKlpsToMaB5NWgc389HdqOG80Ia+sGkNj9ylp74MPbd0t3fzQnKXzBSHOCNuS67sc
+ lUAw7HB+wa3BqgsAEQEAAYkEPgQYAQIACQUCU/YF9wIbAgIpCRDZFAuyVhMC8cFdIAQZAQIA
+ BgUCU/YF9wAKCRC0OWJbLPHTQ14xD/9crEKZOwhIWX32UXvB/nWbhEx6+PQG2uWsnah7oc5D
+ 7V+aY7M1jy5af8yhlhVdaxL5xUoepfOP08lkCEuSdrYbS5wBcQj4NE1QUoeAjJKbq4JwxUkX
+ Baq2Lu91UZpdKxEVFfSkEzmeMaVvClGjGOtNCUKl8lwLuthU7dGTW74mJaW5jjlXldgzfzFd
+ BkS3fsXfcmeDhHh5TpA4e3MYVBIJrq6Repv151g/zxdA02gjJgGvJlXTb6OgEZGNFr8LGJDh
+ LP7MSksBw6IxCAJSicMESu5kXsJfcODlm4zFaV8QDBevI/s/TgOQ9KQ/EJQsG+XBAuh0dqpu
+ ImmCdhlHx+YaGmwKO1/yhfWvg1h1xbVn98izeotmq1+0J1jt9tgM17MGvgHjmvqlaY+oUXfj
+ OkHkcCGOvao5uAsddQhZcSLmLhrSot8WJI0z3NIM30yiNx/r6OMu47lzTobdYCU8/8m7Rhsq
+ fyW68D+XR098NIlU2oYy1zUetw59WJLf2j5u6D6a9p10doY5lYUEeTjy9Ejs/cL+tQbGwgWh
+ WwKVal1lAtZVaru0GMbSQQ2BycZsZ+H+sbVwpDNEOxQaQPMmEzwgv2Sk2hvR3dTnhUoUaVoR
+ hQE3/+fVRbWHEEroh/+vXV6n4Ps5bDd+75NCQ/lfPZNzGxgxqbd/rd2wStVZpQXkhofMD/4k
+ Z8IivHZYaTA+udUk3iRm0l0qnuX2M5eUbyHW0sZVPnL7Oa4OKXoOir1EWwzzq0GNZjHCh6Cz
+ vLOb1+pllnMkBky0G/+txtgvj5T/366ErUF+lQfgNtENKY6In8tw06hPJbu1sUTQIs50Jg9h
+ RNkDSIQ544ack0fzOusSPM+vo6OkvIHt8tV0fTO1muclwCX/5jb7zQIDgGiUIgS8y0M4hIkP
+ KvdmgurPywi74nEoQQrKF6LpPYYHsDteWR/k2m2BOj0ciZDIIxVR09Y9moQIjBLJKN0J21XJ
+ eAgam4uLV2p1kRDdw/ST5uMCqD4Qi5zrZyWilCci6jF1TR2VEt906E2+AZ3BEheRyn8yb2KO
+ +cJD3kB4RzOyBC/Cq/CGAujfDkRiy1ypFF3TkZdya0NnMgka9LXwBV29sAw9vvrxHxGa+tO+
+ RpgKRywr4Al7QGiw7tRPbxkcatkxg67OcRyntfT0lbKlSTEQUxM06qvwFN7nobc9YiJJTeLu
+ gfa4fCqhQCyquWVVoVP+MnLqkzu1F6lSB6dGIpiW0s3LwyE/WbCAVBraPoENlt69jI0WTXvH
+ 4v71zEffYaGWqtrSize20x9xZf5c/Aukpx0UmsqheKeoSprKyRD/Wj/LgsuTE2Uod85U36Xk
+ eFYetwQY1h3lok2Zb/3uFhWr0NqmT14EL7kCDQRT9gkSARAApxtQ4zUMC512kZ+gCiySFcIF
+ /mAf7+l45689Tn7LI1xmPQrAYJDoqQVXcyh3utgtvBvDLmpQ+1BfEONDWc8KRP6Abo35YqBx
+ 3udAkLZgr/RmEg3+Tiof+e1PJ2zRh5zmdei5MT8biE2zVd9DYSJHZ8ltEWIALC9lAsv9oa+2
+ L6naC+KFF3i0m5mxklgFoSthswUnonqvclsjYaiVPoSldDrreCPzmRCUd8znf//Z4BxtlTw3
+ SulF8weKLJ+Hlpw8lwb3sUl6yPS6pL6UV45gyWMe677bVUtxLYOu+kiv2B/+nrNRDs7B35y/
+ J4t8dtK0S3M/7xtinPiYRmsnJdk+sdAe8TgGkEaooF57k1aczcJlUTBQvlYAEg2NJnqaKg3S
+ CJ4fEuT8rLjzuZmLkoHNumhH/mEbyKca82HvANu5C9clyQusJdU+MNRQLRmOAd/wxGLJ0xmA
+ ye7Ozja86AIzbEmuNhNH9xNjwbwSJNZefV2SoZUv0+V9EfEVxTzraBNUZifqv6hernMQXGxs
+ +lBjnyl624U8nnQWnA8PwJ2hI3DeQou1HypLFPeY9DfWv4xYdkyeOtGpueeBlqhtMoZ0kDw2
+ C3vzj77nWwBgpgn1Vpf4hG/sW/CRR6tuIQWWTvUM3ACa1pgEsBvIEBiVvPxyAtL+L+Lh1Sni
+ 7w3HBk1EJvUAEQEAAYkCHwQYAQIACQUCU/YJEgIbDAAKCRDZFAuyVhMC8QndEACuN16mvivn
+ WwLDdypvco5PF8w9yrfZDKW4ggf9TFVB9skzMNCuQc+tc+QM+ni2c4kKIdz2jmcg6QytgqVu
+ m6V1OsNmpjADaQkVp5jL0tmg6/KA9Tvr07Kuv+Uo4tSrS/4djDjJnXHEp/tB+Fw7CArNtUtL
+ lc8SuADCmMD+kBOVWktZyzkBkDfBXlTWl46T/8291lEspDWe5YW1ZAH/HdCR1rQNZWjNCpB2
+ Cic58CYMD1rSonCnbfUeyZYNNhNHZosl4dl7f+am87Q2x3pK0DLSoJRxWb7vZB0uo9CzCSm3
+ I++aYozF25xQoT+7zCx2cQi33jwvnJAK1o4VlNx36RfrxzBqc1uZGzJBCQu48UjmUSsTwWC3
+ HpE/D9sM+xACs803lFUIZC5H62G059cCPAXKgsFpNMKmBAWweBkVJAisoQeX50OP+/11ArV0
+ cv+fOTfJj0/KwFXJaaYh3LUQNILLBNxkSrhCLl8dUg53IbHx4NfIAgqxLWGfXM8DY1aFdU79
+ pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
+ AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <c872f03c-714a-d99f-d555-e897f80d67be@gmail.com>
+Date:   Thu, 7 Feb 2019 16:08:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-Received: by 2002:a24:244:: with SMTP id 65mr6552331itu.3.1549552025058;
- Thu, 07 Feb 2019 07:07:05 -0800 (PST)
-Date:   Thu, 07 Feb 2019 07:07:05 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000003cadb05814f3284@google.com>
-Subject: INFO: rcu detected stall in __perf_sw_event
-From:   syzbot <syzbot+a41ac89a0712acde0e84@syzkaller.appspotmail.com>
-To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
-        namhyung@kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1548997866.26127.4.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    b0314565da2b Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15cd5e73400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f00801d7b7c4fe6
-dashboard link: https://syzkaller.appspot.com/bug?extid=a41ac89a0712acde0e84
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1707cd2f400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a41ac89a0712acde0e84@syzkaller.appspotmail.com
-
-8021q: adding VLAN 0 to HW filter on device batadv0
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	0-....: (10499 ticks this GP) idle=d02/1/0x4000000000000002  
-softirq=13779/13779 fqs=5238
-rcu: 	 (t=10500 jiffies g=11657 q=1546)
-NMI backtrace for cpu 0
-CPU: 0 PID: 9826 Comm: syz-executor0 Not tainted 5.0.0-rc5+ #61
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
-  rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree.c:1211
-  print_cpu_stall kernel/rcu/tree.c:1348 [inline]
-  check_cpu_stall kernel/rcu/tree.c:1422 [inline]
-  rcu_pending kernel/rcu/tree.c:3018 [inline]
-  rcu_check_callbacks.cold+0x500/0xa4a kernel/rcu/tree.c:2521
-  update_process_times+0x32/0x80 kernel/time/timer.c:1635
-  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
-  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
-  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
-  __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
-  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
-  smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:memcpy_erms+0x8/0x10 arch/x86/lib/memcpy_64.S:56
-Code: 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5  
-89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 f3 a4 <c3> 0f 1f 80 00  
-00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 fe 7c 35
-RSP: 0018:ffff88808fd171b8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff888092eb1798 RBX: 0000000000000868 RCX: 0000000000000000
-RDX: 0000000000000010 RSI: ffff88808fd17348 RDI: ffff888092eb17a8
-RBP: ffff88808fd171d8 R08: 1ffff110125d62f3 R09: ffffed10125d62f5
-R10: ffffed10125d62f4 R11: ffff888092eb17a7 R12: 0000000000000010
-R13: ffff888092eb1798 R14: ffff88808fd17338 R15: ffff88808fd17550
-  memcpy include/linux/string.h:352 [inline]
-  memcpy_common kernel/events/internal.h:172 [inline]
-  __output_copy kernel/events/internal.h:176 [inline]
-  perf_output_read_group kernel/events/core.c:6114 [inline]
-  perf_output_read+0xe16/0x1390 kernel/events/core.c:6147
-  perf_output_sample+0x13b9/0x1a90 kernel/events/core.c:6189
-  __perf_event_output kernel/events/core.c:6511 [inline]
-  perf_event_output_forward+0x150/0x290 kernel/events/core.c:6524
-  __perf_event_overflow+0x144/0x360 kernel/events/core.c:7768
-  perf_swevent_overflow+0xaa/0x140 kernel/events/core.c:7844
-  perf_swevent_event+0x1f7/0x2f0 kernel/events/core.c:7877
-  do_perf_sw_event kernel/events/core.c:7985 [inline]
-  ___perf_sw_event+0x31c/0x570 kernel/events/core.c:8016
-  __perf_sw_event+0x51/0xa0 kernel/events/core.c:8028
-  perf_sw_event include/linux/perf_event.h:1054 [inline]
-  do_user_addr_fault arch/x86/mm/fault.c:1516 [inline]
-  __do_page_fault+0x734/0xd60 arch/x86/mm/fault.c:1541
-  do_page_fault+0x71/0x581 arch/x86/mm/fault.c:1572
-  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1143
-RIP: 0010:copy_user_enhanced_fast_string+0xe/0x20  
-arch/x86/lib/copy_user_64.S:181
-Code: 89 d1 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 31 c0 0f 1f 00 c3 0f 1f  
-80 00 00 00 00 0f 1f 00 83 fa 40 0f 82 70 ff ff ff 89 d1 <f3> a4 31 c0 0f  
-1f 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 83
-RSP: 0018:ffff88808fd17b40 EFLAGS: 00010206
-RAX: 0000000000000000 RBX: 0000000000001000 RCX: 0000000000000340
-RDX: 0000000000001000 RSI: 000000002081d000 RDI: ffff88808b047cc0
-RBP: ffff88808fd17b78 R08: ffffed1011609000 R09: 0000000000000000
-R10: ffffed1011608fff R11: ffff88808b047fff R12: 000000002081c340
-R13: ffff88808b047000 R14: 000000002081d340 R15: 00007ffffffff000
-  copy_page_from_iter_iovec lib/iov_iter.c:294 [inline]
-  copy_page_from_iter+0x324/0x750 lib/iov_iter.c:907
-  pipe_write+0x27d/0xfb0 fs/pipe.c:429
-  call_write_iter include/linux/fs.h:1863 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x613/0x8e0 fs/read_write.c:487
-  vfs_write+0x20c/0x580 fs/read_write.c:549
-  ksys_write+0xea/0x1f0 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457e39
-Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f21b6591c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
-RDX: 0000000041395527 RSI: 0000000020000340 RDI: 0000000000000006
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f21b65926d4
-R13: 00000000004c3c0e R14: 00000000004dc3a8 R15: 00000000ffffffff
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 01/02/2019 06:11, Erin Lo wrote:
+> Add back more people since mail server issue
+> 
+> On Fri, 2019-02-01 at 11:33 +0800, Erin Lo wrote:
+>> On Thu, 2019-01-31 at 15:10 -0600, Rob Herring wrote:
+>>> On Wed, Jan 30, 2019 at 8:34 PM Erin Lo <erin.lo@mediatek.com> wrote:
+>>>>
+>>>> On Wed, 2019-01-30 at 10:22 -0600, Rob Herring wrote:
+>>>>> On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
+>>>>>> From: Ben Ho <Ben.Ho@mediatek.com>
+>>>>>>
+>>>>>> Add basic chip support for Mediatek 8183, include
+>>>>>> pinctrl file, uart node with correct uart clocks, pwrap device
+>>>>>>
+>>>>>> Add clock controller nodes, include topckgen, infracfg,
+>>>>>> apmixedsys and subsystem.
+>>>>>>
+>>>>>> Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
+>>>>>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+>>>>>> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+>>>>>> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+>>>>>> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+>>>>>> Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
+>>>>>> Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+>>>>>> Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+>>>>>> ---
+>>>>>
+>>>>>
+>>>>>> +   sysirq: intpol-controller@c530a80 {
+>>>>>
+>>>>> interrupt-controller@...
+>>>>
+>>>> I will modify it in next version.
+>>>>>
+>>>>>
+>>>>> Place all the MMIO peripherals under one or more simple-bus nodes.
+>>>>>
+>>>>> Rob
+>>>>>
+>>>>
+>>>> Do you mean need to add simple-bus like this?
+>>>
+>>> Yes.
+>>
+>> We remove soc because Matthias suggested it in former MTK SoC maybe in
+>> 2015 year.
+>>
+>> We will add it back by your comment.
+>>
+>> Thank you. 
+>>
+>> Best Regards,
+>> Erin
+> 
+> Hi, Matthias,
+> Do you have any comment here?
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Although I wasn't able to find it in the documentation my understanding is, that
+all devices on-chip should be under soc "bus".
+
+I'm sorry if I created confusion with comments in the past.
+
+Regards,
+Matthias
+
+> Thanks
+> 
+> Best Regards,
+> Erin
+>>>
+>>>>
+>>>> +   soc: soc {
+>>>> +                #address-cells = <0x1>;
+>>>> +                #size-cells = <0x1>;
+>>>> +                ranges = <0 0 0 0xffffffff>;
+>>>> +                compatible = "simple-bus";
+>>>>
+>>>>                 soc_data: soc_data@08000000 {
+>>>>                         compatible = "mediatek,mt8183-efuse",
+>>>>                                      "mediatek,efuse";
+>>>>                         reg = <0 0x08000000 0 0x0010>;
+>>>>                         #address-cells = <1>;
+>>>>                         #size-cells = <1>;
+>>>>                         status = "disabled";
+>>>>                 };
+>>>>
+>>>>                 gic: interrupt-controller@0c000000 {
+>>>>                         compatible = "arm,gic-v3";
+>>>>                         #interrupt-cells = <4>;
+>>>>
+>>>> Best Regards,
+>>>> Erin
+>>>>
+>>>>> _______________________________________________
+>>>>> Linux-mediatek mailing list
+>>>>> Linux-mediatek@lists.infradead.org
+>>>>> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>>>>
+>>>>
+>>>>
+>>>> _______________________________________________
+>>>> linux-arm-kernel mailing list
+>>>> linux-arm-kernel@lists.infradead.org
+>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+> 
+> 
