@@ -2,112 +2,195 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE4EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA03C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 637F520663
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:39:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="b8HeXG6+"
+	by mail.kernel.org (Postfix) with ESMTP id 7369520663
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 20:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfBGUjr (ORCPT
+        id S1727500AbfBGUkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 15:39:47 -0500
-Received: from ozlabs.org ([203.11.71.1]:53955 "EHLO ozlabs.org"
+        Thu, 7 Feb 2019 15:40:21 -0500
+Received: from mga02.intel.com ([134.134.136.20]:23150 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726764AbfBGUjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 15:39:47 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wVYD20Vsz9sDr;
-        Fri,  8 Feb 2019 07:39:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549571984;
-        bh=V64LPX5iXjx7YvLwwFcD0tMn41eYvxkY6rUoBWYjAmI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=b8HeXG6+bJ11CmXR28gprB7fFBpJRS1f7BkYmpmwaot7jc57dxne/MmrHPwfDCYgv
-         0Z514raCNP6+5sFb3IHVWj6Kp3GU6mcIJR1vp4jUl912v/afQ6QV6HDx/Jrv/lcb2n
-         HpkvMovYRQXaxRNsLnhGk8wOH3dHD0CmfVxaDlj2jwpXBKEFA9ESXKF1GNBd4ImJxq
-         BW1sHf0lxrFmTvH6rsE1TWZMeCrXJ0aUz96I3HOiascRrEapT423zcNgV15KLmO3Ab
-         0PTQwoLd/RjVBi3NXgaijLWnLgyBacUUwkpOUAbnCtd5SIa+JU0WM8db5mLA6IiSSr
-         ySivj+tF/SMyw==
-Date:   Fri, 8 Feb 2019 07:39:43 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        "Lucas A. M. =?UTF-8?B?TWFnYWxow6Nlcw==?=" <lucmaga@gmail.com>
-Subject: linux-next: Fixes tags need some work in the v4l-dvb tree
-Message-ID: <20190208073943.0317d5ea@canb.auug.org.au>
+        id S1727479AbfBGUkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 15:40:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 12:40:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
+   d="scan'208";a="114506896"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 07 Feb 2019 12:40:19 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 5BF0858048A;
+        Thu,  7 Feb 2019 12:40:19 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v1 1/2] PCI: ATS: Add function to check ATS page aligned
+ request status.
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     joro@8bytes.org, dwmw2@infradead.org, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Keith Busch <keith.busch@intel.com>
+References: <cover.1549478584.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <91bfae8b1d4b424219e3ce3c1fc03559c73f1ae7.1549478584.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190207200747.GK7268@google.com>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <f6f85182-da40-f404-ebc0-fef650d753cb@linux.intel.com>
+Date:   Thu, 7 Feb 2019 12:39:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/aTJTitUrGHEGzsnvTdXsFnI"; protocol="application/pgp-signature"
+In-Reply-To: <20190207200747.GK7268@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/aTJTitUrGHEGzsnvTdXsFnI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+On 2/7/19 12:07 PM, Bjorn Helgaas wrote:
+> Hi Kuppuswamy,
+>
+> Previous changes to ats.c used subject lines starting with just
+> "PCI:".
+>
+> I think it does make sense to include "ATS", but please do it in
+> the way we do it for other PCI features, e.g.,
+>
+>    PCI/ATS: Add pci_ats_page_aligned() interface
+Got it. I will follow PCI/ATS format.
+>
+> On Thu, Feb 07, 2019 at 10:41:13AM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> Add a new function to return the status of ATS page aligned request
+>> bit in ATS capability register. This function will be used by
+>> drivers like IOMMU, if it is required to enforce page-aligned
+>> requests in ATS.
+> "return the Page Aligned Request bit in the ATS Capability Register"
+>
+> This is just to make the terminology match the PCIe spec exactly so
+> it's easier to look up.
+Will fix it in next version.
+>
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Cc: Keith Busch <keith.busch@intel.com>
+>> Suggested-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> ---
+>>   drivers/pci/ats.c             | 22 ++++++++++++++++++++++
+>>   include/linux/pci.h           |  2 ++
+>>   include/uapi/linux/pci_regs.h |  1 +
+>>   3 files changed, 25 insertions(+)
+>>
+>> diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+>> index 5b78f3b1b918..7d14b9a1981e 100644
+>> --- a/drivers/pci/ats.c
+>> +++ b/drivers/pci/ats.c
+>> @@ -142,6 +142,28 @@ int pci_ats_queue_depth(struct pci_dev *dev)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pci_ats_queue_depth);
+>>   
+>> +/**
+>> + * pci_ats_page_aligned - Return ATS page aligned request bit status.
+> Capitalize name of bit as above.
+Agreed.
+>
+>> + * @pdev: the PCI device
+>> + *
+>> + * Returns  value > 0 if address is aligned or 0 otherwise.
+> s/  / /
+>
+> "if Untranslated Addresses generated by the device are always
+> aligned or ..."
+>
+>> + *
+>> + * As per PCI spec, If page aligned request bit is set, it indicates
+>> + * the untranslated address is always aligned to a 4096 byte boundary.
+> "Per PCIe r4.0, sec 10.5.1.2, if the Page Aligned Request bit,
+> Untranslated Addresses generated by the device are always aligned to a
+> 4096 byte boundary."
+>
+>> + */
+>> +int pci_ats_page_aligned(struct pci_dev *pdev)
+>> +{
+>> +	u16 cap;
+>> +
+>> +	if (!pdev->ats_cap)
+>> +		return 0;
+>> +
+>> +	pci_read_config_word(pdev, pdev->ats_cap + PCI_ATS_CAP, &cap);
+>> +
+>> +	return PCI_ATS_CAP_PAGE_ALIGNED(cap);
+>> +}
+>> +EXPORT_SYMBOL_GPL(pci_ats_page_aligned);
+>> +
+>>   #ifdef CONFIG_PCI_PRI
+>>   /**
+>>    * pci_enable_pri - Enable PRI capability
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index 65f1d8c2f082..9724a8c0496b 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -1524,11 +1524,13 @@ void pci_ats_init(struct pci_dev *dev);
+>>   int pci_enable_ats(struct pci_dev *dev, int ps);
+>>   void pci_disable_ats(struct pci_dev *dev);
+>>   int pci_ats_queue_depth(struct pci_dev *dev);
+>> +int pci_ats_page_aligned(struct pci_dev *dev);
+>>   #else
+>>   static inline void pci_ats_init(struct pci_dev *d) { }
+>>   static inline int pci_enable_ats(struct pci_dev *d, int ps) { return -ENODEV; }
+>>   static inline void pci_disable_ats(struct pci_dev *d) { }
+>>   static inline int pci_ats_queue_depth(struct pci_dev *d) { return -ENODEV; }
+>> +static inline int pci_ats_page_aligned(struct pci_dev *dev) { return 0; }
+>>   #endif
+>>   
+>>   #ifdef CONFIG_PCIE_PTM
+>> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+>> index e1e9888c85e6..d42a759867b8 100644
+>> --- a/include/uapi/linux/pci_regs.h
+>> +++ b/include/uapi/linux/pci_regs.h
+>> @@ -866,6 +866,7 @@
+>>   #define PCI_ATS_CAP		0x04	/* ATS Capability Register */
+>>   #define  PCI_ATS_CAP_QDEP(x)	((x) & 0x1f)	/* Invalidate Queue Depth */
+>>   #define  PCI_ATS_MAX_QDEP	32	/* Max Invalidate Queue Depth */
+>> +#define  PCI_ATS_CAP_PAGE_ALIGNED(x)	0x0020 /* Page Aligned Request */
+> This is wrong because it *always* returns "true", regardless of the
+> value of the ATS Capability register.
+>
+> I would prefer this:
+>
+>    #define  PCI_ATS_CAP_PAGE_ALIGNED   0x0020
+Good catch. it looks like I messed it when I did some cleanup. Sorry 
+about it. Initially it was (x & 0x0020).
+>
+> and then test it like this:
+>
+>    if (cap & PCI_ATS_CAP_PAGE_ALIGNED)
+>      return 1;
+>    return 0;
+Ok.
+>>   #define PCI_ATS_CTRL		0x06	/* ATS Control Register */
+>>   #define  PCI_ATS_CTRL_ENABLE	0x8000	/* ATS Enable */
+>>   #define  PCI_ATS_CTRL_STU(x)	((x) & 0x1f)	/* Smallest Translation Unit */
+>> -- 
+>> 2.20.1
+>>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-In commit
-
-  c2d88e7d66f9 ("media: vb2: Fix buf_out_validate documentation")
-
-Fixes tag
-
-  Fixes: 28d77c21cb ("media: vb2: add buf_out_validate callback")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-In commit
-
-  adc589d2a208 ("media: vimc: Add vimc-streamer for stream control")
-
-Fixes tag
-
-  Fixes: f2fe89061d797 ("vimc: Virtual Media Controller core, capture
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-  - Subject does not match target commit subject
-
-Please do not split Fixes tags over more than one line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/aTJTitUrGHEGzsnvTdXsFnI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxcl48ACgkQAVBC80lX
-0GysvAgAgu5WnSrelhXf2Jf0WHsXlx43cgzfSZDH1iYsR0setTzVpRU+5sbrBBF1
-py3SaLAJv9ll8cwCWqhQ9gk1+pQ5fec4RXBNDYfjiropM1hjt6y83j6cEnZlrmNM
-zpcR8jVZ8fGfdGnrdL3j30rP/dUPSXDC1DsWBW3vic1piS7GZlovO1SscPYVIWsm
-aEXvUXAgHOVRRgUFzRHaqSvb2vdyiWOB8l47/eqQGQfha5qf3KXveiYZ3Y0BauoL
-bhYozUSjRaxFnAIFmtjwEVDVaFUtV4QoO36M+CVWqeiaU3Bka5BqGeceV18VBkGS
-IL50vZESus3c308x8PGALN61BbT9uQ==
-=mNyq
------END PGP SIGNATURE-----
-
---Sig_/aTJTitUrGHEGzsnvTdXsFnI--
