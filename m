@@ -2,181 +2,175 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3443C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DB2C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC1221721
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:57:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQNbCPCk"
+	by mail.kernel.org (Postfix) with ESMTP id 9530F21907
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 22:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549576931;
+	bh=SrGQtSRwp7rdI7Pn1+ONFD6lQT2q2uoDnk5SazLE9kY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=L5dZBO9hAo/NHb5x1QDwsZhchcHNHV9C80ny/a7BDQN76UhdEHALSBjIlXBYW8OEP
+	 EpbZp32sK/v1n7C804O0gNCXkeEoqtL9Ft71tjFdfanZsiNPljGrdgzRGmFlzIeYjo
+	 z638YktJOM1ZANI/jHeY8FJC9vDQm98jmom7iL4w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfBGV5i (ORCPT
+        id S1727059AbfBGWCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 16:57:38 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36422 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfBGV5h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 16:57:37 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p6so1479782wmc.1;
-        Thu, 07 Feb 2019 13:57:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=gWoW5koaP9q+iibI0nW5zt88QENkry54DzTcBCQdDWc=;
-        b=RQNbCPCk1QJH34DabpF8pHT9EecHy71Xzdr+Z535uv2+BaQ8KQQb/2kWAruTXEGKIS
-         vs9wQXZjCA6inFfLAI8d13ONmtXOvyuUHRo8hJ7wzJ95toKP/B143N8og5yQz57U0bZy
-         gU13F/vkkBd1Urx8C9bMbe/8uvJcZG0pyAKFDBELm8ybXtKsDQReO6DelQN4ql5UmL9C
-         m6gdItg8+Ipy2M0JU6/RqKapesZwULN0fo2tEUJEPT1wLGbk7uIa+3aG1MP6clcy52cY
-         BeobVYel++VRV3d9eO9LmKaMmBQzgLHL9Njc2xByRQP5zdEKODB/AaGHuApkk9O5NB1x
-         ekqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=gWoW5koaP9q+iibI0nW5zt88QENkry54DzTcBCQdDWc=;
-        b=J5WG2AmTDHJl/j/gQF6TDcw7QyFHV7Bht9r4yV+DNs7ahUBBkbLgCh2wsPXgCMNBId
-         pN4waCXFATCQNo/3W9/YShdXyJXTWp6gFIybQN+XsvQ2+VM3yFKlUN6GVkTF1CMK3lnH
-         mtgq2YWPpLb5NQ3cJZw1bsKriejbGiggB7yFUFoEZG5Mn/S08hBUHHEkHc/iuz9F32ZZ
-         rBA9SNje8WIXUbgnrlZON+8POulN7rKSuBAyslHV1OaEu+0CfgJToNn1vpA/Tuc5Tawf
-         HGe5K/6WS/jtoOQIdHoeLcaPCJ6YFbvOR4tviBGW73AauHoDgGYubZ8ubgFEk5SvFvDu
-         zGNQ==
-X-Gm-Message-State: AHQUAuaECHKs3j4yTSueaAJpuGcbhdAvMndN2wjvvvRmFjbJI55C2bNf
-        0VveizO7YmlNx32tjqRQ5Hn6USQbHQDVetIQ4xu1rbvTIZc=
-X-Google-Smtp-Source: AHgI3IbbOZf+olbmbdxd99WzEa5w2hD/EwiDlA3yrCR6A3sbLUgN7DDCuHT7vKHT1Tr0VuCa4pN3hAFriRqXZv/QIhk=
-X-Received: by 2002:a7b:c4cb:: with SMTP id g11mr9055735wmk.149.1549576655504;
- Thu, 07 Feb 2019 13:57:35 -0800 (PST)
+        Thu, 7 Feb 2019 17:02:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726576AbfBGWCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 17:02:09 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8667221721;
+        Thu,  7 Feb 2019 22:02:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549576928;
+        bh=SrGQtSRwp7rdI7Pn1+ONFD6lQT2q2uoDnk5SazLE9kY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EDnugmESFHVNnH8NkIoeNXzfZtWsQBX2ejQynqs1ryVAi0wdoailGUxVlHc3SdW7f
+         fpENkzt8A1aTc8RWpt0gHxocOcJs+d675QZh/3nXqAt6M/u2CGYS2qbTRaW9S0jYmY
+         QfkiPS1MTPWgxZ1vfDJcnVT61i54w/6ooZqKlQeo=
+Date:   Thu, 7 Feb 2019 16:02:05 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/5] genirq/affinity: move allocation of
+ 'node_to_cpumask' to irq_build_affinity_masks
+Message-ID: <20190207220204.GP7268@google.com>
+References: <20190125095347.17950-1-ming.lei@redhat.com>
+ <20190125095347.17950-2-ming.lei@redhat.com>
 MIME-Version: 1.0
-From:   Lucas De Marchi <lucas.de.marchi@gmail.com>
-Date:   Thu, 7 Feb 2019 13:57:23 -0800
-Message-ID: <CAKi4VALTMvOzhv=c9jVrk4d099xOXt6prUsQSh3xr3gjPsDxVA@mail.gmail.com>
-Subject: [ANNOUNCE] kmod 26
-To:     linux-modules <linux-modules@vger.kernel.org>
-Cc:     Jessica Yu <jeyu@kernel.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125095347.17950-2-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmod 26 is out:
+On Fri, Jan 25, 2019 at 05:53:43PM +0800, Ming Lei wrote:
+> 'node_to_cpumask' is just one temparay variable for irq_build_affinity_masks(),
+> so move it into irq_build_affinity_masks().
+> 
+> No functioanl change.
 
-        https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-26.tar.xz
-        https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-26.tar.sign
+s/temparay/temporary/
+s/functioanl/functional/
 
-Now we also have a new archive for the mailing list:
-        https://lore.kernel.org/linux-modules/
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
 
-- Improvements
-        - Add more error-checking in library functions and remove
-warnings on newer
-          toolchains
+Nice patch, this is much cleaner.
 
-        - Depmod now handles parallel invocations better by protecting
-the temporary
-          files being used
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
 
-        - Improvements to testsuite and added tests to check the behavior
-          regardless of the features enabled in the kernel and
-libraries we link to
-
-        - Teach the --show-exports option to modprobe. This works similarly to
-          --show-modversions, but it reports the exported symbols from
-that module.
-          Under the hood this reads the .symtab and .strtab sections rather than
-          __versions so it shows useful data even if kernel is
-configured without
-          modversions (CONFIG_MODVERSIONS)
-
-        - Teach pkcs7 parsing to modinfo by using openssl. This allows
-modinfo to
-          correctly parse the signature appended to a module by the kernel build
-          system when configured with CONFIG_MODULE_SIG_ALL, or when externally
-          signed by the distro. Traditionally modules were signed and a struct
-          was appended together with the signature to the end of the module.
-          This has changed on the kernel for pkcs#7 and now the structure isn't
-          filled out with useful information.  So we have to parse the signature
-          block in order to return useful data to the user.
-
-          If kmod is linked with openssl we parse the signature and return the
-          fields as we do for other signatures. An example of the relevant part
-          on the output of modinfo is below:
-
-          Before:
-                  sig_id:         PKCS#7
-                  signer:
-                  sig_key:
-                  sig_hashalgo:   md4
-          After:
-                  sig_id:         PKCS#7
-                  signer:         Fedora kernel signing key
-                  sig_key:
-51:C4:0C:6D:7E:A5:6C:D8:8F:B4:3A:DF:91:78:4F:18:BC:D5:E4:C5
-                  sig_hashalgo:   sha256
-
-          If kmod is not linked to openssl we just start printing
-"unknown" in the
-          sig_hashalgo field rather than the bogus value.
-
-Shortlog is below:
-
-Caio Marcelo de Oliveira Filho (1):
-      testsuite: add Clear's mkosi configuration
-
-Chris Stackpole (1):
-      Phrasing correction in modprobe man page
-
-Daniel Kahn Gillmor (1):
-      man: Fix typo
-
-Jakov Simunic (1):
-      build: fix wrong quotes on bootstrap
-
-Jan Engelhardt (1):
-      kmod: build: cure compiler warnings showing up externally
-
-Luca Bruno (1):
-      libkmod-module: check for NULL before accessing pointers
-
-Lucas De Marchi (17):
-      testsuite: raise arch image to 3GB
-      man: depmod: remove deprecated -m option
-      mkosi: allow Clear to use test modules
-      testsuite: add simple test for --show-exports
-      README: Add link to mailing list archive
-      Remove bootstrap* scripts
-      testsuite: split out function to compare outputs exactly
-      testsuite: add support for testing output against regex
-      testsuite: move --show-exports test to use regex
-      Add semaphoreci 2.0 configuration
-      testsuite: fix modinfo test without openssl
-      build: enable openssl by default
-      build: add openssl to CI deps
-      build: check openssl version
-      testsuite: mkosi: update files
-      build: fix make distcheck
-      kmod 26
-
-Michal Suchanek (3):
-      depmod: prevent module dependency files missing during depmod invocation
-      depmod: prevent module dependency files corruption due to
-parallel invocation.
-      depmod: shut up gcc insufficinet buffer warning
-
-Yauheni Kaliuta (6):
-      modprobe: add --show-exports
-      signature: do not report wrong data for pkc#7 signature
-      testsuite: track number of descriptors instead of their state
-      testsuite: factor out fd related parameters to a structure
-      testsuite: add modinfo pkcs7 signature test
-      libkmod-signature: implement pkcs7 parsing with openssl
-
-
--- 
-Lucas De Marchi
+> ---
+>  kernel/irq/affinity.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> index 45b68b4ea48b..118b66d64a53 100644
+> --- a/kernel/irq/affinity.c
+> +++ b/kernel/irq/affinity.c
+> @@ -175,18 +175,22 @@ static int __irq_build_affinity_masks(const struct irq_affinity *affd,
+>   */
+>  static int irq_build_affinity_masks(const struct irq_affinity *affd,
+>  				    int startvec, int numvecs, int firstvec,
+> -				    cpumask_var_t *node_to_cpumask,
+>  				    struct irq_affinity_desc *masks)
+>  {
+>  	int curvec = startvec, nr_present, nr_others;
+>  	int ret = -ENOMEM;
+>  	cpumask_var_t nmsk, npresmsk;
+> +	cpumask_var_t *node_to_cpumask;
+>  
+>  	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
+>  		return ret;
+>  
+>  	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
+> -		goto fail;
+> +		goto fail_nmsk;
+> +
+> +	node_to_cpumask = alloc_node_to_cpumask();
+> +	if (!node_to_cpumask)
+> +		goto fail_npresmsk;
+>  
+>  	ret = 0;
+>  	/* Stabilize the cpumasks */
+> @@ -217,9 +221,12 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
+>  	if (nr_present < numvecs)
+>  		WARN_ON(nr_present + nr_others < numvecs);
+>  
+> +	free_node_to_cpumask(node_to_cpumask);
+> +
+> + fail_npresmsk:
+>  	free_cpumask_var(npresmsk);
+>  
+> - fail:
+> + fail_nmsk:
+>  	free_cpumask_var(nmsk);
+>  	return ret;
+>  }
+> @@ -236,7 +243,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+>  {
+>  	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+>  	int curvec, usedvecs;
+> -	cpumask_var_t *node_to_cpumask;
+>  	struct irq_affinity_desc *masks = NULL;
+>  	int i, nr_sets;
+>  
+> @@ -247,13 +253,9 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+>  	if (nvecs == affd->pre_vectors + affd->post_vectors)
+>  		return NULL;
+>  
+> -	node_to_cpumask = alloc_node_to_cpumask();
+> -	if (!node_to_cpumask)
+> -		return NULL;
+> -
+>  	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+>  	if (!masks)
+> -		goto outnodemsk;
+> +		return NULL;
+>  
+>  	/* Fill out vectors at the beginning that don't need affinity */
+>  	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+> @@ -271,11 +273,10 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+>  		int ret;
+>  
+>  		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+> -						curvec, node_to_cpumask, masks);
+> +						curvec, masks);
+>  		if (ret) {
+>  			kfree(masks);
+> -			masks = NULL;
+> -			goto outnodemsk;
+> +			return NULL;
+>  		}
+>  		curvec += this_vecs;
+>  		usedvecs += this_vecs;
+> @@ -293,8 +294,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+>  	for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
+>  		masks[i].is_managed = 1;
+>  
+> -outnodemsk:
+> -	free_node_to_cpumask(node_to_cpumask);
+>  	return masks;
+>  }
+>  
+> -- 
+> 2.9.5
+> 
