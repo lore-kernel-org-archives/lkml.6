@@ -2,221 +2,92 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34813C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB8EC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21442190A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C63821872
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 14:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfBGOpW (ORCPT
+        id S1727076AbfBGOrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 09:45:22 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:42706 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBGOpV (ORCPT
+        Thu, 7 Feb 2019 09:47:09 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37270 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfBGOrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 09:45:21 -0500
-Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1grkvQ-0005cj-L4; Thu, 07 Feb 2019 09:45:16 -0500
-Date:   Thu, 7 Feb 2019 09:44:38 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Julien Gomes <julien@arista.com>
-Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        vyasevich@gmail.com, lucien.xin@gmail.com
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Message-ID: <20190207144438.GB23613@hmswarspite.think-freely.org>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
- <20190206212316.GD16887@hmswarspite.think-freely.org>
- <a21b3ca1-fb51-99cd-4979-62a8c6476cd7@arista.com>
+        Thu, 7 Feb 2019 09:47:09 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1grkx5-0006BS-2t; Thu, 07 Feb 2019 14:46:55 +0000
+Date:   Thu, 7 Feb 2019 14:46:55 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Edwin Zimmerman <edwin@211mainstreet.net>
+Cc:     'Denis Efremov' <efremov@ispras.ru>,
+        'Casey Schaufler' <casey@schaufler-ca.com>,
+        "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Eric Paris' <eparis@parisplace.org>,
+        'Kees Cook' <keescook@chromium.org>,
+        'John Johansen' <john.johansen@canonical.com>,
+        'James Morris' <jmorris@namei.org>,
+        "'Serge E. Hallyn'" <serge@hallyn.com>,
+        'Paul Moore' <paul@paul-moore.com>,
+        'Kentaro Takeda' <takedakn@nttdata.co.jp>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/10] security: fix documentation for the path_chmod hook
+Message-ID: <20190207144654.GB2217@ZenIV.linux.org.uk>
+References: <cover.1549540487.git.efremov@ispras.ru>
+ <0275d06334cdb1d2a87384d7971924a70776b3cb.1549540487.git.efremov@ispras.ru>
+ <20190207134939.GA2217@ZenIV.linux.org.uk>
+ <000001d4beee$caa8eff0$5ffacfd0$@211mainstreet.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a21b3ca1-fb51-99cd-4979-62a8c6476cd7@arista.com>
+In-Reply-To: <000001d4beee$caa8eff0$5ffacfd0$@211mainstreet.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 01:48:42PM -0800, Julien Gomes wrote:
+On Thu, Feb 07, 2019 at 09:09:49AM -0500, Edwin Zimmerman wrote:
+> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > > index cb93972257be..5d6428d0027b 100644
+> > > --- a/include/linux/lsm_hooks.h
+> > > +++ b/include/linux/lsm_hooks.h
+> > > @@ -304,8 +304,7 @@
+> > >   *	Return 0 if permission is granted.
+> > >   * @path_chmod:
+> > >   *	Check for permission to change DAC's permission of a file or directory.
+> > > - *	@dentry contains the dentry structure.
+> > > - *	@mnt contains the vfsmnt structure.
+> > > + *	@path contains the path structure.
+> > 
+> > May I politely inquire about the value of these comments?  How much information
+> > is provided by refering to an argument as "the dentry structure" or "the path
+> > structure", especially when there's nothing immediately above that would introduce
+> > either.  "Type of 'dentry' argument is somehow related to struct dentry,
+> > try and guess what the value might be - we don't care, we just need every
+> > argument commented"?
+> > 
+> > Who needs that crap in the first place?
 > 
-> 
-> On 2/6/19 1:23 PM, Neil Horman wrote:
-> > On Wed, Feb 06, 2019 at 07:07:23PM -0200, Marcelo Ricardo Leitner wrote:
-> >> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
-> >>>
-> >>>
-> >>> On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
-> >>>> On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
-> >>>>> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
-> >>>>> structures longer than the current definitions.
-> >>>>>
-> >>>>> This should prevent unjustified setsockopt() failures due to struct
-> >>>>> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
-> >>>>> binaries that should be compatible, but were built with later kernel
-> >>>>> uapi headers.
-> >>>>
-> >>>> Not sure if we support backwards compatibility like this?
-> >>>>
-> >>>> My issue with this change is that by doing this, application will have
-> >>>> no clue if the new bits were ignored or not and it may think that an
-> >>>> event is enabled while it is not.
-> >>>>
-> >>>> A workaround would be to do a getsockopt and check the size that was
-> >>>> returned. But then, it might as well use the right struct here in the
-> >>>> first place.
-> >>>>
-> >>>> I'm seeing current implementation as an implicitly versioned argument:
-> >>>> it will always accept setsockopt calls with an old struct (v4.11 or
-> >>>> v4.12), but if the user tries to use v3 on a v1-only system, it will
-> >>>> be rejected. Pretty much like using a newer setsockopt on an old
-> >>>> system.
-> >>>
-> >>> With the current implementation, given sources that say are supposed to
-> >>> run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
-> >>> we can't rebuild the exact same sources on a 4.19 kernel and still run
-> >>> them on 4.9 without messing with structures re-definition.
-> >>
-> >> Maybe what we want(ed) here then is explicit versioning, to have the 3
-> >> definitions available. Then the application is able to use, say struct
-> >> sctp_event_subscribe, and be happy with it, while there is struct
-> >> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
-> >>
-> >> But it's too late for that now because that would break applications
-> >> already using the new fields in sctp_event_subscribe.
-> >>
-> > Yeah, I'm not supportive of codifying that knoweldge in the kernel.  If we were
-> > to support bi-directional versioning, I would encode it into lksctp-tools rather
-> > than the kernel.
-> 
-> I'm not sure that forcing a library on users is a good reason to break UAPI.
-> 
-Thats a misleading statement.  We've never supported running newer applications
-on older kernels, and no one is forcing anyone to use the lksctp-tools library,
-I was only suggesting that, if we were to support this compatibility, that might
-be a place to offer it.
+> The comments fill a valuable place to folks like me who are new to the linux security modules.
+> In my spare time, I'm writing a new LSM specifically geared for parental controls uses, and the
+> comments in lsm_hooks.h have helped me out more than once.  Perhaps the comments could
+> be inproved by changing them to something like this:
+> "@[arg] contains the [type] structure, defined in linux/[?].h"
 
-Its also worth noting that we have precident for this.  If you look at the git
-log, this particular structure has been extended about 6 times in the life of
-sctp.
+Um...   The _type_ of argument is visible in declaration already;
+it doesn't say a damn thing about the value of that argument.
 
-> > 
-> >>>
-> >>> I understand your point, but this still looks like a sort of uapi
-> >>> breakage to me.
-> >>
-> >> Not disagreeing. I really just don't know how supported that is.
-> >> Willing to know so I can pay more attention to this on future changes.
-> >>
-> >> Btw, is this the only occurrence?
-> >>
-> > No, I think there are a few others (maybe paddrparams?)
-> > 
-> >>>
-> >>>
-> >>> I also had another way to work-around this in mind, by copying optlen
-> >>> bytes and checking that any additional field (not included in the
-> >>> "current" kernel structure definition) is not set, returning EINVAL in
-> >>> such case to keep a similar to current behavior.
-> >>> The issue with this is that I didn't find a suitable (ie not totally
-> >>> arbitrary such as "twice the existing structure size") upper limit to
-> >>> optlen.
-> >>
-> >> Seems interesting. Why would it need that upper limit to optlen?
-> >>
-> > I think the thought was to differentiate between someone passing a legit larger
-> > structure from a newer UAPI, from someone just passing in a massive
-> > inappropriately sized buffer (even if the return on both is the same).
-> > 
-> >> Say struct v1 had 4 bytes, v3 now had 12. The user supplies 12 bytes
-> >> to the kernel that only knows about 4 bytes. It can check that (12-4)
-> >> bytes in the end, make sure no bit is on and use only the first 4.
-> >>
-> >> The fact that it was 12 or 200 shouldn't matter, should it? As long as
-> >> the (200-4) bytes are 0'ed, only the first 4 will be used and it
-> >> should be ok, otherwise EINVAL. No need to know how big the current
-> >> current actually is because it wouldn't be validating that here: just
-> >> that it can safely use the first 4 bytes.
-> >>
-> > I'm less than excited about making the kernel check an unbounded user space
-> > buffer, thats seems like a potential DOS attack from an unpriviledged user to
-> > me.  I'm also still hung up on the notion that, despite how we do this, this
-> > patch is going into the latest kernel, so it will only work on a kernel that
-> > already understands the most recent set of subscriptions.  It would work if we,
-> > again someday in the future extended this struct, someone built against that
-> > newer UAPI, and then tried to run it on a kernel that had this patch.
-> 
-> The patch is going into the latest, but can also be backported on future
-> stables.
-> I don't think "not fixing it because it's not fixed yet" is a good
-> reason to keep things the way they are. But maybe that's just me.
-> Given that the structure has already been extended several times, there
-> is pretty much nothing to keep this from happening again and again.
-> 
-Also misleading, as it assumes that we're not intentionally doing this.  I get
-wanting to support running applications built for newer kernels on older
-kernels, but thats just not something that we do, and to say thats broken is
-misleading.  Older applications are required to run on newer kernels, but not
-vice versa, which is what you are asking for.  
+In this particular case, dentry/mnt pair (whichever way it gets
+passed; struct path is exactly such a pair) is actually used to
+specify the location of file or directory in question, but
+try to guess that by description given in this "documentation"...
 
-And yes, this patch can be backported to older stable kernels, but by that same
-token, so can the patches that extend the struct, which would also fix the
-problem, while supporting the newer features, which seems to me to be the better
-solution for applications which are looking for that support.
-
-
-> > 
-> > FWIW, there is an existing implied method to determine the available
-> > subscription events. sctp_getsockopt_events does clamp the size of the output
-> > buffer, and returns that information in the optlen field via put_user.  An
-> > application that was build against UAPIs from 4.19 could pass in the 4.19
-> > sctp_event_subscribe struct to sctp_getsockopt_events, and read the output
-> > length, whcih would inform the application of the events that the kernel is
-> > capable of reporting, and limit itself to only using those events.  Its not a
-> > perfect solution, but its direct, understandable and portable.
-> > 
-> > Neil
-> > 
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Signed-off-by: Julien Gomes <julien@arista.com>
-> >>>>> ---
-> >>>>>  net/sctp/socket.c | 2 +-
-> >>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>
-> >>>>> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> >>>>> index 9644bdc8e85c..f9717e2789da 100644
-> >>>>> --- a/net/sctp/socket.c
-> >>>>> +++ b/net/sctp/socket.c
-> >>>>> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
-> >>>>>  	int i;
-> >>>>>  
-> >>>>>  	if (optlen > sizeof(struct sctp_event_subscribe))
-> >>>>> -		return -EINVAL;
-> >>>>> +		optlen = sizeof(struct sctp_event_subscribe);
-> >>>>>  
-> >>>>>  	if (copy_from_user(&subscribe, optval, optlen))
-> >>>>>  		return -EFAULT;
-> >>>>> -- 
-> >>>>> 2.20.1
-> >>>>>
-> >>>
-> >>
-> 
-> -- 
-> Julien Gomes
-> 
+As for "defined in"... that's what grep/ctags/etc. are for.
+Again, the useful information about an argument is _what_ gets
+passed in it, not just which type it is...
