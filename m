@@ -2,162 +2,238 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A000EC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A321C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6277720663
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="aXjJ5Tzw"
+	by mail.kernel.org (Postfix) with ESMTP id CB80321721
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 21:15:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbfBGVMX (ORCPT
+        id S1727582AbfBGVPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 16:12:23 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33349 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbfBGVMW (ORCPT
+        Thu, 7 Feb 2019 16:15:04 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54682 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727524AbfBGVPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 16:12:22 -0500
-Received: by mail-ed1-f68.google.com with SMTP id a2so1107887edi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 13:12:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3OME255Bf/uxB/3SsI2f37qTGiqhn3cF46//e7/7eVM=;
-        b=aXjJ5Tzwh+JKJQi+wozKXYNGLa4+PvyuxjoYFE7gmYZKf8GKMjTGzFE6SNN0PpM6Mp
-         6Sn93mrCqP1o/w58ktLo8ch9IfTdRN098Fk4BsxaNq4+uac6SVFZB0TD8ShZARC+hfAa
-         gG3sjWz5vPHwWesu/AnTrJvez0utQltPlYlrPWE82hg+/DDVAnPVZ1BgCMf971ycorEC
-         WI8CK/mJ4XpgsmekliZwJH4ZKM62mLnZnukRilJtlcGv7WUs0BCEwE+L9qW9ZrjSDbGq
-         mXLPQVHT24umxnfcnKgB3Swl9XnOhjTdDYwHiInjwi+MOsAjc06Ry2EmBhbV1dwt15ya
-         acow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3OME255Bf/uxB/3SsI2f37qTGiqhn3cF46//e7/7eVM=;
-        b=gzrjdZGLpTo7kklUNm5ion3ZcjyY3Nt/v6q79ISL3nkPtKB73WJFwE0Uy/CMqFvdf5
-         rX6ZfrRPL2VXz07MDs93G/jI1QQfzHz5AXcPuDhrm/7h2MP5DcBmesYhlxVd/rN8v+Ye
-         4FikRf7JXRbjBec3rKUdWgM9AJgMLU7Kjm5l5d5iru6FYKChNVgB4ZT0DundtpwWl3aw
-         T1gukpR8gDwD7l3H3yqXnThDqa4lmLCQYFa6Y3eT198Dp0q3qSUGUz7n5iV0fWuvn8+X
-         grGPgfnUByDDyTtq+egcA8DRTs13CzrCCwqZqRJfTWqGnG2Q4YB8K/Gzcf/BYSSV9wtN
-         8Jrg==
-X-Gm-Message-State: AHQUAuYP/uMLKntqP2zDSCcGfUrdPuh7cjPvsHa85hYO62UMZ5dvpn0R
-        KeN/61LZ6yZnNw7cgQpk78uqdw==
-X-Google-Smtp-Source: AHgI3IZbcG80nPcvIKfmajw5SYcVA2Ll7XmgZuv3K3KMz3pRJI6mg6EpMQCqNU8oYloJjWif5ympgQ==
-X-Received: by 2002:a17:906:a44:: with SMTP id x4-v6mr13083856ejf.177.1549573939763;
-        Thu, 07 Feb 2019 13:12:19 -0800 (PST)
-Received: from [192.168.1.143] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id l17sm101722edc.56.2019.02.07.13.12.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 13:12:19 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [LSF/MM TOPIC] BPF for Block Devices
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-In-Reply-To: <04952865-6EEE-4D78-8CC9-00484CFBD13E@javigon.com>
-Date:   Thu, 7 Feb 2019 22:12:17 +0100
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        IDE/ATA development list <linux-ide@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B6ABE829-3F3F-4612-943E-4899D91CEB1D@javigon.com>
-References: <40D2EB06-6BF2-4233-9196-7A26AC43C64E@raithlin.com>
- <04952865-6EEE-4D78-8CC9-00484CFBD13E@javigon.com>
-To:     Stephen Bates <sbates@raithlin.com>
-X-Mailer: Apple Mail (2.3445.101.1)
+        Thu, 7 Feb 2019 16:15:03 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17KnMWr039433
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Feb 2019 16:15:02 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qgte0xb3y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:15:02 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 7 Feb 2019 21:15:01 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Feb 2019 21:14:56 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17LEtJh33161466
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Feb 2019 21:14:55 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D13D7805E;
+        Thu,  7 Feb 2019 21:14:55 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 359B278066;
+        Thu,  7 Feb 2019 21:14:54 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Feb 2019 21:14:54 +0000 (GMT)
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+To:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
+ <20190206120634.GA4680@linux.intel.com>
+ <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 7 Feb 2019 16:14:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020721-0020-0000-0000-00000EB8463A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010555; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01157763; UDB=6.00604042; IPR=6.00938295;
+ MB=3.00025483; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 21:14:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020721-0021-0000-0000-000064B6F501
+Message-Id: <677450b6-e8a6-b397-8406-4a32a916e65b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902070153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Mailing lists
+On 2/7/19 1:41 PM, Alexander Steffen wrote:
+> On 06.02.2019 13:06, Jarkko Sakkinen wrote:
+>> On Wed, Feb 06, 2019 at 12:47:07AM +0200, Jarkko Sakkinen wrote:
+>>> Make the changes necessary to detach TPM space code and TPM activation
+>>> code out of the tpm_transmit() flow because of both of these can cause
+>>> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+>>> to maintain, and thus, it is better to just fix things now before this
+>>> turns into a bigger mess.
+>>>
+>>> v11:
+>>> * Drop the patch that tries to flush TPM space on system. Not a proper
+>>>    fallback + out of scope for this patch set.
+>>>
+>>> v10:
+>>> * Use void pointers to avoid unnecessary casts in functions paramaters
+>>>    where it makes sense.
+>>>
+>>> v9:
+>>> * Fixed again tpm_try_get_ops().
+>>> * Added missing reviewed-by's.
+>>>
+>>> v8:
+>>> * Re-add the check for ret < 0 after calling tpm_try_transmit() that
+>>>    was dropped by mistake while moving code.
+>>> * Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+>>>    fails.
+>>>
+>>> v7:
+>>> *  Reorganize series so that more trivial and self-contained changes 
+>>> are
+>>>     in the head.
+>>>
+>>> v6:
+>>> * When tpm_validate_commmand() was moved to tpm2-space.c, the struct 
+>>> for
+>>>    the TPM header was incorrectly declared as struct tpm_input_header.
+>>> * Fix return value in tpm_validate_command().
+>>>
+>>> v5:
+>>> * Add the missing rev's from Stefan Berger.
+>>>
+>>> v4:
+>>> * Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+>>> * Fix error handling flow in tpm_try_transmit().
+>>> * Replace struct tpm_input_header and struct tpm_output_header with
+>>>    struct tpm_header.
+>>>
+>>> v3:
+>>> * Encapsulate power gating code to tpm_chip_start() and 
+>>> tpm_chip_stop().
+>>> * Move TPM power gating code and locking to tpm_try_get_ops() and
+>>>    tpm_put_ops().
+>>> * Call power gating code directly in tpm_chip_register() and
+>>>    tpm2_del_space().
+>>>
+>>> v2:
+>>> * Print tpm2_commit_space() error inside tpm2_commit_space()
+>>> * Error code was not printed when recv() callback failed. It is
+>>>    fixed in this version.
+>>> * Added a patch that removes @space from tpm_transmit().
+>>> * Fixed a regression in earlier series. Forgot to amend the change
+>>>    from the staging area that renames NESTED to UNLOCKED in 
+>>> tpm2-space.c.
+>>>
+>>> Jarkko Sakkinen (16):
+>>>    tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+>>>    tpm: fix invalid return value in pubek_show()
+>>>    tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+>>>    tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+>>>    tpm: declare struct tpm_header
+>>>    tpm: access command header through struct in tpm_try_transmit()
+>>>    tpm: encapsulate tpm_dev_transmit()
+>>>    tpm: clean up tpm_try_transmit() error handling flow
+>>>    tpm: move tpm_validate_commmand() to tpm2-space.c
+>>>    tpm: move TPM space code out of tpm_transmit()
+>>>    tpm: remove @space from tpm_transmit()
+>>>    tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+>>>    tpm: remove TPM_TRANSMIT_UNLOCKED flag
+>>>    tpm: introduce tpm_chip_start() and tpm_chip_stop()
+>>>    tpm: take TPM chip power gating out of tpm_transmit()
+>>>    tpm: remove @flags from tpm_transmit()
+>>>
+>>>   drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
+>>>   drivers/char/tpm/tpm-dev-common.c |  44 ++++-
+>>>   drivers/char/tpm/tpm-interface.c  | 264 
+>>> ++++++------------------------
+>>>   drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+>>>   drivers/char/tpm/tpm.h            |  64 +++-----
+>>>   drivers/char/tpm/tpm1-cmd.c       |  28 +---
+>>>   drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+>>>   drivers/char/tpm/tpm2-space.c     |  91 +++++++---
+>>>   drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+>>>   drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+>>>   drivers/char/tpm/xen-tpmfront.c   |   2 +-
+>>>   11 files changed, 408 insertions(+), 421 deletions(-)
+>>>
+>>> -- 
+>>> 2.19.1
+>>>
+>>
+>> Applied to master and next.
+>
+> Something in this series seems to break basic TPM communication for me.
+>
+> For TPM2.0s the probe command fails, causing them to be misdetected as 
+> TPM1.2s:
+>
+> ---
+> tpm tpm0: tpm_try_transmit: tpm_send: error -5
+> tpm_tis MSFT0101:00: 1.2 TPM (device-id 0x1A, rev-id 22)
+> tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
+> ---
+> tpm tpm0: tpm_try_transmit: tpm_send: error -5
+> tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 22)
+> tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
+> ---
+>
+> And for something that actually is a TPM1.2 it fails in a similar way:
+>
+> ---
+> tpm_i2c_infineon 1-0020: 1.2 TPM (device-id 0x1A)
+> tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
+> ---
+> tpm tpm0: tpm_try_transmit: tpm_send: error -5
+> tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 16)
+> tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
+> tpm_tis_spi: probe of spi0.1 failed with error -14
+> ---
+>
+> I see this problem across my entire range of TPM devices and test 
+> platforms. Any idea what could be wrong here?
 
-> On 7 Feb 2019, at 18.48, Javier Gonz=C3=A1lez <javier@javigon.com> =
-wrote:
->=20
->=20
->=20
->> On 7 Feb 2019, at 18.12, Stephen Bates <sbates@raithlin.com> wrote:
->>=20
->> Hi All
->>=20
->>> A BPF track will join the annual LSF/MM Summit this year! Please =
-read the updated description and CFP information below.
->>=20
->> Well if we are adding BPF to LSF/MM I have to submit a request to =
-discuss BPF for block devices please!
->>=20
->> There has been quite a bit of activity around the concept of =
-Computational Storage in the past 12 months. SNIA recently formed a =
-Technical Working Group (TWG) and it is expected that this TWG will be =
-making proposals to standards like NVM Express to add APIs for =
-computation elements that reside on or near block devices.
->>=20
->> While some of these Computational Storage accelerators will provide =
-fixed functions (e.g. a RAID, encryption or compression), others will be =
-more flexible. Some of these flexible accelerators will be capable of =
-running BPF code on them (something that certain Linux drivers for =
-SmartNICs support today [1]). I would like to discuss what such a =
-framework could look like for the storage layer and the file-system =
-layer. I'd like to discuss how devices could advertise this capability =
-(a special type of NVMe namespace or SCSI LUN perhaps?) and how the BPF =
-engine could be programmed and then used against block IO. Ideally I'd =
-like to discuss doing this in a vendor-neutral way and develop ideas I =
-can take back to NVMe and the SNIA TWG to help shape how these standard =
-evolve.
->>=20
->> To provide an example use-case one could consider a BPF capable =
-accelerator being used to perform a filtering function and then using =
-p2pdma to scan data on a number of adjacent NVMe SSDs, filtering said =
-data and then only providing filter-matched LBAs to the host. Many other =
-potential applications apply.=20
->>=20
->> Also, I am interested in the "The end of the DAX Experiment" topic =
-proposed by Dan and the " Zoned Block Devices" from Matias and Damien.
->>=20
->> Cheers
->>=20
->> Stephen
->>=20
->> [1] =
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
-ivers/net/ethernet/netronome/nfp/bpf/offload.c?h=3Dv5.0-rc5
->=20
-> Definitely interested on this too - and pleasantly surprised to see a =
-BPF track!
->=20
-> I would like to extend Stephen=E2=80=99s discussion to eBPF running in =
-the block layer directly - both on the kernel VM and offloaded to the =
-accelerator of choice. This would be like XDP on the storage stack, =
-possibly with different entry points. I have been doing some experiments =
-building a dedup engine for pblk in the last couple of weeks and a =
-number of interesting questions have arisen.
->=20
-> Also, if there is a discussion on offloading the eBPF to an =
-accelerator, I would like to discuss how we can efficiently support data =
-modifications without having double transfers over either the PCIe bus =
-(or worse, over the network): one for the data computation + =
-modification and another for the actual data transfer. Something like =
-p2pmem comes to mind here, but for this to integrate nicely, we would =
-need to overcome the current limitations on PCIe and talk about p2pmem =
-over fabrics.
->=20
-> Javier
+
+Can you bisect the series ?
+
+    Stefan
+
+
+
+>
+>
+> Alexander
+>
 
