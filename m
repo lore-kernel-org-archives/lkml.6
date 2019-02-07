@@ -2,172 +2,298 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51590C4151A
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0AAC282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170F22175B
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:24:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Bx/IIEUm"
+	by mail.kernel.org (Postfix) with ESMTP id 6ED7021904
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 16:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfBGQYe (ORCPT
+        id S1726810AbfBGQZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 11:24:34 -0500
-Received: from sonic302-27.consmr.mail.gq1.yahoo.com ([98.137.68.153]:35155
-        "EHLO sonic302-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726734AbfBGQYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 11:24:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549556673; bh=HbuGRpu6I7YIxZ4SNLsPqCYI80Aa+PLh8ijdAqJqYkI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Bx/IIEUmq4Kjd+ahXb4HSW26GP5xt4g5oZO6o8z18ZYM7E9e30otly9LRgnIentv51/mCn58vBTNxzx/KFzg2CM/Z6X0NPd/hfIUM8rkPYSfbxocvSlRkmm+ZO4X6e35hcKQFVJ+Cnl5LXkhBqVYIFfcp0aP7tzpN/OK6NCJseHCdyg4trKcJMDqXgR+8tdYPFYlYZ3/6cGeldGvOq+nqTVkdWWG83xi2PYAzB+UPFpemJpgVtFDxNpnPwzh8OM0+JhDDQp9euZmiYmvYFebJHm/N/nPcKZwziqWq18R16WVZqOubnPtW3gDrogB5uWw9dZAYlWCq3v4wqqlJzXGvw==
-X-YMail-OSG: 5VfEtBgVM1loia6glQDjSvBugNjD1g5XLr40dSjiuZ_Tr_xRYpanKPik.PeznWj
- GCi9BjKXWbNG.4Q35ADVD546ZRrnjulHg52JR7BXrIZOEMFgpkipODe_25FYqmHKMrf82KzmWtlt
- kag8c0TBuTEWWNj23cxWjC.aCdW1RQAEREzvpGGbUfxjK8QzkCiM45ehNkB.vAY.FCmX0z_1SD8.
- Do9aa6BCvFWTLb4AL7rQGRLdcgVf3H1wl4vbZ2WeME9DukrGgXVqSxD2h.zDnQDB67s17J74JC0u
- GBNT8scUurZyy7R7f4E6c5AmOcs5RQSyRMRjpUWyyOq6GsGAR6P_DIVAwFP5HorlwbbK_8UMcbHd
- _gvUdTg08n58uo_F7EAtFiidwjQykRdSlJvktk73ecssfL2NyFd55wpluSKS9QfheSZWc8kqMqqb
- WheNyE5FCeBPBhM8DxTkxpgSfBGACSp4WYbDSf3Cx_AHgzU9JnQEfm5_eAHAn439BKO5_3Zyq0yp
- HYqEqqW7e2VN5txrw9sMBm8QAhPgCHuTNBjzujTMx1r9A9b59wMZX05B2DaqSi69L1co_AmTrSQ5
- bPd3sBKEVXEO9NNpEmhnpC7rkHnhgvCaXwSdE8ERwv6Zml8In0RZ6ev42R3XNNe7gcSbYO2E__Na
- sXZQdDSS57DhfgqfguKBgvxavYJlTKstilKKqCfRAOhz4lmbfssfrUEbHtAk_ANMBz20rLylLF4d
- TTAVUi2gDck8INgQ7dty5PA1EDJx14ldDmpM61oECQLyOJRHWxtwcmNjdFvyOkMIAYoyrRVUkUDN
- eYLWcRfYG2uvPueFWArEUWJSCbdJYp__NIszOUhbmkbh_hPN25sSlCwu8Pwpf1adWE23QEBXT08q
- cx8eXiR7crQ1F07WBqEbC4L503yetlC2dBMK6aA2vDNIKTsl0ToHfuQenBLt9hT4sfRtB9Vhysma
- 4E7GysdhExnND8ahJVaxHDn5ol1.22q9SuTPch8gHHXV2I.wFvURi0q5o1gz8A5aBthbe_gGqzHY
- 4anFjhZyAKItLKZpJSuExDCLwwKzxDQwLPfnMYSzyDi1rm64psBWeazHFqrH__lm9_bmKgLhKtpR
- Q4FdXNSuX54_3EeajgYWr8H_h8_9mp0XavdgHveLhXJe_9XGoOw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 7 Feb 2019 16:24:33 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp422.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 44df19590cf964fcb3866ff781d6ea2e;
-          Thu, 07 Feb 2019 16:24:28 +0000 (UTC)
-Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@vger.kernel.org>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>
-References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
- <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
- <201902070230.x172UUG6002087@www262.sakura.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
-Date:   Thu, 7 Feb 2019 08:24:26 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <201902070230.x172UUG6002087@www262.sakura.ne.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Thu, 7 Feb 2019 11:25:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51214 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726442AbfBGQZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 11:25:41 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B2AC432AB;
+        Thu,  7 Feb 2019 16:25:40 +0000 (UTC)
+Received: from haswell-e.nc.xsintricity.com (ovpn-112-17.rdu2.redhat.com [10.10.112.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 93E205C22D;
+        Thu,  7 Feb 2019 16:25:37 +0000 (UTC)
+Message-ID: <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+From:   Doug Ledford <dledford@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Date:   Thu, 07 Feb 2019 11:25:35 -0500
+In-Reply-To: <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+         <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca>
+         <20190206175233.GN21860@bombadil.infradead.org>
+         <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+         <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+         <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
+         <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+         <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-um3ENeAUEAAEn9LYnNJ1"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 07 Feb 2019 16:25:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/6/2019 6:30 PM, Tetsuo Handa wrote:
-> Casey Schaufler wrote:
->> On 2/6/2019 2:23 AM, Tetsuo Handa wrote:
->>> But as I update the documentation ( https://tomoyo.osdn.jp/2.6/chapter-3.html.en#3.6 ),
->>> I came to think that we should ignore security= parameter when lsm= parameter is specified.
->>>
->>> Currently, it is possible to enable TOMOYO and only one of SELinux/Smack/AppArmor. Therefore,
->>> it is possible to disable only TOMOYO by specifying security=selinux when we want to enable
->>> only SELinux, by specifying security=smack when we want to enable only Smack, by specifying
->>> security=apparmor when we want to enable only AppArmor. That is, we can use security= parameter
->>> in order to specify the other LSM module which should not be disabled.
->>>
->>> But when it becomes possible to enable TOMOYO and more than one of SELinux/Smack/AppArmor,
->>> we will no longer be able to selectively disable one LSM module using security= parameter, for
->>> security= parameter is intended for specifying only one LSM module which should be enabled.
->>> That is, we will need to use lsm= parameter in order to selectively disable LSM modules.
->> Yes. That is correct. The existing behavior of security= is maintained.
-> But the existing behavior of CONFIG_DEFAULT_SECURITY is not maintained.
 
-That's a developer interface, not a user interface. I realize
-that may be splitting hairs, but it had to change.
+--=-um3ENeAUEAAEn9LYnNJ1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This might cause a problem like
->
->   commit e5a3b95f581da62e2054ef79d3be2d383e9ed664
->   Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->   Date:   Sat Feb 14 11:46:56 2009 +0900
->
->       TOMOYO: Don't create securityfs entries unless registered.
->
->       TOMOYO should not create /sys/kernel/security/tomoyo/ interface unless
->       TOMOYO is registered.
->
-> for Ubuntu users because Ubuntu kernels are built with
->
->   CONFIG_SECURITY_SELINUX=y
->   CONFIG_SECURITY_SMACK=y
->   CONFIG_SECURITY_TOMOYO=y
->   CONFIG_SECURITY_APPARMOR=y
->   CONFIG_SECURITY_YAMA=y
->   CONFIG_DEFAULT_SECURITY="apparmor"
->
-> . Due to CONFIG_DEFAULT_SECURITY="apparmor", majority of Ubuntu users are enabling
-> only AppArmor without explicitly specifying "security=apparmor".
->
-> Currently default CONFIG_LSM setting is
->
->   "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
->
-> but Ubuntu kernels would have to be built with non-default CONFIG_LSM setting like
->
->   "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
->
-> in order to make sure that AppArmor is by default chosen for the LSM_FLAG_EXCLUSIVE module.
+I think I've finally wrapped my head around all of this.  Let's see if I
+have this right:
 
-Yes, and Yocto Project is likely to want Smack specified first.
+* People are using filesystem DAX to expose byte addressable persistent
+memory because putting a filesystem on the memory makes an easy way to
+organize the data in the memory and share it between various processes.=20
+It's worth noting that this is not the only way to share this memory,
+and arguably not even the best way, but it's what people are doing.=20
+However, to get byte level addressability on the remote side, we must
+create files on the server side, mmap those files, then give a handle to
+the memory region to the client side that the client then addresses on a
+byte by byte basis.  This is because all of the normal kernel based
+device sharing mechanisms are block based and don't provide byte level
+addressability.
 
-> Now that TOMOYO becomes a !LSM_FLAG_EXCLUSIVE module, not specifying "security=apparmor" will
-> automatically enable TOMOYO. And majority of Ubuntu users will unexpectedly encounter TOMOYO
-> messages. But removing "tomoyo" from CONFIG_LSM setting in order to save majority of Ubuntu
-> users from unexpectedly encountering TOMOYO messages also has a problem; Ubuntu users who want
-> to enable only TOMOYO from LSM_FLAG_LEGACY_MAJOR modules can specify "security=tomoyo", but
-> Ubuntu users who want to enable TOMOYO and one of SELinux,Smack,AppArmor (including syzbot)
-> will have to explicitly specify "lsm=" because "security=" can't allow enabling multiple
-> LSM_FLAG_LEGACY_MAJOR modules.
+* People are asking for thin allocations, reflinks, deduplication,
+whatever else because persistent memory is still small in terms of size
+compared to the amount of data people want to put on it, so these
+techniques stretch its usefulness.
 
-I believe we got general buy in from Ubuntu, and I understand
-that the LSM list is awkward, but I don't see a rational alternate.
-I know that I played with a half dozen, and nothing was closer to
-maintaining the status quo.
+* Because there is no kernel level mechanism for sharing byte
+addressable memory, this only works with specific applications that have
+been written to create files on byte addressable memory, mmap them, then
+share them out via RDMA.  I bring this up because in the video linked in
+this email, Oracle is gushing about how great this feature is.  But it's
+important to understand that this only works because the Oracle
+processes themselves are the filesystem sharing entity.  That means at
+other points in this conversation where we've talked about the need for
+forward progress, and non-ODP hardware, and the talk has come down to
+sending SIGKILL to a process in order to free memory reservations, I
+feel confident in saying that Oracle would *never* agree to this.  If
+you kill an Oracle process to make forward progress, you are probably
+also killing the very process that needed you to make progress in the
+first place.  I'm pretty confident that Oracle will have no problem
+what-so-ever saying that ODP capable hardware is a hard requirement for
+using their software with DAX.
 
->> The new behavior of lsm= is provided to allow general handling of a list
->> of security modules. It uses the same form of data as CONFIG_LSM.
->>
->>> Then, I think that it is straightforward (and easier to manage) to ignore security= parameter
->>> when lsm= parameter is specified.
->> That reduces flexibility somewhat. If I am debugging security modules
->> I may want to use lsm= to specify the order while using security= to
->> identify a specific exclusive module. I could do that using lsm= by
->> itself, but habits die hard.
-> "lsm=" can be used for identifying a specific exclusive module, and Ubuntu kernels would
-> have to use CONFIG_LSM (or "lsm=") for identifying the default exclusive module (in order
-> to allow enabling both TOMOYO and one of SELinux,Smack,AppArmor at the same time).
->
-> Since "security=" can't be used for selectively enable/disable more than one of
-> SELinux,Smack,TOMOYO,AppArmor, I think that recommending users to migrate to "lsm=" is the
-> better direction. And ignoring "security=" when "lsm=" is specified is easier to understand.
+* So if Oracle is likely to demand ODP hardware, period, are there other
+scenarios that might be more accepting of a more limited FS on top of
+DAX that doesn't support reflinks and deduplication?  I can think of a
+possible yes to that answer rather easily.  Message brokerage servers
+(amqp, qpid) have strict requirements about receiving a message and then
+making sure that it makes it once, and only once, to all subscribed
+receivers.  A natural way of organizing this sort of thing is to create
+a persistent ring buffer for incoming messages, one per each connecting
+client that is sending messages.  Then a log file for each client you
+are sending messages back out to.  Putting these files on persistent
+memory and then mapping the ring buffer to the clients, and writing your
+own transmission journals to the persistent memory, would allow the
+program to be very robust in the face of a program or system crash.=20
+This sort of usage would not require any thin allocations, reflinks, or
+other such features, and yet would still find the filesystem
+organization useful.  Therefore I think the answer is yes, there are at
+least some use cases that would find a less featureful filesystem that
+works with persistent memory and RDMA but without ODP to be of value.
 
-I added Kees to the CC list. Kees, what to you think about
-ignoring security= if lsm= is specified? I'm ambivalent.
+* Really though, as I said in my email to Tom Talpey, this entire
+situation is simply screaming that we are doing DAX networking wrong.=20
+We shouldn't be writing the networking code once in every single
+application that wants to do this.  If we had a memory segment that we
+shared from server to client(s), and in that memory segment we
+implemented a clustered filesystem, then applications would simply mmap
+local files and be done with it.  If the file needed to move, the kernel
+would update the mmap in the application, done.  If you ask me, it is
+the attempt to do this the wrong way that is resulting in all this
+heartache.  That said, for today, my recommendation would be to require
+ODP hardware for XFS filesystem with the DAX option, but allow ext2
+filesystems to mount DAX filesystems on non-ODP hardware, and go in and
+modify the ext2 filesystem so that on DAX mounts, it disables hole punch
+and ftrunctate any time they would result in the forced removal of an
+established mmap.
+
+
+On Wed, 2019-02-06 at 14:44 -0800, Dan Williams wrote:
+> On Wed, Feb 6, 2019 at 2:25 PM Doug Ledford <dledford@redhat.com> wrote:
+> > On Wed, 2019-02-06 at 15:08 -0700, Jason Gunthorpe wrote:
+> > > On Thu, Feb 07, 2019 at 08:03:56AM +1100, Dave Chinner wrote:
+> > > > On Wed, Feb 06, 2019 at 07:16:21PM +0000, Christopher Lameter wrote=
+:
+> > > > > On Wed, 6 Feb 2019, Doug Ledford wrote:
+> > > > >=20
+> > > > > > > Most of the cases we want revoke for are things like truncate=
+().
+> > > > > > > Shouldn't happen with a sane system, but we're trying to avoi=
+d users
+> > > > > > > doing awful things like being able to DMA to pages that are n=
+ow part of
+> > > > > > > a different file.
+> > > > > >=20
+> > > > > > Why is the solution revoke then?  Is there something besides tr=
+uncate
+> > > > > > that we have to worry about?  I ask because EBUSY is not curren=
+tly
+> > > > > > listed as a return value of truncate, so extending the API to i=
+nclude
+> > > > > > EBUSY to mean "this file has pinned pages that can not be freed=
+" is not
+> > > > > > (or should not be) totally out of the question.
+> > > > > >=20
+> > > > > > Admittedly, I'm coming in late to this conversation, but did I =
+miss the
+> > > > > > portion where that alternative was ruled out?
+> > > > >=20
+> > > > > Coming in late here too but isnt the only DAX case that we are co=
+ncerned
+> > > > > about where there was an mmap with the O_DAX option to do direct =
+write
+> > > > > though? If we only allow this use case then we may not have to wo=
+rry about
+> > > > > long term GUP because DAX mapped files will stay in the physical =
+location
+> > > > > regardless.
+> > > >=20
+> > > > No, that is not guaranteed. Soon as we have reflink support on XFS,
+> > > > writes will physically move the data to a new physical location.
+> > > > This is non-negotiatiable, and cannot be blocked forever by a gup
+> > > > pin.
+> > > >=20
+> > > > IOWs, DAX on RDMA requires a) page fault capable hardware so that
+> > > > the filesystem can move data physically on write access, and b)
+> > > > revokable file leases so that the filesystem can kick userspace out
+> > > > of the way when it needs to.
+> > >=20
+> > > Why do we need both? You want to have leases for normal CPU mmaps too=
+?
+> > >=20
+> > > > Truncate is a red herring. It's definitely a case for revokable
+> > > > leases, but it's the rare case rather than the one we actually care
+> > > > about. We really care about making copy-on-write capable filesystem=
+s like
+> > > > XFS work with DAX (we've got people asking for it to be supported
+> > > > yesterday!), and that means DAX+RDMA needs to work with storage tha=
+t
+> > > > can change physical location at any time.
+> > >=20
+> > > Then we must continue to ban longterm pin with DAX..
+> > >=20
+> > > Nobody is going to want to deploy a system where revoke can happen at
+> > > any time and if you don't respond fast enough your system either lock=
+s
+> > > with some kind of FS meltdown or your process gets SIGKILL.
+> > >=20
+> > > I don't really see a reason to invest so much design work into
+> > > something that isn't production worthy.
+> > >=20
+> > > It *almost* made sense with ftruncate, because you could architect to
+> > > avoid ftruncate.. But just any FS op might reallocate? Naw.
+> > >=20
+> > > Dave, you said the FS is responsible to arbitrate access to the
+> > > physical pages..
+> > >=20
+> > > Is it possible to have a filesystem for DAX that is more suited to
+> > > this environment? Ie designed to not require block reallocation (no
+> > > COW, no reflinks, different approach to ftruncate, etc)
+> >=20
+> > Can someone give me a real world scenario that someone is *actually*
+> > asking for with this?
+>=20
+> I'll point to this example. At the 6:35 mark Kodi talks about the
+> Oracle use case for DAX + RDMA.
+>=20
+> https://youtu.be/ywKPPIE8JfQ?t=3D395
+>=20
+> Currently the only way to get this to work is to use ODP capable
+> hardware, or Device-DAX. Device-DAX is a facility to map persistent
+> memory statically through device-file. It's great for statically
+> allocated use cases, but loses all the nice things (provisioning,
+> permissions, naming) that a filesystem gives you. This debate is what
+> to do about non-ODP capable hardware and Filesystem-DAX facility. The
+> current answer is "no RDMA for you".
+>=20
+> > Are DAX users demanding xfs, or is it just the
+> > filesystem of convenience?
+>=20
+> xfs is the only Linux filesystem that supports DAX and reflink.
+>=20
+> > Do they need to stick with xfs?
+>=20
+> Can you clarify the motivation for that question? This problem exists
+> for any filesystem that implements an mmap that where the physical
+> page backing the mapping is identical to the physical storage location
+> for the file data. I don't see it as an xfs specific problem. Rather,
+> xfs is taking the lead in this space because it has already deployed
+> and demonstrated that leases work for the pnfs4 block-server case, so
+> it seems logical to attempt to extend that case for non-ODP-RDMA.
+>=20
+> > Are they
+> > really trying to do COW backed mappings for the RDMA targets?  Or do
+> > they want a COW backed FS but are perfectly happy if the specific RDMA
+> > targets are *not* COW and are statically allocated?
+>=20
+> I would expect the COW to be broken at registration time. Only ODP
+> could possibly support reflink + RDMA. So I think this devolves the
+> problem back to just the "what to do about truncate/punch-hole"
+> problem in the specific case of non-ODP hardware combined with the
+> Filesystem-DAX facility.
+
+
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
+--=-um3ENeAUEAAEn9LYnNJ1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlxcW/8ACgkQuCajMw5X
+L91/3RAAn/t0azp+g0ydwFXoYi7Glyb8+kYEztIcXGo2gFnCTyTT32j4YlcZYeQY
++sb7jSH2fkBbAj69y5pXzuGGg52NvcaGMi8ZzDkxaHxNYIwGXVcT89uNJ5Jri+jD
+RbCD4MnreNx8+YTPy/K9NZGwrG2jemXaN+8Ln0g3UOSV+pBbMTOD6xYXOgPwxmPG
+0sgd2a+Lj5hou8kRIjGk7sbAWCV0kg5Ss4M3gKGt80ny+9CagJHyD49ffhxzU679
+of9gegyRRVBJrFD4zh+qZNEUhhITv3+11kIYU0CwFiwAXT3eMQwhEHL70YwWALuJ
+dOSy1Hy9hDpUqcrkBV2pB9KyaYpDKd84Yt0aS++wNI85i4oZNgjxwtGMmyFb8Fbf
+4S9HePUn5oJarlwzJJYm8pjMWO0daESEqKqIaP9IN1VDp/Mjvw51e1TOmoygshyU
+6zxeaCIfeaJ76EZj1pajXKiA2wE/ONQhIuEsemPthbMxz9py920tOQHlGg39kbys
+rcqym6ZACGXA7Z4myCnpCxTNm5aaEk7isXe4i56GkohCFRostUsqeDBLdr2aqQ0f
+m2TbCHxEuHh6HmhklrHg81w7MJeKl7dOSK71gLwFJoyWZJ3NgSS5OEwwA3kL2TG5
+pBCerjLCZbPYrjgFMod6p+1C8IGNSUMvLycrNscgTn5nfiwjur0=
+=H0zA
+-----END PGP SIGNATURE-----
+
+--=-um3ENeAUEAAEn9LYnNJ1--
 
