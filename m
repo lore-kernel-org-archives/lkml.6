@@ -2,130 +2,133 @@ Return-Path: <SRS0=4Txr=QO=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C30AC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7774C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027392147C
-	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A42FA21902
+	for <linux-kernel@archiver.kernel.org>; Thu,  7 Feb 2019 11:17:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/6xiZvj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kn9CL5fJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbfBGLRf (ORCPT
+        id S1727084AbfBGLRm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 06:17:35 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33385 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfBGLRe (ORCPT
+        Thu, 7 Feb 2019 06:17:42 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35300 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfBGLRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 06:17:34 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so4634350pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:17:34 -0800 (PST)
+        Thu, 7 Feb 2019 06:17:41 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z18so10345449wrh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 03:17:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q1Cia1wz+5mRCkHMYytkTgvIy7gLgYFs59E2XGQjZCc=;
-        b=Y/6xiZvjSdnJhM6j/zki8qil3Ybc/r8bO9vx8LtPIQBMuwcgJWVg17dqthEvGGnbbv
-         6v/hBI3qGAEiw02tmnm6d3FTjpa+yQMvzXeE1plc8IsQT4mZVhMf366l+ji79p1Cy3+W
-         EtBwsB3sG0wmQzlTX0FDmXsZtRdsIJK847l/GOm4wuYAOJS5riWrS5F1qeJRB2TrCsr/
-         Ivzd6bskDEBkexVtUYVO2ah0cMw7EAqBGN1i70aeYz49Rngq7bMPk1wHX/6YkzXK8wQ/
-         kDl+LDEHv/4Fw1GlBCSRqVHfbtON5UJcRs9pSfAx7NRaMM4BqvQLTF/XfYGo6W+h9XWR
-         nP6g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TSwUXwstcS5MWZYT0KETNDOkJuSS6swPSFLDu7aeu/g=;
+        b=kn9CL5fJEF03kKdsiiWjtrbYh/EQ3PwowcBDMnq3ARppJstAw47yqeGmHewMvE8oX0
+         C4lKQg1MD+ydEH0Yl8brbE+V1rh/x6V6bkXTdisNeTcJXiqoafu2G+82hBsRJxh78MJh
+         lb7WNfuGngQ8cDeanvnkx9c0P9yMB9hftMEzYUiAEfad0CdV18pseFQDaQTHkSu8GhPY
+         BGeTGPdAADmjU5rOaT6eS7hcNUahGU+IiWl6l9VTIRkV6/wTj0pFM8/YRGkQo0zmXfUE
+         PEKn56ILQoJIT2tsM73XRqD4BqvneIltz0zfNxkQG7o818TJoUFqMYQRpAEQcrGUpTW1
+         DCjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q1Cia1wz+5mRCkHMYytkTgvIy7gLgYFs59E2XGQjZCc=;
-        b=Uth4vgIwfg2k1traTOljPdG34ckM7Po8FISPBhdJmN5jCFTQjiMvi6bJglohc5hBpX
-         vMbxOfmtmj0Uq1qkYfPVUUOCCnYEnhhyY/W3pwlvAIXWs0pWiHB5LRYtlFy/mbROS8GL
-         ZupC5OXolX4V6K4/FM0SSNvKEsq0NOXr2DDHdOqw2SUErMj5kX/kSkR4I7cAU21k1XNU
-         Scgn0tkA0g2MzNzEx0CcvQZ/F8NB7qpzT1EbJ8ILHcCFbE2l9n2s0aLVDkQPl47ijelQ
-         JRoNLsDnkk+Jodx9/CAJiVzDPtbSOeIl3xY7V0iVuag9BQFS0lbXXoaiXt+IeR58xfKD
-         1u1w==
-X-Gm-Message-State: AHQUAuaWQwDXU8fc4qn/dJVSw5Jj6JQCqqsKG01qEr4ENEhrnSED04tB
-        jAk/QIcjO3qSAqdnCGrSFmmX
-X-Google-Smtp-Source: AHgI3IaTolTllKJ7hnsFOVC1XuKkbhT6P2f8fyuUS5y1sZsQYBC8NV5IIlJx7k/NWQx/Q8ssBCUTkA==
-X-Received: by 2002:a63:4858:: with SMTP id x24mr14245500pgk.420.1549538253718;
-        Thu, 07 Feb 2019 03:17:33 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2405:204:730d:914e:a8b4:2532:ae24:7d86])
-        by smtp.gmail.com with ESMTPSA id l8sm21650875pfb.68.2019.02.07.03.17.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 03:17:32 -0800 (PST)
-Date:   Thu, 7 Feb 2019 16:47:26 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     xuwei5@hisilicon.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, guodong.xu@linaro.org
-Subject: Re: [PATCH 1/3] dt-bindings: reset: Add HI3670 reset controller
- binding
-Message-ID: <20190207111726.GA30269@Mani-XPS-13-9360>
-References: <20190201153841.21903-1-manivannan.sadhasivam@linaro.org>
- <20190201153841.21903-2-manivannan.sadhasivam@linaro.org>
- <1549536094.4557.8.camel@pengutronix.de>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TSwUXwstcS5MWZYT0KETNDOkJuSS6swPSFLDu7aeu/g=;
+        b=X4Ra8LvrHDmD66uTfVXxzZLBs7druyrIEU1DvGcg8GEURrEUlbiSShmqRZ5KsWx6GE
+         4WTGthFAYkRpsgUJqH/i9IKV8YMHjH6PklOQRv8fV+ukCyAkPPioRncgNmR275YxjcSN
+         lr+0rP3QFUOkcC73zN4iieFsANsA7uNDp5vT4b3oFfi+WU0IOcZHFFZastXNjn2VCHQb
+         ZmweJVm/XDq05/jKaY24KtFJeHAeM5a87JynI+46NqRg/EjqZytAl6qss64bkPacP3Lq
+         aDJ5WawLPIonY8z0cpuOJeJA6SxKzTBIzfAMPPtxZL9ECU58X+euynfPm+49KJJwMiSr
+         qvoQ==
+X-Gm-Message-State: AHQUAuZAUHOaS0MKlJZHXi6/FpzsHUVF1vWGknyqE3SpEDvKrTBv0bJ5
+        6LNC9VJv7XBXw9AjZ7XQeeBn+A==
+X-Google-Smtp-Source: AHgI3IbvcffGVQufgjI0mYmCMR2I7H2v4pzY3Qvf07ELBqRF/OvgNF4BNaNWWaXs/g858dlWMppdsQ==
+X-Received: by 2002:a5d:4ecd:: with SMTP id s13mr3720855wrv.110.1549538259754;
+        Thu, 07 Feb 2019 03:17:39 -0800 (PST)
+Received: from localhost.localdomain (42.red-95-121-90.dynamicip.rima-tde.net. [95.121.90.42])
+        by smtp.gmail.com with ESMTPSA id a62sm24490224wmf.47.2019.02.07.03.17.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 07 Feb 2019 03:17:39 -0800 (PST)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, robh@kernel.org,
+        bjorn.andersson@linaro.org
+Cc:     swboyd@chromium.org, andy.gross@linaro.org, shawn.guo@linaro.org,
+        gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
+        jackp@codeaurora.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        khasim.mohammed@linaro.org
+Subject: [PATCH v4 0/4] USB SS PHY for Qualcomm's QCS404
+Date:   Thu,  7 Feb 2019 12:17:30 +0100
+Message-Id: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549536094.4557.8.camel@pengutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+This set adds USB SS PHY support to Qualcomm's QCS404 SoC
+The PHY is implemented using Synopsys' SS PHY IP
 
-On Thu, Feb 07, 2019 at 11:41:34AM +0100, Philipp Zabel wrote:
-> Hi Manivannan,
-> 
-> On Fri, 2019-02-01 at 21:08 +0530, Manivannan Sadhasivam wrote:
-> > HI3670 SoC is architecturally same as the HI3660 SoC. Hence, the same
-> > driver is reused for HI3670 SoC and the binding is documented here.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  .../devicetree/bindings/reset/hisilicon,hi3660-reset.txt     | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
-> > index 2bf3344b2a02..5d60ec541331 100644
-> > --- a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
-> > +++ b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
-> > @@ -5,11 +5,12 @@ Please also refer to reset.txt in this directory for common reset
-> >  controller binding usage.
-> >  
-> >  The reset controller registers are part of the system-ctl block on
-> > -hi3660 SoC.
-> > +hi3660 and hi3670 SoCs.
-> >  
-> >  Required properties:
-> > -- compatible: should be
-> > +- compatible: should be one of the following:
-> >  		 "hisilicon,hi3660-reset"
-> > +		 "hisilicon,hi3670-reset"
-> 
-> If the HI3670 reset controller is compatible to the HI3660 reset
-> controller, this could be:
-> 
-> - compatible: should be one of the following:
->               "hisilicon,hi3660-reset" for HI3660
->               "hisilicon,hi3670-reset", "hisilicon,hi3660-reset" for HI3670
-> 
-> That way there would be no need to change the driver and it would be
-> documented that the two reset controllers are compatible.
-> 
+The code is losely based on Sriharsha Allenki's
+<sallenki@codeaurora.org> original implementation.
 
-Yeah, I thought about the fallback approach initially but was unsure
-about which method to adopt. Will use fallback compatible in next
-revision.
+v2:
+  enable OTG mode detection
+  move vdd voltage levels to driver
+  use bulk_ control interfaces
+  ss-phy-bindings [1]
 
-Thanks,
-Mani
+v3:
+  remove clk/regulator counters
+  vdd constrains in device tree
+  update error labels
+  fix get_optional vbus
+  allocate arrays statically
+  fix typos in bindings
 
-> regards
-> Philipp
+v4:
+ dts:
+   make compatible tag more specific to the driver
+   define a connector node to contain the vbus regulator
+   fix the resets definition
+   fix example node
+   remove unused binding (qcom-dwc3-usb-phy)
+   connector: add optional property vbus-supply
+ driver:
+   vbus regulator is no longer optional
+   
+[1] ss-phy-binding discussion:
+ - qcom,dwc3-ss-usb-phy exist for a generic usb2/usb3 phy driver that
+ was never merged. Rather than trying to re-use these bindings I chose
+ to delete them for simplicity
+ 
+
+Jorge Ramirez-Ortiz (4):
+  dt-bindings: phy: remove qcom-dwc3-usb-phy
+  dt-bindings: connector: Add vbus-supply property
+  dt-bindings: Add Qualcomm USB SuperSpeed PHY bindings
+  phy: qualcomm: usb: Add SuperSpeed PHY driver
+
+ .../bindings/connector/usb-connector.txt      |   4 +
+ .../bindings/phy/qcom,snps-usb-ssphy.txt      |  79 +++++
+ .../bindings/phy/qcom-dwc3-usb-phy.txt        |  37 --
+ drivers/phy/qualcomm/Kconfig                  |  11 +
+ drivers/phy/qualcomm/Makefile                 |   1 +
+ drivers/phy/qualcomm/phy-qcom-usb-ss.c        | 322 ++++++++++++++++++
+ 6 files changed, 417 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-usb-ssphy.txt
+ delete mode 100644 Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-ss.c
+
+-- 
+2.20.1
+
