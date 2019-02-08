@@ -2,136 +2,194 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EEDC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F66C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C91F72146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4092146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfBHRkh (ORCPT
+        id S1728010AbfBHRli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:40:37 -0500
-Received: from foss.arm.com ([217.140.101.70]:55182 "EHLO foss.arm.com"
+        Fri, 8 Feb 2019 12:41:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:55272 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727633AbfBHRkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:40:35 -0500
+        id S1727817AbfBHRlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:41:37 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE71780D;
-        Fri,  8 Feb 2019 09:40:34 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D92523F719;
-        Fri,  8 Feb 2019 09:40:32 -0800 (PST)
-Subject: Re: [patch V2 0/2] genirq, proc: Speedup /proc/stat interrupt
- statistics
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <20190208134802.218483159@linutronix.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <0a0ad274-83fb-8310-a306-68aa65eeef63@arm.com>
-Date:   Fri, 8 Feb 2019 17:40:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 581DA80D;
+        Fri,  8 Feb 2019 09:41:36 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 692823F719;
+        Fri,  8 Feb 2019 09:41:34 -0800 (PST)
+Date:   Fri, 8 Feb 2019 17:41:31 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Message-ID: <20190208174131.GB22401@e107155-lin>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
+ <20190208110053.GA7913@e107155-lin>
+ <87302853-74cc-8eeb-6bd4-6338746e0738@samsung.com>
+ <20190208115122.GA13043@e107155-lin>
+ <66b33c07-4970-b60a-d924-d4baba79c836@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208134802.218483159@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66b33c07-4970-b60a-d924-d4baba79c836@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2019 13:48, Thomas Gleixner wrote:
-> Waiman reported that on large systems with a large amount of interrupts the
-> readout of /proc/stat takes a long time to sum up the interrupt
-> statistics. In principle this is not a problem. but for unknown reasons
-> some enterprise quality software reads /proc/stat with a high frequency.
+On Fri, Feb 08, 2019 at 01:04:18PM +0100, Marek Szyprowski wrote:
+> Hi Sudeep,
 > 
-> The reason for this is that interrupt statistics are accounted per cpu. So
-> the /proc/stat logic has to sum up the interrupt stats for each interrupt.
+> On 2019-02-08 12:51, Sudeep Holla wrote:
+> > On Fri, Feb 08, 2019 at 12:47:06PM +0100, Marek Szyprowski wrote:
+> >> On 2019-02-08 12:00, Sudeep Holla wrote:
+> >>> On Thu, Feb 07, 2019 at 01:22:25PM +0100, Marek Szyprowski wrote:
+> >>>> Dear All,
+> >>>>
+> >>>> This is a scenario that triggers the above issue:
+> >>> [...]
+> >>>> 1. system disables non-boot cpu's at the end of system suspend procedure,
+> >>>> 2. this in turn deinitializes cpufreq drivers for the disabled cpus,
+> >>>> 3. early in the system resume procedure all cpus are got back to online
+> >>>>    state,
+> >>>> 4. this in turn causes cpufreq to be initialized for the newly onlined
+> >>>>    cpus,
+> >>>> 5. cpufreq-dt acquires all its resources (clocks, regulators) during
+> >>>>    ->init() callback,
+> >>> This is strictly not just restricted to cpufreq-dt, but to any driver
+> >>> supporting multiple policies. So we need a generic fix not just
+> >>> cpufreq-dt specific.
+> >> Could you point which other driver needs similar fix? Here in cpufreq-dt
+> >> the problem was caused by using regulator api (indirectly) from
+> >> ->init(). All other drivers, which have regulators support, are for old,
+> >> obsolete, uni-processor systems, which don't have the problem of
+> >> secondary cpu suspend during system suspend/resume cycle.
+> >>
+> > scmi_cpufreq for instance. We can fix that in driver my moving to polling
+> > to get cpufreq_get_rate, but we support both polling and interrupt based.
+> > We may wait for remote processor interrupt in get_rate.
 > 
-> The following series addresses this by making the interrupt statitics code
-> in the core generate the sum directly and by making the loop in the
-> /proc/stat read function smarter.
-> 
-> V1 -> V2: Address review feedback: undo struct layout changes, make
->       	  variables unsigned and add test results to the changelog.
-> 
-> Thanks,
-> 
->         tglx
-> 
-> 8<----------------
->  fs/proc/stat.c          |   29 ++++++++++++++++++++++++++---
->  include/linux/irqdesc.h |    1 +
->  kernel/irq/chip.c       |   12 ++++++++++--
->  kernel/irq/internals.h  |    8 +++++++-
->  kernel/irq/irqdesc.c    |    7 ++++++-
->  5 files changed, 50 insertions(+), 7 deletions(-)
-> 
+> Frankly, I don't feel I know enough to touch this driver and I don't
+> think that this can even be fixed in a generic way in the cpufreq core.
 
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Based on Rafael's suggestion, I cooked up something. See if this helps ?
+The policy to cpu dance can be removed and we can just run through the
+online cpumask I think.
 
-Thanks,
+Regards,
+Sudeep
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+-->8
+
+diff --git i/drivers/cpufreq/cpufreq.c w/drivers/cpufreq/cpufreq.c
+index e35a886e00bc..03d65a02a542 100644
+--- i/drivers/cpufreq/cpufreq.c
++++ w/drivers/cpufreq/cpufreq.c
+@@ -1640,6 +1640,7 @@ EXPORT_SYMBOL(cpufreq_generic_suspend);
+ void cpufreq_suspend(void)
+ {
+ 	struct cpufreq_policy *policy;
++	int cpu;
+ 
+ 	if (!cpufreq_driver)
+ 		return;
+@@ -1662,6 +1663,11 @@ void cpufreq_suspend(void)
+ 	}
+ 
+ suspend:
++	if (cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME)
++		for_each_active_policy(policy)
++			for_each_cpu(cpu, policy->cpus)
++				cpufreq_offline(cpu);
++
+ 	cpufreq_suspended = true;
+ }
+ 
+@@ -1674,7 +1680,7 @@ void cpufreq_suspend(void)
+ void cpufreq_resume(void)
+ {
+ 	struct cpufreq_policy *policy;
+-	int ret;
++	int ret, cpu;
+ 
+ 	if (!cpufreq_driver)
+ 		return;
+@@ -1682,6 +1688,11 @@ void cpufreq_resume(void)
+ 	if (unlikely(!cpufreq_suspended))
+ 		return;
+ 
++	if (cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME)
++		for_each_active_policy(policy)
++			for_each_cpu(cpu, policy->cpus)
++				cpufreq_online(cpu);
++
+ 	cpufreq_suspended = false;
+ 
+ 	if (!has_target() && !cpufreq_driver->resume)
+@@ -2444,14 +2455,16 @@ static enum cpuhp_state hp_online;
+ 
+ static int cpuhp_cpufreq_online(unsigned int cpu)
+ {
+-	cpufreq_online(cpu);
++	if (!(cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME))
++		cpufreq_online(cpu);
+ 
+ 	return 0;
+ }
+ 
+ static int cpuhp_cpufreq_offline(unsigned int cpu)
+ {
+-	cpufreq_offline(cpu);
++	if (!(cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME))
++		cpufreq_offline(cpu);
+ 
+ 	return 0;
+ }
+diff --git i/drivers/cpufreq/scmi-cpufreq.c w/drivers/cpufreq/scmi-cpufreq.c
+index 01871418ffde..0bfc96102739 100644
+--- i/drivers/cpufreq/scmi-cpufreq.c
++++ w/drivers/cpufreq/scmi-cpufreq.c
+@@ -203,7 +203,8 @@ static void scmi_cpufreq_ready(struct cpufreq_policy *policy)
+ static struct cpufreq_driver scmi_cpufreq_driver = {
+ 	.name	= "scmi",
+ 	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
+-		  CPUFREQ_NEED_INITIAL_FREQ_CHECK,
++		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
++		  CPUFREQ_DEFER_INIT_DURING_RESUME,
+ 	.verify	= cpufreq_generic_frequency_table_verify,
+ 	.attr	= cpufreq_generic_attr,
+ 	.target_index	= scmi_cpufreq_set_target,
+diff --git i/include/linux/cpufreq.h w/include/linux/cpufreq.h
+index c86d6d8bdfed..9cf6b3ce063a 100644
+--- i/include/linux/cpufreq.h
++++ w/include/linux/cpufreq.h
+@@ -385,6 +385,12 @@ struct cpufreq_driver {
+  */
+ #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING (1 << 6)
+ 
++/*
++ * Set by drivers to advance/defer the cpufreq online/offline operation during
++ * system suspend/resume.
++ */
++#define CPUFREQ_DEFER_INIT_DURING_RESUME (1 << 7)
++
+ int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+ int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+ 
