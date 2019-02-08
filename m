@@ -2,108 +2,97 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84110C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CEDC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C78420857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E89C020857
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G06yJn1w"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dv5DSh15"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbfBHN5s (ORCPT
+        id S1727518AbfBHOBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:57:48 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46018 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbfBHN5r (ORCPT
+        Fri, 8 Feb 2019 09:01:38 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51779 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfBHOBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:57:47 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so2566291lfa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 05:57:46 -0800 (PST)
+        Fri, 8 Feb 2019 09:01:37 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b11so3554095wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:01:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mW8qhamNDM9m+LnCLsuX8f8uOJ/Eq/Fz3JqxK7IP2ic=;
-        b=G06yJn1w71aUJD32fkTiHf0UUBOzIHrE4Gu/+/WzhKBEm5MIWb09azIw7Zdy/iN1tk
-         zBFYoveDXJOjICogGlCr+HbM3q7wpwXnP+L5gQ2oR1gtN0O8Oqnvylq3qF0tobHcwIbC
-         T4AG4KHCUqFxPIY8zS8wj0fWms5UfH+p1lznjw/cDLfokdJhbdceytR4fwM+IphS/IRN
-         1FlKT5WSxi2JntszyTi9JoT9kzybxl0A7864jXXY/8biFhkYygNpnm9jIjtZczKy7iFm
-         Xs/1TyF8xbIaHstfJinQQ7h+mwIC1eHlNJSOsYykGqLuDMuwBeyzqEgecUpFMJzFf4Eo
-         aynQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BM3OSI7XT+WQwhQ6Ckq9ZONwL9lY+3XqG8eHDrPB9gg=;
+        b=Dv5DSh15bBcOYfkiF3lDKJYHzXDXWkjFsGhMyIZFhHOgqDL+3K1wblfcrBMxInd5K0
+         4xoTmk1TvJ43pNpyUhqysYnQPm/Eks5DqJ16BZ+2Onq4rdez6YzVg02rS7YfnmwozwXg
+         KjfEpc7eK7UQOgGABKuQOmKBKEWB6R1d20wLfTKB6IS0ptLEG6OTgmVXT/tJexRs90EA
+         qXmvaNoQOdwV9wc/4pqbyr8xfGn8ukAi7Df7DiQlqS1SBeEWInTOXaASTRGe7gRsjoM2
+         LlahHD8Cboq4pE0yInXT8NjpUC/ImMo5GedleCpYrhjXCCkY54GRYoGRCqZHl4WC9Zmh
+         S1WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mW8qhamNDM9m+LnCLsuX8f8uOJ/Eq/Fz3JqxK7IP2ic=;
-        b=B291+Ei09g3iASwxWrjIi8xr0IgUOk9XLVodMAHSHft++1NgBZCnbD+I9zlvvTxRQg
-         9ompBRESObxOiF1EVOsNbXeBzoiNOSyWp+BfUa/d/rnPA3TheXFPakVAGdXu4OAXOuo1
-         2YBR5AO2Al60o3tQXOZSb77HRZe3vRc4Hk9JkWyAIa1W7RKAOr8tZ81kMWxUpLH1b1vb
-         klsblDKnAq/lptZ/P02teKZvWrmbyYs/mO9mpiPPZwpSNcmcEBnZWQrhCMp4A12LPRmK
-         Qs5FSBsDcomABR5BzAsxBZZGAnVs9tWn82vPHB3nY6MEwaZxfAQBiRTY3x/sAX8ewlCW
-         4/cQ==
-X-Gm-Message-State: AHQUAubHYyYnJJxrkfOH5laycslBIFp5LkkuQqe3lFmuKkM6IDlUZcfH
-        ucpl+H14NPOawiPTaVZX/7C2Q9y69npRB/swlh2TIg==
-X-Google-Smtp-Source: AHgI3IaxyMA3sZoPmEh2BA6fJPJGU8OCooELrE5wmjrkXcP9D1J4xuzMFvAfh/0v2bGkv4WkIUVxI2WTqgj0nFmrn/c=
-X-Received: by 2002:ac2:4219:: with SMTP id y25mr13455801lfh.130.1549634265412;
- Fri, 08 Feb 2019 05:57:45 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BM3OSI7XT+WQwhQ6Ckq9ZONwL9lY+3XqG8eHDrPB9gg=;
+        b=mjBomPvp9VpWtQhP/8s/+U47x2hIs1ULWq4ohrqyTO3TQ/7Bq8p/ffRVpJDbCrFPSq
+         BGi0k6IKy0ZNsUSHduy2kT2O/NMkzjnL1JQPG1XW3KEOIpZLob1+urNBSH5QCr18Dhqx
+         Sv6eTfDV7dC6RhFW44THir3Gbl6mRSSMkBO0NAJsPwPGSZXXJfeieRskKIIcsTLNht3Y
+         RUUh153p5Pg+bRLdtH5xKQ9UQ6e2vpQFCNi+xu2vp1BVlH5vWQz2xiyEQ5vuOXPvX4ot
+         L4uZbkXsJd88TNnarlJAdiJ7YzpSFSCdQY1UlU/h+haw20Et7xk14O86L1kFaBrXTD6T
+         GVIw==
+X-Gm-Message-State: AHQUAuapiuncjlc2wl73aXL+qgKv+g3aFcLbB8QJZdanY1/E4bwRd7RN
+        uwCADvfVU+Lwxi6Yq8B6Xx4lLw==
+X-Google-Smtp-Source: AHgI3Ia/4zRdBtn7PSN8Iu7AeDVDKUFCRD+av2wch5+HpetFTJAiVwWHQRdbtIFxL8+e/MEdodP5ZA==
+X-Received: by 2002:a1c:9c0a:: with SMTP id f10mr12026485wme.73.1549634495955;
+        Fri, 08 Feb 2019 06:01:35 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id y20sm4599540wra.51.2019.02.08.06.01.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 06:01:34 -0800 (PST)
+Subject: Re: [PATCH v6 3/5] misc: fastrpc: Add support for context Invoke
+ method
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     arnd@arndb.de, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        Thierry Escande <thierry.escande@linaro.org>
+References: <20190208132306.12571-1-srinivas.kandagatla@linaro.org>
+ <20190208132306.12571-4-srinivas.kandagatla@linaro.org>
+ <20190208135514.GA23406@kroah.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <b60a0c35-6e5a-4166-9dd8-3891fce1cd0b@linaro.org>
+Date:   Fri, 8 Feb 2019 14:01:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190117102315.1833-1-jbrunet@baylibre.com> <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com>
- <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
-In-Reply-To: <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Feb 2019 14:57:33 +0100
-Message-ID: <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190208135514.GA23406@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 4:36 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
-> > On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> >
-> > > This patchset fixes the initial pinctrl support added for th g12a SoC
-> > > family, which is mainly around the register regions claimed by the
-> > > driver.
-> > >
-> > > Linus, would it possible for you to provide a tag with these changes to
-> > > Kevin ?
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
-> >
-> > > ATM, we can only use the devices for which the pinmux is already set by
-> > > the bootloader. Enabling the broken pinctrl driver could cause regressions
-> > > in kernelCI. Having a tag, would allow us to start using pinctrl on this
-> > > SoC in this cycle, w/o regression. It would be nice :)
-> >
-> > When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
-> > or next (v5.1) with these patches?
->
-> I was referring to the 5.1 release but it is a good question, I did not really
-> think about 5.0.
->
-> Those changes are mainly fixes, so guess it could go in the 5.0 but support
-> for this SoC is still in its early stages, so either way is fine by me.
->
-> Whatever is simpler for you I guess ;)
+Thanks for the review,
 
-I already merged it for devel and other stuff on top so it will be for v5.1
-as it looks now.
+On 08/02/2019 13:55, Greg KH wrote:
+>> +
+>> +		/* Make sure reserved field is set to 0 */
+>> +		if (args->reserved) {
+>> +			kfree(args);
+>> +			return -EINVAL;
+> Am I wrong in that you are only checking the first reserved field in
+> this array of args?  Don't you have a whole bunch of them here (nscalars
+> of them)?  Don't you need to check them all and not just the first one?
+My Bad, there should be a loop here!
+I will fix this in next version!
 
-Yours,
-Linus Walleij
+--srini
