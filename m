@@ -2,350 +2,111 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1920C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9502C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F9521916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 825922085A
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:39:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GA4ENPUY"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="djWK8Nbn";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LrbJT56x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfBHEfu (ORCPT
+        id S1727068AbfBHEje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 23:35:50 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46851 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbfBHEft (ORCPT
+        Thu, 7 Feb 2019 23:39:34 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48170 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726793AbfBHEjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 23:35:49 -0500
-Received: by mail-ed1-f67.google.com with SMTP id o10so1669385edt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 20:35:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jUTj8B+GtmhHYkTK2S0PrlLERdhvTf9uHTNZBWObPfs=;
-        b=GA4ENPUYXXfI6dTgK7yb5NQbiBIxPYGT+YuxWGwl57lRxHD2Df47j0sshvJzH1W/WX
-         LOWrxR+SwA+QLA/BVwPdOfQ8SRPrGeo6p9uRz1Wktg0ODV1/hqOIb+gsNnCHUcQFKotY
-         U2an3HDhbB6imFEzRUGUWZSehYjv3FIU72ahBdW9jBRKlOwq8Wui7eMlhiHZPTQx3GZH
-         /QO+t+UELXbJbbItEdJ1lzmJ49RuHO4LQIwKyvsN569rc1OSKSBzuHE32EamMSOvtBro
-         Q0/Hj1oAH4ims5aw3PC1lA8EK13Dynh4zC5ZHzuGLZXmVaAa04RVwxaqYqTVY+Ighj5T
-         Csvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jUTj8B+GtmhHYkTK2S0PrlLERdhvTf9uHTNZBWObPfs=;
-        b=NAE1pn9HHgZvhScKAYraquVeNT6EAIdiRUrnrwN2HnMKSC2mJdKzTmJXOEwJ4N8pEO
-         KI3PfkmMa9FT2YKAmlg3VitKHJICdnunuWWBXMcA4srOiOZsQX8hC5/knHRuFwUav5+c
-         Fv0uiLhR617kwe5gX8jQxi40uXG/QRJG3Z6HCCVBAp/c2epdQ+chVz9P3YwvJHeHa3z0
-         diFgT4sXMfPYKKjXoqPSVNQqLuUapSd7WA3BxS0fHd4cJcrpPS8zsm3QCt3Jab+VNqH7
-         oplo5Neui+VrrXHXW5llRj+d9JRnpwfA7FCM3cANGRFolNQ+CQGyH9yBKxuqXADKc6wQ
-         QyKg==
-X-Gm-Message-State: AHQUAublFCLrL2GbtPnYQo64ArS3XctCCXAEkEriWeikQ7bnwts7ppEd
-        DbQdsBqh9wQtNqFz0ZOLKEQ=
-X-Google-Smtp-Source: AHgI3IZuyZAbsoC4WXl+nDIJS142UwHnH+D5NgN25xfaqDSzz9LJTvPxGQEMqVtIQ1n5eodOvisK9w==
-X-Received: by 2002:a17:906:7f95:: with SMTP id f21mr900294ejr.131.1549600546809;
-        Thu, 07 Feb 2019 20:35:46 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id v5sm244274eju.37.2019.02.07.20.35.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 07 Feb 2019 20:35:46 -0800 (PST)
-Date:   Thu, 7 Feb 2019 21:35:43 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org, joel@joelfernandes.org,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        james.morse@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v10 12/25] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-Message-ID: <20190208043543.GA5040@archlinux-ryzen>
-References: <1548946743-38979-1-git-send-email-julien.thierry@arm.com>
- <1548946743-38979-13-git-send-email-julien.thierry@arm.com>
+        Thu, 7 Feb 2019 23:39:33 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 85CF56085F; Fri,  8 Feb 2019 04:39:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549600772;
+        bh=q2vH9t475bMq8VLSdCFwAendgdV3JVdF7MH04rEtX1Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=djWK8NbnBUYIchzvT9GqlZcvpq8rUosqmunPgAKSecSthMHBsOux5ojuyNWtj7E6T
+         78v0MS8rMefHpVXwQJ02bA/DDSxDcshQtlX5K36Dn32zVNp7EJGwLpN1l+nr5C6hfY
+         Rh1UmVa8claf610oZE4ZWdsxs2l3ELr7YWTiLhl0=
+Received: from [10.79.128.169] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 197A060791;
+        Fri,  8 Feb 2019 04:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549600771;
+        bh=q2vH9t475bMq8VLSdCFwAendgdV3JVdF7MH04rEtX1Q=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LrbJT56xrXZBAwNHK20lxYq7JW0bxxwgfijewZ8pjwCfMBkDc0ngQWNBxk2yv6hBg
+         W7a7mIeMwds8k+xpd3VyjJUNw2Aye2uIe3JZNZzphTlPAPrNGoQssyfb6B+RyyB32U
+         HoUDP91KqJr65OT2YzVM27H00HIQJkq/KYWSO42c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 197A060791
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [RFC/PATCH 0/5] DVFS in the OPP core
+To:     Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+References: <20190129015547.213276-1-swboyd@chromium.org>
+ <7af27aa5-3ff6-d4ee-1dc0-bac797c2bdbc@codeaurora.org>
+ <154956885472.115909.8681514480591552850@swboyd.mtv.corp.google.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <76b656dd-e8b2-0982-23a7-398235630d54@codeaurora.org>
+Date:   Fri, 8 Feb 2019 10:09:26 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548946743-38979-13-git-send-email-julien.thierry@arm.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <154956885472.115909.8681514480591552850@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 02:58:50PM +0000, Julien Thierry wrote:
-> Instead disabling interrupts by setting the PSR.I bit, use a priority
-> higher than the one used for interrupts to mask them via PMR.
+
+
+On 2/8/2019 1:17 AM, Stephen Boyd wrote:
+> Quoting Rajendra Nayak (2019-02-06 22:57:12)
+>>
+>>> 3) How do we handle devices that already have power-domains specified in
+>>> DT? The opp binding for required-opps doesn't let us specify the power
+>>> domain to target, instead it assumes that whatever power domain is
+>>> attached to a device is the one that OPP needs to use to change the
+>>> genpd performance state. Do we need a
+>>> dev_pm_opp_set_required_opps_name() or something to be explicit about
+>>> this? Can we have some way for the power domain that required-opps
+>>> correspond to be expressed in the OPP tables themselves?
+>>
+>> I was converting a few more drivers to use the proposed approach in this
+>> RFC, in order to identify all outstanding issues we need to deal with,
+>> and specifically for UFS, I end up with this exact scenario where UFS already
+>> has an existing power domain (gdsc) and I need to add another one (rpmhpd) for
+>> setting the performance state.
+>>
+>> If I use dev_pm_opp_of_add_table() to add the opp table from DT, the opp
+>> layer assumes its the same device on which it can do a dev_pm_genpd_set_performance_state()
+>> with, however the device that's actually associated with the pm_domain when we
+>> have multiple power domains is infact the one (dummy) that we create when
+>> the driver makes a call to dev_pm_domain_attach_by_name/id().
+>>
+>> Any thoughts on whats a good way to handle this?
+>>
 > 
-> When using PMR to disable interrupts, the value of PMR will be used
-> instead of PSR.[DAIF] for the irqflags.
-> 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> ---
->  arch/arm64/include/asm/efi.h      |  11 +++++
->  arch/arm64/include/asm/irqflags.h | 100 +++++++++++++++++++++++++++-----------
->  2 files changed, 83 insertions(+), 28 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
-> index 7ed3208..c9e9a69 100644
-> --- a/arch/arm64/include/asm/efi.h
-> +++ b/arch/arm64/include/asm/efi.h
-> @@ -44,6 +44,17 @@
->  
->  #define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
->  
-> +/*
-> + * Even when Linux uses IRQ priorities for IRQ disabling, EFI does not.
-> + * And EFI shouldn't really play around with priority masking as it is not aware
-> + * which priorities the OS has assigned to its interrupts.
-> + */
-> +#define arch_efi_save_flags(state_flags)		\
-> +	((void)((state_flags) = read_sysreg(daif)))
-> +
-> +#define arch_efi_restore_flags(state_flags)	write_sysreg(state_flags, daif)
-> +
-> +
->  /* arch specific definitions used by the stub code */
->  
->  /*
-> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
-> index 24692ed..d4597b2 100644
-> --- a/arch/arm64/include/asm/irqflags.h
-> +++ b/arch/arm64/include/asm/irqflags.h
-> @@ -18,7 +18,9 @@
->  
->  #ifdef __KERNEL__
->  
-> +#include <asm/alternative.h>
->  #include <asm/ptrace.h>
-> +#include <asm/sysreg.h>
->  
->  /*
->   * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
-> @@ -36,33 +38,27 @@
->  /*
->   * CPU interrupt mask handling.
->   */
-> -static inline unsigned long arch_local_irq_save(void)
-> -{
-> -	unsigned long flags;
-> -	asm volatile(
-> -		"mrs	%0, daif		// arch_local_irq_save\n"
-> -		"msr	daifset, #2"
-> -		: "=r" (flags)
-> -		:
-> -		: "memory");
-> -	return flags;
-> -}
-> -
->  static inline void arch_local_irq_enable(void)
->  {
-> -	asm volatile(
-> -		"msr	daifclr, #2		// arch_local_irq_enable"
-> -		:
-> +	asm volatile(ALTERNATIVE(
-> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
-> +		"nop",
-> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
-> +		"dsb	sy",
-> +		ARM64_HAS_IRQ_PRIO_MASKING)
->  		:
-> +		: "r" (GIC_PRIO_IRQON)
->  		: "memory");
->  }
->  
->  static inline void arch_local_irq_disable(void)
->  {
-> -	asm volatile(
-> -		"msr	daifset, #2		// arch_local_irq_disable"
-> -		:
-> +	asm volatile(ALTERNATIVE(
-> +		"msr	daifset, #2		// arch_local_irq_disable",
-> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
-> +		ARM64_HAS_IRQ_PRIO_MASKING)
->  		:
-> +		: "r" (GIC_PRIO_IRQOFF)
->  		: "memory");
->  }
->  
-> @@ -71,12 +67,44 @@ static inline void arch_local_irq_disable(void)
->   */
->  static inline unsigned long arch_local_save_flags(void)
->  {
-> +	unsigned long daif_bits;
->  	unsigned long flags;
-> -	asm volatile(
-> -		"mrs	%0, daif		// arch_local_save_flags"
-> -		: "=r" (flags)
-> -		:
-> +
-> +	daif_bits = read_sysreg(daif);
-> +
-> +	/*
-> +	 * The asm is logically equivalent to:
-> +	 *
-> +	 * if (system_uses_irq_prio_masking())
-> +	 *	flags = (daif_bits & PSR_I_BIT) ?
-> +	 *			GIC_PRIO_IRQOFF :
-> +	 *			read_sysreg_s(SYS_ICC_PMR_EL1);
-> +	 * else
-> +	 *	flags = daif_bits;
-> +	 */
-> +	asm volatile(ALTERNATIVE(
-> +			"mov	%0, %1\n"
-> +			"nop\n"
-> +			"nop",
-> +			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1) "\n"
-> +			"ands	%1, %1, " __stringify(PSR_I_BIT) "\n"
-> +			"csel	%0, %0, %2, eq",
-> +			ARM64_HAS_IRQ_PRIO_MASKING)
-> +		: "=&r" (flags), "+r" (daif_bits)
-> +		: "r" (GIC_PRIO_IRQOFF)
->  		: "memory");
-> +
-> +	return flags;
-> +}
-> +
-> +static inline unsigned long arch_local_irq_save(void)
-> +{
-> +	unsigned long flags;
-> +
-> +	flags = arch_local_save_flags();
-> +
-> +	arch_local_irq_disable();
-> +
->  	return flags;
->  }
->  
-> @@ -85,16 +113,32 @@ static inline unsigned long arch_local_save_flags(void)
->   */
->  static inline void arch_local_irq_restore(unsigned long flags)
->  {
-> -	asm volatile(
-> -		"msr	daif, %0		// arch_local_irq_restore"
-> -	:
-> -	: "r" (flags)
-> -	: "memory");
-> +	asm volatile(ALTERNATIVE(
-> +			"msr	daif, %0\n"
-> +			"nop",
-> +			"msr_s	" __stringify(SYS_ICC_PMR_EL1) ", %0\n"
-> +			"dsb	sy",
-> +			ARM64_HAS_IRQ_PRIO_MASKING)
-> +		: "+r" (flags)
-> +		:
-> +		: "memory");
->  }
->  
->  static inline int arch_irqs_disabled_flags(unsigned long flags)
->  {
-> -	return flags & PSR_I_BIT;
-> +	int res;
-> +
-> +	asm volatile(ALTERNATIVE(
-> +			"and	%w0, %w1, #" __stringify(PSR_I_BIT) "\n"
-> +			"nop",
-> +			"cmp	%w1, #" __stringify(GIC_PRIO_IRQOFF) "\n"
-> +			"cset	%w0, ls",
-> +			ARM64_HAS_IRQ_PRIO_MASKING)
-> +		: "=&r" (res)
-> +		: "r" ((int) flags)
-> +		: "memory");
-> +
-> +	return res;
->  }
->  #endif
->  #endif
-> -- 
-> 1.9.1
-> 
+> Ulf mentioned that we can use dev_pm_opp_set_genpd_virt_dev() for this.
+> Does that API work here?
 
-Hi Julien,
+Ah, yes, that should work, I hadn't noticed this API existed.
 
-This patch introduced a slew of Clang warnings:
-
-In file included from arch/arm64/kernel/signal.c:21:
-In file included from include/linux/compat.h:10:
-In file included from include/linux/time.h:6:
-In file included from include/linux/seqlock.h:36:
-In file included from include/linux/spinlock.h:54:
-In file included from include/linux/irqflags.h:16:
-arch/arm64/include/asm/irqflags.h:50:10: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
-                : "r" (GIC_PRIO_IRQON)
-                       ^
-arch/arm64/include/asm/ptrace.h:39:25: note: expanded from macro 'GIC_PRIO_IRQON'
-#define GIC_PRIO_IRQON          0xf0
-                                ^
-arch/arm64/include/asm/irqflags.h:46:44: note: use constraint modifier "w"
-                "msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
-                                                         ^~
-                                                         %w0
-arch/arm64/include/asm/alternative.h:286:29: note: expanded from macro 'ALTERNATIVE'
-        _ALTERNATIVE_CFG(oldinstr, newinstr, __VA_ARGS__, 1)
-                                   ^
-arch/arm64/include/asm/alternative.h:88:30: note: expanded from macro '_ALTERNATIVE_CFG'
-        __ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
-                                    ^
-arch/arm64/include/asm/alternative.h:76:2: note: expanded from macro '__ALTERNATIVE_CFG'
-        newinstr "\n"                                                   \
-        ^
-In file included from arch/arm64/kernel/signal.c:21:
-In file included from include/linux/compat.h:10:
-In file included from include/linux/time.h:6:
-In file included from include/linux/seqlock.h:36:
-In file included from include/linux/spinlock.h:54:
-In file included from include/linux/irqflags.h:16:
-arch/arm64/include/asm/irqflags.h:61:10: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
-                : "r" (GIC_PRIO_IRQOFF)
-                       ^
-arch/arm64/include/asm/ptrace.h:40:26: note: expanded from macro 'GIC_PRIO_IRQOFF'
-#define GIC_PRIO_IRQOFF         (GIC_PRIO_IRQON & ~0x80)
-                                ^
-arch/arm64/include/asm/irqflags.h:58:45: note: use constraint modifier "w"
-                "msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
-                                                          ^
-arch/arm64/include/asm/irqflags.h:94:10: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
-                : "r" (GIC_PRIO_IRQOFF)
-                       ^
-arch/arm64/include/asm/ptrace.h:40:26: note: expanded from macro 'GIC_PRIO_IRQOFF'
-#define GIC_PRIO_IRQOFF         (GIC_PRIO_IRQON & ~0x80)
-                                ^
-arch/arm64/include/asm/irqflags.h:91:18: note: use constraint modifier "w"
-                        "csel   %0, %0, %2, eq",
-                                        ^~
-                                        %w2
-arch/arm64/include/asm/alternative.h:286:29: note: expanded from macro 'ALTERNATIVE'
-        _ALTERNATIVE_CFG(oldinstr, newinstr, __VA_ARGS__, 1)
-                                   ^
-arch/arm64/include/asm/alternative.h:88:30: note: expanded from macro '_ALTERNATIVE_CFG'
-        __ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
-                                    ^
-arch/arm64/include/asm/alternative.h:76:2: note: expanded from macro '__ALTERNATIVE_CFG'
-        newinstr "\n"                                                   \
-        ^
-3 warnings generated.
-
-
-I am not sure if they should be fixed with Clang's suggestion of a
-constraint modifier or a cast like commit 1b57ec8c7527 ("arm64: io:
-Ensure value passed to __iormb() is held in a 64-bit register"), hence
-this message.
-
-Thanks,
-Nathan
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
