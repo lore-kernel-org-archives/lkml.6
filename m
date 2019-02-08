@@ -2,110 +2,137 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20318C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B701C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E193920844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:33:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="qZXQTCeL"
+	by mail.kernel.org (Postfix) with ESMTP id D768320844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfBHNdV (ORCPT
+        id S1727773AbfBHNeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:33:21 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39664 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfBHNdU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:33:20 -0500
-Received: by mail-pf1-f196.google.com with SMTP id f132so1680324pfa.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 05:33:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=R//D5hhJAl7Ot//RTtLFQbM0iPV9AIFAuYJrz/swsJs=;
-        b=qZXQTCeLTO/PiAw5P4ewu6LUpr4iqvqZ8cFNGAmRP1qQ7WTPrlaBYDPXqjvOpl4hDA
-         RzfMdzN5UmrVVr0n2nDGrzqkDqQag+zcvRKmZwRfL6xF5FWlw12y2hPuaoC4z5hw0qxX
-         Ptpi0UUJX5dIj4egT7LpsTaG91AxDeu35BqA5bZ2Ix++vE9HtYlPLfx5ROq8/WoUHLTl
-         IEUB9wM+R5bvRLk+9ImwLiFFUisXKyJiZ3cvcV4FSNXEom0hQugH60i3iF1oA78GCBxE
-         gne2Ws62gTDPDAwjyJcxP52aczwnM8xmFISG84vt+vbPuOl/Pxx5ukACaOYTMKwzigm9
-         zdPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R//D5hhJAl7Ot//RTtLFQbM0iPV9AIFAuYJrz/swsJs=;
-        b=bRerqDxTeRMO4lfa8FpNInrWr4NFrkT2TJtWEsYbc6m5inRbCM9SUcCiQIL/fhuzW0
-         HPqCPEFE7ONgV7LVQshFxLXfoCXk6wjavyNWwvDbf9rVw3JWQmylX5GIayvomZrQBWK4
-         QC7B9YBuRzAuEzriJTTkA1exqu2pgYJgQR4z3YvJmmaXnZNhf8Sng75pck6PfLy+LW3U
-         SUIY5xVzB0IyMIZgcXbD/5VGe6f4Whd5cfPUyqEd9SwmRh3TzVk5TO6JZJIksn0wkUH9
-         z9/Q1lMnx7GwhH9+mEE0GJiN+u4baGCEL92LlG+kbsBx8bwV6lCnuLKlvcUF1b9cb6AR
-         4BZA==
-X-Gm-Message-State: AHQUAuY14DGXUBH9JGtAALqoYtf49x0a1TH4MrTi8o+GnqL+eQQhJe+J
-        BDUlJAJ7zeSha1yOnn/XttA5bMdFTlb1Og==
-X-Google-Smtp-Source: AHgI3Ib9qd6d4+sHdNPW3EE5S21Cu6sk3DQClzpapsGa6Z0GtU8zCEEeP4Bx4aY+5EOgoXVPu6dSdg==
-X-Received: by 2002:a63:4665:: with SMTP id v37mr20707872pgk.425.1549632799104;
-        Fri, 08 Feb 2019 05:33:19 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id 125sm2663260pfg.39.2019.02.08.05.33.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 05:33:18 -0800 (PST)
-Subject: Re: [PATCH v2] ata: add Buddha PATA controller driver
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org
-References: <CGME20190207122046eucas1p12d098289e0370252d341ccfed66b8295@eucas1p1.samsung.com>
- <6924b9b1-6c38-2639-a824-f2d765abe437@samsung.com>
- <420634d6-c14f-8380-0980-548fc4740474@physik.fu-berlin.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f5019eaf-6f66-1971-3593-381664b55f65@kernel.dk>
-Date:   Fri, 8 Feb 2019 06:33:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 08:34:00 -0500
+Received: from mga07.intel.com ([134.134.136.100]:33153 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727253AbfBHNeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:34:00 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 05:33:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,347,1544515200"; 
+   d="scan'208";a="145235552"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Feb 2019 05:33:55 -0800
+Date:   Fri, 8 Feb 2019 15:33:55 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+Message-ID: <20190208133355.GA18774@linux.intel.com>
+References: <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+ <20190207212912.GD23906@linux.intel.com>
+ <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
+ <20190208003314.GB7202@linux.intel.com>
+ <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
+ <20190208111442.GA11755@linux.intel.com>
+ <06473b24-7c59-9405-bbe0-8d30b3450391@linux.ibm.com>
+ <20190208130227.GA16679@linux.intel.com>
+ <da69e24d-ad5c-1e7b-9f02-a435872ad635@linux.ibm.com>
+ <20190208131754.GA18133@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <420634d6-c14f-8380-0980-548fc4740474@physik.fu-berlin.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208131754.GA18133@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 4:38 AM, John Paul Adrian Glaubitz wrote:
-> Hi!
+On Fri, Feb 08, 2019 at 03:17:54PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 08:10:32AM -0500, Stefan Berger wrote:
+> > On 2/8/19 8:02 AM, Jarkko Sakkinen wrote:
+> > > On Fri, Feb 08, 2019 at 07:05:26AM -0500, Stefan Berger wrote:
+> > > > See my comment on [PATCH v11 08/16]. It needs to be added in that patch
+> > > > since otherwise rc holds a non-zero value on function exit, which is wrong
+> > > > at that point.
+> > > The snippet in question:
+> > > 
+> > > rc = chip->ops->send(chip, buf, count);
+> > > if (rc < 0) {
+> > > 	if (rc != -EPIPE)
+> > > 		dev_err(&chip->dev,
+> > > 			"%s: tpm_send: error %d\n", __func__, rc);
+> > > 	return rc;
+> > > }
+> > > 
+> > > if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> > > 	goto out_recv;
+> > > 
+> > > 'send()' ought to return zero on success case.
+> > > 
+> > > This is how the snippet was before applying any patches scheduled for
+> > > v5.1:
+> > > 
+> > > rc = chip->ops->send(chip, buf, count);
+> > > if (rc < 0) {
+> > > 	if (rc != -EPIPE)
+> > > 		dev_err(&chip->dev,
+> > > 			"%s: tpm_send: error %d\n", __func__, rc);
+> > > 	return rc;
+> > > }
+> > > 
+> > > if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> > > 	goto out_recv;
+> > > 
+> > > Does not compute.
+> > 
+> > tpm_tis_send_main returns 'len' and that's what we have here.
 > 
-> On 2/7/19 1:20 PM, Bartlomiej Zolnierkiewicz wrote:
->> Add Buddha PATA controller driver. It enables libata support for
->> the Buddha, Catweasel and X-Surf expansion boards on the Zorro
->> expansion bus.
->>
->> Module removal is currently unsupported (the old IDE's buddha
->> driver also doesn't support it).
->>
->> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
->> Cc: Michael Schmitz <schmitzmic@gmail.com>
->> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> ---
->> v2:
->> - added Tested-by from John
+> Before doing any kind of code change, we should at least know what
+> has caused this that it has worked before.
 > 
-> It's a bit confusing, but my primary name is Adrian, despite being
-> the third one. So if this ends in a changelog, please change this
-> to "- added Tested-by from Adrian".
+> And also which commit caused the regression to happen, because it
+> looks like a bug in tpm_tis_core, not in the main TPM driver. It
+> would need the fixes tag and cc to stable.
 
-The stuff below the --- line will not make it into the git log.
+Found the root cause.
 
--- 
-Jens Axboe
+len = chip->ops->recv(chip, buf, bufsiz);
+if (len < 0) {
+	rc = len;
+	dev_err(&chip->dev,
+		"tpm_transmit: tpm_recv: error %d\n", rc);
+	goto out;
+} else if (len < TPM_HEADER_SIZE) {
+	rc = -EFAULT;
+	goto out;
+}
 
+if (len != be32_to_cpu(header->length)) {
+	rc = -EFAULT;
+	goto out;
+}
+
+rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+if (rc)
+	dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+
+That unconditional call to commit space masked the bugs in the device
+drivers. I'll provide fixes shortly.
+
+/Jarkko
