@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44720C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB018C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181D720869
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDF0821927
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfBHNyA (ORCPT
+        id S1727873AbfBHNyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:54:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43867 "EHLO
+        Fri, 8 Feb 2019 08:54:02 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43866 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbfBHNx7 (ORCPT
+        with ESMTP id S1726465AbfBHNyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:53:59 -0500
+        Fri, 8 Feb 2019 08:54:00 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gs6bK-000296-Sh; Fri, 08 Feb 2019 14:53:55 +0100
-Message-Id: <20190208135021.013828701@linutronix.de>
+        id 1gs6bK-000293-AE; Fri, 08 Feb 2019 14:53:54 +0100
+Message-Id: <20190208135020.925487496@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 08 Feb 2019 14:48:04 +0100
+Date:   Fri, 08 Feb 2019 14:48:03 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Waiman Long <longman@redhat.com>,
@@ -40,7 +40,7 @@ Cc:     Waiman Long <longman@redhat.com>,
         Dave Chinner <david@fromorbit.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Marc Zyngier <marc.zyngier@arm.com>
-Subject: [patch V2 2/2] proc/stat: Make the interrupt statistics more efficient
+Subject: [patch V2 1/2] genriq: Avoid summation loops for /proc/stat
 References: <20190208134802.218483159@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -57,76 +57,114 @@ some enterprise quality software reads /proc/stat with a high frequency.
 The reason for this is that interrupt statistics are accounted per cpu. So
 the /proc/stat logic has to sum up the interrupt stats for each interrupt.
 
-The interrupt core provides now a per interrupt summary counter which can
-be used to avoid the summation loops completely except for interrupts
-marked PER_CPU which are only a small fraction of the interrupt space if at
-all.
+This can be largely avoided for interrupts which are not marked as
+'PER_CPU' interrupts by simply adding a per interrupt summation counter
+which is incremented along with the per interrupt per cpu counter.
 
-Another simplification is to iterate only over the active interrupts and
-skip the potentially large gaps in the interrupt number space and just
-print zeros for the gaps without going into the interrupt core in the first
-place.
-
-Waiman provided test results from a 4-socket IvyBridge-EX system (60-core
-120-thread, 3016 irqs) excuting a test program which reads /proc/stat
-50,000 times:
-
-Before:	18.436s (sys 18.380s)
-After:   3.769s (sys  3.742s)
+The PER_CPU interrupts need to avoid that and use only per cpu accounting
+because they share the interrupt number and the interrupt descriptor and
+concurrent updates would conflict or require unwanted synchronization.
 
 Reported-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
 
-v2: Make variables unsigned int. Add results to changelog.
+8<-------------
 
- fs/proc/stat.c |   29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+v2: Undo the unintentional layout change of struct irq_desc.
 
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -79,6 +79,31 @@ static u64 get_iowait_time(int cpu)
- 
- #endif
- 
-+static void show_irq_gap(struct seq_file *p, unsigned int gap)
-+{
-+	static const char zeros[] = " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
-+
-+	while (gap > 0) {
-+		unsigned int inc;
-+
-+		inc = min_t(unsigned int, gap, ARRAY_SIZE(zeros) / 2);
-+		seq_write(p, zeros, 2 * inc);
-+		gap -= inc;
-+	}
-+}
-+
-+static void show_all_irqs(struct seq_file *p)
-+{
-+	unsigned int i, next = 0;
-+
-+	for_each_active_irq(i) {
-+		show_irq_gap(p, i - next);
-+		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
-+		next = i + 1;
-+	}
-+	show_irq_gap(p, nr_irqs - next);
-+}
-+
- static int show_stat(struct seq_file *p, void *v)
+ include/linux/irqdesc.h |    1 +
+ kernel/irq/chip.c       |   12 ++++++++++--
+ kernel/irq/internals.h  |    8 +++++++-
+ kernel/irq/irqdesc.c    |    7 ++++++-
+ 4 files changed, 24 insertions(+), 4 deletions(-)
+
+
+--- a/include/linux/irqdesc.h
++++ b/include/linux/irqdesc.h
+@@ -65,6 +65,7 @@ struct irq_desc {
+ 	unsigned int		core_internal_state__do_not_mess_with_it;
+ 	unsigned int		depth;		/* nested irq disables */
+ 	unsigned int		wake_depth;	/* nested wake enables */
++	unsigned int		tot_count;
+ 	unsigned int		irq_count;	/* For detecting broken IRQs */
+ 	unsigned long		last_unhandled;	/* Aging timer for unhandled count */
+ 	unsigned int		irqs_unhandled;
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -855,7 +855,11 @@ void handle_percpu_irq(struct irq_desc *
  {
- 	int i, j;
-@@ -156,9 +181,7 @@ static int show_stat(struct seq_file *p,
- 	}
- 	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
  
--	/* sum again ? it could be updated? */
--	for_each_irq_nr(j)
--		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
-+	show_all_irqs(p);
+-	kstat_incr_irqs_this_cpu(desc);
++	/*
++	 * PER CPU interrupts are not serialized. Do not touch
++	 * desc->tot_count.
++	 */
++	__kstat_incr_irqs_this_cpu(desc);
  
- 	seq_printf(p,
- 		"\nctxt %llu\n"
+ 	if (chip->irq_ack)
+ 		chip->irq_ack(&desc->irq_data);
+@@ -884,7 +888,11 @@ void handle_percpu_devid_irq(struct irq_
+ 	unsigned int irq = irq_desc_get_irq(desc);
+ 	irqreturn_t res;
+ 
+-	kstat_incr_irqs_this_cpu(desc);
++	/*
++	 * PER CPU interrupts are not serialized. Do not touch
++	 * desc->tot_count.
++	 */
++	__kstat_incr_irqs_this_cpu(desc);
+ 
+ 	if (chip->irq_ack)
+ 		chip->irq_ack(&desc->irq_data);
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -242,12 +242,18 @@ static inline void irq_state_set_masked(
+ 
+ #undef __irqd_to_state
+ 
+-static inline void kstat_incr_irqs_this_cpu(struct irq_desc *desc)
++static inline void __kstat_incr_irqs_this_cpu(struct irq_desc *desc)
+ {
+ 	__this_cpu_inc(*desc->kstat_irqs);
+ 	__this_cpu_inc(kstat.irqs_sum);
+ }
+ 
++static inline void kstat_incr_irqs_this_cpu(struct irq_desc *desc)
++{
++	__kstat_incr_irqs_this_cpu(desc);
++	desc->tot_count++;
++}
++
+ static inline int irq_desc_get_node(struct irq_desc *desc)
+ {
+ 	return irq_common_data_get_node(&desc->irq_common_data);
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -119,6 +119,7 @@ static void desc_set_defaults(unsigned i
+ 	desc->depth = 1;
+ 	desc->irq_count = 0;
+ 	desc->irqs_unhandled = 0;
++	desc->tot_count = 0;
+ 	desc->name = NULL;
+ 	desc->owner = owner;
+ 	for_each_possible_cpu(cpu)
+@@ -919,11 +920,15 @@ unsigned int kstat_irqs_cpu(unsigned int
+ unsigned int kstat_irqs(unsigned int irq)
+ {
+ 	struct irq_desc *desc = irq_to_desc(irq);
+-	int cpu;
+ 	unsigned int sum = 0;
++	int cpu;
+ 
+ 	if (!desc || !desc->kstat_irqs)
+ 		return 0;
++	if (!irq_settings_is_per_cpu_devid(desc) &&
++	    !irq_settings_is_per_cpu(desc))
++	    return desc->tot_count;
++
+ 	for_each_possible_cpu(cpu)
+ 		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
+ 	return sum;
 
 
