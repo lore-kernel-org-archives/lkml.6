@@ -2,101 +2,88 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6477AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2ADCC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F69F2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C2D2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:51:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="inmGbun8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727379AbfBHQtq (ORCPT
+        id S1727350AbfBHQvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:49:46 -0500
-Received: from 8bytes.org ([81.169.241.247]:39034 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfBHQtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:49:46 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 3487E1AF; Fri,  8 Feb 2019 17:49:45 +0100 (CET)
-Date:   Fri, 8 Feb 2019 17:49:43 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Fixes for Linux v5.0-rc5
-Message-ID: <20190208164938.GA10077@8bytes.org>
+        Fri, 8 Feb 2019 11:51:14 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53766 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfBHQvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 11:51:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2GBKTeX367KDz3ZEJbZI6yo5mwfc2MDBukhqsoIsXp4=; b=inmGbun8Yn+OhlN29mqeaVZ6H
+        oUiBiDh4pYX6WLMP2/K7By6sh1J2Fy0Wi3adgdC2+R3PPsU+u+zuZsjKukXXCAPGeogqL3CEDc6Mp
+        mq8db3OggAmSMvkDVMDOP8Cl3FFEuhlA26PIysr7upQ9ndeqg4j89I0ci42xtPandjWnYpfuRrUli
+        G85FHvDSBFdO7FDvIz69wu5lbeRjnMXSWpqVnjRFbKCaWLyQKkH7KlCLHfddIrq0VDUlMToFkoTzi
+        53sggRcQXFxuwx0RgF09zpUEnlbH2pHpmhD7yYi5lkajGUmxRRVryskq6DJ2HjCeMkh/rSY3qeBVb
+        IK4K8JjFw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gs9Mk-0005Ji-V1; Fri, 08 Feb 2019 16:51:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 89AA521406576; Fri,  8 Feb 2019 17:51:00 +0100 (CET)
+Date:   Fri, 8 Feb 2019 17:51:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 1/2] sched/fair: optimization of update_blocked_averages()
+Message-ID: <20190208165100.GM32511@hirez.programming.kicks-ass.net>
+References: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
+ <1549469662-13614-2-git-send-email-vincent.guittot@linaro.org>
+ <20190208154009.GK32511@hirez.programming.kicks-ass.net>
+ <CAKfTPtB9EzuHQ+K56EbDSUV6ifkpj2OR12tXRBN6=NQDwC2OMg@mail.gmail.com>
+ <20190208163045.GD32494@hirez.programming.kicks-ass.net>
+ <CAKfTPtDjS4sL-ijVgGsN9Z1yEsCi87CZfpYsZCr2n3KTLV=ByA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAKfTPtDjS4sL-ijVgGsN9Z1yEsCi87CZfpYsZCr2n3KTLV=ByA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 08, 2019 at 05:47:53PM +0100, Vincent Guittot wrote:
+> On Fri, 8 Feb 2019 at 17:30, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Fri, Feb 08, 2019 at 04:44:53PM +0100, Vincent Guittot wrote:
+> > > On Fri, 8 Feb 2019 at 16:40, Peter Zijlstra <peterz@infradead.org> wrote:
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > > Good point but this should go after the for_each_sched_entity() loop
+> >
+> > Indeed, but that loop does enqueue and can throttle again, should that
+> > not also get that additional list_add_leaf_cfs_rq() loop we added to
+> > enqueue_task_fair() to finish the add?
+> 
+> Initially, I added this additional loop but finally removed it because
+> I didn't hit it during my tests. IIRC, we are protected by
+> throttle_count in such case, which is not the case when we enqueue a
+> task
 
-Hi Linus,
+Fair enough; and the to-be added assert will notify us if we got that
+wrong :-)
 
-The following changes since commit 9825bd94e3a2baae1f4874767ae3a7d4c049720e:
+I'll add the assert, no need to re-send.
 
-  iommu/amd: Fix IOMMU page flush when detach device from a domain (2019-01-24 15:24:49 +0100)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.0-rc5
-
-for you to fetch changes up to 8950dcd83ae7d62bdc2a60507949acebd85399f2:
-
-  iommu/vt-d: Leave scalable mode default off (2019-01-30 17:23:58 +0100)
-
-----------------------------------------------------------------
-IOMMU Fix for Linux v5.0-rc5:
-
-	* Intel decided to leave the newly added Scalable Mode Feature
-	  default-disabled for now. The patch here accomplishes that.
-
-----------------------------------------------------------------
-Lu Baolu (1):
-      iommu/vt-d: Leave scalable mode default off
-
- Documentation/admin-guide/kernel-parameters.txt | 7 +++----
- drivers/iommu/intel-iommu.c                     | 8 ++++----
- 2 files changed, 7 insertions(+), 8 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJcXbMiAAoJECvwRC2XARrj0GsQAJvAQWCBrKYSpKB8iHtawflT
-WngDxifq489v/4bVbYtPOqJ8izi+cmim5dzRHi20e175V7EFaPCQaglr3yHOrSzN
-+FYLwFeT23Q4dpXe7hlc/S5V4MA/ssU2l8lkTO5j1bwrFOtRF++9urI/0Heo3l8Z
-1+Sm15y6rp2t2jPRmc50HF2IbDncfD56Wyl0PUrJxR50NPpJo85ld+fZjIfdN0d3
-qw2bXOV3bapOjaNVHdlibbc7kt5gmJcWfabO02ewhyzVKxAdcvti9jmW6e7AOMTE
-7pMcGPe+Ih3n7lKR8MX03o/NJKosvQEhqCRHqDxLcYtQZCBREe54/XfFSN/G6tDN
-9uuCvPjq0C33DQC2Yu1NdTZMjIwJ4JEzPoBIA1bIT1dh+d9b8rhIawsIBuq8qnyv
-7R2qiJReuFiP7uGUboClW7ao1f2jr5y/8fFuwYe4bCryGS9DhhxLyZnvw8jkO1Yv
-BYGt9npjS4R160Fw9+NShDhtY1hwLg37FMw7JHlbX5KmEMSYw0zyophzaOKFoZ0O
-/ZIbgW4LspgMiYEYuv4gpBWlaQvNMUPJqzWPXqslZGsJHu5h2nCPzXWSeiqnT+yL
-SHt3GGGUekWZ+Glqs2OnwckGZ4L32+H5Gft/da26qrznBSF6CFEh4IlxFretQ5DD
-ID6a0VUNG6uRJk+DjW4h
-=esHw
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+Thanks!
