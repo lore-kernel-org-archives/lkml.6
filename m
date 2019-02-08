@@ -2,166 +2,197 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4FDC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7DAC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 222B62086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF72820811
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:41:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sugds/DP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfBHFhb (ORCPT
+        id S1726860AbfBHFlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 00:37:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44598 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfBHFhb (ORCPT
+        Fri, 8 Feb 2019 00:41:53 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46877 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfBHFlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 00:37:31 -0500
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73A48BF6A;
-        Fri,  8 Feb 2019 05:37:29 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 21:37:27 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dave Chinner <david@fromorbit.com>, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@kernel.org>, Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert
- "mm: don't reclaim inodes with many attached pages"
-Message-Id: <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
-In-Reply-To: <20190207102750.GA4570@quack2.suse.cz>
-References: <20190130041707.27750-1-david@fromorbit.com>
-        <20190130041707.27750-2-david@fromorbit.com>
-        <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
-        <20190131013403.GI4205@dastard>
-        <20190131091011.GP18811@dhcp22.suse.cz>
-        <20190131185704.GA8755@castle.DHCP.thefacebook.com>
-        <20190131221904.GL4205@dastard>
-        <20190207102750.GA4570@quack2.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Feb 2019 00:41:52 -0500
+Received: by mail-ed1-f65.google.com with SMTP id o10so1750244edt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 21:41:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=56vBsUj6S8VeV1+1haZ1yV+gC1eDecm4i5Yq/vJ7M3U=;
+        b=Sugds/DPenjs7p+LNtJf+TDTCzXjF3/kDvbP64ht1hxPyugNKgj8JtW4B98tKESQNh
+         LQnwheIMVQEKZ+1oxdiaH2v97eK+xEehNUAR6b1mgY+lXt7Yz1uNJo6IRvmFn3GyEYC6
+         /qcpLdDvdyUAmhWTGby2yfyjbj50GkYWJqw2o+kwp7Cbn5uwVwQCmrivGg8uW5zEBQWK
+         rVCT/XZusjsr3+sGoTfRF/1nn9l5uwFdrck4RVbQkEjXB3tZgvkzx+zgxDwIZsKWSd14
+         Gkk9F12puvXkwNuYN33/y9Rh7oTSMTCtHPSihLbvtElvh1p6iUVBxEzGWVaZbtNjFhn+
+         j7Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=56vBsUj6S8VeV1+1haZ1yV+gC1eDecm4i5Yq/vJ7M3U=;
+        b=ZDIWuHPe0mJhw9acbXiqjH+hyo4OtMjuvuW7fjhLqtDmlxmPvBYtkBFn4IxGndpYqI
+         9ITrRqu6RiQ9kqgodmNH5arSZr/4lOaxzcOHUmhG/FMhS+UFm6cML496DFwdg21US/g0
+         yL7RvAr+iP4BSykH7dbJ3MVROkhumGxdaGVQ+wC1z0uLsSiqt5YdHn+FyX04M+9AT+1j
+         0sEZLaXkT2BqdapymxWMKB04sMKXk3BlqpNiHf+u0HeuEK8VQAyZWQl3/WfvwqvDkfd8
+         qPZjzTt7uwG5gzRw88U/Fp/WlYoimmbHdxCxy8plwvr7p3WZUIPOdl5deZCOHvhPUtrI
+         L5yg==
+X-Gm-Message-State: AHQUAualmYbO+IGQi4yNg6Z1RY+vXGwaVILPJOo8h92qOTMTqmgaDL95
+        BmwdmANH70q/cJCNOwd8+hY=
+X-Google-Smtp-Source: AHgI3IaFINuHC5Lt+pA4CiAva67HE0mKJo3MxWhhfu4Bpg7xQ47anodq0EV8oB4nqJ2qD4q2JSJ7qw==
+X-Received: by 2002:a05:6402:1646:: with SMTP id s6mr5738593edx.156.1549604510558;
+        Thu, 07 Feb 2019 21:41:50 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id l41sm344954eda.83.2019.02.07.21.41.49
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 07 Feb 2019 21:41:49 -0800 (PST)
+Date:   Thu, 7 Feb 2019 22:41:47 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     ndesaulniers@google.com,
+        yamada masahiro <yamada.masahiro@socionext.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] init/Kconfig: add config support for detecting linker
+Message-ID: <20190208054147.GB9647@archlinux-ryzen>
+References: <20190207220155.81351-1-ndesaulniers@google.com>
+ <563751355.221.1549587440037.JavaMail.zimbra@efficios.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <563751355.221.1549587440037.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019 11:27:50 +0100 Jan Kara <jack@suse.cz> wrote:
-
-> On Fri 01-02-19 09:19:04, Dave Chinner wrote:
-> > Maybe for memcgs, but that's exactly the oppose of what we want to
-> > do for global caches (e.g. filesystem metadata caches). We need to
-> > make sure that a single, heavily pressured cache doesn't evict small
-> > caches that lower pressure but are equally important for
-> > performance.
+On Thu, Feb 07, 2019 at 07:57:20PM -0500, Mathieu Desnoyers wrote:
+> 
+> ----- ndesaulniers@google.com wrote:
+> > Similar to how we differentiate between CONFIG_CC_IS_GCC and
+> > CONFIG_CC_IS_CLANG, add CONFIG_LD_IS_BFD, CONFIG_LD_IS_GOLD, and
+> > CONFIG_LD_IS_LLD.
 > > 
-> > e.g. I've noticed recently a significant increase in RMW cycles in
-> > XFS inode cache writeback during various benchmarks. It hasn't
-> > affected performance because the machine has IO and CPU to burn, but
-> > on slower machines and storage, it will have a major impact.
-> 
-> Just as a data point, our performance testing infrastructure has bisected
-> down to the commits discussed in this thread as the cause of about 40%
-> regression in XFS file delete performance in bonnie++ benchmark.
+> > This simiplifies patches to Makefiles that need to do different things
+> > for different linkers.
 > 
 
-Has anyone done significant testing with Rik's maybe-fix?
+Hi Mathieu,
 
+> What guarantees that the linker used for e.g. make defconfig is the same linker used for make ?
+> 
+> Is it required with this patch ?
+> 
 
+The build system ensures that the compiler (and after this patch, the
+linker) config values are correct before compiling (and prompting the
+user for the new choices that are available to them in that case).
 
-From: Rik van Riel <riel@surriel.com>
-Subject: mm, slab, vmscan: accumulate gradual pressure on small slabs
+For example:
 
-There are a few issues with the way the number of slab objects to scan is
-calculated in do_shrink_slab.  First, for zero-seek slabs, we could leave
-the last object around forever.  That could result in pinning a dying
-cgroup into memory, instead of reclaiming it.  The fix for that is
-trivial.
+$ make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu- defconfig
+...
 
-Secondly, small slabs receive much more pressure, relative to their size,
-than larger slabs, due to "rounding up" the minimum number of scanned
-objects to batch_size.
+$ rg "CONFIG_CC_IS|CONFIG_LD_IS" .config
+10:CONFIG_CC_IS_CLANG=y
+12:CONFIG_LD_IS_BFD=y
 
-We can keep the pressure on all slabs equal relative to their size by
-accumulating the scan pressure on small slabs over time, resulting in
-sometimes scanning an object, instead of always scanning several.
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LD=ld.lld
+scripts/kconfig/conf  --syncconfig Kconfig
+*
+* Restart config...
+*
+*
+* General architecture-dependent options
+*
+Kprobes (KPROBES) [N/y/?] n
+Optimize very unlikely/likely branches (JUMP_LABEL) [N/y/?] (NEW)
+Stack Protector buffer overflow detection (STACKPROTECTOR) [Y/n/?] y
+  Strong Stack Protector (STACKPROTECTOR_STRONG) [Y/n/?] y
+Use a virtually-mapped stack (VMAP_STACK) [Y/n/?] y
+Perform full reference count validation at the expense of speed (REFCOUNT_FULL) [Y/?] y
+*
+* GCC plugins
+*
+GCC plugins (GCC_PLUGINS) [N/y/?] (NEW)
+...
 
-This results in lower system CPU use, and a lower major fault rate, as
-actively used entries from smaller caches get reclaimed less aggressively,
-and need to be reloaded/recreated less often.
+$ rg "CONFIG_CC_IS|CONFIG_LD_IS" .config
+9:CONFIG_CC_IS_GCC=y
+13:CONFIG_LD_IS_LLD=y
 
-[akpm@linux-foundation.org: whitespace fixes, per Roman]
-[riel@surriel.com: couple of fixes]
-  Link: http://lkml.kernel.org/r/20190129142831.6a373403@imladris.surriel.com
-Link: http://lkml.kernel.org/r/20190128143535.7767c397@imladris.surriel.com
-Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
-Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Tested-by: Chris Mason <clm@fb.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: Jonathan Lemon <bsd@fb.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: <stable@vger.kernel.org>
+> How does it work in a cross compile environment ?
+> 
 
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+Since $(LD) is defined based on $(CROSS_COMPILE), it should work fine.
+I tested it with both arm64 and x86_64 and CONFIG_LD_IS_BFD gets
+set by default and I can see CONFIG_LD_IS_GOLD get set with both
+LD=aarch64-linux-gnu-ld.gold and LD=ld.gold.
 
+If I misunderstood the questions or my explanation wasn't correct,
+please let me know!
 
---- a/include/linux/shrinker.h~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
-+++ a/include/linux/shrinker.h
-@@ -65,6 +65,7 @@ struct shrinker {
- 
- 	long batch;	/* reclaim batch size, 0 = default */
- 	int seeks;	/* seeks to recreate an obj */
-+	int small_scan;	/* accumulate pressure on slabs with few objects */
- 	unsigned flags;
- 
- 	/* These are for internal use */
---- a/mm/vmscan.c~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
-+++ a/mm/vmscan.c
-@@ -488,18 +488,30 @@ static unsigned long do_shrink_slab(stru
- 		 * them aggressively under memory pressure to keep
- 		 * them from causing refetches in the IO caches.
- 		 */
--		delta = freeable / 2;
-+		delta = (freeable + 1) / 2;
- 	}
- 
- 	/*
- 	 * Make sure we apply some minimal pressure on default priority
--	 * even on small cgroups. Stale objects are not only consuming memory
-+	 * even on small cgroups, by accumulating pressure across multiple
-+	 * slab shrinker runs. Stale objects are not only consuming memory
- 	 * by themselves, but can also hold a reference to a dying cgroup,
- 	 * preventing it from being reclaimed. A dying cgroup with all
- 	 * corresponding structures like per-cpu stats and kmem caches
- 	 * can be really big, so it may lead to a significant waste of memory.
- 	 */
--	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
-+	if (!delta && shrinker->seeks) {
-+		unsigned long nr_considered;
-+
-+		shrinker->small_scan += freeable;
-+		nr_considered = shrinker->small_scan >> priority;
-+
-+		delta = 4 * nr_considered;
-+		do_div(delta, shrinker->seeks);
-+
-+		if (delta)
-+			shrinker->small_scan -= nr_considered << priority;
-+	}
- 
- 	total_scan += delta;
- 	if (total_scan < 0) {
-_
+Cheers,
+Nathan
 
+> Thanks,
+> 
+> Mathieu
+> 
+> 
+> > 
+> > Cc: Nathan Chancellor <natechancellor@gmail.com>
+> > Cc: Sami Tolvanen <samitolvanen@google.com>
+> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > ---
+> >  init/Kconfig | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index c9386a365eea..b6046dcf7794 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -26,6 +26,15 @@ config CLANG_VERSION
+> >  config CC_HAS_ASM_GOTO
+> >  	def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+> >  
+> > +config LD_IS_BFD
+> > +	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU ld')
+> > +
+> > +config LD_IS_GOLD
+> > +	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU gold')
+> > +
+> > +config LD_IS_LLD
+> > +	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'LLD')
+> > +
+> >  config CONSTRUCTORS
+> >  	bool
+> >  	depends on !UML
+> > -- 
+> > 2.20.1.791.gb4d0f1c61a-goog
+> > 
+> 
+> -- 
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> http://www.efficios.com
