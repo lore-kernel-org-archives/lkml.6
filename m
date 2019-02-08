@@ -2,97 +2,111 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FAAC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D746217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11E4B218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:00:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfBHT6n (ORCPT
+        id S1727359AbfBHUAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:58:43 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.5]:11892 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726860AbfBHT6n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:58:43 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 4524A24ECE
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 13:58:42 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sCILgbqtEdnCesCIMgbkyJ; Fri, 08 Feb 2019 13:58:42 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=33594 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gsCIL-001Aeo-5m; Fri, 08 Feb 2019 13:58:41 -0600
-Date:   Fri, 8 Feb 2019 13:58:38 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Wei Liu <wei.liu2@citrix.com>,
-        Paul Durrant <paul.durrant@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] xen-netback: mark expected switch fall-through
-Message-ID: <20190208195838.GA11878@embeddedor>
+        Fri, 8 Feb 2019 15:00:36 -0500
+Received: from ms.lwn.net ([45.79.88.28]:56278 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726860AbfBHUAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:00:36 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id E5A692CD;
+        Fri,  8 Feb 2019 20:00:35 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 13:00:34 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>, linux-doc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] Start conversion of PowerPC docs
+Message-ID: <20190208130034.6bccffbd@lwn.net>
+In-Reply-To: <87ef8jj6c3.fsf@concordia.ellerman.id.au>
+References: <20190207060316.3221-1-tobin@kernel.org>
+        <20190207170131.1fd2bb03@lwn.net>
+        <87ef8jj6c3.fsf@concordia.ellerman.id.au>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gsCIL-001Aeo-5m
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:33594
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 30
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+On Fri, 08 Feb 2019 14:40:28 +1100
+Michael Ellerman <mpe@ellerman.id.au> wrote:
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+> > - I don't think this should be a top-level directory full of docs; the top
+> >   level is already rather overpopulated.  At worst, we should create an
+> >   arch/ directory for architecture-specific docs.  
+> 
+> We currently have arch specific directories for arm, arm64, ia64, m68k,
+> nios2, openrisc, parisc, powerpc, s390, sh, sparc, x86, xtensa.
+> 
+> Do you mean they should all be moved to Documentation/arch ?
 
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough.
+Over time I'm really trying to bring some organization to Documentation/,
+and to have that reflected in an RST tree that looks like somebody actually
+thought about it.  So yes, I would eventually like to see something like
+Documentation/arch, just like we have arch/ in the top-level directory.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/xen-netback/xenbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >   I kind of think that
+> >   this should be thought through a bit more, though, with an eye toward
+> >   who the audience is.  Some of it is clearly developer documentation, and
+> >   some of it is aimed at admins; ptrace.rst is user-space API stuff.
+> >   Nobody ever welcomes me saying this, but we should really split things
+> >   into the appropriate manuals according to audience.  
+> 
+> I don't think any of it's aimed at admins, but I haven't read every
+> word. I see it as aimed at kernel devs or people writing directly to the
+> kernel API, eg. gdb developers reading ptrace.rst.
+> 
+> If Documentation/ wants to be more user focused and nicely curated
+> perhaps we need arch/foo/docs/ for these developer centric docs?
 
-diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
-index 2625740bdc4a..330ddb64930f 100644
---- a/drivers/net/xen-netback/xenbus.c
-+++ b/drivers/net/xen-netback/xenbus.c
-@@ -655,7 +655,7 @@ static void frontend_changed(struct xenbus_device *dev,
- 		set_backend_state(be, XenbusStateClosed);
- 		if (xenbus_dev_is_online(dev))
- 			break;
--		/* fall through if not online */
-+		/* fall through - if not online */
- 	case XenbusStateUnknown:
- 		set_backend_state(be, XenbusStateClosed);
- 		device_unregister(&dev->dev);
--- 
-2.20.1
+Stuff for GDB developers is best placed in the userspace-api docbook; we're
+trying to concentrate that there.  Stuff for kernel developers is a bit
+more diffuse still; arch/foo/docs may end up being the best place for it in
+the end, yes.
 
+> > - It would be good to know how much of this stuff is still relevant.
+> >   bootwrapper.txt hasn't been modified since it was added in 2008.  
+> 
+> It hasn't been modified but AFAIK it's still pretty much accurate and
+> definitely something we want to have documented.
+
+That's fine for this (and all the others); I'm just hoping that somebody
+has thought about it.  We're carrying a *lot* of dusty old stuff that, IMO,
+can only serve to confuse those who read it.  If these files don't fall
+into that category, that's great.
+
+> We support some hardware that is ~25 years old, so we have some old
+> documentation too, and I'd rather we didn't drop things just because
+> they're old.
+
+I agree, as long as they remain correct and relevant.
+
+> > - I'm glad you're adding SPDX lines, but do you know that the license is
+> >   correct in each case?  It's best to be careful with such things.  
+> 
+> None of the files have licenses so I think we just fall back to COPYING
+> don't we? In which case GPL-2.0 is correct for all files.
+
+That's often the best choice, though some people have resorted to some
+rather more in-depth archeology to try to figure out what the original
+author actually intended.  Again, I'm just asking so that we're sure it's
+the best choice.
+
+Thanks,
+
+jon
