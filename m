@@ -3,186 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391D5C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C15C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0748F20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0804218D2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727306AbfBHUbY convert rfc822-to-8bit (ORCPT
+        id S1727172AbfBHUcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:31:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52024 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726601AbfBHUbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:31:23 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A118637EC;
-        Fri,  8 Feb 2019 20:31:21 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-35.bos.redhat.com [10.18.17.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E87FC60474;
-        Fri,  8 Feb 2019 20:31:18 +0000 (UTC)
-Subject: Re: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new
- rwsem features
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1549566446-27967-1-git-send-email-longman@redhat.com>
- <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFgsZGsBEAC3l/RVYISY3M0SznCZOv8aWc/bsAgif1H8h0WPDrHnwt1jfFTB26EzhRea
- XQKAJiZbjnTotxXq1JVaWxJcNJL7crruYeFdv7WUJqJzFgHnNM/upZuGsDIJHyqBHWK5X9ZO
- jRyfqV/i3Ll7VIZobcRLbTfEJgyLTAHn2Ipcpt8mRg2cck2sC9+RMi45Epweu7pKjfrF8JUY
- r71uif2ThpN8vGpn+FKbERFt4hW2dV/3awVckxxHXNrQYIB3I/G6mUdEZ9yrVrAfLw5M3fVU
- CRnC6fbroC6/ztD40lyTQWbCqGERVEwHFYYoxrcGa8AzMXN9CN7bleHmKZrGxDFWbg4877zX
- 0YaLRypme4K0ULbnNVRQcSZ9UalTvAzjpyWnlnXCLnFjzhV7qsjozloLTkZjyHimSc3yllH7
- VvP/lGHnqUk7xDymgRHNNn0wWPuOpR97J/r7V1mSMZlni/FVTQTRu87aQRYu3nKhcNJ47TGY
- evz/U0ltaZEU41t7WGBnC7RlxYtdXziEn5fC8b1JfqiP0OJVQfdIMVIbEw1turVouTovUA39
- Qqa6Pd1oYTw+Bdm1tkx7di73qB3x4pJoC8ZRfEmPqSpmu42sijWSBUgYJwsziTW2SBi4hRjU
- h/Tm0NuU1/R1bgv/EzoXjgOM4ZlSu6Pv7ICpELdWSrvkXJIuIwARAQABzR9Mb25nbWFuIExv
- bmcgPGxsb25nQHJlZGhhdC5jb20+wsF/BBMBAgApBQJYLGRrAhsjBQkJZgGABwsJCAcDAgEG
- FQgCCQoLBBYCAwECHgECF4AACgkQbjBXZE7vHeYwBA//ZYxi4I/4KVrqc6oodVfwPnOVxvyY
- oKZGPXZXAa3swtPGmRFc8kGyIMZpVTqGJYGD9ZDezxpWIkVQDnKM9zw/qGarUVKzElGHcuFN
- ddtwX64yxDhA+3Og8MTy8+8ZucM4oNsbM9Dx171bFnHjWSka8o6qhK5siBAf9WXcPNogUk4S
- fMNYKxexcUayv750GK5E8RouG0DrjtIMYVJwu+p3X1bRHHDoieVfE1i380YydPd7mXa7FrRl
- 7unTlrxUyJSiBc83HgKCdFC8+ggmRVisbs+1clMsK++ehz08dmGlbQD8Fv2VK5KR2+QXYLU0
- rRQjXk/gJ8wcMasuUcywnj8dqqO3kIS1EfshrfR/xCNSREcv2fwHvfJjprpoE9tiL1qP7Jrq
- 4tUYazErOEQJcE8Qm3fioh40w8YrGGYEGNA4do/jaHXm1iB9rShXE2jnmy3ttdAh3M8W2OMK
- 4B/Rlr+Awr2NlVdvEF7iL70kO+aZeOu20Lq6mx4Kvq/WyjZg8g+vYGCExZ7sd8xpncBSl7b3
- 99AIyT55HaJjrs5F3Rl8dAklaDyzXviwcxs+gSYvRCr6AMzevmfWbAILN9i1ZkfbnqVdpaag
- QmWlmPuKzqKhJP+OMYSgYnpd/vu5FBbc+eXpuhydKqtUVOWjtp5hAERNnSpD87i1TilshFQm
- TFxHDzbOwU0EWCxkawEQALAcdzzKsZbcdSi1kgjfce9AMjyxkkZxcGc6Rhwvt78d66qIFK9D
- Y9wfcZBpuFY/AcKEqjTo4FZ5LCa7/dXNwOXOdB1Jfp54OFUqiYUJFymFKInHQYlmoES9EJEU
- yy+2ipzy5yGbLh3ZqAXyZCTmUKBU7oz/waN7ynEP0S0DqdWgJnpEiFjFN4/ovf9uveUnjzB6
- lzd0BDckLU4dL7aqe2ROIHyG3zaBMuPo66pN3njEr7IcyAL6aK/IyRrwLXoxLMQW7YQmFPSw
- drATP3WO0x8UGaXlGMVcaeUBMJlqTyN4Swr2BbqBcEGAMPjFCm6MjAPv68h5hEoB9zvIg+fq
- M1/Gs4D8H8kUjOEOYtmVQ5RZQschPJle95BzNwE3Y48ZH5zewgU7ByVJKSgJ9HDhwX8Ryuia
- 79r86qZeFjXOUXZjjWdFDKl5vaiRbNWCpuSG1R1Tm8o/rd2NZ6l8LgcK9UcpWorrPknbE/pm
- MUeZ2d3ss5G5Vbb0bYVFRtYQiCCfHAQHO6uNtA9IztkuMpMRQDUiDoApHwYUY5Dqasu4ZDJk
- bZ8lC6qc2NXauOWMDw43z9He7k6LnYm/evcD+0+YebxNsorEiWDgIW8Q/E+h6RMS9kW3Rv1N
- qd2nFfiC8+p9I/KLcbV33tMhF1+dOgyiL4bcYeR351pnyXBPA66ldNWvABEBAAHCwWUEGAEC
- AA8FAlgsZGsCGwwFCQlmAYAACgkQbjBXZE7vHeYxSQ/+PnnPrOkKHDHQew8Pq9w2RAOO8gMg
- 9Ty4L54CsTf21Mqc6GXj6LN3WbQta7CVA0bKeq0+WnmsZ9jkTNh8lJp0/RnZkSUsDT9Tza9r
- GB0svZnBJMFJgSMfmwa3cBttCh+vqDV3ZIVSG54nPmGfUQMFPlDHccjWIvTvyY3a9SLeamaR
- jOGye8MQAlAD40fTWK2no6L1b8abGtziTkNh68zfu3wjQkXk4kA4zHroE61PpS3oMD4AyI9L
- 7A4Zv0Cvs2MhYQ4Qbbmafr+NOhzuunm5CoaRi+762+c508TqgRqH8W1htZCzab0pXHRfywtv
- 0P+BMT7vN2uMBdhr8c0b/hoGqBTenOmFt71tAyyGcPgI3f7DUxy+cv3GzenWjrvf3uFpxYx4
- yFQkUcu06wa61nCdxXU/BWFItryAGGdh2fFXnIYP8NZfdA+zmpymJXDQeMsAEHS0BLTVQ3+M
- 7W5Ak8p9V+bFMtteBgoM23bskH6mgOAw6Cj/USW4cAJ8b++9zE0/4Bv4iaY5bcsL+h7TqQBH
- Lk1eByJeVooUa/mqa2UdVJalc8B9NrAnLiyRsg72Nurwzvknv7anSgIkL+doXDaG21DgCYTD
- wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
- weim8xU=
-Organization: Red Hat
-Message-ID: <d7476dfb-1653-747b-b865-5597ba5fc1c1@redhat.com>
-Date:   Fri, 8 Feb 2019 15:31:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 8 Feb 2019 15:32:41 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43802 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726655AbfBHUcj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:32:39 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18KOPx5044596
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 15:32:38 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhgmmrkra-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 15:32:37 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 20:32:36 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 20:32:33 -0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18KWWir24182870
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 20:32:32 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F17DAC060;
+        Fri,  8 Feb 2019 20:32:32 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52DFAAC05E;
+        Fri,  8 Feb 2019 20:32:32 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 20:32:32 +0000 (GMT)
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v4_1/2=5d_tpm=3a_Unify_the_send_callback_b?=
+ =?UTF-8?Q?ehaviour=c3=a4?=
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+ <20190208191710.GA30645@linux.intel.com>
+ <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
+ <20190208202353.GB1836@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 15:32:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 08 Feb 2019 20:31:23 +0000 (UTC)
+In-Reply-To: <20190208202353.GB1836@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020820-2213-0000-0000-0000034D2DCE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010560; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158228; UDB=6.00604321; IPR=6.00938761;
+ MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 20:32:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020820-2214-0000-0000-00005D491269
+Message-Id: <36dc691e-4f00-7f6b-5a53-763c12d4fa16@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=922 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08/2019 02:50 PM, Linus Torvalds wrote:
-> On Thu, Feb 7, 2019 at 11:08 AM Waiman Long <longman@redhat.com> wrote:
->> This patchset revamps the current rwsem-xadd implementation to make
->> it saner and easier to work with. This patchset removes all the
->> architecture specific assembly code and uses generic C code for all
->> architectures. This eases maintenance and enables us to enhance the
->> code more easily.
->>
->> This patchset also implements the following 3 new features:
->>
->>  1) Waiter lock handoff
->>  2) Reader optimistic spinning
->>  3) Store write-lock owner in the atomic count (x86-64 only)
-> The patches are kind of hard to read, with most of them just doing
-> prep-work that doesn't necessarily matter to the big picture.
->
-> What I'd really like to see is
->
->  (a) an overview of the new locking logic
+On 2/8/19 3:23 PM, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 02:27:31PM -0500, Stefan Berger wrote:
+>> On 2/8/19 2:17 PM, Jarkko Sakkinen wrote:
+>>>    */
+>>> if (rc > 0) {
+>>> 	dev_warn(&chip->dev,
+>>> 		 "%s: send(): invalid value %d\n", __func__, rc);
+>>> 	rc = 0;
+>>> }
+>>>
+>>> Should be fairly safe play now.
+>> Unfortuantely it isn't. You seemed to have lost the
+>> EXPORT_SYMBOL_GPL(tpm_chip_start/stop) and the tpm_chip_start/stop around
+>> the tpm2_shutdown()...
+> OK, now those fixes are back. In tpm_pm_shutdown() case you need also
+> take the lock.
 
-The new locking logic is similar to qrwlock (see patch 11). Cmpxchg is
-used to acquire the write lock, while xadd is still used for read lock.
-Some of the bits in the count are also reserved for special purpose like
-has waiter or lock handoff. Patch 15 tries to compress the write-lock
-owner task pointer and put it into the count field for x86-64 at the
-expense of less bits available for reader count. I have sent out an
-additional patch this morning to make sure that the reader count won't
-overflow.
+tpm_del_char_device also needs the start/stop!
 
-In term of performance, there isn't much change with respect to
-read-lock performance. For write-lock, I saw a slight drop in some
-cases, but nothing significant. The merging of owner task pointer into
-the count field does impose a slightly bigger drop than I would have
-liked which I am going to look into a bit more.
+
+     Stefan
+
 
 >
->  (b) what's the new fastpath case
-
-The only change in the fastpath is the use of cmpxchg for writer lock.
-
+> /Jarkko
 >
->  (c) some performance numbers
-
-There are performance data at patches 11, 12, 15, 19, 20, 21. There was
-performance data for patch 4 as well for eliminating the arch specific
-file. Apparently, I might have deleted it accidentally. Anyway, no
-noticeable performance difference was observed when switching to use
-generic C code for x86, ppc and ARM64.
-
-The major gain in performance is due to reader optimistic spinning
-patches. The microbenchmark that I used shown an order of magnitude of
-performance improvement for mixed reader-writer workloads. Of course, we
-will see less performance gain with real world benchmarks.
-
-I am planning to run more performance test and post the data sometimes
-next week. Davidlohr is also going to run some of his rwsem performance
-test on this patchset.
-
->
-> to explain the changes from a "this is the point of the whole
-> exercise" standpoint.
->
-> And yes, I realize that the lock handoff and optimistic spinning is a
-> big deal, since I've seen the same regression numbers that presumably
-> caused this effort to be resurrected. So it's not that I don't find
-> this intriguing and worthwhile, it's literally that I'd like a summary
-> not so much of the individual patches, but of the new model.
->
-> Please?
-
-Maybe I should break this patchset into a few smaller ones to make it
-easier to review. Any suggestion is welcome.
-
-Cheers,
-Longman
 
