@@ -6,55 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C39FC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F6DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E88852146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D625020844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfBHNCu (ORCPT
+        id S1727801AbfBHNDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:02:50 -0500
-Received: from ozlabs.org ([203.11.71.1]:56315 "EHLO ozlabs.org"
+        Fri, 8 Feb 2019 08:03:09 -0500
+Received: from ozlabs.org ([203.11.71.1]:51921 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727675AbfBHNCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:02:48 -0500
+        id S1727467AbfBHNCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:02:34 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43wwMT34bmz9sPP; Sat,  9 Feb 2019 00:02:44 +1100 (AEDT)
+        id 43wwMD5XkNz9sML; Sat,  9 Feb 2019 00:02:32 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 26b523356f49a0117c8f9e32ca98aa6d6e496e1a
+X-powerpc-patch-commit: 45a202a3fefc6ee7b19b1222bfb5b0679ce31996
 X-Patchwork-Hint: ignore
-In-Reply-To: <a14aac5408f98cf8ad8723ffa874764ccb42d4d4.1548978750.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+In-Reply-To: <5c40aafc.1c69fb81.a0ba0.67a7@mx.google.com>
+To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>, arnd@arndb.de,
+        benh@kernel.crashing.org, paulus@samba.org
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2] powerpc: drop page_is_ram() and walk_system_ram_range()
-Message-Id: <43wwMT34bmz9sPP@ozlabs.org>
-Date:   Sat,  9 Feb 2019 00:02:44 +1100 (AEDT)
+Cc:     brajeswar.linux@gmail.com, linuxppc-dev@lists.ozlabs.org,
+        jrdr.linux@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/cell: Remove duplicate header
+Message-Id: <43wwMD5XkNz9sML@ozlabs.org>
+Date:   Sat,  9 Feb 2019 00:02:31 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-02-01 at 10:46:52 UTC, Christophe Leroy wrote:
-> Since commit c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
-> it is possible to use the generic walk_system_ram_range() and
-> the generic page_is_ram().
+On Thu, 2019-01-17 at 16:19:05 UTC, Sabyasachi Gupta wrote:
+> Remove linux/syscalls.h which is included more than once
 > 
-> To enable the use of walk_system_ram_range() by the IBM EHEA
-> ethernet driver, the generic function has to be exported.
-> 
-> As powerpc was the only (last?) user of CONFIG_ARCH_HAS_WALK_MEMORY,
-> the #ifdef around the generic walk_system_ram_range() has become
-> useless and can be dropped.
-> 
-> Fixes: c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/26b523356f49a0117c8f9e32ca98aa6d
+https://git.kernel.org/powerpc/c/45a202a3fefc6ee7b19b1222bfb5b067
 
 cheers
