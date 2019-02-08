@@ -2,67 +2,246 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C44C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AC7C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6D021924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 879622080A
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfBHKFi (ORCPT
+        id S1727594AbfBHKGK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:05:38 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:46871 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfBHKFh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 05:05:37 -0500
-X-Originating-IP: 109.213.164.40
-Received: from localhost (alyon-652-1-53-40.w109-213.abo.wanadoo.fr [109.213.164.40])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 85E96E0010;
-        Fri,  8 Feb 2019 10:05:34 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: imx-sc: depend on HAVE_ARM_SMCCC
-Date:   Fri,  8 Feb 2019 11:05:30 +0100
-Message-Id: <20190208100530.21872-1-alexandre.belloni@bootlin.com>
+        Fri, 8 Feb 2019 05:06:10 -0500
+Received: from foss.arm.com ([217.140.101.70]:47434 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726522AbfBHKGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 05:06:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72E6AA78;
+        Fri,  8 Feb 2019 02:06:09 -0800 (PST)
+Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5AA313F557;
+        Fri,  8 Feb 2019 02:06:06 -0800 (PST)
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH v7 00/15] Add utilization clamping support
+Date:   Fri,  8 Feb 2019 10:05:39 +0000
+Message-Id: <20190208100554.32196-1-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following build issue:
+Hi all, this is a respin of:
 
-drivers/rtc/rtc-imx-sc.o: In function `imx_sc_rtc_set_time':
->> rtc-imx-sc.c:(.text+0x212): undefined reference to `__arm_smccc_smc'
+   https://lore.kernel.org/lkml/20190115101513.2822-1-patrick.bellasi@arm.com/
 
-Fixes: 13a929f38ad7 ("rtc: imx-sc: add rtc set time support")
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+which includes the following main changes:
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index faa9ae1a3062..8f6735e0ff14 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1698,6 +1698,7 @@ config RTC_DRV_SNVS
- 
- config RTC_DRV_IMX_SC
- 	depends on IMX_SCU
-+	depends on HAVE_ARM_SMCCC
- 	tristate "NXP i.MX System Controller RTC support"
- 	help
- 	   If you say yes here you get support for the NXP i.MX System
+ - remove the mapping code and use a simple linear mapping of
+   clamp values into buckets
+ - move core bits and main data structures at the beginning,
+   in a further attempt to make the overall series easier to digest
+ - update the mapping logic to use exactly UCLAMP_BUCKETS_COUNT buckets,
+   i.e. no more "special" bucket for default values
+ - update uclamp_rq_update() to do a top-to-bottom max search
+ - make system defaults to support a "nice" policy where a task, for
+   each clamp index, can get only "up to" what allowed by the system
+   default setting, i.e. tasks are always allowed to request for less
+ - get rid of "perf" system defaults and initialize RT tasks as max boosted
+ - fix definition of SCHED_POLICY_MAX
+ - split sched_setattr()'s validation code from actual state changing code
+ - for sched_setattr()'s state changing code, use _the_ same pattern
+   __setscheduler() and other code already use,
+   i.e. dequeue-change-enqueue
+ - add SCHED_FLAG_KEEP_PARAMS and use it to skip __setscheduler() when
+   policy and params are not specified
+ - schedutil: add FAIR and RT integration with a single patch
+ - drop clamping for IOWait boost
+ - fixed go to max for RT tasks on !CONFIG_UCLAMP_TASK
+ - add a note on side-effects due to the usage of FREQUENCY_UTIL for
+   performance domain frequency estimation and add a similar note to this
+   changelog
+ - ensure clamp values are not tunable at root cgroup level
+ - propagate system defaults to root group's effective value
+
+Thanks for all the valuable comments, let see where we stand now ;)
+
+Cheers Patrick
+
+
+Series Organization
+===================
+
+The series is organized into these main sections:
+
+ - Patches [01-07]: Per task (primary) API
+ - Patches    [08]: Schedutil integration for FAIR and RT tasks
+ - Patches [09-10]: Integration with EAS's energy_compute()
+ - Patches [11-15]: Per task group (secondary) API
+
+It is based on today's tip/sched/core and the full tree is available here:
+
+   git://linux-arm.org/linux-pb.git   lkml/utilclamp_v7
+   http://www.linux-arm.org/git?p=linux-pb.git;a=shortlog;h=refs/heads/lkml/utilclamp_v7
+
+
+Newcomer's Short Abstract
+=========================
+
+The Linux scheduler tracks a "utilization" signal for each scheduling entity
+(SE), e.g. tasks, to know how much CPU time they use. This signal allows the
+scheduler to know how "big" a task is and, in principle, it can support
+advanced task placement strategies by selecting the best CPU to run a task.
+Some of these strategies are represented by the Energy Aware Scheduler [3].
+
+When the schedutil cpufreq governor is in use, the utilization signal allows
+the Linux scheduler to also drive frequency selection. The CPU utilization
+signal, which represents the aggregated utilization of tasks scheduled on that
+CPU, is used to select the frequency which best fits the workload generated by
+the tasks.
+
+The current translation of utilization values into a frequency selection is
+simple: we go to max for RT tasks or to the minimum frequency which can
+accommodate the utilization of DL+FAIR tasks.
+However, utilisation values by themselves cannot convey the desired
+power/performance behaviours of each task as intended by user-space.
+As such they are not ideally suited for task placement decisions.
+
+Task placement and frequency selection policies in the kernel can be improved
+by taking into consideration hints coming from authorised user-space elements,
+like for example the Android middleware or more generally any "System
+Management Software" (SMS) framework.
+
+Utilization clamping is a mechanism which allows to "clamp" (i.e. filter) the
+utilization generated by RT and FAIR tasks within a range defined by user-space.
+The clamped utilization value can then be used, for example, to enforce a
+minimum and/or maximum frequency depending on which tasks are active on a CPU.
+
+The main use-cases for utilization clamping are:
+
+ - boosting: better interactive response for small tasks which
+   are affecting the user experience.
+
+   Consider for example the case of a small control thread for an external
+   accelerator (e.g. GPU, DSP, other devices). Here, from the task utilization
+   the scheduler does not have a complete view of what the task's requirements
+   are and, if it's a small utilization task, it keeps selecting a more energy
+   efficient CPU, with smaller capacity and lower frequency, thus negatively
+   impacting the overall time required to complete task activations.
+
+ - capping: increase energy efficiency for background tasks not affecting the
+   user experience.
+
+   Since running on a lower capacity CPU at a lower frequency is more energy
+   efficient, when the completion time is not a main goal, then capping the
+   utilization considered for certain (maybe big) tasks can have positive
+   effects, both on energy consumption and thermal headroom.
+   This feature allows also to make RT tasks more energy friendly on mobile
+   systems where running them on high capacity CPUs and at the maximum
+   frequency is not required.
+
+From these two use-cases, it's worth noticing that frequency selection
+biasing, introduced by patches 9 and 10 of this series, is just one possible
+usage of utilization clamping. Another compelling extension of utilization
+clamping is in helping the scheduler in macking tasks placement decisions.
+
+Utilization is (also) a task specific property the scheduler uses to know
+how much CPU bandwidth a task requires, at least as long as there is idle time.
+Thus, the utilization clamp values, defined either per-task or per-task_group,
+can represent tasks to the scheduler as being bigger (or smaller) than what
+they actually are.
+
+Utilization clamping thus enables interesting additional optimizations, for
+example on asymmetric capacity systems like Arm big.LITTLE and DynamIQ CPUs,
+where:
+
+ - boosting: try to run small/foreground tasks on higher-capacity CPUs to
+   complete them faster despite being less energy efficient.
+
+ - capping: try to run big/background tasks on low-capacity CPUs to save power
+   and thermal headroom for more important tasks
+
+This series does not present this additional usage of utilization clamping but
+it's an integral part of the EAS feature set, where [1] is one of its main
+components.
+
+Android kernels use SchedTune, a solution similar to utilization clamping, to
+bias both 'frequency selection' and 'task placement'. This series provides the
+foundation to add similar features to mainline while focusing, for the
+time being, just on schedutil integration.
+
+
+References
+==========
+
+[1] "Expressing per-task/per-cgroup performance hints"
+     Linux Plumbers Conference 2018
+     https://linuxplumbersconf.org/event/2/contributions/128/
+
+[2] Message-ID: <20180911162827.GJ1100574@devbig004.ftw2.facebook.com>
+    https://lore.kernel.org/lkml/20180911162827.GJ1100574@devbig004.ftw2.facebook.com/
+
+[3] https://lore.kernel.org/lkml/20181203095628.11858-1-quentin.perret@arm.com/
+
+
+Patrick Bellasi (15):
+  sched/core: uclamp: Add CPU's clamp buckets refcounting
+  sched/core: uclamp: Enforce last task UCLAMP_MAX
+  sched/core: uclamp: Add system default clamps
+  sched/core: Allow sched_setattr() to use the current policy
+  sched/core: uclamp: Extend sched_setattr() to support utilization
+    clamping
+  sched/core: uclamp: Reset uclamp values on RESET_ON_FORK
+  sched/core: uclamp: Set default clamps for RT tasks
+  sched/cpufreq: uclamp: Add clamps for FAIR and RT tasks
+  sched/core: uclamp: Add uclamp_util_with()
+  sched/fair: uclamp: Add uclamp support to energy_compute()
+  sched/core: uclamp: Extend CPU's cgroup controller
+  sched/core: uclamp: Propagate parent clamps
+  sched/core: uclamp: Propagate system defaults to root group
+  sched/core: uclamp: Use TG's clamps to restrict TASK's clamps
+  sched/core: uclamp: Update CPU's refcount on TG's clamp changes
+
+ Documentation/admin-guide/cgroup-v2.rst |  46 ++
+ include/linux/log2.h                    |  37 +
+ include/linux/sched.h                   |  69 ++
+ include/linux/sched/sysctl.h            |  11 +
+ include/linux/sched/topology.h          |   6 -
+ include/uapi/linux/sched.h              |  16 +-
+ include/uapi/linux/sched/types.h        |  65 +-
+ init/Kconfig                            |  75 +++
+ kernel/sched/core.c                     | 862 +++++++++++++++++++++++-
+ kernel/sched/cpufreq_schedutil.c        |  31 +-
+ kernel/sched/fair.c                     |  43 +-
+ kernel/sched/rt.c                       |   4 +
+ kernel/sched/sched.h                    | 126 +++-
+ kernel/sysctl.c                         |  16 +
+ 14 files changed, 1355 insertions(+), 52 deletions(-)
+
 -- 
 2.20.1
 
