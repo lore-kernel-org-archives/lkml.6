@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28466C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D19BC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E821E2080F
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0F9218DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:45:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Tr/EseCr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Kug9MVbO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfBHQpY (ORCPT
+        id S1727675AbfBHQp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:45:24 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7607 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfBHQpU (ORCPT
+        Fri, 8 Feb 2019 11:45:28 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1653 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbfBHQp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:45:20 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5db1fe0002>; Fri, 08 Feb 2019 08:44:46 -0800
+        Fri, 8 Feb 2019 11:45:26 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5db2110001>; Fri, 08 Feb 2019 08:45:05 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 08 Feb 2019 08:45:19 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 08 Feb 2019 08:45:24 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 08 Feb 2019 08:45:19 -0800
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
- 2019 16:45:18 +0000
+        by hqpgpgate101.nvidia.com on Fri, 08 Feb 2019 08:45:24 -0800
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
+ 2019 16:45:24 +0000
 Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
  (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 8 Feb 2019 16:45:18 +0000
+ Transport; Fri, 8 Feb 2019 16:45:24 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.171.121]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c5db21e0000>; Fri, 08 Feb 2019 08:45:18 -0800
+        id <B5c5db2230000>; Fri, 08 Feb 2019 08:45:24 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
 CC:     <digetx@gmail.com>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
         Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V16 3/6] i2c: tegra: fix maximum transfer size
-Date:   Fri, 8 Feb 2019 08:45:11 -0800
-Message-ID: <1549644314-1481-3-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V16 6/6] i2c: tegra: add i2c interface timing support
+Date:   Fri, 8 Feb 2019 08:45:14 -0800
+Message-ID: <1549644314-1481-6-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549644314-1481-1-git-send-email-skomatineni@nvidia.com>
 References: <1549644314-1481-1-git-send-email-skomatineni@nvidia.com>
@@ -54,68 +54,439 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549644286; bh=9B7Eg89K20j60uEkwVm3pupP3gE89gOfdEhM8y4qdWY=;
+        t=1549644305; bh=8oMz2KJHermtrmDUj0QIErNaOCPMut3MKeUhYdwTdoU=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=Tr/EseCrg1aiFwrw1oSmzN9nFedh9rr1MMFbhyVkGKI8+mbkJe4CU8J7F3BdCIu7/
-         P5nZ3ItxWgULEQ4xGtIL01vjpMCwJzWzMHFuJZILTGQf2ctxJrim3lAidnCwfzC/nY
-         Hd7vaTOfKSPQDU2ruJyWrI2RA2qwKPmsAXf21CAiTgkd8lFHsbmvZxUR91+2FpGCo3
-         YakJkXRPwABAb6imgotDu0OsNuuvjVcJrHQMsuKraRAZzVdRMXugX782iJOpuUnIcW
-         l8nhpWrNbxxgcmvwdh6Lxo9Fa+Xmnf4CZxttOuk9+nguue8p6DypQPgx2Xe5hfnHRL
-         aAcHrzOmvGAug==
+        b=Kug9MVbOURV1tgsa3rfXKSk4Qk7LXuWLQWS3Yi71SghmYGRfolN5R/ci6EHnarlzG
+         w7Znzc1NOSYOCT1ORnt3mLEeGZ4hJKWWyuuJm5SIU0fuQdIWUcDp/vIeM5bjI2sp3t
+         zytLdtjGfha3sKCBJRtztZS26Tlv4PJNeFd0oL+vAW/pD6UUVck/7Uc8tQ0MUR3H1J
+         u6xDe4dr8IkkgYggb+wYhGJ2TmBvp+77q/gYE4DB9K6kKMQMMA1iIZY3a8gHNAEJS6
+         IlPZho5rjLhlSVwCHgevO78220i3grcjX9mHf3nC6j4CeLaduivv8ayVVo/yV8oUcs
+         DK1veNDayPUsA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra194 supports maximum 64K bytes transfer per packet.
-Tegra186 and prior supports maximum 4K bytes transfer per packet.
-This includes 12 bytes of packet header.
+This patch adds I2C interface timing registers support for
+proper bus rate configuration along with meeting the I2C spec
+setup and hold times based on the tuning performed on Tegra210,
+Tegra186 and Tegra194 platforms.
 
-This patch fixes max write length to account for packet header size
-for transfers.
+I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
+and Tegra I2C controller design uses them as a part of internal
+clock divisor.
 
+I2C_INTERFACE_TIMING_1 register contains the setup and hold times
+for start and stop conditions.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- [V16]	: I2C core max message size is 65536. So, max_read_len of 65535 is NOP.
-	  Removed it leaving max_write_len
- [V15]	: This is new patch in this series.
+ [V16]		: Minor changes
+ [V15]		: Moved Tegra186 hw feature structure to DMA patch of this series.
+ [V14]		: INTERFACE_TIMING registers doesnt exist on Tegra114 and prior.
+		  Added flag to hw feature to identify this and program only on supported
+		  tegra chips.
+ [V13]		: Same as V12
+ [V12] 		: Fixed strict coding style check issues
+ [V9/V10/V11]	: Same as V8
+ [V8] 		: Updated to handle timing implementation within tegra_i2c_init directly
+ [V7] 		: Minor updates to timing implementation
+ [V5/V6] 	: Added this Interface timing patch in V5 of the patch series.
 
 
- drivers/i2c/busses/i2c-tegra.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+
+ drivers/i2c/busses/i2c-tegra.c | 189 ++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 159 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3758c7a2c781..08bdefd2810e 100644
+index 9cba84be1571..55082d1db896 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -125,6 +125,9 @@
+@@ -126,6 +126,15 @@
  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
  
-+/* Packet header size in bytes */
-+#define I2C_PACKET_HEADER_SIZE			12
++#define I2C_INTERFACE_TIMING_0			0x94
++#define I2C_THIGH_SHIFT				8
++#define I2C_INTERFACE_TIMING_1			0x98
 +
- /*
-  * msg_end_type: The bus control which need to be send at end of transfer.
-  * @MSG_END_STOP: Send stop pulse at end of transfer.
-@@ -899,12 +902,13 @@ static const struct i2c_algorithm tegra_i2c_algo = {
- /* payload size is only 12 bit */
- static const struct i2c_adapter_quirks tegra_i2c_quirks = {
- 	.flags = I2C_AQ_NO_ZERO_LEN,
--	.max_read_len = 4096,
--	.max_write_len = 4096,
-+	.max_read_len = SZ_4K,
-+	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE,
++#define I2C_STANDARD_MODE			100000
++#define I2C_FAST_MODE				400000
++#define I2C_FAST_PLUS_MODE			1000000
++#define I2C_HS_MODE				3500000
++
+ /* Packet header size in bytes */
+ #define I2C_PACKET_HEADER_SIZE			12
+ 
+@@ -160,7 +169,10 @@ enum msg_end_type {
+  * @has_config_load_reg: Has the config load register to load the new
+  *		configuration.
+  * @clk_divisor_hs_mode: Clock divisor in HS mode.
+- * @clk_divisor_std_fast_mode: Clock divisor in standard/fast mode. It is
++ * @clk_divisor_std_mode: Clock divisor in standard mode. It is
++ *		applicable if there is no fast clock source i.e. single clock
++ *		source.
++ * @clk_divisor_fast_mode: Clock divisor in fast mode. It is
+  *		applicable if there is no fast clock source i.e. single clock
+  *		source.
+  * @clk_divisor_fast_plus_mode: Clock divisor in fast mode plus. It is
+@@ -178,6 +190,18 @@ enum msg_end_type {
+  * @supports_bus_clear: Bus Clear support to recover from bus hang during
+  *		SDA stuck low from device for some unknown reasons.
+  * @has_apb_dma: Support of APBDMA on corresponding Tegra chip.
++ * @tlow_std_mode: Low period of the clock in standard mode.
++ * @thigh_std_mode: High period of the clock in standard mode.
++ * @tlow_fast_fastplus_mode: Low period of the clock in fast/fast-plus modes.
++ * @thigh_fast_fastplus_mode: High period of the clock in fast/fast-plus modes.
++ * @setup_hold_time_std_mode: Setup and hold time for start and stop conditions
++ *		in standard mode.
++ * @setup_hold_time_fast_fast_plus_mode: Setup and hold time for start and stop
++ *		conditions in fast/fast-plus modes.
++ * @setup_hold_time_hs_mode: Setup and hold time for start and stop conditions
++ *		in HS mode.
++ * @has_interface_timing_reg: Has interface timing register to program the tuned
++ *		timing settings.
+  */
+ struct tegra_i2c_hw_feature {
+ 	bool has_continue_xfer_support;
+@@ -185,7 +209,8 @@ struct tegra_i2c_hw_feature {
+ 	bool has_single_clk_source;
+ 	bool has_config_load_reg;
+ 	int clk_divisor_hs_mode;
+-	int clk_divisor_std_fast_mode;
++	int clk_divisor_std_mode;
++	int clk_divisor_fast_mode;
+ 	u16 clk_divisor_fast_plus_mode;
+ 	bool has_multi_master_mode;
+ 	bool has_slcg_override_reg;
+@@ -193,6 +218,14 @@ struct tegra_i2c_hw_feature {
+ 	const struct i2c_adapter_quirks *quirks;
+ 	bool supports_bus_clear;
+ 	bool has_apb_dma;
++	u8 tlow_std_mode;
++	u8 thigh_std_mode;
++	u8 tlow_fast_fastplus_mode;
++	u8 thigh_fast_fastplus_mode;
++	u32 setup_hold_time_std_mode;
++	u32 setup_hold_time_fast_fast_plus_mode;
++	u32 setup_hold_time_hs_mode;
++	bool has_interface_timing_reg;
  };
  
- static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
- 	.flags = I2C_AQ_NO_ZERO_LEN,
-+	.max_write_len = SZ_64K - I2C_PACKET_HEADER_SIZE,
+ /**
+@@ -660,11 +693,13 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+ 	return 0;
+ }
+ 
+-static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
++static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool clk_reinit)
+ {
+ 	u32 val;
+ 	int err;
+-	u32 clk_divisor;
++	u32 clk_divisor, clk_multiplier;
++	u32 tsu_thd = 0;
++	u8 tlow, thigh;
+ 
+ 	err = pm_runtime_get_sync(i2c_dev->dev);
+ 	if (err < 0) {
+@@ -694,6 +729,41 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 					I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT;
+ 	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
+ 
++	if (i2c_dev->bus_clk_rate > I2C_STANDARD_MODE &&
++	    i2c_dev->bus_clk_rate <= I2C_FAST_PLUS_MODE) {
++		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
++		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
++		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
++	} else {
++		tlow = i2c_dev->hw->tlow_std_mode;
++		thigh = i2c_dev->hw->thigh_std_mode;
++		tsu_thd = i2c_dev->hw->setup_hold_time_std_mode;
++	}
++
++	if (i2c_dev->hw->has_interface_timing_reg) {
++		val = (thigh << I2C_THIGH_SHIFT) | tlow;
++		i2c_writel(i2c_dev, val, I2C_INTERFACE_TIMING_0);
++	}
++
++	/*
++	 * configure setup and hold times only when tsu_thd is non-zero.
++	 * otherwise, preserve the chip default values
++	 */
++	if (i2c_dev->hw->has_interface_timing_reg && tsu_thd)
++		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
++
++	if (!clk_reinit) {
++		clk_multiplier = (tlow + thigh + 2);
++		clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
++		err = clk_set_rate(i2c_dev->div_clk,
++				   i2c_dev->bus_clk_rate * clk_multiplier);
++		if (err) {
++			dev_err(i2c_dev->dev,
++				"failed changing clock rate: %d\n", err);
++			goto err;
++		}
++	}
++
+ 	if (!i2c_dev->is_dvc) {
+ 		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
+ 
+@@ -1098,7 +1168,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 			dmaengine_terminate_sync(i2c_dev->msg_read ?
+ 						 i2c_dev->rx_dma_chan :
+ 						 i2c_dev->tx_dma_chan);
+-			tegra_i2c_init(i2c_dev);
++			tegra_i2c_init(i2c_dev, true);
+ 			return -ETIMEDOUT;
+ 		}
+ 
+@@ -1124,7 +1194,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (time_left == 0) {
+ 		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
+ 
+-		tegra_i2c_init(i2c_dev);
++		tegra_i2c_init(i2c_dev, true);
+ 		return -ETIMEDOUT;
+ 	}
+ 
+@@ -1136,7 +1206,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
+-	tegra_i2c_init(i2c_dev);
++	tegra_i2c_init(i2c_dev, true);
+ 	/* start recovery upon arbitration loss in single master mode */
+ 	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
+ 		if (!i2c_dev->is_multimaster_mode)
+@@ -1232,7 +1302,8 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = false,
+ 	.has_single_clk_source = false,
+ 	.clk_divisor_hs_mode = 3,
+-	.clk_divisor_std_fast_mode = 0,
++	.clk_divisor_std_mode = 0,
++	.clk_divisor_fast_mode = 0,
+ 	.clk_divisor_fast_plus_mode = 0,
+ 	.has_config_load_reg = false,
+ 	.has_multi_master_mode = false,
+@@ -1241,6 +1312,14 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.quirks = &tegra_i2c_quirks,
+ 	.supports_bus_clear = false,
+ 	.has_apb_dma = true,
++	.tlow_std_mode = 0x4,
++	.thigh_std_mode = 0x2,
++	.tlow_fast_fastplus_mode = 0x4,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0x0,
++	.setup_hold_time_fast_fast_plus_mode = 0x0,
++	.setup_hold_time_hs_mode = 0x0,
++	.has_interface_timing_reg = false,
  };
  
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -1248,7 +1327,8 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = false,
+ 	.has_single_clk_source = false,
+ 	.clk_divisor_hs_mode = 3,
+-	.clk_divisor_std_fast_mode = 0,
++	.clk_divisor_std_mode = 0,
++	.clk_divisor_fast_mode = 0,
+ 	.clk_divisor_fast_plus_mode = 0,
+ 	.has_config_load_reg = false,
+ 	.has_multi_master_mode = false,
+@@ -1257,6 +1337,14 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.quirks = &tegra_i2c_quirks,
+ 	.supports_bus_clear = false,
+ 	.has_apb_dma = true,
++	.tlow_std_mode = 0x4,
++	.thigh_std_mode = 0x2,
++	.tlow_fast_fastplus_mode = 0x4,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0x0,
++	.setup_hold_time_fast_fast_plus_mode = 0x0,
++	.setup_hold_time_hs_mode = 0x0,
++	.has_interface_timing_reg = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -1264,7 +1352,8 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+ 	.clk_divisor_hs_mode = 1,
+-	.clk_divisor_std_fast_mode = 0x19,
++	.clk_divisor_std_mode = 0x19,
++	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
+ 	.has_config_load_reg = false,
+ 	.has_multi_master_mode = false,
+@@ -1273,6 +1362,14 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.quirks = &tegra_i2c_quirks,
+ 	.supports_bus_clear = true,
+ 	.has_apb_dma = true,
++	.tlow_std_mode = 0x4,
++	.thigh_std_mode = 0x2,
++	.tlow_fast_fastplus_mode = 0x4,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0x0,
++	.setup_hold_time_fast_fast_plus_mode = 0x0,
++	.setup_hold_time_hs_mode = 0x0,
++	.has_interface_timing_reg = false,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -1280,7 +1377,8 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+ 	.clk_divisor_hs_mode = 1,
+-	.clk_divisor_std_fast_mode = 0x19,
++	.clk_divisor_std_mode = 0x19,
++	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = false,
+@@ -1289,6 +1387,14 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.quirks = &tegra_i2c_quirks,
+ 	.supports_bus_clear = true,
+ 	.has_apb_dma = true,
++	.tlow_std_mode = 0x4,
++	.thigh_std_mode = 0x2,
++	.tlow_fast_fastplus_mode = 0x4,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0x0,
++	.setup_hold_time_fast_fast_plus_mode = 0x0,
++	.setup_hold_time_hs_mode = 0x0,
++	.has_interface_timing_reg = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -1296,7 +1402,8 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+ 	.clk_divisor_hs_mode = 1,
+-	.clk_divisor_std_fast_mode = 0x19,
++	.clk_divisor_std_mode = 0x19,
++	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = true,
+@@ -1305,6 +1412,14 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.quirks = &tegra_i2c_quirks,
+ 	.supports_bus_clear = true,
+ 	.has_apb_dma = true,
++	.tlow_std_mode = 0x4,
++	.thigh_std_mode = 0x2,
++	.tlow_fast_fastplus_mode = 0x4,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0,
++	.setup_hold_time_fast_fast_plus_mode = 0,
++	.setup_hold_time_hs_mode = 0,
++	.has_interface_timing_reg = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
+@@ -1312,7 +1427,8 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+ 	.clk_divisor_hs_mode = 1,
+-	.clk_divisor_std_fast_mode = 0x19,
++	.clk_divisor_std_mode = 0x16,
++	.clk_divisor_fast_mode = 0x19,
+ 	.clk_divisor_fast_plus_mode = 0x10,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = true,
+@@ -1321,6 +1437,14 @@ static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
+ 	.quirks = &tegra_i2c_quirks,
+ 	.supports_bus_clear = true,
+ 	.has_apb_dma = false,
++	.tlow_std_mode = 0x4,
++	.thigh_std_mode = 0x3,
++	.tlow_fast_fastplus_mode = 0x4,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0,
++	.setup_hold_time_fast_fast_plus_mode = 0,
++	.setup_hold_time_hs_mode = 0,
++	.has_interface_timing_reg = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -1328,8 +1452,9 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_per_pkt_xfer_complete_irq = true,
+ 	.has_single_clk_source = true,
+ 	.clk_divisor_hs_mode = 1,
+-	.clk_divisor_std_fast_mode = 0x19,
+-	.clk_divisor_fast_plus_mode = 0x10,
++	.clk_divisor_std_mode = 0x4f,
++	.clk_divisor_fast_mode = 0x3c,
++	.clk_divisor_fast_plus_mode = 0x16,
+ 	.has_config_load_reg = true,
+ 	.has_multi_master_mode = true,
+ 	.has_slcg_override_reg = true,
+@@ -1337,6 +1462,14 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.quirks = &tegra194_i2c_quirks,
+ 	.supports_bus_clear = true,
+ 	.has_apb_dma = false,
++	.tlow_std_mode = 0x8,
++	.thigh_std_mode = 0x7,
++	.tlow_fast_fastplus_mode = 0x2,
++	.thigh_fast_fastplus_mode = 0x2,
++	.setup_hold_time_std_mode = 0x08080808,
++	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
++	.setup_hold_time_hs_mode = 0x090909,
++	.has_interface_timing_reg = true,
+ };
+ 
+ /* Match table for of_platform binding */
+@@ -1363,7 +1496,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	phys_addr_t base_phys;
+ 	int irq;
+ 	int ret = 0;
+-	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base_phys = res->start;
+@@ -1434,20 +1566,17 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	i2c_dev->clk_divisor_non_hs_mode =
+-			i2c_dev->hw->clk_divisor_std_fast_mode;
+-	if (i2c_dev->hw->clk_divisor_fast_plus_mode &&
+-		(i2c_dev->bus_clk_rate == 1000000))
++	if (i2c_dev->bus_clk_rate > I2C_FAST_MODE &&
++	    i2c_dev->bus_clk_rate <= I2C_FAST_PLUS_MODE)
+ 		i2c_dev->clk_divisor_non_hs_mode =
+-			i2c_dev->hw->clk_divisor_fast_plus_mode;
+-
+-	clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
+-	ret = clk_set_rate(i2c_dev->div_clk,
+-			   i2c_dev->bus_clk_rate * clk_multiplier);
+-	if (ret) {
+-		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
+-		goto unprepare_fast_clk;
+-	}
++				i2c_dev->hw->clk_divisor_fast_plus_mode;
++	else if (i2c_dev->bus_clk_rate > I2C_STANDARD_MODE &&
++		 i2c_dev->bus_clk_rate <= I2C_FAST_MODE)
++		i2c_dev->clk_divisor_non_hs_mode =
++				i2c_dev->hw->clk_divisor_fast_mode;
++	else
++		i2c_dev->clk_divisor_non_hs_mode =
++				i2c_dev->hw->clk_divisor_std_mode;
+ 
+ 	ret = clk_prepare(i2c_dev->div_clk);
+ 	if (ret < 0) {
+@@ -1477,7 +1606,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto disable_div_clk;
+ 
+-	ret = tegra_i2c_init(i2c_dev);
++	ret = tegra_i2c_init(i2c_dev, false);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
+ 		goto release_dma;
 -- 
 2.7.4
 
