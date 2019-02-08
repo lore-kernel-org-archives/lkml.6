@@ -2,203 +2,113 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A908C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF34C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B11120844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:18:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="ATqiyCLs"
+	by mail.kernel.org (Postfix) with ESMTP id 471712084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:19:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfBHQSY (ORCPT
+        id S1727473AbfBHQTN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:18:24 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40691 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbfBHQSX (ORCPT
+        Fri, 8 Feb 2019 11:19:13 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727144AbfBHQTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:18:23 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z10so1768967pgp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:18:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=rwttkLcB0E6Lz2B+tgr9+cijqY8fQQn5nOYWb3x5YWA=;
-        b=ATqiyCLsID2FI6vHntKHhBzn+aar81HJ9Tv8JjbXVpIV9uG//cqIwTvcM2FbgcnACX
-         f0uAkfpAXGLXmv0GAK9EfWCCUKhkuAfZdar46KltKoZijBTEMC1SXKiEQ6vroIqDVuU0
-         YrlJ67WhEOIwLUUUeDD4/D/Sgjea59Kh+p4Z0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=rwttkLcB0E6Lz2B+tgr9+cijqY8fQQn5nOYWb3x5YWA=;
-        b=GbWstD0zp/OV6AnuF407+8nH0b+AIOjLMMHgpN6n7rfDMOmZ7P94e3xQa4GzOLf3Jy
-         ayZQPjlD5UrjLDAKizGLwSddIhtPpNKOE3OGMrVVj5Epsxjh6Hbm89p6g0oVLZ2UDdZM
-         4OQn8qZ/+2c6uBQYfFW+LtuNw99O8P5qlenROiQhshVbG1xcLbNslm0FdPLM4+26+yOK
-         eSqggTtwQW/uae+2yGOU54TXNHkYgaxcH/g2v3CXtcesRSDXmwCwZ6XlF6qeJjhJ+cOt
-         zVUCNAsgyB4AdtTUt7qujn5WmGIGYXJlJNTkGdFP5S0xCLxgpWC+42R8CNoTXoELVJic
-         sOkg==
-X-Gm-Message-State: AHQUAuZvNUwwDtoEFtylcor2Lzw+B5311rAw6eg61sLwe6YXGnNqLrRn
-        Z2aTAE1vc5qm5/4ZkOyHZcBFpg==
-X-Google-Smtp-Source: AHgI3IYFm9qTo0YgHqGZSOhIItRjWouKqbzosTgd/PKnqIu7ryPVhhmeCqyP/F/uRP5+deEAfJDA9Q==
-X-Received: by 2002:aa7:8d51:: with SMTP id s17mr8824013pfe.16.1549642702499;
-        Fri, 08 Feb 2019 08:18:22 -0800 (PST)
-Received: from localhost (124-171-150-195.dyn.iinet.net.au. [124.171.150.195])
-        by smtp.gmail.com with ESMTPSA id s71sm3704832pfa.122.2019.02.08.08.18.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Feb 2019 08:18:20 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v4 3/3] powerpc/32: Add KASAN support
-In-Reply-To: <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr>
-References: <cover.1548166824.git.christophe.leroy@c-s.fr> <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr>
-Date:   Sat, 09 Feb 2019 03:18:17 +1100
-Message-ID: <87ef8i45km.fsf@dja-thinkpad.axtens.net>
+        Fri, 8 Feb 2019 11:19:12 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18GDs72051505
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 11:19:11 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhaygxwyb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 11:19:10 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 16:19:09 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 16:19:05 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18GJ4A414614720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 16:19:04 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9AA9EB2065;
+        Fri,  8 Feb 2019 16:19:04 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8A1D5B205F;
+        Fri,  8 Feb 2019 16:19:04 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 16:19:04 +0000 (GMT)
+Subject: Re: [PATCH 1/2] tpm: Unify the send callback behaviour
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
+References: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
+ <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
+ <b53745b6-ed49-9e97-6f56-1378561888eb@linux.ibm.com>
+ <20190208154244.GA3963@linux.intel.com>
+ <89f94ccb-d63e-271c-a91b-cfe63e40f776@linux.ibm.com>
+ <20190208160723.GA23755@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 11:19:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190208160723.GA23755@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020816-0040-0000-0000-000004BEC780
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010559; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158143; UDB=6.00604226; IPR=6.00938676;
+ MB=3.00025495; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 16:19:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020816-0041-0000-0000-000008C9E3E2
+Message-Id: <479945da-8e97-2ff5-c1c6-f77aaec86519@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=940 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
+On 2/8/19 11:07 AM, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 10:45:53AM -0500, Stefan Berger wrote:
+>> On 2/8/19 10:42 AM, Jarkko Sakkinen wrote:
+>>> On Fri, Feb 08, 2019 at 09:42:16AM -0500, Stefan Berger wrote: > On 2/8/19 9:05 AM, Jarkko Sakkinen wrote:
+>>>> At least tpm_nsc_send (tpm_nsc.c) and tpm_inf_send (tpm_infineon.c) are also
+>>>> returning the number of bytes sent. I would consider tpm_crb the outlier
+>>>> that returns 0 and should return the length even though we don't need it...
+>>> That would be absolutely wrong way the fix the *actual* issue i.e.
+>>> callbacks returning garbage (sometimes just passing the length parameter
+>>> back as a return value).
+>> Then I guess you have to fixes those other two files as well...
+> That's still a better option.
 
-I've been attempting to port this to 64-bit Book3e nohash (e6500),
-although I think I've ended up with an approach more similar to Aneesh's
-much earlier (2015) series for book3s.
+tpm_tis_core.c's tpm_tis_send_main() also needs fixing...
 
-Part of this is just due to the changes between 32 and 64 bits - we need
-to hack around the discontiguous mappings - but one thing that I'm
-particularly puzzled by is what the kasan_early_init is supposed to do.
 
-> +void __init kasan_early_init(void)
-> +{
-> +	unsigned long addr = KASAN_SHADOW_START;
-> +	unsigned long end = KASAN_SHADOW_END;
-> +	unsigned long next;
-> +	pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(addr), addr), addr);
-> +	int i;
-> +	phys_addr_t pa = __pa(kasan_early_shadow_page);
-> +
-> +	BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
-> +
-> +	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
-> +		panic("KASAN not supported with Hash MMU\n");
-> +
-> +	for (i = 0; i < PTRS_PER_PTE; i++)
-> +		__set_pte_at(&init_mm, (unsigned long)kasan_early_shadow_page,
-> +			     kasan_early_shadow_pte + i,
-> +			     pfn_pte(PHYS_PFN(pa), PAGE_KERNEL_RO), 0);
-> +
-> +	do {
-> +		next = pgd_addr_end(addr, end);
-> +		pmd_populate_kernel(&init_mm, pmd, kasan_early_shadow_pte);
-> +	} while (pmd++, addr = next, addr != end);
-> +}
+>
+> /Jarkko
+>
 
-As far as I can tell it's mapping the early shadow page, read-only, over
-the KASAN_SHADOW_START->KASAN_SHADOW_END range, and it's using the early
-shadow PTE array from the generic code.
-
-I haven't been able to find an answer to why this is in the docs, so I
-was wondering if you or anyone else could explain the early part of
-kasan init a bit better.
-
-At the moment, I don't do any early init, and like Aneesh's series for
-book3s, I end up needing a special flag to disable kasan until after
-kasan_init. Also, as with Balbir's seris for Radix, some tests didn't
-fire, although my missing tests are a superset of his. I suspect the
-early init has something to do with these...?
-
-(I'm happy to collate answers into a patch to the docs, btw!)
-
-In the long term I hope to revive Aneesh's and Balbir's series for hash
-and radix as well.
-
-Regards,
-Daniel
-
-> +
-> +static void __init kasan_init_region(struct memblock_region *reg)
-> +{
-> +	void *start = __va(reg->base);
-> +	void *end = __va(reg->base + reg->size);
-> +	unsigned long k_start, k_end, k_cur, k_next;
-> +	pmd_t *pmd;
-> +
-> +	if (start >= end)
-> +		return;
-> +
-> +	k_start = (unsigned long)kasan_mem_to_shadow(start);
-> +	k_end = (unsigned long)kasan_mem_to_shadow(end);
-> +	pmd = pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), k_start);
-> +
-> +	for (k_cur = k_start; k_cur != k_end; k_cur = k_next, pmd++) {
-> +		k_next = pgd_addr_end(k_cur, k_end);
-> +		if ((void *)pmd_page_vaddr(*pmd) == kasan_early_shadow_pte) {
-> +			pte_t *new = pte_alloc_one_kernel(&init_mm);
-> +
-> +			if (!new)
-> +				panic("kasan: pte_alloc_one_kernel() failed");
-> +			memcpy(new, kasan_early_shadow_pte, PTE_TABLE_SIZE);
-> +			pmd_populate_kernel(&init_mm, pmd, new);
-> +		}
-> +	};
-> +
-> +	for (k_cur = k_start; k_cur < k_end; k_cur += PAGE_SIZE) {
-> +		void *va = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
-> +		pte_t pte = pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
-> +
-> +		if (!va)
-> +			panic("kasan: memblock_alloc() failed");
-> +		pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
-> +		pte_update(pte_offset_kernel(pmd, k_cur), ~0, pte_val(pte));
-> +	}
-> +	flush_tlb_kernel_range(k_start, k_end);
-> +}
-> +
-> +void __init kasan_init(void)
-> +{
-> +	struct memblock_region *reg;
-> +
-> +	for_each_memblock(memory, reg)
-> +		kasan_init_region(reg);
-> +
-> +	kasan_init_tags();
-> +
-> +	/* At this point kasan is fully initialized. Enable error messages */
-> +	init_task.kasan_depth = 0;
-> +	pr_info("KASAN init done\n");
-> +}
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index 33cc6f676fa6..ae7db88b72d6 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -369,6 +369,10 @@ void __init mem_init(void)
->  	pr_info("  * 0x%08lx..0x%08lx  : highmem PTEs\n",
->  		PKMAP_BASE, PKMAP_ADDR(LAST_PKMAP));
->  #endif /* CONFIG_HIGHMEM */
-> +#ifdef CONFIG_KASAN
-> +	pr_info("  * 0x%08lx..0x%08lx  : kasan shadow mem\n",
-> +		KASAN_SHADOW_START, KASAN_SHADOW_END);
-> +#endif
->  #ifdef CONFIG_NOT_COHERENT_CACHE
->  	pr_info("  * 0x%08lx..0x%08lx  : consistent mem\n",
->  		IOREMAP_TOP, IOREMAP_TOP + CONFIG_CONSISTENT_SIZE);
-> -- 
-> 2.13.3
