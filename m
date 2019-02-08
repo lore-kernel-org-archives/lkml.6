@@ -2,86 +2,116 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B8FC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F67C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F4D218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:50:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1JX5DiUB"
+	by mail.kernel.org (Postfix) with ESMTP id CA424218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfBHJuQ (ORCPT
+        id S1727441AbfBHJwZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:50:16 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:30117 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfBHJuP (ORCPT
+        Fri, 8 Feb 2019 04:52:25 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:57711 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727127AbfBHJwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:50:15 -0500
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x189oANd032767
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 18:50:10 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x189oANd032767
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549619410;
-        bh=5eEFdrqXpbL+j89kaxfwCjisLzIwQBKngAOVuu22ayM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1JX5DiUBhSv4cRk3sL8bGmWH2syPf/rQkg56+o+PpQYAwNFqRkP8emVhysNzMf5bS
-         7spCXd64XerOu5MSC2I+/71qRCDcAbEq0LEkxYemYjgPNdNNz4xKNhjKhZ5YRu9vkG
-         98jfpN2lGWjKlX16Pf5/CvOmjIuY+tWGmXFpwcmuIppGqNGoYn0/1/UB6VSnXoZLU1
-         J9TbnclSkDQARA4cKIyM0fZ3CSWrWTcmMAG0fQe0nVhL1NpFzLtp7rk/7gwSIET8ag
-         xvJsNndN3Dbu1VwQ+XTfEF7hj4PQfEs7DnfzVkreQKId9bfm/L41Qp91jifQoUDz9/
-         pRUEY8NrrKOsw==
-X-Nifty-SrcIP: [209.85.222.43]
-Received: by mail-ua1-f43.google.com with SMTP id e16so910431uam.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 01:50:10 -0800 (PST)
-X-Gm-Message-State: AHQUAubUJWHgRCDPVUzUpSg0wibVBEk9sMORWBwkdvfinYrvhu5zdQC8
-        RZzUGlf58ClnzWZATmTg4Khimkrn7VswSeNaM/M=
-X-Google-Smtp-Source: AHgI3IYnNwm3VK/r4QAiJW2ijwLintg0lvF+3SzzV46BnEltgsgYmmShH51unR306PM0+S3Rw0QA1eYFUcaB1uRbKOU=
-X-Received: by 2002:ab0:3402:: with SMTP id z2mr7961605uap.6.1549619409590;
- Fri, 08 Feb 2019 01:50:09 -0800 (PST)
+        Fri, 8 Feb 2019 04:52:24 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-97-BZtxAGQ3OTypNMlgcy5_9g-1; Fri, 08 Feb 2019 09:52:21 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 8 Feb 2019 09:53:04 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 8 Feb 2019 09:53:04 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>
+CC:     Julien Gomes <julien@arista.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "nhorman@tuxdriver.com" <nhorman@tuxdriver.com>,
+        "vyasevich@gmail.com" <vyasevich@gmail.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>
+Subject: RE: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
+ the option length
+Thread-Topic: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Thread-Index: AQHUvmASGkCaWibVqE6iK21f5qVrJKXUlzwQgAAGVoCAAQsJ0A==
+Date:   Fri, 8 Feb 2019 09:53:03 +0000
+Message-ID: <0415888f34e7494e9879a77599c618e0@AcuMS.aculab.com>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
+ <20190206210723.GD13621@localhost.localdomain>
+ <1257941619984a2a992af8d801855c04@AcuMS.aculab.com>
+ <20190207174715.GF13621@localhost.localdomain>
+In-Reply-To: <20190207174715.GF13621@localhost.localdomain>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com> <1549613335-30319-5-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1549613335-30319-5-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 8 Feb 2019 18:49:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASb7iDMf28TGtn=-Gz40K=PgdPrwG3sOa_3oL-PLhtBfw@mail.gmail.com>
-Message-ID: <CAK7LNASb7iDMf28TGtn=-Gz40K=PgdPrwG3sOa_3oL-PLhtBfw@mail.gmail.com>
-Subject: Re: [PATCH 04/11] mtd: rawnand: denali: switch over to ->exec_op()
- from legacy hooks
-To:     linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: BZtxAGQ3OTypNMlgcy5_9g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 5:09 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Implement ->exec_op().
->
-> Remove the deprecated select_chip(), read_byte(), write_byte(),
-> cmd_ctrl(), and waitfunc().
+From: 'Marcelo Ricardo Leitner'
+> Sent: 07 February 2019 17:47
+...
+> > > Maybe what we want(ed) here then is explicit versioning, to have the 3
+> > > definitions available. Then the application is able to use, say struct
+> > > sctp_event_subscribe, and be happy with it, while there is struct
+> > > sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
+> > >
+> > > But it's too late for that now because that would break applications
+> > > already using the new fields in sctp_event_subscribe.
+> >
+> > It is probably better to break the recompilation of the few programs
+> > that use the new fields (and have them not work on old kernels)
+> > than to stop recompilations of old programs stop working on old
+> > kernels or have requested new options silently ignored.
+> 
+> I got confused here, not sure what you mean. Seems there is one "stop"
+> word too many.
 
-I also deleted read_buf(), write_buf().
+More confusing than I intended...
 
-Will fix the log.
+With the current kernel and headers a 'new program' (one that
+needs the new options) will fail to run on an old kernel - which is good.
+However a recompilation of an 'old program' (that doesn't use
+the new options) will also fail to run on an old kernel - which is bad.
 
+Changing the kernel to ignore extra events flags breaks the 'new'
+program.
 
+Versioning the structure now (even though it should have been done
+earlier) won't change the behaviour of existing binaries.
 
+However a recompilation of an 'old' program would use the 'old'
+structure and work on old kernels.
+Attempts to recompile a 'new' program will fail - until the structure
+name (or some #define to enable the extra fields) is changed.
 
--- 
-Best Regards
-Masahiro Yamada
+Breaking compilations is much better than unexpected run-time
+behaviour.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
