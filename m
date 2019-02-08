@@ -2,212 +2,133 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D722C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB64C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 623AE2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A84BF2146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Xkq3W8Q9"
+	dkim=pass (1024-bit key) header.d=digidescorp.com header.i=@digidescorp.com header.b="T0ZqOy+9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfBHRhg (ORCPT
+        id S1728268AbfBHRhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:37:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35521 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728111AbfBHRf0 (ORCPT
+        Fri, 8 Feb 2019 12:37:35 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34933 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbfBHRf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 12:35:26 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t200so4333780wmt.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:25 -0800 (PST)
+Received: by mail-it1-f194.google.com with SMTP id r6so10907247itk.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gQeA7phzsYQZFK2JLuLMFYmsphbl1nQUs0emAC/KfyA=;
-        b=Xkq3W8Q9pXfyA6CBh6NgFCOiju+Lg2KvS8yVHVtcNTSkQWgtVMVPM0hG8FOsREf6Oc
-         B6gJBQcnXUilX1HgmPvxW9eXlYcNWWfZBNsEHYYyV5tHoLroxmiMNtbfC1nlEohxZEtV
-         Z13uDA0toC5sJqMHEjgsH5sH2bgRnBtMr5L0naxQMuo+GrHzuX+8PlCCG5W1gXUUOynh
-         tIztQksQ639lDOyG9abNtUpmqOX/+7KWlzXtdkTJLeGOoqB8kJOQrJKHv+PmMM9X0Eo3
-         Dxa/NbFQ2sFi63trm4OeM8lsRcA8rdnayMt4oPsBLgsRDdIuyZ/npr5C1D4ufbqgsRes
-         DgEQ==
+        d=digidescorp.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=udWPKO5Lvqc0HWggsv/4sa1+FuSbuB82aM5LFvml2yw=;
+        b=T0ZqOy+9Ohw+IJQxlbNHdA5xoqEWE8HBSrsuv7YEAfmcsfMREdmnrGSJvCrBt62EuP
+         Ce7aUQjvZLCNwv/jOXrVM3bAIhrtXXHVmu3MUgDV5XERvXXrZt2HmF1xmlLSVHumY7V9
+         nUzYw67u6PkoiOMET66b/Ge2XN1CtC7EPM9uU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gQeA7phzsYQZFK2JLuLMFYmsphbl1nQUs0emAC/KfyA=;
-        b=lKM2p2/ZKaCMgVcYSOahiMVDiYtpQiWk7ODjqK2gih5nWjSNJC43h7avRI3hbDfSyN
-         iqUaHsTYf7VJVK78egYN207c+seRMlo8tBkEClmPa3b7U8HIWIQkEL/6TM2RwwDyb0/d
-         3n/FWsnCcjQ5GckB75O/sFpJ38q+y+Rhm+JD6HKycikrjJwVn+exHDRwcWHvC+1Yfx0t
-         q3Lv1E5r86cMcxU2PdpzdKF9D5YqMZHUZU+WudkCiGfcVT9afkpKmjfg2XOdcpCE754x
-         OHUT6sZ0aSdr9PkdaQYx6zuFIX+13R05aaJ2tF1fgI0Am8t6wv9YwVTcsRYFxAPuFDZO
-         TY2g==
-X-Gm-Message-State: AHQUAuaAy+WwRoO8OWm/vx+SrTMT0GPHc+INB9J8XGdPKc9jaSJMQ5Ne
-        63fdSCzAcifZX1Nsy3sW1kzaJgeoZs4=
-X-Google-Smtp-Source: AHgI3IZgaaiQ+SWAtXMz9puYxDoz8Q1Z/AKMBHHROs2B58dlWyOaaes3Py9a6JTB/vISHA6ATpcpfw==
-X-Received: by 2002:a1c:2804:: with SMTP id o4mr13086606wmo.150.1549647324441;
-        Fri, 08 Feb 2019 09:35:24 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.23
+         :references;
+        bh=udWPKO5Lvqc0HWggsv/4sa1+FuSbuB82aM5LFvml2yw=;
+        b=Pjo9FmHXQnpqH8GPyRvFn5civ9oAaHvSfLON3el38SxrW1hqF81aCF7uCPuUINeO0w
+         B4ng11xFVa1NgsAZ5wREUQC+IDaRurYPh6ArxizysNxLAtYHcVm0+i5qo4vQ7Hc6skan
+         sH48VE8x8Aqn4B1TixEzdrfgkMWDaqFqf4XIswjIYYKez/X+qroeANrvLPDR1SuHUmeL
+         n8pNww4w3PgfrhEfozTMh3NaWkpWi5LAzMJzPgwv86oSpdWr2XhlN5REULquzjafmf+w
+         5xtHG8IfDrT3FaXJYGHTdOp81xUvF0wiHtGkXSZyyP1N+HWGdnf+TDhmxhuDIz6Lsj+a
+         vCxA==
+X-Gm-Message-State: AHQUAuZFUS+g+bTDEdHK6pYVwUY+q5OIGBZ/dw8ojd848B+lXlWMCuze
+        s2lVQHwgCDjCmSgrbjdl/vBfcg==
+X-Google-Smtp-Source: AHgI3IYzwHMD9OjUghBIDKuFZBUrNIglpVp/SjSeiwDjlEEcmuGD/7EacJnQWUCpjGPjFUzjllqdFA==
+X-Received: by 2002:a02:400a:: with SMTP id n10mr4602199jaa.128.1549647326009;
+        Fri, 08 Feb 2019 09:35:26 -0800 (PST)
+Received: from iscandar.digidescorp.com (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id k1sm1198861iob.2.2019.02.08.09.35.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:23 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 15/33] ARM: davinci: aintc: use the new irqchip config structure in dm* SoCs
-Date:   Fri,  8 Feb 2019 18:34:40 +0100
-Message-Id: <20190208173458.4801-16-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
-References: <20190208173458.4801-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 08 Feb 2019 09:35:25 -0800 (PST)
+From:   Steve Magnani <steve.magnani@digidescorp.com>
+X-Google-Original-From: Steve Magnani <steve@digidescorp.com>
+To:     jack@suse.com
+Cc:     linux-kernel@vger.kernel.org,
+        "Steven J . Magnani" <steve@digidescorp.com>
+Subject: [PATCH 1/2] udf: factor out LVID finalization for reuse
+Date:   Fri,  8 Feb 2019 11:34:54 -0600
+Message-Id: <20190208173455.20151-2-steve@digidescorp.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190208173455.20151-1-steve@digidescorp.com>
+References: <20190208173455.20151-1-steve@digidescorp.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Centralize timestamping and CRC/checksum updating of the in-core
+Logical Volume Integrity Descriptor, in preparation for adding
+a third site where this functionality is needed.
 
-Add the new-style config structures for dm* SoCs. They will be used
-once we make the aintc driver stop using davinci_soc_info.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
 ---
- arch/arm/mach-davinci/dm355.c  | 11 +++++++++++
- arch/arm/mach-davinci/dm365.c  | 11 +++++++++++
- arch/arm/mach-davinci/dm644x.c | 11 +++++++++++
- arch/arm/mach-davinci/dm646x.c | 11 +++++++++++
- 4 files changed, 44 insertions(+)
-
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index e2b680e9944b..ff79c1a17fae 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -15,6 +15,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/spi-davinci.h>
-@@ -792,6 +793,16 @@ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
- 	return 0;
+--- a/fs/udf/super.c	2019-02-08 10:30:00.397978609 -0600
++++ b/fs/udf/super.c	2019-02-08 10:39:14.462529517 -0600
+@@ -1771,6 +1771,17 @@ static int udf_load_vrs(struct super_blo
+ 	return 1;
  }
  
-+static const struct davinci_aintc_config dm355_aintc_config = {
-+	.reg = {
-+		.start		= DAVINCI_ARM_INTC_BASE,
-+		.end		= DAVINCI_ARM_INTC_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= 64,
-+	.prios			= dm355_default_priorities,
-+};
++static void udf_finalize_lvid(struct logicalVolIntegrityDesc *lvid)
++{
++	udf_time_to_disk_stamp(&lvid->recordingDateAndTime,
++				CURRENT_TIME);
 +
- void __init dm355_init_irq(void)
++	lvid->descTag.descCRC = cpu_to_le16(
++		crc_itu_t(0, (char *)lvid + sizeof(struct tag),
++			le16_to_cpu(lvid->descTag.descCRCLength)));
++	lvid->descTag.tagChecksum = udf_tag_checksum(&lvid->descTag);
++}
++
+ static void udf_open_lvid(struct super_block *sb)
  {
- 	davinci_aintc_init();
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 76507dcbcb3a..44dc3ca94dd3 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -19,6 +19,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/keyscan-davinci.h>
-@@ -1051,6 +1052,16 @@ int __init dm365_init_video(struct vpfe_config *vpfe_cfg,
- 	return 0;
- }
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+@@ -1787,15 +1798,9 @@ static void udf_open_lvid(struct super_b
  
-+static const struct davinci_aintc_config dm365_aintc_config = {
-+	.reg = {
-+		.start		= DAVINCI_ARM_INTC_BASE,
-+		.end		= DAVINCI_ARM_INTC_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= 64,
-+	.prios			= dm365_default_priorities,
-+};
-+
- void __init dm365_init_irq(void)
- {
- 	davinci_aintc_init();
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 27c73bc54069..0b0ecac36486 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -14,6 +14,7 @@
- #include <linux/clkdev.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_device.h>
-@@ -728,6 +729,16 @@ int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
- 	return 0;
- }
+ 	lvidiu->impIdent.identSuffix[0] = UDF_OS_CLASS_UNIX;
+ 	lvidiu->impIdent.identSuffix[1] = UDF_OS_ID_LINUX;
+-	udf_time_to_disk_stamp(&lvid->recordingDateAndTime,
+-				CURRENT_TIME);
+ 	lvid->integrityType = cpu_to_le32(LVID_INTEGRITY_TYPE_OPEN);
  
-+static const struct davinci_aintc_config dm644x_aintc_config = {
-+	.reg = {
-+		.start		= DAVINCI_ARM_INTC_BASE,
-+		.end		= DAVINCI_ARM_INTC_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= 64,
-+	.prios			= dm644x_default_priorities,
-+};
-+
- void __init dm644x_init_irq(void)
- {
- 	davinci_aintc_init();
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 98fc5e3815b9..4e871d00e4e9 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -15,6 +15,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_device.h>
-@@ -689,6 +690,16 @@ void __init dm646x_register_clocks(void)
- 	platform_device_register(&dm646x_pll2_device);
- }
+-	lvid->descTag.descCRC = cpu_to_le16(
+-		crc_itu_t(0, (char *)lvid + sizeof(struct tag),
+-			le16_to_cpu(lvid->descTag.descCRCLength)));
+-
+-	lvid->descTag.tagChecksum = udf_tag_checksum(&lvid->descTag);
++	udf_finalize_lvid(lvid);
+ 	mark_buffer_dirty(bh);
+ 	sbi->s_lvid_dirty = 0;
+ 	mutex_unlock(&sbi->s_alloc_mutex);
+@@ -1816,7 +1821,6 @@ static void udf_close_lvid(struct super_
+ 	lvidiu = udf_sb_lvidiu(sbi);
+ 	lvidiu->impIdent.identSuffix[0] = UDF_OS_CLASS_UNIX;
+ 	lvidiu->impIdent.identSuffix[1] = UDF_OS_ID_LINUX;
+-	udf_time_to_disk_stamp(&lvid->recordingDateAndTime, CURRENT_TIME);
+ 	if (UDF_MAX_WRITE_VERSION > le16_to_cpu(lvidiu->maxUDFWriteRev))
+ 		lvidiu->maxUDFWriteRev = cpu_to_le16(UDF_MAX_WRITE_VERSION);
+ 	if (sbi->s_udfrev > le16_to_cpu(lvidiu->minUDFReadRev))
+@@ -1825,11 +1829,7 @@ static void udf_close_lvid(struct super_
+ 		lvidiu->minUDFWriteRev = cpu_to_le16(sbi->s_udfrev);
+ 	lvid->integrityType = cpu_to_le32(LVID_INTEGRITY_TYPE_CLOSE);
  
-+static const struct davinci_aintc_config dm646x_aintc_config = {
-+	.reg = {
-+		.start		= DAVINCI_ARM_INTC_BASE,
-+		.end		= DAVINCI_ARM_INTC_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= 64,
-+	.prios			= dm646x_default_priorities,
-+};
-+
- void __init dm646x_init_irq(void)
- {
- 	davinci_aintc_init();
--- 
-2.20.1
-
+-	lvid->descTag.descCRC = cpu_to_le16(
+-			crc_itu_t(0, (char *)lvid + sizeof(struct tag),
+-				le16_to_cpu(lvid->descTag.descCRCLength)));
+-
+-	lvid->descTag.tagChecksum = udf_tag_checksum(&lvid->descTag);
++	udf_finalize_lvid(lvid);
+ 	mark_buffer_dirty(bh);
+ 	sbi->s_lvid_dirty = 0;
+ 	mutex_unlock(&sbi->s_alloc_mutex);
