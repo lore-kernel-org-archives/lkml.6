@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D85C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7B5020863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A65E20863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfBHR4r (ORCPT
+        id S1728148AbfBHR4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:56:47 -0500
+        Fri, 8 Feb 2019 12:56:50 -0500
 Received: from mga11.intel.com ([192.55.52.93]:40729 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728076AbfBHR4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:56:45 -0500
+        id S1728089AbfBHR4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:56:48 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 09:56:44 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 09:56:46 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="142716517"
+   d="scan'208";a="142716521"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 09:56:44 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 09:56:45 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
@@ -35,9 +35,9 @@ Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, luto@amacapital.net, vbabka@suse.cz,
         will.deacon@arm.com, kirill@shutemov.name,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V5 10/14] perf/core: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
-Date:   Fri,  8 Feb 2019 09:55:05 -0800
-Message-Id: <1549648509-12704-10-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V5 11/14] perf tools: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
+Date:   Fri,  8 Feb 2019 09:55:06 -0800
+Message-Id: <1549648509-12704-11-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549648509-12704-1-git-send-email-kan.liang@linux.intel.com>
 References: <1549648509-12704-1-git-send-email-kan.liang@linux.intel.com>
@@ -48,15 +48,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephane Eranian <eranian@google.com>
 
-When studying code layout, it is useful to capture the page size of the
-sampled code address.
+Adds the infrastructure to sample the code address page size.
 
-Add a new sample type for code page size.
-The new sample type requires collecting the ip. The code page size can
-be calculated from the IRQ-safe perf_get_page_size().
-
-Only the generic support is covered. The large PEBS will be disabled
-with this sample type.
+Introduce a new --code-page-size option for perf record.
 
 Signed-off-by: Stephane Eranian <eranian@google.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
@@ -64,27 +58,18 @@ Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 
 No changes since V4
 
- include/linux/perf_event.h      |  1 +
- include/uapi/linux/perf_event.h |  4 +++-
- kernel/events/core.c            | 11 ++++++++++-
- 3 files changed, 14 insertions(+), 2 deletions(-)
+ tools/include/uapi/linux/perf_event.h    |  4 +++-
+ tools/perf/Documentation/perf-record.txt |  3 +++
+ tools/perf/builtin-record.c              |  2 ++
+ tools/perf/perf.h                        |  1 +
+ tools/perf/util/event.h                  |  1 +
+ tools/perf/util/evsel.c                  | 18 ++++++++++++++++++
+ 6 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 46908cf..d2adb3e 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -939,6 +939,7 @@ struct perf_sample_data {
- 
- 	u64				phys_addr;
- 	u64				data_page_size;
-+	u64				code_page_size;
- } ____cacheline_aligned;
- 
- /* default value for data source */
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
 index 0e8d222..045e218 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
 @@ -142,8 +142,9 @@ enum perf_event_sample_format {
  	PERF_SAMPLE_REGS_INTR			= 1U << 18,
  	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
@@ -104,49 +89,114 @@ index 0e8d222..045e218 100644
  	 * };
  	 */
  	PERF_RECORD_SAMPLE			= 9,
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index fe6f601..d42c3bf 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1755,6 +1755,9 @@ static void __perf_event_header_size(struct perf_event *event, u64 sample_type)
- 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		size += sizeof(data->data_page_size);
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index c2a2875..edaaeca 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -267,6 +267,9 @@ OPTIONS
+ --data-page-size::
+ 	Record the sampled data address data page size
  
-+	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		size += sizeof(data->code_page_size);
++--code-page-size::
++	Record the sampled code address (ip) page size
 +
- 	event->header_size = size;
+ -T::
+ --timestamp::
+ 	Record the sample timestamps. Use it with 'perf report -D' to see the
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index b9df9b9..cac5804 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1872,6 +1872,8 @@ static struct option __record_options[] = {
+ 		    "Record the sample physical addresses"),
+ 	OPT_BOOLEAN(0, "data-page-size", &record.opts.sample_data_page_size,
+ 		    "Record the sampled data address data page size"),
++	OPT_BOOLEAN(0, "code-page-size", &record.opts.sample_code_page_size,
++		    "Record the sampled code address page size"),
+ 	OPT_BOOLEAN(0, "sample-cpu", &record.opts.sample_cpu, "Record the sample cpu"),
+ 	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
+ 			&record.opts.sample_time_set,
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 87a345a..9a2348d 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -49,6 +49,7 @@ struct record_opts {
+ 	bool	     sample_address;
+ 	bool	     sample_phys_addr;
+ 	bool	     sample_data_page_size;
++	bool	     sample_code_page_size;
+ 	bool	     sample_weight;
+ 	bool	     sample_time;
+ 	bool	     sample_time_set;
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index 7ef06fc..601e085 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -208,6 +208,7 @@ struct perf_sample {
+ 	u64 data_src;
+ 	u64 phys_addr;
+ 	u64 data_page_size;
++	u64 code_page_size;
+ 	u32 flags;
+ 	u16 insn_len;
+ 	u8  cpumode;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 4d9e29e..541de5b 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1022,6 +1022,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+ 	if (opts->sample_data_page_size)
+ 		perf_evsel__set_sample_bit(evsel, DATA_PAGE_SIZE);
+ 
++	if (opts->sample_code_page_size)
++		perf_evsel__set_sample_bit(evsel, CODE_PAGE_SIZE);
++
+ 	if (opts->no_buffering) {
+ 		attr->watermark = 0;
+ 		attr->wakeup_events = 1;
+@@ -1565,6 +1568,7 @@ static void __p_sample_type(char *buf, size_t size, u64 value)
+ 		bit_name(BRANCH_STACK), bit_name(REGS_USER), bit_name(STACK_USER),
+ 		bit_name(IDENTIFIER), bit_name(REGS_INTR), bit_name(DATA_SRC),
+ 		bit_name(WEIGHT), bit_name(PHYS_ADDR), bit_name(DATA_PAGE_SIZE),
++		bit_name(CODE_PAGE_SIZE),
+ 		{ .name = NULL, }
+ 	};
+ #undef bit_name
+@@ -2401,6 +2405,12 @@ int perf_evsel__parse_sample(struct perf_evsel *evsel, union perf_event *event,
+ 		array++;
+ 	}
+ 
++	data->code_page_size = 0;
++	if (type & PERF_SAMPLE_CODE_PAGE_SIZE) {
++		data->code_page_size = *array;
++		array++;
++	}
++
+ 	return 0;
  }
  
-@@ -6310,6 +6313,9 @@ void perf_output_sample(struct perf_output_handle *handle,
- 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		perf_output_put(handle, data->data_page_size);
+@@ -2556,6 +2566,9 @@ size_t perf_event__sample_event_size(const struct perf_sample *sample, u64 type,
+ 	if (type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		result += sizeof(u64);
  
-+	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		perf_output_put(handle, data->code_page_size);
++	if (type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		result += sizeof(u64);
 +
- 	if (!event->attr.watermark) {
- 		int wakeup_events = event->attr.wakeup_events;
- 
-@@ -6398,7 +6404,7 @@ void perf_prepare_sample(struct perf_event_header *header,
- 
- 	__perf_event_header__init_id(header, data, event);
- 
--	if (sample_type & PERF_SAMPLE_IP)
-+	if (sample_type & (PERF_SAMPLE_IP | PERF_SAMPLE_CODE_PAGE_SIZE))
- 		data->ip = perf_instruction_pointer(regs);
- 
- 	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
-@@ -6507,6 +6513,9 @@ void perf_prepare_sample(struct perf_event_header *header,
- 
- 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		data->data_page_size = perf_get_page_size(data->addr);
-+
-+	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		data->code_page_size = perf_get_page_size(data->ip);
+ 	return result;
  }
  
- static __always_inline int
+@@ -2730,6 +2743,11 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type,
+ 		array++;
+ 	}
+ 
++	if (type & PERF_SAMPLE_CODE_PAGE_SIZE) {
++		*array = sample->code_page_size;
++		array++;
++	}
++
+ 	return 0;
+ }
+ 
 -- 
 2.7.4
 
