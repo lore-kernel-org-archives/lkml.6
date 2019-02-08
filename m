@@ -2,60 +2,60 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F31C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EFEC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61F472146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE21C217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="esF5UN99"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="GpCVxFiM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfBHRhH (ORCPT
+        id S1728110AbfBHRh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:37:07 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36906 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbfBHRf3 (ORCPT
+        Fri, 8 Feb 2019 12:37:29 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36900 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728120AbfBHRf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:35:29 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so4271559wmd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:27 -0800 (PST)
+        Fri, 8 Feb 2019 12:35:27 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so4271422wmd.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LSsrz2G02KfSWFioH0HpLG7LPLBDOMGfLy9Hu4/jNlI=;
-        b=esF5UN991/2OiLPkIUU5K43O3+ChQ9AEKuaUjv1LzmDoxxnHyExIUu3BNH5kx6Ts80
-         YViu9SOrTg13gb39UnDSkAKimDjECx5vQM+hu+mjCQQwqD52mRe2fvujCyIKV/BmgkgC
-         2s6e2JhmkWMSWuuXC8h1L/gtAJQih+99W1E2E+YkmBIUl98qnquvcmOIOUapVXvBh3Fc
-         a/3sr1P5pZGu/Oe+jbCd8YtU1kwZGdFJQXL7DOr92FM948P+DjpLLqD5h/86KETOZAsM
-         jr9j3KNZsKpC3R1l3BCwbeu7bR6o0OeRu1KVUCsNs92pq7SPuTI0r4L0b1s/fI/fe5T9
-         HTmg==
+        bh=x8EpdU+NTm/X4LPjHfsGwt/Q2G9WVDhSfKVsB9gEBqM=;
+        b=GpCVxFiMaTsv7giLo9bZrCVsIwJxNe3O3mt/A1+tWtoVu+2xBI8FkwkWb2MV7VEHdp
+         mWHZb6rK5+AHMGyNqED8sN0DBFqXdx1T72sXVmcFxY+/BscPy/PRY+OtYXDu9RMxJ7x1
+         ZnWIN7UOAiqiAewG0Ou4H+00sw1EjZlLj9PBRT4fzp6AWbeDl4vTAkBcJ3GQi5pjGiql
+         BFgmCvISCifcCBhY7Ee7rnVtnYyb0rVQJtUqRd2Xqm5IVYybLJAtAVgcRFAsOTHzK+7k
+         K2RID6vTlhwsY2hDoiOIxb4h8K7kWrmGzR6Z3Xdx3X0eeQyhJas2HFhLB7NVtEjbwLFd
+         BtPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LSsrz2G02KfSWFioH0HpLG7LPLBDOMGfLy9Hu4/jNlI=;
-        b=LN53iEhegP7wSbsyBhrwve2Uhd9U3OIEOjjKmiq1SkdmGTG/PJxscE2w5zkpsZkDVy
-         m+h/a0CLCo+wpI4wLadQKbPF12euddR8KI43ZjZ6n6Sdc8P8OUwb0n5sLRsERigG2H1D
-         BfjV47mLAQZ9XxeoauyY4ucsZGxKPIOGSuJfCVrqtB7dc5AUD7ARo26rbgSeqPz90sUm
-         tbM5g7yKjZVxvZ/9alcJdjUAQRf7R/4yckaTnJ2MQ3v/6u2gqjxM2FRkSDEQIHOkcC6o
-         88uQbiV14oK2/Ol5gBYYqiRCK61Wm+0RyIu083j0l8wv5fz/XqewtufMS8TMKHXYhqJF
-         SScg==
-X-Gm-Message-State: AHQUAuYU+0gSBHJrPKYAHxjkIsdUFtd+cJ6V7imKRviok9j8HpZnnAVe
-        d7Xq+EV7+Mv+f6yVlmhz1f0eYg==
-X-Google-Smtp-Source: AHgI3Ibja6nLgjXa7zAwpKqJhkIwi/eQzesgdYVs13zCLuY1VqYTvdLfjHsWh8FBG8tQ/MmHCJyTyg==
-X-Received: by 2002:adf:fcc8:: with SMTP id f8mr16453220wrs.192.1549647326800;
-        Fri, 08 Feb 2019 09:35:26 -0800 (PST)
+        bh=x8EpdU+NTm/X4LPjHfsGwt/Q2G9WVDhSfKVsB9gEBqM=;
+        b=Cq7eZVvbcLbKCdqO7xxiVjtwRSDUpRiFEqRxdvNrKPL9twsZXazKI4cZsN51MnubQ2
+         RpOrSbrTzT36G0x7taowkhtSgZQjEHRwqlS7h4iJI7W6HB3oH2HviUGQQWyPN4GSVra1
+         N8mjm1PFTKuYdFm56n59tzhyAVMMfY4xDXfTu8xs6mS7S7COX25NtjDKc1CAYAXlUoIz
+         d+/T6iNW5jCQqY1WUXK6HILzQ4FanXrB4P8Oo4yE8YmkQHLCDGAZNMq+fIj/bbx4LKn/
+         8DPyBN6br6yakidHQKPzAyfdNF0CrN5/Z6WkhkBB8pEW2Chz0ybWIl/9E2UDJESpUi8u
+         BQTw==
+X-Gm-Message-State: AHQUAuaq+82J4gyE5rRYqhb4eYN7CSDRCUdX0iRQGZwx+5rQF4MWr061
+        a7wV5wgH0xyMYI1B5cZrToX9Qw==
+X-Google-Smtp-Source: AHgI3IYgfgZ7qw6JXPv4Z0BBl8MEGBYOI9yhoAyNUh7V86StOVJ5/aGn1NqXK587lAGRKaPG607zow==
+X-Received: by 2002:a5d:5289:: with SMTP id c9mr15816618wrv.11.1549647325667;
+        Fri, 08 Feb 2019 09:35:25 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.25
+        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:26 -0800 (PST)
+        Fri, 08 Feb 2019 09:35:24 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -66,9 +66,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 17/33] ARM: davinci: aintc: move timer-specific irq_set_handler() out of irq.c
-Date:   Fri,  8 Feb 2019 18:34:42 +0100
-Message-Id: <20190208173458.4801-18-brgl@bgdev.pl>
+Subject: [PATCH v2 16/33] ARM: davinci: aintc: use the new config structure
+Date:   Fri,  8 Feb 2019 18:34:41 +0100
+Message-Id: <20190208173458.4801-17-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
 References: <20190208173458.4801-1-brgl@bgdev.pl>
@@ -81,147 +81,180 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I've been unable to figure out exactly why, but it seems that the
-IRQ_TINT1_TINT34 interrupt for timer 1 needs to be handled as a
-level irq, not edge like all others.
-
-Let's move the handler setup out of the aintc driver where it's lived
-since the beginning and into the dm* SoC-specific files where it
-belongs.
+Modify the aintc driver to take all its configuration from the new
+config structure. Stop referencing davinci_soc_info in any way.
+Move the declaration for davinci_aintc_init() to irq-davinci-aintc.h
+and make it take the new config structure as parameter. Convert all
+users to the new version.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/dm355.c  | 8 ++++++++
- arch/arm/mach-davinci/dm365.c  | 8 ++++++++
- arch/arm/mach-davinci/dm644x.c | 8 ++++++++
- arch/arm/mach-davinci/dm646x.c | 8 ++++++++
- arch/arm/mach-davinci/irq.c    | 3 ---
- 5 files changed, 32 insertions(+), 3 deletions(-)
+ arch/arm/mach-davinci/dm355.c               |  2 +-
+ arch/arm/mach-davinci/dm365.c               |  2 +-
+ arch/arm/mach-davinci/dm644x.c              |  2 +-
+ arch/arm/mach-davinci/dm646x.c              |  2 +-
+ arch/arm/mach-davinci/include/mach/common.h |  2 --
+ arch/arm/mach-davinci/irq.c                 | 39 +++++++++++----------
+ include/linux/irqchip/irq-davinci-aintc.h   |  2 ++
+ 7 files changed, 26 insertions(+), 25 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index c7cd765114af..a732f2ea1d9a 100644
+index ff79c1a17fae..c7cd765114af 100644
 --- a/arch/arm/mach-davinci/dm355.c
 +++ b/arch/arm/mach-davinci/dm355.c
-@@ -15,6 +15,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irq.h>
- #include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-@@ -744,6 +745,13 @@ void __init dm355_init_time(void)
- 	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
- 	dm355_psc_init(NULL, psc);
+@@ -805,7 +805,7 @@ static const struct davinci_aintc_config dm355_aintc_config = {
  
-+	/*
-+	 * Nobody knows why anymore, but this interrupt has been handled as
-+	 * a level irq from the very beginning of davinci support in mainline
-+	 * linux.
-+	 */
-+	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
-+
- 	clk = clk_get(NULL, "timer0");
+ void __init dm355_init_irq(void)
+ {
+-	davinci_aintc_init();
++	davinci_aintc_init(&dm355_aintc_config);
+ }
  
- 	davinci_timer_init(clk);
+ static int __init dm355_init_devices(void)
 diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index bde3c3b94cc9..79afde34cfbb 100644
+index 44dc3ca94dd3..bde3c3b94cc9 100644
 --- a/arch/arm/mach-davinci/dm365.c
 +++ b/arch/arm/mach-davinci/dm365.c
-@@ -19,6 +19,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irq.h>
- #include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-@@ -785,6 +786,13 @@ void __init dm365_init_time(void)
- 	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
- 	dm365_psc_init(NULL, psc);
+@@ -1064,7 +1064,7 @@ static const struct davinci_aintc_config dm365_aintc_config = {
  
-+	/*
-+	 * Nobody knows why anymore, but this interrupt has been handled as
-+	 * a level irq from the very beginning of davinci support in mainline
-+	 * linux.
-+	 */
-+	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
-+
- 	clk = clk_get(NULL, "timer0");
+ void __init dm365_init_irq(void)
+ {
+-	davinci_aintc_init();
++	davinci_aintc_init(&dm365_aintc_config);
+ }
  
- 	davinci_timer_init(clk);
+ static int __init dm365_init_devices(void)
 diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 6d3498058283..007d979d2d64 100644
+index 0b0ecac36486..6d3498058283 100644
 --- a/arch/arm/mach-davinci/dm644x.c
 +++ b/arch/arm/mach-davinci/dm644x.c
-@@ -14,6 +14,7 @@
- #include <linux/clkdev.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irq.h>
- #include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-@@ -680,6 +681,13 @@ void __init dm644x_init_time(void)
- 	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
- 	dm644x_psc_init(NULL, psc);
+@@ -741,7 +741,7 @@ static const struct davinci_aintc_config dm644x_aintc_config = {
  
-+	/*
-+	 * Nobody knows why anymore, but this interrupt has been handled as
-+	 * a level irq from the very beginning of davinci support in mainline
-+	 * linux.
-+	 */
-+	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
-+
- 	clk = clk_get(NULL, "timer0");
+ void __init dm644x_init_irq(void)
+ {
+-	davinci_aintc_init();
++	davinci_aintc_init(&dm644x_aintc_config);
+ }
  
- 	davinci_timer_init(clk);
+ void __init dm644x_init_devices(void)
 diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index a0a8b336c1a4..a643d78ad644 100644
+index 4e871d00e4e9..a0a8b336c1a4 100644
 --- a/arch/arm/mach-davinci/dm646x.c
 +++ b/arch/arm/mach-davinci/dm646x.c
-@@ -15,6 +15,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/dmaengine.h>
- #include <linux/init.h>
-+#include <linux/irq.h>
- #include <linux/irqchip/irq-davinci-aintc.h>
- #include <linux/platform_data/edma.h>
- #include <linux/platform_data/gpio-davinci.h>
-@@ -664,6 +665,13 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
- 	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
- 	dm646x_psc_init(NULL, psc);
+@@ -702,7 +702,7 @@ static const struct davinci_aintc_config dm646x_aintc_config = {
  
-+	/*
-+	 * Nobody knows why anymore, but this interrupt has been handled as
-+	 * a level irq from the very beginning of davinci support in mainline
-+	 * linux.
-+	 */
-+	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
-+
- 	clk = clk_get(NULL, "timer0");
+ void __init dm646x_init_irq(void)
+ {
+-	davinci_aintc_init();
++	davinci_aintc_init(&dm646x_aintc_config);
+ }
  
- 	davinci_timer_init(clk);
+ static int __init dm646x_init_devices(void)
+diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
+index 8c9c011f96f6..14e0e1c40611 100644
+--- a/arch/arm/mach-davinci/include/mach/common.h
++++ b/arch/arm/mach-davinci/include/mach/common.h
+@@ -24,8 +24,6 @@
+ 
+ void davinci_timer_init(struct clk *clk);
+ 
+-extern void davinci_aintc_init(void);
+-
+ struct davinci_timer_instance {
+ 	u32		base;
+ 	u32		bottom_irq;
 diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index f5578abfc0aa..0f469c59acfb 100644
+index 6a7205a844e1..f5578abfc0aa 100644
 --- a/arch/arm/mach-davinci/irq.c
 +++ b/arch/arm/mach-davinci/irq.c
-@@ -18,8 +18,6 @@
- #include <asm/mach/irq.h>
- #include <asm/exception.h>
+@@ -8,6 +8,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/irqchip/irq-davinci-aintc.h>
+ #include <linux/io.h>
+ #include <linux/irqdomain.h>
  
--#include "irqs.h"
--
- #define DAVINCI_AINTC_FIQ_REG0		0x00
- #define DAVINCI_AINTC_FIQ_REG1		0x04
- #define DAVINCI_AINTC_IRQ_REG0		0x08
-@@ -146,6 +144,5 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
- 		davinci_aintc_setup_gc(davinci_aintc_base + reg_off,
- 				       irq_base + irq_off, 32);
- 
--	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
- 	set_handle_irq(davinci_aintc_handle_irq);
+@@ -82,13 +83,14 @@ davinci_aintc_handle_irq(struct pt_regs *regs)
  }
+ 
+ /* ARM Interrupt Controller Initialization */
+-void __init davinci_aintc_init(void)
++void __init davinci_aintc_init(const struct davinci_aintc_config *config)
+ {
+-	unsigned i, j;
+-	const u8 *davinci_def_priorities = davinci_soc_info.intc_irq_prios;
++	unsigned int irq_off, reg_off, prio, shift;
+ 	int rv, irq_base;
++	const u8 *prios;
+ 
+-	davinci_aintc_base = ioremap(davinci_soc_info.intc_base, SZ_4K);
++	davinci_aintc_base = ioremap(config->reg.start,
++				     resource_size(&config->reg));
+ 	if (WARN_ON(!davinci_aintc_base))
+ 		return;
+ 
+@@ -114,23 +116,21 @@ void __init davinci_aintc_init(void)
+ 	davinci_aintc_writel(~0x0, DAVINCI_AINTC_IRQ_REG0);
+ 	davinci_aintc_writel(~0x0, DAVINCI_AINTC_IRQ_REG1);
+ 
+-	for (i = DAVINCI_AINTC_IRQ_INTPRI0_REG;
+-	     i <= DAVINCI_AINTC_IRQ_INTPRI7_REG; i += 4) {
+-		u32		pri;
+-
+-		for (j = 0, pri = 0; j < 32; j += 4, davinci_def_priorities++)
+-			pri |= (*davinci_def_priorities & 0x07) << j;
+-		davinci_aintc_writel(pri, i);
++	prios = config->prios;
++	for (reg_off = DAVINCI_AINTC_IRQ_INTPRI0_REG;
++	     reg_off <= DAVINCI_AINTC_IRQ_INTPRI7_REG; reg_off += 4) {
++		for (shift = 0, prio = 0; shift < 32; shift += 4, prios++)
++			prio |= (*prios & 0x07) << shift;
++		davinci_aintc_writel(prio, reg_off);
+ 	}
+ 
+-	irq_base = irq_alloc_descs(-1, 0, davinci_soc_info.intc_irq_num, 0);
++	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
+ 	if (WARN_ON(irq_base < 0))
+ 		return;
+ 
+ 	davinci_aintc_irq_domain = irq_domain_add_legacy(NULL,
+-					davinci_soc_info.intc_irq_num,
+-					irq_base, 0, &irq_domain_simple_ops,
+-					NULL);
++						config->num_irqs, irq_base, 0,
++						&irq_domain_simple_ops, NULL);
+ 	if (WARN_ON(!davinci_aintc_irq_domain))
+ 		return;
+ 
+@@ -140,10 +140,11 @@ void __init davinci_aintc_init(void)
+ 	if (WARN_ON(rv))
+ 		return;
+ 
+-	for (i = 0, j = 0; i < davinci_soc_info.intc_irq_num;
+-	     i += 32, j += 0x04)
+-		davinci_aintc_setup_gc(davinci_aintc_base + j,
+-				       irq_base + i, 32);
++	for (irq_off = 0, reg_off = 0;
++	     irq_off < config->num_irqs;
++	     irq_off += 32, reg_off += 0x04)
++		davinci_aintc_setup_gc(davinci_aintc_base + reg_off,
++				       irq_base + irq_off, 32);
+ 
+ 	irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_irq);
+ 	set_handle_irq(davinci_aintc_handle_irq);
+diff --git a/include/linux/irqchip/irq-davinci-aintc.h b/include/linux/irqchip/irq-davinci-aintc.h
+index 2b2ace3c1b22..ea4e087fac98 100644
+--- a/include/linux/irqchip/irq-davinci-aintc.h
++++ b/include/linux/irqchip/irq-davinci-aintc.h
+@@ -22,4 +22,6 @@ struct davinci_aintc_config {
+ 	u8 *prios;
+ };
+ 
++void davinci_aintc_init(const struct davinci_aintc_config *config);
++
+ #endif /* _LINUX_IRQ_DAVINCI_AINTC_ */
 -- 
 2.20.1
 
