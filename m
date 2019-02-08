@@ -2,79 +2,200 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8412EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE504C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A502147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:06:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC80D21917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:10:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rxsLx+JI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbfBHIGc (ORCPT
+        id S1727361AbfBHIKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 03:06:32 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:34380 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfBHIGb (ORCPT
+        Fri, 8 Feb 2019 03:10:20 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:61757 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbfBHIKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 03:06:31 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gs1Aa-00013q-6n; Fri, 08 Feb 2019 16:05:56 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gs1AR-0002Uw-Ej; Fri, 08 Feb 2019 16:05:47 +0800
-Date:   Fri, 8 Feb 2019 16:05:47 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stephan Mueller <smueller@chronox.de>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] General Key Derivation Function Support
-Message-ID: <20190208080547.224fudg2m22d3a6d@gondor.apana.org.au>
-References: <20190103143227.9138-1-jlee@suse.com>
- <12103603.N4N57GesWC@tauon.chronox.de>
- <20190208074558.j3k6gw66q4e2y2lv@gondor.apana.org.au>
- <1798550.XZem68xxzE@tauon.chronox.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1798550.XZem68xxzE@tauon.chronox.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 8 Feb 2019 03:10:15 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x188902G007241;
+        Fri, 8 Feb 2019 17:09:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x188902G007241
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549613348;
+        bh=ws0rfNY0AqZ3Gauy1XWKRiE8n2TnorcpmKdkHThTkHk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rxsLx+JIjfJicShCqTX0Jz73s0MTfV43OGVjEN4xxS3ctswj6f/NpiPw3bhGSGNsw
+         OChqCR/uuJlonTMWoFBMoAKk9uFI9VKLvpVBry9k/jGBUyW3ToogsnoaTsG+8rgCEk
+         YsOaI6P6t5QuceXjJc+2Dyl+QBTEy/nVbVDkQO3VSC26/X77KZD3TwwcBULD2u6vhd
+         RbPQOX69zuiDbQqVM/I+I2/lo+Qmhpev/9XVCIruTOrbumYeKIqIk244Uv73NbIrsp
+         FW3V6kb+Xn19LYaCbFj6jZkNYDnc6cKmiPhjDwnwcP4CF2CMQupAxo7efjRZsU8ywI
+         nBp5rN7aGhYkA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH 07/11] mtd: rawnand: denali: use bool type instead of int where appropriate
+Date:   Fri,  8 Feb 2019 17:08:51 +0900
+Message-Id: <1549613335-30319-8-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 09:00:59AM +0100, Stephan Mueller wrote:
->
-> Thanks for the clarification. And do you have a suggestion how we can should 
-> ensure that the self-tests are run only once?
+Use 'bool' type for some function arguments.
 
-Making it run at kernel init time should be good enough.
+ - write (write or read?)
+ - raw (the raw access mode or not?)
 
-> Also, shall we add the signature verification enforcemnt to the helper as 
-> well?
+It is true that denali_nand_info::dma_avail is also boolean, but
+I am keeping it as 'int' because 'scripts/checkpatch --strict' would
+report the following:
 
-What do you mean by that?
+CHECK: Avoid using bool structure members because of possible alignment issues
+  - see: https://lkml.org/lkml/2017/11/21/384
 
-Cheers,
+I do not think it is a matter here, but I am sticking to the suggestion.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/mtd/nand/raw/denali.c | 23 ++++++++++++-----------
+ drivers/mtd/nand/raw/denali.h |  2 +-
+ 2 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index 514d189..748711e 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -357,7 +357,7 @@ static int denali_sw_ecc_fixup(struct nand_chip *chip,
+ }
+ 
+ static void denali_setup_dma64(struct denali_nand_info *denali,
+-			       dma_addr_t dma_addr, int page, int write)
++			       dma_addr_t dma_addr, int page, bool write)
+ {
+ 	uint32_t mode;
+ 	const int page_count = 1;
+@@ -371,7 +371,8 @@ static void denali_setup_dma64(struct denali_nand_info *denali,
+ 	 *    burst len = 64 bytes, the number of pages
+ 	 */
+ 	denali->host_write(denali, mode,
+-			   0x01002000 | (64 << 16) | (write << 8) | page_count);
++			   0x01002000 | (64 << 16) |
++			   (write ? BIT(8) : 0) | page_count);
+ 
+ 	/* 2. set memory low address */
+ 	denali->host_write(denali, mode, lower_32_bits(dma_addr));
+@@ -381,7 +382,7 @@ static void denali_setup_dma64(struct denali_nand_info *denali,
+ }
+ 
+ static void denali_setup_dma32(struct denali_nand_info *denali,
+-			       dma_addr_t dma_addr, int page, int write)
++			       dma_addr_t dma_addr, int page, bool write)
+ {
+ 	uint32_t mode;
+ 	const int page_count = 1;
+@@ -392,7 +393,7 @@ static void denali_setup_dma32(struct denali_nand_info *denali,
+ 
+ 	/* 1. setup transfer type and # of pages */
+ 	denali->host_write(denali, mode | page,
+-			   0x2000 | (write << 8) | page_count);
++			   0x2000 | (write ? BIT(8) : 0) | page_count);
+ 
+ 	/* 2. set memory high address bits 23:8 */
+ 	denali->host_write(denali, mode | ((dma_addr >> 16) << 8), 0x2200);
+@@ -453,7 +454,7 @@ static int denali_pio_write(struct denali_nand_info *denali, const u32 *buf,
+ }
+ 
+ static int denali_pio_xfer(struct denali_nand_info *denali, void *buf,
+-			   size_t size, int page, int write)
++			   size_t size, int page, bool write)
+ {
+ 	if (write)
+ 		return denali_pio_write(denali, buf, size, page);
+@@ -462,7 +463,7 @@ static int denali_pio_xfer(struct denali_nand_info *denali, void *buf,
+ }
+ 
+ static int denali_dma_xfer(struct denali_nand_info *denali, void *buf,
+-			   size_t size, int page, int write)
++			   size_t size, int page, bool write)
+ {
+ 	dma_addr_t dma_addr;
+ 	u32 irq_mask, irq_stat, ecc_err_mask;
+@@ -519,7 +520,7 @@ static int denali_dma_xfer(struct denali_nand_info *denali, void *buf,
+ }
+ 
+ static int denali_data_xfer(struct nand_chip *chip, void *buf, size_t size,
+-			    int page, int raw, int write)
++			    int page, bool raw, bool write)
+ {
+ 	struct denali_nand_info *denali = to_denali(chip);
+ 
+@@ -644,7 +645,7 @@ static int denali_read_page_raw(struct nand_chip *chip, uint8_t *buf,
+ 	if (!buf)
+ 		return -EINVAL;
+ 
+-	ret = denali_data_xfer(chip, tmp_buf, size, page, 1, 0);
++	ret = denali_data_xfer(chip, tmp_buf, size, page, true, false);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -700,7 +701,7 @@ static int denali_write_page_raw(struct nand_chip *chip, const uint8_t *buf,
+ 			return ret;
+ 	}
+ 
+-	return denali_data_xfer(chip, tmp_buf, size, page, 1, 1);
++	return denali_data_xfer(chip, tmp_buf, size, page, true, true);
+ }
+ 
+ static int denali_change_read_column_op(void *buf, unsigned int offset,
+@@ -752,7 +753,7 @@ static int denali_read_page(struct nand_chip *chip, uint8_t *buf,
+ 	int stat = 0;
+ 	int ret;
+ 
+-	ret = denali_data_xfer(chip, buf, mtd->writesize, page, 0, 0);
++	ret = denali_data_xfer(chip, buf, mtd->writesize, page, false, false);
+ 	if (ret && ret != -EBADMSG)
+ 		return ret;
+ 
+@@ -782,7 +783,7 @@ static int denali_write_page(struct nand_chip *chip, const uint8_t *buf,
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 
+ 	return denali_data_xfer(chip, (void *)buf, mtd->writesize, page,
+-				0, 1);
++				false, true);
+ }
+ 
+ static int denali_setup_data_interface(struct nand_chip *chip, int chipnr,
+diff --git a/drivers/mtd/nand/raw/denali.h b/drivers/mtd/nand/raw/denali.h
+index 46296f2..8e91438 100644
+--- a/drivers/mtd/nand/raw/denali.h
++++ b/drivers/mtd/nand/raw/denali.h
+@@ -314,7 +314,7 @@ struct denali_nand_info {
+ 	u32 (*host_read)(struct denali_nand_info *denali, u32 addr);
+ 	void (*host_write)(struct denali_nand_info *denali, u32 addr, u32 data);
+ 	void (*setup_dma)(struct denali_nand_info *denali, dma_addr_t dma_addr,
+-			  int page, int write);
++			  int page, bool write);
+ };
+ 
+ #define DENALI_CAP_HW_ECC_FIXUP			BIT(0)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.4
+
