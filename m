@@ -2,132 +2,102 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CADC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8CCC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C3E20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C23420863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e/e3aXFf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlcR7owN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfBHQzZ (ORCPT
+        id S1727503AbfBHQza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:55:25 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39630 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbfBHQzX (ORCPT
+        Fri, 8 Feb 2019 11:55:30 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37560 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfBHQz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:55:23 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x18GtHhO076694;
-        Fri, 8 Feb 2019 10:55:17 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549644917;
-        bh=H7+hhsGxj/YT0EJAAWQuJRhFHIY1pu+0A0dgS6/Kddo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=e/e3aXFf7MebVhQ9fEsFEFSnftLQGLPR/07liSF1MBDJbZyJ7rUlmNa1/pzQ6VBfP
-         2hUuXsyR2dUwMfFr/skSj+psoXkVl19VGHbjmxMJO76pqGU3hIgrB4jLeflCLWbUQP
-         63/rElzt79giKFmBVVlgkO/g57Yk2PZa2mDVNYIU=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x18GtHcR088529
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 10:55:17 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 8
- Feb 2019 10:55:16 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 8 Feb 2019 10:55:16 -0600
-Received: from [172.22.111.198] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x18GtGrc000335;
-        Fri, 8 Feb 2019 10:55:16 -0600
-Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
-To:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20190130183005.833-1-dmurphy@ti.com> <20190130223542.GA22040@amd>
- <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
- <6d50b09c-87be-d48f-cfe5-f5143c18d38c@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <cf99d7f3-5e79-bd18-094f-54efca5f576c@ti.com>
-Date:   Fri, 8 Feb 2019 10:55:14 -0600
+        Fri, 8 Feb 2019 11:55:28 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b5so1958419plr.4;
+        Fri, 08 Feb 2019 08:55:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Pulm6HOf/6nO7CFL+OWCO30RBWKiP3+NiGVFtJLPlEc=;
+        b=JlcR7owNrLK1sY4nEl2ziFcrSh8MqlJLbINZ4RdiMB828pOTs4CstdzJMmkQn2ZAc/
+         g6SuMOKUgzp9MmA2md6Du4WpXWJMDHMSDt8u88ILvWZ/8NXGZDh6Xk8VtJuYBNjHdI6E
+         lWAimA65b/tGVKWcchcnacnN6p3MZlP/TGNk+R3QdsDz5qSKSafHyWcQOvLuAAMfDunf
+         0co+bZavUZhzHDt8aIS1WcczpXJCAnRTU9Z4x7KqlX8wpM9CVqyt1tpx7nzo54O2imqT
+         eSpN9xLj18CzzIYyDRLezlfASuPqM0uY7eHJR6b+Nz0ejmhFiUFEOSLM9xl3ilE3Oyme
+         govw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pulm6HOf/6nO7CFL+OWCO30RBWKiP3+NiGVFtJLPlEc=;
+        b=UOnEYiSdfPKI9igzEOL3A4aoKsm2ZluOZ6UvWO4ku6ki05UvjSGAN01lRwqCf6a/N3
+         O4E9ZGarDVnATgo+Qpsmgv0X00NnK62kkahTLWy1uJ2EQA/Yo3EgsXc/maKFMbjVaBoV
+         puqyUX9QBEsbw8v6rGGoNHDe9FcN7xxfoZsGnw47+MTGxr7R0z3UJfh2cO2U2MuCnCL5
+         vvj9+1Ju3KGY0Xhym3OgUefsQ0h0VXgkUCRpo0vvT6DrTkIVVmclhzwG89Lu+smtDwkm
+         RDD1eYVzjFRUpKPLMna/WrfsHVv4A7u9ULD1tTyyHZmGi56X7HkTTbEm4Oh0uDRSoS2f
+         Z2Cw==
+X-Gm-Message-State: AHQUAubhNhmf3hbRWDHnBWBChwRJHg8r1Oflcom7F9O7yaTCm5h2yAyj
+        zkhc+yI7QijSJV/Deq2xP2BFlpRh
+X-Google-Smtp-Source: AHgI3IZ4+h3I63Gm9TaQrfOIftPOPI+r6mQtgA9kIMllm7+sQjVHhBR7gnLFoLGrJSaC+fgxGbw9OA==
+X-Received: by 2002:a17:902:bccc:: with SMTP id o12mr13108999pls.273.1549644927491;
+        Fri, 08 Feb 2019 08:55:27 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id r3sm10852843pgn.48.2019.02.08.08.55.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 08:55:26 -0800 (PST)
+Subject: Re: [PATCH V16 6/6] i2c: tegra: add i2c interface timing support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549644314-1481-1-git-send-email-skomatineni@nvidia.com>
+ <1549644314-1481-6-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <98c866b4-7924-91df-5680-f7f23dddfaaf@gmail.com>
+Date:   Fri, 8 Feb 2019 19:55:17 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <6d50b09c-87be-d48f-cfe5-f5143c18d38c@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1549644314-1481-6-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Veas
-
-On 2/7/19 11:09 PM, Vesa Jääskeläinen wrote:
-> Hi All,
+08.02.2019 19:45, Sowjanya Komatineni пишет:
+> This patch adds I2C interface timing registers support for
+> proper bus rate configuration along with meeting the I2C spec
+> setup and hold times based on the tuning performed on Tegra210,
+> Tegra186 and Tegra194 platforms.
 > 
-> On 08/02/2019 6.55, Vesa Jääskeläinen wrote:
->> Hi All,
->>
->> On 31/01/2019 0.35, Pavel Machek wrote:
->>> On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
->>>> Add a documentation of LED Multicolor LED class specific
->>>> sysfs attributes.
->>>
->>> No, sorry. This does not most of the requirements.
->>>
->>>                                 Pavel
->>>
->>> Requirements for RGB LED interface:
->>
->> ...
->>
->> I have tried to capture relevant parts of ideas and requirements and usage in a wiki page in github:
->>
->> https://github.com/vesajaaskelainen/linux-multicolor-leds/wiki
->>
->> I believe the discussion is good to perform in mailing list -- I am happy to update or give you access to update the wiki so we could have easy to use summary/details source during discussions.
->>
->> Ideas on the interface seem to be a bit drifting so I apologize if some of Your ideas were not captured.
->>
->> There has been at least two direct proposals for userspace interface and I tried to provide usage example also for Dan's proposal. Feel free to correct me if I made a mistake.
->>
->> I believe it is a good to create summary page as there seems to many aspects to be though out. What do you feel on this approach?
+> I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
+> and Tegra I2C controller design uses them as a part of internal
+> clock divisor.
 > 
-> And should we perhaps move this discussion only to linux-leds mailing list for successive replies :) ? So we don't generate too broad traffic.
+> I2C_INTERFACE_TIMING_1 register contains the setup and hold times
+> for start and stop conditions.
 > 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
 
-Thank you for this.  I have posted updated documentation and posted updated code that includes a test file that does
-nothing but register a dummy node.  This was tested on raspberry pi 5.0-rc kernel.
-
-Also the code is updated for the LP50xx and a HACK for Droid4.
-
-brightness-model is still an open topic on the best way to implement this so we have not introduced the code yet.
-
-Here is the ABI doc
-http://git.ti.com/gitweb/?p=ti-analog-linux-kernel/dmurphy-analog.git;a=blob;f=Documentation/ABI/testing/sysfs-class-led-multicolor;h=45629199791285200e3775fc0b4dde1dfebb130f;hb=ce08183aa24edc0d883550339eef93fd72b4ac45
-
-Here is the class description
-http://git.ti.com/gitweb/?p=ti-analog-linux-kernel/dmurphy-analog.git;a=blob;f=Documentation/leds/leds-class-multicolor.txt;h=357f045a826aac71d65704891c18e7fb31e5cb9b;hb=refs/heads/multicolor_class
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
 
 
-Dan
-
-> Thanks,
-> Vesa Jääskeläinen
-
-
--- 
-------------------
-Dan Murphy
