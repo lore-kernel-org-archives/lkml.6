@@ -2,232 +2,208 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53736C282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4D4C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16B7B20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="o2lpEMzR"
+	by mail.kernel.org (Postfix) with ESMTP id 0AE3720855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfBHVLX (ORCPT
+        id S1727125AbfBHVNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:11:23 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39922 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfBHVLX (ORCPT
+        Fri, 8 Feb 2019 16:13:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54706 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726565AbfBHVNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:11:23 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f16so5486176wmh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 13:11:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:from:user-agent:mime-version:to:subject:references
-         :in-reply-to:content-transfer-encoding;
-        bh=X8YUq5z6SPlRLoIo3i4beGJadbtO/lLXkz0jDZaiwAo=;
-        b=o2lpEMzRPKrkU9l8ge+zq9Qwyy4JpKQhZXt+uKYTkqYzwt8dYObDX0eiIaLCKdFzmk
-         hfkx8PIXDb0OCdyZVdJbkxKookOk6CO38YH/QbivTEPQON2pKnw08qruCJ9hnSk08Ixa
-         yYLpKKFuRZjeRKcKJ38HXDiQCUq32gDj111OANAQ2i+jEXtf/qsjzD2V7Qz70+/YvLsz
-         Aio7XmO5fSKG1bMXhMpJmPkppSsiLxMbycOKusfvS1ToHy7N4LF9zIZ+I8QZ1DbZUatY
-         OTlwYw+9sye2YWU+NRON0Pll/AZofhPZEHT8Qe1g1XFkNaoEu5Klo7lEhbxfZgA617me
-         +lIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :subject:references:in-reply-to:content-transfer-encoding;
-        bh=X8YUq5z6SPlRLoIo3i4beGJadbtO/lLXkz0jDZaiwAo=;
-        b=O9vCGbar+QV/j11rcQACmGyb+JtBV/OQwaaoyHx4e6eoSuRYivINtX6G6d4R20DnQR
-         VqWBltDVNnrS2BahQKl+f1LBwnEOzaNzrckA+yLNBpNTl6tzoHo854chOyOyskPXNQgS
-         BdMNKnGUxYXBFTtVckVkIAm7LE+9/KJlC+EoHxXVecf22+i+OiT/WXx12UaTBTmo9sqY
-         cCO6HakgJp+pdudhKVBqWUYPRrur2OxVsw6rMOGHQ9Ez1iO7sPoipk+CYSeIn3vHjooS
-         H8eht7IQK+ZSmEckKaLygC/ZwAj2UF3IN8HKxTULHKg7Yf0sYQyCNZRwZYQQTqQnQvMe
-         ro/w==
-X-Gm-Message-State: AHQUAub0dJLvYkj9Bb5Zj56YpmZIuFJ3jCFteeyDF4cqMBaxEE8yxOZE
-        UonZrNof82ieWRLPP/0dSueo0Q==
-X-Google-Smtp-Source: AHgI3Ib8FqRhEQ239Sbs1IkiVvUZfYacobjZMb90C617RpW7cCR9oJDS6csCXMp1lbwwnuCnejTKaw==
-X-Received: by 2002:a1c:67c2:: with SMTP id b185mr333083wmc.96.1549660280043;
-        Fri, 08 Feb 2019 13:11:20 -0800 (PST)
-Received: from Armstrongs-MacBook-Pro.local (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id n11sm2866628wrw.60.2019.02.08.13.11.18
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Feb 2019 13:11:19 -0800 (PST)
-Message-ID: <5C5DF075.4090702@baylibre.com>
-Date:   Fri, 08 Feb 2019 22:11:17 +0100
-From:   Neil Armstrong <narmstrong@baylibre.com>
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
-MIME-Version: 1.0
-To:     Ayan Halder <Ayan.Halder@arm.com>, Randy Li <ayaka@soulik.info>,
-        "airlied@linux.ie" <airlied@linux.ie>, nd <nd@arm.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "sakari.ailus@iki.fi" <sakari.ailus@iki.fi>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "mikhail.v.gavrilov@gmail.com" <mikhail.v.gavrilov@gmail.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v10 1/2] drm/fourcc: Add new P010, P016 video format
-References: <20190109195710.28501-1-ayaka@soulik.info> <20190109195710.28501-2-ayaka@soulik.info> <20190114163645.GA16349@arm.com> <81f3b266-10d4-f230-c59b-79931e2e3188@baylibre.com> <20190208155107.GN23159@phenom.ffwll.local>
-In-Reply-To: <20190208155107.GN23159@phenom.ffwll.local>
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Feb 2019 16:13:47 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18LDcI4118583
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 16:13:46 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhe1w8kn1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:13:45 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 8 Feb 2019 21:13:43 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 21:13:39 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18LDcqp10486098
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Feb 2019 21:13:38 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B102942045;
+        Fri,  8 Feb 2019 21:13:38 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B12014203F;
+        Fri,  8 Feb 2019 21:13:37 +0000 (GMT)
+Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 21:13:37 +0000 (GMT)
+Subject: Re: [PATCH v2] security: mark expected switch fall-throughs and add
+ a missing break
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Date:   Fri, 08 Feb 2019 16:13:37 -0500
+In-Reply-To: <20190208205453.GA3232@embeddedor>
+References: <20190208205453.GA3232@embeddedor>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020821-0020-0000-0000-0000031494E3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020821-0021-0000-0000-00002165A64D
+Message-Id: <1549660417.12743.18.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2019-02-08 at 14:54 -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+> 
+> This patch fixes the following warnings:
+> 
+> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Also, add a missing break statement to fix the following warning:
+> 
+> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Le 08/02/2019 16:51, Daniel Vetter a écrit :
-> On Thu, Feb 07, 2019 at 10:44:10AM +0100, Neil Armstrong wrote:
->> Hi,
->>
->> On 14/01/2019 17:36, Ayan Halder wrote:
->>> On Thu, Jan 10, 2019 at 03:57:09AM +0800, Randy Li wrote:
->>>> P010 is a planar 4:2:0 YUV with interleaved UV plane, 10 bits per
->>>> channel video format.
->>>>
->>>> P012 is a planar 4:2:0 YUV 12 bits per channel
->>>>
->>>> P016 is a planar 4:2:0 YUV with interleaved UV plane, 16 bits per
->>>> channel video format.
->>>>
->>>> V3: Added P012 and fixed cpp for P010.
->>>> V4: format definition refined per review.
->>>> V5: Format comment block for each new pixel format.
->>>> V6: reversed Cb/Cr order in comments.
->>>> v7: reversed Cb/Cr order in comments of header files, remove
->>>> the wrong part of commit message.
->>>> V8: reversed V7 changes except commit message and rebased.
->>>> v9: used the new properties to describe those format and
->>>> rebased.
->>>>
->>>> Cc: Daniel Stone <daniel@fooishbar.org>
->>>> Cc: Ville Syrj??l?? <ville.syrjala@linux.intel.com>
->>>>
->>>> Signed-off-by: Randy Li <ayaka@soulik.info>
->>>> Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
->>>> ---
->>>>  drivers/gpu/drm/drm_fourcc.c  |  9 +++++++++
->>>>  include/uapi/drm/drm_fourcc.h | 21 +++++++++++++++++++++
->>>>  2 files changed, 30 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
->>>> index d90ee03a84c6..ba7e19d4336c 100644
->>>> --- a/drivers/gpu/drm/drm_fourcc.c
->>>> +++ b/drivers/gpu/drm/drm_fourcc.c
->>>> @@ -238,6 +238,15 @@ const struct drm_format_info *__drm_format_info(u32 format)
->>>>  		{ .format = DRM_FORMAT_X0L2,		.depth = 0,  .num_planes = 1,
->>>>  		  .char_per_block = { 8, 0, 0 }, .block_w = { 2, 0, 0 }, .block_h = { 2, 0, 0 },
->>>>  		  .hsub = 2, .vsub = 2, .is_yuv = true },
->>>> +		{ .format = DRM_FORMAT_P010,            .depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 2, 4, 0 }, .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 },
->>>> +		  .hsub = 2, .vsub = 2, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_P012,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 2, 4, 0 }, .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 },
->>>> +		   .hsub = 2, .vsub = 2, .is_yuv = true},
->>>> +		{ .format = DRM_FORMAT_P016,		.depth = 0,  .num_planes = 2,
->>>> +		  .char_per_block = { 2, 4, 0 }, .block_w = { 1, 0, 0 }, .block_h = { 1, 0, 0 },
->>>> +		  .hsub = 2, .vsub = 2, .is_yuv = true},
->>>>  	};
->>>>  
->>>>  	unsigned int i;
->>>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
->>>> index 0b44260a5ee9..8dd1328bc8d6 100644
->>>> --- a/include/uapi/drm/drm_fourcc.h
->>>> +++ b/include/uapi/drm/drm_fourcc.h
->>>> @@ -195,6 +195,27 @@ extern "C" {
->>>>  #define DRM_FORMAT_NV24		fourcc_code('N', 'V', '2', '4') /* non-subsampled Cr:Cb plane */
->>>>  #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
->>>>  
->>>> +/*
->>>> + * 2 plane YCbCr MSB aligned
->>>> + * index 0 = Y plane, [15:0] Y:x [10:6] little endian
->>>> + * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x [10:6:10:6] little endian
->>>> + */
->>>> +#define DRM_FORMAT_P010		fourcc_code('P', '0', '1', '0') /* 2x2 subsampled Cr:Cb plane 10 bits per channel */
->>>> +
->>>> +/*
->>>> + * 2 plane YCbCr MSB aligned
->>>> + * index 0 = Y plane, [15:0] Y:x [12:4] little endian
->>>> + * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x [12:4:12:4] little endian
->>>> + */
->>>> +#define DRM_FORMAT_P012		fourcc_code('P', '0', '1', '2') /* 2x2 subsampled Cr:Cb plane 12 bits per channel */
->>>> +
->>>> +/*
->>>> + * 2 plane YCbCr MSB aligned
->>>> + * index 0 = Y plane, [15:0] Y little endian
->>>> + * index 1 = Cr:Cb plane, [31:0] Cr:Cb [16:16] little endian
->>>> + */
->>>> +#define DRM_FORMAT_P016		fourcc_code('P', '0', '1', '6') /* 2x2 subsampled Cr:Cb plane 16 bits per channel */
->>>> +
->>>
->>> looks good to me.
->>> Reviewed by:- Ayan Kumar Halder <ayan.halder@arm.com>
->>>
->>> We are using P010 format for our mali display driver. Our AFBC patch
->>> series(https://patchwork.freedesktop.org/series/53395/) is dependent
->>> on this patch. So, that's why I wanted to know when you are planning to
->>> merge this. As far as I remember, Juha wanted to implement some igt
->>> tests
->>> (https://lists.freedesktop.org/archives/intel-gfx/2018-September/174877.html)
->>> , so is that done now?
->>>
->>> My apologies if I am pushing hard on this.
->>
->> Looks good to me aswell,
->>
->> Reviewed by: Neil Armstrong <narmstrong@baylibre.com>
->>
->> Seems we will also need P010 to support the Amlogic Compressed modifier to display
->> compressed frames from the HW decoder.
->>
->> I can apply this to drm-misc-next if everyone is ok
+> ---
+> Changes in v2:
+>  - Update Subject.
+>  - Integrate a missing break in switch fix by Mimi Zohar.
 > 
-> Matches what's still flaoting around by intel devs:
+>  security/apparmor/domain.c                | 2 +-
+>  security/integrity/ima/ima_appraise.c     | 1 +
+>  security/integrity/ima/ima_policy.c       | 4 ++++
+>  security/integrity/ima/ima_template_lib.c | 1 +
+>  security/smack/smack_lsm.c                | 3 +--
+>  5 files changed, 8 insertions(+), 3 deletions(-)
 > 
-> https://patchwork.freedesktop.org/patch/284801/
-> 
-> Except this one uses the new block descriptors and has much neater
-> comments.
-> 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
-> Please push to drm-misc-next asap so intel folks aren't blocked.
-> 
-> Thanks, Daniel
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 3b266a438776..ca2dccf5b445 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+>  			stack = NULL;
+>  			break;
+>  		}
+> -		/* fall through to X_NAME */
+> +		/* fall through - to X_NAME */
+>  	case AA_X_NAME:
+>  		if (xindex & AA_X_CHILD)
+>  			/* released by caller */
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index a2baa85ea2f5..5fb7127bbe68 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+>  		break;
+>  	case CREDS_CHECK:
+>  		iint->ima_creds_status = status;
+> +		break;
+>  	case FILE_CHECK:
+>  	case POST_SETATTR:
+>  		iint->ima_file_status = status;
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 26fa9d9723f6..e0cc323f948f 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -936,10 +936,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  		case Opt_uid_gt:
+>  		case Opt_euid_gt:
+>  			entry->uid_op = &uid_gt;
+> +			/* fall through */
+>  		case Opt_uid_lt:
+>  		case Opt_euid_lt:
+>  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+>  				entry->uid_op = &uid_lt;
+> +			/* fall through */
+>  		case Opt_uid_eq:
+>  		case Opt_euid_eq:
+>  			uid_token = (token == Opt_uid_eq) ||
+> @@ -968,9 +970,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  			break;
+>  		case Opt_fowner_gt:
+>  			entry->fowner_op = &uid_gt;
+> +			/* fall through */
+>  		case Opt_fowner_lt:
+>  			if (token == Opt_fowner_lt)
+>  				entry->fowner_op = &uid_lt;
+> +			/* fall through */
+>  		case Opt_fowner_eq:
+>  			ima_log_string_op(ab, "fowner", args[0].from,
+>  					  entry->fowner_op);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index 43752002c222..513b457ae900 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+>  		/* skip ':' and '\0' */
+>  		buf_ptr += 2;
+>  		buflen -= buf_ptr - field_data->data;
+> +		/* fall through */
+>  	case DATA_FMT_DIGEST:
+>  	case DATA_FMT_HEX:
+>  		if (!buflen)
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 587dc06eba33..5c1613519d5a 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3380,13 +3380,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>  		 */
+>  		final = &smack_known_star;
+>  		/*
+> -		 * Fall through.
+> -		 *
+>  		 * If a smack value has been set we want to use it,
+>  		 * but since tmpfs isn't giving us the opportunity
+>  		 * to set mount options simulate setting the
+>  		 * superblock default.
+>  		 */
+> +		/* Fall through */
+>  	default:
+>  		/*
+>  		 * This isn't an understood special case.
 
-
-Applying now, thanks !
-
-Neil
-
-> 
->>
->> Neil
->>
->>>>  /*
->>>>   * 3 plane YCbCr
->>>>   * index 0: Y plane, [7:0] Y
->>>> -- 
->>>> 2.20.1
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>
->>
-> 
