@@ -2,236 +2,152 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0D1C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AE1C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB7F20823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:39:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gt9gcavd"
+	by mail.kernel.org (Postfix) with ESMTP id AC82A20823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfBHQjV (ORCPT
+        id S1727824AbfBHQjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:39:21 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42216 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfBHQjU (ORCPT
+        Fri, 8 Feb 2019 11:39:32 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:52910 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbfBHQjE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:39:20 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so3518723lja.9
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:39:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sJvNPv0iYV1ss/wTWzX21hkUtCucJaHNNAaHN6/iqTo=;
-        b=Gt9gcavdyZ7eD1kl00TIVkYfWXkNUsTl7WeiLPnfIkcXCjsU9llwXdKpqGSpA+bRiE
-         W2pYwEd74BsK6TjjzqjaQg8uUPTnLqpoL1pHg3kfS88rNzRORh/Ek+Dh/EXDXOL2BBtE
-         rCqbXzenpuORZgFA4oAB5C0Eo36gUibZ5HFYOzMLHDVzPbb4PlJQqdw0FLjBfWrb2rRq
-         /wmE7Po53JF48uSbOLGdXnGrCA9zy86//al2UFvizepHJi4gX+f3X3RwU7dZx15QBHc2
-         5Sf9a8Oo/lAA8tfucGZkPa+Ti3GYnAViUXnVXTLmrmtJ6vRcMV2QsPqnnCcQbx9Fn0mz
-         /+xw==
+        Fri, 8 Feb 2019 11:39:04 -0500
+Received: by mail-it1-f198.google.com with SMTP id o205so7230358itc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:39:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sJvNPv0iYV1ss/wTWzX21hkUtCucJaHNNAaHN6/iqTo=;
-        b=bo5n1pdDqFVZgc7QnnPnSY9jvyYKoN3CrGZqB3XYI/aLj6bkfKDLLcUIOuH8bdNybF
-         mn9pXuLmf5q2HpLkdAzCYo70LfVbzWt60N2/MKtil5IAFSRRZgMfBRRQevLaDI0ly4HB
-         4hu884wf4qgjhFnSq9szdAdEghVN6vO+FZcj93JZcVno4qGxapJg/zeJ1K0KorZhf+FS
-         3XF6m7g70XbRe7wfsPWLPDc1ae4K2xdUq8SmGUZwgrbeLh81hbcYZuqFtewgf3Uu/ZLR
-         QGrSmwKshPQHe/lbh1tSJ/fuzYqY3keWNlbH79p6hqiin5xld6twr9mF0c8wj84Ec1n+
-         ZaYg==
-X-Gm-Message-State: AHQUAuav1tAapbM390WTrh5SBfb6xbLVEzb1/2zr3Q1WNv+mzjqAezgJ
-        WiESUuMKu+BGYnC+Xlr7g3ViRA==
-X-Google-Smtp-Source: AHgI3Ia0ZO0l3o8m3eXp9J5skOxTlbXcF5SBSHlTj8+zpkNdl/0AtsFTr6wE07psL2vpKPE8LrIh6Q==
-X-Received: by 2002:a2e:9209:: with SMTP id k9-v6mr2172546ljg.12.1549643957260;
-        Fri, 08 Feb 2019 08:39:17 -0800 (PST)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id y1-v6sm466880ljh.39.2019.02.08.08.39.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 08 Feb 2019 08:39:16 -0800 (PST)
-Date:   Fri, 8 Feb 2019 17:39:13 +0100
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 6/7] PCI: qcom: Add QCS404 PCIe controller support
-Message-ID: <20190208163913.GE773@centauri.lan>
-References: <20190125234509.26419-1-bjorn.andersson@linaro.org>
- <20190125234509.26419-7-bjorn.andersson@linaro.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=rdfd27Mkl6trWsMuQNHLC46wviuh2JA6SwxdQFFJ6x0=;
+        b=saNa+PZGNgk+UJ1bDx+p6FoDELwWn8/paGOBrD9u75NPcyw6IwjXVqaL2L50psGCPU
+         SAM9BwVkTHnj3RUwaXZ1lLFseiG7oPZ8Fj19Wq8Zf/lsNZskun3h9tteuYgaTzTXmObx
+         KXnCjjvbXMjUNu2lzZqSF+wJAgZVGOwSAEo+GNvZbOlHqdDLUfbYyf011LcLud8S84aS
+         JG00dbo3V+jK4kZBcGfxGwZ/y1dIe+KgYGZfGp4xsh1tYh0AKRWTNESRFIYINvxg0DMP
+         7Jm0v0x+F6kqBW1Lv97qfev88xlTqALgrOxf3RXbpwO5KSI4TGvayy1lYf7gdMe41Ro+
+         eiCQ==
+X-Gm-Message-State: AHQUAub7L3s2kuSO+VjuLrSNpEnpSzl5KS9GvNhyWA2eJBp0aV3RGN4v
+        4tK7o1m4N3AozMXqiVUZLOWfa9KIOTQawzAPQBlyXa55fTb9
+X-Google-Smtp-Source: AHgI3IaoXjJoPo2/uGcph6yIU1D1zgEUA7Vfr+npSCvq7Kb8+0rt/R21iHyvcWjCkBjTFiH+1EeTQBWOJ4Zi1IJZp23ZJOJP7lUe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125234509.26419-7-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a02:5c8:: with SMTP id 69mr13369712jal.20.1549643943640;
+ Fri, 08 Feb 2019 08:39:03 -0800 (PST)
+Date:   Fri, 08 Feb 2019 08:39:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca08dd0581649889@google.com>
+Subject: KASAN: wild-memory-access Write in fib6_purge_rt
+From:   syzbot <syzbot+3dbea54db3674c0d57d6@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 03:45:08PM -0800, Bjorn Andersson wrote:
-> The QCS404 platform contains a PCIe controller of version 2.4.0 and a
-> Qualcomm PCIe2 PHY. The driver already supports version 2.4.0, for the
-> IPQ4019, but this support touches clocks and resets related to the PHY
-> as well, and there's no upstream driver for the PHY.
-> 
-> On QCS404 we must initialize the PHY, so a separate PHY driver is
-> implemented to take care of this and the controller driver is updated to
-> not require the PHY related resources. This is done by relying on the
-> fact that operations in both the clock and reset framework are nops when
-> passed NULL, so we can isolate this change to only the get_resource
-> function.
-> 
-> For QCS404 we also need to enable the AHB (iface) clock, in order to
-> access the register space of the controller, but as this is not part of
-> the IPQ4019 DT binding this is only added for new users of the 2.4.0
-> controller.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 64 +++++++++++++++-----------
->  1 file changed, 38 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 9d366fad2b7f..6d4215ddcb42 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -113,7 +113,7 @@ struct qcom_pcie_resources_2_3_2 {
->  };
->  
->  struct qcom_pcie_resources_2_4_0 {
-> -	struct clk_bulk_data clks[3];
-> +	struct clk_bulk_data clks[4];
->  	int num_clks;
->  	struct reset_control *axi_m_reset;
->  	struct reset_control *axi_s_reset;
-> @@ -637,13 +637,16 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
->  	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
->  	struct dw_pcie *pci = pcie->pci;
->  	struct device *dev = pci->dev;
-> +	bool is_ipq = of_device_is_compatible(dev->of_node, "qcom,pcie-ipq4019");
->  	int ret;
->  
->  	res->clks[0].id = "aux";
->  	res->clks[1].id = "master_bus";
->  	res->clks[2].id = "slave_bus";
-> +	res->clks[3].id = "iface";
->  
-> -	res->num_clks = 3;
-> +	/* qcom,pcie-ipq4019 is defined without "iface" */
-> +	res->num_clks = is_ipq ? 3 : 4;
->  
->  	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
->  	if (ret < 0)
-> @@ -657,27 +660,33 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
->  	if (IS_ERR(res->axi_s_reset))
->  		return PTR_ERR(res->axi_s_reset);
->  
-> -	res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
-> -	if (IS_ERR(res->pipe_reset))
-> -		return PTR_ERR(res->pipe_reset);
-> -
-> -	res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
-> -								 "axi_m_vmid");
-> -	if (IS_ERR(res->axi_m_vmid_reset))
-> -		return PTR_ERR(res->axi_m_vmid_reset);
-> -
-> -	res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
-> -								"axi_s_xpu");
-> -	if (IS_ERR(res->axi_s_xpu_reset))
-> -		return PTR_ERR(res->axi_s_xpu_reset);
-> -
-> -	res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
-> -	if (IS_ERR(res->parf_reset))
-> -		return PTR_ERR(res->parf_reset);
-> -
-> -	res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
-> -	if (IS_ERR(res->phy_reset))
-> -		return PTR_ERR(res->phy_reset);
-> +	if (is_ipq) {
-> +		/*
-> +		 * These resources relates to the PHY, but are controlled here
-> +		 * for IPQ4019
-> +		 */
+Hello,
 
-This comment makes be believe that all these resouces are related to the
-PHY.
+syzbot found the following crash on:
 
-"pipe" and "phy" are related to the PHY, but I doubt that the rest of them
-relates to the PHY.
+HEAD commit:    cc7335786f72 socket: fix for Add SO_TIMESTAMP[NS]_NEW
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16539260c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=33ad02b9305759c3
+dashboard link: https://syzkaller.appspot.com/bug?extid=3dbea54db3674c0d57d6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-If QCS404 lacks these other reset signals, which is very possible, since
-it's a completely different SoC, perhaps the comment should also mention
-that.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-With that:
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+3dbea54db3674c0d57d6@syzkaller.appspotmail.com
 
-> +		res->pipe_reset = devm_reset_control_get_exclusive(dev, "pipe");
-> +		if (IS_ERR(res->pipe_reset))
-> +			return PTR_ERR(res->pipe_reset);
-> +
-> +		res->axi_m_vmid_reset = devm_reset_control_get_exclusive(dev,
-> +									 "axi_m_vmid");
-> +		if (IS_ERR(res->axi_m_vmid_reset))
-> +			return PTR_ERR(res->axi_m_vmid_reset);
-> +
-> +		res->axi_s_xpu_reset = devm_reset_control_get_exclusive(dev,
-> +									"axi_s_xpu");
-> +		if (IS_ERR(res->axi_s_xpu_reset))
-> +			return PTR_ERR(res->axi_s_xpu_reset);
-> +
-> +		res->parf_reset = devm_reset_control_get_exclusive(dev, "parf");
-> +		if (IS_ERR(res->parf_reset))
-> +			return PTR_ERR(res->parf_reset);
-> +
-> +		res->phy_reset = devm_reset_control_get_exclusive(dev, "phy");
-> +		if (IS_ERR(res->phy_reset))
-> +			return PTR_ERR(res->phy_reset);
-> +	}
->  
->  	res->axi_m_sticky_reset = devm_reset_control_get_exclusive(dev,
->  								   "axi_m_sticky");
-> @@ -697,9 +706,11 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
->  	if (IS_ERR(res->ahb_reset))
->  		return PTR_ERR(res->ahb_reset);
->  
-> -	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
-> -	if (IS_ERR(res->phy_ahb_reset))
-> -		return PTR_ERR(res->phy_ahb_reset);
-> +	if (is_ipq) {
-> +		res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
-> +		if (IS_ERR(res->phy_ahb_reset))
-> +			return PTR_ERR(res->phy_ahb_reset);
-> +	}
->  
->  	return 0;
->  }
-> @@ -1284,6 +1295,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-msm8996", .data = &ops_2_3_2 },
->  	{ .compatible = "qcom,pcie-ipq8074", .data = &ops_2_3_3 },
->  	{ .compatible = "qcom,pcie-ipq4019", .data = &ops_2_4_0 },
-> +	{ .compatible = "qcom,pcie-qcs404", .data = &ops_2_4_0 },
->  	{ }
->  };
->  
-> -- 
-> 2.18.0
-> 
+==================================================================
+BUG: KASAN: wild-memory-access in atomic_dec_and_test  
+include/asm-generic/atomic-instrumented.h:259 [inline]
+BUG: KASAN: wild-memory-access in fib6_info_release  
+include/net/ip6_fib.h:294 [inline]
+BUG: KASAN: wild-memory-access in fib6_info_release  
+include/net/ip6_fib.h:292 [inline]
+BUG: KASAN: wild-memory-access in fib6_drop_pcpu_from  
+net/ipv6/ip6_fib.c:927 [inline]
+BUG: KASAN: wild-memory-access in fib6_purge_rt+0x4f6/0x670  
+net/ipv6/ip6_fib.c:960
+Write of size 4 at addr ff88809b5430992b by task syz-executor5/21222
+
+CPU: 1 PID: 21222 Comm: syz-executor5 Not tainted 5.0.0-rc4+ #45
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  kasan_report.cold+0x5/0x40 mm/kasan/report.c:321
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
+  kasan_check_write+0x14/0x20 mm/kasan/common.c:106
+  atomic_dec_and_test include/asm-generic/atomic-instrumented.h:259 [inline]
+  fib6_info_release include/net/ip6_fib.h:294 [inline]
+  fib6_info_release include/net/ip6_fib.h:292 [inline]
+  fib6_drop_pcpu_from net/ipv6/ip6_fib.c:927 [inline]
+  fib6_purge_rt+0x4f6/0x670 net/ipv6/ip6_fib.c:960
+  fib6_del_route net/ipv6/ip6_fib.c:1813 [inline]
+  fib6_del+0xac2/0x10a0 net/ipv6/ip6_fib.c:1844
+  fib6_clean_node+0x3a8/0x590 net/ipv6/ip6_fib.c:2006
+  fib6_walk_continue+0x4b3/0x8e0 net/ipv6/ip6_fib.c:1928
+  fib6_walk+0x9d/0x100 net/ipv6/ip6_fib.c:1976
+  fib6_clean_tree+0xe0/0x120 net/ipv6/ip6_fib.c:2055
+  __fib6_clean_all+0x118/0x2a0 net/ipv6/ip6_fib.c:2071
+  fib6_clean_all+0x2b/0x40 net/ipv6/ip6_fib.c:2082
+  rt6_sync_down_dev+0x134/0x150 net/ipv6/route.c:4041
+  rt6_disable_ip+0x27/0x5f0 net/ipv6/route.c:4046
+  addrconf_ifdown+0xa2/0x1220 net/ipv6/addrconf.c:3704
+  addrconf_notify+0x5e1/0x2280 net/ipv6/addrconf.c:3629
+  notifier_call_chain+0xc7/0x240 kernel/notifier.c:93
+  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+  raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:401
+  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1739
+  call_netdevice_notifiers_extack net/core/dev.c:1751 [inline]
+  call_netdevice_notifiers net/core/dev.c:1765 [inline]
+  __dev_notify_flags+0x1e9/0x2c0 net/core/dev.c:7607
+  dev_change_flags+0x10d/0x170 net/core/dev.c:7643
+  devinet_ioctl+0x1396/0x1c60 net/ipv4/devinet.c:1104
+  inet_ioctl+0x1fc/0x370 net/ipv4/af_inet.c:954
+  sock_do_ioctl+0xe2/0x320 net/socket.c:972
+  sock_ioctl+0x331/0x620 net/socket.c:1096
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd6e/0x1390 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fa4949bfc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e39
+RDX: 0000000020000040 RSI: 0000000000008914 RDI: 0000000000000004
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa4949c06d4
+R13: 00000000004c34ff R14: 00000000004d61e8 R15: 00000000ffffffff
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
