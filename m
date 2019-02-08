@@ -2,95 +2,101 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B8AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E242CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A44020823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:41:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="UEedMoIM"
+	by mail.kernel.org (Postfix) with ESMTP id AF8D52084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549644178;
+	bh=1wNkQkf/UtQ6+fr+LcGI2FbZVeFAPE4tiIqJdacuJZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ksOOxvjQaJy9h4XMEgVhiujeiGa3C0Vqk7dEPiVCvXSxEkS5o2ZypCtqEUK++WAqw
+	 lZu50NTooXk8B8s9TJ285IOpbWL4heBEGg4OJ5OzDYOX/6BO7PzIelSayliAxuNgAz
+	 UPAxpe2N3vdgJx8/jwqzQvBKokHhcCjBMBMrtr5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfBHQll (ORCPT
+        id S1727309AbfBHQm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:41:41 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52038 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfBHQll (ORCPT
+        Fri, 8 Feb 2019 11:42:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54364 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHQm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:41:41 -0500
-Received: by mail-it1-f195.google.com with SMTP id y184so3933736itc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KQ/vZbTI2xvoNfErWMG1eOo/Dhk/zkEMJp2icouEFAI=;
-        b=UEedMoIMo5olfWopXlhwmhXIlQJSjpVwH0OSEJmH47wcJPPuNoN4aQsozljAfJU6zj
-         63kWwCtqPVc5nMcwES/QhRF84dHzHVDTjN39sdHtKqAu8RvGhpZc6mF62gzjpVmoW7pM
-         cbeOF6/+eeCmTNJyu7DezIzByFTuccXFsinqVQadi8NVUJyDYG+hq2roIlarQ/9e8m1Z
-         fmc/0jnPMytAHkKPfSOGLRUFBAwwEVVWwB+mUT2Y/61HpHiwse0L/WzNnUhaGf2SLfKe
-         96Q2elI9Jing2Q1X2sim7BLrRH6Y5Cwo8NGY4/wEEXKlvRx0o5qrwhRQRV+Xsepy2kfW
-         XTyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KQ/vZbTI2xvoNfErWMG1eOo/Dhk/zkEMJp2icouEFAI=;
-        b=ncwapuM+UkWPMar6VhPocfJ6h8LfF+hh7/8jsLQtFwclkiRo9RHvQGyvoi4sRbR91c
-         Qgrnnfaim3qSuSA1FJhxbXdx0OBkeQbsaHLGjRI9+EWvi1NWkSkapIM7KdOM3Fuuk/DA
-         m6J7AB43on4Cj/FPIsIKwUUqc1/lw+CHaWs45U7b0/TLMUkj0G/qyjlNbD03dtZOm2ap
-         aG+Z4brGSEpBUaEMBuvj3jNopDALjCacYEOr+HnnrKl+/PLht7+CpX+gLoo7msaF1u5J
-         EwXI187K8LT/Q6DVS0NZ55TtJrt7FsGG/IQuGBzwMQK8tW0kGQVTyhu5GXkOAMTpiud3
-         OwvA==
-X-Gm-Message-State: AHQUAuZCMZtSomdaWRvwukBn0WwMKJGkQn6G/W4LP5Ce0Fj7+I4TPdcn
-        JYN4PebuVt8GZivZaHuetAel3xINlteqhamFO1X+Ug==
-X-Google-Smtp-Source: AHgI3IZgoArtwL9xNz85ka5QvIvv5VH79nGCHRlysDd1ZcvIxjIe/xT2qEB6VsDjGAL5g7V1A8t7M/3lzyc5NWwPoUU=
-X-Received: by 2002:a6b:440c:: with SMTP id r12mr7734256ioa.258.1549644100627;
- Fri, 08 Feb 2019 08:41:40 -0800 (PST)
+        Fri, 8 Feb 2019 11:42:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1wNkQkf/UtQ6+fr+LcGI2FbZVeFAPE4tiIqJdacuJZg=; b=IxAoNOtYHy4S8uz30oREFsiqh
+        qspsU5dV3ia4BFvzawTATtx4bkJcWGvjJ3OiE3WADxTaQkgiBQtK2kp5ys6NBVfpDEgZU9aceL83x
+        TK9XyeLZuvYEeVE0EoGKWph3kOczjdrIFQ0ckwZUHIWqnljdfdAfAIJb26ulDzw1VNbz4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gs9Ep-0002EA-00; Fri, 08 Feb 2019 16:42:51 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3E8EA1127F2F; Fri,  8 Feb 2019 16:42:50 +0000 (GMT)
+Date:   Fri, 8 Feb 2019 16:42:50 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ASoC: msm8916-wcd-analog: add missing license
+ information
+Message-ID: <20190208164250.GG6695@sirena.org.uk>
+References: <20190207165755.1548-1-johan@kernel.org>
+ <20190207165755.1548-2-johan@kernel.org>
+ <20190208115341.GB6695@sirena.org.uk>
+ <20190208151502.GP4686@localhost>
 MIME-Version: 1.0
-References: <20190131133928.17985-1-brgl@bgdev.pl> <20190131133928.17985-33-brgl@bgdev.pl>
- <7471c8db-52f1-4833-d3b7-c606133e7362@ti.com>
-In-Reply-To: <7471c8db-52f1-4833-d3b7-c606133e7362@ti.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 8 Feb 2019 17:41:29 +0100
-Message-ID: <CAMRc=Mdq7UmY8TFG3igz_X7Z_fhmWYFk66zNfuuNE9YktkrXtQ@mail.gmail.com>
-Subject: Re: [PATCH 32/35] ARM: davinci: remove intc related fields from davinci_soc_info
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HKEL+t8MFpg/ASTE"
+Content-Disposition: inline
+In-Reply-To: <20190208151502.GP4686@localhost>
+X-Cookie: Mickey Mouse wears a Spiro Agnew watch.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 7 lut 2019 o 15:04 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
->
-> On 31/01/19 7:09 PM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > These are no longer used. Remove them.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> I assume you are going to drop this patch and keep the priority setting
-> code around?
->
-> Thanks,
-> Sekhar
 
-I'm still going to drop it from da8xx as it's no needed AFAICT. Both
-SoCs use 7 as the priority for all interrupts. I'm just going to keep
-the defines for offsets.
+--HKEL+t8MFpg/ASTE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Bart
+On Fri, Feb 08, 2019 at 04:15:02PM +0100, Johan Hovold wrote:
+
+> Ah, yes, that makes sense for consistency since you've already enforced
+> that style. And while I don't think the all-c++-comment headers look
+> better in general, for the single copyright statement case it's not too
+> bad.
+
+Yeah, I'm not really actively a fan either.
+
+--HKEL+t8MFpg/ASTE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxdsYkACgkQJNaLcl1U
+h9CstAf9HetsWXgiyITwU+/rGgnBrKgOr2pU2+nnMZqPMabWnB2vcLHeM7JzrWRk
+quGhzasynFfL2CJC7qo92djEpPmcp4kIJ7FzyDxJgilEvxglt93YFYllJN4Lr5T4
+B/jnW8QAlWDoVcTe0nM7sBbw8ExoAe4A0KLLlDI57fudnpSDjdk0XPVKVBjOD0Xq
+fjQ/tw+oTwxk0Ov939xKlp6Lv8Nzj+2cdJdYW+jTLq7rmVN6VUGfviP41nXhg4Hw
+cuuO0FzW36HECUx1zoCcNnHo89f3hbtTuW26H8ZgKaBkwdXOruiaaW2aV3AfcLky
+cKrv8cBbDSI+guVQk9Rd6eV+6UAJuw==
+=oHjI
+-----END PGP SIGNATURE-----
+
+--HKEL+t8MFpg/ASTE--
