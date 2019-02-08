@@ -2,83 +2,99 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF67C282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FFFC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A38E22146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4431D21916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549586547;
+	bh=qZXdWOc89XVHySKfM2B7o0I6mdeY6kjbnFlaTHr+BGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=K+jnyVAra3+AHLNmzuL8hZaCiLYL145ZSpPFl5JgnuWpow2b8VazCVyjhXh0TulMf
+	 /uJ8jgHBwRUwxC2g/obbD488fzRDYMxVeWEHidRROMJ/18OYl/EZyOsZ6FLem6WLP3
+	 5UUL/ICu9iahJNyl0eNlq/yGhXsQmhfXCluJoIgg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfBHAlM (ORCPT
+        id S1727002AbfBHAmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:41:12 -0500
-Received: from mga04.intel.com ([192.55.52.120]:44680 "EHLO mga04.intel.com"
+        Thu, 7 Feb 2019 19:42:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726792AbfBHAlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:41:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 16:41:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,346,1544515200"; 
-   d="scan'208";a="131930693"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Feb 2019 16:41:11 -0800
-Received: from fmsmsx157.amr.corp.intel.com (10.18.116.73) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 7 Feb 2019 16:41:11 -0800
-Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.29]) by
- FMSMSX157.amr.corp.intel.com ([169.254.14.168]) with mapi id 14.03.0415.000;
- Thu, 7 Feb 2019 16:41:10 -0800
-From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
-To:     "Williams, Dan J" <dan.j.williams@intel.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Burzynski, Grzegorz" <grzegorz.burzynski@intel.com>,
-        "Verma, Vishal" <vishal.verma@intel.com>
-Subject: Re: [PATCH] acpi/nfit: Fix bus command validation
-Thread-Topic: [PATCH] acpi/nfit: Fix bus command validation
-Thread-Index: AQHUv0KvK9Aq2jVz9kGaprz2stpXBaXVlYwA
-Date:   Fri, 8 Feb 2019 00:41:09 +0000
-Message-ID: <df5958d2e4f94e1a898d53761ac13dc543a8b577.camel@intel.com>
-References: <154958385172.3932544.193235520333886200.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154958385172.3932544.193235520333886200.stgit@dwillia2-desk3.amr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-x-originating-ip: [10.232.112.170]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B19C8DBDAEA5F94DB27A3C30DB33F08D@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1726774AbfBHAmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 19:42:25 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E628921907;
+        Fri,  8 Feb 2019 00:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549586544;
+        bh=qZXdWOc89XVHySKfM2B7o0I6mdeY6kjbnFlaTHr+BGE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=f9d6Z2jktLhOUpCUmJKZmrHXdJVZjUFfU/vmP4GnJhxByXFxOdxxWgbTWtWgsG64W
+         zGZbSuDeMkWETQ2qEdQ9yEHyvetGKRHyXu2Qz7sWH3N4nfN8AvQ2jPipWmQITUtVAp
+         CBRCcIW/3gEuQhMMRYDc0W3Hcgy5/6/oQNsGsGpg=
+Date:   Fri, 8 Feb 2019 09:42:20 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] tracing: uprobes: Re-enable $comm support for
+ uprobe events
+Message-Id: <20190208094220.83ae0df5c71a9cd8891e598d@kernel.org>
+In-Reply-To: <20190206155243.725bc30d@gandalf.local.home>
+References: <154778663676.19927.12774448308165809570.stgit@devbox>
+        <154778666570.19927.5960654930869453736.stgit@devbox>
+        <20190206155243.725bc30d@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBUaHUsIDIwMTktMDItMDcgYXQgMTU6NTcgLTA4MDAsIERhbiBXaWxsaWFtcyB3cm90ZToN
-Cj4gQ29tbWl0IDExMTg5YzEwODlkYSAiYWNwaS9uZml0OiBGaXggY29tbWFuZC1zdXBwb3J0ZWQg
-ZGV0ZWN0aW9uIiBicm9rZQ0KPiBORF9DTURfQ0FMTCBmb3IgYnVzLWxldmVsIGNvbW1hbmRzLiBU
-aGUgImZ1bmMgPSBjbWQiIGFzc3VtcHRpb24gaXMgb25seQ0KPiB2YWxpZCBmb3I6DQo+IA0KPiAg
-ICAgTkRfQ01EX0FSU19DQVANCj4gICAgIE5EX0NNRF9BUlNfU1RBUlQNCj4gICAgIE5EX0NNRF9B
-UlNfU1RBVFVTDQo+ICAgICBORF9DTURfQ0xFQVJfRVJST1INCj4gDQo+IFRoZSBmdW5jdGlvbiBu
-dW1iZXIgb3RoZXJ3aXNlIG5lZWRzIHRvIGJlIHB1bGxlZCBmcm9tIHRoZSBjb21tYW5kDQo+IHBh
-eWxvYWQgZm9yOg0KPiANCj4gICAgIE5GSVRfQ01EX1RSQU5TTEFURV9TUEENCj4gICAgIE5GSVRf
-Q01EX0FSU19JTkpFQ1RfU0VUDQo+ICAgICBORklUX0NNRF9BUlNfSU5KRUNUX0NMRUFSDQo+ICAg
-ICBORklUX0NNRF9BUlNfSU5KRUNUX0dFVA0KPiANCj4gVXBkYXRlIGNtZF90b19mdW5jKCkgZm9y
-IHRoZSBidXMgY2FzZSBhbmQgY2FsbCBpdCBpbiB0aGUgY29tbW9uIHBhdGguDQo+IA0KPiBGaXhl
-czogMTExODljMTA4OWRhICgiYWNwaS9uZml0OiBGaXggY29tbWFuZC1zdXBwb3J0ZWQgZGV0ZWN0
-aW9uIikNCj4gQ2M6IDxzdGFibGVAdmdlci5rZXJuZWwub3JnPg0KPiBDYzogVmlzaGFsIFZlcm1h
-IDx2aXNoYWwudmVybWFAaW50ZWwuY29tPg0KPiBSZXBvcnRlZC1ieTogR3J6ZWdvcnogQnVyenlu
-c2tpIDxncnplZ29yei5idXJ6eW5za2lAaW50ZWwuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBEYW4g
-V2lsbGlhbXMgPGRhbi5qLndpbGxpYW1zQGludGVsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2Fj
-cGkvbmZpdC9jb3JlLmMgfCAgIDIyICsrKysrKysrKysrKy0tLS0tLS0tLS0NCj4gIDEgZmlsZSBj
-aGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCg0KTG9va3MgZ29vZCwN
-ClJldmlld2VkLWJ5OiBWaXNoYWwgVmVybWEgPHZpc2hhbC5sLnZlcm1hQGludGVsLmNvbT4NCg==
+On Wed, 6 Feb 2019 15:52:43 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Fri, 18 Jan 2019 13:44:25 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > @@ -180,7 +183,12 @@ fetch_store_strlen(unsigned long addr)
+> >  	int len;
+> >  	void __user *vaddr = (void __force __user *) addr;
+> >  
+> > -	len = strnlen_user(vaddr, MAX_STRING_SIZE);
+> > +	if (addr == (unsigned long)current->comm) {
+> > +		len = strlen(current->comm);
+> > +		if (len)
+> > +			len++;
+> 
+> Why only add 1 if len is non zero? Why not always do it.
+> 
+> One thing, len should always be greater than 0, and the other is that
+> this makes it inconsistent with the NULL case of reading the address in
+> userspace.
+
+Agreed, it should not 0, so it should be;
+len = strlen(current->comm) + 1;
+
+Thank you!
+
+> 
+> -- Steve
+> 
+> 
+> > +	} else
+> > +		len = strnlen_user(vaddr, MAX_STRING_SIZE);
+> >  
+> >  	return (len > MAX_STRING_SIZE) ? 0 : len;
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
