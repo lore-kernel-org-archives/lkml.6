@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BA4C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0104C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4131B218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B082177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549631473;
-	bh=Mo5RwKPeFQupXDKrXFc1Ahkfm5TKQT8gxyRHapjGh+8=;
+	s=default; t=1549631479;
+	bh=Hpw+alWVf4HRJL0bVp/AWf3aujoIEkZirIuWt/b/Myg=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=l1vmG06aDUnUwN7Al0XpP01a/yvqc398oKQ8LhuDCmDoXU6OdYxPwsQMdjo13mU3o
-	 6Sj6Xu8q6PxFhXgndiIDxH2dBGnAqnCJJvGaCYLnWiZ6bYEW5oUKJdlcgoidEXp7/q
-	 3a56vvqN80SAipLgsc0py5luzz5XSBnFXdxfPsTo=
+	b=EWq0NlyxSOz4Vhf+vKV4ErFqE+rNvrDyykZ/TbAdED8bmJw4E2kggiYUfs8QoF0VA
+	 UUn+vt2PpnuJvn5kOsXMXu+Udq81d22gxc0T4LFVwRQrF6dmqnJCzzgFeVekInHoji
+	 Z7LmQUyEbHeezO3rOgY1O6j9hiP/H7s1vD144XWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfBHNLL (ORCPT
+        id S1727611AbfBHNLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:11:11 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37814 "EHLO
+        Fri, 8 Feb 2019 08:11:18 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38046 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbfBHNLL (ORCPT
+        with ESMTP id S1726781AbfBHNLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:11:11 -0500
+        Fri, 8 Feb 2019 08:11:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=7hfsyRifw4S3C/OKvZF9n7+rcSsdtnAF6uLl31JeAeA=; b=gJs8yKVfXLVa
-        6y800mcT7yId5UkCyqMFht1zymZeRYQm8LYwtFP/8FvpfPU5ioNZsqGiKiFfvvCUIUXrUaGq1J+fi
-        gTcvwY+HOzHoXFLy7IwC+msmlvxF7ZqbMbcDc7L2FImpNBfK9gxRlqzwZzzy5FKc1qtk4n6xAnDOH
-        XC+KQ=;
+        List-Archive; bh=hENB2q6vvWZl4wvXwZBYVBxOiCYWvgULT3yMKbjPU9o=; b=HnXnwT03sFdU
+        EacfzzlLosR2UV6wDT/4tHaxBwCPOaznhaaxk8VIFPMJZ5CHUTgDcQbzou2VSEDIUYAjE9YFAcB1X
+        FsU6x7P18wT1NHbHYM/jZO1eg/3j8Zp1Wml6kx1/27Vug7ncw1Fo44JQwXxC3yq3nbHiHa4qz1o70
+        XPjiQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gs5vt-0001JL-PE; Fri, 08 Feb 2019 13:11:05 +0000
+        id 1gs5w0-0001Ja-7G; Fri, 08 Feb 2019 13:11:12 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5FAE01127F30; Fri,  8 Feb 2019 13:11:05 +0000 (GMT)
+        id C0F0D1127F30; Fri,  8 Feb 2019 13:11:11 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org
-Subject: Applied "dt-bindings: sound: msm8916-wcd-analog: fix example regulator names" to the asoc tree
-In-Reply-To:  <20190207165755.1548-4-johan@kernel.org>
+        Mark Brown <broonie@kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        alsa-devel@alsa-project.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: codecs: jz4725b: Remove unnecessary const qualifier" to the asoc tree
+In-Reply-To:  <20190208045918.16799-1-natechancellor@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190208131105.5FAE01127F30@debutante.sirena.org.uk>
-Date:   Fri,  8 Feb 2019 13:11:05 +0000 (GMT)
+Message-Id: <20190208131111.C0F0D1127F30@debutante.sirena.org.uk>
+Date:   Fri,  8 Feb 2019 13:11:11 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,7 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dt-bindings: sound: msm8916-wcd-analog: fix example regulator names
+   ASoC: codecs: jz4725b: Remove unnecessary const qualifier
 
 has been applied to the asoc tree at
 
@@ -90,49 +90,57 @@ to this mail.
 Thanks,
 Mark
 
-From 510135535382db7f5ee8727818172e42c9c9cbd5 Mon Sep 17 00:00:00 2001
-From: Johan Hovold <johan@kernel.org>
-Date: Thu, 7 Feb 2019 17:57:55 +0100
-Subject: [PATCH] dt-bindings: sound: msm8916-wcd-analog: fix example regulator
- names
+From d9186330c881468722c005ee772ca745c81a29ef Mon Sep 17 00:00:00 2001
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Thu, 7 Feb 2019 21:59:18 -0700
+Subject: [PATCH] ASoC: codecs: jz4725b: Remove unnecessary const qualifier
 
-Fix upper-case regulator names in the binding example which do not match
-the corresponding required properties.
+Clang warns:
 
-While at it, add a blank line after the required-properties section to
-improve readability.
+sound/soc/codecs/jz4725b.c:177:14: warning: duplicate 'const' declaration specifier [-Wduplicate-decl-specifier]
+static const SOC_VALUE_ENUM_SINGLE_DECL(jz4725b_codec_adc_src_enum,
+             ^
+include/sound/soc.h:356:2: note: expanded from macro 'SOC_VALUE_ENUM_SINGLE_DECL'
+        SOC_VALUE_ENUM_DOUBLE_DECL(name, xreg, xshift, xshift, xmask, xtexts, xvalues)
+        ^
+include/sound/soc.h:353:2: note: expanded from macro 'SOC_VALUE_ENUM_DOUBLE_DECL'
+        const struct soc_enum name = SOC_VALUE_ENUM_DOUBLE(xreg, xshift_l, xshift_r, xmask, \
+        ^
 
-Signed-off-by: Johan Hovold <johan@kernel.org>
+As it points out, SOC_VALUE_ENUM_DOUBLE_DECL has the const attribute in
+its definition so remove it here.
+
+Fixes: e9d97b05a80f ("ASoC: codecs: Add jz4725b-codec driver")
+Link: https://github.com/ClangBuiltLinux/linux/issues/354
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt  | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/soc/codecs/jz4725b.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt b/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt
-index fdcea3d12ee5..e7d17dda55db 100644
---- a/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt
-+++ b/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt
-@@ -30,6 +30,7 @@ Required properties
-  - vdd-cdc-io-supply: phandle to VDD_CDC_IO regulator DT node.
-  - vdd-cdc-tx-rx-cx-supply: phandle to VDD_CDC_TX/RX/CX regulator DT node.
-  - vdd-micbias-supply: phandle of VDD_MICBIAS supply's regulator DT node.
-+
- Optional Properties:
-  - qcom,mbhc-vthreshold-low: Array of 5 threshold voltages in mV for 5 buttons
- 			     detection on headset when the mbhc is powered up
-@@ -92,9 +93,9 @@ spmi_bus {
- 				  "cdc_ear_cnp_int",
- 				  "cdc_hphr_cnp_int",
- 				  "cdc_hphl_cnp_int";
--	               VDD-CDC-IO-supply = <&pm8916_l5>;
--	               VDD-CDC-TX-RX-CX-supply = <&pm8916_l5>;
--	               VDD-MICBIAS-supply = <&pm8916_l13>;
-+	               vdd-cdc-io-supply = <&pm8916_l5>;
-+	               vdd-cdc-tx-rx-cx-supply = <&pm8916_l5>;
-+	               vdd-micbias-supply = <&pm8916_l13>;
- 	               #sound-dai-cells = <1>;
- 	};
+diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
+index 103ccbc5d55c..766354c73076 100644
+--- a/sound/soc/codecs/jz4725b.c
++++ b/sound/soc/codecs/jz4725b.c
+@@ -173,12 +173,12 @@ static const char * const jz4725b_codec_adc_src_texts[] = {
+ 	"Mic 1", "Mic 2", "Line In", "Mixer",
  };
+ static const unsigned int jz4725b_codec_adc_src_values[] = { 0, 1, 2, 3, };
+-static const SOC_VALUE_ENUM_SINGLE_DECL(jz4725b_codec_adc_src_enum,
+-					JZ4725B_CODEC_REG_CR3,
+-					REG_CR3_INSEL_OFFSET,
+-					REG_CR3_INSEL_MASK,
+-					jz4725b_codec_adc_src_texts,
+-					jz4725b_codec_adc_src_values);
++static SOC_VALUE_ENUM_SINGLE_DECL(jz4725b_codec_adc_src_enum,
++				  JZ4725B_CODEC_REG_CR3,
++				  REG_CR3_INSEL_OFFSET,
++				  REG_CR3_INSEL_MASK,
++				  jz4725b_codec_adc_src_texts,
++				  jz4725b_codec_adc_src_values);
+ static const struct snd_kcontrol_new jz4725b_codec_adc_src_ctrl =
+ 			SOC_DAPM_ENUM("Route", jz4725b_codec_adc_src_enum);
+ 
 -- 
 2.20.1
 
