@@ -2,117 +2,179 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD8AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F757C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6FA42147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BEBB2147C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:51:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oUOcF/z2"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YBjgxW62"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbfBHFvE (ORCPT
+        id S1727070AbfBHFvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 00:51:04 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41485 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfBHFvD (ORCPT
+        Fri, 8 Feb 2019 00:51:51 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:40026 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfBHFvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 00:51:03 -0500
-Received: by mail-ed1-f67.google.com with SMTP id p15so1800102edy.8;
-        Thu, 07 Feb 2019 21:51:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4lH59NO+4XoIuJfVc2uOhVjVOoxLCynRZfX+m3dm3I8=;
-        b=oUOcF/z28CVSVspQ/PyH6GsYv5nLPKgBS+CpnD49+nCiPucHsISSQmm63JiYGE3TkR
-         xDt2Kl1q62gocZ/oNHZasGMgdQQQ9dpNBx2OmFq9vINKjZCVLnyEurQZxcDox9x8a3K/
-         KIbzqrQSndquyvZDZPCNOQVC2I7ltICeFNil6tql13SmnDJ7qkpHIXaDEkCPE8Khrp+9
-         Uu4fNQTe3rTtMDb9er511e4jbysVCmPRZtN7bnAMenl5f77wO+/Lnv/sUWXmq4XDNEwX
-         Zwef5VhB+Bxe4HPkp5MTh30p4qFjCGgHxMxyFNf9l5NJdZbqI3FEB4GUeGRYehJxXQqI
-         3nKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4lH59NO+4XoIuJfVc2uOhVjVOoxLCynRZfX+m3dm3I8=;
-        b=m5D+hroiIlbD6VyqlMTlkuLW19jL0xZT4EGKw6h/TIo1dIh2BStomHa0Rphxi7G+Wj
-         CyR/dArgtlKc8xJJ1uYYb1f8K5k5R8de8Pn5w/+TFaRwrHoqjmiFSt+27HWTJJ7GK/Ff
-         sUY77PCFsFRp1EdFdIA4FJNUE3JukRZldtKKq2h+9/8sgA2xjhtRlw4NTnnJHgS3IYkD
-         ffSYY1WIgITgM5CRZL7ecX9QFwLnYhtAVDPhEJZeRfuhSeXm1JkIVOfL+uUMIpLFG11G
-         TAPh3wmjx08Z4pKnvCN5HizEVCiEARjxn2D0vAi/oe+u9chARH6tWm9FGZwYclHO57Xi
-         +sTQ==
-X-Gm-Message-State: AHQUAuZLhpr37Vn1mUsm6O0LXoQWOu74rRmRliYF7L8H6arpRbcQ/HX5
-        zfdPZo74eH3qw4WXFxOHWTs=
-X-Google-Smtp-Source: AHgI3IZb4/tjFMsSs2w2KE7XgKp46jbVp1a10oq1l4/qLbLSBU9aSQBJzWLINtS9JM4LhsyA38rCFQ==
-X-Received: by 2002:a50:b356:: with SMTP id r22mr15539424edd.164.1549605061448;
-        Thu, 07 Feb 2019 21:51:01 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id k12sm794342ejz.4.2019.02.07.21.51.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 07 Feb 2019 21:51:00 -0800 (PST)
-Date:   Thu, 7 Feb 2019 22:50:59 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     ndesaulniers@google.com
-Cc:     yamada.masahiro@socionext.com,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] Makefile: lld: tell clang to use lld
-Message-ID: <20190208055059.GD9647@archlinux-ryzen>
-References: <20190207220155.81351-1-ndesaulniers@google.com>
- <20190207220155.81351-3-ndesaulniers@google.com>
+        Fri, 8 Feb 2019 00:51:51 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x185nAq6118609;
+        Fri, 8 Feb 2019 05:50:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ApExCUUIiNh51VY6PoBf3NHlLOlNUh1N7RqcvsWcFbk=;
+ b=YBjgxW62E1LrbKUPvy1QrolD3UxbeeTfpDkTPjb13UTXSDQ2dhBF6+2IO3hK6CyvggeP
+ n3uhkGE3YzbZ1SqCGv5W91hn/UP+5Dux9rBBPJZDiq/ZL5IaamHQOC8HhS6dGMIk1QpJ
+ ihRUCijZUYgw3+AEG0WpWkww/LycKsgWrC3gDd1GaQoQu+NfXfat0R4uKhtWL7LgJxL/
+ Lq1M+lk4tdB9ApkNsiyiOmT9VteQOJ2ACYv44u5ptzAIL9Qq5hVI44v/ZPxHaNsgNMBg
+ fkehmdSBh/OSqKbZb8nsas1Sc4BK5NTWDtHeNclncswPGRc3+FHuRPWcbc0daL3CB76l UQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2qd97far4w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Feb 2019 05:50:37 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x185oZBj023044
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 05:50:35 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x185oYY6010905;
+        Fri, 8 Feb 2019 05:50:34 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Feb 2019 21:50:33 -0800
+Subject: Re: [PATCH] huegtlbfs: fix page leak during migration of file pages
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20190130211443.16678-1-mike.kravetz@oracle.com>
+ <917e7673-051b-e475-8711-ed012cff4c44@oracle.com>
+ <20190208023132.GA25778@hori1.linux.bs1.fc.nec.co.jp>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <07ce373a-d9ea-f3d3-35cc-5bc181901caf@oracle.com>
+Date:   Thu, 7 Feb 2019 21:50:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207220155.81351-3-ndesaulniers@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190208023132.GA25778@hori1.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9160 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902080043
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 02:01:51PM -0800, ndesaulniers@google.com wrote:
-> This is needed because clang doesn't select which linker to use based on
-> $LD but rather -fuse-ld=$(LD). This is problematic especially for
-> cc-ldoption, which checks for linker flag support via invoking the
-> compiler, rather than the linker.
+On 2/7/19 6:31 PM, Naoya Horiguchi wrote:
+> On Thu, Feb 07, 2019 at 10:50:55AM -0800, Mike Kravetz wrote:
+>> On 1/30/19 1:14 PM, Mike Kravetz wrote:
+>>> +++ b/fs/hugetlbfs/inode.c
+>>> @@ -859,6 +859,16 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
+>>>  	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
+>>>  	if (rc != MIGRATEPAGE_SUCCESS)
+>>>  		return rc;
+>>> +
+>>> +	/*
+>>> +	 * page_private is subpool pointer in hugetlb pages, transfer
+>>> +	 * if needed.
+>>> +	 */
+>>> +	if (page_private(page) && !page_private(newpage)) {
+>>> +		set_page_private(newpage, page_private(page));
+>>> +		set_page_private(page, 0);
 > 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/342
-> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> ---
->  Makefile | 3 +++
->  1 file changed, 3 insertions(+)
+> You don't have to copy PagePrivate flag?
 > 
-> diff --git a/Makefile b/Makefile
-> index 0eae4277206e..6307c17259ea 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -502,6 +502,9 @@ endif
->  CLANG_FLAGS	+= -no-integrated-as
->  KBUILD_CFLAGS	+= $(CLANG_FLAGS)
->  KBUILD_AFLAGS	+= $(CLANG_FLAGS)
-> +ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
-> +CLANG_FLAGS	+= -fuse-ld=lld
-> +endif
 
-This section needs to be moved up above KBUILD_CFLAGS otherwise it never
-actually gets passed along.
+Well my original thought was no.  For hugetlb pages, PagePrivate is not
+associated with page_private.  It indicates a reservation was consumed.
+It is set  when a hugetlb page is newly allocated and the allocation is
+associated with a reservation and the global reservation count is
+decremented.  When the page is added to the page cache or rmap,
+PagePrivate is cleared.  If the page is free'ed before being added to page
+cache or rmap, PagePrivate tells free_huge_page to restore (increment) the
+reserve count as we did not 'instantiate' the page.
 
-With that change, please add:
+So, PagePrivate is only set from the time a huge page is allocated until
+it is added to page cache or rmap.  My original thought was that the page
+could not be migrated during this time.  However, I am not sure if that
+reasoning is correct.  The page is not locked, so it would appear that it
+could be migrated?  But, if it can be migrated at this time then perhaps
+there are bigger issues for the (hugetlb) page fault code?
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-
->  export CLANG_FLAGS
->  endif
->  
-> -- 
-> 2.20.1.791.gb4d0f1c61a-goog
+>>> +
+>>> +	}
+>>> +
+>>>  	if (mode != MIGRATE_SYNC_NO_COPY)
+>>>  		migrate_page_copy(newpage, page);
+>>>  	else
+>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>> index f7e4bfdc13b7..0d9708803553 100644
+>>> --- a/mm/migrate.c
+>>> +++ b/mm/migrate.c
+>>> @@ -703,8 +703,14 @@ void migrate_page_states(struct page *newpage, struct page *page)
+>>>  	 */
+>>>  	if (PageSwapCache(page))
+>>>  		ClearPageSwapCache(page);
+>>> -	ClearPagePrivate(page);
+>>> -	set_page_private(page, 0);
+>>> +	/*
+>>> +	 * Unlikely, but PagePrivate and page_private could potentially
+>>> +	 * contain information needed at hugetlb free page time.
+>>> +	 */
+>>> +	if (!PageHuge(page)) {
+>>> +		ClearPagePrivate(page);
+>>> +		set_page_private(page, 0);
+>>> +	}
 > 
+> # This argument is mainly for existing code...
+> 
+> According to the comment on migrate_page():
+> 
+>     /*
+>      * Common logic to directly migrate a single LRU page suitable for
+>      * pages that do not use PagePrivate/PagePrivate2.
+>      *
+>      * Pages are locked upon entry and exit.
+>      */
+>     int migrate_page(struct address_space *mapping, ...
+> 
+> So this common logic assumes that page_private is not used, so why do
+> we explicitly clear page_private in migrate_page_states()?
+
+Perhaps someone else knows.  If not, I can do some git research and
+try to find out why.
+
+> buffer_migrate_page(), which is commonly used for the case when
+> page_private is used, does that clearing outside migrate_page_states().
+> So I thought that hugetlbfs_migrate_page() could do in the similar manner.
+> IOW, migrate_page_states() should not do anything on PagePrivate.
+> But there're a few other .migratepage callbacks, and I'm not sure all of
+> them are safe for the change, so this approach might not fit for a small fix.
+
+I will look at those as well unless someone knows without researching.
+
+> 
+> # BTW, there seems a typo in $SUBJECT.
+
+Thanks!
+
+-- 
+Mike Kravetz
