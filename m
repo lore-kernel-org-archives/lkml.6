@@ -2,93 +2,140 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C369EC282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909D2C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9432021929
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:40:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kE0/Vu06"
+	by mail.kernel.org (Postfix) with ESMTP id 633D6218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:43:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfBHLk2 (ORCPT
+        id S1726858AbfBHLnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:40:28 -0500
-Received: from ozlabs.org ([203.11.71.1]:38769 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726456AbfBHLk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:40:28 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wtXS2QnZz9sML;
-        Fri,  8 Feb 2019 22:40:24 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549626026;
-        bh=JJqZ+W8MgcHUZatSsFJ8VKpmNMn1kFhO1/BK4AFXmb0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kE0/Vu06rbl30d64a/nNckFgYNA5sL9ojvdaCmoks79emOLtynOa/Y0iq4p8HAoR5
-         VHIVgeF5k0eCdv5KmKIb3i2zhqsGauyjQmnpM3MHbYJfn6ar/9Lr9qQrkfw1y5COQZ
-         8sDWwWJbsehPnEWADXQd6tPT/QW5+/B3R2s/IYq3vyq1CqMvwF+5UcNNHgUP4Zwn3q
-         IxO9xlcizyjtGqIfDnRhPVHXOPUhyek/NEHS/+aZc2DR8wGz0hC9AM+bdJRgzj0pgA
-         4aSpSjvBGNbInRQ+e9GrI6ckEvt3qGR99SeVOq00aMiGL4TLt3esdz3WJvRosl7myX
-         d01oOPeczCi0A==
-Date:   Fri, 8 Feb 2019 22:40:22 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-Cc:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>
-Subject: Re: linux-next: Fixes tag needs some work in the drm-fixes tree
-Message-ID: <20190208224022.6bfdd56d@canb.auug.org.au>
-In-Reply-To: <2145777.rZLEu8YqWI@diego>
-References: <20190208220137.3b72799a@canb.auug.org.au>
-        <2145777.rZLEu8YqWI@diego>
+        Fri, 8 Feb 2019 06:43:20 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49514 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726456AbfBHLnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:43:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 509AB80D;
+        Fri,  8 Feb 2019 03:43:19 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA42E3F719;
+        Fri,  8 Feb 2019 03:43:17 -0800 (PST)
+Date:   Fri, 8 Feb 2019 11:43:15 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        tj@kernel.org, longman@redhat.com, johannes.berg@intel.com,
+        linux-kernel@vger.kernel.org,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
+Message-ID: <20190208114315.GD6972@fuggles.cambridge.arm.com>
+References: <20190111124835.GP1900@hirez.programming.kicks-ass.net>
+ <1547222103.83374.72.camel@acm.org>
+ <20190111165529.GA14054@worktop.programming.kicks-ass.net>
+ <1547226101.83374.80.camel@acm.org>
+ <20190114125235.GB20726@hirez.programming.kicks-ass.net>
+ <1547484753.83374.109.camel@acm.org>
+ <20190118094808.GA27931@hirez.programming.kicks-ass.net>
+ <1250147c-27bc-92e1-3ff5-211f3ba56891@acm.org>
+ <20190201121510.GC31516@hirez.programming.kicks-ass.net>
+ <3c533b0e-b079-79ad-4935-cd61af000ce6@acm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WRmrqpeCRp1v1YZBUH2VnvT"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c533b0e-b079-79ad-4935-cd61af000ce6@acm.org>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WRmrqpeCRp1v1YZBUH2VnvT
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi Bart, Peter,
 
-Hi Heiko,
+On Sun, Feb 03, 2019 at 09:36:38AM -0800, Bart Van Assche wrote:
+> On 2/1/19 4:15 AM, Peter Zijlstra wrote:
+> > On Fri, Jan 18, 2019 at 06:34:20PM -0800, Bart Van Assche wrote:
+> > > I agree with what you wrote. The only code I know of that accesses list
+> > > entries using RCU is the __bfs() function. In that function I found the
+> > > following loop:
+> > > 
+> > > 	list_for_each_entry_rcu(entry, head, entry) { [ ... ] }
+> > 
+> > Thing is; I can't seem to find any __bfs() usage outside of graph_lock.
+> > 
+> >    count_{fwd,bwd}_deps() - takes graph lock
+> > 
+> >    check_{noncircular,redudant}() - called from check_prev_add() <-
+> >    check_prevs_add() <- validate_chain() which takes graph lock
+> > 
+> >    find_usage{,_fwd,_bwd}
+> >      <- check_usage() <- check_irq_usage() <- check_prev_add_irq() <-
+> >      check_prev_add <- check_prevs_add() <- validate_chain() which takes
+> >      graph lock
+> > 
+> >      <- check_usage_{fwd,bdw}() <- mark_lock_irq() <- mark_lock() which
+> >      takes graph lock
+> > 
+> > Or did I miss something? If there are no __bfs() users outside of graph
+> > lock, then we can simply remove that _rcu from the iteration, and
+> > simplify all that.
+> 
+> Every time I make a single change to the lockdep code I have to rerun my
+> test case for a week to make sure that no regressions have been introduced.
+> In other words, I can make further changes but that could take some time. Do
+> you want me to look into this simplification now or after this patch series
+> went upstream?
+> 
+> > > Since zap_class() calls list_del_rcu(&entry->entry), since a grace period
+> > > occurs between the call_rcu() invocation and the RCU callback function,
+> > > since at least an RCU reader lock must be held around RCU loops and since
+> > > sleeping is not allowed while holding an RCU read lock I think there is
+> > > no risk that __bfs() will examine a list entry after it has been freed.
+> > 
+> > So you agree that list_entry_being_freed() should only check the current
+> > pf?
+> 
+> Sorry if I wasn't clear enough. In a previous e-mail I tried to explain that
+> both pf's have to be checked. Another way to explain that is as follows:
+> - Each list entry has one of the following states: free, in use or being
+>   freed.
+> - "Free" means that the corresponding bit in the list_entries_in_use
+>   bitmap has not been set.
+> - "In use" means that the corresponding bit in the list_entries_in_use
+>   bitmap has been set and that none of the corresponding bits in the
+>   list_entries_being_freed bitmaps have been set.
+> - "Being freed" means that the corresponding bit in one of the
+>   list_entries_being_freed bitmaps has been set.
+> 
+> Since it can happen that multiple elements of the pending_free[] array are
+> in the state where call_rcu() has been called but the RCU callback function
+> has not yet been called, I think that zap_class() must check the
+> list_entries_being_freed bitmaps in all pending_free[] array elements.
 
-On Fri, 08 Feb 2019 12:31:38 +0100 Heiko St=C3=BCbner <heiko@sntech.de> wro=
-te:
->
-> we had this warning already from the drm-misc-fixes tree :-) .
+I've also been trying to understand why it's necessary to check both of the
+pending_free entries, and I'm still struggling somewhat. It's true that the
+wakeup in get_pending_free_lock() could lead to both entries being used
+without the RCU call back running in between, however in this scenario then
+any list entries marked for freeing in the first pf will have been unhashed
+and therefore made unreachable to look_up_lock_class().
 
-Sorry about that ... there goes my memory again :-)
+So I think the concern remains that entries are somehow remaining visible
+after being zapped.
 
---=20
-Cheers,
-Stephen Rothwell
+You mentioned earlier in the thread that people actually complained about
+list corruption if you only checked the current pf:
 
---Sig_/WRmrqpeCRp1v1YZBUH2VnvT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  | The list_del_rcu() call must only happen once. I ran into complaints
+  | reporting that the list_del_rcu() call triggered list corruption. This
+  | change made these complaints disappear.
 
------BEGIN PGP SIGNATURE-----
+Do you have any more details about these complaints (e.g. kernel logs etc)?
+Failing that, any idea how to reproduce them?
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxdaqYACgkQAVBC80lX
-0GzGTAgAonbRwa6BT2OMnCXiT0vr8+MzkQPWBcXDrPXJ2LoaKbkXCDMxB65+sLoB
-yR78Vl52nUdVilOp+VMgGdXPOGo4VP1ylNpmb6kDoRWO3FkRrAPsK9y2aEx2ZoRU
-f4myF3pwSrK0OBJJM1NIMlCSPArlLGKqjAIVY8mOIutwERYq2oBvS9d991wStA1m
-Iydwi1TgcZa4Z2Fizx+YC+86F3AZ7y5nT40MwGDnbKPIUlS4wvD7zNFcwQJgiBUT
-arZeq3X0zfMO0tTzqbTJyv/1u96KKZPZkX0JAA/9GdbE1QFZqoogOXvBMWFJWAaU
-GLp4p6UzUzYLfWQ5q8CYBJ1Ejldb9g==
-=//hW
------END PGP SIGNATURE-----
+Thanks,
 
---Sig_/WRmrqpeCRp1v1YZBUH2VnvT--
+Will
