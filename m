@@ -2,264 +2,150 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA97C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E1ECC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5F92146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2681C20863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:37:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="RzKCAJwr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GCyUdBJ2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfBHSgM (ORCPT
+        id S1727960AbfBHShe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:36:12 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45028 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfBHSfm (ORCPT
+        Fri, 8 Feb 2019 13:37:34 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8040 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbfBHShe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:35:42 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so2057569pfh.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 10:35:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uwp4av0rFoVSu/yavwYPj1kXW4mS0yBlIgbcR0OoIqs=;
-        b=RzKCAJwrV5kruqdR9ROVJBGzmOrpqZRBW2b4ikkeus+HjJy0SeFkGTgDly5bZ7IL0Z
-         Pp6VCXsXNSyGXiIh/qqmlHG3Yz/aY2A/9PlbrU3WQxivi0A1CZKovHMVSPqfqsbWT22C
-         0xEYAswdVAQbBDmMFdbyuKTU5bHElKAJ6J70zXOwfX0dOVgPT1w41N/t4odssKWcnhDd
-         sOAjd/JVBfzIIudfONwDyCvpt84DZ3EwJ2kjgwM9By1Wm7VTAU8YELVQHe0XcyQxUuXm
-         MpWIpGfybh06rZB+mqRrX8QtcYoVVPCvYudfbVvB4SxArPbt8+ZoXVZ4xv0uhUI8Zldo
-         NSGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uwp4av0rFoVSu/yavwYPj1kXW4mS0yBlIgbcR0OoIqs=;
-        b=GR1IN9rVCUdm5tr+tX7W16rriRmuVfLx4iA1VSVVNyJVzq0pjB85xHhPDGb3oyuhyc
-         +O5BWPfrB6MHlsKqN8Exd+EAfLmUXXtRNHhH3dSVHK9Eoyri42dYrJnN+q6IAOGOIW3u
-         5vMIpD9Eq0IyQvbycf/9rVn6DBdOVo53aOPf975l2vioYgj4X/eE0x5bnfikJKD081Jk
-         tqyJG9xMb5E4Pzsw9Kzzl1Jyhp1up7xh3oni8gz7eVa4opsq35F+FmsZsecr2/102+HG
-         EZsRpBHRMzEAWLBG8hWI2lb7fr9Na6BCxkUxu/TFGPjwlcIsDSHp0cU6IfGWt3IVgj1k
-         3s4g==
-X-Gm-Message-State: AHQUAuZeb/804/80jh8Kh7Vfxyc/6lZB13detp9umRtu+I03dyyMKdCF
-        PFi5/lFj5PwjTNscAKUse7e0dw==
-X-Google-Smtp-Source: AHgI3IbSK74VjJAIdyqXm8eEwYeIlvatUcPgN1jPffinXIM8wMm2lCLt+z/JOYS5n8uAwyfoUfQirA==
-X-Received: by 2002:a63:c045:: with SMTP id z5mr3619267pgi.135.1549650941301;
-        Fri, 08 Feb 2019 10:35:41 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id 14sm2306472pgq.22.2019.02.08.10.35.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 10:35:40 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com
-Cc:     joel@joelfernandes.org, kernel-team@android.com
-Subject: [PATCH v3 3/7] binder: add function to copy binder object from buffer
-Date:   Fri,  8 Feb 2019 10:35:16 -0800
-Message-Id: <20190208183520.30886-4-tkjos@google.com>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-In-Reply-To: <20190208183520.30886-1-tkjos@google.com>
-References: <20190208183520.30886-1-tkjos@google.com>
+        Fri, 8 Feb 2019 13:37:34 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5dcc570000>; Fri, 08 Feb 2019 10:37:11 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 08 Feb 2019 10:37:31 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 08 Feb 2019 10:37:31 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
+ 2019 18:37:30 +0000
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (104.47.40.51) by
+ HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Fri, 8 Feb 2019 18:37:31 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB3527.namprd12.prod.outlook.com (20.179.94.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Fri, 8 Feb 2019 18:37:15 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
+ 18:37:15 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+CC:     "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "peda@axentia.se" <peda@axentia.se>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
+Thread-Topic: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
+Thread-Index: AQHUv9bE0/Y/Hcdfq0yQz/32u+ruR6XWMncAgAAB09CAAAIogIAAAGjwgAABgxCAAAEIkIAAARIg
+Date:   Fri, 8 Feb 2019 18:37:15 +0000
+Message-ID: <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
+ <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
+ <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
+ <BYAPR12MB339810D394AC0A50934DD5EAC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <3e4db3e9-8198-f1bf-f909-492bf1ff8c56@gmail.com>
+ <BYAPR12MB33981B3AD88271597CC4F7F5C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB3398429D6C403347C149B643C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB33986FBB8B684F2E56948FBCC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <BYAPR12MB33986FBB8B684F2E56948FBCC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3527;6:a3EbIVwLuDsnUYybtKK5g0fMOzOCcJNqWVZgrNvkZsrp5DwQSbl2UzQQFLL7aXF5tdlQcJ4OHuKhNK64bUvnpBLOcbhvyDRbvYdUg0kpBOnycQKKO5HseHSc8uDpD39bIKJ021PmOd1qAiYBNMQpx0/GrjNQX2HH6last225yC61lw0fPCE+Ph6/GZ7bYeBDwulpyTl3HTcXQdPSi3s+rlWzDUWcCEcrsoNd42xUuOR56I2X+gAJV3VdZAKUd+b0hXQjZBXZWnjoY8Lh/XWti7YMgn6gmrqSpPrQ2VEFHt7ZinhE17azcISaGJH8LS0TvzJJ5jS0ba3lRrVD4o80yq/uRkVKBM7vzjNxKf4BFtjsXzLvZO1u/oCDc4szti68hmSC24sTatG8TlGkGKAUrXu+l3g5PGr3FawJMx0L2AwwqKrvWEy0GvMC2p2+SydT5fERDS8FMUl8trwfyF+3DA==;5:nHPETNdJh3uuo+2PnmxT2fPRDbg9zvuEQI2PT9jb4VJO4TyRZzDwCtZgTQ1Nt6D48Z2qiaKrwBbAga3iTMaaZ0s5ABwnNuYRkOk1nJmmvfCZcXBo4uba82jnEwj6aKIOQDQYflfDxqdLGq61acNOosdGtU0ntIl3lYv1EOF35TVzC7Pb0u7NiqH/Blpuz3GQeP6zDqi69T+UbKZI0jIL9A==;7:MAdIy0wOMArg4COKp0f62MXVdhJOMGi2e1yOcgUrdNtZbxWs9AAIQ/yo3Di+Ax49Nw99daEr5p+aV6tUwZIH0/G1MzIt12GMryir1imqTzMbzomZo9DYdzJ+g7o2JFAsLkG8441JrLN8xQWiRzjyZw==
+x-ms-office365-filtering-correlation-id: 9d4b9157-6983-4dbb-6dd2-08d68df47278
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3527;
+x-ms-traffictypediagnostic: BYAPR12MB3527:
+x-microsoft-antispam-prvs: <BYAPR12MB35271C77D255061D9881CB2DC2690@BYAPR12MB3527.namprd12.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(366004)(346002)(136003)(189003)(199004)(478600001)(33656002)(81156014)(3846002)(8676002)(7736002)(305945005)(14454004)(68736007)(81166006)(8936002)(6116002)(229853002)(2906002)(6636002)(74316002)(93886005)(2501003)(106356001)(105586002)(476003)(11346002)(446003)(53936002)(486006)(71200400001)(55016002)(71190400001)(25786009)(2940100002)(9686003)(6246003)(4326008)(7696005)(76176011)(66066001)(99286004)(6436002)(93156006)(86362001)(316002)(256004)(110136005)(54906003)(97736004)(6506007)(26005)(102836004)(14444005)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3527;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hYDyEHzFPTo/00W1JC6CZLjdL7SY63Xtn7WSA3/WIB92+zMYnhAcP4/tUYZOqSQ/AGF+snjxWUokmrH9IuVuecDX6Vqujw8NNBmrEPcT4X+NTQy4UN/7xNIc1XmU49byR6ZOnZRC87kms6gQe2AxECJEkDd18antPGowwATHS7rU5yVdkSOgxV9+iWqefOOziy390Jn0dFKG7K7BBtScKStDQjxVelC7UK/AtbRLpKOiIroASevzkrBlvkrdXXIjiTare+4w6E0gZzJooSU9HhM6OOnQmX/mHDG6UX8+P+1CS6vYqtpUcdNLJy74M3qW8E2VbT0ATEaAuKXqIopl5MJFtBdMHN0AtoXcQDQZJcVZYXEf+rhoPhiK7Q0g6aCDb4uxLT2J5vTLZUHzgvU7NAGQGCdmxNIyJdKJOLOP460=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d4b9157-6983-4dbb-6dd2-08d68df47278
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 18:37:15.0434
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3527
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549651031; bh=e5F/ydBrZoGmtHzxNydZkkSWH4PyAuvinRhMnQTnQFM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=GCyUdBJ2A+6ceRLxe7Kbq14SMhmCo1i41aBC2QlDXauV2EjyqT4SZVNfdO7Vkgq44
+         qZVWXYglhXLdVekuMRJtn//WIwgdDAyoDcbCvAmOVFfVPtZT2ZP/AThrBfSAqeisXO
+         kU+OvN9qrRePm4yqCngG8SFvvhBu9O09RVV+A9i+laZwOg6HTEVl8lBz7ZglL34fm2
+         lbdmE/99sIhEta7541PC7aYDgW1SOegfPMsSU2IdbyfVkrp9yZkgWa76uF0Hb1p5mf
+         Q1gEy2Q7KlxfCqSR/GSEkVvLNdWw3xSXBBtRYVZ4Jm8LILr7wu+IeZd8XUNTYcyuad
+         N0vSNaNbXLGnQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When creating or tearing down a transaction, the binder driver
-examines objects in the buffer and takes appropriate action.
-To do this without needing to dereference pointers into the
-buffer, the local copies of the objects are needed. This patch
-introduces a function to validate and copy binder objects
-from the buffer to a local structure.
-
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
-v2: remove casts as suggested by Dan Carpenter
-
- drivers/android/binder.c | 75 +++++++++++++++++++++++++++++++---------
- 1 file changed, 58 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 74d0c1ff874e2..8063b405e4fa1 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -628,6 +628,26 @@ struct binder_transaction {
- 	spinlock_t lock;
- };
- 
-+/**
-+ * struct binder_object - union of flat binder object types
-+ * @hdr:   generic object header
-+ * @fbo:   binder object (nodes and refs)
-+ * @fdo:   file descriptor object
-+ * @bbo:   binder buffer pointer
-+ * @fdao:  file descriptor array
-+ *
-+ * Used for type-independent object copies
-+ */
-+struct binder_object {
-+	union {
-+		struct binder_object_header hdr;
-+		struct flat_binder_object fbo;
-+		struct binder_fd_object fdo;
-+		struct binder_buffer_object bbo;
-+		struct binder_fd_array_object fdao;
-+	};
-+};
-+
- /**
-  * binder_proc_lock() - Acquire outer lock for given binder_proc
-  * @proc:         struct binder_proc to acquire
-@@ -2017,26 +2037,33 @@ static void binder_cleanup_transaction(struct binder_transaction *t,
- }
- 
- /**
-- * binder_validate_object() - checks for a valid metadata object in a buffer.
-+ * binder_get_object() - gets object and checks for valid metadata
-+ * @proc:	binder_proc owning the buffer
-  * @buffer:	binder_buffer that we're parsing.
-- * @offset:	offset in the buffer at which to validate an object.
-+ * @offset:	offset in the @buffer at which to validate an object.
-+ * @object:	struct binder_object to read into
-  *
-  * Return:	If there's a valid metadata object at @offset in @buffer, the
-- *		size of that object. Otherwise, it returns zero.
-+ *		size of that object. Otherwise, it returns zero. The object
-+ *		is read into the struct binder_object pointed to by @object.
-  */
--static size_t binder_validate_object(struct binder_buffer *buffer, u64 offset)
-+static size_t binder_get_object(struct binder_proc *proc,
-+				struct binder_buffer *buffer,
-+				unsigned long offset,
-+				struct binder_object *object)
- {
--	/* Check if we can read a header first */
-+	size_t read_size;
- 	struct binder_object_header *hdr;
- 	size_t object_size = 0;
- 
--	if (buffer->data_size < sizeof(*hdr) ||
--	    offset > buffer->data_size - sizeof(*hdr) ||
--	    !IS_ALIGNED(offset, sizeof(u32)))
-+	read_size = min_t(size_t, sizeof(*object), buffer->data_size - offset);
-+	if (read_size < sizeof(*hdr))
- 		return 0;
-+	binder_alloc_copy_from_buffer(&proc->alloc, object, buffer,
-+				      offset, read_size);
- 
--	/* Ok, now see if we can read a complete object. */
--	hdr = (struct binder_object_header *)(buffer->data + offset);
-+	/* Ok, now see if we read a complete object. */
-+	hdr = &object->hdr;
- 	switch (hdr->type) {
- 	case BINDER_TYPE_BINDER:
- 	case BINDER_TYPE_WEAK_BINDER:
-@@ -2245,6 +2272,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
- 	for (offp = off_start; offp < off_end; offp++) {
- 		struct binder_object_header *hdr;
- 		size_t object_size;
-+		struct binder_object object;
- 		binder_size_t object_offset;
- 		binder_size_t buffer_offset = (uintptr_t)offp -
- 			(uintptr_t)buffer->data;
-@@ -2252,14 +2280,14 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
- 		binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
- 					      buffer, buffer_offset,
- 					      sizeof(object_offset));
--		object_size = binder_validate_object(buffer, object_offset);
-+		object_size = binder_get_object(proc, buffer,
-+						object_offset, &object);
- 		if (object_size == 0) {
- 			pr_err("transaction release %d bad object at offset %lld, size %zd\n",
- 			       debug_id, (u64)object_offset, buffer->data_size);
- 			continue;
- 		}
--		hdr = (struct binder_object_header *)
--			(buffer->data + object_offset);
-+		hdr = &object.hdr;
- 		switch (hdr->type) {
- 		case BINDER_TYPE_BINDER:
- 		case BINDER_TYPE_WEAK_BINDER: {
-@@ -3159,6 +3187,7 @@ static void binder_transaction(struct binder_proc *proc,
- 	for (; offp < off_end; offp++) {
- 		struct binder_object_header *hdr;
- 		size_t object_size;
-+		struct binder_object object;
- 		binder_size_t object_offset;
- 		binder_size_t buffer_offset =
- 			(uintptr_t)offp - (uintptr_t)t->buffer->data;
-@@ -3168,7 +3197,8 @@ static void binder_transaction(struct binder_proc *proc,
- 					      t->buffer,
- 					      buffer_offset,
- 					      sizeof(object_offset));
--		object_size = binder_validate_object(t->buffer, object_offset);
-+		object_size = binder_get_object(target_proc, t->buffer,
-+						object_offset, &object);
- 		if (object_size == 0 || object_offset < off_min) {
- 			binder_user_error("%d:%d got transaction with invalid offset (%lld, min %lld max %lld) or object.\n",
- 					  proc->pid, thread->pid,
-@@ -3181,8 +3211,7 @@ static void binder_transaction(struct binder_proc *proc,
- 			goto err_bad_offset;
- 		}
- 
--		hdr = (struct binder_object_header *)
--			(t->buffer->data + object_offset);
-+		hdr = &object.hdr;
- 		off_min = object_offset + object_size;
- 		switch (hdr->type) {
- 		case BINDER_TYPE_BINDER:
-@@ -3197,6 +3226,9 @@ static void binder_transaction(struct binder_proc *proc,
- 				return_error_line = __LINE__;
- 				goto err_translate_failed;
- 			}
-+			binder_alloc_copy_to_buffer(&target_proc->alloc,
-+						    t->buffer, object_offset,
-+						    fp, sizeof(*fp));
- 		} break;
- 		case BINDER_TYPE_HANDLE:
- 		case BINDER_TYPE_WEAK_HANDLE: {
-@@ -3210,6 +3242,9 @@ static void binder_transaction(struct binder_proc *proc,
- 				return_error_line = __LINE__;
- 				goto err_translate_failed;
- 			}
-+			binder_alloc_copy_to_buffer(&target_proc->alloc,
-+						    t->buffer, object_offset,
-+						    fp, sizeof(*fp));
- 		} break;
- 
- 		case BINDER_TYPE_FD: {
-@@ -3226,6 +3261,9 @@ static void binder_transaction(struct binder_proc *proc,
- 				goto err_translate_failed;
- 			}
- 			fp->pad_binder = 0;
-+			binder_alloc_copy_to_buffer(&target_proc->alloc,
-+						    t->buffer, object_offset,
-+						    fp, sizeof(*fp));
- 		} break;
- 		case BINDER_TYPE_FDA: {
- 			struct binder_fd_array_object *fda =
-@@ -3310,7 +3348,10 @@ static void binder_transaction(struct binder_proc *proc,
- 				return_error_line = __LINE__;
- 				goto err_translate_failed;
- 			}
--			last_fixup_obj = bp;
-+			binder_alloc_copy_to_buffer(&target_proc->alloc,
-+						    t->buffer, object_offset,
-+						    bp, sizeof(*bp));
-+			last_fixup_obj = t->buffer->data + object_offset;
- 			last_fixup_min_off = 0;
- 		} break;
- 		default:
--- 
-2.20.1.791.gb4d0f1c61a-goog
-
+PiA+ID4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBpMmNfYWRhcHRlcl9xdWlya3MgdGVncmExOTRf
+aTJjX3F1aXJrcyA9IHsNCj4gPiA+Pj4gIAkuZmxhZ3MgPSBJMkNfQVFfTk9fWkVST19MRU4sDQo+
+ID4gPj4+ICsJLm1heF93cml0ZV9sZW4gPSA2NTUzNSAtIEkyQ19QQUNLRVRfSEVBREVSX1NJWkUs
+DQo+ID4gPj4NCj4gPiA+PiBJZGVhbGx5IGl0IHNob3VsZCBiZSBTWl82NEsgLSBJMkNfUEFDS0VU
+X0hFQURFUl9TSVpFIHRvIG5vdCBtaXNzIHRoZSBvbmUgYnl0ZSwgb3RoZXJ3aXNlIGdvb2QgdG8g
+bWU6DQo+ID4gPj4NCj4gPiA+PiBSZXZpZXdlZC1ieTogRG1pdHJ5IE9zaXBlbmtvIDxkaWdldHhA
+Z21haWwuY29tPg0KPiA+ID4gIA0KPiA+ID4gV2l0aCBTWl82NEsgLSBJMkNfUEFDS0VUX0hFQURS
+X1NpemUsIFdoZW4gd2UgY29tcHV0ZSBkbWFfYnVmX3NpemUgDQo+ID4gPiA9IG1heF93cml0ZV9s
+ZW4gKyBJMkNfUEFDS0VUX0hFQURFUl9TSVpFLCBkbWFfYnVmX3NpemUgd2lsbCBiZSANCj4gPiA+
+IFNaXzY0SyB3aGljaCBpcyAweDEwMDAwIGFwYmRtYSBkbWEgY291bnQgbGltaXQgc2hvdWxkIGJl
+IDwgNjRLIA0KPiA+ID4gbWVhbmluZyA2NTUzNSBtYXggaXMgYWxsb3dlZA0KPiA+ID4gDQo+ID4N
+Cj4gPiBCdXQgaXQncyBmb3IgdGhlIEdQQ0RNQSwgZG9lcyBpdCBoYXZlIHRoZSBzYW1lIDY0SyBs
+aW1pdCBhcyBBUEIgRE1BPw0KPg0KIDY0SyBsaW1pdCBpcyBmb3IgQVBCRE1BLiBUaGlzIHBhdGNo
+IGhhcyBBUEJETUEgc3VwcG9ydCBvbmx5LiBObyBHUENETUEgc3VwcG9ydCBzbyBidWYgc2l6ZSBs
+aW1pdCBpcyBiYXNlZCBvbiBBUEJETUEuDQogR1BDRE1BIHN1cHBvcnRzIHVwdG8gMUdCLiANCg0K
+IEkgdGhpbmsgZG1hX2J1Zl9zaXplIGlzIG9ubHkgZm9yIGJ1ZmZlciBhbGxvY2F0aW9uIHNvIHNo
+b3VsZG7igJl0IGhhcm0gZm9yIGV4YWN0IDY0Sy4NCldpbGwgdGFrZSBhIGxvb2sgYXQgZG1hIGRy
+aXZlci4uLg0KDQpBbGwgbXNnIHJlYWRzLCBtYXggbGVuZ3RoIGlzIDY1NTM1DQpBbGwgbXNnIHdy
+aXRlcywgbWF4IGxlbmd0aCByZXF1ZXN0cyBpcyBhbHNvIGxpbWl0ZWQgdG8gNjU1MzUgZHVlIHRv
+IHUxNiB0eXBlIG9mIG1zZy5sZW4gU28sIEluIGFueSBjYXNlLCB3ZSBkb27igJl0IG5lZWQgNjU1
+MzYgYnl0ZXMuDQpDb25mdXNlZCwgeWVhaCB3aXRoIG1heCB3cml0ZSBxdWlyaywgbWF4IHRyYW5z
+ZmVyIGNhbiBiZSA2NEsuDQoNCldpbGwgY2hhbmdlIHRvIDY0SyBpbnN0ZWFkIG9mIDY1NTM1Lg0K
