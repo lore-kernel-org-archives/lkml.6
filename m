@@ -2,165 +2,199 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A6BC4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F927C4151A
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CECCE20857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:50:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="0k9WPPCK"
+	by mail.kernel.org (Postfix) with ESMTP id 7099B2146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbfBHMul (ORCPT
+        id S1727469AbfBHMux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:50:41 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36479 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726624AbfBHMul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:50:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so3473811wrv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:50:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mobiveil.co.in; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qnHdX7TnXOEiHXHYVasMmzva4CaTpXguv8jLldqZ/zM=;
-        b=0k9WPPCKKItYXzndcogdzxnVoO9cQlpjEn2qq4gxRc/FV272WdMDa/HugcL9upD7P6
-         t8xXnl6q1RTUo5498d+qetP/xj0gz+rlcUWUhDBPM2JNl47QC+KxFSUeH4b9wHJX+A4E
-         dK7tUg9ny3O1jwPkgEAHETOzII/BJLVdDNXV4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qnHdX7TnXOEiHXHYVasMmzva4CaTpXguv8jLldqZ/zM=;
-        b=W/LYGNV9tJSr8Js62OSq7486SQ9JAClfgr/qUKbs5rl6BBNwWbLmdxmDK1ePI2TOut
-         ceAasUWHLaWG6tpMi5IFQdYLWMq0V/N91O1dFPapZtzaeTLEOGyZ25Pj8a68pnIDnfYs
-         0+cABb7E5XWocY8ad0NobwgO2ZDdfKWHwifbY6+SixWup3JkxKm/V2m5OZqqdHi8yA9M
-         1JMFD2Ze3VgSLqWv3tThRbsc3Aj0gjJ1SqorACdAg5fvvxOOET7WZEm1RDnevj9WVQw0
-         LjOA73zv6c2MAgrgeZudTntemQWwTmMxgpe7LU2SSf0bWy8gvtevz5fSNUxByB6kuJxI
-         ib+g==
-X-Gm-Message-State: AHQUAubaSEJpEPEWCO4q4ll0lGslK94GajvOtMCd9sG/nfwUsgqW/rOy
-        3DllsNL5ft4/nRguTWfvSyrHU1oOJpOV4A3DOTec+A==
-X-Google-Smtp-Source: AHgI3IYkO1gBaw8j2seTdh1YGRiQzYKKQql6G6YxqXpzAf/hB9zHkLibVQpTzUvEP9Z7w1HZvDqzA1aD42q9jVaM4Ms=
-X-Received: by 2002:adf:fd81:: with SMTP id d1mr16559738wrr.105.1549630239150;
- Fri, 08 Feb 2019 04:50:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-26-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-26-Zhiqiang.Hou@nxp.com>
-From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Date:   Fri, 8 Feb 2019 18:23:18 +0530
-Message-ID: <CAFZiPx24PEE6LnUaY5MiQ_QDLbwkF-BvWe8s9ycUDVH-dN2_xg@mail.gmail.com>
-Subject: Re: [PATCHv3 25/27] PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fri, 8 Feb 2019 07:50:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58662 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726585AbfBHMuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:50:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9B245B66E;
+        Fri,  8 Feb 2019 12:50:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 78B751E3DB8; Fri,  8 Feb 2019 13:50:49 +0100 (CET)
+Date:   Fri, 8 Feb 2019 13:50:49 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Chris Mason <clm@fb.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
+ pages"
+Message-ID: <20190208125049.GA11587@quack2.suse.cz>
+References: <20190130041707.27750-1-david@fromorbit.com>
+ <20190130041707.27750-2-david@fromorbit.com>
+ <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
+ <20190131013403.GI4205@dastard>
+ <20190131091011.GP18811@dhcp22.suse.cz>
+ <20190131185704.GA8755@castle.DHCP.thefacebook.com>
+ <20190131221904.GL4205@dastard>
+ <20190207102750.GA4570@quack2.suse.cz>
+ <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
+ <20190208095507.GB6353@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208095507.GB6353@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ZQ,
+On Fri 08-02-19 10:55:07, Jan Kara wrote:
+> On Thu 07-02-19 21:37:27, Andrew Morton wrote:
+> > On Thu, 7 Feb 2019 11:27:50 +0100 Jan Kara <jack@suse.cz> wrote:
+> > 
+> > > On Fri 01-02-19 09:19:04, Dave Chinner wrote:
+> > > > Maybe for memcgs, but that's exactly the oppose of what we want to
+> > > > do for global caches (e.g. filesystem metadata caches). We need to
+> > > > make sure that a single, heavily pressured cache doesn't evict small
+> > > > caches that lower pressure but are equally important for
+> > > > performance.
+> > > > 
+> > > > e.g. I've noticed recently a significant increase in RMW cycles in
+> > > > XFS inode cache writeback during various benchmarks. It hasn't
+> > > > affected performance because the machine has IO and CPU to burn, but
+> > > > on slower machines and storage, it will have a major impact.
+> > > 
+> > > Just as a data point, our performance testing infrastructure has bisected
+> > > down to the commits discussed in this thread as the cause of about 40%
+> > > regression in XFS file delete performance in bonnie++ benchmark.
+> > > 
+> > 
+> > Has anyone done significant testing with Rik's maybe-fix?
+> 
+> I will give it a spin with bonnie++ today. We'll see what comes out.
 
-On Tue, Jan 29, 2019 at 1:41 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
->
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->
-> When LX2 PCIe controller is sending multiple split completions and
-> ACK latency expires indicating that ACK should be send at priority.
-> But because of large number of split completions and FC update DLLP,
-> the controller does not give priority to ACK transmission. This
-> results into ACK latency timer timeout error at the link partner and
-> the pending TLPs are replayed by the link partner again.
->
-> Workaround:
-> 1. Reduce the ACK latency timeout value to a very small value.
-> 2. Restrict the number of completions from the LX2 PCIe controller
->    to 1, by changing the Max Read Request Size (MRRS) of link partner
->    to the same value as Max Packet size (MPS).
->
-> This patch implemented part 1, the part 2 can be set by kernel parameter
-> 'pci=pcie_bus_perf'
->
-> This ERRATA is only for LX2160A Rev1.0, and it will be fixed
-> in Rev2.0.
->
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
-> V3:
->  - Integrated without change from http://patchwork.ozlabs.org/patch/1006796/
->
->  .../pci/controller/mobiveil/pci-layerscape-gen4.c | 15 +++++++++++++++
->  drivers/pci/controller/mobiveil/pcie-mobiveil.h   |  4 ++++
->  2 files changed, 19 insertions(+)
->
-> diff --git a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-> index d2c5dbbd5e3c..20ce146788ca 100644
-> --- a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-> +++ b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-> @@ -82,12 +82,27 @@ static bool ls_pcie_g4_is_bridge(struct ls_pcie_g4 *pcie)
->         return header_type == PCI_HEADER_TYPE_BRIDGE;
->  }
->
-> +static void workaround_A011451(struct ls_pcie_g4 *pcie)
-> +{
-> +       struct mobiveil_pcie *mv_pci = pcie->pci;
-> +       u32 val;
-> +
-> +       /* Set ACK latency timeout */
-> +       val = csr_readl(mv_pci, GPEX_ACK_REPLAY_TO);
-> +       val &= ~(ACK_LAT_TO_VAL_MASK << ACK_LAT_TO_VAL_SHIFT);
-> +       val |= (4 << ACK_LAT_TO_VAL_SHIFT);
-> +       csr_writel(mv_pci, val, GPEX_ACK_REPLAY_TO);
-> +}
-> +
->  static int ls_pcie_g4_host_init(struct mobiveil_pcie *pci)
->  {
->         struct ls_pcie_g4 *pcie = to_ls_pcie_g4(pci);
->
->         pcie->rev = csr_readb(pci, PCI_REVISION_ID);
->
-> +       if (pcie->rev == REV_1_0)
-> +               workaround_A011451(pcie);
-> +
->         return 0;
->  }
->
-> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> index ab43de5e4b2b..f0e2e4ae09b5 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> @@ -85,6 +85,10 @@
->  #define PAB_AXI_AMAP_PEX_WIN_H(win)    PAB_REG_ADDR(0x0bac, win)
->  #define PAB_INTP_AXI_PIO_CLASS         0x474
->
-> +#define GPEX_ACK_REPLAY_TO             0x438
-> +#define  ACK_LAT_TO_VAL_MASK           0x1fff
-> +#define  ACK_LAT_TO_VAL_SHIFT          0
-> +
->  #define PAB_PEX_AMAP_CTRL(win)         PAB_REG_ADDR(0x4ba0, win)
->  #define  AMAP_CTRL_EN_SHIFT            0
->  #define  AMAP_CTRL_TYPE_SHIFT          1
-> --
-> 2.17.1
->
-again, can we avoid errata number on patch title and have a brief title instead?
+OK, I did a bonnie++ run with Rik's patch (on top of 4.20 to rule out other
+differences). This machine does not show so big differences in bonnie++
+numbers but the difference is still clearly visible. The results are
+(averages of 5 runs):
+
+		 Revert			Base			Rik
+SeqCreate del    78.04 (   0.00%)	98.18 ( -25.81%)	90.90 ( -16.48%)
+RandCreate del   87.68 (   0.00%)	95.01 (  -8.36%)	87.66 (   0.03%)
+
+'Revert' is 4.20 with "mm: don't reclaim inodes with many attached pages"
+and "mm: slowly shrink slabs with a relatively small number of objects"
+reverted. 'Base' is the kernel without any reverts. 'Rik' is a 4.20 with
+Rik's patch applied.
+
+The numbers are time to do a batch of deletes so lower is better. You can see
+that the patch did help somewhat but it was not enough to close the gap
+when files are deleted in 'readdir' order.
+
+								Honza
+
+> > From: Rik van Riel <riel@surriel.com>
+> > Subject: mm, slab, vmscan: accumulate gradual pressure on small slabs
+> > 
+> > There are a few issues with the way the number of slab objects to scan is
+> > calculated in do_shrink_slab.  First, for zero-seek slabs, we could leave
+> > the last object around forever.  That could result in pinning a dying
+> > cgroup into memory, instead of reclaiming it.  The fix for that is
+> > trivial.
+> > 
+> > Secondly, small slabs receive much more pressure, relative to their size,
+> > than larger slabs, due to "rounding up" the minimum number of scanned
+> > objects to batch_size.
+> > 
+> > We can keep the pressure on all slabs equal relative to their size by
+> > accumulating the scan pressure on small slabs over time, resulting in
+> > sometimes scanning an object, instead of always scanning several.
+> > 
+> > This results in lower system CPU use, and a lower major fault rate, as
+> > actively used entries from smaller caches get reclaimed less aggressively,
+> > and need to be reloaded/recreated less often.
+> > 
+> > [akpm@linux-foundation.org: whitespace fixes, per Roman]
+> > [riel@surriel.com: couple of fixes]
+> >   Link: http://lkml.kernel.org/r/20190129142831.6a373403@imladris.surriel.com
+> > Link: http://lkml.kernel.org/r/20190128143535.7767c397@imladris.surriel.com
+> > Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
+> > Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
+> > Signed-off-by: Rik van Riel <riel@surriel.com>
+> > Tested-by: Chris Mason <clm@fb.com>
+> > Acked-by: Roman Gushchin <guro@fb.com>
+> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Dave Chinner <dchinner@redhat.com>
+> > Cc: Jonathan Lemon <bsd@fb.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: <stable@vger.kernel.org>
+> > 
+> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> > ---
+> > 
+> > 
+> > --- a/include/linux/shrinker.h~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
+> > +++ a/include/linux/shrinker.h
+> > @@ -65,6 +65,7 @@ struct shrinker {
+> >  
+> >  	long batch;	/* reclaim batch size, 0 = default */
+> >  	int seeks;	/* seeks to recreate an obj */
+> > +	int small_scan;	/* accumulate pressure on slabs with few objects */
+> >  	unsigned flags;
+> >  
+> >  	/* These are for internal use */
+> > --- a/mm/vmscan.c~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
+> > +++ a/mm/vmscan.c
+> > @@ -488,18 +488,30 @@ static unsigned long do_shrink_slab(stru
+> >  		 * them aggressively under memory pressure to keep
+> >  		 * them from causing refetches in the IO caches.
+> >  		 */
+> > -		delta = freeable / 2;
+> > +		delta = (freeable + 1) / 2;
+> >  	}
+> >  
+> >  	/*
+> >  	 * Make sure we apply some minimal pressure on default priority
+> > -	 * even on small cgroups. Stale objects are not only consuming memory
+> > +	 * even on small cgroups, by accumulating pressure across multiple
+> > +	 * slab shrinker runs. Stale objects are not only consuming memory
+> >  	 * by themselves, but can also hold a reference to a dying cgroup,
+> >  	 * preventing it from being reclaimed. A dying cgroup with all
+> >  	 * corresponding structures like per-cpu stats and kmem caches
+> >  	 * can be really big, so it may lead to a significant waste of memory.
+> >  	 */
+> > -	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
+> > +	if (!delta && shrinker->seeks) {
+> > +		unsigned long nr_considered;
+> > +
+> > +		shrinker->small_scan += freeable;
+> > +		nr_considered = shrinker->small_scan >> priority;
+> > +
+> > +		delta = 4 * nr_considered;
+> > +		do_div(delta, shrinker->seeks);
+> > +
+> > +		if (delta)
+> > +			shrinker->small_scan -= nr_considered << priority;
+> > +	}
+> >  
+> >  	total_scan += delta;
+> >  	if (total_scan < 0) {
+> > _
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
