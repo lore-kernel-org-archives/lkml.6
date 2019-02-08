@@ -2,97 +2,233 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4209C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867ACC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3E1120855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F69020823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:38:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lq+Go2oG"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dnSMd9Tk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbfBHTen (ORCPT
+        id S1727764AbfBHTi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:34:43 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51423 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbfBHTel (ORCPT
+        Fri, 8 Feb 2019 14:38:57 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50220 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbfBHTi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:34:41 -0500
-Received: by mail-it1-f194.google.com with SMTP id y184so5331575itc.1;
-        Fri, 08 Feb 2019 11:34:40 -0800 (PST)
+        Fri, 8 Feb 2019 14:38:57 -0500
+Received: by mail-it1-f196.google.com with SMTP id z7so11717573iti.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 11:38:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+ESOqZSGyoucI1+2p8zSZ9yGK4zHeL7l9qckYjJCW8o=;
-        b=lq+Go2oGIEjUPWFyebfY/GOhPPxUcu3LVXirMD5v9iKafnahVq5Pz0S1/XU59goI/W
-         S+KGlGVztloJnaVsobc57dM2thktdUJ55+XyXPAFO8FQxRiIR5iy2A317FAmvk95dJ3Y
-         Utff5xF+wTn9byz31BlEI0KoBG6KFJJA0tlvMRqsmmUbEshEy0ToQUA4ZBS9QtgoWiLy
-         2Md+i1aE2U6flYOO8cnLdUvpmhSpP5+t1WYV8NCojJddiN1u8WDk8o+BbzJvK5nLhNju
-         XzTlGFnFIGxmylxRWpQRzeORVI2RJ2DCRSIWbYLNy6DFTFtOOtHQ0jj2ml4WkXzLQfrP
-         zFmg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R7U+rdDo+q7kmT2LehXnXJ8Sv20e3ClgkFSKKQGngkw=;
+        b=dnSMd9TkMWIg4vIUs0CIPKYsG4M0Fw9G6GZ+RtEAR8myfMdneiC0VxD/BlfAkoYe66
+         iTmTIxovuRMCRlOUaMN86BDQuaztlpfXV3LnXs9VXQ1afqVsterkerU1CMnM79A7CnBI
+         3jc0YFamn9xUUPTx1QVydOiforkjbRdw5TjA8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+ESOqZSGyoucI1+2p8zSZ9yGK4zHeL7l9qckYjJCW8o=;
-        b=sqwqi94cnu1RhOmkDLEQlAN/eXSGxuA+kN6lWabiYRiotqfImddv+/pyY6V32z49Zo
-         CYJnUSTBD8fC/zqfpd+rVx8118XHLI21TMX3vXH/kgWwJtjhxeIuS5Am2t1Bug8KodrQ
-         +r8lkBnciCE+IKfJTSRkv3ITS5lS/TDRWK9Lt3SohmVF/CZYFiwY6YxgMsO2utMSriVo
-         gdrHoNEWthdJrDPX7IAQLBxtlVeDfd3Hcacjw4nT8DwhVUFRdGzEhaQ7V3uYjC/18pWy
-         echqaCj0uVQsXWiJ+OEriVVUM52WWXLTyr93kzS2WLTT+CA/nyALeFgGPfaiNTB6dR5r
-         sIZQ==
-X-Gm-Message-State: AHQUAuZ6Ty8jxV5SzJ7yvWcmDQF4Fs/h6DWSSMhHsbctllRloWPVmNB3
-        fP5ORp8vn1xCL35DWfKDojA+39JP
-X-Google-Smtp-Source: AHgI3IbP4cEZCwtHdM7tNUSYXeaVu2HMJtz+jw+B/p39bnzvbER1iOWbb0+f0WNdc9g8+kVPc/oZFQ==
-X-Received: by 2002:a24:738f:: with SMTP id y137mr92232itb.136.1549654480589;
-        Fri, 08 Feb 2019 11:34:40 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id v202sm1636425ita.13.2019.02.08.11.34.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R7U+rdDo+q7kmT2LehXnXJ8Sv20e3ClgkFSKKQGngkw=;
+        b=ilyPPhM9HvtsEMUKFXUdQ5nMdepaeQ6u46upad266KtZG7lbXDiVlY2kgGZCXPJ3tf
+         eARznHpKoZNetC9/HXzx/Z65stumq++FGF6u7p1o4SCTAXOyGmJw/3Zm400Ie72QyVFk
+         E3b9w23qiBzEdmWplzZl2tdHH0+6I8iPtf6tTOa7pPtxrdMWu+w4Ws9lAfq+8lNPhi7V
+         Qlo1hzFGwa26irMH9QxPJvogiLcWllX1bgapUxCtYxdl34qEWxUeyGM0zSNaCYcrdhRA
+         Sp3lGsOhLiyZvMDnQ2HkzPNvphBcSilLVKXq6PQK3WKga7xYid6JGnXRxqQzuv2+tPg0
+         2K+A==
+X-Gm-Message-State: AHQUAuby2/vLD+qoBkFD6TJEikeeJO7JDzukKJAd1ArEOWj3VRy2bZ89
+        3sZ+R9bTuJ6WuIpU+WzWGSH9Bo/ss8U=
+X-Google-Smtp-Source: AHgI3IblZAjKInM5g+urnggrz2MbLU5+fiNSgT39GNb4VZlHdap1lZhwmWAuhdZqoWoSA3AZNS8ojA==
+X-Received: by 2002:a02:8561:: with SMTP id g88mr11942416jai.68.1549654735493;
+        Fri, 08 Feb 2019 11:38:55 -0800 (PST)
+Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
+        by smtp.gmail.com with ESMTPSA id o26sm1269467iob.73.2019.02.08.11.38.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 11:34:39 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] Input: lm8323: remove recursive mutex lock/unlock
-Date:   Fri,  8 Feb 2019 14:34:34 -0500
-Message-Id: <20190208193434.5629-2-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190208193434.5629-1-TheSven73@gmail.com>
-References: <20190208193434.5629-1-TheSven73@gmail.com>
+        Fri, 08 Feb 2019 11:38:54 -0800 (PST)
+From:   Nick Crews <ncrews@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     alexandre.belloni@bootlin.com, eballetbo@gmail.com,
+        sjg@chromium.org, dmitry.torokhov@gmail.com, groeck@chromium.org,
+        dlaurie@chromium.org, Nick Crews <ncrews@chromium.org>,
+        linux-rtc@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Duncan Laurie <dlaurie@google.com>
+Subject: [PATCH v7 0/4] platform/chrome: Add basic support for Wilco EC
+Date:   Fri,  8 Feb 2019 12:38:46 -0700
+Message-Id: <20190208193850.120121-1-ncrews@chromium.org>
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recursive mutex lock/unlock is not permitted. Remove.
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
- drivers/input/keyboard/lm8323.c | 2 --
- 1 file changed, 2 deletions(-)
+There is a new chromebook that contains a different Embedded Controller
+(codename Wilco) than the rest of the chromebook series. Thus the kernel
+requires a different driver than the already existing and generalized
+cros_ec_* drivers. The core of the communication with the EC
+is implemented in wilco_ec/mailbox.c, using a simple byte-level protocol
+with a checksum, transmitted over an eSPI bus.
 
-diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
-index ea4ed1750eb5..4363c60f7845 100644
---- a/drivers/input/keyboard/lm8323.c
-+++ b/drivers/input/keyboard/lm8323.c
-@@ -359,11 +359,9 @@ static int lm8323_configure(struct lm8323_chip *lm)
- 
- static void pwm_done(struct lm8323_pwm *pwm)
- {
--	mutex_lock(&pwm->lock);
- 	pwm->running = false;
- 	if (pwm->desired_brightness != pwm->brightness)
- 		led_set_brightness(&pwm->cdev, pwm->desired_brightness);
--	mutex_unlock(&pwm->lock);
- }
- 
- /*
+In this patch series I only introduce a very barebones
+driver with a debugfs interface for sending/receiving raw byte
+sequences to the EC, as well as a standard RTC driver with read/write
+functionality.  Later, I will hopefully include more specialized
+drivers such as a keyboard backlight driver, an EC event notification node,
+telemetry data query node, etc.
+
+The entry point of the driver is wilco_ec/core.c,
+which is responsible for several tasks:
+- Initialize the register interface that is used by wilco_ec_mailbox()
+- Create a platform device which is picked up by the debugfs driver
+- Create a platform device which is picked up by the RTC driver
+
+A full thread of the development of these patches can be found at
+https://chromium-review.googlesource.com/c/1356082. This thread contains
+comments and revisions that could be helpful in understanding how the
+driver arrived at the state it is in now. The thread also contains some
+ChromeOS specific patches that actually enable the driver. If you want
+to test the patch yourself, you would have to install the ChromeOS SDK
+and cherry pick in these patches, and even then you would need a Sarien
+device to actually run it.
+
+Thank you for your comments!
+
+Changes in v7:
+- Switch to #define for MAX_WORD_SIZE so array size
+  can be determined at compile time.
+
+Changes in v6:
+- Re-added WILCO_EC_FLAG_EXTENDED_DATA and went back to always
+  reading either EC_MAILBOX_DATA_SIZE or EC_MAILBOX_DATA_SIZE_EXTENDED
+  bytes, since it turns out the EC always expects you to calculate the
+  checksum over all of them.
+- Split WILCO_EC_MSG_TELEMETRY into WILCO_EC_MSG_TELEMETRY_SHORT and
+  WILCO_EC_MSG_TELEMETRY_LONG, since there will be two different
+  commands.
+- A couple comment and err message polishes
+- s/4.19/5.1/ for kernel version in documentation, since that is
+  the version this patch should land in.
+- Instead of requiring at least 3 bytes for msg type and command,
+  now just require two for msg type. We can skip the command.
+- Fixed error checking in probe() so that errors are hidden, without
+  causing more errors or unextpected behavior.
+- Some comment polishing.
+- In the core, actually unregister the debugfs child platform_device
+- In the core, actually unregister the RTC child platform_device.
+
+Changes in v5:
+- move checking of NO_RESPONSE flag before timeout check,
+  so now timeout doesn't always happen when EC isn't supposed
+  to respond.
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+- core now always continues regardless of debugfs failure
+- mv documentation to file header
+- Check for OOM
+- rm unneeded check if debug_info is allocqated
+- rm bogus comment
+- add space around "+"
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+
+Changes in v4:
+- add #define DRV_NAME
+- remove redundant Kconfig nesting
+- changed my email to @chromium.org
+- Add better explanation of what core.c does
+- Change debugfs driver to be a separate module
+- Change me email to @chromium.org from @google.com
+- Change CONFIG_WILCO_EC_SYSFS_RAW to
+  CONFIG_WILCO_EC_DEBUGFS
+- Change me email to @chromium.org from @google.com
+- Move "Add RTC driver" before "Add sysfs attributes" so that
+  it could get accepted earlier, since it is less contentious
+
+Changes in v3:
+- Change <= to >= in mec_in_range()
+- Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
+- remove unused ret in probe()
+- Add newline spacer in probe()
+- rm unnecessary res in get_resource()
+- s/8bit/8-bit
+- rm first sleep when sending command to EC
+- Move the attribute to the debugfs system
+- Move the implementation to debugfs.c
+- Improve the raw hex parsing
+- Encapsulate global variables in one object
+- Add safety check when passing less than 3 bytes
+- Move documentation to debugfs-wilco-ec
+- rm #define for driver name
+- Don't compute weekday when reading from RTC.
+  Still set weekday when writing, as RTC needs this
+  to control advanced power scheduling
+- rm check for invalid month data
+- Set range_min and range_max on rtc_device
+
+Changes in v2:
+- Fixed kernel-doc comments
+- Fixed include of linux/mfd/cros_ec_lpc_mec.h
+- cros_ec_lpc_mec_in_range() returns -EINVAL on error
+- Added parens around macro variables
+- Remove COMPILE_TEST from Kconfig because inb()/outb()
+won't work on anything but X86
+- Add myself as module author
+- Tweak mailbox()
+- Add sysfs documentation
+- rm duplicate EC_MAILBOX_DATA_SIZE defs
+- Make docstrings follow kernel style
+- Fix tags in commit msg
+- Move Kconfig to subdirectory
+- Reading raw now includes ASCII translation
+- rm license boiler plate
+- rm "wilco_ec_rtc -" prefix in docstring
+- Make rtc driver its own module within the drivers/rtc/ directory
+- Register a rtc device from core.c that is picked up by this driver
+
+Nick Crews (4):
+  cros_ec: Remove cros_ec dependency in lpc_mec
+  platform/chrome: Add new driver for Wilco EC
+  platform/chrome: Add support for raw commands in debugfs
+  platform/chrome: rtc: Add RTC driver
+
+ Documentation/ABI/testing/debugfs-wilco-ec |  23 ++
+ drivers/platform/chrome/Kconfig            |   4 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/cros_ec_lpc_mec.c  |  52 ++++-
+ drivers/platform/chrome/cros_ec_lpc_mec.h  |  43 ++--
+ drivers/platform/chrome/cros_ec_lpc_reg.c  |  47 ++--
+ drivers/platform/chrome/wilco_ec/Kconfig   |  21 ++
+ drivers/platform/chrome/wilco_ec/Makefile  |   6 +
+ drivers/platform/chrome/wilco_ec/core.c    | 136 ++++++++++++
+ drivers/platform/chrome/wilco_ec/debugfs.c | 238 +++++++++++++++++++++
+ drivers/platform/chrome/wilco_ec/mailbox.c | 236 ++++++++++++++++++++
+ drivers/rtc/Kconfig                        |  11 +
+ drivers/rtc/Makefile                       |   1 +
+ drivers/rtc/rtc-wilco-ec.c                 | 177 +++++++++++++++
+ include/linux/platform_data/wilco-ec.h     | 144 +++++++++++++
+ 15 files changed, 1081 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/ABI/testing/debugfs-wilco-ec
+ create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
+ create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
+ create mode 100644 drivers/platform/chrome/wilco_ec/core.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/debugfs.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
+ create mode 100644 drivers/rtc/rtc-wilco-ec.c
+ create mode 100644 include/linux/platform_data/wilco-ec.h
+
 -- 
-2.17.1
+2.20.1.791.gb4d0f1c61a-goog
 
