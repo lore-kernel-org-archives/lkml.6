@@ -2,139 +2,135 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECE8C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4A3C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD14A21841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A40821841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:56:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="djk3NTmq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfBHWyQ convert rfc822-to-8bit (ORCPT
+        id S1726906AbfBHW4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:54:16 -0500
-Received: from elephants.elehost.com ([216.66.27.132]:36259 "EHLO
-        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfBHWyP (ORCPT
+        Fri, 8 Feb 2019 17:56:16 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:9486 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfBHW4P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:54:15 -0500
-X-Virus-Scanned: amavisd-new at elehost.com
-Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
-        (authenticated bits=0)
-        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18Ms0hu098317
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 8 Feb 2019 17:54:01 -0500 (EST)
-        (envelope-from rsbecker@nexbridge.com)
-From:   "Randall S. Becker" <rsbecker@nexbridge.com>
-To:     "'Jeff King'" <peff@peff.net>
-Cc:     "'brian m. carlson'" <sandals@crustytoothpaste.net>,
-        "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
-        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net> <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com> <20190208193157.GA30952@sigill.intra.peff.net> <20190208220714.GG11927@genre.crustytoothpaste.net> <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com> <20190208223512.GA2135@sigill.intra.peff.net>
-In-Reply-To: <20190208223512.GA2135@sigill.intra.peff.net>
-Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-Date:   Fri, 8 Feb 2019 17:53:53 -0500
-Message-ID: <006601d4c001$2de3a160$89aae420$@nexbridge.com>
+        Fri, 8 Feb 2019 17:56:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1549666575; x=1581202575;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=JJVjRFZ0MjlKPtlNZx40KnljAAcqK9QsHXHfcYZKklo=;
+  b=djk3NTmqlRgA50fxN/cjywDuhjyMM79EQouYR7mrokaiG5RwkF6DqySl
+   nCG47KXU1QjNQbl1dq0CQ8dEIsYDRQeul2k6TTkCZ9ZPXxsTAu0xSFEus
+   ZEU9mVtCFBvpwz5iy9/VVfgevNYwlMp/O1VHVqgaWi4xU5aYRUzODzyH/
+   jjGweKdwH3gYVv1bdObTB1XnmqdogaCFmX8Scg/Lt+SZ/uTc9JK4GL8FH
+   n4SYrvFGx9vKgW0mwmRDnDgrgbnKp/vX0Mc8vC3E8xfE3nTpMVb7cLndn
+   +eACl8WhfxveGP6ubCifhpATdwt39fc98hniUaf3/nD7Hb/798y27itpT
+   g==;
+X-IronPort-AV: E=Sophos;i="5.56,564,1539619200"; 
+   d="scan'208";a="105811949"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 09 Feb 2019 06:56:15 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 08 Feb 2019 14:36:56 -0800
+Received: from usa003289.ad.shared (HELO [10.86.59.147]) ([10.86.59.147])
+  by uls-op-cesaip01.wdc.com with ESMTP; 08 Feb 2019 14:56:15 -0800
+Subject: Re: [v3 PATCH 6/8] clocksource/drivers/riscv: Add required checks
+ during clock source init
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Alan Kao <alankao@andestech.com>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Anup Patel <anup@brainfault.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        =?UTF-8?Q?Patrick_St=c3=a4hlin?= <me@packi.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Andreas Schwab <schwab@suse.de>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zong Li <zongbox@gmail.com>
+References: <1549590681-24125-1-git-send-email-atish.patra@wdc.com>
+ <1549590681-24125-7-git-send-email-atish.patra@wdc.com>
+ <20190208090405.GC16932@infradead.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <7e6afb87-73e1-9688-7602-b7579fb94590@wdc.com>
+Date:   Fri, 8 Feb 2019 14:56:13 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw84wKJiaU9Aj0+V9MB8y1xFgJaeDVqApzvLgABsopuUQKjTm1tpmFndgA=
-Content-Language: en-ca
+In-Reply-To: <20190208090405.GC16932@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 8, 2019 17:35, Jeff King wrote:
-> On Fri, Feb 08, 2019 at 05:12:43PM -0500, Randall S. Becker wrote:
-> > On February 8, 2019 17:07, brian m. carlson wrote:
-> > > On Fri, Feb 08, 2019 at 02:31:57PM -0500, Jeff King wrote:
-> > > > > It is available AFAIK on Linux, POSIX, and Windows under Cygwin.
-> > > > > That's more than /dev/zero has anyway. I have the patch ready if
-> > > > > you want it.
-> > > >
-> > > > Is it POSIX? Certainly truncate() is, but I didn't think the
-> > > > command-line tool was. If it really is available everywhere, then
-> > > > yeah, I'd be fine with it.
-> > >
-> > > It's not. POSIX doesn't specify the command, and macOS lacks it, I
-> believe.
-> >
-> > I'm happy to modify the test (it is in one spot), to make a decision based
-> on:
-> > a) whether /dev/zero exists
-> > b) whether the system is a NonStop
-> > c) something else
-> >
-> > What would you all prefer? It doesn't matter to me one way or another,
-> > as long as I can get the dependency to /dev/zero removed so tests will
-> > run here.
+On 2/8/19 1:04 AM, Christoph Hellwig wrote:
+> On Thu, Feb 07, 2019 at 05:51:19PM -0800, Atish Patra wrote:
+>> Currently, clocksource registration happens for an invalid cpu
+>> for non-smp kernels. This lead to kernel panic as cpu hotplug
+>> registration will fail for those cpus. Moreover,
+>> riscv_hartid_to_cpuid can return errors now.
+>>
+>> Do not proceed if hartid or cpuid is invalid. Take this opprtunity
+>> to print appropriate error strings for different failure cases.
+>>
+>> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+>> ---
+>>   drivers/clocksource/timer-riscv.c | 23 ++++++++++++++++++++---
+>>   1 file changed, 20 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+>> index 43189220..3c7ea75b 100644
+>> --- a/drivers/clocksource/timer-riscv.c
+>> +++ b/drivers/clocksource/timer-riscv.c
+>> @@ -95,13 +95,30 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+>>   	struct clocksource *cs;
+>>   
+>>   	hartid = riscv_of_processor_hartid(n);
+>> +	if (hartid < 0) {
+>> +		pr_warn("Not valid hartid for node [%pOF] error = [%d]\n",
+>> +			n, hartid);
+>> +		return hartid;
+>> +	}
+>> +
+>>   	cpuid = riscv_hartid_to_cpuid(hartid);
+>> +	if (cpuid < 0) {
+>> +		pr_warn("Invalid cpuid for hartid [%d]\n", hartid);
+>> +		return cpuid;
+>> +	}
+>>   
+>>   	if (cpuid != smp_processor_id())
+>>   		return 0;
+>>   
+>> +	pr_err("%s: Registering clocksource cpuid [%d] hartid [%d]\n",
+>> +	       __func__, cpuid, hartid);
 > 
-> For the case in t5318, I think we can just put the NULs in a file. Does this
-> work on your platform?
-
-Yes, should work just fine.
-
+> This does not look like an error case to me.  At best it is info,
+> if not debug.
 > 
-> ---
-> diff --git a/t/t5318-commit-graph.sh b/t/t5318-commit-graph.sh index
-> 16d10ebce8..6d0ccc7eba 100755
-> --- a/t/t5318-commit-graph.sh
-> +++ b/t/t5318-commit-graph.sh
-> @@ -383,7 +383,8 @@ corrupt_graph_and_verify() {
->  	cp $objdir/info/commit-graph commit-graph-backup &&
->  	printf "$data" | dd of="$objdir/info/commit-graph" bs=1
-> seek="$pos" conv=notrunc &&
->  	dd of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" count=0
-> &&
-> -	dd if=/dev/zero of="$objdir/info/commit-graph" bs=1
-> seek="$zero_pos" count=$(($orig_size - $zero_pos)) &&
-> +	gen_zero_bytes $(($orig_size - $zero_pos)) >zeroes &&
-> +	dd if=zeroes of="$objdir/info/commit-graph" bs=1 seek="$zero_pos"
-> &&
->  	test_must_fail git commit-graph verify 2>test_err &&
->  	grep -v "^+" test_err >err &&
->  	test_i18ngrep "$grepstr" err
-> diff --git a/t/test-lib-functions.sh b/t/test-lib-functions.sh index
-> 92cf8f812c..4afab14431 100644
-> --- a/t/test-lib-functions.sh
-> +++ b/t/test-lib-functions.sh
-> @@ -1302,3 +1302,8 @@ test_set_port () {
->  	port=$(($port + ${GIT_TEST_STRESS_JOB_NR:-0}))
->  	eval $var=$port
->  }
-> +
-> +# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes).
-> +gen_zero_bytes () {
-> +	perl -e 'print "\0" x $ARGV[0]' "$@"
-> +}
+Thanks for catching. It was a typo. I will fix it in next version.
 
-This function does work on platform, so it's good.
-
-> For the others that need infinite zeroes, I think using "yes" makes more
-> sense, though we could also teach this function to accept an "infinity"
-> parameter.
-
-You could be sneaky about it, I suppose
-+# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes).
-+ gen_zero_bytes () {
-+ 	if [ $1 -eq -1 ]; then
-+ 	        yes | tr 'y' '\0'
-+ 	else
-+ 	        perl -e 'print "\0" x $ARGV[0]' "$@"
-+ }
-Or something alone those lines. It's not even slightly elegant, though. It would be better inside perl, so just
-
-+# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes). If $1 is < 0, output forever.
-+ gen_zero_bytes () {
-+ 	perl -e ' if ($ARGV[0] < 0) { while (-1) { print "\0" } } else { print "\0" x $ARGV[0] }' "$@"
-+ }
-
-Cheers,
-Randall
+Regards,
+Atish
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
