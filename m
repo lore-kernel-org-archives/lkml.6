@@ -2,101 +2,155 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4D7C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A566C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9C420863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0ACB217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:42:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="q5wrC9We"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H58r5Ove"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfBHPmr (ORCPT
+        id S1727935AbfBHPmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:42:47 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40388 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727411AbfBHPmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:42:46 -0500
-Received: from zn.tnic (p200300EC2BC9F9007DDA8219BB83B60F.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:f900:7dda:8219:bb83:b60f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C1701EC096B;
-        Fri,  8 Feb 2019 16:42:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549640564;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=/A7uikAdQaVJMXlK4goukqq7euk9Zo9vixwi+aS0DAs=;
-        b=q5wrC9WeY49gravJvyv8XnuFWX1MaQhoJiauR3tRbke7zHeb0B0AKUPnTDUEdNaWPfdGpR
-        +G3C1LmHlBkM06k6g4tdhzRk/rOX2oAWhPcFvR4xl+DZljX6lMG0/RxBjpZ7wtGceS/W1c
-        tD5xbn3IlldBnkFhCjnRoOkFYd8NSBg=
-Date:   Fri, 8 Feb 2019 16:42:39 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH 1/3] x86/mpx: tweak header name
-Message-ID: <20190208154239.GI674@zn.tnic>
-References: <20190124142448.23243-1-mst@redhat.com>
- <20190124142448.23243-2-mst@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190124142448.23243-2-mst@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 8 Feb 2019 10:42:51 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50727 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbfBHPmu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 10:42:50 -0500
+Received: by mail-wm1-f65.google.com with SMTP id z5so3888211wmf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 07:42:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=/BsdiLgEQYED0q/Vc9+obN0erQdEH4dBLTgeo1fZTiQ=;
+        b=H58r5OveFpNzVjc20ohoDib/Yy5P9Dn5q2HwJjY/qRcpT+gmG6RNQpwPjru2E2g2Mm
+         rGSwq46ieI6xHT55p2sQmRvWbGRoBSUQwptZSEF6Dl49uhTcwPjS27AvS7HZGjt/sRN+
+         yR59OVDzYjk3WiVMeKlwuRQ24s+pXIn6fMI8d3AiriYrXHu0zDlsDN3g6xv9wX0jfIcp
+         UdcOpAGl22nasZebCzCABPBokGMabh/XQJRkXtIQF/1gwrGMupW3i8e2tLHGc6ghqCBW
+         BptFFf03jggdghb/hKPvQPt7/pt370++zoZXV1QfdQIkbi8gJ/QwEezt5epjigbnS4K6
+         ISkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/BsdiLgEQYED0q/Vc9+obN0erQdEH4dBLTgeo1fZTiQ=;
+        b=SaLHZCI3zsC9S3QXgC+2sbk4xtpCnNKNcHirJpJpiFcys1/nep757ug8igmKlDwHOn
+         khTSmFf3N2mFWWlRvZ//S9lzdISiQ8Oi9B2Jj2tcHXwMhV0rPoqaZSLiTVfJtSn3JXKk
+         yXPLGxtg5+Gk94VLuadL5ZlejZbLea3OuIXbxQT3EXo1hey6rl/dOzKl7WRG2kR9+Vbe
+         cGtlHaGTGBsDaJac/4E00x4siSqq2X1x6Eny5Gmig7EZ+Zityg3XM2q1wPW/s1WZq0Da
+         0egSlQdSPDIn2xQrIUHUDs6PCddrk27eQL+xypA9YCjL/fGaDexeK1IFhrm9EPSUQA/V
+         vcew==
+X-Gm-Message-State: AHQUAub8Gqeo7SrmvbKX5AkBx1F6jovtPc2FHjhGvpFaxnoadVgRVFpl
+        wtcz/JurAFDw66vGaMvqlMSLVZ2SvHUkDA==
+X-Google-Smtp-Source: AHgI3IZOo5e1Yj8Qbkp2SbvMDcpvN+Sc4xiDUAPe/kr14/qwI/FK3UfmaLBRVbEpIIZ6j+Uq26IGNw==
+X-Received: by 2002:a05:600c:211a:: with SMTP id u26mr7702668wml.142.1549640568210;
+        Fri, 08 Feb 2019 07:42:48 -0800 (PST)
+Received: from localhost.localdomain (static-qvn-qvu-167076.business.bouyguestelecom.com. [89.81.167.76])
+        by smtp.gmail.com with ESMTPSA id g10sm4291016wrq.81.2019.02.08.07.42.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Feb 2019 07:42:47 -0800 (PST)
+From:   Jerome Forissier <jerome.forissier@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Jerome Forissier <jerome.forissier@linaro.org>
+Subject: [PATCH] tee: optee: update optee_msg.h and optee_smc.h to dual license
+Date:   Fri,  8 Feb 2019 16:42:06 +0100
+Message-Id: <1549640526-10935-1-git-send-email-jerome.forissier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 01:02:53AM -0500, Michael S. Tsirkin wrote:
-> Use linux/mman.h to make sure we get all mmap flags we need.
+The files optee_msg.h and optee_smc.h (under drivers/tee/optee) contain
+information originating from the OP-TEE OS project [1] [2], where the
+licensing terms are BSD 2-Clause. Therefore, apply a dual license to
+those files.
 
-Why, asm/mman.h is not enough or is this fixing a build issue or what is that
-patch supposed to address?
+[1] https://github.com/OP-TEE/optee_os/blob/master/core/include/optee_msg.h
+[2] https://github.com/OP-TEE/optee_os/blob/master/core/arch/arm/include/sm/optee_smc.h
 
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  arch/x86/mm/mpx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/mm/mpx.c b/arch/x86/mm/mpx.c
-> index de1851d15699..c805db6236b4 100644
-> --- a/arch/x86/mm/mpx.c
-> +++ b/arch/x86/mm/mpx.c
-> @@ -9,12 +9,12 @@
->  #include <linux/kernel.h>
->  #include <linux/slab.h>
->  #include <linux/mm_types.h>
-> +#include <linux/mman.h>
->  #include <linux/syscalls.h>
->  #include <linux/sched/sysctl.h>
->  
->  #include <asm/insn.h>
->  #include <asm/insn-eval.h>
-> -#include <asm/mman.h>
->  #include <asm/mmu_context.h>
->  #include <asm/mpx.h>
->  #include <asm/processor.h>
-> -- 
+Signed-off-by: Jerome Forissier <jerome.forissier@linaro.org>
+---
+ drivers/tee/optee/optee_msg.h | 26 ++------------------------
+ drivers/tee/optee/optee_smc.h | 26 ++------------------------
+ 2 files changed, 4 insertions(+), 48 deletions(-)
 
-Thx.
-
+diff --git a/drivers/tee/optee/optee_msg.h b/drivers/tee/optee/optee_msg.h
+index 3050490..795bc19 100644
+--- a/drivers/tee/optee/optee_msg.h
++++ b/drivers/tee/optee/optee_msg.h
+@@ -1,28 +1,6 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+ /*
+- * Copyright (c) 2015-2016, Linaro Limited
+- * All rights reserved.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions are met:
+- *
+- * 1. Redistributions of source code must retain the above copyright notice,
+- * this list of conditions and the following disclaimer.
+- *
+- * 2. Redistributions in binary form must reproduce the above copyright notice,
+- * this list of conditions and the following disclaimer in the documentation
+- * and/or other materials provided with the distribution.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+- * POSSIBILITY OF SUCH DAMAGE.
++ * Copyright (c) 2015-2019, Linaro Limited
+  */
+ #ifndef _OPTEE_MSG_H
+ #define _OPTEE_MSG_H
+diff --git a/drivers/tee/optee/optee_smc.h b/drivers/tee/optee/optee_smc.h
+index bbf0cf0..c72122d 100644
+--- a/drivers/tee/optee/optee_smc.h
++++ b/drivers/tee/optee/optee_smc.h
+@@ -1,28 +1,6 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+ /*
+- * Copyright (c) 2015-2016, Linaro Limited
+- * All rights reserved.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions are met:
+- *
+- * 1. Redistributions of source code must retain the above copyright notice,
+- * this list of conditions and the following disclaimer.
+- *
+- * 2. Redistributions in binary form must reproduce the above copyright notice,
+- * this list of conditions and the following disclaimer in the documentation
+- * and/or other materials provided with the distribution.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+- * POSSIBILITY OF SUCH DAMAGE.
++ * Copyright (c) 2015-2019, Linaro Limited
+  */
+ #ifndef OPTEE_SMC_H
+ #define OPTEE_SMC_H
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
