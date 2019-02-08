@@ -2,310 +2,145 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13857C282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7327AC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5FF721841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34F0421841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:02:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hdot/TzR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfBHW7X (ORCPT
+        id S1726896AbfBHXCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:59:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:10805 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726655AbfBHW7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:59:22 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 14:59:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="p7s'?scan'208";a="142777209"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 14:59:21 -0800
-Received: from orsmsx152.amr.corp.intel.com (10.22.226.39) by
- ORSMSX101.amr.corp.intel.com (10.22.225.128) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 8 Feb 2019 14:59:21 -0800
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.11]) by
- ORSMSX152.amr.corp.intel.com ([169.254.8.53]) with mapi id 14.03.0415.000;
- Fri, 8 Feb 2019 14:59:20 -0800
-From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zub@linux.fjfi.cvut.cz" <zub@linux.fjfi.cvut.cz>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "sbauer@plzdonthack.me" <sbauer@plzdonthack.me>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     "jonas.rabenstein@studium.uni-erlangen.de" 
-        <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH v4 16/16] block: sed-opal: rename next to execute_steps
-Thread-Topic: [PATCH v4 16/16] block: sed-opal: rename next to execute_steps
-Thread-Index: AQHUvHtpXRh3Cnvke0+xrQTl6wy9laXXEPwA
-Date:   Fri, 8 Feb 2019 22:59:20 +0000
-Message-ID: <1549666758.10972.63.camel@intel.com>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
-         <1549054223-12220-17-git-send-email-zub@linux.fjfi.cvut.cz>
-In-Reply-To: <1549054223-12220-17-git-send-email-zub@linux.fjfi.cvut.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.232.112.141]
-Content-Type: multipart/signed; micalg=sha-1;
-        protocol="application/x-pkcs7-signature"; boundary="=-IJaCfD7/EgX5owy+HXuX"
+        Fri, 8 Feb 2019 18:02:54 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:8199 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbfBHXCy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 18:02:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1549666974; x=1581202974;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=HJS0dqTZ8pL/wWqfL161CgRt5Xxy3W9rZvtNpfXa3YI=;
+  b=hdot/TzRe4GrwFRnljYtM2k9vy77Fh7Bz0cM9dIOxd2vXiFS8m50QZy/
+   OBdNQ+56ABkvZhnQyShVUhpDWoiWFRiTeaIn6PNjYI9aq8p4NQ3UnNZJR
+   0qFo8Wihy9HQu9OcMkYBHv9q0UjWMi0F2ALFvOAhU7d1XLv5SxMRxbXgh
+   2SArTiYiIm24CaKl35aq7WTXz3WAXp3nkwlWPRV5eyGpGt0CgSMiBioVu
+   haC7mqyIBY77vLtcNylfHL+8eguhqfnVLOcdDY80NWeY3Z/RoJycpQNsS
+   b4feV8JJApHcyGlUr/h1ofKxFMqN5dq6UI9mG6FFibt936l3MFQBuEm/S
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,564,1539619200"; 
+   d="scan'208";a="102116688"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 09 Feb 2019 07:02:53 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 08 Feb 2019 14:41:35 -0800
+Received: from usa003289.ad.shared (HELO [10.86.59.147]) ([10.86.59.147])
+  by uls-op-cesaip01.wdc.com with ESMTP; 08 Feb 2019 15:02:52 -0800
+Subject: Re: [v3 PATCH 8/8] RISC-V: Assign hwcap only according to boot cpu.
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        =?UTF-8?Q?Patrick_St=c3=a4hlin?= <me@packi.ch>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Alan Kao <alankao@andestech.com>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Anup Patel <anup@brainfault.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zong Li <zongbox@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Andreas Schwab <schwab@suse.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1549590681-24125-1-git-send-email-atish.patra@wdc.com>
+ <1549590681-24125-9-git-send-email-atish.patra@wdc.com>
+ <20190208091133.GD16932@infradead.org>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <8f5fd0c8-0320-00b1-4ddf-b1225be352c8@wdc.com>
+Date:   Fri, 8 Feb 2019 15:02:52 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
+In-Reply-To: <20190208091133.GD16932@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-IJaCfD7/EgX5owy+HXuX
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 2/8/19 1:11 AM, Christoph Hellwig wrote:
+>> +	 * We don't support running Linux on hertergenous ISA systems.
+>> +	 * But first "okay" processor might not be the boot cpu.
+>> +	 * Check the ISA of boot cpu.
+> 
+> Please use up your available 80 characters per line in comments.
+> 
+I will fix it.
 
-Looks good
+>> +		/*
+>> +		 * All "okay" hart should have same isa. We don't know how to
+>> +		 * handle if they don't. Throw a warning for now.
+>> +		 */
+>> +		if (elf_hwcap && temp_hwcap != elf_hwcap)
+>> +			pr_warn("isa mismatch: 0x%lx != 0x%lx\n",
+>> +				elf_hwcap, temp_hwcap);
+>> +
+>> +		if (hartid == boot_cpu_hartid)
+>> +			boot_hwcap = temp_hwcap;
+>> +		elf_hwcap = temp_hwcap;
+> 
+> So we always set elf_hwcap to the capabilities of the previous cpu.
+> 
+>> +		temp_hwcap = 0;
+> 
+> I think tmp_hwcap should be declared and initialized inside the outer loop
+> instead having to manually reset it like this.
+> 
+>> +	}
+>>   
+>> +	elf_hwcap = boot_hwcap;
+> 
+> And then reset it here to the boot cpu.
+> 
+> Shoudn't we only report the features supported by all cores?  Otherwise
+> we'll still have problems if the boot cpu supports a feature, but not
+> others.
+> 
 
-Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
+Hmm. The other side of the argument is boot cpu does have a feature that 
+is not supported by other hart that didn't even boot.
+The user space may execute something based on boot cpu capability but 
+that won't be enabled.
 
-On Fri, 2019-02-01 at 21:50 +0100, David Kozub wrote:
-> As the function is responsible for executing the individual steps supplie=
-d
-> in the steps argument, execute_steps is a more descriptive name than the
-> rather generic next.
->=20
-> Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-> Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
-> ---
->  block/sed-opal.c | 37 +++++++++++++++++++------------------
->  1 file changed, 19 insertions(+), 18 deletions(-)
->=20
-> diff --git a/block/sed-opal.c b/block/sed-opal.c
-> index 3362741dd198..c09149dd5e0a 100644
-> --- a/block/sed-opal.c
-> +++ b/block/sed-opal.c
-> @@ -401,8 +401,8 @@ static int execute_step(struct opal_dev *dev,
->  	return error;
->  }
-> =20
-> -static int next(struct opal_dev *dev, const struct opal_step *steps,
-> -		size_t n_steps)
-> +static int execute_steps(struct opal_dev *dev,
-> +			 const struct opal_step *steps, size_t n_steps)
->  {
->  	size_t state;
->  	int error;
-> @@ -2034,7 +2034,7 @@ static int opal_secure_erase_locking_range(struct o=
-pal_dev *dev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, erase_steps, ARRAY_SIZE(erase_steps));
-> +	ret =3D execute_steps(dev, erase_steps, ARRAY_SIZE(erase_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2051,7 +2051,7 @@ static int opal_erase_locking_range(struct opal_dev=
- *dev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, erase_steps, ARRAY_SIZE(erase_steps));
-> +	ret =3D execute_steps(dev, erase_steps, ARRAY_SIZE(erase_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2077,7 +2077,7 @@ static int opal_enable_disable_shadow_mbr(struct op=
-al_dev *dev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
-> +	ret =3D execute_steps(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2099,7 +2099,7 @@ static int opal_mbr_status(struct opal_dev *dev, st=
-ruct opal_mbr_data *opal_mbr)
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
-> +	ret =3D execute_steps(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2122,7 +2122,7 @@ static int opal_write_shadow_mbr(struct opal_dev *d=
-ev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
-> +	ret =3D execute_steps(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2174,7 +2174,7 @@ static int opal_add_user_to_lr(struct opal_dev *dev=
-,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, steps, ARRAY_SIZE(steps));
-> +	ret =3D execute_steps(dev, steps, ARRAY_SIZE(steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2189,7 +2189,7 @@ static int opal_reverttper(struct opal_dev *dev, st=
-ruct opal_key *opal)
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, revert_steps, ARRAY_SIZE(revert_steps));
-> +	ret =3D execute_steps(dev, revert_steps, ARRAY_SIZE(revert_steps));
->  	mutex_unlock(&dev->dev_lock);
-> =20
->  	/*
-> @@ -2217,10 +2217,11 @@ static int __opal_lock_unlock(struct opal_dev *de=
-v,
->  	};
-> =20
->  	if (lk_unlk->session.sum)
-> -		return next(dev, unlock_sum_steps,
-> -			    ARRAY_SIZE(unlock_sum_steps));
-> +		return execute_steps(dev, unlock_sum_steps,
-> +				     ARRAY_SIZE(unlock_sum_steps));
->  	else
-> -		return next(dev, unlock_steps, ARRAY_SIZE(unlock_steps));
-> +		return execute_steps(dev, unlock_steps,
-> +				     ARRAY_SIZE(unlock_steps));
->  }
-> =20
->  static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *ke=
-y)
-> @@ -2232,7 +2233,7 @@ static int __opal_set_mbr_done(struct opal_dev *dev=
-, struct opal_key *key)
->  		{ end_opal_session, }
->  	};
-> =20
-> -	return next(dev, mbrdone_step, ARRAY_SIZE(mbrdone_step));
-> +	return execute_steps(dev, mbrdone_step, ARRAY_SIZE(mbrdone_step));
->  }
-> =20
->  static int opal_lock_unlock(struct opal_dev *dev,
-> @@ -2267,7 +2268,7 @@ static int opal_take_ownership(struct opal_dev *dev=
-, struct opal_key *opal)
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, owner_steps, ARRAY_SIZE(owner_steps));
-> +	ret =3D execute_steps(dev, owner_steps, ARRAY_SIZE(owner_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2288,7 +2289,7 @@ static int opal_activate_lsp(struct opal_dev *dev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, active_steps, ARRAY_SIZE(active_steps));
-> +	ret =3D execute_steps(dev, active_steps, ARRAY_SIZE(active_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2305,7 +2306,7 @@ static int opal_setup_locking_range(struct opal_dev=
- *dev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, lr_steps, ARRAY_SIZE(lr_steps));
-> +	ret =3D execute_steps(dev, lr_steps, ARRAY_SIZE(lr_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2327,7 +2328,7 @@ static int opal_set_new_pw(struct opal_dev *dev, st=
-ruct opal_new_pw *opal_pw)
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, pw_steps, ARRAY_SIZE(pw_steps));
-> +	ret =3D execute_steps(dev, pw_steps, ARRAY_SIZE(pw_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
-> @@ -2351,7 +2352,7 @@ static int opal_activate_user(struct opal_dev *dev,
-> =20
->  	mutex_lock(&dev->dev_lock);
->  	setup_opal_dev(dev);
-> -	ret =3D next(dev, act_steps, ARRAY_SIZE(act_steps));
-> +	ret =3D execute_steps(dev, act_steps, ARRAY_SIZE(act_steps));
->  	mutex_unlock(&dev->dev_lock);
->  	return ret;
->  }
---=-IJaCfD7/EgX5owy+HXuX
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+At least, in this way we know that we are compatible completely with 
+boot cpu capabilities. Thoughts ?
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIKeTCCBOsw
-ggPToAMCAQICEFLpAsoR6ESdlGU4L6MaMLswDQYJKoZIhvcNAQEFBQAwbzELMAkGA1UEBhMCU0Ux
-FDASBgNVBAoTC0FkZFRydXN0IEFCMSYwJAYDVQQLEx1BZGRUcnVzdCBFeHRlcm5hbCBUVFAgTmV0
-d29yazEiMCAGA1UEAxMZQWRkVHJ1c3QgRXh0ZXJuYWwgQ0EgUm9vdDAeFw0xMzAzMTkwMDAwMDBa
-Fw0yMDA1MzAxMDQ4MzhaMHkxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEUMBIGA1UEBxMLU2Fu
-dGEgQ2xhcmExGjAYBgNVBAoTEUludGVsIENvcnBvcmF0aW9uMSswKQYDVQQDEyJJbnRlbCBFeHRl
-cm5hbCBCYXNpYyBJc3N1aW5nIENBIDRBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-4LDMgJ3YSVX6A9sE+jjH3b+F3Xa86z3LLKu/6WvjIdvUbxnoz2qnvl9UKQI3sE1zURQxrfgvtP0b
-Pgt1uDwAfLc6H5eqnyi+7FrPsTGCR4gwDmq1WkTQgNDNXUgb71e9/6sfq+WfCDpi8ScaglyLCRp7
-ph/V60cbitBvnZFelKCDBh332S6KG3bAdnNGB/vk86bwDlY6omDs6/RsfNwzQVwo/M3oPrux6y6z
-yIoRulfkVENbM0/9RrzQOlyK4W5Vk4EEsfW2jlCV4W83QKqRccAKIUxw2q/HoHVPbbETrrLmE6RR
-Z/+eWlkGWl+mtx42HOgOmX0BRdTRo9vH7yeBowIDAQABo4IBdzCCAXMwHwYDVR0jBBgwFoAUrb2Y
-ejS0Jvf6xCZU7wO94CTLVBowHQYDVR0OBBYEFB5pKrTcKP5HGE4hCz+8rBEv8Jj1MA4GA1UdDwEB
-/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMDYGA1UdJQQvMC0GCCsGAQUFBwMEBgorBgEEAYI3
-CgMEBgorBgEEAYI3CgMMBgkrBgEEAYI3FQUwFwYDVR0gBBAwDjAMBgoqhkiG+E0BBQFpMEkGA1Ud
-HwRCMEAwPqA8oDqGOGh0dHA6Ly9jcmwudHJ1c3QtcHJvdmlkZXIuY29tL0FkZFRydXN0RXh0ZXJu
-YWxDQVJvb3QuY3JsMDoGCCsGAQUFBwEBBC4wLDAqBggrBgEFBQcwAYYeaHR0cDovL29jc3AudHJ1
-c3QtcHJvdmlkZXIuY29tMDUGA1UdHgQuMCygKjALgQlpbnRlbC5jb20wG6AZBgorBgEEAYI3FAID
-oAsMCWludGVsLmNvbTANBgkqhkiG9w0BAQUFAAOCAQEAKcLNo/2So1Jnoi8G7W5Q6FSPq1fmyKW3
-sSDf1amvyHkjEgd25n7MKRHGEmRxxoziPKpcmbfXYU+J0g560nCo5gPF78Wd7ZmzcmCcm1UFFfIx
-fw6QA19bRpTC8bMMaSSEl8y39Pgwa+HENmoPZsM63DdZ6ziDnPqcSbcfYs8qd/m5d22rpXq5IGVU
-tX6LX7R/hSSw/3sfATnBLgiJtilVyY7OGGmYKCAS2I04itvSS1WtecXTt9OZDyNbl7LtObBrgMLh
-ZkpJW+pOR9f3h5VG2S5uKkA7Th9NC9EoScdwQCAIw+UWKbSQ0Isj2UFL7fHKvmqWKVTL98sRzvI3
-seNC4DCCBYYwggRuoAMCAQICEzMAAMamAkocC+WQNPgAAAAAxqYwDQYJKoZIhvcNAQEFBQAweTEL
-MAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYDVQQHEwtTYW50YSBDbGFyYTEaMBgGA1UEChMR
-SW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIkludGVsIEV4dGVybmFsIEJhc2ljIElzc3Vpbmcg
-Q0EgNEEwHhcNMTgxMDE3MTgxODQzWhcNMTkxMDEyMTgxODQzWjBHMRowGAYDVQQDExFEZXJyaWNr
-LCBKb25hdGhhbjEpMCcGCSqGSIb3DQEJARYaam9uYXRoYW4uZGVycmlja0BpbnRlbC5jb20wggEi
-MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCjUTRFAcK/fny1Eh3T7Q0iD+MSCPo7ZnIoW/hI
-/jifxPTtccOjZgp1NsXP5uPvpZERSz/VK5pyHJ5H0YZhkP17F4Ccdap2yL3cmfBwBNUeyNUsQ9AL
-1kBq1JfsUb+VDAEYwXLAY7Yuame4VsqAU24ZqQ1FOee+a1sPRPnJwfdtbJDP6qtS2sLMlahOlMrz
-s64sbhqEEXyCKujbQdpMupaSkBIqBsOXpqKgFZJrD1A/ZC5jE4SF27Y98C6FOfrA7VGDdX5lxwH0
-PNauajAtxgRKfqfSMb+IcL/VXiPtVZOxVq+CTZeDJkaEmn/79vg8OYxpR+YhFF+tGlKf/Zc4id1P
-AgMBAAGjggI3MIICMzAdBgNVHQ4EFgQU4oawcWXM1cPGdwGcIszDfjORVZAwHwYDVR0jBBgwFoAU
-HmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5pbnRlbC5j
-b20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWluZyUyMENB
-JTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3dy5pbnRl
-bC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIw
-SXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRlbC5jb20v
-MAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9gSiFjp9T
-gpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMMMCkGCSsG
-AQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBRBgNVHREESjBIoCoGCisGAQQB
-gjcUAgOgHAwaam9uYXRoYW4uZGVycmlja0BpbnRlbC5jb22BGmpvbmF0aGFuLmRlcnJpY2tAaW50
-ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQBxGkHe05DNpYel4b9WbbyQqD1G6y6YA6C93TjKULZi
-p8+gO1LL096ixD44+frVm3jtXMikoadRHQJmBJdzsCywNE1KgtrYF0k4zRWr7a28nyfGgQe4UHHD
-7ARyZFeGd7AKSQ1y4/LU57I2Aw2HKx9/PXavv1JXjjO2/bqTfnZDJTQmOQ0nvlO3/gvbbABxZHqz
-NtfHZsQWS7s+Elk2xGUQ0Po2pMCQoaPo9R96mm+84UP9q3OvSqMoaZwfzoUeAx2wGJYl0h3S+ABr
-CPVfCgq9qnmVCn5DyHWE3V/BRjJCoILLBLxAxnmSdH4pF6wJ6pYRLEw9qoyNhpzGUIJU/Lk1MYIC
-FzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYDVQQHEwtTYW50YSBD
-bGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIkludGVsIEV4dGVybmFs
-IEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAMamAkocC+WQNPgAAAAAxqYwCQYFKw4DAhoFAKBdMBgG
-CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE5MDIwODIyNTkxOFowIwYJ
-KoZIhvcNAQkEMRYEFP03nbEtCaMNLBC1eOsaoyAszXZbMA0GCSqGSIb3DQEBAQUABIIBAJ3yjEeR
-6L17b7IZxaV3+y3y6ck5xmaspHA3phUtFK7LFV0lBEVGMnGgpy0CRlgW8fxGfQ7CR8udLWQ8Qpur
-ovasPhOAGy69+AUjZ6JeTFMrVgnEH+a7hUcv2i0Dvk/vocKsU5/K1aAMulkqounIfh5nGGxxfezL
-JiN9BSZGp5dqgDi5UxZyC8OIaJVRN0DmYCAjsWSCywXfDLyq4EudaMAHoKSuXzsm392aTskqMfez
-b7ShMHCkoVLSe9iKap2SQJ2I6LnEhouqyxSOGPv0Iuue+1KAw75xtRVpXV0EyjmEGLaRR3WXWpvY
-4enH5ZG8xjVr7/Pl+avNMxKs0+n/nr4AAAAAAAA=
+Regards,
+Atish
+> Something like:
+> 
+> 	for () {
+> 		unsigned long this_hwcap = 0;
+> 
+> 		for (i = 0; i < strlen(isa); i++)
+> 			this_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
+> 
+> 		if (elf_hwcap)
+> 			elf_hwcap &= this_hwcap;
+> 		else
+> 			elf_hwcap = this_hwcap;
+> 	}
+> 
+> 
 
-
---=-IJaCfD7/EgX5owy+HXuX--
