@@ -2,92 +2,89 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196D6C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3099C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA2020863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 978B221924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:26:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549624954;
-	bh=jtFZT6pg2xfaAZLc1Bs3aw7RsCOZYo5J9JbMUrLw39w=;
-	h=From:Date:Subject:To:Cc:List-ID:From;
-	b=S0Vdk9nPpOQL+crhsVd4LphrXgjLq8D0M7o7UWf2uh9zalkqxC+8hqJQzKekimWfr
-	 Sl2YstMtov4fZUL85VmklT2Mg+BMEmqK1mDDC9Q5IJDkqTVMy/PweRmYU+9SkBrXMA
-	 WYaTxVJerotVyaX254DBuExAxcMAwjNGXTCEW/Do=
+	s=default; t=1549625165;
+	bh=Q5ThEQnu7HtEketgN/UJFVfnXVKGRUe2t2cy/0m9E20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=A51IzxzKTvJS+myW/vSApFAKdxBGp1YJgYeRqAwBxM0VANrQk7/aU0IVcGnW8aes0
+	 xIO+8I8PlT2cw9O+ZazG/JeCzhmOx0CVaLsZI5OKelaCZab+F07/pM/tHOJd9kz6Tk
+	 p23gPCTT76/JS40TmY7DXyof1Xh/ox4QfUnfTU+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfBHLWd (ORCPT
+        id S1727138AbfBHL0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:22:33 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45212 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHLWc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:22:32 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 32so5163004ota.12;
-        Fri, 08 Feb 2019 03:22:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=p84v49WIlZL8pX0+KpZTS18uSWpifEkuiw1CUi8FD+E=;
-        b=SOj8VM0cIoae/WUl5Rl1z4ZHHPcoC+6vhKoTAolufq+l20YKXV5veoHRWPENr8ZyC4
-         fJbnuTrQJ36rvXbyrRgNikY/lZJRryH3TZHshEC3GEaoV22LNuNeTQeJcNX+WfBKjfY2
-         K/3BU+P5z3yFLXFrLS18p8N3EcGvgLNJJFb7QVHqNrny2EN9BAiWrYfOk6fQdB5/nJmy
-         R4J0/Nz5JSG/LIi3V555unNN2f2STMl7aKQl49RPgg0iAPiYzsW6kECjjVKJMkEB444W
-         dEubMmAm3lM7Ff3XkYSHIEfmfjeDDlRZVF1N8V+/zPOQL6JjAsLF3SYY1CgWLiOL79Wp
-         Pzww==
-X-Gm-Message-State: AHQUAua87fU4LJjZyyIoxSlIWiSEWth0/d0+iRVSeGoYMLR/d2XcWfqd
-        hTCyavnwhtFQ7Xnm0u70b3krPT4KDe5Em6EUGEvunyxm
-X-Google-Smtp-Source: AHgI3IZbJozjn+bJh9kKevVr07Ar8u1wf/DQDYrLYkHjQs2khCMqQaEYklCAN5kKrteXl9P9v0LlFhmiV8htGlx3nBU=
-X-Received: by 2002:a9d:4c84:: with SMTP id m4mr11639653otf.124.1549624951450;
- Fri, 08 Feb 2019 03:22:31 -0800 (PST)
+        Fri, 8 Feb 2019 06:26:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726456AbfBHL0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:26:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2AAF20863;
+        Fri,  8 Feb 2019 11:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549625163;
+        bh=Q5ThEQnu7HtEketgN/UJFVfnXVKGRUe2t2cy/0m9E20=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aBvAX4q8MqpL0BPqCLlIYLvbI7YpeZNuea+NSRhRml2U1MTU/Io4qeVjvEatyDMoF
+         qAUc+M1Q+xjUeZu7hJpO1C+LdROw4Xny/GEvynuvQVDQeN/LINA0B9eH/W6GcKSC6g
+         Hbt415//b9aqR7ljh+/QjWt/bAbY2ZoDHzig/z3k=
+Date:   Fri, 8 Feb 2019 12:26:00 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Todd Kjos <tkjos@android.com>
+Cc:     tkjos@google.com, arve@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, maco@google.com,
+        joel@joelfernandes.org, kernel-team@android.com
+Subject: Re: [PATCH v2 0/7] binder: eliminate use of vmalloc space for binder
+ buffers
+Message-ID: <20190208112600.GA22147@kroah.com>
+References: <20190130224655.255149-1-tkjos@google.com>
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 8 Feb 2019 12:22:20 +0100
-Message-ID: <CAJZ5v0hX3PB6k3GCP2y9MYGJiYH6Fvg=cFdUNuDx0FB5UnVY3A@mail.gmail.com>
-Subject: [GIT PULL] ACPI fix for v5.0-rc6
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190130224655.255149-1-tkjos@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, Jan 30, 2019 at 02:46:48PM -0800, Todd Kjos wrote:
+> Binder buffers have always been mapped into kernel space
+> via map_kernel_range_noflush() to allow the binder driver
+> to modify the buffer before posting to userspace for
+> processing.
+> 
+> In recent Android releases, the number of long-running
+> binder processes has increased to the point that for
+> 32-bit systems, there is a risk of running out of
+> vmalloc space.
+> 
+> This patch set removes the persistent mapping of the
+> binder buffers into kernel space. Instead, the binder
+> driver creates temporary mappings with kmap() or
+> kmap_atomic() to copy to or from the buffer only when
+> necessary.
 
-Please pull from the tag
+This patch series blows up when I apply it to my char-misc-next branch:
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-5.0-rc6
+drivers/android/binder_alloc_selftest.c: In function ‘check_buffer_pages_allocated’:
+drivers/android/binder_alloc_selftest.c:108:44: error: ‘struct binder_buffer’ has no member named ‘data’
+  end = (void *)PAGE_ALIGN((uintptr_t)buffer->data + size);
+                                            ^~
+Did you forget to enable CONFIG_ANDROID_BINDER_IPC_SELFTEST when doing your
+builds?
 
-with top-most commit ce5cbf53496bfebe1b7478a532820373342e8302
+thanks,
 
- ACPI: Set debug output flags independent of ACPICA
-
-on top of commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5
-
- Linux 5.0-rc5
-
-to receive an ACPI fix for 5.0-rc6.
-
-This prevents excessive ACPI debug messages from being printed
-to the kernel log, which has started to happen after one of the
-recent ACPICA commits (Erik Schmauss).
-
-Thanks!
-
-
----------------
-
-Erik Schmauss (1):
-      ACPI: Set debug output flags independent of ACPICA
-
----------------
-
- drivers/acpi/bus.c | 3 +++
- 1 file changed, 3 insertions(+)
+greg k-h
