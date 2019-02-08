@@ -2,171 +2,216 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEF8C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7B6220844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:15:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wfyr+dAZ"
+	by mail.kernel.org (Postfix) with ESMTP id 593BF20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfBHQPZ (ORCPT
+        id S1727574AbfBHQPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:15:25 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45726 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBHQPY (ORCPT
+        Fri, 8 Feb 2019 11:15:54 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:43045 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726522AbfBHQPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:15:24 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so2909518lfa.12;
-        Fri, 08 Feb 2019 08:15:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bLXvZvUJiHt8osK66qwWWSmj4MuGS30szSGLqg7p7O4=;
-        b=Wfyr+dAZAb3WwpQ0Y3GtMe/tjcMfcEL12Hd9IoDe6AeJmnBjO44Bm0H+Us5CMqGyuf
-         irHu+13oCQREBShCEwzrV1KyfPqS7rpEpG9poooqsGljBMjNcI+Zgg9rZtXQoMWjEh7r
-         1J9kHjlP01geXqzSU0dljk0oMRJB1v1vr/hQ5Nz380e/9lvhFldQRFsol9bcyzs6S/lP
-         zLXYzjdmXL3wLmCT8pjwLiqHM+0YpbhhWqQd0vIvEErbst0K3N0t5KvAU4GDe1h6ow6i
-         UH6y5/b1tgGSJrQdaHTB6HX0xC8qeb2Vxp349M0292PMBPICiK+S4knwLyv8tI8tjC3h
-         figA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bLXvZvUJiHt8osK66qwWWSmj4MuGS30szSGLqg7p7O4=;
-        b=flxZr9adYzVXYCrHVgka+YuuHFfWGro8m4D4DxOJa6tQHyXVCLZ90g7w8gVpQveLfx
-         pOn0xk4wiPeHWq6VayGzyITmN2AFTe8qbk3dJr+uW5JC7P69vyMu8oaG8YCdaYN3r+4b
-         JoalBOGSF8fi1gTxDPL2pWnrsgKUqicMz+QpMKbfGxKeVLz8e7kpLUEynu+/EAo+FXqq
-         Zwh1NJRgslTi9tB5Au/8jGOPDxNYX1gMt/MPGTvYPEo2ahZeMwWzsrEzR4m1PlpJ5R2E
-         /iR5Sv+SYD78o+EB/2ZrRcPVNTbT5YoPQ8AuzfaODE1oWu0sgru6cYZM4V4g6E0Zm1eo
-         W+cQ==
-X-Gm-Message-State: AHQUAuZ5zvZJ91miI4Wuj/fkaExgWZssBd/klYdnSJP55ISjioOosQNO
-        3Naw/gRuY0ntxQT+e6vYq3henREZ
-X-Google-Smtp-Source: AHgI3IYIJkxHeOnL+47gmSWpAQNyyjc4rA9GtKLMAUPIZbMeglX5ijMtudZUSpnYSW1H3hYmT+poPg==
-X-Received: by 2002:a19:4dd0:: with SMTP id a199mr14789692lfb.42.1549642521876;
-        Fri, 08 Feb 2019 08:15:21 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id v24-v6sm289881ljj.65.2019.02.08.08.15.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 08:15:21 -0800 (PST)
-Subject: Re: [PATCH V15 4/6] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
- <1549576040-15907-4-git-send-email-skomatineni@nvidia.com>
- <7806f2cd-72b4-6ae3-b75f-0fc74fb62b95@gmail.com>
- <BYAPR12MB3398BE6DA6F1E82E5F2525C2C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB3398382FF9052AE466CE29ECC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB339863A43F030013DCA7F548C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <21901823-2ec1-6bd5-d0df-2360858f2b7e@gmail.com>
-Date:   Fri, 8 Feb 2019 19:15:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 8 Feb 2019 11:15:54 -0500
+Received: from [31.193.165.228] (port=46970 helo=mx-ginzinger.sigmacloud.services)
+        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Kepplinger@ginzinger.com>)
+        id 1gs8oZ-0006Lk-2l; Fri, 08 Feb 2019 17:15:43 +0100
+Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
+ exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1466.3; Fri, 8 Feb 2019 17:15:43 +0100
+X-CTCH-RefID: str=0001.0A0B0211.5C5DAB2F.0081,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
+To:     <dmitry.torokhov@gmail.com>, <linux-input@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] Input: st1232 - switch to gpiod API
+Date:   Fri, 8 Feb 2019 17:15:33 +0100
+Message-ID: <20190208161533.25230-1-martin.kepplinger@ginzinger.com>
+X-Mailer: git-send-email 2.20.1
+X-Originating-IP: [10.10.1.120]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2] Input: st1232 -
+ switch to gpiod API
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB339863A43F030013DCA7F548C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----BDA0BC7841D63DD6ABFC5C9A2ECE256B"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-08.02.2019 18:58, Sowjanya Komatineni пишет:
-> 
-> 
->>> Please use "release_dma:" variant that I suggested in the comment to v14 because:
->>>>
->>> 1) It's just a good (and common-style in kernel) tone to unwind errors handling in the opposite order, it makes code more straight forward and helps to avoid silly mistakes.
->>>
->>> 2) It keeps the current code consistent in regards to probe error-handling.
->>>
->>
->> Can move tegra_i2c_release_dma under the same disable_div_clk label before clk_disable
->>
->> Order in probe is
-> 	clk_prepare
-> 	i2c_runtime_resume
-> 	clk_enable in case of multimaster mode
-> 	i2c_init_dma
->>
->> unwinding should be order is
-> 	release_dma
-> 	disable_div_clk
-> 	disable_rpm
-> 	unprepared
->>
->> Probe failure from tegra_i2c_init_dma, tegra_i2c_init, devm_request_irq, i2c_add_numbered_adapter all of them perform goto disable_div_clk
->>
->> I can add tegra_i2c_release_dma before performing clock disable under same disable_div_clk so all existing disable_div_clk labels remain same.
->> Otherwise adding new label release_dma causes all goto disable_div_clk statement also to be changed but its same as adding release_dma under disable_div_clk above the clk_disable.
->>
-> 
-> OK, please ignore above. will add release_dma to show explicitly for readability.
-> With release_dma all error handlers performing disable_clk_div need to go thru release dma and disable_clk_div label is not needed.
+This is an S/MIME signed message
 
-tegra_i2c_init_dma() releases dma itself in a case of error, hence it should jump to the disable_clk_div.
+------BDA0BC7841D63DD6ABFC5C9A2ECE256B
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-> So having release dma under disable_clk before clk_disable function is also same. 
-> Please confirm if this is ok to use same disable_div_clk or do you prefer release_dma label removing disable_div_clk
+Use devm_gpiod_get_optional() and gpiod_set_value_cansleep() instead
+of the old API. The st1232_ts_power() now passes on the inverted "poweron"
+value to reflect the correct logical value.
 
-In general goto-label naming should reflect the actual jump-action. If goto jumps to dma-releasing, then the action is release-dma and not disable-clk.
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+---
 
-Hence the correct variant is:
+ok. tested. If i get that right, assigning different gpio functions
+would now be difficult, but afaik isn't needed anyways.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 7104213d813b..62e81096fb55 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1604,14 +1604,14 @@ static int tegra_i2c_probe(struct platform_device *pdev)
-        ret = tegra_i2c_init(i2c_dev, false);
-        if (ret) {
-                dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
--               goto disable_div_clk;
-+               goto release_dma;
-        }
+thanks
+                                  martin
+
+
+
+revision history
+----------------
+v2: retain dts compatibility by allowing current reset-gpios setting
+
+
+ drivers/input/touchscreen/st1232.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
+index 634d6c243845..1fbc0847416b 100644
+--- a/drivers/input/touchscreen/st1232.c
++++ b/drivers/input/touchscreen/st1232.c
+@@ -45,7 +45,7 @@ struct st1232_ts_data {
+ 	struct i2c_client *client;
+ 	struct input_dev *input_dev;
+ 	struct dev_pm_qos_request low_latency_req;
+-	int reset_gpio;
++	struct gpio_desc *reset_gpio;
+ 	const struct st_chip_info *chip_info;
+ 	int read_buf_len;
+ 	u8 *read_buf;
+@@ -142,8 +142,8 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
  
-        ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
-                        tegra_i2c_isr, 0, dev_name(&pdev->dev), i2c_dev);
-        if (ret) {
-                dev_err(&pdev->dev, "Failed to request irq %i\n", i2c_dev->irq);
--               goto disable_div_clk;
-+               goto release_dma;
-        }
+ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
+ {
+-	if (gpio_is_valid(ts->reset_gpio))
+-		gpio_direction_output(ts->reset_gpio, poweron);
++	if (ts->reset_gpio)
++		gpiod_set_value_cansleep(ts->reset_gpio, !poweron);
+ }
  
-        i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
-@@ -1625,14 +1625,16 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ static const struct st_chip_info st1232_chip_info = {
+@@ -215,15 +215,13 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 	ts->client = client;
+ 	ts->input_dev = input_dev;
  
-        ret = i2c_add_numbered_adapter(&i2c_dev->adapter);
-        if (ret)
--               goto disable_div_clk;
-+               goto release_dma;
+-	ts->reset_gpio = of_get_gpio(client->dev.of_node, 0);
+-	if (gpio_is_valid(ts->reset_gpio)) {
+-		error = devm_gpio_request(&client->dev, ts->reset_gpio, NULL);
+-		if (error) {
+-			dev_err(&client->dev,
+-				"Unable to request GPIO pin %d.\n",
+-				ts->reset_gpio);
+-				return error;
+-		}
++	ts->reset_gpio = devm_gpiod_get_optional(&client->dev, NULL,
++						 GPIOD_OUT_HIGH);
++	if (IS_ERR(ts->reset_gpio)) {
++		error = PTR_ERR(ts->reset_gpio);
++		dev_err(&client->dev, "Unable to request GPIO pin: %d.\n",
++			error);
++		return error;
+ 	}
  
-        return 0;
- 
-+release_dma:
-+       tegra_i2c_release_dma(i2c_dev);
-+
- disable_div_clk:
-        if (i2c_dev->is_multimaster_mode)
-                clk_disable(i2c_dev->div_clk);
--       tegra_i2c_release_dma(i2c_dev);
- 
- disable_rpm:
-        pm_runtime_disable(&pdev->dev);
+ 	st1232_ts_power(ts, true);
+-- 
+2.20.1
+
+
+------BDA0BC7841D63DD6ABFC5C9A2ECE256B
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
+hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
+Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
+bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
+dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
+R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
+U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
+UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
+fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
+KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
+03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
+k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
+AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
+HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
+oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
+cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
+AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
+GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
+ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
+WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
+NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
+2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
+BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
+fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
+cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
+2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
+csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
+AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
+Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
+H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
+kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
+fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
+voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
+h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
+6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
+BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
+14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
+MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
+Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
+TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
+gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
+YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
+bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
+A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
+b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
+3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
+udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
+I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
+1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
+NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
+aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjA4MTYxNTUw
+WjAvBgkqhkiG9w0BCQQxIgQgfIacfAk1dTXKfqJSXZ/X+H/qonMrGzpZQ21gKEl2
+ZHIweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
+vZZO5okDWwFdONl0vfJN+X74pgiMlZHxRaIuVel2p5y6cNO4cxvTMeiQ+7Kom6aF
+19FBlYQAuEj9SWGnlPitgpt9xw1uC2/5JA6soh2CqsVqpid9k4DX+j3sTKyPVhco
+shprYii2hTBDre9wClyb1HvjCmPYx4VbPo0Ot3niGbf6Lo9F2q0Vg6s6NgOYQk9b
+HBSwL+/OW8ghr47Egj/aMedBDgNZGPrkXOGb9YUA5LiffTNDQ7QbOugyc3LnIB8u
+8bf9VoupTLg3U0xj9YXHMG/sMkHwmYc7u7ptRvULd4I4iPIDNOpbxJmDbVvFAOjN
+EDmOffo985j54kpRQzFYfw==
+
+------BDA0BC7841D63DD6ABFC5C9A2ECE256B--
+
