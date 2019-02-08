@@ -2,234 +2,120 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A00FC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6ACC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 173F42075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:42:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3331D2075C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:43:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Fsc+cFoJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfBHOmY (ORCPT
+        id S1727919AbfBHOnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:42:24 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52574 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726568AbfBHOmX (ORCPT
+        Fri, 8 Feb 2019 09:43:25 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:29965 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfBHOnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:42:23 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18EaHIh111074
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 09:42:22 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhbay1b1h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:42:22 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 14:42:21 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 14:42:17 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18EgGLI22610090
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 14:42:17 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6125B2065;
-        Fri,  8 Feb 2019 14:42:16 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C17BEB205F;
-        Fri,  8 Feb 2019 14:42:16 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 14:42:16 +0000 (GMT)
-Subject: Re: [PATCH 1/2] tpm: Unify the send callback behaviour
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
-References: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
- <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 8 Feb 2019 09:42:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 8 Feb 2019 09:43:25 -0500
+X-IronPort-AV: E=Sophos;i="5.58,347,1544511600"; 
+   d="scan'208";a="25999748"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Feb 2019 07:43:24 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 8 Feb 2019 07:43:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lv6DRGM0cQteB3o5C6tZrCEjMxkVk+LmDOfhW4yu4fE=;
+ b=Fsc+cFoJU/D4KJrEua+MghIALhntDdaNT6j1uZU/zkv2287px5NfM6OxTz0haprXrR1LmZvo7NLSyhs8+Q7c4DyTVu4lQ86oH5qMeqvbyOjzXv4Tf0JJcnonOlvpdWsbNS4sMb2ZWtjDB9kCJiG4V328k2L2JQv5wPMYwf8/U40=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
+ BN6PR11MB1538.namprd11.prod.outlook.com (10.172.23.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.21; Fri, 8 Feb 2019 14:43:22 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1580.019; Fri, 8 Feb 2019
+ 14:43:22 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <beanhuo@micron.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <bbrezillon@kernel.org>,
+        <richard@nod.at>
+Subject: Re: [PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
+Thread-Topic: [PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
+Thread-Index: AdS/uVD1jG3UvCBSRuC2oJ8LRRcc4gAA03cA
+Date:   Fri, 8 Feb 2019 14:43:22 +0000
+Message-ID: <298d18cf-094b-d5d0-45d1-39c7b75ba309@microchip.com>
+References: <BYAPR08MB4533C8EA6B775C7514FA7F82DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
+In-Reply-To: <BYAPR08MB4533C8EA6B775C7514FA7F82DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0082.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:59::35) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:101::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1538;6:AqW4o09fnN4qSyXxF1UzVzrG32nVayo0dCZ+S5GefrE34mobwmwwaXmOnzSBPGZtFU5h/DmkDVHRCdbZQNsAVGb5P/r+lvzTfqdmkaLFwYg7e8rWDQSgY2/UXxhlMRMdtWc84FbwcTRX3oD2P6P4V3KSzUowIMYA8X3eDH2LzlUYILFPQzPe36OxUOsmTnSCdB61Z69jk2kOQAV8xzYw6Er9Bo90oXNfuEi1NaUKKsbOZ+orfVx5/0x1eueUDiaO+BNB9AZiu+9rfOKiXcCXeLWWNE4D7ILjgKSp1DP+A3No9TnBXJWbe86nzVXJuhzddiTdfwEgECZRpX2cxQ/AHvanRNO621RkJZLJYEQHoPyyB39qlvehArcv5nkc4CkYSqgq08z3od5qucFsJ1JzEZJW/3FAWIz1Qsy7QyrF4P1mZihxKnaaKxOXlfIDCLHgCy9B7cHQ8StgYvoEHy6gPw==;5:yZhE2ZWupMRJU/TkZRlmiGvjXwKlU83YnzDmFIy2uDw51ZRD1J2Iq6yyajSRGNpMSEmSGws6lX+nQoaMHlKJUNNPfg3klgjHArIzgV/0gB3J9gq+748MLY1Kxj6x4TZMV3tib/oSld4/9OQiBJ9aZkzf6yBBDtePQAUycTrkggcP7RNQ3R6QfyFoHWZJ1LEijzbfwrNt4PLKAzK/94dSyg==;7:gX34kBXVMmvI7czuBc/39scQRIngpJO522F1GgSWQKlgULKEWjmM7PsZP2acbB9gxG3jvWDgKMgOLYltlNsxLsLoHkx985KE4xdYWWg9vn9eb3I/B1CMsVoleAKIzMTgV0HBZ/Ur082UhRzl3mB5bg==
+x-ms-office365-filtering-correlation-id: ec8c72b1-f8b7-4a55-8bd0-08d68dd3c5fe
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1538;
+x-ms-traffictypediagnostic: BN6PR11MB1538:
+x-microsoft-antispam-prvs: <BN6PR11MB1538E2A38F9AE168EE98FF0CF0690@BN6PR11MB1538.namprd11.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(366004)(39860400002)(199004)(189003)(476003)(66066001)(6486002)(229853002)(486006)(97736004)(186003)(8676002)(3846002)(2616005)(6436002)(14454004)(81166006)(81156014)(105586002)(72206003)(106356001)(6512007)(6116002)(386003)(478600001)(6506007)(53546011)(446003)(11346002)(36756003)(68736007)(31686004)(305945005)(102836004)(8936002)(7736002)(31696002)(6246003)(14444005)(2201001)(76176011)(71190400001)(86362001)(2906002)(71200400001)(316002)(52116002)(110136005)(54906003)(53936002)(25786009)(256004)(2501003)(19627235002)(99286004)(4326008)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1538;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: EwygdxNQMwHtE4Qe0jV9hVyW+gB+Xg7V+KKrpmetOIHB5Blna9tgo3gIcH3W9VvbjJazdNegSiqZ7qlalO7F5ozVq4mX5McRi76M/aYhXfIZh0dXmPHJdI8YogZh5vYCZf+gEfZJx83RA6k6HbaVeYYKGIGB15/GAKTToBi5o/MK+hlHsGyT6nKDNsnhhYKJJdHkC5ZaaGhInGjFvvu0IhF1pW+fALXK4+M/NsBe8lG4680PB8jmrUr96MEwMa2vQKH3D3b+qjNdEITmpcb9wo68Xi2qMexpV0sDOSDx3q9mIiYJnes5JqcYqHUQW7eHSK5sCEOsPhe5DDIuROTpL/jUdqIvAY4BYFgk8ybcJ4HHBZGBQDWskUqdVWQLFY4/oenJk6S5yvI5AbpSuqv8XhN+rbgHzufMX/F1TCh6A20=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9C9729E30C3E1E499579A21793CD15CB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020814-0060-0000-0000-0000030804F6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010559; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158112; UDB=6.00604251; IPR=6.00938644;
- MB=3.00025494; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 14:42:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020814-0061-0000-0000-0000483A6DFD
-Message-Id: <b53745b6-ed49-9e97-6f56-1378561888eb@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080103
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec8c72b1-f8b7-4a55-8bd0-08d68dd3c5fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 14:43:20.5472
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1538
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 9:05 AM, Jarkko Sakkinen wrote:
-> The send() callback should never return length as it does not in every
-> driver except tpm_crb in the success case. The reason is that the main
-> transmit functionality only cares about whether the transmit was
-> successful or not and ignores the count completely.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->   drivers/char/tpm/st33zp24/st33zp24.c | 2 +-
->   drivers/char/tpm/tpm_atmel.c         | 2 +-
->   drivers/char/tpm/tpm_i2c_atmel.c     | 6 +++++-
->   drivers/char/tpm/tpm_i2c_infineon.c  | 2 +-
->   drivers/char/tpm/tpm_i2c_nuvoton.c   | 2 +-
->   drivers/char/tpm/tpm_ibmvtpm.c       | 2 +-
->   drivers/char/tpm/tpm_vtpm_proxy.c    | 3 +--
->   drivers/char/tpm/xen-tpmfront.c      | 2 +-
-
-At least tpm_nsc_send (tpm_nsc.c) and tpm_inf_send (tpm_infineon.c) are 
-also returning the number of bytes sent. I would consider tpm_crb the 
-outlier that returns 0 and should return the length even though we don't 
-need it...
-
-
->   8 files changed, 12 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-> index 64dc560859f2..13dc614b7ebc 100644
-> --- a/drivers/char/tpm/st33zp24/st33zp24.c
-> +++ b/drivers/char/tpm/st33zp24/st33zp24.c
-> @@ -436,7 +436,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
->   			goto out_err;
->   	}
->
-> -	return len;
-> +	return 0;
->   out_err:
->   	st33zp24_cancel(chip);
->   	release_locality(chip);
-> diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
-> index 66a14526aaf4..a290b30a0c35 100644
-> --- a/drivers/char/tpm/tpm_atmel.c
-> +++ b/drivers/char/tpm/tpm_atmel.c
-> @@ -105,7 +105,7 @@ static int tpm_atml_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   		iowrite8(buf[i], priv->iobase);
->   	}
->
-> -	return count;
-> +	return 0;
->   }
->
->   static void tpm_atml_cancel(struct tpm_chip *chip)
-> diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
-> index 4720b2442ffe..aa11c8a1df5e 100644
-> --- a/drivers/char/tpm/tpm_i2c_atmel.c
-> +++ b/drivers/char/tpm/tpm_i2c_atmel.c
-> @@ -65,7 +65,11 @@ static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len)
->   	dev_dbg(&chip->dev,
->   		"%s(buf=%*ph len=%0zx) -> sts=%d\n", __func__,
->   		(int)min_t(size_t, 64, len), buf, len, status);
-> -	return status;
-> +
-> +	if (status < 0)
-> +		return status;
-> +
-> +	return 0;
->   }
->
->   static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-> index 3b490d9d90e7..3b4e9672ff6c 100644
-> --- a/drivers/char/tpm/tpm_i2c_infineon.c
-> +++ b/drivers/char/tpm/tpm_i2c_infineon.c
-> @@ -588,7 +588,7 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
->   	/* go and do it */
->   	iic_tpm_write(TPM_STS(tpm_dev.locality), &sts, 1);
->
-> -	return len;
-> +	return 0;
->   out_err:
->   	tpm_tis_i2c_ready(chip);
->   	/* The TPM needs some time to clean up here,
-> diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> index 5700cc2ddee1..315a3b4548f7 100644
-> --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> @@ -465,7 +465,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
->   	}
->
->   	dev_dbg(dev, "%s() -> %zd\n", __func__, len);
-> -	return len;
-> +	return 0;
->   }
->
->   static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 07b5a487d0c8..aeae3222723c 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -192,7 +192,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   		rc = 0;
->   		ibmvtpm->tpm_processing_cmd = false;
->   	} else
-> -		rc = count;
-> +		rc = 0;
->
->   	spin_unlock(&ibmvtpm->rtce_lock);
->   	return rc;
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index 26a2be555288..d74f3de74ae6 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -335,7 +335,6 @@ static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
->   static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   {
->   	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
-> -	int rc = 0;
->
->   	if (count > sizeof(proxy_dev->buffer)) {
->   		dev_err(&chip->dev,
-> @@ -366,7 +365,7 @@ static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
->
->   	wake_up_interruptible(&proxy_dev->wq);
->
-> -	return rc;
-> +	return 0;
->   }
->
->   static void vtpm_proxy_tpm_op_cancel(struct tpm_chip *chip)
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index 1259e935fd58..4e2d00cb0d81 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -173,7 +173,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   		return -ETIME;
->   	}
->
-> -	return count;
-> +	return 0;
->   }
->
->   static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-
-
+DQpPbiAwMi8wOC8yMDE5IDA0OjIzIFBNLCBCZWFuIEh1byAoYmVhbmh1bykgd3JvdGU6DQo+IENo
+YW5nZSBTTk9SX0hXQ1BBU19SRUFEX09DVEFMIHRvIFNOT1JfSFdDQVBTX1JFQURfT0NUQUwuDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCZWFuIEh1byA8YmVhbmh1b0BtaWNyb24uY29tPg0KDQokIC4v
+c2NyaXB0cy9jaGVja3BhdGNoLnBsIC0tc3RyaWN0DQp2Mi1tdGQtc3BpLW5vci1GaXgtd3Jvbmct
+YWJicmV2aWF0aW9uLUhXQ1BBUy5wYXRjaA0KV0FSTklORzogTWlzc2luZyBTaWduZWQtb2ZmLWJ5
+OiBsaW5lIGJ5IG5vbWluYWwgcGF0Y2ggYXV0aG9yICdCZWFuIEh1byAoYmVhbmh1bykNCjxiZWFu
+aHVvQG1pY3Jvbi5jb20+Jw0KDQpUaGVyZSBhcmUgc2NyaXB0cyB0aGF0IGNoZWNrIHRoYXQgdGhl
+IGF1dGhvci9jb21taXR0ZXIgaGFzIGl0cyBTb0IsIGRlcGVuZGluZyBvbg0KaG93IHN0cmljdCB0
+aGUgY2hlY2sgaXMsIGl0IG1pZ2h0IGNvbXBsYWludCB0aGF0IFNvQiBhbiBhdXRob3IvY29tbWl0
+dGVyIGRvIG5vdA0KbWF0Y2gsIHNvIHBsZWFzZSBjaGFuZ2UgZ2l0Y29uZmlnIHRvIG1ha2UgdGhl
+bSBtYXRjaC4NCg0KPiAtLS0NCj4gIGluY2x1ZGUvbGludXgvbXRkL3NwaS1ub3IuaCB8IDIgKy0N
+Cj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvbXRkL3NwaS1ub3IuaCBiL2luY2x1ZGUvbGludXgv
+bXRkL3NwaS1ub3IuaA0KPiBpbmRleCAyMzUzYWY4Li5iM2QzNjBiIDEwMDY0NA0KPiAtLS0gYS9p
+bmNsdWRlL2xpbnV4L210ZC9zcGktbm9yLmgNCj4gKysrIGIvaW5jbHVkZS9saW51eC9tdGQvc3Bp
+LW5vci5oDQo+IEBAIC00ODcsNyArNDg3LDcgQEAgc3RydWN0IHNwaV9ub3JfaHdjYXBzIHsNCj4g
+ICNkZWZpbmUgU05PUl9IV0NBUFNfUkVBRF80XzRfNAkJQklUKDkpDQo+ICAjZGVmaW5lIFNOT1Jf
+SFdDQVBTX1JFQURfMV80XzRfRFRSCUJJVCgxMCkNCj4gIA0KPiAtI2RlZmluZSBTTk9SX0hXQ1BB
+U19SRUFEX09DVEFMCQlHRU5NQVNLKDE0LCAxMSkNCj4gKyNkZWZpbmUgU05PUl9IV0NBUFNfUkVB
+RF9PQ1RBTAkJR0VOTUFTSygxNCwgMTEpDQo+ICAjZGVmaW5lIFNOT1JfSFdDQVBTX1JFQURfMV8x
+XzgJCUJJVCgxMSkNCj4gICNkZWZpbmUgU05PUl9IV0NBUFNfUkVBRF8xXzhfOAkJQklUKDEyKQ0K
+PiAgI2RlZmluZSBTTk9SX0hXQ0FQU19SRUFEXzhfOF84CQlCSVQoMTMpDQo+IA0K
