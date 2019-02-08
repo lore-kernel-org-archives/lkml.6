@@ -3,75 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEAAC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2952C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59B0A20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AD4420855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfBHT0e convert rfc822-to-8bit (ORCPT
+        id S1727725AbfBHT1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:26:34 -0500
-Received: from elephants.elehost.com ([216.66.27.132]:52912 "EHLO
-        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbfBHT0e (ORCPT
+        Fri, 8 Feb 2019 14:27:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52128 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727144AbfBHT1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:26:34 -0500
-X-Virus-Scanned: amavisd-new at elehost.com
-Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
-        (authenticated bits=0)
-        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18JQOHo088343
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 8 Feb 2019 14:26:25 -0500 (EST)
-        (envelope-from rsbecker@nexbridge.com)
-From:   "Randall S. Becker" <rsbecker@nexbridge.com>
-To:     "'Jeff King'" <peff@peff.net>
-Cc:     "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
-        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net>
-In-Reply-To: <20190208191519.GF27673@sigill.intra.peff.net>
-Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-Date:   Fri, 8 Feb 2019 14:26:17 -0500
-Message-ID: <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com>
+        Fri, 8 Feb 2019 14:27:40 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18JIoH3088861
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 14:27:38 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qhd38fsup-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 14:27:37 -0500
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 19:27:37 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 19:27:32 -0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18JRV9Q23396414
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 19:27:31 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C5630AC05B;
+        Fri,  8 Feb 2019 19:27:31 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6058AC05F;
+        Fri,  8 Feb 2019 19:27:31 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 19:27:31 +0000 (GMT)
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v4_1/2=5d_tpm=3a_Unify_the_send_callback_b?=
+ =?UTF-8?Q?ehaviour=c3=a4?=
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+ <20190208191710.GA30645@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 14:27:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw84wKJiaU9Aj0+V9OmuzTBEA==
-Content-Language: en-ca
+In-Reply-To: <20190208191710.GA30645@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020819-0068-0000-0000-0000039125DA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010560; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158206; UDB=6.00604308; IPR=6.00938739;
+ MB=3.00025496; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 19:27:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020819-0069-0000-0000-0000476FE0F4
+Message-Id: <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=778 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 8, 2019 14:15, Jeff King wrote:
-> On Fri, Feb 08, 2019 at 01:47:04PM -0500, Randall S. Becker wrote:
-> 
-> > > Though I suspect we may be able to just find a solution that works
-> > > everywhere, without having two different implementations. If we know
-> > > we need $count bytes for dd, we could probably just generate a file
-> > > with that many NULs in it.
-> >
-> > For this, we could use truncate -s count file instead of dd to get a
-> > fixed size file of nulls. This would remove the need for /dev/zero in
-> > t5318 (the patch below probably will wrap badly in my mailer so I can
-> > submit a real patch separately.
-> 
-> I don't think "truncate" is portable, though.
+On 2/8/19 2:17 PM, Jarkko Sakkinen wrote:
+>
+>   */
+> if (rc > 0) {
+> 	dev_warn(&chip->dev,
+> 		 "%s: send(): invalid value %d\n", __func__, rc);
+> 	rc = 0;
+> }
+>
+> Should be fairly safe play now.
 
-It is available AFAIK on Linux, POSIX, and Windows under Cygwin. That's more than /dev/zero has anyway. I have the patch ready if you want it.
+Unfortuantely it isn't. You seemed to have lost the 
+EXPORT_SYMBOL_GPL(tpm_chip_start/stop) and the tpm_chip_start/stop 
+around the tpm2_shutdown()...
 
-> > > Other cases don't seem to actually care that they're getting NULs,
-> > > and are just redirecting stdin from /dev/zero to get an infinite
-> > > amount of input. They could probably use "yes" for that.
-> >
-> > What about reading from /dev/null?
-> 
-> That would yield zero bytes, not an infinite number of them.
 
-So something like: yes | tr 'y' '\0' | stuff?
+>
+> /Jarkko
+>
 
