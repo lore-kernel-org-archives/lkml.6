@@ -2,121 +2,117 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C96C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEC6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4CA21927
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89E662073D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:29:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQ32SUUn"
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="eK5Pp9Ru"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfBHM3J (ORCPT
+        id S1727669AbfBHM3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:29:09 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39613 "EHLO
+        Fri, 8 Feb 2019 07:29:14 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37795 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbfBHM3G (ORCPT
+        with ESMTP id S1727543AbfBHM3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:29:06 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t27so3364988wra.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:29:05 -0800 (PST)
+        Fri, 8 Feb 2019 07:29:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c8so3388332wrs.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:29:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I/GDz/IsdMmcCDZRowSDR4Fv2Qfj1zy1OtxkQuRkPWc=;
-        b=bQ32SUUn9vi65MSFCaMG8romDjcU3AD7T9O5DcsJOafYp2HhL+4nYYKtw1jU6vgPeZ
-         PPlvriLyOUy6OAFv0SbTzA+CrjXB9b8Eyeydjah33j1Ry1CLPN6metL11jy4Rr8v3iNp
-         5r9GbpUeXue5X+YAxOTIqHmRkchgOvkOcUaBwqTQBt8ocWmt+0r9Cn3AwQeZ1wJFNA5N
-         eTDzCbNW9mySBBuYh0nTojE0IM8smXXxGOosQoEQHlmQDIXNHRkEr3u1AMD/IjN5bhWl
-         9g4sNByRFMUzocTeQ8Z+I2B5JV7DOrRuCDicf33pAjMMBfUG5NtGn0qges7iX5+66ncn
-         Y2qw==
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g9nFuyNIknlIPIGeHUyXP6qUPfqzFzQLiNuJwZvm5cU=;
+        b=eK5Pp9RuVMmtIWtg7h7fgU66oyZMjz3hwMnNA+eP++5q7EFsskUTciNTLlXSPxZ3ja
+         b413Rwfl8CdiPQedqr0B+riZ3+ruwnAFU1hHFHgWVzk8X5aAU/g/bP6B3hmcGnCobjN1
+         xvjy2sUSCVGYEXtrv8VepBlC51tsCRacZ1Dig=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I/GDz/IsdMmcCDZRowSDR4Fv2Qfj1zy1OtxkQuRkPWc=;
-        b=n50EPNEa97zTfNvVFVIc8iJqekJSh2QVBRA43v7p8Yh4Iqkys3NSxco75JHWhbiGdZ
-         zaqzd174HXU9sCLWom6+7/wAGsNf5vxzfzI0lxMCyzT+AyK0KVSOXJNRUFS4UrMM/yOY
-         +jsZetF69Lej/ZNEZ4fpSJ+3oP+gK0w7N0raaHPrXLUkvl4Pimc+bzySWOUv6Sp+sgbL
-         rCChsPRyzTEoM88PE4eVYaMlDWLOBDmAz4ykP+L5CT6dtJxsbpIV5wEqZRlGeKwb79ZJ
-         WrY77IUru/zZOHYNB6dDti92XwITfkf3RQ+vQwLXhG8qrtzv8tkRpwqmLqNTRK3dfT4Q
-         3Bow==
-X-Gm-Message-State: AHQUAub9HVLBu4rpKfLr1GvzL9Z4MRL0c03qXzaFYnvumQV7V/Mg+BjP
-        4evdldv4Nv88hnb6CX5oBZz6K7jmsYs=
-X-Google-Smtp-Source: AHgI3IZIGFdLK0E05Vb//wPGIifqL10j36kHJDaCuc4fjJYcY8HpsDbjkn/5Cf3hNFQ3T42fnhUG9g==
-X-Received: by 2002:a5d:4d46:: with SMTP id a6mr16737894wru.28.1549628944975;
-        Fri, 08 Feb 2019 04:29:04 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id y20sm4236525wra.51.2019.02.08.04.29.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 04:29:03 -0800 (PST)
-Subject: Re: [PATCH v5 1/5] misc: dt-bindings: Add Qualcomm Fastrpc bindings
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     arnd@arndb.de, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        Thierry Escande <thierry.escande@linaro.org>,
-        Rob Herring <robh@kernel.org>
-References: <20190201130925.27066-1-srinivas.kandagatla@linaro.org>
- <20190201130925.27066-2-srinivas.kandagatla@linaro.org>
- <20190208122113.GG23483@kroah.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <6d3b6d2f-8ba1-fe87-ffbe-7a82c4a680db@linaro.org>
-Date:   Fri, 8 Feb 2019 12:28:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g9nFuyNIknlIPIGeHUyXP6qUPfqzFzQLiNuJwZvm5cU=;
+        b=KurTbc9qm8We4ZSWrV/AgA9v6FREh+kCiaUI0JKqtx5OaLao1XAGWtqmlsvaXBGf+C
+         GY9Bm+0zw1rZUKfzd867+vg7JSC+zEFA5kA79VcPyN7zEVZ55Z/NB1HC+cRM7ljETLtw
+         7dTPpWbCxvQyL27ndDLLDAEVkyi8YrfmzVfKQ5cZ0G0NvhQJm8COYTgVvvBBBLY7i/bL
+         BEI57fRS7Ow3XTKWdA6fHptH5+ZTlwLPQCC59MaE78WpclxmOanAAmWwjC5S6LSGMX7X
+         DeYJl5WUZg4elMHUOTIklEjvcKtRnaDEfBICSiK5uz2od2z9tu1sYdcvBwRamZe7MrKl
+         HXow==
+X-Gm-Message-State: AHQUAuZTrHvsDKiHnDmwKQdNFjcQ3jRf13TPI4PYHTP46kBeJLhofp+u
+        qkvbyT5jJkBw0bP5vvt9cIPLUnYFKW6AZubl9/UrMw==
+X-Google-Smtp-Source: AHgI3IY1p3Yuz0ID0EDGHal6AKMUbD4D2TsUhOweezQ/5aEp+LsUms5K76ATBXPhfhNeKqUgYORS/92rCevTgNKKe88=
+X-Received: by 2002:adf:b201:: with SMTP id u1mr3445624wra.165.1549628949513;
+ Fri, 08 Feb 2019 04:29:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190208122113.GG23483@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-15-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-15-Zhiqiang.Hou@nxp.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Fri, 8 Feb 2019 18:01:48 +0530
+Message-ID: <CAFZiPx3qPHWfyz8R1xhsvZyS40WdyWGCZzSd8xgcQ3q+H9WCYQ@mail.gmail.com>
+Subject: Re: [PATCHv3 14/27] PCI: mobiveil: initialize Primary/Secondary/Subordinate
+ bus number
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 08/02/2019 12:21, Greg KH wrote:
-> On Fri, Feb 01, 2019 at 01:09:21PM +0000, Srinivas Kandagatla wrote:
->> The FastRPC driver implements an IPC (Inter-Processor Communication)
->> mechanism that allows for clients to transparently make remote method
->> invocations across DSP and APPS boundaries. This enables developers
->> to offload tasks to the DSP and free up the application processor for
->> other tasks.
->>
->> Co-developed-by: Thierry Escande<thierry.escande@linaro.org>
->> Signed-off-by: Thierry Escande<thierry.escande@linaro.org>
->> Signed-off-by: Srinivas Kandagatla<srinivas.kandagatla@linaro.org>
->> Reviewed-by: Rob Herring<robh@kernel.org>
->> ---
->>   .../devicetree/bindings/misc/qcom,fastrpc.txt | 78 +++++++++++++++++++
->>   1 file changed, 78 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
-> What changed from v4?  v2?  v3?
-> 
-I have done that in cover letter w.r.t previous versions,
-
-Changes since v4(https://patchwork.kernel.org/cover/10779341/) :
-- collected acks for DT from Rob.
-- Removed unnecessary list safe iteration spotted by Greg KH.
-- Removed unnecessary syslog spams.
-- Added more checks to input validity.
-
-
-> That needs to be somewhere in here, below the --- line or in the 00
-> email at the least to give us some idea of what is different.
-> 
-> v6 please?
-Sure, I can send v6 with full change log from RFC in cover letter along 
-with some minor fixes.
-
-
-thanks,
-srini
+On Tue, Jan 29, 2019 at 1:40 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+>
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+> The reset value is all zero, so set a workable value for Primary,
+> Secondary and Subordinate bus numbers.
+>
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> ---
+> V3:
+>  - No change
+>
+>  drivers/pci/controller/pcie-mobiveil.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index db7ecb021c63..9210165fe8c0 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -582,6 +582,12 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>         u32 value, pab_ctrl, type;
+>         struct resource_entry *win;
+>
+> +       /* setup bus numbers */
+> +       value = csr_readl(pcie, PCI_PRIMARY_BUS);
+> +       value &= 0xff000000;
+> +       value |= 0x00ff0100;
+> +       csr_writel(pcie, value, PCI_PRIMARY_BUS);
+> +
+>         /*
+>          * program Bus Master Enable Bit in Command Register in PAB Config
+>          * Space
+> --
+> 2.17.1
+>
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
