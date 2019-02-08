@@ -2,97 +2,92 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F6CC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196D6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C85BF20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:22:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vKIGYZGL"
+	by mail.kernel.org (Postfix) with ESMTP id DCA2020863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549624954;
+	bh=jtFZT6pg2xfaAZLc1Bs3aw7RsCOZYo5J9JbMUrLw39w=;
+	h=From:Date:Subject:To:Cc:List-ID:From;
+	b=S0Vdk9nPpOQL+crhsVd4LphrXgjLq8D0M7o7UWf2uh9zalkqxC+8hqJQzKekimWfr
+	 Sl2YstMtov4fZUL85VmklT2Mg+BMEmqK1mDDC9Q5IJDkqTVMy/PweRmYU+9SkBrXMA
+	 WYaTxVJerotVyaX254DBuExAxcMAwjNGXTCEW/Do=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfBHLWZ (ORCPT
+        id S1727423AbfBHLWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:22:25 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43742 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbfBHLWY (ORCPT
+        Fri, 8 Feb 2019 06:22:33 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45212 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbfBHLWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:22:24 -0500
-Received: by mail-lf1-f65.google.com with SMTP id j1so2237219lfb.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 03:22:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BzEoJSJEJXBZy8f1Wg8bpBsrehVuXk1vukG5ZjufnMs=;
-        b=vKIGYZGLrWGG3Ddru8X0PUsY6nvcElywqJf2WaocebYFSBy+PA0eaHaP4P7AqiKKyu
-         OkCgYUNx/Cfp0nmK3GqPYE4QzS+ti0eUhPub1iWcQxhdkUO0N5YO+t2vbv4PegEOwpS+
-         EoMmVvPt7jImC4tCWGQeUviXF4OgXk0yxkOAd0i7wYXLz72B7pNqLxjeYL5g7CnEbj5t
-         aDmnWItNWGs/RdNo4yQhnwu/ZJ5PZ4yx9eINJT21CGvb3SlzqN8AqKEiuJhNNrUgMBoi
-         hgPip31AAsfOmeCiDAsLTTYKLvx+pijHLrGGAE8ndOdt53a6FPZRiVuG7Bpyorq2bYtN
-         bEdw==
+        Fri, 8 Feb 2019 06:22:32 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 32so5163004ota.12;
+        Fri, 08 Feb 2019 03:22:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BzEoJSJEJXBZy8f1Wg8bpBsrehVuXk1vukG5ZjufnMs=;
-        b=WCpN/8pKxq2liC3F1ei5wvzmhKTWpob1KOgbyAseGcZoxE1iW4r1JkgsuOrYkp98L/
-         1a5Wtxq8T5Gv6jHFirCH8/zpUlbI++GhTmknvk8qUQx2NhH52LCSq5PKYL0Z+b/ekRQV
-         OZD04cGm/Z8tXKaLlsxaMqh7fiAU1v1p7vJOoOrXe4wmAD+DYHeju2LS2OJExg5fSOvX
-         L4PNRJ0QdSgnwVlLFJwdcaVargcVuR12ZkQGD/FMvOiXCQFq8hbKbN2Ai4fuPBTmdgxY
-         vtri4czsUJBDnv+FJcd1vEGVrQMTYbmldwTXqkpJMxE7mzOxGx58D2oOLobiqiOhDwJE
-         bYvQ==
-X-Gm-Message-State: AHQUAub2FWT1OWOQwJlsne/XUb1nSM+Asjj7ooG00E5y4/OdDVNV6NHi
-        JSPB6vSHNWbRbGs8XZEdBu1YPGZ6myC4pcVF543bhw==
-X-Google-Smtp-Source: AHgI3IZyirNu0MtEuHPP/zzOhmdH+z6MjF+SXLB2GjmBk0yMInW95jahzSzQLqcLk2iTixUgApHokrSSjNc2bvqgB0M=
-X-Received: by 2002:a19:9a08:: with SMTP id c8mr13098161lfe.8.1549624942778;
- Fri, 08 Feb 2019 03:22:22 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=p84v49WIlZL8pX0+KpZTS18uSWpifEkuiw1CUi8FD+E=;
+        b=SOj8VM0cIoae/WUl5Rl1z4ZHHPcoC+6vhKoTAolufq+l20YKXV5veoHRWPENr8ZyC4
+         fJbnuTrQJ36rvXbyrRgNikY/lZJRryH3TZHshEC3GEaoV22LNuNeTQeJcNX+WfBKjfY2
+         K/3BU+P5z3yFLXFrLS18p8N3EcGvgLNJJFb7QVHqNrny2EN9BAiWrYfOk6fQdB5/nJmy
+         R4J0/Nz5JSG/LIi3V555unNN2f2STMl7aKQl49RPgg0iAPiYzsW6kECjjVKJMkEB444W
+         dEubMmAm3lM7Ff3XkYSHIEfmfjeDDlRZVF1N8V+/zPOQL6JjAsLF3SYY1CgWLiOL79Wp
+         Pzww==
+X-Gm-Message-State: AHQUAua87fU4LJjZyyIoxSlIWiSEWth0/d0+iRVSeGoYMLR/d2XcWfqd
+        hTCyavnwhtFQ7Xnm0u70b3krPT4KDe5Em6EUGEvunyxm
+X-Google-Smtp-Source: AHgI3IZbJozjn+bJh9kKevVr07Ar8u1wf/DQDYrLYkHjQs2khCMqQaEYklCAN5kKrteXl9P9v0LlFhmiV8htGlx3nBU=
+X-Received: by 2002:a9d:4c84:: with SMTP id m4mr11639653otf.124.1549624951450;
+ Fri, 08 Feb 2019 03:22:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20190205091237.6448-1-brgl@bgdev.pl> <20190205091237.6448-8-brgl@bgdev.pl>
-In-Reply-To: <20190205091237.6448-8-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Feb 2019 12:22:10 +0100
-Message-ID: <CACRpkdYKLeKA7CPFvoBPHB-K+X_n80YvFyYS_SHxuTTyGLNZ4g@mail.gmail.com>
-Subject: Re: [PATCH v4 07/10] gpio: max77650: add GPIO support
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 8 Feb 2019 12:22:20 +0100
+Message-ID: <CAJZ5v0hX3PB6k3GCP2y9MYGJiYH6Fvg=cFdUNuDx0FB5UnVY3A@mail.gmail.com>
+Subject: [GIT PULL] ACPI fix for v5.0-rc6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 10:12 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Hi Linus,
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Add GPIO support for max77650 mfd device. This PMIC exposes a single
-> GPIO line.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Please pull from the tag
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-5.0-rc6
 
-Please merge this with the rest of the stuff through MFD!
+with top-most commit ce5cbf53496bfebe1b7478a532820373342e8302
 
-Thanks,
-Linus Walleij
+ ACPI: Set debug output flags independent of ACPICA
+
+on top of commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5
+
+ Linux 5.0-rc5
+
+to receive an ACPI fix for 5.0-rc6.
+
+This prevents excessive ACPI debug messages from being printed
+to the kernel log, which has started to happen after one of the
+recent ACPICA commits (Erik Schmauss).
+
+Thanks!
+
+
+---------------
+
+Erik Schmauss (1):
+      ACPI: Set debug output flags independent of ACPICA
+
+---------------
+
+ drivers/acpi/bus.c | 3 +++
+ 1 file changed, 3 insertions(+)
