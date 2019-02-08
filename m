@@ -2,177 +2,164 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40694C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF47BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC76217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFFF1218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:23:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kvx1Kqgg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfBHNW6 (ORCPT
+        id S1727648AbfBHNXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:22:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47512 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727377AbfBHNW6 (ORCPT
+        Fri, 8 Feb 2019 08:23:25 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44693 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfBHNXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:22:58 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18DGCjE086861
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 08:22:56 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qh854f59u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:22:56 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Fri, 8 Feb 2019 13:22:54 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 13:22:51 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18DMoC359113596
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 13:22:50 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E79ED42047;
-        Fri,  8 Feb 2019 13:22:49 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8430B4203F;
-        Fri,  8 Feb 2019 13:22:45 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.102.1.73])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  8 Feb 2019 13:22:45 +0000 (GMT)
-Date:   Fri, 8 Feb 2019 18:52:38 +0530
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Alice Ferrazzi <alicef@alicef.me>, jeyu@kernel.org,
-        jikos@kernel.org, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: Re: [PATCH v2] livepatch: core: Return EOPNOTSUPP instead of ENOSYS
-References: <20190204183324.30775-1-alicef@alicef.me>
- <20190205155933.r6ey474lq4m5nlmp@treble>
- <20190206102832.apa7sekkwljo4ejg@pathway.suse.cz>
- <20190208062005.GA21436@JAVRIS.in.ibm.com>
- <alpine.LSU.2.21.1902081013100.24868@pobox.suse.cz>
+        Fri, 8 Feb 2019 08:23:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v16so3511879wrn.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 05:23:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gF3HRrnToBNb9Vm3Va2jq+6CBn36T82L5pS+JyLAmHc=;
+        b=kvx1KqggRS41/8ecBa+FvibNHlIMvmQZu95hG5hj6LrnqD2m5z7JbjBqpMcoz3it9U
+         BksAI822SxVBtJZsh+aLWi+JH/j3Ng09MrP73yvyKWLZyBzjf2RSyFPDskTQxkchvxkJ
+         q03NKFq4AlI4/aYGQiZpxfVbFB8LGdwv5sbnSo0ES4MW1xL+ddGKxoW/xkD5E6bzWksR
+         0yTOTGElt64j4uZSX4qDeQvxrOXvtNtom9QGERHwJcXdvd9wyOwlBJWVK9my9lvXGWF/
+         l1uVLBCisyLMsXJVQCowscjEVWOGgc8YwZBmk/Gvs0lmvt1KDDnwLjZ18sBtOXpa9MwH
+         ZxyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gF3HRrnToBNb9Vm3Va2jq+6CBn36T82L5pS+JyLAmHc=;
+        b=VKnbsoFoNmtBkNp7AQ/wAFT2X1UjHOCydZGHLF7wDr/FEEzZynEabd/5BBLDjXUsr4
+         DcOG5kZQpRGdy52T1m/nZY+T34QB4SIgnhpqgil/ZzDUzP+GLxpwMONYDDs1rLQ1P8gN
+         ETWfLfxEBf5OFFI8on8ZgqMIET1WAo+V+ABRBMIYxeiBTOKE5Av7Sc8BxgOHbzKE3kHZ
+         IklFZDEpuxV/Ps/IJt7gIk/cX3Xnm1Ygk5ozwzvtCq6zxxwPAlUHDp/iqCDEQdgzH80f
+         hdDiTX/0tZByBJrSnTGvnkwymxrvKYuLTXuaIh/dyvex1llJGF73R0z/bw+72PlbSKzr
+         1dLg==
+X-Gm-Message-State: AHQUAuaA+t4uXqkbZvS3VRZuaOpd6GheNQt4ZPkyLo8iJfsc+lHyMFvz
+        RbPD5flZoLxaCpicRh0VcHn2AQ==
+X-Google-Smtp-Source: AHgI3IbdjUG2fPN+4RXK3LgiYBYNLZfWJkQ3rrn47FhqzERp4eeSbOm8sWhWEcc6GK+3ZMOPe2CfNA==
+X-Received: by 2002:a5d:6850:: with SMTP id o16mr17115689wrw.123.1549632201760;
+        Fri, 08 Feb 2019 05:23:21 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id m21sm3033007wmi.43.2019.02.08.05.23.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Feb 2019 05:23:20 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org, arnd@arndb.de
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v6 0/5] misc: Add support to Qualcomm FastRPC driver
+Date:   Fri,  8 Feb 2019 13:23:01 +0000
+Message-Id: <20190208132306.12571-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1902081013100.24868@pobox.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 19020813-0020-0000-0000-000003146E20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020813-0021-0000-0000-000021657D64
-Message-Id: <20190208132238.GA32656@JAVRIS.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080095
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miroslav,
+Thanks for reviewing the v5 here is new version addressing the
+comments from v6.
+This patchset adds support to Qualcomm FastRPC driver which implements
+an IPC (Inter-Processor Communication) mechanism that allows for clients
+to transparently make remote method invocations across processor boundaries.
 
-On Fri, Feb 08, 2019 at 10:24:21AM +0100, Miroslav Benes wrote:
-> Hi Kamalesh,
-> 
-> On Fri, 8 Feb 2019, Kamalesh Babulal wrote:
-> 
-> > On Wed, Feb 06, 2019 at 11:28:32AM +0100, Petr Mladek wrote:
-> > > On Tue 2019-02-05 09:59:33, Josh Poimboeuf wrote:
-> > > > On Tue, Feb 05, 2019 at 03:33:28AM +0900, Alice Ferrazzi wrote:
-> > > > > From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-> > > > > 
-> > > > > As a result of an unsupported operation is better to use EOPNOTSUPP
-> > > > > as error code.
-> > > > > ENOSYS is only used for 'invalid syscall nr' and nothing else.
+The below diagram depicts invocation of a single method where the client
+and objects reside on different processors. An object could expose
+multiple methods which can be grouped together and referred to as an
+interface.
 
-[...]
+: ,--------,        ,------,  ,-----------,  ,------,        ,--------,
+: |        | method |      |  |           |  |      | method |        |
+: | Client |------->| Stub |->| Transport |->| Skel |------->| Object |
+: |        |        |      |  |           |  |      |        |        |
+: `--------`        `------`  `-----------`  `------`        `--------`
 
-> > After removal of the immediate flag by
-> > commit d0807da78e11 ("livepatch: Remove immediate feature"), every
-> > architecture enabling livepatching is required to have implemented
-> > reliable stack trace.  Is it a better idea to make
-> > HAVE_RELIABLE_STACKTRACE a config dependency, which will disable
-> > livepatching support for architectures without reliable stack trace
-> > function during kernel build?
-> 
-> if I am not mistaken, s390x is currently the only one which is supported 
-> (the redirection works) but has no reliable stacktraces (so far, it is my 
-> plan to take a look soon).
-> 
-> Theoretically, it could still work. We have the fake signal and we can 
-> force the remaining tasks (kthreads). It is not something to be used in 
-> production but it could make sense for a limited testing.
+Client:    Linux user mode process that initiates the remote invocation
+Stub:      Auto generated code linked in with the user mode process that
+           takes care of marshaling parameters
+Transport: Involved in carrying an invocation from a client to an
+           object. This involves two portions: 1) FastRPC Linux
+           kernel driver that receives the remote invocation, queues
+           them up and then waits for the response after signaling the
+           remote side. 2) Service running on the remote side that
+           dequeues the messages from the queue and dispatches them for
+           processing.
+Skel:      Auto generated code that takes care of un-marshaling
+           parameters
+Object:    Method implementation
 
-That was my understanding too, s390 doesn't set HAVE_RELIABLE_STACKTRACE.
+Most of the work is derived from various downstream Qualcomm kernels.
+Credits to various Qualcomm authors who have contributed to this code.
+Specially Tharun Kumar Merugu <mtharu@codeaurora.org>
 
-(below output is right trimmed for readability)
+TODO:
+ - Support INIT_STATIC process
+ - Support remote mmap/unmap methods.
+ - Handling secure compute context banks.
+ - Add secure buffer support
 
-arch $ find . -name 'Kconfig'|xargs egrep -an "HAVE_LIVEPATCH"                                                                                                                                                                               
-./powerpc/Kconfig:209:  select HAVE_LIVEPATCH ...
-./x86/Kconfig:171:      select HAVE_LIVEPATCH ...
-./s390/Kconfig:161:     select HAVE_LIVEPATCH
+Change since v5 (https://patchwork.kernel.org/cover/10792749/) :
+- Fix domain id range check spotted by Thierry
+- Add missing dma_unmap_sg spotted by Thierry
+- Add refcounting to invoke context, to make sure that we do not free/unmap 
+	buffers when dsp is actively using it.
+- Rebased on top of char-misc-next branch
 
-arch $ find . -name 'Kconfig'|xargs egrep -an "HAVE_RELIABLE_STACKTRACE"                                                                                                                                                                     
-./powerpc/Kconfig:223:  select HAVE_RELIABLE_STACKTRACE ...
-./x86/Kconfig:189:      select HAVE_RELIABLE_STACKTRACE ...
-./Kconfig:690:config HAVE_RELIABLE_STACKTRACE
+Changes since v4(https://patchwork.kernel.org/cover/10779341/) :
+- collected acks for DT from Rob.
+- Removed unnecessary list safe iteration spotted by Greg KH.
+- Removed unnecessary syslog spams.
+- Added more checks to input validity.
 
-klp_have_reliable_stack() will guard against loading of livepatching
-module on s390, for the same reason being that HAVE_RELIABLE_STACKTRACE
-is not set. My explanation is purely based on the above grep output
-on Kconfig files, which might be partial. Am I missing something here?
+Changes since v3(https://patchwork.kernel.org/cover/10763343/) :
+- removed secured property from dt binding, defer it till we add
+	support to secure buffers.
+- reword various bits in bindings suggested by Rob Herring
 
-> > The idea is to remove klp_have_reliable_stack() by moving
-> > CONFIG_HAVE_RELIABLE_STACKTRACE as a config dependency to Kconfig file
-> > and adding the other CONFIG_STACKTRACE as a config dependency is not
-> > required, as it's selected via CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > dependency chain. With the patch on architecture without
-> > HAVE_RELIABLE_STACKTRACE, the user should see:
+Changes since v2 (https://lkml.org/lkml/2018/12/7/550) :
+- removed compat_ioctl specific structures and various cleanups as
+  suggested by Greg KH
+- replace reg property with label property as suggested by Bjorn
+- minor content cleanup in bindings as suggested by Mark Rutland
 
-[...]
+Changes since RFC:
+- moved from char to misc driver as suggested by Greg KH
+- updated ioctl data structures as suggested by Arnd.
+- cleaned up and reorganized most of the code from RFC review comments.
 
-> > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > index fe1993399823..9a80f7574d75 100644
-> > --- a/kernel/livepatch/core.c
-> > +++ b/kernel/livepatch/core.c
-> > @@ -1002,12 +1002,6 @@ int klp_enable_patch(struct klp_patch *patch)
-> >         if (!klp_initialized())
-> >                 return -ENODEV;
-> >  
-> > -       if (!klp_have_reliable_stack()) {
-> > -               pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
-> > -               return -ENOSYS;
-> > -       }
-> > -
-> > -
-> >         mutex_lock(&klp_mutex);
-> >  
-> >         ret = klp_init_patch_early(patch);
-> 
-> On the other hand, I like this change. So we have two options, I think. 
-> We can apply this and wait if someone complains (because of s390x 
-> testing), or we can wait for the full support of s390x and then enforce 
-> it.
 
-Thanks, I am ok with either of the options.  We could enforce the config
-dependency, in case the above assumption in regard to s390 is correct.
+Srinivas Kandagatla (5):
+  misc: dt-bindings: Add Qualcomm Fastrpc bindings
+  misc: fastrpc: Add Qualcomm fastrpc basic driver model
+  misc: fastrpc: Add support for context Invoke method
+  misc: fastrpc: Add support for create remote init process
+  misc: fastrpc: Add support for dmabuf exporter
 
-Thanks,
-Kamalesh
+ .../devicetree/bindings/misc/qcom,fastrpc.txt |   78 +
+ drivers/misc/Kconfig                          |   10 +
+ drivers/misc/Makefile                         |    1 +
+ drivers/misc/fastrpc.c                        | 1386 +++++++++++++++++
+ include/uapi/misc/fastrpc.h                   |   41 +
+ 5 files changed, 1516 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
+ create mode 100644 drivers/misc/fastrpc.c
+ create mode 100644 include/uapi/misc/fastrpc.h
+
+-- 
+2.20.1
 
