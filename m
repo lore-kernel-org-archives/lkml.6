@@ -5,133 +5,191 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A143C282CC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB40C282CB
 	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32629218EA
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52DC821919
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:08:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iq0p2CRr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDqodEhz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbfBHSHG (ORCPT
+        id S1727977AbfBHSIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:07:06 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41564 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbfBHSHF (ORCPT
+        Fri, 8 Feb 2019 13:08:02 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55388 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727373AbfBHSIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:07:05 -0500
-Received: by mail-pl1-f194.google.com with SMTP id k15so2044192pls.8;
-        Fri, 08 Feb 2019 10:07:05 -0800 (PST)
+        Fri, 8 Feb 2019 13:08:02 -0500
+Received: by mail-it1-f195.google.com with SMTP id m62so10896550ith.5;
+        Fri, 08 Feb 2019 10:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MzDQmN4pDdHV8yZHM6tWbaNysuBFr2DjwHYnpLG/xvg=;
-        b=iq0p2CRrhsvbbQpRh1Okxh9BI69PU8FyOEGYqDuHX4vha6S+RdBzLyooJFUE0OpvgL
-         m9XswWPZmtVPMPsBp7NZFSmhsPXA3SfTCrNOTrBZtRhLsZmNss07U2wabmpNNgbQo5c9
-         K9VpfNGCW25LfVgvdI8Fra8626X5NrX3Fh+NILRDdHNh1eV+zTdAfAXWozTMIZ57ohOI
-         UGto3RyxGWyKluXtYwxlZohr9H7pR3bEZ7pkjdzwR8KgBgzZobG6qBSg0KpPE0p/kosU
-         Y1Lbf0rv9N4Bm+9NMpLhDAtDUwZ/JBJSSU0CLPqzXGvEYKi7x2lop6uj7pl189HzKVPW
-         t2OQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1ha8tiaDoQDUW/w4Eg9NVxaHOTac5NWivcizqdQ179M=;
+        b=VDqodEhzP/xST8wGK5OrHBtM0hJWOrVvpmcLj+dps2H5Tz8/68X4XeqbZi0gXJMI7n
+         RYSiWoeoEyXX5sEEWBE7kypMtrsCfWXjm/ZPFtsENx5tK0Q9XvdF4pBVJ9sbAj/3Neei
+         S9Z8uEcMgTO6BMnlkRW8ykgwKF7yIRZ1QPlkN/d9S6cuvOI+nUk09dGohOENjaitI05K
+         xU9+8cJS/7n0d+kldh2g16SEBDL1XaG1+kbd/3pqBIg42swbygzie6lyYFfR++ctwRb6
+         3VsL21eR+CyMO36j+HtTGlkKVGPRoti8euAnVPGBtc4RZOelxqzE9dX81l+Ra9SIlRY3
+         8WIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MzDQmN4pDdHV8yZHM6tWbaNysuBFr2DjwHYnpLG/xvg=;
-        b=tHCwx0MAnu+YGiDBdR2ZQUnNZTh5Gev0IQFkZQq6U3XxWtydJX3rbHIziDACKX0VcK
-         ljGrAmPMU/2HntCDt3JYroP4a9BhJ9t4RLWK10I1W2F44uM4pUR9gKqV18AkkBdz3cqT
-         GXF7nMuMR2EkZf189p8IOw1Y1uYWF6V7OlDlS2ZxwMD2TF3ld+4IsCrvDnAsmA0s+q/G
-         XvLdc8M59wewI0wF4PYTylJZxbV3c5GVnEnBF831brCIdH+z9jeToPlR21+fel2i8hR+
-         rlLSKEFTzPFmoPqak6GcSv+/QI63wYVileMS5SzSY0lt6tu49c6o7nZym2SyS09ogXpw
-         /h6w==
-X-Gm-Message-State: AHQUAuYy7Elhp75fXRTFeThl+NYkKyqjKcI1a0tDpzWuisiQtWQRPTTE
-        WW2dMETnj4Des0QYcPF7kJPcSQRs
-X-Google-Smtp-Source: AHgI3IZhxkYqTSLh5WUBz4t6NKAt8VzROUXAMOCQGL1dyfBkSk8TrY2EqMmE2n7NONYN63n6MbZwhQ==
-X-Received: by 2002:a17:902:9b97:: with SMTP id y23mr22894290plp.329.1549649224838;
-        Fri, 08 Feb 2019 10:07:04 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id w6sm3582050pga.72.2019.02.08.10.06.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 10:07:04 -0800 (PST)
-Subject: Re: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     wsa@the-dreams.de, peda@axentia.se, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
- <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
-Date:   Fri, 8 Feb 2019 21:06:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ha8tiaDoQDUW/w4Eg9NVxaHOTac5NWivcizqdQ179M=;
+        b=PKaVwKNNmM2X9kHWirYPpI4PDoYReLNCl2ysdsxVKJhkdrTHf1zSu+WlqKyERTZJ5t
+         Xsxri1Mu1Gv84u8ygW7wlFxZZKb5jYX2mm7A6fPBvLFhB9ZVjfV/P/r7Z+8FUV1FKPj5
+         VP1DMPnLb9XyQSbfDRbMLRxFNFat/Xjh8oGS7P4pi5wgfCtrftpF3lXKgAFdKanKLTsx
+         he9fEV7xTGW6LBjiSvNL4dS6PAIea3GmIrtb8a2u1QrTRVm4NYXHvrsVjcZLY4MRd2Fj
+         fsSaqrlU28bhOLFH5XRie09/Oe2z51g1T89BBAeqyPfMMrWnWtMfGpxPeJlpYuNOCWe2
+         ZxXw==
+X-Gm-Message-State: AHQUAuazJYzHnhk9X/lpRIhDIvsXfJrD3obo/OkrLdsvr2sczbPoMavg
+        IghQ4YoVoBr0Zhy0C2w+C2aGZ3rrW3Z1R41crog=
+X-Google-Smtp-Source: AHgI3IaVb9P4AyOT8Be58qgdkvNb/UFAUSpF6SKVEawnVPDnIerwXJ7pAU5kcqBHpaMdjbrM61NnLgM0vP0EsJp3hWE=
+X-Received: by 2002:a5e:8c14:: with SMTP id n20mr3449441ioj.200.1549649280774;
+ Fri, 08 Feb 2019 10:08:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190204201854.2328-1-nitesh@redhat.com> <20190204201854.2328-3-nitesh@redhat.com>
+In-Reply-To: <20190204201854.2328-3-nitesh@redhat.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Fri, 8 Feb 2019 10:07:49 -0800
+Message-ID: <CAKgT0UfqtRigPwUaN=H_MrLgeXErkeOcpuPy6ys6A3UCLnMBPg@mail.gmail.com>
+Subject: Re: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via
+ static key
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>, david@redhat.com,
+        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-08.02.2019 20:49, Sowjanya Komatineni пишет:
-> Tegra194 supports maximum 64K bytes transfer per packet.
-> Tegra186 and prior supports maximum 4K bytes transfer per packet.
-> 
-> This includes 12 bytes of packet header and this limit is
-> applicable irrespective of PIO or DMA mode transfers.
-> 
-> This patch fixes max write length to account for packet header size
-> for transfers.
-> 
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+On Mon, Feb 4, 2019 at 2:11 PM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>
+> This patch enables the guest free page hinting support
+> to enable or disable based on the STATIC key which
+> could be set via sysctl.
+>
+> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
 > ---
->  [V16/V17] : I2C core max message size is 65536. So, max_read_len of 65535 is NOP.
-> 	  Removed it leaving max_write_len
->  [V15]	: This is new patch in this series.
-> 
-> 
->  drivers/i2c/busses/i2c-tegra.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 3758c7a2c781..e4bf85e8dc14 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -125,6 +125,9 @@
->  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
->  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
->  
-> +/* Packet header size in bytes */
-> +#define I2C_PACKET_HEADER_SIZE			12
-> +
->  /*
->   * msg_end_type: The bus control which need to be send at end of transfer.
->   * @MSG_END_STOP: Send stop pulse at end of transfer.
-> @@ -899,12 +902,13 @@ static const struct i2c_algorithm tegra_i2c_algo = {
->  /* payload size is only 12 bit */
->  static const struct i2c_adapter_quirks tegra_i2c_quirks = {
->  	.flags = I2C_AQ_NO_ZERO_LEN,
-> -	.max_read_len = 4096,
-> -	.max_write_len = 4096,
-> +	.max_read_len = SZ_4K,
-> +	.max_write_len = SZ_4K - I2C_PACKET_HEADER_SIZE,
+>  include/linux/gfp.h          |  2 ++
+>  include/linux/page_hinting.h |  5 +++++
+>  kernel/sysctl.c              |  9 +++++++++
+>  virt/kvm/page_hinting.c      | 23 +++++++++++++++++++++++
+>  4 files changed, 39 insertions(+)
+>
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index e596527284ba..8389219a076a 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -461,6 +461,8 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+>  #define HAVE_ARCH_FREE_PAGE
+>  static inline void arch_free_page(struct page *page, int order)
+>  {
+> +       if (!static_branch_unlikely(&guest_page_hinting_key))
+> +               return;
+>         guest_free_page(page, order);
+>  }
+>  #endif
+> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
+> index b54f7428f348..9bdcf63e1306 100644
+> --- a/include/linux/page_hinting.h
+> +++ b/include/linux/page_hinting.h
+> @@ -14,4 +14,9 @@ struct hypervisor_pages {
+>         unsigned int order;
 >  };
->  
->  static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
->  	.flags = I2C_AQ_NO_ZERO_LEN,
-> +	.max_write_len = 65535 - I2C_PACKET_HEADER_SIZE,
+>
+> +extern int guest_page_hinting_flag;
+> +extern struct static_key_false guest_page_hinting_key;
+> +
+> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
+> +                             void __user *buffer, size_t *lenp, loff_t *ppos);
+>  void guest_free_page(struct page *page, int order);
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index ba4d9e85feb8..5d53629c9bfb 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -1690,6 +1690,15 @@ static struct ctl_table vm_table[] = {
+>                 .extra1         = (void *)&mmap_rnd_compat_bits_min,
+>                 .extra2         = (void *)&mmap_rnd_compat_bits_max,
+>         },
+> +#endif
+> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
+> +       {
+> +               .procname       = "guest-page-hinting",
+> +               .data           = &guest_page_hinting_flag,
+> +               .maxlen         = sizeof(guest_page_hinting_flag),
+> +               .mode           = 0644,
+> +               .proc_handler   = guest_page_hinting_sysctl,
+> +       },
+>  #endif
+>         { }
+>  };
 
-Ideally it should be SZ_64K - I2C_PACKET_HEADER_SIZE to not miss the one byte, otherwise good to me:
+Since you are adding a new sysctl shouldn't you also be updating
+Documentation/sysctl/vm.txt?
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
+> index 818bd6b84e0c..4a34ea8db0c8 100644
+> --- a/virt/kvm/page_hinting.c
+> +++ b/virt/kvm/page_hinting.c
+> @@ -1,6 +1,7 @@
+>  #include <linux/gfp.h>
+>  #include <linux/mm.h>
+>  #include <linux/kernel.h>
+> +#include <linux/kvm_host.h>
+>
+>  /*
+>   * struct kvm_free_pages - Tracks the pages which are freed by the guest.
+> @@ -31,6 +32,28 @@ struct page_hinting {
+>
+>  DEFINE_PER_CPU(struct page_hinting, hinting_obj);
+>
+> +struct static_key_false guest_page_hinting_key  = STATIC_KEY_FALSE_INIT;
+> +EXPORT_SYMBOL(guest_page_hinting_key);
+> +static DEFINE_MUTEX(hinting_mutex);
+> +int guest_page_hinting_flag;
+> +EXPORT_SYMBOL(guest_page_hinting_flag);
 
+I'm not entirely sure this flag makes sense to me. What is to prevent
+someone from turning this on when there is no means of actually using
+the hints. I understand right now that guest_free_page doesn't
+actually do anything, but when it does I would assume it has to
+interact with a device. If that device is not present would it still
+make sense for us to be generating hints?
+
+> +
+> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
+> +                             void __user *buffer, size_t *lenp,
+> +                             loff_t *ppos)
+> +{
+> +       int ret;
+> +
+> +       mutex_lock(&hinting_mutex);
+> +       ret = proc_dointvec(table, write, buffer, lenp, ppos);
+> +       if (guest_page_hinting_flag)
+> +               static_key_enable(&guest_page_hinting_key.key);
+> +       else
+> +               static_key_disable(&guest_page_hinting_key.key);
+> +       mutex_unlock(&hinting_mutex);
+> +       return ret;
+> +}
+> +
+>  void guest_free_page(struct page *page, int order)
+>  {
+>  }
+> --
+> 2.17.2
+>
