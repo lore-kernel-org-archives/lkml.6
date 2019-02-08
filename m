@@ -3,96 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E029DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6754CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B883821841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E5A521841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:13:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfBHWLt convert rfc822-to-8bit (ORCPT
+        id S1727090AbfBHWND convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:11:49 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:46769 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBHWLt (ORCPT
+        Fri, 8 Feb 2019 17:13:03 -0500
+Received: from elephants.elehost.com ([216.66.27.132]:16544 "EHLO
+        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfBHWND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:11:49 -0500
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 7BF60100009;
-        Fri,  8 Feb 2019 22:11:45 +0000 (UTC)
-Date:   Fri, 8 Feb 2019 23:11:44 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 07/11] mtd: rawnand: denali: use bool type instead of
- int where appropriate
-Message-ID: <20190208231144.413a8f6d@xps13>
-In-Reply-To: <7e1121479b38e98949b44c9fba91dee3adf97b99.camel@perches.com>
-References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com>
-        <1549613335-30319-8-git-send-email-yamada.masahiro@socionext.com>
-        <7e1121479b38e98949b44c9fba91dee3adf97b99.camel@perches.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 8 Feb 2019 17:13:03 -0500
+X-Virus-Scanned: amavisd-new at elehost.com
+Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
+        (authenticated bits=0)
+        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18MCoOj097005
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 8 Feb 2019 17:12:50 -0500 (EST)
+        (envelope-from rsbecker@nexbridge.com)
+From:   "Randall S. Becker" <rsbecker@nexbridge.com>
+To:     "'brian m. carlson'" <sandals@crustytoothpaste.net>,
+        "'Jeff King'" <peff@peff.net>
+Cc:     "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
+        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net> <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com> <20190208193157.GA30952@sigill.intra.peff.net> <20190208220714.GG11927@genre.crustytoothpaste.net>
+In-Reply-To: <20190208220714.GG11927@genre.crustytoothpaste.net>
+Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+Date:   Fri, 8 Feb 2019 17:12:43 -0500
+Message-ID: <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain;
+        charset="utf-8"
 Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw84wKJiaU9Aj0+V9MB8y1xFgJaeDVqApzvLgCmhA6QgA==
+Content-Language: en-ca
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+On February 8, 2019 17:07, brian m. carlson wrote:
+> On Fri, Feb 08, 2019 at 02:31:57PM -0500, Jeff King wrote:
+> > > It is available AFAIK on Linux, POSIX, and Windows under Cygwin.
+> > > That's more than /dev/zero has anyway. I have the patch ready if you
+> > > want it.
+> >
+> > Is it POSIX? Certainly truncate() is, but I didn't think the
+> > command-line tool was. If it really is available everywhere, then
+> > yeah, I'd be fine with it.
+> 
+> It's not. POSIX doesn't specify the command, and macOS lacks it, I believe.
 
-Joe Perches <joe@perches.com> wrote on Fri, 08 Feb 2019 01:23:37 -0800:
+I'm happy to modify the test (it is in one spot), to make a decision based on:
+a) whether /dev/zero exists
+b) whether the system is a NonStop
+c) something else
 
-> On Fri, 2019-02-08 at 17:08 +0900, Masahiro Yamada wrote:
-> > Use 'bool' type for some function arguments.
-> > 
-> >  - write (write or read?)
-> >  - raw (the raw access mode or not?)
-> > 
-> > It is true that denali_nand_info::dma_avail is also boolean, but
-> > I am keeping it as 'int' because 'scripts/checkpatch --strict' would
-> > report the following:
-> > 
-> > CHECK: Avoid using bool structure members because of possible alignment issues
-> >   - see: https://lkml.org/lkml/2017/11/21/384
-> > 
-> > I do not think it is a matter here, but I am sticking to the suggestion.  
-> 
-> just fyi: that suggestion has been removed by:
-> 
-> commit 7967656ffbfa493f5546c0f18bf8a28f702c4baa
-> Author: Jason Gunthorpe <jgg@ziepe.ca>
-> Date:   Fri Jan 18 15:50:47 2019 -0700
-> 
->     coding-style: Clarify the expectations around bool
->     
->     There has been some confusion since checkpatch started warning about bool
->     use in structures, and people have been avoiding using it.
->     
->     Many people feel there is still a legitimate place for bool in structures,
->     so provide some guidance on bool usage derived from the entire thread that
->     spawned the checkpatch warning.
->     
->     Link: https://lkml.kernel.org/r/CA+55aFwVZk1OfB9T2v014PTAKFhtVan_Zj2dOjnCy3x
-> 
-> 
-> 
+What would you all prefer? It doesn't matter to me one way or another, as long as I can get the dependency to /dev/zero removed so tests will run here.
 
-Interesting, thanks for the link! I will consider this for my ongoing
-developments.
+Thanks,
+Randall
 
-
-Regards,
-Miquèl
