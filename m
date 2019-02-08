@@ -2,367 +2,206 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C7EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB207C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2743B20811
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:33:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ulrfSqP5"
+	by mail.kernel.org (Postfix) with ESMTP id 93CE120811
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:35:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfBHVdy (ORCPT
+        id S1727379AbfBHVfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:33:54 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33109 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbfBHVdx (ORCPT
+        Fri, 8 Feb 2019 16:35:36 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39998 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbfBHVfg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:33:53 -0500
-Received: by mail-vs1-f67.google.com with SMTP id k11so53798vsm.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 13:33:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yhQbpZiiOCrUFmF4Enb6j0SBjYID4O8d9pMfZujhwK8=;
-        b=ulrfSqP5/Ugmp2IoqAaEIJzdQQfM0W9C2yFcEoejm/fIuLi/fj6tYhD8/qpyqwhX1B
-         RNBKNMBE98uxB5fWGckhXx1C0OON58wGafOkvD/Qo6ztKUkZQQ45NoVZEnNu6L6Fnk5p
-         OEsjD6TjJDIfuIJd9VYChP7nebMWywAjLm5va1crsmSV7AKlQJeIjE7fRUcbYhH6YNuB
-         cpsXXaRkVX6bkwTzIZINtoYjHv+95+GrK2palj1ffxSq8Q+UdAxYfwR8HUVpG3I8OKlG
-         pxP4mAvXlM1xQ+mtRai1xeaC5R4Y3u/TVRrqGcSmHLGDYz5D8CBW8bbzKfREIez1xYvu
-         3tuA==
+        Fri, 8 Feb 2019 16:35:36 -0500
+Received: by mail-qk1-f193.google.com with SMTP id y16so3033064qki.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 13:35:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yhQbpZiiOCrUFmF4Enb6j0SBjYID4O8d9pMfZujhwK8=;
-        b=QXs9RmcqdC+93HDnuCLENW9ktGMYYOFh4V8x/yYv9VBxA25aBVeuxQhZlXECuY4qwc
-         /WM/N8iOtIBP3oxA1CQmp45Tb4dgImn0SH95/JneY+3zd4EFGH1d3+ILLDKtu6e4/LOe
-         OKnE0RW/E4FAY72akVAEyGDm4xFc6vJjVe99cKwbUqJIhp+qgoXxeRPkKviGm+GJvgB/
-         V+Qd/zrPqB5PlCoCT84sBD4FSDTPKECRo8h0CR49EmD06QPFXccx8nPaMhO5lXT5Uev2
-         LRqZy1sRPujnbXK/iwUdaU68Vlj4dUWBY55G5vheu7fwUj9Vg5d7HG2aF++zlX3dHgzg
-         iI3A==
-X-Gm-Message-State: AHQUAuY2aa+gQur1dsrDgpwkNzjXj32bhfVXMw8TWfbAu86qSjW1s2F0
-        pw5z//cwuUW5pXvSaIBqEbZT41UB4xL2tdI+I4c=
-X-Google-Smtp-Source: AHgI3IaJ2k9u7QU5JQKDM2zOrXkJnyKKOw/Et1zXAA7gIFHhbSt+EIs0EptSGTM4Uo+ZIk/rKwKfJUOIxnXl8AVUYgI=
-X-Received: by 2002:a67:44c8:: with SMTP id y69mr7005142vsf.172.1549661631822;
- Fri, 08 Feb 2019 13:33:51 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ARls8l9B1QpFmm4aPfw90cpl5kEhT9Yw7zKI5DeBEkI=;
+        b=ap7P8PhyBjivtXm7muaDbboK4whX80GooWu7ulBetVrG9jHNIV6Trydfghsgn77aHS
+         HMZ292rxr49a+k0/tzm/iq1FaOAxtAEMvIQWD9wcU1TDhFzxLUvs7s5N6vjCrsCjAymE
+         t+15bJz5QQB3ze12i38SVELAlOExDDsLjTxJ7dR1beq4NpNBl5WQgnIJFiXmYxTeZ/H7
+         p9nd6nrDJ6MUEemvRG4sKbdWDdzb3PAO0utvxV3RpttET5tip+ie82GT/iS+/S9xJrNK
+         n6svktVkPwDSrfXIQdEiSraSqtaF3F53agdL07183Dd/9SlO2rr7V1nvv1zvZ1b7x/zO
+         PCgA==
+X-Gm-Message-State: AHQUAuYfldWBB4YH6d+HQ67JopKkMW56yFVbO8u9IzL9OMMXXF3+GPKA
+        q5Up6k9UYuwoAsd06if3XTERQg==
+X-Google-Smtp-Source: AHgI3IYzayvnTvypc3/QCy8C7HXUe2Yfkgt1q0rsg4OEoZwNuHy2JRoAbikUEMUPJTfSAp1PyvRcdw==
+X-Received: by 2002:ae9:df02:: with SMTP id t2mr17410377qkf.230.1549661734868;
+        Fri, 08 Feb 2019 13:35:34 -0800 (PST)
+Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
+        by smtp.gmail.com with ESMTPSA id a5sm1119216qtm.16.2019.02.08.13.35.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 13:35:34 -0800 (PST)
+Date:   Fri, 8 Feb 2019 16:35:31 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>, david@redhat.com,
+        dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and
+ report free pages
+Message-ID: <20190208162516-mutt-send-email-mst@kernel.org>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-7-nitesh@redhat.com>
+ <20190205153607-mutt-send-email-mst@kernel.org>
+ <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
+ <20190205165514-mutt-send-email-mst@kernel.org>
+ <CAKgT0UdcrbUw-wfeXQPjnnbTWrvNB0zpwq-bCv4EEWcOSizL_w@mail.gmail.com>
+ <ab03c35e-b2bb-cb96-4701-436a4e2770d1@redhat.com>
+ <CAKgT0UcEFi7Rq9+EnLNNm61782QYRT6XZQDgbWFt2S8eMLf=qA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190204203254.4026-1-oded.gabbay@gmail.com> <20190206115237.GA6750@rapoport-lnx>
-In-Reply-To: <20190206115237.GA6750@rapoport-lnx>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Fri, 8 Feb 2019 23:33:27 +0200
-Message-ID: <CAFCwf10K9Ejqm_=jrtOyXAs4yL-6zs1X79O=dwjg=2jmB3PPYA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/15] Habana Labs kernel driver
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UcEFi7Rq9+EnLNNm61782QYRT6XZQDgbWFt2S8eMLf=qA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 1:52 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Mon, Feb 04, 2019 at 10:32:39PM +0200, Oded Gabbay wrote:
-> > Hello,
-> > This is v3 of the Habana Labs kernel driver patch-set. It contains minor fixes
-> > according to reviews done on v2. In addition, it is rebased on v5.0-rc5.
+On Fri, Feb 08, 2019 at 09:58:47AM -0800, Alexander Duyck wrote:
+> On Thu, Feb 7, 2019 at 12:50 PM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
 > >
-> > Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
 > >
-> > Link to v1 cover letter: https://lwn.net/Articles/777342/
-> >
-> > I would appricate any feedback, question and/or review.
-> >
-> > Thanks,
-> > Oded
-> >
-> > p.s. for those who prefer to clone the tree instead of looking at the
-> > emails, you can grab a copy from our company's page in GitHub:
-> >
-> > https://github.com/HabanaAI/linux/releases/tag/hl_patchset_v3_20190204
-> >
-> > Oded Gabbay (14):
-> >   habanalabs: add skeleton driver
-> >   habanalabs: add Goya registers header files
-> >   habanalabs: add basic Goya support
-> >   habanalabs: add context and ASID modules
-> >   habanalabs: add command buffer module
-> >   habanalabs: add basic Goya h/w initialization
-> >   habanalabs: add h/w queues module
-> >   habanalabs: add event queue and interrupts
-> >   habanalabs: add sysfs and hwmon support
-> >   habanalabs: add device reset support
-> >   habanalabs: add command submission module
-> >   habanalabs: implement INFO IOCTL
-> >   habanalabs: add debugfs support
-> >   Update MAINTAINERS and CREDITS with habanalabs info
-> >
-> > Omer Shpigelman (1):
-> >   habanalabs: add virtual memory and MMU modules
->
-> Nit: git am is unhappy about black lines at EOF, e.g:
->
-> Applying: habanalabs: add basic Goya support
-> .git/rebase-apply/patch:29: new blank line at EOF.
-> +
-Yes, but on the other hand, joe perches gave me a comment about
-missing newline at end of Makefile.
-So either diff will complain or git am.
+> > On 2/7/19 12:43 PM, Alexander Duyck wrote:
+> > > On Tue, Feb 5, 2019 at 3:21 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > >> On Tue, Feb 05, 2019 at 04:54:03PM -0500, Nitesh Narayan Lal wrote:
+> > >>> On 2/5/19 3:45 PM, Michael S. Tsirkin wrote:
+> > >>>> On Mon, Feb 04, 2019 at 03:18:53PM -0500, Nitesh Narayan Lal wrote:
+> > >>>>> This patch enables the kernel to scan the per cpu array and
+> > >>>>> compress it by removing the repetitive/re-allocated pages.
+> > >>>>> Once the per cpu array is completely filled with pages in the
+> > >>>>> buddy it wakes up the kernel per cpu thread which re-scans the
+> > >>>>> entire per cpu array by acquiring a zone lock corresponding to
+> > >>>>> the page which is being scanned. If the page is still free and
+> > >>>>> present in the buddy it tries to isolate the page and adds it
+> > >>>>> to another per cpu array.
+> > >>>>>
+> > >>>>> Once this scanning process is complete and if there are any
+> > >>>>> isolated pages added to the new per cpu array kernel thread
+> > >>>>> invokes hyperlist_ready().
+> > >>>>>
+> > >>>>> In hyperlist_ready() a hypercall is made to report these pages to
+> > >>>>> the host using the virtio-balloon framework. In order to do so
+> > >>>>> another virtqueue 'hinting_vq' is added to the balloon framework.
+> > >>>>> As the host frees all the reported pages, the kernel thread returns
+> > >>>>> them back to the buddy.
+> > >>>>>
+> > >>>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+> > >>>> This looks kind of like what early iterations of Wei's patches did.
+> > >>>>
+> > >>>> But this has lots of issues, for example you might end up with
+> > >>>> a hypercall per a 4K page.
+> > >>>> So in the end, he switched over to just reporting only
+> > >>>> MAX_ORDER - 1 pages.
+> > >>> You mean that I should only capture/attempt to isolate pages with order
+> > >>> MAX_ORDER - 1?
+> > >>>> Would that be a good idea for you too?
+> > >>> Will it help if we have a threshold value based on the amount of memory
+> > >>> captured instead of the number of entries/pages in the array?
+> > >> This is what Wei's patches do at least.
+> > > So in the solution I had posted I was looking more at
+> > > HUGETLB_PAGE_ORDER and above as the size of pages to provide the hints
+> > > on [1]. The advantage to doing that is that you can also avoid
+> > > fragmenting huge pages which in turn can cause what looks like a
+> > > memory leak as the memory subsystem attempts to reassemble huge
+> > > pages[2]. In my mind a 2MB page makes good sense in terms of the size
+> > > of things to be performing hints on as anything smaller than that is
+> > > going to just end up being a bunch of extra work and end up causing a
+> > > bunch of fragmentation.
+> > As per my opinion, in any implementation which page size to store before
+> > reporting depends on the allocation pattern of the workload running in
+> > the guest.
+> 
+> I suggest you take a look at item 2 that I had called out in the
+> previous email. There are known issues with providing hints smaller
+> than THP using MADV_DONTNEED or MADV_FREE. Specifically what will
+> happen is that you end up breaking up a higher order transparent huge
+> page, backfilling a few holes with other pages, but then the memory
+> allocation subsystem attempts to reassemble the larger THP page
+> resulting in an application exhibiting behavior similar to a memory
+> leak while not actually allocating memory since it is sitting on
+> fragments of THP pages.
+> 
+> Also while I am thinking of it I haven't noticed anywhere that you are
+> handling the case of a device assigned to the guest. That seems like a
+> spot where we are going to have to stop hinting as well aren't we?
 
->
-> Aside from that, for patches 1, 3-11 and 13 feel free to add
->
-> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
->
-Thanks for the review!
-Oded
+That would be easy for the host to do, way easier than for the guest.
 
-> As for the "habanalabs: add virtual memory and MMU modules" and the debugfs
-> patch I'll need more time to review the changes related to 2M pages.
->
-> >  CREDITS                                       |    2 +-
-> >  .../ABI/testing/debugfs-driver-habanalabs     |  127 +
-> >  .../ABI/testing/sysfs-driver-habanalabs       |  190 +
-> >  MAINTAINERS                                   |    9 +
-> >  drivers/misc/Kconfig                          |    1 +
-> >  drivers/misc/Makefile                         |    1 +
-> >  drivers/misc/habanalabs/Kconfig               |   22 +
-> >  drivers/misc/habanalabs/Makefile              |   15 +
-> >  drivers/misc/habanalabs/asid.c                |   58 +
-> >  drivers/misc/habanalabs/command_buffer.c      |  432 ++
-> >  drivers/misc/habanalabs/command_submission.c  |  782 +++
-> >  drivers/misc/habanalabs/context.c             |  216 +
-> >  drivers/misc/habanalabs/debugfs.c             | 1071 ++++
-> >  drivers/misc/habanalabs/device.c              | 1111 ++++
-> >  drivers/misc/habanalabs/goya/Makefile         |    4 +
-> >  drivers/misc/habanalabs/goya/goya.c           | 5344 +++++++++++++++++
-> >  drivers/misc/habanalabs/goya/goyaP.h          |  193 +
-> >  drivers/misc/habanalabs/goya/goya_hwmgr.c     |  306 +
-> >  drivers/misc/habanalabs/goya/goya_security.c  | 2999 +++++++++
-> >  drivers/misc/habanalabs/habanalabs.h          | 1441 +++++
-> >  drivers/misc/habanalabs/habanalabs_drv.c      |  465 ++
-> >  drivers/misc/habanalabs/habanalabs_ioctl.c    |  234 +
-> >  drivers/misc/habanalabs/hw_queue.c            |  636 ++
-> >  drivers/misc/habanalabs/hwmon.c               |  449 ++
-> >  drivers/misc/habanalabs/include/armcp_if.h    |  335 ++
-> >  .../include/goya/asic_reg/cpu_ca53_cfg_regs.h |  213 +
-> >  .../include/goya/asic_reg/cpu_if_regs.h       |  110 +
-> >  .../include/goya/asic_reg/cpu_pll_regs.h      |  186 +
-> >  .../include/goya/asic_reg/dma_ch_0_regs.h     |  512 ++
-> >  .../include/goya/asic_reg/dma_ch_1_regs.h     |  512 ++
-> >  .../include/goya/asic_reg/dma_ch_2_regs.h     |  512 ++
-> >  .../include/goya/asic_reg/dma_ch_3_regs.h     |  512 ++
-> >  .../include/goya/asic_reg/dma_ch_4_regs.h     |  512 ++
-> >  .../include/goya/asic_reg/dma_macro_regs.h    |  242 +
-> >  .../include/goya/asic_reg/dma_nrtr_regs.h     |  380 ++
-> >  .../include/goya/asic_reg/dma_qm_0_regs.h     |  543 ++
-> >  .../include/goya/asic_reg/dma_qm_1_regs.h     |  543 ++
-> >  .../include/goya/asic_reg/dma_qm_2_regs.h     |  543 ++
-> >  .../include/goya/asic_reg/dma_qm_3_regs.h     |  543 ++
-> >  .../include/goya/asic_reg/dma_qm_4_regs.h     |  543 ++
-> >  .../include/goya/asic_reg/goya_blocks.h       | 1372 +++++
-> >  .../include/goya/asic_reg/goya_masks.h        |  262 +
-> >  .../include/goya/asic_reg/goya_regs.h         |   99 +
-> >  .../include/goya/asic_reg/ic_pll_regs.h       |  186 +
-> >  .../include/goya/asic_reg/mc_pll_regs.h       |  186 +
-> >  .../include/goya/asic_reg/mme1_rtr_regs.h     |  876 +++
-> >  .../include/goya/asic_reg/mme2_rtr_regs.h     |  876 +++
-> >  .../include/goya/asic_reg/mme3_rtr_regs.h     |  876 +++
-> >  .../include/goya/asic_reg/mme4_rtr_regs.h     |  876 +++
-> >  .../include/goya/asic_reg/mme5_rtr_regs.h     |  876 +++
-> >  .../include/goya/asic_reg/mme6_rtr_regs.h     |  876 +++
-> >  .../include/goya/asic_reg/mme_cmdq_regs.h     |  431 ++
-> >  .../include/goya/asic_reg/mme_qm_regs.h       |  543 ++
-> >  .../include/goya/asic_reg/mme_regs.h          | 2422 ++++++++
-> >  .../include/goya/asic_reg/mmu_regs.h          |  158 +
-> >  .../include/goya/asic_reg/pci_nrtr_regs.h     |  380 ++
-> >  .../include/goya/asic_reg/pcie_aux_regs.h     |  476 ++
-> >  .../goya/asic_reg/psoc_emmc_pll_regs.h        |  186 +
-> >  .../goya/asic_reg/psoc_global_conf_regs.h     | 1119 ++++
-> >  .../include/goya/asic_reg/psoc_mme_pll_regs.h |  186 +
-> >  .../include/goya/asic_reg/psoc_pci_pll_regs.h |  186 +
-> >  .../include/goya/asic_reg/psoc_spi_regs.h     |  427 ++
-> >  .../goya/asic_reg/sram_y0_x0_rtr_regs.h       |  215 +
-> >  .../goya/asic_reg/sram_y0_x1_rtr_regs.h       |  215 +
-> >  .../goya/asic_reg/sram_y0_x2_rtr_regs.h       |  215 +
-> >  .../goya/asic_reg/sram_y0_x3_rtr_regs.h       |  215 +
-> >  .../goya/asic_reg/sram_y0_x4_rtr_regs.h       |  215 +
-> >  .../include/goya/asic_reg/stlb_regs.h         |  133 +
-> >  .../include/goya/asic_reg/tpc0_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc0_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc0_eml_cfg_regs.h |  580 ++
-> >  .../include/goya/asic_reg/tpc0_nrtr_regs.h    |  380 ++
-> >  .../include/goya/asic_reg/tpc0_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc1_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc1_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc1_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc1_rtr_regs.h     |  848 +++
-> >  .../include/goya/asic_reg/tpc2_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc2_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc2_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc2_rtr_regs.h     |  848 +++
-> >  .../include/goya/asic_reg/tpc3_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc3_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc3_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc3_rtr_regs.h     |  848 +++
-> >  .../include/goya/asic_reg/tpc4_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc4_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc4_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc4_rtr_regs.h     |  848 +++
-> >  .../include/goya/asic_reg/tpc5_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc5_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc5_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc5_rtr_regs.h     |  848 +++
-> >  .../include/goya/asic_reg/tpc6_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc6_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc6_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc6_rtr_regs.h     |  848 +++
-> >  .../include/goya/asic_reg/tpc7_cfg_regs.h     | 2110 +++++++
-> >  .../include/goya/asic_reg/tpc7_cmdq_regs.h    |  431 ++
-> >  .../include/goya/asic_reg/tpc7_nrtr_regs.h    |  380 ++
-> >  .../include/goya/asic_reg/tpc7_qm_regs.h      |  543 ++
-> >  .../include/goya/asic_reg/tpc_pll_regs.h      |  186 +
-> >  drivers/misc/habanalabs/include/goya/goya.h   |   41 +
-> >  .../include/goya/goya_async_events.h          |  186 +
-> >  .../misc/habanalabs/include/goya/goya_fw_if.h |   28 +
-> >  .../habanalabs/include/goya/goya_packets.h    |  129 +
-> >  drivers/misc/habanalabs/include/hl_boot_if.h  |   30 +
-> >  .../include/hw_ip/mmu/mmu_general.h           |   45 +
-> >  .../habanalabs/include/hw_ip/mmu/mmu_v1_0.h   |   15 +
-> >  drivers/misc/habanalabs/include/qman_if.h     |   56 +
-> >  drivers/misc/habanalabs/irq.c                 |  325 +
-> >  drivers/misc/habanalabs/memory.c              | 1722 ++++++
-> >  drivers/misc/habanalabs/mmu.c                 |  604 ++
-> >  drivers/misc/habanalabs/sysfs.c               |  691 +++
-> >  include/uapi/misc/habanalabs.h                |  444 ++
-> >  115 files changed, 73533 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/ABI/testing/debugfs-driver-habanalabs
-> >  create mode 100644 Documentation/ABI/testing/sysfs-driver-habanalabs
-> >  create mode 100644 drivers/misc/habanalabs/Kconfig
-> >  create mode 100644 drivers/misc/habanalabs/Makefile
-> >  create mode 100644 drivers/misc/habanalabs/asid.c
-> >  create mode 100644 drivers/misc/habanalabs/command_buffer.c
-> >  create mode 100644 drivers/misc/habanalabs/command_submission.c
-> >  create mode 100644 drivers/misc/habanalabs/context.c
-> >  create mode 100644 drivers/misc/habanalabs/debugfs.c
-> >  create mode 100644 drivers/misc/habanalabs/device.c
-> >  create mode 100644 drivers/misc/habanalabs/goya/Makefile
-> >  create mode 100644 drivers/misc/habanalabs/goya/goya.c
-> >  create mode 100644 drivers/misc/habanalabs/goya/goyaP.h
-> >  create mode 100644 drivers/misc/habanalabs/goya/goya_hwmgr.c
-> >  create mode 100644 drivers/misc/habanalabs/goya/goya_security.c
-> >  create mode 100644 drivers/misc/habanalabs/habanalabs.h
-> >  create mode 100644 drivers/misc/habanalabs/habanalabs_drv.c
-> >  create mode 100644 drivers/misc/habanalabs/habanalabs_ioctl.c
-> >  create mode 100644 drivers/misc/habanalabs/hw_queue.c
-> >  create mode 100644 drivers/misc/habanalabs/hwmon.c
-> >  create mode 100644 drivers/misc/habanalabs/include/armcp_if.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_ca53_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_if_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_0_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_1_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_2_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_3_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_4_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_macro_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_nrtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_0_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_1_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_2_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_3_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_4_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_blocks.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_masks.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ic_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mc_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme1_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme2_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme3_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme4_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme5_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme6_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mmu_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pci_nrtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pcie_aux_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_emmc_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_global_conf_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_mme_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_pci_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_spi_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x0_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x1_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x2_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x3_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x4_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/stlb_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_eml_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_nrtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_rtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_cfg_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_cmdq_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_nrtr_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_qm_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc_pll_regs.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/goya.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_async_events.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_fw_if.h
-> >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_packets.h
-> >  create mode 100644 drivers/misc/habanalabs/include/hl_boot_if.h
-> >  create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
-> >  create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
-> >  create mode 100644 drivers/misc/habanalabs/include/qman_if.h
-> >  create mode 100644 drivers/misc/habanalabs/irq.c
-> >  create mode 100644 drivers/misc/habanalabs/memory.c
-> >  create mode 100644 drivers/misc/habanalabs/mmu.c
-> >  create mode 100644 drivers/misc/habanalabs/sysfs.c
-> >  create mode 100644 include/uapi/misc/habanalabs.h
-> >
+> Otherwise we would need to redo the memory mapping of the guest in the
+> IOMMU every time a page is evicted and replaced.
+
+I think that in fact we could in theory make it work.
+
+
+The reason is that while Linux IOMMU APIs do not allow
+this, in fact you can change a mapping just for a single
+page within a huge mapping while others are used, as follows:
+
+- create a new set of PTEs
+- copy over all PTE mappings except the one
+  we are changing
+- change the required mapping in the new entry
+- atomically update the PMD to point at new PTEs
+- flush IOMMU translation cache
+
+similarly for higher levels if there are no PTEs.
+
+So we could come up with something like
+        int (*remap)(struct iommu_domain *domain, unsigned long iova,
+                   phys_addr_t paddr, size_t size, int prot);
+
+that just tweaks a mapping for a specified range without
+breaking others.
+
+
+
+> > I am also planning to try Michael's suggestion of using MAX_ORDER - 1.
+> > However I am still thinking about a workload which I can use to test its
+> > effectiveness.
+> 
+> You might want to look at doing something like min(MAX_ORDER - 1,
+> HUGETLB_PAGE_ORDER).
+> I know for x86 a 2MB page is the upper limit for
+> THP which is the most likely to be used page size with the guest.
+
+Did you mean max?
+
+I just feel that a good order has much more to do with how
+the buddy allocators works than with hardware.
+
+And maybe TRT is to completely disable hinting for when
+HUGETLB_PAGE_ORDER > MAX_ORDER since clearly using
+buddy allocator for hinting when that breaks huge pages
+isn't a good idea.
+
+
+> > >
+> > > The only issue with limiting things on an arbitrary boundary like that
+> > > is that you have to hook into the buddy allocator to catch the cases
+> > > where a page has been merged up into that range.
+> > I don't think, I understood your comment completely. In any case, we
+> > have to rely on the buddy for merging the pages.
+> > >
+> > > [1] https://lkml.org/lkml/2019/2/4/903
+> > > [2] https://blog.digitalocean.com/transparent-huge-pages-and-alternative-memory-allocators/
 > > --
-> > 2.17.1
+> > Regards
+> > Nitesh
 > >
->
-> --
-> Sincerely yours,
-> Mike.
->
