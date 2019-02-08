@@ -2,310 +2,427 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2274BC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6D1C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBCB320869
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:29:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FAFA20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:32:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qARRQG7g"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="d4D9cIdT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBHX3a (ORCPT
+        id S1726900AbfBHXcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 18:29:30 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39302 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfBHX3a (ORCPT
+        Fri, 8 Feb 2019 18:32:41 -0500
+Received: from server.eikelenboom.it ([91.121.65.215]:40598 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfBHXck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 18:29:30 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r11so2233874pgp.6;
-        Fri, 08 Feb 2019 15:29:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=euC6RE000PyoWL8mLHmu4rDRlmY4Pbemh3wb2aBa7Os=;
-        b=qARRQG7gOjvnC6lYusstiHQ81AGk8QE87FIEIB7K8srKyWLNakzisXg3y3iN8ldmYV
-         6Ubgt51lVVmmOSgP13C2uvONf830D9YNR4uHMA6NnBJ3PJvLw2kNlSyILPMlYPOC80Df
-         mZESM2MBpWclaUY2StmmjLWQZ+YTNW4Bj3TLipKbqsRXSPglevBY/XfZwMBbcqNl3mwS
-         GlKAve7leIrkf1+sVh/ciwvP/9JNp94xGi6aDQUI0ckh3rdWRSmgwHjjVSNRVhVAvYDq
-         m3HTXoKzrHRlTVoQpWeN4Pl6rv+ljiYWpTBUTinBPhib3Ivjo+4/VJEjK5lC8q4tolj5
-         vM+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=euC6RE000PyoWL8mLHmu4rDRlmY4Pbemh3wb2aBa7Os=;
-        b=MVksnaOLJ11KuGGB5+vq6+fORjiUT63yYNit/L3HEOZI9pKGZ9bxWaMx+s5+SCvU8L
-         qZB51iwSlCNBa0EsMPayqF5appLQ/vE66HdyIPPb37d2F3fqgBtGeQy+WVu8Hfs54R0T
-         /4ludUGKGQoMVbNoV6wBl4vi1sFHaRpIbYc5wl4JD0l5mU/8A27Eu3QcuKIcSobb61Rn
-         KvQ7yDZ65gRMjeJk5hhHUwY8zHPg4KnBsougvUOOMrf6iaH3IBUI/1OE18ynyTaOgx21
-         0TYxVpnNywmBXdAwKLhodorEHuRuSmxwl4+E+od8RMbBU+KTQt9oslm565V6iHQ5m6BE
-         oJfQ==
-X-Gm-Message-State: AHQUAubWl2dHPFs81clhA8UmEBmW/kTyDQh2ZPizxAIWBroW++fTgV1a
-        A+xZCWeKh8VxvR43sLmG/VI=
-X-Google-Smtp-Source: AHgI3Iaza+zd1ihtXOR5RXDeG4Z59WXfV801UIyKICbQo7Zgrs8KrO9A5YoyvfMxgoS5+/JXgqJ5qA==
-X-Received: by 2002:a62:2fc3:: with SMTP id v186mr24835414pfv.82.1549668569009;
-        Fri, 08 Feb 2019 15:29:29 -0800 (PST)
-Received: from ast-mbp ([2620:10d:c090:180::1:4d67])
-        by smtp.gmail.com with ESMTPSA id y72sm5513469pfa.98.2019.02.08.15.29.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 15:29:28 -0800 (PST)
-Date:   Fri, 8 Feb 2019 15:29:26 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH] perf, bpf: Retain kernel executable code in memory
- to aid Intel PT tracing
-Message-ID: <20190208232924.bpdjuaqufndigtd4@ast-mbp>
-References: <20190207111901.2399-1-adrian.hunter@intel.com>
+        Fri, 8 Feb 2019 18:32:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RYtJLwMkPrNVHLHlFYB+S4GmzTejLJZ0QhiOtR+nPV4=; b=d4D9cIdTt2LQ7/XSmixkE0xySq
+        hdG7gs3EnLlIbjSY+HMCXkRL7pTuq0R46yyqttF3Pq+LrNRdNYuD8GYDkfhcokonzSxrHTGWGCD4t
+        kZ74Kl95UKtkwd6lEKC/ANOPO6TOvG22zBq/y+c1JCLxzj5E6Zhw/CV4rf8f2UvKQ8a0=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:57028 helo=[172.16.1.50])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1gsFdX-0005Go-B4; Sat, 09 Feb 2019 00:32:47 +0100
+Subject: Re: Linux 5.0 regression: rtl8169 / kernel BUG at
+ lib/dynamic_queue_limits.c:27!
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+References: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
+ <0f605e50-56fe-06b5-9b66-6aed89a608ce@gmail.com>
+ <471e550b-c227-22e6-19fd-5f9abd450e5f@eikelenboom.it>
+ <1265d424-4943-e571-a74b-b1512ebec179@gmail.com>
+ <059e59c6-2264-fd5c-068f-3656e39539c1@eikelenboom.it>
+ <140d0df7-1775-5457-aa03-b21ece250a72@gmail.com>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <7084be7a-c279-080d-d1ec-cd604f2b2b14@eikelenboom.it>
+Date:   Sat, 9 Feb 2019 00:34:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207111901.2399-1-adrian.hunter@intel.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <140d0df7-1775-5457-aa03-b21ece250a72@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 01:19:01PM +0200, Adrian Hunter wrote:
-> Subject to memory pressure and other limits, retain executable code, such
-> as JIT-compiled bpf, in memory instead of freeing it immediately it is no
-> longer needed for execution.
+On 08/02/2019 22:50, Heiner Kallweit wrote:
+> On 08.02.2019 22:45, Sander Eikelenboom wrote:
+>> On 08/02/2019 22:22, Heiner Kallweit wrote:
+>>> On 08.02.2019 21:55, Sander Eikelenboom wrote:
+>>>> On 08/02/2019 19:52, Heiner Kallweit wrote:
+>>>>> On 08.02.2019 19:29, Sander Eikelenboom wrote:
+>>>>>> L.S.,
+>>>>>>
+>>>>>> While testing a linux 5.0-rc5 kernel (with some patches on top but they don't seem related) under Xen i the nasty splat below, 
+>>>>>> that I haven encountered with Linux 4.20.x.
+>>>>>>
+>>>>>> Unfortunately I haven't got a clear reproducer for this and bisecting could be nasty due to another (networking related) kernel bug.
+>>>>>>
+>>>>>> If you need more info, want me to run a debug patch etc., please feel free to ask.
+>>>>>>
+>>>>> Thanks for the report. However I see no change in the r8169 driver between
+>>>>> 4.20 and 5.0 with regard to BQL code. Having said that the root cause could
+>>>>> be somewhere else. Therefore I'm afraid a bisect will be needed.
+>>>>
+>>>> Hmm i did some diging and i think:
+>>>> bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
+>>>> 2e6eedb4813e34d8d84ac0eb3afb668966f3f356 r8169: make use of xmit_more and __netdev_sent_queue
+>>>> 620344c43edfa020bbadfd81a144ebe5181fc94f net: core: add __netdev_sent_queue as variant of __netdev_tx_sent_queue
+>>>>
+>>> You're right. Thought this was added in 4.20 already.
+>>> The BQL code pattern I copied from the mlx4 driver and so far I haven't heard about
+>>> this issue from any user of physical hw. And due to the fact that a lot of mainboards
+>>> have onboard Realtek network I have quite a few testers out there.
+>>> Does the issue occur under specific circumstances like very high load?
+>>
+>> Yep, the box is already quite contented with the Xen VM's and if I remember correctly it occurred while kernel compiling
+>> on the host.
+>>
+>>> If indeed the xmit_more patch causes the issue, I think we have to involve Eric Dumazet
+>>> as author of the underlying changes.
+>>
+>> It could also be the barriers weren't that unneeded as assumed.
 > 
-> While perf is primarily aimed at statistical analysis, tools like Intel
-> PT can aim to provide a trace of exactly what happened. As such, corner
-> cases that can be overlooked statistically need to be addressed. For
-> example, there is a gap where JIT-compiled bpf can be freed from memory
-> before a tracer has a chance to read it out through the bpf syscall.
-> While that can be ignored statistically, it contributes to a death by
-> 1000 cuts for tracers attempting to assemble exactly what happened. This is
-> a bit gratuitous given that retaining the executable code is relatively
-> simple, and the amount of memory involved relatively small. The retained
-> executable code is then available in memory images such as /proc/kcore.
-> 
-> This facility could perhaps be extended also to init sections.
-> 
-> Note that this patch is compile tested only and, at present, is missing
-> the ability to retain symbols.
-> 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  arch/x86/Kconfig.cpu       |   1 +
->  include/linux/filter.h     |   4 +
->  include/linux/xc_retain.h  |  49 ++++++++++
->  init/Kconfig               |   6 ++
->  kernel/Makefile            |   1 +
->  kernel/bpf/core.c          |  44 ++++++++-
->  kernel/xc_retain.c         | 183 +++++++++++++++++++++++++++++++++++++
->  net/core/sysctl_net_core.c |  62 +++++++++++++
->  8 files changed, 349 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/xc_retain.h
->  create mode 100644 kernel/xc_retain.c
-> 
-> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
-> index 6adce15268bd..21dcd064c272 100644
-> --- a/arch/x86/Kconfig.cpu
-> +++ b/arch/x86/Kconfig.cpu
-> @@ -389,6 +389,7 @@ menuconfig PROCESSOR_SELECT
->  config CPU_SUP_INTEL
->  	default y
->  	bool "Support Intel processors" if PROCESSOR_SELECT
-> +	select XC_RETAIN if PERF_EVENTS && BPF_JIT
->  	---help---
->  	  This enables detection, tunings and quirks for Intel processors
->  
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index d531d4250bff..40b9f601e18f 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -851,6 +851,10 @@ extern int bpf_jit_enable;
->  extern int bpf_jit_harden;
->  extern int bpf_jit_kallsyms;
->  extern long bpf_jit_limit;
-> +extern unsigned int bpf_jit_retain_min;
-> +extern unsigned int bpf_jit_retain_max;
-> +
-> +void bpf_jit_retain_update_sz(void);
->  
->  typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
->  
-> diff --git a/include/linux/xc_retain.h b/include/linux/xc_retain.h
-> new file mode 100644
-> index 000000000000..e79dc138bab8
-> --- /dev/null
-> +++ b/include/linux/xc_retain.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2019 Intel Corporation.
-> + */
-> +#ifndef _LINUX_XC_RETAIN_H
-> +#define _LINUX_XC_RETAIN_H
-> +
-> +#include <linux/list.h>
-> +#include <linux/shrinker.h>
-> +#include <linux/spinlock.h>
-> +
-> +struct xc_retain_ops {
-> +	void (*free)(void *addr);
-> +};
-> +
-> +struct xc_retain {
-> +	struct list_head list;
-> +	struct list_head items;
-> +	const struct xc_retain_ops ops;
-> +	unsigned int min_pages;
-> +	unsigned int max_pages;
-> +	unsigned int current_pages;
-> +	unsigned int item_cnt;
-> +	spinlock_t lock;
-> +	struct shrinker shrinker;
-> +};
-> +
-> +#ifdef CONFIG_XC_RETAIN
-> +int xc_retain_register(struct xc_retain *xr);
-> +void xc_retain_binary(struct xc_retain *xr, void *addr, unsigned int pages);
-> +void xc_retain_set_min_pages(struct xc_retain *xr, unsigned int min_pages);
-> +void xc_retain_set_max_pages(struct xc_retain *xr, unsigned int max_pages);
-> +#else
-> +static inline int xc_retain_register(struct xc_retain *xr)
-> +{
-> +	return 0;
-> +}
-> +static inline void xc_retain_binary(struct xc_retain *xr, void *addr,
-> +				    unsigned int pages)
-> +{
-> +	xr->ops.free(addr);
-> +}
-> +static inline void xc_retain_set_max_pages(struct xc_retain *xr,
-> +					   unsigned int max_pages)
-> +{
-> +}
-> +#endif
-> +
-> +#endif
-> diff --git a/init/Kconfig b/init/Kconfig
-> index c9386a365eea..954c288cabdc 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1550,6 +1550,12 @@ config EMBEDDED
->  	  an embedded system so certain expert options are available
->  	  for configuration.
->  
-> +config XC_RETAIN
-> +	bool
-> +	help
-> +	  Retain kernel executable code (e.g. jitted BPF) in memory after it
-> +	  would normally be freed.
-> +
->  config HAVE_PERF_EVENTS
->  	bool
->  	help
-> diff --git a/kernel/Makefile b/kernel/Makefile
-> index 6aa7543bcdb2..5df40e2a934e 100644
-> --- a/kernel/Makefile
-> +++ b/kernel/Makefile
-> @@ -98,6 +98,7 @@ obj-$(CONFIG_TRACEPOINTS) += trace/
->  obj-$(CONFIG_IRQ_WORK) += irq_work.o
->  obj-$(CONFIG_CPU_PM) += cpu_pm.o
->  obj-$(CONFIG_BPF) += bpf/
-> +obj-$(CONFIG_XC_RETAIN) += xc_retain.o
->  
->  obj-$(CONFIG_PERF_EVENTS) += events/
->  
-> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> index 19c49313c709..7fd235d235c2 100644
-> --- a/kernel/bpf/core.c
-> +++ b/kernel/bpf/core.c
-> @@ -34,6 +34,7 @@
->  #include <linux/kallsyms.h>
->  #include <linux/rcupdate.h>
->  #include <linux/perf_event.h>
-> +#include <linux/xc_retain.h>
->  
->  #include <asm/unaligned.h>
->  
-> @@ -480,6 +481,10 @@ int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
->  int bpf_jit_harden   __read_mostly;
->  int bpf_jit_kallsyms __read_mostly;
->  long bpf_jit_limit   __read_mostly;
-> +#define BPF_JIT_RETAIN_MIN 0
-> +#define BPF_JIT_RETAIN_MAX 16
-> +unsigned int bpf_jit_retain_min __read_mostly = BPF_JIT_RETAIN_MIN;
-> +unsigned int bpf_jit_retain_max __read_mostly = BPF_JIT_RETAIN_MAX;
->  
->  static __always_inline void
->  bpf_get_prog_addr_region(const struct bpf_prog *prog,
-> @@ -795,6 +800,43 @@ void bpf_jit_binary_free(struct bpf_binary_header *hdr)
->  	bpf_jit_uncharge_modmem(pages);
->  }
->  
-> +#ifdef CONFIG_XC_RETAIN
-> +static struct xc_retain bpf_jit_retain = {
-> +	.min_pages = BPF_JIT_RETAIN_MIN,
-> +	.max_pages = BPF_JIT_RETAIN_MAX,
-> +	.ops = {
-> +		.free = module_memfree,
-> +	},
-> +};
-> +
-> +void bpf_jit_retain_update_sz(void)
-> +{
-> +	xc_retain_set_min_pages(&bpf_jit_retain, bpf_jit_retain_min);
-> +	xc_retain_set_max_pages(&bpf_jit_retain, bpf_jit_retain_max);
-> +}
-> +
-> +static int __init bpf_jit_retain_init(void)
-> +{
-> +	return xc_retain_register(&bpf_jit_retain);
-> +}
-> +subsys_initcall(bpf_jit_retain_init);
-> +
-> +static void bpf_jit_binary_retain(struct bpf_prog *fp,
-> +				  struct bpf_binary_header *hdr)
-> +{
-> +	u32 pages = hdr->pages;
-> +
-> +	xc_retain_binary(&bpf_jit_retain, hdr, pages);
-> +	bpf_jit_uncharge_modmem(pages);
-> +}
-> +#else
-> +static void bpf_jit_binary_retain(struct bpf_prog *fp,
-> +				  struct bpf_binary_header *hdr)
-> +{
-> +	return bpf_jit_binary_free(hdr);
-> +}
-> +#endif
+> The barriers were removed after adding xmit_more handling. Therefore it would be good to
+> test also with only 
+> bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
+> removed.
 
-I'm strongly against this approach.
+*arghh* *grmbl*
 
-I understand that it's under CONFIG, but changing kernel
-into garbage collection nightmare even under config
-or sysctl is not an option.
-In many cases bpf progs are loaded/unloaded a lot.
-Consider CI test system that runs tests 24/7.
-bpf progs are loaded/unloaded in huge numbers.
-Such system will suffer non deterministic test and
-performance results due to shrinkers.
-perf analysis with PT becomes inaccurate and main goal
-of retaining accurate instruction info is not achieved.
-bpf_jit_retain_min/max tunables is not an option either.
-Please see how perf record is handling bpf prog/unload.
-What stops you from doing the same for PT?
+with both:
+    bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3
+    and
+    2e6eedb4813e34d8d84ac0eb3afb668966f3f356 
+reverted i get yet another splat:
+
+[ 3769.246083] ld: page allocation failure: order:0, mode:0x480020(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0
+[ 3769.246095] CPU: 2 PID: 3201 Comm: ld Not tainted 5.0.0-rc5-20190208-thp-net-florian-rtl8169-doflr+ #1
+[ 3769.246096] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+[ 3769.246098] Call Trace:
+[ 3769.246104]  <IRQ>
+[ 3769.246114]  dump_stack+0x5c/0x7b
+[ 3769.246120]  warn_alloc+0x103/0x190
+[ 3769.246122]  __alloc_pages_nodemask+0xe3d/0xe80
+[ 3769.246128]  ? inet_gro_receive+0x232/0x2c0
+[ 3769.246130]  page_frag_alloc+0x117/0x150
+[ 3769.246132]  __napi_alloc_skb+0x83/0xd0
+[ 3769.246137]  rtl8169_poll+0x210/0x640
+[ 3769.246140]  net_rx_action+0x23d/0x370
+[ 3769.246145]  __do_softirq+0xed/0x229
+[ 3769.246149]  irq_exit+0xb7/0xc0
+[ 3769.246152]  xen_evtchn_do_upcall+0x27/0x40
+[ 3769.246154]  xen_do_hypervisor_callback+0x29/0x40
+[ 3769.246155]  </IRQ>
+[ 3769.246161] RIP: e030:__pv_queued_spin_lock_slowpath+0xda/0x280
+[ 3769.246163] Code: 14 41 bc 01 00 00 00 41 bd 00 01 00 00 3c 02 0f 94 c0 0f b6 c0 48 89 04 24 c6 45 14 00 ba 00 80 00 00 c6 43 01 01 eb 0b f3 90 <83> ea 01 0f 84 49 01 00 00 0f b6 03 84 c0 75 ee 44 89 e8 f0 66 44
+[ 3769.246164] RSP: e02b:ffffc90005b0f780 EFLAGS: 00000202
+[ 3769.246166] RAX: 0000000000000001 RBX: ffff8880047c9200 RCX: 0000000000000001
+[ 3769.246167] RDX: 0000000000007d75 RSI: 0000000000000000 RDI: ffff8880047c9200
+[ 3769.246167] RBP: ffff88807d4a1a80 R08: ffffc90005b0f978 R09: ffffc90005b0f978
+[ 3769.246168] R10: ffffc90005b0f9d0 R11: ffff88807fc17000 R12: 0000000000000001
+[ 3769.246169] R13: 0000000000000100 R14: 0000000000000000 R15: 00000000000c0000
+[ 3769.246173]  _raw_spin_lock+0x16/0x20
+[ 3769.246176]  list_lru_add+0x59/0x170
+[ 3769.246179]  inode_lru_list_add+0x1b/0x40
+[ 3769.246182]  iput+0x18b/0x1a0
+[ 3769.246184]  __dentry_kill+0xc5/0x170
+[ 3769.246186]  shrink_dentry_list+0x93/0x1c0
+[ 3769.246187]  prune_dcache_sb+0x4d/0x70
+[ 3769.246191]  super_cache_scan+0x104/0x190
+[ 3769.246194]  do_shrink_slab+0x12c/0x1e0
+[ 3769.246196]  shrink_slab+0xdf/0x2b0
+[ 3769.246198]  shrink_node+0x158/0x470
+[ 3769.246200]  do_try_to_free_pages+0xd1/0x380
+[ 3769.246202]  try_to_free_pages+0xb2/0xe0
+[ 3769.246204]  __alloc_pages_nodemask+0x603/0xe80
+[ 3769.246207]  ? xas_load+0x9/0x80
+[ 3769.246209]  ? find_get_entry+0x58/0x120
+[ 3769.246210]  pagecache_get_page+0xde/0x210
+[ 3769.246213]  grab_cache_page_write_begin+0x17/0x30
+[ 3769.246215]  ext4_da_write_begin+0xc4/0x340
+[ 3769.246217]  generic_perform_write+0xb8/0x1b0
+[ 3769.246219]  __generic_file_write_iter+0x13c/0x1b0
+[ 3769.246223]  ext4_file_write_iter+0x121/0x3c0
+[ 3769.246225]  __vfs_write+0x123/0x1a0
+[ 3769.246226]  vfs_write+0xab/0x1a0
+[ 3769.246229]  ksys_write+0x4d/0xc0
+[ 3769.246232]  do_syscall_64+0x49/0x100
+[ 3769.246234]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 3769.246237] RIP: 0033:0x7fee5b265730
+[ 3769.246238] Code: 73 01 c3 48 8b 0d 68 d7 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d d9 2f 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e 9b 01 00 48 89 04 24
+[ 3769.246239] RSP: 002b:00007fff33183dd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[ 3769.246240] RAX: ffffffffffffffda RBX: 0000000000000710 RCX: 00007fee5b265730
+[ 3769.246241] RDX: 0000000000000710 RSI: 000055559bed78b0 RDI: 0000000000000049
+[ 3769.246241] RBP: 000055559bed78b0 R08: 0000000000000b40 R09: 0000000001c0320c
+[ 3769.246242] R10: 00007fee5be91e80 R11: 0000000000000246 R12: 0000000000000710
+[ 3769.246243] R13: 0000000000000001 R14: 00005555a2690050 R15: 0000000000000710
+[ 3769.246244] Mem-Info:
+[ 3769.246249] active_anon:152383 inactive_anon:99216 isolated_anon:0
+                active_file:51569 inactive_file:85922 isolated_file:0
+                unevictable:552 dirty:6866 writeback:0 unstable:0
+                slab_reclaimable:6707 slab_unreclaimable:16166
+                mapped:1870 shmem:6 pagetables:2716 bounce:0
+                free:3639 free_pcp:900 free_cma:0
+[ 3769.246252] Node 0 active_anon:609532kB inactive_anon:396864kB active_file:206276kB inactive_file:343688kB unevictable:2208kB isolated(anon):0kB isolated(file):0kB mapped:7480kB dirty:27464kB writeback:0kB shmem:24kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
+[ 3769.246253] Node 0 DMA free:7480kB min:44kB low:56kB high:68kB active_anon:8056kB inactive_anon:0kB active_file:92kB inactive_file:148kB unevictable:0kB writepending:8kB present:15956kB managed:15872kB mlocked:0kB kernel_stack:0kB pagetables:20kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[ 3769.246256] lowmem_reserve[]: 0 1865 1865 1865
+[ 3769.246258] Node 0 DMA32 free:7076kB min:19472kB low:21380kB high:23288kB active_anon:601840kB inactive_anon:396512kB active_file:206216kB inactive_file:343644kB unevictable:2208kB writepending:27256kB present:2080768kB managed:1833792kB mlocked:2208kB kernel_stack:9392kB pagetables:10844kB bounce:0kB free_pcp:3600kB local_pcp:596kB free_cma:0kB
+[ 3769.246260] lowmem_reserve[]: 0 0 0 0
+[ 3769.246262] Node 0 DMA: 6*4kB (UE) 4*8kB (UME) 4*16kB (UME) 2*32kB (UE) 6*64kB (UE) 2*128kB (UM) 4*256kB (UME) 3*512kB (UME) 2*1024kB (ME) 1*2048kB (M) 0*4096kB = 7480kB
+[ 3769.246267] Node 0 DMA32: 66*4kB (UM) 271*8kB (UME) 218*16kB (UME) 45*32kB (UME) 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 7360kB
+[ 3769.246272] 144878 total pagecache pages
+[ 3769.246276] 6812 pages in swap cache
+[ 3769.246277] Swap cache stats: add 62616, delete 55806, find 31/55
+[ 3769.246278] Free swap  = 3943164kB
+[ 3769.246278] Total swap = 4194300kB
+[ 3769.246279] 524181 pages RAM
+[ 3769.246279] 0 pages HighMem/MovableOnly
+[ 3769.246280] 61765 pages reserved
+[ 3769.246280] 0 pages cma reserved
+[ 3769.246284] ld: page allocation failure: order:0, mode:0x480020(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0
+[ 3769.246286] CPU: 2 PID: 3201 Comm: ld Not tainted 5.0.0-rc5-20190208-thp-net-florian-rtl8169-doflr+ #1
+[ 3769.246287] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+[ 3769.246287] Call Trace:
+[ 3769.246288]  <IRQ>
+[ 3769.246290]  dump_stack+0x5c/0x7b
+[ 3769.246291]  warn_alloc+0x103/0x190
+[ 3769.246293]  __alloc_pages_nodemask+0xe3d/0xe80
+[ 3769.246294]  ? inet_gro_receive+0x232/0x2c0
+[ 3769.246296]  page_frag_alloc+0x117/0x150
+[ 3769.246297]  __napi_alloc_skb+0x83/0xd0
+[ 3769.246299]  rtl8169_poll+0x210/0x640
+[ 3769.246300]  net_rx_action+0x23d/0x370
+[ 3769.246302]  __do_softirq+0xed/0x229
+[ 3769.246304]  irq_exit+0xb7/0xc0
+[ 3769.246305]  xen_evtchn_do_upcall+0x27/0x40
+[ 3769.246306]  xen_do_hypervisor_callback+0x29/0x40
+[ 3769.246307]  </IRQ>
+[ 3769.246308] RIP: e030:__pv_queued_spin_lock_slowpath+0xda/0x280
+[ 3769.246310] Code: 14 41 bc 01 00 00 00 41 bd 00 01 00 00 3c 02 0f 94 c0 0f b6 c0 48 89 04 24 c6 45 14 00 ba 00 80 00 00 c6 43 01 01 eb 0b f3 90 <83> ea 01 0f 84 49 01 00 00 0f b6 03 84 c0 75 ee 44 89 e8 f0 66 44
+[ 3769.246310] RSP: e02b:ffffc90005b0f780 EFLAGS: 00000202
+[ 3769.246311] RAX: 0000000000000001 RBX: ffff8880047c9200 RCX: 0000000000000001
+[ 3769.246312] RDX: 0000000000007d75 RSI: 0000000000000000 RDI: ffff8880047c9200
+[ 3769.246313] RBP: ffff88807d4a1a80 R08: ffffc90005b0f978 R09: ffffc90005b0f978
+[ 3769.246313] R10: ffffc90005b0f9d0 R11: ffff88807fc17000 R12: 0000000000000001
+[ 3769.246314] R13: 0000000000000100 R14: 0000000000000000 R15: 00000000000c0000
+[ 3769.246316]  _raw_spin_lock+0x16/0x20
+[ 3769.246317]  list_lru_add+0x59/0x170
+[ 3769.246318]  inode_lru_list_add+0x1b/0x40
+[ 3769.246320]  iput+0x18b/0x1a0
+[ 3769.246321]  __dentry_kill+0xc5/0x170
+[ 3769.246322]  shrink_dentry_list+0x93/0x1c0
+[ 3769.246323]  prune_dcache_sb+0x4d/0x70
+[ 3769.246325]  super_cache_scan+0x104/0x190
+[ 3769.246326]  do_shrink_slab+0x12c/0x1e0
+[ 3769.246328]  shrink_slab+0xdf/0x2b0
+[ 3769.246329]  shrink_node+0x158/0x470
+[ 3769.246331]  do_try_to_free_pages+0xd1/0x380
+[ 3769.246333]  try_to_free_pages+0xb2/0xe0
+[ 3769.246334]  __alloc_pages_nodemask+0x603/0xe80
+[ 3769.246336]  ? xas_load+0x9/0x80
+[ 3769.246337]  ? find_get_entry+0x58/0x120
+[ 3769.246338]  pagecache_get_page+0xde/0x210
+[ 3769.246340]  grab_cache_page_write_begin+0x17/0x30
+[ 3769.246341]  ext4_da_write_begin+0xc4/0x340
+[ 3769.246342]  generic_perform_write+0xb8/0x1b0
+[ 3769.246344]  __generic_file_write_iter+0x13c/0x1b0
+[ 3769.246345]  ext4_file_write_iter+0x121/0x3c0
+[ 3769.246347]  __vfs_write+0x123/0x1a0
+[ 3769.246348]  vfs_write+0xab/0x1a0
+[ 3769.246349]  ksys_write+0x4d/0xc0
+[ 3769.246350]  do_syscall_64+0x49/0x100
+[ 3769.246352]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 3769.246353] RIP: 0033:0x7fee5b265730
+[ 3769.246354] Code: 73 01 c3 48 8b 0d 68 d7 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d d9 2f 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e 9b 01 00 48 89 04 24
+[ 3769.246354] RSP: 002b:00007fff33183dd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[ 3769.246355] RAX: ffffffffffffffda RBX: 0000000000000710 RCX: 00007fee5b265730
+[ 3769.246356] RDX: 0000000000000710 RSI: 000055559bed78b0 RDI: 0000000000000049
+[ 3769.246357] RBP: 000055559bed78b0 R08: 0000000000000b40 R09: 0000000001c0320c
+[ 3769.246357] R10: 00007fee5be91e80 R11: 0000000000000246 R12: 0000000000000710
+[ 3769.246358] R13: 0000000000000001 R14: 00005555a2690050 R15: 0000000000000710
+[ 3769.246364] ld: page allocation failure: order:0, mode:0x480020(GFP_ATOMIC), nodemask=(null),cpuset=/,mems_allowed=0
+[ 3769.246366] CPU: 2 PID: 3201 Comm: ld Not tainted 5.0.0-rc5-20190208-thp-net-florian-rtl8169-doflr+ #1
+[ 3769.246366] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+[ 3769.246366] Call Trace:
+[ 3769.246367]  <IRQ>
+[ 3769.246368]  dump_stack+0x5c/0x7b
+[ 3769.246370]  warn_alloc+0x103/0x190
+[ 3769.246371]  __alloc_pages_nodemask+0xe3d/0xe80
+[ 3769.246373]  ? inet_gro_receive+0x232/0x2c0
+[ 3769.246374]  page_frag_alloc+0x117/0x150
+[ 3769.246375]  __napi_alloc_skb+0x83/0xd0
+[ 3769.246376]  rtl8169_poll+0x210/0x640
+[ 3769.246378]  net_rx_action+0x23d/0x370
+[ 3769.246379]  __do_softirq+0xed/0x229
+[ 3769.246381]  irq_exit+0xb7/0xc0
+[ 3769.246382]  xen_evtchn_do_upcall+0x27/0x40
+[ 3769.246383]  xen_do_hypervisor_callback+0x29/0x40
+[ 3769.246383]  </IRQ>
+[ 3769.246385] RIP: e030:__pv_queued_spin_lock_slowpath+0xda/0x280
+[ 3769.246386] Code: 14 41 bc 01 00 00 00 41 bd 00 01 00 00 3c 02 0f 94 c0 0f b6 c0 48 89 04 24 c6 45 14 00 ba 00 80 00 00 c6 43 01 01 eb 0b f3 90 <83> ea 01 0f 84 49 01 00 00 0f b6 03 84 c0 75 ee 44 89 e8 f0 66 44
+[ 3769.246387] RSP: e02b:ffffc90005b0f780 EFLAGS: 00000202
+[ 3769.246388] RAX: 0000000000000001 RBX: ffff8880047c9200 RCX: 0000000000000001
+[ 3769.246388] RDX: 0000000000007d75 RSI: 0000000000000000 RDI: ffff8880047c9200
+[ 3769.246389] RBP: ffff88807d4a1a80 R08: ffffc90005b0f978 R09: ffffc90005b0f978
+[ 3769.246390] R10: ffffc90005b0f9d0 R11: ffff88807fc17000 R12: 0000000000000001
+[ 3769.246390] R13: 0000000000000100 R14: 0000000000000000 R15: 00000000000c0000
+[ 3769.246392]  _raw_spin_lock+0x16/0x20
+[ 3769.246393]  list_lru_add+0x59/0x170
+[ 3769.246395]  inode_lru_list_add+0x1b/0x40
+[ 3769.246396]  iput+0x18b/0x1a0
+[ 3769.246397]  __dentry_kill+0xc5/0x170
+[ 3769.246398]  shrink_dentry_list+0x93/0x1c0
+[ 3769.246399]  prune_dcache_sb+0x4d/0x70
+[ 3769.246401]  super_cache_scan+0x104/0x190
+[ 3769.246402]  do_shrink_slab+0x12c/0x1e0
+[ 3769.246404]  shrink_slab+0xdf/0x2b0
+[ 3769.246405]  shrink_node+0x158/0x470
+[ 3769.246407]  do_try_to_free_pages+0xd1/0x380
+[ 3769.246408]  try_to_free_pages+0xb2/0xe0
+[ 3769.246410]  __alloc_pages_nodemask+0x603/0xe80
+[ 3769.246411]  ? xas_load+0x9/0x80
+[ 3769.246413]  ? find_get_entry+0x58/0x120
+[ 3769.246414]  pagecache_get_page+0xde/0x210
+[ 3769.246415]  grab_cache_page_write_begin+0x17/0x30
+[ 3769.246416]  ext4_da_write_begin+0xc4/0x340
+[ 3769.246418]  generic_perform_write+0xb8/0x1b0
+[ 3769.246420]  __generic_file_write_iter+0x13c/0x1b0
+[ 3769.246421]  ext4_file_write_iter+0x121/0x3c0
+[ 3769.246422]  __vfs_write+0x123/0x1a0
+[ 3769.246423]  vfs_write+0xab/0x1a0
+[ 3769.246424]  ksys_write+0x4d/0xc0
+[ 3769.246426]  do_syscall_64+0x49/0x100
+[ 3769.246427]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 3769.246428] RIP: 0033:0x7fee5b265730
+[ 3769.246429] Code: 73 01 c3 48 8b 0d 68 d7 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d d9 2f 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 7e 9b 01 00 48 89 04 24
+[ 3769.246430] RSP: 002b:00007fff33183dd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[ 3769.246431] RAX: ffffffffffffffda RBX: 0000000000000710 RCX: 00007fee5b265730
+[ 3769.246431] RDX: 0000000000000710 RSI: 000055559bed78b0 RDI: 0000000000000049
+[ 3769.246432] RBP: 000055559bed78b0 R08: 0000000000000b40 R09: 0000000001c0320c
+[ 3769.246433] R10: 00007fee5be91e80 R11: 0000000000000246 R12: 0000000000000710
+[ 3769.246433] R13: 0000000000000001 R14: 00005555a2690050 R15: 0000000000000710
+
+
+ 
+>> Since we are almost at RC6 i took the liberty to CC Eric now.
+>>
+> Sure, thanks.
+> 
+>> BTW am i correct these patches are merely optimizations ?
+> 
+> Yes
+> 
+>> If so and concluding they revert cleanly, perhaps it should be considered at this point in the RC's
+>> to revert them for 5.0 and try again for 5.1 ?
+>>
+> Before removing both it would be good to test with only the barrier-removal removed.
+> 
+>> --
+>> Sander
+>>
+> Heiner
+> 
+>>
+>>>
+>>>> would be candidates, which were merged in 5.0.
+>>>>
+>>>> I have reverted the first two, see how that works out.
+>>>>
+>>>> --
+>>>> Sander
+>>>>
+>>> Heiner
+>>>
+>>>>  
+>>>>>> --
+>>>>>> Sander
+>>>>>>
+>>>>> Heiner
+>>>>>
+>>>>>>
+>>>>>> [ 6466.554866] kernel BUG at lib/dynamic_queue_limits.c:27!
+>>>>>> [ 6466.571425] invalid opcode: 0000 [#1] SMP NOPTI
+>>>>>> [ 6466.585890] CPU: 3 PID: 7057 Comm: as Not tainted 5.0.0-rc5-20190208-thp-net-florian-doflr+ #1
+>>>>>> [ 6466.598693] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+>>>>>> [ 6466.611579] RIP: e030:dql_completed+0x126/0x140
+>>>>>> [ 6466.624339] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+>>>>>> [ 6466.648130] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+>>>>>> [ 6466.659616] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+>>>>>> [ 6466.672835] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+>>>>>> [ 6466.684521] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+>>>>>> [ 6466.696824] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+>>>>>> [ 6466.709953] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+>>>>>> [ 6466.722165] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+>>>>>> [ 6466.733228] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>> [ 6466.746581] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+>>>>>> [ 6466.758366] Call Trace:
+>>>>>> [ 6466.768118]  <IRQ>
+>>>>>> [ 6466.778214]  rtl8169_poll+0x4f4/0x640
+>>>>>> [ 6466.789198]  net_rx_action+0x23d/0x370
+>>>>>> [ 6466.798467]  __do_softirq+0xed/0x229
+>>>>>> [ 6466.807039]  irq_exit+0xb7/0xc0
+>>>>>> [ 6466.815471]  xen_evtchn_do_upcall+0x27/0x40
+>>>>>> [ 6466.826647]  xen_do_hypervisor_callback+0x29/0x40
+>>>>>> [ 6466.835902]  </IRQ>
+>>>>>> [ 6466.845361] RIP: e030:xen_hypercall_mmu_update+0xa/0x20
+>>>>>> [ 6466.853390] Code: 51 41 53 b8 00 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 01 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+>>>>>> [ 6466.874031] RSP: e02b:ffffc90003c0bdd0 EFLAGS: 00000246
+>>>>>> [ 6466.883452] RAX: 0000000000000000 RBX: 000000041f83bfe8 RCX: ffffffff8100102a
+>>>>>> [ 6466.891986] RDX: deadbeefdeadf00d RSI: deadbeefdeadf00d RDI: deadbeefdeadf00d
+>>>>>> [ 6466.903402] RBP: 0000000000000fe8 R08: 000000000000000b R09: 0000000000000000
+>>>>>> [ 6466.911201] R10: deadbeefdeadf00d R11: 0000000000000246 R12: 800000050c346067
+>>>>>> [ 6466.918491] R13: ffff8880607c4fe8 R14: ffff888005082800 R15: 0000000000000000
+>>>>>> [ 6466.926647]  ? xen_hypercall_mmu_update+0xa/0x20
+>>>>>> [ 6466.938195]  ? xen_set_pte_at+0x78/0xe0
+>>>>>> [ 6466.947046]  ? __handle_mm_fault+0xc43/0x1060
+>>>>>> [ 6466.955772]  ? do_mmap+0x44b/0x5b0
+>>>>>> [ 6466.964410]  ? handle_mm_fault+0xf8/0x200
+>>>>>> [ 6466.973290]  ? __do_page_fault+0x231/0x4a0
+>>>>>> [ 6466.981973]  ? page_fault+0x8/0x30
+>>>>>> [ 6466.990904]  ? page_fault+0x1e/0x30
+>>>>>> [ 6466.999585] Modules linked in:
+>>>>>> [ 6467.007533] ---[ end trace 94bec01608fe4061 ]---
+>>>>>> [ 6467.016751] RIP: e030:dql_completed+0x126/0x140
+>>>>>> [ 6467.024271] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+>>>>>> [ 6467.039726] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+>>>>>> [ 6467.047243] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+>>>>>> [ 6467.054202] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+>>>>>> [ 6467.062000] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+>>>>>> [ 6467.069664] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+>>>>>> [ 6467.077715] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+>>>>>> [ 6467.084916] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+>>>>>> [ 6467.093352] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>> [ 6467.101492] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+>>>>>> [ 6467.110542] Kernel panic - not syncing: Fatal exception in interrupt
+>>>>>> [ 6467.118166] Kernel Offset: disabled
+>>>>>> (XEN) [2019-02-08 18:04:48.854] Hardware Dom0 crashed: rebooting machine in 5 seconds.
+>>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>
+>>
+> 
 
