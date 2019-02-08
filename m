@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E944DC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCA6C282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73D1D21919
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:57:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5780921917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oOeYqfUt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4GdsIz4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfBHH5A (ORCPT
+        id S1727302AbfBHH5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:57:00 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34878 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfBHH44 (ORCPT
+        Fri, 8 Feb 2019 02:57:05 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34277 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbfBHH45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:56:56 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z9so1315190pfi.2;
-        Thu, 07 Feb 2019 23:56:55 -0800 (PST)
+        Fri, 8 Feb 2019 02:56:57 -0500
+Received: by mail-pf1-f193.google.com with SMTP id j18so1315455pfe.1;
+        Thu, 07 Feb 2019 23:56:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=33aqc7VxCmQrf2zs2FpPkA7KtnfR/GRdMJWgpUgJpEM=;
-        b=oOeYqfUtXBNrVgo+VeodEVVR034PVDJLhgzdbme81C0PIxX2ttKG4gV4sD+b5UGM6n
-         xpO2VvX1Wq6ajdWaoT2zI7Sw2gCqnmz1FeklNnKA1Lnqko7hzAwP99nbtTJax/xZpbMx
-         K6kNidvmaJuQ1QVoKxxOPw2EBhE8Pz/cuYxoN5xYyebzyDJZRAx6eZ2uoZN8MasOZWrh
-         0b734phPIp3ld30v/CXZnD8ZXHmtmgTRmTq+aRRt+cV1BBn34gN+7jX+pqEGPQzuVhUr
-         uazvaGrsI5gxRaaW8hnzecpNaEWJ/JctpA9szJ+xEeyX9mrdfJyddmqisjabYbTjlSKn
-         m3Hw==
+        bh=J2d/n7dMaeGjTEKIDIBTiayW7FnCIDacKxsczsn6v/k=;
+        b=I4GdsIz44Gw1ZvdxS8A3KX2aMztLlez48JnFUkyF/acaAc80cF5HhhgrbpoGR2PB+E
+         vP8U4msgbCn1JRQtjFisJFWRt+xNAUMU/ob+jHwE+eyLV8RMqHi1bS2fj1pBgNYUiWra
+         clSIiacqFsl9crG1jF98vOlxCxG1p6wFAjL7/g1xMk/yIy6s+gR6l5+9vCDOOdx4Xz+I
+         AYruW4TVowbQxZCmYY47S19UsD4WvHPvMClC6ZQoh7GC/KFrFfn/1uSc7RX5TAOd5Gg2
+         Y3KKyAj5lkTr2tHH/EJJ6Uf280tplM9hzxdBlAg5IgcgttR2fxsX+wVOMcstZ4YtxbXf
+         qZ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=33aqc7VxCmQrf2zs2FpPkA7KtnfR/GRdMJWgpUgJpEM=;
-        b=W75eSR75flAHDuvM00JedhdBRxupAiytNKMmmeeHhWe2pLaq0uRt2kdwnDayxlyNSy
-         e9o/w+EoX8X5XjWcyGSEuJAwJRgEFl4fiRWEVrfULylKmX2Pf1NxqbPIx5P7gb0NIVNP
-         6G4VV9vXR77t9OnO313A81asYHa1zCttMrQtr9jss05a8ZYUn+1oh2gBB+S7c2BD0FdW
-         dxyERny7r1GvjR41Lyckx4EhpjJvl4yM0WYyBhh2akHTQHOdSOjfsBsHPXK2Pwn2FZ6q
-         OEZlc/3yYIP2Z8WUhj79z+9BQgx4h0kYR0GXUw7NjhDFGusYzt4GOq7gTeJBXqF1ZS8O
-         cXWg==
-X-Gm-Message-State: AHQUAua/gEGkKVpkxSbg+JW+9jOiM48U7s4rlXc+0doDq5QXD4JITPze
-        J3zkVkKXE3/t0fSbhBu31KiyrAmQ
-X-Google-Smtp-Source: AHgI3IYo9MNT56RXdhRr+J3mZ3gjZXndch8d3O7H0eXplSlfFA8QPMUsfVhX1gtcwwJ3Gse7G9c1+g==
-X-Received: by 2002:a63:c56:: with SMTP id 22mr4014447pgm.44.1549612614688;
-        Thu, 07 Feb 2019 23:56:54 -0800 (PST)
+        bh=J2d/n7dMaeGjTEKIDIBTiayW7FnCIDacKxsczsn6v/k=;
+        b=F3Fxg1jJSqCo28LB6fjYnTurYKyBgU2w1i1TtTdNrVricwI/DWGnVlNsEEKD/SFuSW
+         U7+T3VbKoWgtpzvD+v/YyaDjLP5cM6HZ1dBaXexSRbdHhtAqqAqYMxhetVnY5i4p2wtR
+         f3qFyuwIQXB/WeKmK1HdJ3iEdlYtDWzETGhBpg3jj2fuQu9upt8ybQkNzlPYwA9buYGZ
+         VHoLIHKpq353EEk8ppfNtTr9b9GfUvQGLGdiHWKYxWeTIouw++cyskLVis8AK/b7QVsJ
+         dsvy1oKTjCDJuVojsB9PtgcPUpW+uWplioSrk4AmDUrdo1DEosSBppBKyRHWN4IylwNv
+         0RTw==
+X-Gm-Message-State: AHQUAubz2EwurjTOX+cEFBS62Sz3hEOXvTqOk5iCR8JzSHUcXFuqinAQ
+        gAgsQ+ovrATvL1qcKeBJnzU=
+X-Google-Smtp-Source: AHgI3IYYHIztn9vPyDo0otP9186JN8e6QmitPtzNtoARPeba6iDr110h0m/ZLkxOo1nRMHdRATOVJQ==
+X-Received: by 2002:a63:4611:: with SMTP id t17mr9848800pga.119.1549612616425;
+        Thu, 07 Feb 2019 23:56:56 -0800 (PST)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id h64sm2642610pfc.142.2019.02.07.23.56.52
+        by smtp.gmail.com with ESMTPSA id h64sm2642610pfc.142.2019.02.07.23.56.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 23:56:53 -0800 (PST)
+        Thu, 07 Feb 2019 23:56:55 -0800 (PST)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
@@ -77,10 +77,11 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Ralph Campbell <rcampbell@nvidia.com>,
         Tom Talpey <tom@talpey.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Date:   Thu,  7 Feb 2019 23:56:48 -0800
-Message-Id: <20190208075649.3025-2-jhubbard@nvidia.com>
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 2/2] infiniband/mm: convert put_page() to put_user_page*()
+Date:   Thu,  7 Feb 2019 23:56:49 -0800
+Message-Id: <20190208075649.3025-3-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208075649.3025-1-jhubbard@nvidia.com>
 References: <20190208075649.3025-1-jhubbard@nvidia.com>
@@ -94,69 +95,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-Introduces put_user_page(), which simply calls put_page().
-This provides a way to update all get_user_pages*() callers,
-so that they call put_user_page(), instead of put_page().
+For infiniband code that retains pages via get_user_pages*(),
+release those pages via the new put_user_page(), or
+put_user_pages*(), instead of put_page()
 
-Also introduces put_user_pages(), and a few dirty/locked variations,
-as a replacement for release_pages(), and also as a replacement
-for open-coded loops that release multiple pages.
-These may be used for subsequent performance improvements,
-via batching of pages to be released.
+This is a tiny part of the second step of fixing the problem described
+in [1]. The steps are:
 
-This is the first step of fixing a problem (also described in [1] and
-[2]) with interactions between get_user_pages ("gup") and filesystems.
-
-Problem description: let's start with a bug report. Below, is what happens
-sometimes, under memory pressure, when a driver pins some pages via gup,
-and then marks those pages dirty, and releases them. Note that the gup
-documentation actually recommends that pattern. The problem is that the
-filesystem may do a writeback while the pages were gup-pinned, and then the
-filesystem believes that the pages are clean. So, when the driver later
-marks the pages as dirty, that conflicts with the filesystem's page
-tracking and results in a BUG(), like this one that I experienced:
-
-    kernel BUG at /build/linux-fQ94TU/linux-4.4.0/fs/ext4/inode.c:1899!
-    backtrace:
-        ext4_writepage
-        __writepage
-        write_cache_pages
-        ext4_writepages
-        do_writepages
-        __writeback_single_inode
-        writeback_sb_inodes
-        __writeback_inodes_wb
-        wb_writeback
-        wb_workfn
-        process_one_work
-        worker_thread
-        kthread
-        ret_from_fork
-
-...which is due to the file system asserting that there are still buffer
-heads attached:
-
-        ({                                                      \
-                BUG_ON(!PagePrivate(page));                     \
-                ((struct buffer_head *)page_private(page));     \
-        })
-
-Dave Chinner's description of this is very clear:
-
-    "The fundamental issue is that ->page_mkwrite must be called on every
-    write access to a clean file backed page, not just the first one.
-    How long the GUP reference lasts is irrelevant, if the page is clean
-    and you need to dirty it, you must call ->page_mkwrite before it is
-    marked writeable and dirtied. Every. Time."
-
-This is just one symptom of the larger design problem: filesystems do not
-actually support get_user_pages() being called on their pages, and letting
-hardware write directly to those pages--even though that patter has been
-going on since about 2005 or so.
-
-The steps are to fix it are:
-
-1) (This patch): provide put_user_page*() routines, intended to be used
+1) Provide put_user_page*() routines, intended to be used
    for releasing pages that were pinned via get_user_pages*().
 
 2) Convert all of the call sites for get_user_pages*(), to
@@ -169,159 +115,186 @@ The steps are to fix it are:
 
 4) Use the tracking and identification of these pages, to implement
    special handling (especially in writeback paths) when the pages are
-   backed by a filesystem.
+   backed by a filesystem. Again, [1] provides details as to why that is
+   desirable.
 
-[1] https://lwn.net/Articles/774411/ : "DMA and get_user_pages()"
-[2] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
+[1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>
+Cc: Doug Ledford <dledford@redhat.com>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Jerome Glisse <jglisse@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Christian Benvenuti <benve@cisco.com>
 
 Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Acked-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- include/linux/mm.h | 24 ++++++++++++++
- mm/swap.c          | 82 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 106 insertions(+)
+ drivers/infiniband/core/umem.c              |  7 ++++---
+ drivers/infiniband/core/umem_odp.c          |  2 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
+ drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
+ drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |  6 +++---
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 ++++---
+ 7 files changed, 23 insertions(+), 27 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 80bb6408fe73..809b7397d41e 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -993,6 +993,30 @@ static inline void put_page(struct page *page)
- 		__put_page(page);
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+index c6144df47ea4..c2898bc7b3b2 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -58,9 +58,10 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
+ 	for_each_sg(umem->sg_head.sgl, sg, umem->npages, i) {
+ 
+ 		page = sg_page(sg);
+-		if (!PageDirty(page) && umem->writable && dirty)
+-			set_page_dirty_lock(page);
+-		put_page(page);
++		if (umem->writable && dirty)
++			put_user_pages_dirty_lock(&page, 1);
++		else
++			put_user_page(page);
+ 	}
+ 
+ 	sg_free_table(&umem->sg_head);
+diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+index acb882f279cb..d32757c1f77e 100644
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -663,7 +663,7 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+ 					ret = -EFAULT;
+ 					break;
+ 				}
+-				put_page(local_page_list[j]);
++				put_user_page(local_page_list[j]);
+ 				continue;
+ 			}
+ 
+diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
+index e341e6dcc388..99ccc0483711 100644
+--- a/drivers/infiniband/hw/hfi1/user_pages.c
++++ b/drivers/infiniband/hw/hfi1/user_pages.c
+@@ -121,13 +121,10 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
+ void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
+ 			     size_t npages, bool dirty)
+ {
+-	size_t i;
+-
+-	for (i = 0; i < npages; i++) {
+-		if (dirty)
+-			set_page_dirty_lock(p[i]);
+-		put_page(p[i]);
+-	}
++	if (dirty)
++		put_user_pages_dirty_lock(p, npages);
++	else
++		put_user_pages(p, npages);
+ 
+ 	if (mm) { /* during close after signal, mm can be NULL */
+ 		down_write(&mm->mmap_sem);
+diff --git a/drivers/infiniband/hw/mthca/mthca_memfree.c b/drivers/infiniband/hw/mthca/mthca_memfree.c
+index 112d2f38e0de..99108f3dcf01 100644
+--- a/drivers/infiniband/hw/mthca/mthca_memfree.c
++++ b/drivers/infiniband/hw/mthca/mthca_memfree.c
+@@ -481,7 +481,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
+ 
+ 	ret = pci_map_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
+ 	if (ret < 0) {
+-		put_page(pages[0]);
++		put_user_page(pages[0]);
+ 		goto out;
+ 	}
+ 
+@@ -489,7 +489,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
+ 				 mthca_uarc_virt(dev, uar, i));
+ 	if (ret) {
+ 		pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
+-		put_page(sg_page(&db_tab->page[i].mem));
++		put_user_page(sg_page(&db_tab->page[i].mem));
+ 		goto out;
+ 	}
+ 
+@@ -555,7 +555,7 @@ void mthca_cleanup_user_db_tab(struct mthca_dev *dev, struct mthca_uar *uar,
+ 		if (db_tab->page[i].uvirt) {
+ 			mthca_UNMAP_ICM(dev, mthca_uarc_virt(dev, uar, i), 1);
+ 			pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
+-			put_page(sg_page(&db_tab->page[i].mem));
++			put_user_page(sg_page(&db_tab->page[i].mem));
+ 		}
+ 	}
+ 
+diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+index 16543d5e80c3..1a5c64c8695f 100644
+--- a/drivers/infiniband/hw/qib/qib_user_pages.c
++++ b/drivers/infiniband/hw/qib/qib_user_pages.c
+@@ -40,13 +40,10 @@
+ static void __qib_release_user_pages(struct page **p, size_t num_pages,
+ 				     int dirty)
+ {
+-	size_t i;
+-
+-	for (i = 0; i < num_pages; i++) {
+-		if (dirty)
+-			set_page_dirty_lock(p[i]);
+-		put_page(p[i]);
+-	}
++	if (dirty)
++		put_user_pages_dirty_lock(p, num_pages);
++	else
++		put_user_pages(p, num_pages);
  }
  
-+/**
-+ * put_user_page() - release a gup-pinned page
-+ * @page:            pointer to page to be released
-+ *
-+ * Pages that were pinned via get_user_pages*() must be released via
-+ * either put_user_page(), or one of the put_user_pages*() routines
-+ * below. This is so that eventually, pages that are pinned via
-+ * get_user_pages*() can be separately tracked and uniquely handled. In
-+ * particular, interactions with RDMA and filesystems need special
-+ * handling.
-+ *
-+ * put_user_page() and put_page() are not interchangeable, despite this early
-+ * implementation that makes them look the same. put_user_page() calls must
-+ * be perfectly matched up with get_user_page() calls.
-+ */
-+static inline void put_user_page(struct page *page)
-+{
-+	put_page(page);
-+}
-+
-+void put_user_pages_dirty(struct page **pages, unsigned long npages);
-+void put_user_pages_dirty_lock(struct page **pages, unsigned long npages);
-+void put_user_pages(struct page **pages, unsigned long npages);
-+
- #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
- #define SECTION_IN_PAGE_FLAGS
- #endif
-diff --git a/mm/swap.c b/mm/swap.c
-index 4929bc1be60e..7c42ca45bb89 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -133,6 +133,88 @@ void put_pages_list(struct list_head *pages)
- }
- EXPORT_SYMBOL(put_pages_list);
- 
-+typedef int (*set_dirty_func)(struct page *page);
-+
-+static void __put_user_pages_dirty(struct page **pages,
-+				   unsigned long npages,
-+				   set_dirty_func sdf)
-+{
-+	unsigned long index;
-+
-+	for (index = 0; index < npages; index++) {
-+		struct page *page = compound_head(pages[index]);
-+
-+		if (!PageDirty(page))
-+			sdf(page);
-+
-+		put_user_page(page);
-+	}
-+}
-+
-+/**
-+ * put_user_pages_dirty() - release and dirty an array of gup-pinned pages
-+ * @pages:  array of pages to be marked dirty and released.
-+ * @npages: number of pages in the @pages array.
-+ *
-+ * "gup-pinned page" refers to a page that has had one of the get_user_pages()
-+ * variants called on that page.
-+ *
-+ * For each page in the @pages array, make that page (or its head page, if a
-+ * compound page) dirty, if it was previously listed as clean. Then, release
-+ * the page using put_user_page().
-+ *
-+ * Please see the put_user_page() documentation for details.
-+ *
-+ * set_page_dirty(), which does not lock the page, is used here.
-+ * Therefore, it is the caller's responsibility to ensure that this is
-+ * safe. If not, then put_user_pages_dirty_lock() should be called instead.
-+ *
-+ */
-+void put_user_pages_dirty(struct page **pages, unsigned long npages)
-+{
-+	__put_user_pages_dirty(pages, npages, set_page_dirty);
-+}
-+EXPORT_SYMBOL(put_user_pages_dirty);
-+
-+/**
-+ * put_user_pages_dirty_lock() - release and dirty an array of gup-pinned pages
-+ * @pages:  array of pages to be marked dirty and released.
-+ * @npages: number of pages in the @pages array.
-+ *
-+ * For each page in the @pages array, make that page (or its head page, if a
-+ * compound page) dirty, if it was previously listed as clean. Then, release
-+ * the page using put_user_page().
-+ *
-+ * Please see the put_user_page() documentation for details.
-+ *
-+ * This is just like put_user_pages_dirty(), except that it invokes
-+ * set_page_dirty_lock(), instead of set_page_dirty().
-+ *
-+ */
-+void put_user_pages_dirty_lock(struct page **pages, unsigned long npages)
-+{
-+	__put_user_pages_dirty(pages, npages, set_page_dirty_lock);
-+}
-+EXPORT_SYMBOL(put_user_pages_dirty_lock);
-+
-+/**
-+ * put_user_pages() - release an array of gup-pinned pages.
-+ * @pages:  array of pages to be marked dirty and released.
-+ * @npages: number of pages in the @pages array.
-+ *
-+ * For each page in the @pages array, release the page using put_user_page().
-+ *
-+ * Please see the put_user_page() documentation for details.
-+ */
-+void put_user_pages(struct page **pages, unsigned long npages)
-+{
-+	unsigned long index;
-+
-+	for (index = 0; index < npages; index++)
-+		put_user_page(pages[index]);
-+}
-+EXPORT_SYMBOL(put_user_pages);
-+
  /*
-  * get_kernel_pages() - pin kernel pages in memory
-  * @kiov:	An array of struct kvec structures
+diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c b/drivers/infiniband/hw/qib/qib_user_sdma.c
+index 31c523b2a9f5..a1a1ec4adffc 100644
+--- a/drivers/infiniband/hw/qib/qib_user_sdma.c
++++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
+@@ -320,7 +320,7 @@ static int qib_user_sdma_page_to_frags(const struct qib_devdata *dd,
+ 		 * the caller can ignore this page.
+ 		 */
+ 		if (put) {
+-			put_page(page);
++			put_user_page(page);
+ 		} else {
+ 			/* coalesce case */
+ 			kunmap(page);
+@@ -634,7 +634,7 @@ static void qib_user_sdma_free_pkt_frag(struct device *dev,
+ 			kunmap(pkt->addr[i].page);
+ 
+ 		if (pkt->addr[i].put_page)
+-			put_page(pkt->addr[i].page);
++			put_user_page(pkt->addr[i].page);
+ 		else
+ 			__free_page(pkt->addr[i].page);
+ 	} else if (pkt->addr[i].kvaddr) {
+@@ -709,7 +709,7 @@ static int qib_user_sdma_pin_pages(const struct qib_devdata *dd,
+ 	/* if error, return all pages not managed by pkt */
+ free_pages:
+ 	while (i < j)
+-		put_page(pages[i++]);
++		put_user_page(pages[i++]);
+ 
+ done:
+ 	return ret;
+diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
+index 49275a548751..2ef8d31dc838 100644
+--- a/drivers/infiniband/hw/usnic/usnic_uiom.c
++++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
+@@ -77,9 +77,10 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
+ 		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
+ 			page = sg_page(sg);
+ 			pa = sg_phys(sg);
+-			if (!PageDirty(page) && dirty)
+-				set_page_dirty_lock(page);
+-			put_page(page);
++			if (dirty)
++				put_user_pages_dirty_lock(&page, 1);
++			else
++				put_user_page(page);
+ 			usnic_dbg("pa: %pa\n", &pa);
+ 		}
+ 		kfree(chunk);
 -- 
 2.20.1
 
