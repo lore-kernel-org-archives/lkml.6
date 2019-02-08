@@ -2,157 +2,121 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197EBC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488A6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6CBF218D2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:24:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P+lAusm9"
+	by mail.kernel.org (Postfix) with ESMTP id 1F4DE20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbfBHNYe (ORCPT
+        id S1727721AbfBHNZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:24:34 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33690 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfBHNYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:24:34 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x18DOH69020334;
-        Fri, 8 Feb 2019 07:24:17 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549632257;
-        bh=KN27eVrW9tG745rWB5gGx4GSDgsoCpJZfglRGskOQBI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=P+lAusm9BLTzDk8nbFCw328u49Da5fae4BHImqSTMOGwKmWiqOwAevya63TqXCdE1
-         QhItZkjpyZcJCF/dLp3Mpvn2kpa42i/OleBnbAEChph/Qsn8uVENU3SZRfx/f88l+7
-         /Y2S6z0Ecs8RvGzMUj8I5tT1K8Yi5zOW7QJLEjEM=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x18DOHGM056066
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 07:24:17 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 8
- Feb 2019 07:24:17 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 8 Feb 2019 07:24:17 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x18DODlT007996;
-        Fri, 8 Feb 2019 07:24:14 -0600
-Subject: Re: [PATCH v2 02/12] clocksource: davinci-timer: new driver
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190204171757.32073-1-brgl@bgdev.pl>
- <20190204171757.32073-3-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <7243573a-884d-cce2-380b-1be73636fafb@ti.com>
-Date:   Fri, 8 Feb 2019 18:54:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Fri, 8 Feb 2019 08:25:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51370 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726600AbfBHNZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:25:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B811780D;
+        Fri,  8 Feb 2019 05:25:16 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C18EE3F719;
+        Fri,  8 Feb 2019 05:25:13 -0800 (PST)
+Subject: Re: [PATCH v2 02/11] genirq: introduce irq_domain_translate_twocell
+To:     Brian Masney <masneyb@onstation.org>, linus.walleij@linaro.org,
+        sboyd@kernel.org, bjorn.andersson@linaro.org,
+        andy.gross@linaro.org, lee.jones@linaro.org
+Cc:     tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190208021631.30252-1-masneyb@onstation.org>
+ <20190208021631.30252-3-masneyb@onstation.org>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <9ac5e0d4-d1fb-963c-4952-391f558710e4@arm.com>
+Date:   Fri, 8 Feb 2019 13:25:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190204171757.32073-3-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190208021631.30252-3-masneyb@onstation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/19 10:47 PM, Bartosz Golaszewski wrote:
+On 08/02/2019 02:16, Brian Masney wrote:
+> Add a new function irq_domain_translate_twocell() that is to be used as
+> the translate function in struct irq_domain_ops for the v2 IRQ API.
+> 
+> This patch also changes irq_domain_xlate_twocell() from the v1 IRQ API
+> to call irq_domain_translate_twocell() in the v2 IRQ API. This required
+> changes to of_phandle_args_to_fwspec()'s arguments so that it can be
+> called from multiple places.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Changes since v1:
+> - Included Marc Zyngier's changes to irq_domain_xlate_twocell() and
+>   of_phandle_args_to_fwspec().
 
-> +static unsigned int davinci_timer_read(struct davinci_timer_data *timer,
-> +				       unsigned int reg)
-> +{
-> +	return __raw_readl(timer->base + reg);
-> +}
-> +
-> +static void davinci_timer_write(struct davinci_timer_data *timer,
-> +				unsigned int reg, unsigned int val)
-> +{
-> +	__raw_writel(val, timer->base + reg);
-> +}
+Thanks for having folded this in.
 
-Since its a new driver, please use readl_relaxed() and writel_relaxed().
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
-> +static void davinci_timer_init(void __iomem *base)
-> +{
-> +	/* Set clock to internal mode and disable it. */
-> +	__raw_writel(0x0, base + DAVINCI_TIMER_REG_TCR);
-> +	/*
-> +	 * Reset both 32-bit timers, set no prescaler for timer 34, set the
-> +	 * timer to dual 32-bit unchained mode, unreset both 32-bit timers.
-> +	 */
-> +	__raw_writel(DAVINCI_TIMER_TGCR_DEFAULT, base + DAVINCI_TIMER_REG_TGCR);
-> +	/* Init both counters to zero. */
-> +	__raw_writel(0x0, base + DAVINCI_TIMER_REG_TIM12);
-> +	__raw_writel(0x0, base + DAVINCI_TIMER_REG_TIM34);
-
-here too.
-
-> +}
-> +
-> +int __init davinci_timer_register(struct clk *clk,
-> +				  const struct davinci_timer_cfg *timer_cfg)
-> +{
-
-[...]
-
-> +	clocksource = kzalloc(sizeof(*clocksource), GFP_KERNEL);
-> +	if (!clocksource) {
-> +		pr_err("%s: Error allocating memory for clocksource data\n",
-> +		       __func__);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	clocksource->dev.name = "tim34";
-> +	clocksource->dev.rating = 300;
-> +	clocksource->dev.read = davinci_timer_clksrc_read;
-> +	clocksource->dev.mask = CLOCKSOURCE_MASK(DAVINCI_TIMER_CLKSRC_BITS);
-> +	clocksource->dev.flags = CLOCK_SOURCE_IS_CONTINUOUS;
-> +	clocksource->timer.set_period = davinci_timer_set_period_std;
-> +	clocksource->timer.mode = DAVINCI_TIMER_MODE_PERIODIC;
-> +	clocksource->timer.base = base;
-> +
-> +	if (timer_cfg->cmp_off)
-> +		clocksource->timer.regs = &davinci_timer_tim12_regs;
-> +	else
-> +		clocksource->timer.regs = &davinci_timer_tim34_regs;
-
-We should set clocksource->dev.name based on cmp_off too, otherwise it
-will be confusing to have a device called "tim34" using tim12 registers.
-
-> +/**
-> + * struct davinci_timer_cfg - davinci clocksource driver configuration struct
-> + * @reg:        register range resource
-> + * @irq:        clockevent and clocksource interrupt resources
-> + * @cmp_off:    if set - it specifies the compare register used for clockevent
-> + *
-> + * Note: if the compare register is specified, the driver will use the bottom
-> + * clock half for both clocksource and clockevent and the compare register
-> + * to generate event irqs. The user must supply the correct compare register
-> + * interrupt number.
-> + *
-> + * This is only used by da830 the DSP of which uses the top half. The timer
-> + * driver still configures the top half to run in free-run mode.
-
-This note helps. Thanks!
-
-Regards,
-Sekhar
+	M.
+-- 
+Jazz is not dead. It just smells funny...
