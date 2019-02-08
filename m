@@ -2,144 +2,179 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F19BC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C3AC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48AEC21920
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C84320823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfBHJy1 (ORCPT
+        id S1727566AbfBHJzK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:54:27 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59597 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfBHJy1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:54:27 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gs2rU-0001QD-KN; Fri, 08 Feb 2019 10:54:20 +0100
-Message-ID: <1549619660.2544.89.camel@pengutronix.de>
-Subject: Re: [RFC v2 5/5] arm64: dts: imx8mq-evk: Enable PCIE0 interface
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Fri, 08 Feb 2019 10:54:20 +0100
-In-Reply-To: <20190208002941.30343-6-andrew.smirnov@gmail.com>
-References: <20190208002941.30343-1-andrew.smirnov@gmail.com>
-         <20190208002941.30343-6-andrew.smirnov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 8 Feb 2019 04:55:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46574 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726081AbfBHJzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 04:55:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 11216ABEC;
+        Fri,  8 Feb 2019 09:55:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 672FA1E3DB5; Fri,  8 Feb 2019 10:55:07 +0100 (CET)
+Date:   Fri, 8 Feb 2019 10:55:07 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Chris Mason <clm@fb.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
+ pages"
+Message-ID: <20190208095507.GB6353@quack2.suse.cz>
+References: <20190130041707.27750-1-david@fromorbit.com>
+ <20190130041707.27750-2-david@fromorbit.com>
+ <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
+ <20190131013403.GI4205@dastard>
+ <20190131091011.GP18811@dhcp22.suse.cz>
+ <20190131185704.GA8755@castle.DHCP.thefacebook.com>
+ <20190131221904.GL4205@dastard>
+ <20190207102750.GA4570@quack2.suse.cz>
+ <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 07.02.2019, 16:29 -0800 schrieb Andrey Smirnov:
-> Enable PCIE0 interface connected to BCM4356 WiFi/Bluetooth module.
+On Thu 07-02-19 21:37:27, Andrew Morton wrote:
+> On Thu, 7 Feb 2019 11:27:50 +0100 Jan Kara <jack@suse.cz> wrote:
 > 
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
+> > On Fri 01-02-19 09:19:04, Dave Chinner wrote:
+> > > Maybe for memcgs, but that's exactly the oppose of what we want to
+> > > do for global caches (e.g. filesystem metadata caches). We need to
+> > > make sure that a single, heavily pressured cache doesn't evict small
+> > > caches that lower pressure but are equally important for
+> > > performance.
+> > > 
+> > > e.g. I've noticed recently a significant increase in RMW cycles in
+> > > XFS inode cache writeback during various benchmarks. It hasn't
+> > > affected performance because the machine has IO and CPU to burn, but
+> > > on slower machines and storage, it will have a major impact.
+> > 
+> > Just as a data point, our performance testing infrastructure has bisected
+> > down to the commits discussed in this thread as the cause of about 40%
+> > regression in XFS file delete performance in bonnie++ benchmark.
+> > 
+> 
+> Has anyone done significant testing with Rik's maybe-fix?
+
+I will give it a spin with bonnie++ today. We'll see what comes out.
+
+								Honza
+
+> 
+> 
+> 
+> From: Rik van Riel <riel@surriel.com>
+> Subject: mm, slab, vmscan: accumulate gradual pressure on small slabs
+> 
+> There are a few issues with the way the number of slab objects to scan is
+> calculated in do_shrink_slab.  First, for zero-seek slabs, we could leave
+> the last object around forever.  That could result in pinning a dying
+> cgroup into memory, instead of reclaiming it.  The fix for that is
+> trivial.
+> 
+> Secondly, small slabs receive much more pressure, relative to their size,
+> than larger slabs, due to "rounding up" the minimum number of scanned
+> objects to batch_size.
+> 
+> We can keep the pressure on all slabs equal relative to their size by
+> accumulating the scan pressure on small slabs over time, resulting in
+> sometimes scanning an object, instead of always scanning several.
+> 
+> This results in lower system CPU use, and a lower major fault rate, as
+> actively used entries from smaller caches get reclaimed less aggressively,
+> and need to be reloaded/recreated less often.
+> 
+> [akpm@linux-foundation.org: whitespace fixes, per Roman]
+> [riel@surriel.com: couple of fixes]
+>   Link: http://lkml.kernel.org/r/20190129142831.6a373403@imladris.surriel.com
+> Link: http://lkml.kernel.org/r/20190128143535.7767c397@imladris.surriel.com
+> Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
+> Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Tested-by: Chris Mason <clm@fb.com>
+> Acked-by: Roman Gushchin <guro@fb.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: Jonathan Lemon <bsd@fb.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: <stable@vger.kernel.org>
+> 
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 34 ++++++++++++++++++++
->  1 file changed, 34 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> index 64acccc4bfcb..20afdb9ffdd9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> @@ -31,6 +31,12 @@
->  		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
->  		enable-active-high;
->  	};
+> 
+> --- a/include/linux/shrinker.h~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
+> +++ a/include/linux/shrinker.h
+> @@ -65,6 +65,7 @@ struct shrinker {
+>  
+>  	long batch;	/* reclaim batch size, 0 = default */
+>  	int seeks;	/* seeks to recreate an obj */
+> +	int small_scan;	/* accumulate pressure on slabs with few objects */
+>  	unsigned flags;
+>  
+>  	/* These are for internal use */
+> --- a/mm/vmscan.c~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
+> +++ a/mm/vmscan.c
+> @@ -488,18 +488,30 @@ static unsigned long do_shrink_slab(stru
+>  		 * them aggressively under memory pressure to keep
+>  		 * them from causing refetches in the IO caches.
+>  		 */
+> -		delta = freeable / 2;
+> +		delta = (freeable + 1) / 2;
+>  	}
+>  
+>  	/*
+>  	 * Make sure we apply some minimal pressure on default priority
+> -	 * even on small cgroups. Stale objects are not only consuming memory
+> +	 * even on small cgroups, by accumulating pressure across multiple
+> +	 * slab shrinker runs. Stale objects are not only consuming memory
+>  	 * by themselves, but can also hold a reference to a dying cgroup,
+>  	 * preventing it from being reclaimed. A dying cgroup with all
+>  	 * corresponding structures like per-cpu stats and kmem caches
+>  	 * can be really big, so it may lead to a significant waste of memory.
+>  	 */
+> -	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
+> +	if (!delta && shrinker->seeks) {
+> +		unsigned long nr_considered;
 > +
-> +	pcie0_refclk: pcie0-refclk {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <100000000>;
-> +	};
->  };
->  
->  &fec1 {
-> @@ -40,6 +46,14 @@
-> >  	status = "okay";
->  };
->  
-> +&gpio5 {
-> + 	wl-reg-on {
-> +		gpio-hog;
-> +		gpios = <29 GPIO_ACTIVE_HIGH>;
-> +		output-high;
-> +	};
-> +};
+> +		shrinker->small_scan += freeable;
+> +		nr_considered = shrinker->small_scan >> priority;
 > +
->  &i2c1 {
-> >  	clock-frequency = <100000>;
-> >  	pinctrl-names = "default";
-> @@ -131,6 +145,18 @@
-> >  	};
->  };
->  
-> +&pcie0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_pcie0>;
-> +	reset-gpio = <&gpio5 28 GPIO_ACTIVE_LOW>;
-> +	clocks = <&clk IMX8MQ_CLK_PCIE1_ROOT>,
-> +		 <&clk IMX8MQ_CLK_PCIE1_AUX>,
-> +		 <&clk IMX8MQ_CLK_PCIE1_PHY>,
-> +		 <&pcie0_refclk>;
-> +	clock-names = "pcie", "pcie_aux", "pcie_phy", "pcie_bus";
-> +	status = "okay";
-> +};
-
-From a PCIe PoV I think this is fine. Please send a patch for the PCIe
-driver to use the pcie_aux clock.
-
+> +		delta = 4 * nr_considered;
+> +		do_div(delta, shrinker->seeks);
 > +
->  &uart1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_uart1>;
-> @@ -195,6 +221,14 @@
->  		>;
->  	};
->  
-> +	pinctrl_pcie0: pcie0grp {
-> +		fsl,pins = <
-> +			MX8MQ_IOMUXC_I2C4_SCL_PCIE1_CLKREQ_B		0x76
-> +			MX8MQ_IOMUXC_UART4_TXD_GPIO5_IO29		0x16
-
-Shouldn't this GPIO be separated in a pinctrl group for gpio5?
-
-> +			MX8MQ_IOMUXC_UART4_RXD_GPIO5_IO28		0x16
-> +		>;
-> +	};
-> +
->  	pinctrl_reg_usdhc2: regusdhc2grpgpio {
->  		fsl,pins = <
->  			MX8MQ_IOMUXC_SD2_RESET_B_GPIO2_IO19		0x41
+> +		if (delta)
+> +			shrinker->small_scan -= nr_considered << priority;
+> +	}
+>  
+>  	total_scan += delta;
+>  	if (total_scan < 0) {
+> _
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
