@@ -3,56 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD8FC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 354F0C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847BE20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 117212146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbfBHNCn (ORCPT
+        id S1727631AbfBHNCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:02:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:58979 "EHLO ozlabs.org"
+        Fri, 8 Feb 2019 08:02:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:37915 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727613AbfBHNCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:02:41 -0500
+        id S1727572AbfBHNCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:02:39 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43wwMM4s3bz9sNx; Sat,  9 Feb 2019 00:02:39 +1100 (AEDT)
+        id 43wwMJ3LnGz9sNg; Sat,  9 Feb 2019 00:02:35 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 9bf3d3c4e4fd82c7174f4856df372ab2a71005b9
+X-powerpc-patch-commit: 75f8a37580b64f87c223fbd08db6b2f79129864a
 X-Patchwork-Hint: ignore
-In-Reply-To: <5aa3c84a675405ac99382a5893406ef7e8dfd455.1548779831.git.christophe.leroy@c-s.fr>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+In-Reply-To: <20190128161136.GA2266@hp-pavilion-15-notebook-pc-brajeswar>
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
+        christophe.leroy@c-s.fr, arnd@arndb.de, anton@ozlabs.org,
+        aneesh.kumar@linux.ibm.com
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2] powerpc/traps: fix the message printed when stack overflows
-Message-Id: <43wwMM4s3bz9sNx@ozlabs.org>
-Date:   Sat,  9 Feb 2019 00:02:39 +1100 (AEDT)
+Cc:     sabyasachi.linux@gmail.com, linuxppc-dev@lists.ozlabs.org,
+        jrdr.linux@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/kernel/time: Remove duplicate header
+Message-Id: <43wwMJ3LnGz9sNg@ozlabs.org>
+Date:   Sat,  9 Feb 2019 00:02:35 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-29 at 16:37:55 UTC, Christophe Leroy wrote:
-> Today's message is useless:
+On Mon, 2019-01-28 at 16:11:36 UTC, Brajeswar Ghosh wrote:
+> Remove linux/rtc.h which is included more than once
 > 
-> [   42.253267] Kernel stack overflow in process (ptrval), r1=c65500b0
-> 
-> This patch fixes it:
-> 
-> [   66.905235] Kernel stack overflow in process sh[356], r1=c65560b0
-> 
-> Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/9bf3d3c4e4fd82c7174f4856df372ab2
+https://git.kernel.org/powerpc/c/75f8a37580b64f87c223fbd08db6b2f7
 
 cheers
