@@ -2,156 +2,256 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF89EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7115C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA02620855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95FF520855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CwfeA0Zf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PegaWPt3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727445AbfBHP6W (ORCPT
+        id S1727479AbfBHQAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:58:22 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:38496 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726524AbfBHP6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:58:22 -0500
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.100]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5da71d0000>; Fri, 08 Feb 2019 23:58:21 +0800
-Received: from HKMAIL103.nvidia.com ([10.18.16.12])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 08 Feb 2019 07:58:18 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Fri, 08 Feb 2019 07:58:18 -0800
-Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL103.nvidia.com
- (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
- 2019 15:58:17 +0000
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (104.47.37.56) by
- HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Fri, 8 Feb 2019 15:58:17 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3064.namprd12.prod.outlook.com (20.178.54.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Fri, 8 Feb 2019 15:58:13 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
- 15:58:13 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V15 4/6] i2c: tegra: Add DMA support
-Thread-Topic: [PATCH V15 4/6] i2c: tegra: Add DMA support
-Thread-Index: AQHUvy64ygjLqqj+r0yzTYtI5VJ73KXV2pEAgAAvldCAAARMAIAAAN1w
-Date:   Fri, 8 Feb 2019 15:58:13 +0000
-Message-ID: <BYAPR12MB339863A43F030013DCA7F548C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
- <1549576040-15907-4-git-send-email-skomatineni@nvidia.com>
- <7806f2cd-72b4-6ae3-b75f-0fc74fb62b95@gmail.com>
- <BYAPR12MB3398BE6DA6F1E82E5F2525C2C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB3398382FF9052AE466CE29ECC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-In-Reply-To: <BYAPR12MB3398382FF9052AE466CE29ECC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3064;6:+gXUlD+l+hHaw2/hEk6sS8FNaIwAnBGpwhlVgsBPSa3qtGc+6F72QI2U7iHm3ijXvfGOjDkSKvTojYKakVfG0JRiHa9+Yh9r1KS6T9TVEUFzHTO0gk2Y4gr0eLbGwwoRn51MPBM2Jo2pcY7Ynp6KTW4noAUUfKQTZuclIfsRGOS+5hq7rpGHcwgV3mEkn1g2M4Q1utwN/klL4000D3W7lzrXxdjUMJdPvyw75CnIPxFLcv6qKiYf2MSpQOo5nLjMqb+CptKpmUdAWfiS6kAOB3EC4PCnAmoLgq5HRlnzYx8vUZR2ksKr7iZPjPLvGNCztQg5FTspBONkaQeALfgMNtFxShLYjYkXZ+0ZzJuP0ducHdOYk83LR9+aYX1ZJbdvo+O1pSIdE0W56sbOgbzNbzTqGkcsJXZbj+bX0XskBNWKhsWm6OK+mfHYk8i71Sf6mbEzWQpD3nRyUVmfUIULzA==;5:tm5Alh1SNL9e29Lr87PTAKFy0scC9CF+E40HtW5JN2karBLDe/et734RAtz0fC7EEQMRLc+/RKw6Qo9hAusqZcp+Rq0HPi+D0X/Yu69nnxXfvwXtUwpPAQDmQUS/HAUbd8BL/dA2FFrZVMPngLo1x/gNAXWXcBJwX+XrUo6s2lyoI3DvyzTc4QAd7yO4G1cW/8jNmZ7CeMgibkBy4m7WcQ==;7:D0p0xinU3/FtupxOiX3TOtJSyGBoD9gT1abjAcEU2obVhQFMj1/oBWjwVpGfAOgLLbDrQFzFCxX/PwVoOUtlwhKx33pTTPotz3gNmyQJSXJMhyYlS/ugHw9YjZPzyDUUXQHIFNjG377Q0Wix+1gPnQ==
-x-ms-office365-filtering-correlation-id: d1bc9e7b-38dc-411c-34d9-08d68dde3b56
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3064;
-x-ms-traffictypediagnostic: BYAPR12MB3064:
-x-microsoft-antispam-prvs: <BYAPR12MB3064083963FA711AC53E381EC2690@BYAPR12MB3064.namprd12.prod.outlook.com>
-x-forefront-prvs: 094213BFEA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(366004)(376002)(136003)(199004)(189003)(8676002)(305945005)(93156006)(53936002)(71200400001)(105586002)(71190400001)(106356001)(66066001)(7736002)(8936002)(93886005)(33656002)(14454004)(74316002)(81156014)(6436002)(2906002)(81166006)(14444005)(256004)(9686003)(6636002)(2940100002)(68736007)(76176011)(2501003)(7696005)(229853002)(486006)(99286004)(25786009)(4326008)(11346002)(6506007)(102836004)(86362001)(3846002)(476003)(446003)(6116002)(316002)(54906003)(6246003)(97736004)(26005)(110136005)(186003)(55016002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3064;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 5Iw26ada9i4xrd3aBiIOFlLiYtSmAlxJ26t0lbFIoYbuEV+XKEsXEbvBDVpsoYGOa3/bMhIk+nEsUNMBPlciQvDgfR5Fg+hGL5N/pzVfGH8qOcum7xZU/32myxc+SU28hYA673CJuOO1yXcXD74EkwjWbnyO3C/1TO3pzje9c+LGIY1Y/gu7V8qK5Sbn8uadUI38xtpMfR/BYIH0MtLUe0i7gdz9tW0Sc1v6PV912OgCW6MTI4FiEbsMpolnPClkYAEnr2RLK0JcoRoSZwhJ8Lky8IsM7XPyreW66v5BIbdi8joUULpLPda/VfMgk8qc01z5jYhphXv08u4Nxe/mlSCAhZ4pIrBjh8/qHIuEde8LjHBYTe6sqyViU3NHQUF9CZSPnGIYb05JmKkS++AWFtUXwzKLcj44SZ/RyXLBe0I=
+        Fri, 8 Feb 2019 11:00:14 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34342 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbfBHQAM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 11:00:12 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b3so3219669ede.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:00:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OSulq3lvXqbyFxTDC1tKNbLEzrnsSrdFhhsO0c+emWk=;
+        b=PegaWPt354clt0Nf2kBLiRyOeBlcq+KTIwHGkpto8vdEOFAHq3pPgvQjdCpS8yMSer
+         NwbChSq0wto5jUClfp34wusOL4r4SGOIsDi2vLzRyD4zSg1MLB7hShhzpB0xs7WqR1/w
+         SaF5zzDISG2OZHeNI2gpR+eOodfNosAEs3AGCR81hwxgxQieeYbfegzvPCQCSDeLAbCq
+         sBTKElVDT7UllZyS/x2jzu60mAPG2uB/F8zuEgdjHYwptiv3gvKMj0IDMMR9BaUSYljV
+         d4LT+9LA+s6ToqyFKDdUyfiL/80teYStlDGCEFVyzU6a4V1oQc990Y71ugct94IHMKkP
+         6/Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OSulq3lvXqbyFxTDC1tKNbLEzrnsSrdFhhsO0c+emWk=;
+        b=Q5iUkwfTFoSx1QA70UPY4S2fJIum9tD4NpMDJTX0L1Ufdg5m6iflG6iv+K49tOQ82i
+         2fw4dcyJLzI4Pm1L7r9AgGAO2+nDyQI6ZQrybQk+AM3yTF7oMeyABJB4DoIg84SJ0jFx
+         LEmZP6VrknsqBpzYA7exEeItaRzPpuusvo2jBrRBSvgVFc1Jk5uV0mB75DPRGqmwQJtj
+         QmcvCV/9kNwX4yXiyJmTAY0U9vuf6b1yjbjMcSy4b/tpSY4zcJ98jXVoXOWZMluCSCwU
+         hYprv9CkPqbYhSeYNvDkKYsMICkDnErOME3YDJw+G7J0HLGObM1BIbidew8bPfqS+1+K
+         1Rhg==
+X-Gm-Message-State: AHQUAuZOHqrBHgAw1EAx9yAdkKSCaynbqNHoo8CBK1TMkWWRLBlrIPoJ
+        0Xu/PsCcxTMgwID7HksJF4E=
+X-Google-Smtp-Source: AHgI3IbkGyP7JBxpm3YWvtKeNBT4rPelXWKTqOEdwPlIDJ9mKAqYRNkp+l66Pr+P4qex9ZaOGKYWtQ==
+X-Received: by 2002:aa7:c352:: with SMTP id j18mr17153720edr.295.1549641610084;
+        Fri, 08 Feb 2019 08:00:10 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id s46sm717960edd.9.2019.02.08.08.00.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 08 Feb 2019 08:00:09 -0800 (PST)
+Date:   Fri, 8 Feb 2019 09:00:07 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        james.morse@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v10 12/25] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+Message-ID: <20190208160007.GA26005@archlinux-ryzen>
+References: <1548946743-38979-1-git-send-email-julien.thierry@arm.com>
+ <1548946743-38979-13-git-send-email-julien.thierry@arm.com>
+ <20190208043543.GA5040@archlinux-ryzen>
+ <a5c2aacd-f607-c73e-d636-9cfc73c1fde0@arm.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1bc9e7b-38dc-411c-34d9-08d68dde3b56
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 15:58:13.5103
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3064
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549641501; bh=/88oILZnGMBpGJYa9K5ZOguO9MqtnosnEOtliaOHK+o=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=CwfeA0ZfbOZvigwnV3MO8Dqv2MDLllwli2Sn7NRInF3uoSjgCSh2Pd6Z0LTbpb46l
-         NIFZVonuP9flDLDhiC6KZ/uAZfZzIb1D57PI11QKIlUmx51kDGDexjojeYLfazX1WK
-         sczSAeYg5xaA07V4UwB+4zCLIppLby5OIRo2LT2W4tZLyKpKjxli00KNAAiepv2u2j
-         mb+S0g6KemwER69haJV2Z5Mv/36b2a68uLgXA59/+WDSGX+NBBUKwiYCiYgh9Vlxm2
-         Z2h7ihozetedLmqmqKzPgbv1heu1sVspA1uA6mfN1xGin1EoAsLAO+lAPppsLLVKO/
-         mb5DHVMVG843Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5c2aacd-f607-c73e-d636-9cfc73c1fde0@arm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gPiBQbGVhc2UgdXNlICJyZWxlYXNlX2RtYToiIHZhcmlhbnQgdGhhdCBJIHN1Z2dlc3Rl
-ZCBpbiB0aGUgY29tbWVudCB0byB2MTQgYmVjYXVzZToNCj4gPiA+DQo+ID4gMSkgSXQncyBqdXN0
-IGEgZ29vZCAoYW5kIGNvbW1vbi1zdHlsZSBpbiBrZXJuZWwpIHRvbmUgdG8gdW53aW5kIGVycm9y
-cyBoYW5kbGluZyBpbiB0aGUgb3Bwb3NpdGUgb3JkZXIsIGl0IG1ha2VzIGNvZGUgbW9yZSBzdHJh
-aWdodCBmb3J3YXJkIGFuZCBoZWxwcyB0byBhdm9pZCBzaWxseSBtaXN0YWtlcy4NCj4gPg0KPiA+
-IDIpIEl0IGtlZXBzIHRoZSBjdXJyZW50IGNvZGUgY29uc2lzdGVudCBpbiByZWdhcmRzIHRvIHBy
-b2JlIGVycm9yLWhhbmRsaW5nLg0KPiA+DQo+DQo+IENhbiBtb3ZlIHRlZ3JhX2kyY19yZWxlYXNl
-X2RtYSB1bmRlciB0aGUgc2FtZSBkaXNhYmxlX2Rpdl9jbGsgbGFiZWwgYmVmb3JlIGNsa19kaXNh
-YmxlDQo+DQo+IE9yZGVyIGluIHByb2JlIGlzDQoJY2xrX3ByZXBhcmUNCglpMmNfcnVudGltZV9y
-ZXN1bWUNCgljbGtfZW5hYmxlIGluIGNhc2Ugb2YgbXVsdGltYXN0ZXIgbW9kZQ0KCWkyY19pbml0
-X2RtYQ0KPg0KPiB1bndpbmRpbmcgc2hvdWxkIGJlIG9yZGVyIGlzDQoJcmVsZWFzZV9kbWENCglk
-aXNhYmxlX2Rpdl9jbGsNCglkaXNhYmxlX3JwbQ0KCXVucHJlcGFyZWQNCj4NCj4gUHJvYmUgZmFp
-bHVyZSBmcm9tIHRlZ3JhX2kyY19pbml0X2RtYSwgdGVncmFfaTJjX2luaXQsIGRldm1fcmVxdWVz
-dF9pcnEsIGkyY19hZGRfbnVtYmVyZWRfYWRhcHRlciBhbGwgb2YgdGhlbSBwZXJmb3JtIGdvdG8g
-ZGlzYWJsZV9kaXZfY2xrDQo+DQo+IEkgY2FuIGFkZCB0ZWdyYV9pMmNfcmVsZWFzZV9kbWEgYmVm
-b3JlIHBlcmZvcm1pbmcgY2xvY2sgZGlzYWJsZSB1bmRlciBzYW1lIGRpc2FibGVfZGl2X2NsayBz
-byBhbGwgZXhpc3RpbmcgZGlzYWJsZV9kaXZfY2xrIGxhYmVscyByZW1haW4gc2FtZS4NCj4gT3Ro
-ZXJ3aXNlIGFkZGluZyBuZXcgbGFiZWwgcmVsZWFzZV9kbWEgY2F1c2VzIGFsbCBnb3RvIGRpc2Fi
-bGVfZGl2X2NsayBzdGF0ZW1lbnQgYWxzbyB0byBiZSBjaGFuZ2VkIGJ1dCBpdHMgc2FtZSBhcyBh
-ZGRpbmcgcmVsZWFzZV9kbWEgdW5kZXIgZGlzYWJsZV9kaXZfY2xrIGFib3ZlIHRoZSBjbGtfZGlz
-YWJsZS4NCj4NCg0KT0ssIHBsZWFzZSBpZ25vcmUgYWJvdmUuIHdpbGwgYWRkIHJlbGVhc2VfZG1h
-IHRvIHNob3cgZXhwbGljaXRseSBmb3IgcmVhZGFiaWxpdHkuDQpXaXRoIHJlbGVhc2VfZG1hIGFs
-bCBlcnJvciBoYW5kbGVycyBwZXJmb3JtaW5nIGRpc2FibGVfY2xrX2RpdiBuZWVkIHRvIGdvIHRo
-cnUgcmVsZWFzZSBkbWEgYW5kIGRpc2FibGVfY2xrX2RpdiBsYWJlbCBpcyBub3QgbmVlZGVkLg0K
-U28gaGF2aW5nIHJlbGVhc2UgZG1hIHVuZGVyIGRpc2FibGVfY2xrIGJlZm9yZSBjbGtfZGlzYWJs
-ZSBmdW5jdGlvbiBpcyBhbHNvIHNhbWUuIA0KDQpQbGVhc2UgY29uZmlybSBpZiB0aGlzIGlzIG9r
-IHRvIHVzZSBzYW1lIGRpc2FibGVfZGl2X2NsayBvciBkbyB5b3UgcHJlZmVyIHJlbGVhc2VfZG1h
-IGxhYmVsIHJlbW92aW5nIGRpc2FibGVfZGl2X2Nsaw0KDQoNCj4gPiA+ICANCj4gPiA+ICBkaXNh
-YmxlX3JwbToNCj4gPiA+ICAJcG1fcnVudGltZV9kaXNhYmxlKCZwZGV2LT5kZXYpOw0KPiA+DQo+
-ID4NCj4gPiBbc25pcF0NCj4gPg0KPiA+IFBsZWFzZSBhbHNvIGFkZHJlc3MgbXkgY29tbWVudCB0
-byB0aGUgImZpeCBtYXhpbXVtIHRyYW5zZmVyIHNpemUiIHBhdGNoLiBBbmQgcGxlYXNlIGFkZCBX
-b2xmcmFtIFNhbmcgdG8gdGhlIENDIGxpc3QuDQo+ID4NCj4gPiBMb29rcyBsaWtlIHYxNiBzaG91
-bGQgYmUgdGhlIGZpbmFsLCBzbyB3aXRoIGV2ZXJ5dGhpbmcgYmVpbmcgYWRkcmVzc2VkOg0KPiA+
-DQo+ID4gUmV2aWV3ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4NCj4g
-PiBUZXN0ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4NCg0KDQo=
+On Fri, Feb 08, 2019 at 09:36:48AM +0000, Julien Thierry wrote:
+> Hi Nathan,
+> 
+> On 08/02/2019 04:35, Nathan Chancellor wrote:
+> > On Thu, Jan 31, 2019 at 02:58:50PM +0000, Julien Thierry wrote:
+> 
+> [...]
+> 
+> > 
+> > Hi Julien,
+> > 
+> > This patch introduced a slew of Clang warnings:
+> > 
+> > In file included from arch/arm64/kernel/signal.c:21:
+> > In file included from include/linux/compat.h:10:
+> > In file included from include/linux/time.h:6:
+> > In file included from include/linux/seqlock.h:36:
+> > In file included from include/linux/spinlock.h:54:
+> > In file included from include/linux/irqflags.h:16:
+> > arch/arm64/include/asm/irqflags.h:50:10: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
+> >                 : "r" (GIC_PRIO_IRQON)
+> >                        ^
+> > arch/arm64/include/asm/ptrace.h:39:25: note: expanded from macro 'GIC_PRIO_IRQON'
+> > #define GIC_PRIO_IRQON          0xf0
+> >                                 ^
+> > arch/arm64/include/asm/irqflags.h:46:44: note: use constraint modifier "w"
+> >                 "msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
+> >                                                          ^~
+> >                                                          %w0
+> 
+> I'm not sure I get the relevance of this kind of warnings from Clang.
+> Had it been an output operand I could understand the concern of having a
+> variable too small to store the register value. But here it's an input
+> operand being place in a wider register...
+> 
+> > arch/arm64/include/asm/alternative.h:286:29: note: expanded from macro 'ALTERNATIVE'
+> >         _ALTERNATIVE_CFG(oldinstr, newinstr, __VA_ARGS__, 1)
+> >                                    ^
+> > arch/arm64/include/asm/alternative.h:88:30: note: expanded from macro '_ALTERNATIVE_CFG'
+> >         __ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
+> >                                     ^
+> > arch/arm64/include/asm/alternative.h:76:2: note: expanded from macro '__ALTERNATIVE_CFG'
+> >         newinstr "\n"                                                   \
+> >         ^
+> > In file included from arch/arm64/kernel/signal.c:21:
+> > In file included from include/linux/compat.h:10:
+> > In file included from include/linux/time.h:6:
+> > In file included from include/linux/seqlock.h:36:
+> > In file included from include/linux/spinlock.h:54:
+> > In file included from include/linux/irqflags.h:16:
+> > arch/arm64/include/asm/irqflags.h:61:10: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
+> >                 : "r" (GIC_PRIO_IRQOFF)
+> >                        ^
+> > arch/arm64/include/asm/ptrace.h:40:26: note: expanded from macro 'GIC_PRIO_IRQOFF'
+> > #define GIC_PRIO_IRQOFF         (GIC_PRIO_IRQON & ~0x80)
+> >                                 ^
+> > arch/arm64/include/asm/irqflags.h:58:45: note: use constraint modifier "w"
+> >                 "msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
+> >                                                           ^
+> > arch/arm64/include/asm/irqflags.h:94:10: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
+> >                 : "r" (GIC_PRIO_IRQOFF)
+> >                        ^
+> > arch/arm64/include/asm/ptrace.h:40:26: note: expanded from macro 'GIC_PRIO_IRQOFF'
+> > #define GIC_PRIO_IRQOFF         (GIC_PRIO_IRQON & ~0x80)
+> >                                 ^
+> > arch/arm64/include/asm/irqflags.h:91:18: note: use constraint modifier "w"
+> >                         "csel   %0, %0, %2, eq",
+> >                                         ^~
+> >                                         %w2
+> > arch/arm64/include/asm/alternative.h:286:29: note: expanded from macro 'ALTERNATIVE'
+> >         _ALTERNATIVE_CFG(oldinstr, newinstr, __VA_ARGS__, 1)
+> >                                    ^
+> > arch/arm64/include/asm/alternative.h:88:30: note: expanded from macro '_ALTERNATIVE_CFG'
+> >         __ALTERNATIVE_CFG(oldinstr, newinstr, feature, IS_ENABLED(cfg), 0)
+> >                                     ^
+> > arch/arm64/include/asm/alternative.h:76:2: note: expanded from macro '__ALTERNATIVE_CFG'
+> >         newinstr "\n"                                                   \
+> >         ^
+> > 3 warnings generated.
+> > 
+> > 
+> > I am not sure if they should be fixed with Clang's suggestion of a
+> > constraint modifier or a cast like commit 1b57ec8c7527 ("arm64: io:
+> > Ensure value passed to __iormb() is held in a 64-bit register"), hence
+> > this message.
+> > 
+> 
+> Clang's suggestion would not work as MSR instructions do not operate on
+> 32-bit general purpose registers. Seeing that PMR is a 32-bit register,
+> I'd avoid adding UL for the GIC_PRIO_IRQ* constants.
+> 
+> So I'd recommend just casting the the asm inline operands to unsigned
+> long. This should only affect the 3 locations
+> arch/arm64/include/asm/irqflags.h.
+> 
+> Does the following patch work for you?
+
+Hi Julien,
+
+Yes it does, thank you for the quick response and fix!
+
+Nathan
+
+> 
+> Thanks,
+> 
+> -- 
+> Julien Thierry
+> 
+> 
+> -->
+> 
+> From e839dec632bbf440efe8314751138ba46324078c Mon Sep 17 00:00:00 2001
+> From: Julien Thierry <julien.thierry@arm.com>
+> Date: Fri, 8 Feb 2019 09:21:58 +0000
+> Subject: [PATCH] arm64: irqflags: Fix clang build warnings
+> 
+> Clang complains when passing asm operands that are smaller than the
+> registers they are mapped to:
+> 
+> arch/arm64/include/asm/irqflags.h:50:10: warning: value size does not
+> 	match register size specified by the constraint and modifier
+> 	[-Wasm-operand-widths]
+>                 : "r" (GIC_PRIO_IRQON)
+> 
+> Fix it by casting the affected input operands to a type of the correct
+> size.
+> 
+> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+
+> ---
+>  arch/arm64/include/asm/irqflags.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+> index d4597b2..43d8366 100644
+> --- a/arch/arm64/include/asm/irqflags.h
+> +++ b/arch/arm64/include/asm/irqflags.h
+> @@ -47,7 +47,7 @@ static inline void arch_local_irq_enable(void)
+>  		"dsb	sy",
+>  		ARM64_HAS_IRQ_PRIO_MASKING)
+>  		:
+> -		: "r" (GIC_PRIO_IRQON)
+> +		: "r" ((unsigned long) GIC_PRIO_IRQON)
+>  		: "memory");
+>  }
+>  
+> @@ -58,7 +58,7 @@ static inline void arch_local_irq_disable(void)
+>  		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
+>  		ARM64_HAS_IRQ_PRIO_MASKING)
+>  		:
+> -		: "r" (GIC_PRIO_IRQOFF)
+> +		: "r" ((unsigned long) GIC_PRIO_IRQOFF)
+>  		: "memory");
+>  }
+>  
+> @@ -91,7 +91,7 @@ static inline unsigned long arch_local_save_flags(void)
+>  			"csel	%0, %0, %2, eq",
+>  			ARM64_HAS_IRQ_PRIO_MASKING)
+>  		: "=&r" (flags), "+r" (daif_bits)
+> -		: "r" (GIC_PRIO_IRQOFF)
+> +		: "r" ((unsigned long) GIC_PRIO_IRQOFF)
+>  		: "memory");
+>  
+>  	return flags;
+> -- 
+> 1.9.1
+> 
+> 
