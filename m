@@ -2,111 +2,112 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69CCC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6817DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BECAC218FF
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3683B2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfBHSrQ convert rfc822-to-8bit (ORCPT
+        id S1727393AbfBHSrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:47:16 -0500
-Received: from elephants.elehost.com ([216.66.27.132]:62441 "EHLO
-        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbfBHSrQ (ORCPT
+        Fri, 8 Feb 2019 13:47:55 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45306 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbfBHSrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:47:16 -0500
-X-Virus-Scanned: amavisd-new at elehost.com
-Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
-        (authenticated bits=0)
-        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18IlBIm085947
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 8 Feb 2019 13:47:11 -0500 (EST)
-        (envelope-from rsbecker@nexbridge.com)
-From:   "Randall S. Becker" <rsbecker@nexbridge.com>
-To:     "'Jeff King'" <peff@peff.net>
-Cc:     "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
-        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net>
-In-Reply-To: <20190208180321.GB27673@sigill.intra.peff.net>
-Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-Date:   Fri, 8 Feb 2019 13:47:04 -0500
-Message-ID: <002501d4bfde$b26e6050$174b20f0$@nexbridge.com>
+        Fri, 8 Feb 2019 13:47:55 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gsBBm-0001HT-Gb; Fri, 08 Feb 2019 19:47:50 +0100
+Date:   Fri, 8 Feb 2019 19:47:43 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Kan Liang <kan.liang@linux.intel.com>
+cc:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, eranian@google.com, jolsa@redhat.com,
+        namhyung@kernel.org, ak@linux.intel.com, luto@amacapital.net,
+        vbabka@suse.cz, will.deacon@arm.com, kirill@shutemov.name
+Subject: Re: [PATCH V5 02/14] perf/x86: Add perf_get_page_size support
+In-Reply-To: <1549648509-12704-2-git-send-email-kan.liang@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1902081940050.1662@nanos.tec.linutronix.de>
+References: <1549648509-12704-1-git-send-email-kan.liang@linux.intel.com> <1549648509-12704-2-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw846bhVcLg
-Content-Language: en-ca
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 8, 2019 13:03, Jeff King wrote:
-> To: Randall S. Becker <rsbecker@nexbridge.com>
-> Cc: 'Junio C Hamano' <gitster@pobox.com>; git@vger.kernel.org; 'Linux
-> Kernel' <linux-kernel@vger.kernel.org>; git-packagers@googlegroups.com
-> Subject: Re: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-> 
-> On Fri, Feb 08, 2019 at 12:49:59PM -0500, Randall S. Becker wrote:
-> 
-> > > We did discuss this at the time of the patch, but it seems we
-> > > already use /dev/zero in a bunch of places:
-> > >
-> > >
-> > > https://public-inbox.org/git/xmqqbm57rkg5.fsf@gitster-ct.c.googlers.
-> > > com/
-> > >
-> > > Were you just skipping the other tests before?
-> >
-> > I did not catch the implications of the review at the time - my bad. We
-> were not intentionally skipping the tests. It looks like some are automatically
-> skipped. t4153 automatically skips (missing TTY), and t5562 fails also but for
-> a different reason (hang - we don't have apache2 to serve up http content).
-> >
-> > Would you object to something like this:
-> >
-> > if [ ! -e /dev/zero ]; then
-> > 	# use shred or some other mechanism (still trying to figure out a
-> > solution) else
-> > 	# existing dd
-> > fi
-> 
-> That's fine, as long as it's wrapped up in a function in order to keep the tests
-> readable.
-> 
-> Though I suspect we may be able to just find a solution that works
-> everywhere, without having two different implementations. If we know we
-> need $count bytes for dd, we could probably just generate a file with that
-> many NULs in it.
+On Fri, 8 Feb 2019, kan.liang@linux.intel.com wrote:
+> +u64 perf_get_page_size(u64 virt)
+> +{
+> +	unsigned long flags;
+> +	unsigned int level;
+> +	pte_t *pte;
+> +
+> +	if (!virt)
+> +		return 0;
+> +
+> +	/*
+> +	 * Interrupts are disabled, so it prevents any tear down
+> +	 * of the page tables.
+> +	 * See the comment near struct mmu_table_batch.
+> +	 */
+> +	local_irq_save(flags);
+> +	if (virt >= TASK_SIZE)
+> +		pte = lookup_address(virt, &level);
+> +	else {
+> +		if (current->mm) {
+> +			pte = lookup_address_in_pgd(pgd_offset(current->mm, virt),
+> +						    virt, &level);
+> +		} else
+> +			level = PG_LEVEL_NUM;
+> +	}
 
-For this, we could use truncate -s count file instead of dd to get a fixed size file of nulls. This would remove the need for /dev/zero in t5318 (the patch below probably will wrap badly in my mailer so I can submit a real patch separately.
+This still lacks quite some curly brackets and aside of that you can write
+that so it becomes readable:
 
-@@ -383,7 +383,7 @@ corrupt_graph_and_verify() {
-        cp $objdir/info/commit-graph commit-graph-backup &&
-        printf "$data" | dd of="$objdir/info/commit-graph" bs=1 seek="$pos" conv=notrunc &&
-        dd of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" count=0 &&
--       dd if=/dev/zero of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" count=$(($orig_size - $zero_pos)) &&
-+       truncate -s $orig_size "$objdir/info/commit-graph" &&
-        test_must_fail git commit-graph verify 2>test_err &&
-        grep -v "^+" test_err >err &&
-        test_i18ngrep "$grepstr" err
+	if (virt >= TASK_SIZE)
+		pte = lookup_address(virt, &level);
+	} else if (current->mm) {
+  		pte = lookup_address_in_pgd(pgd_offset(current->mm, virt),
+						       virt, &level);
+	} else
+		level = PG_LEVEL_NUM;
+	}
 
-This passes on my platform.
 
-> Other cases don't seem to actually care that they're getting NULs, and are
-> just redirecting stdin from /dev/zero to get an infinite amount of input. They
-> could probably use "yes" for that.
+> +	local_irq_restore(flags);
+> +	if (level >= PG_LEVEL_NUM)
+> +		return 0;
+> +
+> +	return (u64)page_level_size(level);
+> +}
+> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+> index e9acf1d..720dc9e 100644
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -1274,7 +1274,8 @@ static void setup_pebs_sample_data(struct perf_event *event,
+>  	}
+>  
+>  
+> -	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR)) &&
+> +	if ((sample_type & (PERF_SAMPLE_ADDR | PERF_SAMPLE_PHYS_ADDR
+> +			    | PERF_SAMPLE_DATA_PAGE_SIZE)) &&
+>  	    x86_pmu.intel_cap.pebs_format >= 1)
 
-What about reading from /dev/null?
+Can you please define a mask from those constants and use that instead of
+adding this ugly line break.
 
-Regards,
-Randall
+Thanks,
 
+	tglx
