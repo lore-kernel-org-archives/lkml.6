@@ -6,94 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6FEC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD8FC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64CB020844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 847BE20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727592AbfBHNCj (ORCPT
+        id S1727664AbfBHNCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:02:39 -0500
-Received: from ozlabs.org ([203.11.71.1]:39993 "EHLO ozlabs.org"
+        Fri, 8 Feb 2019 08:02:43 -0500
+Received: from ozlabs.org ([203.11.71.1]:58979 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbfBHNCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:02:36 -0500
+        id S1727613AbfBHNCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:02:41 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 43wwMG0vPgz9sNL; Sat,  9 Feb 2019 00:02:33 +1100 (AEDT)
+        id 43wwMM4s3bz9sNx; Sat,  9 Feb 2019 00:02:39 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: eddd0b332304d554ad6243942f87c2fcea98c56b
+X-powerpc-patch-commit: 9bf3d3c4e4fd82c7174f4856df372ab2a71005b9
 X-Patchwork-Hint: ignore
-In-Reply-To: <20190122155724.27557-2-joe.lawrence@redhat.com>
-To:     Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        live-patching@vger.kernel.org
+In-Reply-To: <5aa3c84a675405ac99382a5893406ef7e8dfd455.1548779831.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Nicolai Stange <nstange@suse.de>, Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Torsten Duwe <duwe@lst.de>
-Subject: Re: [1/4] powerpc/64s: Clear on-stack exception marker upon exception return
-Message-Id: <43wwMG0vPgz9sNL@ozlabs.org>
-Date:   Sat,  9 Feb 2019 00:02:33 +1100 (AEDT)
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2] powerpc/traps: fix the message printed when stack overflows
+Message-Id: <43wwMM4s3bz9sNx@ozlabs.org>
+Date:   Sat,  9 Feb 2019 00:02:39 +1100 (AEDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-22 at 15:57:21 UTC, Joe Lawrence wrote:
-> From: Nicolai Stange <nstange@suse.de>
+On Tue, 2019-01-29 at 16:37:55 UTC, Christophe Leroy wrote:
+> Today's message is useless:
 > 
-> The ppc64 specific implementation of the reliable stacktracer,
-> save_stack_trace_tsk_reliable(), bails out and reports an "unreliable
-> trace" whenever it finds an exception frame on the stack. Stack frames
-> are classified as exception frames if the STACK_FRAME_REGS_MARKER magic,
-> as written by exception prologues, is found at a particular location.
+> [   42.253267] Kernel stack overflow in process (ptrval), r1=c65500b0
 > 
-> However, as observed by Joe Lawrence, it is possible in practice that
-> non-exception stack frames can alias with prior exception frames and thus,
-> that the reliable stacktracer can find a stale STACK_FRAME_REGS_MARKER on
-> the stack. It in turn falsely reports an unreliable stacktrace and blocks
-> any live patching transition to finish. Said condition lasts until the
-> stack frame is overwritten/initialized by function call or other means.
+> This patch fixes it:
 > 
-> In principle, we could mitigate this by making the exception frame
-> classification condition in save_stack_trace_tsk_reliable() stronger:
-> in addition to testing for STACK_FRAME_REGS_MARKER, we could also take into
-> account that for all exceptions executing on the kernel stack
-> - their stack frames's backlink pointers always match what is saved
->   in their pt_regs instance's ->gpr[1] slot and that
-> - their exception frame size equals STACK_INT_FRAME_SIZE, a value
->   uncommonly large for non-exception frames.
+> [   66.905235] Kernel stack overflow in process sh[356], r1=c65560b0
 > 
-> However, while these are currently true, relying on them would make the
-> reliable stacktrace implementation more sensitive towards future changes in
-> the exception entry code. Note that false negatives, i.e. not detecting
-> exception frames, would silently break the live patching consistency model.
-> 
-> Furthermore, certain other places (diagnostic stacktraces, perf, xmon)
-> rely on STACK_FRAME_REGS_MARKER as well.
-> 
-> Make the exception exit code clear the on-stack STACK_FRAME_REGS_MARKER
-> for those exceptions running on the "normal" kernel stack and returning
-> to kernelspace: because the topmost frame is ignored by the reliable stack
-> tracer anyway, returns to userspace don't need to take care of clearing
-> the marker.
-> 
-> Furthermore, as I don't have the ability to test this on Book 3E or
-> 32 bits, limit the change to Book 3S and 64 bits.
-> 
-> Finally, make the HAVE_RELIABLE_STACKTRACE Kconfig option depend on
-> PPC_BOOK3S_64 for documentation purposes. Before this patch, it depended
-> on PPC64 && CPU_LITTLE_ENDIAN and because CPU_LITTLE_ENDIAN implies
-> PPC_BOOK3S_64, there's no functional change here.
-> 
-> Fixes: df78d3f61480 ("powerpc/livepatch: Implement reliable stack tracing for the consistency model")
-> Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-> Signed-off-by: Nicolai Stange <nstange@suse.de>
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+> Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/eddd0b332304d554ad6243942f87c2fc
+https://git.kernel.org/powerpc/c/9bf3d3c4e4fd82c7174f4856df372ab2
 
 cheers
