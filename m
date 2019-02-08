@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555D9C4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCE4C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C6A21916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D391921916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpvRD7Ka"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6Ub6F4y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfBHAaK (ORCPT
+        id S1727076AbfBHAaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:30:10 -0500
-Received: from mail-pf1-f170.google.com ([209.85.210.170]:47059 "EHLO
-        mail-pf1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfBHAaE (ORCPT
+        Thu, 7 Feb 2019 19:30:16 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37075 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbfBHAaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:30:04 -0500
-Received: by mail-pf1-f170.google.com with SMTP id c73so797494pfe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:30:03 -0800 (PST)
+        Thu, 7 Feb 2019 19:30:00 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y126so822568pfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:30:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rpJNkOBHsfvv1X+OP8aoJHBEpYyMF+iONDDdi76qcyU=;
-        b=CpvRD7Kasw/cgtJcGXCiiAqOkeTsqsFrDwWfGAtFo5xLxC6JqGr8UMhCAqu8zlk3op
-         jf4Nj650Bg0E1FLP/y/KQ1tKzKwAt+sNSZzQHEtMHxPJS7Oqi0e4xjdnyzzpwLXsmxFp
-         T2aOpQYueI7v4NANqdhNdPfLbrVLxWXvfRMY8YZyqoJu/iONmM/ZCbjkt7QMO6oOmk8c
-         pDG3DdKhdIjyq4G8U+nydgTTrM1VsH5R+bgKxRtPvaRFbOyRrau51uB4giqbnaWWvNOt
-         Z0Hvf582ZMepwds+I0EPKTGLM/OpO8Mij4ajyjOcNbqrqumrm1kh8omx21z0UFnhcWmM
-         w4ag==
+        bh=c324b380hphqzikJSwYwP+iMI2K9W7f9e6HIiTYzB7k=;
+        b=Y6Ub6F4ydFHhhs7fQk8IjFmLX17QPsmXIhljs3ttclwAAhAFQsFDD/d6UMXpXsJPCy
+         dAh37W5bDhiIFaYTAz/2vjI3qRxono16pVaIsLmCuxZg0DKMmA6K7kPM717tq/pBgQo8
+         V9hnUhl/7xR7tptVuJ1GkCnNJQVH1fAWzu1pwj6y3/DLV/uOu52wa9IqquGEMU/rmT+O
+         DJBTEG7pGkvtbOxWsq7kCOHP7ZeXJ9c4d5GBela9ftO4TEyMsPeNSf2tcHhwVZVLTqch
+         RLIbzu8VtWTGBBcPxOab6V/sQsfU5bfnAN47f4ANk7PIGTGHMXKBFiBnusj4FvuPlReJ
+         goJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rpJNkOBHsfvv1X+OP8aoJHBEpYyMF+iONDDdi76qcyU=;
-        b=JxeRQGH8hLyWiZgZz0yCnmjDOUuZ/RUeTQtzPHbLYfYpuCUskmoaC8464pqvwHcEwC
-         LJ4GRofT1G2mFuYoPy0/J+zDUM8IOyvi7g77vR/jS5s9t89dNwbVl/fLQ+qq7h0MNyIw
-         NtNPx3qPBVvJ4XkAhNUFRNcRlNzpwMaZsy5RuF6tQW25JcCB0ewZh9ybqASVNwNw1tWF
-         plI4JU7cxvueYENafOmNSjV7KnA3Q/ab86wI0pMxA0SxgLcUOIeR5uby+HQyDb+FG/pB
-         g0Jxb5F+TqI8EfHEmSiAWlI5kRXQ9g85ECU8iQsy0lg9WpFoN4t5+iyUKxmM5ziuOGmJ
-         lYGw==
-X-Gm-Message-State: AHQUAubDkzs7yofLRhlonF0UXTcplNpGRAlumymFKVre3MV905dhyhqJ
-        ZSOUmJsd9u4JiupiAMjZkGWsVpZk
-X-Google-Smtp-Source: AHgI3IaIZS4Y2fg9Km1oRwdvMmzHrOA+B9Ly6diFlmKOF8/L8KoUYFjzqjdAzFcqqCL5WEcQTQpSTw==
-X-Received: by 2002:a62:a9b:: with SMTP id 27mr1431301pfk.223.1549585803272;
-        Thu, 07 Feb 2019 16:30:03 -0800 (PST)
+        bh=c324b380hphqzikJSwYwP+iMI2K9W7f9e6HIiTYzB7k=;
+        b=gn1ToDIthbC4JBwRZkcmrVNt/hmO4QgWMx+iVGiRbhn9gJI1PD4QS/o6Y8/K/PX1Xq
+         aDL4eP4IVUY5P3Td98I+7ed/GWkRKvqtDKP4KYAylgGnzX+Esa6IUJvQcR47C6b9uzri
+         2O1UE8tXL4h1vEwAKd+mDzYL6sSrxQ4wrJ2/PkjBl4za8eGZMCqV15hIbk6H+wzGZK5t
+         Q5YOxYLEk54/OvwlFus3Ct+oEsK4z7Ja1Ptl4F6Wyb7AX2qN+QoDuEcke1QaCVu9zyyP
+         CNaJo9Y1xjOfS6bz7NhsISOrgTyakdu+OA8P6N030YEfL83BZ+KyjUkgQJAFgTH9QAUT
+         6zQg==
+X-Gm-Message-State: AHQUAua0jcCxeyzcqSjVplEytr9/ZHqfOlfVjO+Jt6ig94kdVutHBXD3
+        WHWFtr6Lj/gE8CkrFXzoSWs=
+X-Google-Smtp-Source: AHgI3Iatvplw1t39WpZ1FuDx8dLwVFh25jfkRAbg/cnaQUJj6AX/lmjxWW3/02r+d9pW3T/WZUgJyw==
+X-Received: by 2002:a62:2f06:: with SMTP id v6mr19345960pfv.216.1549585800149;
+        Thu, 07 Feb 2019 16:30:00 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id p81sm380835pfa.107.2019.02.07.16.30.01
+        by smtp.gmail.com with ESMTPSA id p81sm380835pfa.107.2019.02.07.16.29.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 16:30:02 -0800 (PST)
+        Thu, 07 Feb 2019 16:29:59 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Lucas Stach <l.stach@pengutronix.de>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -67,9 +67,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 5/5] arm64: dts: imx8mq-evk: Enable PCIE0 interface
-Date:   Thu,  7 Feb 2019 16:29:41 -0800
-Message-Id: <20190208002941.30343-6-andrew.smirnov@gmail.com>
+Subject: [RFC v2 3/5] arm64: dts: imx8mq: Combine PCIE power domains
+Date:   Thu,  7 Feb 2019 16:29:39 -0800
+Message-Id: <20190208002941.30343-4-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208002941.30343-1-andrew.smirnov@gmail.com>
 References: <20190208002941.30343-1-andrew.smirnov@gmail.com>
@@ -80,7 +80,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable PCIE0 interface connected to BCM4356 WiFi/Bluetooth module.
+According to NXP's FAE feedback and a comment in ATF firmware, PCIE1
+and PCIE2 power domains can't really be used independently. Due to
+shared reset line both power domains have to be turned on at the same
+time. Account for that quirk by combining PCIE power domains into a
+single 'pgc_pcie' power domain.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Shawn Guo <shawnguo@kernel.org>
@@ -94,75 +98,43 @@ Cc: linux-imx@nxp.com
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 34 ++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-index 64acccc4bfcb..20afdb9ffdd9 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-@@ -31,6 +31,12 @@
- 		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	pcie0_refclk: pcie0-refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+	};
- };
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index 50436bd393ed..89babc531380 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -273,9 +273,28 @@
+ 						reg = <IMX8M_POWER_DOMAIN_MIPI>;
+ 					};
  
- &fec1 {
-@@ -40,6 +46,14 @@
- 	status = "okay";
- };
+-					pgc_pcie1: power-domain@1 {
++					/*
++					 * As per comment in ATF source code:
++					 *
++					 * PCIE1 and PCIE2 share the
++					 * same reset signal, if we
++					 * power down PCIE2, PCIE1
++					 * will be held in reset too.
++					 *
++					 * So instead of creating two
++					 * separate power domains for
++					 * PCIE1 and PCIE2. We create
++					 * a link between 1 and 10 and
++					 * use what was supposed to be
++					 * domain 1 as a shared PCIE
++					 * power domain powering both
++					 * PCIE1 and PCIE2 at the same
++					 * time
++					 */
++					pgc_pcie: power-domain@1 {
+ 						#power-domain-cells = <0>;
+ 						reg = <IMX8M_POWER_DOMAIN_PCIE1>;
++						power-domains = <&pgc_pcie2>;
+ 					};
  
-+&gpio5 {
-+ 	wl-reg-on {
-+		gpio-hog;
-+		gpios = <29 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+	};
-+};
-+
- &i2c1 {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
-@@ -131,6 +145,18 @@
- 	};
- };
- 
-+&pcie0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	reset-gpio = <&gpio5 28 GPIO_ACTIVE_LOW>;
-+	clocks = <&clk IMX8MQ_CLK_PCIE1_ROOT>,
-+		 <&clk IMX8MQ_CLK_PCIE1_AUX>,
-+		 <&clk IMX8MQ_CLK_PCIE1_PHY>,
-+		 <&pcie0_refclk>;
-+	clock-names = "pcie", "pcie_aux", "pcie_phy", "pcie_bus";
-+	status = "okay";
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart1>;
-@@ -195,6 +221,14 @@
- 		>;
- 	};
- 
-+	pinctrl_pcie0: pcie0grp {
-+		fsl,pins = <
-+			MX8MQ_IOMUXC_I2C4_SCL_PCIE1_CLKREQ_B		0x76
-+			MX8MQ_IOMUXC_UART4_TXD_GPIO5_IO29		0x16
-+			MX8MQ_IOMUXC_UART4_RXD_GPIO5_IO28		0x16
-+		>;
-+	};
-+
- 	pinctrl_reg_usdhc2: regusdhc2grpgpio {
- 		fsl,pins = <
- 			MX8MQ_IOMUXC_SD2_RESET_B_GPIO2_IO19		0x41
+ 					pgc_otg1: power-domain@2 {
 -- 
 2.20.1
 
