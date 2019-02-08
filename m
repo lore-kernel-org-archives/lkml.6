@@ -2,194 +2,123 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB40C282CB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D858C282D7
 	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52DC821919
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:08:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDqodEhz"
+	by mail.kernel.org (Postfix) with ESMTP id 329D6218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfBHSIC (ORCPT
+        id S1727895AbfBHSGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:08:02 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55388 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbfBHSIC (ORCPT
+        Fri, 8 Feb 2019 13:06:18 -0500
+Received: from gateway20.websitewelcome.com ([192.185.62.46]:37640 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727115AbfBHSGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:08:02 -0500
-Received: by mail-it1-f195.google.com with SMTP id m62so10896550ith.5;
-        Fri, 08 Feb 2019 10:08:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1ha8tiaDoQDUW/w4Eg9NVxaHOTac5NWivcizqdQ179M=;
-        b=VDqodEhzP/xST8wGK5OrHBtM0hJWOrVvpmcLj+dps2H5Tz8/68X4XeqbZi0gXJMI7n
-         RYSiWoeoEyXX5sEEWBE7kypMtrsCfWXjm/ZPFtsENx5tK0Q9XvdF4pBVJ9sbAj/3Neei
-         S9Z8uEcMgTO6BMnlkRW8ykgwKF7yIRZ1QPlkN/d9S6cuvOI+nUk09dGohOENjaitI05K
-         xU9+8cJS/7n0d+kldh2g16SEBDL1XaG1+kbd/3pqBIg42swbygzie6lyYFfR++ctwRb6
-         3VsL21eR+CyMO36j+HtTGlkKVGPRoti8euAnVPGBtc4RZOelxqzE9dX81l+Ra9SIlRY3
-         8WIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1ha8tiaDoQDUW/w4Eg9NVxaHOTac5NWivcizqdQ179M=;
-        b=PKaVwKNNmM2X9kHWirYPpI4PDoYReLNCl2ysdsxVKJhkdrTHf1zSu+WlqKyERTZJ5t
-         Xsxri1Mu1Gv84u8ygW7wlFxZZKb5jYX2mm7A6fPBvLFhB9ZVjfV/P/r7Z+8FUV1FKPj5
-         VP1DMPnLb9XyQSbfDRbMLRxFNFat/Xjh8oGS7P4pi5wgfCtrftpF3lXKgAFdKanKLTsx
-         he9fEV7xTGW6LBjiSvNL4dS6PAIea3GmIrtb8a2u1QrTRVm4NYXHvrsVjcZLY4MRd2Fj
-         fsSaqrlU28bhOLFH5XRie09/Oe2z51g1T89BBAeqyPfMMrWnWtMfGpxPeJlpYuNOCWe2
-         ZxXw==
-X-Gm-Message-State: AHQUAuazJYzHnhk9X/lpRIhDIvsXfJrD3obo/OkrLdsvr2sczbPoMavg
-        IghQ4YoVoBr0Zhy0C2w+C2aGZ3rrW3Z1R41crog=
-X-Google-Smtp-Source: AHgI3IaVb9P4AyOT8Be58qgdkvNb/UFAUSpF6SKVEawnVPDnIerwXJ7pAU5kcqBHpaMdjbrM61NnLgM0vP0EsJp3hWE=
-X-Received: by 2002:a5e:8c14:: with SMTP id n20mr3449441ioj.200.1549649280774;
- Fri, 08 Feb 2019 10:08:00 -0800 (PST)
+        Fri, 8 Feb 2019 13:06:18 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 3BBEA400CD8B0
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 12:06:17 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sAXZgZoOQdnCesAXZgZjNF; Fri, 08 Feb 2019 12:06:17 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=57552 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gsAXY-004Bi0-80; Fri, 08 Feb 2019 12:06:16 -0600
+Date:   Fri, 8 Feb 2019 12:06:15 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] mtd: cfi_cmdset_0002: Mark expected switch fall-throughs
+Message-ID: <20190208180615.GA24601@embeddedor>
 MIME-Version: 1.0
-References: <20190204201854.2328-1-nitesh@redhat.com> <20190204201854.2328-3-nitesh@redhat.com>
-In-Reply-To: <20190204201854.2328-3-nitesh@redhat.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Fri, 8 Feb 2019 10:07:49 -0800
-Message-ID: <CAKgT0UfqtRigPwUaN=H_MrLgeXErkeOcpuPy6ys6A3UCLnMBPg@mail.gmail.com>
-Subject: Re: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via
- static key
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, david@redhat.com,
-        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1gsAXY-004Bi0-80
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:57552
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 2:11 PM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
->
-> This patch enables the guest free page hinting support
-> to enable or disable based on the STATIC key which
-> could be set via sysctl.
->
-> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
-> ---
->  include/linux/gfp.h          |  2 ++
->  include/linux/page_hinting.h |  5 +++++
->  kernel/sysctl.c              |  9 +++++++++
->  virt/kvm/page_hinting.c      | 23 +++++++++++++++++++++++
->  4 files changed, 39 insertions(+)
->
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index e596527284ba..8389219a076a 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -461,6 +461,8 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
->  #define HAVE_ARCH_FREE_PAGE
->  static inline void arch_free_page(struct page *page, int order)
->  {
-> +       if (!static_branch_unlikely(&guest_page_hinting_key))
-> +               return;
->         guest_free_page(page, order);
->  }
->  #endif
-> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
-> index b54f7428f348..9bdcf63e1306 100644
-> --- a/include/linux/page_hinting.h
-> +++ b/include/linux/page_hinting.h
-> @@ -14,4 +14,9 @@ struct hypervisor_pages {
->         unsigned int order;
->  };
->
-> +extern int guest_page_hinting_flag;
-> +extern struct static_key_false guest_page_hinting_key;
-> +
-> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
-> +                             void __user *buffer, size_t *lenp, loff_t *ppos);
->  void guest_free_page(struct page *page, int order);
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index ba4d9e85feb8..5d53629c9bfb 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1690,6 +1690,15 @@ static struct ctl_table vm_table[] = {
->                 .extra1         = (void *)&mmap_rnd_compat_bits_min,
->                 .extra2         = (void *)&mmap_rnd_compat_bits_max,
->         },
-> +#endif
-> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
-> +       {
-> +               .procname       = "guest-page-hinting",
-> +               .data           = &guest_page_hinting_flag,
-> +               .maxlen         = sizeof(guest_page_hinting_flag),
-> +               .mode           = 0644,
-> +               .proc_handler   = guest_page_hinting_sysctl,
-> +       },
->  #endif
->         { }
->  };
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Since you are adding a new sysctl shouldn't you also be updating
-Documentation/sysctl/vm.txt?
+This patch fixes the following warnings:
 
-> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
-> index 818bd6b84e0c..4a34ea8db0c8 100644
-> --- a/virt/kvm/page_hinting.c
-> +++ b/virt/kvm/page_hinting.c
-> @@ -1,6 +1,7 @@
->  #include <linux/gfp.h>
->  #include <linux/mm.h>
->  #include <linux/kernel.h>
-> +#include <linux/kvm_host.h>
->
->  /*
->   * struct kvm_free_pages - Tracks the pages which are freed by the guest.
-> @@ -31,6 +32,28 @@ struct page_hinting {
->
->  DEFINE_PER_CPU(struct page_hinting, hinting_obj);
->
-> +struct static_key_false guest_page_hinting_key  = STATIC_KEY_FALSE_INIT;
-> +EXPORT_SYMBOL(guest_page_hinting_key);
-> +static DEFINE_MUTEX(hinting_mutex);
-> +int guest_page_hinting_flag;
-> +EXPORT_SYMBOL(guest_page_hinting_flag);
+drivers/mtd/chips/cfi_cmdset_0002.c: In function ‘get_chip’:
+drivers/mtd/chips/cfi_cmdset_0002.c:870:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (mode == FL_READY && chip->oldstate == FL_READY)
+      ^
+drivers/mtd/chips/cfi_cmdset_0002.c:873:2: note: here
+  default:
+  ^~~~~~~
+drivers/mtd/chips/cfi_cmdset_0002.c: In function ‘cfi_amdstd_sync’:
+drivers/mtd/chips/cfi_cmdset_0002.c:2745:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    chip->state = FL_SYNCING;
+    ~~~~~~~~~~~~^~~~~~~~~~~~
+drivers/mtd/chips/cfi_cmdset_0002.c:2750:3: note: here
+   case FL_SYNCING:
+   ^~~~
 
-I'm not entirely sure this flag makes sense to me. What is to prevent
-someone from turning this on when there is no means of actually using
-the hints. I understand right now that guest_free_page doesn't
-actually do anything, but when it does I would assume it has to
-interact with a device. If that device is not present would it still
-make sense for us to be generating hints?
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-> +
-> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
-> +                             void __user *buffer, size_t *lenp,
-> +                             loff_t *ppos)
-> +{
-> +       int ret;
-> +
-> +       mutex_lock(&hinting_mutex);
-> +       ret = proc_dointvec(table, write, buffer, lenp, ppos);
-> +       if (guest_page_hinting_flag)
-> +               static_key_enable(&guest_page_hinting_key.key);
-> +       else
-> +               static_key_disable(&guest_page_hinting_key.key);
-> +       mutex_unlock(&hinting_mutex);
-> +       return ret;
-> +}
-> +
->  void guest_free_page(struct page *page, int order)
->  {
->  }
-> --
-> 2.17.2
->
+This patch is part of the ongoing efforts to enabling
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/mtd/chips/cfi_cmdset_0002.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index 72428b6bfc47..0b0a1874d3bf 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -869,6 +869,7 @@ static int get_chip(struct map_info *map, struct flchip *chip, unsigned long adr
+ 		/* Only if there's no operation suspended... */
+ 		if (mode == FL_READY && chip->oldstate == FL_READY)
+ 			return 0;
++		/* fall through */
+ 
+ 	default:
+ 	sleep:
+@@ -2747,6 +2748,7 @@ static void cfi_amdstd_sync (struct mtd_info *mtd)
+ 			 * as the whole point is that nobody can do anything
+ 			 * with the chip now anyway.
+ 			 */
++			/* fall through */
+ 		case FL_SYNCING:
+ 			mutex_unlock(&chip->mutex);
+ 			break;
+-- 
+2.20.1
+
