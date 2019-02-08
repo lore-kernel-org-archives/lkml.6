@@ -2,175 +2,109 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3840C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC755C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:41:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 826072146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="O40UEtSQ"
+	by mail.kernel.org (Postfix) with ESMTP id 911A22146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfBHOkt (ORCPT
+        id S1727890AbfBHOlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:40:49 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:19628 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726568AbfBHOkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:40:49 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43wyXY6gw7z9vBwc;
-        Fri,  8 Feb 2019 15:40:45 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=O40UEtSQ; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id zYTMgxMD0fV5; Fri,  8 Feb 2019 15:40:45 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43wyXY5PXkz9vBwZ;
-        Fri,  8 Feb 2019 15:40:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549636845; bh=5GG72cfsOyRs1FMwnBMqAfDwn15LcXCsOplueh6doO0=;
-        h=From:Subject:To:Cc:Date:From;
-        b=O40UEtSQxXdfDb/419Re+wWnkIIt+yZhnDbLDDNb+AktAn0M8c+EZhMz44A9SPEx8
-         DK2jD4twcM9JkfHglLX+MThSGZxrk3Tg84BzSvr1ikAfnrITj2QJCO19Ec21WRzBcN
-         dhupWUw05SB2gjleGFvIcmOH7kvp0Y/UNFFhEIjE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3B10F8B8DA;
-        Fri,  8 Feb 2019 15:40:47 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ejnY7pB_f5qS; Fri,  8 Feb 2019 15:40:47 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 05AF48B756;
-        Fri,  8 Feb 2019 15:40:47 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id CB010656D3; Fri,  8 Feb 2019 14:40:46 +0000 (UTC)
-Message-Id: <a952f14712b90f182c0fcace434b2a0e9f21ed9f.1549636481.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH v1] powerpc/accounting: do not account system time on
- transition to user.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri,  8 Feb 2019 14:40:46 +0000 (UTC)
+        Fri, 8 Feb 2019 09:41:06 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56177 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfBHOlF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 09:41:05 -0500
+X-Originating-IP: 109.213.164.40
+Received: from localhost (alyon-652-1-53-40.w109-213.abo.wanadoo.fr [109.213.164.40])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 7A210E0005;
+        Fri,  8 Feb 2019 14:41:01 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] clk: at91: fix masterck name
+Date:   Fri,  8 Feb 2019 15:40:59 +0100
+Message-Id: <20190208144059.29861-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Time spent in kernel mode don't need to be accounted on transition
-to user space. As far as the time spent in user is known, it
-is possible to calculate the time spent in kernel by substracting
-the time spent in user.
+The master clock is actually named masterck earlier in the driver. Having
+"mck" in the parent list means that it can never be selected.
 
-To do so, this patch modifies vtime_delta() to substract the
-time spent in user since the last call to vtime_delta().
+Fixes: 1eabdc2f9dd8 ("clk: at91: add at91sam9x5 PMCs driver")
+Fixes: a2038077de9a ("clk: at91: add sama5d2 PMC driver")
+Fixes: 084b696bb509 ("clk: at91: add sama5d4 pmc driver")
 
-This patch gives a 2% improvment of null_syscall() selftest on a 83xx.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-But surprisingly, this patch degrades the null_syscall selftest by 20% on the 8xx. Any idea of the reason ?
+ drivers/clk/at91/at91sam9x5.c | 2 +-
+ drivers/clk/at91/sama5d2.c    | 4 ++--
+ drivers/clk/at91/sama5d4.c    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
- arch/powerpc/include/asm/accounting.h | 1 +
- arch/powerpc/include/asm/ppc_asm.h    | 8 +-------
- arch/powerpc/kernel/asm-offsets.c     | 8 ++------
- arch/powerpc/kernel/time.c            | 4 +++-
- 4 files changed, 7 insertions(+), 14 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/accounting.h b/arch/powerpc/include/asm/accounting.h
-index c607c5d835cc..2f1ff5f9fd7a 100644
---- a/arch/powerpc/include/asm/accounting.h
-+++ b/arch/powerpc/include/asm/accounting.h
-@@ -27,6 +27,7 @@ struct cpu_accounting_data {
- 	/* Internal counters */
- 	unsigned long starttime;	/* TB value snapshot */
- 	unsigned long starttime_user;	/* TB value on exit to usermode */
-+	unsigned long utime_asm;
- #ifdef CONFIG_ARCH_HAS_SCALED_CPUTIME
- 	unsigned long startspurr;	/* SPURR value snapshot */
- 	unsigned long utime_sspurr;	/* ->user_time when ->startspurr set */
-diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-index e0637730a8e7..be17d570d484 100644
---- a/arch/powerpc/include/asm/ppc_asm.h
-+++ b/arch/powerpc/include/asm/ppc_asm.h
-@@ -28,9 +28,8 @@
- #define ACCOUNT_STOLEN_TIME
- #else
- #define ACCOUNT_CPU_USER_ENTRY(ptr, ra, rb)				\
--	MFTB(ra);			/* get timebase */		\
- 	PPC_LL	rb, ACCOUNT_STARTTIME_USER(ptr);			\
--	PPC_STL	ra, ACCOUNT_STARTTIME(ptr);				\
-+	MFTB(ra);			/* get timebase */		\
- 	subf	rb,rb,ra;		/* subtract start value */	\
- 	PPC_LL	ra, ACCOUNT_USER_TIME(ptr);				\
- 	add	ra,ra,rb;		/* add on to user time */	\
-@@ -38,12 +37,7 @@
+diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+index 2fe225a697df..d55a151cb7f5 100644
+--- a/drivers/clk/at91/at91sam9x5.c
++++ b/drivers/clk/at91/at91sam9x5.c
+@@ -210,7 +210,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 	parent_names[1] = "mainck";
+ 	parent_names[2] = "plladivck";
+ 	parent_names[3] = "utmick";
+-	parent_names[4] = "mck";
++	parent_names[4] = "masterck";
+ 	for (i = 0; i < 2; i++) {
+ 		char name[6];
  
- #define ACCOUNT_CPU_USER_EXIT(ptr, ra, rb)				\
- 	MFTB(ra);			/* get timebase */		\
--	PPC_LL	rb, ACCOUNT_STARTTIME(ptr);				\
- 	PPC_STL	ra, ACCOUNT_STARTTIME_USER(ptr);			\
--	subf	rb,rb,ra;		/* subtract start value */	\
--	PPC_LL	ra, ACCOUNT_SYSTEM_TIME(ptr);				\
--	add	ra,ra,rb;		/* add on to system time */	\
--	PPC_STL	ra, ACCOUNT_SYSTEM_TIME(ptr)
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index d69ad96fe988..cd0ef7274fdb 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -240,7 +240,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	parent_names[1] = "mainck";
+ 	parent_names[2] = "plladivck";
+ 	parent_names[3] = "utmick";
+-	parent_names[4] = "mck";
++	parent_names[4] = "masterck";
+ 	for (i = 0; i < 3; i++) {
+ 		char name[6];
  
- #ifdef CONFIG_PPC_SPLPAR
- #define ACCOUNT_STOLEN_TIME						\
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index 7a1b93c5af63..f2ba7735f56f 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -260,19 +260,15 @@ int main(void)
- 	OFFSET(PACAHWCPUID, paca_struct, hw_cpu_id);
- 	OFFSET(PACAKEXECSTATE, paca_struct, kexec_state);
- 	OFFSET(PACA_DSCR_DEFAULT, paca_struct, dscr_default);
--	OFFSET(ACCOUNT_STARTTIME, paca_struct, accounting.starttime);
- 	OFFSET(ACCOUNT_STARTTIME_USER, paca_struct, accounting.starttime_user);
--	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime);
--	OFFSET(ACCOUNT_SYSTEM_TIME, paca_struct, accounting.stime);
-+	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime_asm);
- 	OFFSET(PACA_TRAP_SAVE, paca_struct, trap_save);
- 	OFFSET(PACA_NAPSTATELOST, paca_struct, nap_state_lost);
- 	OFFSET(PACA_SPRG_VDSO, paca_struct, sprg_vdso);
- #else /* CONFIG_PPC64 */
- #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
--	OFFSET(ACCOUNT_STARTTIME, thread_info, accounting.starttime);
- 	OFFSET(ACCOUNT_STARTTIME_USER, thread_info, accounting.starttime_user);
--	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime);
--	OFFSET(ACCOUNT_SYSTEM_TIME, thread_info, accounting.stime);
-+	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime_asm);
- #endif
- #endif /* CONFIG_PPC64 */
- 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index bc0503ef9c9c..79420643b45f 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -331,8 +331,10 @@ static unsigned long vtime_delta(struct task_struct *tsk,
- 	WARN_ON_ONCE(!irqs_disabled());
- 
- 	now = mftb();
--	stime = now - acct->starttime;
-+	stime = now - acct->starttime - acct->utime_asm;
- 	acct->starttime = now;
-+	acct->utime += acct->utime_asm;
-+	acct->utime_asm = 0;
- 
- 	*stime_scaled = vtime_delta_scaled(acct, now, stime);
+@@ -291,7 +291,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	parent_names[1] = "mainck";
+ 	parent_names[2] = "plladivck";
+ 	parent_names[3] = "utmick";
+-	parent_names[4] = "mck";
++	parent_names[4] = "masterck";
+ 	parent_names[5] = "audiopll_pmcck";
+ 	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+index e358be7f6c8d..b645a9d59cdb 100644
+--- a/drivers/clk/at91/sama5d4.c
++++ b/drivers/clk/at91/sama5d4.c
+@@ -207,7 +207,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+ 	parent_names[1] = "mainck";
+ 	parent_names[2] = "plladivck";
+ 	parent_names[3] = "utmick";
+-	parent_names[4] = "mck";
++	parent_names[4] = "masterck";
+ 	for (i = 0; i < 3; i++) {
+ 		char name[6];
  
 -- 
-2.13.3
+2.20.1
 
