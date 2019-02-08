@@ -2,120 +2,109 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2DAC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2983C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D392177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC0F22177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:11:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="StFrvc4/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbfBHULZ (ORCPT
+        id S1727883AbfBHULg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:11:25 -0500
-Received: from fieldses.org ([173.255.197.46]:57078 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727457AbfBHUKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:10:49 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id EF646BCC; Fri,  8 Feb 2019 15:10:48 -0500 (EST)
-From:   "J. Bruce Fields" <bfields@redhat.com>
-To:     linux-nfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Howells <dhowells@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shaohua Li <shli@fb.com>, Oleg Nesterov <oleg@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 6/7] rpc: move rpc server threads into their own thread group
-Date:   Fri,  8 Feb 2019 15:10:46 -0500
-Message-Id: <1549656647-25115-7-git-send-email-bfields@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1549656647-25115-1-git-send-email-bfields@redhat.com>
-References: <1549656647-25115-1-git-send-email-bfields@redhat.com>
+        Fri, 8 Feb 2019 15:11:36 -0500
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:54616 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbfBHULd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:11:33 -0500
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 6CC4D149F6B;
+        Fri,  8 Feb 2019 15:11:31 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:message-id:references:mime-version:content-type
+        :in-reply-to:content-transfer-encoding; s=sasl; bh=3Zv1L31uLuHxE
+        GW6DIj7be3q+mw=; b=StFrvc4/+bm6pNuVI+QE+9M49is8e5Huy8g9MW3GfKj4Y
+        6D0JoKC9B8l0h9gBMjR/gz4lclI8hB4pVGYp+mFU+oYFxOJ0WckaR9aWwA/PVmxH
+        waH5J21T8CGGws3b5rFIV1N1/qNo+IF1spDoGsXrwGAHXNzVqwessS2N9IHhjM=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=date:from:to:cc
+        :subject:message-id:references:mime-version:content-type
+        :in-reply-to:content-transfer-encoding; q=dns; s=sasl; b=jcQn6+5
+        N3QKhCjOQ82RVLf6GyRo28PcajNlnsPl3x1s0/YYlec7D5wS9VFXCbNAJlcews6K
+        /Zph7DKCTE0y7k8GiVTHdexoqndnZwoSPE9TRsIJwRK9/0rzckdfOXxeXVaABn5C
+        akRhAwqN6XhjNFMnAZf/op+HjtfCk17Na5Rs=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 636A5149F6A;
+        Fri,  8 Feb 2019 15:11:31 -0500 (EST)
+Received: from zaya.teonanacatl.net (unknown [71.173.194.225])
+        (using TLSv1.2 with cipher AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id CDE64149F69;
+        Fri,  8 Feb 2019 15:11:30 -0500 (EST)
+Date:   Fri, 8 Feb 2019 15:11:29 -0500
+From:   Todd Zullinger <tmz@pobox.com>
+To:     SZEDER =?iso-8859-1?Q?G=E1bor?= <szeder.dev@gmail.com>
+Cc:     "Randall S. Becker" <rsbecker@nexbridge.com>,
+        Jeff King <peff@peff.net>,
+        'Junio C Hamano' <gitster@pobox.com>, git@vger.kernel.org,
+        'Linux Kernel' <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+Subject: Re: [Breakage] Git v2.21.0-rc0 - t5403 (NonStop)
+Message-ID: <20190208201128.GD30548@zaya.teonanacatl.net>
+References: <000d01d4bf9b$d5d48da0$817da8e0$@nexbridge.com>
+ <20190208111002.GU10587@szeder.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20190208111002.GU10587@szeder.dev>
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-Pobox-Relay-ID: B9646A38-2BDD-11E9-8887-DF19F34BB12D-09356542!pb-smtp2.pobox.com
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "J. Bruce Fields" <bfields@redhat.com>
+SZEDER G=E1bor wrote:
+> On Fri, Feb 08, 2019 at 05:48:27AM -0500, Randall S. Becker wrote:
+>> We have a few new breakages on the NonStop port in 2.21.0-rc0. The fir=
+st is in t5403, as below:
+[...]
+>> The post-checkout hook is:
+>> #!/usr/local/bin/bash
+>> echo "$@" >$GIT_DIR/post-checkout.args
+>>=20
+>> This looks like it is a "bash thing" and $GIT_DIR might have to be in =
+quotes, and is not be specific to the platform. If I replace=20
+>>=20
+>> echo "$@" >$GIT_DIR/post-checkout.args
+>>=20
+>> with
+>>=20
+>> echo "$@" >"$GIT_DIR/post-checkout.args"
+>>=20
+>> The test passes.
+>=20
+> Wow, this is the second time this "redirection to a filename with
+> spaces under Bash" issue pops up today, see the other one here:
+>=20
+>   https://public-inbox.org/git/20190208031746.22683-2-tmz@pobox.com/T/#=
+u
 
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
----
- include/linux/sunrpc/svc.h |  1 +
- net/sunrpc/svc.c           | 23 ++++++++++++++++++-----
- 2 files changed, 19 insertions(+), 5 deletions(-)
+Indeed, I was surprised to see another one today.
 
-diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-index e52385340b3b..07d428dd067f 100644
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -101,6 +101,7 @@ struct svc_serv {
- 
- 	unsigned int		sv_nrpools;	/* number of thread pools */
- 	struct svc_pool *	sv_pools;	/* array of thread pools */
-+	struct kthread_group *	sv_kthread_grp;
- 	const struct svc_serv_ops *sv_ops;	/* server operations */
- #if defined(CONFIG_SUNRPC_BACKCHANNEL)
- 	struct list_head	sv_cb_list;	/* queue for callback requests
-diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-index 502e09a28f84..d8586a57da40 100644
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -464,10 +464,16 @@ __svc_create(struct svc_program *prog, unsigned int bufsize, int npools,
- 	serv->sv_pools =
- 		kcalloc(serv->sv_nrpools, sizeof(struct svc_pool),
- 			GFP_KERNEL);
--	if (!serv->sv_pools) {
--		kfree(serv);
--		return NULL;
--	}
-+	if (!serv->sv_pools)
-+		goto out_free_serv;
-+
-+	serv->sv_kthread_grp = kthread_start_group(CLONE_THREAD |
-+					CLONE_SIGHAND | CLONE_VM | CLONE_FS |
-+					CLONE_FILES | SIGCHLD,
-+					serv->sv_name);
-+
-+	if (IS_ERR(serv->sv_kthread_grp))
-+		goto out_free_pools;
- 
- 	for (i = 0; i < serv->sv_nrpools; i++) {
- 		struct svc_pool *pool = &serv->sv_pools[i];
-@@ -482,6 +488,11 @@ __svc_create(struct svc_program *prog, unsigned int bufsize, int npools,
- 	}
- 
- 	return serv;
-+out_free_pools:
-+	kfree(serv->sv_pools);
-+out_free_serv:
-+	kfree(serv);
-+	return NULL;
- }
- 
- struct svc_serv *
-@@ -551,6 +562,7 @@ svc_destroy(struct svc_serv *serv)
- 	if (svc_serv_is_pooled(serv))
- 		svc_pool_map_put();
- 
-+	kthread_stop_group(serv->sv_kthread_grp);
- 	kfree(serv->sv_pools);
- 	kfree(serv);
- }
-@@ -719,7 +731,8 @@ svc_start_kthread(struct svc_serv *serv, struct svc_pool *pool,
- 		return PTR_ERR(rqstp);
- 
- 	__module_get(serv->sv_ops->svo_module);
--	task = kthread_create_on_node(serv->sv_ops->svo_function, rqstp,
-+	task = kthread_group_create_on_node(serv->sv_kthread_grp,
-+				      serv->sv_ops->svo_function, rqstp,
- 				      node, "%s", serv->sv_name);
- 	if (IS_ERR(task)) {
- 		module_put(serv->sv_ops->svo_module);
--- 
-2.20.1
+It made me wonder how I had missed it in my own testing.
+This one requires SHELL_PATH to be bash, while I only set
+TEST_SHELL_PATH to bash for the improved -x tracing in the
+fedora builds.
 
+I ran the tests again with SHELL_PATH as bash on fedora and
+this was the only failure I saw (other than the one from my
+earlier message, that is).
+
+--=20
+Todd
