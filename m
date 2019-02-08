@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8582DC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE0EC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567F72177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2128C207E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549655109;
-	bh=IxH9JYF0gowAzl03NpZVeOiyro/q3s/o8kI/MwLlQ9o=;
+	s=default; t=1549655113;
+	bh=oZMPvd2dUru5qKccL+k0azlrRLglTL9kVeO2DoI9zZ4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=B9iI9i7ee8dgJdeOuTzAqz9JJXWeoNxvSMCYKRazP5nJ+teZ5e9tn43QZMkAsBwqE
-	 BlSY64FDjpPXpqSzzfP3qC2A1EHyMJW+Pg1FCzYrtV7xgrXhMiTGi03DiMmxdRZSTi
-	 fFC9I2XxEdI+K0YZL0oW6ajwMRRJkf2a0pujFlkg=
+	b=nuVgTqShZNcPIp2siCKXRr+1AFQ5DVyEyTGLeRQpDYpVpnRHiGrGvFrF5zzB4BC/K
+	 xlV+ruQzrdroqAhx8IRKOKrkHOH2ysfAPJkGDrgmjSs56U8PBWODVNOPzGaXJ2Ddp8
+	 sMRfbWDXrVzSAMciKKsxzvupOYg840rWxaQNiDjc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfBHTpI (ORCPT
+        id S1727276AbfBHTpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:45:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39916 "EHLO mail.kernel.org"
+        Fri, 8 Feb 2019 14:45:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfBHTpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:45:04 -0500
-Subject: Re: [GIT PULL] xfs: fixes for v5.0-rc6
+        id S1727084AbfBHTpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 14:45:06 -0500
+Subject: Re: [GIT PULL] Driver core fixes for 5.0-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549655104;
-        bh=IxH9JYF0gowAzl03NpZVeOiyro/q3s/o8kI/MwLlQ9o=;
+        s=default; t=1549655105;
+        bh=oZMPvd2dUru5qKccL+k0azlrRLglTL9kVeO2DoI9zZ4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=X1nRJtmKj6+g9SFQBSxMT3A5fbqTKd/Kt/TOX/vLvpfVVBLEO/0XS7md8ERgqokh7
-         gQTma+Z3Vt74EHSs362lN+DsIgtWEcV7014KVhWbxkiuUi3AcBV4Cj7C6x6FI1ii93
-         SaP/03S4IFdkxWEnECWsWdCW6fc6AvJjOtqgaSGs=
+        b=WPX2drM4CWnYSSLsYfOKJsZjYjCn165WQRcKsfPJYcxxUcQPD1hFs1OxUuueSor1c
+         Tfipw/m2aUI8EXXlw6YCMzgD3HXCeZpbN05N6F7gvqHwEHh/KH327Z5+s2C5NuXE9V
+         ywDEhO6f15PNpOF2vm2M1CkUdJUIaMZA3QtNRugA=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190208072517.GL7991@magnolia>
-References: <20190208072517.GL7991@magnolia>
+In-Reply-To: <20190208083904.GA27008@kroah.com>
+References: <20190208083904.GA27008@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190208072517.GL7991@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/xfs-5.0-fixes-1
-X-PR-Tracked-Commit-Id: add46b3b021263c02d5a7080c58e5b459479fafd
+X-PR-Tracked-Message-Id: <20190208083904.GA27008@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+ tags/driver-core-5.0-rc6
+X-PR-Tracked-Commit-Id: 36991ca68db9dd43bac7f3519f080ee3939263ef
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bd5ff862ec7855cc7a110891443e7dc6deeb6b84
-Message-Id: <154965510418.5511.3372169854260519470.pr-tracker-bot@kernel.org>
-Date:   Fri, 08 Feb 2019 19:45:04 +0000
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     torvalds@linux-foundation.org, Dave Chinner <david@fromorbit.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+X-PR-Merge-Commit-Id: 8c8e62cc983938a554d39497b5600b842f8a7965
+Message-Id: <154965510554.5511.10300336532155378090.pr-tracker-bot@kernel.org>
+Date:   Fri, 08 Feb 2019 19:45:05 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 7 Feb 2019 23:25:17 -0800:
+The pull request you sent on Fri, 8 Feb 2019 09:39:04 +0100:
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.0-fixes-1
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-5.0-rc6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bd5ff862ec7855cc7a110891443e7dc6deeb6b84
+https://git.kernel.org/torvalds/c/8c8e62cc983938a554d39497b5600b842f8a7965
 
 Thank you!
 
