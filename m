@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F796C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C83C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D15852146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93DD20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfBHPY2 (ORCPT
+        id S1728124AbfBHPYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:24:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59994 "EHLO mx1.suse.de"
+        Fri, 8 Feb 2019 10:24:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60024 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727717AbfBHPY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:24:26 -0500
+        id S1728094AbfBHPY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 10:24:27 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4E650B141;
-        Fri,  8 Feb 2019 15:24:25 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 8BDFBB144;
+        Fri,  8 Feb 2019 15:24:26 +0000 (UTC)
 From:   Petr Mladek <pmladek@suse.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
@@ -33,10 +33,11 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v6 5/9] vsprintf: Factor out %pV handler as va_format()
-Date:   Fri,  8 Feb 2019 16:23:06 +0100
-Message-Id: <20190208152310.29531-6-pmladek@suse.com>
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v6 6/9] vsprintf: Factor out %pO handler as kobject_string()
+Date:   Fri,  8 Feb 2019 16:23:07 +0100
+Message-Id: <20190208152310.29531-7-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190208152310.29531-1-pmladek@suse.com>
 References: <20190208152310.29531-1-pmladek@suse.com>
@@ -45,55 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the code from the long pointer() function. We are going to improve
-error handling that will make it more complicated.
+Move code from the long pointer() function. We are going to improve
+error handling that will make it even more complicated.
 
 This patch does not change the existing behavior.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Tobin Harding <me@tobin.cc>
+Cc: Kees Cook <keescook@chromium.org>
 ---
- lib/vsprintf.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ lib/vsprintf.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index d8bc3bb8ce18..9621b76f6c60 100644
+index 9621b76f6c60..ab59db1c1146 100644
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -1519,6 +1519,17 @@ char *escaped_string(char *buf, char *end, u8 *addr, struct printf_spec spec,
- 	return buf;
+@@ -1887,6 +1887,17 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+ 	return widen_string(buf, buf - buf_start, end, spec);
  }
  
-+static char *va_format(char *buf, char *end, struct va_format *va_fmt)
++static char *kobject_string(char *buf, char *end, void *ptr,
++			    struct printf_spec spec, const char *fmt)
 +{
-+	va_list va;
++	switch (fmt[1]) {
++	case 'F':
++		return device_node_string(buf, end, ptr, spec, fmt + 1);
++	}
 +
-+	va_copy(va, *va_fmt->va);
-+	buf += vsnprintf(buf, end > buf ? end - buf : 0, va_fmt->fmt, va);
-+	va_end(va);
-+
-+	return buf;
++	return ptr_to_id(buf, end, ptr, spec);
 +}
 +
- static noinline_for_stack
- char *uuid_string(char *buf, char *end, const u8 *addr,
- 		  struct printf_spec spec, const char *fmt)
-@@ -2046,15 +2057,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 	case 'U':
- 		return uuid_string(buf, end, ptr, spec, fmt);
- 	case 'V':
--		{
--			va_list va;
--
--			va_copy(va, *((struct va_format *)ptr)->va);
--			buf += vsnprintf(buf, end > buf ? end - buf : 0,
--					 ((struct va_format *)ptr)->fmt, va);
--			va_end(va);
--			return buf;
+ /*
+  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
+  * by an extra set of alphanumeric characters that are extended format
+@@ -2082,11 +2093,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 	case 'G':
+ 		return flags_string(buf, end, ptr, fmt);
+ 	case 'O':
+-		switch (fmt[1]) {
+-		case 'F':
+-			return device_node_string(buf, end, ptr, spec, fmt + 1);
 -		}
-+		return va_format(buf, end, ptr);
- 	case 'K':
- 		return restricted_pointer(buf, end, ptr, spec);
- 	case 'N':
+-		break;
++		return kobject_string(buf, end, ptr, spec, fmt);
+ 	case 'x':
+ 		return pointer_string(buf, end, ptr, spec);
+ 	}
 -- 
 2.13.7
 
