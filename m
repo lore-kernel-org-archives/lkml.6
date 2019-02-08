@@ -2,127 +2,141 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34791C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71179C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDC9120844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CEC42086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:12:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="no1297wT"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="ljQt4VK/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfBHQMX (ORCPT
+        id S1727521AbfBHQMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:12:23 -0500
-Received: from mail-eopbgr130055.outbound.protection.outlook.com ([40.107.13.55]:42496
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Fri, 8 Feb 2019 11:12:34 -0500
+Received: from mail-eopbgr140077.outbound.protection.outlook.com ([40.107.14.77]:14214
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726524AbfBHQMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:12:22 -0500
+        id S1726869AbfBHQMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 11:12:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
  s=selector1-cern-ch;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXbnnot0xdVW7bF83WkfShnLbXyjRIV7dsnkGiKeaMw=;
- b=no1297wTpo9SP3f7NXcT9RMeI63GKCjHSe8grB1BfBa9Zwt2uINtIcIrFH5PklhaY2MPObUQ679D7LE4++dIGZtk1052cPvh0S74t3I1hkdv+7PK0hRN6zjJLwuICDg+cjDJu2oVJCHfllTCpmmH2+KQ79OTc2i/3XDy6GV4z6s=
-Received: from AM5PR0602CA0014.eurprd06.prod.outlook.com
- (2603:10a6:203:a3::24) by AM0PR06MB4001.eurprd06.prod.outlook.com
- (2603:10a6:208:b4::19) with Microsoft SMTP Server (version=TLS1_2,
+ bh=G8tAcT/apF6DPLLmFySVdcDsEcqNwhs0WLE6X7Q3J0c=;
+ b=ljQt4VK/PvDX+850Bttuv36RHt7GjYXyqSbwrcBLhzL9a4FUzahsffK4kUKrIo4/91nCpwC30muiBPlJs6rRFj+nPTyzUhbruAOrenPIuSpmLcEmInX/hW+cS76HZswRGlsMz+E4g1OpdrhcT0wIcVtLhbHoY0TDt3BM0m4d4v0=
+Received: from AM5PR06CA0027.eurprd06.prod.outlook.com (2603:10a6:206:2::40)
+ by AM5PR0601MB2257.eurprd06.prod.outlook.com (2603:10a6:203:6f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.21; Fri, 8 Feb
- 2019 16:12:18 +0000
-Received: from AM5EUR02FT059.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e1e::203) by AM5PR0602CA0014.outlook.office365.com
- (2603:10a6:203:a3::24) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 16:12:30 +0000
+Received: from AM5EUR02FT025.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::201) by AM5PR06CA0027.outlook.office365.com
+ (2603:10a6:206:2::40) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1601.17 via Frontend
- Transport; Fri, 8 Feb 2019 16:12:18 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.48)
+ Transport; Fri, 8 Feb 2019 16:12:30 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.46)
  smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
  header.d=none;korsgaard.com; dmarc=bestguesspass action=none
  header.from=cern.ch;
 Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
- AM5EUR02FT059.mail.protection.outlook.com (10.152.9.204) with Microsoft SMTP
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT025.mail.protection.outlook.com (10.152.8.110) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Fri, 8 Feb 2019 16:12:18 +0000
+ 15.20.1580.10 via Frontend Transport; Fri, 8 Feb 2019 16:12:30 +0000
 Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
- (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 8 Feb
- 2019 17:12:13 +0100
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 8 Feb
+ 2019 17:12:21 +0100
 Received: from cwe-513-vol689.cern.ch (188.185.69.206) by smtp.cern.ch
  (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 8 Feb
- 2019 17:12:13 +0100
+ 2019 17:12:21 +0100
 From:   Federico Vaga <federico.vaga@cern.ch>
 To:     Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>
-CC:     <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 0/5]
-Date:   Fri, 8 Feb 2019 17:11:56 +0100
-Message-ID: <20190208161201.7860-1-federico.vaga@cern.ch>
+CC:     <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Federico Vaga <federico.vaga@cern.ch>
+Subject: [PATCH v3 2/5] i2c:ocores: do not handle IRQ if IF is not set
+Date:   Fri, 8 Feb 2019 17:11:58 +0100
+Message-ID: <20190208161201.7860-3-federico.vaga@cern.ch>
 X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20190208161201.7860-1-federico.vaga@cern.ch>
+References: <20190208161201.7860-1-federico.vaga@cern.ch>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [188.185.69.206]
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(396003)(136003)(2980300002)(199004)(189003)(186003)(8676002)(305945005)(7696005)(51416003)(246002)(2616005)(956004)(26005)(316002)(7636002)(16526019)(336012)(126002)(47776003)(476003)(7736002)(86362001)(14444005)(2906002)(110136005)(106002)(426003)(66066001)(16586007)(786003)(54906003)(50226002)(44832011)(8936002)(486006)(4326008)(53416004)(3846002)(6116002)(74482002)(48376002)(4744005)(966005)(36756003)(1076003)(6666004)(106466001)(6306002)(50466002)(478600001)(356004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR06MB4001;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0601MB2257;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8914c293-d7ff-4209-e380-08d68de032b6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:AM0PR06MB4001;
-X-MS-TrafficTypeDiagnostic: AM0PR06MB4001:
-X-MS-Exchange-PUrlCount: 1
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR06MB4001;20:kfO3AIUlNjfVy63II+vE2lYgto0nWbpBIKOPge6RWhBfRyXWygbhBgeHa8OOlnp09r0vP7Wp0R6xioQeYttvNV0+KiACWiSWhKCZikogbS+HTRTBvo8smv+sImp46RaC3DoyYSSDozFFkxjwZw2rONbFISiQK6UAbRk/NpmEXLHLizPLcbnBNuNXGuE2GPDMfahTqQlZ8fZ+EEqPcTLmpmj5HZNL8ICmc16kyjV8YfztgzsL1uNt4fQ9O1+LsVTPVWffqcHAj7AG+Tb/XaIMSQOIwob5yzmiJMhrDjSJDRSVMUFFzaN46ANtzd/t2Fbj2qBLs6vISfimWBY75+luJqPh2RtRTr4/IGaO5dTBArUth/A1728bDoRQLEB0LoJvifuVVtLdGtvigLQnijgw3PLXigqOmoVHkFihkR0gjxAj9uPTPSdVI3GMCpu3sD8pn7i6SBawKKBApgEMadGF75UCetIVzpMcrcYvVKBdKETB13dItLJIeLlOuLBRViJi;4:XIdMWweQCMFH0U+XucYxxJDZmUqmyx2uM8OgUPuXKd3WlQkEsnUdqlV4E0qEr2quaUev6tQSuc7FkOGn7zx75exhUcREZR8YnWW9zZv0d14Af3ZTafFvDjU3vU03eCgB35+RYMuWoD72Ye3zAXi0l062sryjkRQkgSV9G2ySaXlt3tAMpgc61GING+XeG/imatTBHD9keydHKrrPQGksD4+jPxc1CLHjA88z56iHerhSZk+kIDYiIitDoLloCIXLDTC4fZPgkEO3X9SVEUOpKUJG6b7KSAMtfzXL9rzbetNxrkdlgzq72043N3GSYBvG
-X-Microsoft-Antispam-PRVS: <AM0PR06MB40011F682420ABC9DA614746EF690@AM0PR06MB4001.eurprd06.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 88482373-b670-4095-900a-08d68de03a0c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(5565046)(2017052603328)(7153060)(7193020);SRVR:AM5PR0601MB2257;
+X-MS-TrafficTypeDiagnostic: AM5PR0601MB2257:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0601MB2257;20:UyvTUR8qwu03AVcONLjx59N4NU+JQLUf0ZH/E+1sPyofKEB4qMi+ul4+6JroLMzTgwNQcyH5l19tBQQdFrErWx6gy02JxGppWYCVq8S7U8SZPfbu/YvUJyKhHsHI1mAvjLlSby2Dv6HQlceYwBW968YvLkTacOS/8vS0F64XIiN7zypBdS+X3pgaj0w6rRwtCLZi0Qf8Qb7vUZ7LcGOuEQy1fwbI/tg4dsEuGNBc/RDs5q08229OavBc0Py5sHYF5WWxTLW2QR8Z2Rw35+JcppsgzcazwwRrAtAfPRDyvxpZaW8s4kWJry9f88UBYyIUkynO7f2SKHqmB0rK5Ou57NJT2QlS78zGgpBvE4vsx8exIq8jcLsk1tdzvYIW20GlWpQfQ8AYn7oXXdPZ5fRPFRR9tyjkCKp7TGUjcV6PzQSrFHNME0EsosPwcC7wrfrk1k5Ou74idJmsg8zmdSnF6BqVY1ECsl7akXaWu78DcFz5tb5kFPzjr6JtU7y5lmXf;4:I7qDKNQ3WNkDy1vUyBL5CpBBCUgZhxUb3giIh1DBz1EuA1yprHquv1IAp8PzSHtdpNcMhBh1DjaVko+rUND3xg9WFIehVql3prDxyMSZXnLj4GqHELK/xix6vMUpy59sjP8jowlJ9wnMJ6m+l5TRS5s5jADlYd4neJsO5dIVCNmZL1NnMkf9821soqINAQP+zj711C3bxBUo9KRtgsCeKevh4on2iuVgtbZ//pgTf5jILwdqYysqOYR3kiIUjJ6NjRR+D8jsGwAaG2S5eOwyeNbjMPk/o5TanPPCb/DTD2ahPX8LYAFc15dlXRLTciP1
+X-Microsoft-Antispam-PRVS: <AM5PR0601MB2257A71560815BAF16930590EF690@AM5PR0601MB2257.eurprd06.prod.outlook.com>
 X-Forefront-PRVS: 094213BFEA
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR06MB4001;23:YJbad3X587FbSkLsiFUdPrHxJiU2VXMsLguKSVW/Z?=
- =?us-ascii?Q?z3565xtmdGnfsZNfUj6BF4JOoWYFOzKciGYw/zCjkWc601D0QFjy6cExULbM?=
- =?us-ascii?Q?zSi09fv4rQS9ls4hQ4fHE0IDq/3QOjxbQHJN4GJhF1ISF5SdPemwm8lwhseE?=
- =?us-ascii?Q?2A18/hELzvXR5wSgnWMLi5nIchxKvR1qkh2NARkgnl3rDg52Oi0OehcYNX7I?=
- =?us-ascii?Q?NA32ZG3/y3TFYN09fKvhdhvbbhHaui+6hcyvqsyL3DNPmqdOdJklip3mGfXi?=
- =?us-ascii?Q?7PtXyUnYvb+yddvhsmHO+lFuCDvdoTfoA20Af1ecCsXgcWUynYkDq7bi8Eu6?=
- =?us-ascii?Q?EYI+wfMb0ujILdZwx8WlI6SwtbEH4ZEau1Zzl0Z6QpKjpXUv8m4Bbl7p+u7n?=
- =?us-ascii?Q?luOpvH+jYlP+TyEj7jKvzNcpABdNNBBKVxV4fd76B7yMlBDBWcb5RBgBfqcS?=
- =?us-ascii?Q?RzlSdaPd4AERJMevo5u4MX5e+M6Ssox41mq7SmvU/qw3YFymLlBWvwzKg1IU?=
- =?us-ascii?Q?52kci91ElljWfEnYIfgL5Ihk6pBdFX3kT4jG2J9HLZJd70s76/yHrz5gPCZ5?=
- =?us-ascii?Q?hTpX1BpvuX5s1n1c88oFtZ01jWLvRVZpA6RcWuKKK26VxUIZsb4yKWgca1FF?=
- =?us-ascii?Q?8vKUBB83omBwsVNlhtwJoYUx/hLAkWoC86W5kGsGlSVcA2Kl3rbiqBm6YI7m?=
- =?us-ascii?Q?DHZsHroQjDH22kc5eaYgFlws394uYrUIwyZ1cUdpKDg0FhMa2HtOB1NMsKBn?=
- =?us-ascii?Q?7m87N62YEh9ynqjXzyDTSNr6z8kbdaKQccroZ6EY5SspguR2BWW6GwZSO1CD?=
- =?us-ascii?Q?Je7u8HYI4nD+e4uE/mCbO6P5oJp5Ml4mnGQZU6P8yky6ZkpgyoHfU+1L6eGm?=
- =?us-ascii?Q?h25ISQxet+6EsaEQFvGyqZ2cr5Yheqh0uei/i+9W5C32BPqAPyoRxCX/wzJt?=
- =?us-ascii?Q?Wqs92rnTANfT4pI3UGEg/cUENesNff8gZ1sBlmIPVALySAQ7oY8Ag/8qLmUr?=
- =?us-ascii?Q?PLY7YzA8mP7WnoaqtOldwOexjmY21Z/c7ezTfJW0UiIhAJpPgsnkSALgN/0S?=
- =?us-ascii?Q?Mvoq5jPbjq6il3Ce3Ol86zk6xh3rJ6R/sJJ4KOsGSrK5stVgvj426q92BOF7?=
- =?us-ascii?Q?ygnGE1/jz5NysGTKgFAt0DfZyHL8GT24UwCNJ+uttG87GqCNCga8/FyF13x5?=
- =?us-ascii?Q?qaG87qIHx/LtgY=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0601MB2257;23:vfnynuTLNr+9mE9wJBEnsqWmHpzzcy8O8fwpHggjir7KBpCuMdcYnzmjKSYqGBo22v4BWO+l8RTA3nrnlsDWgdjRCAcxjmg+FYydLSfDCaDSfheEjAFMqGsHNt0G5Vd07t9ryjwiarrhzc7R4xXRUHZXzuEE8ht/vswxcpKVzf5Otij0hdjwh+cHcrpEM6ro;6:9IN4h/qVSkpxLdOqHaBlAKvzxfPftjidmO84GTYtUy1Ucp49kjRnKX/akam7rtdr9HdKjRBbe478E+iZdTYzLIX8W3vWPraFWfNO5iMYuuMiKutW9/SOqKzgSSHivNHeccyDfDg9AQUCNfgH7LYZzwjYU+1eW4IKKvD9XLzsiqikJFsKjY+bn4P1VzvHvMeUwVIaNnXXR6bFBkKT8Wv0zCGIWGA6N43u5RTXKVNRSXmueGXhsYPen5sNpivP5DphItEkffwz6hqtbqaTrYMnwoyOrwGyJ7MjB/qfTcVJA6j37M21rKu4UQvtcwZfqxWauyMJQusq1V0TRgNltlxPVR1sajoW1v21GtcfBTQBxpEbO2qMdFGB8mVqFL2vVcKkpkw2YUmgQinzJNnwnYIYxwVS1F3gtVbZxALomvFzVVq+lj/wXNqqLDwd2+l6bxMlBWtYqYKgqufu7xodNAX9Vw==;5:sS1QnNbX0r7G224j2VLEeJy922JKbCi3IxwE3xq05NTi+9gIeBBb9uM8Sq+Z8rV+vtmL3TKOvV23KJN4BlU4X+AOX6pZGO3D68HhDByFxtGy0fpnrFxh5lJL3C7cvKb4Iw8Km2ybgYzdGxx2Gt4h57LPwfj3LFZE9ath2N38SS4lte+ft6nL2eIGNyjBRPyBdF8xLAwZ/SL1E4xApRV1VA==
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 2ILj2dwL+sHg5gWYM5PDuexIoFVCDIXjsyO245MKouhkQwppsFzHfhzDM+h8ge7TOqi6oQfdjxeqku9xffECPUZCti4GtNwFQbhxYPHA0GyzZ4m+CHes1+ooivdbh0jD1foEgA71+cdE3nnH8PYA9ZfSRpEdHJ8BG7eykYPJ0npoOSxIMzwl4UVDGSTsz3ZlblgBNwEyMde3r6FDGHJmYWvuglGpjGHJmIBGUVP4kDXcF1D/nM8NSTFnP5TBsiiPtOmPjwBrb496ofyCPkhNzqJSTUqe08Y19uyb9DyzES5851NOXrvg5nFFAWOG9XNR7WfoQTMn8zmnhx3HDfjDfia8x+nm5pHIeTadDsicaf6nxznIvONRuolA6JGwSHTuOHaHGR9JZo81OtzHq+cDBQOP+g9B3H7jsbsNRt4npcM=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR06MB4001;6:m+4sIV0lGXx7eFWdDY/oZaWgHA2THw3dfsRExnJUftfcTvgOnhbW2ngY5e9omZLtoz7GLPeHZGsBw2h/UPDR0/qKG+OJwg1Hqi+2SSCaYc7qRKY0G2fBodrqBS8cCtLWfb7F9ylKKVDLVUtK141fjAQuZ/CiVN2w3XndAKNVKW0Rl4RZJPHVGywcjvImGc9wZsXWoaw0gc08+OSkbD4Bjgt3HjCYbn/QNA1R1XXHIyyrsnLms1x5xbl0wUs5BER0PNbU92yyDOQxp/ORPXBourikCSGsS7F+HIYCtoFYXyE9TCAFF6n7fwWw7/CBdPIc6rNFyN+DHWyOMx9tYWyD1ET/2xlOPwZML5ie4/jrKG9YdjBpXhceoaoY/yUryeE+x32yrME+N7784+yhU+YwwxjuVk58+QiIApOnOzYkKxHe+LOFhgh6+r5MEaRCoGbG1IURyCD4hsleVjB3XF491A==;5:ah4lL3UZLRSM8PANaD7SzHWPcP4xg4EOQehva3kSAk/LlgSZjQG7/VLv6bMsJtvdyMDl7872p8vqHnuR5lJBkBTlgGUQmW50aTn0WAs/41bnDn92ObMvdgpFAAKYHvOnBoW7V7ZenhuwCxUt09nFBAcnNC1xP5ZbdajqYhbBWpUo+/HV/WUg8FXPU5SGkMIH6jxzic2N2yfVYcBhvCa+Rw==;7:p9xlr6olK8wfdBBmo6yvgSHn3ZVHJO2dNNOYGYe9TYmh+a/ewltVD1b9fw1eUPM7l4BMTmMqpOUN4Jo2Ii35K0rs+nlCmjU6Qsvy4peXhorGpuCAbk5xdShGBr7UVHq57NISIZEF3khymHQQL7qaAg==
+X-Microsoft-Antispam-Message-Info: ZIzjv3yCTpSGI4ETPkVGsaUHtOa7kWFQUGJZeT27HDd8kyuB1w8KH0M7T+e24PGa7rFCFIJTdNPEPjbHZKIzyvSyr3y1gTP62AkilFzT7H5cBvo/Lngd6oe9L1SHjV3MDH+ZXFlQM/S25C2HGKRTa+VEYOjlGyPYoUuYfNA8VkJlVbWIx0WTWQPgPq5AqekLZRt7WMLtY4/bbRKKPcMlrYScerCja+APazQRWBCF/6+EMJvYhl4ExVaPlhi8gSB08SYK6fzRURLu+1lUL5BICOK3FTnhaabPtPvvnEDjs0XiooPI8QKwPGKgwnq3G3Abz4G40hnoQziYAG/Vw12UuNKlU0AiXGcfHxqX5vj6Gh3csMx2biuwwIto4NzLqFgDW8KcMzjMExt6CcvcUQz1phx8XYgGzg9j8FAMHMadmAhC8MzEbfSIpVPd3qLUGLmMIaiNY5J2u1LyhF4SOItQV+UoTmUpYyyeutKHZRcR6LBZ4D9Ag0mTNqDdYBrHvDpgb6dLsH9LxFM0ePMXS1zu6GEQ3AuJTzXAUicNw3Mp/yw=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0601MB2257;7:puzCcaTA2NRhd0lY5qdBAGQm9lcKOoVLWZRaWtVenQEjll9ZQeOsyQlkd/PrDr2M+mkhK7SweU2w3ru+/v9Ob04qCXQK96HLAwv5IqS3HsV4emJbp38IP2FXljZJO0frmYA4lMMsPlObgRyVwwr6ng==
 X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2019 16:12:18.0059
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Feb 2019 16:12:30.3194
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8914c293-d7ff-4209-e380-08d68de032b6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88482373-b670-4095-900a-08d68de03a0c
 X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR06MB4001
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0601MB2257
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set provides improvements to the i2c-ocore driver.
+If the Interrupt Flag (IF) is not set, we should not handle the IRQ:
+- the line can be shared with other devices
+- it can be a spurious interrupt
 
-[V2 -> V3]
-- fix error condition on platform_get_irq(). Copied from
-  https://patchwork.ozlabs.org/patch/1038409/
+To avoid reading twice the status register, the ocores_process() function
+expects it to be read by the caller.
 
-[V1 -> V2]
-- replaced usleep_range() with udelay() so that the polling version can be
-  used in atomic context.
-- added dedicated patch for minor style issues
-- fixed delay computation
-- use spin_lock_irqsave(), instead of spin_trylock_irqsave(). IACK is always
-  necessary and a trylock would generate an extra interrupt for nothing
-- make the driver ready for an eventual master_xfer_irqless()
+Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+Acked-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ drivers/i2c/busses/i2c-ocores.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+index aa85202..fcc2558 100644
+--- a/drivers/i2c/busses/i2c-ocores.c
++++ b/drivers/i2c/busses/i2c-ocores.c
+@@ -143,10 +143,9 @@ static inline u8 oc_getreg(struct ocores_i2c *i2c, int reg)
+ 	return i2c->getreg(i2c, reg);
+ }
+ 
+-static void ocores_process(struct ocores_i2c *i2c)
++static void ocores_process(struct ocores_i2c *i2c, u8 stat)
+ {
+ 	struct i2c_msg *msg = i2c->msg;
+-	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
+ 	unsigned long flags;
+ 
+ 	/*
+@@ -223,8 +222,12 @@ out:
+ static irqreturn_t ocores_isr(int irq, void *dev_id)
+ {
+ 	struct ocores_i2c *i2c = dev_id;
++	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
++
++	if (!(stat & OCI2C_STAT_IF))
++		return IRQ_NONE;
+ 
+-	ocores_process(i2c);
++	ocores_process(i2c, stat);
+ 
+ 	return IRQ_HANDLED;
+ }
+-- 
+2.15.0
 
