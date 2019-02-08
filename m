@@ -2,54 +2,89 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AB1C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBBCC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ADEE21919
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:18:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BB27218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:23:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfBHJSV (ORCPT
+        id S1727099AbfBHJXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:18:21 -0500
-Received: from verein.lst.de ([213.95.11.211]:41249 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbfBHJSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:18:20 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id B126568D93; Fri,  8 Feb 2019 10:18:18 +0100 (CET)
-Date:   Fri, 8 Feb 2019 10:18:18 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: use generic DMA mapping code in powerpc V4
-Message-ID: <20190208091818.GA23491@lst.de>
-References: <9632DCDF-B9D9-416C-95FC-006B6005E2EC@xenosoft.de> <594beaae-9681-03de-9f42-191cc7d2f8e3@xenosoft.de> <20190204075616.GA5408@lst.de> <ffbf56ae-c259-47b5-9deb-7fb21fead254@xenosoft.de> <20190204123852.GA10428@lst.de> <b1c0161f-4211-03af-022d-0db7237516e9@xenosoft.de> <20190206151505.GA31065@lst.de> <20190206151655.GA31172@lst.de> <61EC67B1-12EF-42B6-B69B-B59F9E4FC474@xenosoft.de> <7c1f208b-6909-3b0a-f9f9-38ff1ac3d617@xenosoft.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c1f208b-6909-3b0a-f9f9-38ff1ac3d617@xenosoft.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Fri, 8 Feb 2019 04:23:42 -0500
+Received: from smtprelay0245.hostedemail.com ([216.40.44.245]:40719 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725998AbfBHJXm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 04:23:42 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 91D4418224D73;
+        Fri,  8 Feb 2019 09:23:40 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: card36_7731ced553b11
+X-Filterd-Recvd-Size: 2421
+Received: from XPS-9350 (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  8 Feb 2019 09:23:38 +0000 (UTC)
+Message-ID: <7e1121479b38e98949b44c9fba91dee3adf97b99.camel@perches.com>
+Subject: Re: [PATCH 07/11] mtd: rawnand: denali: use bool type instead of
+ int where appropriate
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Date:   Fri, 08 Feb 2019 01:23:37 -0800
+In-Reply-To: <1549613335-30319-8-git-send-email-yamada.masahiro@socionext.com>
+References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com>
+         <1549613335-30319-8-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 10:01:46AM +0100, Christian Zigotzky wrote:
-> Hi Christoph,
->
-> Your new patch fixes the problems with the P.A. Semi Ethernet! :-)
+On Fri, 2019-02-08 at 17:08 +0900, Masahiro Yamada wrote:
+> Use 'bool' type for some function arguments.
+> 
+>  - write (write or read?)
+>  - raw (the raw access mode or not?)
+> 
+> It is true that denali_nand_info::dma_avail is also boolean, but
+> I am keeping it as 'int' because 'scripts/checkpatch --strict' would
+> report the following:
+> 
+> CHECK: Avoid using bool structure members because of possible alignment issues
+>   - see: https://lkml.org/lkml/2017/11/21/384
+> 
+> I do not think it is a matter here, but I am sticking to the suggestion.
 
-Thanks a lot once again for testing!
+just fyi: that suggestion has been removed by:
 
-Now can you test with this patch and the whole series?
+commit 7967656ffbfa493f5546c0f18bf8a28f702c4baa
+Author: Jason Gunthorpe <jgg@ziepe.ca>
+Date:   Fri Jan 18 15:50:47 2019 -0700
 
-I've updated the powerpc-dma.6 branch to include this fix.
+    coding-style: Clarify the expectations around bool
+    
+    There has been some confusion since checkpatch started warning about bool
+    use in structures, and people have been avoiding using it.
+    
+    Many people feel there is still a legitimate place for bool in structures,
+    so provide some guidance on bool usage derived from the entire thread that
+    spawned the checkpatch warning.
+    
+    Link: https://lkml.kernel.org/r/CA+55aFwVZk1OfB9T2v014PTAKFhtVan_Zj2dOjnCy3x
+
+
+
