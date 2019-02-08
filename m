@@ -2,130 +2,147 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8628C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C94DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B8A21917
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:31:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="d4jlx/3n"
+	by mail.kernel.org (Postfix) with ESMTP id E1AE021917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfBHIb0 (ORCPT
+        id S1727321AbfBHIcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 03:31:26 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46130 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfBHIbZ (ORCPT
+        Fri, 8 Feb 2019 03:32:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38204 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726133AbfBHIcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 03:31:25 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f5so1873334lfc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 00:31:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e9o0xEZeVxGkGRYq+FrqLeZRYKbVYwBBNVU1Vhi1O7c=;
-        b=d4jlx/3nA/a5G7syHqg2prvdxFpGgbBoY21yMrmJkBeBq03jK/tjjyC3ad2yAifFhc
-         cPqTUdPHzxs6WThF95eB9FAe9zclG3k1aJ6TbaJQfqbbDhbOwpGG9CT08esoy9vCiZLE
-         +/mPVCXFiYcAHBKiBrj+1FxDmKNJkHjCJJejVnz5i4b7PkKqVIrfU+pinba2vLJTbN6g
-         SETyheeaOhPNNm5rbtFCOdNTVLQvlzpQ/iuWf2nvSRt6SB04KW/OwluWcPTRQTXlpzsw
-         JuhdbPvzy9BLv5fNtao3neUBWc3QWFsTFa7+e7xQpCTB9dvD7ykGqkh6EfBwWGQr+WE5
-         jYAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e9o0xEZeVxGkGRYq+FrqLeZRYKbVYwBBNVU1Vhi1O7c=;
-        b=h5wUnB9VtDIzGyxpOd25PU3BPa14yoYdDsahBimitkAmr3JwbNGgkusfUenH7pfEqG
-         nMDtjJ+JF2zF/4bJYJKymsQahKowudl0+tRaz/ULd2XN4bLSaj+T05a5S9rEzlm62J5x
-         l3jWnNuBD6NDjZrxuEAnd/klxboJljFBm+6HFXvGmp2pX8P/27oMphXxb0XEJlwA8HmS
-         pMba3P4womacU4qZzbL+uOHXElHiNLPjpVxnNyCIg1g9yM9Em/5r2susSez8VKVPv4Ui
-         HUqxj5bWrBdGgBjp/HICkcrytTI/l9Wlo7c2L49ypKK2Vr7stYTrJo2UrJnmLZ4GOHW5
-         zNCw==
-X-Gm-Message-State: AHQUAuYEMrcYaRY12O9q8ySQ0LtrIsKJkMjV8OsNKSHXapTIFMQ/V3FI
-        L6L7uFs3eKXhDFbbQnkCvYyB9Q==
-X-Google-Smtp-Source: AHgI3IbZa/PxvTalxyrFemw0ERdwLiKEJ13PYlnSQyzLL5Wel6ke7icNnqLupvzfVXuGjkiT0Rh4+A==
-X-Received: by 2002:a19:9508:: with SMTP id x8mr12577498lfd.112.1549614683327;
-        Fri, 08 Feb 2019 00:31:23 -0800 (PST)
-Received: from [192.168.0.36] (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.googlemail.com with ESMTPSA id q10-v6sm239573ljj.3.2019.02.08.00.31.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 00:31:22 -0800 (PST)
-Subject: Re: [LSF/MM TOPIC] BPF for Block Devices
-To:     Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        IDE/ATA development list <linux-ide@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>
-References: <40D2EB06-6BF2-4233-9196-7A26AC43C64E@raithlin.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <f1f00282-11be-1682-3802-c8bd0e6fec4b@lightnvm.io>
-Date:   Fri, 8 Feb 2019 09:31:20 +0100
+        Fri, 8 Feb 2019 03:32:16 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x188NqpO126492
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 03:32:14 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qh3n0pnrx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 03:32:14 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Fri, 8 Feb 2019 08:32:12 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 08:32:08 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x188W71x31850566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Feb 2019 08:32:07 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64FE552051;
+        Fri,  8 Feb 2019 08:32:07 +0000 (GMT)
+Received: from [9.124.31.214] (unknown [9.124.31.214])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2759152052;
+        Fri,  8 Feb 2019 08:32:05 +0000 (GMT)
+Subject: Re: [PATCH] Uprobes: Fix deadlock between delayed_uprobe_lock and
+ fs_reclaim
+To:     Oleg Nesterov <oleg@redhat.com>, Sherry Yang <sherryy@android.com>
+Cc:     Michal Hocko <mhocko@suse.com>, srikar@linux.vnet.ibm.com,
+        songliubraving@fb.com, peterz@infradead.org, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
+        syzbot+1068f09c44d151250c33@syzkaller.appspotmail.com
+References: <20190204040614.20450-1-ravi.bangoria@linux.ibm.com>
+ <20190206133601.GA21522@redhat.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 14:03:55 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <40D2EB06-6BF2-4233-9196-7A26AC43C64E@raithlin.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190206133601.GA21522@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020808-4275-0000-0000-0000030CFBA7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020808-4276-0000-0000-0000381B06C6
+Message-Id: <0f6683c9-50c8-f26f-02e0-4689eee8ea5d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/19 6:12 PM, Stephen  Bates wrote:
-> Hi All
-> 
->> A BPF track will join the annual LSF/MM Summit this year! Please read the updated description and CFP information below.
-> 
-> Well if we are adding BPF to LSF/MM I have to submit a request to discuss BPF for block devices please!
-> 
-> There has been quite a bit of activity around the concept of Computational Storage in the past 12 months. SNIA recently formed a Technical Working Group (TWG) and it is expected that this TWG will be making proposals to standards like NVM Express to add APIs for computation elements that reside on or near block devices.
-> 
-> While some of these Computational Storage accelerators will provide fixed functions (e.g. a RAID, encryption or compression), others will be more flexible. Some of these flexible accelerators will be capable of running BPF code on them (something that certain Linux drivers for SmartNICs support today [1]). I would like to discuss what such a framework could look like for the storage layer and the file-system layer. I'd like to discuss how devices could advertise this capability (a special type of NVMe namespace or SCSI LUN perhaps?) and how the BPF engine could be programmed and then used against block IO. Ideally I'd like to discuss doing this in a vendor-neutral way and develop ideas I can take back to NVMe and the SNIA TWG to help shape how these standard evolve.
-> 
-> To provide an example use-case one could consider a BPF capable accelerator being used to perform a filtering function and then using p2pdma to scan data on a number of adjacent NVMe SSDs, filtering said data and then only providing filter-matched LBAs to the host. Many other potential applications apply.
-> 
-> Also, I am interested in the "The end of the DAX Experiment" topic proposed by Dan and the " Zoned Block Devices" from Matias and Damien.
-> 
-> Cheers
->   
-> Stephen
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/ethernet/netronome/nfp/bpf/offload.c?h=v5.0-rc5
->   
->      
-> 
 
-If we're going down that road, we can also look at the block I/O path 
-itself.
 
-Now that Jens' has shown that io_uring can beat SPDK. Let's take it a 
-step further, and create an API, such that we can bypass the boilerplate 
-checking in kernel block I/O path, and go straight to issuing the I/O in 
-the block layer.
+On 2/6/19 7:06 PM, Oleg Nesterov wrote:
+> Ravi, I am on vacation till the end of this week, can't read your patch
+> carefully.
+> 
+> I am not sure I fully understand the problem, but shouldn't we change
+> binder_alloc_free_page() to use mmput_async() ? Like it does if trylock
+> fails.
 
-For example, we could provide an API that allows applications to 
-register a fast path through the kernel — one where checks, such as 
-generic_make_request_checks(), already has been validated.
+I don't understand binderfs code much so I'll let Sherry comment on this.
 
-The user-space application registers a BFP program with the kernel, the 
-kernel prechecks the possible I/O patterns and then green-lights all 
-I/Os that goes through that unit. In that way, the checks only have to 
-be done once, instead of every I/O. This approach could work beautifully 
-with direct io and raw devices, and with a bit more work, we can do more 
-complex use-cases as well.
+> 
+> In any case, I don't think memalloc_nofs_save() is what we need, see below.
+> 
+> On 02/04, Ravi Bangoria wrote:
+>>
+>> There can be a deadlock between delayed_uprobe_lock and
+>> fs_reclaim like:
+>>
+>>    CPU0                         CPU1
+>>    ----                         ----
+>>    lock(fs_reclaim);
+>>                                 lock(delayed_uprobe_lock);
+>>                                 lock(fs_reclaim);
+>>    lock(delayed_uprobe_lock);
+>>
+>> Here CPU0 is a file system code path which results in
+>> mmput()->__mmput()->uprobe_clear_state() with fs_reclaim
+>> locked. And, CPU1 is a uprobe event creation path.
+> 
+> But this is false positive, right? if CPU1 calls update_ref_ctr() then
+> either ->mm_users is already zero so binder_alloc_free_page()->mmget_not_zero()
+> will fail, or the caller of update_ref_ctr() has a reference and thus
+> binder_alloc_free_page()->mmput() can't trigger __mmput() ?
+
+Yes, it seems so.
+
+So, IIUC, even though the locking sequence are actually opposite, *actual*
+instances of the locks will never be able to lock simultaneously on both
+the code path as warned by lockdep. Please correct me if I misunderstood.
+
+[...]
+
+>> +	nofs_flags = memalloc_nofs_save();
+>>  	mutex_lock(&delayed_uprobe_lock);
+>>  	if (d > 0)
+>>  		ret = delayed_uprobe_add(uprobe, mm);
+>>  	else
+>>  		delayed_uprobe_remove(uprobe, mm);
+>>  	mutex_unlock(&delayed_uprobe_lock);
+>> +	memalloc_nofs_restore(nofs_flags);
+> 
+> PF_MEMALLOC_NOFS is only needed when we are going to call delayed_uprobe_add()
+> which does kzalloc(GFP_KERNEL). Can't we simply change it tuse use use GFP_NOFS
+> instead?
+
+Yes, I can use GFP_NOFS. (and same was suggested by Aneesh as well)
+
+But from https://lwn.net/Articles/710545/, I found that community
+is planning to deprecate the GFP_NOFS flag?
+
+-Ravi
+
