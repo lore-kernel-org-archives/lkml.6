@@ -2,101 +2,113 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E242CC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BE5C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8D52084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549644178;
-	bh=1wNkQkf/UtQ6+fr+LcGI2FbZVeFAPE4tiIqJdacuJZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ksOOxvjQaJy9h4XMEgVhiujeiGa3C0Vqk7dEPiVCvXSxEkS5o2ZypCtqEUK++WAqw
-	 lZu50NTooXk8B8s9TJ285IOpbWL4heBEGg4OJ5OzDYOX/6BO7PzIelSayliAxuNgAz
-	 UPAxpe2N3vdgJx8/jwqzQvBKokHhcCjBMBMrtr5E=
+	by mail.kernel.org (Postfix) with ESMTP id 93DEF2080F
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:44:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q/C7Ms4c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfBHQm5 (ORCPT
+        id S1727230AbfBHQod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:42:57 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54364 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBHQm4 (ORCPT
+        Fri, 8 Feb 2019 11:44:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43797 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHQod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:42:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1wNkQkf/UtQ6+fr+LcGI2FbZVeFAPE4tiIqJdacuJZg=; b=IxAoNOtYHy4S8uz30oREFsiqh
-        qspsU5dV3ia4BFvzawTATtx4bkJcWGvjJ3OiE3WADxTaQkgiBQtK2kp5ys6NBVfpDEgZU9aceL83x
-        TK9XyeLZuvYEeVE0EoGKWph3kOczjdrIFQ0ckwZUHIWqnljdfdAfAIJb26ulDzw1VNbz4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gs9Ep-0002EA-00; Fri, 08 Feb 2019 16:42:51 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3E8EA1127F2F; Fri,  8 Feb 2019 16:42:50 +0000 (GMT)
-Date:   Fri, 8 Feb 2019 16:42:50 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ASoC: msm8916-wcd-analog: add missing license
- information
-Message-ID: <20190208164250.GG6695@sirena.org.uk>
-References: <20190207165755.1548-1-johan@kernel.org>
- <20190207165755.1548-2-johan@kernel.org>
- <20190208115341.GB6695@sirena.org.uk>
- <20190208151502.GP4686@localhost>
+        Fri, 8 Feb 2019 11:44:33 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q2-v6so3518687lji.10
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vH9MF2VJ/mZsuifPIeSJXySSV33CGWujLbuBkNInlec=;
+        b=q/C7Ms4c9X4XCpPkvUCSUNW5S/vcOsPSRg2vBAzcHvDKP0ho/hs54Et+IdYSgPIjIY
+         38qDbbB2jwfw2OXros4obVgE3txkWeVKVh0G+RR1goz77/yBNUsQ29mLC2/BW+aH4mhy
+         stLix7e5+x+4N/kB5s4Bh0sfY5TP3oAweJ5ONqX+YBplaWNNFlXlw3NvBUQ5gvvXzPyK
+         RWeOzHi+hUKpdHE+4buscGCAn0PNsowPR0zgDGaEAi7szURsw07hgww/uCnfLmoGW3PW
+         cbQkdY7X4IanvZR9QuhDWsNWc6LWbwUAzijemah1ZAx+OsLYe6mjPJKJ1lczSJwuBAuT
+         HzzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vH9MF2VJ/mZsuifPIeSJXySSV33CGWujLbuBkNInlec=;
+        b=sLZCufVMEc3PAjfyYzsqjwqsmQVwaMr5VI/xuCuaPm/ww8v3pUqM+NCXklCm32ePdY
+         HUl1MfE/Il8senf1M5k6o+GGwD02aPwi9awXNGQa3+2U8AmSKHzLicZX4kGHHfo0YPhQ
+         TKDxBWmVc7ltaVelKdmqoJrnfjGEvhWDqP7Z+pBLg/mJtNpC0bQ5Dm9iZe7uRnzrPLRL
+         mmmon2SV+I/uhiB1NUeLatRKWJc+ZnxACqQCTBhQCiE8K5MrsztFuC88AaroJFHKPAi1
+         c7CSTPHTULggIxr+1Orqmr5R7hfSGdxKI1YIL+O7FF1025mDZxR3DmWdANfqqoo++Fp6
+         wDIg==
+X-Gm-Message-State: AHQUAubnht8wX+FwGe86FQn/L3VYQqqK2/fGbwXy5Gu4+aH6QwK4F9g9
+        Z8CtsU0frUZYKyh5Sbx/abZ1ECLeKewy0YnEnEQ4uQ==
+X-Google-Smtp-Source: AHgI3Iaqyu677akJUA+/8Q066YhqbZ1vEAC2F6obhyaMxM+RXxODhdxmCS4Wc8Jj86susuDSbUwPnTnkmh/fPzHf+Hg=
+X-Received: by 2002:a2e:7d18:: with SMTP id y24-v6mr1953179ljc.170.1549644270685;
+ Fri, 08 Feb 2019 08:44:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HKEL+t8MFpg/ASTE"
-Content-Disposition: inline
-In-Reply-To: <20190208151502.GP4686@localhost>
-X-Cookie: Mickey Mouse wears a Spiro Agnew watch.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190130224655.255149-1-tkjos@google.com> <20190208112600.GA22147@kroah.com>
+In-Reply-To: <20190208112600.GA22147@kroah.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Fri, 8 Feb 2019 08:44:18 -0800
+Message-ID: <CAHRSSEzEW7AfhmrUbUJnL+DFB2sU2X7J8dnnkO6px7Z7BzpE=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] binder: eliminate use of vmalloc space for binder buffers
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Todd Kjos <tkjos@android.com>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>, joel@joelfernandes.org,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 8, 2019 at 3:26 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jan 30, 2019 at 02:46:48PM -0800, Todd Kjos wrote:
+> > Binder buffers have always been mapped into kernel space
+> > via map_kernel_range_noflush() to allow the binder driver
+> > to modify the buffer before posting to userspace for
+> > processing.
+> >
+> > In recent Android releases, the number of long-running
+> > binder processes has increased to the point that for
+> > 32-bit systems, there is a risk of running out of
+> > vmalloc space.
+> >
+> > This patch set removes the persistent mapping of the
+> > binder buffers into kernel space. Instead, the binder
+> > driver creates temporary mappings with kmap() or
+> > kmap_atomic() to copy to or from the buffer only when
+> > necessary.
+>
+> This patch series blows up when I apply it to my char-misc-next branch:
+>
+> drivers/android/binder_alloc_selftest.c: In function =E2=80=98check_buffe=
+r_pages_allocated=E2=80=99:
+> drivers/android/binder_alloc_selftest.c:108:44: error: =E2=80=98struct bi=
+nder_buffer=E2=80=99 has no member named =E2=80=98data=E2=80=99
+>   end =3D (void *)PAGE_ALIGN((uintptr_t)buffer->data + size);
+>                                             ^~
+> Did you forget to enable CONFIG_ANDROID_BINDER_IPC_SELFTEST when doing yo=
+ur
+> builds?
 
---HKEL+t8MFpg/ASTE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I did forget. Thanks for catching this. I'll repost with the fix.
 
-On Fri, Feb 08, 2019 at 04:15:02PM +0100, Johan Hovold wrote:
+-Todd
 
-> Ah, yes, that makes sense for consistency since you've already enforced
-> that style. And while I don't think the all-c++-comment headers look
-> better in general, for the single copyright statement case it's not too
-> bad.
-
-Yeah, I'm not really actively a fan either.
-
---HKEL+t8MFpg/ASTE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxdsYkACgkQJNaLcl1U
-h9CstAf9HetsWXgiyITwU+/rGgnBrKgOr2pU2+nnMZqPMabWnB2vcLHeM7JzrWRk
-quGhzasynFfL2CJC7qo92djEpPmcp4kIJ7FzyDxJgilEvxglt93YFYllJN4Lr5T4
-B/jnW8QAlWDoVcTe0nM7sBbw8ExoAe4A0KLLlDI57fudnpSDjdk0XPVKVBjOD0Xq
-fjQ/tw+oTwxk0Ov939xKlp6Lv8Nzj+2cdJdYW+jTLq7rmVN6VUGfviP41nXhg4Hw
-cuuO0FzW36HECUx1zoCcNnHo89f3hbtTuW26H8ZgKaBkwdXOruiaaW2aV3AfcLky
-cKrv8cBbDSI+guVQk9Rd6eV+6UAJuw==
-=oHjI
------END PGP SIGNATURE-----
-
---HKEL+t8MFpg/ASTE--
+>
+> thanks,
+>
+> greg k-h
