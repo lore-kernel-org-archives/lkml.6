@@ -2,94 +2,85 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BB6C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A305AC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB41820863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7044D2084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:17:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfBHTQu (ORCPT
+        id S1727351AbfBHTRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:16:50 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.131]:32164 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726703AbfBHTQt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:16:49 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 1AB2ADCB9
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 13:16:49 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sBdpgjHq72PzOsBdpgFAjl; Fri, 08 Feb 2019 13:16:49 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=59426 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gsBdo-000eTu-CC; Fri, 08 Feb 2019 13:16:48 -0600
-Date:   Fri, 8 Feb 2019 13:16:47 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
-        linux-wimax@intel.com, "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: wimax/i2400m: mark expected switch fall-through
-Message-ID: <20190208191647.GA3727@embeddedor>
+        Fri, 8 Feb 2019 14:17:18 -0500
+Received: from mga09.intel.com ([134.134.136.24]:60147 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726703AbfBHTRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 14:17:17 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 11:17:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="121021449"
+Received: from szilberm-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.172])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Feb 2019 11:17:11 -0800
+Date:   Fri, 8 Feb 2019 21:17:10 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: =?iso-8859-1?Q?Uni?=
+ =?iso-8859-1?Q?fy_the_send_callback_behaviour=E4?=
+Message-ID: <20190208191710.GA30645@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gsBdo-000eTu-CC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:59426
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190208190057.GA3439@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+On Fri, Feb 08, 2019 at 09:00:57PM +0200, Jarkko Sakkinen wrote:
+> It all looks now legit, but just in case I'll add a check for the return
+> value to tpm_try_transmit() and a warning if it is not zero in the
+> success case (and after that zeroing of rc).
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+Now the commits are applied both master and next, and these are
+the checks for send():
 
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough.
+rc = chip->ops->send(chip, buf, count);
+if (rc < 0) {
+	if (rc != -EPIPE)
+		dev_err(&chip->dev,
+			"%s: send(): error %d\n", __func__, rc);
+	return rc;
+}
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wimax/i2400m/usb.c | 1 +
- 1 file changed, 1 insertion(+)
+/* A sanity check. send() should just return zero on success e.g.
+ * not the command length.
+ */
+if (rc > 0) {
+	dev_warn(&chip->dev,
+		 "%s: send(): invalid value %d\n", __func__, rc);
+	rc = 0;
+}
 
-diff --git a/drivers/net/wimax/i2400m/usb.c b/drivers/net/wimax/i2400m/usb.c
-index f8eb66ef2944..73842a830645 100644
---- a/drivers/net/wimax/i2400m/usb.c
-+++ b/drivers/net/wimax/i2400m/usb.c
-@@ -210,6 +210,7 @@ int __i2400mu_send_barker(struct i2400mu *i2400mu,
- 			msleep(10);	/* give the device some time */
- 			goto retry;
- 		}
-+		/* fall through */
- 	case -EINVAL:			/* while removing driver */
- 	case -ENODEV:			/* dev disconnect ... */
- 	case -ENOENT:			/* just ignore it */
--- 
-2.20.1
+Should be fairly safe play now.
 
+/Jarkko
