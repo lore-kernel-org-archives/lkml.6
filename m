@@ -2,101 +2,98 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15B9C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19DFC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D00520857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBFB220857
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549626735;
+	bh=pohZGXFefnjdUnhTfmgy+boYVO8nt6nd54dOCA9vnC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eIHG3sOyr4qhooiYNqRNScXeQfYOsAbyGqSN+6R4dXFnQumnMWKnOFAk3J0QHK/dn
+	 xwr+vyriKIAyHb3pZx9k/2a5K5w+Igjj9R08Ss1U00peUcH5oAE9n3Rr0DUXmhKFTk
+	 P7g7PoAHW17H8PyJCWc7+FKd3xUJoV8CjuXA85wk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfBHLwL (ORCPT
+        id S1727480AbfBHLwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:52:11 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:41121 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbfBHLwI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:52:08 -0500
-X-Originating-IP: 90.88.22.177
-Received: from localhost (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 08111240006;
-        Fri,  8 Feb 2019 11:52:05 +0000 (UTC)
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 3/3] gpio: em: drop ->irq_{request,release}_resources hooks
-Date:   Fri,  8 Feb 2019 12:52:01 +0100
-Message-Id: <20190208115201.7518-4-thomas.petazzoni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208115201.7518-1-thomas.petazzoni@bootlin.com>
-References: <20190208115201.7518-1-thomas.petazzoni@bootlin.com>
+        Fri, 8 Feb 2019 06:52:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727398AbfBHLwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:52:12 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B9F9217D8;
+        Fri,  8 Feb 2019 11:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549626731;
+        bh=pohZGXFefnjdUnhTfmgy+boYVO8nt6nd54dOCA9vnC4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QwxA7bccmmOWBKzhTirhSK6soPqm1Q+Y3HVcYk8qWTSxEMu55T6tdoVLZ/4ByF3uY
+         ONZyKQz6YaZG1ibx2T/6YnfdIxjodTQMlNDzZ84WJegsfGP4NOYYFoaljGEbvF4Adl
+         RYB9B73/xQlfN5/hQKf6CNQ/MM53GVBT9qh7wNjI=
+Date:   Fri, 8 Feb 2019 12:52:09 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH 2/4] components: multiple components for a device
+Message-ID: <20190208115209.GB19392@kroah.com>
+References: <20190207232759.14553-1-daniel.vetter@ffwll.ch>
+ <20190207232759.14553-2-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207232759.14553-2-daniel.vetter@ffwll.ch>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Those hooks implement the exact same behavior as the default hooks by
-gpiolib, so there is no point in having a duplicated definition in
-gpio-dwapb.
+On Fri, Feb 08, 2019 at 12:27:57AM +0100, Daniel Vetter wrote:
+> Component framework is extended to support multiple components for
+> a struct device. These will be matched with different masters based on
+> its sub component value.
+> 
+> We are introducing this, as I915 needs two different components
+> with different subcomponent value, which will be matched to two
+> different component masters(Audio and HDCP) based on the subcomponent
+> values.
+> 
+> v2: Add documenation.
+> 
+> v3: Rebase on top of updated documenation.
+> 
+> v4: Review from Rafael:
+> - Remove redundant "This" from kerneldoc (also in the previous patch)
+> - Streamline the logic in find_component() a bit.
+> 
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1 code)
+> Signed-off-by: Ramalingam C <ramalingam.c@intel.com> (v1 commit message)
+> Cc: Ramalingam C <ramalingam.c@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
----
-Note: this commit was only build tested.
----
- drivers/gpio/gpio-em.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
-
-diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-index 982e699a5b81..e27c56854ee7 100644
---- a/drivers/gpio/gpio-em.c
-+++ b/drivers/gpio/gpio-em.c
-@@ -98,29 +98,6 @@ static void em_gio_irq_enable(struct irq_data *d)
- 	em_gio_write(p, GIO_IEN, BIT(irqd_to_hwirq(d)));
- }
- 
--static int em_gio_irq_reqres(struct irq_data *d)
--{
--	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
--	int ret;
--
--	ret = gpiochip_lock_as_irq(&p->gpio_chip, irqd_to_hwirq(d));
--	if (ret) {
--		dev_err(p->gpio_chip.parent,
--			"unable to lock HW IRQ %lu for IRQ\n",
--			irqd_to_hwirq(d));
--		return ret;
--	}
--	return 0;
--}
--
--static void em_gio_irq_relres(struct irq_data *d)
--{
--	struct em_gio_priv *p = irq_data_get_irq_chip_data(d);
--
--	gpiochip_unlock_as_irq(&p->gpio_chip, irqd_to_hwirq(d));
--}
--
--
- #define GIO_ASYNC(x) (x + 8)
- 
- static unsigned char em_gio_sense_table[IRQ_TYPE_SENSE_MASK + 1] = {
-@@ -344,8 +321,6 @@ static int em_gio_probe(struct platform_device *pdev)
- 	irq_chip->irq_mask = em_gio_irq_disable;
- 	irq_chip->irq_unmask = em_gio_irq_enable;
- 	irq_chip->irq_set_type = em_gio_irq_set_type;
--	irq_chip->irq_request_resources = em_gio_irq_reqres;
--	irq_chip->irq_release_resources = em_gio_irq_relres;
- 	irq_chip->flags	= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND;
- 
- 	p->irq_domain = irq_domain_add_simple(pdev->dev.of_node, ngpios, 0,
--- 
-2.20.1
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
