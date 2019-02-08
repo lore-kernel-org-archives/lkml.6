@@ -2,95 +2,87 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3757C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4F6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F8BF2083B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F37B12083B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfBHTK4 (ORCPT
+        id S1727238AbfBHTLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:10:56 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.72]:27320 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726852AbfBHTK4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:10:56 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 4E6B432592
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 13:09:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sBWNgDJY1YTGMsBWNgsZZ0; Fri, 08 Feb 2019 13:09:07 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=59368 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gsBWM-000Y9Q-KE; Fri, 08 Feb 2019 13:09:06 -0600
-Date:   Fri, 8 Feb 2019 13:09:06 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Petko Manolov <petkan@nucleusys.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] net: usb: rtl8150: mark expected switch fall-through
-Message-ID: <20190208190906.GA19976@embeddedor>
+        Fri, 8 Feb 2019 14:11:35 -0500
+Received: from bsmtp8.bon.at ([213.33.87.20]:54882 "EHLO bsmtp8.bon.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbfBHTLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 14:11:35 -0500
+X-Greylist: delayed 2517 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 14:11:34 EST
+Received: from bsmtp7.bon.at (unknown [192.168.181.107])
+        by bsmtp8.bon.at (Postfix) with ESMTPS id 43x3cf1yltz5tvh
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 19:29:38 +0100 (CET)
+Received: from dx.site (unknown [93.83.142.38])
+        by bsmtp7.bon.at (Postfix) with ESMTPSA id 43x3cZ4C53z5tlB;
+        Fri,  8 Feb 2019 19:29:34 +0100 (CET)
+Received: from [IPv6:::1] (localhost [IPv6:::1])
+        by dx.site (Postfix) with ESMTP id 70B72211F;
+        Fri,  8 Feb 2019 19:29:33 +0100 (CET)
+Subject: Re: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+To:     Jeff King <peff@peff.net>,
+        "Randall S. Becker" <rsbecker@nexbridge.com>
+Cc:     'Junio C Hamano' <gitster@pobox.com>, git@vger.kernel.org,
+        'Linux Kernel' <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com>
+ <20190208165052.GC23461@sigill.intra.peff.net>
+ <001101d4bfd6$b9430230$2bc90690$@nexbridge.com>
+ <20190208180321.GB27673@sigill.intra.peff.net>
+From:   Johannes Sixt <j6t@kdbg.org>
+Message-ID: <0694f2f1-040a-1d8c-cd01-2cf51cdbe426@kdbg.org>
+Date:   Fri, 8 Feb 2019 19:29:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gsBWM-000Y9Q-KE
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:59368
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190208180321.GB27673@sigill.intra.peff.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+Am 08.02.19 um 19:03 schrieb Jeff King:
+> On Fri, Feb 08, 2019 at 12:49:59PM -0500, Randall S. Becker wrote:
+>> Would you object to something like this:
+>>
+>> if [ ! -e /dev/zero ]; then
+>> 	# use shred or some other mechanism (still trying to figure out a solution)
+>> else
+>> 	# existing dd
+>> fi
+> 
+> That's fine, as long as it's wrapped up in a function in order to keep
+> the tests readable.
+> 
+> Though I suspect we may be able to just find a solution that works
+> everywhere, without having two different implementations. If we know we
+> need $count bytes for dd, we could probably just generate a file with
+> that many NULs in it.
+> 
+> Other cases don't seem to actually care that they're getting NULs, and
+> are just redirecting stdin from /dev/zero to get an infinite amount of
+> input. They could probably use "yes" for that.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+If the data does not have to be a sequence of zero bytes, the
+alternatives are:
 
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough.
+* `test-genrandom seed-string $size` for a sequence of reproducible
+"random" bytes
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/usb/rtl8150.c | 1 +
- 1 file changed, 1 insertion(+)
+* `printf "%0*d" $size 0` for a sequence of '0' characters.
 
-diff --git a/drivers/net/usb/rtl8150.c b/drivers/net/usb/rtl8150.c
-index 3f145e4c6c08..59dbdbb5feff 100644
---- a/drivers/net/usb/rtl8150.c
-+++ b/drivers/net/usb/rtl8150.c
-@@ -847,6 +847,7 @@ static int rtl8150_ioctl(struct net_device *netdev, struct ifreq *rq, int cmd)
- 	switch (cmd) {
- 	case SIOCDEVPRIVATE:
- 		data[0] = dev->phy;
-+		/* fall through */
- 	case SIOCDEVPRIVATE + 1:
- 		read_mii_word(dev, dev->phy, (data[1] & 0x1f), &data[3]);
- 		break;
--- 
-2.20.1
+In t5318, the zero bytes do matter, though.
 
+-- Hannes
