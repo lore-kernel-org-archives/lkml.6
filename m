@@ -2,147 +2,123 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2EBC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5920C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCD4E2177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 702872177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:36:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UKcD1P4G"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="lfXbiGgz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbfBHMgq (ORCPT
+        id S1727478AbfBHMgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:36:46 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:56790 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbfBHMgp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:36:45 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190208123644euoutp02d3e57b7085d09720419de16c37df57ba~BY7uVPeBH0194801948euoutp02S
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 12:36:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190208123644euoutp02d3e57b7085d09720419de16c37df57ba~BY7uVPeBH0194801948euoutp02S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549629404;
-        bh=6KZFWnRyX18XnxLYJNRuBcadu4N+tR9bz7UgH2K5uvs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=UKcD1P4GhKXGy03AsU7hSVWG9pPimicdpdgqKmDaJUaZDU2uZnBVW4JkLQ8/SrLw+
-         9fTgDmWI1i0FpOp6ObvyvaDEq/CZvIfFDwb5Mq1OKzcAc3kgiEwQ/ONvYo6T07Jlg3
-         LZOQ1NBiutee34sfLPxIuy5srmvkmVJfx0H9VTjE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190208123643eucas1p17617816d79aaa0940a11d9382c459950~BY7triYJx2954129541eucas1p1I;
-        Fri,  8 Feb 2019 12:36:43 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6D.9D.04441.BD77D5C5; Fri,  8
-        Feb 2019 12:36:43 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190208123641eucas1p1410682d411a4b2aa18de07919d12f437~BY7sRgVGJ0788807888eucas1p1n;
-        Fri,  8 Feb 2019 12:36:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190208123641eusmtrp24cc933a0e01ff0a386c0c6c8c9424868~BY7sDQWbK2768227682eusmtrp2a;
-        Fri,  8 Feb 2019 12:36:41 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-dc-5c5d77db482d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 16.17.04284.9D77D5C5; Fri,  8
-        Feb 2019 12:36:41 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190208123641eusmtip159fd90141c3a22e0fad498499a839399~BY7rjykBV0272702727eusmtip1U;
-        Fri,  8 Feb 2019 12:36:41 +0000 (GMT)
-Subject: Re: [PATCH] usb: dwc3: Enable GBit Ethernet on Odroid XU4
-To:     Roger Quadros <rogerq@ti.com>,
-        Jochen Sprickerhof <jochen@sprickerhof.de>
-Cc:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kishon Vijay Abraham I <kishon@ti.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <bdbce410-7f48-17a5-b58b-3ebd65ca6913@samsung.com>
-Date:   Fri, 8 Feb 2019 13:36:40 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <5C5AB41C.9080402@ti.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7q3y2NjDKYtZLc41vaE3aJ58Xo2
-        i6V/7zFaXHjaw2ZxedccNotFy1qZLXoeaTmwe2xa1cnmsX/uGnaPDVv+sXgcv7GdyePzJrkA
-        1igum5TUnMyy1CJ9uwSujEfPd7AWfOSoODdpFlMD4yT2LkZODgkBE4nHvdOZQWwhgRWMErPv
-        RHYxcgHZXxgl9n9fxQjhfGaUeHxnK1zH9YlL2CE6ljNKbJ/jBlH0nlHi+avpYAlhASeJw08W
-        s3QxcnCICPhLXN5YDBJmFtjJKPHvTgWIzSZgKNH1tosNxOYVsJPYPfcDC4jNIqAisWfXGkYQ
-        W1QgRmLKuSPsEDWCEidnPgGr4RRQk3j+cT4jxEx5ie1v5zBD2OISt57MZwK5R0JgE7vEovZ/
-        zBBHu0j873rJCmELS7w6vgXqGRmJ/zthGpoZJdpnzGKHcHoYJbbO2cEGUWUtcfj4RVaQb5gF
-        NCXW79KHCDtKTLh6lhEkLCHAJ3HjrSDEEXwSk7aBghQkzCvR0SYEUa0mMev4Ori1By9cYp7A
-        qDQLyWuzkLwzC8k7sxD2LmBkWcUonlpanJueWmyYl1quV5yYW1yal66XnJ+7iRGYfk7/O/5p
-        B+PXS0mHGAU4GJV4eC9ox8QIsSaWFVfmHmKU4GBWEuFNKo2NEeJNSaysSi3Kjy8qzUktPsQo
-        zcGiJM5bzfAgWkggPbEkNTs1tSC1CCbLxMEp1cCYfnnJ5lU/Vp91d5j3xGS1XcoOtn9T3Hc3
-        Gy1Nsr8g6c0RrfJ031KLp/sbTZa0HgjIc7jud/aD+FwTR9UbLWXuMr8WhOQqF+hvqzT5a26Y
-        uq67I1RjYZjpWqHOz8/1/ad2XYpKPnX07hOWhd2uDzaHvjj4qX+m++XQ0G23zvxw/cD+9q5I
-        9txIJZbijERDLeai4kQA32uT9zsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xu7o3y2NjDK49VbQ41vaE3aJ58Xo2
-        i6V/7zFaXHjaw2ZxedccNotFy1qZLXoeaTmwe2xa1cnmsX/uGnaPDVv+sXgcv7GdyePzJrkA
-        1ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNTJX07m5TUnMyy1CJ9uwS9jEfP
-        d7AWfOSoODdpFlMD4yT2LkZODgkBE4nrE5cA2VwcQgJLGSWuTjsPlZCRODmtgRXCFpb4c62L
-        DcQWEnjLKNG8wRvEFhZwkjj8ZDELiC0i4Ctx6eV+ZpBBzAI7GSWeTdzFBDH1AqPE0d/PGUGq
-        2AQMJbreQkziFbCT2D33A1g3i4CKxJ5da4BqODhEBWIkrp5jhCgRlDg58wlYCaeAmsTzj/PB
-        4swC6hJ/5l1ihrDlJba/nQNli0vcejKfaQKj0Cwk7bOQtMxC0jILScsCRpZVjCKppcW56bnF
-        hnrFibnFpXnpesn5uZsYgTG37djPzTsYL20MPsQowMGoxMOroRcTI8SaWFZcmXuIUYKDWUmE
-        N6k0NkaINyWxsiq1KD++qDQntfgQoynQbxOZpUST84HpIK8k3tDU0NzC0tDc2NzYzEJJnPe8
-        QWWUkEB6YklqdmpqQWoRTB8TB6dUA6NraIT/k2C11Job2jJz0yuZJwj7Hmfym58uedGM4WTN
-        tk9P9H7pMl9+yZGh++dZev1D26QOt9SIm0cXmu0uXKN5OpUtUlXVg9EyfYXd05T/jHsX3lj0
-        0/1zmA9fd8zF+z/KVq5ye7+7P3L1X0ONy1+KRflfnbHRbZl6vW96aaCcxg65hu/rviqxFGck
-        GmoxFxUnAgDpdjVUzwIAAA==
-X-CMS-MailID: 20190208123641eucas1p1410682d411a4b2aa18de07919d12f437
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190206101740epcas2p131674b4b9733047711855ffb2e7a99a7
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190206101740epcas2p131674b4b9733047711855ffb2e7a99a7
-References: <20190121140204.GA2360@vis> <5C5A9DCB.8040507@ti.com>
-        <20190206093830.GS26157@vis>
-        <CGME20190206101740epcas2p131674b4b9733047711855ffb2e7a99a7@epcas2p1.samsung.com>
-        <5C5AB41C.9080402@ti.com>
+        Fri, 8 Feb 2019 07:36:50 -0500
+Received: from onstation.org ([52.200.56.107]:36118 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726547AbfBHMgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:36:47 -0500
+Received: from xilitla.corp.homestore.net (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 5B8CF167;
+        Fri,  8 Feb 2019 12:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1549629406;
+        bh=NQAgLIkej0qo4K7KZhSM4e805UeNbxIJ95v1NUnfvg0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lfXbiGgz9wfP+1clODanCTXXv0Ur5UM7vRXN9oj8fQkrGPq/mkbkdWWRJrnWsQXm6
+         vWALCX8gQlMfNxmMNEN//+2V4E1zOGAMAYsMjL3SBxLDLh5gRHayqRoB4kd8pkbI56
+         NMv/yOt9/qi30f+rBbeN/jfWQGprC6xg84Jzjg7s=
+From:   Brian Masney <masneyb@onstation.org>
+To:     linus.walleij@linaro.org
+Cc:     sboyd@kernel.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH -next] spmi: pmic-arb: revert "validate type when mapping IRQ"
+Date:   Fri,  8 Feb 2019 07:36:35 -0500
+Message-Id: <20190208123635.26755-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
+Validation of the IRQ type was added to spmi pmic-arb, however spmi-mpp
+in device tree still uses IRQ_TYPE_NONE. This commit caused the
+spmi-mpp probe to fail since platform_irq_count() would return 0.
+Correct this by backing out the previous patch.
 
-On 2019-02-06 11:17, Roger Quadros wrote:
-> +Marek
->
-> As Vivek's and Andrzej's Samsung IDs bounced back.
->
-> On 06/02/19 11:38, Jochen Sprickerhof wrote:
->> * Roger Quadros <rogerq@ti.com> [2019-02-06 10:41]:
->>> Hi,
->>>
->>> On 21/01/19 16:02, Jochen Sprickerhof wrote:
->> [..]
->>>> I'm not sure why this it only works with the driver compiled into the
->>>> kernel nor why it needs a hard reset or why it was the line was dropped
->>>> when the patch was accepted. Would be great to get some feedback of the
->>>> authors.
->>> When XHCI driver is compiled into the kernel are the relevant PHY drivers
->>> compiled in as well?
->> Only CONFIG_USB_PHY=y (I took the config from the linux-image-4.19.0-1-armmp_4.19.13-1_armhf.deb Debian package as a basis where this is the default).
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Fixes: 135ef21ab064 ("spmi: pmic-arb: validate type when mapping IRQ")
+---
+Linus: I think that the better longer-term approach is to just embed the
+IRQ counts similar to what is now in spmi-gpio. Since we are getting
+close to the end of the dev cycle, I think it is safer to just drop
+the old patch for the time being. I'll commit to doing that work for the
+next dev cycle, although I can send you that change this weekend if you
+prefer that we go that route instead.
 
-I confirm that on Odroid XU4 USB 3.0 works only when all related drivers
-(dwc3, xhci and exynos5 drd phy) are compiled into the kernel. If they
-are compiled as modules, USB 3.0 calibration doesn't work. The mentioned
-patch doesn't fix anything.
+My ssbi-gpio series does not have this issue.
 
-Best regards
+ drivers/spmi/spmi-pmic-arb.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+index 316e2708f3ba..928759242e42 100644
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -740,9 +740,9 @@ static int qpnpint_irq_domain_translate(struct irq_domain *d,
+ }
+ 
+ 
+-static int qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
+-				  struct irq_domain *domain, unsigned int virq,
+-				  irq_hw_number_t hwirq, unsigned int type)
++static void qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
++				   struct irq_domain *domain, unsigned int virq,
++				   irq_hw_number_t hwirq, unsigned int type)
+ {
+ 	irq_flow_handler_t handler;
+ 
+@@ -751,15 +751,11 @@ static int qpnpint_irq_domain_map(struct spmi_pmic_arb *pmic_arb,
+ 
+ 	if (type & IRQ_TYPE_EDGE_BOTH)
+ 		handler = handle_edge_irq;
+-	else if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
+-		handler = handle_level_irq;
+ 	else
+-		return -EINVAL;
++		handler = handle_level_irq;
+ 
+ 	irq_domain_set_info(domain, virq, hwirq, &pmic_arb_irqchip, pmic_arb,
+ 			    handler, NULL, NULL);
+-
+-	return 0;
+ }
+ 
+ static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
+@@ -776,12 +772,9 @@ static int qpnpint_irq_domain_alloc(struct irq_domain *domain,
+ 	if (ret)
+ 		return ret;
+ 
+-	for (i = 0; i < nr_irqs; i++) {
+-		ret = qpnpint_irq_domain_map(pmic_arb, domain, virq + i,
+-					     hwirq + i, type);
+-		if (ret)
+-			return ret;
+-	}
++	for (i = 0; i < nr_irqs; i++)
++		qpnpint_irq_domain_map(pmic_arb, domain, virq + i, hwirq + i,
++				       type);
+ 
+ 	return 0;
+ }
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.17.2
 
