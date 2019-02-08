@@ -2,112 +2,110 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9368FC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D908C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F87B207E0
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 107632177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549655091;
+	bh=YffvMbEGhoruT6GnoPlQiNrwPjeurAJ66lZSInC2jnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2KcEN58gL+5jL/MebiTI2aERs0uziWC02rauvkvuyFnqCDyXqcTxnaRFHRhXHNn7+
+	 QEgX2XkMbVdXhZVkqIpBdzbTxH3a+4u0XZ3MiVrml61oi86AHBvhpVD5P/0ZjF18JY
+	 faEgzimkf/rBVqr1AZok9foGFEat+kOEJ7jxqNdc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfBHTo1 (ORCPT
+        id S1727174AbfBHTot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:44:27 -0500
-Received: from smtprelay01.ispgateway.de ([80.67.18.13]:64437 "EHLO
-        smtprelay01.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBHTo1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:44:27 -0500
-X-Greylist: delayed 557 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 14:44:27 EST
-Received: from [91.97.136.117] (helo=localhost)
-        by smtprelay01.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <jochen@sprickerhof.de>)
-        id 1gsBvU-0005Hy-MR; Fri, 08 Feb 2019 20:35:04 +0100
-Date:   Fri, 8 Feb 2019 20:35:05 +0100
-From:   Jochen Sprickerhof <jochen@sprickerhof.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Roger Quadros <rogerq@ti.com>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH] usb: dwc3: Enable GBit Ethernet on Odroid XU4
-Message-ID: <20190208193505.GA5822@vis>
-References: <20190121140204.GA2360@vis>
- <5C5A9DCB.8040507@ti.com>
- <20190206093830.GS26157@vis>
- <CGME20190206101740epcas2p131674b4b9733047711855ffb2e7a99a7@epcas2p1.samsung.com>
- <5C5AB41C.9080402@ti.com>
- <bdbce410-7f48-17a5-b58b-3ebd65ca6913@samsung.com>
+        Fri, 8 Feb 2019 14:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726522AbfBHTos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 14:44:48 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 514EA207E0;
+        Fri,  8 Feb 2019 19:44:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549655087;
+        bh=YffvMbEGhoruT6GnoPlQiNrwPjeurAJ66lZSInC2jnI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=acY2bOD2Ez532pUzGiQeQ1HFQ4XLDV/HJukWkrfaohpSzyFrr+vYKGD175ITLTJtX
+         PQbDFJS65jn7eu7cQHzyaiTGftaA9S02Qk9jv1hSynw7WGx90BFhU44bHnXT3Xbk/H
+         nOY/30DgohF1A+ycl1sChPgQwn+UOnNwMYCJP0O0=
+Date:   Fri, 8 Feb 2019 13:44:45 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/2] genirq/msi: Clean up usage of __u8/__u16 types
+Message-ID: <20190208194444.GW7268@google.com>
+References: <20190208165439.19503-1-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bdbce410-7f48-17a5-b58b-3ebd65ca6913@samsung.com>
+In-Reply-To: <20190208165439.19503-1-logang@deltatee.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Df-Sender: NTc3MDAz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[+cc Marc, Thomas]
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 08, 2019 at 09:54:38AM -0700, Logan Gunthorpe wrote:
+> The double underscore types are meant for compatibility in userspace
+> headers which does not apply here. Therefore, change to use the
+> standard no-underscore types.
+> 
+> The origin of the double underscore types dates back to before the
+> git era so I was not able to find a commit to see the original
+> justification.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Bjorn Helgaas <helgaas@kernel.org>
 
-Hi Marek,
+I applied both of these:
 
-* Marek Szyprowski <m.szyprowski@samsung.com> [2019-02-08 13:36]:
->>>> On 21/01/19 16:02, Jochen Sprickerhof wrote:
->>> [..]
->>>>> I'm not sure why this it only works with the driver compiled into the
->>>>> kernel nor why it needs a hard reset or why it was the line was dropp=
-ed
->>>>> when the patch was accepted. Would be great to get some feedback of t=
-he
->>>>> authors.
->>>> When XHCI driver is compiled into the kernel are the relevant PHY driv=
-ers
->>>> compiled in as well?
->>> Only CONFIG_USB_PHY=3Dy (I took the config from the linux-image-4.19.0-=
-1-armmp_4.19.13-1_armhf.deb Debian package as a basis where this is the def=
-ault).
->
->I confirm that on Odroid XU4 USB 3.0 works only when all related drivers
->(dwc3, xhci and exynos5 drd phy) are compiled into the kernel. If they
->are compiled as modules, USB 3.0 calibration doesn't work. The mentioned
->patch doesn't fix anything.
+  PCI: Clean up usage of __u32 type
+  genirq/msi: Clean up usage of __u8/__u16 types
 
-I've just tried Linux v5.0-rc5 with the Debian config and=20
-USB_XHCI_PLATFORM=3Dy and it works, thanks!
+to pci/misc for v5.1, thanks!
 
-Is there a way to make it work with xhci compiled as a module, so it=20
-would work in Debian out of the box?
-
-Cheers Jochen
-
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEc7KZy9TurdzAF+h6W//cwljmlDMFAlxd2eUACgkQW//cwljm
-lDPPHBAAnDHdDPIaq7kOdaLqP8bJRPxh1jU+C+jFA96s+nh34nHC3eRGEX5IZe7o
-y3vfnslLmMSvhVhzVOmCzoC4B58sIHBNwEijKqdecMD8pDY4yxmKfGWSIDy+8qBl
-sbz2el2Qq3MBNBmMn1uTczDg7Lb/I8TkpzLZ4brXKQsZifEJm8gVIPRh8zqAYz8z
-sSYxvMHd2VUxT+daPRMnJJwSnpDkvGwC8ti8btK4GPHzYwyV4Yl9BLSUMQxUehAk
-YsJx6VnBhu1e7E3t/9QqatgXYkrLcozgjSGKiV2HKKr0+OYa/ko2zfL9P5zAvGZx
-0atzR5Crx0mQNQPeU6KC5QB801/XzydkhHHxpG2iDi37j/H9GFcb8KWeYdqagZsa
-7uk13DQ/htuHDoas81WnRaGa7t7XrfIhQZMSVADdmSfmK/Fsu551djKuH8Y7N5sh
-BpGyRgQXciBdYRUMhDoa99K5rBeuXlfZ6VKCHg67OJaueaX2SumXxTvBZUTDvvlX
-eTDzZ9nuhX7bbBQf4UFgcFZWGJMMt9EBRrgvJu2AmWZ5Mbv4MVX0XYuP2khwXZ9F
-lvu5KyiKqQExG3XZkN2dKCXU/34f6Kf/M02rOQDXlj11WMZEsVGQCkcX0CUix9Z0
-mn0B/hfgSU3K45dK1DVlhXnyc3WWgEVA05hdVDpO0EkH331Mr6M=
-=qgKH
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
+> ---
+>  include/linux/msi.h | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index 784fb52b9900..7e9b81c3b50d 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -83,12 +83,12 @@ struct msi_desc {
+>  		struct {
+>  			u32 masked;
+>  			struct {
+> -				__u8	is_msix		: 1;
+> -				__u8	multiple	: 3;
+> -				__u8	multi_cap	: 3;
+> -				__u8	maskbit		: 1;
+> -				__u8	is_64		: 1;
+> -				__u16	entry_nr;
+> +				u8	is_msix		: 1;
+> +				u8	multiple	: 3;
+> +				u8	multi_cap	: 3;
+> +				u8	maskbit		: 1;
+> +				u8	is_64		: 1;
+> +				u16	entry_nr;
+>  				unsigned default_irq;
+>  			} msi_attrib;
+>  			union {
+> -- 
+> 2.19.0
+> 
