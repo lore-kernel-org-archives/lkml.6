@@ -2,220 +2,157 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB09C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F1C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F122084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A882177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="NDvX+37b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwH0P+KH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfBHTSB (ORCPT
+        id S1727458AbfBHTTi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:18:01 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40098 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727125AbfBHTSB (ORCPT
+        Fri, 8 Feb 2019 14:19:38 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36709 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbfBHTTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:18:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 43FEB8EE2FF;
-        Fri,  8 Feb 2019 11:18:01 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NQA0BeCezmWC; Fri,  8 Feb 2019 11:18:01 -0800 (PST)
-Received: from host186.65.213.217 (unknown [65.213.217.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9EDFF8EE0BF;
-        Fri,  8 Feb 2019 11:18:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1549653481;
-        bh=w/8GcRYpIeKuC6iRiY8gS+tIXb9B2qsaFxFOW/7BrtM=;
-        h=Subject:From:To:Cc:Date:From;
-        b=NDvX+37bJ4QdTaJDN9KIW4c95nTl/zNwGhrsXhGrB6VUayXMjQ/YZHZS5fZzy9965
-         sQsoOTy9ejKoNBOfwi1AtTESinZ5APTgac4vvmxffw4nJQY90mSrZCWMeSj5kuPNrG
-         ihi1z803+k2nc/BoTtMN8xfFVNwaEi5oiiFUn6fw=
-Message-ID: <1549653479.3647.13.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 5.0-rc5
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 08 Feb 2019 14:17:59 -0500
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Feb 2019 14:19:37 -0500
+Received: by mail-pf1-f194.google.com with SMTP id d22so2094969pfo.3;
+        Fri, 08 Feb 2019 11:19:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9JhHL5/aksfCmH9dx827g1mYpbbDSTWhMDYItxweaDE=;
+        b=fwH0P+KH+AnXBQX9gQKdRgiLAPihtgoDmiPzLKxYB0yoWh72BnAUhPSfwDV1SzdG0z
+         Be7p2AYs3KpzTQLzNJagmOBOgUEEQqLmSx4Bhs59FdU3NHh8EDTOArfdPMx2KeZycl8C
+         Qbd2R2ZT/zOPVl5on7uTn5k9l1NU/lLelyyW1DxMomyIj62uu/gpDwoVpbLyoNTlNtkD
+         U9rRuLqRs4/5vACabF1lj9LiKS9UFPD8lOaqg+FJmORXMF0qy2gxcrytLjqR0RvRbaBQ
+         AFFEykW60pR3rxpM8hw1fxVHWEan0lTu0X4CDFwh6tvwA3huSN+pOqDh8v5jALe5pqrx
+         eOsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9JhHL5/aksfCmH9dx827g1mYpbbDSTWhMDYItxweaDE=;
+        b=oMjHKmjDYYfuVEAy3QKBUJs8TyJ8Bke2TkGnuyg0rp9XYpamSyGaAn0O6PGwhkWxLM
+         DmdnpiJYneNc0KEIvwYgEgbPXfTTwnWnR6dFM8z6C9NsXkWzzbF/0l6/z3pot7C6gXNo
+         TvBzpV6ka3lNVW9VXuT/NwXr6Qab3Jj3JLJbPdjjGsFW3d6A1ozsbNK2l7m2g7SrBYc5
+         dhkpL2kGflGZOaz/wvHCTtsbjP+2WCux9C/hLi4vQvmozJgz66Q6fpH2WXwjZXUhuelp
+         j6Ds2itHKBl0SLeVSu9ANh45r3XYII6lKN5TEEDbhUQi/GcAD+Xn8+iJrLHyVMd+nlLG
+         Masw==
+X-Gm-Message-State: AHQUAubyckr1SdQNRwWol/OqnvhhTca1A74/6mlbdSSNAqXnqmVIGhs6
+        lA5nlrYMzyMxEoYRWd3aVeeejOyc
+X-Google-Smtp-Source: AHgI3IYN71jIZ/yGMj6QsDbb2Eu4vTRwKJZHUjVca+DC6pD2I+PTR6O/zg3L3m2vTlQubpsHnru5xQ==
+X-Received: by 2002:a63:fc59:: with SMTP id r25mr6725871pgk.302.1549653576047;
+        Fri, 08 Feb 2019 11:19:36 -0800 (PST)
+Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
+        by smtp.googlemail.com with ESMTPSA id o5sm4761817pgm.68.2019.02.08.11.19.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 11:19:35 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
+To:     linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
+        IMX), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding matrices
+Date:   Fri,  8 Feb 2019 11:19:25 -0800
+Message-Id: <20190208191928.13273-2-steve_longerbeam@mentor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190208191928.13273-1-steve_longerbeam@mentor.com>
+References: <20190208191928.13273-1-steve_longerbeam@mentor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a set of five minor fixes (although, tecnhincally, the aicxxx
-fix is for a major problem in that the driver won't load without it,
-but I think the fact it's taken us since 4.10 to discover this
-indicates that the user base for these things has declined).
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-The patch is available here:
+The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
+coefficients, so rename them to indicate that. And add some comments
+to make clear these are BT.601 coefficients encoding between YUV limited
+range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
+matrix, so rename to ic_csc_identity. No functional changes.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-
-The short changelog is:
-
-Damien Le Moal (1):
-      scsi: sd_zbc: Fix zone information messages
-
-David Disseldorp (1):
-      scsi: target: make the pi_prot_format ConfigFS path readable
-
-James Bottomley (1):
-      scsi: aic94xx: fix module loading
-
-Ross Lagerwall (1):
-      Revert "scsi: libfc: Add WARN_ON() when deleting rports"
-
-Vaibhav Jain (1):
-      scsi: cxlflash: Prevent deadlock when adapter probe fails
-
-And the diffstat:
-
- drivers/scsi/aic94xx/aic94xx_init.c   |  8 ++++----
- drivers/scsi/cxlflash/main.c          |  2 ++
- drivers/scsi/libfc/fc_rport.c         |  1 -
- drivers/scsi/sd_zbc.c                 | 12 ++++++++----
- drivers/target/target_core_configfs.c |  8 +++++++-
- 5 files changed, 21 insertions(+), 10 deletions(-)
-
-With full diff below.
-
-James
-
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 ---
+Changes in v2:
+- rename ic_csc_rgb2rgb matrix to ic_csc_identity.
+---
+ drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
-index f83f79b07b50..07efcb9b5b94 100644
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -280,7 +280,7 @@ static ssize_t asd_show_dev_rev(struct device *dev,
- 	return snprintf(buf, PAGE_SIZE, "%s\n",
- 			asd_dev_rev[asd_ha->revision_id]);
- }
--static DEVICE_ATTR(revision, S_IRUGO, asd_show_dev_rev, NULL);
-+static DEVICE_ATTR(aic_revision, S_IRUGO, asd_show_dev_rev, NULL);
+diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+index 594c3cbc8291..3ef61f0b509b 100644
+--- a/drivers/gpu/ipu-v3/ipu-ic.c
++++ b/drivers/gpu/ipu-v3/ipu-ic.c
+@@ -183,11 +183,13 @@ struct ic_csc_params {
+ };
  
- static ssize_t asd_show_dev_bios_build(struct device *dev,
- 				       struct device_attribute *attr,char *buf)
-@@ -477,7 +477,7 @@ static int asd_create_dev_attrs(struct asd_ha_struct *asd_ha)
- {
- 	int err;
+ /*
++ * BT.601 encoding from RGB full range to YUV limited range:
++ *
+  * Y = R *  .299 + G *  .587 + B *  .114;
+  * U = R * -.169 + G * -.332 + B *  .500 + 128.;
+  * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
+  */
+-static const struct ic_csc_params ic_csc_rgb2ycbcr = {
++static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
+ 	.coeff = {
+ 		{ 77, 150, 29 },
+ 		{ 469, 427, 128 },
+@@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+ 	.scale = 1,
+ };
  
--	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_revision);
-+	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
- 	if (err)
- 		return err;
+-/* transparent RGB->RGB matrix for graphics combining */
+-static const struct ic_csc_params ic_csc_rgb2rgb = {
++/*
++ * identity matrix, used for transparent RGB->RGB graphics
++ * combining.
++ */
++static const struct ic_csc_params ic_csc_identity = {
+ 	.coeff = {
+ 		{ 128, 0, 0 },
+ 		{ 0, 128, 0 },
+@@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
+ };
  
-@@ -499,13 +499,13 @@ static int asd_create_dev_attrs(struct asd_ha_struct *asd_ha)
- err_biosb:
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
- err_rev:
--	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
-+	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
- 	return err;
- }
+ /*
++ * Inverse BT.601 encoding from YUV limited range to RGB full range:
++ *
+  * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
+  * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
+  * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
+  */
+-static const struct ic_csc_params ic_csc_ycbcr2rgb = {
++static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+ 	.coeff = {
+ 		{ 149, 0, 204 },
+ 		{ 149, 462, 408 },
+@@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
+ 		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
  
- static void asd_remove_dev_attrs(struct asd_ha_struct *asd_ha)
- {
--	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
-+	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_pcba_sn);
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_update_bios);
-diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-index bfa13e3b191c..c8bad2c093b8 100644
---- a/drivers/scsi/cxlflash/main.c
-+++ b/drivers/scsi/cxlflash/main.c
-@@ -3687,6 +3687,7 @@ static int cxlflash_probe(struct pci_dev *pdev,
- 	host->max_cmd_len = CXLFLASH_MAX_CDB_LEN;
- 
- 	cfg = shost_priv(host);
-+	cfg->state = STATE_PROBING;
- 	cfg->host = host;
- 	rc = alloc_mem(cfg);
- 	if (rc) {
-@@ -3775,6 +3776,7 @@ static int cxlflash_probe(struct pci_dev *pdev,
- 	return rc;
- 
- out_remove:
-+	cfg->state = STATE_PROBED;
- 	cxlflash_remove(pdev);
- 	goto out;
- }
-diff --git a/drivers/scsi/libfc/fc_rport.c b/drivers/scsi/libfc/fc_rport.c
-index 9192a1d9dec6..dfba4921b265 100644
---- a/drivers/scsi/libfc/fc_rport.c
-+++ b/drivers/scsi/libfc/fc_rport.c
-@@ -184,7 +184,6 @@ void fc_rport_destroy(struct kref *kref)
- 	struct fc_rport_priv *rdata;
- 
- 	rdata = container_of(kref, struct fc_rport_priv, kref);
--	WARN_ON(!list_empty(&rdata->peers));
- 	kfree_rcu(rdata, rcu);
- }
- EXPORT_SYMBOL(fc_rport_destroy);
-diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
-index 83365b29a4d8..fff86940388b 100644
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -462,12 +462,16 @@ int sd_zbc_read_zones(struct scsi_disk *sdkp, unsigned char *buf)
- 	sdkp->device->use_10_for_rw = 0;
- 
- 	/*
--	 * If something changed, revalidate the disk zone bitmaps once we have
--	 * the capacity, that is on the second revalidate execution during disk
--	 * scan and always during normal revalidate.
-+	 * Revalidate the disk zone bitmaps once the block device capacity is
-+	 * set on the second revalidate execution during disk scan and if
-+	 * something changed when executing a normal revalidate.
- 	 */
--	if (sdkp->first_scan)
-+	if (sdkp->first_scan) {
-+		sdkp->zone_blocks = zone_blocks;
-+		sdkp->nr_zones = nr_zones;
- 		return 0;
-+	}
-+
- 	if (sdkp->zone_blocks != zone_blocks ||
- 	    sdkp->nr_zones != nr_zones ||
- 	    disk->queue->nr_zones != nr_zones) {
-diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-index 72016d0dfca5..8e7fffbb8802 100644
---- a/drivers/target/target_core_configfs.c
-+++ b/drivers/target/target_core_configfs.c
-@@ -852,6 +852,12 @@ static ssize_t pi_prot_type_store(struct config_item *item,
- 	return count;
- }
- 
-+/* always zero, but attr needs to remain RW to avoid userspace breakage */
-+static ssize_t pi_prot_format_show(struct config_item *item, char *page)
-+{
-+	return snprintf(page, PAGE_SIZE, "0\n");
-+}
-+
- static ssize_t pi_prot_format_store(struct config_item *item,
- 		const char *page, size_t count)
- {
-@@ -1132,7 +1138,7 @@ CONFIGFS_ATTR(, emulate_3pc);
- CONFIGFS_ATTR(, emulate_pr);
- CONFIGFS_ATTR(, pi_prot_type);
- CONFIGFS_ATTR_RO(, hw_pi_prot_type);
--CONFIGFS_ATTR_WO(, pi_prot_format);
-+CONFIGFS_ATTR(, pi_prot_format);
- CONFIGFS_ATTR(, pi_prot_verify);
- CONFIGFS_ATTR(, enforce_pr_isids);
- CONFIGFS_ATTR(, is_nonrot);
+ 	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
+-		params = &ic_csc_ycbcr2rgb;
++		params = &ic_csc_ycbcr2rgb_bt601;
+ 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
+-		params = &ic_csc_rgb2ycbcr;
++		params = &ic_csc_rgb2ycbcr_bt601;
+ 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+-		params = &ic_csc_rgb2rgb;
++		params = &ic_csc_identity;
+ 	else {
+ 		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
+ 		return -EINVAL;
+-- 
+2.17.1
+
