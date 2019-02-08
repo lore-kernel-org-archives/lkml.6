@@ -2,92 +2,86 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADD4C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B8FC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2BEB218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8F4D218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:50:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1JX5DiUB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfBHJtZ (ORCPT
+        id S1727357AbfBHJuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:49:25 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32890 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726081AbfBHJtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:49:24 -0500
-Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 907D3A851F2BD9D4D5A4;
-        Fri,  8 Feb 2019 09:49:23 +0000 (GMT)
-Received: from [127.0.0.1] (10.202.226.46) by lhreml703-cah.china.huawei.com
- (10.201.108.44) with Microsoft SMTP Server id 14.3.408.0; Fri, 8 Feb 2019
- 09:49:16 +0000
-Subject: Re: [PATCH] HISI LPC: Don't fail probe for unrecognised child devices
-To:     John Garry <john.garry@huawei.com>, <xuwei5@huawei.com>
-CC:     <arm@kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <olof@lixom.net>
-References: <1546516622-46343-1-git-send-email-john.garry@huawei.com>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <249f851b-e28c-c5df-7706-f7212162bae7@hisilicon.com>
-Date:   Fri, 8 Feb 2019 09:49:16 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 04:50:16 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:30117 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfBHJuP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 04:50:15 -0500
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x189oANd032767
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 18:50:10 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x189oANd032767
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549619410;
+        bh=5eEFdrqXpbL+j89kaxfwCjisLzIwQBKngAOVuu22ayM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1JX5DiUBhSv4cRk3sL8bGmWH2syPf/rQkg56+o+PpQYAwNFqRkP8emVhysNzMf5bS
+         7spCXd64XerOu5MSC2I+/71qRCDcAbEq0LEkxYemYjgPNdNNz4xKNhjKhZ5YRu9vkG
+         98jfpN2lGWjKlX16Pf5/CvOmjIuY+tWGmXFpwcmuIppGqNGoYn0/1/UB6VSnXoZLU1
+         J9TbnclSkDQARA4cKIyM0fZ3CSWrWTcmMAG0fQe0nVhL1NpFzLtp7rk/7gwSIET8ag
+         xvJsNndN3Dbu1VwQ+XTfEF7hj4PQfEs7DnfzVkreQKId9bfm/L41Qp91jifQoUDz9/
+         pRUEY8NrrKOsw==
+X-Nifty-SrcIP: [209.85.222.43]
+Received: by mail-ua1-f43.google.com with SMTP id e16so910431uam.12
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 01:50:10 -0800 (PST)
+X-Gm-Message-State: AHQUAubUJWHgRCDPVUzUpSg0wibVBEk9sMORWBwkdvfinYrvhu5zdQC8
+        RZzUGlf58ClnzWZATmTg4Khimkrn7VswSeNaM/M=
+X-Google-Smtp-Source: AHgI3IYnNwm3VK/r4QAiJW2ijwLintg0lvF+3SzzV46BnEltgsgYmmShH51unR306PM0+S3Rw0QA1eYFUcaB1uRbKOU=
+X-Received: by 2002:ab0:3402:: with SMTP id z2mr7961605uap.6.1549619409590;
+ Fri, 08 Feb 2019 01:50:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1546516622-46343-1-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com> <1549613335-30319-5-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1549613335-30319-5-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 8 Feb 2019 18:49:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASb7iDMf28TGtn=-Gz40K=PgdPrwG3sOa_3oL-PLhtBfw@mail.gmail.com>
+Message-ID: <CAK7LNASb7iDMf28TGtn=-Gz40K=PgdPrwG3sOa_3oL-PLhtBfw@mail.gmail.com>
+Subject: Re: [PATCH 04/11] mtd: rawnand: denali: switch over to ->exec_op()
+ from legacy hooks
+To:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+On Fri, Feb 8, 2019 at 5:09 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Implement ->exec_op().
+>
+> Remove the deprecated select_chip(), read_byte(), write_byte(),
+> cmd_ctrl(), and waitfunc().
 
-On 1/3/2019 11:57 AM, John Garry wrote:
-> Currently for ACPI-based FW we fail the probe for an unrecognised child
-> HID.
-> 
-> However, there is FW in the field with LPC child devices having fake HIDs,
-> namely "IPI0002", which was an IPMI device invented to support the
-> initial out-of-tree LPC host driver, different from the final mainline
-> version.
-> 
-> To provide compatibility support for these dodgy FWs, just discard the
-> unrecognised HIDs instead of failing the probe altogether.
-> 
-> Tested-by: Zengruan Ye <yezengruan@huawei.com>
-> Signed-off-by: John Garry <john.garry@huawei.com>
+I also deleted read_buf(), write_buf().
 
-Updated the subject as "bus: hisi_lpc: xxx" to follow the style and
-applied to the hisilicon tree.
-Thanks!
+Will fix the log.
 
-Best Regards,
-Wei
 
-> 
-> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-> index d5f8545..19d7b6f 100644
-> --- a/drivers/bus/hisi_lpc.c
-> +++ b/drivers/bus/hisi_lpc.c
-> @@ -522,10 +522,9 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
->  
->  		if (!found) {
->  			dev_warn(hostdev,
-> -				 "could not find cell for child device (%s)\n",
-> +				 "could not find cell for child device (%s), discarding\n",
->  				 hid);
-> -			ret = -ENODEV;
-> -			goto fail;
-> +			continue;
->  		}
->  
->  		pdev = platform_device_alloc(cell->name, PLATFORM_DEVID_AUTO);
-> 
 
+
+-- 
+Best Regards
+Masahiro Yamada
