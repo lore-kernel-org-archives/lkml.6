@@ -2,207 +2,129 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A73C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B21C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3780121916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:14:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 100C120863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:14:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rdXaV2Kj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YaGNj6qS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfBHFO0 (ORCPT
+        id S1727135AbfBHFOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 00:14:26 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48120 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfBHFOZ (ORCPT
+        Fri, 8 Feb 2019 00:14:49 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41129 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBHFOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 00:14:25 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x185EGqU002615;
-        Thu, 7 Feb 2019 23:14:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549602856;
-        bh=uv/vDbobEA/423bYmegRzWeDlsmKJhcSL5IECCFS2Jo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rdXaV2Kj9NG4HuETzh3rEo35DD6ctJP1JwLlFL6SP7sO3eWVO5FbXk6waxN8HvP1r
-         44JZOMfP7wMtRudJZZ1x/zMc4B9cqPboUVpglaEtEW2Kae2MigP/VGtApOsmfRvPR7
-         TcycPqK1eF6RIzuxNkd0AfsZZbhHGwiks+54+KnU=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x185EGri027207
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Feb 2019 23:14:16 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
- Feb 2019 23:14:15 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 7 Feb 2019 23:14:15 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x185ECjw002829;
-        Thu, 7 Feb 2019 23:14:13 -0600
-Subject: Re: [PATCH v2 8/9] PCI: dwc: Remove Keystone specific
- dw_pcie_host_ops
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     Murali Karicheri <m-karicheri2@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190207110924.30716-1-kishon@ti.com>
- <20190207110924.30716-9-kishon@ti.com> <20190207212622.GO7268@google.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <2b839b2f-d792-069b-b45f-4a455335f016@ti.com>
-Date:   Fri, 8 Feb 2019 10:43:40 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 00:14:49 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p15so1753887edy.8
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 21:14:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Vs4bUubttQaRrgqX59SKfDkHmiyTz8gi93GWUZb1r0E=;
+        b=YaGNj6qS3SMc9R+P4ZNtrQXtWAv8YCiDjHs6RKj8Rh5VpsQ/omge0qX+xMUgFC1O5V
+         8Ojoc1uHhpKVzGo8oCrAQ9x/HIuBswdGJPDQwc9FJ9Tahd3hbwBUz4opMh16/QQvJ/FQ
+         hqzDKtoGlM+cVBYu7huz8mi4CmOyd/hJuzjmaKrBvFDJCbE4GEPLzXPyofnjJQ7UNz6d
+         Kn7n52gy+2+jmvHp6Ok9z18Wmka3KNjbhOYvANUhrXuSQJCcXZ/Tol09fxBdtjNqVCKp
+         XThn6kDoLFiEaohJJk2OipcTcMlpi40C0RfjpHh3HZOTQ4EqqzNo+jDABFUMqxKz7dBD
+         AzTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Vs4bUubttQaRrgqX59SKfDkHmiyTz8gi93GWUZb1r0E=;
+        b=ML1qllY9/u4U11ZfpMzdRkTrhZP0nZk6vgZj3u3YYnGIQvMKdEkJJWMwqbkj+KfyOe
+         sFV0nZrhYocFJiarEwxL1v3zFWbh5TmWsPgKG3lgJ0ybWffrwrNuOZ+GLBw5TkOZfplu
+         ap4vQqOrXnkkVEp56Ivfm3oIZurEvsECN+8jKPinmsKTmZD9LS5hZ0AxJJI3tLWx5Yy+
+         czYGnozrAHuaqJ6Kw9AO6rveSe4JuUN1yeST8a45Y3Ufx1G0L7HdG0+Zeknl/L6RA5So
+         UWJ31aWsJlJ8kJXX54rDmxeCzsMPu78yboiybxeclpBNQy1Z4dIgY2Vr0htcDewp1xby
+         e9ow==
+X-Gm-Message-State: AHQUAuZTAxpSsadE2AsDNgN5PLDggzSuTBZ5ApAuqcBjfHk4PBM9oFC7
+        u+RnDe7AbCoORht/JJCotMG7bZ1FPu0yQQ==
+X-Google-Smtp-Source: AHgI3IYMYEXuKMKkcFKNMRmsDZWal9b0ZiESIbjJqKXDpYHYaugU0o9PYosCvqr0oxrDNKWZD1V3Zg==
+X-Received: by 2002:a50:98a6:: with SMTP id j35mr15208174edb.141.1549602886973;
+        Thu, 07 Feb 2019 21:14:46 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id s46sm354053edd.9.2019.02.07.21.14.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 07 Feb 2019 21:14:46 -0800 (PST)
+Date:   Thu, 7 Feb 2019 22:14:44 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     ndesaulniers@google.com
+Cc:     yamada.masahiro@socionext.com,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] init/Kconfig: add config support for detecting linker
+Message-ID: <20190208051444.GA9647@archlinux-ryzen>
+References: <20190207220155.81351-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190207212622.GO7268@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207220155.81351-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 08/02/19 2:56 AM, Bjorn Helgaas wrote:
-> On Thu, Feb 07, 2019 at 04:39:23PM +0530, Kishon Vijay Abraham I wrote:
->> Now that Keystone started using it's own msi_irq_chip, remove
->> Keystone specific callback function defined in dw_pcie_host_ops.
+On Thu, Feb 07, 2019 at 02:01:49PM -0800, ndesaulniers@google.com wrote:
+> Similar to how we differentiate between CONFIG_CC_IS_GCC and
+> CONFIG_CC_IS_CLANG, add CONFIG_LD_IS_BFD, CONFIG_LD_IS_GOLD, and
+> CONFIG_LD_IS_LLD.
 > 
-> s/it's/its/
-> s/callback function/callback functions/
-
-okay.
+> This simiplifies patches to Makefiles that need to do different things
+> for different linkers.
 > 
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  .../pci/controller/dwc/pcie-designware-host.c | 45 ++++++-------------
->>  drivers/pci/controller/dwc/pcie-designware.h  |  5 ---
->>  2 files changed, 14 insertions(+), 36 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
->> index 042de09b0451..9492b05e8ff0 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
->> @@ -126,18 +126,12 @@ static void dw_pci_setup_msi_msg(struct irq_data *data, struct msi_msg *msg)
->>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->>  	u64 msi_target;
->>  
->> -	if (pp->ops->get_msi_addr)
->> -		msi_target = pp->ops->get_msi_addr(pp);
->> -	else
->> -		msi_target = (u64)pp->msi_data;
->> +	msi_target = (u64)pp->msi_data;
->>  
->>  	msg->address_lo = lower_32_bits(msi_target);
->>  	msg->address_hi = upper_32_bits(msi_target);
->>  
->> -	if (pp->ops->get_msi_data)
->> -		msg->data = pp->ops->get_msi_data(pp, data->hwirq);
->> -	else
->> -		msg->data = data->hwirq;
->> +	msg->data = data->hwirq;
->>  
->>  	dev_dbg(pci->dev, "msi#%d address_hi %#x address_lo %#x\n",
->>  		(int)data->hwirq, msg->address_hi, msg->address_lo);
->> @@ -157,17 +151,13 @@ static void dw_pci_bottom_mask(struct irq_data *data)
->>  
->>  	raw_spin_lock_irqsave(&pp->lock, flags);
->>  
->> -	if (pp->ops->msi_clear_irq) {
->> -		pp->ops->msi_clear_irq(pp, data->hwirq);
->> -	} else {
->> -		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
->> -		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
->> -		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
->> +	ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
->> +	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
->> +	bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
->>  
->> -		pp->irq_status[ctrl] &= ~(1 << bit);
->> -		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK + res, 4,
->> -				    ~pp->irq_status[ctrl]);
->> -	}
->> +	pp->irq_status[ctrl] &= ~(1 << bit);
->> +	dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK + res, 4,
->> +			    ~pp->irq_status[ctrl]);
->>  
->>  	raw_spin_unlock_irqrestore(&pp->lock, flags);
->>  }
->> @@ -180,17 +170,13 @@ static void dw_pci_bottom_unmask(struct irq_data *data)
->>  
->>  	raw_spin_lock_irqsave(&pp->lock, flags);
->>  
->> -	if (pp->ops->msi_set_irq) {
->> -		pp->ops->msi_set_irq(pp, data->hwirq);
->> -	} else {
->> -		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
->> -		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
->> -		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
->> +	ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
->> +	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
->> +	bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
->>  
->> -		pp->irq_status[ctrl] |= 1 << bit;
->> -		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK + res, 4,
->> -				    ~pp->irq_status[ctrl]);
->> -	}
->> +	pp->irq_status[ctrl] |= 1 << bit;
->> +	dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK + res, 4,
->> +			    ~pp->irq_status[ctrl]);
->>  
->>  	raw_spin_unlock_irqrestore(&pp->lock, flags);
->>  }
->> @@ -209,9 +195,6 @@ static void dw_pci_bottom_ack(struct irq_data *d)
->>  
->>  	dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + res, 4, 1 << bit);
->>  
->> -	if (pp->ops->msi_irq_ack)
->> -		pp->ops->msi_irq_ack(d->hwirq, pp);
->> -
->>  	raw_spin_unlock_irqrestore(&pp->lock, flags);
->>  }
->>  
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index 95e0c3c93f48..ea4b215b605d 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -142,14 +142,9 @@ struct dw_pcie_host_ops {
->>  	int (*wr_other_conf)(struct pcie_port *pp, struct pci_bus *bus,
->>  			     unsigned int devfn, int where, int size, u32 val);
->>  	int (*host_init)(struct pcie_port *pp);
->> -	void (*msi_set_irq)(struct pcie_port *pp, int irq);
->> -	void (*msi_clear_irq)(struct pcie_port *pp, int irq);
->> -	phys_addr_t (*get_msi_addr)(struct pcie_port *pp);
->> -	u32 (*get_msi_data)(struct pcie_port *pp, int pos);
+> Cc: Nathan Chancellor <natechancellor@gmail.com>
+> Cc: Sami Tolvanen <samitolvanen@google.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+
+> ---
+>  init/Kconfig | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> I don't see the whole series on linux-pci (I only see patches 2, 6, 8, 9),
-
-I do see all the patches here
-https://patchwork.kernel.org/project/linux-pci/list/. Maybe it arrived little late?
-> but I expected to somewhere see the removal of assignments to these
-> pointers.  It would be easier to review if the removal of assignments and
-> the removal of the function pointers from the structure were in the same
-> patch, but maybe that's not really feasible.
-
-The removal of the assignments are in 7th patch of the series (PCI: keystone:
-Use Keystone specific msi_irq_chip). It's feasible but just wanted to keep the
-keystone changes and DesignWare changes in separate patches.
-
-Thanks
-Kishon
+> diff --git a/init/Kconfig b/init/Kconfig
+> index c9386a365eea..b6046dcf7794 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -26,6 +26,15 @@ config CLANG_VERSION
+>  config CC_HAS_ASM_GOTO
+>  	def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+>  
+> +config LD_IS_BFD
+> +	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU ld')
+> +
+> +config LD_IS_GOLD
+> +	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU gold')
+> +
+> +config LD_IS_LLD
+> +	def_bool $(success,$(LD) --version | head -n 1 | grep -q 'LLD')
+> +
+>  config CONSTRUCTORS
+>  	bool
+>  	depends on !UML
+> -- 
+> 2.20.1.791.gb4d0f1c61a-goog
+> 
