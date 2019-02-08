@@ -2,153 +2,104 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D35C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B917C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED102146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B7B12177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:12:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IDauax/d"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="I7hGWnOv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfBHOLz (ORCPT
+        id S1727911AbfBHOMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:11:55 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35874 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727700AbfBHOLz (ORCPT
+        Fri, 8 Feb 2019 09:12:09 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38413 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbfBHOMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:11:55 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g11-v6so3137975ljk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:11:54 -0800 (PST)
+        Fri, 8 Feb 2019 09:12:09 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so1634096pgc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:12:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=n53tPLzEI0RmifJ+cFWa8NK1/+5mVBbBZjdDbpnzm5w=;
-        b=IDauax/dQeE6GOhP7olo8NL8/kg6h6C4h2vsn0Gesa/nLTH2YqFblBw+3jbv82elCN
-         7mpe3gGRDtS/UV54gjYPlQqsNJEHHrE7/FdQnErB5smTob3XFBt2KwlNojdzhkmMk7p9
-         uqzEhfV1wgsViltuQUfRFMUlgewKlYDpZ7KlGUrj7tJZZ6zuv53Ycl85HtZkk0CoeGKB
-         O3HEX0CyYJGg6jrsMnUaN1YnDubo8rx7x5y5hajzzpPjKTjlNzpYpQHfa30hrvS5k2G2
-         YyvNpPP8IS/7ZynewgOFyy+LlUcbqLb6kBBTWRhbp7Mz9zxpIG2HFCxMmWvHHy/Yl2aS
-         vsig==
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=upLxb8FYOOB0a3AN+WEMWBMy2FJ8QnNHx4fmloyVXyI=;
+        b=I7hGWnOvMTUQHjiu9rXcxKOaYjnCRH/04iAWprsW6Dw3/0e5WjdYsJ1eaNk+iijCzS
+         UmksFWWtHeVe1S+rvpv2XAdEzO/Bt5/PPghCIK4JYVbpGruUkLcnv/Ud1kHSLcuR/kEf
+         O1rcRLvf+4lVI1QQ4tySLw6O5ijBuDeA2eVGO9KUG3kIOp7npvk3jFxfA++bqQg7xxvV
+         RM0uGX3RMYfI6JYiuErSzBYgD2oMJburIFt7MsptTai9JvaxQ+P+bYepwQJIgCZBtc9R
+         0zKdy5/gVS5f55SxWfM2IAHc/9N62dYGFRsGPfQn96XjJK5/230zbBi1UBTdDiX6uSHz
+         THUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n53tPLzEI0RmifJ+cFWa8NK1/+5mVBbBZjdDbpnzm5w=;
-        b=hUPYa6O/WUB6ZnUV/8TpKfsHbi0ZKUIKjUZ6PRSixBVh597DUNTzXc3N++8BZU6+Sb
-         JrflxjKZ3nhloVY39cP4WAswgXKFNBclkbTcHhuoeyqer28bKsV6GQh3nPD5H0T9vQA2
-         LKVA8yBbTox+Cfe/YWMqQHtoqRfz/zyvEKoF/ANv6e/9g1BXehaeXsatRalMwyNC0X/v
-         YLbE/JaWUzRtpP1/PLZ/bl3aHzBGtnifdqNU3wfgoJ6+DhAnjLUKEqxnqvHB7rjNhB6s
-         VGRk/9OiJ24xr09gy4UZewUEA8R4LOchKxg/twAsw1/JdsRc6dYbgGqnv+zjYkPUvrEZ
-         G3fg==
-X-Gm-Message-State: AHQUAuY2i79b0Wbd5pWhA3+MxFdPaouqqQnbdqRqVUVMwx9l5RmeCeff
-        tBZtaGBvGtoBOdK4YhDJ1OxuoQ==
-X-Google-Smtp-Source: AHgI3IatIcyDuLTmgcEJM59o/AYr7tQtPhC/FSSi9EiwcJdrxNgkcOE+1bvmeKyeamgflPah0XxS8w==
-X-Received: by 2002:a2e:449b:: with SMTP id b27-v6mr13559531ljf.47.1549635113146;
-        Fri, 08 Feb 2019 06:11:53 -0800 (PST)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id m27-v6sm394001ljc.7.2019.02.08.06.11.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 08 Feb 2019 06:11:52 -0800 (PST)
-Date:   Fri, 8 Feb 2019 15:11:50 +0100
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        David Brown <david.brown@linaro.org>,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: gcc-qcs404: Add PCIe resets
-Message-ID: <20190208141150.GA773@centauri.lan>
-References: <20190125234509.26419-1-bjorn.andersson@linaro.org>
- <20190125234509.26419-2-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125234509.26419-2-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=upLxb8FYOOB0a3AN+WEMWBMy2FJ8QnNHx4fmloyVXyI=;
+        b=K766ED6COCdoExuxigIjhZrOEhyNen/u3ZbcwrZr5OvXRRsvGJB+5suAZb2WpI9FeK
+         TL48O8RDgjsanRRdfSO4nfH1lPayNpKStz3edv6JT3v/mmzwvIkgbXgeoWRcFmfoLV8c
+         pPVGzp+TI95HfBSVZHFU0S/6W+gj+NeqA1Rc92et7BHuU6JCKQq3OWsUuaozL2T7EFEq
+         0xsKNXlKNdmsWo+0tk1yCDdBDZjrg9I3fz+1bquhcPELXHDou5ycgX2Llf/D6a/iIdOf
+         gI2aVbIeT6celsPBGAiQRylPB6Goy6mlKvCxffUMcYbWysQpyJ5raaeB7GmkEbgd05ho
+         DYRQ==
+X-Gm-Message-State: AHQUAuZ+WUwngexHQA9LaBsIk/jqgYj4hli8053oI/B4PckebinJa+6V
+        JyAujubNHcDdPPhTHSvQL49YmQ==
+X-Google-Smtp-Source: AHgI3IaSCtUGGr5R+R+CApFtB4Iuz376FYv9XwMgkA/sz9XsfwT/g6OV4khEBt88Ikinp5FTnw6y8Q==
+X-Received: by 2002:a65:44ca:: with SMTP id g10mr17421622pgs.180.1549635128057;
+        Fri, 08 Feb 2019 06:12:08 -0800 (PST)
+Received: from localhost.localdomain (36-239-237-75.dynamic-ip.hinet.net. [36.239.237.75])
+        by smtp.gmail.com with ESMTPSA id 184sm3411700pfe.106.2019.02.08.06.12.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 06:12:06 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: lm363x: Check return value of gpiod_get_index_optional
+Date:   Fri,  8 Feb 2019 22:11:52 +0800
+Message-Id: <20190208141152.13887-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 03:45:03PM -0800, Bjorn Andersson wrote:
-> Enabling PCIe requires several of the PCIe related resets from GCC, so
-> add them all.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Stephen, I suggest that we merge this patch through Andy's devicetree branch,
-> together with the DT patch in the end of this series.
-> 
->  drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
->  include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> index 64da032bb9ed..cfb8789ff706 100644
-> --- a/drivers/clk/qcom/gcc-qcs404.c
-> +++ b/drivers/clk/qcom/gcc-qcs404.c
-> @@ -2675,6 +2675,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
->  	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
->  	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
->  	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
-> +	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = {0x3e040, 6},
-> +	[GCC_PCIE_0_AHB_ARES] = {0x3e040, 5},
-> +	[GCC_PCIE_0_AXI_SLAVE_ARES] = {0x3e040, 4},
-> +	[GCC_PCIE_0_AXI_MASTER_ARES] = {0x3e040, 3},
-> +	[GCC_PCIE_0_CORE_STICKY_ARES] = {0x3e040, 2},
-> +	[GCC_PCIE_0_SLEEP_ARES] = {0x3e040, 1},
-> +	[GCC_PCIE_0_PIPE_ARES] = {0x3e040, 0},
+gpiod_get_index_optional can return ERR_PTR, add IS_ERR checking for it.
+While at it, also remove a redundant NULL test for gpiod in error path.
 
-Hello Bjorn,
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/lm363x-regulator.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-please add spaces before and after the braces, to match the
-syntax of the existing lines.
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index 8c0e8419c43f..c876e161052a 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -258,6 +258,9 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
+ 	 * Register update is required if the pin is used.
+ 	 */
+ 	gpiod = lm363x_regulator_of_get_enable_gpio(dev, id);
++	if (IS_ERR(gpiod))
++		return PTR_ERR(gpiod);
++
+ 	if (gpiod) {
+ 		cfg.ena_gpiod = gpiod;
+ 
+@@ -265,8 +268,7 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
+ 					 LM3632_EXT_EN_MASK,
+ 					 LM3632_EXT_EN_MASK);
+ 		if (ret) {
+-			if (gpiod)
+-				gpiod_put(gpiod);
++			gpiod_put(gpiod);
+ 			dev_err(dev, "External pin err: %d\n", ret);
+ 			return ret;
+ 		}
+-- 
+2.17.1
 
-With that,
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-
-
-Kind regards,
-Niklas
-
->  	[GCC_EMAC_BCR] = { 0x4e000 },
->  };
->  
-> diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> index 6ceb55ed72c6..00ab0d77b38a 100644
-> --- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> +++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> @@ -161,5 +161,12 @@
->  #define GCC_PCIE_0_LINK_DOWN_BCR			11
->  #define GCC_PCIEPHY_0_PHY_BCR				12
->  #define GCC_EMAC_BCR					13
-> +#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		14
-> +#define GCC_PCIE_0_AHB_ARES				15
-> +#define GCC_PCIE_0_AXI_SLAVE_ARES			16
-> +#define GCC_PCIE_0_AXI_MASTER_ARES			17
-> +#define GCC_PCIE_0_CORE_STICKY_ARES			18
-> +#define GCC_PCIE_0_SLEEP_ARES				19
-> +#define GCC_PCIE_0_PIPE_ARES				20
->  
->  #endif
-> -- 
-> 2.18.0
-> 
