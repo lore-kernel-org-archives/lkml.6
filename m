@@ -5,63 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD85C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B4CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37962177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:36:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3942177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfBHWgQ convert rfc822-to-8bit (ORCPT
+        id S1726844AbfBHWkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:36:16 -0500
-Received: from elephants.elehost.com ([216.66.27.132]:23040 "EHLO
-        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbfBHWgP (ORCPT
+        Fri, 8 Feb 2019 17:40:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37420 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfBHWkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:36:15 -0500
-X-Virus-Scanned: amavisd-new at elehost.com
-Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
-        (authenticated bits=0)
-        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18Ma8tc097788
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 8 Feb 2019 17:36:08 -0500 (EST)
-        (envelope-from rsbecker@nexbridge.com)
-From:   "Randall S. Becker" <rsbecker@nexbridge.com>
-To:     "'brian m. carlson'" <sandals@crustytoothpaste.net>
-Cc:     "'Jeff King'" <peff@peff.net>,
-        "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
-        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net> <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com> <20190208193157.GA30952@sigill.intra.peff.net> <20190208220714.GG11927@genre.crustytoothpaste.net> <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com> <20190208221835.GH11927@genre.crustytoothpaste.net>
-In-Reply-To: <20190208221835.GH11927@genre.crustytoothpaste.net>
-Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-Date:   Fri, 8 Feb 2019 17:36:00 -0500
-Message-ID: <006501d4bffe$ae907c50$0bb174f0$@nexbridge.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw84wKJiaU9Aj0+V9MB8y1xFgJaeDVqApzvLgABsopuUQJEpoh9pmRbftA=
-Content-Language: en-ca
+        Fri, 8 Feb 2019 17:40:49 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7ADF6CA08;
+        Fri,  8 Feb 2019 22:40:48 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 14:40:47 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memblock: update comments and kernel-doc
+Message-Id: <20190208144047.66254b6d08edfea462e6466a@linux-foundation.org>
+In-Reply-To: <1549626347-25461-1-git-send-email-rppt@linux.ibm.com>
+References: <1549626347-25461-1-git-send-email-rppt@linux.ibm.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 8, 2019 17:19, brian m. carlson wrote:
-> On Fri, Feb 08, 2019 at 05:12:43PM -0500, Randall S. Becker wrote:
-> > I'm happy to modify the test (it is in one spot), to make a decision based
-> on:
-> > a) whether /dev/zero exists
-> > b) whether the system is a NonStop
-> > c) something else
-> >
-> > What would you all prefer? It doesn't matter to me one way or another, as
-> long as I can get the dependency to /dev/zero removed so tests will run here.
-> 
-> My preference is that we wrap the yes/tr invocation into a function (maybe
-> "infinite_nul") and use that where we currently require /dev/zero.
+On Fri,  8 Feb 2019 13:45:47 +0200 Mike Rapoport <rppt@linux.ibm.com> wrote:
 
-That's simple enough to do in test-lib-functions.sh for the situation where yes|tr is being piped, but that's t5562. In t5318 we have dd if=/dev/zero, and that's where truncate would need to work. The requirements of that test seem very specific to me and not that generalizable. I'm just dealing with new breakages on the platform.
+> * Remove comments mentioning bootmem
+> * Extend "DOC: memblock overview"
+> * Add kernel-doc comments for several more functions
+> 
+> ...
+>
+> @@ -1400,6 +1413,19 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+>  	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
+>  }
+>  
+> +/**
+> + * memblock_phys_alloc_range - allocate a memory block from specified MUMA node
+> + * @size: size of memory block to be allocated in bytes
+> + * @align: alignment of the region and block's size
+> + * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
+> + *
+> + * Allocates memory block from the specified NUMA node. If the node
+> + * has no available memory, attempts to allocated from any node in the
+> + * system.
+> + *
+> + * Return: physical address of the allocated memory block on success,
+> + * %0 on failure.
+> + */
+>  phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
+>  {
+>  	return memblock_alloc_range_nid(size, align, 0,
+
+copy-n-paste!
+
+--- a/mm/memblock.c~memblock-update-comments-and-kernel-doc-fix
++++ a/mm/memblock.c
+@@ -1414,7 +1414,7 @@ phys_addr_t __init memblock_phys_alloc_r
+ }
+ 
+ /**
+- * memblock_phys_alloc_range - allocate a memory block from specified MUMA node
++ * memblock_phys_alloc_try_nid - allocate a memory block from specified MUMA node
+  * @size: size of memory block to be allocated in bytes
+  * @align: alignment of the region and block's size
+  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
 
