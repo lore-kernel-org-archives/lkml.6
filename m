@@ -2,121 +2,92 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3D5C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4501C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 611202147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 921522147C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:09:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t6bBtkiK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uN0PHAwu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBHFJT (ORCPT
+        id S1726978AbfBHFJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 00:09:19 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39264 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfBHFJS (ORCPT
+        Fri, 8 Feb 2019 00:09:27 -0500
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:44160 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBHFJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 00:09:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t9-v6so1902171ljh.6;
-        Thu, 07 Feb 2019 21:09:17 -0800 (PST)
+        Fri, 8 Feb 2019 00:09:26 -0500
+Received: by mail-ed1-f43.google.com with SMTP id y56so1723375edd.11;
+        Thu, 07 Feb 2019 21:09:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8vv6VBS1DcVpRo1o4q3JPCkiFSznywYK2L7AtxRYwPo=;
-        b=t6bBtkiKzxQwVQYnp+bEmSz+r15qN2sD10szzjgPLQJdPth2ftRVxSVrttGzOg7NCQ
-         idHW/Zdo4ki6BnX3Xf7RggSgVOydsoF4xvInK2NxlVT1M2aoNcjjlbILPCmRsrgtx1Nk
-         erZs8jLTuRCusVutxQxf2oedVI0jYxLoMPopvY+uaKYJ+vTylpO0GbgwrfxT/nyW5JiZ
-         TeGg0++uuMkNWeTdLCf/s/hoV9Te4Rd8LOjN1o+AKoWyd4M/l8pseISwZ+Buef5csF3T
-         DKZGIMWZkeDytbFjNOvggLSMlF2RccDMrLdb6JrG4vrIughgHKy7GEYhWFszZk9DOrYx
-         85FA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Xpmvty5nL0sZvatl2VW477OUNsqZQSbd+CWBQl8OdMU=;
+        b=uN0PHAwubKZo7UxNHzhh3y9dkX63+kZjKJbMOrJHnivyBSOsLVxVu9nSyFCL1pONVm
+         qQwMNnfumfOwJ5Yzyl7vOJc+tUROTfu41IHRGeJk7vnshGFSd8FhujwlwWygcBcrGhk9
+         uSR+2cL23ohOw9alPirGPnYEKzM27QFQ4LQFCEhrrGPR30nGSt9oWzKP1ml1Ksz1GHbp
+         oILb0fITlvQGtEzl1ohSb4zLcpPR/NhNXLbUNzXaU/WgdVhdx9YR7/BtSuRKe92HNMYW
+         Y+2XG6J0jRpoGkAA7Yfxzub9RLXpZk6gyoSZx3aNe9R9TE5SgKhUSaoz++xsAYnR1jBO
+         V31A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8vv6VBS1DcVpRo1o4q3JPCkiFSznywYK2L7AtxRYwPo=;
-        b=qvmezVPiSFpShLwdApw/B9CJXdfwYEOfL6ZW0+IaeJQkeX6L/1ibSxx+KONCKYgi1F
-         x+41Z416Et5VGJpqW57Cf5KhYyLMTpYlCfFQKEF12F+5Q0j0qddyy0+PYkjn6ez77P9C
-         ZjRNojETCf1JHQpMv7guv2YDIiXlK4kv455tdUe7FIa9G0otaYsk8340/bIqtXzLlp8o
-         OnqfOj8CWWCfXMn6fn+oju6dMhFvCotSbilhJTlCbWAkf0+fB5chKPGbvUR06aYlxnTF
-         uY5Fi5ifzC48vMlW/HxhcYu0ulaQ5T0uW2/zjOMCPxNA+MaO0L5tzmrxGNaA1FvVhHxs
-         HowQ==
-X-Gm-Message-State: AHQUAuazihRl+oanmtFX1hV4Mj5x1ty2JEpbCjeCEq2WmmAVxQDY8ppL
-        tlNsa7QdmV0qtq1wdBUFEIRfpKAn8DKWXw==
-X-Google-Smtp-Source: AHgI3IY3O6o2LsdAhtSaWENqH5jryP+oZA/g5D0059HKueQNf1wJdVRNHfznSNQ2GMs7ujOjAGLQwg==
-X-Received: by 2002:a2e:5816:: with SMTP id m22-v6mr930198ljb.177.1549602556067;
-        Thu, 07 Feb 2019 21:09:16 -0800 (PST)
-Received: from ?IPv6:2001:14ba:8017:3300:554b:539:3415:5da3? (dtynxhyc1lpcxwqy1n2vt-3.rev.dnainternet.fi. [2001:14ba:8017:3300:554b:539:3415:5da3])
-        by smtp.googlemail.com with ESMTPSA id d5sm160603lfi.65.2019.02.07.21.09.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 21:09:15 -0800 (PST)
-Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
-From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-References: <20190130183005.833-1-dmurphy@ti.com> <20190130223542.GA22040@amd>
- <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
-Message-ID: <6d50b09c-87be-d48f-cfe5-f5143c18d38c@gmail.com>
-Date:   Fri, 8 Feb 2019 07:09:14 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Xpmvty5nL0sZvatl2VW477OUNsqZQSbd+CWBQl8OdMU=;
+        b=QOwyr8AXSYj/gpMWCuUkkiHxH5UFr93LTlMNfgC1EquJeRQEr7/ztQr86bIPKk6lou
+         vYbch4VI3efH2D9jpuq4OjhQ7VsuyehYVdn06fmNYXAm6mmIoflm4Go5MfWELdnoVgOb
+         gAntSIDh4F2aj7eAMHJQNOG3xPmF3/5r075f+EycgUBMSkbOEXc7uPDmewTyQ+0INnmq
+         b/yZGU858z3A4S6+m9TG25Dh0TkbuF5R60BfP7NYlg2fFrdw2qnf828NIqkXxb8bkYI2
+         tq/bWecFBUSSzKIRiN3d10RxtSMjW0b0DZtnzi2EyYAIDpHq5THB+hHzqkWX54Pbn6ZC
+         mmnA==
+X-Gm-Message-State: AHQUAuacK+HTaoKFtu8bxTosEg7lc0H26+lKiZqTVPcCJZpl+W8wi5Jr
+        HLKep8tbZ13B7YCOO2qI+ITsjaWIKRNiww==
+X-Google-Smtp-Source: AHgI3IadcQDrsMgUubSnH74vNHukdMaRIlUvI5F5jStrmwdBd9qvuH9LZk8yhqsa9GKZuwS0MRmBUg==
+X-Received: by 2002:a05:6402:754:: with SMTP id p20mr315195edy.258.1549602564280;
+        Thu, 07 Feb 2019 21:09:24 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id v2sm336792edr.46.2019.02.07.21.09.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 07 Feb 2019 21:09:23 -0800 (PST)
+Date:   Thu, 7 Feb 2019 22:09:21 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Sasha Neftin <sasha.neftin@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc:     Aaron Brown <aaron.f.brown@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Clang warning in drivers/net/ethernet/intel/igc/igc_ethtool.c
+Message-ID: <20190208050921.GA8758@archlinux-ryzen>
 MIME-Version: 1.0
-In-Reply-To: <6afa674b-9c4e-2568-c758-030e93aebd06@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Hi all,
 
-On 08/02/2019 6.55, Vesa Jääskeläinen wrote:
-> Hi All,
-> 
-> On 31/01/2019 0.35, Pavel Machek wrote:
->> On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
->>> Add a documentation of LED Multicolor LED class specific
->>> sysfs attributes.
->>
->> No, sorry. This does not most of the requirements.
->>
->>                                 Pavel
->>
->> Requirements for RGB LED interface:
-> 
-> ...
-> 
-> I have tried to capture relevant parts of ideas and requirements and 
-> usage in a wiki page in github:
-> 
-> https://github.com/vesajaaskelainen/linux-multicolor-leds/wiki
-> 
-> I believe the discussion is good to perform in mailing list -- I am 
-> happy to update or give you access to update the wiki so we could have 
-> easy to use summary/details source during discussions.
-> 
-> Ideas on the interface seem to be a bit drifting so I apologize if some 
-> of Your ideas were not captured.
-> 
-> There has been at least two direct proposals for userspace interface and 
-> I tried to provide usage example also for Dan's proposal. Feel free to 
-> correct me if I made a mistake.
-> 
-> I believe it is a good to create summary page as there seems to many 
-> aspects to be though out. What do you feel on this approach?
+After commit 8c5ad0dae93c ("igc: Add ethtool support"), Clang warns:
 
-And should we perhaps move this discussion only to linux-leds mailing 
-list for successive replies :) ? So we don't generate too broad traffic.
+drivers/net/ethernet/intel/igc/igc_ethtool.c:9:19: warning: variable 'igc_priv_flags_strings' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+static const char igc_priv_flags_strings[][ETH_GSTRING_LEN] = {
+                  ^
+1 warning generated.
+
+igc_priv_flags_strings is only used in an ARRAY_SIZE macro, which is a
+compile time evaluation, so no reference to it is being emitted in the
+final assembly. Is it actually needed and was forgotten to be used
+somewhere or could it be eliminated so that Clang no longer warns?
 
 Thanks,
-Vesa Jääskeläinen
+Nathan
