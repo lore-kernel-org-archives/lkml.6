@@ -2,124 +2,127 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF32C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03425C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 146ED2075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACD342075C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:53:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H0BzMHZk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cyIcBeuj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfBHOwC (ORCPT
+        id S1727962AbfBHOxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:52:02 -0500
-Received: from chuckie.co.uk ([82.165.15.123]:59655 "EHLO
-        s16892447.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726887AbfBHOwC (ORCPT
+        Fri, 8 Feb 2019 09:53:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55250 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727837AbfBHOxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:52:02 -0500
-X-Greylist: delayed 1092 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 09:52:01 EST
-Received: from host86-138-240-60.range86-138.btcentralplus.com ([86.138.240.60] helo=[192.168.1.65])
-        by s16892447.onlinehome-server.info with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <mark.cave-ayland@ilande.co.uk>)
-        id 1gs7Vh-0000XE-WE; Fri, 08 Feb 2019 14:52:11 +0000
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-References: <20190208143319.11980-1-mark.cave-ayland@ilande.co.uk>
- <41b02fb0-cdc6-6de0-d8fc-44d3d0a8ad70@c-s.fr>
-From:   Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mark.cave-ayland@ilande.co.uk; keydata=
- mQENBFQJuzwBCADAYvxrwUh1p/PvUlNFwKosVtVHHplgWi5p29t58QlOUkceZG0DBYSNqk93
- 3JzBTbtd4JfFcSupo6MNNOrCzdCbCjZ64ik8ycaUOSzK2tKbeQLEXzXoaDL1Y7vuVO7nL9bG
- E5Ru3wkhCFc7SkoypIoAUqz8EtiB6T89/D9TDEyjdXUacc53R5gu8wEWiMg5MQQuGwzbQy9n
- PFI+mXC7AaEUqBVc2lBQVpAYXkN0EyqNNT12UfDLdxaxaFpUAE2pCa2LTyo5vn5hEW+i3VdN
- PkmjyPvL6DdY03fvC01PyY8zaw+UI94QqjlrDisHpUH40IUPpC/NB0LwzL2aQOMkzT2NABEB
- AAG0ME1hcmsgQ2F2ZS1BeWxhbmQgPG1hcmsuY2F2ZS1heWxhbmRAaWxhbmRlLmNvLnVrPokB
- OAQTAQIAIgUCVAm7PAIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQW8LFb64PMh9f
- NAgAuc3ObOEY8NbZko72AGrg2tWKdybcMVITxmcor4hb9155o/OWcA4IDbeATR6cfiDL/oxU
- mcmtXVgPqOwtW3NYAKr5g/FrZZ3uluQ2mtNYAyTFeALy8YF7N3yhs7LOcpbFP7tEbkSzoXNG
- z8iYMiYtKwttt40WaheWuRs0ZOLbs6yoczZBDhna3Nj0LA3GpeJKlaV03O4umjKJgACP1c/q
- T2Pkg+FCBHHFP454+waqojHp4OCBo6HyK+8I4wJRa9Z0EFqXIu8lTDYoggeX0Xd6bWeCFHK3
- DhD0/Xi/kegSW33unsp8oVcM4kcFxTkpBgj39dB4KwAUznhTJR0zUHf63LkBDQRUCbs8AQgA
- y7kyevA4bpetM/EjtuqQX4U05MBhEz/2SFkX6IaGtTG2NNw5wbcAfhOIuNNBYbw6ExuaJ3um
- 2uLseHnudmvN4VSJ5Hfbd8rhqoMmmO71szgT/ZD9MEe2KHzBdmhmhxJdp+zQNivy215j6H27
- 14mbC2dia7ktwP1rxPIX1OOfQwPuqlkmYPuVwZP19S4EYnCELOrnJ0m56tZLn5Zj+1jZX9Co
- YbNLMa28qsktYJ4oU4jtn6V79H+/zpERZAHmH40IRXdR3hA+Ye7iC/ZpWzT2VSDlPbGY9Yja
- Sp7w2347L5G+LLbAfaVoejHlfy/msPeehUcuKjAdBLoEhSPYzzdvEQARAQABiQEfBBgBAgAJ
- BQJUCbs8AhsMAAoJEFvCxW+uDzIfabYIAJXmBepHJpvCPiMNEQJNJ2ZSzSjhic84LTMWMbJ+
- opQgr5cb8SPQyyb508fc8b4uD8ejlF/cdbbBNktp3BXsHlO5BrmcABgxSP8HYYNsX0n9kERv
- NMToU0oiBuAaX7O/0K9+BW+3+PGMwiu5ml0cwDqljxfVN0dUBZnQ8kZpLsY+WDrIHmQWjtH+
- Ir6VauZs5Gp25XLrL6bh/SL8aK0BX6y79m5nhfKI1/6qtzHAjtMAjqy8ChPvOqVVVqmGUzFg
- KPsrrIoklWcYHXPyMLj9afispPVR8e0tMKvxzFBWzrWX1mzljbBlnV2n8BIwVXWNbgwpHSsj
- imgcU9TTGC5qd9g=
-Message-ID: <2ed8efb9-5cd4-31bf-6c7b-501b9d1925e6@ilande.co.uk>
-Date:   Fri, 8 Feb 2019 14:51:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 09:53:19 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3BBE8601C4; Fri,  8 Feb 2019 14:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549637598;
+        bh=MPRaqOdkGpix0APQkLF+9Z/Ip7Q0xgLGZYfbeWNgmao=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=H0BzMHZkFW8CxQOIZpkQMaQKMB5qqhwPDD+hL7Y5iyalbzBwpG++LOptTR5Lz9eVO
+         I0i1DzGA0bjfzTaajRFGHujjtKczwZynEoiyss5UWhv14D5n5A8D32KPXXd6r4rlXq
+         HnvN0y6c+B5wB3x+2GzMOKa/LmGtIza5M4Mi/y0U=
+Received: from [192.168.1.100] (unknown [157.45.225.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 93C4F60208;
+        Fri,  8 Feb 2019 14:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549637597;
+        bh=MPRaqOdkGpix0APQkLF+9Z/Ip7Q0xgLGZYfbeWNgmao=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cyIcBeujMHi2oZAkg1z3EGJzMNrRji9YMGARAdGeO3b9Zcty2cHsnG6/ngK5v1QSX
+         w8dHHy1qoSNNWcB8CzpIbTuYZKoW9rsA2zRCGAYPeuAaXLARnidJ4QYW7aLJWcC3qb
+         IhzlVFYGRIyT/0+BZ9OqzTvu9CDhhMJXHdPLJZB4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93C4F60208
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCHv7 1/6] arm64: dts: qcom: sdm845: Add Coresight support
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mike.leach@linaro.org,
+        leo.yan@linaro.org, alexander.shishkin@linux.intel.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        vivek.gautam@codeaurora.org, jhugo@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, marc.w.gonzalez@free.fr
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        tingwei@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org>
+ <b672119cd1ffb5cba9da27ab5974fd5978e55b31.1548981329.git.saiprakash.ranjan@codeaurora.org>
+ <81dc97e6-2640-d600-9373-30518ed59792@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <3922a74f-3607-fb9f-2b50-bb9b2f45b1cf@codeaurora.org>
+Date:   Fri, 8 Feb 2019 20:23:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <41b02fb0-cdc6-6de0-d8fc-44d3d0a8ad70@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <81dc97e6-2640-d600-9373-30518ed59792@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 86.138.240.60
-X-SA-Exim-Mail-From: mark.cave-ayland@ilande.co.uk
-Subject: Re: [PATCH] powerpc: fix 32-bit KVM-PR lockup and panic with MacOS
- guest
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Jan 2012 02:45:44 +0000)
-X-SA-Exim-Scanned: Yes (on s16892447.onlinehome-server.info)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2019 14:45, Christophe Leroy wrote:
-
-> Le 08/02/2019 à 15:33, Mark Cave-Ayland a écrit :
->> Commit 8792468da5e1 "powerpc: Add the ability to save FPU without giving it up"
+On 2/8/2019 7:50 PM, Suzuki K Poulose wrote:
 > 
-> Expected format for the above is:
 > 
-> Commit 123456789abc ("text")
-
-Hi Christophe,
-
-Apologies - I'm fairly new at submitting kernel patches, but I can re-send it in the
-correct format later if required.
-
->> unexpectedly removed the MSR_FE0 and MSR_FE1 bits from the bitmask used to
->> update the MSR of the previous thread in __giveup_fpu() causing a KVM-PR MacOS
->> guest to lockup and panic the kernel.
+> On 01/02/2019 00:53, Sai Prakash Ranjan wrote:
+>> Add coresight components found on Qualcomm SDM845 SoC.
 >>
->> Reinstate these bits to the MSR bitmask to enable MacOS guests to run under
->> 32-bit KVM-PR once again without issue.
+>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 >>
->> Signed-off-by: Mark Cave-Ayland <mark.cave-ayland@ilande.co.uk>
+>> ---
+>> For testing, all dependent patches are in below tree:
+>>   * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
+>>
+>> - Depends on AOSS QMP side channel patches by Bjorn Andersson [1] - [4].
+>> - AMBA bus pclk change [5].
+>> - Also depends on patch ("arm64: dts: qcom: sdm845: Increase address
+>>    and size cells for soc") [6].
+>>
+>> [1] 
+>> https://lore.kernel.org/lkml/20190131003933.11436-5-bjorn.andersson@linaro.org/ 
+>>
+>> [2] 
+>> https://lore.kernel.org/lkml/20190131003933.11436-6-bjorn.andersson@linaro.org/ 
+>>
+>> [3] 
+>> https://lore.kernel.org/lkml/20190131003933.11436-7-bjorn.andersson@linaro.org/ 
+>>
+>> [4] 
+>> https://lore.kernel.org/lkml/20190131003933.11436-10-bjorn.andersson@linaro.org/ 
+>>
+>> [5] 
+>> https://lore.kernel.org/lkml/20190131020141.28352-1-bjorn.andersson@linaro.org/ 
+>>
+>> [6] 
+>> https://lore.kernel.org/lkml/20190117042940.25487-2-bjorn.andersson@linaro.org/ 
+>>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 434 +++++++++++++++++++++++++++
+>>   1 file changed, 434 insertions(+)
+>>
 > 
-> Should include a Fixes: and a Cc to stable ?
-> 
-> Fixes: 8792468da5e1 ("powerpc: Add the ability to save FPU without giving it up")
-> Cc: stable@vger.kernel.org
+> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Indeed, but there are still some questions to be asked here:
+Thanks!
 
-1) Why were these bits removed from the original bitmask in the first place without
-it being documented in the commit message?
-
-2) Is this the right fix? I'm told that MacOS guests already run without this patch
-on a G5 under 64-bit KVM-PR which may suggest that this is a workaround for another
-bug elsewhere in the 32-bit powerpc code.
-
-
-If you think that these points don't matter, then I'm happy to resubmit the patch
-as-is based upon your comments above.
-
-
-ATB,
-
-Mark.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
