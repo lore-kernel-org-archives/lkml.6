@@ -2,441 +2,261 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8CEC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65531C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6152321841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:07:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JBBYceUl"
+	by mail.kernel.org (Postfix) with ESMTP id 29701218FF
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfBHXHF (ORCPT
+        id S1727106AbfBHXHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 18:07:05 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:44703 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfBHXHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 18:07:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version
-        :Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=y+oC/s2rSC2j/e+TEEr1ysU7rESInKFprVF8OtBLUJA=; b=JBBYceUlYFmJwzIWINPhSPOPc4
-        7cqgk7bY07UG327yG1kHbybGqsaXP4p62iS59EWQVuQUCDmwTJvV8ngjNGvlTaEhhwqGy7TipGL3X
-        siOYQDtPJLU6/n8TF4L7mY/1D9Wmlz9D0Ehf20naSu6K1NUBNXp+Rw55hBOPYsHnkUUg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gsFE2-0003xW-Nx; Sat, 09 Feb 2019 00:06:26 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Emeric Dupont <emeric.dupont@zii.aero>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v6] mfd: tqmx86: IO controller with i2c, wachdog and gpio
-Date:   Sat,  9 Feb 2019 00:06:22 +0100
-Message-Id: <20190208230622.15181-1-andrew@lunn.ch>
-X-Mailer: git-send-email 2.11.0
+        Fri, 8 Feb 2019 18:07:54 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34745 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfBHXHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 18:07:54 -0500
+Received: by mail-qt1-f193.google.com with SMTP id b8so5939102qtj.1;
+        Fri, 08 Feb 2019 15:07:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=w7xrwvSBwIBH7Z+TlaO5PDEiKXf5UtCtvsJ3/crDyMs=;
+        b=OsUiyBXmQcMBJl4zKLwnFEYE9f1EMHiK258LwSGdSgy2Rv3VuZED0nGCTcrHcAVV+B
+         S1swbjYt+pD30fRqdS1j6z4qkpT+f0VzN7oSPAR2MvIywtYxDFUIeMYClEIagTGsXfGB
+         p4a4CmVxoUYYf2GqUisugWyrACH5Gl4tmRKthm/coSK9kmMzQp9/LCXnvBTax+bCxFsc
+         AdbY0FKsHZ7R94EDIjOZZ16kFlarLfxinHFw8n43rnj0m+zQ+43jDtkkIZK4+RrWX5Dp
+         AZ6RVmoFyzf7zOebxWj7KQH1qnxusj1vAt5jUlfZiN2RW23GNbrEGb2f6MVUG3hvU5mU
+         o9JA==
+X-Gm-Message-State: AHQUAubgyuh2SwCgQr2LrqVFz6PyCQO6IYj9F5VKhHYabmVT5v268Fo6
+        RCNaqNo1G3/rKX2zbZYAWtnenz0ykvX1+AYrwKo=
+X-Google-Smtp-Source: AHgI3IZT02Djf1BLipGoxcQxRwnbXMnS+n3tmKCge0ErTfO0Jgn2NV7iSikDm216h1ZXgNxJKUL351sCK2EF3rzzPEM=
+X-Received: by 2002:ac8:1d12:: with SMTP id d18mr18045357qtl.343.1549667272692;
+ Fri, 08 Feb 2019 15:07:52 -0800 (PST)
+MIME-Version: 1.0
+References: <CAK8P3a3pPwnOW7pXjOhU386zCekAda+p8AgzbOM6ybT=dKMGwA@mail.gmail.com>
+ <CAK8P3a2+NBY58T75zjSrE59+iOXuny+rpWfk_zfzzr3=PAsVuw@mail.gmail.com>
+In-Reply-To: <CAK8P3a2+NBY58T75zjSrE59+iOXuny+rpWfk_zfzzr3=PAsVuw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 9 Feb 2019 00:07:36 +0100
+Message-ID: <CAK8P3a1wz_WurJYLa4uE49APo-HfvLq4MAGH0huNwwxsuiprZw@mail.gmail.com>
+Subject: [GIT PULL 2/2] y2038: Add time64 system calls
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The QMX86 is a PLD present on some TQ-Systems ComExpress modules. It
-provides 1 or 2 I2C bus masters, 8 GPIOs and a watchdog timer. Add an
-MFD which will instantiate the individual drivers.
+I messed up the $SUBJECT line on this one, new subject for reference
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
----
-v2:
-
-Drop setting i2c bus speed, which removes the build dependencies on
-the i2c ocores patches. This can be added back later.
-
-v3
-
-Fix indentation of help
-Fix SPDX to match MODULE_LICENSE
-Remove warranty text
-Add my Copyright
-Sort include files
-Add _REG_ to register defines
-Add #defines for all resources
-Replace magic numbers with #defines
-Rename pld_clock to pld_clock_rate
-Remove wrapper around ioread8()/iowrite8()
-Scatter const keyword in a few places
-Remove enum for calls
-Implement lookup for board in tq_board_if
-Rename ioeic to io_ext_int_val to make is more readable
-Handle optional calls in a different way
-Better group code and structures
-Kill all the sysfs attributes
-Use devm_mfd_add_devices()
-Don't exist silently for unknown board ID
-
-Not addressed, waiting for answers:
-MODULE_PARM for GPIO interrupts
-Not using regmap, intel IO not supported by regmap
-Setting GPIO irq on resource structure
-Global tqmx86_pdev
-Jumping through hoops
-
-v4
-
-Remove -- to avoid broken mailer
-
-v5
-
-Remove device data since it is only used in the probe function
-Remove platform data, since it only contains well know values
-Move GPIO IRQ resource first and comment about this assumption
-Fixup platform data naming
-Use true for ignore_resource_conflicts
-Use ARRAY_SIZE for num_resources
-Replace tq_board_info with two functions using switch
-Error out for invalid GPIO IRQ configuration
-Error out if GPIO IRQ cannot be configured in the hardware
-Split registering cells into two calls
-Validate GPIO IRQ using a switch statement, and derive the HW configuration
-
-v6
-
-Minimize switch statement in tqmx86_board_id_to_clk_rate
-Wrap io_ext_int_val differently
-Read TQMX86_REG_IO_EXT_INT into variable before comparing
-Move GPIO IRQ validation into probe
----
- drivers/mfd/Kconfig  |   8 ++
- drivers/mfd/Makefile |   1 +
- drivers/mfd/tqmx86.c | 281 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 290 insertions(+)
- create mode 100644 drivers/mfd/tqmx86.c
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f461460a2aeb..226f7eeb2093 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1677,6 +1677,14 @@ config MFD_TC6393XB
- 	help
- 	  Support for Toshiba Mobile IO Controller TC6393XB
- 
-+config MFD_TQMX86
-+	tristate "TQ-Systems IO controller TQMX86"
-+	select MFD_CORE
-+	help
-+	  Say yes here to enable support for various functions of the
-+	  TQ-Systems IO controller and watchdog device, found on their
-+	  ComExpress CPU modules.
-+
- config MFD_VX855
- 	tristate "VIA VX855/VX875 integrated south bridge"
- 	depends on PCI
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 12980a4ad460..7f4790662988 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_MFD_TC3589X)	+= tc3589x.o
- obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
- obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
- obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
-+obj-$(CONFIG_MFD_TQMX86)	+= tqmx86.o
- 
- obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
- obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
-diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-new file mode 100644
-index 000000000000..22d2f02d855c
---- /dev/null
-+++ b/drivers/mfd/tqmx86.c
-@@ -0,0 +1,281 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * TQ-Systems PLD MFD core driver, based on vendor driver by
-+ * Vadim V.Vlasov <vvlasov@dev.rtsoft.ru>
-+ *
-+ * Copyright (c) 2015 TQ-Systems GmbH
-+ * Copyright (c) 2019 Andrew Lunn <andrew@lunn.ch>
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/dmi.h>
-+#include <linux/i2c.h>
-+#include <linux/io.h>
-+#include <linux/mfd/core.h>
-+#include <linux/module.h>
-+#include <linux/platform_data/i2c-ocores.h>
-+#include <linux/platform_device.h>
-+
-+#define TQMX86_IOBASE	0x160
-+#define TQMX86_IOSIZE	0x3f
-+#define TQMX86_IOBASE_I2C	0x1a0
-+#define TQMX86_IOSIZE_I2C	0xa
-+#define TQMX86_IOBASE_WATCHDOG	0x18b
-+#define TQMX86_IOSIZE_WATCHDOG	0x2
-+#define TQMX86_IOBASE_GPIO	0x18d
-+#define TQMX86_IOSIZE_GPIO	0x4
-+
-+#define TQMX86_REG_BOARD_ID	0x20
-+#define TQMX86_REG_BOARD_ID_E38M	1
-+#define TQMX86_REG_BOARD_ID_50UC	2
-+#define TQMX86_REG_BOARD_ID_E38C	3
-+#define TQMX86_REG_BOARD_ID_60EB	4
-+#define TQMX86_REG_BOARD_ID_E39M	5
-+#define TQMX86_REG_BOARD_ID_E39C	6
-+#define TQMX86_REG_BOARD_ID_E39x	7
-+#define TQMX86_REG_BOARD_ID_70EB	8
-+#define TQMX86_REG_BOARD_ID_80UC	9
-+#define TQMX86_REG_BOARD_ID_90UC	10
-+#define TQMX86_REG_BOARD_REV	0x21
-+#define TQMX86_REG_IO_EXT_INT	0x26
-+#define TQMX86_REG_IO_EXT_INT_NONE		0
-+#define TQMX86_REG_IO_EXT_INT_7			1
-+#define TQMX86_REG_IO_EXT_INT_9			2
-+#define TQMX86_REG_IO_EXT_INT_12		3
-+#define TQMX86_REG_IO_EXT_INT_MASK		0x3
-+#define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
-+
-+#define TQMX86_REG_I2C_DETECT	0x47
-+#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
-+#define TQMX86_REG_I2C_INT_EN	0x49
-+
-+static uint gpio_irq;
-+module_param(gpio_irq, uint, 0);
-+MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (7, 9, 12)");
-+
-+static const struct resource tqmx_i2c_soft_resources[] = {
-+	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-+};
-+
-+static const struct resource tqmx_watchdog_resources[] = {
-+	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
-+};
-+
-+/*
-+ * The IRQ resource must be first, since it is updated with the
-+ * configured IRQ in the probe function.
-+ */
-+static struct resource tqmx_gpio_resources[] = {
-+	DEFINE_RES_IRQ(0),
-+	DEFINE_RES_IO(TQMX86_IOBASE_GPIO, TQMX86_IOSIZE_GPIO),
-+};
-+
-+static struct i2c_board_info tqmx86_i2c_devices[] = {
-+	{
-+		/* 4K EEPROM at 0x50 */
-+		I2C_BOARD_INFO("24c32", 0x50),
-+	},
-+};
-+
-+static struct ocores_i2c_platform_data ocores_platfom_data = {
-+	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
-+	.devices = tqmx86_i2c_devices,
-+};
-+
-+static const struct mfd_cell tqmx86_i2c_soft_dev[] = {
-+	{
-+		.name = "ocores-i2c",
-+		.platform_data = &ocores_platfom_data,
-+		.pdata_size = sizeof(ocores_platfom_data),
-+		.resources = tqmx_i2c_soft_resources,
-+		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
-+	},
-+};
-+
-+static const struct mfd_cell tqmx86_devs[] = {
-+	{
-+		.name = "tqmx86-wdt",
-+		.resources = tqmx_watchdog_resources,
-+		.num_resources = ARRAY_SIZE(tqmx_watchdog_resources),
-+		.ignore_resource_conflicts = true,
-+	},
-+	{
-+		.name = "tqmx86-gpio",
-+		.resources = tqmx_gpio_resources,
-+		.num_resources = ARRAY_SIZE(tqmx_gpio_resources),
-+		.ignore_resource_conflicts = true,
-+	},
-+};
-+
-+static const char *tqmx86_board_id_to_name(u8 board_id)
-+{
-+	switch (board_id) {
-+	case TQMX86_REG_BOARD_ID_E38M:
-+		return "TQMxE38M";
-+	case TQMX86_REG_BOARD_ID_50UC:
-+		return "TQMx50UC";
-+	case TQMX86_REG_BOARD_ID_E38C:
-+		return "TQMxE38C";
-+	case TQMX86_REG_BOARD_ID_60EB:
-+		return "TQMx60EB";
-+	case TQMX86_REG_BOARD_ID_E39M:
-+		return "TQMxE39M";
-+	case TQMX86_REG_BOARD_ID_E39C:
-+		return "TQMxE39C";
-+	case TQMX86_REG_BOARD_ID_E39x:
-+		return "TQMxE39x";
-+	case TQMX86_REG_BOARD_ID_70EB:
-+		return "TQMx70EB";
-+	case TQMX86_REG_BOARD_ID_80UC:
-+		return "TQMx80UC";
-+	case TQMX86_REG_BOARD_ID_90UC:
-+		return "TQMx90UC";
-+	default:
-+		return "Unknown";
-+	}
-+}
-+
-+static int tqmx86_board_id_to_clk_rate(u8 board_id)
-+{
-+	switch (board_id) {
-+	case TQMX86_REG_BOARD_ID_50UC:
-+	case TQMX86_REG_BOARD_ID_60EB:
-+	case TQMX86_REG_BOARD_ID_70EB:
-+	case TQMX86_REG_BOARD_ID_80UC:
-+	case TQMX86_REG_BOARD_ID_90UC:
-+		return 24000;
-+	case TQMX86_REG_BOARD_ID_E39M:
-+	case TQMX86_REG_BOARD_ID_E39C:
-+	case TQMX86_REG_BOARD_ID_E39x:
-+		return 25000;
-+	case TQMX86_REG_BOARD_ID_E38M:
-+	case TQMX86_REG_BOARD_ID_E38C:
-+		return 33000;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int tqmx86_probe(struct platform_device *pdev)
-+{
-+	u8 board_id, rev, i2c_det, i2c_ien, io_ext_int_val;
-+	struct device *dev = &pdev->dev;
-+	u8 gpio_irq_cfg, readback;
-+	const char *board_name;
-+	void __iomem *io_base;
-+	int err;
-+
-+	switch (gpio_irq) {
-+	case 0:
-+		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_NONE;
-+		break;
-+	case 7:
-+		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_7;
-+		break;
-+	case 9:
-+		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_9;
-+		break;
-+	case 12:
-+		gpio_irq_cfg = TQMX86_REG_IO_EXT_INT_12;
-+		break;
-+	default:
-+		pr_err("tqmx86: Invalid GPIO IRQ (%d)\n", gpio_irq);
-+		return -EINVAL;
-+	}
-+
-+	io_base = devm_ioport_map(dev, TQMX86_IOBASE, TQMX86_IOSIZE);
-+	if (!io_base)
-+		return -ENOMEM;
-+
-+	board_id = ioread8(io_base + TQMX86_REG_BOARD_ID);
-+	board_name = tqmx86_board_id_to_name(board_id);
-+	rev = ioread8(io_base + TQMX86_REG_BOARD_REV);
-+
-+	dev_info(dev,
-+		 "Found %s - Board ID %d, PCB Revision %d, PLD Revision %d\n",
-+		 board_name, board_id, rev >> 4, rev & 0xf);
-+
-+	i2c_det = ioread8(io_base + TQMX86_REG_I2C_DETECT);
-+	i2c_ien = ioread8(io_base + TQMX86_REG_I2C_INT_EN);
-+
-+	if (gpio_irq_cfg) {
-+		io_ext_int_val =
-+			gpio_irq_cfg << TQMX86_REG_IO_EXT_INT_GPIO_SHIFT;
-+		iowrite8(io_ext_int_val, io_base + TQMX86_REG_IO_EXT_INT);
-+		readback = ioread8(io_base + TQMX86_REG_IO_EXT_INT);
-+		if (readback != io_ext_int_val) {
-+			dev_warn(dev, "GPIO interrupts not supported.\n");
-+			return -EINVAL;
-+		}
-+
-+		/* Assumes the IRQ resource is first. */
-+		tqmx_gpio_resources[0].start = gpio_irq;
-+	}
-+
-+	ocores_platfom_data.clock_khz = tqmx86_board_id_to_clk_rate(board_id);
-+
-+	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
-+		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-+					   tqmx86_i2c_soft_dev,
-+					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
-+					   NULL, 0, NULL);
-+		if (err)
-+			return err;
-+	}
-+
-+	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-+				    tqmx86_devs,
-+				    ARRAY_SIZE(tqmx86_devs),
-+				    NULL, 0, NULL);
-+}
-+
-+static int tqmx86_create_platform_device(const struct dmi_system_id *id)
-+{
-+	struct platform_device *pdev;
-+	int err;
-+
-+	pdev = platform_device_alloc("tqmx86", -1);
-+	if (!pdev)
-+		return -ENOMEM;
-+
-+	err = platform_device_add(pdev);
-+	if (err)
-+		platform_device_put(pdev);
-+
-+	return err;
-+}
-+
-+static const struct dmi_system_id tqmx86_dmi_table[] __initconst = {
-+	{
-+		.ident = "TQMX86",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "TQ-Group"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "TQMx"),
-+		},
-+		.callback = tqmx86_create_platform_device,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, tqmx86_dmi_table);
-+
-+static struct platform_driver tqmx86_driver = {
-+	.driver		= {
-+		.name	= "tqmx86",
-+	},
-+	.probe		= tqmx86_probe,
-+};
-+
-+static int __init tqmx86_init(void)
-+{
-+	if (!dmi_check_system(tqmx86_dmi_table))
-+		return -ENODEV;
-+
-+	return platform_driver_register(&tqmx86_driver);
-+}
-+
-+module_init(tqmx86_init);
-+
-+MODULE_DESCRIPTION("TQx86 PLD Core Driver");
-+MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:tqmx86");
--- 
-2.20.1
-
+On Sat, Feb 9, 2019 at 12:05 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+>
+>   Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
+> tags/y2038-new-syscalls
+>
+> for you to fetch changes up to 48166e6ea47d23984f0b481ca199250e1ce0730a:
+>
+>   y2038: add 64-bit time_t syscalls to all 32-bit architectures
+> (2019-02-07 00:13:28 +0100)
+>
+> ----------------------------------------------------------------
+> y2038: Add time64 system calls
+>
+> This series finally gets us to the point of having system calls with
+> 64-bit time_t on all architectures, after a long time of incremental
+> preparation patches.
+>
+> There was actually one conversion that I missed during the summer,
+> i.e. Deepa's timex series, which I now updated based the 5.0-rc1 changes
+> and review comments.
+>
+> The following system calls are now added on all 32-bit architectures
+> using the same system call numbers:
+>
+> 403 clock_gettime64
+> 404 clock_settime64
+> 405 clock_adjtime64
+> 406 clock_getres_time64
+> 407 clock_nanosleep_time64
+> 408 timer_gettime64
+> 409 timer_settime64
+> 410 timerfd_gettime64
+> 411 timerfd_settime64
+> 412 utimensat_time64
+> 413 pselect6_time64
+> 414 ppoll_time64
+> 416 io_pgetevents_time64
+> 417 recvmmsg_time64
+> 418 mq_timedsend_time64
+> 419 mq_timedreceiv_time64
+> 420 semtimedop_time64
+> 421 rt_sigtimedwait_time64
+> 422 futex_time64
+> 423 sched_rr_get_interval_time64
+>
+> Each one of these corresponds directly to an existing system call
+> that includes a 'struct timespec' argument, or a structure containing
+> a timespec or (in case of clock_adjtime) timeval. Not included here
+> are new versions of getitimer/setitimer and getrusage/waitid, which
+> are planned for the future but only needed to make a consistent API
+> rather than for correct operation beyond y2038. These four system
+> calls are based on 'timeval', and it has not been finally decided
+> what the replacement kernel interface will use instead.
+>
+> So far, I have done a lot of build testing across most architectures,
+> which has found a number of bugs. Runtime testing so far included
+> testing LTP on 32-bit ARM with the existing system calls, to ensure
+> we do not regress for existing binaries, and a test with a 32-bit
+> x86 build of LTP against a modified version of the musl C library
+> that has been adapted to the new system call interface [3].
+> This library can be used for testing on all architectures supported
+> by musl-1.1.21, but it is not how the support is getting integrated
+> into the official musl release. Official musl support is planned
+> but will require more invasive changes to the library.
+>
+> Link: https://lore.kernel.org/lkml/20190110162435.309262-1-arnd@arndb.de/T/
+> Link: https://lore.kernel.org/lkml/20190118161835.2259170-1-arnd@arndb.de/
+> Link: https://git.linaro.org/people/arnd/musl-y2038.git/ [2]
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> ----------------------------------------------------------------
+> Arnd Bergmann (31):
+>       s390: open-code s390_personality syscall
+>       ipc: introduce ksys_ipc()/compat_ksys_ipc() for s390
+>       s390: use generic UID16 implementation
+>       s390: autogenerate compat syscall wrappers
+>       s390: remove compat_wrapper.c
+>       ia64: add __NR_umount2 definition
+>       ia64: add statx and io_pgetevents syscalls
+>       ia64: assign syscall numbers for perf and seccomp
+>       alpha: wire up io_pgetevents system call
+>       alpha: update syscall macro definitions
+>       ARM: add migrate_pages() system call
+>       ARM: add kexec_file_load system call number
+>       m68k: assign syscall number for seccomp
+>       sh: remove duplicate unistd_32.h file
+>       sh: add statx system call
+>       sparc64: fix sparc_ipc type conversion
+>       ipc: rename old-style shmctl/semctl/msgctl syscalls
+>       arch: add split IPC system calls where needed
+>       arch: add pkey and rseq syscall numbers everywhere
+>       alpha: add standard statfs64/fstatfs64 syscalls
+>       alpha: add generic get{eg,eu,g,p,u,pp}id() syscalls
+>       syscalls: remove obsolete __IGNORE_ macros
+>       time: make adjtime compat handling available for 32 bit
+>       time: fix sys_timer_settime prototype
+>       sparc64: add custom adjtimex/clock_adjtime functions
+>       x86/x32: use time64 versions of sigtimedwait and recvmmsg
+>       y2038: syscalls: rename y2038 compat syscalls
+>       y2038: use time32 syscall names on 32-bit
+>       y2038: remove struct definition redirects
+>       y2038: rename old time and utime syscalls
+>       y2038: add 64-bit time_t syscalls to all 32-bit architectures
+>
+> Deepa Dinamani (3):
+>       time: Add struct __kernel_timex
+>       timex: use __kernel_timex internally
+>       timex: change syscalls to use struct __kernel_timex
+>
+>  arch/Kconfig                                |   2 +-
+>  arch/alpha/include/asm/unistd.h             |  21 --
+>  arch/alpha/include/uapi/asm/unistd.h        |  10 +
+>  arch/alpha/kernel/osf_sys.c                 |   5 +-
+>  arch/alpha/kernel/syscalls/syscall.tbl      |  22 +-
+>  arch/arm/include/asm/unistd.h               |   5 +-
+>  arch/arm/kernel/sys_oabi-compat.c           |   8 +-
+>  arch/arm/tools/syscall.tbl                  |  85 +++---
+>  arch/arm64/include/asm/unistd.h             |   2 +-
+>  arch/arm64/include/asm/unistd32.h           |  99 +++++--
+>  arch/ia64/include/asm/unistd.h              |  14 -
+>  arch/ia64/include/uapi/asm/unistd.h         |   2 +
+>  arch/ia64/kernel/syscalls/syscall.tbl       |  11 +-
+>  arch/m68k/include/asm/unistd.h              |   4 +-
+>  arch/m68k/kernel/syscalls/syscall.tbl       |  88 ++++--
+>  arch/microblaze/include/asm/unistd.h        |   4 +-
+>  arch/microblaze/kernel/syscalls/syscall.tbl |  83 +++---
+>  arch/mips/include/asm/unistd.h              |  17 +-
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |  77 ++++--
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |   7 +-
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |  85 ++++--
+>  arch/parisc/include/asm/unistd.h            |  13 +-
+>  arch/parisc/kernel/syscalls/syscall.tbl     | 109 ++++++--
+>  arch/powerpc/include/asm/unistd.h           |   8 +-
+>  arch/powerpc/kernel/syscalls/syscall.tbl    | 134 +++++++--
+>  arch/s390/Kconfig                           |   2 +
+>  arch/s390/include/asm/syscall_wrapper.h     | 135 ++++++++++
+>  arch/s390/include/asm/unistd.h              |   7 +-
+>  arch/s390/include/uapi/asm/posix_types.h    |   6 +
+>  arch/s390/kernel/Makefile                   |   2 +-
+>  arch/s390/kernel/compat_linux.c             | 235 +---------------
+>  arch/s390/kernel/compat_wrapper.c           | 186 -------------
+>  arch/s390/kernel/entry.S                    |   4 +-
+>  arch/s390/kernel/sys_s390.c                 |  16 +-
+>  arch/s390/kernel/syscalls/syscall.tbl       | 373 +++++++++++++------------
+>  arch/sh/include/asm/unistd.h                |   4 +-
+>  arch/sh/include/uapi/asm/unistd_32.h        | 403 ----------------------------
+>  arch/sh/kernel/syscalls/syscall.tbl         |  88 ++++--
+>  arch/sparc/include/asm/unistd.h             |  13 +-
+>  arch/sparc/kernel/sys_sparc_64.c            |  61 ++++-
+>  arch/sparc/kernel/syscalls/syscall.tbl      | 116 ++++++--
+>  arch/x86/entry/syscalls/syscall_32.tbl      |  85 ++++--
+>  arch/x86/entry/syscalls/syscall_64.tbl      |   6 +-
+>  arch/x86/include/asm/unistd.h               |   8 +-
+>  arch/xtensa/include/asm/unistd.h            |  14 +-
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |  78 ++++--
+>  drivers/ptp/ptp_clock.c                     |   2 +-
+>  fs/aio.c                                    |  10 +-
+>  fs/select.c                                 |   4 +-
+>  fs/timerfd.c                                |   4 +-
+>  fs/utimes.c                                 |  10 +-
+>  include/linux/compat.h                      | 104 +------
+>  include/linux/posix-clock.h                 |   2 +-
+>  include/linux/syscalls.h                    |  72 ++++-
+>  include/linux/time32.h                      |  32 ++-
+>  include/linux/time64.h                      |   8 -
+>  include/linux/timex.h                       |   4 +-
+>  include/uapi/asm-generic/unistd.h           | 103 ++++---
+>  include/uapi/linux/time.h                   |   4 -
+>  include/uapi/linux/timex.h                  |  39 +++
+>  ipc/mqueue.c                                |  16 +-
+>  ipc/msg.c                                   |  39 ++-
+>  ipc/sem.c                                   |  41 ++-
+>  ipc/shm.c                                   |  40 ++-
+>  ipc/syscall.c                               |  32 ++-
+>  ipc/util.h                                  |  21 +-
+>  kernel/compat.c                             |  64 -----
+>  kernel/futex.c                              |   2 +-
+>  kernel/sched/core.c                         |   5 +-
+>  kernel/signal.c                             |   2 +-
+>  kernel/sys_ni.c                             |  22 +-
+>  kernel/time/hrtimer.c                       |   2 +-
+>  kernel/time/ntp.c                           |  18 +-
+>  kernel/time/ntp_internal.h                  |   2 +-
+>  kernel/time/posix-clock.c                   |   2 +-
+>  kernel/time/posix-stubs.c                   |  25 +-
+>  kernel/time/posix-timers.c                  |  72 +++--
+>  kernel/time/posix-timers.h                  |   2 +-
+>  kernel/time/time.c                          |  92 ++++++-
+>  kernel/time/timekeeping.c                   |   4 +-
+>  net/compat.c                                |   2 +-
+>  scripts/checksyscalls.sh                    |  40 +++
+>  82 files changed, 1870 insertions(+), 1830 deletions(-)
+>  create mode 100644 arch/s390/include/asm/syscall_wrapper.h
+>  delete mode 100644 arch/s390/kernel/compat_wrapper.c
+>  delete mode 100644 arch/sh/include/uapi/asm/unistd_32.h
