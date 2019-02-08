@@ -2,85 +2,220 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A305AC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB09C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7044D2084D
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F122084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:18:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="NDvX+37b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbfBHTRS (ORCPT
+        id S1727415AbfBHTSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:17:18 -0500
-Received: from mga09.intel.com ([134.134.136.24]:60147 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbfBHTRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:17:17 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 11:17:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="121021449"
-Received: from szilberm-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.172])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Feb 2019 11:17:11 -0800
-Date:   Fri, 8 Feb 2019 21:17:10 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tpm: =?iso-8859-1?Q?Uni?=
- =?iso-8859-1?Q?fy_the_send_callback_behaviour=E4?=
-Message-ID: <20190208191710.GA30645@linux.intel.com>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
- <20190208190057.GA3439@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208190057.GA3439@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 8 Feb 2019 14:18:01 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40098 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727125AbfBHTSB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 14:18:01 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 43FEB8EE2FF;
+        Fri,  8 Feb 2019 11:18:01 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NQA0BeCezmWC; Fri,  8 Feb 2019 11:18:01 -0800 (PST)
+Received: from host186.65.213.217 (unknown [65.213.217.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9EDFF8EE0BF;
+        Fri,  8 Feb 2019 11:18:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1549653481;
+        bh=w/8GcRYpIeKuC6iRiY8gS+tIXb9B2qsaFxFOW/7BrtM=;
+        h=Subject:From:To:Cc:Date:From;
+        b=NDvX+37bJ4QdTaJDN9KIW4c95nTl/zNwGhrsXhGrB6VUayXMjQ/YZHZS5fZzy9965
+         sQsoOTy9ejKoNBOfwi1AtTESinZ5APTgac4vvmxffw4nJQY90mSrZCWMeSj5kuPNrG
+         ihi1z803+k2nc/BoTtMN8xfFVNwaEi5oiiFUn6fw=
+Message-ID: <1549653479.3647.13.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.0-rc5
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 08 Feb 2019 14:17:59 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 09:00:57PM +0200, Jarkko Sakkinen wrote:
-> It all looks now legit, but just in case I'll add a check for the return
-> value to tpm_try_transmit() and a warning if it is not zero in the
-> success case (and after that zeroing of rc).
+This is a set of five minor fixes (although, tecnhincally, the aicxxx
+fix is for a major problem in that the driver won't load without it,
+but I think the fact it's taken us since 4.10 to discover this
+indicates that the user base for these things has declined).
 
-Now the commits are applied both master and next, and these are
-the checks for send():
+The patch is available here:
 
-rc = chip->ops->send(chip, buf, count);
-if (rc < 0) {
-	if (rc != -EPIPE)
-		dev_err(&chip->dev,
-			"%s: send(): error %d\n", __func__, rc);
-	return rc;
-}
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-/* A sanity check. send() should just return zero on success e.g.
- * not the command length.
- */
-if (rc > 0) {
-	dev_warn(&chip->dev,
-		 "%s: send(): invalid value %d\n", __func__, rc);
-	rc = 0;
-}
+The short changelog is:
 
-Should be fairly safe play now.
+Damien Le Moal (1):
+      scsi: sd_zbc: Fix zone information messages
 
-/Jarkko
+David Disseldorp (1):
+      scsi: target: make the pi_prot_format ConfigFS path readable
+
+James Bottomley (1):
+      scsi: aic94xx: fix module loading
+
+Ross Lagerwall (1):
+      Revert "scsi: libfc: Add WARN_ON() when deleting rports"
+
+Vaibhav Jain (1):
+      scsi: cxlflash: Prevent deadlock when adapter probe fails
+
+And the diffstat:
+
+ drivers/scsi/aic94xx/aic94xx_init.c   |  8 ++++----
+ drivers/scsi/cxlflash/main.c          |  2 ++
+ drivers/scsi/libfc/fc_rport.c         |  1 -
+ drivers/scsi/sd_zbc.c                 | 12 ++++++++----
+ drivers/target/target_core_configfs.c |  8 +++++++-
+ 5 files changed, 21 insertions(+), 10 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/aic94xx/aic94xx_init.c b/drivers/scsi/aic94xx/aic94xx_init.c
+index f83f79b07b50..07efcb9b5b94 100644
+--- a/drivers/scsi/aic94xx/aic94xx_init.c
++++ b/drivers/scsi/aic94xx/aic94xx_init.c
+@@ -280,7 +280,7 @@ static ssize_t asd_show_dev_rev(struct device *dev,
+ 	return snprintf(buf, PAGE_SIZE, "%s\n",
+ 			asd_dev_rev[asd_ha->revision_id]);
+ }
+-static DEVICE_ATTR(revision, S_IRUGO, asd_show_dev_rev, NULL);
++static DEVICE_ATTR(aic_revision, S_IRUGO, asd_show_dev_rev, NULL);
+ 
+ static ssize_t asd_show_dev_bios_build(struct device *dev,
+ 				       struct device_attribute *attr,char *buf)
+@@ -477,7 +477,7 @@ static int asd_create_dev_attrs(struct asd_ha_struct *asd_ha)
+ {
+ 	int err;
+ 
+-	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	if (err)
+ 		return err;
+ 
+@@ -499,13 +499,13 @@ static int asd_create_dev_attrs(struct asd_ha_struct *asd_ha)
+ err_biosb:
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ err_rev:
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	return err;
+ }
+ 
+ static void asd_remove_dev_attrs(struct asd_ha_struct *asd_ha)
+ {
+-	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
++	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_pcba_sn);
+ 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_update_bios);
+diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
+index bfa13e3b191c..c8bad2c093b8 100644
+--- a/drivers/scsi/cxlflash/main.c
++++ b/drivers/scsi/cxlflash/main.c
+@@ -3687,6 +3687,7 @@ static int cxlflash_probe(struct pci_dev *pdev,
+ 	host->max_cmd_len = CXLFLASH_MAX_CDB_LEN;
+ 
+ 	cfg = shost_priv(host);
++	cfg->state = STATE_PROBING;
+ 	cfg->host = host;
+ 	rc = alloc_mem(cfg);
+ 	if (rc) {
+@@ -3775,6 +3776,7 @@ static int cxlflash_probe(struct pci_dev *pdev,
+ 	return rc;
+ 
+ out_remove:
++	cfg->state = STATE_PROBED;
+ 	cxlflash_remove(pdev);
+ 	goto out;
+ }
+diff --git a/drivers/scsi/libfc/fc_rport.c b/drivers/scsi/libfc/fc_rport.c
+index 9192a1d9dec6..dfba4921b265 100644
+--- a/drivers/scsi/libfc/fc_rport.c
++++ b/drivers/scsi/libfc/fc_rport.c
+@@ -184,7 +184,6 @@ void fc_rport_destroy(struct kref *kref)
+ 	struct fc_rport_priv *rdata;
+ 
+ 	rdata = container_of(kref, struct fc_rport_priv, kref);
+-	WARN_ON(!list_empty(&rdata->peers));
+ 	kfree_rcu(rdata, rcu);
+ }
+ EXPORT_SYMBOL(fc_rport_destroy);
+diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
+index 83365b29a4d8..fff86940388b 100644
+--- a/drivers/scsi/sd_zbc.c
++++ b/drivers/scsi/sd_zbc.c
+@@ -462,12 +462,16 @@ int sd_zbc_read_zones(struct scsi_disk *sdkp, unsigned char *buf)
+ 	sdkp->device->use_10_for_rw = 0;
+ 
+ 	/*
+-	 * If something changed, revalidate the disk zone bitmaps once we have
+-	 * the capacity, that is on the second revalidate execution during disk
+-	 * scan and always during normal revalidate.
++	 * Revalidate the disk zone bitmaps once the block device capacity is
++	 * set on the second revalidate execution during disk scan and if
++	 * something changed when executing a normal revalidate.
+ 	 */
+-	if (sdkp->first_scan)
++	if (sdkp->first_scan) {
++		sdkp->zone_blocks = zone_blocks;
++		sdkp->nr_zones = nr_zones;
+ 		return 0;
++	}
++
+ 	if (sdkp->zone_blocks != zone_blocks ||
+ 	    sdkp->nr_zones != nr_zones ||
+ 	    disk->queue->nr_zones != nr_zones) {
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index 72016d0dfca5..8e7fffbb8802 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -852,6 +852,12 @@ static ssize_t pi_prot_type_store(struct config_item *item,
+ 	return count;
+ }
+ 
++/* always zero, but attr needs to remain RW to avoid userspace breakage */
++static ssize_t pi_prot_format_show(struct config_item *item, char *page)
++{
++	return snprintf(page, PAGE_SIZE, "0\n");
++}
++
+ static ssize_t pi_prot_format_store(struct config_item *item,
+ 		const char *page, size_t count)
+ {
+@@ -1132,7 +1138,7 @@ CONFIGFS_ATTR(, emulate_3pc);
+ CONFIGFS_ATTR(, emulate_pr);
+ CONFIGFS_ATTR(, pi_prot_type);
+ CONFIGFS_ATTR_RO(, hw_pi_prot_type);
+-CONFIGFS_ATTR_WO(, pi_prot_format);
++CONFIGFS_ATTR(, pi_prot_format);
+ CONFIGFS_ATTR(, pi_prot_verify);
+ CONFIGFS_ATTR(, enforce_pr_isids);
+ CONFIGFS_ATTR(, is_nonrot);
