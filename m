@@ -2,109 +2,119 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E901FC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58891C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1EC72073F
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 261E92080D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:29:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djkzee7I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfBHA2U (ORCPT
+        id S1726900AbfBHA35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:28:20 -0500
-Received: from gateway30.websitewelcome.com ([192.185.145.3]:13237 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726781AbfBHA2U (ORCPT
+        Thu, 7 Feb 2019 19:29:57 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43386 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbfBHA35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:28:20 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 595224127
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 18:28:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ru1jgyWycYTGMru1jgdwtF; Thu, 07 Feb 2019 18:28:19 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=46210 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gru1i-003sDb-L5; Thu, 07 Feb 2019 18:28:18 -0600
-Date:   Thu, 7 Feb 2019 18:28:17 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] Bluetooth: a2mp: Use struct_size() helper
-Message-ID: <20190208002817.GA15338@embeddedor>
+        Thu, 7 Feb 2019 19:29:57 -0500
+Received: by mail-pg1-f193.google.com with SMTP id v28so753741pgk.10
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:29:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VvKYzIXrc6EWu7dGE6oPMlu2MVBMRNsjV1h+Z0dn2TU=;
+        b=djkzee7IYtTa1/ecxtM3tKYtPMEEUm0M5c8WlKmB13/9CUivkYqps2+OROfExObpxl
+         ceuuktpwobG/1itfQj5UbzrvJR3Ed96kZvE5uYXeIpwKgLjgSWthoA28uvL7D5d29IUL
+         ZXPBEoxwuaEkvMwDr43gXuY0MqDajxpvmopTdKT5o/Nna0QTFOuuj/Zf/1FwDI2DNX3j
+         f79Nzq0fhd2RbhLwgatg9N1NttgmDswWQRsG5WK7E/rd3gtPMQgZ6DA6sY841TKbvHVK
+         MuoZwlyqdZh1ASGm+u7R4AnwWlJVJ3kEZvncdRYbrd6A/D3NeogK3QWDKON2Rc7XPTBd
+         YcEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VvKYzIXrc6EWu7dGE6oPMlu2MVBMRNsjV1h+Z0dn2TU=;
+        b=fmsyVDi54P4/Ne3OikNDkpnTi+XpoWSMjlNMevihLyhDiByim0HkoiJEINyK3Udsfr
+         BfCfo2CAIimKaS5heEGLg5gHfGKthj/9CysBNV0lXoEfykBsHWJMbi09o+chzZEUlbT1
+         okZtC4w7CRfurFPV+C0nPp5RDB6l6BbvgBaomcn/oRt+sg/mHlrUT7dqzBYvhiTpEBZy
+         0R+qd0wGdjU1sXWUp81lA43js/QAXati5MADE8F6+guz4nBK9gTCUrBGYgp4x5tUiOJD
+         E95/Q5//L/8WKQj2sMDFYySfrNJR47sjG54LEyk4JAmk9byhb0JQ0wjmhoKLCalw4dAo
+         /YjA==
+X-Gm-Message-State: AHQUAubKJaN7hJ/TsV9qFWhHL2Nne3WEDTl1cuJ+KQeSG/UwleuRO8xU
+        qfzOnMZzV48R0/XjBow/cKs=
+X-Google-Smtp-Source: AHgI3IYOt7O8HUcXtRzHPrk9cV4X3PXvHzlomx/ok846UDy9gvtwtHtcQTrtfvEfBpk2YxgwLgRXsg==
+X-Received: by 2002:aa7:8503:: with SMTP id v3mr6244163pfn.255.1549585795808;
+        Thu, 07 Feb 2019 16:29:55 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id p81sm380835pfa.107.2019.02.07.16.29.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 16:29:54 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC v2 0/5] PCIE support for i.MX8MQ (DT changes)
+Date:   Thu,  7 Feb 2019 16:29:36 -0800
+Message-Id: <20190208002941.30343-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gru1i-003sDb-L5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:46210
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Everyone:
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+This series contains all of the i.MX Device Tree changes I made to
+enable support of PCIe on i.MX8MQ EVK. Marked as RFC since "arm64:
+dts: imx8mq-evk: Enable PCIE0 interface" contains proposed AUX clock
+binding that is not part of the PCI tree yet (to be submitted once we
+agree on this RFC).
 
-size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = alloc(size, GFP_KERNEL)
+NOTE: Immutable brach containing imx8mq-reset.h used in "arm64: dts:
+Add nodes for PCIe IP blocks" is availible in [reset-imx8mq]
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Feedback is welcome!
 
-size = struct_size(instance, entry, count);
-instance = alloc(size, GFP_KERNEL)
+Changes since [v1]:
 
-This code was detected with the help of Coccinelle.
+    - Dropped unsupported IRQ from PCIe nodes (a leftover from vendor tree)
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/bluetooth/a2mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    - Added "pcie_aux" clock and moved clock configuration to board
+      file since "pcie_bus" clock is now board specific
 
-diff --git a/net/bluetooth/a2mp.c b/net/bluetooth/a2mp.c
-index 58fc6333d412..5f918ea18b5a 100644
---- a/net/bluetooth/a2mp.c
-+++ b/net/bluetooth/a2mp.c
-@@ -174,7 +174,7 @@ static int a2mp_discover_req(struct amp_mgr *mgr, struct sk_buff *skb,
- 			num_ctrl++;
- 	}
- 
--	len = num_ctrl * sizeof(struct a2mp_cl) + sizeof(*rsp);
-+	len = struct_size(rsp, cl, num_ctrl);
- 	rsp = kmalloc(len, GFP_ATOMIC);
- 	if (!rsp) {
- 		read_unlock(&hci_dev_list_lock);
+Thanks,
+Andrey Smirnov
+
+[reset-imx8mq] git://git.pengutronix.de/pza/linux reset/imx8mq
+[v1] https://lore.kernel.org/lkml/20190131204333.31846-1-andrew.smirnov@gmail.com/
+
+Andrey Smirnov (5):
+  arm64: dts: imx8mq: Mark iomuxc_gpr as i.MX6Q compatible
+  arm64: dts: imx8mq: Add a node for SRC IP block
+  arm64: dts: imx8mq: Combine PCIE power domains
+  arm64: dts: imx8mq: Add nodes for PCIe IP blocks
+  arm64: dts: imx8mq-evk: Enable PCIE0 interface
+
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 34 ++++++++
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi    | 87 +++++++++++++++++++-
+ 2 files changed, 119 insertions(+), 2 deletions(-)
+
 -- 
 2.20.1
 
