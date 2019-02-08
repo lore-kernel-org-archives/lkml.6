@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3BDC282C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555D9C4151A
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB382080D
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C6A21916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:30:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzsXKtZ0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpvRD7Ka"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfBHAaF (ORCPT
+        id S1727041AbfBHAaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:30:05 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35283 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfBHAaC (ORCPT
+        Thu, 7 Feb 2019 19:30:10 -0500
+Received: from mail-pf1-f170.google.com ([209.85.210.170]:47059 "EHLO
+        mail-pf1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfBHAaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:30:02 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p8so825461plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:30:02 -0800 (PST)
+        Thu, 7 Feb 2019 19:30:04 -0500
+Received: by mail-pf1-f170.google.com with SMTP id c73so797494pfe.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:30:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=m09kF0Fi0NLeeymHfmgKYOPmCDh2G2+L0dXTvpyHyHg=;
-        b=dzsXKtZ0Fim3cjwQhLLvhVsXktoKxQsMktcmqYni3Eb5hs57LWi+P24srKZ+7jBAM2
-         zwEtFscYjWQnrr6X2pPTJC+0JL+RYcZjDLX/pxS0V/zBCvtEb7Xm9hDlPd08bHlz9iRI
-         ul3XmlBi5obDnYGvuDRyl4Lh+z8GVe2/WAn5nSSAvFRN1g15OnXlbfIWmJxtvyNTahxe
-         tMW3gtDB7i1bu9fXoXawzDMJmAZNlaWb4upuEgL8kxt957iEFyo7KhacePFngmwcdxtd
-         utT+c5sLIqDD3I0jzDKrChOrDl4InwdbDi1zhXVoF97VGI0L3jqhCFo+ulS6qRbZQLlW
-         584A==
+        bh=rpJNkOBHsfvv1X+OP8aoJHBEpYyMF+iONDDdi76qcyU=;
+        b=CpvRD7Kasw/cgtJcGXCiiAqOkeTsqsFrDwWfGAtFo5xLxC6JqGr8UMhCAqu8zlk3op
+         jf4Nj650Bg0E1FLP/y/KQ1tKzKwAt+sNSZzQHEtMHxPJS7Oqi0e4xjdnyzzpwLXsmxFp
+         T2aOpQYueI7v4NANqdhNdPfLbrVLxWXvfRMY8YZyqoJu/iONmM/ZCbjkt7QMO6oOmk8c
+         pDG3DdKhdIjyq4G8U+nydgTTrM1VsH5R+bgKxRtPvaRFbOyRrau51uB4giqbnaWWvNOt
+         Z0Hvf582ZMepwds+I0EPKTGLM/OpO8Mij4ajyjOcNbqrqumrm1kh8omx21z0UFnhcWmM
+         w4ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=m09kF0Fi0NLeeymHfmgKYOPmCDh2G2+L0dXTvpyHyHg=;
-        b=FI0UHD+DqJ74V/3VJDRiREmapooUe7mfTCcB/qYddL2Bdf64XOdUyIG3tiAWCtQA/y
-         pkTpE51mZYnOIwFp6I5V23DM/6OdWyvHG0VVd6YjaLfoQYClSPB/dbzwQJlIKnUqYuPf
-         IaRcYeegr1zfIHwdq8F5isAJOfjKPIhXah2CWFVkIvmHoYDC5+Vhokg2MTx+yDYcY81O
-         JVHSCtK3zC7+z2f1dqvMGuK15xCqPNtnqSVpUuATD4nMbs5xY0UBs/dkxPQ3hZt0PlGx
-         X/Czj4F7xCPCDdY+q/cFp6lQSONNhnF25Ne5tTU+CTI619NxgqZHM37cTwpOcb+6sRSU
-         T1OA==
-X-Gm-Message-State: AHQUAuaeJLReiXpCGc8IEKw+lwavE1ABQ13GFLu+OaTH0O/e3Chef58x
-        WgVzx/US1iOZUR3G9tbYyNo=
-X-Google-Smtp-Source: AHgI3IZ+9Sw0ETvVXWytwkQXKXlNz+9/mdNFtZqJqmldb5O+2m4JOpwydj4sd2mXjv9ZIB01qn7seg==
-X-Received: by 2002:a17:902:1d4a:: with SMTP id u10mr18697449plu.122.1549585801790;
-        Thu, 07 Feb 2019 16:30:01 -0800 (PST)
+        bh=rpJNkOBHsfvv1X+OP8aoJHBEpYyMF+iONDDdi76qcyU=;
+        b=JxeRQGH8hLyWiZgZz0yCnmjDOUuZ/RUeTQtzPHbLYfYpuCUskmoaC8464pqvwHcEwC
+         LJ4GRofT1G2mFuYoPy0/J+zDUM8IOyvi7g77vR/jS5s9t89dNwbVl/fLQ+qq7h0MNyIw
+         NtNPx3qPBVvJ4XkAhNUFRNcRlNzpwMaZsy5RuF6tQW25JcCB0ewZh9ybqASVNwNw1tWF
+         plI4JU7cxvueYENafOmNSjV7KnA3Q/ab86wI0pMxA0SxgLcUOIeR5uby+HQyDb+FG/pB
+         g0Jxb5F+TqI8EfHEmSiAWlI5kRXQ9g85ECU8iQsy0lg9WpFoN4t5+iyUKxmM5ziuOGmJ
+         lYGw==
+X-Gm-Message-State: AHQUAubDkzs7yofLRhlonF0UXTcplNpGRAlumymFKVre3MV905dhyhqJ
+        ZSOUmJsd9u4JiupiAMjZkGWsVpZk
+X-Google-Smtp-Source: AHgI3IaIZS4Y2fg9Km1oRwdvMmzHrOA+B9Ly6diFlmKOF8/L8KoUYFjzqjdAzFcqqCL5WEcQTQpSTw==
+X-Received: by 2002:a62:a9b:: with SMTP id 27mr1431301pfk.223.1549585803272;
+        Thu, 07 Feb 2019 16:30:03 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id p81sm380835pfa.107.2019.02.07.16.30.00
+        by smtp.gmail.com with ESMTPSA id p81sm380835pfa.107.2019.02.07.16.30.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 16:30:00 -0800 (PST)
+        Thu, 07 Feb 2019 16:30:02 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Lucas Stach <l.stach@pengutronix.de>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -67,9 +67,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 4/5] arm64: dts: imx8mq: Add nodes for PCIe IP blocks
-Date:   Thu,  7 Feb 2019 16:29:40 -0800
-Message-Id: <20190208002941.30343-5-andrew.smirnov@gmail.com>
+Subject: [RFC v2 5/5] arm64: dts: imx8mq-evk: Enable PCIE0 interface
+Date:   Thu,  7 Feb 2019 16:29:41 -0800
+Message-Id: <20190208002941.30343-6-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208002941.30343-1-andrew.smirnov@gmail.com>
 References: <20190208002941.30343-1-andrew.smirnov@gmail.com>
@@ -80,7 +80,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add nodes for two PCIe controllers found on i.MX8MQ.
+Enable PCIE0 interface connected to BCM4356 WiFi/Bluetooth module.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Shawn Guo <shawnguo@kernel.org>
@@ -94,85 +94,75 @@ Cc: linux-imx@nxp.com
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 58 +++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 34 ++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index 89babc531380..8ceab748ed04 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -6,6 +6,7 @@
- 
- #include <dt-bindings/clock/imx8mq-clock.h>
- #include <dt-bindings/power/imx8mq-power.h>
-+#include <dt-bindings/reset/imx8mq-reset.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include "imx8mq-pinfunc.h"
-@@ -539,6 +540,63 @@
- 			};
- 		};
- 
-+		pcie0: pcie@33800000 {
-+			compatible = "fsl,imx8mq-pcie";
-+			reg = <0x33800000 0x400000>,
-+			      <0x1ff00000 0x80000>;
-+			reg-names = "dbi", "config";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			bus-range = <0x00 0xff>;
-+			ranges = <0x81000000 0 0x00000000 0x1ff80000 0 0x00010000 /* downstream I/O 64KB */
-+			          0x82000000 0 0x18000000 0x18000000 0 0x07f00000>; /* non-prefetchable memory */
-+			num-lanes = <1>;
-+			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &gic GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 2 &gic GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 3 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+			                <0 0 0 4 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+			fsl,max-link-speed = <2>;
-+			power-domains = <&pgc_pcie>;
-+			resets = <&src IMX8MQ_RESET_PCIEPHY>,
-+			         <&src IMX8MQ_RESET_PCIE_CTRL_APPS_EN>,
-+			         <&src IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF>;
-+			reset-names = "pciephy", "apps", "turnoff";
-+			status = "disabled";
-+		};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+index 64acccc4bfcb..20afdb9ffdd9 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+@@ -31,6 +31,12 @@
+ 		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
 +
-+		pcie1: pcie@0x33c00000 {
-+			compatible = "fsl,imx8mq-pcie";
-+			reg = <0x33c00000 0x400000>,
-+			      <0x27f00000 0x80000>;
-+			reg-names = "dbi", "config";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			device_type = "pci";
-+			ranges =  <0x81000000 0 0x00000000 0x27f80000 0 0x00010000 /* downstream I/O 64KB */
-+				   0x82000000 0 0x20000000 0x20000000 0 0x07f00000>; /* non-prefetchable memory */
-+			num-lanes = <1>;
-+			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &gic GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 2 &gic GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 3 &gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
-+					<0 0 0 4 &gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+			fsl,max-link-speed = <2>;
-+			power-domains = <&pgc_pcie>;
-+			resets = <&src IMX8MQ_RESET_PCIEPHY2>,
-+			         <&src IMX8MQ_RESET_PCIE2_CTRL_APPS_EN>,
-+			         <&src IMX8MQ_RESET_PCIE2_CTRL_APPS_TURNOFF>;
-+			reset-names = "pciephy", "apps", "turnoff";
-+			status = "disabled";
-+		};
++	pcie0_refclk: pcie0-refclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++	};
+ };
+ 
+ &fec1 {
+@@ -40,6 +46,14 @@
+ 	status = "okay";
+ };
+ 
++&gpio5 {
++ 	wl-reg-on {
++		gpio-hog;
++		gpios = <29 GPIO_ACTIVE_HIGH>;
++		output-high;
++	};
++};
 +
- 		gic: interrupt-controller@38800000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x38800000 0x10000>,	/* GIC Dist */
+ &i2c1 {
+ 	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
+@@ -131,6 +145,18 @@
+ 	};
+ };
+ 
++&pcie0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pcie0>;
++	reset-gpio = <&gpio5 28 GPIO_ACTIVE_LOW>;
++	clocks = <&clk IMX8MQ_CLK_PCIE1_ROOT>,
++		 <&clk IMX8MQ_CLK_PCIE1_AUX>,
++		 <&clk IMX8MQ_CLK_PCIE1_PHY>,
++		 <&pcie0_refclk>;
++	clock-names = "pcie", "pcie_aux", "pcie_phy", "pcie_bus";
++	status = "okay";
++};
++
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart1>;
+@@ -195,6 +221,14 @@
+ 		>;
+ 	};
+ 
++	pinctrl_pcie0: pcie0grp {
++		fsl,pins = <
++			MX8MQ_IOMUXC_I2C4_SCL_PCIE1_CLKREQ_B		0x76
++			MX8MQ_IOMUXC_UART4_TXD_GPIO5_IO29		0x16
++			MX8MQ_IOMUXC_UART4_RXD_GPIO5_IO28		0x16
++		>;
++	};
++
+ 	pinctrl_reg_usdhc2: regusdhc2grpgpio {
+ 		fsl,pins = <
+ 			MX8MQ_IOMUXC_SD2_RESET_B_GPIO2_IO19		0x41
 -- 
 2.20.1
 
