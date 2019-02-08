@@ -2,71 +2,467 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08502C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F23B7C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D655B2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A68A120855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:10:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Fe9/i3k4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbfBHQHb (ORCPT
+        id S1727436AbfBHQKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:07:31 -0500
-Received: from mga09.intel.com ([134.134.136.24]:45576 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbfBHQHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:07:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 08:07:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="141804126"
-Received: from shivamur-mobl1.gar.corp.intel.com (HELO localhost) ([10.249.254.162])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Feb 2019 08:07:25 -0800
-Date:   Fri, 8 Feb 2019 18:07:23 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] tpm: Unify the send callback behaviour
-Message-ID: <20190208160723.GA23755@linux.intel.com>
-References: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
- <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
- <b53745b6-ed49-9e97-6f56-1378561888eb@linux.ibm.com>
- <20190208154244.GA3963@linux.intel.com>
- <89f94ccb-d63e-271c-a91b-cfe63e40f776@linux.ibm.com>
+        Fri, 8 Feb 2019 11:10:19 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36152 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbfBHQKS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 11:10:18 -0500
+Received: by mail-ot1-f65.google.com with SMTP id k98so6688047otk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:10:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2rNg8DO8inNsKCuLX/bbZodL8zbWnatOyGyOD05wEcw=;
+        b=Fe9/i3k4qipNf/HNuPK1nsaZzJs8CLW/EH9AZbK6ncVDCN/BXgprrHEL8129QPS77l
+         RDZfzhzirb7iGk/BMTZDDGJv2bd3cgjJ37jWZZfBvDMi1hax7VQbZzuZe3mqLIr4rJUR
+         lLvLPx1dzHkbDZ71xIoZppqqKeGIqWsUA6SHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2rNg8DO8inNsKCuLX/bbZodL8zbWnatOyGyOD05wEcw=;
+        b=gQNcq2PLT6LyNWo10VkeL2boNeMgGxK0tf0nUI5Eo9QHMBMr2dVKCLv1FQxfJHFdcR
+         1bdygNktFF4kqGqh/yUBOGhq4/JxPtt9iM/S/E+fZM1QOfRgSkdKf26z7/nNn/kYHsYJ
+         m4xq4jLGBl+2J/YE9ZHkja+A9zBKpnE48aTFYy2XLZvtdI5CMEgpD3YDl30yfCkdtoAO
+         H74a+43HkYWHIM0gYwNNopetlBO/IqCwqgyPenvwEK7d94qDiztfx+llWd9YliNl9DSC
+         ErtwyaPplnXP9umC1UpHZt+o/aq2MCW4fLa6zsEpDV1Bmjg3KrV+XuhQNhZoAFT4V/5+
+         gZcQ==
+X-Gm-Message-State: AHQUAuYye4owBZj6CafSvcR/+/zY5BBj+u4Q55SbT/uNyfNg0sMR+yvh
+        mM7HanrB4biRVG7IlVXlqsjOl/IzZ8E=
+X-Google-Smtp-Source: AHgI3IZcyyZ4MIKxk4vnB24BxhHBoYiuWygOV5JDOr9wxHhvmcAkkOZDfQZ0pHf4lgEzmclZYvB00w==
+X-Received: by 2002:a9d:7a4d:: with SMTP id z13mr6757130otm.194.1549642217008;
+        Fri, 08 Feb 2019 08:10:17 -0800 (PST)
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com. [209.85.210.50])
+        by smtp.gmail.com with ESMTPSA id x4sm1000679otk.37.2019.02.08.08.10.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 08:10:15 -0800 (PST)
+Received: by mail-ot1-f50.google.com with SMTP id a11so6613852otr.10
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:10:14 -0800 (PST)
+X-Received: by 2002:a9d:7e8b:: with SMTP id m11mr1964444otp.80.1549642214022;
+ Fri, 08 Feb 2019 08:10:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89f94ccb-d63e-271c-a91b-cfe63e40f776@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190208012312.105259-1-ncrews@chromium.org> <20190208012312.105259-5-ncrews@chromium.org>
+ <4620e71f-9579-0d4e-2cf8-7851e77e81fc@collabora.com>
+In-Reply-To: <4620e71f-9579-0d4e-2cf8-7851e77e81fc@collabora.com>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Fri, 8 Feb 2019 09:10:02 -0700
+X-Gmail-Original-Message-ID: <CAHX4x86pqUoo+v3FK3zY8Dyxgia9L8iGsYVYnfBA-OvRAm9HDw@mail.gmail.com>
+Message-ID: <CAHX4x86pqUoo+v3FK3zY8Dyxgia9L8iGsYVYnfBA-OvRAm9HDw@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] platform/chrome: rtc: Add RTC driver
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Duncan Laurie <dlaurie@google.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        dlaurie@chromium.org, dmitry.torokhov@gmail.com,
+        Enric Balletbo Serra <eballetbo@gmail.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, Simon Glass <sjg@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 10:45:53AM -0500, Stefan Berger wrote:
-> On 2/8/19 10:42 AM, Jarkko Sakkinen wrote:
-> > On Fri, Feb 08, 2019 at 09:42:16AM -0500, Stefan Berger wrote: > On 2/8/19 9:05 AM, Jarkko Sakkinen wrote:
-> > > At least tpm_nsc_send (tpm_nsc.c) and tpm_inf_send (tpm_infineon.c) are also
-> > > returning the number of bytes sent. I would consider tpm_crb the outlier
-> > > that returns 0 and should return the length even though we don't need it...
-> > That would be absolutely wrong way the fix the *actual* issue i.e.
-> > callbacks returning garbage (sometimes just passing the length parameter
-> > back as a return value).
-> 
-> Then I guess you have to fixes those other two files as well...
+Hi Enric and Alexandre,
 
-That's still a better option.
+On Fri, Feb 8, 2019 at 5:18 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Hi,
+>
+> On 8/2/19 2:23, Nick Crews wrote:
+> > This Embedded Controller has an internal RTC that is exposed
+> > as a standard RTC class driver with read/write functionality.
+> >
+> > The driver is added to the drivers/rtc/ so that the maintainer of that
+> > directory will be able to comment on this change, as that maintainer is
+> > the expert on this system. In addition, the driver code is called
+> > indirectly after a corresponding device is registered from core.c,
+> > as opposed to core.c registering the driver callbacks directly.
+> >
+> > To test:
+> >> hwclock --show --rtc /dev/rtc1
+> > 2007-12-31 16:01:20.460959-08:00
+> >> hwclock --systohc --rtc /dev/rtc1
+> >> hwclock --show --rtc /dev/rtc1
+> > 2018-11-29 17:08:00.780793-08:00
+> >
+> >> hwclock --show --rtc /dev/rtc1
+> > 2007-12-31 16:01:20.460959-08:00
+> >> hwclock --systohc --rtc /dev/rtc1
+> >> hwclock --show --rtc /dev/rtc1
+> > 2018-11-29 17:08:00.780793-08:00
+> >
+> > Signed-off-by: Duncan Laurie <dlaurie@google.com>
+> > Signed-off-by: Nick Crews <ncrews@chromium.org>
+>
+> I think that you missed :)
+>
+> Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>
 
-/Jarkko
+Ah, I removed these because this version is a bit different from the
+one that you Acked. Do you normally keep those sign-offs
+even after making changes that you possibly might not like?
+
+> > ---
+> >
+> > Changes in v6:
+> > - In the core, actually unregister the RTC child platform_device.
+> >
+> > Changes in v5: None
+> > Changes in v4:
+> > - Change me email to @chromium.org from @google.com
+> > - Move "Add RTC driver" before "Add sysfs attributes" so that
+> >   it could get accepted earlier, since it is less contentious
+> >
+> > Changes in v3:
+> > - rm #define for driver name
+> > - Don't compute weekday when reading from RTC.
+> >   Still set weekday when writing, as RTC needs this
+> >   to control advanced power scheduling
+> > - rm check for invalid month data
+> > - Set range_min and range_max on rtc_device
+> >
+> > Changes in v2:
+> > - rm license boiler plate
+> > - rm "wilco_ec_rtc -" prefix in docstring
+> > - Make rtc driver its own module within the drivers/rtc/ directory
+> > - Register a rtc device from core.c that is picked up by this driver
+> >
+> >  drivers/platform/chrome/wilco_ec/core.c |  22 ++-
+>
+> Alexandre, this specific patch depends on the patches of the series to apply,
+> and the first patches of the series also conflicts/depends on some patches
+> queued in chrome-platform-5.1 branch [1]. Is it fine with you if I create an
+> immutable branch and all go via your tree? Or what do you think? I am new here
+> and I am not sure how to manage that.
+>
+> Thanks,
+>   Enric
+
+Let me know if I can help with this. I based this off what I thought was the
+most current master, SHA 74e96711e3379fc66630f2a1d184947f80cf2c48.
+Was this not the correct commit to base these off of?
+
+>
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git/log/?h=chrome-platform-5.1
+>
+> >  drivers/rtc/Kconfig                     |  11 ++
+> >  drivers/rtc/Makefile                    |   1 +
+> >  drivers/rtc/rtc-wilco-ec.c              | 177 ++++++++++++++++++++++++
+> >  include/linux/platform_data/wilco-ec.h  |   2 +
+> >  5 files changed, 211 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/rtc/rtc-wilco-ec.c
+> >
+> > diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
+> > index ae86cae216fd..e67385ec5103 100644
+> > --- a/drivers/platform/chrome/wilco_ec/core.c
+> > +++ b/drivers/platform/chrome/wilco_ec/core.c
+> > @@ -42,6 +42,7 @@ static int wilco_ec_probe(struct platform_device *pdev)
+> >  {
+> >       struct device *dev = &pdev->dev;
+> >       struct wilco_ec_device *ec;
+> > +     int ret;
+> >
+> >       ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+> >       if (!ec)
+> > @@ -70,21 +71,38 @@ static int wilco_ec_probe(struct platform_device *pdev)
+> >                            ec->io_packet->start + EC_MAILBOX_DATA_SIZE);
+> >
+> >       /*
+> > -      * Register a debugfs platform device that will get picked up by the
+> > -      * debugfs driver. Ignore failure.
+> > +      * Register a child device that will be found by the RTC driver.
+> > +      * Ignore failure.
+> >        */
+> >       ec->debugfs_pdev = platform_device_register_data(dev,
+> >                                                        "wilco-ec-debugfs",
+> >                                                        PLATFORM_DEVID_AUTO,
+> >                                                        NULL, 0);
+> >
+> > +     /* Register a child device that will be found by the RTC driver. */
+> > +     ec->rtc_pdev = platform_device_register_data(dev, "rtc-wilco-ec",
+> > +                                                  PLATFORM_DEVID_AUTO,
+> > +                                                  NULL, 0);
+> > +     if (IS_ERR(ec->rtc_pdev)) {
+> > +             dev_err(dev, "Failed to create RTC platform device\n");
+> > +             ret = PTR_ERR(ec->rtc_pdev);
+> > +             goto unregister_debugfs;
+> > +     }
+> > +
+> >       return 0;
+> > +
+> > +unregister_debugfs:
+> > +     if (ec->debugfs_pdev)
+> > +             platform_device_unregister(ec->debugfs_pdev);
+> > +     cros_ec_lpc_mec_destroy();
+> > +     return ret;
+> >  }
+> >
+> >  static int wilco_ec_remove(struct platform_device *pdev)
+> >  {
+> >       struct wilco_ec_device *ec = platform_get_drvdata(pdev);
+> >
+> > +     platform_device_unregister(ec->rtc_pdev);
+> >       if (ec->debugfs_pdev)
+> >               platform_device_unregister(ec->debugfs_pdev);
+> >
+> > diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> > index 225b0b8516f3..d5063c791515 100644
+> > --- a/drivers/rtc/Kconfig
+> > +++ b/drivers/rtc/Kconfig
+> > @@ -1814,4 +1814,15 @@ config RTC_DRV_GOLDFISH
+> >         Goldfish is a code name for the virtual platform developed by Google
+> >         for Android emulation.
+> >
+> > +config RTC_DRV_WILCO_EC
+> > +     tristate "Wilco EC RTC"
+> > +     depends on WILCO_EC
+> > +     default m
+> > +     help
+> > +       If you say yes here, you get read/write support for the Real Time
+> > +       Clock on the Wilco Embedded Controller (Wilco is a kind of Chromebook)
+> > +
+> > +       This can also be built as a module. If so, the module will
+> > +       be named "rtc_wilco_ec".
+> > +
+> >  endif # RTC_CLASS
+> > diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+> > index df022d820bee..6255ea78da25 100644
+> > --- a/drivers/rtc/Makefile
+> > +++ b/drivers/rtc/Makefile
+> > @@ -172,6 +172,7 @@ obj-$(CONFIG_RTC_DRV_V3020)       += rtc-v3020.o
+> >  obj-$(CONFIG_RTC_DRV_VR41XX) += rtc-vr41xx.o
+> >  obj-$(CONFIG_RTC_DRV_VRTC)   += rtc-mrst.o
+> >  obj-$(CONFIG_RTC_DRV_VT8500) += rtc-vt8500.o
+> > +obj-$(CONFIG_RTC_DRV_WILCO_EC)       += rtc-wilco-ec.o
+> >  obj-$(CONFIG_RTC_DRV_WM831X) += rtc-wm831x.o
+> >  obj-$(CONFIG_RTC_DRV_WM8350) += rtc-wm8350.o
+> >  obj-$(CONFIG_RTC_DRV_X1205)  += rtc-x1205.o
+> > diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+> > new file mode 100644
+> > index 000000000000..35cc56114c1c
+> > --- /dev/null
+> > +++ b/drivers/rtc/rtc-wilco-ec.c
+> > @@ -0,0 +1,177 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * RTC interface for Wilco Embedded Controller with R/W abilities
+> > + *
+> > + * Copyright 2018 Google LLC
+> > + *
+> > + * The corresponding platform device is typically registered in
+> > + * drivers/platform/chrome/wilco_ec/core.c
+> > + */
+> > +
+> > +#include <linux/bcd.h>
+> > +#include <linux/err.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/platform_data/wilco-ec.h>
+> > +#include <linux/rtc.h>
+> > +#include <linux/timekeeping.h>
+> > +
+> > +#define EC_COMMAND_CMOS                      0x7c
+> > +#define EC_CMOS_TOD_WRITE            0x02
+> > +#define EC_CMOS_TOD_READ             0x08
+> > +
+> > +/**
+> > + * struct ec_rtc_read - Format of RTC returned by EC.
+> > + * @second: Second value (0..59)
+> > + * @minute: Minute value (0..59)
+> > + * @hour: Hour value (0..23)
+> > + * @day: Day value (1..31)
+> > + * @month: Month value (1..12)
+> > + * @year: Year value (full year % 100)
+> > + * @century: Century value (full year / 100)
+> > + *
+> > + * All values are presented in binary (not BCD).
+> > + */
+> > +struct ec_rtc_read {
+> > +     u8 second;
+> > +     u8 minute;
+> > +     u8 hour;
+> > +     u8 day;
+> > +     u8 month;
+> > +     u8 year;
+> > +     u8 century;
+> > +} __packed;
+> > +
+> > +/**
+> > + * struct ec_rtc_write - Format of RTC sent to the EC.
+> > + * @param: EC_CMOS_TOD_WRITE
+> > + * @century: Century value (full year / 100)
+> > + * @year: Year value (full year % 100)
+> > + * @month: Month value (1..12)
+> > + * @day: Day value (1..31)
+> > + * @hour: Hour value (0..23)
+> > + * @minute: Minute value (0..59)
+> > + * @second: Second value (0..59)
+> > + * @weekday: Day of the week (0=Saturday)
+> > + *
+> > + * All values are presented in BCD.
+> > + */
+> > +struct ec_rtc_write {
+> > +     u8 param;
+> > +     u8 century;
+> > +     u8 year;
+> > +     u8 month;
+> > +     u8 day;
+> > +     u8 hour;
+> > +     u8 minute;
+> > +     u8 second;
+> > +     u8 weekday;
+> > +} __packed;
+> > +
+> > +int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+> > +{
+> > +     struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
+> > +     u8 param = EC_CMOS_TOD_READ;
+> > +     struct ec_rtc_read rtc;
+> > +     struct wilco_ec_message msg = {
+> > +             .type = WILCO_EC_MSG_LEGACY,
+> > +             .flags = WILCO_EC_FLAG_RAW_RESPONSE,
+> > +             .command = EC_COMMAND_CMOS,
+> > +             .request_data = &param,
+> > +             .request_size = sizeof(param),
+> > +             .response_data = &rtc,
+> > +             .response_size = sizeof(rtc),
+> > +     };
+> > +     int ret;
+> > +
+> > +     ret = wilco_ec_mailbox(ec, &msg);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     tm->tm_sec      = rtc.second;
+> > +     tm->tm_min      = rtc.minute;
+> > +     tm->tm_hour     = rtc.hour;
+> > +     tm->tm_mday     = rtc.day;
+> > +     tm->tm_mon      = rtc.month - 1;
+> > +     tm->tm_year     = rtc.year + (rtc.century * 100) - 1900;
+> > +     tm->tm_yday     = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+> > +
+> > +     /* Don't compute day of week, we don't need it. */
+> > +     tm->tm_wday = -1;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
+> > +{
+> > +     struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
+> > +     struct ec_rtc_write rtc;
+> > +     struct wilco_ec_message msg = {
+> > +             .type = WILCO_EC_MSG_LEGACY,
+> > +             .flags = WILCO_EC_FLAG_RAW_RESPONSE,
+> > +             .command = EC_COMMAND_CMOS,
+> > +             .request_data = &rtc,
+> > +             .request_size = sizeof(rtc),
+> > +     };
+> > +     int year = tm->tm_year + 1900;
+> > +     /*
+> > +      * Convert from 0=Sunday to 0=Saturday for the EC
+> > +      * We DO need to set weekday because the EC controls battery charging
+> > +      * schedules that depend on the day of the week.
+> > +      */
+> > +     int wday = tm->tm_wday == 6 ? 0 : tm->tm_wday + 1;
+> > +     int ret;
+> > +
+> > +     rtc.param       = EC_CMOS_TOD_WRITE;
+> > +     rtc.century     = bin2bcd(year / 100);
+> > +     rtc.year        = bin2bcd(year % 100);
+> > +     rtc.month       = bin2bcd(tm->tm_mon + 1);
+> > +     rtc.day         = bin2bcd(tm->tm_mday);
+> > +     rtc.hour        = bin2bcd(tm->tm_hour);
+> > +     rtc.minute      = bin2bcd(tm->tm_min);
+> > +     rtc.second      = bin2bcd(tm->tm_sec);
+> > +     rtc.weekday     = bin2bcd(wday);
+> > +
+> > +     ret = wilco_ec_mailbox(ec, &msg);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct rtc_class_ops wilco_ec_rtc_ops = {
+> > +     .read_time = wilco_ec_rtc_read,
+> > +     .set_time = wilco_ec_rtc_write,
+> > +};
+> > +
+> > +static int wilco_ec_rtc_probe(struct platform_device *pdev)
+> > +{
+> > +     struct rtc_device *rtc;
+> > +
+> > +     rtc = devm_rtc_allocate_device(&pdev->dev);
+> > +     if (IS_ERR(rtc))
+> > +             return PTR_ERR(rtc);
+> > +
+> > +     rtc->ops = &wilco_ec_rtc_ops;
+> > +     /* EC only supports this century */
+> > +     rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> > +     rtc->range_max = RTC_TIMESTAMP_END_2099;
+> > +     rtc->owner = THIS_MODULE;
+> > +
+> > +     return rtc_register_device(rtc);
+> > +}
+> > +
+> > +static struct platform_driver wilco_ec_rtc_driver = {
+> > +     .driver = {
+> > +             .name = "rtc-wilco-ec",
+> > +     },
+> > +     .probe = wilco_ec_rtc_probe,
+> > +};
+> > +
+> > +module_platform_driver(wilco_ec_rtc_driver);
+> > +
+> > +MODULE_ALIAS("platform:rtc-wilco-ec");
+> > +MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_DESCRIPTION("Wilco EC RTC driver");
+> > diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
+> > index 5344975afa1a..446473a46b88 100644
+> > --- a/include/linux/platform_data/wilco-ec.h
+> > +++ b/include/linux/platform_data/wilco-ec.h
+> > @@ -35,6 +35,7 @@
+> >   *               is used to hold the request and the response.
+> >   * @data_size: Size of the data buffer used for EC communication.
+> >   * @debugfs_pdev: The child platform_device used by the debugfs sub-driver.
+> > + * @rtc_pdev: The child platform_device used by the RTC sub-driver.
+> >   */
+> >  struct wilco_ec_device {
+> >       struct device *dev;
+> > @@ -45,6 +46,7 @@ struct wilco_ec_device {
+> >       void *data_buffer;
+> >       size_t data_size;
+> >       struct platform_device *debugfs_pdev;
+> > +     struct platform_device *rtc_pdev;
+> >  };
+> >
+> >  /**
+> >
