@@ -2,122 +2,101 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CF7C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DADC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FD14218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:10:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqmNpgAW"
+	by mail.kernel.org (Postfix) with ESMTP id DCD9F218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbfBHLKJ (ORCPT
+        id S1727856AbfBHLKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:10:09 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33809 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHLKI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:10:08 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y185so6528786wmd.1;
-        Fri, 08 Feb 2019 03:10:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=61nXeU63Nqg+Ya2ts8zImuo9zIBJw0Z+EpETWMs99H4=;
-        b=TqmNpgAWgbhi5G6TWDW/uaIo+YKC+/K05cd4OT+EZOTkon4LcWfgXUyASo+f9deBNB
-         AHQq0dVYpoOTXGW7Tl+uzNHHQ1d+i/NWvGXowGw2w2tTsVHnBSbQ7UJiIff52uYlJOnC
-         5S6spw6/H5ASmCkR33VkpQng0x/gEDkPlEiWhSVkNAcrj4cnPkvwM5P0fgQU0ZGj75wf
-         RzxidMqDL/px9e1/CxeLhAvvc1NrgtcQYhXb+d9FyQczc7yABGTvJGya3eu3oTWq3V+6
-         7Ld4su74ekkDN2vrn97+OhSo0mJ6RDJajrm2iLs2nIUFV/ukr6NfO6F+9OTj6ySOH0ae
-         3abw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=61nXeU63Nqg+Ya2ts8zImuo9zIBJw0Z+EpETWMs99H4=;
-        b=kQOojLilG/WB01u7iiaw/sejW9W3DLcb9ve7+kpF5EdI14ASa7vAiKXoTy2XzG8iP9
-         Q3txdcny1BeF26oV+VNTDlX5IN10avpDwSYukN0Y6F/fT++Ixpy/+NEVj7TsTysipwZ3
-         ik5+CgMh5WnYjmM4yzhLSTzjVquGXMZzV9iBYAyxJt61o3bY39aUe+QdEM168KQNWICj
-         UtpzZ/WaFheqeuqFC9Ua3YvgkKh/ebrn5JmqdTFYoBUlJu7bfsr8E30x3GcL9QpJKVjh
-         nizLhWyripJeChaM8tPrCCvEaIXpILAI6I1ZH17FdqgNtJUIpteOYtyNHoIlta+M3Rx4
-         ujBw==
-X-Gm-Message-State: AHQUAubtrLNk5X2uHlBJTYc/adt9DzvCewVGqLcQ0iF7Y0r174JIKKmW
-        titDWdqE6goTKT7YI558966AzS3r
-X-Google-Smtp-Source: AHgI3IZAooC68GF5G2HuODu8gvHLRzVS5zSJxYuAF95A4P2PSLriMluyzO56H73xhgSAx3vgd7Ihmg==
-X-Received: by 2002:a1c:6a12:: with SMTP id f18mr6589912wmc.69.1549624206351;
-        Fri, 08 Feb 2019 03:10:06 -0800 (PST)
-Received: from szeder.dev (x4db62aaa.dyn.telefonica.de. [77.182.42.170])
-        by smtp.gmail.com with ESMTPSA id i184sm3978938wmd.26.2019.02.08.03.10.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 03:10:05 -0800 (PST)
-Date:   Fri, 8 Feb 2019 12:10:02 +0100
-From:   SZEDER =?utf-8?B?R8OhYm9y?= <szeder.dev@gmail.com>
-To:     "Randall S. Becker" <rsbecker@nexbridge.com>
-Cc:     Jeff King <peff@peff.net>, 'Junio C Hamano' <gitster@pobox.com>,
-        git@vger.kernel.org, 'Linux Kernel' <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: Re: [Breakage] Git v2.21.0-rc0 - t5403 (NonStop)
-Message-ID: <20190208111002.GU10587@szeder.dev>
-References: <000d01d4bf9b$d5d48da0$817da8e0$@nexbridge.com>
+        Fri, 8 Feb 2019 06:10:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33500 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726547AbfBHLKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:10:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BF4C5AE65;
+        Fri,  8 Feb 2019 11:10:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C875D1E3DB8; Fri,  8 Feb 2019 12:10:28 +0100 (CET)
+Date:   Fri, 8 Feb 2019 12:10:28 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190208111028.GD6353@quack2.suse.cz>
+References: <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+ <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+ <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
+ <20190208044302.GA20493@dastard>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000d01d4bf9b$d5d48da0$817da8e0$@nexbridge.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190208044302.GA20493@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 05:48:27AM -0500, Randall S. Becker wrote:
-> We have a few new breakages on the NonStop port in 2.21.0-rc0. The first is in t5403, as below:
+On Fri 08-02-19 15:43:02, Dave Chinner wrote:
+> On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
+> > One approach that may be a clean way to solve this:
+> > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
+> >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
+> >    on the longterm pinned range until the long term pin is removed.
 > 
-> /home/git/git/t/trash directory.t5403-post-checkout-hook/clone3/.git/hooks/post-checkout: line 2: $GIT_DIR/post-checkout.args: ambiguous redirect
-> not ok 8 - post-checkout hook is triggered by clone
-> #
-> #               mkdir -p templates/hooks &&
-> #               write_script templates/hooks/post-checkout <<-\EOF &&
-> #               echo "$@" >$GIT_DIR/post-checkout.args
-> #               EOF
-> #               git clone --template=templates . clone3 &&
-> #               test -f clone3/.git/post-checkout.args
-> #
+> So, ummm, how do we do block allocation then, which is done on
+> demand during writes?
 > 
-> The post-checkout hook is:
-> #!/usr/local/bin/bash
-> echo "$@" >$GIT_DIR/post-checkout.args
+> IOWs, this requires the application to set up the file in the
+> correct state for the filesystem to lock it down so somebody else
+> can write to it.  That means the file can't be sparse, it can't be
+> preallocated (i.e. can't contain unwritten extents), it must have zeroes
+> written to it's full size before being shared because otherwise it
+> exposes stale data to the remote client (secure sites are going to
+> love that!), they can't be extended, etc.
 > 
-> This looks like it is a "bash thing" and $GIT_DIR might have to be in quotes, and is not be specific to the platform. If I replace 
+> IOWs, once the file is prepped and leased out for RDMA, it becomes
+> an immutable for the purposes of local access.
 > 
-> echo "$@" >$GIT_DIR/post-checkout.args
-> 
-> with
-> 
-> echo "$@" >"$GIT_DIR/post-checkout.args"
-> 
-> The test passes.
+> Which, essentially we can already do. Prep the file, map it
+> read/write, mark it immutable, then pin it via the longterm gup
+> interface which can do the necessary checks.
 
-Wow, this is the second time this "redirection to a filename with
-spaces under Bash" issue pops up today, see the other one here:
+Hum, and what will you do if the immutable file that is target for RDMA
+will be a source of reflink? That seems to be currently allowed for
+immutable files but RDMA store would be effectively corrupting the data of
+the target inode. But we could treat it similarly as swapfiles - those also
+have to deal with writes to blocks beyond filesystem control. In fact the
+similarity seems to be quite large there. What do you think?
 
-  https://public-inbox.org/git/20190208031746.22683-2-tmz@pobox.com/T/#u
-
-In short, Bash (when invoked as bash) doesn't conform to POSIX in this
-respect; for a (too detailed) explanation see:
-
-  https://public-inbox.org/git/20180926121107.GH27036@localhost/
-
-Even our CodingGuidelines suggest the use of quotes around the
-redirection's target.
-
-> I wonder I should provide this patch or whether the author would like to do so.
-
-Well, since you didn't Cc the author, he might very well overlook this
-issue, so I think you should ;)
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
