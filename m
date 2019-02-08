@@ -2,33 +2,32 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E809DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A0D20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7B5020863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbfBHR4j (ORCPT
+        id S1728132AbfBHR4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:56:39 -0500
-Received: from mga11.intel.com ([192.55.52.93]:40705 "EHLO mga11.intel.com"
+        Fri, 8 Feb 2019 12:56:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:40729 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbfBHR4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:56:37 -0500
+        id S1728076AbfBHR4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:56:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 09:56:36 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 09:56:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="142716480"
+   d="scan'208";a="142716517"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 09:56:36 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 09:56:44 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
@@ -36,9 +35,9 @@ Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, luto@amacapital.net, vbabka@suse.cz,
         will.deacon@arm.com, kirill@shutemov.name,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V5 04/14] perf script: Support data page size
-Date:   Fri,  8 Feb 2019 09:54:59 -0800
-Message-Id: <1549648509-12704-4-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V5 10/14] perf/core: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
+Date:   Fri,  8 Feb 2019 09:55:05 -0800
+Message-Id: <1549648509-12704-10-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549648509-12704-1-git-send-email-kan.liang@linux.intel.com>
 References: <1549648509-12704-1-git-send-email-kan.liang@linux.intel.com>
@@ -47,188 +46,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Stephane Eranian <eranian@google.com>
 
-Display the data page size if it is available.
+When studying code layout, it is useful to capture the page size of the
+sampled code address.
 
-Can be configured by the user, for example:
-  perf script --fields comm,event,phys_addr,data_page_size
-            dtlb mem-loads:uP:        3fec82ea8 4K
-            dtlb mem-loads:uP:        3fec82e90 4K
-            dtlb mem-loads:uP:        3e23700a4 4K
-            dtlb mem-loads:uP:        3fec82f20 4K
-            dtlb mem-loads:uP:        3e23700a4 4K
-            dtlb mem-loads:uP:        3b4211bec 4K
-            dtlb mem-loads:uP:        382205dc0 2M
-            dtlb mem-loads:uP:        36fa082c0 2M
-            dtlb mem-loads:uP:        377607340 2M
-            dtlb mem-loads:uP:        330010180 2M
-            dtlb mem-loads:uP:        33200fd80 2M
-            dtlb mem-loads:uP:        31b012b80 2M
+Add a new sample type for code page size.
+The new sample type requires collecting the ip. The code page size can
+be calculated from the IRQ-safe perf_get_page_size().
 
+Only the generic support is covered. The large PEBS will be disabled
+with this sample type.
+
+Signed-off-by: Stephane Eranian <eranian@google.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V4
 
- tools/perf/Documentation/perf-script.txt |  5 +++--
- tools/perf/builtin-script.c              | 19 +++++++++++++++++--
- tools/perf/util/event.h                  |  3 +++
- tools/perf/util/session.c                | 23 +++++++++++++++++++++++
- 4 files changed, 46 insertions(+), 4 deletions(-)
+ include/linux/perf_event.h      |  1 +
+ include/uapi/linux/perf_event.h |  4 +++-
+ kernel/events/core.c            | 11 ++++++++++-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 9e4def0..14ae84c1 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -116,8 +116,9 @@ OPTIONS
- --fields::
-         Comma separated list of fields to print. Options are:
-         comm, tid, pid, time, cpu, event, trace, ip, sym, dso, addr, symoff,
--        srcline, period, iregs, uregs, brstack, brstacksym, flags, bpf-output, brstackinsn,
--        brstackoff, callindent, insn, insnlen, synth, phys_addr, metric, misc, srccode.
-+        srcline, period, iregs, uregs, brstack, brstacksym, flags, bpf-output,
-+        brstackinsn, brstackoff, callindent, insn, insnlen, synth, phys_addr,
-+        metric, misc, srccode, data_page_size.
-         Field list can be prepended with the type, trace, sw or hw,
-         to indicate to which event type the field list applies.
-         e.g., -F sw:comm,tid,time,ip,sym  and -F trace:time,cpu,trace
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index ac221f1..a8b7a84 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -27,6 +27,7 @@
- #include "util/thread-stack.h"
- #include "util/time-utils.h"
- #include "util/path.h"
-+#include "util/event.h"
- #include "print_binary.h"
- #include <linux/bitmap.h>
- #include <linux/kernel.h>
-@@ -97,6 +98,7 @@ enum perf_output_field {
- 	PERF_OUTPUT_METRIC	    = 1U << 28,
- 	PERF_OUTPUT_MISC            = 1U << 29,
- 	PERF_OUTPUT_SRCCODE	    = 1U << 30,
-+	PERF_OUTPUT_DATA_PAGE_SIZE  = 1U << 31,
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 46908cf..d2adb3e 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -939,6 +939,7 @@ struct perf_sample_data {
+ 
+ 	u64				phys_addr;
+ 	u64				data_page_size;
++	u64				code_page_size;
+ } ____cacheline_aligned;
+ 
+ /* default value for data source */
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 0e8d222..045e218 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -142,8 +142,9 @@ enum perf_event_sample_format {
+ 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
+ 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
+ 	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
++	PERF_SAMPLE_CODE_PAGE_SIZE		= 1U << 21,
+ 
+-	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
++	PERF_SAMPLE_MAX = 1U << 22,		/* non-ABI */
+ 
+ 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
  };
+@@ -865,6 +866,7 @@ enum perf_event_type {
+ 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+ 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
+ 	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
++	 *	{ u64			code_page_size;} && PERF_SAMPLE_CODE_PAGE_SIZE
+ 	 * };
+ 	 */
+ 	PERF_RECORD_SAMPLE			= 9,
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index fe6f601..d42c3bf 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1755,6 +1755,9 @@ static void __perf_event_header_size(struct perf_event *event, u64 sample_type)
+ 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		size += sizeof(data->data_page_size);
  
- struct output_option {
-@@ -134,6 +136,7 @@ struct output_option {
- 	{.str = "metric", .field = PERF_OUTPUT_METRIC},
- 	{.str = "misc", .field = PERF_OUTPUT_MISC},
- 	{.str = "srccode", .field = PERF_OUTPUT_SRCCODE},
-+	{.str = "data_page_size", .field = PERF_OUTPUT_DATA_PAGE_SIZE},
- };
- 
- enum {
-@@ -204,7 +207,8 @@ static struct {
- 			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
- 			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
- 			      PERF_OUTPUT_ADDR | PERF_OUTPUT_DATA_SRC |
--			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR,
-+			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR |
-+			      PERF_OUTPUT_DATA_PAGE_SIZE,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
- 	},
-@@ -468,6 +472,11 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 					PERF_OUTPUT_PHYS_ADDR))
- 		return -EINVAL;
- 
-+	if (PRINT_FIELD(DATA_PAGE_SIZE) &&
-+		perf_evsel__check_stype(evsel, PERF_SAMPLE_DATA_PAGE_SIZE, "DATA_PAGE_SIZE",
-+					PERF_OUTPUT_DATA_PAGE_SIZE))
-+		return -EINVAL;
++	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		size += sizeof(data->code_page_size);
 +
- 	return 0;
+ 	event->header_size = size;
  }
  
-@@ -1757,6 +1766,7 @@ static void process_event(struct perf_script *script,
- 	unsigned int type = output_type(attr->type);
- 	struct perf_evsel_script *es = evsel->priv;
- 	FILE *fp = es->fp;
-+	char str[PAGE_SIZE_NAME_LEN];
+@@ -6310,6 +6313,9 @@ void perf_output_sample(struct perf_output_handle *handle,
+ 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		perf_output_put(handle, data->data_page_size);
  
- 	if (output[type].fields == 0)
- 		return;
-@@ -1837,6 +1847,10 @@ static void process_event(struct perf_script *script,
- 
- 	if (PRINT_FIELD(PHYS_ADDR))
- 		fprintf(fp, "%16" PRIx64, sample->phys_addr);
++	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		perf_output_put(handle, data->code_page_size);
 +
-+	if (PRINT_FIELD(DATA_PAGE_SIZE))
-+		fprintf(fp, " %s", get_page_size_name(sample->data_page_size, str));
-+
- 	fprintf(fp, "\n");
+ 	if (!event->attr.watermark) {
+ 		int wakeup_events = event->attr.wakeup_events;
  
- 	if (PRINT_FIELD(SRCCODE)) {
-@@ -3334,7 +3348,8 @@ int cmd_script(int argc, const char **argv)
- 		     "Fields: comm,tid,pid,time,cpu,event,trace,ip,sym,dso,"
- 		     "addr,symoff,srcline,period,iregs,uregs,brstack,"
- 		     "brstacksym,flags,bpf-output,brstackinsn,brstackoff,"
--		     "callindent,insn,insnlen,synth,phys_addr,metric,misc",
-+		     "callindent,insn,insnlen,synth,phys_addr,metric,misc,"
-+		     "data_page_size",
- 		     parse_output_fields),
- 	OPT_BOOLEAN('a', "all-cpus", &system_wide,
- 		    "system-wide collection from all CPUs"),
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 53d1a41..7ef06fc 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -846,4 +846,7 @@ extern int sysctl_perf_event_max_stack;
- extern int sysctl_perf_event_max_contexts_per_stack;
- extern unsigned int proc_map_timeout;
+@@ -6398,7 +6404,7 @@ void perf_prepare_sample(struct perf_event_header *header,
  
-+#define PAGE_SIZE_NAME_LEN	10
-+char *get_page_size_name(u64 size, char *str);
+ 	__perf_event_header__init_id(header, data, event);
+ 
+-	if (sample_type & PERF_SAMPLE_IP)
++	if (sample_type & (PERF_SAMPLE_IP | PERF_SAMPLE_CODE_PAGE_SIZE))
+ 		data->ip = perf_instruction_pointer(regs);
+ 
+ 	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
+@@ -6507,6 +6513,9 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 
+ 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		data->data_page_size = perf_get_page_size(data->addr);
 +
- #endif /* __PERF_RECORD_H */
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 24fd625..3d86afd 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1082,10 +1082,30 @@ static void dump_event(struct perf_evlist *evlist, union perf_event *event,
- 	       event->header.size, perf_event__name(event->header.type));
++	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		data->code_page_size = perf_get_page_size(data->ip);
  }
  
-+char *get_page_size_name(u64 size, char *str)
-+{
-+	const char suffixes[5] = { 'B', 'K', 'M', 'G', 'T' };
-+	int i;
-+
-+	if (size == 0) {
-+		snprintf(str, PAGE_SIZE_NAME_LEN, "%s", "N/A");
-+		return str;
-+	}
-+	for (i = 0; i < 5; i++) {
-+		if (size < 1024)
-+			break;
-+		size /= 1024;
-+	}
-+
-+	snprintf(str, PAGE_SIZE_NAME_LEN, "%lu%c", size, suffixes[i]);
-+	return str;
-+}
-+
- static void dump_sample(struct perf_evsel *evsel, union perf_event *event,
- 			struct perf_sample *sample)
- {
- 	u64 sample_type;
-+	char str[PAGE_SIZE_NAME_LEN];
- 
- 	if (!dump_trace)
- 		return;
-@@ -1120,6 +1140,9 @@ static void dump_sample(struct perf_evsel *evsel, union perf_event *event,
- 	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
- 		printf(" .. phys_addr: 0x%"PRIx64"\n", sample->phys_addr);
- 
-+	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
-+		printf(" .. data page size: %s\n", get_page_size_name(sample->data_page_size, str));
-+
- 	if (sample_type & PERF_SAMPLE_TRANSACTION)
- 		printf("... transaction: %" PRIx64 "\n", sample->transaction);
- 
+ static __always_inline int
 -- 
 2.7.4
 
