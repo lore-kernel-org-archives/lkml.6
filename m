@@ -2,87 +2,82 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B90C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C46DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4C421917
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA5221917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfBHHFG (ORCPT
+        id S1727211AbfBHHHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:05:06 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:33966 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfBHHFF (ORCPT
+        Fri, 8 Feb 2019 02:07:15 -0500
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:49804 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726063AbfBHHHP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:05:05 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gs0Db-0000If-UI; Fri, 08 Feb 2019 15:05:00 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gs0DY-0008BN-VT; Fri, 08 Feb 2019 15:04:56 +0800
-Date:   Fri, 8 Feb 2019 15:04:56 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: [PATCH] crypto: qat - Remove unused goto label
-Message-ID: <20190208070456.xywdb3ga2kqwoxaf@gondor.apana.org.au>
-References: <20190204110106.345c3e21@canb.auug.org.au>
+        Fri, 8 Feb 2019 02:07:15 -0500
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1gs0Fi-0008P5-19; Fri, 08 Feb 2019 08:07:10 +0100
+Date:   Fri, 8 Feb 2019 08:07:10 +0100
+From:   Florian Westphal <fw@strlen.de>
+To:     Sander Eikelenboom <linux@eikelenboom.it>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Kernel 5.0-rc5 regression with NAT, bisected to: netfilter: nat:
+ remove l4proto->manip_pkt
+Message-ID: <20190208070710.rcbj6exqwz6m2o7o@breakpoint.cc>
+References: <40b70892-daf5-28d7-28b5-869911faf2bb@eikelenboom.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204110106.345c3e21@canb.auug.org.au>
+In-Reply-To: <40b70892-daf5-28d7-28b5-869911faf2bb@eikelenboom.it>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 11:01:06AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
+Sander Eikelenboom <linux@eikelenboom.it> wrote:
+> L.S.,
 > 
-> After merging the crypto tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> While trying out a 5.0-RC5 kernel I seem to have stumbled over a regression with NAT.
+> (using an nftables firewall with NAT and connection tracking).
 > 
-> drivers/crypto/qat/qat_common/adf_transport.c: In function 'adf_init_etr_data':
-> drivers/crypto/qat/qat_common/adf_transport.c:501:1: warning: label 'err_bank_debug' defined but not used [-Wunused-label]
->  err_bank_debug:
->  ^~~~~~~~~~~~~~
+> Unfortunately it isn't too obvious since no errors are logged, but on clients it
+> causes symptoms like firefox intermittently not being able to load pages with:
+>     Network Protocol Error
+>     An error occurred during a connection to www.example.com
+>     The page you are trying to view cannot be shown because an error in the network protocol was detected.
+>     Please contact the website owners to inform them of this problem.
 > 
-> Introduced by commit
+> But it's only intermittently, so i can still visit some webpages with clients, 
+> could be that packet size and or fragments are at play ?
 > 
->   f0fcf9ade46a ("crypto: qat - no need to check return value of debugfs_create functions")
+> So I tried testing with git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git with 
+> e8c32c32b48c2e889704d8ca0872f92eb027838e as last commit, to be sure to have the latest netdev has to offer,
+> but to no avail. 
+> 
+> After that I tried to git bisect and ended up with:
+> 
+> faec18dbb0405c7d4dda025054511dc3a6696918 is the first bad commit
+> commit faec18dbb0405c7d4dda025054511dc3a6696918
+> Author: Florian Westphal <fw@strlen.de>
+> Date:   Thu Dec 13 16:01:33 2018 +0100
+> 
+>     netfilter: nat: remove l4proto->manip_pkt
 
-Thanks for the report Stephen!
+Thanks, this is immensely helpful.
 
----8<---
-This patch removes an unused label.
+I think I see the bug, we can't use target->dst.protonum in
+nf_nat_l4proto_manip_pkt(), it will be TCP in case we're dealing
+with a related icmp packet.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: f0fcf9ade46a ("crypto: qat - no need to check return...")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/drivers/crypto/qat/qat_common/adf_transport.c b/drivers/crypto/qat/qat_common/adf_transport.c
-index ac658ce46836..2136cbe4bf6c 100644
---- a/drivers/crypto/qat/qat_common/adf_transport.c
-+++ b/drivers/crypto/qat/qat_common/adf_transport.c
-@@ -498,7 +498,6 @@ int adf_init_etr_data(struct adf_accel_dev *accel_dev)
- 
- err_bank_all:
- 	debugfs_remove(etr_data->debug);
--err_bank_debug:
- 	kfree(etr_data->banks);
- err_bank:
- 	kfree(etr_data);
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I will send a patch in a few hours when I get back.
