@@ -6,27 +6,26 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2198AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049DCC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF623206C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C867D2081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:41:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfBHJkj (ORCPT
+        id S1727188AbfBHJlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:40:39 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41533 "EHLO
+        Fri, 8 Feb 2019 04:41:31 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38879 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbfBHJki (ORCPT
+        with ESMTP id S1725998AbfBHJlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:40:38 -0500
+        Fri, 8 Feb 2019 04:41:31 -0500
 Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
         by metis.ext.pengutronix.de with esmtp (Exim 4.89)
         (envelope-from <l.stach@pengutronix.de>)
-        id 1gs2e8-0008QY-6W; Fri, 08 Feb 2019 10:40:32 +0100
-Message-ID: <1549618831.2544.82.camel@pengutronix.de>
-Subject: Re: [RFC v2 1/5] arm64: dts: imx8mq: Mark iomuxc_gpr as i.MX6Q
- compatible
+        id 1gs2eu-00008e-Ow; Fri, 08 Feb 2019 10:41:20 +0100
+Message-ID: <1549618880.2544.83.camel@pengutronix.de>
+Subject: Re: [RFC v2 2/5] arm64: dts: imx8mq: Add a node for SRC IP block
 From:   Lucas Stach <l.stach@pengutronix.de>
 To:     Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
@@ -36,10 +35,10 @@ Cc:     Shawn Guo <shawnguo@kernel.org>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Fri, 08 Feb 2019 10:40:31 +0100
-In-Reply-To: <20190208002941.30343-2-andrew.smirnov@gmail.com>
+Date:   Fri, 08 Feb 2019 10:41:20 +0100
+In-Reply-To: <20190208002941.30343-3-andrew.smirnov@gmail.com>
 References: <20190208002941.30343-1-andrew.smirnov@gmail.com>
-         <20190208002941.30343-2-andrew.smirnov@gmail.com>
+         <20190208002941.30343-3-andrew.smirnov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
@@ -54,8 +53,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Am Donnerstag, den 07.02.2019, 16:29 -0800 schrieb Andrey Smirnov:
-> Mark iomuxc_gpr as compatible with "fsl,imx6q-iomuxc-gpr" in order for
-> to allow i.MX6 PCIe driver to use it.
+> Add a node for reset controller IP block found on i.MX8MQ.
 > 
 > > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 > Cc: Shawn Guo <shawnguo@kernel.org>
@@ -69,24 +67,26 @@ Am Donnerstag, den 07.02.2019, 16:29 -0800 schrieb Andrey Smirnov:
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-kernel@vger.kernel.org
 
-I think that's the right thing to do.
-
-Acked-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
 > ---
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> index 892063a7c26c..f6c37bf9cbce 100644
+> index f6c37bf9cbce..50436bd393ed 100644
 > --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
 > +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> @@ -230,7 +230,7 @@
-> >  			};
->  
->  			iomuxc_gpr: syscon@30340000 {
-> -				compatible = "fsl,imx8mq-iomuxc-gpr", "syscon";
-> +				compatible = "fsl,imx8mq-iomuxc-gpr", "fsl,imx6q-iomuxc-gpr", "syscon";
->  				reg = <0x30340000 0x10000>;
+> @@ -254,6 +254,12 @@
+>  				              "clk_ext3", "clk_ext4";
 >  			};
 >  
+> +			src: src@30390000 {
+> +				compatible = "fsl,imx8mq-src", "syscon";
+> +				reg = <0x30390000 0x10000>;
+> +				#reset-cells = <1>;
+> +			};
+> +
+>  			gpc: gpc@303a0000 {
+>  				compatible = "fsl,imx8mq-gpc";
+>  				reg = <0x303a0000 0x10000>;
