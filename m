@@ -2,104 +2,238 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21875C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DFBC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C302077B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:21:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sn4odvhy"
+	by mail.kernel.org (Postfix) with ESMTP id BB8182081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfBHSVV (ORCPT
+        id S1727890AbfBHSWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:21:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43137 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfBHSVV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:21:21 -0500
-Received: by mail-pl1-f194.google.com with SMTP id f90so1832928plb.10;
-        Fri, 08 Feb 2019 10:21:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cmVTaqERL/brTGUdKHqdh+Z6loMGPa1kk0LlpDYd7OI=;
-        b=sn4odvhyVujVY34GjfTqwYAO1Jb26NzrNZSjUNxpoD0xWn62PhYdVk7+xj5ONC2r8J
-         DBbC8+lKKOAzpNgAXE58h5Gtf3Z3RbuJhU+ath7T1lKSd8dauO34PZ9SS2bfGvSB407M
-         MH8kXKgtUWgQ3IE5OU5tZ55clV/sPjNygYHcB5SbjRBG63AfEtmAXZaWqvRO8ooUbXGe
-         Io9pwRgelrQQioe59Rm/KcJag/I+wFy1ye9YIYVVqmAR3VfS4PNer6oIAz1ckWIhlg0B
-         JQ5srPKzHMxWEZ1KAlD3h7r7PxopkCH9A/cKEXPmh2/rfSPcm2NIahu8ewtEiTh2IWQM
-         Tu2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cmVTaqERL/brTGUdKHqdh+Z6loMGPa1kk0LlpDYd7OI=;
-        b=Srj3vTy/opPpMxo7Wy/U2h9nv2X7buSQ/goJZCgtK+eeECacrEsJzHXuOIRyWEjYn7
-         gGlfatlr6S/ZtGxcvsWCACgNFcL1nTm1Q1YBBwI2Z5v+T9Z7lapaXsZug59SB0ogQ5dD
-         CzAVcR/zqdUJEtS+jwI8F/4vulmb5uxL6n6ZB7hNLNrpnhc/JaIRsgTsDTmL7WDPNKKd
-         E4xEHiAa56cHz4GcFQfl87Webs7i93AiKThptDHQ91qGgPbjEi01kDpeFVZ9bwSkUImR
-         SvAG6HUI4u1VIjjbLmuQhwGY1F2PH/CrzId2GCKMDKaJ4kDhrOKT6fNA5PdYCYnCk4DT
-         hkNA==
-X-Gm-Message-State: AHQUAuYup1hDS8bdUHh1WZ1zqyihE0TuvWviqdwQEZi9ohQ4J9Bh9+Tk
-        CzndsIP054gLWdvnwgSJutw51I/Y
-X-Google-Smtp-Source: AHgI3IY3sB1zwSt0/T285UkRuZE/TbSI5oWcmBPv+/povELgS0BZjU6egK+z4I2b69QHPjVNQMs7Xg==
-X-Received: by 2002:a17:902:2:: with SMTP id 2mr24653859pla.228.1549650080227;
-        Fri, 08 Feb 2019 10:21:20 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id 196sm4477455pfc.77.2019.02.08.10.21.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 10:21:19 -0800 (PST)
-Subject: Re: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        "peda@axentia.se" <peda@axentia.se>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
- <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
- <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
- <BYAPR12MB339810D394AC0A50934DD5EAC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3e4db3e9-8198-f1bf-f909-492bf1ff8c56@gmail.com>
-Date:   Fri, 8 Feb 2019 21:21:09 +0300
+        Fri, 8 Feb 2019 13:22:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727121AbfBHSWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 13:22:36 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C794C05B03C;
+        Fri,  8 Feb 2019 18:22:36 +0000 (UTC)
+Received: from [10.40.206.40] (unknown [10.40.206.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D5DD3383F;
+        Fri,  8 Feb 2019 18:22:23 +0000 (UTC)
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>, david@redhat.com,
+        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via
+ static key
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-3-nitesh@redhat.com>
+ <CAKgT0UfqtRigPwUaN=H_MrLgeXErkeOcpuPy6ys6A3UCLnMBPg@mail.gmail.com>
+Organization: Red Hat Inc,
+Message-ID: <eac2187a-e6e3-878a-7acc-f9963a61e6dc@redhat.com>
+Date:   Fri, 8 Feb 2019 13:22:20 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB339810D394AC0A50934DD5EAC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKgT0UfqtRigPwUaN=H_MrLgeXErkeOcpuPy6ys6A3UCLnMBPg@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 08 Feb 2019 18:22:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-08.02.2019 21:17, Sowjanya Komatineni пишет:
-> 
->>>  static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
->>>  	.flags = I2C_AQ_NO_ZERO_LEN,
->>> +	.max_write_len = 65535 - I2C_PACKET_HEADER_SIZE,
->>
->> Ideally it should be SZ_64K - I2C_PACKET_HEADER_SIZE to not miss the one byte, otherwise good to me:
->>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> With SZ_64K - I2C_PACKET_HEADR_Size, When we compute dma_buf_size = max_write_len + I2C_PACKET_HEADER_SIZE, dma_buf_size will be SZ_64K which is 0x10000 apbdma dma count limit should be < 64K meaning 65535 max is allowed
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8
+Content-Type: multipart/mixed; boundary="2Arqim0FweqXqCGWylmvZOpjMC27hDPHj";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+ pagupta@redhat.com, wei.w.wang@intel.com,
+ Yang Zhang <yang.zhang.wz@gmail.com>, Rik van Riel <riel@surriel.com>,
+ david@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, dhildenb@redhat.com,
+ Andrea Arcangeli <aarcange@redhat.com>
+Message-ID: <eac2187a-e6e3-878a-7acc-f9963a61e6dc@redhat.com>
+Subject: Re: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via
+ static key
 
-But it's for the GPCDMA, does it have the same 64K limit as APB DMA?
+--2Arqim0FweqXqCGWylmvZOpjMC27hDPHj
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On 2/8/19 1:07 PM, Alexander Duyck wrote:
+> On Mon, Feb 4, 2019 at 2:11 PM Nitesh Narayan Lal <nitesh@redhat.com> w=
+rote:
+>> This patch enables the guest free page hinting support
+>> to enable or disable based on the STATIC key which
+>> could be set via sysctl.
+>>
+>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+>> ---
+>>  include/linux/gfp.h          |  2 ++
+>>  include/linux/page_hinting.h |  5 +++++
+>>  kernel/sysctl.c              |  9 +++++++++
+>>  virt/kvm/page_hinting.c      | 23 +++++++++++++++++++++++
+>>  4 files changed, 39 insertions(+)
+>>
+>> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+>> index e596527284ba..8389219a076a 100644
+>> --- a/include/linux/gfp.h
+>> +++ b/include/linux/gfp.h
+>> @@ -461,6 +461,8 @@ static inline struct zonelist *node_zonelist(int n=
+id, gfp_t flags)
+>>  #define HAVE_ARCH_FREE_PAGE
+>>  static inline void arch_free_page(struct page *page, int order)
+>>  {
+>> +       if (!static_branch_unlikely(&guest_page_hinting_key))
+>> +               return;
+>>         guest_free_page(page, order);
+>>  }
+>>  #endif
+>> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting=
+=2Eh
+>> index b54f7428f348..9bdcf63e1306 100644
+>> --- a/include/linux/page_hinting.h
+>> +++ b/include/linux/page_hinting.h
+>> @@ -14,4 +14,9 @@ struct hypervisor_pages {
+>>         unsigned int order;
+>>  };
+>>
+>> +extern int guest_page_hinting_flag;
+>> +extern struct static_key_false guest_page_hinting_key;
+>> +
+>> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
+>> +                             void __user *buffer, size_t *lenp, loff_=
+t *ppos);
+>>  void guest_free_page(struct page *page, int order);
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index ba4d9e85feb8..5d53629c9bfb 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -1690,6 +1690,15 @@ static struct ctl_table vm_table[] =3D {
+>>                 .extra1         =3D (void *)&mmap_rnd_compat_bits_min,=
+
+>>                 .extra2         =3D (void *)&mmap_rnd_compat_bits_max,=
+
+>>         },
+>> +#endif
+>> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
+>> +       {
+>> +               .procname       =3D "guest-page-hinting",
+>> +               .data           =3D &guest_page_hinting_flag,
+>> +               .maxlen         =3D sizeof(guest_page_hinting_flag),
+>> +               .mode           =3D 0644,
+>> +               .proc_handler   =3D guest_page_hinting_sysctl,
+>> +       },
+>>  #endif
+>>         { }
+>>  };
+> Since you are adding a new sysctl shouldn't you also be updating
+> Documentation/sysctl/vm.txt?
+Indeed I will be doing that.
+However, I would first like to close other major issues with the design.
+>
+>> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
+>> index 818bd6b84e0c..4a34ea8db0c8 100644
+>> --- a/virt/kvm/page_hinting.c
+>> +++ b/virt/kvm/page_hinting.c
+>> @@ -1,6 +1,7 @@
+>>  #include <linux/gfp.h>
+>>  #include <linux/mm.h>
+>>  #include <linux/kernel.h>
+>> +#include <linux/kvm_host.h>
+>>
+>>  /*
+>>   * struct kvm_free_pages - Tracks the pages which are freed by the gu=
+est.
+>> @@ -31,6 +32,28 @@ struct page_hinting {
+>>
+>>  DEFINE_PER_CPU(struct page_hinting, hinting_obj);
+>>
+>> +struct static_key_false guest_page_hinting_key  =3D STATIC_KEY_FALSE_=
+INIT;
+>> +EXPORT_SYMBOL(guest_page_hinting_key);
+>> +static DEFINE_MUTEX(hinting_mutex);
+>> +int guest_page_hinting_flag;
+>> +EXPORT_SYMBOL(guest_page_hinting_flag);
+> I'm not entirely sure this flag makes sense to me. What is to prevent
+> someone from turning this on when there is no means of actually using
+> the hints. I understand right now that guest_free_page doesn't
+> actually do anything, but when it does I would assume it has to
+> interact with a device. If that device is not present would it still
+> make sense for us to be generating hints?
+Fair point, I will address this issue.
+>
+>> +
+>> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
+>> +                             void __user *buffer, size_t *lenp,
+>> +                             loff_t *ppos)
+>> +{
+>> +       int ret;
+>> +
+>> +       mutex_lock(&hinting_mutex);
+>> +       ret =3D proc_dointvec(table, write, buffer, lenp, ppos);
+>> +       if (guest_page_hinting_flag)
+>> +               static_key_enable(&guest_page_hinting_key.key);
+>> +       else
+>> +               static_key_disable(&guest_page_hinting_key.key);
+>> +       mutex_unlock(&hinting_mutex);
+>> +       return ret;
+>> +}
+>> +
+>>  void guest_free_page(struct page *page, int order)
+>>  {
+>>  }
+>> --
+>> 2.17.2
+>>
+--=20
+Regards
+Nitesh
+
+
+--2Arqim0FweqXqCGWylmvZOpjMC27hDPHj--
+
+--tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxdyNwACgkQo4ZA3AYy
+ozlFwQ//cObQErrqLHor8mjiBfRaY95rCaA3wQ0TdKFMk+eXIhHeRuCgNLynVJKY
+Pyk/BgCLWNsE7YN6BiTCdWr1151r7vPMeq7jWb3F+Cm9guPE0LTluoQcINrQpHd7
+O6PYI1iHa2oliZVu4PmtHKdcNsi+BRkjaEJwI8InEi+8OuVc//RiVfQ9+DtRQK03
+oZAaZnLb807GZkcTnPdLCp0kEr9Q/ZqpVUgR+eW3kYaFEk8keWA4cn1VF5ZNlYov
+75wIOKRN4LtXWkQLNfrl9xKJd2gH1zSXPqL5a+71imM1pmwgkFo+UVgsD14Y6hL5
+yQ37f24wrtpAQeOR1nc+Pr4iJ0jemWOBYcLBJS0T7SngNzR9MGMJlFzN3kxgm/7c
+lxfJMob9TFv7jqoJQpODilJbEa1vDKT2Gi7YoQtVFSpNnzwY4WPRZYWMU7EMn3ho
+sL3+KagwxEJ1hAxJI5+Wvqn6BSJ779r7eRDbrXmUgqhl4xIwh7kIOHQ9EvK7wTXw
+87RFq0vfwYfv/13skHqEcytLzWp145OwqNCU2ndaOV7yUHVnBtrFNw6wG70Af05T
+POji67tuo9Nf8qd7lZNm+xrF65SaBowUV97GgkFiYh4kyJTsiF1XyBv5sf6QWKpS
+kDUYlVho6d5+3Qwoa3HUfnA/6ejk3GLFKrq9aF0y6D56gRsAg4Y=
+=5zZH
+-----END PGP SIGNATURE-----
+
+--tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8--
