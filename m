@@ -3,149 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66915C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6801C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC1E2177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F3DF20863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:15:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="JqJ4M5pL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKs3hDcc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfBHSON (ORCPT
+        id S1727966AbfBHSPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:14:13 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:36988 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727373AbfBHSON (ORCPT
+        Fri, 8 Feb 2019 13:15:32 -0500
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:38595 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbfBHSPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:14:13 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 402CA10C1086;
-        Fri,  8 Feb 2019 10:14:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549649652; bh=R//ocag1WxtYv6NHWUUVIFiK8K/XKiF+nwhlmb4Zf4w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=JqJ4M5pLaiGOeK0Xc/NXRKt/8PKH3MrupvPrg5LrGVsZtdXzzLqF8EGghpmlxSwvA
-         CcY5945qv9BhLzevhLZXhzjQh0Y9EW1rG0bRCvwBbRfSl0Zeqiq43aLtD8OM9fdiI3
-         aiHfkfX82DhnOcyswoF0VJCLYn5IAx2us946z6Wl0lXkX8FvbKEidRks8gUaONZxsn
-         qmnFJwLAFAnmbdLnlpQsBe440g0/o71y/Dk9jtmepGSyJ7uS6iZt8Tg6l64V4x8cSf
-         OGjrPlAg6cTq9D7ZwOPoSPCCd7Boyov4klwk22+tznQO2dHbaAzba4lX3n4cV8N3G/
-         m7GRYvF9fEmMg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id BC6CDA0090;
-        Fri,  8 Feb 2019 18:14:11 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 8 Feb 2019 10:11:57 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 8 Feb 2019 23:41:59 +0530
-Received: from [10.10.161.59] (10.10.161.59) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 8 Feb 2019 23:41:53 +0530
-Subject: Re: [PATCH v2 0/3] Replace opencoded set_mask_bits
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>,
-        <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-snps-arc@lists.infradead.org>, <linux-mm@kvack.org>,
-        <peterz@infradead.org>, <mark.rutland@arm.com>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc,gmane.linux.kernel.mm
-References: <1548275584-18096-1-git-send-email-vgupta@synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <c8f00c90-2e09-e825-1a1f-056294cafbea@synopsys.com>
-Date:   Fri, 8 Feb 2019 10:11:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 13:15:32 -0500
+Received: by mail-ot1-f49.google.com with SMTP id e12so7360192otl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 10:15:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1fC1RvnwFrYgz6BCjd2ndzz+PsaKqX+zYFD4OnGitx8=;
+        b=RKs3hDccshU9rxJ1dhh1rmEhFOZnI/yvDlvfA5O6Xi1hzA8zs4oYuZUu5P6uUSsnx6
+         /4/MvViu1Lt+q30WoR9FjS36nrNZiZpiHpAuFfqsffxIy8sO5c31QYgD10EGQH2JeQKw
+         Q2GFziY4CQBVIFpVaWwD8tIZ6G2hpe3jzT5YEKGS9xjLnWeMWg18fgdOMGRAzzF5Zvgg
+         nsbYtgJjaQnPf+1VG3PM675zVbdH3pIXgc+t8yIsEpmtAbC0D1ZAMu2NCAlPKD3xKRB6
+         csO8VpNOsxDNVBIbNI3RxloqStsv2NSsIVyWXfsFJ+iaE/tq5JcuG4Trm5vRlMaftG+6
+         NnCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1fC1RvnwFrYgz6BCjd2ndzz+PsaKqX+zYFD4OnGitx8=;
+        b=QOgYS/9fCZR6YQmtsfLaBd554PuqXZ0BOEcs9yfaxTmdgJW6tURq/x1/NnQnmwwt8C
+         3vLjR0SnobalehvC0l5QjmeieAMIQCqQCcGfKIXhzlBSX2drpGK060h6S2vMa2fOTn3a
+         ku3cwmIV2pRuisrzGxX0PJZy18IVoGoIkv8bTZpw5y38AaXgoNAJ5PC+JnCbO3+Z5HgR
+         WpUx68Nuta5rZbkz0OI5x1cLVeJrBF3ySP/K7ePpUiASRbCC91Btv5gW+/M5szPKOkXt
+         Yo/BhhVbBbO0kUhetnwxhKwuw8dGmGOSsDC8COAIbw5yeR6vqYEpmTiRfbefbxBMnHzc
+         3YmA==
+X-Gm-Message-State: AHQUAuZ2eJ8FbjADipwF/MphkIsGNqYI/PlU4qaMdQV44faV0kosP0Gu
+        5dGokQRANidoeKFFpWCnn3EO0qseff3Jqo2n/lA=
+X-Google-Smtp-Source: AHgI3IZKYBMp3sY2O/vyhcuXt8BERMfG9FzlKUG0EAYhcWArX8R7YqjbqVLnIcAIKVBALjoDk7yTsYtYsVAsIOri8IM=
+X-Received: by 2002:a9d:4504:: with SMTP id w4mr716223ote.18.1549649731313;
+ Fri, 08 Feb 2019 10:15:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1548275584-18096-1-git-send-email-vgupta@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.59]
+References: <20190204220952.30761-1-TheSven73@googlemail.com>
+ <20190204220952.30761-2-TheSven73@googlemail.com> <20190208170656.GL50184@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190208170656.GL50184@devbig004.ftw2.facebook.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Fri, 8 Feb 2019 13:15:20 -0500
+Message-ID: <CAGngYiUFQKpTUQKJtWvDftmntueb=e2AXqX=OhJLaRDKxzKxYg@mail.gmail.com>
+Subject: Re: [RFC v1 1/3] workqueue: Add resource-managed version of INIT_[DELAYED_]WORK()
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/19 12:33 PM, Vineet Gupta wrote:
-> Hi,
-> 
-> Repost of [1] rebased on 5.0-rc3 + accumulated Acked-by/Reviewed-by.
-> No code changes since v1.
-> 
-> Please consider applying.
-> 
-> [1] http://lists.infradead.org/pipermail/linux-snps-arc/2019-January/005201.html
-> 
-> Thx,
-> -Vineet
+Hi Tejun,
 
-Ping ! @Peter, @Arnd are you happy with this. If so, Andrew can you please add
-this via mm tree or do i need to pester the respective maintainers !
+On Fri, Feb 8, 2019 at 12:07 PM Tejun Heo <tj@kernel.org> wrote:
+>
+> I don't object to the basic idea but cancel_[delayed_]work_sync()
+> works iff queueing is disabled already, so there can be situations
+> where this can lead to surprising / subtle failures.  Given that, it
+> *might* not be a bad idea to keep this explicit unless there is a way
+> to reliably block future queueing.
+>
 
-Thx,
--Vineet
+Yes, I'm "coming around" to your opinion myself.
 
-> 
-> Vineet Gupta (3):
->   coredump: Replace opencoded set_mask_bits()
->   fs: inode_set_flags() replace opencoded set_mask_bits()
->   bitops.h: set_mask_bits() to return old value
-> 
->  fs/exec.c              | 7 +------
->  fs/inode.c             | 8 +-------
->  include/linux/bitops.h | 2 +-
->  3 files changed, 3 insertions(+), 14 deletions(-)
-> 
+There's also the question of which one is appropriate for clean-up:
+cancel_work_sync() or flush_work().
 
+And what about work scheduled on more than one workqueue?
+Or work scheduled on multi-threaded workqueues?
+
+The workqueue API sounds too complicated to have a devm_
+helper. It would lull developers into a false sense of security.
