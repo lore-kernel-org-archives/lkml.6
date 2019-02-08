@@ -2,83 +2,97 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1821DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6335C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C0A2075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781DC2075C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:33:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="E9hUK5Wl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfBHWc5 (ORCPT
+        id S1727232AbfBHWdy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:32:57 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36912 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbfBHWc5 (ORCPT
+        Fri, 8 Feb 2019 17:33:54 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:47054 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbfBHWdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:32:57 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AF65C36C;
-        Fri,  8 Feb 2019 22:32:56 +0000 (UTC)
-Date:   Fri, 8 Feb 2019 14:32:55 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [patch V2 1/2] genriq: Avoid summation loops for /proc/stat
-Message-Id: <20190208143255.9dec696b15f03bf00f4c60c2@linux-foundation.org>
-In-Reply-To: <20190208135020.925487496@linutronix.de>
-References: <20190208134802.218483159@linutronix.de>
-        <20190208135020.925487496@linutronix.de>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Feb 2019 17:33:53 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x18MT0l2151703;
+        Fri, 8 Feb 2019 22:33:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=DeXUG8dz+KtUUxfoLvRj2aLTjX1Q8xRJ9S307sRwFOs=;
+ b=E9hUK5WlQvzutvfN16iMCKi5pkWHNANlp4wDTpG2gwaug+4pFQoFwZKoH4lhMUFq2ZGt
+ /PkgE+I2+/fmoK8E4kzXAk91quNjkBKIR2J/JdzeiJ/miaGVBk1ngKQGZIUrpkGrrgoz
+ X/iYDQhVKDQeiRqfogJglMvsZ8PsP1SW7KIa3LxT73qq0mmK6DRHYPJKrisOCIxEvY1c
+ DEMjjY5ySpkysAl7dTDKR584barDaBfhuKWMZPwT/OeXgtcaE2C/li73hMcLjAo6H6ZD
+ 0JyR0N4jq6AWqrWUso8Zi4MX5UaaXpo+8J1PlYJqq4jTmSf0tqqXdsSWH03Co1+qJYtv Pw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2qd97ff4yg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 08 Feb 2019 22:33:33 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x18MXRN9016615
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 22:33:27 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x18MXQiH011008;
+        Fri, 8 Feb 2019 22:33:26 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 08 Feb 2019 14:33:26 -0800
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Manoj N. Kumar" <manoj@linux.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
+        Uma Krishnan <ukrishn@linux.ibm.com>,
+        Brian King <brking@us.ibm.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com,
+        Bradley Grove <bgrove@attotech.com>,
+        Don Brace <don.brace@microsemi.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v5] scsi/ata: Use unsigned int for cmd's type in ioctls in scsi_host_template
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190126075256.29608-1-natechancellor@gmail.com>
+        <20190207160719.28895-1-natechancellor@gmail.com>
+Date:   Fri, 08 Feb 2019 17:33:22 -0500
+In-Reply-To: <20190207160719.28895-1-natechancellor@gmail.com> (Nathan
+        Chancellor's message of "Thu, 7 Feb 2019 09:07:20 -0700")
+Message-ID: <yq1pns1x64t.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9161 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902080152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Feb 2019 14:48:03 +0100 Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> Waiman reported that on large systems with a large amount of interrupts the
-> readout of /proc/stat takes a long time to sum up the interrupt
-> statistics. In principle this is not a problem. but for unknown reasons
-> some enterprise quality software reads /proc/stat with a high frequency.
-> 
-> The reason for this is that interrupt statistics are accounted per cpu. So
-> the /proc/stat logic has to sum up the interrupt stats for each interrupt.
-> 
-> This can be largely avoided for interrupts which are not marked as
-> 'PER_CPU' interrupts by simply adding a per interrupt summation counter
-> which is incremented along with the per interrupt per cpu counter.
-> 
-> The PER_CPU interrupts need to avoid that and use only per cpu accounting
-> because they share the interrupt number and the interrupt descriptor and
-> concurrent updates would conflict or require unwanted synchronization.
-> 
-> ...
->
-> --- a/include/linux/irqdesc.h
-> +++ b/include/linux/irqdesc.h
-> @@ -65,6 +65,7 @@ struct irq_desc {
->  	unsigned int		core_internal_state__do_not_mess_with_it;
->  	unsigned int		depth;		/* nested irq disables */
->  	unsigned int		wake_depth;	/* nested wake enables */
-> +	unsigned int		tot_count;
+Nathan,
 
-Confused.  Isn't this going to quickly overflow?
+> Clang warns several times in the scsi subsystem (trimmed for brevity):
 
+Applied to 5.1/scsi-queue, thanks!
 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
