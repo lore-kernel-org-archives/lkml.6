@@ -2,446 +2,91 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A290C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAA4C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11E1C217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:36:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CF5B20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:40:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LASlcymn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bWfo7PNl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfBHPgs (ORCPT
+        id S1727846AbfBHPkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:36:48 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53063 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727619AbfBHPgs (ORCPT
+        Fri, 8 Feb 2019 10:40:23 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53062 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbfBHPkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:36:48 -0500
-Received: by mail-it1-f193.google.com with SMTP id r11so4299659itc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 07:36:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=slf0MQV4c6I6qRAG9dgu9hAdqH9NY7PHsuyM1hSvzUc=;
-        b=LASlcymn7KWJSeiXsuIG2o+iY5QHa7exXz6BRUBK//r19OqYPfC2iJZ96JskQpr1+S
-         1X9p39isIY/+1OE+twBnwop1sTvnYeapsiIuam6wrJTkSCH1n0e8pO8w2sVES2Ig+Fxi
-         2we1f6UJmv5OTQeSBzQdgTV+XSb6t7I2nGwiM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=slf0MQV4c6I6qRAG9dgu9hAdqH9NY7PHsuyM1hSvzUc=;
-        b=CE2P0fmHYshhTyOVBL57dcoSOjGafXTVDRCiADiP9VXy3IhVMII8CeABVVGCfaDfzK
-         /97Os2JjMEKWMMjgOOD0f3drtyLO1ubpqRqpwuezIZhKVKn/ABlj2a5+YKgyhQNERl9g
-         wqt3Te/1DM/cZ5SlSLkfZf0z8RYLseGCP0EqbXUPN1hcrXrMN+lEKAqMYmf0pNQ9ZdQI
-         VkN3hXEB87nw8aIc/g53UOe2qzOoO5YKKFQJjROUo0PEKMueMXOu/INXbUkX6S+AflDG
-         CWi85rJlscKP6dZzBYruRUloQcgX7ytzCNKDND67Unz85QPsyxNprRNneXpbXHKpJxaC
-         kqBA==
-X-Gm-Message-State: AHQUAubl5rZ0Wjn+A16y4KvuyN/2PLT2K8aI6qPGMu+2ibPYy0fTbdw4
-        9oHPSNZytco/b+zu56FyAOxGKBmwBwJtqJgc9GxOBg==
-X-Google-Smtp-Source: AHgI3IZxpgpoXU64zPt4kkzMWscbCLglF1JdMoUemge3s1F9PLuHCuTOnmS/0qBuJwFtoXHQoKzkb6Ok2wcXUsEEQTA=
-X-Received: by 2002:a6b:b2c4:: with SMTP id b187mr9971223iof.291.1549640207069;
- Fri, 08 Feb 2019 07:36:47 -0800 (PST)
+        Fri, 8 Feb 2019 10:40:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xqMZ9xrJ2PZHdQ5jtidEV7yoEqOjuBsVJVNlx6xEDFw=; b=bWfo7PNlACFhIONoiVPlGGV09
+        5Jauo1gjKSrP0g2OCFA20FYqI4MZpwktTq6ZgaBrFbnFKJAZiyP0MnsKlvagCE/WgR2pldUgGy1Ee
+        RWd0s81jgQGwxvp98ED3BGTC7N7EH2AdcdA5dSEijiQiGpI9YpSM4XXSp8qaTffVXRgWQLgNndd+E
+        g77UlbYQHmhEQHjfiVKwTj3bTzd+Pikx23PNfnwexJ6T2+GXhh6pwzXyOi5u6UbKJwiIr1heIOeRo
+        KzzZoCzw03CY2h4Snp3UJcZ4WGCVYarXkoeEv6pDXXepw4z0Rt8byrNcs5qLDRMCKfQCPBXpgjgvo
+        31fb+P7AA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gs8GB-0004T8-W8; Fri, 08 Feb 2019 15:40:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9727921406573; Fri,  8 Feb 2019 16:40:09 +0100 (CET)
+Date:   Fri, 8 Feb 2019 16:40:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tj@kernel.org,
+        sargun@sargun.me, xiexiuqi@huawei.com, xiezhipeng1@huawei.com,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH 1/2] sched/fair: optimization of update_blocked_averages()
+Message-ID: <20190208154009.GK32511@hirez.programming.kicks-ass.net>
+References: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
+ <1549469662-13614-2-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-References: <20190207232759.14553-1-daniel.vetter@ffwll.ch>
- <20190207232759.14553-2-daniel.vetter@ffwll.ch> <20190208102849.qpozfixt77727ojx@shell.armlinux.org.uk>
- <20190208152325.GL23159@phenom.ffwll.local>
-In-Reply-To: <20190208152325.GL23159@phenom.ffwll.local>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 8 Feb 2019 16:36:34 +0100
-Message-ID: <CAKMK7uHw=bL=EkQ937KmU1ZQ2Nv+EtyqQaaQh01BE7DLCognbA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] components: multiple components for a device
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549469662-13614-2-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 4:23 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Fri, Feb 08, 2019 at 10:28:49AM +0000, Russell King - ARM Linux admin wrote:
-> > On Fri, Feb 08, 2019 at 12:27:57AM +0100, Daniel Vetter wrote:
-> > > Component framework is extended to support multiple components for
-> > > a struct device. These will be matched with different masters based on
-> > > its sub component value.
-> > >
-> > > We are introducing this, as I915 needs two different components
-> > > with different subcomponent value, which will be matched to two
-> > > different component masters(Audio and HDCP) based on the subcomponent
-> > > values.
-> > >
-> > > v2: Add documenation.
-> > >
-> > > v3: Rebase on top of updated documenation.
-> > >
-> > > v4: Review from Rafael:
-> > > - Remove redundant "This" from kerneldoc (also in the previous patch)
-> > > - Streamline the logic in find_component() a bit.
-> > >
-> > > Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1 code)
-> > > Signed-off-by: Ramalingam C <ramalingam.c@intel.com> (v1 commit message)
-> > > Cc: Ramalingam C <ramalingam.c@intel.com>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> > > Cc: Rafael J. Wysocki <rafael@kernel.org>
-> > > Cc: Jaroslav Kysela <perex@perex.cz>
-> > > Cc: Takashi Iwai <tiwai@suse.com>
-> > > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > > Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > ---
-> > >  drivers/base/component.c  | 158 +++++++++++++++++++++++++++++---------
-> > >  include/linux/component.h |  10 ++-
-> > >  2 files changed, 129 insertions(+), 39 deletions(-)
-> > >
-> > > diff --git a/drivers/base/component.c b/drivers/base/component.c
-> > > index 1624c2a892a5..7dbc41cccd58 100644
-> > > --- a/drivers/base/component.c
-> > > +++ b/drivers/base/component.c
-> > > @@ -47,6 +47,7 @@ struct component;
-> > >  struct component_match_array {
-> > >     void *data;
-> > >     int (*compare)(struct device *, void *);
-> > > +   int (*compare_typed)(struct device *, int, void *);
-> > >     void (*release)(struct device *, void *);
-> > >     struct component *component;
-> > >     bool duplicate;
-> > > @@ -74,6 +75,7 @@ struct component {
-> > >     bool bound;
-> > >
-> > >     const struct component_ops *ops;
-> > > +   int subcomponent;
-> > >     struct device *dev;
-> > >  };
-> > >
-> > > @@ -158,7 +160,7 @@ static struct master *__master_find(struct device *dev,
-> > >  }
-> > >
-> > >  static struct component *find_component(struct master *master,
-> > > -   int (*compare)(struct device *, void *), void *compare_data)
-> > > +   struct component_match_array *mc)
-> > >  {
-> > >     struct component *c;
-> > >
-> > > @@ -166,7 +168,11 @@ static struct component *find_component(struct master *master,
-> > >             if (c->master && c->master != master)
-> > >                     continue;
-> > >
-> > > -           if (compare(c->dev, compare_data))
-> > > +           if (mc->compare && mc->compare(c->dev, mc->data))
-> > > +                   return c;
-> > > +
-> > > +           if (mc->compare_typed &&
-> > > +               mc->compare_typed(c->dev, c->subcomponent, mc->data))
-> > >                     return c;
-> > >     }
-> > >
-> > > @@ -192,7 +198,7 @@ static int find_components(struct master *master)
-> > >             if (match->compare[i].component)
-> > >                     continue;
-> > >
-> > > -           c = find_component(master, mc->compare, mc->data);
-> > > +           c = find_component(master, mc);
-> > >             if (!c) {
-> > >                     ret = -ENXIO;
-> > >                     break;
-> > > @@ -327,29 +333,12 @@ static int component_match_realloc(struct device *dev,
-> > >     return 0;
-> > >  }
-> > >
-> > > -/**
-> > > - * component_match_add_release - add a component match with release callback
-> > > - * @master: device with the aggregate driver
-> > > - * @matchptr: pointer to the list of component matches
-> > > - * @release: release function for @compare_data
-> > > - * @compare: compare function to match against all components
-> > > - * @compare_data: opaque pointer passed to the @compare function
-> > > - *
-> > > - * Adds a new component match to the list stored in @matchptr, which the @master
-> > > - * aggregate driver needs to function. The list of component matches pointed to
-> > > - * by @matchptr must be initialized to NULL before adding the first match.
-> > > - *
-> > > - * The allocated match list in @matchptr is automatically released using devm
-> > > - * actions, where upon @release will be called to free any references held by
-> > > - * @compare_data, e.g. when @compare_data is a &device_node that must be
-> > > - * released with of_node_put().
-> > > - *
-> > > - * See also component_match_add().
-> > > - */
-> > > -void component_match_add_release(struct device *master,
-> > > +static void __component_match_add(struct device *master,
-> > >     struct component_match **matchptr,
-> > >     void (*release)(struct device *, void *),
-> > > -   int (*compare)(struct device *, void *), void *compare_data)
-> > > +   int (*compare)(struct device *, void *),
-> > > +   int (*compare_typed)(struct device *, int, void *),
-> > > +   void *compare_data)
-> > >  {
-> > >     struct component_match *match = *matchptr;
-> > >
-> > > @@ -381,13 +370,69 @@ void component_match_add_release(struct device *master,
-> > >     }
-> > >
-> > >     match->compare[match->num].compare = compare;
-> > > +   match->compare[match->num].compare_typed = compare_typed;
-> > >     match->compare[match->num].release = release;
-> > >     match->compare[match->num].data = compare_data;
-> > >     match->compare[match->num].component = NULL;
-> > >     match->num++;
-> > >  }
-> > > +
-> > > +/**
-> > > + * component_match_add_release - add a component match with release callback
-> > > + * @master: device with the aggregate driver
-> > > + * @matchptr: pointer to the list of component matches
-> > > + * @release: release function for @compare_data
-> > > + * @compare: compare function to match against all components
-> > > + * @compare_data: opaque pointer passed to the @compare function
-> > > + *
-> > > + * Adds a new component match to the list stored in @matchptr, which the @master
-> > > + * aggregate driver needs to function. The list of component matches pointed to
-> > > + * by @matchptr must be initialized to NULL before adding the first match. This
-> > > + * only matches against components added with component_add().
-> > > + *
-> > > + * The allocated match list in @matchptr is automatically released using devm
-> > > + * actions, where upon @release will be called to free any references held by
-> > > + * @compare_data, e.g. when @compare_data is a &device_node that must be
-> > > + * released with of_node_put().
-> > > + *
-> > > + * See also component_match_add() and component_match_add_typed().
-> > > + */
-> > > +void component_match_add_release(struct device *master,
-> > > +   struct component_match **matchptr,
-> > > +   void (*release)(struct device *, void *),
-> > > +   int (*compare)(struct device *, void *), void *compare_data)
-> > > +{
-> > > +   __component_match_add(master, matchptr, release, compare, NULL,
-> > > +                         compare_data);
-> > > +}
-> > >  EXPORT_SYMBOL(component_match_add_release);
-> > >
-> > > +/**
-> > > + * component_match_add_typed - add a compent match for a typed component
-> > > + * @master: device with the aggregate driver
-> > > + * @matchptr: pointer to the list of component matches
-> > > + * @compare_typed: compare function to match against all typed components
-> > > + * @compare_data: opaque pointer passed to the @compare function
-> > > + *
-> > > + * Adds a new component match to the list stored in @matchptr, which the @master
-> > > + * aggregate driver needs to function. The list of component matches pointed to
-> > > + * by @matchptr must be initialized to NULL before adding the first match. This
-> > > + * only matches against components added with component_add_typed().
-> > > + *
-> > > + * The allocated match list in @matchptr is automatically released using devm
-> > > + * actions.
-> > > + *
-> > > + * See also component_match_add_release() and component_match_add_typed().
-> > > + */
-> > > +void component_match_add_typed(struct device *master,
-> > > +   struct component_match **matchptr,
-> > > +   int (*compare_typed)(struct device *, int, void *), void *compare_data)
-> > > +{
-> > > +   __component_match_add(master, matchptr, NULL, NULL, compare_typed,
-> > > +                         compare_data);
-> >
-> > You're still passing some compare data in that may need to be released,
-> > but you are explicitly denying the ability to provide a release
-> > function pointer here.  What was the reasoning behind that decision?
-> > If someone wanted to use this with compare_data being a device_node,
-> > how should that be handled?
->
-> Same way we've handled it originally, adding the new variant. I'm not a
-> huge fan of adding api preemptively, without a user. And the data pointer
-> we pass around in i915 for mei_hdcp and snd-hda-intel don't hold
-> references (we don't even use them, we just compare the device against
-> hardcoded expectations). Since the new compare_typed is entirely
-> orthogonal to whether you have a release function or not, that should be
-> simple to do.
 
-Forgot to add: I also don't expect a user for this. The ->release
-callback is used for dt drivers, because of_node_put(). And well
-designed device tree will not have multiple components stack in very
-awkward ways on the exact same underlying device, that would simply be
-rather unclean DT design. x86 otoh, thanks to window's "one pci
-device, one driver" expectation is full of that kind of
-kludged-together SoC-but-not-really behind one pci device. Therefore I
-expect the overlap for this kind of stuff to be 0.
+Argh head hurts!!
 
-This includes all the hand-rolled hacks we have in i915 that predate
-component, e.g. ips on ironlake or the pmu serialization on vlv. So
-with a 4/4 rate of possible users of component_typed not needed a
-->release callback I think not providing that combo for now is the
-right call. And as mentioned, really easy to adjust in case I've
-guessed wrong here.
--Daniel
+On Wed, Feb 06, 2019 at 05:14:21PM +0100, Vincent Guittot wrote:
+> @@ -4438,6 +4450,10 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
+>  		/* adjust cfs_rq_clock_task() */
+>  		cfs_rq->throttled_clock_task_time += rq_clock_task(rq) -
+>  					     cfs_rq->throttled_clock_task;
+> +
+> +		/* Add cfs_rq with already running entity in the list */
+> +		if (cfs_rq->nr_running >= 1)
+> +			list_add_leaf_cfs_rq(cfs_rq);
+>  	}
+>  
+>  	return 0;
 
-> > > +}
-> > > +EXPORT_SYMBOL(component_match_add_typed);
-> > > +
-> > >  static void free_master(struct master *master)
-> > >  {
-> > >     struct component_match *match = master->match;
-> > > @@ -616,19 +661,8 @@ int component_bind_all(struct device *master_dev, void *data)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(component_bind_all);
-> > >
-> > > -/**
-> > > - * component_add - register a component
-> > > - * @dev: component device
-> > > - * @ops: component callbacks
-> > > - *
-> > > - * Register a new component for @dev. Functions in @ops will be called when the
-> > > - * aggregate driver is ready to bind the overall driver by calling
-> > > - * component_bind_all(). See also &struct component_ops.
-> > > - *
-> > > - * The component needs to be unregistered at driver unload/disconnect by calling
-> > > - * component_del().
-> > > - */
-> > > -int component_add(struct device *dev, const struct component_ops *ops)
-> > > +static int __component_add(struct device *dev, const struct component_ops *ops,
-> > > +   int subcomponent)
-> > >  {
-> > >     struct component *component;
-> > >     int ret;
-> > > @@ -639,6 +673,7 @@ int component_add(struct device *dev, const struct component_ops *ops)
-> > >
-> > >     component->ops = ops;
-> > >     component->dev = dev;
-> > > +   component->subcomponent = subcomponent;
-> > >
-> > >     dev_dbg(dev, "adding component (ops %ps)\n", ops);
-> > >
-> > > @@ -657,6 +692,55 @@ int component_add(struct device *dev, const struct component_ops *ops)
-> > >
-> > >     return ret < 0 ? ret : 0;
-> > >  }
-> > > +
-> > > +/**
-> > > + * component_add_typed - register a component
-> > > + * @dev: component device
-> > > + * @ops: component callbacks
-> > > + * @subcomponent: nonzero identifier for subcomponents
-> > > + *
-> > > + * Register a new component for @dev. Functions in @ops will be call when the
-> > > + * aggregate driver is ready to bind the overall driver by calling
-> > > + * component_bind_all(). See also &struct component_ops.
-> > > + *
-> > > + * @subcomponent must be nonzero and is used to differentiate between multiple
-> > > + * components registerd on the same device @dev. These components are match
-> > > + * using component_match_add_typed().
-> > > + *
-> > > + * The component needs to be unregistered at driver unload/disconnect by
-> > > + * calling component_del().
-> > > + *
-> > > + * See also component_add().
-> > > + */
-> > > +int component_add_typed(struct device *dev, const struct component_ops *ops,
-> > > +   int subcomponent)
-> > > +{
-> > > +   if (WARN_ON(subcomponent == 0))
-> > > +           return -EINVAL;
-> > > +
-> > > +   return __component_add(dev, ops, subcomponent);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(component_add_typed);
-> > > +
-> > > +/**
-> > > + * component_add - register a component
-> > > + * @dev: component device
-> > > + * @ops: component callbacks
-> > > + *
-> > > + * Register a new component for @dev. Functions in @ops will be called when the
-> > > + * aggregate driver is ready to bind the overall driver by calling
-> > > + * component_bind_all(). See also &struct component_ops.
-> > > + *
-> > > + * The component needs to be unregistered at driver unload/disconnect by
-> > > + * calling component_del().
-> > > + *
-> > > + * See also component_add_typed() for a variant that allows multipled different
-> > > + * components on the same device.
-> > > + */
-> > > +int component_add(struct device *dev, const struct component_ops *ops)
-> > > +{
-> > > +   return __component_add(dev, ops, 0);
-> > > +}
-> > >  EXPORT_SYMBOL_GPL(component_add);
-> > >
-> > >  /**
-> > > diff --git a/include/linux/component.h b/include/linux/component.h
-> > > index 83da25bdf59c..30bcc7e590eb 100644
-> > > --- a/include/linux/component.h
-> > > +++ b/include/linux/component.h
-> > > @@ -34,6 +34,8 @@ struct component_ops {
-> > >  };
-> > >
-> > >  int component_add(struct device *, const struct component_ops *);
-> > > +int component_add_typed(struct device *dev, const struct component_ops *ops,
-> > > +   int subcomponent);
-> > >  void component_del(struct device *, const struct component_ops *);
-> > >
-> > >  int component_bind_all(struct device *master, void *master_data);
-> > > @@ -91,6 +93,9 @@ void component_match_add_release(struct device *master,
-> > >     struct component_match **matchptr,
-> > >     void (*release)(struct device *, void *),
-> > >     int (*compare)(struct device *, void *), void *compare_data);
-> > > +void component_match_add_typed(struct device *master,
-> > > +   struct component_match **matchptr,
-> > > +   int (*compare_typed)(struct device *, int, void *), void *compare_data);
-> > >
-> > >  /**
-> > >   * component_match_add - add a compent match
-> > > @@ -101,12 +106,13 @@ void component_match_add_release(struct device *master,
-> > >   *
-> > >   * Adds a new component match to the list stored in @matchptr, which the @master
-> > >   * aggregate driver needs to function. The list of component matches pointed to
-> > > - * by @matchptr must be initialized to NULL before adding the first match.
-> > > + * by @matchptr must be initialized to NULL before adding the first match. This
-> > > + * only matches against components added with component_add().
-> > >   *
-> > >   * The allocated match list in @matchptr is automatically released using devm
-> > >   * actions.
-> > >   *
-> > > - * See also component_match_add_release().
-> > > + * See also component_match_add_release() and component_match_add_typed().
-> > >   */
-> > >  static inline void component_match_add(struct device *master,
-> > >     struct component_match **matchptr,
-> > > --
-> > > 2.20.1
-> > >
-> > >
-> >
-> > --
-> > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> > FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-> > According to speedtest.net: 11.9Mbps down 500kbps up
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+Do we want the below to go with the above change?
 
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 38d4669aa2ef..0bd80a891025 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4536,6 +4536,8 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	/* update hierarchical throttle state */
+ 	walk_tg_tree_from(cfs_rq->tg, tg_nop, tg_unthrottle_up, (void *)rq);
+ 
++	assert_list_leaf_cfs_rq(rq);
++
+ 	if (!cfs_rq->load.weight)
+ 		return;
+ 
