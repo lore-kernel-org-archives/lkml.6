@@ -2,90 +2,131 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EE8C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44720C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF7B2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:53:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yUMgM7Lo"
+	by mail.kernel.org (Postfix) with ESMTP id 181D720869
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfBHNxU (ORCPT
+        id S1727816AbfBHNyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:53:20 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46784 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbfBHNxT (ORCPT
+        Fri, 8 Feb 2019 08:54:00 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:43867 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726641AbfBHNx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:53:19 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f5so2539626lfc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 05:53:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rPNmJ15KEK8QlnNyQUI2whawGc1QMo6m2jIEISNaNE0=;
-        b=yUMgM7Lo2ER9OkIyI9MiiM5OUgzU8i0hi0XWbOV5mI5iwZPcijQrRCjjJGBUx8XZCa
-         FvkKQdnERlzbrrKjxdDN8RONPhTuOcFFl+FJff1y43YLC3vs7DhHmiRrWcEpnUv3KMPA
-         Y5mhqTe/3KVigfV4e7syx+l2IbPbya18pApTA56PmHuo81TwPTCLJRsJKBr7biTacLVo
-         9VYh6cg1cE6/i9bRB+9uluYEyYJtSfm8v/snddH9zLHXuYpAC/AW5cwPu4MdR/uXIKzR
-         0xi1HX1h6LCAnjDdkwhwFi40j0a+yBd3lpkZcjzZW8vUMhklXvuAYN2xuxd7zoHNS/FH
-         zQ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rPNmJ15KEK8QlnNyQUI2whawGc1QMo6m2jIEISNaNE0=;
-        b=uYOAtMQnoR/P5yl4795TUUNo6Hwz2oaxZ4k+LtcyUBbwBsFAMMOSSEpQOcwThsyBP4
-         Ev/39anSs8F2/cEGqYQb613sJJkkUYaMS322vR8C0hTeBRQntK8zm0OhocRUUJHJneT8
-         mCYxxA0aza7RouPxr9o8MWqF1Hmzqw1FCLse0ap/Ddgh9KCANjuXCJLnyR8J9pDcbyv0
-         r4fnn+FF4EKkJuKE1NjjVLsA/peqJZTJCA/y90rQ7WLF/nvXxkq7cjTj1sPJHCUdxeRp
-         ExSjZjrSNGmLi4QGE05iR8pji2ogVHu5GUYj2lm2g1nfl2sbreYmPpCc6iIfNiqG2RXi
-         NOYw==
-X-Gm-Message-State: AHQUAuZOkoknciAJm2ODL0gPoCrZEBGg5aid6zWZmrD5U84hrBiMlhGR
-        9mVJFEbAKu6rboanM5JMVD8z7IbJy1ngoBj2mynpeQ==
-X-Google-Smtp-Source: AHgI3IaIrZMPapB0BgETZ1wjFbskiZhzO2E/nH+1osqKOjlDOpn74o8cVB4BavFg+AORqKDSsBLEj9lejIp3MmRee4A=
-X-Received: by 2002:a19:7dc2:: with SMTP id y185mr14170440lfc.27.1549633997617;
- Fri, 08 Feb 2019 05:53:17 -0800 (PST)
+        Fri, 8 Feb 2019 08:53:59 -0500
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gs6bK-000296-Sh; Fri, 08 Feb 2019 14:53:55 +0100
+Message-Id: <20190208135021.013828701@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 08 Feb 2019 14:48:04 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [patch V2 2/2] proc/stat: Make the interrupt statistics more efficient
+References: <20190208134802.218483159@linutronix.de>
 MIME-Version: 1.0
-References: <20190205195909.3565-1-krzk@kernel.org>
-In-Reply-To: <20190205195909.3565-1-krzk@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Feb 2019 14:53:06 +0100
-Message-ID: <CACRpkdbXZnYP0=BXqoSyr9=y4+WWWax+KYQ8MvcAUVyMVL652w@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: samsung: Remove legacy API for handling
- external wakeup interrupts mask
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 8:59 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Waiman reported that on large systems with a large amount of interrupts the
+readout of /proc/stat takes a long time to sum up the interrupt
+statistics. In principle this is not a problem. but for unknown reasons
+some enterprise quality software reads /proc/stat with a high frequency.
 
-> Remove the legacy, ugly API of exposing the static value of external
-> wakeup interrupts mask, because all arch-machine users where converted
-> to use generic implementation from pinctrl driver.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Sylwester Nawrocki <snawrocki@kernel.org>
-> Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+The reason for this is that interrupt statistics are accounted per cpu. So
+the /proc/stat logic has to sum up the interrupt stats for each interrupt.
 
-Patch applied for v5.1.
+The interrupt core provides now a per interrupt summary counter which can
+be used to avoid the summation loops completely except for interrupts
+marked PER_CPU which are only a small fraction of the interrupt space if at
+all.
 
-Yours,
-Linus Walleij
+Another simplification is to iterate only over the active interrupts and
+skip the potentially large gaps in the interrupt number space and just
+print zeros for the gaps without going into the interrupt core in the first
+place.
+
+Waiman provided test results from a 4-socket IvyBridge-EX system (60-core
+120-thread, 3016 irqs) excuting a test program which reads /proc/stat
+50,000 times:
+
+Before:	18.436s (sys 18.380s)
+After:   3.769s (sys  3.742s)
+
+Reported-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+
+v2: Make variables unsigned int. Add results to changelog.
+
+ fs/proc/stat.c |   29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
+
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -79,6 +79,31 @@ static u64 get_iowait_time(int cpu)
+ 
+ #endif
+ 
++static void show_irq_gap(struct seq_file *p, unsigned int gap)
++{
++	static const char zeros[] = " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
++
++	while (gap > 0) {
++		unsigned int inc;
++
++		inc = min_t(unsigned int, gap, ARRAY_SIZE(zeros) / 2);
++		seq_write(p, zeros, 2 * inc);
++		gap -= inc;
++	}
++}
++
++static void show_all_irqs(struct seq_file *p)
++{
++	unsigned int i, next = 0;
++
++	for_each_active_irq(i) {
++		show_irq_gap(p, i - next);
++		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
++		next = i + 1;
++	}
++	show_irq_gap(p, nr_irqs - next);
++}
++
+ static int show_stat(struct seq_file *p, void *v)
+ {
+ 	int i, j;
+@@ -156,9 +181,7 @@ static int show_stat(struct seq_file *p,
+ 	}
+ 	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
+ 
+-	/* sum again ? it could be updated? */
+-	for_each_irq_nr(j)
+-		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
++	show_all_irqs(p);
+ 
+ 	seq_printf(p,
+ 		"\nctxt %llu\n"
+
+
