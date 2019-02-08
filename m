@@ -2,143 +2,138 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D93C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E9CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14D2520855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:19:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQbWyOlW"
+	by mail.kernel.org (Postfix) with ESMTP id 34F542146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:20:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfBHPTB (ORCPT
+        id S1727963AbfBHPUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:19:01 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38463 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbfBHPTA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:19:00 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h50so3058471ede.5;
-        Fri, 08 Feb 2019 07:18:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BvVSppcWn4VKsXIVbbXUK9OzQFNQquhADDfzAtIHSjQ=;
-        b=qQbWyOlW4jZhTSepxY6IuZc9GizIYO0YmQSzY5+z3ft0wFNY9G6+H0CYMBaoursQq2
-         E2Z5K+wfPrkdxvZUgRjIRSXyVF0Mxm9pg+5ybj+YNvYXAy7jNUDAZZ8P/rZWV5hAU68U
-         vg3fmyutYTD78lGwtOq+J5EVQMP87EvmcZdgaZiQWhZN+nzGt9CYHuo3lGQ4QNqF8+WW
-         C9+sdT1WkyUd/1c7agT0Mw0JPHYi/ftkHfsjcd8ycyayxlJ8ndt3ngdUwfOB9DejFYob
-         zKT0ajmPD1yk0cOEdIDLTq/o+m7qVCuEUPbet54aWkuBf+Mn53K+RdEw9lDJ8V+6lpti
-         Tv7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BvVSppcWn4VKsXIVbbXUK9OzQFNQquhADDfzAtIHSjQ=;
-        b=X0/cHpa4xXls2tsWJmfC+PZPsxoeQnGkk5qN40K5bHPxyONyi8oidZPa/1wZ3d16yk
-         3gdYtQKwlOgrHlAJ/5nhVyiF5+kx0xwiFeYNpEbKhhOlBKyvbCA18KdB2YrUBpU8lIti
-         fRfhzaTzpXofWzpe+WjYdEW2RQMs7BW4eW83orrmBFIdD0oIaSeZ4PRiwMfbETwz8Yyk
-         yJE7PTW2hV+zv+IJO3jeC44X/KhCGFOCh8thbKTG3a1utGPdJM2USpoW/hWC/BFzchIS
-         pQghq1XxiDu5fe6sMf1dkUDED/vri7EuhL3fcATbv3HjHoj2NDOPNF2apgiSOsYLPm+k
-         QRFQ==
-X-Gm-Message-State: AHQUAuZYC4YOtUTVLG2rhEZ63o5HM/AHLjBsO9d8tGiVoTs3gHx8MM2d
-        sFoRr9PdWY8UsYTpnFYmTgM=
-X-Google-Smtp-Source: AHgI3IYFaDDqMZAOazuJyTTXQfm3Y6F9RIFCwFsXW2qY0NZHjA6nnQYDdploNVfWk5NPLMQNP4PAyA==
-X-Received: by 2002:aa7:c0c8:: with SMTP id j8mr10087558edp.94.1549639138655;
-        Fri, 08 Feb 2019 07:18:58 -0800 (PST)
-Received: from [10.83.36.153] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id z60sm674220ede.82.2019.02.08.07.18.56
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 07:18:57 -0800 (PST)
-Subject: Re: [PATCH 16/32] x86/vdso: Generate vdso{,32}-timens.lds
+        Fri, 8 Feb 2019 10:20:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726813AbfBHPUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 10:20:06 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0179D59454;
+        Fri,  8 Feb 2019 15:20:06 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-35.bos.redhat.com [10.18.17.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 520A116C0E;
+        Fri,  8 Feb 2019 15:20:04 +0000 (UTC)
+Subject: Re: [patch V2 0/2] genirq, proc: Speedup /proc/stat interrupt
+ statistics
 To:     Thomas Gleixner <tglx@linutronix.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Dmitry Safonov <dima@arista.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andy Tucker <agtucker@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-References: <20190206001107.16488-1-dima@arista.com>
- <20190206001107.16488-17-dima@arista.com>
- <a2bbe610-7553-0ba6-b58b-1013e034b8f6@rasmusvillemoes.dk>
- <alpine.DEB.2.21.1902081051410.1645@nanos.tec.linutronix.de>
-From:   Dmitry Safonov <0x7f454c46@gmail.com>
-Message-ID: <3f0ac089-387e-ab58-59e9-5f8cafa1573d@gmail.com>
-Date:   Fri, 8 Feb 2019 15:18:56 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+References: <20190208134802.218483159@linutronix.de>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <43213c22-98fd-c9d4-53a5-21f8ab4fe187@redhat.com>
+Date:   Fri, 8 Feb 2019 10:20:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902081051410.1645@nanos.tec.linutronix.de>
+In-Reply-To: <20190208134802.218483159@linutronix.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 08 Feb 2019 15:20:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 9:57 AM, Thomas Gleixner wrote:
-> On Thu, 7 Feb 2019, Rasmus Villemoes wrote:
-> 
-> Cc: + Vincenzo, Will
-> 
->> On 06/02/2019 01.10, Dmitry Safonov wrote:
->>> As it has been discussed on timens RFC, adding a new conditional branch
->>> `if (inside_time_ns)` on VDSO for all processes is undesirable.
->>> It will add a penalty for everybody as branch predictor may mispredict
->>> the jump. Also there are instruction cache lines wasted on cmp/jmp.
->>>
->>> Those effects of introducing time namespace are very much unwanted
->>> having in mind how much work have been spent on micro-optimisation
->>> vdso code.
->>>
->>> Addressing those problems, there are two versions of VDSO's .so:
->>> for host tasks (without any penalty) and for processes inside of time
->>> namespace with clk_to_ns() that subtracts offsets from host's time.
->>>
->>> Unfortunately, to allow changing VDSO VMA on a running process,
->>> the entry points to VDSO should have the same offsets (addresses).
->>> That's needed as i.e. application that calls setns() may have already
->>> resolved VDSO symbols in GOT/PLT.
->>
->> These (14-19, if I'm reading them right) seems to add quite a lot of
->> complexity and fragility to the build, and other architectures would
->> probably have to add something similar to their vdso builds.
-> 
-> Yes and we really want to avoid that. The VDSO implementations are
-> pointlessly different accross the architectures and there is effort on the
-> way to consolidate them:
-> 
->   https://lkml.kernel.org/r/20190115135539.24762-1-vincenzo.frascino@arm.com
-> 
-> I talked to Vincenzo earlier this week and he's working on a new version of
-> that. The timens stuff wants to go on top of the consolidation otherwise we
-> end up with another set of pointlessly different and differently broken
-> VDSO variants.
+On 02/08/2019 08:48 AM, Thomas Gleixner wrote:
+> Waiman reported that on large systems with a large amount of interrupts the
+> readout of /proc/stat takes a long time to sum up the interrupt
+> statistics. In principle this is not a problem. but for unknown reasons
+> some enterprise quality software reads /proc/stat with a high frequency.
+>
+> The reason for this is that interrupt statistics are accounted per cpu. So
+> the /proc/stat logic has to sum up the interrupt stats for each interrupt.
+>
+> The following series addresses this by making the interrupt statitics code
+> in the core generate the sum directly and by making the loop in the
+> /proc/stat read function smarter.
+>
+> V1 -> V2: Address review feedback: undo struct layout changes, make
+>       	  variables unsigned and add test results to the changelog.
+>
+> Thanks,
+>
+>         tglx
+>
+> 8<----------------
+>  fs/proc/stat.c          |   29 ++++++++++++++++++++++++++---
+>  include/linux/irqdesc.h |    1 +
+>  kernel/irq/chip.c       |   12 ++++++++++--
+>  kernel/irq/internals.h  |    8 +++++++-
+>  kernel/irq/irqdesc.c    |    7 ++++++-
+>  5 files changed, 50 insertions(+), 7 deletions(-)
+>
+Thanks for the patch.
 
-That looks awesome!
-I've missed the tread about it, will catch the details.
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-Thanks much,
-          Dmitry
+-Longman
+
