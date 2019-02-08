@@ -2,89 +2,153 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6020C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D35C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9286E2177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549635085;
-	bh=MER7eVkRNi1dIxnAlEqHi060EUS9lKSJj9pU/vFY79c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EqjYSvre/IaSVqbG5vDBbD4XdEvkok6ETqpMYD6sAuqh5KDWTNXWmIn+SD6GuGzMe
-	 mY0RLPr4qr8SBsU0jvHNWtI9YLbZMZbSPpc9obsT7NCmAYhgVWseKgugSECxfATGSb
-	 eMsOjDpvHMB7GXLFNDdW4JDOGb5H8BhsI4Ugw4HI=
+	by mail.kernel.org (Postfix) with ESMTP id AED102146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:11:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IDauax/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfBHOLX (ORCPT
+        id S1727885AbfBHOLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:11:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726641AbfBHOLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:11:23 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FFBA2075C;
-        Fri,  8 Feb 2019 14:11:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549635082;
-        bh=MER7eVkRNi1dIxnAlEqHi060EUS9lKSJj9pU/vFY79c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0RlWcssOYTZCJ8TZdqKbh5iWakubpPrBIU+bXIk6x7S3E7XtssyMKhkcA4/fUbkpj
-         gEFdvp0+TsDbYJggDDpgBYqDBBkmjFw/01JJnjYtaW+dtEhaIarQd4v+qs5lUz6/IK
-         15rrIp+b0/BRcB6wrd7FT4iQqibaRvZAfvKTBH1U=
-Date:   Fri, 8 Feb 2019 15:11:20 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     arnd@arndb.de, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        Thierry Escande <thierry.escande@linaro.org>
-Subject: Re: [PATCH v6 3/5] misc: fastrpc: Add support for context Invoke
- method
-Message-ID: <20190208141120.GA9516@kroah.com>
-References: <20190208132306.12571-1-srinivas.kandagatla@linaro.org>
- <20190208132306.12571-4-srinivas.kandagatla@linaro.org>
- <20190208135514.GA23406@kroah.com>
- <b60a0c35-6e5a-4166-9dd8-3891fce1cd0b@linaro.org>
+        Fri, 8 Feb 2019 09:11:55 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35874 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727700AbfBHOLz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 09:11:55 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so3137975ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:11:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n53tPLzEI0RmifJ+cFWa8NK1/+5mVBbBZjdDbpnzm5w=;
+        b=IDauax/dQeE6GOhP7olo8NL8/kg6h6C4h2vsn0Gesa/nLTH2YqFblBw+3jbv82elCN
+         7mpe3gGRDtS/UV54gjYPlQqsNJEHHrE7/FdQnErB5smTob3XFBt2KwlNojdzhkmMk7p9
+         uqzEhfV1wgsViltuQUfRFMUlgewKlYDpZ7KlGUrj7tJZZ6zuv53Ycl85HtZkk0CoeGKB
+         O3HEX0CyYJGg6jrsMnUaN1YnDubo8rx7x5y5hajzzpPjKTjlNzpYpQHfa30hrvS5k2G2
+         YyvNpPP8IS/7ZynewgOFyy+LlUcbqLb6kBBTWRhbp7Mz9zxpIG2HFCxMmWvHHy/Yl2aS
+         vsig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n53tPLzEI0RmifJ+cFWa8NK1/+5mVBbBZjdDbpnzm5w=;
+        b=hUPYa6O/WUB6ZnUV/8TpKfsHbi0ZKUIKjUZ6PRSixBVh597DUNTzXc3N++8BZU6+Sb
+         JrflxjKZ3nhloVY39cP4WAswgXKFNBclkbTcHhuoeyqer28bKsV6GQh3nPD5H0T9vQA2
+         LKVA8yBbTox+Cfe/YWMqQHtoqRfz/zyvEKoF/ANv6e/9g1BXehaeXsatRalMwyNC0X/v
+         YLbE/JaWUzRtpP1/PLZ/bl3aHzBGtnifdqNU3wfgoJ6+DhAnjLUKEqxnqvHB7rjNhB6s
+         VGRk/9OiJ24xr09gy4UZewUEA8R4LOchKxg/twAsw1/JdsRc6dYbgGqnv+zjYkPUvrEZ
+         G3fg==
+X-Gm-Message-State: AHQUAuY2i79b0Wbd5pWhA3+MxFdPaouqqQnbdqRqVUVMwx9l5RmeCeff
+        tBZtaGBvGtoBOdK4YhDJ1OxuoQ==
+X-Google-Smtp-Source: AHgI3IatIcyDuLTmgcEJM59o/AYr7tQtPhC/FSSi9EiwcJdrxNgkcOE+1bvmeKyeamgflPah0XxS8w==
+X-Received: by 2002:a2e:449b:: with SMTP id b27-v6mr13559531ljf.47.1549635113146;
+        Fri, 08 Feb 2019 06:11:53 -0800 (PST)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id m27-v6sm394001ljc.7.2019.02.08.06.11.51
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 08 Feb 2019 06:11:52 -0800 (PST)
+Date:   Fri, 8 Feb 2019 15:11:50 +0100
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        David Brown <david.brown@linaro.org>,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 1/7] clk: gcc-qcs404: Add PCIe resets
+Message-ID: <20190208141150.GA773@centauri.lan>
+References: <20190125234509.26419-1-bjorn.andersson@linaro.org>
+ <20190125234509.26419-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b60a0c35-6e5a-4166-9dd8-3891fce1cd0b@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190125234509.26419-2-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 02:01:33PM +0000, Srinivas Kandagatla wrote:
-> Thanks for the review,
+On Fri, Jan 25, 2019 at 03:45:03PM -0800, Bjorn Andersson wrote:
+> Enabling PCIe requires several of the PCIe related resets from GCC, so
+> add them all.
 > 
-> On 08/02/2019 13:55, Greg KH wrote:
-> > > +
-> > > +		/* Make sure reserved field is set to 0 */
-> > > +		if (args->reserved) {
-> > > +			kfree(args);
-> > > +			return -EINVAL;
-> > Am I wrong in that you are only checking the first reserved field in
-> > this array of args?  Don't you have a whole bunch of them here (nscalars
-> > of them)?  Don't you need to check them all and not just the first one?
-> My Bad, there should be a loop here!
-> I will fix this in next version!
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Stephen, I suggest that we merge this patch through Andy's devicetree branch,
+> together with the DT patch in the end of this series.
+> 
+>  drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
+>  include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+> index 64da032bb9ed..cfb8789ff706 100644
+> --- a/drivers/clk/qcom/gcc-qcs404.c
+> +++ b/drivers/clk/qcom/gcc-qcs404.c
+> @@ -2675,6 +2675,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
+>  	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
+>  	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
+>  	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
+> +	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = {0x3e040, 6},
+> +	[GCC_PCIE_0_AHB_ARES] = {0x3e040, 5},
+> +	[GCC_PCIE_0_AXI_SLAVE_ARES] = {0x3e040, 4},
+> +	[GCC_PCIE_0_AXI_MASTER_ARES] = {0x3e040, 3},
+> +	[GCC_PCIE_0_CORE_STICKY_ARES] = {0x3e040, 2},
+> +	[GCC_PCIE_0_SLEEP_ARES] = {0x3e040, 1},
+> +	[GCC_PCIE_0_PIPE_ARES] = {0x3e040, 0},
 
-No, you don't need to loop it here, check it in the call that evaluates
-the individual args, which will catch the issue when people send
-"internal" commands.
+Hello Bjorn,
 
-Which reminds me, what happens if a sequence has problems half way
-through the list of args?  Do you "roll back" to the beginning, or just
-abort?  What happens to the internal device state then?
+please add spaces before and after the braces, to match the
+syntax of the existing lines.
 
-thanks,
+With that,
+Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
 
-greg k-h
+
+Kind regards,
+Niklas
+
+>  	[GCC_EMAC_BCR] = { 0x4e000 },
+>  };
+>  
+> diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+> index 6ceb55ed72c6..00ab0d77b38a 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+> @@ -161,5 +161,12 @@
+>  #define GCC_PCIE_0_LINK_DOWN_BCR			11
+>  #define GCC_PCIEPHY_0_PHY_BCR				12
+>  #define GCC_EMAC_BCR					13
+> +#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		14
+> +#define GCC_PCIE_0_AHB_ARES				15
+> +#define GCC_PCIE_0_AXI_SLAVE_ARES			16
+> +#define GCC_PCIE_0_AXI_MASTER_ARES			17
+> +#define GCC_PCIE_0_CORE_STICKY_ARES			18
+> +#define GCC_PCIE_0_SLEEP_ARES				19
+> +#define GCC_PCIE_0_PIPE_ARES				20
+>  
+>  #endif
+> -- 
+> 2.18.0
+> 
