@@ -2,109 +2,94 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7B9C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E88C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC3C2147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:25:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D384921924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:31:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TnT50oi5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uOqY3eAT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbfBHHZa (ORCPT
+        id S1727053AbfBHHbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:25:30 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:50074 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfBHHZa (ORCPT
+        Fri, 8 Feb 2019 02:31:07 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46688 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfBHHbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:25:30 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x187NxQC188231;
-        Fri, 8 Feb 2019 07:25:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=geF/3jJl7XuabR8YMzSfPsiDbRrTM8ihdKE7E2zArws=;
- b=TnT50oi5IxMACmKDpE1xPqSb9G6AaHybCTr1iib7zh9jTw6+18YxKqWNatdOGZC3oFoq
- OF6+boAZn9yp6WwuwuB91mtipYBP0HhNtujGLQ6EtmlMYtRSsN7qAFGhXc/GYgRc3wti
- v3GL6OOOk5z8CbJU75Q9oxTdD/A0zNs2O7MDIAcw7vGtSmzUi8SXPbDQWqgRFmvpK0mt
- 2ZgO7jyDhFsaZKuiWXkQ/I1ss3yV4Zz1QfwS4SN5+1MMmPzLxRRfvyPN5cj5uGTEFblj
- mcqtty1Q9rF1T61715LDku4hKKyjoBV3PUPpcEaIWC4baZ5M8TELGQ30gApd9U71broX QQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2qd97fb1qw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 08 Feb 2019 07:25:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x187PLfg009116
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 07:25:21 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x187PJp1001511;
-        Fri, 8 Feb 2019 07:25:19 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Feb 2019 23:25:19 -0800
-Date:   Thu, 7 Feb 2019 23:25:17 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: fixes for v5.0-rc6
-Message-ID: <20190208072517.GL7991@magnolia>
+        Fri, 8 Feb 2019 02:31:06 -0500
+Received: by mail-pg1-f195.google.com with SMTP id w7so1189220pgp.13;
+        Thu, 07 Feb 2019 23:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iV2Rbp3l+hI6xVrlNmRRpoa1Z2cO+ueEmwD5bnxk40E=;
+        b=uOqY3eATbtPJt2Ba8aGINKT29iQfNm3jKe603Z+nc8zqJI7F5AGACWH6gWkIRa2Sdc
+         nXDq5na0e1RvHyI3eLfYlDR339u5kgtOX9YRlACS4uN3Y7naZvc17C6HIxX3rNcbFaIi
+         1xJwb5POxMHmfndOTEUx/n/VrBqDiUEbV2NFoOHJEJAQ0wy3mPdDQP4a6E4NEBfFmVxx
+         Jn9gR+Axi0t5tXCYXD96MX9fR/n1fgyZXoxKqyd4TfQ3AadrfJpqJGI3uEXDwtqp4GvZ
+         bS2HZo66qDzkmfsqDcjAIf+II7ocDdwqYEbXdy6k4s569QMDcC6wEvWFD+A87+HNrMoE
+         V8Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iV2Rbp3l+hI6xVrlNmRRpoa1Z2cO+ueEmwD5bnxk40E=;
+        b=FRtTA6DlQWsWMvcHfgd1SrjB6zSyjVkeN8KwWGil8hHuDvIAykkRR+LkPHdXwe7/Ym
+         x7j+yTH0jXXiUPbF35Ut0o/23PiGc4HIaLHG0de3rrn2hi6+3zLdwRUCYRk/bMe0+8qz
+         qRstwM5Fdn6fly2yrfNFxAYyx+fw1OxZyB6KDoDZW+EsjvOIAhFTbADudh+oNT3nS0vD
+         lJ0CPAt7vZsXJOfxdW12rS4zdLoCCjp/oA3ITpC9EEvmKIt42h7uoNQGRS7i6a1DnSpX
+         j9ilwbYRxNhNhHrrWD2SBEYInaO+aHScSAG/MggqziPxgpxveaOwSxaIyJio4CnXuTJh
+         U8+g==
+X-Gm-Message-State: AHQUAuZZFnKwSROXwW6KGoMGaqFFx4UdFkMmHfyE6AOCQ1TLYH6i42Lt
+        aYggBfIIFu7mdBSIhbpHcqw=
+X-Google-Smtp-Source: AHgI3Iaer57bgUs0l4yqpB/SG7K6/U9APHgtGGLDvlgXURSZkb9yUWTwXR6sTfDQv6MFA+M4GhRvcg==
+X-Received: by 2002:a62:9917:: with SMTP id d23mr2210779pfe.88.1549611065477;
+        Thu, 07 Feb 2019 23:31:05 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id a10sm1484583pfi.138.2019.02.07.23.31.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 23:31:04 -0800 (PST)
+Date:   Thu, 7 Feb 2019 23:31:02 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     linux-input@vger.kernel.org,
+        Danilo Krummrich <danilokrummrich@dk-develop.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Input: ps2-gpio - flush TX work when closing port
+Message-ID: <20190208073102.GA31622@dtor-ws>
+References: <20190207222740.GA38612@dtor-ws>
+ <CAGngYiWzC92Lw+Z-BAtPfEHgys0vcQOxdxo7g_JHKHF36-Hm7Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9160 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902080054
+In-Reply-To: <CAGngYiWzC92Lw+Z-BAtPfEHgys0vcQOxdxo7g_JHKHF36-Hm7Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Feb 07, 2019 at 06:03:03PM -0500, Sven Van Asbroeck wrote:
+> On Thu, Feb 7, 2019 at 5:27 PM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> >
+> > +       flush_work(&drvdata->tx_work.work);
+> 
+> Would cancel_work_sync() be better than flush_work() ?
 
-Here are a handful of XFS fixes to fix a data corruption problem, a
-crasher bug, and a deadlock.  It merged cleanly against this morning's
-master, so please let me know if you encounter any problems.
+No, because we want to have interrupt and gpios in a consistent state.
+If we cancel then we need to see if we should disable it or it may
+already be disabled, etc. This way we know it is enabled after
+flush_delayed_work() returns, and we need to disable it.
 
---D
+Thanks.
 
-The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
-
-  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.0-fixes-1
-
-for you to fetch changes up to add46b3b021263c02d5a7080c58e5b459479fafd:
-
-  xfs: set buffer ops when repair probes for btree type (2019-02-03 14:03:59 -0800)
-
-----------------------------------------------------------------
-Changes since last update:
-- Fix cache coherency problem with writeback mappings
-- Fix buffer deadlock when shutting fs down
-- Fix a null pointer dereference when running online repair
-
-----------------------------------------------------------------
-Brian Foster (2):
-      xfs: eof trim writeback mapping as soon as it is cached
-      xfs: end sync buffer I/O properly on shutdown error
-
-Darrick J. Wong (1):
-      xfs: set buffer ops when repair probes for btree type
-
- fs/xfs/scrub/repair.c | 11 ++++++++---
- fs/xfs/xfs_aops.c     |  2 ++
- fs/xfs/xfs_buf.c      | 19 +++++++++++++++++--
- 3 files changed, 27 insertions(+), 5 deletions(-)
+-- 
+Dmitry
