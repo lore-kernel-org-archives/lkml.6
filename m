@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC232C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3EBC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932E8217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 041C4217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:55:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfBHTzS (ORCPT
+        id S1727557AbfBHTzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:55:18 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:36034 "EHLO
+        Fri, 8 Feb 2019 14:55:31 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:36044 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbfBHTzR (ORCPT
+        with ESMTP id S1727333AbfBHTza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:55:17 -0500
+        Fri, 8 Feb 2019 14:55:30 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6D181149AF4FE;
-        Fri,  8 Feb 2019 11:55:17 -0800 (PST)
-Date:   Fri, 08 Feb 2019 11:55:17 -0800 (PST)
-Message-Id: <20190208.115517.987557285007525732.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1ECB9149AF4FE;
+        Fri,  8 Feb 2019 11:55:30 -0800 (PST)
+Date:   Fri, 08 Feb 2019 11:55:29 -0800 (PST)
+Message-Id: <20190208.115529.481319155837472988.davem@davemloft.net>
 To:     gustavo@embeddedor.com
 Cc:     petkan@nucleusys.com, linux-usb@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: usb: pegasus: Mark expected switch
+Subject: Re: [PATCH net-next] net: usb: rtl8150: mark expected switch
  fall-through
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190208190729.GA3970@embeddedor>
-References: <20190208190729.GA3970@embeddedor>
+In-Reply-To: <20190208190906.GA19976@embeddedor>
+References: <20190208190906.GA19976@embeddedor>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 08 Feb 2019 11:55:17 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 08 Feb 2019 11:55:30 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Fri, 8 Feb 2019 13:07:29 -0600
+Date: Fri, 8 Feb 2019 13:09:06 -0600
 
 > In preparation to enabling -Wimplicit-fallthrough, mark switch
 > cases where we are expecting to fall through.
