@@ -2,126 +2,194 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2F2C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE90FC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F2DC20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B609820863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:41:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzR8XeFC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pndu+8wn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbfBHSii (ORCPT
+        id S1727888AbfBHSlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:38:38 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42432 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727115AbfBHSii (ORCPT
+        Fri, 8 Feb 2019 13:41:24 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:36776 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfBHSlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:38:38 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s1so2083895plp.9;
-        Fri, 08 Feb 2019 10:38:37 -0800 (PST)
+        Fri, 8 Feb 2019 13:41:24 -0500
+Received: by mail-vk1-f196.google.com with SMTP id m13so1057165vkk.3;
+        Fri, 08 Feb 2019 10:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LYGCo+XEmg29JqPM7gUuaZ8OGf8wDVXjcmoV8Acp9Ss=;
-        b=mzR8XeFCpGNzL6arZYJCOFPjbuQdSngoI4l6ZHoWFNITUcnvzXIfs4iCaHn9kZdhKQ
-         yDdVDSneyPiESbqcFo+yXVHiJSv7h9brDO8KbsKJ1XrJzpok/Fdl5i0ZXv/BkaNhiMN3
-         4hAnmdkOMFJKraShsTH+sNe39x2B0oW53ia+hjuSBpY4eJOjpys1E0fSNNlZsg173koh
-         /7WfdndVbmnYA5yr8QUgGjkE51afBbvIM8RR2FtCKlUIkMihShB5h5auH6KhpRRSiC0t
-         lUS1/Q0Vhl+Fs3bgPDmxEbtUMl92hhHZZuQZkf3XBT/w/M+4AlpLcmC2BW656rP9Txmv
-         Xz2g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Le/DZACXPOlmol6khm3F06DRG7ay1idhlfXwfW1ZEMk=;
+        b=pndu+8wnUAdXPKkfLXDiLr/cAPsYrak1QxEtgTgs0dR4+udw2Nc9B4T85/KCdrw74P
+         F8cITFN22VvYVFe/GkLIjwGX4N0ntpGnUEMPWLDdC/r3ai+4514fIlQqmdkr/YjC4nNM
+         UY2rlgMOOslUdx4xdywZisgzWzFYEunky85ePWPNHyBbTqFB+WyiV0fur/8c54nY602N
+         MJ+AgE9ps9nKGAgQ+XgZbV7YwD8dAmzrIQVRhXmDoSNBFjF2h7suC0rMfJ2uhZ9fZCjB
+         mLbUBmqCqdwOLg6rjt5P4hGyAh7EdmJd6XKpb3b2AIn/j28+fSM2feEqje5kYf9Htump
+         3U4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LYGCo+XEmg29JqPM7gUuaZ8OGf8wDVXjcmoV8Acp9Ss=;
-        b=eSBc5vPJKnsJoqnDBH/UfOgJ1GeBCXXD8KJ0qoHN9MRQ7DGzKtVZVr4iqLRXRkoElf
-         KEsivpfChHO5HervhzlR4AEzX3BrORgJMLTycQk7Q/I3SG3P3aiQT0ewpI4qfVKoAmGj
-         EY2HK+MHjYBWpO5aIw8TCVjdJL/0WSYo/UO7PrEADYW8KKT24BwY0r8Wm0KtDw1bB7gM
-         joLz3gdxsBH0I/0m7iSUo0Y434EQwCKdHgHTMd2syZPqtDhoiVg/4qhbn4zfuF8183c2
-         sNOUohPC0ZIpAh7GsLVhZvPbLeYEVnC8meodOiVwR3II2Hr5OsHJtkkcV0um1uMRsHp1
-         tumA==
-X-Gm-Message-State: AHQUAubdpA7V4zGYW4RdADKc5Pz28fYZ8ln4OtylzVXUVneTC9/N1uvJ
-        MWeqgA684Lmk8uZNbk/aN3I6spxs
-X-Google-Smtp-Source: AHgI3IZpfXuCsz02hfclLf3c0QMLnBSzsOM/wBDuYg4YaEjL6ZrxoQAFEHKZo6fZSL+AQ86pPGUnQQ==
-X-Received: by 2002:a17:902:e90d:: with SMTP id cs13mr24445664plb.189.1549651117225;
-        Fri, 08 Feb 2019 10:38:37 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id m198sm5287156pga.10.2019.02.08.10.38.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 10:38:36 -0800 (PST)
-Subject: Re: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "wsa@the-dreams.de" <wsa@the-dreams.de>,
-        "peda@axentia.se" <peda@axentia.se>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
- <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
- <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
- <BYAPR12MB339810D394AC0A50934DD5EAC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <3e4db3e9-8198-f1bf-f909-492bf1ff8c56@gmail.com>
- <BYAPR12MB33981B3AD88271597CC4F7F5C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB3398429D6C403347C149B643C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33986FBB8B684F2E56948FBCC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fbf4efd3-bd4d-5a65-d9d7-b4fe9f7ab5dc@gmail.com>
-Date:   Fri, 8 Feb 2019 21:38:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Le/DZACXPOlmol6khm3F06DRG7ay1idhlfXwfW1ZEMk=;
+        b=p+YZmkmjtPXa+YHOw7dJUote3lCIEEY3TJUZae8ULcoBeoC2xkbFgc2HoKMZUgDjWJ
+         e+NfS1M66ImyB5H9A2CtH4Kqb0/oulNY4AjaTMTk5iwfCGm8GCPaEeFMKLe+4rzASK6s
+         2YjHtIInsLBAQZuZdWeQs88Sa2kpdheEgKbks62ccXNO+DEz+g6IoOL4d1PEXnm8F4j4
+         I+NT6ObqozaDh/7gVrKOOAfIhXir9dba/pp68VNUeGFqFpme7ZVEFVZ4QTHDoYhbR/Pz
+         uFEaX/YtwIi1YRO0gfLcXR/QTLAFWic4FANCi/kjXHlCRwShYCE5xObvAIbS+fnyEl9K
+         ZLEg==
+X-Gm-Message-State: AHQUAuaWvIwfUzvT3gbu3Tx8W10zn2UpmbttrhjmDyRoUCbIqAGqcPUQ
+        ZfTc6PhE0eHy69wH0D131wZJ8C+gv+myI22PHr0=
+X-Google-Smtp-Source: AHgI3IYHGr+o0NUKePxeZsehtN/DTNzTxzJ+0D2pG6DtNeEfaZdwhtuqzEjd+Lm/EzvgInoClq3oSe5CKFxCSXqXyT4=
+X-Received: by 2002:a1f:d1c3:: with SMTP id i186mr9345380vkg.51.1549651282971;
+ Fri, 08 Feb 2019 10:41:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3398DAC18B36F12F20765354C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190114191724.29960-1-alamy.liu@gmail.com> <ee3dc963-53f0-e362-caa5-069ce0e6eae7@intel.com>
+ <CAJ3kudsgJsZ1KFXdD9Vnfx0GypnEf+ba-D8t+Wy1e8GdLF=U0w@mail.gmail.com>
+ <362c073b-d795-4431-f1dd-c203cc606a6f@codeaurora.org> <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
+In-Reply-To: <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
+From:   Alamy Liu <alamy.liu@gmail.com>
+Date:   Fri, 8 Feb 2019 10:41:11 -0800
+Message-ID: <CAJ3kuds-XgrhjiyS8j-5twOHde3NHsGaH5hFqeOm8HLXHi59aA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: cqhci: replace NUM_SLOTS with cq_host->num_slots
+To:     "Asutosh Das (asd)" <asutoshd@codeaurora.org>,
+        Ritesh Harjani <riteshh@codeaurora.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-08.02.2019 21:37, Sowjanya Komatineni пишет:
->>>>>>  static const struct i2c_adapter_quirks tegra194_i2c_quirks = {
->>>>>>  	.flags = I2C_AQ_NO_ZERO_LEN,
->>>>>> +	.max_write_len = 65535 - I2C_PACKET_HEADER_SIZE,
->>>>>
->>>>> Ideally it should be SZ_64K - I2C_PACKET_HEADER_SIZE to not miss the one byte, otherwise good to me:
->>>>>
->>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>>>  
->>>> With SZ_64K - I2C_PACKET_HEADR_Size, When we compute dma_buf_size 
->>>> = max_write_len + I2C_PACKET_HEADER_SIZE, dma_buf_size will be 
->>>> SZ_64K which is 0x10000 apbdma dma count limit should be < 64K 
->>>> meaning 65535 max is allowed
->>>>
->>>
->>> But it's for the GPCDMA, does it have the same 64K limit as APB DMA?
->>
->  64K limit is for APBDMA. This patch has APBDMA support only. No GPCDMA support so buf size limit is based on APBDMA.
->  GPCDMA supports upto 1GB. 
-> 
->  I think dma_buf_size is only for buffer allocation so shouldn’t harm for exact 64K.
-> Will take a look at dma driver...
-> 
-> All msg reads, max length is 65535
-> All msg writes, max length requests is also limited to 65535 due to u16 type of msg.len So, In any case, we don’t need 65536 bytes.
-> Confused, yeah with max write quirk, max transfer can be 64K.
-> 
-> Will change to 64K instead of 65535.
-> 
+The IP I'm using has fixed 32 slots for CQ once CQE is enabled in RTL.
+There is no other RO register to say the slot number & which slot that
+DCMD would use.
 
-Good, thank you! Everything else looks good to me.
+I agree that most host controller would have 32 slots for CQ, and use
+the last one for DCMD if enabled (easier design & save gates
+count/size). (15th for DCMD if there were 16 slots in CQ, ...etc). It
+also doesn't make sense to use a slot in the middle of slots for DCMD,
+Both the code (both S.W. & H.W.) would become more complicated.
+Although I don't see it is defined somewhere, I believe that every
+designer would follow.
+(H.W.: increasing gate count -> increasing die size -> increase $;
+complicated design -> higher chance to have bug/error).
+(H.W.: SDHC cq_depth: longer cq_depth -> more memory -> more $. The
+decision would be the trade off between $ & performance. Also, the
+SDHC is not necessary to be used in Cortex-A/Linux. Thus, 16/8
+cq_depth is possible, although I don't know if there is one existed
+out there)
+
+Another thinking: If all cq_depth is fixed to 32, the mmc driver core
+doesn't even have to detect the cq_depth and eventually choose the
+small one between HC & eMMC (queue.c::mmc_init_queue)
+
+Best Regards
+
+
+On Fri, Feb 8, 2019 at 2:34 AM Asutosh Das (asd)
+<asutoshd@codeaurora.org> wrote:
+>
+> On 2/8/2019 8:07 AM, Ritesh Harjani wrote:
+> > Hi Alamy,
+> >
+> > On 2/8/2019 1:00 AM, Alamy Liu wrote:
+> >> It says in B.2.1 in the JESD84-B51.pdf (I don't have JESD84-B51A.pdf):
+> >>
+> >>     /The TDL is located in a memory location known to the CQE, and is
+> >>     comprised of up to 32 fixed-size slots. Each slot is comprised of
+> >>     one Task Descriptor and one Transfer Descriptor./
+> >>
+> >>
+> >> So if the IP has 16 slots, it should still meet the specification.
+> >> Then the configuration could be moved to DTS, maybe:
+> >>
+> >>     cqhci-slotnum = <16>;
+> >>
+> >>     cqhci-dcmd-slotno = <15>;
+> >>
+> > Does your IP defines this as 16 slots & DCMD slot to be 15?
+> > Because if there is a deviation then IP may also define num_slots by
+> > using some reserved registers.
+> > Also in JESD84-B51.pdf, specific slot no. is used extensively for
+> > defining policies(like in case of DCMD & CQCFG), so in that case
+> > defining via DT may not be that helpful.
+> > Unless there is no other way in your IP to determine the num_slots
+> > except going via DT?
+> >
+> > Let others also provide an opinion here.
+> >
+> > Regards
+> > Ritesh
+> >
+> >
+> >>
+> >> Please comment.
+> >>
+> >> Regards,
+> >> Alamy
+> >>
+> >>
+> >>
+> >> On Thu, Jan 31, 2019 at 1:34 AM Adrian Hunter <adrian.hunter@intel.com
+> >> <mailto:adrian.hunter@intel.com>> wrote:
+> >>
+> >>     On 14/01/19 9:17 PM, Alamy Liu wrote:
+> >>     > Prevent to use fixed value (NUM_SLOTS) after it had been determined
+> >>     > and saved in a variable (cq_host->num_slots).
+> >>
+> >>     num_slots is always 32 (i.e. NUM_SLOTS) so why not go the other
+> >>     way and get
+> >>     rid of num_slots and just use NUM_SLOTS?
+> >>
+> >>     >
+> >>     > Signed-off-by: Alamy Liu <alamy.liu@gmail.com
+> >>     <mailto:alamy.liu@gmail.com>>
+> >>     > ---
+> >>     >  drivers/mmc/host/cqhci.c | 2 +-
+> >>     >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>     >
+> >>     > diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+> >>     > index 159270e947..26d63594b7 100644
+> >>     > --- a/drivers/mmc/host/cqhci.c
+> >>     > +++ b/drivers/mmc/host/cqhci.c
+> >>     > @@ -699,7 +699,7 @@ static void cqhci_error_irq(struct mmc_host
+> >>     *mmc, u32 status, int cmd_error,
+> >>     >                * The only way to guarantee forward progress is
+> >>     to mark at
+> >>     >                * least one task in error, so if none is
+> >>     indicated, pick one.
+> >>     >                */
+> >>     > -             for (tag = 0; tag < NUM_SLOTS; tag++) {
+> >>     > +             for (tag = 0; tag < cq_host->num_slots; tag++) {
+> >>     >                       slot = &cq_host->slot[tag];
+> >>     >                       if (!slot->mrq)
+> >>     >                               continue;
+> >>     >
+> >>
+> Is it worth exploring to tie up the TDL memory allocations with the
+> queue-depth? Because the queue-depth may vary with vendor; in most host
+> controllers the slot size is 32. And since memory allocations are done
+> on the basis of host slot size there's unused slots in the case of card
+> advertising less than 32 queue-depth.
+> The tricky part would be the DCMD handling though.
+>
+> In the IP in question, what slot is assigned to DCMD?
+>
+>
+> --
+> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
+> Linux Foundation Collaborative Project
