@@ -2,140 +2,105 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15779C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0925C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5042086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:46:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="emvlvo6s"
+	by mail.kernel.org (Postfix) with ESMTP id 766A72086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfBHPqA (ORCPT
+        id S1727934AbfBHPqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:46:00 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39650 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfBHPp7 (ORCPT
+        Fri, 8 Feb 2019 10:46:02 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727479AbfBHPqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:45:59 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so9836010itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 07:45:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0x0ow+hqpKgNG8nZU8pQBR0zcMJQoa157kMMUNcDp/c=;
-        b=emvlvo6sKZKjFjBGm2Qm3rOQ1WMI0NTkFeP3ibPwujZxo6PfBN2AKRo5oGenddV46I
-         GhhuP3W66EcjctQmyDROcMuMl42f1YuGZDg9kF/NE2jqIYZCFbhldRJDVRDpX9lACo5K
-         W7gyOWT3Hm0zn/K3a1RvvjYW/+iyIlGvJoBeo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0x0ow+hqpKgNG8nZU8pQBR0zcMJQoa157kMMUNcDp/c=;
-        b=RGWBJTmklNAy/wk9uYVpNfKWGM9B8Ai/20BQnc+ubPeh5+8cBJwoNtqD0Gvtp8ihmw
-         0hfdVSfvGNzsVfH2B1Oyy0YAnxh9rDAfkDtQU22PVP3/EUXS8u6gCJX+7bc9B5MwM6WU
-         1XEmMFl0S/k9rgPZ3mx+3nCPM1r2rCoM3lZr6iKNaZqNQLy789kbAQUHNhukyDqjIE4l
-         GPa5GCSrr67M1k9ohx9kJ8BxQbDAxpYHFihn3R1iS4vW7yiXGG1r0FzjsozkyfxhJ0K5
-         1k0alyHPrjcRe0TYJo9TynMrdea3LREUka/fHxaiZ9/W0ZG5ja4jnhn6Z1ZTrqkneJln
-         3c/g==
-X-Gm-Message-State: AHQUAub4rW3NoG2vb7CfKBS63VOUdWDYmSdScoZyTIEoGvBNPMvGOw14
-        CgP7cDdMoWLWY1ltSpXsMGiycpJWxmY3F91eIYi39g==
-X-Google-Smtp-Source: AHgI3IZOCNoBJRDkV+PhsYq3j4GGkxd6kp2abAEWcjIchjALdf7BOLzk6ApdXV6AHc5BBEsuGr9tscBeAlyfqbuOrB0=
-X-Received: by 2002:a6b:4001:: with SMTP id k1mr960585ioa.34.1549640758193;
- Fri, 08 Feb 2019 07:45:58 -0800 (PST)
+        Fri, 8 Feb 2019 10:46:00 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18FcxQA101610
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 10:45:58 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qhbfhbtnp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 10:45:58 -0500
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 15:45:57 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 15:45:55 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18Fjsvm24248522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 15:45:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26FB7B2067;
+        Fri,  8 Feb 2019 15:45:54 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1610BB2065;
+        Fri,  8 Feb 2019 15:45:54 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 15:45:54 +0000 (GMT)
+Subject: Re: [PATCH 1/2] tpm: Unify the send callback behaviour
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
+References: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
+ <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
+ <b53745b6-ed49-9e97-6f56-1378561888eb@linux.ibm.com>
+ <20190208154244.GA3963@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 10:45:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190207232759.14553-1-daniel.vetter@ffwll.ch>
- <20190208115123.GA19392@kroah.com> <20190208152911.GM23159@phenom.ffwll.local>
-In-Reply-To: <20190208152911.GM23159@phenom.ffwll.local>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 8 Feb 2019 16:45:47 +0100
-Message-ID: <CAKMK7uE027rMTThQn=OkhBzmT0g0J=j_hoVG7e2hFYFv4=RDgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] component: Add documentation
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        "C, Ramalingam" <ramalingam.c@intel.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190208154244.GA3963@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020815-0068-0000-0000-000003910DE4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010559; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158132; UDB=6.00604264; IPR=6.00938665;
+ MB=3.00025495; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 15:45:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020815-0069-0000-0000-0000476F540F
+Message-Id: <89f94ccb-d63e-271c-a91b-cfe63e40f776@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=817 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 4:29 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Fri, Feb 08, 2019 at 12:51:23PM +0100, Greg Kroah-Hartman wrote:
-> > On Fri, Feb 08, 2019 at 12:27:56AM +0100, Daniel Vetter wrote:
-> > > While typing these I think doing an s/component_master/aggregate/
-> > > would be useful:
-> > > - it's shorter :-)
-> > > - I think component/aggregate is much more meaningful naming than
-> > >   component/puppetmaster or something like that. At least to my
-> > >   English ear "aggregate" emphasizes much more the "assemble a pile of
-> > >   things into something bigger" aspect, and there's not really much
-> > >   of a control hierarchy between aggregate and constituing components.
-> > >
-> > > But that's way more than a quick doc typing exercise ...
-> > >
-> > > Thanks to Ram for commenting on an initial draft of these docs.
-> > >
-> > > v2: Review from Rafael:
-> > > - git add Documenation/driver-api/component.rst
-> > > - lots of polish to the wording + spelling fixes.
-> > >
-> > > v3: Review from Russell:
-> > > - s/framework/helper
-> > > - clarify the documentation for component_match_add functions.
-> > >
-> > > v4: Remove a few superflous "This".
-> > >
-> > > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > Cc: "C, Ramalingam" <ramalingam.c@intel.com>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> > > Cc: Rafael J. Wysocki <rafael@kernel.org>
-> > > Cc: Jaroslav Kysela <perex@perex.cz>
-> > > Cc: Takashi Iwai <tiwai@suse.com>
-> > > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> >
-> > Thanks for doing this!
-> >
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> Thanks for reviewing (obviously includes Rafael and Russell too)!
->
-> For merging I see two options:
-> - All through drm-intel, but will only land in 5.2 because the feature
->   cut-off has already happened for i915. So a bit awkward.
-> - Topic branch with the 2 component patches plus the snd-hda/drm-i915
->   patch, so that you/Takashi/drm can pull it in as needed. The drm
->   component doc patch (3/4 in this series) I can pull in later on.
->
-> Greg/Takashi, any preferences?
+On 2/8/19 10:42 AM, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 09:42:16AM -0500, Stefan Berger wrote: > On 2/8/19 9:05 AM, Jarkko Sakkinen wrote:
+>> At least tpm_nsc_send (tpm_nsc.c) and tpm_inf_send (tpm_infineon.c) are also
+>> returning the number of bytes sent. I would consider tpm_crb the outlier
+>> that returns 0 and should return the length even though we don't need it...
+> That would be absolutely wrong way the fix the *actual* issue i.e.
+> callbacks returning garbage (sometimes just passing the length parameter
+> back as a return value).
 
-Just realized that for the mei side of this series I need a topic
-branch anyway, so topic branch it is. I'll prep that so that CI can
-beat on it over the w/e, and we can rebase the i915/mei series on top,
-and then send out the topic pull to everyone early next week. You can
-then all decide whether you need it or not.
+Then I guess you have to fixes those other two files as well...
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+>
+> /Jarkko
+>
+
