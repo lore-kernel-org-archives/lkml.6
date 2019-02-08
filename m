@@ -2,145 +2,195 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7327AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ED8C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F0421841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:02:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="hdot/TzR"
+	by mail.kernel.org (Postfix) with ESMTP id 6A43721841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBHXCy (ORCPT
+        id S1726994AbfBHXEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 18:02:54 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:8199 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbfBHXCy (ORCPT
+        Fri, 8 Feb 2019 18:04:55 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39970 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfBHXEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 18:02:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1549666974; x=1581202974;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=HJS0dqTZ8pL/wWqfL161CgRt5Xxy3W9rZvtNpfXa3YI=;
-  b=hdot/TzRe4GrwFRnljYtM2k9vy77Fh7Bz0cM9dIOxd2vXiFS8m50QZy/
-   OBdNQ+56ABkvZhnQyShVUhpDWoiWFRiTeaIn6PNjYI9aq8p4NQ3UnNZJR
-   0qFo8Wihy9HQu9OcMkYBHv9q0UjWMi0F2ALFvOAhU7d1XLv5SxMRxbXgh
-   2SArTiYiIm24CaKl35aq7WTXz3WAXp3nkwlWPRV5eyGpGt0CgSMiBioVu
-   haC7mqyIBY77vLtcNylfHL+8eguhqfnVLOcdDY80NWeY3Z/RoJycpQNsS
-   b4feV8JJApHcyGlUr/h1ofKxFMqN5dq6UI9mG6FFibt936l3MFQBuEm/S
-   w==;
-X-IronPort-AV: E=Sophos;i="5.56,564,1539619200"; 
-   d="scan'208";a="102116688"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Feb 2019 07:02:53 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 08 Feb 2019 14:41:35 -0800
-Received: from usa003289.ad.shared (HELO [10.86.59.147]) ([10.86.59.147])
-  by uls-op-cesaip01.wdc.com with ESMTP; 08 Feb 2019 15:02:52 -0800
-Subject: Re: [v3 PATCH 8/8] RISC-V: Assign hwcap only according to boot cpu.
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        =?UTF-8?Q?Patrick_St=c3=a4hlin?= <me@packi.ch>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Alan Kao <alankao@andestech.com>,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Anup Patel <anup@brainfault.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Zong Li <zongbox@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Andreas Schwab <schwab@suse.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1549590681-24125-1-git-send-email-atish.patra@wdc.com>
- <1549590681-24125-9-git-send-email-atish.patra@wdc.com>
- <20190208091133.GD16932@infradead.org>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <8f5fd0c8-0320-00b1-4ddf-b1225be352c8@wdc.com>
-Date:   Fri, 8 Feb 2019 15:02:52 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
+        Fri, 8 Feb 2019 18:04:55 -0500
+Received: by mail-qt1-f196.google.com with SMTP id j36so5872376qta.7;
+        Fri, 08 Feb 2019 15:04:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=GWnKTS8PcvSpGtSNLMzzyLJjbWcCiiXJ3eevLezV0CM=;
+        b=gM2gFDqese9WAwi6HYBImuzwTmy6WsKitIzLALm2bcqvD9itAbZ8ik/qv0rYyCxHpp
+         wTwkpBa4dN42RlcGk+8oFQ+kve46CzGTk/Rp0icmKJhn8Cl6Mgr8F8ImjrplAYQ6UE1v
+         SDPk2FHueVNwTdn7DnyWC64lngv2oZ+lAASZGyL4kiWD36GhZy3lRrqH85UJA5UAT+Sf
+         DHylpLHP34Q7JtZEeJst7dc5yH8uIQ0Wojz5CDsLkgBWNU825zDG4pMvVquAYBgIc5oQ
+         Xspy/ifK4hq07WSHlfKq05Q8xI8NEvm/Nmr2EKv3wO+EriIsJZ27ZesqoX10psgkfLmc
+         6A0A==
+X-Gm-Message-State: AHQUAuYQFtW6lOa9LTtltl06QhsDvyEiJcTPN5WR0e6Zc6WD3UTLjrNZ
+        BDWhMXq3F9Wvev9j3hsYv7ARF0NW7kjXvM13ahbtR9X8
+X-Google-Smtp-Source: AHgI3IYtOcvuR2xGNJjMADge+PUWCY4jwMBgndHQPhUM+IsakDkFzzJX3mcuFX4xbxg/MuNT7vF83xBD1D+9V1UjTyE=
+X-Received: by 2002:a0c:d791:: with SMTP id z17mr8606154qvi.149.1549667093790;
+ Fri, 08 Feb 2019 15:04:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190208091133.GD16932@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 9 Feb 2019 00:04:37 +0100
+Message-ID: <CAK8P3a3pPwnOW7pXjOhU386zCekAda+p8AgzbOM6ybT=dKMGwA@mail.gmail.com>
+Subject: [GIT PULL 1/2] arch: System call unification and cleanup
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 1:11 AM, Christoph Hellwig wrote:
->> +	 * We don't support running Linux on hertergenous ISA systems.
->> +	 * But first "okay" processor might not be the boot cpu.
->> +	 * Check the ISA of boot cpu.
-> 
-> Please use up your available 80 characters per line in comments.
-> 
-I will fix it.
+The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
 
->> +		/*
->> +		 * All "okay" hart should have same isa. We don't know how to
->> +		 * handle if they don't. Throw a warning for now.
->> +		 */
->> +		if (elf_hwcap && temp_hwcap != elf_hwcap)
->> +			pr_warn("isa mismatch: 0x%lx != 0x%lx\n",
->> +				elf_hwcap, temp_hwcap);
->> +
->> +		if (hartid == boot_cpu_hartid)
->> +			boot_hwcap = temp_hwcap;
->> +		elf_hwcap = temp_hwcap;
-> 
-> So we always set elf_hwcap to the capabilities of the previous cpu.
-> 
->> +		temp_hwcap = 0;
-> 
-> I think tmp_hwcap should be declared and initialized inside the outer loop
-> instead having to manually reset it like this.
-> 
->> +	}
->>   
->> +	elf_hwcap = boot_hwcap;
-> 
-> And then reset it here to the boot cpu.
-> 
-> Shoudn't we only report the features supported by all cores?  Otherwise
-> we'll still have problems if the boot cpu supports a feature, but not
-> others.
-> 
+  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
 
-Hmm. The other side of the argument is boot cpu does have a feature that 
-is not supported by other hart that didn't even boot.
-The user space may execute something based on boot cpu capability but 
-that won't be enabled.
+are available in the Git repository at:
 
-At least, in this way we know that we are compatible completely with 
-boot cpu capabilities. Thoughts ?
+  git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
+tags/y2038-syscall-cleanup
 
-Regards,
-Atish
-> Something like:
-> 
-> 	for () {
-> 		unsigned long this_hwcap = 0;
-> 
-> 		for (i = 0; i < strlen(isa); i++)
-> 			this_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
-> 
-> 		if (elf_hwcap)
-> 			elf_hwcap &= this_hwcap;
-> 		else
-> 			elf_hwcap = this_hwcap;
-> 	}
-> 
-> 
+for you to fetch changes up to 805089c2f77047d81f47ddc227435d606ceb180e:
 
+  syscalls: remove obsolete __IGNORE_ macros (2019-02-07 00:13:27 +0100)
+
+----------------------------------------------------------------
+arch: System call unification and cleanup
+
+The system call tables have diverged a bit over the years, and a number
+of the recent additions never made it into all architectures, for one
+reason or another.
+
+This is an attempt to clean it up as far as we can without breaking
+compatibility, doing a number of steps:
+
+- Add system calls that have not yet been integrated into all
+  architectures but that we definitely want there. This includes
+  {,f}statfs64() and get{eg,eu,g,p,u,pp}id() on alpha, which have
+  been missing traditionally.
+
+- The s390 compat syscall handling is cleaned up to be more like
+  what we do on other architectures, while keeping the 31-bit
+  pointer extension. This was merged as a shared branch by the
+  s390 maintainers and is included here in order to base the other
+  patches on top.
+
+- Add the separate ipc syscalls on all architectures that
+  traditionally only had sys_ipc(). This version is done without
+  support for IPC_OLD that is we have in sys_ipc. The
+  new semtimedop_time64 syscall will only be added here, not
+  in sys_ipc
+
+- Add syscall numbers for a couple of syscalls that we probably
+  don't need everywhere, in particular pkey_* and rseq,
+  for the purpose of symmetry: if it's in asm-generic/unistd.h,
+  it makes sense to have it everywhere. I expect that any future
+  system calls will get assigned on all platforms together, even
+  when they appear to be specific to a single architecture.
+
+- Prepare for having the same system call numbers for any future
+  calls. In combination with the generated tables, this hopefully
+  makes it easier to add new calls across all architectures
+  together.
+
+All of the above are technically separate from the y2038 work,
+but are done as preparation before we add the new 64-bit time_t
+system calls everywhere, providing a common baseline set of system
+calls.
+
+I expect that glibc and other libraries that want to use 64-bit
+time_t will require linux-5.1 kernel headers for building in
+the future, and at a much later point may also require linux-5.1
+or a later version as the minimum kernel at runtime. Having a
+common baseline then allows the removal of many architecture or
+kernel version specific workarounds.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+----------------------------------------------------------------
+Arnd Bergmann (22):
+      s390: open-code s390_personality syscall
+      ipc: introduce ksys_ipc()/compat_ksys_ipc() for s390
+      s390: use generic UID16 implementation
+      s390: autogenerate compat syscall wrappers
+      s390: remove compat_wrapper.c
+      ia64: add __NR_umount2 definition
+      ia64: add statx and io_pgetevents syscalls
+      ia64: assign syscall numbers for perf and seccomp
+      alpha: wire up io_pgetevents system call
+      alpha: update syscall macro definitions
+      ARM: add migrate_pages() system call
+      ARM: add kexec_file_load system call number
+      m68k: assign syscall number for seccomp
+      sh: remove duplicate unistd_32.h file
+      sh: add statx system call
+      sparc64: fix sparc_ipc type conversion
+      ipc: rename old-style shmctl/semctl/msgctl syscalls
+      arch: add split IPC system calls where needed
+      arch: add pkey and rseq syscall numbers everywhere
+      alpha: add standard statfs64/fstatfs64 syscalls
+      alpha: add generic get{eg,eu,g,p,u,pp}id() syscalls
+      syscalls: remove obsolete __IGNORE_ macros
+
+ arch/alpha/include/asm/unistd.h             |  21 --
+ arch/alpha/include/uapi/asm/unistd.h        |  10 +
+ arch/alpha/kernel/syscalls/syscall.tbl      |  20 +-
+ arch/arm/include/asm/unistd.h               |   1 -
+ arch/arm/tools/syscall.tbl                  |   8 +-
+ arch/arm64/include/asm/unistd.h             |   2 +-
+ arch/arm64/include/asm/unistd32.h           |  10 +-
+ arch/ia64/include/asm/unistd.h              |  14 -
+ arch/ia64/include/uapi/asm/unistd.h         |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |  10 +-
+ arch/m68k/kernel/syscalls/syscall.tbl       |  16 ++
+ arch/microblaze/kernel/syscalls/syscall.tbl |   6 +-
+ arch/mips/include/asm/unistd.h              |  13 -
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   6 +-
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   6 +-
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  11 +
+ arch/parisc/include/asm/unistd.h            |   4 -
+ arch/parisc/kernel/syscalls/syscall.tbl     |   4 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  13 +
+ arch/s390/Kconfig                           |   2 +
+ arch/s390/include/asm/syscall_wrapper.h     | 135 ++++++++++
+ arch/s390/include/asm/unistd.h              |   5 -
+ arch/s390/include/uapi/asm/posix_types.h    |   6 +
+ arch/s390/kernel/Makefile                   |   2 +-
+ arch/s390/kernel/compat_linux.c             | 235 +---------------
+ arch/s390/kernel/compat_wrapper.c           | 186 -------------
+ arch/s390/kernel/entry.S                    |   4 +-
+ arch/s390/kernel/sys_s390.c                 |  16 +-
+ arch/s390/kernel/syscalls/syscall.tbl       | 301 +++++++++++----------
+ arch/sh/include/uapi/asm/unistd_32.h        | 403 ----------------------------
+ arch/sh/kernel/syscalls/syscall.tbl         |  16 ++
+ arch/sparc/include/asm/unistd.h             |   5 -
+ arch/sparc/kernel/sys_sparc_64.c            |   2 +-
+ arch/sparc/kernel/syscalls/syscall.tbl      |  16 ++
+ arch/x86/entry/syscalls/syscall_32.tbl      |  11 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+ arch/xtensa/include/asm/unistd.h            |  12 -
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   7 +-
+ include/linux/syscalls.h                    |   7 +
+ include/uapi/asm-generic/unistd.h           |   1 +
+ ipc/msg.c                                   |  39 ++-
+ ipc/sem.c                                   |  39 ++-
+ ipc/shm.c                                   |  40 ++-
+ ipc/syscall.c                               |  32 ++-
+ ipc/util.h                                  |  21 +-
+ kernel/sys_ni.c                             |   4 +
+ 46 files changed, 608 insertions(+), 1118 deletions(-)
+ create mode 100644 arch/s390/include/asm/syscall_wrapper.h
+ delete mode 100644 arch/s390/kernel/compat_wrapper.c
+ delete mode 100644 arch/sh/include/uapi/asm/unistd_32.h
