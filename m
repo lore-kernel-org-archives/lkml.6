@@ -2,126 +2,172 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14BBC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E63C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4FD2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549647513;
-	bh=JTtF6ah6Cr+6Ez1xO7g0tSHejag8MxwaGEpGs5XH9ng=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=cQkSLGcOi+5BJ+difpIz4AdgWrwPqCFWNwUvg2IOM1zirAKjAxRDVvXDmVOlbp1/9
-	 9mTLnjX4Djj/cFjvE91OnDXRMLQgstInD+z6H4bvK73wRDfY/UZ3rO71LA8Zwmfn7O
-	 x9NVdcY5r3d88RoXFVEkP83GwX+S4siSPfZTbK2c=
+	by mail.kernel.org (Postfix) with ESMTP id 635932146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jK6lihc0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfBHRfR (ORCPT
+        id S1728005AbfBHRfM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:35:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57446 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727994AbfBHRfM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 12:35:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=jAhNKtgZ95iRAW5JXj+tgYu1F+MBck1cit6JH2EURgU=; b=QdVKaEfFa1qN
-        LgB/CsfyaanXWVwr2rAYjwKVDoxAHa9eToW1rVjjN1smEg4Dsfz7WVIyjKZC98R1NzjerthH1y3ML
-        8rW13aVU/qCV0ady5yKNe9QjR6QFm73ULwHN+dbN2oQy4YOqLp7MTNEI4FTyNh60zB9u2thz45FcN
-        9sHm8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gsA3S-0002JU-Mg; Fri, 08 Feb 2019 17:35:10 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4D3291127F2F; Fri,  8 Feb 2019 17:35:10 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "dt-bindings: regulator: update fixed-regulator example" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190208173510.4D3291127F2F@debutante.sirena.org.uk>
-Date:   Fri,  8 Feb 2019 17:35:10 +0000 (GMT)
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38577 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727969AbfBHRfJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:35:09 -0500
+Received: by mail-wm1-f68.google.com with SMTP id v26so4295150wmh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=trIQtIIzr10xL3xuZKgdBn1lKngoT5UlbTmlmF/bYWM=;
+        b=jK6lihc0lcB6CCtG3Atc5UHFLX51hOdgzSCYQY+LlP8DjI92r/C4HfCEXzGZw7ApUy
+         /m5ylF9WC12+DXwieSncGB5oPNfs5QDO665KMq7yLnLEOSLHsR7PMvxL7Ij2nyrt7Rhn
+         nVMeIrlJvEt+KlW8x6Lly4PgA/73exunrNW9SE2MUCcNWi7WC4DanB10x40JRXfVzlyc
+         SZNpEv6lZkEqQd+cVSGiYwVZqvN0nhNnsNQ327D2zLnoByB3dlO3S70ZPbuBouQzw5TM
+         oKcwiHErAtTRi7nQis75YIzNjSxrjTlbSePEfOTOhlWtdLVuS9BUQ+OWaF9dnQc/HpMS
+         pCng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=trIQtIIzr10xL3xuZKgdBn1lKngoT5UlbTmlmF/bYWM=;
+        b=RcLLoDSK5Ho4Ja+PHCDPO4J0G6fOGYDfOiuF4W9C5tlmTtxa2MPIC4N39+N3SMrm1Q
+         tT/7Cm13SSCvUWvHp0LwiIz4wHnDRfJX48nfl9TYPhYMqCiYZuBkKXc7cLT5GYLMfATB
+         F/jN7YFgT/15pD6/CEYb4dhwOcmJluC7t8xvCqNyzPLv3mVZOhRrDu++denMOIDlz08g
+         FtTALq9E5m4r2D46VCtInjjuW8I+oeGnWusLn+2uPuVleg1t058oMxZadO8JdlwQn5pi
+         ERCPvQyrpjimxqgV/N30B06b9UHbsgLbssimP+lqW6IKqTxbDOqBUFgSVv6+/g5zzjEk
+         RKzg==
+X-Gm-Message-State: AHQUAuZf1CGHPBTS0W2YCEUv/iIqHnnZ94GYvndwo227zlp/fQwWNjzv
+        o/0PCwQKwq+eePZ1k+DOAfy5HA==
+X-Google-Smtp-Source: AHgI3IZUg8zAxrwFhONR5KyJ4tPz1KiiEVYKk4FjR/xv7aUmSG5Nm9MS0CBf6n+HIVnFo0X24biUdA==
+X-Received: by 2002:adf:f78e:: with SMTP id q14mr4877484wrp.227.1549647307382;
+        Fri, 08 Feb 2019 09:35:07 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 09:35:06 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 02/33] ARM: davinci: aintc: use irq domain
+Date:   Fri,  8 Feb 2019 18:34:27 +0100
+Message-Id: <20190208173458.4801-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
+References: <20190208173458.4801-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-   dt-bindings: regulator: update fixed-regulator example
+We need to create an irq domain if we want to select SPARSE_IRQ. The
+cp-intc driver already supports it, but aintc doesn't. Use the helpers
+provided by the generic irq chip abstraction.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From b735f41dcb06ae06acab2618b8814fe2dd1fca90 Mon Sep 17 00:00:00 2001
-From: Johan Hovold <johan@kernel.org>
-Date: Fri, 8 Feb 2019 15:04:25 +0100
-Subject: [PATCH] dt-bindings: regulator: update fixed-regulator example
-
-Fixed regulators do not have associated bus addresses and are typically
-placed directly under the root node where their names must still be
-unique despite not having a unit address.
-
-Fix the malformed example node which had a unit address but no "reg"
-property by dropping the unit address.
-
-Also, try to make the example more useful by using the recommended
-generic node name "regulator", but with a suffix reflecting the
-regulator name in order to make it unique.
-
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- .../devicetree/bindings/regulator/fixed-regulator.yaml        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/irq.c | 35 +++++++++++++++++++++++++++--------
+ 1 file changed, 27 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-index a7607b0baab7..d289c2f7455a 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-@@ -52,9 +52,9 @@ required:
+diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
+index 952dc126c390..07d8ef8037e4 100644
+--- a/arch/arm/mach-davinci/irq.c
++++ b/arch/arm/mach-davinci/irq.c
+@@ -23,6 +23,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/io.h>
++#include <linux/irqdomain.h>
  
- examples:
-   - |
--    abc: fixedregulator@0 {
-+    reg_1v8: regulator-1v8 {
-       compatible = "regulator-fixed";
--      regulator-name = "fixed-supply";
-+      regulator-name = "1v8";
-       regulator-min-microvolt = <1800000>;
-       regulator-max-microvolt = <1800000>;
-       gpio = <&gpio1 16 0>;
+ #include <mach/hardware.h>
+ #include <mach/cputype.h>
+@@ -40,23 +41,23 @@
+ #define IRQ_INTPRI0_REG_OFFSET	0x0030
+ #define IRQ_INTPRI7_REG_OFFSET	0x004C
+ 
++static struct irq_domain *davinci_irq_domain;
++
+ static inline void davinci_irq_writel(unsigned long value, int offset)
+ {
+ 	__raw_writel(value, davinci_intc_base + offset);
+ }
+ 
+ static __init void
+-davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
++davinci_irq_setup_gc(void __iomem *base,
++		     unsigned int irq_start, unsigned int num)
+ {
+ 	struct irq_chip_generic *gc;
+ 	struct irq_chip_type *ct;
+ 
+-	gc = irq_alloc_generic_chip("AINTC", 1, irq_start, base, handle_edge_irq);
+-	if (!gc) {
+-		pr_err("%s: irq_alloc_generic_chip for IRQ %u failed\n",
+-		       __func__, irq_start);
+-		return;
+-	}
++	gc = irq_get_domain_generic_chip(davinci_irq_domain, irq_start);
++	gc->reg_base = base;
++	gc->irq_base = irq_start;
+ 
+ 	ct = gc->chip_types;
+ 	ct->chip.irq_ack = irq_gc_ack_set_bit;
+@@ -74,6 +75,7 @@ void __init davinci_irq_init(void)
+ {
+ 	unsigned i, j;
+ 	const u8 *davinci_def_priorities = davinci_soc_info.intc_irq_prios;
++	int rv, irq_base;
+ 
+ 	davinci_intc_type = DAVINCI_INTC_TYPE_AINTC;
+ 	davinci_intc_base = ioremap(davinci_soc_info.intc_base, SZ_4K);
+@@ -110,8 +112,25 @@ void __init davinci_irq_init(void)
+ 		davinci_irq_writel(pri, i);
+ 	}
+ 
++	irq_base = irq_alloc_descs(-1, 0, davinci_soc_info.intc_irq_num, 0);
++	if (WARN_ON(irq_base < 0))
++		return;
++
++	davinci_irq_domain = irq_domain_add_legacy(NULL,
++					davinci_soc_info.intc_irq_num,
++					irq_base, 0, &irq_domain_simple_ops,
++					NULL);
++	if (WARN_ON(!davinci_irq_domain))
++		return;
++
++	rv = irq_alloc_domain_generic_chips(davinci_irq_domain, 32, 1,
++					    "AINTC", handle_edge_irq,
++					    IRQ_NOREQUEST | IRQ_NOPROBE, 0, 0);
++	if (WARN_ON(rv))
++		return;
++
+ 	for (i = 0, j = 0; i < davinci_soc_info.intc_irq_num; i += 32, j += 0x04)
+-		davinci_alloc_gc(davinci_intc_base + j, i, 32);
++		davinci_irq_setup_gc(davinci_intc_base + j, irq_base + i, 32);
+ 
+ 	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
+ }
 -- 
 2.20.1
 
