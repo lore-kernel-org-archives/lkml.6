@@ -2,243 +2,561 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C67C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD2DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB0D20823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E44E218D4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="pyrkidHU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iz6mrpfi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfBHRRR (ORCPT
+        id S1727745AbfBHRS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:17:17 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:29436 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbfBHRRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:17:17 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43x2153DBtz9v3vn;
-        Fri,  8 Feb 2019 18:17:13 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=pyrkidHU; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id JDKlIB8Er7e5; Fri,  8 Feb 2019 18:17:13 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43x2150XCvz9v3vm;
-        Fri,  8 Feb 2019 18:17:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549646233; bh=QhIXpDbKcHkuUsm1eW6ykE+MFEqnZ6lkzlTZ18smoCU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pyrkidHUVmjS4dvs8XoiW15xN6cPNqTIi/OChdZ1aLMOhSwGapUnunhBir5rR1yQ8
-         3cluXFw2h1RZFi7KOiuHXluSmPbRfoSXhri3XMHJpwYXQPzmQ0VqOj132bYa7G7pm4
-         JgNmsYm+lWJb7fZkJlPQ/SL5rqKBlut98MJWovHo=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B45628B8E1;
-        Fri,  8 Feb 2019 18:17:14 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 1YXNCKcWSOhD; Fri,  8 Feb 2019 18:17:14 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 729798B8DF;
-        Fri,  8 Feb 2019 18:17:14 +0100 (CET)
-Subject: Re: [PATCH v4 3/3] powerpc/32: Add KASAN support
-To:     Daniel Axtens <dja@axtens.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-References: <cover.1548166824.git.christophe.leroy@c-s.fr>
- <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr>
- <87ef8i45km.fsf@dja-thinkpad.axtens.net>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <69720148-fd19-0810-5a1d-96c45e2ec00c@c-s.fr>
-Date:   Fri, 8 Feb 2019 18:17:14 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 8 Feb 2019 12:18:26 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43537 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbfBHRSZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:18:25 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y4so4713161qtc.10
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2uoWu9O6W6XIeF23yZzxJcmg1Wzczb9vgFdzdn2e1k0=;
+        b=iz6mrpfig8xGBwLvzAur40PT34KpgyIih3VlX2bYA7Yja5Dgl1nPscVBTiWgXCOVlH
+         EQuhwC2p6kzWdzbDx2XIs/Ap4MfWGTj5wQi4Y04D86S3jJgjNUsVqLbTP7nVuzSjO1Y1
+         iIFncQ13k1Ejcu1qYQq50i3VuNJDcBa4rnrA2hy9OLU6V9/dB9cVkrSYApgOYBIBk2XT
+         cjxwVz93jBmJpuN+LTzEfcjGb3hJrpRNHkAVP0GPTJTE+cBquTSyGKqFgMAQS9nM+rHO
+         hj265YcUkWa9D5IrtlOw3FHcHGqtx7nE4/zbS7H0iRM74HfCVogLdFRRzeScYh/A0CiH
+         cPBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2uoWu9O6W6XIeF23yZzxJcmg1Wzczb9vgFdzdn2e1k0=;
+        b=q4ScTE419V4DXmlnibNajVOdNgS1GGPGaJgSV7dybIKeKJjMGPyIYMkU00rU5q53AM
+         s6EBFfR2l8TlBrjXk3eO/aAcDveJYMLjtRGsOAECMSSyKAITZdqnZ34oF/aP8xhtSMth
+         TeacWv1G6fY4bcYcxB2W+Oj+T4jZioXNL2D2p6akZgUEOZM7HVfwwLpgwO8Pv8nF/hB/
+         6kTJy85w0gpooAYoDJJo7xgYSPV7cNjzIvWYnM/cZsoTXdIBaEl1QdV4/zJB+XUxCqxV
+         ePwQHDof759qvqbFzNQo+xrW58NDH/wc0tvDwX5cMRKZbeJgzEDHC4JQO0cW7S9pGCU5
+         qc/Q==
+X-Gm-Message-State: AHQUAuZdrEgvsOzlPVUt3pNmgy8JBWe/sxkQDbDBCRxsiBP78DKMwdxN
+        YrVc91Erx9BEqZw7v3R29D//ZBxAp+n9/gdvWDU=
+X-Google-Smtp-Source: AHgI3IawB5sUyb+kaBh5dqN+uoywaDLwmhHoIEtOcZhFK+b2rg+zSz7WFhhE7C2nvACBy9I6NyjJvqZ4rjnrOWJgR3U=
+X-Received: by 2002:a0c:ef88:: with SMTP id w8mr17254799qvr.25.1549646303796;
+ Fri, 08 Feb 2019 09:18:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87ef8i45km.fsf@dja-thinkpad.axtens.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20190208012312.105259-1-ncrews@chromium.org> <20190208012312.105259-4-ncrews@chromium.org>
+In-Reply-To: <20190208012312.105259-4-ncrews@chromium.org>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Fri, 8 Feb 2019 18:18:12 +0100
+Message-ID: <CAFqH_50uGkHXdGfgC-a+9vyNPvW9jVynuY8uaWkHi4zgPgmzsw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] platform/chrome: Add support for raw commands in debugfs
+To:     Nick Crews <ncrews@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Simon Glass <sjg@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <groeck@chromium.org>, dlaurie@chromium.org,
+        Duncan Laurie <dlaurie@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+Hi Nick,
+Missatge de Nick Crews <ncrews@chromium.org> del dia dv., 8 de febr.
+2019 a les 2:24:
+>
+> Add a debugfs attribute that allows sending raw commands to the EC.
+> This is useful for development and debug but should not be enabled
+> in a production environment.
+>
+> To test:
+> Get the EC firmware build date
+> First send the request command
+> > echo 00 f0 38 00 03 00 > raw
+> Then read the result. "12/21/18" is in the middle of the response
+> > cat raw
+> 00 31 32 2f 32 31 2f 31 38 00 00 0f 01 00 01 00  .12/21/18.......
+>
+> Get the EC firmware build date
+> First send the request command
+> > echo 00 f0 38 00 03 00 > raw
+> Then read the result. "12/21/18" is in the middle of the response
+> > cat raw
+> 00 31 32 2f 32 31 2f 31 38 00 00 0f 01 00 01 00  .12/21/18.......
+>
+> Signed-off-by: Duncan Laurie <dlaurie@google.com>
+> Signed-off-by: Nick Crews <ncrews@chromium.org>
+> ---
+>
+> Changes in v6:
+> - s/4.19/5.1/ for kernel version in documentation, since that is
+>   the version this patch should land in.
+> - Instead of requiring at least 3 bytes for msg type and command,
+>   now just require two for msg type. We can skip the command.
+> - Fixed error checking in probe() so that errors are hidden, without
+>   causing more errors or unextpected behavior.
+> - Some comment polishing.
+> - In the core, actually unregister the debugfs child platform_device
+>
+> Changes in v5:
+> - core now always continues regardless of debugfs failure
+> - mv documentation to file header
+> - Check for OOM
+> - rm unneeded check if debug_info is allocqated
+> - rm bogus comment
+> - add space around "+"
+> - rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+>   wilco_ec_message.response_size
+>
+> Changes in v4:
+> - Change debugfs driver to be a separate module
+> - Change me email to @chromium.org from @google.com
+> - Change CONFIG_WILCO_EC_SYSFS_RAW to
+>   CONFIG_WILCO_EC_DEBUGFS
+>
+> Changes in v3:
+> - Move the attribute to the debugfs system
+> - Move the implementation to debugfs.c
+> - Improve the raw hex parsing
+> - Encapsulate global variables in one object
+> - Add safety check when passing less than 3 bytes
+> - Move documentation to debugfs-wilco-ec
+>
+> Changes in v2:
+> - Add sysfs documentation
+> - rm duplicate EC_MAILBOX_DATA_SIZE defs
+> - Make docstrings follow kernel style
+> - Fix tags in commit msg
+> - Move Kconfig to subdirectory
+> - Reading raw now includes ASCII translation
+>
+>  Documentation/ABI/testing/debugfs-wilco-ec |  23 ++
+>  drivers/platform/chrome/wilco_ec/Kconfig   |  10 +
+>  drivers/platform/chrome/wilco_ec/Makefile  |   2 +
+>  drivers/platform/chrome/wilco_ec/core.c    |  14 ++
+>  drivers/platform/chrome/wilco_ec/debugfs.c | 238 +++++++++++++++++++++
+>  include/linux/platform_data/wilco-ec.h     |   2 +
+>  6 files changed, 289 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/debugfs-wilco-ec
+>  create mode 100644 drivers/platform/chrome/wilco_ec/debugfs.c
+>
+> diff --git a/Documentation/ABI/testing/debugfs-wilco-ec b/Documentation/A=
+BI/testing/debugfs-wilco-ec
+> new file mode 100644
+> index 000000000000..f814f112e213
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/debugfs-wilco-ec
+> @@ -0,0 +1,23 @@
+> +What:          /sys/kernel/debug/wilco_ec/raw
+> +Date:          January 2019
+> +KernelVersion: 5.1
+> +Description:
+> +               Write and read raw mailbox commands to the EC.
+> +
+> +               For writing:
+> +               Bytes 0-1 indicate the message type:
+> +                       00 F0 =3D Execute Legacy Command
+> +                       00 F2 =3D Read/Write NVRAM Property
+> +               Byte 2 provides the command code
+> +               Bytes 3+ consist of the data passed in the request
+> +
+> +               At least three bytes are required, for the msg type and c=
+ommand,
+> +               with additional bytes optional for additional data.
+> +
+> +               Example:
+> +               // Request EC info type 3 (EC firmware build date)
+> +               $ echo 00 f0 38 00 03 00 > raw
+> +               // View the result. The decoded ASCII result "12/21/18" i=
+s
+> +               // included after the raw hex.
+> +               $ cat raw
+> +               00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/1=
+8.8...
+> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/=
+chrome/wilco_ec/Kconfig
+> index 20945a301ec6..fb6d9ff33e41 100644
+> --- a/drivers/platform/chrome/wilco_ec/Kconfig
+> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
+> @@ -9,3 +9,13 @@ config WILCO_EC
+>
+>           To compile this driver as a module, choose M here: the
+>           module will be called wilco_ec.
+> +
+> +config WILCO_EC_DEBUGFS
+> +       tristate "Enable raw access to EC via debugfs"
+> +       depends on WILCO_EC
+> +       help
+> +         If you say Y here, you get support for sending raw commands to
+> +         the Wilco EC via debugfs.  These commands do not do any byte
+> +         manipulation and allow for testing arbitrary commands.  This
+> +         interface is intended for debug only and will not be present
+> +         on production devices.
+> diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform=
+/chrome/wilco_ec/Makefile
+> index 03b32301dc61..063e7fb4ea17 100644
+> --- a/drivers/platform/chrome/wilco_ec/Makefile
+> +++ b/drivers/platform/chrome/wilco_ec/Makefile
+> @@ -2,3 +2,5 @@
+>
+>  wilco_ec-objs                          :=3D core.o mailbox.o
+>  obj-$(CONFIG_WILCO_EC)                 +=3D wilco_ec.o
+> +wilco_ec_debugfs-objs                  :=3D debugfs.o
+> +obj-$(CONFIG_WILCO_EC_DEBUGFS)         +=3D wilco_ec_debugfs.o
+> diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/c=
+hrome/wilco_ec/core.c
+> index 20ecc580d108..ae86cae216fd 100644
+> --- a/drivers/platform/chrome/wilco_ec/core.c
+> +++ b/drivers/platform/chrome/wilco_ec/core.c
+> @@ -69,11 +69,25 @@ static int wilco_ec_probe(struct platform_device *pde=
+v)
+>         cros_ec_lpc_mec_init(ec->io_packet->start,
+>                              ec->io_packet->start + EC_MAILBOX_DATA_SIZE)=
+;
+>
+> +       /*
+> +        * Register a debugfs platform device that will get picked up by =
+the
+> +        * debugfs driver. Ignore failure.
+> +        */
+> +       ec->debugfs_pdev =3D platform_device_register_data(dev,
+> +                                                        "wilco-ec-debugf=
+s",
+> +                                                        PLATFORM_DEVID_A=
+UTO,
+> +                                                        NULL, 0);
+> +
+>         return 0;
+>  }
+>
+>  static int wilco_ec_remove(struct platform_device *pdev)
+>  {
+> +       struct wilco_ec_device *ec =3D platform_get_drvdata(pdev);
+> +
+> +       if (ec->debugfs_pdev)
+> +               platform_device_unregister(ec->debugfs_pdev);
+> +
+>         /* Teardown cros_ec interface */
+>         cros_ec_lpc_mec_destroy();
+>
+> diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platfor=
+m/chrome/wilco_ec/debugfs.c
+> new file mode 100644
+> index 000000000000..8b324bfe42cd
+> --- /dev/null
+> +++ b/drivers/platform/chrome/wilco_ec/debugfs.c
+> @@ -0,0 +1,238 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * debugfs attributes for Wilco EC
+> + *
+> + * Copyright 2019 Google LLC
+> + *
+> + * There is only one attribute used for debugging, called raw.
+> + * You can write a hexadecimal sentence to raw, and that series of bytes
+> + * will be sent to the EC. Then, you can read the bytes of response
+> + * by reading from raw.
+> + *
+> + * For writing:
+> + * Bytes 0-1 indicate the message type:
+> + *         00 F0 =3D Execute Legacy Command
+> + *         00 F2 =3D Read/Write NVRAM Property
+> + * Byte 2 provides the command code
+> + * Bytes 3+ consist of the data passed in the request
+> + *
+> + * When referencing the EC interface spec, byte 2 corresponds to MBOX[0]=
+,
+> + * byte 3 corresponds to MBOX[1], etc.
+> + *
+> + * At least three bytes are required, for the msg type and command,
+> + * with additional bytes optional for additional data.
+> + *
+> + * Example:
+> + * // Request EC info type 3 (EC firmware build date)
+> + * $ echo 00 f0 38 00 03 00 > raw
+> + * // View the result. The decoded ASCII result "12/21/18" is
+> + * // included after the raw hex.
+> + * $ cat raw
+> + * 00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8...
+> + */
+> +
+> +#include <linux/ctype.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/fs.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_data/wilco-ec.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define DRV_NAME "wilco-ec-debugfs"
+> +
+> +/* The 256 raw bytes will take up more space when represented as a hex s=
+tring */
+> +#define FORMATTED_BUFFER_SIZE (EC_MAILBOX_DATA_SIZE_EXTENDED * 4)
+> +
+> +struct wilco_ec_debugfs {
+> +       struct wilco_ec_device *ec;
+> +       struct dentry *dir;
+> +       size_t response_size;
+> +       u8 raw_data[EC_MAILBOX_DATA_SIZE_EXTENDED];
+> +       u8 formatted_data[FORMATTED_BUFFER_SIZE];
+> +};
+> +static struct wilco_ec_debugfs *debug_info;
+> +
+> +/**
+> + * parse_hex_sentence() - Convert a ascii hex representation into byte a=
+rray.
+> + * @in: Input buffer of ascii.
+> + * @isize: Length of input buffer.
+> + * @out: Output buffer.
+> + * @osize: Length of output buffer, e.g. max number of bytes to parse.
+> + *
+> + * An valid input is a series of ascii hexadecimal numbers, separated by=
+ spaces.
+> + * An example valid input is
+> + * "   00 f2 0    000076 6 0  ff"
+> + *
+> + * If an individual "word" within the hex sentence is longer than MAX_WO=
+RD_SIZE,
+> + * then the sentence is illegal, and parsing will fail.
+> + *
+> + * Return: Number of bytes parsed, or negative error code on failure.
+> + */
+> +static int parse_hex_sentence(const char *in, int isize, u8 *out, int os=
+ize)
+> +{
+> +       int n_parsed =3D 0;
+> +       int word_start =3D 0;
+> +       int word_end;
+> +       int word_len;
+> +       /* Temp buffer for holding a "word" of chars that represents one =
+byte */
+> +       const static int MAX_WORD_SIZE =3D 16;
+> +       char tmp[MAX_WORD_SIZE + 1];
 
-Le 08/02/2019 à 17:18, Daniel Axtens a écrit :
-> Hi Christophe,
-> 
-> I've been attempting to port this to 64-bit Book3e nohash (e6500),
-> although I think I've ended up with an approach more similar to Aneesh's
-> much earlier (2015) series for book3s.
-> 
-> Part of this is just due to the changes between 32 and 64 bits - we need
-> to hack around the discontiguous mappings - but one thing that I'm
-> particularly puzzled by is what the kasan_early_init is supposed to do.
+I got this warning:
 
-It should be a problem as my patch uses a 'for_each_memblock(memory, 
-reg)' loop.
+  CC [M]  drivers/platform/chrome/wilco_ec/debugfs.o
+drivers/platform/chrome/wilco_ec/debugfs.c: In function =E2=80=98parse_hex_=
+sentence=E2=80=99:
+drivers/platform/chrome/wilco_ec/debugfs.c:79:2: warning: ISO C90
+forbids array =E2=80=98tmp=E2=80=99 whose size can=E2=80=99t be evaluated [=
+-Wvla]
+  char tmp[MAX_WORD_SIZE + 1];
+  ^~~~
 
-> 
->> +void __init kasan_early_init(void)
->> +{
->> +	unsigned long addr = KASAN_SHADOW_START;
->> +	unsigned long end = KASAN_SHADOW_END;
->> +	unsigned long next;
->> +	pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(addr), addr), addr);
->> +	int i;
->> +	phys_addr_t pa = __pa(kasan_early_shadow_page);
->> +
->> +	BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
->> +
->> +	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
->> +		panic("KASAN not supported with Hash MMU\n");
->> +
->> +	for (i = 0; i < PTRS_PER_PTE; i++)
->> +		__set_pte_at(&init_mm, (unsigned long)kasan_early_shadow_page,
->> +			     kasan_early_shadow_pte + i,
->> +			     pfn_pte(PHYS_PFN(pa), PAGE_KERNEL_RO), 0);
->> +
->> +	do {
->> +		next = pgd_addr_end(addr, end);
->> +		pmd_populate_kernel(&init_mm, pmd, kasan_early_shadow_pte);
->> +	} while (pmd++, addr = next, addr != end);
->> +}
-> 
-> As far as I can tell it's mapping the early shadow page, read-only, over
-> the KASAN_SHADOW_START->KASAN_SHADOW_END range, and it's using the early
-> shadow PTE array from the generic code.
-> 
-> I haven't been able to find an answer to why this is in the docs, so I
-> was wondering if you or anyone else could explain the early part of
-> kasan init a bit better.
+Could you kindly fix and resend, please.
 
-See https://www.kernel.org/doc/html/latest/dev-tools/kasan.html for an 
-explanation of the shadow.
+Thanks,
+ Enric
 
-When shadow is 0, it means the memory area is entirely accessible.
-
-It is necessary to setup a shadow area as soon as possible because all 
-data accesses check the shadow area, from the begining (except for a few 
-files where sanitizing has been disabled in Makefiles).
-
-Until the real shadow area is set, all access are granted thanks to the 
-zero shadow area beeing for of zeros.
-
-I mainly used ARM arch as an exemple when I implemented KASAN for ppc32.
-
-> 
-> At the moment, I don't do any early init, and like Aneesh's series for
-> book3s, I end up needing a special flag to disable kasan until after
-> kasan_init. Also, as with Balbir's seris for Radix, some tests didn't
-> fire, although my missing tests are a superset of his. I suspect the
-> early init has something to do with these...?
-
-I think you should really focus on establishing a zero shadow area as 
-early as possible instead of trying to ack the core parts of KASAN.
-
-> 
-> (I'm happy to collate answers into a patch to the docs, btw!)
-
-We can also have the discussion going via 
-https://github.com/linuxppc/issues/issues/106
-
-> 
-> In the long term I hope to revive Aneesh's and Balbir's series for hash
-> and radix as well.
-
-Great.
-
-Christophe
-
-> 
-> Regards,
-> Daniel
-> 
->> +
->> +static void __init kasan_init_region(struct memblock_region *reg)
->> +{
->> +	void *start = __va(reg->base);
->> +	void *end = __va(reg->base + reg->size);
->> +	unsigned long k_start, k_end, k_cur, k_next;
->> +	pmd_t *pmd;
->> +
->> +	if (start >= end)
->> +		return;
->> +
->> +	k_start = (unsigned long)kasan_mem_to_shadow(start);
->> +	k_end = (unsigned long)kasan_mem_to_shadow(end);
->> +	pmd = pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), k_start);
->> +
->> +	for (k_cur = k_start; k_cur != k_end; k_cur = k_next, pmd++) {
->> +		k_next = pgd_addr_end(k_cur, k_end);
->> +		if ((void *)pmd_page_vaddr(*pmd) == kasan_early_shadow_pte) {
->> +			pte_t *new = pte_alloc_one_kernel(&init_mm);
->> +
->> +			if (!new)
->> +				panic("kasan: pte_alloc_one_kernel() failed");
->> +			memcpy(new, kasan_early_shadow_pte, PTE_TABLE_SIZE);
->> +			pmd_populate_kernel(&init_mm, pmd, new);
->> +		}
->> +	};
->> +
->> +	for (k_cur = k_start; k_cur < k_end; k_cur += PAGE_SIZE) {
->> +		void *va = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
->> +		pte_t pte = pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
->> +
->> +		if (!va)
->> +			panic("kasan: memblock_alloc() failed");
->> +		pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
->> +		pte_update(pte_offset_kernel(pmd, k_cur), ~0, pte_val(pte));
->> +	}
->> +	flush_tlb_kernel_range(k_start, k_end);
->> +}
->> +
->> +void __init kasan_init(void)
->> +{
->> +	struct memblock_region *reg;
->> +
->> +	for_each_memblock(memory, reg)
->> +		kasan_init_region(reg);
->> +
->> +	kasan_init_tags();
->> +
->> +	/* At this point kasan is fully initialized. Enable error messages */
->> +	init_task.kasan_depth = 0;
->> +	pr_info("KASAN init done\n");
->> +}
->> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
->> index 33cc6f676fa6..ae7db88b72d6 100644
->> --- a/arch/powerpc/mm/mem.c
->> +++ b/arch/powerpc/mm/mem.c
->> @@ -369,6 +369,10 @@ void __init mem_init(void)
->>   	pr_info("  * 0x%08lx..0x%08lx  : highmem PTEs\n",
->>   		PKMAP_BASE, PKMAP_ADDR(LAST_PKMAP));
->>   #endif /* CONFIG_HIGHMEM */
->> +#ifdef CONFIG_KASAN
->> +	pr_info("  * 0x%08lx..0x%08lx  : kasan shadow mem\n",
->> +		KASAN_SHADOW_START, KASAN_SHADOW_END);
->> +#endif
->>   #ifdef CONFIG_NOT_COHERENT_CACHE
->>   	pr_info("  * 0x%08lx..0x%08lx  : consistent mem\n",
->>   		IOREMAP_TOP, IOREMAP_TOP + CONFIG_CONSISTENT_SIZE);
->> -- 
->> 2.13.3
+> +       u8 byte;
+> +
+> +       while (word_start < isize && n_parsed < osize) {
+> +               /* Find the start of the next word */
+> +               while (word_start < isize && isspace(in[word_start]))
+> +                       word_start++;
+> +                /* reached the end of the input before next word? */
+> +               if (word_start >=3D isize)
+> +                       break;
+> +
+> +               /* Find the end of this word */
+> +               word_end =3D word_start;
+> +               while (word_end < isize && !isspace(in[word_end]))
+> +                       word_end++;
+> +
+> +               /* Copy to a tmp NULL terminated string */
+> +               word_len =3D word_end - word_start;
+> +               if (word_len > MAX_WORD_SIZE)
+> +                       return -EINVAL;
+> +               memcpy(tmp, in + word_start, word_len);
+> +               tmp[word_len] =3D '\0';
+> +
+> +               /*
+> +                * Convert from hex string, place in output. If fails to =
+parse,
+> +                * just return -EINVAL because specific error code is onl=
+y
+> +                * relevant for this one word, returning it would be conf=
+using.
+> +                */
+> +               if (kstrtou8(tmp, 16, &byte))
+> +                       return -EINVAL;
+> +               out[n_parsed++] =3D byte;
+> +
+> +               word_start =3D word_end;
+> +       }
+> +       return n_parsed;
+> +}
+> +
+> +/* The message type takes up two bytes*/
+> +#define TYPE_AND_DATA_SIZE ((EC_MAILBOX_DATA_SIZE) + 2)
+> +
+> +static ssize_t raw_write(struct file *file, const char __user *user_buf,
+> +                        size_t count, loff_t *ppos)
+> +{
+> +       char *buf =3D debug_info->formatted_data;
+> +       struct wilco_ec_message msg;
+> +       u8 request_data[TYPE_AND_DATA_SIZE];
+> +       ssize_t kcount;
+> +       int ret;
+> +
+> +       if (count > FORMATTED_BUFFER_SIZE)
+> +               return -EINVAL;
+> +
+> +       kcount =3D simple_write_to_buffer(buf, FORMATTED_BUFFER_SIZE, ppo=
+s,
+> +                                       user_buf, count);
+> +       if (kcount < 0)
+> +               return kcount;
+> +
+> +       ret =3D parse_hex_sentence(buf, kcount, request_data, TYPE_AND_DA=
+TA_SIZE);
+> +       if (ret < 0)
+> +               return ret;
+> +       /* Need at least two bytes for message type */
+> +       if (ret < 2)
+> +               return -EINVAL;
+> +
+> +       /* Clear response data buffer */
+> +       memset(debug_info->raw_data, '\0', EC_MAILBOX_DATA_SIZE_EXTENDED)=
+;
+> +
+> +       msg.type =3D request_data[0] << 8 | request_data[1];
+> +       msg.flags =3D WILCO_EC_FLAG_RAW;
+> +       msg.command =3D ret > 2 ? request_data[2] : 0;
+> +       msg.request_data =3D ret > 3 ? request_data + 3 : 0;
+> +       msg.request_size =3D ret - 3;
+> +       msg.response_data =3D debug_info->raw_data;
+> +       msg.response_size =3D EC_MAILBOX_DATA_SIZE;
+> +
+> +       /* Telemetry commands use extended response data */
+> +       if (msg.type =3D=3D WILCO_EC_MSG_TELEMETRY_LONG) {
+> +               msg.flags |=3D WILCO_EC_FLAG_EXTENDED_DATA;
+> +               msg.response_size =3D EC_MAILBOX_DATA_SIZE_EXTENDED;
+> +       }
+> +
+> +       ret =3D wilco_ec_mailbox(debug_info->ec, &msg);
+> +       if (ret < 0)
+> +               return ret;
+> +       debug_info->response_size =3D ret;
+> +
+> +       return count;
+> +}
+> +
+> +static ssize_t raw_read(struct file *file, char __user *user_buf, size_t=
+ count,
+> +                       loff_t *ppos)
+> +{
+> +       int fmt_len =3D 0;
+> +
+> +       if (debug_info->response_size) {
+> +               fmt_len =3D hex_dump_to_buffer(debug_info->raw_data,
+> +                                            debug_info->response_size,
+> +                                            16, 1, debug_info->formatted=
+_data,
+> +                                            FORMATTED_BUFFER_SIZE, true)=
+;
+> +               /* Only return response the first time it is read */
+> +               debug_info->response_size =3D 0;
+> +       }
+> +
+> +       return simple_read_from_buffer(user_buf, count, ppos,
+> +                                      debug_info->formatted_data, fmt_le=
+n);
+> +}
+> +
+> +static const struct file_operations fops_raw =3D {
+> +       .owner =3D THIS_MODULE,
+> +       .read =3D raw_read,
+> +       .write =3D raw_write,
+> +       .llseek =3D no_llseek,
+> +};
+> +
+> +/**
+> + * wilco_ec_debugfs_probe() - Create the debugfs node
+> + * @pdev: The platform device, probably created in core.c
+> + *
+> + * Try to create a debugfs node. If it fails, then we don't want to chan=
+ge
+> + * behavior at all, this is for debugging after all. Just fail silently.
+> + *
+> + * Return: 0 always.
+> + */
+> +static int wilco_ec_debugfs_probe(struct platform_device *pdev)
+> +{
+> +       struct wilco_ec_device *ec =3D dev_get_drvdata(pdev->dev.parent);
+> +
+> +       debug_info =3D devm_kzalloc(&pdev->dev, sizeof(*debug_info), GFP_=
+KERNEL);
+> +       if (!debug_info)
+> +               return 0;
+> +       debug_info->ec =3D ec;
+> +       debug_info->dir =3D debugfs_create_dir("wilco_ec", NULL);
+> +       if (!debug_info->dir)
+> +               return 0;
+> +       debugfs_create_file("raw", 0644, debug_info->dir, NULL, &fops_raw=
+);
+> +
+> +       return 0;
+> +}
+> +
+> +static int wilco_ec_debugfs_remove(struct platform_device *pdev)
+> +{
+> +       debugfs_remove_recursive(debug_info->dir);
+> +
+> +       return 0;
+> +}
+> +
+> +static struct platform_driver wilco_ec_debugfs_driver =3D {
+> +       .driver =3D {
+> +               .name =3D DRV_NAME,
+> +       },
+> +       .probe =3D wilco_ec_debugfs_probe,
+> +       .remove =3D wilco_ec_debugfs_remove,
+> +};
+> +
+> +module_platform_driver(wilco_ec_debugfs_driver);
+> +
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> +MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("Wilco EC debugfs driver");
+> diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platf=
+orm_data/wilco-ec.h
+> index 0feb4b520a54..5344975afa1a 100644
+> --- a/include/linux/platform_data/wilco-ec.h
+> +++ b/include/linux/platform_data/wilco-ec.h
+> @@ -34,6 +34,7 @@
+>   * @data_buffer: Buffer used for EC communication.  The same buffer
+>   *               is used to hold the request and the response.
+>   * @data_size: Size of the data buffer used for EC communication.
+> + * @debugfs_pdev: The child platform_device used by the debugfs sub-driv=
+er.
+>   */
+>  struct wilco_ec_device {
+>         struct device *dev;
+> @@ -43,6 +44,7 @@ struct wilco_ec_device {
+>         struct resource *io_packet;
+>         void *data_buffer;
+>         size_t data_size;
+> +       struct platform_device *debugfs_pdev;
+>  };
+>
+>  /**
+> --
+> 2.20.1.611.gfbb209baf1-goog
+>
