@@ -2,116 +2,186 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28AAC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9851C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBE721924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:35:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="svYxcveE"
+	by mail.kernel.org (Postfix) with ESMTP id AFAF021924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfBHHf6 (ORCPT
+        id S1727192AbfBHHgp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:35:58 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45084 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726831AbfBHHf5 (ORCPT
+        Fri, 8 Feb 2019 02:36:45 -0500
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:59848 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfBHHgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:35:57 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a14so1280859plm.12;
-        Thu, 07 Feb 2019 23:35:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6xOlCJP9BiIAilDkxBEwX/lLlgFnZqX/CUuBUlXMnEU=;
-        b=svYxcveEQuOcK+2Y9I0mOENnENx+GuNgqsrENDTK2fXwSw1yy9yyRu9pUUXTovjCzS
-         j+kHd0OmWOlhahLbyetkLvH+3gqaAukQV3RLAfv9hjKpyppWcTm323ZUZCgJDbULIjL8
-         AY+q704PkXJfwzpR0m/igH4wp9uKhP8vSfoYHBpUQXKexjQY/bAJ37DmNICTiA9ZzHRz
-         /jDOONyuxxaoiDR0plZBJ+6OSZ6eRSgN6OnBEI7ICYtpkMmZ99ziCcoxATIlXgn4Lk6K
-         nni+1wj4ZrYe+Xj96iJ+c0ySQAD+T/xP97fbpY2XjN3e+cg87fuQyJU5VdPp5/RVtYwD
-         cLiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6xOlCJP9BiIAilDkxBEwX/lLlgFnZqX/CUuBUlXMnEU=;
-        b=VkKQaMq2sMhEgC2SJWn9CPb/uX1trMJ3289VcrE72d5gmMUEtYWHBv9+dawlq3EiZv
-         kYhu9xIcFBVe79YlUOaMdKPvecQYl52TYg4fikcCP1UdEg0FO2clUWB4chwUclZTRDBM
-         eXaQoM0j7U8J/DZXmlQSCP0Lr4seAWfAQKIzKaN9EuWokP56XGjHrGp/GYXgCr8DenW7
-         rrn4hiuebTKV7KfBvfjbxJkzK106538pIRPeqOauZxkYlUQxQc+vu0dHt+WehbYSe0Lc
-         cgxQSrjf7cPpeMqUyzSb6NvMw4R2q91hrOA0ANbWjKZNCVwXhETT18/WERgHqk0S6gDN
-         1+nA==
-X-Gm-Message-State: AHQUAuZpxNaxYO9bXUAbxYv7QKScPhf7uEibPWG4OedVAJb0CnhIYzuf
-        pvKT9hn7h4J5UbU+aGatNeQ=
-X-Google-Smtp-Source: AHgI3IYX3nIFpS4mr59LBCt7y62Cu0v0D9RYGGjnvmGQzUlAUczXPwoPhkplk7R/7u0tioXHsjj25g==
-X-Received: by 2002:a17:902:296a:: with SMTP id g97mr21400955plb.317.1549611356777;
-        Thu, 07 Feb 2019 23:35:56 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id f12sm1359914pgo.13.2019.02.07.23.35.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 23:35:56 -0800 (PST)
-Date:   Thu, 7 Feb 2019 23:35:54 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH] input: keyboard: gpio-keys-polled: use input name from
- pdata if available
-Message-ID: <20190208073554.GB31622@dtor-ws>
-References: <1549559131-7423-1-git-send-email-info@metux.net>
+        Fri, 8 Feb 2019 02:36:44 -0500
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x187YEIQ004889
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 8 Feb 2019 16:34:14 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x187YEHs004312;
+        Fri, 8 Feb 2019 16:34:14 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x187Wdv1024689;
+        Fri, 8 Feb 2019 16:34:14 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-2250485; Fri, 8 Feb 2019 16:31:51 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Fri, 8
+ Feb 2019 16:31:50 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] huegtlbfs: fix page leak during migration of file pages
+Thread-Topic: [PATCH] huegtlbfs: fix page leak during migration of file pages
+Thread-Index: AQHUuODePgsnC0Y0+kCvHMlE24frN6XUI3qAgACAsgCAADeYAIAAHE6A
+Date:   Fri, 8 Feb 2019 07:31:49 +0000
+Message-ID: <20190208073149.GA14423@hori1.linux.bs1.fc.nec.co.jp>
+References: <20190130211443.16678-1-mike.kravetz@oracle.com>
+ <917e7673-051b-e475-8711-ed012cff4c44@oracle.com>
+ <20190208023132.GA25778@hori1.linux.bs1.fc.nec.co.jp>
+ <07ce373a-d9ea-f3d3-35cc-5bc181901caf@oracle.com>
+In-Reply-To: <07ce373a-d9ea-f3d3-35cc-5bc181901caf@oracle.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <B452139787547842A7CC02450396F598@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549559131-7423-1-git-send-email-info@metux.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enrico,
+On Thu, Feb 07, 2019 at 09:50:30PM -0800, Mike Kravetz wrote:
+> On 2/7/19 6:31 PM, Naoya Horiguchi wrote:
+> > On Thu, Feb 07, 2019 at 10:50:55AM -0800, Mike Kravetz wrote:
+> >> On 1/30/19 1:14 PM, Mike Kravetz wrote:
+> >>> +++ b/fs/hugetlbfs/inode.c
+> >>> @@ -859,6 +859,16 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
+> >>>  	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
+> >>>  	if (rc != MIGRATEPAGE_SUCCESS)
+> >>>  		return rc;
+> >>> +
+> >>> +	/*
+> >>> +	 * page_private is subpool pointer in hugetlb pages, transfer
+> >>> +	 * if needed.
+> >>> +	 */
+> >>> +	if (page_private(page) && !page_private(newpage)) {
+> >>> +		set_page_private(newpage, page_private(page));
+> >>> +		set_page_private(page, 0);
+> > 
+> > You don't have to copy PagePrivate flag?
+> > 
+> 
+> Well my original thought was no.  For hugetlb pages, PagePrivate is not
+> associated with page_private.  It indicates a reservation was consumed.
+> It is set  when a hugetlb page is newly allocated and the allocation is
+> associated with a reservation and the global reservation count is
+> decremented.  When the page is added to the page cache or rmap,
+> PagePrivate is cleared.  If the page is free'ed before being added to page
+> cache or rmap, PagePrivate tells free_huge_page to restore (increment) the
+> reserve count as we did not 'instantiate' the page.
+> 
+> So, PagePrivate is only set from the time a huge page is allocated until
+> it is added to page cache or rmap.  My original thought was that the page
+> could not be migrated during this time.  However, I am not sure if that
+> reasoning is correct.  The page is not locked, so it would appear that it
+> could be migrated?  But, if it can be migrated at this time then perhaps
+> there are bigger issues for the (hugetlb) page fault code?
 
-On Thu, Feb 07, 2019 at 06:05:31PM +0100, Enrico Weigelt, metux IT consult wrote:
-> Instead of hardcoding the input name to the driver name ('gpio-keys-polled'),
-> allow the passing a name via platform data ('name' field was already present),
-> but default to old behaviour in case of NULL.
+In my understanding, free hugetlb pages are not expected to be passed to
+migrate_pages(), and currently that's ensured by each migration caller
+which checks and avoids free hugetlb pages on its own.
+migrate_pages() and its internal code are probably not aware of handling
+free hugetlb pages, so if they are accidentally passed to migration code,
+that's a big problem as you are concerned.
+So the above reasoning should work at least this assumption is correct.
 
-I thought the world is moving away from platform data and towards
-OF/ACPI systems. What device are you targeting with this change?
+Most of migration callers are not intersted in moving free hugepages.
+The one I'm not sure of is the code path from alloc_contig_range().
+If someone think it's worthwhile to migrate free hugepage to get bigger
+contiguous memory, he/she tries to enable that code path and the assumption
+will be broken.
 
-I would want to convert gpio-keys[-polled] to generic device properties
-and away form platform data...
+Thanks,
+Naoya Horiguchi
 
 > 
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> ---
->  drivers/input/keyboard/gpio_keys_polled.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>> +
+> >>> +	}
+> >>> +
+> >>>  	if (mode != MIGRATE_SYNC_NO_COPY)
+> >>>  		migrate_page_copy(newpage, page);
+> >>>  	else
+> >>> diff --git a/mm/migrate.c b/mm/migrate.c
+> >>> index f7e4bfdc13b7..0d9708803553 100644
+> >>> --- a/mm/migrate.c
+> >>> +++ b/mm/migrate.c
+> >>> @@ -703,8 +703,14 @@ void migrate_page_states(struct page *newpage, struct page *page)
+> >>>  	 */
+> >>>  	if (PageSwapCache(page))
+> >>>  		ClearPageSwapCache(page);
+> >>> -	ClearPagePrivate(page);
+> >>> -	set_page_private(page, 0);
+> >>> +	/*
+> >>> +	 * Unlikely, but PagePrivate and page_private could potentially
+> >>> +	 * contain information needed at hugetlb free page time.
+> >>> +	 */
+> >>> +	if (!PageHuge(page)) {
+> >>> +		ClearPagePrivate(page);
+> >>> +		set_page_private(page, 0);
+> >>> +	}
+> > 
+> > # This argument is mainly for existing code...
+> > 
+> > According to the comment on migrate_page():
+> > 
+> >     /*
+> >      * Common logic to directly migrate a single LRU page suitable for
+> >      * pages that do not use PagePrivate/PagePrivate2.
+> >      *
+> >      * Pages are locked upon entry and exit.
+> >      */
+> >     int migrate_page(struct address_space *mapping, ...
+> > 
+> > So this common logic assumes that page_private is not used, so why do
+> > we explicitly clear page_private in migrate_page_states()?
 > 
-> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-> index edc7262..3312186 100644
-> --- a/drivers/input/keyboard/gpio_keys_polled.c
-> +++ b/drivers/input/keyboard/gpio_keys_polled.c
-> @@ -272,7 +272,7 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
->  
->  	input = poll_dev->input;
->  
-> -	input->name = pdev->name;
-> +	input->name = (pdata->name ? pdata->name : pdev->name);
->  	input->phys = DRV_NAME"/input0";
->  
->  	input->id.bustype = BUS_HOST;
+> Perhaps someone else knows.  If not, I can do some git research and
+> try to find out why.
+> 
+> > buffer_migrate_page(), which is commonly used for the case when
+> > page_private is used, does that clearing outside migrate_page_states().
+> > So I thought that hugetlbfs_migrate_page() could do in the similar manner.
+> > IOW, migrate_page_states() should not do anything on PagePrivate.
+> > But there're a few other .migratepage callbacks, and I'm not sure all of
+> > them are safe for the change, so this approach might not fit for a small fix.
+> 
+> I will look at those as well unless someone knows without researching.
+> 
+> > 
+> > # BTW, there seems a typo in $SUBJECT.
+> 
+> Thanks!
+> 
 > -- 
-> 1.9.1
+> Mike Kravetz
 > 
-
-Thanks.
-
--- 
-Dmitry
