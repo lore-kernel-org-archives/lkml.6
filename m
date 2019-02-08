@@ -2,99 +2,120 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E763C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0F2C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9782177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5555C2177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbfBHMFK (ORCPT
+        id S1727272AbfBHMFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:05:10 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49673 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfBHMFJ (ORCPT
+        Fri, 8 Feb 2019 07:05:33 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38802 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726456AbfBHMFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:05:09 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x18C4mQX2158784
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 8 Feb 2019 04:04:48 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x18C4l7D2158781;
-        Fri, 8 Feb 2019 04:04:48 -0800
-Date:   Fri, 8 Feb 2019 04:04:48 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Davidlohr Bueso <tipbot@zytor.com>
-Message-ID: <tip-6f568ebe2afefdc33a6fb06ef20a94f8b96455f1@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, dave@stgolabs.net,
-        dbueso@suse.de, hpa@zytor.com, peterz@infradead.org,
-        tglx@linutronix.de
-Reply-To: dave@stgolabs.net, dbueso@suse.de, hpa@zytor.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, tglx@linutronix.de
-In-Reply-To: <20190206185602.949-1-dave@stgolabs.net>
-References: <20190206185602.949-1-dave@stgolabs.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] futex: Fix barrier comment
-Git-Commit-ID: 6f568ebe2afefdc33a6fb06ef20a94f8b96455f1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 8 Feb 2019 07:05:33 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18C1IIB110653
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 07:05:31 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qh7fs5j6f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 07:05:31 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 12:05:30 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 12:05:28 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18C5RVX10879124
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 12:05:27 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F148712405A;
+        Fri,  8 Feb 2019 12:05:26 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8BCC124053;
+        Fri,  8 Feb 2019 12:05:26 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 12:05:26 +0000 (GMT)
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
+ <20190206120634.GA4680@linux.intel.com>
+ <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+ <20190207212912.GD23906@linux.intel.com>
+ <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
+ <20190208003314.GB7202@linux.intel.com>
+ <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
+ <20190208111442.GA11755@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 07:05:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20190208111442.GA11755@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020812-0064-0000-0000-000003A50D14
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010558; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158059; UDB=6.00604220; IPR=6.00938591;
+ MB=3.00025493; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 12:05:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020812-0065-0000-0000-00003C56CCC5
+Message-Id: <06473b24-7c59-9405-bbe0-8d30b3450391@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=797 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6f568ebe2afefdc33a6fb06ef20a94f8b96455f1
-Gitweb:     https://git.kernel.org/tip/6f568ebe2afefdc33a6fb06ef20a94f8b96455f1
-Author:     Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate: Wed, 6 Feb 2019 10:56:02 -0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 8 Feb 2019 13:00:35 +0100
+On 2/8/19 6:14 AM, Jarkko Sakkinen wrote:
+> On Thu, Feb 07, 2019 at 08:51:15PM -0500, Stefan Berger wrote:
+>>>> +    rc = 0;
+>>>>        if (chip->flags & TPM_CHIP_FLAG_IRQ)
+>>>>            goto out_recv;
+>>> What why?
+>>
+>> This fix seems to only be necessary when bisecting. You may want to apply
+>> it!
+> I don't want to apply it because I don't understand why it would
+> be needed. Can you give a short explanation?
 
-futex: Fix barrier comment
 
-The current comment for the barrier that guarantees that waiter increment
-is always before taking the hb spinlock (barrier (A)) needs to be fixed as
-it is misplaced.
+See my comment on [PATCH v11 08/16]. It needs to be added in that patch 
+since otherwise rc holds a non-zero value on function exit, which is 
+wrong at that point.
 
-This is obviously referring to hb_waiters_inc, which is a full barrier.
 
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190206185602.949-1-dave@stgolabs.net
+>
+> /Jarkko
+>
 
----
- kernel/futex.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/futex.c b/kernel/futex.c
-index fdd312da0992..5ec2473a3497 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2221,11 +2221,11 @@ static inline struct futex_hash_bucket *queue_lock(struct futex_q *q)
- 	 * decrement the counter at queue_unlock() when some error has
- 	 * occurred and we don't end up adding the task to the list.
- 	 */
--	hb_waiters_inc(hb);
-+	hb_waiters_inc(hb); /* implies smp_mb(); (A) */
- 
- 	q->lock_ptr = &hb->lock;
- 
--	spin_lock(&hb->lock); /* implies smp_mb(); (A) */
-+	spin_lock(&hb->lock);
- 	return hb;
- }
- 
