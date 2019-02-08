@@ -2,99 +2,155 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF80C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27614C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A46CC218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4122218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfBHJrA (ORCPT
+        id S1727372AbfBHJrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:47:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43179 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfBHJrA (ORCPT
+        Fri, 8 Feb 2019 04:47:20 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50193 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfBHJrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:47:00 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gs2k0-0006Iz-E1; Fri, 08 Feb 2019 10:46:36 +0100
-Date:   Fri, 8 Feb 2019 10:46:35 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@openvz.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andy Tucker <agtucker@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 03/32] timens: Introduce CLOCK_MONOTONIC offsets
-In-Reply-To: <alpine.DEB.2.21.1902072225420.1645@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1902080859460.1645@nanos.tec.linutronix.de>
-References: <20190206001107.16488-1-dima@arista.com> <20190206001107.16488-4-dima@arista.com> <alpine.DEB.2.21.1902072225420.1645@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Fri, 8 Feb 2019 04:47:20 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gs2kb-0000fu-LA; Fri, 08 Feb 2019 10:47:13 +0100
+Message-ID: <1549619233.2544.87.camel@pengutronix.de>
+Subject: Re: [RFC v2 4/5] arm64: dts: imx8mq: Add nodes for PCIe IP blocks
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Fri, 08 Feb 2019 10:47:13 +0100
+In-Reply-To: <20190208002941.30343-5-andrew.smirnov@gmail.com>
+References: <20190208002941.30343-1-andrew.smirnov@gmail.com>
+         <20190208002941.30343-5-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019, Thomas Gleixner wrote:
-> Does this really need to be an out of line call? If you stick this into the
-> clock_get() implementations then it boils down to:
+Am Donnerstag, den 07.02.2019, 16:29 -0800 schrieb Andrey Smirnov:
+> Add nodes for two PCIe controllers found on i.MX8MQ.
 > 
-> static inline void timens_add_monotonic(struct timespec64 *ts)
-> {
-> 	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
+> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > Cc: Chris Healy <cphealy@gmail.com>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+
+One minor thing below, otherwise:
+
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 58 +++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
 > 
-> 	if (ns_offsets)
-> 		*ts = timespec64_add(*ts, ns_offsets->monotonic_time_offset);
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> index 89babc531380..8ceab748ed04 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> @@ -6,6 +6,7 @@
+>  
+>  #include <dt-bindings/clock/imx8mq-clock.h>
+>  #include <dt-bindings/power/imx8mq-power.h>
+> +#include <dt-bindings/reset/imx8mq-reset.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include "imx8mq-pinfunc.h"
+> @@ -539,6 +540,63 @@
+> >  			};
+> >  		};
+>  
+> > > +		pcie0: pcie@33800000 {
+> > +			compatible = "fsl,imx8mq-pcie";
+> > +			reg = <0x33800000 0x400000>,
+> > +			      <0x1ff00000 0x80000>;
+> > +			reg-names = "dbi", "config";
+> > +			#address-cells = <3>;
+> > +			#size-cells = <2>;
+> > +			device_type = "pci";
+> > +			bus-range = <0x00 0xff>;
+> > +			ranges = <0x81000000 0 0x00000000 0x1ff80000 0 0x00010000 /* downstream I/O 64KB */
+> > +			          0x82000000 0 0x18000000 0x18000000 0 0x07f00000>; /* non-prefetchable memory */
+> > +			num-lanes = <1>;
+> > +			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "msi";
+> > +			#interrupt-cells = <1>;
+> > +			interrupt-map-mask = <0 0 0 0x7>;
+> > +			interrupt-map = <0 0 0 1 &gic GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+> > +			                <0 0 0 2 &gic GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
+> > +			                <0 0 0 3 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+> > +			                <0 0 0 4 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+> > +			fsl,max-link-speed = <2>;
+> > +			power-domains = <&pgc_pcie>;
+> > +			resets = <&src IMX8MQ_RESET_PCIEPHY>,
+> > +			         <&src IMX8MQ_RESET_PCIE_CTRL_APPS_EN>,
+> > +			         <&src IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF>;
+> > +			reset-names = "pciephy", "apps", "turnoff";
+> > +			status = "disabled";
+> > +		};
+> +
+> +		pcie1: pcie@0x33c00000 {
+                            ^
+Node name should not have the hex prefix in the address.
 
-And this needs to be a special variant of
-timespec64-add_safe(). timespec64_add_safe() is not sufficient, because it
-assumes that both values are positive, which is not the case here..
-
-In timer_set() implementations you move the timespec_valid() check after
-the add. That's wrong because you really want to check the input value from
-user space.
-
-Assume that the caller supplied value is valid and the adjustment brings it
-out of range then how should the caller understand why it it rejected?
-
-So timespec64_add_namespace() must check for under and overflow. But doing
-this with timespecs is a pain. I rather suggest to rework the whole thing
-so hrtimer_nanosleep() takes a ktime_t expiry value and move the conversion
-to the call sites. Then the whole offset magic becomes:
-
-   expires = timespec64_to_ktime(rqtp);
-
-   if (abstime)
-   	expires = timens_to_host_mono(expires);
-
-and that function can nicely do the underflow and overflow detection and
-cap the values to 0 on underflow and KTIME_MAX on overflow.
-
-Hmm?
-
-Thanks,
-
-	tglx
+> +			compatible = "fsl,imx8mq-pcie";
+> > +			reg = <0x33c00000 0x400000>,
+> > +			      <0x27f00000 0x80000>;
+> > +			reg-names = "dbi", "config";
+> > +			#address-cells = <3>;
+> > +			#size-cells = <2>;
+> > +			device_type = "pci";
+> > +			ranges =  <0x81000000 0 0x00000000 0x27f80000 0 0x00010000 /* downstream I/O 64KB */
+> > +				   0x82000000 0 0x20000000 0x20000000 0 0x07f00000>; /* non-prefetchable memory */
+> > +			num-lanes = <1>;
+> > +			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "msi";
+> > +			#interrupt-cells = <1>;
+> > +			interrupt-map-mask = <0 0 0 0x7>;
+> > +			interrupt-map = <0 0 0 1 &gic GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>,
+> > +					<0 0 0 2 &gic GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
+> > +					<0 0 0 3 &gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>,
+> > +					<0 0 0 4 &gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
+> > +			fsl,max-link-speed = <2>;
+> > +			power-domains = <&pgc_pcie>;
+> > +			resets = <&src IMX8MQ_RESET_PCIEPHY2>,
+> > +			         <&src IMX8MQ_RESET_PCIE2_CTRL_APPS_EN>,
+> > +			         <&src IMX8MQ_RESET_PCIE2_CTRL_APPS_TURNOFF>;
+> > +			reset-names = "pciephy", "apps", "turnoff";
+> > +			status = "disabled";
+> > +		};
+> +
+> > >  		gic: interrupt-controller@38800000 {
+> >  			compatible = "arm,gic-v3";
+> > >  			reg = <0x38800000 0x10000>,	/* GIC Dist */
