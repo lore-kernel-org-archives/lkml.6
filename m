@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFCCC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97AAC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22AB121908
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF0921924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549663559;
-	bh=RuHAVu0gOCLm5Zf+yBEO8Vvfj1eA87/HOZkE07AZZZc=;
+	s=default; t=1549663566;
+	bh=CzpinGmSROMX+pW9hoaV8a4bSbtDnMp1TdI/3QiKmXI=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=RUN917XYq9gvUV4D4R25lDxcPW8OOFAD8g4uTyuzUwK1b7nCT583zRhiLDhiVeqN+
-	 mZUFaUCJkGx77sce9+8018SNlMgo5GdYqsFR8G1G4kFmR03+ry306kKhyARg4cny+O
-	 6NMtfGe3lxMHQI7vLK0VuJgpg8+XZ8epe7cRZZ2w=
+	b=z8/DI3ZUIUiWfQerLoSx1gCHmru2/SsRNe2UTGNhTCJGTJpA6v8sARtbpiF4KIzEe
+	 +/81uMRoilhyH0dqP3KaZc4FFkfb7mzaI9zGY6dz9i1oxeRiO7v/40MUVRZbph0A6N
+	 fEY2Ww8vEH6w0wlxfH5DlfVz9fs0j8joXcDvEy4A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfBHWF5 (ORCPT
+        id S1727223AbfBHWGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:05:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54158 "EHLO mail.kernel.org"
+        Fri, 8 Feb 2019 17:06:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbfBHWF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:05:56 -0500
+        id S1726974AbfBHWGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 17:06:04 -0500
 Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BC7621908;
-        Fri,  8 Feb 2019 22:05:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F39721908;
+        Fri,  8 Feb 2019 22:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549663555;
-        bh=RuHAVu0gOCLm5Zf+yBEO8Vvfj1eA87/HOZkE07AZZZc=;
+        s=default; t=1549663562;
+        bh=CzpinGmSROMX+pW9hoaV8a4bSbtDnMp1TdI/3QiKmXI=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=K04LPluzi3G5wlTlYQ9F/4eH3/ttfcHWHiC/5o8J4Z89AKurf3xSK0A8s+G5I9Ysa
-         0VBc4nI2FAJdSY16iylrn+7mEXfxFr+LIOX7v6r7+ZA74rK1JJ+qikV3HfQYNH5NW1
-         jXLgX6San9+Epx01v6vqDHNz/m/PyJ+11ly8uRms=
-Subject: [PATCH v1 2/7] iommu/amd: Use dev_printk() when possible
+        b=Z1Gc2Tj/dYkGdBSidhsaHoNHBTyn8zH032VtgAlDNyKkCp53F2U+HEa3+qIKjIRa8
+         Ey6J5N8nGQVXT8SsPSETWuk4uJeH08IvKxetvku6IDq44Z+uIbtGzhjYUzcPEPApIs
+         iyjZA43gfYLJpA8JlscJbrERDDcZBY1v2P3eQJUI=
+Subject: [PATCH v1 3/7] iommu/vt-d: Use dev_printk() when possible
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     David Woodhouse <dwmw2@infradead.org>,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Date:   Fri, 08 Feb 2019 16:05:53 -0600
-Message-ID: <154966355299.132359.9681240291578714185.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date:   Fri, 08 Feb 2019 16:06:00 -0600
+Message-ID: <154966356075.132359.4070597928540213560.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -63,168 +63,189 @@ with other messages related to the device.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/iommu/amd_iommu.c      |   25 +++++++++++--------------
- drivers/iommu/amd_iommu_init.c |   20 ++++++++++----------
- 2 files changed, 21 insertions(+), 24 deletions(-)
+ drivers/iommu/intel-iommu.c |   54 +++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 87ba23a75b38..fee9c9049d7a 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -18,6 +18,7 @@
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 2bd9ac285c0d..81077803880f 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -19,6 +19,7 @@
   */
  
- #define pr_fmt(fmt)     "AMD-Vi: " fmt
+ #define pr_fmt(fmt)     "DMAR: " fmt
 +#define dev_fmt(fmt)    pr_fmt(fmt)
  
- #include <linux/ratelimit.h>
- #include <linux/pci.h>
-@@ -279,10 +280,10 @@ static u16 get_alias(struct device *dev)
- 		return pci_alias;
- 	}
- 
--	pr_info("Using IVRS reported alias %02x:%02x.%d "
--		"for device %s[%04x:%04x], kernel reported alias "
-+	pci_info(pdev, "Using IVRS reported alias %02x:%02x.%d "
-+		"for device [%04x:%04x], kernel reported alias "
- 		"%02x:%02x.%d\n", PCI_BUS_NUM(ivrs_alias), PCI_SLOT(ivrs_alias),
--		PCI_FUNC(ivrs_alias), dev_name(dev), pdev->vendor, pdev->device,
-+		PCI_FUNC(ivrs_alias), pdev->vendor, pdev->device,
- 		PCI_BUS_NUM(pci_alias), PCI_SLOT(pci_alias),
- 		PCI_FUNC(pci_alias));
- 
-@@ -293,9 +294,8 @@ static u16 get_alias(struct device *dev)
- 	if (pci_alias == devid &&
- 	    PCI_BUS_NUM(ivrs_alias) == pdev->bus->number) {
- 		pci_add_dma_alias(pdev, ivrs_alias & 0xff);
--		pr_info("Added PCI DMA alias %02x.%d for %s\n",
--			PCI_SLOT(ivrs_alias), PCI_FUNC(ivrs_alias),
--			dev_name(dev));
-+		pci_info(pdev, "Added PCI DMA alias %02x.%d\n",
-+			PCI_SLOT(ivrs_alias), PCI_FUNC(ivrs_alias));
- 	}
- 
- 	return ivrs_alias;
-@@ -545,7 +545,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
- 		dev_data = get_dev_data(&pdev->dev);
- 
- 	if (dev_data && __ratelimit(&dev_data->rs)) {
--		dev_err(&pdev->dev, "Event logged [IO_PAGE_FAULT domain=0x%04x address=0x%llx flags=0x%04x]\n",
-+		pci_err(pdev, "Event logged [IO_PAGE_FAULT domain=0x%04x address=0x%llx flags=0x%04x]\n",
- 			domain_id, address, flags);
- 	} else if (printk_ratelimit()) {
- 		pr_err("Event logged [IO_PAGE_FAULT device=%02x:%02x.%x domain=0x%04x address=0x%llx flags=0x%04x]\n",
-@@ -2251,8 +2251,7 @@ static int amd_iommu_add_device(struct device *dev)
- 	ret = iommu_init_device(dev);
- 	if (ret) {
- 		if (ret != -ENOTSUPP)
--			pr_err("Failed to initialize device %s - trying to proceed anyway\n",
--				dev_name(dev));
-+			dev_err(dev, "Failed to initialize - trying to proceed anyway\n");
- 
- 		iommu_ignore_device(dev);
- 		dev->dma_ops = NULL;
-@@ -2605,8 +2604,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
- 	return nelems;
- 
- out_unmap:
--	pr_err("%s: IOMMU mapping error in map_sg (io-pages: %d)\n",
--	       dev_name(dev), npages);
-+	dev_err(dev, "IOMMU mapping error in map_sg (io-pages: %d)\n", npages);
- 
- 	for_each_sg(sglist, s, nelems, i) {
- 		int j, pages = iommu_num_pages(sg_phys(s), s->length, PAGE_SIZE);
-@@ -2800,7 +2798,7 @@ static int init_reserved_iova_ranges(void)
- 					   IOVA_PFN(r->start),
- 					   IOVA_PFN(r->end));
- 			if (!val) {
--				pr_err("Reserve pci-resource range failed\n");
-+				pci_err(pdev, "Reserve pci-resource range %pR failed\n", r);
- 				return -ENOMEM;
+ #include <linux/init.h>
+ #include <linux/bitmap.h>
+@@ -1815,7 +1816,7 @@ static int dmar_init_reserved_ranges(void)
+ 					    IOVA_PFN(r->start),
+ 					    IOVA_PFN(r->end));
+ 			if (!iova) {
+-				pr_err("Reserve iova failed\n");
++				pci_err(pdev, "Reserve iova for %pR failed\n", r);
+ 				return -ENODEV;
  			}
  		}
-@@ -3170,8 +3168,7 @@ static void amd_iommu_get_resv_regions(struct device *dev,
- 						 length, prot,
- 						 IOMMU_RESV_DIRECT);
- 		if (!region) {
--			pr_err("Out of memory allocating dm-regions for %s\n",
--				dev_name(dev));
-+			dev_err(dev, "Out of memory allocating dm-regions\n");
- 			return;
+@@ -2544,8 +2545,7 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
+ 		ret = intel_pasid_alloc_table(dev);
+ 		if (ret) {
+-			pr_err("PASID table allocation for %s failed\n",
+-			       dev_name(dev));
++			dev_err(dev, "PASID table allocation failed\n");
+ 			dmar_remove_one_dev_info(domain, dev);
+ 			return NULL;
  		}
- 		list_add_tail(&region->list, head);
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 66123b911ec8..f773792d77fd 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -18,6 +18,7 @@
-  */
- 
- #define pr_fmt(fmt)     "AMD-Vi: " fmt
-+#define dev_fmt(fmt)    pr_fmt(fmt)
- 
- #include <linux/pci.h>
- #include <linux/acpi.h>
-@@ -1457,8 +1458,7 @@ static void amd_iommu_erratum_746_workaround(struct amd_iommu *iommu)
- 	pci_write_config_dword(iommu->dev, 0xf0, 0x90 | (1 << 8));
- 
- 	pci_write_config_dword(iommu->dev, 0xf4, value | 0x4);
--	pr_info("Applying erratum 746 workaround for IOMMU at %s\n",
--		dev_name(&iommu->dev->dev));
-+	pci_info(iommu->dev, "Applying erratum 746 workaround\n");
- 
- 	/* Clear the enable writing bit */
- 	pci_write_config_dword(iommu->dev, 0xf0, 0x90);
-@@ -1488,8 +1488,7 @@ static void amd_iommu_ats_write_check_workaround(struct amd_iommu *iommu)
- 	/* Set L2_DEBUG_3[AtsIgnoreIWDis] = 1 */
- 	iommu_write_l2(iommu, 0x47, value | BIT(0));
- 
--	pr_info("Applying ATS write check workaround for IOMMU at %s\n",
--		dev_name(&iommu->dev->dev));
-+	pci_info(iommu->dev, "Applying ATS write check workaround\n");
- }
- 
- /*
-@@ -1665,6 +1664,7 @@ static int iommu_pc_get_set_reg(struct amd_iommu *iommu, u8 bank, u8 cntr,
- 
- static void init_iommu_perf_ctr(struct amd_iommu *iommu)
- {
-+	struct pci_dev *pdev = iommu->dev;
- 	u64 val = 0xabcd, val2 = 0;
- 
- 	if (!iommu_feature(iommu, FEATURE_PC))
-@@ -1676,12 +1676,12 @@ static void init_iommu_perf_ctr(struct amd_iommu *iommu)
- 	if ((iommu_pc_get_set_reg(iommu, 0, 0, 0, &val, true)) ||
- 	    (iommu_pc_get_set_reg(iommu, 0, 0, 0, &val2, false)) ||
- 	    (val != val2)) {
--		pr_err("Unable to write to IOMMU perf counter.\n");
-+		pci_err(pdev, "Unable to write to IOMMU perf counter.\n");
- 		amd_iommu_pc_present = false;
- 		return;
+@@ -2560,15 +2560,14 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 					dev, PASID_RID2PASID);
+ 		spin_unlock(&iommu->lock);
+ 		if (ret) {
+-			pr_err("Setup RID2PASID for %s failed\n",
+-			       dev_name(dev));
++			dev_err(dev, "Setup RID2PASID failed\n");
+ 			dmar_remove_one_dev_info(domain, dev);
+ 			return NULL;
+ 		}
  	}
  
--	pr_info("IOMMU performance counters supported\n");
-+	pci_info(pdev, "IOMMU performance counters supported\n");
+ 	if (dev && domain_context_mapping(domain, dev)) {
+-		pr_err("Domain context map for %s failed\n", dev_name(dev));
++		dev_err(dev, "Domain context map failed\n");
+ 		dmar_remove_one_dev_info(domain, dev);
+ 		return NULL;
+ 	}
+@@ -2723,13 +2722,12 @@ static int domain_prepare_identity_map(struct device *dev,
+ 	   range which is reserved in E820, so which didn't get set
+ 	   up to start with in si_domain */
+ 	if (domain == si_domain && hw_pass_through) {
+-		pr_warn("Ignoring identity map for HW passthrough device %s [0x%Lx - 0x%Lx]\n",
+-			dev_name(dev), start, end);
++		dev_warn(dev, "Ignoring identity map for HW passthrough [0x%Lx - 0x%Lx]\n",
++			 start, end);
+ 		return 0;
+ 	}
  
- 	val = readl(iommu->mmio_base + MMIO_CNTR_CONF_OFFSET);
- 	iommu->max_banks = (u8) ((val >> 12) & 0x3f);
-@@ -1840,14 +1840,14 @@ static void print_iommu_info(void)
- 	struct amd_iommu *iommu;
+-	pr_info("Setting identity map for device %s [0x%Lx - 0x%Lx]\n",
+-		dev_name(dev), start, end);
++	dev_info(dev, "Setting identity map [0x%Lx - 0x%Lx]\n", start, end);
  
- 	for_each_iommu(iommu) {
-+		struct pci_dev *pdev = iommu->dev;
- 		int i;
+ 	if (end < start) {
+ 		WARN(1, "Your BIOS is broken; RMRR ends before it starts!\n"
+@@ -3016,8 +3014,8 @@ static int __init dev_prepare_static_identity_mapping(struct device *dev, int hw
  
--		pr_info("Found IOMMU at %s cap 0x%hx\n",
--			dev_name(&iommu->dev->dev), iommu->cap_ptr);
-+		pci_info(pdev, "Found IOMMU cap 0x%hx\n", iommu->cap_ptr);
+ 	ret = domain_add_dev_info(si_domain, dev);
+ 	if (!ret)
+-		pr_info("%s identity mapping for device %s\n",
+-			hw ? "Hardware" : "Software", dev_name(dev));
++		dev_info(dev, "%s identity mapping\n",
++			 hw ? "Hardware" : "Software");
+ 	else if (ret == -ENODEV)
+ 		/* device not associated with an iommu */
+ 		ret = 0;
+@@ -3550,8 +3548,7 @@ static unsigned long intel_alloc_iova(struct device *dev,
+ 	iova_pfn = alloc_iova_fast(&domain->iovad, nrpages,
+ 				   IOVA_PFN(dma_mask), true);
+ 	if (unlikely(!iova_pfn)) {
+-		pr_err("Allocating %ld-page iova for %s failed",
+-		       nrpages, dev_name(dev));
++		dev_err(dev, "Allocating %ld-page iova failed", nrpages);
+ 		return 0;
+ 	}
  
- 		if (iommu->cap & (1 << IOMMU_CAP_EFR)) {
--			pr_info("Extended features (%#llx):\n",
--				iommu->features);
-+			pci_info(pdev, "Extended features (%#llx):\n",
-+				 iommu->features);
- 			for (i = 0; i < ARRAY_SIZE(feat_str); ++i) {
- 				if (iommu_feature(iommu, (1ULL << i)))
- 					pr_cont(" %s", feat_str[i]);
+@@ -3599,7 +3596,7 @@ struct dmar_domain *get_valid_domain_for_dev(struct device *dev)
+ out:
+ 
+ 	if (!domain)
+-		pr_err("Allocating domain for %s failed\n", dev_name(dev));
++		dev_err(dev, "Allocating domain failed\n");
+ 
+ 
+ 	return domain;
+@@ -3626,8 +3623,7 @@ static int iommu_no_mapping(struct device *dev)
+ 			 * to non-identity mapping.
+ 			 */
+ 			dmar_remove_one_dev_info(si_domain, dev);
+-			pr_info("32bit %s uses non-identity mapping\n",
+-				dev_name(dev));
++			dev_info(dev, "32bit DMA uses non-identity mapping\n");
+ 			return 0;
+ 		}
+ 	} else {
+@@ -3639,8 +3635,7 @@ static int iommu_no_mapping(struct device *dev)
+ 			int ret;
+ 			ret = domain_add_dev_info(si_domain, dev);
+ 			if (!ret) {
+-				pr_info("64bit %s uses identity mapping\n",
+-					dev_name(dev));
++				dev_info(dev, "64bit DMA uses identity mapping\n");
+ 				return 1;
+ 			}
+ 		}
+@@ -3705,8 +3700,8 @@ static dma_addr_t __intel_map_page(struct device *dev, struct page *page,
+ error:
+ 	if (iova_pfn)
+ 		free_iova_fast(&domain->iovad, iova_pfn, dma_to_mm_pfn(size));
+-	pr_err("Device %s request: %zx@%llx dir %d --- failed\n",
+-		dev_name(dev), size, (unsigned long long)paddr, dir);
++	dev_err(dev, "Device request: %zx@%llx dir %d --- failed\n",
++		size, (unsigned long long)paddr, dir);
+ 	return DMA_MAPPING_ERROR;
+ }
+ 
+@@ -3741,8 +3736,7 @@ static void intel_unmap(struct device *dev, dma_addr_t dev_addr, size_t size)
+ 	start_pfn = mm_to_dma_pfn(iova_pfn);
+ 	last_pfn = start_pfn + nrpages - 1;
+ 
+-	pr_debug("Device %s unmapping: pfn %lx-%lx\n",
+-		 dev_name(dev), start_pfn, last_pfn);
++	dev_dbg(dev, "Device unmapping: pfn %lx-%lx\n", start_pfn, last_pfn);
+ 
+ 	freelist = domain_unmap(domain, start_pfn, last_pfn);
+ 
+@@ -5096,9 +5090,9 @@ static int intel_iommu_attach_device(struct iommu_domain *domain,
+ 		addr_width = cap_mgaw(iommu->cap);
+ 
+ 	if (dmar_domain->max_addr > (1LL << addr_width)) {
+-		pr_err("%s: iommu width (%d) is not "
+-		       "sufficient for the mapped address (%llx)\n",
+-		       __func__, addr_width, dmar_domain->max_addr);
++		dev_err(dev, "%s: iommu width (%d) is not "
++		        "sufficient for the mapped address (%llx)\n",
++		        __func__, addr_width, dmar_domain->max_addr);
+ 		return -EFAULT;
+ 	}
+ 	dmar_domain->gaw = addr_width;
+@@ -5399,7 +5393,7 @@ const struct iommu_ops intel_iommu_ops = {
+ static void quirk_iommu_g4x_gfx(struct pci_dev *dev)
+ {
+ 	/* G4x/GM45 integrated gfx dmar support is totally busted. */
+-	pr_info("Disabling IOMMU for graphics on this chipset\n");
++	pci_info(dev, "Disabling IOMMU for graphics on this chipset\n");
+ 	dmar_map_gfx = 0;
+ }
+ 
+@@ -5417,7 +5411,7 @@ static void quirk_iommu_rwbf(struct pci_dev *dev)
+ 	 * Mobile 4 Series Chipset neglects to set RWBF capability,
+ 	 * but needs it. Same seems to hold for the desktop versions.
+ 	 */
+-	pr_info("Forcing write-buffer flush capability\n");
++	pci_info(dev, "Forcing write-buffer flush capability\n");
+ 	rwbf_quirk = 1;
+ }
+ 
+@@ -5447,11 +5441,11 @@ static void quirk_calpella_no_shadow_gtt(struct pci_dev *dev)
+ 		return;
+ 
+ 	if (!(ggc & GGC_MEMORY_VT_ENABLED)) {
+-		pr_info("BIOS has allocated no shadow GTT; disabling IOMMU for graphics\n");
++		pci_info(dev, "BIOS has allocated no shadow GTT; disabling IOMMU for graphics\n");
+ 		dmar_map_gfx = 0;
+ 	} else if (dmar_map_gfx) {
+ 		/* we have to ensure the gfx device is idle before we flush */
+-		pr_info("Disabling batched IOTLB flush on Ironlake\n");
++		pci_info(dev, "Disabling batched IOTLB flush on Ironlake\n");
+ 		intel_iommu_strict = 1;
+        }
+ }
 
