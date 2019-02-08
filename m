@@ -2,105 +2,188 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD32C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F6EC282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68BE62147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2DA921924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:20:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nwnYsV93"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="RqdT+3F7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfBHHRb (ORCPT
+        id S1727007AbfBHHUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:17:31 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40975 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfBHHRa (ORCPT
+        Fri, 8 Feb 2019 02:20:51 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46974 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfBHHUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:17:30 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b7so1259138pfi.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 23:17:30 -0800 (PST)
+        Fri, 8 Feb 2019 02:20:51 -0500
+Received: by mail-ot1-f65.google.com with SMTP id w25so4245814otm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 23:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FsIYsxEIqBscnFcelcBiL1zQ4XvUS8w5wcOoGC+EPI8=;
-        b=nwnYsV93mWADDtWq8UFp12U3lm4rmg2gHzKyC7DO71L6J6GQxryB8MQmIoD85KTAtu
-         xwfgvVy0VnsavAhayr+z5l6L9Mi31B9EIT0j6FLgoDpG2MDdk7aKx3xHpSC7zV5HifdM
-         awJkYg4D53WWsWxC4gj39TsXPad4vkIpO8TPjH9eRGuWKTKXaiZ6+RIki4MNRNTS37cY
-         Clf3sJtKVna7y9CG+ZDnku3k3qn8wx1rIHPmKLR64sk8gVXV/ki0OzvYxzefyJRDpVq5
-         aZrcNKJ/12XQK2FI4U19Y8McMJyqZQa+sd0RQQaYXTVwUSZ2nevJRGlZRePw5Pkbijvj
-         AgEw==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EalRzoWbflT2aUthpO0bEhvXjIl1xZCE1RoISoW/U9Y=;
+        b=RqdT+3F72R/XTbxkQVYqEPxLju2bMe5GObiCn7fONaAWZovYmEhemig/3V41W8s0bq
+         avOpQIP2tDET1eQ8G5YrUaSYErm7Ut26GfFEgnMQFAAienKbiP1eBbnAVPQYEF9MLsEZ
+         /f8WjcEg/F/fpfBJUPjzgrELyxY7Z92C7fF3JOsOOuQPIS2qltuHKPCHUprp8mbL96Ze
+         Hsz+FK+QgdMfpoF7ufDl4hUiHaOaUyiN7VR8zWb7nf17YP5MurLGfMBOlmg7vqcnOwAt
+         IiqitN7VTf8qNrSIwQZeLCnR4PqcktvSj+pUKWoVS51xR9HHF/KboRwvQr9uJQ9Um2fW
+         bHxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FsIYsxEIqBscnFcelcBiL1zQ4XvUS8w5wcOoGC+EPI8=;
-        b=dBb/SgUDV58DuUxLGT7BGNbEjmVpqC+u4tQW4PZVxlXm5C0vWWy1NsjPZNDlIhR0lP
-         0FgkE7CVp72/256S2/FwI+Q7uCXtIAt505pewDprj+qBGG3e0WjZpBijZCQr4pM8ZoF0
-         bg4b+pmocuZnvZxO/Loe/fmmVZMEqTpS9AY8E/iBKrr+fGYMcwDN5bcSL19g2PSQ3uRj
-         VJ+sFns8cgT3LSNkgz26vyddLc6YzhoQBfyYkzTy4uis5tPD+4IxFg6rK72WF9uLC3+q
-         xQ4K4+sfYatUy9iYlWGXvHfErRsewFWV29k3L6kO33aja6fzu5fHvnRNzofE7XHVNDsx
-         loFQ==
-X-Gm-Message-State: AHQUAuYcxX2hbBNeKtcR/R7e8LOYt3F7RtlV5Ts9QoY+Ti8vClGEm3g0
-        bSdOCy14V+npL5FG2cZhWa2gcQ==
-X-Google-Smtp-Source: AHgI3Ibk5qm5sSrhyoRyNa14nNoLzvCYCMNMFIP5WX7YvZG7Ol8gaOwDIsO+UCsEI+iuJULn5eh7nw==
-X-Received: by 2002:aa7:8759:: with SMTP id g25mr11710618pfo.248.1549610249686;
-        Thu, 07 Feb 2019 23:17:29 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id n68sm2057498pfb.62.2019.02.07.23.17.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Feb 2019 23:17:28 -0800 (PST)
-Date:   Fri, 8 Feb 2019 12:47:26 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Graham Roff <grahamr@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [RFC/PATCH 0/5] DVFS in the OPP core
-Message-ID: <20190208071726.urevxs5a3vaf7gwh@vireshk-i7>
-References: <20190129015547.213276-1-swboyd@chromium.org>
- <20190131092349.fksfqemm23qddkhw@vireshk-i7>
- <154952629766.115909.11259861549408107064@swboyd.mtv.corp.google.com>
- <CAPDyKFrrncpfEfbZJ1LHvqDbkc29CaJxZnXwh4Mz7PT6Efbctg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EalRzoWbflT2aUthpO0bEhvXjIl1xZCE1RoISoW/U9Y=;
+        b=Hnf9V+R/aDdfhtfxln4LiSg7y4hA6TBfn/F/cGLp54YtGKmtIYziu3M0306fmg/UEi
+         UbaI1u1iO2YN3aRhgyx6qcZPhj0cOcSczwzAt1TxIUXTj30+5dQy38SbN8eF3Ps1UHfk
+         p3T1cH9eWvqFX0qbT3kc9ltzXTP1d3OOgfH0RX53XadMypBevfFhZK66E3icIGCCM6vM
+         UjUfxJqv5gpTd87aC821C02/ncXMzPyCDJpq/k1t0NnoL8iY+k8LdjPflNFQW1S+fFhs
+         BrQZtVG4lFu6fDUs1VjI/Fjt1wyfNgFum9jbe3YfCSMvBx5ejeCvQ2CerpCwrtljiyFS
+         qutg==
+X-Gm-Message-State: AHQUAuaHx86afNAOVK7MAsJeOR1crgOR8f2PX83s9HKYkNiFpEEihENM
+        4l69Y1e+ApUfoN9/nhdt6PfiOAXLyzlfIRWF/J1+BQ==
+X-Google-Smtp-Source: AHgI3IZXcUnnQaJW7YsANVhPGTSt2w31gaQbk9tULfIlXaNf0UZe4rmwULn4ckSvOVDerW//0ny6kxOaPLKqk45/OSM=
+X-Received: by 2002:a9d:7d18:: with SMTP id v24mr3691452otn.352.1549610450102;
+ Thu, 07 Feb 2019 23:20:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFrrncpfEfbZJ1LHvqDbkc29CaJxZnXwh4Mz7PT6Efbctg@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard> <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <20190207035258.GD6173@dastard> <20190207052310.GA22726@ziepe.ca>
+ <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
+ <20190207171736.GD22726@ziepe.ca> <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
+ <20190208051950.GA4283@ziepe.ca>
+In-Reply-To: <20190208051950.GA4283@ziepe.ca>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 7 Feb 2019 23:20:37 -0800
+Message-ID: <CAPcyv4jWnkHxBcU2_Pz99wM02RYab4y25hu_qUE8KCVArYxCeg@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-02-19, 14:37, Ulf Hansson wrote:
-> I think we also need to consider cross SoC drivers. One SoC may have
-> both clocks and OPPs to manage, while another may have only clocks.
+On Thu, Feb 7, 2019 at 9:19 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Thu, Feb 07, 2019 at 03:54:58PM -0800, Dan Williams wrote:
+>
+> > > The only production worthy way is to have the FS be a partner in
+> > > making this work without requiring revoke, so the critical RDMA
+> > > traffic can operate safely.
+> >
+> > ...belies a path forward. Just swap out "FS be a partner" with "system
+> > administrator be a partner". In other words, If the RDMA stack can't
+> > tolerate an MR being disabled then the administrator needs to actively
+> > disable the paths that would trigger it. Turn off reflink, don't
+> > truncate, avoid any future FS feature that might generate unwanted
+> > lease breaks.
+>
+> This is what I suggested already, except with explicit kernel aid, not
+> left as some gordian riddle for the administrator to unravel.
 
-We already have that case with CPUs as well and dev_pm_opp_set_rate()
-takes care of it.
+It's a riddle either way. "Why is my truncate failing?"
 
-> Even it this may be fairly uncommon, we should consider it, before we
-> decide to fold in additional clock management, like
-> clk_prepare|unprepare() for example, behind the dev_pm_opp_set_rate()
-> API.
-> 
-> The point is, the driver may need to call clk_prepare|enable()
-> anyways, unless we make that conditional depending on a DT compatible
-> string, for example. Of course, because the clock prepare/enable is
-> reference counted, there may not be a problem in practice to have both
-> the OPP and driver to deal with it.
+The lease path allows the riddle to be solved in a way that moves the
+ecosystem forwards. It provides a mechanism to notify (effectively mmu
+notifers plumbed to userspace), an opportunity for capable RDMA apps /
+drivers to do better than SIGKILL, and a path for filesystems to
+continue to innovate and not make users choose filesystems just on the
+chance they might need to do RDMA.
 
--- 
-viresh
+> You already said it is too hard for expert FS developers to maintain a
+> mode switch
+
+I do disagree with a truncate behavior switch, but reflink already has
+a mkfs switch so it's obviously possible for any future feature that
+might run afoul of the RDMA restrictions to have fs-feature control.
+
+> , it seems like a really big stretch to think application
+> and systems architects will have any hope to do better.
+
+Certainly they can, it's just a matter of documenting options. It can
+be made easier if we can get commonly named options across filesystems
+to disable lease dependent functionality.
+
+> It makes much more sense for the admin to flip some kind of bit and
+> the FS guarentees the safety that you are asking the admin to create.
+
+Flipping the bit changes the ABI contract in backwards incompatible
+ways. I'm saying go the other way, audit the configuration for legacy
+RDMA safety.
+
+> > We would need to make sure that lease notifications include the
+> > information to identify the lease breaker to debug escapes that
+> > might happen, but it is a solution that can be qualified to not
+> > lease break.
+>
+> I think building a complicated lease framework and then telling
+> everyone in user space to design around it so it never gets used would
+> be very hard to explain and justify.
+
+There is no requirement to design around it. If an RDMA-implementation
+doesn't use it the longterm-GUPs are already blocked. If the
+implementation does use it, but fails to service lease breaks it gets
+SIGKILL with information of what lead to the SIGKILL so the
+configuration can be fixed. Implementations that want to do better
+have an opportunity to be a partner to the filesytem and repair the
+MR.
+
+> Never mind the security implications if some seemingly harmless future
+> filesystem change causes unexpected lease revokes across something
+> like a tenant boundary.
+
+Fileystems innovate quickly, but not that quickly. Ongoing
+communication between FS and RDMA developers is not insurmountable.
+
+> > In any event, this lets end users pick their filesystem
+> > (modulo RDMA incompatible features), provides an enumeration of
+> > lease break sources in the kernel, and opens up FS-DAX to a wider
+> > array of RDMA adapters. In general this is what Linux has
+> > historically done, give end users technology freedom.
+>
+> I think this is not the Linux model. The kernel should not allow
+> unpriv user space to do an operation that could be unsafe.
+
+There's permission to block unprivileged writes/truncates to a file,
+otherwise I'm missing what hole is being opened? That said, the horse
+already left the barn. Linux has already shipped in the page-cache
+case "punch hole in the middle of a MR succeeds and leaves the state
+of the file relative to ongoing RDMA inconsistent". Now that we know
+about the bug the question is how do we do better than the current
+status quo of taking all of the functionality away.
+
+> I continue to think this is is the best idea that has come up - but
+> only if the filesystem is involved and expressly tells the kernel
+> layers that this combination of DAX & filesystem is safe.
+
+I think we're getting into "need to discuss at LSF/MM territory",
+because the concept of "DAX safety", or even DAX as an explicit FS
+capability has been a point of contention since day one. We're trying
+change DAX to be defined by mmap API flags like MAP_SYNC and maybe
+MAP_DIRECT in the future.
+
+For example, if the MR was not established to a MAP_SYNC vma then the
+kernel should be free to indirect the RDMA through the page-cache like
+the typical non-DAX case. DAX as a global setting is too coarse.
