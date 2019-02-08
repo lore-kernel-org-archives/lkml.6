@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0056C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC7DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1FC2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B674620863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:35:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="AhmJuNl6"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="jQw4XCee"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbfBHSft (ORCPT
+        id S1728127AbfBHSfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:35:49 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:32959 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbfBHSfn (ORCPT
+        Fri, 8 Feb 2019 13:35:51 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44560 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728087AbfBHSfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:35:43 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z8so2105239plo.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 10:35:43 -0800 (PST)
+        Fri, 8 Feb 2019 13:35:48 -0500
+Received: by mail-pg1-f196.google.com with SMTP id y1so1934626pgk.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 10:35:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xg+qYp+4sFzWmUuF/Mb341Ib7ZOx1DBI0D76Lp7pNZs=;
-        b=AhmJuNl6vH66UqY/COp73t7OcHIPL9zhQo1DxfctUTlIdcZzM8jhKd94TqR+C0AB6E
-         OZXNRqr0/hsgDWlO5PNAoEpolcLd7lPm5UYjYsuw0s7sJg7Oet5/sEyFckNBlxY/do0K
-         yJdINZk4OIU5iCPyZbnVd+8oIZWTJXTJGs3G8pMNjN0/gxWcINIR3T4ixTJbEycpfmvo
-         5W3+R6PzY5qDmNGsesjWpDwmNTOSSw5XzkTwoSucilt++40QInnUXvTqnJS7itfkQv69
-         TIAomYXoh1xmZH+539bkkYP6eSWAL0tXE1aqGu8/mpbEtMmZBU8v2GctSgc1nmyHzHoE
-         7B2Q==
+        bh=ji85EekoNkEHjtZGFeCgph3QuaSPbD3l0dFTe21TjYY=;
+        b=jQw4XCee2tzmy93A4XFLJYgArBM9nt5L8+AxMPBAxj4bwjrXVSUTQXV5nfhu9+hJ0A
+         PRLHBkeJ5RVGaKE40df8v9edodW/SOySlr/B9nyBq7byNjl0Ssssy+kdzguqEaPzjp+k
+         KmJjlY9AOMOWeBHZBUKRWiSeh30y5v9+nh6yt9W7Fiy1RbPDgeR6EVo4w7Gd05M9c8f6
+         kLPBIYFAmRA9epD+as1aePhRTN5RhGnN5y/arYLL5yVUIK3PPhLD0KNMEfKhZoUKNeen
+         EeaxQ1kZJqcAutznBQpFXDC75LX3ZPsroVZIf7nSvAV7j42UN3w+3nTIJ/L6iXKeIAfT
+         xLOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xg+qYp+4sFzWmUuF/Mb341Ib7ZOx1DBI0D76Lp7pNZs=;
-        b=tl+HWXxRC2AAMw5SZvvhTwBY5DIjkjLr4TyGxCKBFzrj5xBtJW6HcAf2bR0jMuVsoS
-         HkVazvZSfL2UnD0i1DfPwTPhTsnZtcQzKhzfux0tLkEedRBfHj+ksXMa+OVAW80gtx0k
-         BnCVY2YPIxwUVHIGv0t76uyAaDosOj3Z0Gx7RNrdvO3YxVD0FNEeVC1mva1om0o5Mh/r
-         szTJeP0G4vesog/4V9BpUUPZpSQRwmouv2LM66rBEjIyzKMSU8z8ZF4i20CYPI8Y+bdC
-         VfeDKi4GxxquzisxJGtkfaOACdT3uMEo3XLPZTbJPQaFXAXZ2dgbYiCHesmopDqzbhl9
-         sP4g==
-X-Gm-Message-State: AHQUAuaYncdUqZcS0NFu9aM1nLsp6G1SHH59FgxFImSqmJ9Edp1C3Gvf
-        JoU9Wsy9Z9Iqnc70enUV75a76g==
-X-Google-Smtp-Source: AHgI3Ibr429JeUyldhRJ/L1Jw/27yKu7f7irB8HfTdVupdQ1ukOBwJ3AwkKd04B6yYU9G8Q5PU3Fuw==
-X-Received: by 2002:a17:902:b609:: with SMTP id b9mr24198050pls.57.1549650942622;
-        Fri, 08 Feb 2019 10:35:42 -0800 (PST)
+        bh=ji85EekoNkEHjtZGFeCgph3QuaSPbD3l0dFTe21TjYY=;
+        b=L5eYn6A819WLPCG8Y8c5beG+OnNjG2I9R20cRZygfH4dSIG+r+9xwUGffm2YwGAoML
+         lpejO8PJ40kYgozQ6Y0cJzpWU+lQLWUDGYMMpaMZBps3CH+vSD+HT0dDNEGWNK1EZ2gX
+         teyJCufGtw3I/Q0hY8+yfUp1fYRBh5ue8zZX6KB00b85z6DctPfUt4KwY1e1QCAh7Mgb
+         NRvYixcrmmjBMQDtCQOdmDhnjj+Uxx1B46VSIpYOdSTmN+zSM0RTmf90wDIsvSgaxbKM
+         ltV7e1Nvgseg4XYQIbNpBr70szDGLNEU8TeDHt++E8nJ2xfMA1yXsdFEUFidsc4wFKw5
+         fX1Q==
+X-Gm-Message-State: AHQUAubPJquXbkkUkG5ic7Bxjd+X5zWHVAgV3+Fp/2peF5XKfsLO0tpc
+        Vg2wHHp5Dm5TLfgrf/jDPSHA9A==
+X-Google-Smtp-Source: AHgI3IabjI7yIqz4CG9XeogK/q0sd/9erhm/5of62zdm2ABJgmqBU2JIqzD5dcPn+G1JKMQ78i2/dg==
+X-Received: by 2002:a65:6684:: with SMTP id b4mr6966585pgw.55.1549650946569;
+        Fri, 08 Feb 2019 10:35:46 -0800 (PST)
 Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id 14sm2306472pgq.22.2019.02.08.10.35.41
+        by smtp.googlemail.com with ESMTPSA id 14sm2306472pgq.22.2019.02.08.10.35.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 10:35:41 -0800 (PST)
+        Fri, 08 Feb 2019 10:35:45 -0800 (PST)
 From:   Todd Kjos <tkjos@android.com>
 X-Google-Original-From: Todd Kjos <tkjos@google.com>
 To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         maco@google.com
 Cc:     joel@joelfernandes.org, kernel-team@android.com
-Subject: [PATCH v3 4/7] binder: avoid kernel vm_area for buffer fixups
-Date:   Fri,  8 Feb 2019 10:35:17 -0800
-Message-Id: <20190208183520.30886-5-tkjos@google.com>
+Subject: [PATCH v3 7/7] binder: use userspace pointer as base of buffer space
+Date:   Fri,  8 Feb 2019 10:35:20 -0800
+Message-Id: <20190208183520.30886-8-tkjos@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 In-Reply-To: <20190208183520.30886-1-tkjos@google.com>
 References: <20190208183520.30886-1-tkjos@google.com>
@@ -75,341 +75,630 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor the functions to validate and fixup struct
-binder_buffer pointer objects to avoid using vm_area
-pointers. Instead copy to/from kernel space using
-binder_alloc_copy_to_buffer() and
-binder_alloc_copy_from_buffer(). The following
-functions were refactored:
-
-	refactor binder_validate_ptr()
-	binder_validate_fixup()
-	binder_fixup_parent()
+Now that alloc->buffer points to the userspace vm_area
+rename buffer->data to buffer->user_data and rename
+local pointers that hold user addresses. Also use the
+"__user" tag to annotate all user pointers so sparse
+can flag cases where user pointer vaues  are copied to
+kernel pointers. Refactor code to use offsets instead
+of user pointers.
 
 Signed-off-by: Todd Kjos <tkjos@google.com>
 ---
- drivers/android/binder.c | 146 ++++++++++++++++++++++++++-------------
- 1 file changed, 97 insertions(+), 49 deletions(-)
+v2: remove casts as suggested by Dan Carpenter
+v3: fix build-break when CONFIG_ANDROID_BINDER_IPC_SELFTEST enabled
+
+ drivers/android/binder.c                | 118 ++++++++++++++----------
+ drivers/android/binder_alloc.c          |  87 ++++++++---------
+ drivers/android/binder_alloc.h          |   6 +-
+ drivers/android/binder_alloc_selftest.c |   4 +-
+ drivers/android/binder_trace.h          |   2 +-
+ 5 files changed, 118 insertions(+), 99 deletions(-)
 
 diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 8063b405e4fa1..98163bf5f35c7 100644
+index b3d609b5935a6..25491eceb7503 100644
 --- a/drivers/android/binder.c
 +++ b/drivers/android/binder.c
-@@ -2092,10 +2092,13 @@ static size_t binder_get_object(struct binder_proc *proc,
+@@ -2278,33 +2278,30 @@ static void binder_deferred_fd_close(int fd)
  
- /**
-  * binder_validate_ptr() - validates binder_buffer_object in a binder_buffer.
-+ * @proc:	binder_proc owning the buffer
-  * @b:		binder_buffer containing the object
-+ * @object:	struct binder_object to read into
-  * @index:	index in offset array at which the binder_buffer_object is
-  *		located
-- * @start:	points to the start of the offset array
-+ * @start_offset: points to the start of the offset array
-+ * @object_offsetp: offset of @object read from @b
-  * @num_valid:	the number of valid offsets in the offset array
-  *
-  * Return:	If @index is within the valid range of the offset array
-@@ -2106,34 +2109,46 @@ static size_t binder_get_object(struct binder_proc *proc,
-  *		Note that the offset found in index @index itself is not
-  *		verified; this function assumes that @num_valid elements
-  *		from @start were previously verified to have valid offsets.
-+ *		If @object_offsetp is non-NULL, then the offset within
-+ *		@b is written to it.
-  */
--static struct binder_buffer_object *binder_validate_ptr(struct binder_buffer *b,
--							binder_size_t index,
--							binder_size_t *start,
--							binder_size_t num_valid)
-+static struct binder_buffer_object *binder_validate_ptr(
-+						struct binder_proc *proc,
-+						struct binder_buffer *b,
-+						struct binder_object *object,
-+						binder_size_t index,
-+						binder_size_t start_offset,
-+						binder_size_t *object_offsetp,
-+						binder_size_t num_valid)
+ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 					      struct binder_buffer *buffer,
+-					      binder_size_t *failed_at)
++					      binder_size_t failed_at,
++					      bool is_failure)
  {
--	struct binder_buffer_object *buffer_obj;
--	binder_size_t *offp;
-+	size_t object_size;
-+	binder_size_t object_offset;
-+	unsigned long buffer_offset;
- 
- 	if (index >= num_valid)
- 		return NULL;
- 
--	offp = start + index;
--	buffer_obj = (struct binder_buffer_object *)(b->data + *offp);
--	if (buffer_obj->hdr.type != BINDER_TYPE_PTR)
-+	buffer_offset = start_offset + sizeof(binder_size_t) * index;
-+	binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
-+				      b, buffer_offset, sizeof(object_offset));
-+	object_size = binder_get_object(proc, b, object_offset, object);
-+	if (!object_size || object->hdr.type != BINDER_TYPE_PTR)
- 		return NULL;
-+	if (object_offsetp)
-+		*object_offsetp = object_offset;
- 
--	return buffer_obj;
-+	return &object->bbo;
- }
- 
- /**
-  * binder_validate_fixup() - validates pointer/fd fixups happen in order.
-+ * @proc:		binder_proc owning the buffer
-  * @b:			transaction buffer
-- * @objects_start	start of objects buffer
-- * @buffer:		binder_buffer_object in which to fix up
-- * @offset:		start offset in @buffer to fix up
-- * @last_obj:		last binder_buffer_object that we fixed up in
-- * @last_min_offset:	minimum fixup offset in @last_obj
-+ * @objects_start_offset: offset to start of objects buffer
-+ * @buffer_obj_offset:	offset to binder_buffer_object in which to fix up
-+ * @fixup_offset:	start offset in @buffer to fix up
-+ * @last_obj_offset:	offset to last binder_buffer_object that we fixed
-+ * @last_min_offset:	minimum fixup offset in object at @last_obj_offset
-  *
-  * Return:		%true if a fixup in buffer @buffer at offset @offset is
-  *			allowed.
-@@ -2164,28 +2179,41 @@ static struct binder_buffer_object *binder_validate_ptr(struct binder_buffer *b,
-  *   C (parent = A, offset = 16)
-  *     D (parent = B, offset = 0) // B is not A or any of A's parents
-  */
--static bool binder_validate_fixup(struct binder_buffer *b,
--				  binder_size_t *objects_start,
--				  struct binder_buffer_object *buffer,
-+static bool binder_validate_fixup(struct binder_proc *proc,
-+				  struct binder_buffer *b,
-+				  binder_size_t objects_start_offset,
-+				  binder_size_t buffer_obj_offset,
- 				  binder_size_t fixup_offset,
--				  struct binder_buffer_object *last_obj,
-+				  binder_size_t last_obj_offset,
- 				  binder_size_t last_min_offset)
- {
--	if (!last_obj) {
-+	if (!last_obj_offset) {
- 		/* Nothing to fix up in */
- 		return false;
- 	}
- 
--	while (last_obj != buffer) {
-+	while (last_obj_offset != buffer_obj_offset) {
-+		unsigned long buffer_offset;
-+		struct binder_object last_object;
-+		struct binder_buffer_object *last_bbo;
-+		size_t object_size = binder_get_object(proc, b, last_obj_offset,
-+						       &last_object);
-+		if (object_size != sizeof(*last_bbo))
-+			return false;
-+
-+		last_bbo = &last_object.bbo;
- 		/*
- 		 * Safe to retrieve the parent of last_obj, since it
- 		 * was already previously verified by the driver.
- 		 */
--		if ((last_obj->flags & BINDER_BUFFER_FLAG_HAS_PARENT) == 0)
-+		if ((last_bbo->flags & BINDER_BUFFER_FLAG_HAS_PARENT) == 0)
- 			return false;
--		last_min_offset = last_obj->parent_offset + sizeof(uintptr_t);
--		last_obj = (struct binder_buffer_object *)
--			(b->data + *(objects_start + last_obj->parent));
-+		last_min_offset = last_bbo->parent_offset + sizeof(uintptr_t);
-+		buffer_offset = objects_start_offset +
-+			sizeof(binder_size_t) * last_bbo->parent,
-+		binder_alloc_copy_from_buffer(&proc->alloc, &last_obj_offset,
-+					      b, buffer_offset,
-+					      sizeof(last_obj_offset));
- 	}
- 	return (fixup_offset >= last_min_offset);
- }
-@@ -2254,6 +2282,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
- {
- 	binder_size_t *offp, *off_start, *off_end;
+-	binder_size_t *offp, *off_start, *off_end;
  	int debug_id = buffer->debug_id;
-+	binder_size_t off_start_offset;
+-	binder_size_t off_start_offset;
++	binder_size_t off_start_offset, buffer_offset, off_end_offset;
  
  	binder_debug(BINDER_DEBUG_TRANSACTION,
- 		     "%d buffer release %d, size %zd-%zd, failed at %pK\n",
-@@ -2263,8 +2292,8 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+-		     "%d buffer release %d, size %zd-%zd, failed at %pK\n",
++		     "%d buffer release %d, size %zd-%zd, failed at %llx\n",
+ 		     proc->pid, buffer->debug_id,
+-		     buffer->data_size, buffer->offsets_size, failed_at);
++		     buffer->data_size, buffer->offsets_size,
++		     (unsigned long long)failed_at);
+ 
  	if (buffer->target_node)
  		binder_dec_node(buffer->target_node, 1, 0);
  
--	off_start = (binder_size_t *)(buffer->data +
--				      ALIGN(buffer->data_size, sizeof(void *)));
-+	off_start_offset = ALIGN(buffer->data_size, sizeof(void *));
-+	off_start = (binder_size_t *)(buffer->data + off_start_offset);
- 	if (failed_at)
- 		off_end = failed_at;
- 	else
-@@ -2350,6 +2379,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
- 		case BINDER_TYPE_FDA: {
+ 	off_start_offset = ALIGN(buffer->data_size, sizeof(void *));
+-	off_start = (binder_size_t *)(buffer->data + off_start_offset);
+-	if (failed_at)
+-		off_end = failed_at;
+-	else
+-		off_end = (void *)off_start + buffer->offsets_size;
+-	for (offp = off_start; offp < off_end; offp++) {
++	off_end_offset = is_failure ? failed_at :
++				off_start_offset + buffer->offsets_size;
++	for (buffer_offset = off_start_offset; buffer_offset < off_end_offset;
++	     buffer_offset += sizeof(binder_size_t)) {
+ 		struct binder_object_header *hdr;
+ 		size_t object_size;
+ 		struct binder_object object;
+ 		binder_size_t object_offset;
+-		binder_size_t buffer_offset = (uintptr_t)offp -
+-			(uintptr_t)buffer->data;
+ 
+ 		binder_alloc_copy_from_buffer(&proc->alloc, &object_offset,
+ 					      buffer, buffer_offset,
+@@ -2380,9 +2377,10 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
  			struct binder_fd_array_object *fda;
  			struct binder_buffer_object *parent;
-+			struct binder_object ptr_object;
- 			uintptr_t parent_buffer;
- 			u32 *fd_array;
+ 			struct binder_object ptr_object;
+-			u32 *fd_array;
++			binder_size_t fda_offset;
  			size_t fd_index;
-@@ -2365,8 +2395,10 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 			binder_size_t fd_buf_size;
++			binder_size_t num_valid;
+ 
+ 			if (proc->tsk != current->group_leader) {
+ 				/*
+@@ -2393,12 +2391,14 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 				continue;
  			}
  
++			num_valid = (buffer_offset - off_start_offset) /
++						sizeof(binder_size_t);
  			fda = to_binder_fd_array_object(hdr);
--			parent = binder_validate_ptr(buffer, fda->parent,
--						     off_start,
-+			parent = binder_validate_ptr(proc, buffer, &ptr_object,
-+						     fda->parent,
-+						     off_start_offset,
-+						     NULL,
- 						     offp - off_start);
+ 			parent = binder_validate_ptr(proc, buffer, &ptr_object,
+ 						     fda->parent,
+ 						     off_start_offset,
+ 						     NULL,
+-						     offp - off_start);
++						     num_valid);
  			if (!parent) {
  				pr_err("transaction release %d bad parent offset\n",
-@@ -2665,9 +2697,9 @@ static int binder_translate_fd_array(struct binder_fd_array_object *fda,
- static int binder_fixup_parent(struct binder_transaction *t,
- 			       struct binder_thread *thread,
- 			       struct binder_buffer_object *bp,
--			       binder_size_t *off_start,
-+			       binder_size_t off_start_offset,
- 			       binder_size_t num_valid,
--			       struct binder_buffer_object *last_fixup_obj,
-+			       binder_size_t last_fixup_obj_off,
- 			       binder_size_t last_fixup_min_off)
+ 				       debug_id);
+@@ -2417,14 +2417,21 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 				       debug_id, (u64)fda->num_fds);
+ 				continue;
+ 			}
+-			fd_array = (u32 *)(uintptr_t)
+-				(parent->buffer + fda->parent_offset);
++			/*
++			 * the source data for binder_buffer_object is visible
++			 * to user-space and the @buffer element is the user
++			 * pointer to the buffer_object containing the fd_array.
++			 * Convert the address to an offset relative to
++			 * the base of the transaction buffer.
++			 */
++			fda_offset =
++			    (parent->buffer - (uintptr_t)buffer->user_data) +
++			    fda->parent_offset;
+ 			for (fd_index = 0; fd_index < fda->num_fds;
+ 			     fd_index++) {
+ 				u32 fd;
+-				binder_size_t offset =
+-					(uintptr_t)&fd_array[fd_index] -
+-					(uintptr_t)buffer->data;
++				binder_size_t offset = fda_offset +
++					fd_index * sizeof(fd);
+ 
+ 				binder_alloc_copy_from_buffer(&proc->alloc,
+ 							      &fd,
+@@ -2638,7 +2645,7 @@ static int binder_translate_fd_array(struct binder_fd_array_object *fda,
+ 				     struct binder_transaction *in_reply_to)
  {
- 	struct binder_buffer_object *parent;
-@@ -2675,20 +2707,25 @@ static int binder_fixup_parent(struct binder_transaction *t,
- 	struct binder_buffer *b = t->buffer;
+ 	binder_size_t fdi, fd_buf_size;
+-	u32 *fd_array;
++	binder_size_t fda_offset;
  	struct binder_proc *proc = thread->proc;
  	struct binder_proc *target_proc = t->to_proc;
-+	struct binder_object object;
-+	binder_size_t buffer_offset;
-+	binder_size_t parent_offset;
  
- 	if (!(bp->flags & BINDER_BUFFER_FLAG_HAS_PARENT))
- 		return 0;
- 
--	parent = binder_validate_ptr(b, bp->parent, off_start, num_valid);
-+	parent = binder_validate_ptr(target_proc, b, &object, bp->parent,
-+				     off_start_offset, &parent_offset,
-+				     num_valid);
- 	if (!parent) {
- 		binder_user_error("%d:%d got transaction with invalid parent offset or type\n",
- 				  proc->pid, thread->pid);
+@@ -2655,8 +2662,16 @@ static int binder_translate_fd_array(struct binder_fd_array_object *fda,
+ 				  proc->pid, thread->pid, (u64)fda->num_fds);
  		return -EINVAL;
  	}
- 
--	if (!binder_validate_fixup(b, off_start,
--				   parent, bp->parent_offset,
--				   last_fixup_obj,
-+	if (!binder_validate_fixup(target_proc, b, off_start_offset,
-+				   parent_offset, bp->parent_offset,
-+				   last_fixup_obj_off,
- 				   last_fixup_min_off)) {
- 		binder_user_error("%d:%d got transaction with out-of-order buffer fixup\n",
+-	fd_array = (u32 *)(uintptr_t)(parent->buffer + fda->parent_offset);
+-	if (!IS_ALIGNED((unsigned long)fd_array, sizeof(u32))) {
++	/*
++	 * the source data for binder_buffer_object is visible
++	 * to user-space and the @buffer element is the user
++	 * pointer to the buffer_object containing the fd_array.
++	 * Convert the address to an offset relative to
++	 * the base of the transaction buffer.
++	 */
++	fda_offset = (parent->buffer - (uintptr_t)t->buffer->user_data) +
++		fda->parent_offset;
++	if (!IS_ALIGNED((unsigned long)fda_offset, sizeof(u32))) {
+ 		binder_user_error("%d:%d parent offset not aligned correctly.\n",
  				  proc->pid, thread->pid);
-@@ -2705,7 +2742,10 @@ static int binder_fixup_parent(struct binder_transaction *t,
- 	parent_buffer = (u8 *)((uintptr_t)parent->buffer -
- 			binder_alloc_get_user_buffer_offset(
- 				&target_proc->alloc));
--	*(binder_uintptr_t *)(parent_buffer + bp->parent_offset) = bp->buffer;
-+	buffer_offset = bp->parent_offset +
-+			(uintptr_t)parent_buffer - (uintptr_t)b->data;
-+	binder_alloc_copy_to_buffer(&target_proc->alloc, b, buffer_offset,
-+				    &bp->buffer, sizeof(bp->buffer));
+ 		return -EINVAL;
+@@ -2664,9 +2679,7 @@ static int binder_translate_fd_array(struct binder_fd_array_object *fda,
+ 	for (fdi = 0; fdi < fda->num_fds; fdi++) {
+ 		u32 fd;
+ 		int ret;
+-		binder_size_t offset =
+-			(uintptr_t)&fd_array[fdi] -
+-			(uintptr_t)t->buffer->data;
++		binder_size_t offset = fda_offset + fdi * sizeof(fd);
  
- 	return 0;
- }
-@@ -2825,6 +2865,7 @@ static void binder_transaction(struct binder_proc *proc,
+ 		binder_alloc_copy_from_buffer(&target_proc->alloc,
+ 					      &fd, t->buffer,
+@@ -2724,7 +2737,7 @@ static int binder_fixup_parent(struct binder_transaction *t,
+ 		return -EINVAL;
+ 	}
+ 	buffer_offset = bp->parent_offset +
+-			(uintptr_t)parent->buffer - (uintptr_t)b->data;
++			(uintptr_t)parent->buffer - (uintptr_t)b->user_data;
+ 	binder_alloc_copy_to_buffer(&target_proc->alloc, b, buffer_offset,
+ 				    &bp->buffer, sizeof(bp->buffer));
+ 
+@@ -2845,10 +2858,10 @@ static void binder_transaction(struct binder_proc *proc,
+ 	struct binder_transaction *t;
  	struct binder_work *w;
  	struct binder_work *tcomplete;
- 	binder_size_t *offp, *off_end, *off_start;
-+	binder_size_t off_start_offset;
+-	binder_size_t *offp, *off_end, *off_start;
+-	binder_size_t off_start_offset;
++	binder_size_t buffer_offset = 0;
++	binder_size_t off_start_offset, off_end_offset;
  	binder_size_t off_min;
- 	u8 *sg_bufp, *sg_buf_end;
+-	u8 *sg_bufp, *sg_buf_end;
++	binder_size_t sg_buf_offset, sg_buf_end_offset;
  	struct binder_proc *target_proc = NULL;
-@@ -2835,7 +2876,7 @@ static void binder_transaction(struct binder_proc *proc,
- 	uint32_t return_error = 0;
- 	uint32_t return_error_param = 0;
- 	uint32_t return_error_line = 0;
--	struct binder_buffer_object *last_fixup_obj = NULL;
-+	binder_size_t last_fixup_obj_off = 0;
- 	binder_size_t last_fixup_min_off = 0;
- 	struct binder_context *context = proc->context;
- 	int t_debug_id = atomic_inc_return(&binder_last_id);
-@@ -3132,8 +3173,8 @@ static void binder_transaction(struct binder_proc *proc,
+ 	struct binder_thread *target_thread = NULL;
+ 	struct binder_node *target_node = NULL;
+@@ -3141,7 +3154,7 @@ static void binder_transaction(struct binder_proc *proc,
+ 				    ALIGN(extra_buffers_size, sizeof(void *)) -
+ 				    ALIGN(secctx_sz, sizeof(u64));
+ 
+-		t->security_ctx = (uintptr_t)t->buffer->data + buf_offset;
++		t->security_ctx = (uintptr_t)t->buffer->user_data + buf_offset;
+ 		binder_alloc_copy_to_buffer(&target_proc->alloc,
+ 					    t->buffer, buf_offset,
+ 					    secctx, secctx_sz);
+@@ -3152,9 +3165,6 @@ static void binder_transaction(struct binder_proc *proc,
  	t->buffer->transaction = t;
  	t->buffer->target_node = target_node;
  	trace_binder_transaction_alloc_buf(t->buffer);
--	off_start = (binder_size_t *)(t->buffer->data +
--				      ALIGN(tr->data_size, sizeof(void *)));
-+	off_start_offset = ALIGN(tr->data_size, sizeof(void *));
-+	off_start = (binder_size_t *)(t->buffer->data + off_start_offset);
- 	offp = off_start;
+-	off_start_offset = ALIGN(tr->data_size, sizeof(void *));
+-	off_start = (binder_size_t *)(t->buffer->data + off_start_offset);
+-	offp = off_start;
  
  	if (binder_alloc_copy_user_to_buffer(
-@@ -3266,11 +3307,15 @@ static void binder_transaction(struct binder_proc *proc,
- 						    fp, sizeof(*fp));
- 		} break;
- 		case BINDER_TYPE_FDA: {
-+			struct binder_object ptr_object;
-+			binder_size_t parent_offset;
+ 				&target_proc->alloc,
+@@ -3200,17 +3210,18 @@ static void binder_transaction(struct binder_proc *proc,
+ 		return_error_line = __LINE__;
+ 		goto err_bad_offset;
+ 	}
+-	off_end = (void *)off_start + tr->offsets_size;
+-	sg_bufp = (u8 *)(PTR_ALIGN(off_end, sizeof(void *)));
+-	sg_buf_end = sg_bufp + extra_buffers_size;
++	off_start_offset = ALIGN(tr->data_size, sizeof(void *));
++	buffer_offset = off_start_offset;
++	off_end_offset = off_start_offset + tr->offsets_size;
++	sg_buf_offset = ALIGN(off_end_offset, sizeof(void *));
++	sg_buf_end_offset = sg_buf_offset + extra_buffers_size;
+ 	off_min = 0;
+-	for (; offp < off_end; offp++) {
++	for (buffer_offset = off_start_offset; buffer_offset < off_end_offset;
++	     buffer_offset += sizeof(binder_size_t)) {
+ 		struct binder_object_header *hdr;
+ 		size_t object_size;
+ 		struct binder_object object;
+ 		binder_size_t object_offset;
+-		binder_size_t buffer_offset =
+-			(uintptr_t)offp - (uintptr_t)t->buffer->data;
+ 
+ 		binder_alloc_copy_from_buffer(&target_proc->alloc,
+ 					      &object_offset,
+@@ -3290,12 +3301,14 @@ static void binder_transaction(struct binder_proc *proc,
+ 			binder_size_t parent_offset;
  			struct binder_fd_array_object *fda =
  				to_binder_fd_array_object(hdr);
++			size_t num_valid = (buffer_offset - off_start_offset) *
++						sizeof(binder_size_t);
  			struct binder_buffer_object *parent =
--				binder_validate_ptr(t->buffer, fda->parent,
--						    off_start,
-+				binder_validate_ptr(target_proc, t->buffer,
-+						    &ptr_object, fda->parent,
-+						    off_start_offset,
-+						    &parent_offset,
- 						    offp - off_start);
+ 				binder_validate_ptr(target_proc, t->buffer,
+ 						    &ptr_object, fda->parent,
+ 						    off_start_offset,
+ 						    &parent_offset,
+-						    offp - off_start);
++						    num_valid);
  			if (!parent) {
  				binder_user_error("%d:%d got transaction with invalid parent offset or type\n",
-@@ -3280,9 +3325,11 @@ static void binder_transaction(struct binder_proc *proc,
- 				return_error_line = __LINE__;
- 				goto err_bad_parent;
- 			}
--			if (!binder_validate_fixup(t->buffer, off_start,
--						   parent, fda->parent_offset,
--						   last_fixup_obj,
-+			if (!binder_validate_fixup(target_proc, t->buffer,
-+						   off_start_offset,
-+						   parent_offset,
-+						   fda->parent_offset,
-+						   last_fixup_obj_off,
- 						   last_fixup_min_off)) {
- 				binder_user_error("%d:%d got transaction with out-of-order buffer fixup\n",
  						  proc->pid, thread->pid);
-@@ -3299,7 +3346,7 @@ static void binder_transaction(struct binder_proc *proc,
- 				return_error_line = __LINE__;
- 				goto err_translate_failed;
- 			}
--			last_fixup_obj = parent;
-+			last_fixup_obj_off = parent_offset;
- 			last_fixup_min_off =
- 				fda->parent_offset + sizeof(u32) * fda->num_fds;
- 		} break;
-@@ -3338,9 +3385,10 @@ static void binder_transaction(struct binder_proc *proc,
- 						&target_proc->alloc);
- 			sg_bufp += ALIGN(bp->length, sizeof(u64));
+@@ -3332,9 +3345,8 @@ static void binder_transaction(struct binder_proc *proc,
+ 		case BINDER_TYPE_PTR: {
+ 			struct binder_buffer_object *bp =
+ 				to_binder_buffer_object(hdr);
+-			size_t buf_left = sg_buf_end - sg_bufp;
+-			binder_size_t sg_buf_offset = (uintptr_t)sg_bufp -
+-				(uintptr_t)t->buffer->data;
++			size_t buf_left = sg_buf_end_offset - sg_buf_offset;
++			size_t num_valid;
  
--			ret = binder_fixup_parent(t, thread, bp, off_start,
-+			ret = binder_fixup_parent(t, thread, bp,
-+						  off_start_offset,
- 						  offp - off_start,
--						  last_fixup_obj,
-+						  last_fixup_obj_off,
+ 			if (bp->length > buf_left) {
+ 				binder_user_error("%d:%d got transaction with too large buffer\n",
+@@ -3359,12 +3371,15 @@ static void binder_transaction(struct binder_proc *proc,
+ 				goto err_copy_data_failed;
+ 			}
+ 			/* Fixup buffer pointer to target proc address space */
+-			bp->buffer = (uintptr_t)sg_bufp;
+-			sg_bufp += ALIGN(bp->length, sizeof(u64));
++			bp->buffer = (uintptr_t)
++				t->buffer->user_data + sg_buf_offset;
++			sg_buf_offset += ALIGN(bp->length, sizeof(u64));
+ 
++			num_valid = (buffer_offset - off_start_offset) *
++					sizeof(binder_size_t);
+ 			ret = binder_fixup_parent(t, thread, bp,
+ 						  off_start_offset,
+-						  offp - off_start,
++						  num_valid,
+ 						  last_fixup_obj_off,
  						  last_fixup_min_off);
  			if (ret < 0) {
- 				return_error = BR_FAILED_REPLY;
-@@ -3351,7 +3399,7 @@ static void binder_transaction(struct binder_proc *proc,
- 			binder_alloc_copy_to_buffer(&target_proc->alloc,
- 						    t->buffer, object_offset,
- 						    bp, sizeof(*bp));
--			last_fixup_obj = t->buffer->data + object_offset;
-+			last_fixup_obj_off = object_offset;
- 			last_fixup_min_off = 0;
- 		} break;
- 		default:
+@@ -3456,7 +3471,8 @@ static void binder_transaction(struct binder_proc *proc,
+ err_copy_data_failed:
+ 	binder_free_txn_fixups(t);
+ 	trace_binder_transaction_failed_buffer_release(t->buffer);
+-	binder_transaction_buffer_release(target_proc, t->buffer, offp);
++	binder_transaction_buffer_release(target_proc, t->buffer,
++					  buffer_offset, true);
+ 	if (target_node)
+ 		binder_dec_node_tmpref(target_node);
+ 	target_node = NULL;
+@@ -3557,7 +3573,7 @@ binder_free_buf(struct binder_proc *proc, struct binder_buffer *buffer)
+ 		binder_node_inner_unlock(buf_node);
+ 	}
+ 	trace_binder_transaction_buffer_release(buffer);
+-	binder_transaction_buffer_release(proc, buffer, NULL);
++	binder_transaction_buffer_release(proc, buffer, 0, false);
+ 	binder_alloc_free_buf(&proc->alloc, buffer);
+ }
+ 
+@@ -4451,7 +4467,7 @@ static int binder_thread_read(struct binder_proc *proc,
+ 		}
+ 		trd->data_size = t->buffer->data_size;
+ 		trd->offsets_size = t->buffer->offsets_size;
+-		trd->data.ptr.buffer = (uintptr_t)t->buffer->data;
++		trd->data.ptr.buffer = (uintptr_t)t->buffer->user_data;
+ 		trd->data.ptr.offsets = trd->data.ptr.buffer +
+ 					ALIGN(t->buffer->data_size,
+ 					    sizeof(void *));
+@@ -5489,7 +5505,7 @@ static void print_binder_transaction_ilocked(struct seq_file *m,
+ 		seq_printf(m, " node %d", buffer->target_node->debug_id);
+ 	seq_printf(m, " size %zd:%zd data %pK\n",
+ 		   buffer->data_size, buffer->offsets_size,
+-		   buffer->data);
++		   buffer->user_data);
+ }
+ 
+ static void print_binder_work_ilocked(struct seq_file *m,
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 0e7f0aa967c32..000dd4d145bae 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -69,9 +69,8 @@ static size_t binder_alloc_buffer_size(struct binder_alloc *alloc,
+ 				       struct binder_buffer *buffer)
+ {
+ 	if (list_is_last(&buffer->entry, &alloc->buffers))
+-		return (u8 *)alloc->buffer +
+-			alloc->buffer_size - (u8 *)buffer->data;
+-	return (u8 *)binder_buffer_next(buffer)->data - (u8 *)buffer->data;
++		return alloc->buffer + alloc->buffer_size - buffer->user_data;
++	return binder_buffer_next(buffer)->user_data - buffer->user_data;
+ }
+ 
+ static void binder_insert_free_buffer(struct binder_alloc *alloc,
+@@ -121,9 +120,9 @@ static void binder_insert_allocated_buffer_locked(
+ 		buffer = rb_entry(parent, struct binder_buffer, rb_node);
+ 		BUG_ON(buffer->free);
+ 
+-		if (new_buffer->data < buffer->data)
++		if (new_buffer->user_data < buffer->user_data)
+ 			p = &parent->rb_left;
+-		else if (new_buffer->data > buffer->data)
++		else if (new_buffer->user_data > buffer->user_data)
+ 			p = &parent->rb_right;
+ 		else
+ 			BUG();
+@@ -138,17 +137,17 @@ static struct binder_buffer *binder_alloc_prepare_to_free_locked(
+ {
+ 	struct rb_node *n = alloc->allocated_buffers.rb_node;
+ 	struct binder_buffer *buffer;
+-	void *uptr;
++	void __user *uptr;
+ 
+-	uptr = (void *)user_ptr;
++	uptr = (void __user *)user_ptr;
+ 
+ 	while (n) {
+ 		buffer = rb_entry(n, struct binder_buffer, rb_node);
+ 		BUG_ON(buffer->free);
+ 
+-		if (uptr < buffer->data)
++		if (uptr < buffer->user_data)
+ 			n = n->rb_left;
+-		else if (uptr > buffer->data)
++		else if (uptr > buffer->user_data)
+ 			n = n->rb_right;
+ 		else {
+ 			/*
+@@ -188,9 +187,9 @@ struct binder_buffer *binder_alloc_prepare_to_free(struct binder_alloc *alloc,
+ }
+ 
+ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+-				    void *start, void *end)
++				    void __user *start, void __user *end)
+ {
+-	void *page_addr;
++	void __user *page_addr;
+ 	unsigned long user_page_addr;
+ 	struct binder_lru_page *page;
+ 	struct vm_area_struct *vma = NULL;
+@@ -357,8 +356,8 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
+ 	struct binder_buffer *buffer;
+ 	size_t buffer_size;
+ 	struct rb_node *best_fit = NULL;
+-	void *has_page_addr;
+-	void *end_page_addr;
++	void __user *has_page_addr;
++	void __user *end_page_addr;
+ 	size_t size, data_offsets_size;
+ 	int ret;
+ 
+@@ -456,15 +455,15 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
+ 		     "%d: binder_alloc_buf size %zd got buffer %pK size %zd\n",
+ 		      alloc->pid, size, buffer, buffer_size);
+ 
+-	has_page_addr =
+-		(void *)(((uintptr_t)buffer->data + buffer_size) & PAGE_MASK);
++	has_page_addr = (void __user *)
++		(((uintptr_t)buffer->user_data + buffer_size) & PAGE_MASK);
+ 	WARN_ON(n && buffer_size != size);
+ 	end_page_addr =
+-		(void *)PAGE_ALIGN((uintptr_t)buffer->data + size);
++		(void __user *)PAGE_ALIGN((uintptr_t)buffer->user_data + size);
+ 	if (end_page_addr > has_page_addr)
+ 		end_page_addr = has_page_addr;
+-	ret = binder_update_page_range(alloc, 1,
+-	    (void *)PAGE_ALIGN((uintptr_t)buffer->data), end_page_addr);
++	ret = binder_update_page_range(alloc, 1, (void __user *)
++		PAGE_ALIGN((uintptr_t)buffer->user_data), end_page_addr);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+@@ -477,7 +476,7 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
+ 			       __func__, alloc->pid);
+ 			goto err_alloc_buf_struct_failed;
+ 		}
+-		new_buffer->data = (u8 *)buffer->data + size;
++		new_buffer->user_data = (u8 __user *)buffer->user_data + size;
+ 		list_add(&new_buffer->entry, &buffer->entry);
+ 		new_buffer->free = 1;
+ 		binder_insert_free_buffer(alloc, new_buffer);
+@@ -503,8 +502,8 @@ static struct binder_buffer *binder_alloc_new_buf_locked(
+ 	return buffer;
+ 
+ err_alloc_buf_struct_failed:
+-	binder_update_page_range(alloc, 0,
+-				 (void *)PAGE_ALIGN((uintptr_t)buffer->data),
++	binder_update_page_range(alloc, 0, (void __user *)
++				 PAGE_ALIGN((uintptr_t)buffer->user_data),
+ 				 end_page_addr);
+ 	return ERR_PTR(-ENOMEM);
+ }
+@@ -539,14 +538,15 @@ struct binder_buffer *binder_alloc_new_buf(struct binder_alloc *alloc,
+ 	return buffer;
+ }
+ 
+-static void *buffer_start_page(struct binder_buffer *buffer)
++static void __user *buffer_start_page(struct binder_buffer *buffer)
+ {
+-	return (void *)((uintptr_t)buffer->data & PAGE_MASK);
++	return (void __user *)((uintptr_t)buffer->user_data & PAGE_MASK);
+ }
+ 
+-static void *prev_buffer_end_page(struct binder_buffer *buffer)
++static void __user *prev_buffer_end_page(struct binder_buffer *buffer)
+ {
+-	return (void *)(((uintptr_t)(buffer->data) - 1) & PAGE_MASK);
++	return (void __user *)
++		(((uintptr_t)(buffer->user_data) - 1) & PAGE_MASK);
+ }
+ 
+ static void binder_delete_free_buffer(struct binder_alloc *alloc,
+@@ -561,7 +561,8 @@ static void binder_delete_free_buffer(struct binder_alloc *alloc,
+ 		to_free = false;
+ 		binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
+ 				   "%d: merge free, buffer %pK share page with %pK\n",
+-				   alloc->pid, buffer->data, prev->data);
++				   alloc->pid, buffer->user_data,
++				   prev->user_data);
+ 	}
+ 
+ 	if (!list_is_last(&buffer->entry, &alloc->buffers)) {
+@@ -571,23 +572,24 @@ static void binder_delete_free_buffer(struct binder_alloc *alloc,
+ 			binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
+ 					   "%d: merge free, buffer %pK share page with %pK\n",
+ 					   alloc->pid,
+-					   buffer->data,
+-					   next->data);
++					   buffer->user_data,
++					   next->user_data);
+ 		}
+ 	}
+ 
+-	if (PAGE_ALIGNED(buffer->data)) {
++	if (PAGE_ALIGNED(buffer->user_data)) {
+ 		binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
+ 				   "%d: merge free, buffer start %pK is page aligned\n",
+-				   alloc->pid, buffer->data);
++				   alloc->pid, buffer->user_data);
+ 		to_free = false;
+ 	}
+ 
+ 	if (to_free) {
+ 		binder_alloc_debug(BINDER_DEBUG_BUFFER_ALLOC,
+ 				   "%d: merge free, buffer %pK do not share page with %pK or %pK\n",
+-				   alloc->pid, buffer->data,
+-				   prev->data, next ? next->data : NULL);
++				   alloc->pid, buffer->user_data,
++				   prev->user_data,
++				   next ? next->user_data : NULL);
+ 		binder_update_page_range(alloc, 0, buffer_start_page(buffer),
+ 					 buffer_start_page(buffer) + PAGE_SIZE);
+ 	}
+@@ -613,8 +615,8 @@ static void binder_free_buf_locked(struct binder_alloc *alloc,
+ 	BUG_ON(buffer->free);
+ 	BUG_ON(size > buffer_size);
+ 	BUG_ON(buffer->transaction != NULL);
+-	BUG_ON(buffer->data < alloc->buffer);
+-	BUG_ON(buffer->data > alloc->buffer + alloc->buffer_size);
++	BUG_ON(buffer->user_data < alloc->buffer);
++	BUG_ON(buffer->user_data > alloc->buffer + alloc->buffer_size);
+ 
+ 	if (buffer->async_transaction) {
+ 		alloc->free_async_space += size + sizeof(struct binder_buffer);
+@@ -625,8 +627,9 @@ static void binder_free_buf_locked(struct binder_alloc *alloc,
+ 	}
+ 
+ 	binder_update_page_range(alloc, 0,
+-		(void *)PAGE_ALIGN((uintptr_t)buffer->data),
+-		(void *)(((uintptr_t)buffer->data + buffer_size) & PAGE_MASK));
++		(void __user *)PAGE_ALIGN((uintptr_t)buffer->user_data),
++		(void __user *)(((uintptr_t)
++			  buffer->user_data + buffer_size) & PAGE_MASK));
+ 
+ 	rb_erase(&buffer->rb_node, &alloc->allocated_buffers);
+ 	buffer->free = 1;
+@@ -692,7 +695,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
+ 		goto err_already_mapped;
+ 	}
+ 
+-	alloc->buffer = (void *)vma->vm_start;
++	alloc->buffer = (void __user *)vma->vm_start;
+ 	mutex_unlock(&binder_alloc_mmap_lock);
+ 
+ 	alloc->pages = kcalloc((vma->vm_end - vma->vm_start) / PAGE_SIZE,
+@@ -712,7 +715,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
+ 		goto err_alloc_buf_struct_failed;
+ 	}
+ 
+-	buffer->data = alloc->buffer;
++	buffer->user_data = alloc->buffer;
+ 	list_add(&buffer->entry, &alloc->buffers);
+ 	buffer->free = 1;
+ 	binder_insert_free_buffer(alloc, buffer);
+@@ -773,7 +776,7 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
+ 		int i;
+ 
+ 		for (i = 0; i < alloc->buffer_size / PAGE_SIZE; i++) {
+-			void *page_addr;
++			void __user *page_addr;
+ 			bool on_lru;
+ 
+ 			if (!alloc->pages[i].page_ptr)
+@@ -804,7 +807,7 @@ static void print_binder_buffer(struct seq_file *m, const char *prefix,
+ 				struct binder_buffer *buffer)
+ {
+ 	seq_printf(m, "%s %d: %pK size %zd:%zd:%zd %s\n",
+-		   prefix, buffer->debug_id, buffer->data,
++		   prefix, buffer->debug_id, buffer->user_data,
+ 		   buffer->data_size, buffer->offsets_size,
+ 		   buffer->extra_buffers_size,
+ 		   buffer->transaction ? "active" : "delivered");
+@@ -1056,7 +1059,7 @@ static inline bool check_buffer(struct binder_alloc *alloc,
+  * @pgoffp: address to copy final page offset to
+  *
+  * Lookup the struct page corresponding to the address
+- * at @buffer_offset into @buffer->data. If @pgoffp is not
++ * at @buffer_offset into @buffer->user_data. If @pgoffp is not
+  * NULL, the byte-offset into the page is written there.
+  *
+  * The caller is responsible to ensure that the offset points
+@@ -1073,7 +1076,7 @@ static struct page *binder_alloc_get_page(struct binder_alloc *alloc,
+ 					  pgoff_t *pgoffp)
+ {
+ 	binder_size_t buffer_space_offset = buffer_offset +
+-		(buffer->data - alloc->buffer);
++		(buffer->user_data - alloc->buffer);
+ 	pgoff_t pgoff = buffer_space_offset & ~PAGE_MASK;
+ 	size_t index = buffer_space_offset >> PAGE_SHIFT;
+ 	struct binder_lru_page *lru_page;
+diff --git a/drivers/android/binder_alloc.h b/drivers/android/binder_alloc.h
+index 1026e9fb20db1..b60d161b7a7ae 100644
+--- a/drivers/android/binder_alloc.h
++++ b/drivers/android/binder_alloc.h
+@@ -40,7 +40,7 @@ struct binder_transaction;
+  * @data_size:          size of @transaction data
+  * @offsets_size:       size of array of offsets
+  * @extra_buffers_size: size of space for other objects (like sg lists)
+- * @data:               pointer to base of buffer space
++ * @user_data:          user pointer to base of buffer space
+  *
+  * Bookkeeping structure for binder transaction buffers
+  */
+@@ -59,7 +59,7 @@ struct binder_buffer {
+ 	size_t data_size;
+ 	size_t offsets_size;
+ 	size_t extra_buffers_size;
+-	void *data;
++	void __user *user_data;
+ };
+ 
+ /**
+@@ -102,7 +102,7 @@ struct binder_alloc {
+ 	struct mutex mutex;
+ 	struct vm_area_struct *vma;
+ 	struct mm_struct *vma_vm_mm;
+-	void *buffer;
++	void __user *buffer;
+ 	struct list_head buffers;
+ 	struct rb_root free_buffers;
+ 	struct rb_root allocated_buffers;
+diff --git a/drivers/android/binder_alloc_selftest.c b/drivers/android/binder_alloc_selftest.c
+index 8bd7bcef967d2..f0f4d7d026351 100644
+--- a/drivers/android/binder_alloc_selftest.c
++++ b/drivers/android/binder_alloc_selftest.c
+@@ -105,8 +105,8 @@ static bool check_buffer_pages_allocated(struct binder_alloc *alloc,
+ 	void *page_addr, *end;
+ 	int page_index;
+ 
+-	end = (void *)PAGE_ALIGN((uintptr_t)buffer->data + size);
+-	page_addr = buffer->data;
++	end = (void *)PAGE_ALIGN((uintptr_t)buffer->user_data + size);
++	page_addr = buffer->user_data;
+ 	for (; page_addr < end; page_addr += PAGE_SIZE) {
+ 		page_index = (page_addr - alloc->buffer) / PAGE_SIZE;
+ 		if (!alloc->pages[page_index].page_ptr ||
+diff --git a/drivers/android/binder_trace.h b/drivers/android/binder_trace.h
+index 14de7ac57a34d..83cc254d2335a 100644
+--- a/drivers/android/binder_trace.h
++++ b/drivers/android/binder_trace.h
+@@ -293,7 +293,7 @@ DEFINE_EVENT(binder_buffer_class, binder_transaction_failed_buffer_release,
+ 
+ TRACE_EVENT(binder_update_page_range,
+ 	TP_PROTO(struct binder_alloc *alloc, bool allocate,
+-		 void *start, void *end),
++		 void __user *start, void __user *end),
+ 	TP_ARGS(alloc, allocate, start, end),
+ 	TP_STRUCT__entry(
+ 		__field(int, proc)
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
