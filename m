@@ -2,114 +2,114 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A42C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A2CC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708492146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:01:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t3SKHIz8"
+	by mail.kernel.org (Postfix) with ESMTP id C0A3F21907
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfBHCBm (ORCPT
+        id S1726902AbfBHCOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 21:01:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42185 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbfBHCBm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 21:01:42 -0500
-Received: by mail-pf1-f195.google.com with SMTP id m6so914639pfa.9;
-        Thu, 07 Feb 2019 18:01:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rCXYuL2yAB+lK2US45/0mGxsgwjtq+ulyYDwTWv61C0=;
-        b=t3SKHIz8BoD7qGbeZngs12TnU5mv/oLSbdc3Aa4Sy5LggK3MnB3vo20Wgn/o/cg98k
-         60NDhIa35S38Duzo9bU4OjSFSG7A8G3CtfRtFlF3MtpfteAtnbgENz0TZlv2GGP+pCJT
-         LnA6Ne57lzA8S7HJpc83udB2BNF/emDruyTW31yikjUkh+/ITkE7c8cpFNmFoJiJBuFl
-         Pwe8PtHUg6XbGhqTolyhZO6vEn7EZhkMYRI9xUQc3CFbbZPfwFZECmeiPDGsjtYd8+xa
-         wgYmeyFW/5NonKtjaLD0dyUp/BslcoGtsrUAsxWRNOkhl9w/0T9mbuwDy+q2Tqh37YhW
-         Xtbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rCXYuL2yAB+lK2US45/0mGxsgwjtq+ulyYDwTWv61C0=;
-        b=RxErkFDtkCPX7QGMfsW8ZQ/SEIKS2VtSF68QNKBZ+jM9IMQXrPymcnhSPOQeDBp4S4
-         js7zhEp3uVgUhoH3fivDalsxlC3p97iPEXplVp6DS0C8pv6eNmOxBO7Hjy1tvMK8p+YY
-         wQCW4M2vmwr1oKaePIkViZy5XfjDWb7x5EFcW95R8PaLi8VF76cfSlFrY9dtVcmXQWD3
-         bCvREpiFhHyOv3ozflNv7SBTWsH1k8FZ3VVMMeaeIsEhBK/MVDBHuvMh1RqcxEphKQRZ
-         l98hzXsoviGuXx36SgD6yEkI3jN5+s6wRxMgEmU9Rj43nYucBVP+dXhpSsSpP/d1B/Ci
-         wKeQ==
-X-Gm-Message-State: AHQUAuZFybJcq5PdZ0jakFX8SMccI8piO03hrFH2f21dqlERvLxoOy8u
-        oSYCB1MWY1D9oTHvjkefUpQ=
-X-Google-Smtp-Source: AHgI3Ia3XMfxae7D9RdSp4kC4yA9+lfsmjUeA4uj2E54LxMcvUG1ISZrl0dFGrEqvsX9Bjqbzxa4Og==
-X-Received: by 2002:a63:ce08:: with SMTP id y8mr13032128pgf.388.1549591301268;
-        Thu, 07 Feb 2019 18:01:41 -0800 (PST)
-Received: from localhost ([110.70.55.31])
-        by smtp.gmail.com with ESMTPSA id q5sm588767pfi.165.2019.02.07.18.01.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 18:01:40 -0800 (PST)
-Date:   Fri, 8 Feb 2019 11:01:37 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@ozlabs.org, akpm@linux-foundation.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
- description
-Message-ID: <20190208020137.GA22600@jagdpanzerIV>
-References: <20190207124635.3885-1-mpe@ellerman.id.au>
+        Thu, 7 Feb 2019 21:14:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:44634 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726775AbfBHCOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 21:14:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53A53EBD;
+        Thu,  7 Feb 2019 18:14:03 -0800 (PST)
+Received: from [10.162.40.126] (p8cg001049571a15.blr.arm.com [10.162.40.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C899D3F675;
+        Thu,  7 Feb 2019 18:14:00 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: [LSF/MM TOPIC] Non standard size THP
+To:     lsf-pc@lists.linux-foundation.org,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <dcb0b2cf-ba5c-e6ef-0b05-c6006227b6a9@arm.com>
+Date:   Fri, 8 Feb 2019 07:43:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207124635.3885-1-mpe@ellerman.id.au>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc-ing Steven
+Hello,
 
-  https://lore.kernel.org/lkml/20190207124635.3885-1-mpe@ellerman.id.au/T/#u
+THP is currently supported for
 
-On (02/07/19 23:46), Michael Ellerman wrote:
-> Arch code can set a "dump stack arch description string" which is
-> displayed with oops output to describe the hardware platform.
-> 
-> It is useful to initialise this as early as possible, so that an early
-> oops will have the hardware description.
-> 
-> However in practice we discover the hardware platform in stages, so it
-> would be useful to be able to incrementally fill in the hardware
-> description as we discover it.
-> 
-> This patch adds that ability, by creating dump_stack_add_arch_desc().
-> 
-> If there is no existing string it behaves exactly like
-> dump_stack_set_arch_desc(). However if there is an existing string it
-> appends to it, with a leading space.
-> 
-> This makes it easy to call it multiple times from different parts of the
-> code and get a reasonable looking result.
-> 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+- PMD level pages (anon and file)
+- PUD level pages (file - DAX file system)
 
-You probably can have a __init buffer somewhere in ppc code, append
-data to it, step by step, and call dump_stack_set_arch_desc() all
-the time.
+THP is a single entry mapping at standard page table levels (either PMD or PUD)
 
-But no real objections; dump_stack_add_arch_desc() can do.
+But architectures like ARM64 supports non-standard page table level huge pages
+with contiguous bits.
 
-FWIW,
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+- These are created as multiple entries at either PTE or PMD level
+- These multiple entries carry pages which are physically contiguous
+- A special PTE bit (PTE_CONT) is set indicating single entry to be contiguous
 
-	-ss
+These multiple contiguous entries create a huge page size which is different
+than standard PMD/PUD level but they provide benefits of huge memory like
+less number of faults, bigger TLB coverage, less TLB miss etc.
+
+Currently they are used as HugeTLB pages because
+
+	- HugeTLB page sizes is carried in the VMA
+	- Page table walker can operate on multiple PTE or PMD entries given its size in VMA
+	- Irrespective of HugeTLB page size its operated with set_huge_pte_at() at any level
+	- set_huge_pte_at() is arch specific which knows how to encode multiple consecutive entries
+	
+But not as THP huge pages because
+
+	- THP size is not encoded any where like VMA
+	- Page table walker expects it to be either at PUD (HPAGE_PUD_SIZE) or at PMD (HPAGE_PMD_SIZE)
+	- Page table operates directly with set_pmd_at() or set_pud_at()
+	- Direct faulted or promoted huge pages is verified with [pmd|pud]_trans_huge()
+
+How non-standard huge pages can be supported for THP
+
+	- THP starts recognizing non standard huge page (exported by arch) like HPAGE_CONT_(PMD|PTE)_SIZE
+	- THP starts operating for either on HPAGE_PMD_SIZE or HPAGE_CONT_PMD_SIZE or HPAGE_CONT_PTE_SIZE
+	- set_pmd_at() only recognizes HPAGE_PMD_SIZE hence replace set_pmd_at() with set_huge_pmd_at()
+	- set_huge_pmd_at() could differentiate between HPAGE_PMD_SIZE or HPAGE_CONT_PMD_SIZE
+	- In case for HPAGE_CONT_PTE_SIZE extend page table walker till PTE level
+	- Use set_huge_pte_at() which can operate on multiple contiguous PTE bits
+
+Kirill Shutemov proposed re-working the page table traversal during last year's
+LSFMM. A recursive page table walk just with level information would allow us to
+introduce artificial or non-standard page table levels for contiguous bit huge
+page support.
+
+https://lwn.net/Articles/753267/
+
+Here is the matrix for contiguous PTE and PMD sizes for various base page size
+configurations on ARM64. Promoting or faulting pages at contiguous PTE level is
+much more likely than PMD level which are more difficult to allocate at run time.
+    
+            CONT PTE    PMD    CONT PMD
+            --------    ---    --------
+    4K:        64K      2M        32M
+    16K:        2M     32M         1G
+    64K:        2M    512M        16G
+
+Having support for contiguous PTE size based THP size will help many workloads utilize
+THP benefits. I understand there would be much more fine grained details which need to
+be sorted out and difficulties to be overcome but its worth starting a discussion on this
+front which can really benefit workloads.
+
+- Anshuman
