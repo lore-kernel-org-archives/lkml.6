@@ -2,108 +2,110 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EABDC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C533AC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E552146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9953A217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="g1PCSE8H"
+	dkim=pass (1024-bit key) header.d=digidescorp.com header.i=@digidescorp.com header.b="bBtfyIzh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfBHRhK (ORCPT
+        id S1728412AbfBHRhI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:37:10 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54225 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbfBHRf3 (ORCPT
+        Fri, 8 Feb 2019 12:37:08 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33109 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728141AbfBHRf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 12:35:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d15so4361255wmb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:28 -0800 (PST)
+Received: by mail-it1-f194.google.com with SMTP id q78so9316858itc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=krZKYWoU8pidQJSuC93zX28N7u3H16YP6+0fJKp65YA=;
-        b=g1PCSE8H4NRPRwdR5gSw9St8gLtnFSfzX+xkJidkPUsJsGIOzc3pw3FuScFZqrjNxx
-         chfJBd+lXeZw0WTIonBnYn/Isugire9ZiVtiboJ3wdBMywQ/EyXV1GEeHdQtTkGwWlrA
-         NrtBJ9xVcMMc+6tblnK3PmlIsY8ZuqG2k+6O5LMA6QyZxXG/kqqxW1f0nLyvGQlnILIu
-         6rnv/Pk2ZaqZ+Lp0LAqwh1wfFs2A1WIHKUAE4Jxr4xDb+cfzZn0aqAM5rC9AhTTP5a5m
-         OaEGsMSrTIGBMtyUOUJZniXF+JXIs9GcDEhMFBjefyQkPdYDJbtiqHwptAVlzmXmPAvU
-         eQTg==
+        d=digidescorp.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/48HGg+33SRO0lkRonK7zd7mhVUUhsHQ0929pL4R4rI=;
+        b=bBtfyIzhLUdRgnMl4RNRmSpqKPPgtUbO3+QacKCcGzGXowrypAcsD3C/oSOZy8kLuE
+         kmgDRpvRDbKTq2jSZBthdeRtrcSuuX4HYNq5FWvWSWMIzppmSwI6y/Cn+MGPBLW5/G/9
+         jrJlrbTAA1/idTyYYCZ1/Blx893FffaTisUPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=krZKYWoU8pidQJSuC93zX28N7u3H16YP6+0fJKp65YA=;
-        b=NMl3+rTMc+DE7ecTLLWCDl595MDin1sGJaPl6BMXHEDF2e+vjIAU1tdNT/A2W+v9Tx
-         5PnvChgdz7fAJSoh/mW/3+ETR+jN/9xwDuWf+ZFotMFIvaNiekK3M4ZsIp5qE9kvloSD
-         UemNKd345cZXdtimQJmpE5UiDobVMRip5TBUwxZJh6JCZSw62GlmjBEQrx+W6H0YRT47
-         0fe8vWcrMTPU7IQ1xPU/Pryagp05uAe6+PwdHw8ahY9NGq+kCQpmLvuwsnwKC5LCKSfB
-         cb725bPxzUC+o8Cf7E6OqGJGjiLZqAr8S6tdHLxojG9MQ5hZW0ZMFWsurSWdVotymmyG
-         OL0g==
-X-Gm-Message-State: AHQUAuaY7eEFTWzyoVHRs2gg3ANRU3AWCtHH+yvyYsdnLE2QAb1aCSga
-        HMp+eIOfw34z1jtGPG8Ce42KiA==
-X-Google-Smtp-Source: AHgI3IbgQ/VM6XgrgnNUQ5bh34WjL5FESmPkUww+I9D6IlcykpHcCr/TefDLN7RCHYBkPQKD4t1/Qg==
-X-Received: by 2002:a1c:f00a:: with SMTP id a10mr2801634wmb.148.1549647327937;
-        Fri, 08 Feb 2019 09:35:27 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.26
+         :references;
+        bh=/48HGg+33SRO0lkRonK7zd7mhVUUhsHQ0929pL4R4rI=;
+        b=Tun54djwcH5ilQTMvp7AupQENW0qQnOUNbNyBoxo8/OsrL16JtDIjfH6MnPpvsG0KG
+         iaDrZL8KoMLOmp7b9nd9ZNRrDKQcsvGkBpuPQ4/x0qBoDJSZvtVCoQ2CmXzciyIr2GTf
+         qP1Jz8CuM70YPQ+kYAOfuqU3LWQT4TlybHTzMBtK0E+xHylQZfOo9MvLnw+wRmDnwoIa
+         HDtFCIXyD/iTvDsKg4IJXA2lFomov2Yif2L8OfSDmUe4LkBsOob8lSmDVbSvnXJQLxiG
+         aQ2BIcXWEzam5UbRC0NR5gJ1lixOprCvZ1yE3CTiKtSbhW69aiPOVWwMNBbr/HBm4gVh
+         F+wA==
+X-Gm-Message-State: AHQUAuZBs1uVxPMl5RerihVyANmQ/qPbPPellEa9Y9le3nePj8NI9Bjl
+        1uLv5SqY33ishbC5bb62eZTV4A==
+X-Google-Smtp-Source: AHgI3IagAZX1jsBpv6nmkze3UVMfkjuAFS1OurYyS3yC1iAHPCxZZfEMm4/nkpjqLzCKMyoydgJ85g==
+X-Received: by 2002:a6b:ec08:: with SMTP id c8mr6730109ioh.37.1549647328785;
+        Fri, 08 Feb 2019 09:35:28 -0800 (PST)
+Received: from iscandar.digidescorp.com (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id k1sm1198861iob.2.2019.02.08.09.35.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:27 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 18/33] ARM: davinci: aintc: remove unnecessary includes
-Date:   Fri,  8 Feb 2019 18:34:43 +0100
-Message-Id: <20190208173458.4801-19-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
-References: <20190208173458.4801-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 08 Feb 2019 09:35:28 -0800 (PST)
+From:   Steve Magnani <steve.magnani@digidescorp.com>
+X-Google-Original-From: Steve Magnani <steve@digidescorp.com>
+To:     jack@suse.com
+Cc:     linux-kernel@vger.kernel.org,
+        "Steven J . Magnani" <steve@digidescorp.com>
+Subject: [PATCH 2/2] udf: finalize integrity descriptor before writeback
+Date:   Fri,  8 Feb 2019 11:34:55 -0600
+Message-Id: <20190208173455.20151-3-steve@digidescorp.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190208173455.20151-1-steve@digidescorp.com>
+References: <20190208173455.20151-1-steve@digidescorp.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Make sure the CRC and tag checksum of the Logical Volume Integrity
+Descriptor are valid before the structure is written out to disk.
+Otherwise, unless the filesystem is unmounted gracefully, the on-disk
+LVID will be invalid - which is unnecessary filesystem damage.
 
-These includes are no longer required. Remove them.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
 ---
- arch/arm/mach-davinci/irq.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 0f469c59acfb..0768edfc3b66 100644
---- a/arch/arm/mach-davinci/irq.c
-+++ b/arch/arm/mach-davinci/irq.c
-@@ -12,10 +12,6 @@
- #include <linux/io.h>
- #include <linux/irqdomain.h>
+--- a/fs/udf/super.c	2019-02-08 10:39:48.351039434 -0600
++++ b/fs/udf/super.c	2019-02-08 10:42:26.017400020 -0600
+@@ -1856,8 +1856,8 @@ u64 lvid_get_unique_id(struct super_bloc
+ 	if (!(++uniqueID & 0xFFFFFFFF))
+ 		uniqueID += 16;
+ 	lvhd->uniqueID = cpu_to_le64(uniqueID);
++	udf_updated_lvid(sb);
+ 	mutex_unlock(&sbi->s_alloc_mutex);
+-	mark_buffer_dirty(bh);
  
--#include <mach/hardware.h>
--#include <mach/cputype.h>
--#include <mach/common.h>
--#include <asm/mach/irq.h>
- #include <asm/exception.h>
+ 	return ret;
+ }
+@@ -2154,11 +2154,20 @@ static int udf_sync_fs(struct super_bloc
  
- #define DAVINCI_AINTC_FIQ_REG0		0x00
--- 
-2.20.1
-
+ 	mutex_lock(&sbi->s_alloc_mutex);
+ 	if (sbi->s_lvid_dirty) {
++		struct buffer_head *bh = sbi->s_lvid_bh;
++
++		if (bh) {
++			struct logicalVolIntegrityDesc *lvid;
++
++			lvid = (struct logicalVolIntegrityDesc *)bh->b_data;
++			udf_finalize_lvid(lvid);
++		}
++
+ 		/*
+ 		 * Blockdevice will be synced later so we don't have to submit
+ 		 * the buffer for IO
+ 		 */
+-		mark_buffer_dirty(sbi->s_lvid_bh);
++		mark_buffer_dirty(bh);
+ 		sb->s_dirt = 0;
+ 		sbi->s_lvid_dirty = 0;
+ 	}
