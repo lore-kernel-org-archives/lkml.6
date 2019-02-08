@@ -2,135 +2,89 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FBAC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C9DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1D721924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:03:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B08218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:05:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="guKzi/8r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q1CkdT3G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfBHLD2 (ORCPT
+        id S1727699AbfBHLFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:03:28 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54263 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfBHLD2 (ORCPT
+        Fri, 8 Feb 2019 06:05:55 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42999 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfBHLFy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:03:28 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d15so2968641wmb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 03:03:26 -0800 (PST)
+        Fri, 8 Feb 2019 06:05:54 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v23so5123632otk.9;
+        Fri, 08 Feb 2019 03:05:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=knW0z7TbZkk4k9GAX5c/GhUDvRtIDL/zkxnCrXGg7wc=;
-        b=guKzi/8r5BTCFCD7qPgsIdinPklLl5lQl9SqYuAN8HOHuCAVgsPQUoVS55Tz/57xZd
-         LhdHT41XQmQk+XRmT1DgFLE6g4XBPdcq3M3Z1FABBXtIh8F67G+cu5nK8rn7NvluORuM
-         dIgEdH8kmGYnvYuM83Lkgb1ZMKcZSuPeCcRnS2qmoUQVAUHLT+aFpN34ONRL7aFntyUb
-         yFBrlOYR+csN3MQM/T3aUFFnMwvpfaHhS4LLgc8x7mcxIjsCXW4cTsuO1Z1JV2U7mdvS
-         I9Mm9/UAW7ztCdc/EXxfET0FcFPAXZ46zTpGZLqY0yRQBtVxsUbNInS2R9+8ozzh5hYa
-         nAsQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zXHJqO5kYdjQIh175jjIQKAv0+RlFrvNTrEMg/QvCfA=;
+        b=q1CkdT3GUZ3b7Z3nwBJDE1alMUot9pL3oER2gLKbm82fHG2DwfvlGc+V4LIzcsyKXv
+         iYUexP6/wb8/qGLE5nLDriylW2y+LLsMTAuUffB3qjNj4efdT/Z8CUqV+EP5TAtNRcJN
+         H4Vo9hTnylDzQm30dzhiX1i+sQHG2r0mlCVvmuqPNVfJKficuN9bab6UyF45QJNduEwM
+         Y+lVE6d8fjcAZ6WUuuqYANbJbGWMHArecOryxV44RUvVCfw+IKKVDq207M5JYjPoBCfX
+         tngzEUzhf9j9T3x7CDOc/IsGSwgecykDcORQ9Kehqoq2ac5JrTpsNVPUsjmoD5Jy611M
+         CMaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=knW0z7TbZkk4k9GAX5c/GhUDvRtIDL/zkxnCrXGg7wc=;
-        b=Q3burTxbH7IvPs1imwOrz3v6crvzENuiJQ7589kgiviZThcH3WP7abUV9hTU84c50U
-         28BnrNdx6z2XZy8mQviaHIdatb6Ts6GueU6nhYkfCSOWeldaMbEjcKoy6DZnkeyJ7kvs
-         78Mvccf6GLdydQGFlSz/K8CuUiIUNpSx+aqn6Vgkvjr0VioHB1kZcUhaMezU8mamjnoT
-         4IfPJ0Buu5az/YGkzVmNkdhxYY5ld/DqTDZn5g/uOgt9yRwiLp6Y2ViYw4JVgwiHGzvQ
-         RPIHnxsXCag+Fw4GHTak0ySKLxcs/6wUYC+WIQW+IKPs69YATa6gh4YbCvlz6e886L+V
-         kF6Q==
-X-Gm-Message-State: AHQUAuahY2NhjdRrFXeQCz6SnPZPb5boKMOqve0SK4FOY26IhGzLEuhJ
-        astSs8ObT//De6OVTR63cr2/4w==
-X-Google-Smtp-Source: AHgI3IaWUmARQbjqZ4kU6hLTUyLy2A5wPMuDrximngCGWcJncatY80GHwlySBSiYnZ+++zUyl6zgpQ==
-X-Received: by 2002:a7b:cf12:: with SMTP id l18mr2143879wmg.21.1549623806030;
-        Fri, 08 Feb 2019 03:03:26 -0800 (PST)
-Received: from dell ([2.27.35.171])
-        by smtp.gmail.com with ESMTPSA id h62sm2152740wmf.11.2019.02.08.03.03.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Feb 2019 03:03:25 -0800 (PST)
-Date:   Fri, 8 Feb 2019 11:03:23 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [RFT PATCH 7/9] mfd: axp20x: add USB power supply mfd cell to
- AXP813
-Message-ID: <20190208110323.GK20638@dell>
-References: <20190207064535.9226-1-wens@csie.org>
- <20190207064535.9226-8-wens@csie.org>
- <20190207110247.GE20638@dell>
- <CAGb2v66uC=ZUj3S3ceVHABg68WMuyfHPcG77CV1DjCNn9ff71A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zXHJqO5kYdjQIh175jjIQKAv0+RlFrvNTrEMg/QvCfA=;
+        b=RG8qV35HazEh1jzmzdJJnc6eGyIDy4ssYnEBSbm+Q8bLalPSY86QZ7KPvVk+mPXxaa
+         nJ3nOYA+v53iEVbp95JWIMF2FkT5zTtLuluLUQuoC8fB9jFPUqzKOM9TqBArfbQFzIAE
+         vybQc8oilG/C5hx5U9Ff6d8V01/rQrxwQzQtUkvXErGBfcuLilMmMmXhkOGQB46Caq01
+         IBscnywND5ubSskiwECA/OV2RlsRRZ/GdyuuvppOPEMZZQc2940XLyY8uSGx0yD29C2B
+         q2zmzlavh9exDqwgs7GYQXK4mV6pHAk9Zz8jmt3A9miSoPRosJfMdqaTJMYtEnNrbz48
+         XmZA==
+X-Gm-Message-State: AHQUAuZMFuEQVDWTg0KQLfon3FuExYl1XB/IoLKvB7jueiKrVSJt++cZ
+        +wTdb+k16sHMe77ToQTOS1Gk86IjuU67hcs+IppW3g==
+X-Google-Smtp-Source: AHgI3Ia9qL3KOe3SISQ66koUXPs1BVWTTqbSzgJXW7LTCPQN8faM9lnsr5b0/ksOa7VREPRL4x4ZI8vntzNVtXFb5m0=
+X-Received: by 2002:a9d:3bc7:: with SMTP id k65mr12612365otc.11.1549623953921;
+ Fri, 08 Feb 2019 03:05:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGb2v66uC=ZUj3S3ceVHABg68WMuyfHPcG77CV1DjCNn9ff71A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190208024110.8021-1-allen.lkml@gmail.com> <20190208083808.GB2803@osiris>
+In-Reply-To: <20190208083808.GB2803@osiris>
+From:   Allen <allen.lkml@gmail.com>
+Date:   Fri, 8 Feb 2019 16:35:42 +0530
+Message-ID: <CAOMdWSK=JOQkS+nce+1YXZQFoYE5OgJTb2QuoWN_iP8tHvE3Pw@mail.gmail.com>
+Subject: Re: [PATCH] Use ARRAY_SIZE instead of dividing sizeof array with
+ sizeof an element.
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 07 Feb 2019, Chen-Yu Tsai wrote:
-
-> On Thu, Feb 7, 2019 at 7:02 PM Lee Jones <lee.jones@linaro.org> wrote:
 > >
-> > On Thu, 07 Feb 2019, Chen-Yu Tsai wrote:
-> >
-> > > From: Quentin Schulz <quentin.schulz@bootlin.com>
-> > >
-> > > The AXP813 has a VBUS power input. Now that the axp20x_usb_power driver
-> > > supports this variant, we can add an mfd cell for it to use it.
-> > >
-> > > Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> > > [wens@csie.org: add commit message]
-> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > ---
-> > >  drivers/mfd/axp20x.c | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> > > index 3c97f2c0fdfe..17b115845993 100644
-> > > --- a/drivers/mfd/axp20x.c
-> > > +++ b/drivers/mfd/axp20x.c
-> > > @@ -198,6 +198,12 @@ static const struct resource axp22x_usb_power_supply_resources[] = {
-> > >       DEFINE_RES_IRQ_NAMED(AXP22X_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
-> > >  };
-> > >
-> > > +/* AXP803 and AXP813/AXP818 share the same interrupts */
-> > > +static struct resource axp803_usb_power_supply_resources[] = {
-> > > +     DEFINE_RES_IRQ_NAMED(AXP803_IRQ_VBUS_PLUGIN, "VBUS_PLUGIN"),
-> > > +     DEFINE_RES_IRQ_NAMED(AXP803_IRQ_VBUS_REMOVAL, "VBUS_REMOVAL"),
-> >
-> > Nit: Why 2 spaces here?                              ^
-> 
-> 2 spaces? I'm only seeing one.
+> > diff --git a/arch/s390/tools/gen_opcode_table.c b/arch/s390/tools/gen_opcode_table.c
+> > index a1bc02b29c81..468b70c85f62 100644
+> > --- a/arch/s390/tools/gen_opcode_table.c
+> > +++ b/arch/s390/tools/gen_opcode_table.c
+> > @@ -138,7 +138,7 @@ static struct insn_type *insn_format_to_type(char *format)
+> >       strcpy(tmp, format);
+> >       base_format = tmp;
+> >       base_format = strsep(&base_format, "_");
+> > -     for (i = 0; i < sizeof(insn_type_table) / sizeof(insn_type_table[0]); i++) {
+> > +     for (i = 0; i < ARRAY_SIZE(insn_type_table); i++) {
+>
+> This does not compile.
+>
+   Surprising. I try it out again.
 
-Eh, that's odd.  My eyes must be failing me.
-
-Just add my Ack then. :)
+Thanks.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+       - Allen
