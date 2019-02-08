@@ -2,127 +2,95 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03425C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD4DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD342075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CD582075C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:55:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H0BzMHZk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cyIcBeuj"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="TeihzEBT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbfBHOxU (ORCPT
+        id S1727837AbfBHOzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:53:20 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55250 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727837AbfBHOxT (ORCPT
+        Fri, 8 Feb 2019 09:55:14 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:34455 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726641AbfBHOzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:53:19 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3BBE8601C4; Fri,  8 Feb 2019 14:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549637598;
-        bh=MPRaqOdkGpix0APQkLF+9Z/Ip7Q0xgLGZYfbeWNgmao=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=H0BzMHZkFW8CxQOIZpkQMaQKMB5qqhwPDD+hL7Y5iyalbzBwpG++LOptTR5Lz9eVO
-         I0i1DzGA0bjfzTaajRFGHujjtKczwZynEoiyss5UWhv14D5n5A8D32KPXXd6r4rlXq
-         HnvN0y6c+B5wB3x+2GzMOKa/LmGtIza5M4Mi/y0U=
-Received: from [192.168.1.100] (unknown [157.45.225.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 93C4F60208;
-        Fri,  8 Feb 2019 14:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549637597;
-        bh=MPRaqOdkGpix0APQkLF+9Z/Ip7Q0xgLGZYfbeWNgmao=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cyIcBeujMHi2oZAkg1z3EGJzMNrRji9YMGARAdGeO3b9Zcty2cHsnG6/ngK5v1QSX
-         w8dHHy1qoSNNWcB8CzpIbTuYZKoW9rsA2zRCGAYPeuAaXLARnidJ4QYW7aLJWcC3qb
-         IhzlVFYGRIyT/0+BZ9OqzTvu9CDhhMJXHdPLJZB4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93C4F60208
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv7 1/6] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        leo.yan@linaro.org, alexander.shishkin@linux.intel.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        vivek.gautam@codeaurora.org, jhugo@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, marc.w.gonzalez@free.fr
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        tingwei@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org>
- <b672119cd1ffb5cba9da27ab5974fd5978e55b31.1548981329.git.saiprakash.ranjan@codeaurora.org>
- <81dc97e6-2640-d600-9373-30518ed59792@arm.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <3922a74f-3607-fb9f-2b50-bb9b2f45b1cf@codeaurora.org>
-Date:   Fri, 8 Feb 2019 20:23:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 8 Feb 2019 09:55:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549637712;
+        s=strato-dkim-0002; d=aepfle.de;
+        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=nFB5TzZhp4rOfoKsEQpCfZ2TLxqIXIx7hKQSO2UutCk=;
+        b=TeihzEBTxIws1gRDV1Bgd6k7s9dNxUR5/XwkFDQyd60o1BRmbDpEE49YztkVXtMky7
+        1HN7gG4Jy+XhkVmMdVZO/LXPrZ4GF0+xkHI24RZ0+quf5ZIOTyyW32ILiGLdafp4RNHJ
+        W9BiwBVFPI8jTHQphB7KBDJX0AkCJ3c60wkgT1xwmy9VqnPbc7JFOWyTvuYvhO22Yv5r
+        e4eYdV5G5ecFqWWauJbSLYNSXZSMuirpsI2o7HhLQ7NpIFtNJ79N7KVYcM3bbqQ/JKwc
+        bMNQ0mCi03zSdWulj8vyAGwIJpmUIDjVpqz7IQNu4WvPqvbSkZzqAkJwymQTYYaDF6O3
+        WVRQ==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAgc09FajRctxFpb+ZDKqA9+B38Tio5yEQ1NasN4="
+X-RZG-CLASS-ID: mo00
+Received: from aepfle.de
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id 20a457v18Eq3WIF
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 8 Feb 2019 15:52:03 +0100 (CET)
+Date:   Fri, 8 Feb 2019 15:51:59 +0100
+From:   Olaf Hering <olaf@aepfle.de>
+To:     lantianyu1986@gmail.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        michael.h.kelley@microsoft.com, kys@microsoft.com,
+        vkuznets@redhat.com, alex.williamson@redhat.com, sashal@kernel.org,
+        dan.carpenter@oracle.com
+Subject: Re: [PATCH V3 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
+Message-ID: <20190208145159.GA17854@aepfle.de>
+References: <1549553629-8414-1-git-send-email-Tianyu.Lan@microsoft.com>
+ <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <81dc97e6-2640-d600-9373-30518ed59792@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+In-Reply-To: <1549553629-8414-3-git-send-email-Tianyu.Lan@microsoft.com>
+User-Agent: Mutt/1.11.2 (20190107T174927.9920de1b)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/2019 7:50 PM, Suzuki K Poulose wrote:
-> 
-> 
-> On 01/02/2019 00:53, Sai Prakash Ranjan wrote:
->> Add coresight components found on Qualcomm SDM845 SoC.
->>
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>
->> ---
->> For testing, all dependent patches are in below tree:
->>   * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
->>
->> - Depends on AOSS QMP side channel patches by Bjorn Andersson [1] - [4].
->> - AMBA bus pclk change [5].
->> - Also depends on patch ("arm64: dts: qcom: sdm845: Increase address
->>    and size cells for soc") [6].
->>
->> [1] 
->> https://lore.kernel.org/lkml/20190131003933.11436-5-bjorn.andersson@linaro.org/ 
->>
->> [2] 
->> https://lore.kernel.org/lkml/20190131003933.11436-6-bjorn.andersson@linaro.org/ 
->>
->> [3] 
->> https://lore.kernel.org/lkml/20190131003933.11436-7-bjorn.andersson@linaro.org/ 
->>
->> [4] 
->> https://lore.kernel.org/lkml/20190131003933.11436-10-bjorn.andersson@linaro.org/ 
->>
->> [5] 
->> https://lore.kernel.org/lkml/20190131020141.28352-1-bjorn.andersson@linaro.org/ 
->>
->> [6] 
->> https://lore.kernel.org/lkml/20190117042940.25487-2-bjorn.andersson@linaro.org/ 
->>
->> ---
->>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 434 +++++++++++++++++++++++++++
->>   1 file changed, 434 insertions(+)
->>
-> 
-> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Thanks!
+--TB36FDmn/VVEgNH/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+On Thu, Feb 07, lantianyu1986@gmail.com wrote:
+
+> +++ b/drivers/iommu/Kconfig
+> +config HYPERV_IOMMU
+> +	bool "Hyper-V x2APIC IRQ Handling"
+> +	depends on HYPERV
+> +	select IOMMU_API
+> +	help
+
+
+Consider adding 'default HYPERV' like some other drivers already do it.
+
+Olaf
+
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQSkRyP6Rn//f03pRUBdQqD6ppg2fgUCXF2XjAAKCRBdQqD6ppg2
+fmGcAJ9YHvrop3zssh0S9nzhUQtTdp2DvQCfeSlpubU2Zx7jnb8G+URfPb4FQDg=
+=ilV3
+-----END PGP SIGNATURE-----
+
+--TB36FDmn/VVEgNH/--
