@@ -2,277 +2,133 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3E9C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0F0C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2498220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC7020855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:25:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRfnV9a5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mpE1oWYo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbfBHRWG (ORCPT
+        id S1727643AbfBHRZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:22:06 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51802 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbfBHRWB (ORCPT
+        Fri, 8 Feb 2019 12:25:14 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52204 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHRZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:22:01 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so4287198wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:21:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9ELIDzrFuDE4fv0H7ZmmXRZO/WnsGeJX4P6W+1XXVUI=;
-        b=NRfnV9a540UmNDKscNJAOYXOcEyFaaX8bPbnN++HLDJnypKbdEz6liciFdRn1wcNfi
-         PGUHa4X+nTbJuFKsM6OXlu8ssaLc0mgIh+bdoxtjsAweLEQZmfJ+mkyGlAU38d0brE55
-         xjAV8U3Ej3uPiRhFaYsZ6svKUA0jzzdTONgMwWk0Y20lmjmjr75HWi+bt/7bLodDvwBg
-         qmNVkPO6qD9OgGDp+OgtiBt5kd7pGcFF53ph03VnYe2baWXVbofhnvYHQjghX387wCxT
-         vCzSZXZy9p3kYhvb0Gf03Ev65jet852z+os9RYnpCJnF2JIWCxZqAmLb0Gh4utqi+Vjk
-         skxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9ELIDzrFuDE4fv0H7ZmmXRZO/WnsGeJX4P6W+1XXVUI=;
-        b=MYXosN0OT1VOHTL7uWg9PGhkxOsDqknUfC2E0zrtZqeGbpnldi7rRdAl4wM57pvnag
-         8o9AH3xoJYZH46GV//TESgdyjNFjGaYVv8efjPfCLhczNzk4C6xE/AeAa8G05mO2mPH+
-         7rKcFjHDvhSXzWRGDbiTf1Wzaq6Y52Z0pT0HDvRYw6zB6+g7J8fWBXU/95zLtH+GnAHi
-         7qO5Gh8R47RSqSNIy55B7s7u7sODDijKDAbobEwxE9Cnba+s7x6BShSsFrDTElFLzT44
-         wvtbg2DelD1C+95SoNHdkOdWQlI7gf5Ip5wQFmQqIx/Qc2gkNzDDuBMlMXLhjzFLPPm0
-         RVdw==
-X-Gm-Message-State: AHQUAuaEEwat5v1A7XWTWy5GJCud3F1aqp8+ayuc6c6KdQSImmNIPrvD
-        pwx46BR7206X5PL1ij9cTQfN9w==
-X-Google-Smtp-Source: AHgI3IaR1xFVAO9b2qxaU0otLVQUTY6EsoNLrmwz4hZ6r6RNdzpR5VBVU2tncDgrUueX3odkeTfxtQ==
-X-Received: by 2002:a05:6000:120a:: with SMTP id e10mr17621512wrx.85.1549646518598;
-        Fri, 08 Feb 2019 09:21:58 -0800 (PST)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id k23sm4097150wmj.32.2019.02.08.09.21.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 08 Feb 2019 09:21:57 -0800 (PST)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org
-Cc:     daidavid1@codeaurora.org, vincent.guittot@linaro.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        evgreen@chromium.org, dianders@chromium.org,
-        seansw@qti.qualcomm.com, mturquette@baylibre.com,
-        abailon@baylibre.com, thierry.reding@gmail.com,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        henryc.chen@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v1 2/2] interconnect: qcom: Add tagging and wake/sleep support for sdm845
-Date:   Fri,  8 Feb 2019 19:21:52 +0200
-Message-Id: <20190208172152.1807-3-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190208172152.1807-1-georgi.djakov@linaro.org>
-References: <20190208172152.1807-1-georgi.djakov@linaro.org>
+        Fri, 8 Feb 2019 12:25:13 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190208172511euoutp025f884065d9aaf2cfc512f26a37ddd8f9~Bc3ljm37l2005220052euoutp02D
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 17:25:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190208172511euoutp025f884065d9aaf2cfc512f26a37ddd8f9~Bc3ljm37l2005220052euoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549646712;
+        bh=G2rVGDN7z5nw/lxbw9ooUmGtDE/shZTqpsdxaRQKquY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=mpE1oWYo7G7Y1YfX/L3kX4lhGrEUZVTYfqM2eC+KCmE+oB1I7Eu+md9xbCJEu3g/9
+         w78dH3p3OrhyQYj7sa6dRIi+v2Pm4WMVn4EoaQtxVmtmM0HZk3p07/5XikVsSgxLr1
+         GbNpWveCWNaWzfOdhd43pZ83fWhnqwdx72tQDzOA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190208172511eucas1p11d3c09d74ca342877657b0c02251ea1c~Bc3lRIL3h0238602386eucas1p1x;
+        Fri,  8 Feb 2019 17:25:11 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 2D.8D.04294.77BBD5C5; Fri,  8
+        Feb 2019 17:25:11 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190208172510eucas1p1c7af38b36bfea59a3257092113a88b04~Bc3kmkCBs2285622856eucas1p1R;
+        Fri,  8 Feb 2019 17:25:10 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190208172510eusmtrp2eb1c9744de49659fbb489fa2e20dcc4c~Bc3kYWRAN0898008980eusmtrp2L;
+        Fri,  8 Feb 2019 17:25:10 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-5f-5c5dbb77d07d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id DD.E4.04284.67BBD5C5; Fri,  8
+        Feb 2019 17:25:10 +0000 (GMT)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190208172510eusmtip28b8988a547c85cb466ff94069b3e809d~Bc3kEWUwE1721017210eusmtip2C;
+        Fri,  8 Feb 2019 17:25:10 +0000 (GMT)
+Subject: Re: [PATCH] fbdev: omap2: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <5ad3b534-e673-9ff4-e171-a12445694938@samsung.com>
+Date:   Fri, 8 Feb 2019 18:25:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190122152151.16139-15-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOKsWRmVeSWpSXmKPExsWy7djP87rlu2NjDP5/lbC48vU9m0Xz4vVs
+        Fif6PrBaXN41h81i9pJ+Fov3nzqZHNg8Nq3qZPPYP3cNu8f97uNMHp83yQWwRHHZpKTmZJal
+        FunbJXBl9L74zFQwn7ViZc8CxgbGLSxdjJwcEgImEtN7T7F1MXJxCAmsYJS4ePUkC4TzhVGi
+        f/V6JgjnM6PE6d1n4FqaV7SyQiSWM0o8PNfPCOG8Z5RY9e4YUBUHh7BAnMTpY0UgDSICxhL9
+        Z2exg9QwC2xilFjZv48ZJMEmYCUxsX0VI4jNK2AnsfJ4ByuIzSKgInF1xV0mkDmiAhES/WfU
+        IUoEJU7OfAJ2BKeAo8TS62vBbGYBA4kji+awQtjyEtvfzmEG2SUhMJldYtX29awQV7tIXLrQ
+        wwRhC0u8Or6FHcKWkfi/cz4TRMN0Rok3v5ayQDjrGSXWnDkG1WEtcfj4RahJjhILll8Eu05C
+        gE/ixltBiM18EpO2TWeGCPNKdLQJQVSrSWxYtoENZlfXzpXMELaHxLqtxxknMCrOQvLbLCT/
+        zELyzwJG5lWM4qmlxbnpqcVGeanlesWJucWleel6yfm5mxiByeX0v+NfdjDu+pN0iFGAg1GJ
+        hzeiJTZGiDWxrLgy9xCjBAezkgjvwe1AId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTS
+        E0tSs1NTC1KLYLJMHJxSDYyhIUEfz30W5wqoLi4sS/HoudfLbOG595X/5rzfK/7+1z6yR1bi
+        jHNHToduykUx3imi289V5/lvZJjS+Ur7h6bY+dMBKyavqfi/4pKX+gFxVlfe+cFJl50KwvdP
+        3HK01D5nN/MdiTNdTmYJLXfDs5bd8I1lm3lyuXkxU9mLbdaJLI8qmB7c0VZiKc5INNRiLipO
+        BADEokaIKgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xe7plu2NjDB7t0LS48vU9m0Xz4vVs
+        Fif6PrBaXN41h81i9pJ+Fov3nzqZHNg8Nq3qZPPYP3cNu8f97uNMHp83yQWwROnZFOWXlqQq
+        ZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehl9L74zFQwn7ViZc8C
+        xgbGLSxdjJwcEgImEs0rWlm7GLk4hASWMkq8e/cXyOEASshIHF9fBlEjLPHnWhcbRM1bRonJ
+        d6cyg9QIC8RJnD5WBFIjImAs0X92FjtEzRRGif6urWBDmQW2MEq0Lp3KBFLFJmAlMbF9FSOI
+        zStgJ7HyeAcriM0ioCJxdcVdsBpRgQiJWw87WCBqBCVOznwCZnMKOEosvb4WzGYW0JPYcf0X
+        K4QtL7H97RzmCYyCs5C0zEJSNgtJ2QJG5lWMIqmlxbnpucWGesWJucWleel6yfm5mxiBEbPt
+        2M/NOxgvbQw+xCjAwajEw8vQFBsjxJpYVlyZe4hRgoNZSYT34HagEG9KYmVValF+fFFpTmrx
+        IUZToCcmMkuJJucDozmvJN7Q1NDcwtLQ3Njc2MxCSZz3vEFllJBAemJJanZqakFqEUwfEwen
+        VAOj0DvZu+zbqq8/qL00ZVpOYvZTTq55lseWrrm8p8q7wf3Zh92lpp97H4XJvNzzvf3jssk8
+        vGYMGobWmufEGVdt4+Aq//E66nutNNv3YImV3rvef/I83rDsehyb04nCH/vZzG6saGHQ0+Dc
+        tmKq8U7JVe8+VTNGrhOxqY/PTPd5oBmRrr7qghqvEktxRqKhFnNRcSIAPmsWUq4CAAA=
+X-CMS-MailID: 20190208172510eucas1p1c7af38b36bfea59a3257092113a88b04
+X-Msg-Generator: CA
+X-RootMTR: 20190122152306epcas4p1c240839621d10e97226c657457805ea4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190122152306epcas4p1c240839621d10e97226c657457805ea4
+References: <CGME20190122152306epcas4p1c240839621d10e97226c657457805ea4@epcas4p1.samsung.com>
+        <20190122152151.16139-15-gregkh@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Dai <daidavid1@codeaurora.org>
 
-Add support for wake and sleep commands by using a tag to indicate
-whether or not the aggregate and set requests are active only or
-dual context for a particular path.
+On 01/22/2019 04:21 PM, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-fbdev@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: David Dai <daidavid1@codeaurora.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/interconnect/qcom/sdm845.c | 101 +++++++++++++++++++++--------
- 1 file changed, 75 insertions(+), 26 deletions(-)
+Patch queued for v5.1, thanks.
 
-diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
-index fb526004c82e..13499f681160 100644
---- a/drivers/interconnect/qcom/sdm845.c
-+++ b/drivers/interconnect/qcom/sdm845.c
-@@ -65,6 +65,12 @@ struct bcm_db {
- #define SDM845_MAX_BCMS		30
- #define SDM845_MAX_BCM_PER_NODE	2
- #define SDM845_MAX_VCD		10
-+#define SDM845_MAX_CTX		2
-+#define SDM845_EE_STATE		2
-+#define EE_STATE_WAKE		0
-+#define EE_STATE_SLEEP		1
-+#define AO_CTX			0
-+#define DUAL_CTX		1
- 
- /**
-  * struct qcom_icc_node - Qualcomm specific interconnect nodes
-@@ -86,8 +92,8 @@ struct qcom_icc_node {
- 	u16 num_links;
- 	u16 channels;
- 	u16 buswidth;
--	u64 sum_avg;
--	u64 max_peak;
-+	u64 sum_avg[SDM845_MAX_CTX];
-+	u64 max_peak[SDM845_MAX_CTX];
- 	struct qcom_icc_bcm *bcms[SDM845_MAX_BCM_PER_NODE];
- 	size_t num_bcms;
- };
-@@ -112,8 +118,8 @@ struct qcom_icc_bcm {
- 	const char *name;
- 	u32 type;
- 	u32 addr;
--	u64 vote_x;
--	u64 vote_y;
-+	u64 vote_x[SDM845_EE_STATE];
-+	u64 vote_y[SDM845_EE_STATE];
- 	bool dirty;
- 	bool keepalive;
- 	struct bcm_db aux_data;
-@@ -555,7 +561,7 @@ inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
- 		cmd->wait = true;
- }
- 
--static void tcs_list_gen(struct list_head *bcm_list,
-+static void tcs_list_gen(struct list_head *bcm_list, int ee_state,
- 			 struct tcs_cmd tcs_list[SDM845_MAX_VCD],
- 			 int n[SDM845_MAX_VCD])
- {
-@@ -573,8 +579,8 @@ static void tcs_list_gen(struct list_head *bcm_list,
- 			commit = true;
- 			cur_vcd_size = 0;
- 		}
--		tcs_cmd_gen(&tcs_list[idx], bcm->vote_x, bcm->vote_y,
--			    bcm->addr, commit);
-+		tcs_cmd_gen(&tcs_list[idx], bcm->vote_x[ee_state],
-+			    bcm->vote_y[ee_state], bcm->addr, commit);
- 		idx++;
- 		n[batch]++;
- 		/*
-@@ -595,32 +601,42 @@ static void tcs_list_gen(struct list_head *bcm_list,
- 
- static void bcm_aggregate(struct qcom_icc_bcm *bcm)
- {
--	size_t i;
--	u64 agg_avg = 0;
--	u64 agg_peak = 0;
-+	size_t i, ctx;
-+	u64 agg_avg[SDM845_MAX_CTX] = {0};
-+	u64 agg_peak[SDM845_MAX_CTX] = {0};
- 	u64 temp;
- 
--	for (i = 0; i < bcm->num_nodes; i++) {
--		temp = bcm->nodes[i]->sum_avg * bcm->aux_data.width;
--		do_div(temp, bcm->nodes[i]->buswidth * bcm->nodes[i]->channels);
--		agg_avg = max(agg_avg, temp);
-+	for (ctx = 0; ctx < SDM845_MAX_CTX; ctx++) {
-+		for (i = 0; i < bcm->num_nodes; i++) {
-+			temp = bcm->nodes[i]->sum_avg[ctx] * bcm->aux_data.width;
-+			do_div(temp, bcm->nodes[i]->buswidth * bcm->nodes[i]->channels);
-+			agg_avg[ctx] = max(agg_avg[ctx], temp);
- 
--		temp = bcm->nodes[i]->max_peak * bcm->aux_data.width;
--		do_div(temp, bcm->nodes[i]->buswidth);
--		agg_peak = max(agg_peak, temp);
-+			temp = bcm->nodes[i]->max_peak[ctx] * bcm->aux_data.width;
-+			do_div(temp, bcm->nodes[i]->buswidth);
-+			agg_peak[ctx] = max(agg_peak[ctx], temp);
-+		}
- 	}
- 
--	temp = agg_avg * 1000ULL;
-+	temp = agg_avg[AO_CTX] + agg_avg[DUAL_CTX] * 1000ULL;
-+	do_div(temp, bcm->aux_data.unit);
-+	bcm->vote_x[EE_STATE_WAKE] = temp;
-+
-+	temp = max(agg_peak[AO_CTX], agg_peak[DUAL_CTX]) * 1000ULL;
-+	do_div(temp, bcm->aux_data.unit);
-+	bcm->vote_y[EE_STATE_WAKE] = temp;
-+
-+	temp = agg_avg[DUAL_CTX] * 1000ULL;
- 	do_div(temp, bcm->aux_data.unit);
--	bcm->vote_x = temp;
-+	bcm->vote_x[EE_STATE_SLEEP] = temp;
- 
--	temp = agg_peak * 1000ULL;
-+	temp = agg_peak[DUAL_CTX] * 1000ULL;
- 	do_div(temp, bcm->aux_data.unit);
--	bcm->vote_y = temp;
-+	bcm->vote_y[EE_STATE_SLEEP] = temp;
- 
- 	if (bcm->keepalive && bcm->vote_x == 0 && bcm->vote_y == 0) {
--		bcm->vote_x = 1;
--		bcm->vote_y = 1;
-+		bcm->vote_x[EE_STATE_WAKE] = 1;
-+		bcm->vote_y[EE_STATE_WAKE] = 1;
- 	}
- 
- 	bcm->dirty = false;
-@@ -631,14 +647,16 @@ static int qcom_icc_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
- {
- 	size_t i;
- 	struct qcom_icc_node *qn;
-+	u32 ctx = 0;
- 
- 	qn = node->data;
-+	ctx = (!!tag) ? AO_CTX : DUAL_CTX;
- 
- 	*agg_avg += avg_bw;
- 	*agg_peak = max_t(u32, *agg_peak, peak_bw);
- 
--	qn->sum_avg = *agg_avg;
--	qn->max_peak = *agg_peak;
-+	qn->sum_avg[ctx] = *agg_avg;
-+	qn->max_peak[ctx] = *agg_peak;
- 
- 	for (i = 0; i < qn->num_bcms; i++)
- 		qn->bcms[i]->dirty = true;
-@@ -675,7 +693,7 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	 * Construct the command list based on a pre ordered list of BCMs
- 	 * based on VCD.
- 	 */
--	tcs_list_gen(&commit_list, cmds, commit_idx);
-+	tcs_list_gen(&commit_list, EE_STATE_WAKE, cmds, commit_idx);
- 
- 	if (!commit_idx[0])
- 		return ret;
-@@ -693,6 +711,37 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 		return ret;
- 	}
- 
-+	INIT_LIST_HEAD(&commit_list);
-+
-+	for (i = 0; i < qp->num_bcms; i++) {
-+		/* Only generate WAKE and SLEEP commands if a resource's
-+		 * requirements change as the execution environment transitions
-+		 * between different power states.
-+		 */
-+		if (qp->bcms[i]->vote_x[EE_STATE_WAKE] !=
-+		    qp->bcms[i]->vote_x[EE_STATE_SLEEP] ||
-+		    qp->bcms[i]->vote_y[EE_STATE_WAKE] !=
-+		    qp->bcms[i]->vote_y[EE_STATE_SLEEP]) {
-+			list_add_tail(&qp->bcms[i]->list, &commit_list);
-+		}
-+	}
-+
-+	tcs_list_gen(&commit_list, EE_STATE_WAKE, cmds, commit_idx);
-+
-+	ret = rpmh_write_batch(qp->dev, RPMH_WAKE_ONLY_STATE, cmds, commit_idx);
-+	if (ret) {
-+		dev_err(qp->dev, "Error sending WAKE RPMH requests: %d\n", ret);
-+		return ret;
-+	}
-+
-+	tcs_list_gen(&commit_list, EE_STATE_SLEEP, cmds, commit_idx);
-+
-+	ret = rpmh_write_batch(qp->dev, RPMH_SLEEP_STATE, cmds, commit_idx);
-+	if (ret) {
-+		dev_err(qp->dev, "Error sending SLEEP RPMH requests: %d\n", ret);
-+		return ret;
-+	}
-+
- 	return ret;
- }
- 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
