@@ -2,172 +2,129 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E63C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EE5C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 635932146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jK6lihc0"
+	by mail.kernel.org (Postfix) with ESMTP id 638222146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549647523;
+	bh=xQT9h8WMnR5wewn/xl9MPB+4qCgYGzhzEIW6WF34rKI=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=CMnYGzPqPFYfWGfHZjWwkqmYym16/+E8L2T14Q/R/IYP4ny0elTVADi3AZrwZnY5w
+	 WGaxoA6zFSKcvkEJ1ihq0fnAOo1nFZ6Ru0mD6zXkRWzP5d9lzNKRvKKqSLtqYyVAwK
+	 wG47Tyedbor9dtvrRjqo4FZnVqE43kIZDzYcY8Gc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbfBHRfM (ORCPT
+        id S1728080AbfBHRim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:35:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38577 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbfBHRfJ (ORCPT
+        Fri, 8 Feb 2019 12:38:42 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57416 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727977AbfBHRfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:35:09 -0500
-Received: by mail-wm1-f68.google.com with SMTP id v26so4295150wmh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=trIQtIIzr10xL3xuZKgdBn1lKngoT5UlbTmlmF/bYWM=;
-        b=jK6lihc0lcB6CCtG3Atc5UHFLX51hOdgzSCYQY+LlP8DjI92r/C4HfCEXzGZw7ApUy
-         /m5ylF9WC12+DXwieSncGB5oPNfs5QDO665KMq7yLnLEOSLHsR7PMvxL7Ij2nyrt7Rhn
-         nVMeIrlJvEt+KlW8x6Lly4PgA/73exunrNW9SE2MUCcNWi7WC4DanB10x40JRXfVzlyc
-         SZNpEv6lZkEqQd+cVSGiYwVZqvN0nhNnsNQ327D2zLnoByB3dlO3S70ZPbuBouQzw5TM
-         oKcwiHErAtTRi7nQis75YIzNjSxrjTlbSePEfOTOhlWtdLVuS9BUQ+OWaF9dnQc/HpMS
-         pCng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=trIQtIIzr10xL3xuZKgdBn1lKngoT5UlbTmlmF/bYWM=;
-        b=RcLLoDSK5Ho4Ja+PHCDPO4J0G6fOGYDfOiuF4W9C5tlmTtxa2MPIC4N39+N3SMrm1Q
-         tT/7Cm13SSCvUWvHp0LwiIz4wHnDRfJX48nfl9TYPhYMqCiYZuBkKXc7cLT5GYLMfATB
-         F/jN7YFgT/15pD6/CEYb4dhwOcmJluC7t8xvCqNyzPLv3mVZOhRrDu++denMOIDlz08g
-         FtTALq9E5m4r2D46VCtInjjuW8I+oeGnWusLn+2uPuVleg1t058oMxZadO8JdlwQn5pi
-         ERCPvQyrpjimxqgV/N30B06b9UHbsgLbssimP+lqW6IKqTxbDOqBUFgSVv6+/g5zzjEk
-         RKzg==
-X-Gm-Message-State: AHQUAuZf1CGHPBTS0W2YCEUv/iIqHnnZ94GYvndwo227zlp/fQwWNjzv
-        o/0PCwQKwq+eePZ1k+DOAfy5HA==
-X-Google-Smtp-Source: AHgI3IZUg8zAxrwFhONR5KyJ4tPz1KiiEVYKk4FjR/xv7aUmSG5Nm9MS0CBf6n+HIVnFo0X24biUdA==
-X-Received: by 2002:adf:f78e:: with SMTP id q14mr4877484wrp.227.1549647307382;
-        Fri, 08 Feb 2019 09:35:07 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:06 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 02/33] ARM: davinci: aintc: use irq domain
-Date:   Fri,  8 Feb 2019 18:34:27 +0100
-Message-Id: <20190208173458.4801-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
-References: <20190208173458.4801-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 8 Feb 2019 12:35:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=rtu0eLpKJwn8VKCAPhaF2xDi46qnu1GuwvFFtYQ2/5c=; b=u46H0VinlJch
+        paok9V209F9LJaKhRwg4Ya4GerHSu3I2QAo2wMgxO1UDeqJwMhp+NTMt7yjiOa9dqHIjE6sbp8CCN
+        WN/tfR04onHZc1UbBKPsRar7vdzGvk+xQN5LHQFYhsF7+ac315oDrhShg/AlcgT6zUYEs1W17rfv3
+        qB4Sg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gsA3R-0002JN-3y; Fri, 08 Feb 2019 17:35:09 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id A7B8D1127F2F; Fri,  8 Feb 2019 17:35:08 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: lm363x: Check return value of gpiod_get_index_optional" to the regulator tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20190208173508.A7B8D1127F2F@debutante.sirena.org.uk>
+Date:   Fri,  8 Feb 2019 17:35:08 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The patch
 
-We need to create an irq domain if we want to select SPARSE_IRQ. The
-cp-intc driver already supports it, but aintc doesn't. Use the helpers
-provided by the generic irq chip abstraction.
+   regulator: lm363x: Check return value of gpiod_get_index_optional
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c68f47aa0260eb530561b768ffc260d9c7e47a55 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Fri, 8 Feb 2019 22:11:52 +0800
+Subject: [PATCH] regulator: lm363x: Check return value of
+ gpiod_get_index_optional
+
+gpiod_get_index_optional can return ERR_PTR, add IS_ERR checking for it.
+While at it, also remove a redundant NULL test for gpiod in error path.
+
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm/mach-davinci/irq.c | 35 +++++++++++++++++++++++++++--------
- 1 file changed, 27 insertions(+), 8 deletions(-)
+ drivers/regulator/lm363x-regulator.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 952dc126c390..07d8ef8037e4 100644
---- a/arch/arm/mach-davinci/irq.c
-+++ b/arch/arm/mach-davinci/irq.c
-@@ -23,6 +23,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/io.h>
-+#include <linux/irqdomain.h>
- 
- #include <mach/hardware.h>
- #include <mach/cputype.h>
-@@ -40,23 +41,23 @@
- #define IRQ_INTPRI0_REG_OFFSET	0x0030
- #define IRQ_INTPRI7_REG_OFFSET	0x004C
- 
-+static struct irq_domain *davinci_irq_domain;
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index 8c0e8419c43f..c876e161052a 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -258,6 +258,9 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
+ 	 * Register update is required if the pin is used.
+ 	 */
+ 	gpiod = lm363x_regulator_of_get_enable_gpio(dev, id);
++	if (IS_ERR(gpiod))
++		return PTR_ERR(gpiod);
 +
- static inline void davinci_irq_writel(unsigned long value, int offset)
- {
- 	__raw_writel(value, davinci_intc_base + offset);
- }
+ 	if (gpiod) {
+ 		cfg.ena_gpiod = gpiod;
  
- static __init void
--davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
-+davinci_irq_setup_gc(void __iomem *base,
-+		     unsigned int irq_start, unsigned int num)
- {
- 	struct irq_chip_generic *gc;
- 	struct irq_chip_type *ct;
- 
--	gc = irq_alloc_generic_chip("AINTC", 1, irq_start, base, handle_edge_irq);
--	if (!gc) {
--		pr_err("%s: irq_alloc_generic_chip for IRQ %u failed\n",
--		       __func__, irq_start);
--		return;
--	}
-+	gc = irq_get_domain_generic_chip(davinci_irq_domain, irq_start);
-+	gc->reg_base = base;
-+	gc->irq_base = irq_start;
- 
- 	ct = gc->chip_types;
- 	ct->chip.irq_ack = irq_gc_ack_set_bit;
-@@ -74,6 +75,7 @@ void __init davinci_irq_init(void)
- {
- 	unsigned i, j;
- 	const u8 *davinci_def_priorities = davinci_soc_info.intc_irq_prios;
-+	int rv, irq_base;
- 
- 	davinci_intc_type = DAVINCI_INTC_TYPE_AINTC;
- 	davinci_intc_base = ioremap(davinci_soc_info.intc_base, SZ_4K);
-@@ -110,8 +112,25 @@ void __init davinci_irq_init(void)
- 		davinci_irq_writel(pri, i);
- 	}
- 
-+	irq_base = irq_alloc_descs(-1, 0, davinci_soc_info.intc_irq_num, 0);
-+	if (WARN_ON(irq_base < 0))
-+		return;
-+
-+	davinci_irq_domain = irq_domain_add_legacy(NULL,
-+					davinci_soc_info.intc_irq_num,
-+					irq_base, 0, &irq_domain_simple_ops,
-+					NULL);
-+	if (WARN_ON(!davinci_irq_domain))
-+		return;
-+
-+	rv = irq_alloc_domain_generic_chips(davinci_irq_domain, 32, 1,
-+					    "AINTC", handle_edge_irq,
-+					    IRQ_NOREQUEST | IRQ_NOPROBE, 0, 0);
-+	if (WARN_ON(rv))
-+		return;
-+
- 	for (i = 0, j = 0; i < davinci_soc_info.intc_irq_num; i += 32, j += 0x04)
--		davinci_alloc_gc(davinci_intc_base + j, i, 32);
-+		davinci_irq_setup_gc(davinci_intc_base + j, irq_base + i, 32);
- 
- 	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
- }
+@@ -265,8 +268,7 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
+ 					 LM3632_EXT_EN_MASK,
+ 					 LM3632_EXT_EN_MASK);
+ 		if (ret) {
+-			if (gpiod)
+-				gpiod_put(gpiod);
++			gpiod_put(gpiod);
+ 			dev_err(dev, "External pin err: %d\n", ret);
+ 			return ret;
+ 		}
 -- 
 2.20.1
 
