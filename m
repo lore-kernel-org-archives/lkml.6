@@ -2,753 +2,123 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B20C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFC6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DBE12086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7994620857
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:27:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iUddjeMI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfBHM1A (ORCPT
+        id S1727312AbfBHM1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:27:00 -0500
-Received: from mx.socionext.com ([202.248.49.38]:27810 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727139AbfBHM07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:26:59 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 08 Feb 2019 21:26:55 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 3A89B180D62;
-        Fri,  8 Feb 2019 21:26:55 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 8 Feb 2019 21:26:55 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id DD6B34036D;
-        Fri,  8 Feb 2019 21:26:54 +0900 (JST)
-Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id C89A51217C2;
-        Fri,  8 Feb 2019 21:26:54 +0900 (JST)
-From:   Sugaya Taichi <sugaya.taichi@socionext.com>
-To:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH v2 10/15] serial: Add Milbeaut serial control
-Date:   Fri,  8 Feb 2019 21:27:40 +0900
-Message-Id: <1549628860-31903-1-git-send-email-sugaya.taichi@socionext.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 8 Feb 2019 07:27:39 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54952 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHM1i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:27:38 -0500
+Received: by mail-it1-f196.google.com with SMTP id i145so8258213ita.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:27:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=rcwExCzNoL+yg617jsQnJerR6CSHpOTYTtf3KT5kGcw=;
+        b=iUddjeMIr5uEDafh3drBAEn05JBVkVu3p7zC/+JqgG1WQJJmoB0vn5ecMydqLtIw8L
+         gU2XsuvVAuxYvkRvhXyo9Sn1tfP8qYyBISMBOZKqH3UIHPSQxVNm9pj5M9Qqf7mP22a/
+         4pgMfzqzGlL+uC9CPcp8HMa2WDfkwOtn8omfPESv7kLCfaGDUXGd8kr47g9sPzvj5JvG
+         8zJcXiW+IEs0A4pRpImskD9OjodGr3jM286JF9fM9KfUV4VV5rwnJ8Ok7V+tAE1RmfmX
+         QvnLDa5LXUNzbtLQefyJugKYsuxX9lcDuUSm3Pz9eXf2ytEM7WysDQG27beFRdiF8cDi
+         uH0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=rcwExCzNoL+yg617jsQnJerR6CSHpOTYTtf3KT5kGcw=;
+        b=EMtH+kbGYcHbRfwCqhsyyG6WUsUXvpoHcOxqnMrV/0dRH4nVJAkuRL80WDq6V9ESqZ
+         Zk03sORinRBcM6G4V2zeu7wW+tptJAxnobMYX6iyvdNKmoqj/qP7MaMPnh2qb1Ue9z41
+         ZEfBwZcSqGQwuM8s8a9lJUs1whsfUBUxNQnOmSDQ1VOXtgiz1J102MiSbsV4X93aycUS
+         lnnPoQuVJZdW4ykWN9hMZOFuGhJ/exPxW26x0m3iAW+pf/kiwBjqt1rCMzPu+K16PN2F
+         E0rWDUpCk3hgu+vc8YA4iTT2lP4QkwRfq+f1FH+0jETo1VGmbXN1Op61gEW3zOuI1Y8J
+         KYVw==
+X-Gm-Message-State: AHQUAuYcBh6L6db+Jd906q+M1q0HSswF0HznWDuBbjnSznmCRyy+Zg2Z
+        OeMwIkEGQgy2sywSpmUggDWD8q/0YN3/URnN2rN6Tg==
+X-Google-Smtp-Source: AHgI3IYzjk7sMJji7Y7S3Nhqtgur/rxitLL8oQLyEzaHW8raU0cFAN3cEMzrCTy5viobvZUYD1wZLzuhLrOLUP5eW0w=
+X-Received: by 2002:a02:6f4d:: with SMTP id b13mr10837675jae.57.1549628857291;
+ Fri, 08 Feb 2019 04:27:37 -0800 (PST)
+MIME-Version: 1.0
+References: <20190131133928.17985-1-brgl@bgdev.pl> <edfcdc52-3ff0-ec58-94f7-4816d2b2b3f4@lechnology.com>
+ <CAMRc=MfPAg_j-DfaQCaTd2GmBDctv7L0eSzTET+fcj+WArejdg@mail.gmail.com> <b70bbda8-b448-d9d1-e3fa-57dbfa6c2fbb@ti.com>
+In-Reply-To: <b70bbda8-b448-d9d1-e3fa-57dbfa6c2fbb@ti.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 8 Feb 2019 13:27:26 +0100
+Message-ID: <CAMRc=McNvvowdQG3zNhLpAuOL-Q_U1184mTwcJWJMRxto1LYbg@mail.gmail.com>
+Subject: Re: [PATCH 00/35] ARM: davinci: modernize the irq support
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Milbeaut serial control including earlycon and console.
+pt., 8 lut 2019 o 12:43 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> On 05/02/19 9:41 PM, Bartosz Golaszewski wrote:
+> > pon., 4 lut 2019 o 22:49 David Lechner <david@lechnology.com> napisa=C5=
+=82(a):
+> >>
+> >> On 1/31/19 7:38 AM, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>>
+> >>> This series ports the davinci platform to using SPARSE_IRQ, cleans up
+> >>> the irqchip drivers and moves them over to drivers/irqchip.
+> >>>
+> >>
+> >> This has been on my todo list for years, but I've never had enough
+> >> time to figure it out. Nice to see it finally getting done!
+> >>
+> >> Series tested on LEGO MINDSTORMS EV3 (da850-like). I can now use
+> >> IIO triggers without having to patch the kernel to add extra
+> >> interrupts.
+> >>
+> >> Tested-by: David Lechner <david@lechnology.com>
+> >>
+> >>
+> >
+> > Wow thanks for taking the time to review it!
+> >
+> > I'll address certain remarks - for those unaddressed - I'll fix them in=
+ v2.
+> >
+> > Sekhar: are you fine with sending both the clocksource and interrupt
+> > series together next time with additional patches on top making
+> > davinci part of multi_v5_defconfig?
+>
+> I think its better to keep them separate. You can base both on latest
+> mainline.
+>
+> Thanks,
+> Sekhar
 
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
----
- drivers/tty/serial/Kconfig         |  25 ++
- drivers/tty/serial/Makefile        |   1 +
- drivers/tty/serial/milbeaut_usio.c | 621 +++++++++++++++++++++++++++++++++++++
- include/uapi/linux/serial_core.h   |   3 +
- 4 files changed, 650 insertions(+)
- create mode 100644 drivers/tty/serial/milbeaut_usio.c
+If you prefer I can keep them separate, although there were a couple
+conflicts when I merged them in my tree, which are now resolved.
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 089a6f2..1420195 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1560,6 +1560,31 @@ config SERIAL_RDA_CONSOLE
- 	  Say 'Y' here if you wish to use the RDA8810PL UART as the system
- 	  console. Only earlycon is implemented currently.
- 
-+config SERIAL_MILBEAUT_USIO
-+	tristate "Milbeaut USIO/UART serial port support"
-+	depends on ARCH_MILBEAUT
-+	default y
-+	select SERIAL_CORE
-+	help
-+	  This selects the USIO/UART IP found in Socionext Milbeaut SoCs.
-+
-+config SERIAL_MILBEAUT_USIO_PORTS
-+	int "Maximum number of CSIO/UART ports (1-8)"
-+	range 1 8
-+	depends on SERIAL_MILBEAUT_USIO
-+	default "4"
-+
-+config SERIAL_MILBEAUT_USIO_CONSOLE
-+	bool "Support for console on MILBEAUT USIO/UART serial port"
-+	depends on SERIAL_MILBEAUT_USIO=y
-+	select SERIAL_CORE_CONSOLE
-+	select SERIAL_EARLYCON
-+	help
-+	  Say 'Y' here if you wish to use a USIO/UART of Socionext Milbeaut
-+	  SoCs as the system console (the system console is the device which
-+	  receives all kernel messages and warnings and which allows logins in
-+	  single user mode).
-+
- endmenu
- 
- config SERIAL_MCTRL_GPIO
-diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
-index 1511e8a..fd6fdbe 100644
---- a/drivers/tty/serial/Makefile
-+++ b/drivers/tty/serial/Makefile
-@@ -91,6 +91,7 @@ obj-$(CONFIG_SERIAL_PIC32)	+= pic32_uart.o
- obj-$(CONFIG_SERIAL_MPS2_UART)	+= mps2-uart.o
- obj-$(CONFIG_SERIAL_OWL)	+= owl-uart.o
- obj-$(CONFIG_SERIAL_RDA)	+= rda-uart.o
-+obj-$(CONFIG_SERIAL_MILBEAUT_USIO) += milbeaut_usio.o
- 
- # GPIOLIB helpers for modem control lines
- obj-$(CONFIG_SERIAL_MCTRL_GPIO)	+= serial_mctrl_gpio.o
-diff --git a/drivers/tty/serial/milbeaut_usio.c b/drivers/tty/serial/milbeaut_usio.c
-new file mode 100644
-index 0000000..43729ee
---- /dev/null
-+++ b/drivers/tty/serial/milbeaut_usio.c
-@@ -0,0 +1,621 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Socionext Inc.
-+ */
-+
-+#if defined(CONFIG_SERIAL_MILBEAUT_USIO_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-+#define SUPPORT_SYSRQ
-+#endif
-+
-+#include <linux/clk.h>
-+#include <linux/console.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_core.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
-+
-+#define USIO_NAME		"mlb-usio-uart"
-+#define USIO_UART_DEV_NAME	"ttyUSI"
-+
-+static struct uart_port mlb_usio_ports[CONFIG_SERIAL_MILBEAUT_USIO_PORTS];
-+
-+#define RX	0
-+#define TX	1
-+static int mlb_usio_irq[CONFIG_SERIAL_MILBEAUT_USIO_PORTS][2];
-+
-+#define MLB_USIO_REG_SMR		0
-+#define MLB_USIO_REG_SCR		1
-+#define MLB_USIO_REG_ESCR		2
-+#define MLB_USIO_REG_SSR		3
-+#define MLB_USIO_REG_DR			4
-+#define MLB_USIO_REG_BGR		6
-+#define MLB_USIO_REG_FCR		12
-+#define MLB_USIO_REG_FBYTE		14
-+
-+#define MLB_USIO_SMR_SOE		BIT(0)
-+#define MLB_USIO_SMR_SBL		BIT(3)
-+#define MLB_USIO_SCR_TXE		BIT(0)
-+#define MLB_USIO_SCR_RXE		BIT(1)
-+#define MLB_USIO_SCR_TBIE		BIT(2)
-+#define MLB_USIO_SCR_TIE		BIT(3)
-+#define MLB_USIO_SCR_RIE		BIT(4)
-+#define MLB_USIO_SCR_UPCL		BIT(7)
-+#define MLB_USIO_ESCR_L_8BIT		0
-+#define MLB_USIO_ESCR_L_5BIT		1
-+#define MLB_USIO_ESCR_L_6BIT		2
-+#define MLB_USIO_ESCR_L_7BIT		3
-+#define MLB_USIO_ESCR_P			BIT(3)
-+#define MLB_USIO_ESCR_PEN		BIT(4)
-+#define MLB_USIO_ESCR_FLWEN		BIT(7)
-+#define MLB_USIO_SSR_TBI		BIT(0)
-+#define MLB_USIO_SSR_TDRE		BIT(1)
-+#define MLB_USIO_SSR_RDRF		BIT(2)
-+#define MLB_USIO_SSR_ORE		BIT(3)
-+#define MLB_USIO_SSR_FRE		BIT(4)
-+#define MLB_USIO_SSR_PE			BIT(5)
-+#define MLB_USIO_SSR_REC		BIT(7)
-+#define MLB_USIO_SSR_BRK		BIT(8)
-+#define MLB_USIO_FCR_FE1		BIT(0)
-+#define MLB_USIO_FCR_FE2		BIT(1)
-+#define MLB_USIO_FCR_FCL1		BIT(2)
-+#define MLB_USIO_FCR_FCL2		BIT(3)
-+#define MLB_USIO_FCR_FSET		BIT(4)
-+#define MLB_USIO_FCR_FTIE		BIT(9)
-+#define MLB_USIO_FCR_FDRQ		BIT(10)
-+#define MLB_USIO_FCR_FRIIE		BIT(11)
-+
-+static void mlb_usio_stop_tx(struct uart_port *port)
-+{
-+	writew(readw(port->membase + MLB_USIO_REG_FCR) & ~MLB_USIO_FCR_FTIE,
-+	       port->membase + MLB_USIO_REG_FCR);
-+	writeb(readb(port->membase + MLB_USIO_REG_SCR) & ~MLB_USIO_SCR_TBIE,
-+	       port->membase + MLB_USIO_REG_SCR);
-+}
-+
-+static void mlb_usio_tx_chars(struct uart_port *port)
-+{
-+	struct circ_buf *xmit = &port->state->xmit;
-+	int count;
-+
-+	writew(readw(port->membase + MLB_USIO_REG_FCR) & ~MLB_USIO_FCR_FTIE,
-+	       port->membase + MLB_USIO_REG_FCR);
-+	writeb(readb(port->membase + MLB_USIO_REG_SCR) &
-+	       ~(MLB_USIO_SCR_TIE | MLB_USIO_SCR_TBIE),
-+	       port->membase + MLB_USIO_REG_SCR);
-+
-+	if (port->x_char) {
-+		writew(port->x_char, port->membase + MLB_USIO_REG_DR);
-+		port->icount.tx++;
-+		port->x_char = 0;
-+		return;
-+	}
-+	if (uart_circ_empty(xmit) || uart_tx_stopped(port)) {
-+		mlb_usio_stop_tx(port);
-+		return;
-+	}
-+
-+	count = port->fifosize -
-+		(readw(port->membase + MLB_USIO_REG_FBYTE) & 0xff);
-+
-+	do {
-+		writew(xmit->buf[xmit->tail], port->membase + MLB_USIO_REG_DR);
-+
-+		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
-+		port->icount.tx++;
-+		if (uart_circ_empty(xmit))
-+			break;
-+
-+	} while (--count > 0);
-+
-+	writew(readw(port->membase + MLB_USIO_REG_FCR) & ~MLB_USIO_FCR_FDRQ,
-+	       port->membase + MLB_USIO_REG_FCR);
-+
-+	writeb(readb(port->membase + MLB_USIO_REG_SCR) | MLB_USIO_SCR_TBIE,
-+	       port->membase + MLB_USIO_REG_SCR);
-+
-+	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
-+		uart_write_wakeup(port);
-+
-+	if (uart_circ_empty(xmit))
-+		mlb_usio_stop_tx(port);
-+}
-+
-+static void mlb_usio_start_tx(struct uart_port *port)
-+{
-+	u16 fcr = readw(port->membase + MLB_USIO_REG_FCR);
-+
-+	writew(fcr | MLB_USIO_FCR_FTIE, port->membase + MLB_USIO_REG_FCR);
-+	if (!(fcr & MLB_USIO_FCR_FDRQ))
-+		return;
-+
-+	writeb(readb(port->membase + MLB_USIO_REG_SCR) | MLB_USIO_SCR_TBIE,
-+	       port->membase + MLB_USIO_REG_SCR);
-+
-+	if (readb(port->membase + MLB_USIO_REG_SSR) & MLB_USIO_SSR_TBI)
-+		mlb_usio_tx_chars(port);
-+}
-+
-+static void mlb_usio_stop_rx(struct uart_port *port)
-+{
-+	writeb(readb(port->membase + MLB_USIO_REG_SCR) & ~MLB_USIO_SCR_RIE,
-+	       port->membase + MLB_USIO_REG_SCR);
-+}
-+
-+static void mlb_usio_enable_ms(struct uart_port *port)
-+{
-+	writeb(readb(port->membase + MLB_USIO_REG_SCR) |
-+	       MLB_USIO_SCR_RIE | MLB_USIO_SCR_RXE,
-+	       port->membase + MLB_USIO_REG_SCR);
-+}
-+
-+static void mlb_usio_rx_chars(struct uart_port *port)
-+{
-+	struct tty_port *ttyport = &port->state->port;
-+	unsigned long flag = 0;
-+	char ch = 0;
-+	u8 status;
-+	int max_count = 2;
-+
-+	while (max_count--) {
-+		status = readb(port->membase + MLB_USIO_REG_SSR);
-+
-+		if (!(status & MLB_USIO_SSR_RDRF))
-+			break;
-+
-+		if (!(status & (MLB_USIO_SSR_ORE | MLB_USIO_SSR_FRE |
-+				MLB_USIO_SSR_PE))) {
-+			ch = readw(port->membase + MLB_USIO_REG_DR);
-+			flag = TTY_NORMAL;
-+			port->icount.rx++;
-+			if (uart_handle_sysrq_char(port, ch))
-+				continue;
-+			uart_insert_char(port, status, MLB_USIO_SSR_ORE,
-+					 ch, flag);
-+			continue;
-+		}
-+		if (status & MLB_USIO_SSR_PE)
-+			port->icount.parity++;
-+		if (status & MLB_USIO_SSR_ORE)
-+			port->icount.overrun++;
-+		status &= port->read_status_mask;
-+		if (status & MLB_USIO_SSR_BRK) {
-+			flag = TTY_BREAK;
-+			ch = 0;
-+		} else
-+			if (status & MLB_USIO_SSR_PE) {
-+				flag = TTY_PARITY;
-+				ch = 0;
-+			} else
-+				if (status & MLB_USIO_SSR_FRE) {
-+					flag = TTY_FRAME;
-+					ch = 0;
-+				}
-+		if (flag)
-+			uart_insert_char(port, status, MLB_USIO_SSR_ORE,
-+					 ch, flag);
-+
-+		writeb(readb(port->membase + MLB_USIO_REG_SSR) |
-+				MLB_USIO_SSR_REC,
-+				port->membase + MLB_USIO_REG_SSR);
-+
-+		max_count = readw(port->membase + MLB_USIO_REG_FBYTE) >> 8;
-+		writew(readw(port->membase + MLB_USIO_REG_FCR) |
-+		       MLB_USIO_FCR_FE2 | MLB_USIO_FCR_FRIIE,
-+		port->membase + MLB_USIO_REG_FCR);
-+	}
-+
-+	tty_flip_buffer_push(ttyport);
-+}
-+
-+static irqreturn_t mlb_usio_rx_irq(int irq, void *dev_id)
-+{
-+	struct uart_port *port = dev_id;
-+
-+	spin_lock(&port->lock);
-+	mlb_usio_rx_chars(port);
-+	spin_unlock(&port->lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t mlb_usio_tx_irq(int irq, void *dev_id)
-+{
-+	struct uart_port *port = dev_id;
-+
-+	spin_lock(&port->lock);
-+	if (readb(port->membase + MLB_USIO_REG_SSR) & MLB_USIO_SSR_TBI)
-+		mlb_usio_tx_chars(port);
-+	spin_unlock(&port->lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static unsigned int mlb_usio_tx_empty(struct uart_port *port)
-+{
-+	return (readb(port->membase + MLB_USIO_REG_SSR) & MLB_USIO_SSR_TBI) ?
-+		TIOCSER_TEMT : 0;
-+}
-+
-+static void mlb_usio_set_mctrl(struct uart_port *port, unsigned int mctrl)
-+{
-+}
-+
-+static unsigned int mlb_usio_get_mctrl(struct uart_port *port)
-+{
-+	return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
-+
-+}
-+
-+static void mlb_usio_break_ctl(struct uart_port *port, int break_state)
-+{
-+}
-+
-+static int mlb_usio_startup(struct uart_port *port)
-+{
-+	const char *portname = to_platform_device(port->dev)->name;
-+	unsigned long flags;
-+	int ret, index = port->line;
-+	unsigned char  escr;
-+
-+	ret = request_irq(mlb_usio_irq[index][RX], mlb_usio_rx_irq,
-+				0, portname, port);
-+	if (ret)
-+		return ret;
-+	ret = request_irq(mlb_usio_irq[index][TX], mlb_usio_tx_irq,
-+				0, portname, port);
-+	if (ret) {
-+		free_irq(mlb_usio_irq[index][RX], port);
-+		return ret;
-+	}
-+
-+	escr = readb(port->membase + MLB_USIO_REG_ESCR);
-+	if (of_property_read_bool(port->dev->of_node, "uart-flow-enable"))
-+		escr |= MLB_USIO_ESCR_FLWEN;
-+	spin_lock_irqsave(&port->lock, flags);
-+	writeb(0, port->membase + MLB_USIO_REG_SCR);
-+	writeb(escr, port->membase + MLB_USIO_REG_ESCR);
-+	writeb(MLB_USIO_SCR_UPCL, port->membase + MLB_USIO_REG_SCR);
-+	writeb(MLB_USIO_SSR_REC, port->membase + MLB_USIO_REG_SSR);
-+	writew(0, port->membase + MLB_USIO_REG_FCR);
-+	writew(MLB_USIO_FCR_FCL1 | MLB_USIO_FCR_FCL2,
-+	       port->membase + MLB_USIO_REG_FCR);
-+	writew(MLB_USIO_FCR_FE1 | MLB_USIO_FCR_FE2 | MLB_USIO_FCR_FRIIE,
-+	       port->membase + MLB_USIO_REG_FCR);
-+	writew(0, port->membase + MLB_USIO_REG_FBYTE);
-+	writew(BIT(12), port->membase + MLB_USIO_REG_FBYTE);
-+
-+	writeb(MLB_USIO_SCR_TXE  | MLB_USIO_SCR_RIE | MLB_USIO_SCR_TBIE |
-+	       MLB_USIO_SCR_RXE, port->membase + MLB_USIO_REG_SCR);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void mlb_usio_shutdown(struct uart_port *port)
-+{
-+	int index = port->line;
-+
-+	free_irq(mlb_usio_irq[index][RX], port);
-+	free_irq(mlb_usio_irq[index][TX], port);
-+}
-+
-+static void mlb_usio_set_termios(struct uart_port *port,
-+			struct ktermios *termios, struct ktermios *old)
-+{
-+	unsigned int escr, smr = MLB_USIO_SMR_SOE;
-+	unsigned long flags, baud, quot;
-+
-+	switch (termios->c_cflag & CSIZE) {
-+	case CS5:
-+		escr = MLB_USIO_ESCR_L_5BIT;
-+		break;
-+	case CS6:
-+		escr = MLB_USIO_ESCR_L_6BIT;
-+		break;
-+	case CS7:
-+		escr = MLB_USIO_ESCR_L_7BIT;
-+		break;
-+	case CS8:
-+	default:
-+		escr = MLB_USIO_ESCR_L_8BIT;
-+		break;
-+	}
-+
-+	if (termios->c_cflag & CSTOPB)
-+		smr |= MLB_USIO_SMR_SBL;
-+
-+	if (termios->c_cflag & PARENB) {
-+		escr |= MLB_USIO_ESCR_PEN;
-+		if (termios->c_cflag & PARODD)
-+			escr |= MLB_USIO_ESCR_P;
-+	}
-+	/* Set hard flow control */
-+	if (of_property_read_bool(port->dev->of_node, "uart-flow-enable") ||
-+			(termios->c_cflag & CRTSCTS))
-+		escr |= MLB_USIO_ESCR_FLWEN;
-+
-+	baud = uart_get_baud_rate(port, termios, old, 0, port->uartclk);
-+	if (baud > 1)
-+		quot = port->uartclk / baud - 1;
-+	else
-+		quot = 0;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	uart_update_timeout(port, termios->c_cflag, baud);
-+	port->read_status_mask = MLB_USIO_SSR_ORE | MLB_USIO_SSR_RDRF |
-+				 MLB_USIO_SSR_TDRE;
-+	if (termios->c_iflag & INPCK)
-+		port->read_status_mask |= MLB_USIO_SSR_FRE | MLB_USIO_SSR_PE;
-+
-+	port->ignore_status_mask = 0;
-+	if (termios->c_iflag & IGNPAR)
-+		port->ignore_status_mask |= MLB_USIO_SSR_FRE | MLB_USIO_SSR_PE;
-+	if ((termios->c_iflag & IGNBRK) && (termios->c_iflag & IGNPAR))
-+		port->ignore_status_mask |= MLB_USIO_SSR_ORE;
-+	if ((termios->c_cflag & CREAD) == 0)
-+		port->ignore_status_mask |= MLB_USIO_SSR_RDRF;
-+
-+	writeb(0, port->membase + MLB_USIO_REG_SCR);
-+	writeb(MLB_USIO_SCR_UPCL, port->membase + MLB_USIO_REG_SCR);
-+	writeb(MLB_USIO_SSR_REC, port->membase + MLB_USIO_REG_SSR);
-+	writew(0, port->membase + MLB_USIO_REG_FCR);
-+	writeb(smr, port->membase + MLB_USIO_REG_SMR);
-+	writeb(escr, port->membase + MLB_USIO_REG_ESCR);
-+	writew(quot, port->membase + MLB_USIO_REG_BGR);
-+	writew(0, port->membase + MLB_USIO_REG_FCR);
-+	writew(MLB_USIO_FCR_FCL1 | MLB_USIO_FCR_FCL2 | MLB_USIO_FCR_FE1 |
-+	       MLB_USIO_FCR_FE2 | MLB_USIO_FCR_FRIIE,
-+	       port->membase + MLB_USIO_REG_FCR);
-+	writew(0, port->membase + MLB_USIO_REG_FBYTE);
-+	writew(BIT(12), port->membase + MLB_USIO_REG_FBYTE);
-+	writeb(MLB_USIO_SCR_RIE | MLB_USIO_SCR_RXE | MLB_USIO_SCR_TBIE |
-+	       MLB_USIO_SCR_TXE, port->membase + MLB_USIO_REG_SCR);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+static const char *mlb_usio_type(struct uart_port *port)
-+{
-+	return ((port->type == PORT_MLB_USIO) ? USIO_NAME : NULL);
-+}
-+
-+static void mlb_usio_config_port(struct uart_port *port, int flags)
-+{
-+	if (flags & UART_CONFIG_TYPE)
-+		port->type = PORT_MLB_USIO;
-+}
-+
-+static const struct uart_ops mlb_usio_ops = {
-+	.tx_empty	= mlb_usio_tx_empty,
-+	.set_mctrl	= mlb_usio_set_mctrl,
-+	.get_mctrl	= mlb_usio_get_mctrl,
-+	.stop_tx	= mlb_usio_stop_tx,
-+	.start_tx	= mlb_usio_start_tx,
-+	.stop_rx	= mlb_usio_stop_rx,
-+	.enable_ms	= mlb_usio_enable_ms,
-+	.break_ctl	= mlb_usio_break_ctl,
-+	.startup	= mlb_usio_startup,
-+	.shutdown	= mlb_usio_shutdown,
-+	.set_termios	= mlb_usio_set_termios,
-+	.type		= mlb_usio_type,
-+	.config_port	= mlb_usio_config_port,
-+};
-+
-+#ifdef CONFIG_SERIAL_MILBEAUT_USIO_CONSOLE
-+
-+static void mlb_usio_console_putchar(struct uart_port *port, int c)
-+{
-+	while (!(readb(port->membase + MLB_USIO_REG_SSR) & MLB_USIO_SSR_TDRE))
-+		cpu_relax();
-+
-+	writew(c, port->membase + MLB_USIO_REG_DR);
-+}
-+
-+static void mlb_usio_console_write(struct console *co, const char *s,
-+			       unsigned int count)
-+{
-+	struct uart_port *port = &mlb_usio_ports[co->index];
-+
-+	uart_console_write(port, s, count, mlb_usio_console_putchar);
-+}
-+
-+static int __init mlb_usio_console_setup(struct console *co, char *options)
-+{
-+	struct uart_port *port;
-+	int baud = 115200;
-+	int parity = 'n';
-+	int flow = 'n';
-+	int bits = 8;
-+
-+	if (co->index >= CONFIG_SERIAL_MILBEAUT_USIO_PORTS)
-+		return -ENODEV;
-+
-+	port = &mlb_usio_ports[co->index];
-+	if (!port->membase)
-+		return -ENODEV;
-+
-+
-+	if (options)
-+		uart_parse_options(options, &baud, &parity, &bits, &flow);
-+
-+	if (of_property_read_bool(port->dev->of_node, "uart-flow-enable"))
-+		flow = 'r';
-+
-+	return uart_set_options(port, co, baud, parity, bits, flow);
-+}
-+
-+
-+static struct uart_driver mlb_usio_uart_driver;
-+static struct console mlb_usio_console = {
-+	.name   = USIO_UART_DEV_NAME,
-+	.write  = mlb_usio_console_write,
-+	.device = uart_console_device,
-+	.setup  = mlb_usio_console_setup,
-+	.flags  = CON_PRINTBUFFER,
-+	.index  = -1,
-+	.data   = &mlb_usio_uart_driver,
-+};
-+
-+static int __init mlb_usio_console_init(void)
-+{
-+	register_console(&mlb_usio_console);
-+	return 0;
-+}
-+console_initcall(mlb_usio_console_init);
-+
-+
-+static void mlb_usio_early_console_write(struct console *co, const char *s,
-+					u_int count)
-+{
-+	struct earlycon_device *dev = co->data;
-+
-+	uart_console_write(&dev->port, s, count, mlb_usio_console_putchar);
-+}
-+
-+static int __init mlb_usio_early_console_setup(struct earlycon_device *device,
-+						const char *opt)
-+{
-+	if (!device->port.membase)
-+		return -ENODEV;
-+	device->con->write = mlb_usio_early_console_write;
-+	return 0;
-+}
-+
-+OF_EARLYCON_DECLARE(mlb_usio, "socionext,milbeaut-usio-uart",
-+			mlb_usio_early_console_setup);
-+
-+#define USIO_CONSOLE	(&mlb_usio_console)
-+#else
-+#define USIO_CONSOLE	NULL
-+#endif
-+
-+static struct  uart_driver mlb_usio_uart_driver = {
-+	.owner		= THIS_MODULE,
-+	.driver_name	= USIO_NAME,
-+	.dev_name	= USIO_UART_DEV_NAME,
-+	.cons           = USIO_CONSOLE,
-+	.nr		= CONFIG_SERIAL_MILBEAUT_USIO_PORTS,
-+};
-+
-+static int mlb_usio_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk = devm_clk_get(&pdev->dev, 0);
-+	struct uart_port *port;
-+	struct resource *res;
-+	int index = 0;
-+	int ret;
-+
-+	if (IS_ERR(clk)) {
-+		dev_err(&pdev->dev, "Missing clock\n");
-+		return PTR_ERR(clk);
-+	}
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Clock enable failed: %d\n", ret);
-+		return ret;
-+	}
-+	of_property_read_u32(pdev->dev.of_node, "index", &index);
-+	port = &mlb_usio_ports[index];
-+
-+	port->private_data = (void *)clk;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (res == NULL) {
-+		dev_err(&pdev->dev, "Missing regs\n");
-+		ret = -ENODEV;
-+		goto failed;
-+	}
-+	port->mapbase = res->start;
-+	port->membase = ioremap(res->start, (res->end - res->start + 1));
-+	port->membase = devm_ioremap(&pdev->dev, res->start,
-+				resource_size(res));
-+
-+	ret = platform_get_irq_byname(pdev, "rx");
-+	mlb_usio_irq[index][RX] = ret;
-+
-+	ret = platform_get_irq_byname(pdev, "tx");
-+	mlb_usio_irq[index][TX] = ret;
-+
-+	port->irq = mlb_usio_irq[index][RX];
-+	port->uartclk = clk_get_rate(clk);
-+	port->fifosize = 128;
-+	port->iotype = UPIO_MEM32;
-+	port->flags = UPF_BOOT_AUTOCONF | UPF_SPD_VHI;
-+	port->line = index;
-+	port->ops = &mlb_usio_ops;
-+	port->dev = &pdev->dev;
-+
-+	ret = uart_add_one_port(&mlb_usio_uart_driver, port);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Adding port failed: %d\n", ret);
-+		goto failed1;
-+	}
-+	return 0;
-+
-+failed1:
-+	iounmap(port->membase);
-+
-+failed:
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
-+
-+	return ret;
-+}
-+
-+static int mlb_usio_remove(struct platform_device *pdev)
-+{
-+	struct uart_port *port = &mlb_usio_ports[pdev->id];
-+	struct clk *clk = port->private_data;
-+
-+	uart_remove_one_port(&mlb_usio_uart_driver, port);
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id mlb_usio_dt_ids[] = {
-+	{ .compatible = "socionext,milbeaut-usio-uart" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, mlb_usio_dt_ids);
-+
-+static struct platform_driver mlb_usio_driver = {
-+	.probe          = mlb_usio_probe,
-+	.remove         = mlb_usio_remove,
-+	.driver         = {
-+		.name   = USIO_NAME,
-+		.of_match_table = mlb_usio_dt_ids,
-+	},
-+};
-+
-+static int __init mlb_usio_init(void)
-+{
-+	int ret = uart_register_driver(&mlb_usio_uart_driver);
-+
-+	if (ret) {
-+		pr_err("%s: uart registration failed: %d\n", __func__, ret);
-+		return ret;
-+	}
-+	ret = platform_driver_register(&mlb_usio_driver);
-+	if (ret) {
-+		uart_unregister_driver(&mlb_usio_uart_driver);
-+		pr_err("%s: drv registration failed: %d\n", __func__, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit mlb_usio_exit(void)
-+{
-+	platform_driver_unregister(&mlb_usio_driver);
-+	uart_unregister_driver(&mlb_usio_uart_driver);
-+}
-+
-+module_init(mlb_usio_init);
-+module_exit(mlb_usio_exit);
-+
-+MODULE_AUTHOR("SOCIONEXT");
-+MODULE_DESCRIPTION("MILBEAUT_USIO/UART Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
-index df4a753..0f8a3bf 100644
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@ -284,4 +284,7 @@
- /* RDA UART */
- #define PORT_RDA	118
- 
-+/* Socionext Milbeaut UART */
-+#define PORT_MLB_USIO	119
-+
- #endif /* _UAPILINUX_SERIAL_CORE_H */
--- 
-1.9.1
+Let's maybe start with the interrupts (I'll send a v2 tonight if you
+don't have any more comments), and once you have that in your tree, I
+will rebase the timer code and then the multi_v5 series.
 
+Bart
