@@ -2,110 +2,147 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D614C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB046C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096A621916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B59BA21919
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:19:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E4BOUi+w";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TD6RlVOS"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ZY9qesP9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfBHFOz (ORCPT
+        id S1726994AbfBHFTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 00:14:55 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41930 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfBHFOz (ORCPT
+        Fri, 8 Feb 2019 00:19:54 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43915 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbfBHFTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 00:14:55 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 857D060A60; Fri,  8 Feb 2019 05:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549602893;
-        bh=BN+IwVB+jo/hG86eIynovwh2uHK3TLFHFAxCWtsZUWE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=E4BOUi+wrQrm9ob14fE0IHsiWMPRi4ioaV/Mnu/prMh+0mRjn/1GklBMzCjmycZhn
-         N9I51bTYj8MucKbKdQjLxRV89NrSJJXgrTJtEBEQflf7h8Zbr6a+0PMPVQrX9uy2DT
-         W2s5IMIG9jlBch996td2MpycjMIV92zUPZIomIgQ=
-Received: from [192.168.43.47] (unknown [106.206.90.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 916B56090B;
-        Fri,  8 Feb 2019 05:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549602884;
-        bh=BN+IwVB+jo/hG86eIynovwh2uHK3TLFHFAxCWtsZUWE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TD6RlVOS7AaF0Di7rtX+HrbpQipfx9LAjmXTPM8GmEaKIqoB8rH9Azx38oM/VoOK3
-         H/Gy8h20m7m5T/e7ty0v9OY78IUzURlwNLXj9WBampyYD+ffnjYc5z2m2YKk96hbig
-         sD1GRp5b+GguBcqq+a86/jZIoIXuqf136omo/V5Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 916B56090B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv7 6/6] coresight: cpu-debug: Add support for Qualcomm Kryo
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fri, 8 Feb 2019 00:19:53 -0500
+Received: by mail-pl1-f194.google.com with SMTP id f90so894688plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 21:19:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BYbBSsXD8XXPJr8WmxtwPC6HBpOHhpTEB9wAZo2Q1Iw=;
+        b=ZY9qesP9VVn0x9e71+u4lkQ//uBh7kJgGvlvQKRWeoCf4hvZtlJxqBWlgNIsBozfuw
+         PdiI4WYxwxhuhA+2Sgprj5UL9o5hea0yoh9+Ctc3FowkhG51kFr8aedwRShg+QKcaDCW
+         tIY0lbhw0VWFe5rVm0M2wXVtSouGOAhLUfZ50+m3NGMVTTrnEeKRxLxi0BdKLdR7nIiA
+         XEYfw1JdCfICZ/gylNCtg2bIU+Rm1+9QUR+dnNgdoU5lcQEY8JXoxLEdbOeFNsjs58Ms
+         yjBkj2TK4LWgLjeiJEPhzVoyPpQRQIMnqvxzPKyKJF6lFGUzbvvWjTcEHrDFrmsmTVdQ
+         Iftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BYbBSsXD8XXPJr8WmxtwPC6HBpOHhpTEB9wAZo2Q1Iw=;
+        b=skKM9Zm/Ns5hP0G3+OGyX0ibu7shvOfIbjbPM2WSsmKiO/SSiE7DVQuuF5q3di0sLR
+         OjEpkfiAYvO9GeK/bj2OESJ+AVKD/KEIrMJvfz52Q5CP7j5zxTMh3X+IDU+dN91+KAfN
+         RMZHQBqvQJRr6doEZ0BsRlj9SQviKD/CIGo0XPfaNEHrTrnPiIyMaEjlmGE67LqZWrZq
+         fTSPRCQKHImLZi046fDRWRdsQyTd0WN8EkZxP2SOzvFeF1xwueILvhZUYU3tbrxkkJtJ
+         Zjz9m2Pfkjj7WGtef9D5AlqjrwrfaAY2fNny7w42tLI0kzV2Yh6Lj/vYhoddoNcDh6BY
+         4TQw==
+X-Gm-Message-State: AHQUAuYm9NIQP3yUi2GPtS8RujCHfUUxYhd9eMgVjF6shhVBsCSdsN3p
+        8dLlwDE17XxltjOK8Osk7nSEH/PswDo=
+X-Google-Smtp-Source: AHgI3Ib+Q8mmAigiLi1jjcsVDeZ6rNsQaeyBAKdrDXlYrjxQElJhijsWAqyqebNTeTb+oDehCRzanA==
+X-Received: by 2002:a17:902:298a:: with SMTP id h10mr20875446plb.312.1549603192845;
+        Thu, 07 Feb 2019 21:19:52 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id d16sm901999pgj.21.2019.02.07.21.19.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 21:19:51 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gryZq-0002AV-R9; Thu, 07 Feb 2019 22:19:50 -0700
+Date:   Thu, 7 Feb 2019 22:19:50 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org>
- <53cf9d9d3b14f503a6c842754f3c55413f5a3392.1548981329.git.saiprakash.ranjan@codeaurora.org>
- <CANLsYky9ujRyftg3WoeSWK37=3_k5hw9x=DV34P_YrUXCLApXw@mail.gmail.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <d6f568ca-be16-ef1a-b83b-83b9a613582d@codeaurora.org>
-Date:   Fri, 8 Feb 2019 10:44:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190208051950.GA4283@ziepe.ca>
+References: <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <20190207035258.GD6173@dastard>
+ <20190207052310.GA22726@ziepe.ca>
+ <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
+ <20190207171736.GD22726@ziepe.ca>
+ <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CANLsYky9ujRyftg3WoeSWK37=3_k5hw9x=DV34P_YrUXCLApXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/2019 1:58 AM, Mathieu Poirier wrote:
-> On Thu, 31 Jan 2019 at 17:55, Sai Prakash Ranjan
-> <saiprakash.ranjan@codeaurora.org> wrote:
->>
->> Add support for coresight CPU debug module on Qualcomm
->> Kryo CPUs. This patch adds the UCI entries for Kryo CPUs
->> found on MSM8996 which shares the same PIDs as ETMs.
+On Thu, Feb 07, 2019 at 03:54:58PM -0800, Dan Williams wrote:
 
-[..]
-
-> I have reviewed your work and things look good to me.  Once again
-> there isn't much I can do with it right now.  Please re-submit when
-> Mike's set has been merged.
+> > The only production worthy way is to have the FS be a partner in
+> > making this work without requiring revoke, so the critical RDMA
+> > traffic can operate safely.
 > 
+> ...belies a path forward. Just swap out "FS be a partner" with "system
+> administrator be a partner". In other words, If the RDMA stack can't
+> tolerate an MR being disabled then the administrator needs to actively
+> disable the paths that would trigger it. Turn off reflink, don't
+> truncate, avoid any future FS feature that might generate unwanted
+> lease breaks. 
 
-Sure, thanks.
+This is what I suggested already, except with explicit kernel aid, not
+left as some gordian riddle for the administrator to unravel.
 
+You already said it is too hard for expert FS developers to maintain a
+mode switch, it seems like a really big stretch to think application
+and systems architects will have any hope to do better.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+It makes much more sense for the admin to flip some kind of bit and
+the FS guarentees the safety that you are asking the admin to create.
+
+> We would need to make sure that lease notifications include the
+> information to identify the lease breaker to debug escapes that
+> might happen, but it is a solution that can be qualified to not
+> lease break. 
+
+I think building a complicated lease framework and then telling
+everyone in user space to design around it so it never gets used would
+be very hard to explain and justify.
+
+Never mind the security implications if some seemingly harmless future
+filesystem change causes unexpected lease revokes across something
+like a tenant boundary.
+
+> In any event, this lets end users pick their filesystem
+> (modulo RDMA incompatible features), provides an enumeration of
+> lease break sources in the kernel, and opens up FS-DAX to a wider
+> array of RDMA adapters. In general this is what Linux has
+> historically done, give end users technology freedom.
+
+I think this is not the Linux model. The kernel should not allow
+unpriv user space to do an operation that could be unsafe.
+
+I continue to think this is is the best idea that has come up - but
+only if the filesystem is involved and expressly tells the kernel
+layers that this combination of DAX & filesystem is safe.
+
+Jason
