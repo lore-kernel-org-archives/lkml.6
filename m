@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE0EC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F20EFC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2128C207E0
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C29DD207E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549655113;
-	bh=oZMPvd2dUru5qKccL+k0azlrRLglTL9kVeO2DoI9zZ4=;
+	s=default; t=1549655117;
+	bh=JtNrdwlGQr696O16eW30BH9uAr9OxHBXFfBrB+/3oLA=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=nuVgTqShZNcPIp2siCKXRr+1AFQ5DVyEyTGLeRQpDYpVpnRHiGrGvFrF5zzB4BC/K
-	 xlV+ruQzrdroqAhx8IRKOKrkHOH2ysfAPJkGDrgmjSs56U8PBWODVNOPzGaXJ2Ddp8
-	 sMRfbWDXrVzSAMciKKsxzvupOYg840rWxaQNiDjc=
+	b=qYsp6uoZsb4ftAvPFYwa4q5czRG+A1O1Tlg7QubZqkYaD2tM7QAMOP4MmNgGdoNG1
+	 mATQOT0ZI9545Hy8RmLXpr2Cuytxrd8/60NXzlyf3/5c+rV9/xhmBLRrG8rw3RvkZP
+	 EX3HhZgJInYX/jryHGfo84UOcifQhpELaHJdb0t4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfBHTpL (ORCPT
+        id S1727317AbfBHTpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:45:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39984 "EHLO mail.kernel.org"
+        Fri, 8 Feb 2019 14:45:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727084AbfBHTpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727180AbfBHTpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 14:45:06 -0500
-Subject: Re: [GIT PULL] Driver core fixes for 5.0-rc6
+Subject: Re: [GIT PULL] Char/Misc driver fixes for 5.0-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1549655105;
-        bh=oZMPvd2dUru5qKccL+k0azlrRLglTL9kVeO2DoI9zZ4=;
+        bh=JtNrdwlGQr696O16eW30BH9uAr9OxHBXFfBrB+/3oLA=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=WPX2drM4CWnYSSLsYfOKJsZjYjCn165WQRcKsfPJYcxxUcQPD1hFs1OxUuueSor1c
-         Tfipw/m2aUI8EXXlw6YCMzgD3HXCeZpbN05N6F7gvqHwEHh/KH327Z5+s2C5NuXE9V
-         ywDEhO6f15PNpOF2vm2M1CkUdJUIaMZA3QtNRugA=
+        b=DmsX8xtBMPCyvqilL1rrEm/xOmw36k5Hq2DoEDpun6AhF+UWlFScGUin4F1uqEpb0
+         sw99LDp0NNaSzjqbwL4Np0KX60fyUdYdI+SvC35H2ap9INHr+DQwPEHPaUgIp0otaQ
+         +BHmhtpeR+YV+eL+EUj8QABcxO05p9rIDzHoLTXY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190208083904.GA27008@kroah.com>
-References: <20190208083904.GA27008@kroah.com>
+In-Reply-To: <20190208083921.GA27053@kroah.com>
+References: <20190208083921.GA27053@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190208083904.GA27008@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
- tags/driver-core-5.0-rc6
-X-PR-Tracked-Commit-Id: 36991ca68db9dd43bac7f3519f080ee3939263ef
+X-PR-Tracked-Message-Id: <20190208083921.GA27053@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+ tags/char-misc-5.0-rc6
+X-PR-Tracked-Commit-Id: 4bf13fdbc3567e571c20b415e4df70f564d54067
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8c8e62cc983938a554d39497b5600b842f8a7965
-Message-Id: <154965510554.5511.10300336532155378090.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 680905431b9de8c7224b15b76b1826a1481cfeaf
+Message-Id: <154965510578.5511.11418654059577566923.pr-tracker-bot@kernel.org>
 Date:   Fri, 08 Feb 2019 19:45:05 +0000
 To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 8 Feb 2019 09:39:04 +0100:
+The pull request you sent on Fri, 8 Feb 2019 09:39:21 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/driver-core-5.0-rc6
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.0-rc6
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8c8e62cc983938a554d39497b5600b842f8a7965
+https://git.kernel.org/torvalds/c/680905431b9de8c7224b15b76b1826a1481cfeaf
 
 Thank you!
 
