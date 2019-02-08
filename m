@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C83C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BA9C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A93DD20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EE9E2146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfBHPYa (ORCPT
+        id S1728141AbfBHPYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:24:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60024 "EHLO mx1.suse.de"
+        Fri, 8 Feb 2019 10:24:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60044 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728094AbfBHPY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:24:27 -0500
+        id S1728120AbfBHPYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 10:24:30 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8BDFBB144;
-        Fri,  8 Feb 2019 15:24:26 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id D08C1B143;
+        Fri,  8 Feb 2019 15:24:29 +0000 (UTC)
 From:   Petr Mladek <pmladek@suse.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
@@ -33,11 +33,10 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v6 6/9] vsprintf: Factor out %pO handler as kobject_string()
-Date:   Fri,  8 Feb 2019 16:23:07 +0100
-Message-Id: <20190208152310.29531-7-pmladek@suse.com>
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v6 9/9] vsprintf: Avoid confusion between invalid address and value
+Date:   Fri,  8 Feb 2019 16:23:10 +0100
+Message-Id: <20190208152310.29531-10-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190208152310.29531-1-pmladek@suse.com>
 References: <20190208152310.29531-1-pmladek@suse.com>
@@ -46,54 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move code from the long pointer() function. We are going to improve
-error handling that will make it even more complicated.
+We are able to detect invalid values handled by %p[iI] printk specifier.
+The current error message is "invalid address". It might cause confusion
+against "(efault)" reported by the generic valid_pointer_address() check.
 
-This patch does not change the existing behavior.
+Let's unify the style and use the more appropriate error code description
+"(einval)".
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tobin Harding <me@tobin.cc>
-Cc: Kees Cook <keescook@chromium.org>
 ---
- lib/vsprintf.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ Documentation/core-api/printk-formats.rst | 1 +
+ lib/vsprintf.c                            | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index 732943b36828..0cbd98206a20 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -56,6 +56,7 @@ might be printed instead of the unreachable information::
+ 
+ 	(null)	 data on plain NULL address
+ 	(efault) data on invalid address
++	(einval) invalid data on a valid address
+ 
+ Plain Pointers
+ --------------
 diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 9621b76f6c60..ab59db1c1146 100644
+index 3a95b4d1ca2e..e51cbc2be540 100644
 --- a/lib/vsprintf.c
 +++ b/lib/vsprintf.c
-@@ -1887,6 +1887,17 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
- 	return widen_string(buf, buf - buf_start, end, spec);
- }
- 
-+static char *kobject_string(char *buf, char *end, void *ptr,
-+			    struct printf_spec spec, const char *fmt)
-+{
-+	switch (fmt[1]) {
-+	case 'F':
-+		return device_node_string(buf, end, ptr, spec, fmt + 1);
-+	}
-+
-+	return ptr_to_id(buf, end, ptr, spec);
-+}
-+
- /*
-  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
-  * by an extra set of alphanumeric characters that are extended format
-@@ -2082,11 +2093,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
- 	case 'G':
- 		return flags_string(buf, end, ptr, fmt);
- 	case 'O':
--		switch (fmt[1]) {
--		case 'F':
--			return device_node_string(buf, end, ptr, spec, fmt + 1);
--		}
--		break;
-+		return kobject_string(buf, end, ptr, spec, fmt);
- 	case 'x':
- 		return pointer_string(buf, end, ptr, spec);
+@@ -1510,7 +1510,7 @@ char *ip_addr_string(char *buf, char *end, const void *ptr,
+ 		case AF_INET6:
+ 			return ip6_addr_string_sa(buf, end, &sa->v6, spec, fmt);
+ 		default:
+-			return string_nocheck(buf, end, "(invalid address)", spec);
++			return string_nocheck(buf, end, "(einval)", spec);
+ 		}}
  	}
+ 
 -- 
 2.13.7
 
