@@ -6,59 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 827E6C282CC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1BDC282CB
 	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505DB21916
+	by mail.kernel.org (Postfix) with ESMTP id 7C6EE21908
 	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfBHGDB (ORCPT
+        id S1727213AbfBHGDE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 01:03:01 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35526 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbfBHGC7 (ORCPT
+        Fri, 8 Feb 2019 01:03:04 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45593 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbfBHGDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 01:02:59 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w204so1485534qka.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 22:02:58 -0800 (PST)
+        Fri, 8 Feb 2019 01:03:01 -0500
+Received: by mail-qt1-f194.google.com with SMTP id e5so2678482qtr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 22:03:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=+nXOz6pJ3BlFpyk91TAV6qomYY/ubiCtP1T6z27AOU8=;
-        b=dZTmLDIgESLI0qu4XCAM8Qp4r0/+6MkzwEhcOvHGTlf7oWpDYlzQeva4lDwin7tAbQ
-         1PaMOva3cvygKa9+kFnaQBaj/5DvXS+4ttAJyHEbc8zbO9kBaEdtM6UWgtdXvtC6TrPR
-         WBGsCifYjr4JraIeMaoSCae4lStsXQSWASK9WlDVUHcW3Dsc2EetYi4vEGxtoDytP9wZ
-         3FpNZppG5hPCrISnrsg6/adgOEZoluXUJ15g7w68j8FBQ/rf51IkHQ1QNX3/k0b7j92U
-         TH2352wAtK9HvvfjQQCjaXKXWEFh8m+z0g2Anr4aiCvJTqtVEepQsA42LYdgiPEPsq33
-         3aCg==
-X-Gm-Message-State: AHQUAubZbx8tjMZNTayqj4mfVsSit7U44Zxmb0gjPIFxyqj7uA3y1/8g
-        nAcKwUhsYfmpXM1imegQP2i6w7+EMqMTuw==
-X-Google-Smtp-Source: AHgI3IY8UkuNEaunDWPDIIGAubiipW3iirC76VOqANc+nOZM1N0XFgV17IacLCmhs/QrcslrJHU2NQ==
-X-Received: by 2002:ae9:f110:: with SMTP id k16mr10172495qkg.93.1549605777884;
-        Thu, 07 Feb 2019 22:02:57 -0800 (PST)
+        bh=4J99pS820vJG8R6BMT8R5uc5unH9zi10s5KwbbGVQ8w=;
+        b=dRZVO6Vt/zdYYf0B9KzyWm5pLw87kawzg4XephBVWpkiYlipjW8zlz8ayV71Lvs8FP
+         FN3ChoUeAwu4rP39kmhROzVy7+HgYIHqjpwmnF70/ARofBV5QprR3/u6SBT4UXe9on1b
+         ZJtvGwdv1sma9eY5DcE937RyeR+4AozkZ96cWpaqNNoTYrKhEe+lJOceoxbPq+aeZRl9
+         RfuIU+kme3C8aZMusCvusx2OdlczCVpDCEulQQz/AHnX7F6rydCgsmsA8dLwGhEb9rOQ
+         XvJnC4YW2jIW+l05u6OGVcbfCbRhLVx2XEd/gDlMVgYrW9o9AXmDGRQrIDcccwxaVB8j
+         HPnw==
+X-Gm-Message-State: AHQUAuZstmEtQ0CKVGsUC1WRazxJ9Xg85MqDtqCAMwe1Z6NytZ5r8BYu
+        v9o5m+ZnKci+ASZIe6ISLje45NQ1DJ00/g==
+X-Google-Smtp-Source: AHgI3IaUfH9TnFt1mis/ttpKDH7qHAxs74b4Ncs9bdwAemJnW8cCjyxCkg7otaEX2ZpNx0Y1qFSa2w==
+X-Received: by 2002:ac8:5157:: with SMTP id h23mr9091612qtn.370.1549605779973;
+        Thu, 07 Feb 2019 22:02:59 -0800 (PST)
 Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id y6sm1075699qki.10.2019.02.07.22.02.56
+        by smtp.gmail.com with ESMTPSA id s40sm1191106qtb.83.2019.02.07.22.02.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 22:02:57 -0800 (PST)
-Date:   Fri, 8 Feb 2019 01:02:55 -0500
+        Thu, 07 Feb 2019 22:02:59 -0800 (PST)
+Date:   Fri, 8 Feb 2019 01:02:58 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH 2/2] arch: move common mmap flags to linux/mman.h
-Message-ID: <20190124142448.23243-3-mst@redhat.com>
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH 2/3] drm: tweak header name
+Message-ID: <20190124142448.23243-4-mst@redhat.com>
 References: <20190124142448.23243-1-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -71,111 +65,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have 3 mmap flags shared by all architectures,
-let's move them into the common header.
-
-This will help discourage future architectures from duplicating code.
+Use linux/mman.h to make sure we get all mmap flags we need.
 
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- arch/alpha/include/uapi/asm/mman.h     | 4 +---
- arch/mips/include/uapi/asm/mman.h      | 4 +---
- arch/parisc/include/uapi/asm/mman.h    | 4 +---
- arch/xtensa/include/uapi/asm/mman.h    | 4 +---
- include/uapi/asm-generic/mman-common.h | 4 +---
- include/uapi/linux/mman.h              | 4 ++++
- 6 files changed, 9 insertions(+), 15 deletions(-)
+ include/drm/drmP.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/alpha/include/uapi/asm/mman.h b/arch/alpha/include/uapi/asm/mman.h
-index f9d4e6b6d4bd..ac23379b7a87 100644
---- a/arch/alpha/include/uapi/asm/mman.h
-+++ b/arch/alpha/include/uapi/asm/mman.h
-@@ -10,9 +10,7 @@
- #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
- #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
+diff --git a/include/drm/drmP.h b/include/drm/drmP.h
+index bdb0d5548f39..a3184416ddc5 100644
+--- a/include/drm/drmP.h
++++ b/include/drm/drmP.h
+@@ -57,8 +57,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/dma-fence.h>
+ #include <linux/module.h>
+-
+-#include <asm/mman.h>
++#include <linux/mman.h>
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
  
--#define MAP_SHARED	0x01		/* Share changes */
--#define MAP_PRIVATE	0x02		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x0f		/* Mask for type of mapping (OSF/1 is _wrong_) */
- #define MAP_FIXED	0x100		/* Interpret addr exactly */
- #define MAP_ANONYMOUS	0x10		/* don't use a file */
-diff --git a/arch/mips/include/uapi/asm/mman.h b/arch/mips/include/uapi/asm/mman.h
-index 3035ca499cd8..c2b40969eb1f 100644
---- a/arch/mips/include/uapi/asm/mman.h
-+++ b/arch/mips/include/uapi/asm/mman.h
-@@ -27,9 +27,7 @@
- /*
-  * Flags for mmap
-  */
--#define MAP_SHARED	0x001		/* Share changes */
--#define MAP_PRIVATE	0x002		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x003	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x00f		/* Mask for type of mapping */
- #define MAP_FIXED	0x010		/* Interpret addr exactly */
- 
-diff --git a/arch/parisc/include/uapi/asm/mman.h b/arch/parisc/include/uapi/asm/mman.h
-index 870fbf8c7088..c98162f494db 100644
---- a/arch/parisc/include/uapi/asm/mman.h
-+++ b/arch/parisc/include/uapi/asm/mman.h
-@@ -10,9 +10,7 @@
- #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
- #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
- 
--#define MAP_SHARED	0x01		/* Share changes */
--#define MAP_PRIVATE	0x02		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x2b		/* Mask for type of mapping, includes bits 0x08 and 0x20 */
- #define MAP_FIXED	0x04		/* Interpret addr exactly */
- #define MAP_ANONYMOUS	0x10		/* don't use a file */
-diff --git a/arch/xtensa/include/uapi/asm/mman.h b/arch/xtensa/include/uapi/asm/mman.h
-index 58f29a9d895d..be726062412b 100644
---- a/arch/xtensa/include/uapi/asm/mman.h
-+++ b/arch/xtensa/include/uapi/asm/mman.h
-@@ -34,9 +34,7 @@
- /*
-  * Flags for mmap
-  */
--#define MAP_SHARED	0x001		/* Share changes */
--#define MAP_PRIVATE	0x002		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x003	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x00f		/* Mask for type of mapping */
- #define MAP_FIXED	0x010		/* Interpret addr exactly */
- 
-diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
-index e7ee32861d51..abd238d0f7a4 100644
---- a/include/uapi/asm-generic/mman-common.h
-+++ b/include/uapi/asm-generic/mman-common.h
-@@ -15,9 +15,7 @@
- #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
- #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
- 
--#define MAP_SHARED	0x01		/* Share changes */
--#define MAP_PRIVATE	0x02		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x0f		/* Mask for type of mapping */
- #define MAP_FIXED	0x10		/* Interpret addr exactly */
- #define MAP_ANONYMOUS	0x20		/* don't use a file */
-diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
-index d0f515d53299..fc1a64c3447b 100644
---- a/include/uapi/linux/mman.h
-+++ b/include/uapi/linux/mman.h
-@@ -12,6 +12,10 @@
- #define OVERCOMMIT_ALWAYS		1
- #define OVERCOMMIT_NEVER		2
- 
-+#define MAP_SHARED	0x01		/* Share changes */
-+#define MAP_PRIVATE	0x02		/* Changes are private */
-+#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+
- /*
-  * Huge page size encoding when MAP_HUGETLB is specified, and a huge page
-  * size other than the default is desired.  See hugetlb_encode.h.
 -- 
 MST
 
