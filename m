@@ -2,75 +2,48 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61FEC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1821DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B7E2075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:32:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="N5r8+FgD"
+	by mail.kernel.org (Postfix) with ESMTP id D9C0A2075C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:32:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfBHWcR (ORCPT
+        id S1727180AbfBHWc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:32:17 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43141 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbfBHWcQ (ORCPT
+        Fri, 8 Feb 2019 17:32:57 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36912 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbfBHWc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:32:16 -0500
-Received: by mail-pl1-f196.google.com with SMTP id f90so2109173plb.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 14:32:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4MmHhrZCWwf0Jj5r3oFevIAVOPwXt80Sip+HsREXIZ4=;
-        b=N5r8+FgDBOm7C2HUHTNnWDzMEI0dVoqLf+amRiv8hZLSUErnKYrK5NfT4KaVhX3cI+
-         +nZjfY0Gkq8DAUsUSVBekEk/dBcyauLDUL0l9l3NmpcqIsBQm1YpMxU3olDyLuJ9PGoa
-         VWruqA6cZgDn3POeESbgrGLj+rl5LRFsu9EiMZBYTrM/YRnCLRBjdqUfjCUO4wgIoi/x
-         DlSUfPvFVdrurKv3+f10m+zOsejeGDwpTD46SmdFgkijWiuT2qwKuig06Ihhd8EU+7Nl
-         kYZwtWgJwZub1Axm3b8/hO3lBzeh6TkIzcyOtULmnUl/2YjH1az8EQ/RFcOlPk30vhVc
-         LCyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4MmHhrZCWwf0Jj5r3oFevIAVOPwXt80Sip+HsREXIZ4=;
-        b=Ew9QKCSAF7cVY9cIsI4FA5xSX8BX2MQQp0SEvYhbGwC9QGDQ3dmFRjjEmkXUqZY85U
-         mwHT4w8iInLEET0nIhADcG6wWvk2i05nwfLkssZUvPUMCLTn6K5uI/6sB7q8PkqAVQNS
-         KRlJDINMCKxtIVMlJ3WvtYN77sqfifCktHdjZLcx2I7fo23Yt1tw+KVfB7dheYV/NHA7
-         82e8doFhMqon/I3LFtubiTo3GBoQn/6RIjAHML3HmM8sOjttrPvttDBQkqLnvr/yYsjW
-         pGcNz80kByiceg7GPZVgxa5VrP+jrc776ahMT23nWod3fPLCYJnpgMlEzYHxdMGo95k1
-         TIsw==
-X-Gm-Message-State: AHQUAuZD3KPWQpStkhrereLk9zoRJU7ekSu2IKvKKIxJ0szqXt5f9fuf
-        6iBViGS+5SF/V0nU9btFQO2QoQ==
-X-Google-Smtp-Source: AHgI3IZ91QzJG9fsgrqU++3IVe7tLzNrhOwMELRzWaq1YHGPqGPHcCs9hFptucLC34D9nZIEeMyvZw==
-X-Received: by 2002:a17:902:128c:: with SMTP id g12mr24307583pla.146.1549665135950;
-        Fri, 08 Feb 2019 14:32:15 -0800 (PST)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id n10sm4992076pfj.14.2019.02.08.14.32.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Feb 2019 14:32:15 -0800 (PST)
-Date:   Fri, 8 Feb 2019 14:32:09 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Kimberly Brown <kimbrownkd@gmail.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>, devel@linuxdriverproject.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Display nothing in sysfs if
- monitor_allocated not set
-Message-ID: <20190208143148.052c8d9c@hermes.lan>
-In-Reply-To: <52d58fe5805f2ba2405c9091b4c86033d434d2b9.1549619051.git.kimbrownkd@gmail.com>
-References: <cover.1549619051.git.kimbrownkd@gmail.com>
-        <52d58fe5805f2ba2405c9091b4c86033d434d2b9.1549619051.git.kimbrownkd@gmail.com>
-MIME-Version: 1.0
+        Fri, 8 Feb 2019 17:32:57 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AF65C36C;
+        Fri,  8 Feb 2019 22:32:56 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 14:32:55 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [patch V2 1/2] genriq: Avoid summation loops for /proc/stat
+Message-Id: <20190208143255.9dec696b15f03bf00f4c60c2@linux-foundation.org>
+In-Reply-To: <20190208135020.925487496@linutronix.de>
+References: <20190208134802.218483159@linutronix.de>
+        <20190208135020.925487496@linutronix.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,18 +51,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Feb 2019 05:01:12 -0500
-Kimberly Brown <kimbrownkd@gmail.com> wrote:
+On Fri, 08 Feb 2019 14:48:03 +0100 Thomas Gleixner <tglx@linutronix.de> wrote:
 
-You are right, the current behavior is broken.
-It would be good to add a description of under what conditions
-monitor is not used. Is this some part of a project emulating
-Hyper-V?
+> Waiman reported that on large systems with a large amount of interrupts the
+> readout of /proc/stat takes a long time to sum up the interrupt
+> statistics. In principle this is not a problem. but for unknown reasons
+> some enterprise quality software reads /proc/stat with a high frequency.
+> 
+> The reason for this is that interrupt statistics are accounted per cpu. So
+> the /proc/stat logic has to sum up the interrupt stats for each interrupt.
+> 
+> This can be largely avoided for interrupts which are not marked as
+> 'PER_CPU' interrupts by simply adding a per interrupt summation counter
+> which is incremented along with the per interrupt per cpu counter.
+> 
+> The PER_CPU interrupts need to avoid that and use only per cpu accounting
+> because they share the interrupt number and the interrupt descriptor and
+> concurrent updates would conflict or require unwanted synchronization.
+> 
+> ...
+>
+> --- a/include/linux/irqdesc.h
+> +++ b/include/linux/irqdesc.h
+> @@ -65,6 +65,7 @@ struct irq_desc {
+>  	unsigned int		core_internal_state__do_not_mess_with_it;
+>  	unsigned int		depth;		/* nested irq disables */
+>  	unsigned int		wake_depth;	/* nested wake enables */
+> +	unsigned int		tot_count;
+
+Confused.  Isn't this going to quickly overflow?
 
 
-> +
-> +	if (!hv_dev->channel->offermsg.monitor_allocated)
-> +		return sprintf(buf, "\n");
-
-If monitor is not used, why not return an error instead of empty
-data. Any program (or user) would have to handle that already.
