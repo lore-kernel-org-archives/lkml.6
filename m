@@ -3,44 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5CDC282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C747C282C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFF121916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E4EE21916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfBHDKi (ORCPT
+        id S1727171AbfBHDOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 22:10:38 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.228]:48328 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726801AbfBHDKh (ORCPT
+        Thu, 7 Feb 2019 22:14:19 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.172]:17198 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726810AbfBHDNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 22:10:37 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id CC8ED1D444
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 21:10:36 -0600 (CST)
+        Thu, 7 Feb 2019 22:13:17 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 905C1C721
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 21:13:16 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id rwYmg6NJ32qH7rwYmgfOeA; Thu, 07 Feb 2019 21:10:36 -0600
+        id rwbMgzvu3YTGMrwbMgfKKT; Thu, 07 Feb 2019 21:13:16 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=49080 helo=embeddedor)
+Received: from [189.250.49.191] (port=49112 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1grwYm-001Q7r-3i; Thu, 07 Feb 2019 21:10:36 -0600
-Date:   Thu, 7 Feb 2019 21:10:35 -0600
+        id 1grwbK-001Rhb-C8; Thu, 07 Feb 2019 21:13:14 -0600
+Date:   Thu, 7 Feb 2019 21:13:13 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] can: kvaser_usb: Use struct_size() in alloc_candev()
-Message-ID: <20190208031035.GA2665@embeddedor>
+Subject: [PATCH net-next] net: usb: cdc-phonet: use struct_size() in
+ alloc_netdev()
+Message-ID: <20190208031313.GA2848@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -53,13 +52,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.49.191
 X-Source-L: No
-X-Exim-ID: 1grwYm-001Q7r-3i
+X-Exim-ID: 1grwbK-001Rhb-C8
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:49080
+X-Source-Sender: (embeddedor) [189.250.49.191]:49112
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
+X-Email-Count: 10
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -87,23 +86,24 @@ This code was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/usb/cdc-phonet.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-index c89c7d4900d7..0f1d3e807d63 100644
---- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-+++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-@@ -643,8 +643,7 @@ static int kvaser_usb_init_one(struct kvaser_usb *dev,
- 			return err;
- 	}
+diff --git a/drivers/net/usb/cdc-phonet.c b/drivers/net/usb/cdc-phonet.c
+index 78b16eb9e58c..63aaae487995 100644
+--- a/drivers/net/usb/cdc-phonet.c
++++ b/drivers/net/usb/cdc-phonet.c
+@@ -361,8 +361,8 @@ static int usbpn_probe(struct usb_interface *intf, const struct usb_device_id *i
+ 	else
+ 		return -EINVAL;
  
--	netdev = alloc_candev(sizeof(*priv) +
--			      dev->max_tx_urbs * sizeof(*priv->tx_contexts),
-+	netdev = alloc_candev(struct_size(priv, tx_contexts, dev->max_tx_urbs),
- 			      dev->max_tx_urbs);
- 	if (!netdev) {
- 		dev_err(&dev->intf->dev, "Cannot alloc candev\n");
+-	dev = alloc_netdev(sizeof(*pnd) + sizeof(pnd->urbs[0]) * rxq_size,
+-			   ifname, NET_NAME_UNKNOWN, usbpn_setup);
++	dev = alloc_netdev(struct_size(pnd, urbs, rxq_size), ifname,
++			   NET_NAME_UNKNOWN, usbpn_setup);
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
 -- 
 2.20.1
 
