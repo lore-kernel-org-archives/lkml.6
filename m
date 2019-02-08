@@ -6,24 +6,25 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE34C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CF6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4888821916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26D3521916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfBHWYc (ORCPT
+        id S1727279AbfBHWZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:24:32 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:48222 "EHLO smtp4-g21.free.fr"
+        Fri, 8 Feb 2019 17:25:09 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:56822 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbfBHWYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:24:32 -0500
+        id S1726788AbfBHWZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 17:25:09 -0500
 Received: from [192.168.1.42] (unknown [77.207.133.132])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 79E5F19F591;
-        Fri,  8 Feb 2019 23:23:54 +0100 (CET)
-Subject: [PATCH v4 2/7] dt-bindings: ufs: Add msm8998 compatible string
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 193E219F4EA;
+        Fri,  8 Feb 2019 23:24:31 +0100 (CET)
+Subject: [PATCH v4 3/7] dt-bindings: phy-qcom-qmp: Add
+ qcom,msm8998-qmp-ufs-phy
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
 To:     MSM <linux-arm-msm@vger.kernel.org>,
         SCSI <linux-scsi@vger.kernel.org>
@@ -43,8 +44,8 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         Martin Petersen <martin.petersen@oracle.com>,
         LKML <linux-kernel@vger.kernel.org>
 References: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
-Message-ID: <17069590-0fed-032b-3b05-ba4631582fed@free.fr>
-Date:   Fri, 8 Feb 2019 23:11:50 +0100
+Message-ID: <dade6a09-ab00-82f6-eb5b-bc2b09ed5162@free.fr>
+Date:   Fri, 8 Feb 2019 23:13:16 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
@@ -56,24 +57,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "qcom,msm8998-ufshc" compatible string.
+Add compatible string for QMP UFS phy on msm8998.
 
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-index 5111e9130bc3..991e21ee7b44 100644
---- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-+++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-@@ -11,6 +11,7 @@ Required properties:
- 			  the appropriate jedec string:
- 			    "qcom,msm8994-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
- 			    "qcom,msm8996-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
-+			    "qcom,msm8998-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
- 			    "qcom,sdm845-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
- - interrupts        : <interrupt mapping for UFS host controller IRQ>
- - reg               : <registers mapping>
+diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+index 4ff26dbf4310..5d181fc3cc18 100644
+--- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
++++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+ 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+ 	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
++	       "qcom,msm8998-qmp-ufs-phy" for UFS QMP phy on msm8998,
+ 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
+ 	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
+ 	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
+@@ -45,6 +46,8 @@ Required properties:
+ 			"aux", "cfg_ahb", "ref".
+ 		For "qcom,msm8998-qmp-usb3-phy" must contain:
+ 			"aux", "cfg_ahb", "ref".
++		For "qcom,msm8998-qmp-ufs-phy" must contain:
++			"ref", "ref_aux".
+ 		For "qcom,sdm845-qmp-usb3-phy" must contain:
+ 			"aux", "cfg_ahb", "ref", "com_aux".
+ 		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
+@@ -66,6 +69,7 @@ Required properties:
+ 			"phy", "common".
+ 		For "qcom,msm8998-qmp-usb3-phy" must contain
+ 			"phy", "common".
++		For "qcom,msm8998-qmp-ufs-phy": no resets are listed.
+ 		For "qcom,sdm845-qmp-usb3-phy" must contain:
+ 			"phy", "common".
+ 		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
 -- 
 2.17.1
