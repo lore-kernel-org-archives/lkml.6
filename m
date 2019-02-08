@@ -2,87 +2,84 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C5AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E344EC282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 906AB20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549635838;
-	bh=NyuR7vjKA9+mNS82qtwHGuir1nlBMSH618URsrT3kCY=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=G+3/MktfWDR+WHCSKLUl1UP3NQwLW7CaGQ+3OS2+eNAD/d2JYKymMmKdTxd/VbKu8
-	 5ewxVTwWQ3YWt/XosTe9TJQ37mtnr8ewb2OFt2Fw5c8A1kuiMYyCVdDlwZGWYqWIla
-	 rvnwxgIk5FuoJBAhgSTqPA2aSmHHjbz1r3Lv7RlY=
+	by mail.kernel.org (Postfix) with ESMTP id B3B0520844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:24:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfBHOX5 (ORCPT
+        id S1727889AbfBHOXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:23:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727774AbfBHOXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 09:23:55 -0500
-Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8BA82083B;
-        Fri,  8 Feb 2019 14:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549635834;
-        bh=NyuR7vjKA9+mNS82qtwHGuir1nlBMSH618URsrT3kCY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QCfznIxqnuYV/D1HgnesZejhW+80BZHqhYCb7xmkiasAAwX0Xq5U5kYX0l9JhXQkS
-         HThp/1qKm6vHP8u7dLOH8S34qnfZBLajNLg0FsEdIio2iwG4xo3Ymc5rUmTejhyh3P
-         6/F4ayDPKtYhzmjVtbPOA65aX+zzkZkW2vCfOKDQ=
-Date:   Fri, 8 Feb 2019 08:23:53 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thinh Nguyen <thinh.nguyen@synopsys.com>,
-        "Lukas F. Hartmann" <lukas@mntmn.com>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Subject: [GIT PULL] PCI fixes for v5.0
-Message-ID: <20190208142353.GV7268@google.com>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52120 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726641AbfBHOXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 09:23:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20CEFA78;
+        Fri,  8 Feb 2019 06:23:54 -0800 (PST)
+Received: from en101 (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94AE83F557;
+        Fri,  8 Feb 2019 06:23:50 -0800 (PST)
+Date:   Fri, 8 Feb 2019 14:23:43 +0000
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCHv7 2/6] arm64: dts: qcom: msm8998: Add Coresight support
+Message-ID: <20190208142343.GA9649@en101>
+References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org>
+ <bcff6cd655c565568caa2d5a9b20d95e619afb1e.1548981329.git.saiprakash.ranjan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <bcff6cd655c565568caa2d5a9b20d95e619afb1e.1548981329.git.saiprakash.ranjan@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+On Fri, Feb 01, 2019 at 06:23:10AM +0530, Sai Prakash Ranjan wrote:
+> Enable coresight support by adding device nodes for the
+> available source, sinks and channel blocks on MSM8998.
+> 
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> 
+> ---
+> For testing, all dependent patches are in below tree:
+>  * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
+> 
+> This depends on MSM8998 rpm clocks and rpmcc node by Jeffrey Hugo
+> and Marc Gonzalez [1][2][3].
+> 
+> [1] https://lore.kernel.org/lkml/1545099336-5615-1-git-send-email-jhugo@codeaurora.org/
+> [2] https://lore.kernel.org/lkml/1548866144-30265-1-git-send-email-jhugo@codeaurora.org/
+> [3] https://lore.kernel.org/lkml/6da00186-e7c9-c93d-a80a-65eda2516451@free.fr/
+> ---
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi | 435 ++++++++++++++++++++++++++
+>  1 file changed, 435 insertions(+)
 
-  - Work around Synopsys duplicate Device ID (HAPS USB3, NXP i.MX) that
-    breaks PCIe on I.MX SoCs (Thinh Nguyen)
-
-
-The following changes since commit f14bcc0add3abecceca1a3fe538c4ec9566893f3:
-
-  Revert "PCI: armada8k: Add support for gpio controlled reset signal" (2019-01-31 15:07:29 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.0-fixes-4
-
-for you to fetch changes up to f57a98e1b71357713e44c57268a53d9c803f0626:
-
-  PCI: Work around Synopsys duplicate Device ID (HAPS USB3, NXP i.MX) (2019-02-06 17:17:27 -0600)
-
-----------------------------------------------------------------
-pci-v5.0-fixes-4
-
-----------------------------------------------------------------
-Thinh Nguyen (1):
-      PCI: Work around Synopsys duplicate Device ID (HAPS USB3, NXP i.MX)
-
- drivers/pci/quirks.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
