@@ -4,103 +4,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8653FC4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9455C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460A5217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A48C020863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:02:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mm-sol.com header.i=@mm-sol.com header.b="W46trkMD"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="M61Sg1II"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfBHPCm (ORCPT
+        id S1727929AbfBHPC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:02:42 -0500
-Received: from ns.mm-sol.com ([37.157.136.199]:50130 "EHLO extserv.mm-sol.com"
+        Fri, 8 Feb 2019 10:02:57 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:21083 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfBHPCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:02:41 -0500
-X-Greylist: delayed 472 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 10:02:39 EST
-Received: from [192.168.27.209] (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 8216ECE08;
-        Fri,  8 Feb 2019 16:54:46 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mm-sol.com; s=201706;
-        t=1549637686; bh=dcPQbvq/7hiwMZM4pUapZaSIoVhm0pG5ACXN9uM1WFc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W46trkMD4q7fSURU38goShYmZnB7vFFbku3GDWzpNvgZE2kiOCeRofKA+GpuKHLSM
-         CG4ItJflYegZgDB0skCvmGBwBEJEnKUj+Ud6A32qVM9v/gHIegoyZy8k8SmxSnT3cv
-         +nlV5RA0a8okqmTmjqoE7Uo+PlYhcKmbM9fM3hO75S9i3VLcldfmT83mSSgIjIFiSI
-         igA9EzDw37OovCgcCwHbgqx8iVda4+3Om7FttIeRSbgxvKnQjuFC5xSfOeZuyPCaCn
-         fS0cPLFt5bYojErEcLTmSiNl9CZeHW4G6gwDdnATVCXVf/yUbIr4xOpEKou1iVItZs
-         IOoki3ZKcAwOA==
-Subject: Re: [PATCH] PCI: qcom: Don't deassert reset GPIO during probe
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        stable@vger.kernel.org
-References: <20190125232616.25714-1-bjorn.andersson@linaro.org>
-From:   Stanimir Varbanov <svarbanov@mm-sol.com>
-Message-ID: <d972ef33-5069-e012-abd5-31f2f985af6d@mm-sol.com>
-Date:   Fri, 8 Feb 2019 16:54:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190125232616.25714-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726813AbfBHPC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 10:02:56 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43wz2619x9z9vBxV;
+        Fri,  8 Feb 2019 16:02:54 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=M61Sg1II; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id zHG7QCYHBWWY; Fri,  8 Feb 2019 16:02:54 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43wz2606Zjz9vBxT;
+        Fri,  8 Feb 2019 16:02:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549638174; bh=oNW1cjqNraLzYK6Kh8uFIYVP1M6z46QbE9hpGbjPuM4=;
+        h=From:Subject:To:Cc:Date:From;
+        b=M61Sg1IIWrtqlKJKrthI1aJM1BEbxYs7yYyato/T7F5JpWTmzQThz6qFv0gdEeqIg
+         ZXfCt7K9bPUqH/tnq7AxWtgtNx8LkrFWweVMDRelTQoadpaApcSBZRhShZCqpEi3Wh
+         cnJWzhxSRKVRIeza3cruB7+y5Kdwdcd/7E3Ibg4Q=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E4948B8DF;
+        Fri,  8 Feb 2019 16:02:55 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id snUdZqBBPijt; Fri,  8 Feb 2019 16:02:55 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4BE468B756;
+        Fri,  8 Feb 2019 16:02:55 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 49CB4656D3; Fri,  8 Feb 2019 15:02:55 +0000 (UTC)
+Message-Id: <59dbb1bc305068dd0fe8e2d5a75c4213e0134549.1549638049.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] tools/selftest/vm: allow choosing mem size and page size in
+ map_hugetlb
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kselftest@vger.kernel.org
+Date:   Fri,  8 Feb 2019 15:02:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+map_hugetlb maps 256Mbytes of memory with default hugepage size.
 
-Thanks for the patch!
+This patch allows the user to pass the size and page shift as an
+argument in order to use different size and page size.
 
-On 1/26/19 1:26 AM, Bjorn Andersson wrote:
-> Acquiring the reset GPIO low means that reset is being deasserted, this
-> is followed almost immediately with qcom_pcie_host_init() asserting it,
-> initializing it and then finally deasserting it again, for the link to
-> come up.
-> 
-> Some PCIe devices requires a minimum time between the initial deassert
-> and subsequent reset cycles. In a platform that boots with the reset
-> GPIO asserted this requirement is being violated by this deassert/assert
-> pulse.
-> 
-> Acquiring the reset GPIO high will prevent this by matching the state to
-> the subsequent asserted state.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index d185ea5fe996..a7f703556790 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1228,7 +1228,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  
->  	pcie->ops = of_device_get_match_data(dev);
->  
-> -	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
-> +	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_HIGH);
->  	if (IS_ERR(pcie->reset)) {
->  		ret = PTR_ERR(pcie->reset);
->  		goto err_pm_runtime_put;
-> 
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ tools/testing/selftests/vm/map_hugetlb.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
-Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-
+diff --git a/tools/testing/selftests/vm/map_hugetlb.c b/tools/testing/selftests/vm/map_hugetlb.c
+index 9b777fa95f09..5a2d7b8efc40 100644
+--- a/tools/testing/selftests/vm/map_hugetlb.c
++++ b/tools/testing/selftests/vm/map_hugetlb.c
+@@ -23,6 +23,14 @@
+ #define MAP_HUGETLB 0x40000 /* arch specific */
+ #endif
+ 
++#ifndef MAP_HUGE_SHIFT
++#define MAP_HUGE_SHIFT 26
++#endif
++
++#ifndef MAP_HUGE_MASK
++#define MAP_HUGE_MASK 0x3f
++#endif
++
+ /* Only ia64 requires this */
+ #ifdef __ia64__
+ #define ADDR (void *)(0x8000000000000000UL)
+@@ -58,12 +66,29 @@ static int read_bytes(char *addr)
+ 	return 0;
+ }
+ 
+-int main(void)
++int main(int argc, char **argv)
+ {
+ 	void *addr;
+ 	int ret;
++	size_t length = LENGTH;
++	int flags = FLAGS;
++	int shift = 0;
++
++	if (argc > 1)
++		length = atol(argv[1]) << 20;
++	if (argc > 2) {
++		shift = atoi(argv[2]);
++		if (shift)
++			flags |= (shift & MAP_HUGE_MASK) << MAP_HUGE_SHIFT;
++	}
++
++	if (shift)
++		printf("%u kB hugepages\n", 1 << shift);
++	else
++		printf("Default size hugepages\n");
++	printf("Mapping %lu Mbytes\n", (unsigned long)length >> 20);
+ 
+-	addr = mmap(ADDR, LENGTH, PROTECTION, FLAGS, -1, 0);
++	addr = mmap(ADDR, length, PROTECTION, flags, -1, 0);
+ 	if (addr == MAP_FAILED) {
+ 		perror("mmap");
+ 		exit(1);
 -- 
-regards,
-Stan
+2.13.3
+
