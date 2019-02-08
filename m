@@ -2,122 +2,79 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A47CC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D166C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E468320857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="L/fyudzr"
+	by mail.kernel.org (Postfix) with ESMTP id 07A5E2177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfBHM2V (ORCPT
+        id S1727792AbfBHM23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:28:21 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40027 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBHM2U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:28:20 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q1so3363931wrp.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:28:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mobiveil.co.in; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U4llWnWHk/iioaBg109tqNu+HuUT0xmojGp7I0EC54Q=;
-        b=L/fyudzrkzoYTq4L/ntv6UXvIiIYQqA7Ub6OxQPODZcgS/4JVHGT856I6pqUC7Zb0G
-         tFb21UBAOnBWD35EphMs15SF7tcLOw0jAiGEHEe6OmRmpSUTj8c9+Qwc+Uru7p+SYopy
-         yhQ2gqJozThixs3FipH3W96aeQ/uAzyRp6uHo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U4llWnWHk/iioaBg109tqNu+HuUT0xmojGp7I0EC54Q=;
-        b=CW9yyyZuUvfw5iOe7Eu2ANdWyopHBVffbAgcz0R7oLB2qBO12duRwONRklLSR44/h+
-         AqXBiu228RqMOnRVDThXsx011y7iH/sYM8FC43UlJzrSvX+A821k6aFRGgFQl2uYaRnl
-         aAR3LtoNMR+mon/GASmx06Ll3Wzae8yeFQlpQupu7/lDackZ75ZCz76yclspfpdO4ie/
-         XqS/qlIgZqn2dH3fnKSqvRpWQESmH4oDhH6ge5AhXH6ax/QP99A1GGvp5U0qX4IPegCb
-         0fKR6lxq3e4BKzzZOg4eJcmqNJSLQBltamB3HhQhFTLaMre/snEunIvAPv/vssV2d0qH
-         JptQ==
-X-Gm-Message-State: AHQUAuYFjZ9RgJgKJioBXd3v6jSwQ5DA/8MAm6MfHHEOvaIriMfgFzvQ
-        fzBiLWAbdT5Y+V6zUgt31v+v8IjQDcSmKbb9R/ZsYg==
-X-Google-Smtp-Source: AHgI3IbX0QUvVY2C3pm3ZumTALuuw3Fd6Hjq/SfVvqMKAzNqiHmSISFhlnJFt3zuK1w52e5QmA/4xzfTVQs0EHUfML4=
-X-Received: by 2002:a5d:468e:: with SMTP id u14mr14259352wrq.253.1549628898050;
- Fri, 08 Feb 2019 04:28:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-14-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-14-Zhiqiang.Hou@nxp.com>
-From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Date:   Fri, 8 Feb 2019 18:00:57 +0530
-Message-ID: <CAFZiPx165X4AQqxFW4r_zZDNjB29-OQD46xce2Lhh4=n-qYHxw@mail.gmail.com>
-Subject: Re: [PATCHv3 13/27] PCI: mobiveil: move irq chained handler setup out
- of DT parse
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Feb 2019 07:28:29 -0500
+Received: from mx.socionext.com ([202.248.49.38]:27832 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726600AbfBHM22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:28:28 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 08 Feb 2019 21:28:27 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id E673860062;
+        Fri,  8 Feb 2019 21:28:27 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 8 Feb 2019 21:28:27 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id A0D3F1A04E1;
+        Fri,  8 Feb 2019 21:28:27 +0900 (JST)
+Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 924FA1202F1;
+        Fri,  8 Feb 2019 21:28:27 +0900 (JST)
+From:   Sugaya Taichi <sugaya.taichi@socionext.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>
+Subject: [PATCH v2 15/15] MAINTAINERS: Add entry to MAINTAINERS for Milbeaut
+Date:   Fri,  8 Feb 2019 21:29:11 +0900
+Message-Id: <1549628951-540-1-git-send-email-sugaya.taichi@socionext.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 1:39 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
->
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->
-> Move irq_set_chained_handler_and_data() out of DT parse function.
->
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-> ---
-> V3:
->  - No change
->
->  drivers/pci/controller/pcie-mobiveil.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-> index c2848c22b466..db7ecb021c63 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -460,8 +460,6 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
->                 return -ENODEV;
->         }
->
-> -       irq_set_chained_handler_and_data(pcie->irq, mobiveil_pcie_isr, pcie);
-> -
->         return 0;
->  }
->
-> @@ -902,6 +900,8 @@ static int mobiveil_pcie_probe(struct platform_device *pdev)
->                 goto error;
->         }
->
-> +       irq_set_chained_handler_and_data(pcie->irq, mobiveil_pcie_isr, pcie);
-> +
->         ret = devm_request_pci_bus_resources(dev, &pcie->resources);
->         if (ret)
->                 goto error;
-> --
-> 2.17.1
->
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Add entry to MAINTAINERS for Milbeaut that supported minimal drivers.
+
+Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8c68de3c..50e0479 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1806,6 +1806,15 @@ F:	drivers/watchdog/sama5d4_wdt.c
+ X:	drivers/input/touchscreen/atmel_mxt_ts.c
+ X:	drivers/net/wireless/atmel/
+ 
++ARM/MILBEAUT ARCHITECTURE
++M:	Taichi Sugaya <sugaya.taichi@socionext.com>
++M:	Takao Orito <orito.takao@socionext.com>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++F:	arch/arm/boot/dts/milbeaut*
++F:	arch/arm/mach-milbeaut/
++N:	milbeaut
++
+ ARM/MIOA701 MACHINE SUPPORT
+ M:	Robert Jarzmik <robert.jarzmik@free.fr>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-- 
+1.9.1
+
