@@ -2,120 +2,144 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF91C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F19BC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E96E20823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549619651;
-	bh=NgopAKlV3yAZFfu9l2ekqNSVVXiqkV1sF49ACTXXNFI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ZDWsnhEdgqu7epcBlcEIQqoPHtHpQWziFt5Rv83Mgmw3GFqP4EeJ0udrvcuTrL9Hx
-	 AwDfpn+N03OTZjZLBBPSXa4T4GqLpvNsR3zpjPUYAx64gf30/1LLqE2Htmfh4BkBIq
-	 sGiwMWZfy/0t4B3eVD9kMZ41Srq2DWyhPSK3n6Bk=
+	by mail.kernel.org (Postfix) with ESMTP id 48AEC21920
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbfBHJyJ (ORCPT
+        id S1727515AbfBHJy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:54:09 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35525 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHJyJ (ORCPT
+        Fri, 8 Feb 2019 04:54:27 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59597 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfBHJy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:54:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id z19so851028otm.2;
-        Fri, 08 Feb 2019 01:54:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8VfsE/dzYczCUfX/n2vKlNRBDnNnPyv4tAwRHXUAldQ=;
-        b=c/hSIgShEa2qIVG2Gj5RNpmijhLgpTOhskdxCMnQSsJEOIHOfeLarW1k8Iy7dbZlsf
-         cHfB/aghLkdlKQa2I9iCtVZ2jjiqW9MoVgaUhqB8LAquFCQFpGWXe+isJVjdZ4WYWfoT
-         j8AaCGVP10TiFvbMo+L7vzgHwLcBCw9bu+ukfw3pgicsBkK8hTDnhHRLYUkQ1oe4AQPP
-         RJTz/cybe3r88mzuos2FeGDkiDpNffutlRe/ivZo01D5/wXL7VlCukrTykmbQ82cAu89
-         635A/bXrEoqKH00qkyTGFfbG/kxyBd5635JNsx9aE/kGnpzwV3yzDoPzg4vNSmezKefy
-         czpA==
-X-Gm-Message-State: AHQUAubc7Zq2txruNYhi2iC3un1lqwm48pTWSMtImkHmqd5MgpTkRNvn
-        z5R5ZWTLVa1W0UYANU0YPoOTmPjhdxMxOxIGfZw=
-X-Google-Smtp-Source: AHgI3IajVzFgWCoKQVSUfYA32BGpvovq0M2Y4leaXECJG9tw48W5QJzvsdjY7uSau46x6I/qAkNIfQmqwMUxSYufhQQ=
-X-Received: by 2002:a9d:63c1:: with SMTP id e1mr11325264otl.119.1549619648139;
- Fri, 08 Feb 2019 01:54:08 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1547197612.git.viresh.kumar@linaro.org> <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
- <20190208090912.43aao5kny42iirum@vireshk-i7>
-In-Reply-To: <20190208090912.43aao5kny42iirum@vireshk-i7>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 8 Feb 2019 10:53:55 +0100
-Message-ID: <CAJZ5v0iE9tFt9Xs27EYcjv6N1KAq-LaAQnv=QBvnbNRpfwrWCg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Fri, 8 Feb 2019 04:54:27 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gs2rU-0001QD-KN; Fri, 08 Feb 2019 10:54:20 +0100
+Message-ID: <1549619660.2544.89.camel@pengutronix.de>
+Subject: Re: [RFC v2 5/5] arm64: dts: imx8mq-evk: Enable PCIE0 interface
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Fri, 08 Feb 2019 10:54:20 +0100
+In-Reply-To: <20190208002941.30343-6-andrew.smirnov@gmail.com>
+References: <20190208002941.30343-1-andrew.smirnov@gmail.com>
+         <20190208002941.30343-6-andrew.smirnov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 10:09 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 11-01-19, 10:47, Rafael J. Wysocki wrote:
-> > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > Hi,
-> > >
-> > > This commit introduces the frequency constraint infrastructure, which
-> > > provides a generic interface for parts of the kernel to constraint the
-> > > working frequency range of a device.
-> > >
-> > > The primary users of this are the cpufreq and devfreq frameworks. The
-> > > cpufreq framework already implements such constraints with help of
-> > > notifier chains (for thermal and other constraints) and some local code
-> > > (for user-space constraints). The devfreq framework developers have also
-> > > shown interest [1] in such a framework, which may use it at a later
-> > > point of time.
-> > >
-> > > The idea here is to provide a generic interface and get rid of the
-> > > notifier based mechanism.
-> > >
-> > > Only one constraint is added for now for the cpufreq framework and the
-> > > rest will follow after this stuff is merged.
-> > >
-> > > Matthias Kaehlcke was involved in the preparation of the first draft of
-> > > this work and so I have added him as Co-author to the first patch.
-> > > Thanks Matthias.
-> > >
-> > > FWIW, This doesn't have anything to do with the boot-constraints
-> > > framework [2] I was trying to upstream earlier :)
-> >
-> > This is quite a bit of code to review, so it will take some time.
->
-> @Rafael: You are going to provide some more feedback here, right ?
+Am Donnerstag, den 07.02.2019, 16:29 -0800 schrieb Andrey Smirnov:
+> Enable PCIE0 interface connected to BCM4356 WiFi/Bluetooth module.
+> 
+> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 34 ++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> index 64acccc4bfcb..20afdb9ffdd9 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> @@ -31,6 +31,12 @@
+>  		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+>  		enable-active-high;
+>  	};
+> +
+> +	pcie0_refclk: pcie0-refclk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <100000000>;
+> +	};
+>  };
+>  
+>  &fec1 {
+> @@ -40,6 +46,14 @@
+> >  	status = "okay";
+>  };
+>  
+> +&gpio5 {
+> + 	wl-reg-on {
+> +		gpio-hog;
+> +		gpios = <29 GPIO_ACTIVE_HIGH>;
+> +		output-high;
+> +	};
+> +};
+> +
+>  &i2c1 {
+> >  	clock-frequency = <100000>;
+> >  	pinctrl-names = "default";
+> @@ -131,6 +145,18 @@
+> >  	};
+>  };
+>  
+> +&pcie0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pcie0>;
+> +	reset-gpio = <&gpio5 28 GPIO_ACTIVE_LOW>;
+> +	clocks = <&clk IMX8MQ_CLK_PCIE1_ROOT>,
+> +		 <&clk IMX8MQ_CLK_PCIE1_AUX>,
+> +		 <&clk IMX8MQ_CLK_PCIE1_PHY>,
+> +		 <&pcie0_refclk>;
+> +	clock-names = "pcie", "pcie_aux", "pcie_phy", "pcie_bus";
+> +	status = "okay";
+> +};
 
-I think I've said something already.
+From a PCIe PoV I think this is fine. Please send a patch for the PCIe
+driver to use the pcie_aux clock.
 
-TLDR: I'm not convinced.
+> +
+>  &uart1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&pinctrl_uart1>;
+> @@ -195,6 +221,14 @@
+>  		>;
+>  	};
+>  
+> +	pinctrl_pcie0: pcie0grp {
+> +		fsl,pins = <
+> +			MX8MQ_IOMUXC_I2C4_SCL_PCIE1_CLKREQ_B		0x76
+> +			MX8MQ_IOMUXC_UART4_TXD_GPIO5_IO29		0x16
 
-PM QoS does similar things in a similar way.  Why does it have to be a
-different framework?
+Shouldn't this GPIO be separated in a pinctrl group for gpio5?
 
-Using freq constraints for thermal reasons without coordinating it
-with scheduling is questionable in general, because thermal control
-may work against scheduling then.
-
-AFAICS, the original reason for notifiers in cpufreq was to avoid
-drawing too much power (and frequency was a proxy of power then) and
-they allowed the firmware to set the additional limit when going from
-AC to battery, for example.  That appears to be a different goal,
-though.
+> +			MX8MQ_IOMUXC_UART4_RXD_GPIO5_IO28		0x16
+> +		>;
+> +	};
+> +
+>  	pinctrl_reg_usdhc2: regusdhc2grpgpio {
+>  		fsl,pins = <
+>  			MX8MQ_IOMUXC_SD2_RESET_B_GPIO2_IO19		0x41
