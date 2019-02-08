@@ -6,85 +6,66 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 669F3C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F4BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B6F21924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A77521924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:53:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="YqSkI+3j"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="V/s3MDl+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfBHVwp (ORCPT
+        id S1726977AbfBHVx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:52:45 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:48894 "EHLO mail.skyhub.de"
+        Fri, 8 Feb 2019 16:53:29 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49056 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbfBHVwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:52:45 -0500
+        id S1726244AbfBHVx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 16:53:29 -0500
 Received: from zn.tnic (p200300EC2BC9F900B830E0BCFC6FF2AB.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:f900:b830:e0bc:fc6f:f2ab])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C6211EC097D;
-        Fri,  8 Feb 2019 22:52:42 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B1C7D1EC0A4F;
+        Fri,  8 Feb 2019 22:53:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549662762;
+        t=1549662807;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=8TAE6Q5k0LWdVJHO58ethYalirt4HvstAbRz34K3oYY=;
-        b=YqSkI+3j4tuU5lwMKDG4x5TorT5uZlY1FSjy2JrqnJyAz/JK1rdsdY9wncrnKukYtOxBGE
-        KeJqNgBs0qd1Z9A83gEk4eYRaSMvifUyuuJshL0dD8IfEeYszbT1blW5nOg/EK+u+bz0EY
-        ekTdg8qXoE7RMD9NQTykv/ijuSVmrHc=
-Date:   Fri, 8 Feb 2019 22:52:32 +0100
+        bh=+bkeTsRJ3DNtbvZ47f5dXFlITQ8viIxge0L4fkv7618=;
+        b=V/s3MDl+UqhjG6tUVA4W4BMjA5dzECqzinVtNJGF5351SzOstiojOCcr3psr9VP60b4YCb
+        d1SbbUkkpFL64h0XFLOh/wFs8xlhcc+nxVC2PZghTX1A+S8jhzaJmiLUruv4YnngWDq2Y/
+        2gCX2BBPJ/MYbVDLf3CVAmBMhElJB1M=
+Date:   Fri, 8 Feb 2019 22:53:22 +0100
 From:   Borislav Petkov <bp@alien8.de>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH 1/3] x86/mpx: tweak header name
-Message-ID: <20190208215232.GN674@zn.tnic>
-References: <20190124142448.23243-1-mst@redhat.com>
- <20190124142448.23243-2-mst@redhat.com>
- <20190208154239.GI674@zn.tnic>
- <20190208164206-mutt-send-email-mst@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     fanc.fnst@cn.fujitsu.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, thomas.lendacky@amd.com,
+        yamada.masahiro@socionext.com, caoj.fnst@cn.fujitsu.com,
+        jgross@suse.com, mingo@kernel.org, keescook@chromium.org,
+        x86@kernel.org, hpa@zytor.com, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
+ boot_params
+Message-ID: <20190208215322.GO674@zn.tnic>
+References: <20190123110850.12433-6-fanc.fnst@cn.fujitsu.com>
+ <tip-3a63f70bf4c3a17f5d9c9bf3bc3288a23bdfefce@git.kernel.org>
+ <20190208190248.GA10854@roeck-us.net>
+ <20190208191024.GL674@zn.tnic>
+ <20190208204451.GA14024@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190208164206-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190208204451.GA14024@roeck-us.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 04:43:37PM -0500, Michael S. Tsirkin wrote:
-> Coding style violation: if a linux/foo.h exists then it must
-> be included in preference to asm/foo.h
-> 
-> And the specific issue is that a follow-up patch moves code from
-> asm/mman.h to linux/mman.h so if any one was indirectly using
-> this header it will now miss the symbols that are being moved.
+On Fri, Feb 08, 2019 at 12:44:51PM -0800, Guenter Roeck wrote:
+> Yes, the kernel boots if I comment out that function and have it return 0.
 
-Ok, so first of all, this should be your commit message - not what you
-have there now.
-
-Then, please send full patchsets to recipients - I have only this patch
-in my mbox and have no clue what the whole patchset is addressing.
-
-Further, do you want an ACK only or should I pick this up?
-
-Finally, this whole file is going away:
-
-https://lkml.kernel.org/r/7de5232f-4bc1-5c85-00d5-cb646462577f@intel.com
-
-so your patch might become obsolete by then. Depends on what goes first.
-
-Thx.
+Thanks, this localizes the issue significantly.
 
 -- 
 Regards/Gruss,
