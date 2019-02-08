@@ -2,158 +2,152 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7F4C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D367CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DE02146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A46E62146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:15:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=MicronCorp.onmicrosoft.com header.i=@MicronCorp.onmicrosoft.com header.b="lyMU0iNf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzpPKauB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbfBHRON (ORCPT
+        id S1727904AbfBHRPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:14:13 -0500
-Received: from mailout.micron.com ([137.201.242.129]:35660 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbfBHROM (ORCPT
+        Fri, 8 Feb 2019 12:15:16 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:42692 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfBHRPQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:14:12 -0500
-Received: from mail.micron.com (bowex17b.micron.com [137.201.21.210])
-        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id x18HDxJw008409;
-        Fri, 8 Feb 2019 10:13:59 -0700
-Received: from BOWEX36G.micron.com (137.201.84.120) by bowex17b.micron.com
- (137.201.21.210) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Fri, 8 Feb
- 2019 10:13:58 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (137.201.84.23)
- by BOWEX36G.micron.com (137.201.84.120) with Microsoft SMTP Server (TLS) id
- 15.0.1365.1 via Frontend Transport; Fri, 8 Feb 2019 10:13:58 -0700
+        Fri, 8 Feb 2019 12:15:16 -0500
+Received: by mail-qk1-f196.google.com with SMTP id y140so2523997qkb.9;
+        Fri, 08 Feb 2019 09:15:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=MicronCorp.onmicrosoft.com; s=selector1-micron-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qplrVvwt8IUsplBEoHCvjo3Z4GCCh7+Whzpi8qrleFc=;
- b=lyMU0iNfsxPTjEdmgAVOvvP1HVrnTOynIHQdmqKV3j/M7GpaKYM0jyMHk7YtAaUQEca6XiuvNhAYt/sz7Eh8LWjS++PsojzVlMoUj9YuXSo+pa7kMOs8M2LvC0zWlotN20MrSPB8Lx1m6Zoff23tF2E6NT62WTwhs281zfVHXoM=
-Received: from BYAPR08MB4533.namprd08.prod.outlook.com (52.135.234.15) by
- BYAPR08MB4776.namprd08.prod.outlook.com (20.176.255.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Fri, 8 Feb 2019 17:13:52 +0000
-Received: from BYAPR08MB4533.namprd08.prod.outlook.com
- ([fe80::911c:eb84:5e0d:c669]) by BYAPR08MB4533.namprd08.prod.outlook.com
- ([fe80::911c:eb84:5e0d:c669%3]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
- 17:13:52 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "richard@nod.at" <richard@nod.at>
-Subject: RE: [EXT] Re: [PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
-Thread-Topic: [EXT] Re: [PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
-Thread-Index: AdS/uVD1jG3UvCBSRuC2oJ8LRRcc4gAA03cAAAFVpvAAAQltAAACntYg
-Date:   Fri, 8 Feb 2019 17:13:52 +0000
-Message-ID: <BYAPR08MB4533DB0A7F4E30543750C83FDB690@BYAPR08MB4533.namprd08.prod.outlook.com>
-References: <BYAPR08MB4533C8EA6B775C7514FA7F82DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
- <298d18cf-094b-d5d0-45d1-39c7b75ba309@microchip.com>
- <BYAPR08MB45335415CC3690816C1FD603DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
- <a83a9655-0ce7-da15-ec17-80ef88764e21@microchip.com>
-In-Reply-To: <a83a9655-0ce7-da15-ec17-80ef88764e21@microchip.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [165.225.81.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR08MB4776;6:fmOnfmfHex35mGUVO4r5Uf/M+90Kui8b4vX0inPQApKrI1S7bOpJYSwxD29RZgXR4reW0NuSPxgCxEYz3JT6wbKw26UZJcdUm8iLrbloYRWBLT+eQTO3+ix0lgmFgDBeye6WI5R8uMu++ahheAhMRKtBCA8JknXaevBYVbapdgdUej54z3Tq7x++VVoLWtzuABdMZc6625VUGv80XsFuHA50gFsV94PhzoRqxWOQkB9hj1G+mjDByXBmN8gGAQL+kE8Cfg5iS4E2nC5Z+2VU32Jf//eQgrtpySlVaz9gnc8Ha1EhMjRy4lwFE0+DVLQ6/n5dR0B1b88O1gi2iivyNxN1/0XFnWclLa6PgDZoIpgrlt/hkZalGCtMltwC9VaW0FqXFKjfayYFto6DZmX12krjnNP2Gv1h/EFA1osjQaF3bnQafoJ8gVt7VzkgELkit8yHzEbpmciXsWHxq99pPw==;5:ovLDywzChTQS+g78gpcp8/kToWxhZTxYPTC4AlyYVbXKqAEATSxd0UV01Xoczsv3es8AJLab+JkvLju1RpoLTCyRG8U65Tq5Wn1soSRP3XENUC6UuAVQLjEgLBJcLsjMwuakfpwKJispJE8vt8ALrRXz18OQY4PZqECW2LyaFV/cre+k2RNvObtotjFPVpMSbR/xvsL2ohWdSNeIkqZHyA==;7:YN5H6fe7v4p95adCi/VqjSc/omfYzaeJVDwOLYkqU3lHewyZ+SZYE65zkDezndaOCRaFiBlBGRqRvEo3IcyGC2P25v2O5wYq8cm3ewDlL9nvZObjmzB7nDZUQupU74SLMkHnb6IvJSf+dFERDvZyyQ==
-x-ms-office365-filtering-correlation-id: 8a9d76d2-3b74-4823-0426-08d68de8cc88
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4776;
-x-ms-traffictypediagnostic: BYAPR08MB4776:|BYAPR08MB4776:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <BYAPR08MB47761685E3AAD38311E2E6F1DB690@BYAPR08MB4776.namprd08.prod.outlook.com>
-x-forefront-prvs: 094213BFEA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(366004)(136003)(376002)(39860400002)(189003)(199004)(4326008)(486006)(476003)(11346002)(478600001)(7696005)(446003)(76176011)(66066001)(68736007)(99286004)(26005)(6506007)(6436002)(55236004)(9686003)(106356001)(102836004)(105586002)(86362001)(55016002)(6306002)(25786009)(110136005)(54906003)(186003)(2201001)(2906002)(316002)(229853002)(71190400001)(2501003)(14454004)(81166006)(81156014)(93886005)(8676002)(305945005)(6116002)(3846002)(71200400001)(97736004)(33656002)(19627235002)(8936002)(6246003)(74316002)(7736002)(256004)(14444005)(53936002)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR08MB4776;H:BYAPR08MB4533.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NvkjVivVvYPed8chZraMBMk+SL3bfsDVtees8iP4XU0uQcxirk9mikg9xY27BhMUGT87Kzfnp5kTUTbw0KIUYkATqxcxA1Gtumwa3jxjH6QrTDAhkQokzIXqBIB5SB/9ppAV5668GRfMoXOCLfM6A6QtBftVXRJPXkkT1JZxKmkwtUI9w92zHYl0j72WLrQZHnxc8anjFUVLJeXvJ1MZQYeG/3jCLlnPLU3f3FPLMGQweibQFx8xHWuD0fkg2kx78qM5nsteP8GMvdujBH0mxBv46HVGBonkYCkPJxzckU9ASXUFRQ6Xq37fLa1ouZz1Go8W7Oiy7QWB8EfYvO6nkUiI8vEIAeGehO/BLqZTqevY7kraJeIGXpO9wz2T2NI5eAR5vrIF+t1UydgYLI6e9PtmiCKq4HbGwLDxSpEuIbU=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1xMQEVP6TCnc/SzTIcoGln/5cNGj6+SOvsEQlmB7EdI=;
+        b=GzpPKauBCrG1z8aNFgM7xAA6svfg7EwUKVbwNOnB5PWR1leCjIH5oWtkQSBBTUFu7Z
+         WjTkJF5yuzLk6kaCrstA06WDvMFkNn380lAm7HF0I39j+1VmQxjDtNAVGWZJnF66s2hh
+         C3D3MmNugmuP2zMVmte2UR/hRrp+si8gatkBmTcE9cehrkZlJKh2yA+GU68c3PLwuVvk
+         jYeY/ydRdq31ahgzPqJx0TiGXkDyYCG5thcAeH3dfOxV/hcaV8G7MY4w66IeOur+Hg/Q
+         HE/hPS64JIPKPiYRycbRZguvW/vedH0J4HFgx6S7wfcn5AUoEAHyxAGoNARJ1F34fR2L
+         bGQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1xMQEVP6TCnc/SzTIcoGln/5cNGj6+SOvsEQlmB7EdI=;
+        b=EtEwQt5HefUnfWXlDiPcmhirFFGwnUqok5XUsXPq5f6sngJh4TDMhTfGclmZp8r6Ru
+         1fKTaskRs1yZDmVqEjfgXuyqNS/xpBc6kf9gNY2iNr0F+pJALyWvzn86TdeqrHA6ZT74
+         LfhWmtwV/l2AUuSC2VkrZ6/JM4N2KIbz47BJRvhImNDkc7bbOMC8ZkxetOxCBY6DXcRs
+         TKMkWVgqt96Z8busbBpEJ35FCNRu8Z5L4x/nbhfB3o94VR71i1StwlVJCsaP+925XRJq
+         cUJZS8uh076OLVt2H3v83TGlaM6PZadv7vEJwDnDOwlJ/25ymI+d4lO8h/wL/An5H0Xv
+         wkYw==
+X-Gm-Message-State: AHQUAuZt/BLGUOvNkkTMiSFi3JIK6WyGKRqYGZ+iJvtZ0Fh7CPsbUPQt
+        zmEQmOSe25eVkONda0UfUOu0bIZjsY50G5EBs5Y=
+X-Google-Smtp-Source: AHgI3IYb+IzHFn3uuHznRr8bRB4134rOHzqFQEoXipSlrf5o0H3GtcrUZJPjWARC7dqcynTwmGUVYAPfJFawS1vssuo=
+X-Received: by 2002:a37:be84:: with SMTP id o126mr17102368qkf.312.1549646115541;
+ Fri, 08 Feb 2019 09:15:15 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a9d76d2-3b74-4823-0426-08d68de8cc88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 17:13:52.1658
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4776
-X-OriginatorOrg: micron.com
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-24416.005
-X-TM-AS-Result: No--13.676400-0.000000-31
-X-TM-AS-MatchedID: 150567-700107-701928-701461-705388-703747-700752-780014-7
-        02020-707788-106230-701236-851106-700546-139010-700075-706159-705178-703283
-        -703179-703969-700756-707210-780022-701500-700839-700481-704421-700074-7037
-        88-707395-184200-700648-710970-701249-139704-700047-148004-148007-148020-14
-        8050-20020-20043-42000-42003-63-190014
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-X-MT-CheckInternalSenderRule: True
-X-Scanned-By: MIMEDefang 2.78 on 137.201.130.65
+References: <20190208012312.105259-1-ncrews@chromium.org> <20190208012312.105259-5-ncrews@chromium.org>
+ <4620e71f-9579-0d4e-2cf8-7851e77e81fc@collabora.com> <CAHX4x86pqUoo+v3FK3zY8Dyxgia9L8iGsYVYnfBA-OvRAm9HDw@mail.gmail.com>
+In-Reply-To: <CAHX4x86pqUoo+v3FK3zY8Dyxgia9L8iGsYVYnfBA-OvRAm9HDw@mail.gmail.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Fri, 8 Feb 2019 18:15:04 +0100
+Message-ID: <CAFqH_534v=_LxwVVn51SXmeocggvYQVjzq2GOvFs=mm7A7qhkA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] platform/chrome: rtc: Add RTC driver
+To:     Nick Crews <ncrews@chromium.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Duncan Laurie <dlaurie@google.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        dlaurie@chromium.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rtc@vger.kernel.org, Simon Glass <sjg@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Tutor
-Thanks. unfortunately, it doesn't work on my side. Problem is on our email =
-server side, not my local setting.
-I followed your configuration, then git-email failed.
-Please just change my S-o-b to 'Bean Huo (beanhuo) <beanhuo@micron.com>' in=
- my patch to please checkpacth.pl.  It is not huge change.=20
-Thanks,
+Hi Nick,
+Missatge de Nick Crews <ncrews@chromium.org> del dia dv., 8 de febr.
+2019 a les 17:10:
+>
+> Hi Enric and Alexandre,
+>
+> On Fri, Feb 8, 2019 at 5:18 AM Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+> >
+> > Hi,
+> >
+> > On 8/2/19 2:23, Nick Crews wrote:
+> > > This Embedded Controller has an internal RTC that is exposed
+> > > as a standard RTC class driver with read/write functionality.
+> > >
+> > > The driver is added to the drivers/rtc/ so that the maintainer of that
+> > > directory will be able to comment on this change, as that maintainer is
+> > > the expert on this system. In addition, the driver code is called
+> > > indirectly after a corresponding device is registered from core.c,
+> > > as opposed to core.c registering the driver callbacks directly.
+> > >
+> > > To test:
+> > >> hwclock --show --rtc /dev/rtc1
+> > > 2007-12-31 16:01:20.460959-08:00
+> > >> hwclock --systohc --rtc /dev/rtc1
+> > >> hwclock --show --rtc /dev/rtc1
+> > > 2018-11-29 17:08:00.780793-08:00
+> > >
+> > >> hwclock --show --rtc /dev/rtc1
+> > > 2007-12-31 16:01:20.460959-08:00
+> > >> hwclock --systohc --rtc /dev/rtc1
+> > >> hwclock --show --rtc /dev/rtc1
+> > > 2018-11-29 17:08:00.780793-08:00
+> > >
+> > > Signed-off-by: Duncan Laurie <dlaurie@google.com>
+> > > Signed-off-by: Nick Crews <ncrews@chromium.org>
+> >
+> > I think that you missed :)
+> >
+> > Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> >
+>
+> Ah, I removed these because this version is a bit different from the
+> one that you Acked. Do you normally keep those sign-offs
+> even after making changes that you possibly might not like?
+>
 
+Well, it's right that you did a small change in the core, so to be
+strict maybe you have reason, but I don't see as a big change so I
+expected you maintain my tag. Anyway it's not a problem at all, just
+that at least I expected the Alexandre ack :)
+
+[snip]
+
+> >
+> > Alexandre, this specific patch depends on the patches of the series to apply,
+> > and the first patches of the series also conflicts/depends on some patches
+> > queued in chrome-platform-5.1 branch [1]. Is it fine with you if I create an
+> > immutable branch and all go via your tree? Or what do you think? I am new here
+> > and I am not sure how to manage that.
+> >
+> > Thanks,
+> >   Enric
 >
->On 02/08/2019 05:27 PM, Bean Huo (beanhuo) wrote:
->> Hi, Tutor
->>
->>> $ ./scripts/checkpatch.pl --strict
->>> v2-mtd-spi-nor-Fix-wrong-abbreviation-HWCPAS.patch
->>> WARNING: Missing Signed-off-by: line by nominal patch author 'Bean
->>> Huo
->>> (beanhuo) <beanhuo@micron.com>'
->>>
->> I think, this is because of our email system, it always adds '(xxx)'
->> between user name and email address.
->> If you are convenient, please help fix since it is not such hug change.
+> Let me know if I can help with this. I based this off what I thought was the
+> most current master, SHA 74e96711e3379fc66630f2a1d184947f80cf2c48.
+> Was this not the correct commit to base these off of?
 >
->I'm on a funny email server too, it keeps overwriting my email header "fro=
-m field".
->I have a workaround that might work for you too. Here's part of my
->.gitconfig:
->
->[user]
->        name =3D Tudor Ambarus
->        email =3D tudor.ambarus@microchip.com [sendemail]
->        from =3D Tudor X Ambarus <tudor.ambarus@microchip.com>
->
->Because my [sendemail] from field is different than my [user] name and ema=
-il, git
->send-email will add in the body of the patch the [user] name and email:
->
->From: Tudor Ambarus <tudor.ambarus@microchip.com>
->
->When the patch is applied, it takes the author name from the patch body. E=
-ven if
->the server overwrites the from field from the header, it will be ignored.
->
->Let me know if this works for you.
->ta
->______________________________________________________
->Linux MTD discussion mailing list
->http://lists.infradead.org/mailman/listinfo/linux-mtd/
+
+Yeah, it's fine, just that I queued recently some changes and I have
+trivial conflicts in Kconfig and Makefile, nothing that you need to
+worry.
+
+[snip]
