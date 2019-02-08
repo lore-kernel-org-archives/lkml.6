@@ -2,91 +2,123 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102F4C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9001BC282C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD52721907
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:52:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PkS72uz0"
+	by mail.kernel.org (Postfix) with ESMTP id 6984F21907
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfBHAwv (ORCPT
+        id S1726892AbfBHA4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:52:51 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39508 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfBHAwv (ORCPT
+        Thu, 7 Feb 2019 19:56:13 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:14819 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726775AbfBHA4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:52:51 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r11so788713pgp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:52:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=pna5PQ6isrBAB3aTHUhUZYVF371WUTwDp+BF/t+C/MI=;
-        b=PkS72uz0uAWG9bbtkFXEezORMZnaKrTA2Cl6YK5aUB9E554Lxbc+YnhC97U0SDvUka
-         ++Q5jT6FDVn5hCzD57z8pL/J7VW2Dy9Nh9Gl2UJMtt6vTYRjl+70J3vcSlkZr/nTDrzF
-         K1JCDaVv6WYcOGRSwGxYNl66v3uQAc9tU/2bZVMwmeJ9HDCWs2Ezle0xY5fb4iKubKgr
-         lkoU3uAjmxUEwHwE3b1Wb+g/wVOi/Ww6tOtMdIVvDbRm8UrMqPxPjQV5vrJfVvnpwE0p
-         CvF/6tY/nAEjRSy6ocgIGSWYV61KO+70OtEa183CfX9J7nsabyz8eHCP1ecyZmH9llBZ
-         NipA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=pna5PQ6isrBAB3aTHUhUZYVF371WUTwDp+BF/t+C/MI=;
-        b=aMgnvvr9nrNJSelfqYDQYObovJNqds5C/qj0PG0DpRCJCj1rw68/G12reI4w6+Wlly
-         YrziBf27KoMkcjekr703RXFyiL8QUyO7tk+4tEVPlyGEyzRVoodK2iqkdv6D/8V9COXg
-         vkkUADN/RY50GERfZDbi7cOxcT1+FoeX2BJ2kufriRMsdtZMXKO62zwAx/ObbrzEwAl1
-         N1iECcFkn/Ouk2Ul9CIvDZO4KJr94WqV77D7N3qEZGHPB6xvzxl/GJ/j3LReV9RdKNr7
-         hPeYCCVHFINUSpS8+9m6Bf5Z75AttV5tNtJh7+JM5wHQcc3vYIZg9SBRgcUmdWhsSNFR
-         BU3w==
-X-Gm-Message-State: AHQUAubj5/dVOo3vp1GiqyGYKHMJrbF7xHHcBGBsbxNuzyeA2Bb4BTT4
-        A8IQkW/YNVFL9y/qQvX3/sc9KQ==
-X-Google-Smtp-Source: AHgI3IZtHELm0XiYrNwP8mgmR0kL4wFcUAoa43JPc9pnhrJ/OZ/bdUc6BdhffybgoCtHBrBlR1rkfA==
-X-Received: by 2002:aa7:84c7:: with SMTP id x7mr10756119pfn.180.1549587170484;
-        Thu, 07 Feb 2019 16:52:50 -0800 (PST)
-Received: from localhost ([2601:602:9200:a1a5:1818:ce94:f47:7c12])
-        by smtp.googlemail.com with ESMTPSA id g11sm414133pfo.139.2019.02.07.16.52.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 16:52:49 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 2/2] soc: amlogic: clk-measure: fix-up some clock definitions
-In-Reply-To: <20190207132603.694-3-jbrunet@baylibre.com>
-References: <20190207132603.694-1-jbrunet@baylibre.com> <20190207132603.694-3-jbrunet@baylibre.com>
-Date:   Thu, 07 Feb 2019 16:52:48 -0800
-Message-ID: <7hr2cjf6e7.fsf@baylibre.com>
+        Thu, 7 Feb 2019 19:56:10 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id D155562E9
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 18:56:09 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ruSfgUWf92PzOruSfg0daV; Thu, 07 Feb 2019 18:56:09 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=47436 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gruSf-004Ccg-01; Thu, 07 Feb 2019 18:56:09 -0600
+Date:   Thu, 7 Feb 2019 18:56:08 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] netfilter: xt_recent: Use struct_size() in
+ kvzalloc()
+Message-ID: <20190208005608.GA16399@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1gruSf-004Ccg-01
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:47436
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 32
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-> As pointed out in review, a few clock are not properly defined.
->
-> Reported-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Fixes: 2a4c63e080cd ("soc: amlogic: clk-measure: add axg and g12a support")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-I squashed this with the original too.
+size = sizeof(struct foo) + count * sizeof(void *);
+instance = alloc(size, GFP_KERNEL)
 
-In doing so, I noticed I (mis)applied this to my dt64 branch, so while
-sqaushing, I also moved it to my drivers branch.
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-Thanks,
+size = struct_size(instance, entry, count);
+instance = alloc(size, GFP_KERNEL)
 
-Kevin
+Notice that, in this case, variable sz is not necessary, hence it is
+removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/netfilter/xt_recent.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/net/netfilter/xt_recent.c b/net/netfilter/xt_recent.c
+index f44de4bc2100..1664d2ec8b2f 100644
+--- a/net/netfilter/xt_recent.c
++++ b/net/netfilter/xt_recent.c
+@@ -337,7 +337,6 @@ static int recent_mt_check(const struct xt_mtchk_param *par,
+ 	unsigned int nstamp_mask;
+ 	unsigned int i;
+ 	int ret = -EINVAL;
+-	size_t sz;
+ 
+ 	net_get_random_once(&hash_rnd, sizeof(hash_rnd));
+ 
+@@ -387,8 +386,7 @@ static int recent_mt_check(const struct xt_mtchk_param *par,
+ 		goto out;
+ 	}
+ 
+-	sz = sizeof(*t) + sizeof(t->iphash[0]) * ip_list_hash_size;
+-	t = kvzalloc(sz, GFP_KERNEL);
++	t = kvzalloc(struct_size(t, iphash, ip_list_hash_size), GFP_KERNEL);
+ 	if (t == NULL) {
+ 		ret = -ENOMEM;
+ 		goto out;
+-- 
+2.20.1
+
