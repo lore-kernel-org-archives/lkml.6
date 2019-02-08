@@ -2,70 +2,108 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3723CC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5CDC282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1077A21907
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAFF121916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfBHDKH (ORCPT
+        id S1727138AbfBHDKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 22:10:07 -0500
-Received: from mout.gmx.net ([212.227.17.22]:58961 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfBHDKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 22:10:06 -0500
-Received: from homer.simpson.net ([185.221.151.12]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LqV4f-1hMrSQ1Fcf-00e33d; Fri, 08
- Feb 2019 04:09:59 +0100
-Message-ID: <1549595398.26710.14.camel@gmx.de>
-Subject: Re: Kernel panics with recent 4.9 Kernels
-From:   Mike Galbraith <efault@gmx.de>
-To:     Michael Brunnbauer <brunni@netestate.de>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 08 Feb 2019 04:09:58 +0100
-In-Reply-To: <20190207191359.GA14298@netestate.de>
-References: <20190205091239.GA3687@netestate.de>
-         <20190207191359.GA14298@netestate.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:gmJzOzW+ie9PPH5Y9PbesqxZ4zCBgQkaxiM+sF0nmMzgBEESUfC
- QnpP3vVTVBzgFdc8mJdcivencZEToFjKt0Yb2t4H0RuMCt02QMWFiSaG9Os/9NxMmvZyKan
- LBCGmIuuqKQDUCu984Swby2zTPXix6IH7NK/zHIsYZ37G8F9UezqxyF6N1m+FYCSPYpKsdv
- +JMBWfseA4i2oPgxtZQTw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:fW/t38JTaWM=:lAdsJHlZlfxidg9A6ifGVT
- 8TDcgpqBbOFUhRot5hKGtbbM5Is+zBlV79GJaF9yWzcv47TDqXVtON/2gG4t7mbCu4t/hEYcS
- uKnGML7YfoP9oqNtm3MHiWeG8iJsgnleKbBqznfByX//xbVnRi4rxP0pgiKNEusbGcwEHklhx
- nW+hep8Bst/5mmifPF7Tq9uxFLht++yY5DTyNGxCd3czszsqHm2Ktf1DoctIn3KLm2MeE9ora
- 2MPB9GKc+cY6u7pY0iOGA3s9kRWoCscLYhbZy+gIx/YAlJwD0ohjPWAtqT1EOFpv12moIDUI4
- Ui1/Ph6tKCUhQAbqEEDZPDvC8J21D38Ql9n0UaTKmzHtpBnJJ/C00VfMJz/NWqjMNY50TmBjy
- nFCFXZbKZf//iBDBX+VI862SehxMhVWuAu24vGYredYlBAuTSh9tbcr1EDGoKU1mUPy5nYX9M
- mC7z7i8m4FvexYkzQpW0u0ho89R314CReMteVZFquyLXTXx/PrzFjHZorJvwrAyKtPNWKRh7O
- Ir8EOo/pZsNzrkWYr33UQgJsc+EL6JlcZLzFb36TYc8MAzOdby0cSXps+ptlX1r/LMSeVgIp2
- hbwGxakH6MuiUEUxxf2NjFSYQDyjZJfr1Os/VsJgqGWcox2y0yjVae6t0dYypzQQ0d1Fg1wB2
- 0rzMu8GLi/YxR5bneq2txn37fWdHqpl/087BlQUS20STt4GToE6VEeNDVUWjaV1w5WC5FWLbY
- fjLxlCaPCcmsQrnpWklz8YJ0DyYeV5XDySGxyPxUTOGzJK4GD61Lr26rVWJnZ8vlv38A1PdIa
- kt7dfkHsBObZO671GBt8ykjAVvPjyRnWqKhRIfUlg7lG/qqyNGwNllWVxUJIOCdxyzYa/T2sU
- yQ8g28MeSf7rYcd3Vef/Uq3+1xore+tXsJoqdbL8Ntfv/jpMgEiCR9jluIgkrt
+        Thu, 7 Feb 2019 22:10:38 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.228]:48328 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726801AbfBHDKh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 22:10:37 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id CC8ED1D444
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 21:10:36 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id rwYmg6NJ32qH7rwYmgfOeA; Thu, 07 Feb 2019 21:10:36 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=49080 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1grwYm-001Q7r-3i; Thu, 07 Feb 2019 21:10:36 -0600
+Date:   Thu, 7 Feb 2019 21:10:35 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] can: kvaser_usb: Use struct_size() in alloc_candev()
+Message-ID: <20190208031035.GA2665@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1grwYm-001Q7r-3i
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:49080
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-07 at 20:13 +0100, Michael Brunnbauer wrote:
-> hi,
-> 
-> no replies to my mail. Any suggestions what I should do or where I
-> could ask for help?
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-I'd suggest trying to capture events with something better than an
-incomplete screenshot, ie serial console, netconsole, anything that
-will let you show the full event and a few lines leading up to it.
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-	-Mike
+instance = alloc(sizeof(struct foo) + count * sizeof(void *));
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = alloc(struct_size(instance, entry, count));
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
+index c89c7d4900d7..0f1d3e807d63 100644
+--- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
++++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
+@@ -643,8 +643,7 @@ static int kvaser_usb_init_one(struct kvaser_usb *dev,
+ 			return err;
+ 	}
+ 
+-	netdev = alloc_candev(sizeof(*priv) +
+-			      dev->max_tx_urbs * sizeof(*priv->tx_contexts),
++	netdev = alloc_candev(struct_size(priv, tx_contexts, dev->max_tx_urbs),
+ 			      dev->max_tx_urbs);
+ 	if (!netdev) {
+ 		dev_err(&dev->intf->dev, "Cannot alloc candev\n");
+-- 
+2.20.1
+
