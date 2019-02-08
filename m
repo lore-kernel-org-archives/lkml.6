@@ -2,99 +2,143 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534AEC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D93C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10F65205C9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549639047;
-	bh=QfqY9QJgxxZ7HAFzvUaH9/TT+HcaSxdD+VOLBLYhigE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B+OHUhLCnHcE6ltIwjEeb4eo1WiIWPrZOmRjDEMn9haXQ6IoMdzN0ZEJc1p8N29yA
-	 IIh4FA2OQIR76CxJIt+IBuHaarqjUPU1rZDuj384cbbiF1B4PNLouOg3FsWDksNtbo
-	 zERm5jBrOPkc9thw7yG+0L2R3ICTgAy/60PtU98E=
+	by mail.kernel.org (Postfix) with ESMTP id 14D2520855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:19:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQbWyOlW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbfBHPRV (ORCPT
+        id S1727894AbfBHPTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:17:21 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40693 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfBHPRS (ORCPT
+        Fri, 8 Feb 2019 10:19:01 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38463 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfBHPTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:17:18 -0500
-Received: by mail-lf1-f66.google.com with SMTP id t14so2787817lfk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 07:17:17 -0800 (PST)
+        Fri, 8 Feb 2019 10:19:00 -0500
+Received: by mail-ed1-f68.google.com with SMTP id h50so3058471ede.5;
+        Fri, 08 Feb 2019 07:18:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BvVSppcWn4VKsXIVbbXUK9OzQFNQquhADDfzAtIHSjQ=;
+        b=qQbWyOlW4jZhTSepxY6IuZc9GizIYO0YmQSzY5+z3ft0wFNY9G6+H0CYMBaoursQq2
+         E2Z5K+wfPrkdxvZUgRjIRSXyVF0Mxm9pg+5ybj+YNvYXAy7jNUDAZZ8P/rZWV5hAU68U
+         vg3fmyutYTD78lGwtOq+J5EVQMP87EvmcZdgaZiQWhZN+nzGt9CYHuo3lGQ4QNqF8+WW
+         C9+sdT1WkyUd/1c7agT0Mw0JPHYi/ftkHfsjcd8ycyayxlJ8ndt3ngdUwfOB9DejFYob
+         zKT0ajmPD1yk0cOEdIDLTq/o+m7qVCuEUPbet54aWkuBf+Mn53K+RdEw9lDJ8V+6lpti
+         Tv7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QnjIDXgRWNWjvTXldHI84YCSiOOYFJ6u69v3q3ucNrE=;
-        b=Fl+s0/CFudXY9Sros6gtaw7hx2GXnOvbcDm7++N3HcBLGPKSm9H8IqZzGiWqgCqJW4
-         o8ApKgKfqgnrhYs/1Q+wa/q2Csf/+XsptPZ5KqNhOfKuI4ADCOFIv917VMfoLFCVZGfk
-         x1wD50IIRK2Fpx/7jD4kjKiWH1DD4IK2k2PPoufzoSGRA0AHWNJKotPC3Ejp8GFgMmCJ
-         tligfLmyiy67yeZcwLUqfmRkQhXSETi1hpoQ0RzJMpTDv5Vj2AVTCcnxQFKNrg+Cw9rG
-         yNp4FkrQJ6eP1aCEzvIAA7DjwJSf1xKYF8E6dGwoCuOaLVIEu/qgoweuV3lkW7t4TkRM
-         uQig==
-X-Gm-Message-State: AHQUAuYP3EdT6PGVQqNSM+oVZ/k9yea97WxpRrZMxhfGoHn+hlXkV9Eq
-        D7aXvBznHqLYkorWy98bsbY=
-X-Google-Smtp-Source: AHgI3Iamv6MSo0wh/kdwKgNcI6D40n2AD3Ezim8rAWxDv5mx72+PHez65iM5SzxOf0KSiwloSgoidg==
-X-Received: by 2002:ac2:4318:: with SMTP id l24mr6560964lfh.75.1549639036387;
-        Fri, 08 Feb 2019 07:17:16 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id r10-v6sm416231ljj.71.2019.02.08.07.17.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 07:17:15 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@xi.terra>)
-        id 1gs7ty-0006y8-5T; Fri, 08 Feb 2019 16:17:14 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH v2 1/2] ASoC: msm8916-wcd-analog: add missing license information
-Date:   Fri,  8 Feb 2019 16:16:55 +0100
-Message-Id: <20190208151656.26735-2-johan@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208151656.26735-1-johan@kernel.org>
-References: <20190208151656.26735-1-johan@kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BvVSppcWn4VKsXIVbbXUK9OzQFNQquhADDfzAtIHSjQ=;
+        b=X0/cHpa4xXls2tsWJmfC+PZPsxoeQnGkk5qN40K5bHPxyONyi8oidZPa/1wZ3d16yk
+         3gdYtQKwlOgrHlAJ/5nhVyiF5+kx0xwiFeYNpEbKhhOlBKyvbCA18KdB2YrUBpU8lIti
+         fRfhzaTzpXofWzpe+WjYdEW2RQMs7BW4eW83orrmBFIdD0oIaSeZ4PRiwMfbETwz8Yyk
+         yJE7PTW2hV+zv+IJO3jeC44X/KhCGFOCh8thbKTG3a1utGPdJM2USpoW/hWC/BFzchIS
+         pQghq1XxiDu5fe6sMf1dkUDED/vri7EuhL3fcATbv3HjHoj2NDOPNF2apgiSOsYLPm+k
+         QRFQ==
+X-Gm-Message-State: AHQUAuZYC4YOtUTVLG2rhEZ63o5HM/AHLjBsO9d8tGiVoTs3gHx8MM2d
+        sFoRr9PdWY8UsYTpnFYmTgM=
+X-Google-Smtp-Source: AHgI3IYFaDDqMZAOazuJyTTXQfm3Y6F9RIFCwFsXW2qY0NZHjA6nnQYDdploNVfWk5NPLMQNP4PAyA==
+X-Received: by 2002:aa7:c0c8:: with SMTP id j8mr10087558edp.94.1549639138655;
+        Fri, 08 Feb 2019 07:18:58 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id z60sm674220ede.82.2019.02.08.07.18.56
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 07:18:57 -0800 (PST)
+Subject: Re: [PATCH 16/32] x86/vdso: Generate vdso{,32}-timens.lds
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Dmitry Safonov <dima@arista.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andy Tucker <agtucker@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <20190206001107.16488-1-dima@arista.com>
+ <20190206001107.16488-17-dima@arista.com>
+ <a2bbe610-7553-0ba6-b58b-1013e034b8f6@rasmusvillemoes.dk>
+ <alpine.DEB.2.21.1902081051410.1645@nanos.tec.linutronix.de>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <3f0ac089-387e-ab58-59e9-5f8cafa1573d@gmail.com>
+Date:   Fri, 8 Feb 2019 15:18:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1902081051410.1645@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the missing license and copyright information which never made it
-into the analog driver when the original driver was split in two as part
-of the review process.
+On 2/8/19 9:57 AM, Thomas Gleixner wrote:
+> On Thu, 7 Feb 2019, Rasmus Villemoes wrote:
+> 
+> Cc: + Vincenzo, Will
+> 
+>> On 06/02/2019 01.10, Dmitry Safonov wrote:
+>>> As it has been discussed on timens RFC, adding a new conditional branch
+>>> `if (inside_time_ns)` on VDSO for all processes is undesirable.
+>>> It will add a penalty for everybody as branch predictor may mispredict
+>>> the jump. Also there are instruction cache lines wasted on cmp/jmp.
+>>>
+>>> Those effects of introducing time namespace are very much unwanted
+>>> having in mind how much work have been spent on micro-optimisation
+>>> vdso code.
+>>>
+>>> Addressing those problems, there are two versions of VDSO's .so:
+>>> for host tasks (without any penalty) and for processes inside of time
+>>> namespace with clk_to_ns() that subtracts offsets from host's time.
+>>>
+>>> Unfortunately, to allow changing VDSO VMA on a running process,
+>>> the entry points to VDSO should have the same offsets (addresses).
+>>> That's needed as i.e. application that calls setns() may have already
+>>> resolved VDSO symbols in GOT/PLT.
+>>
+>> These (14-19, if I'm reading them right) seems to add quite a lot of
+>> complexity and fragility to the build, and other architectures would
+>> probably have to add something similar to their vdso builds.
+> 
+> Yes and we really want to avoid that. The VDSO implementations are
+> pointlessly different accross the architectures and there is effort on the
+> way to consolidate them:
+> 
+>   https://lkml.kernel.org/r/20190115135539.24762-1-vincenzo.frascino@arm.com
+> 
+> I talked to Vincenzo earlier this week and he's working on a new version of
+> that. The timens stuff wants to go on top of the consolidation otherwise we
+> end up with another set of pointlessly different and differently broken
+> VDSO variants.
 
-Link: https://lkml.kernel.org/r/1465582725-30183-3-git-send-email-srinivas.kandagatla@linaro.org
-Fixes: 585e881e5b9e ("ASoC: codecs: Add msm8916-wcd analog codec")
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- sound/soc/codecs/msm8916-wcd-analog.c | 3 +++
- 1 file changed, 3 insertions(+)
+That looks awesome!
+I've missed the tread about it, will catch the details.
 
-diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
-index b7cf7cce95fe..368b6c09474b 100644
---- a/sound/soc/codecs/msm8916-wcd-analog.c
-+++ b/sound/soc/codecs/msm8916-wcd-analog.c
-@@ -1,3 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2016, The Linux Foundation. All rights reserved.
-+
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/kernel.h>
--- 
-2.20.1
-
+Thanks much,
+          Dmitry
