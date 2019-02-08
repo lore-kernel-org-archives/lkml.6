@@ -2,95 +2,184 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1728C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F268BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68CE62177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBDF22177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:09:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OpE43GoU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DWVcxqd1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfBHMIL (ORCPT
+        id S1727257AbfBHMJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:08:11 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33301 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfBHMIK (ORCPT
+        Fri, 8 Feb 2019 07:09:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38952 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfBHMJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:08:10 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q12so2381295lfm.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:08:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/MZVCPmiFoZOeY6Zi2sALAnt/UkJv5RFzHY10fRT4mI=;
-        b=OpE43GoUJYMqV2jgCBvlmhI2KoIScG4kI9bUBTnc01KvDFy+ZgiH8UtfjavtxkYzR6
-         mXcvxjONbF+enJ24VKebl2DbbZo5wA3dRBK/oWxpJMm7kvAsgzBNPLOL3JdGUv892MBg
-         u7so9XNQ9ZMpwps4OAbefgxVnZOCOD0r4XuL0e8r6nfY7H6EyA2ViNOlikmgane+Hx9O
-         pzkiucyCRnYfc9yxzMknbPy6OeQhVby2j7SNmhyxT+LW0sL9262lxa96gGON0+9ZBMa0
-         kL4kk5rxHc66RTtSQsbi9mObG4Am2NTjM+Jt4qhm3scPA35mLx62/frTl8X5fvV/MtSK
-         YmuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/MZVCPmiFoZOeY6Zi2sALAnt/UkJv5RFzHY10fRT4mI=;
-        b=P5/9n/GZYpG+wayARVqJTEXrsTgmhuyG0eHR9Lo5bPkfpLlT4pJPH1DpsJACBoh8ss
-         piQDBsA3yjp0l72Y6vwGL6eU6bSS7wDFn2CyUIs4jMwGeMxK+2xM64QjH72EZ7caI9xz
-         IIvqzQpODQ8wtVbbmsEetPGQ/jUhxXTvJvN70u0Y+vHNlPI5x+Xy3pPocwrJlB0fb/Mr
-         FgWn/eYx1LgLf3L2OUPilgyqMG7hYez11XyS4osF0qYnKq+c5bi9lwtEkt//V4f0a3Ks
-         PwMjVN4kqhFAKm/Wqo+5z53yfiv8FVLElHqhQb4SHOmqrt4fl+XTiglmKoHwOp30u0J2
-         X76g==
-X-Gm-Message-State: AHQUAuZIKwJ56zDINFj48E056NJEy6pa5oWl7RwUuYUh8C+VqxI7n7Q/
-        EbzTjdaIumooZcy89uy7dzZn7gxiBLGlS4S9U8RVAw==
-X-Google-Smtp-Source: AHgI3IaPPJmXbMUXRxatMm83Ibuspywjjx9pmn4aBEeEXTgtFqQqNYb4fqm7fvevB4/5Kcs/FH9N86RwxeERxtmbpIQ=
-X-Received: by 2002:a19:7dc2:: with SMTP id y185mr13882950lfc.27.1549627687819;
- Fri, 08 Feb 2019 04:08:07 -0800 (PST)
+        Fri, 8 Feb 2019 07:09:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=apFhCBtwuGg5WGyFdjFAuOs+eOGdX7+UzmNDhA3Bf+Y=; b=DWVcxqd1+1K3MHQ+3unvHjzzz
+        IEyUlAh2KQXF/GtJ+llwVz4wT7qxXOwsUgq1VhWISDgr3fKpowYC34mJdSJeA++533r0CuKmaXoIQ
+        CH9wSjKO4m0qQ46TeOzDmoY2ub0tXGnOi329IKAjd6tq46JOZrpkrSpb34CZ8MNEETItCqwz/g9B1
+        q1OU7+XVybhkNhTxyBwGmsI1OHMBgXxDuVKvyMAgg5rlBEPqPsSJFFbCckYG9Kp0nrH/74MknhMDw
+        NtVovFsYKPHiQzIM/4aJS3UI//NEMDQsPQmziv76gX2Kr/Jd71X9/Plo12xh8EGSkGGZ7yuklqAq/
+        JUaIPL/ig==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gs4xq-0006bC-Kc; Fri, 08 Feb 2019 12:09:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 06D6A213E9B59; Fri,  8 Feb 2019 13:09:00 +0100 (CET)
+Date:   Fri, 8 Feb 2019 13:08:59 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rik van Riel <riel@surriel.com>
+Subject: [PATCH] x86/mm/cpa: Fix set_mce_nospec()
+Message-ID: <20190208120859.GH32511@hirez.programming.kicks-ass.net>
+References: <20181224231106.GA27438@gmail.com>
+ <20190207001737.GA32096@agluck-desk>
+ <20190207101846.GB32511@hirez.programming.kicks-ass.net>
+ <CAHk-=whSRGDk9437PvMFEvDvc5hr73fXj+CvNHZu=vNE=GFDFg@mail.gmail.com>
+ <20190207140131.GB32477@hirez.programming.kicks-ass.net>
+ <20190207173600.GA15682@agluck-desk>
+ <20190207175720.GE32511@hirez.programming.kicks-ass.net>
+ <20190207184021.GA17049@agluck-desk>
 MIME-Version: 1.0
-References: <1549531468-1676-1-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1549531468-1676-1-git-send-email-claudiu.beznea@microchip.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Feb 2019 13:07:56 +0100
-Message-ID: <CACRpkdasSzX8gxW1dDjkeTyT6RAYFhrwSPGdwmrKEaabEFgG4Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] add support for SAM9X60 pin controller
-To:     Claudiu.Beznea@microchip.com
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207184021.GA17049@agluck-desk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 10:24 AM <Claudiu.Beznea@microchip.com> wrote:
+On Thu, Feb 07, 2019 at 10:40:21AM -0800, Luck, Tony wrote:
 
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
->
-> This series adds drive strenght and slew rate support for SAMX60's pin
-> controller. For drive strenght we could have 2 values: low, high.
-> For slew rate we could have 2 values: enable, disabled.
->
-> Besides this I took the chance and adapt the documentation for at91 pinctrl
-> driver.
->
-> Changes in v3:
-> - fix checkpatch.pl warning on DBG_SHOW_FLAG_MASKED() macro in patch 1/7
-> - add Ack-by tag
+> Tried it out and it works!
 
-All 7 patches applied for kernel v5.1.
+Excellent, find below a proper patch!
 
-Yours,
-Linus Walleij
+---
+Subject: x86/mm/cpa: Fix set_mce_nospec()
+
+In commit:
+
+ fe0937b24ff5 ("x86/mm/cpa: Fold cpa_flush_range() and cpa_flush_array()
+                into a single cpa_flush() function")
+
+I accidentally made the call to make_addr_canonical_again() go away,
+this breaks set_mce_nospec().
+
+Re-instate the call to convert the address back into canonical form
+right before we do either CLFLUSH or INVLPG. Rename the function while
+at it to be shorter (and less MAGA).
+
+Reported-by: Tony Luck <tony.luck@intel.com>
+Tested-by: Tony Luck <tony.luck@intel.com>
+Fixes: fe0937b24ff5 ("x86/mm/cpa: Fold cpa_flush_range() and cpa_flush_array() into a single cpa_flush() function")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/mm/pageattr.c | 50 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 4f8972311a77..14e6119838a6 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -230,6 +230,29 @@ static bool __cpa_pfn_in_highmap(unsigned long pfn)
+ 
+ #endif
+ 
++/*
++ * See set_mce_nospec().
++ *
++ * Machine check recovery code needs to change cache mode of poisoned pages to
++ * UC to avoid speculative access logging another error. But passing the
++ * address of the 1:1 mapping to set_memory_uc() is a fine way to encourage a
++ * speculative access. So we cheat and flip the top bit of the address. This
++ * works fine for the code that updates the page tables. But at the end of the
++ * process we need to flush the TLB and cache and the non-canonical address
++ * causes a #GP fault when used by the INVLPG and CLFLUSH instructions.
++ *
++ * But in the common case we already have a canonical address. This code
++ * will fix the top bit if needed and is a no-op otherwise.
++ */
++static inline unsigned long fix_addr(unsigned long addr)
++{
++#ifdef CONFIG_X86_64
++	return (long)(addr << 1) >> 1;
++#else
++	return addr;
++#endif
++}
++
+ static unsigned long __cpa_addr(struct cpa_data *cpa, unsigned long idx)
+ {
+ 	if (cpa->flags & CPA_PAGES_ARRAY) {
+@@ -313,7 +336,7 @@ void __cpa_flush_tlb(void *data)
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < cpa->numpages; i++)
+-		__flush_tlb_one_kernel(__cpa_addr(cpa, i));
++		__flush_tlb_one_kernel(fix_addr(__cpa_addr(cpa, i)));
+ }
+ 
+ static void cpa_flush(struct cpa_data *data, int cache)
+@@ -347,7 +370,7 @@ static void cpa_flush(struct cpa_data *data, int cache)
+ 		 * Only flush present addresses:
+ 		 */
+ 		if (pte && (pte_val(*pte) & _PAGE_PRESENT))
+-			clflush_cache_range_opt((void *)addr, PAGE_SIZE);
++			clflush_cache_range_opt((void *)fix_addr(addr), PAGE_SIZE);
+ 	}
+ 	mb();
+ }
+@@ -1627,29 +1650,6 @@ static int __change_page_attr_set_clr(struct cpa_data *cpa, int checkalias)
+ 	return ret;
+ }
+ 
+-/*
+- * Machine check recovery code needs to change cache mode of poisoned
+- * pages to UC to avoid speculative access logging another error. But
+- * passing the address of the 1:1 mapping to set_memory_uc() is a fine
+- * way to encourage a speculative access. So we cheat and flip the top
+- * bit of the address. This works fine for the code that updates the
+- * page tables. But at the end of the process we need to flush the cache
+- * and the non-canonical address causes a #GP fault when used by the
+- * CLFLUSH instruction.
+- *
+- * But in the common case we already have a canonical address. This code
+- * will fix the top bit if needed and is a no-op otherwise.
+- */
+-static inline unsigned long make_addr_canonical_again(unsigned long addr)
+-{
+-#ifdef CONFIG_X86_64
+-	return (long)(addr << 1) >> 1;
+-#else
+-	return addr;
+-#endif
+-}
+-
+-
+ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
+ 				    pgprot_t mask_set, pgprot_t mask_clr,
+ 				    int force_split, int in_flag,
