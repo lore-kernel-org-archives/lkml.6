@@ -2,209 +2,85 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A17C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419D0C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858A0217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06EC4218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfBHNUu convert rfc822-to-8bit (ORCPT
+        id S1727466AbfBHNWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:20:50 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.132]:22118 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726585AbfBHNUu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:20:50 -0500
-Received: from [46.226.53.50] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-c.eu-west-1.aws.symcld.net id 80/95-07510-D228D5C5; Fri, 08 Feb 2019 13:20:45 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNKsWRWlGSWpSXmKPExsVy8+3OTbq6TbE
-  xBmcOaFssuXiV3aL93TJ2i8u75rBZHFt9hc2BxWPemmqP6fN+Mnl83iQXwBzFmpmXlF+RwJqx
-  9Ox2loK1ChVNLV+YGxhfSXUxcnEICTxllDiy5ycbhPOTUeL71OOsEM4sRolLl24ydTFycrAJy
-  Ej8fn6THcQWEVCWOHi4hQ3EZhYokDj6dDdYjbBAjMTjM7+YIGoSJa5P3w9UzwFk60mcW68GEm
-  YRUJHYeK4JrIRXwFli0uWtYGMYBcQkvp9awwQxUlzi1pP5YLaEgIDEkj3nmSFsUYmXj/+xgoy
-  UEFCQaGoSgggbSqyadoAFwpaWeNOzjg3CNpU4fPMwC8RIPYkbU6dAXawtsWzha2aIEwQlTs58
-  AlYjJKAosfTmOqi1mhINy7ZB2fYS099fhTrBRuLQ31a4+a9+TGaawCg9C8nVs5Csm4Vk3Swk6
-  xYwsqxiNEsqykzPKMlNzMzRNTQw0DU0NNI1MjDUNdZLrNJN1kst1S1PLS7RNdRLLC/WK67MTc
-  5J0ctLLdnECEwEKQUnmXcwPluRfohRkoNJSZRXrTg2RogvKT+lMiOxOCO+qDQntfgQowwHh5I
-  E77QGoJxgUWp6akVaZg4wJcGkJTh4lER4b4KkeYsLEnOLM9MhUqcYFaXEeZfUAyUEQBIZpXlw
-  bbA0eIlRVkqYl5GBgUGIpyC1KDezBFX+FaM4B6OSMO9GkPE8mXklcNNfAS1mAlmsFQOyuCQRI
-  SXVwJij8vJm/BuX3sfev3+trFmhXdPAIV5kwbHHMH+9O+PkKa7sP+47/5r+SyB6x1TbFzrXDR
-  WWb2Z+5uHKOG3TdMbIaokfbcuXdWzazd/66OCuM92hL78afTOVmrXHs2uafVF16JnoONXSlzc
-  W8kRFSzo8sXG/dujP7bSXNTPfTlyUlud49FXQPWklluKMREMt5qLiRAD10fEefgMAAA==
-X-Env-Sender: Oliver.Rohe@wago.com
-X-Msg-Ref: server-25.tower-302.messagelabs.com!1549632045!1430767!1
-X-Originating-IP: [217.237.185.178]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 21757 invoked from network); 8 Feb 2019 13:20:45 -0000
-Received: from unknown (HELO mail.wago.com) (217.237.185.178)
-  by server-25.tower-302.messagelabs.com with AES256-GCM-SHA384 encrypted SMTP; 8 Feb 2019 13:20:45 -0000
-Received: from SVEX01011.wago.local (10.1.103.229) by SVEX01009.wago.local
- (10.1.103.227) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Fri, 8 Feb 2019
- 14:20:45 +0100
-Received: from SVEX01005.wago.local (10.1.101.121) by SVEX01011.wago.local
- (10.1.103.229) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.1.1531.3 via Frontend
- Transport; Fri, 8 Feb 2019 14:20:45 +0100
-Received: from SVEX01006.wago.local ([10.1.101.122]) by SVEX01005.wago.local
- ([169.254.1.23]) with mapi id 14.03.0415.000; Fri, 8 Feb 2019 14:20:44 +0100
-From:   <Oliver.Rohe@wago.com>
-To:     <alexandre.belloni@bootlin.com>
-CC:     <a.zummo@towertech.it>, <linux-rtc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <Oliver.Rohe@wago.com>
-Subject: [PATCH v2] rtc: rs5c372: Fix reading from rtc when the oscillator
- got interrupted.
-Thread-Topic: [PATCH v2] rtc: rs5c372: Fix reading from rtc when the
- oscillator got interrupted.
-Thread-Index: AQHUv7EYL4syJ08/n0KkXYUo5Vbq4g==
-Date:   Fri, 8 Feb 2019 13:20:44 +0000
-Message-ID: <1549632034-9195-1-git-send-email-oliver.rohe@wago.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.1.103.232]
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean
-x-pp-proceessed: 8707ce24-8c4e-4a04-80f2-2a31f9152b06
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Fri, 8 Feb 2019 08:22:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37672 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726585AbfBHNWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:22:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7FC19AD55;
+        Fri,  8 Feb 2019 13:22:47 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 3A21CDA83D; Fri,  8 Feb 2019 14:22:09 +0100 (CET)
+Date:   Fri, 8 Feb 2019 14:22:08 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] btrfs: add zstd compression level support
+Message-ID: <20190208132208.GN2900@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190204202008.51652-1-dennis@kernel.org>
+ <20190207165925.GJ2900@twin.jikos.cz>
+ <20190207173654.GA27942@dennisz-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-X-KSE-ServerInfo: SVEX01009.wago.local, 9
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-PP-Proceessed: 81a9f692-418a-4f33-bb70-032f75efc73b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207173654.GA27942@dennisz-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the oscillator of the rtc gets interrupted,
-e.g. due to an empty battery, reading from the rtc will now return an error
-and the oscillator bit will be cleared, once the rtc is successfully reset.
+On Thu, Feb 07, 2019 at 12:36:54PM -0500, Dennis Zhou wrote:
+> On Thu, Feb 07, 2019 at 05:59:26PM +0100, David Sterba wrote:
+> > On Mon, Feb 04, 2019 at 03:19:56PM -0500, Dennis Zhou wrote:
+> > > Dennis Zhou (12):
+> > >   btrfs: add helpers for compression type and level
+> > >   btrfs: rename workspaces_list to workspace_manager
+> > >   btrfs: manage heuristic workspace as index 0
+> > >   btrfs: unify compression ops with workspace_manager
+> > >   btrfs: add helper methods for workspace manager init and cleanup
+> > >   btrfs: add compression interface in (get/put)_workspace()
+> > >   btrfs: move to fn pointers for get/put workspaces
+> > >   btrfs: plumb level through the compression interface
+> > >   btrfs: change set_level() to bound the level passed in
+> > >   btrfs: zstd use the passed through level instead of default
+> > >   btrfs: make zstd memory requirements monotonic
+> > >   btrfs: add zstd compression level support
+> > 
+> > The patchset has been added to msic-next, scheduled for 5.1. I've left
+> > out the changes to warn on wrong level, so currently it falls back to
+> > the default. I don't want to make a last minute change of that sort, so
+> > this needs to go as a separate patch.
+> 
+> Regarding the bug report from Dan, do you want me to send you a patch
+> for it on top of the topic branch or do you mind fixing the missing:
+> 
+> unsigned int level = 0;
 
-Signed-off-by: Oliver Rohe <oliver.rohe@wago.com>
----
- drivers/rtc/rtc-rs5c372.c | 54 +++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 47 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/rtc/rtc-rs5c372.c b/drivers/rtc/rtc-rs5c372.c
-index 2ad5976..66a473a 100644
---- a/drivers/rtc/rtc-rs5c372.c
-+++ b/drivers/rtc/rtc-rs5c372.c
-@@ -52,8 +52,10 @@
- #	define RS5C_CTRL1_CT4		(4 << 0)	/* 1 Hz level irq */
- #define RS5C_REG_CTRL2		15
- #	define RS5C372_CTRL2_24		(1 << 5)
--#	define RS5C_CTRL2_XSTP          (1 << 4)        /* only if !R2x2x */
-+#	define RS5C_CTRL2_XSTP		(1 << 4)	/* only if !R2x2x */
-+#	define R2x2x_CTRL2_VDET		(1 << 6)	/* only if  R2x2x */
- #	define R2x2x_CTRL2_XSTP		(1 << 5)	/* only if  R2x2x */
-+#	define R2x2x_CTRL2_PON		(1 << 4)	/* only if  R2x2x */
- #	define RS5C_CTRL2_CTFG		(1 << 2)
- #	define RS5C_CTRL2_AAFG		(1 << 1)	/* or WAFG */
- #	define RS5C_CTRL2_BAFG		(1 << 0)	/* or DAFG */
-@@ -212,10 +214,27 @@ static int rs5c372_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct rs5c372	*rs5c = i2c_get_clientdata(client);
- 	int		status = rs5c_get_regs(rs5c);
-+	unsigned char ctrl2 = rs5c->regs[RS5C_REG_CTRL2];
- 
- 	if (status < 0)
- 		return status;
- 
-+	switch (rs5c->type) {
-+	case rtc_r2025sd:
-+	case rtc_r2221tl:
-+		if ((rs5c->type == rtc_r2025sd && !(ctrl2 & R2x2x_CTRL2_XSTP)) ||
-+		    (rs5c->type == rtc_r2221tl &&  (ctrl2 & R2x2x_CTRL2_XSTP))) {
-+			dev_warn(&client->dev, "rtc oscillator interruption detected. Please reset the rtc clock.\n");
-+			return -EINVAL;
-+		}
-+		break;
-+	default:
-+		if (ctrl2 & RS5C_CTRL2_XSTP) {
-+			dev_warn(&client->dev, "rtc oscillator interruption detected. Please reset the rtc clock.\n");
-+			return -EINVAL;
-+		}
-+	}
-+
- 	tm->tm_sec = bcd2bin(rs5c->regs[RS5C372_REG_SECS] & 0x7f);
- 	tm->tm_min = bcd2bin(rs5c->regs[RS5C372_REG_MINS] & 0x7f);
- 	tm->tm_hour = rs5c_reg2hr(rs5c, rs5c->regs[RS5C372_REG_HOURS]);
-@@ -243,6 +262,7 @@ static int rs5c372_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct rs5c372	*rs5c = i2c_get_clientdata(client);
- 	unsigned char	buf[7];
-+	unsigned char	ctrl2;
- 	int		addr;
- 
- 	dev_dbg(&client->dev, "%s: tm is secs=%d, mins=%d, hours=%d "
-@@ -261,7 +281,32 @@ static int rs5c372_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	buf[6] = bin2bcd(tm->tm_year - 100);
- 
- 	if (i2c_smbus_write_i2c_block_data(client, addr, sizeof(buf), buf) < 0) {
--		dev_err(&client->dev, "%s: write error\n", __func__);
-+		dev_dbg(&client->dev, "%s: write error in line %i\n",
-+			__func__, __LINE__);
-+		return -EIO;
-+	}
-+
-+	addr = RS5C_ADDR(RS5C_REG_CTRL2);
-+	ctrl2 = i2c_smbus_read_byte_data(client, addr);
-+
-+	/* clear rtc warning bits */
-+	switch (rs5c->type) {
-+	case rtc_r2025sd:
-+	case rtc_r2221tl:
-+		ctrl2 &= ~(R2x2x_CTRL2_VDET | R2x2x_CTRL2_PON);
-+		if (rs5c->type == rtc_r2025sd)
-+			ctrl2 |= R2x2x_CTRL2_XSTP;
-+		else
-+			ctrl2 &= ~R2x2x_CTRL2_XSTP;
-+		break;
-+	default:
-+		ctrl2 &= ~RS5C_CTRL2_XSTP;
-+		break;
-+	}
-+
-+	if (i2c_smbus_write_byte_data(client, addr, ctrl2) < 0) {
-+		dev_dbg(&client->dev, "%s: write error in line %i\n",
-+			__func__, __LINE__);
- 		return -EIO;
- 	}
- 
-@@ -523,23 +568,18 @@ static int rs5c_oscillator_setup(struct rs5c372 *rs5c372)
- 	buf[0] = rs5c372->regs[RS5C_REG_CTRL1];
- 	buf[1] = rs5c372->regs[RS5C_REG_CTRL2];
- 
--	/* handle xstp bit */
- 	switch (rs5c372->type) {
- 	case rtc_r2025sd:
- 		if (buf[1] & R2x2x_CTRL2_XSTP)
- 			return ret;
--		rs5c372->regs[RS5C_REG_CTRL2] |= R2x2x_CTRL2_XSTP;
- 		break;
- 	case rtc_r2221tl:
- 		if (!(buf[1] & R2x2x_CTRL2_XSTP))
- 			return ret;
--		rs5c372->regs[RS5C_REG_CTRL2] &= ~R2x2x_CTRL2_XSTP;
- 		break;
--
- 	default:
- 		if (!(buf[1] & RS5C_CTRL2_XSTP))
- 			return ret;
--		rs5c372->regs[RS5C_REG_CTRL2] &= ~RS5C_CTRL2_XSTP;
- 		break;
- 	}
- 
--- 
-2.7.4
+It's been fixed in the pushed branch.
