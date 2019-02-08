@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197DDC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B589C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D74842146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB98D217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:38:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Xd4FqMO9"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="MHhXc71Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbfBHRiN (ORCPT
+        id S1728387AbfBHRiT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:38:13 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54185 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728047AbfBHRfS (ORCPT
+        Fri, 8 Feb 2019 12:38:19 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51874 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728039AbfBHRfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 12:35:18 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d15so4359995wmb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:17 -0800 (PST)
+Received: by mail-wm1-f67.google.com with SMTP id b11so4376959wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EVbb/kmDGnz2R06A9Y+sRzR+uJXik+IbWekFAYRY3NY=;
-        b=Xd4FqMO9I6790JqPr79qSiqhSgCtZHQ1J58BNZs0T74nySxs2q+HXWouHipBL2wWKZ
-         2YzZj0CD9aaoze2laS5JYLbbBCzfvokXAXHjlp454uKIgGCP4N77BWyP+ADjpro/VpEA
-         F2nbwFdX76a4FDyzV9xO1GXEtX51noqw+Eck0sp4RTajjDExJiZ+CguPtidHATXrwsrR
-         VLP3ujtFLNHGfhT2r6NTDJaqSpma6l5MOFP/jHOU9oCbpxZu0O2M9wYRUGhKpEMuOkWm
-         o2j0tCkYmW6JKvBbEqsY08bE30J1FR+50rugCUJECd2H2sbB61C/4k3ODgntqPrcKsnK
-         tzTw==
+        bh=xAHLRF3J06rWcMtazdECljGtU627vGPhieQV9I0Sumk=;
+        b=MHhXc71QrcJceQYX8GYJlYmT+KpzXqxKkzLRFtpwkIDjAcvV6LJ6pUfWpkJSgt0V7+
+         qFftg8HIwJqw6bkSO+p5ZjtqsheHhEMgIINh3rlyyk4yPvGyQPF/G3WCwptQX5sETe9w
+         qfD416AhKQKY+C7cbxY7dT/GvImcGYUR2moPnZRPrWnWwi6g3a9jACbs8cNdHu0+fmBI
+         8miYLiCrFkD5LM+s5bCp5ExbZRVbcQiCHFt8suah5d+Kt9DcN64niBpVJSJkJXgXglLP
+         1M4dnb0yjVRevKhzEIiXxbGaOSRfoaBuFif/hI9SiikJvOEVPODmUB6P4QxNDhBWg80v
+         pT3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EVbb/kmDGnz2R06A9Y+sRzR+uJXik+IbWekFAYRY3NY=;
-        b=DR1MW5nLxXDVIDbd3y9K+/iOiZ1qxV4aDtbsCcWYF7M3k7KRdVEclcG1hWImAnaTOO
-         6nu3/onetCjq+FhoHGgh3WDeh1QrqQQHuuRqmKRQgQZnQfTS3P/j0E9gXFpf26Rs98xz
-         n2k74n9wx1bMirGz/AYFcBMIO3OU64HDCVfEO9jKigoCezqXaxGFfd5xXCOwZpRXeu6I
-         +zgpju2pUKKO+2vv8brBcOAm7VE3PaYjbmFE4d2vk4QxH57inD43GV55uq6e60d+nESN
-         8YR2YKbCPasTnN21+HiCCGmk7Qd8sT2bF8ulW5t1Gi7ngR+MgMVjx8yZJ9yuoDoFIgR1
-         K5ew==
-X-Gm-Message-State: AHQUAuZ9OV9hx4UlUdYSXCtT/ut6lWE0HncWII6g/tsuBBiEm28NdtYP
-        Q42if27ErORsajj/ITvd/zs+IA==
-X-Google-Smtp-Source: AHgI3IaI0pnsdQtq6MqG/GmPvD6gDbPnXpMBFVIAGhp/O8zIeiMvo7WGh6h+OvsMvrtJ9on0JuoT2w==
-X-Received: by 2002:a5d:4004:: with SMTP id n4mr16665956wrp.80.1549647317160;
-        Fri, 08 Feb 2019 09:35:17 -0800 (PST)
+        bh=xAHLRF3J06rWcMtazdECljGtU627vGPhieQV9I0Sumk=;
+        b=hzYwtgp5upECVv9Qy22F6jzwIM4SbN+cJ0X78UtkdKg5vWJRudKMjtfq1mojY4jjht
+         jauRjgccE8wHGh+teQCqk8wZ/W4U7U/X0tvhojWPxkkzP7Svn2N5l4gorTwp4us4IA8S
+         XH4w+01iCRCen2ACLEw+Y5x0HoO7Ly/8xjtVzbFI6vaAeruvhfa9FL/Fr2y6CxgMwdrP
+         1fzEsG+1bV5ZeVx3UXOjZBNK9WPGFhaDUQ30NiOpC14gtqcktbcdZIT2elY/rptM1bcr
+         +Opg1YQmcu59psrxIacMmDQdf4Eplor7+VNN4fw0AbwSwfFbhDmOF+ZMV4d0jAmCaWXO
+         zjAA==
+X-Gm-Message-State: AHQUAuaeJd7lyFEdCRiQOQXwBKSv68F7EgTxZzV24z5DkZk5341xXrSE
+        q7FLl6PrKbqRqY1h/5ZHJjAz5A==
+X-Google-Smtp-Source: AHgI3IYcHvDkHeWdpW8nyfUr0ofwXJFgZaYhkH9h4rzzMr0D5/ysnGrP0KusG4mWkQPz3E78Y5iCKA==
+X-Received: by 2002:adf:e290:: with SMTP id v16mr2951747wri.100.1549647315841;
+        Fri, 08 Feb 2019 09:35:15 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.15
+        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:16 -0800 (PST)
+        Fri, 08 Feb 2019 09:35:15 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -66,9 +66,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 09/33] ARM: davinci: aintc: drop GPL license boilerplate
-Date:   Fri,  8 Feb 2019 18:34:34 +0100
-Message-Id: <20190208173458.4801-10-brgl@bgdev.pl>
+Subject: [PATCH v2 08/33] ARM: davinci: make irqs.h a local header
+Date:   Fri,  8 Feb 2019 18:34:33 +0100
+Message-Id: <20190208173458.4801-9-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
 References: <20190208173458.4801-1-brgl@bgdev.pl>
@@ -81,47 +81,325 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Replace the GPLv2 or later license boilerplate with an SPDX identifier.
+The existence of irqs.h in mach-davinci/include/mach only makes sense
+without SPARSE_IRQ as it's then expected to define NR_IRQS and is
+included from asm/irq.h. As we now support SPARSE_IRQ, this header can
+be moved to mach-davinci and used as the source of HW interrupt numbers.
+
+While updating the includes in various files - also rearrange the
+headers by directory (linux/asm/mach).
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/irq.c | 26 ++++++--------------------
- 1 file changed, 6 insertions(+), 20 deletions(-)
+ arch/arm/mach-davinci/board-da830-evm.c         | 5 +++--
+ arch/arm/mach-davinci/board-da850-evm.c         | 5 +++--
+ arch/arm/mach-davinci/board-dm644x-evm.c        | 7 ++++---
+ arch/arm/mach-davinci/board-dm646x-evm.c        | 3 ++-
+ arch/arm/mach-davinci/da830.c                   | 2 +-
+ arch/arm/mach-davinci/da850.c                   | 2 +-
+ arch/arm/mach-davinci/devices-da8xx.c           | 2 +-
+ arch/arm/mach-davinci/devices.c                 | 9 ++++-----
+ arch/arm/mach-davinci/dm355.c                   | 2 +-
+ arch/arm/mach-davinci/dm365.c                   | 2 +-
+ arch/arm/mach-davinci/dm644x.c                  | 2 +-
+ arch/arm/mach-davinci/dm646x.c                  | 2 +-
+ arch/arm/mach-davinci/irq.c                     | 3 ++-
+ arch/arm/mach-davinci/{include/mach => }/irqs.h | 0
+ arch/arm/mach-davinci/usb-da8xx.c               | 3 ++-
+ arch/arm/mach-davinci/usb.c                     | 7 ++++---
+ 16 files changed, 31 insertions(+), 25 deletions(-)
+ rename arch/arm/mach-davinci/{include/mach => }/irqs.h (100%)
 
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index 41f5a51fee9a..7b8c4aeca096 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -36,11 +36,12 @@
+ #include <asm/mach/arch.h>
+ 
+ #include <mach/common.h>
+-#include <mach/irqs.h>
+-#include "cp_intc.h"
+ #include <mach/mux.h>
+ #include <mach/da8xx.h>
+ 
++#include "cp_intc.h"
++#include "irqs.h"
++
+ #define DA830_EVM_PHY_ID		""
+ /*
+  * USB1 VBUS is controlled by GPIO1[15], over-current is reported on GPIO2[4].
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 317f48560534..b0814bd30a1f 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -43,10 +43,11 @@
+ #include <linux/spi/flash.h>
+ 
+ #include <mach/common.h>
+-#include "cp_intc.h"
+ #include <mach/da8xx.h>
+ #include <mach/mux.h>
+-#include <mach/irqs.h>
++
++#include "cp_intc.h"
++#include "irqs.h"
+ #include "sram.h"
+ 
+ #include <asm/mach-types.h>
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 16ffed2525e6..a6bc48c9ecd9 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -36,10 +36,10 @@
+ #include <asm/mach/arch.h>
+ 
+ #include <mach/common.h>
+-#include <mach/irqs.h>
+-#include <linux/platform_data/i2c-davinci.h>
+-#include <mach/serial.h>
+ #include <mach/mux.h>
++#include <mach/serial.h>
++
++#include <linux/platform_data/i2c-davinci.h>
+ #include <linux/platform_data/mtd-davinci.h>
+ #include <linux/platform_data/mmc-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
+@@ -47,6 +47,7 @@
+ #include <linux/platform_data/ti-aemif.h>
+ 
+ #include "davinci.h"
++#include "irqs.h"
+ 
+ #define DM644X_EVM_PHY_ID		"davinci_mdio-0:01"
+ #define LXT971_PHY_ID	(0x001378e2)
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index 8d5be6dd2019..26c123f35350 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -44,10 +44,11 @@
+ #include <asm/mach/arch.h>
+ 
+ #include <mach/common.h>
+-#include <mach/irqs.h>
++
+ #include <mach/serial.h>
+ 
+ #include "davinci.h"
++#include "irqs.h"
+ 
+ #define NAND_BLOCK_SIZE		SZ_128K
+ 
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index aa8da725a325..ca903c9105e4 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -19,9 +19,9 @@
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/irqs.h>
+ #include <mach/time.h>
+ 
++#include "irqs.h"
+ #include "mux.h"
+ 
+ /* Offsets of the 8 compare registers on the da830 */
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index d22b19833326..486d53481636 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -32,10 +32,10 @@
+ #include <mach/cpufreq.h>
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/irqs.h>
+ #include <mach/pm.h>
+ #include <mach/time.h>
+ 
++#include "irqs.h"
+ #include "mux.h"
+ 
+ #define DA850_PLL1_BASE		0x01e1a000
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 3104a3eb2ddf..b8dc674e06bc 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -25,10 +25,10 @@
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+ #include <mach/time.h>
+-#include <mach/irqs.h>
+ 
+ #include "asp.h"
+ #include "cpuidle.h"
++#include "irqs.h"
+ #include "sram.h"
+ 
+ #define DA8XX_TPCC_BASE			0x01c00000
+diff --git a/arch/arm/mach-davinci/devices.c b/arch/arm/mach-davinci/devices.c
+index 722c463f9b18..40bd8029e457 100644
+--- a/arch/arm/mach-davinci/devices.c
++++ b/arch/arm/mach-davinci/devices.c
+@@ -11,21 +11,20 @@
+ 
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/platform_data/i2c-davinci.h>
++#include <linux/platform_data/mmc-davinci.h>
++#include <linux/platform_data/edma.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/io.h>
+ #include <linux/reboot.h>
+ 
+ #include <mach/hardware.h>
+-#include <linux/platform_data/i2c-davinci.h>
+-#include <mach/irqs.h>
+ #include <mach/cputype.h>
+ #include <mach/mux.h>
+-#include <linux/platform_data/mmc-davinci.h>
+ #include <mach/time.h>
+-#include <linux/platform_data/edma.h>
+-
+ 
+ #include "davinci.h"
++#include "irqs.h"
+ 
+ #define DAVINCI_I2C_BASE	     0x01C21000
+ #define DAVINCI_ATA_BASE	     0x01C66000
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index cb725244fa13..b27ea4fc1d51 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -26,13 +26,13 @@
+ 
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+-#include <mach/irqs.h>
+ #include <mach/mux.h>
+ #include <mach/serial.h>
+ #include <mach/time.h>
+ 
+ #include "asp.h"
+ #include "davinci.h"
++#include "irqs.h"
+ #include "mux.h"
+ 
+ #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index ae1b53ea956a..d9c6ab9215a6 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -31,13 +31,13 @@
+ 
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+-#include <mach/irqs.h>
+ #include <mach/mux.h>
+ #include <mach/serial.h>
+ #include <mach/time.h>
+ 
+ #include "asp.h"
+ #include "davinci.h"
++#include "irqs.h"
+ #include "mux.h"
+ 
+ #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 5ccb49196a71..b2748c82b747 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -23,13 +23,13 @@
+ 
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+-#include <mach/irqs.h>
+ #include <mach/mux.h>
+ #include <mach/serial.h>
+ #include <mach/time.h>
+ 
+ #include "asp.h"
+ #include "davinci.h"
++#include "irqs.h"
+ #include "mux.h"
+ 
+ /*
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 2b55625e8fb5..cf210741dfe5 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -24,13 +24,13 @@
+ 
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+-#include <mach/irqs.h>
+ #include <mach/mux.h>
+ #include <mach/serial.h>
+ #include <mach/time.h>
+ 
+ #include "asp.h"
+ #include "davinci.h"
++#include "irqs.h"
+ #include "mux.h"
+ 
+ #define DAVINCI_VPIF_BASE       (0x01C12000)
 diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 88c30759d1c5..1301adc569e2 100644
+index 16ac28833eb4..88c30759d1c5 100644
 --- a/arch/arm/mach-davinci/irq.c
 +++ b/arch/arm/mach-davinci/irq.c
-@@ -1,23 +1,9 @@
--/*
-- * Interrupt handler for DaVinci boards.
-- *
-- * Copyright (C) 2006 Texas Instruments.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Copyright (C) 2006, 2019 Texas Instruments.
-+//
-+// Interrupt handler for DaVinci boards.
+@@ -28,10 +28,11 @@
+ #include <mach/hardware.h>
+ #include <mach/cputype.h>
+ #include <mach/common.h>
+-#include <mach/irqs.h>
+ #include <asm/mach/irq.h>
+ #include <asm/exception.h>
+ 
++#include "irqs.h"
 +
- #include <linux/kernel.h>
+ #define FIQ_REG0_OFFSET		0x0000
+ #define FIQ_REG1_OFFSET		0x0004
+ #define IRQ_REG0_OFFSET		0x0008
+diff --git a/arch/arm/mach-davinci/include/mach/irqs.h b/arch/arm/mach-davinci/irqs.h
+similarity index 100%
+rename from arch/arm/mach-davinci/include/mach/irqs.h
+rename to arch/arm/mach-davinci/irqs.h
+diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
+index 2de5a04ffc24..25f21ee86f1a 100644
+--- a/arch/arm/mach-davinci/usb-da8xx.c
++++ b/arch/arm/mach-davinci/usb-da8xx.c
+@@ -18,7 +18,8 @@
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+-#include <mach/irqs.h>
++
++#include "irqs.h"
+ 
+ #define DA8XX_USB0_BASE		0x01e00000
+ #define DA8XX_USB1_BASE		0x01e25000
+diff --git a/arch/arm/mach-davinci/usb.c b/arch/arm/mach-davinci/usb.c
+index 9d4a58a3113a..cde72ba35dc3 100644
+--- a/arch/arm/mach-davinci/usb.c
++++ b/arch/arm/mach-davinci/usb.c
+@@ -5,13 +5,14 @@
  #include <linux/init.h>
- #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+-
++#include <linux/platform_data/usb-davinci.h>
+ #include <linux/usb/musb.h>
+ 
+ #include <mach/common.h>
+-#include <mach/irqs.h>
+ #include <mach/cputype.h>
+-#include <linux/platform_data/usb-davinci.h>
++
++
++#include "irqs.h"
+ 
+ #define DAVINCI_USB_OTG_BASE	0x01c64000
+ 
 -- 
 2.20.1
 
