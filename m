@@ -6,33 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674A5C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B29C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBCE20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98E9A2177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfBHRD2 (ORCPT
+        id S1727915AbfBHRDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:03:28 -0500
-Received: from foss.arm.com ([217.140.101.70]:54184 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727688AbfBHRDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:03:25 -0500
+        Fri, 8 Feb 2019 12:03:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54176 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727816AbfBHRDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:03:24 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E800715AB;
-        Fri,  8 Feb 2019 09:03:24 -0800 (PST)
-Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 081373F719;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE4F51596;
         Fri,  8 Feb 2019 09:03:23 -0800 (PST)
+Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 014493F719;
+        Fri,  8 Feb 2019 09:03:22 -0800 (PST)
 From:   Julien Grall <julien.grall@arm.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Julien Grall <julien.grall@arm.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>
-Subject: [PATCH 1/3] nds32: Removed unused thread flag TIF_USEDFPU
-Date:   Fri,  8 Feb 2019 17:03:13 +0000
-Message-Id: <20190208170315.10762-3-julien.grall@arm.com>
+Cc:     Julien Grall <julien.grall@arm.com>
+Subject: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching FPSIMD/SVE state
+Date:   Fri,  8 Feb 2019 17:03:12 +0000
+Message-Id: <20190208170315.10762-2-julien.grall@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190208170315.10762-1-julien.grall@arm.com>
 References: <20190208170315.10762-1-julien.grall@arm.com>
@@ -41,38 +39,304 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bit TIF_USEDFPU is not used in the nds32 code.
+When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
+the kernel may be able to use FPSIMD/SVE. This is for instance the case
+for crypto code.
+
+Any use of FPSIMD/SVE in the kernel are clearly marked by using the
+function kernel_neon_{begin, end}. Furthermore, this can only be used
+when may_use_simd() returns true.
+
+The current implementation of may_use_simd() allows softirq to use
+FPSIMD/SVE unless it is currently in used (i.e kernel_neon_busy is true).
+When in used, softirqs usually fallback to a software method.
+
+At the moment, as a softirq may use FPSIMD/SVE, softirqs are disabled
+when touching the FPSIMD/SVE context. This has the drawback to disable
+all softirqs even if they are not using FPSIMD/SVE.
+
+As a softirq should not rely on been able to use simd at a given time,
+there are limited reason to keep softirq disabled when touching the
+FPSIMD/SVE context. Instead, we can only disable preemption and tell
+the NEON unit is currently in use.
+
+This patch introduces two new helpers kernel_neon_{disable, enable} to
+mark the area using FPSIMD/SVE context and use them in replacement of
+local_bh_{disable, enable}. The functions kernel_neon_{begin, end} are
+also re-implemented to use the new helpers.
 
 Signed-off-by: Julien Grall <julien.grall@arm.com>
-Cc: Greentime Hu <green.hu@gmail.com>
-Cc: Vincent Chen <deanbo422@gmail.com>
 
 ---
-    Untested as I don't have a cross-compiler for it.
----
- arch/nds32/include/asm/thread_info.h | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/arch/nds32/include/asm/thread_info.h b/arch/nds32/include/asm/thread_info.h
-index bff741ff337b..8c610abe673a 100644
---- a/arch/nds32/include/asm/thread_info.h
-+++ b/arch/nds32/include/asm/thread_info.h
-@@ -42,7 +42,6 @@ struct thread_info {
-  *  TIF_SIGPENDING	- signal pending
-  *  TIF_NEED_RESCHED	- rescheduling necessary
-  *  TIF_NOTIFY_RESUME	- callback before returning to user
-- *  TIF_USEDFPU		- FPU was used by this task this quantum (SMP)
-  *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
+I have been exploring this solution as an alternative approach to the RT
+patch "arm64: fpsimd: use preemp_disable in addition to local_bh_disable()".
+
+So far, the patch has only been lightly tested.
+
+For RT-linux, it might be possible to use migrate_{enable, disable}. I
+am quite new with RT and have some trouble to understand the semantics
+of migrate_{enable, disable}. So far, I am still unsure if it is possible
+to run another userspace task on the same CPU while getting preempted
+when the migration is disabled.
+---
+ arch/arm64/include/asm/simd.h |  4 +--
+ arch/arm64/kernel/fpsimd.c    | 76 +++++++++++++++++++++++++------------------
+ 2 files changed, 46 insertions(+), 34 deletions(-)
+
+diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+index 6495cc51246f..94c0dac508aa 100644
+--- a/arch/arm64/include/asm/simd.h
++++ b/arch/arm64/include/asm/simd.h
+@@ -15,10 +15,10 @@
+ #include <linux/preempt.h>
+ #include <linux/types.h>
+ 
+-#ifdef CONFIG_KERNEL_MODE_NEON
+-
+ DECLARE_PER_CPU(bool, kernel_neon_busy);
+ 
++#ifdef CONFIG_KERNEL_MODE_NEON
++
+ /*
+  * may_use_simd - whether it is allowable at this time to issue SIMD
+  *                instructions or access the SIMD register file
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index 5ebe73b69961..b7e5dac26190 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -90,7 +90,8 @@
+  * To prevent this from racing with the manipulation of the task's FPSIMD state
+  * from task context and thereby corrupting the state, it is necessary to
+  * protect any manipulation of a task's fpsimd_state or TIF_FOREIGN_FPSTATE
+- * flag with local_bh_disable() unless softirqs are already masked.
++ * flag with kernel_neon_{disable, enable}. This will still allow softirqs to
++ * run but prevent them to use FPSIMD.
+  *
+  * For a certain task, the sequence may look something like this:
+  * - the task gets scheduled in; if both the task's fpsimd_cpu field
+@@ -142,6 +143,9 @@ extern void __percpu *efi_sve_state;
+ 
+ #endif /* ! CONFIG_ARM64_SVE */
+ 
++static void kernel_neon_disable(void);
++static void kernel_neon_enable(void);
++
+ /*
+  * Call __sve_free() directly only if you know task can't be scheduled
+  * or preempted.
+@@ -213,11 +217,11 @@ static void sve_free(struct task_struct *task)
+  * thread_struct is known to be up to date, when preparing to enter
+  * userspace.
+  *
+- * Softirqs (and preemption) must be disabled.
++ * Preemption must be disabled.
   */
- #define TIF_SIGPENDING		1
-@@ -50,7 +49,6 @@ struct thread_info {
- #define TIF_SINGLESTEP		3
- #define TIF_NOTIFY_RESUME	4	/* callback before returning to user */
- #define TIF_SYSCALL_TRACE	8
--#define TIF_USEDFPU             16
- #define TIF_POLLING_NRFLAG	17
- #define TIF_MEMDIE		18
- #define TIF_FREEZE		19
+ static void task_fpsimd_load(void)
+ {
+-	WARN_ON(!in_softirq() && !irqs_disabled());
++	WARN_ON(!preempt_count() && !irqs_disabled());
+ 
+ 	if (system_supports_sve() && test_thread_flag(TIF_SVE))
+ 		sve_load_state(sve_pffr(&current->thread),
+@@ -238,7 +242,7 @@ void fpsimd_save(void)
+ 	struct user_fpsimd_state *st = __this_cpu_read(fpsimd_last_state.st);
+ 	/* set by fpsimd_bind_task_to_cpu() or fpsimd_bind_state_to_cpu() */
+ 
+-	WARN_ON(!in_softirq() && !irqs_disabled());
++	WARN_ON(!preempt_count() && !irqs_disabled());
+ 
+ 	if (!test_thread_flag(TIF_FOREIGN_FPSTATE)) {
+ 		if (system_supports_sve() && test_thread_flag(TIF_SVE)) {
+@@ -360,7 +364,7 @@ static int __init sve_sysctl_init(void) { return 0; }
+  * task->thread.sve_state.
+  *
+  * Task can be a non-runnable task, or current.  In the latter case,
+- * softirqs (and preemption) must be disabled.
++ * preemption must be disabled.
+  * task->thread.sve_state must point to at least sve_state_size(task)
+  * bytes of allocated kernel memory.
+  * task->thread.uw.fpsimd_state must be up to date before calling this
+@@ -387,7 +391,7 @@ static void fpsimd_to_sve(struct task_struct *task)
+  * task->thread.uw.fpsimd_state.
+  *
+  * Task can be a non-runnable task, or current.  In the latter case,
+- * softirqs (and preemption) must be disabled.
++ * preemption must be disabled.
+  * task->thread.sve_state must point to at least sve_state_size(task)
+  * bytes of allocated kernel memory.
+  * task->thread.sve_state must be up to date before calling this function.
+@@ -547,7 +551,7 @@ int sve_set_vector_length(struct task_struct *task,
+ 	 * non-SVE thread.
+ 	 */
+ 	if (task == current) {
+-		local_bh_disable();
++		kernel_neon_disable();
+ 
+ 		fpsimd_save();
+ 		set_thread_flag(TIF_FOREIGN_FPSTATE);
+@@ -558,7 +562,7 @@ int sve_set_vector_length(struct task_struct *task,
+ 		sve_to_fpsimd(task);
+ 
+ 	if (task == current)
+-		local_bh_enable();
++		kernel_neon_enable();
+ 
+ 	/*
+ 	 * Force reallocation of task SVE state to the correct size
+@@ -813,7 +817,7 @@ asmlinkage void do_sve_acc(unsigned int esr, struct pt_regs *regs)
+ 
+ 	sve_alloc(current);
+ 
+-	local_bh_disable();
++	kernel_neon_disable();
+ 
+ 	fpsimd_save();
+ 	fpsimd_to_sve(current);
+@@ -825,7 +829,7 @@ asmlinkage void do_sve_acc(unsigned int esr, struct pt_regs *regs)
+ 	if (test_and_set_thread_flag(TIF_SVE))
+ 		WARN_ON(1); /* SVE access shouldn't have trapped */
+ 
+-	local_bh_enable();
++	kernel_neon_enable();
+ }
+ 
+ /*
+@@ -892,7 +896,7 @@ void fpsimd_flush_thread(void)
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
+-	local_bh_disable();
++	kernel_neon_disable();
+ 
+ 	memset(&current->thread.uw.fpsimd_state, 0,
+ 	       sizeof(current->thread.uw.fpsimd_state));
+@@ -935,7 +939,7 @@ void fpsimd_flush_thread(void)
+ 
+ 	set_thread_flag(TIF_FOREIGN_FPSTATE);
+ 
+-	local_bh_enable();
++	kernel_neon_enable();
+ }
+ 
+ /*
+@@ -947,9 +951,9 @@ void fpsimd_preserve_current_state(void)
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
+-	local_bh_disable();
++	kernel_neon_disable();
+ 	fpsimd_save();
+-	local_bh_enable();
++	kernel_neon_enable();
+ }
+ 
+ /*
+@@ -1007,14 +1011,14 @@ void fpsimd_restore_current_state(void)
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
+-	local_bh_disable();
++	kernel_neon_disable();
+ 
+ 	if (test_and_clear_thread_flag(TIF_FOREIGN_FPSTATE)) {
+ 		task_fpsimd_load();
+ 		fpsimd_bind_task_to_cpu();
+ 	}
+ 
+-	local_bh_enable();
++	kernel_neon_enable();
+ }
+ 
+ /*
+@@ -1027,7 +1031,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
+-	local_bh_disable();
++	kernel_neon_disable();
+ 
+ 	current->thread.uw.fpsimd_state = *state;
+ 	if (system_supports_sve() && test_thread_flag(TIF_SVE))
+@@ -1038,7 +1042,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
+ 
+ 	clear_thread_flag(TIF_FOREIGN_FPSTATE);
+ 
+-	local_bh_enable();
++	kernel_neon_enable();
+ }
+ 
+ /*
+@@ -1055,11 +1059,28 @@ void fpsimd_flush_cpu_state(void)
+ 	set_thread_flag(TIF_FOREIGN_FPSTATE);
+ }
+ 
+-#ifdef CONFIG_KERNEL_MODE_NEON
+-
+ DEFINE_PER_CPU(bool, kernel_neon_busy);
+ EXPORT_PER_CPU_SYMBOL(kernel_neon_busy);
+ 
++static void kernel_neon_disable(void)
++{
++	preempt_disable();
++	WARN_ON(__this_cpu_read(kernel_neon_busy));
++	__this_cpu_write(kernel_neon_busy, true);
++}
++
++static void kernel_neon_enable(void)
++{
++	bool busy;
++
++	busy = __this_cpu_xchg(kernel_neon_busy, false);
++	WARN_ON(!busy); /* No matching kernel_neon_disable()? */
++
++	preempt_enable();
++}
++
++#ifdef CONFIG_KERNEL_MODE_NEON
++
+ /*
+  * Kernel-side NEON support functions
+  */
+@@ -1084,9 +1105,7 @@ void kernel_neon_begin(void)
+ 
+ 	BUG_ON(!may_use_simd());
+ 
+-	local_bh_disable();
+-
+-	__this_cpu_write(kernel_neon_busy, true);
++	kernel_neon_disable();
+ 
+ 	/* Save unsaved fpsimd state, if any: */
+ 	fpsimd_save();
+@@ -1094,9 +1113,7 @@ void kernel_neon_begin(void)
+ 	/* Invalidate any task state remaining in the fpsimd regs: */
+ 	fpsimd_flush_cpu_state();
+ 
+-	preempt_disable();
+-
+-	local_bh_enable();
++	kernel_neon_enable();
+ }
+ EXPORT_SYMBOL(kernel_neon_begin);
+ 
+@@ -1111,15 +1128,10 @@ EXPORT_SYMBOL(kernel_neon_begin);
+  */
+ void kernel_neon_end(void)
+ {
+-	bool busy;
+-
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
+-	busy = __this_cpu_xchg(kernel_neon_busy, false);
+-	WARN_ON(!busy);	/* No matching kernel_neon_begin()? */
+-
+-	preempt_enable();
++	kernel_neon_enable();
+ }
+ EXPORT_SYMBOL(kernel_neon_end);
+ 
 -- 
 2.11.0
 
