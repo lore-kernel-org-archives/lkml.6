@@ -2,272 +2,160 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3223CC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B6AC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 010C92080A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58E792080A
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549620533;
+	bh=kPS4HTgskwUlUMnOBvJo5+OvKhvbDqbJ2iI8tuXHBCU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=svtgM2NAiubVplYoS4SNgJ1JeQoMCIO+0YBN9cQ50DFH+1/a7XC41LcOlan/ZGw7j
+	 /914pjaDj3FO5tuMM7Z3O6/5iC6aQyBbTgmWogff52C9MRKghdM+abazQs3P7oc5t4
+	 O8qtSkYr90H59s9eghas0jIeFdQptVVkoSyky+Oo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfBHKGt (ORCPT
+        id S1726722AbfBHKIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:06:49 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47620 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbfBHKGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 05:06:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3F9CA78;
-        Fri,  8 Feb 2019 02:06:46 -0800 (PST)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9CBED3F557;
-        Fri,  8 Feb 2019 02:06:43 -0800 (PST)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v7 10/15] sched/fair: uclamp: Add uclamp support to energy_compute()
-Date:   Fri,  8 Feb 2019 10:05:49 +0000
-Message-Id: <20190208100554.32196-11-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208100554.32196-1-patrick.bellasi@arm.com>
-References: <20190208100554.32196-1-patrick.bellasi@arm.com>
+        Fri, 8 Feb 2019 05:08:52 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45676 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfBHKIv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 05:08:51 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so4868726ota.12;
+        Fri, 08 Feb 2019 02:08:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kPS4HTgskwUlUMnOBvJo5+OvKhvbDqbJ2iI8tuXHBCU=;
+        b=JVdC7PJEwc4ipF/NeDx2ZYIV90UT1Tu8f7497kIk4NFv7Dbw/xwhWCiIerHXPyyATU
+         AozpaJRs3LoEelI3ktZWzntJz1R238v7wMOg6p+0/Ly+NxziRhsnjfMNzYh7TpM0VQCK
+         ArgWBPLql82nUjZXrs9F4R7VVxoSNPw6DS1KD7fDboVSuTZ1JsHGmz6xPz88+maVY1BW
+         alqelO+YpiavuOEvhKr4fjCR1Rqtxk2sp7iZw2cXB5PiXprmskAItgIWyspzoOqnEcuG
+         /wcvK3HTSWI0nLOsrLNNPELSg5xVvlJfSWro8fQQtC3dLrxLaFvlHbKCG7QFY8wK26TB
+         iX2g==
+X-Gm-Message-State: AHQUAuYdVspGFKnkSyAJoJLMP3SgSmRK13SQnMfvnkp0BvQM/nPVNe7V
+        HS5QkOC4yy2F86egcumGfRFzBcbv0wZJmEOrAX8=
+X-Google-Smtp-Source: AHgI3IbRViFMrWma//Wt/PjdNR8luBcEtgCOx5vIvFPtLbGFPafR4RfbpKhSEjtFYEpQDaq1fx5AiDlSctOMdTxok8U=
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr4225692ota.244.1549620529635;
+ Fri, 08 Feb 2019 02:08:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com> <20190208064957.zhyue42kpgaoslwm@vireshk-i7>
+ <dc3802db-2931-e4fa-72f4-fa6e9b5c0e9a@samsung.com> <20190208085544.vqkebcgg7jpbv2a6@vireshk-i7>
+ <bbab0116-c2e5-a3a6-30e4-cbd8c583a120@samsung.com> <20190208092348.uqkfgxwx2pe3lmpd@vireshk-i7>
+In-Reply-To: <20190208092348.uqkfgxwx2pe3lmpd@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 8 Feb 2019 11:08:38 +0100
+Message-ID: <CAJZ5v0i=q78gXjCUUgXVHFFjwEiY9H2Ds7ba3gAHNC11JQ6q9A@mail.gmail.com>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Energy Aware Scheduler (AES) estimates the energy impact of waking
-up a task on a given CPU. This estimation is based on:
- a) an (active) power consumptions defined for each CPU frequency
- b) an estimation of which frequency will be used on each CPU
- c) an estimation of the busy time (utilization) of each CPU
+On Fri, Feb 8, 2019 at 10:23 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 08-02-19, 10:15, Marek Szyprowski wrote:
+> > On 2019-02-08 09:55, Viresh Kumar wrote:
+> > > On 08-02-19, 09:12, Marek Szyprowski wrote:
+> > >> On 2019-02-08 07:49, Viresh Kumar wrote:
+> > >>> Why don't you get similar problem during suspend? I think you can get
+> > >>> it when the CPUs are offlined as I2C would have gone by then. The
+> > >>> cpufreq or OPP core can try and run some regulator or genpd or clk
+> > >>> calls to disable resources, etc. Even if doesn't happen, it certainly
+> > >>> can.
+> > >> CPUfreq is suspended very early during system suspend and thus it does
+> > >> nothing when CPUs are being offlined.
+> > >>> Also at resume the cpufreq core may try to change the frequency right
+> > >>> from ->init() on certain cases, though not everytime and so the
+> > >>> problem can come despite of this series.
+> > >> cpufreq is still in suspended state (it is being 'resume' very late in
+> > >> the system resume procedure), so if driver doesn't explicitly change any
+> > >> opp in ->init(), then cpufreq core waits until everything is resumed. To
+> > >> sum up, this seems to be fine, beside the issue with regulator
+> > >> initialization I've addressed in this patchset.
+> > > Yeah, the governors are suspended very soon, but any frequency change
+> > > starting from cpufreq core can still happen. There are at least two
+> > > points in cpufreq_online() where we may end up changing the frequency,
+> > > but that is conditional and may not be getting hit.
+> >
+> > Then probably cpufreq core suspend should handle this.
+>
+> Handle what ? That code is part of cpufreq_online() and needs to be
+> there only.
+>
+> > >>> We guarantee that the resources are available during probe but not
+> > >>> during resume, that's where the problem is.
+> > >> Yes, so I've changed cpufreq-dt to the common approach, in which the
+> > >> driver keeps all needed resources for the whole lifetime of the device.
+> > > That's not what I was saying actually. I was saying that it should be
+> > > fine to do a I2C transfer during resume, else we will always have
+> > > problems and have to fix them with hacks like the one you proposed
+> > > where you acquire resources for all the possible CPUs. Maybe we can
+> > > fix it once and for all.
+> >
+> > It is fine to do i2c transfers during cpufreq resume (see
+>
+> By resume I meant system resume and the whole onlining process of
+> non-boot CPUs.
+>
+> > drivers/base/power/main.c dpm_resume() function for exact call place).
+> > The problem is that such calls are not allowed in ->init(), which might
+> > be called very early from CPU hotplug path (CPUs are resumed in the
+> > first step of system resume procedure).
+>
+> Right and that's where I think we can do something to fix it in a
+> proper way.
+>
+> > What's wrong with my proposed fix? It is not that uncommon to gather all
+> > resources in probe() and keep them until remove() happens.
+>
+> For cpufreq drivers, we must be doing most of the stuff in init/exit
+> only as far as possible. I am not saying your patch is bad, that is
+> the best we can do in such situations. But I don't like that we have
+> to get the resources for all CPUs, despite the fact that many of them
+> would be part of the same policy and hence share resources. The
+> problem was that we need to get sharing-cpus detail as well in probe
+> then, etc.
+>
+> I was thinking about doing disable_nonboot_cpus() much earlier as the
+> userspace is already frozen by then.
+>
+> @Rafael: Will that slowdown the suspend/resume process? Maybe not as
+> we are doing everything from a single CPU/thread anyways ?
 
-Utilization clamping can affect both b) and c) estimations. A CPU is
-expected to run:
- - on an higher than required frequency, but for a shorter time, in case
-   its estimated utilization will be smaller then the minimum utilization
-   enforced by uclamp
- - on a smaller than required frequency, but for a longer time, in case
-   its estimated utilization is bigger then the maximum utilization
-   enforced by uclamp
+First, we used to do that and we switched over to what we have right
+now several years ago, because it didn't work reliably then.
 
-While effects on busy time for both boosted/capped tasks are already
-considered by compute_energy(), clamping effects on frequency selection
-are currently ignored by that function.
+Arguably, CPU hotplug is in a much better shape now, so it might be
+working better, but that would be a huge change and lots of
+documentation would need to be revised. :-)
 
-Fix it by considering how CPU clamp values will be affected by a
-task waking up and being RUNNABLE on that CPU.
+Also it is not true that everything is done on a single CPU, but I'm
+not really sure about the possible slowdown.
 
-Do that by refactoring schedutil_freq_util() to take an additional
-task_struct* which allows EAS to evaluate the impact on clamp values of
-a task being eventually queued in a CPU. Clamp values are applied to the
-RT+CFS utilization only when a FREQUENCY_UTIL is required by
-compute_energy().
+Second, there are (many) systems for which that change is not really
+necessary and it is risky because of possible regressions.
 
-Do note that switching from ENERGY_UTIL to FREQUENCY_UTIL in the
-computation of cpu_util signal implies that we are more likely to
-estimate the higherst OPP when a RT task is running in another CPU of
-the same performance domain. This can have an impact on energy
-estimation but:
- - it's not easy to say which approach is better, since it quite likely
-   depends on the use case
- - the original approach could still be obtained by setting a smaller
-   task-specific util_min whenever required
-
-Since we are at that:
- - rename schedutil_freq_util() into schedutil_cpu_util(),
-   since it's not only used for frequency selection.
- - use "unsigned int" instead of "unsigned long" whenever the tracked
-   utilization value is not expected to overflow 32bit.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
----
-Changes in v7:
- Message-ID: <20190122151404.5rtosic6puixado3@queper01-lin>
- - add a note on side-effects due to the usage of FREQUENCY_UTIL for
-   performance domain frequency estimation
- - add a similer note to this changelog
----
- kernel/sched/cpufreq_schedutil.c | 18 ++++++++-------
- kernel/sched/fair.c              | 39 +++++++++++++++++++++++++++-----
- kernel/sched/sched.h             | 18 ++++-----------
- 3 files changed, 48 insertions(+), 27 deletions(-)
-
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 70a8b87fa29c..fdad719fca8b 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -195,10 +195,11 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
-  * based on the task model parameters and gives the minimal utilization
-  * required to meet deadlines.
-  */
--unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
--				  unsigned long max, enum schedutil_type type)
-+unsigned int schedutil_cpu_util(int cpu, unsigned int util_cfs,
-+				unsigned int max, enum schedutil_type type,
-+				struct task_struct *p)
- {
--	unsigned long dl_util, util, irq;
-+	unsigned int dl_util, util, irq;
- 	struct rq *rq = cpu_rq(cpu);
- 
- 	if (!IS_BUILTIN(CONFIG_UCLAMP_TASK) &&
-@@ -229,7 +230,7 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
- 	 */
- 	util = util_cfs + cpu_util_rt(rq);
- 	if (type == FREQUENCY_UTIL)
--		util = uclamp_util(rq, util);
-+		util = uclamp_util_with(rq, util, p);
- 
- 	dl_util = cpu_util_dl(rq);
- 
-@@ -283,13 +284,14 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
- static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
--	unsigned long util = cpu_util_cfs(rq);
--	unsigned long max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-+	unsigned int util_cfs = cpu_util_cfs(rq);
-+	unsigned int cpu_cap = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
- 
--	sg_cpu->max = max;
-+	sg_cpu->max = cpu_cap;
- 	sg_cpu->bw_dl = cpu_bw_dl(rq);
- 
--	return schedutil_freq_util(sg_cpu->cpu, util, max, FREQUENCY_UTIL);
-+	return schedutil_cpu_util(sg_cpu->cpu, util_cfs, cpu_cap,
-+				  FREQUENCY_UTIL, NULL);
- }
- 
- /**
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8c0aa76af90a..f6b0808e01ad 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6453,11 +6453,20 @@ static unsigned long cpu_util_next(int cpu, struct task_struct *p, int dst_cpu)
- static long
- compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
- {
--	long util, max_util, sum_util, energy = 0;
-+	unsigned int max_util, cfs_util, cpu_util, cpu_cap;
-+	unsigned long sum_util, energy = 0;
- 	int cpu;
- 
- 	for (; pd; pd = pd->next) {
-+		struct cpumask *pd_mask = perf_domain_span(pd);
-+
-+		/*
-+		 * The energy model mandate all the CPUs of a performance
-+		 * domain have the same capacity.
-+		 */
-+		cpu_cap = arch_scale_cpu_capacity(NULL, cpumask_first(pd_mask));
- 		max_util = sum_util = 0;
-+
- 		/*
- 		 * The capacity state of CPUs of the current rd can be driven by
- 		 * CPUs of another rd if they belong to the same performance
-@@ -6468,11 +6477,29 @@ compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
- 		 * it will not appear in its pd list and will not be accounted
- 		 * by compute_energy().
- 		 */
--		for_each_cpu_and(cpu, perf_domain_span(pd), cpu_online_mask) {
--			util = cpu_util_next(cpu, p, dst_cpu);
--			util = schedutil_energy_util(cpu, util);
--			max_util = max(util, max_util);
--			sum_util += util;
-+		for_each_cpu_and(cpu, pd_mask, cpu_online_mask) {
-+			cfs_util = cpu_util_next(cpu, p, dst_cpu);
-+
-+			/*
-+			 * Busy time computation: utilization clamping is not
-+			 * required since the ratio (sum_util / cpu_capacity)
-+			 * is already enough to scale the EM reported power
-+			 * consumption at the (eventually clamped) cpu_capacity.
-+			 */
-+			sum_util += schedutil_cpu_util(cpu, cfs_util, cpu_cap,
-+						       ENERGY_UTIL, NULL);
-+
-+			/*
-+			 * Performance domain frequency: utilization clamping
-+			 * must be considered since it affects the selection
-+			 * of the performance domain frequency.
-+			 * NOTE: in case RT tasks are running, by default the
-+			 * FREQUENCY_UTIL's utilization can be max OPP.
-+			 */
-+			cpu_util = schedutil_cpu_util(cpu, cfs_util, cpu_cap,
-+						      FREQUENCY_UTIL,
-+						      cpu == dst_cpu ? p : NULL);
-+			max_util = max(max_util, cpu_util);
- 		}
- 
- 		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index de181b8a3a2a..b9acef080d99 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2335,6 +2335,7 @@ static inline unsigned long capacity_orig_of(int cpu)
- #endif
- 
- #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
-+
- /**
-  * enum schedutil_type - CPU utilization type
-  * @FREQUENCY_UTIL:	Utilization used to select frequency
-@@ -2350,15 +2351,9 @@ enum schedutil_type {
- 	ENERGY_UTIL,
- };
- 
--unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
--				  unsigned long max, enum schedutil_type type);
--
--static inline unsigned long schedutil_energy_util(int cpu, unsigned long cfs)
--{
--	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
--
--	return schedutil_freq_util(cpu, cfs, max, ENERGY_UTIL);
--}
-+unsigned int schedutil_cpu_util(int cpu, unsigned int util_cfs,
-+				unsigned int max, enum schedutil_type type,
-+				struct task_struct *p);
- 
- static inline unsigned long cpu_bw_dl(struct rq *rq)
- {
-@@ -2387,10 +2382,7 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
- 	return READ_ONCE(rq->avg_rt.util_avg);
- }
- #else /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
--static inline unsigned long schedutil_energy_util(int cpu, unsigned long cfs)
--{
--	return cfs;
--}
-+#define schedutil_cpu_util(cpu, util_cfs, max, type, p) 0
- #endif
- 
- #ifdef CONFIG_HAVE_SCHED_AVG_IRQ
--- 
-2.20.1
-
+I guess that CPUs depending on I2C for online/offline could be taken
+offline earlier and brought back online later during suspend/resume,
+like before/after the _noirq suspend of devices, but doing that on all
+systems altogether is almost guaranteed to introduce regressions.
