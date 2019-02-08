@@ -2,292 +2,283 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A452EC282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7BBC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BBB5218D2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B8E32177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="AShQVu9A"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d68G2Vun"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfBHUJE (ORCPT
+        id S1727554AbfBHUJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:09:04 -0500
-Received: from mail-eopbgr800114.outbound.protection.outlook.com ([40.107.80.114]:44951
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726211AbfBHUJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:09:04 -0500
+        Fri, 8 Feb 2019 15:09:39 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42523 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfBHUJj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:09:39 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n74so927781pfi.9
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 12:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=raqfwCt8+wo22dH89sYfYzNDyByvcxD2aS+JQQ9fgRc=;
- b=AShQVu9AuQnahAz4V+LBatqnRc/GTJXa2bHk5FiOJSinEfrngGz6B4tfdCPYaggxfMHITyoZBsdUjaak4k4DSg75MxLRT7kTv1OAhlPkv3oEHm0k3fGbV+iKCjJCarL9TEMhrWqJyvDT7xEErGrtgf9FFGw89quryr8uA/Xko6U=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1536.namprd22.prod.outlook.com (10.174.170.161) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Fri, 8 Feb 2019 20:08:54 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::7d5e:f3b0:4a5:4636]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::7d5e:f3b0:4a5:4636%9]) with mapi id 15.20.1580.019; Fri, 8 Feb 2019
- 20:08:54 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Tom Li <tomli@tomli.me>
-CC:     James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Alexandre Oliva <lxoliva@fsfla.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] On the Current Troubles of Mainlining Loongson Platform
- Drivers
-Thread-Topic: [RFC] On the Current Troubles of Mainlining Loongson Platform
- Drivers
-Thread-Index: AQHUv4iaADGqjKpPI06v8WRtTh6JiaXWVScA
-Date:   Fri, 8 Feb 2019 20:08:54 +0000
-Message-ID: <20190208200852.wcywd7yfcq7zwzve@pburton-laptop>
-References: <20190208083038.GA1433@localhost.localdomain>
-In-Reply-To: <20190208083038.GA1433@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR11CA0064.namprd11.prod.outlook.com
- (2603:10b6:a03:80::41) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [67.207.99.198]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1536;6:zZn3SIzMqneFyq2A8Q4L/PZcjlWLHxTVoHri4i49aaGY+c3o8ExFufv3seuHiOmM8SBnqDLQY35fS31nnZJsPvasAI2foxLlX3h2boRDA29FqG1YcDpsqlTbAkMzxaXtBjPC3UQ5TqSMIrkNmG//QsL2qFVjmS/v//kSAetwjR2u+sTVDo0735T6/5TpJYcq2wuNWIZU8zbd5aJp4UUMH0e2HalbWTTU5i6BgAKNXqtZok6jYRFqlcTwBIMLwvD8UGWXUfdWg+VZtmsfWfNQport84MKbc6JlgTq9OPAS/hr1RS9DsVUuUOKDbztXYTPoOvmOWMHXCPbDgI6aF7ghXNQFLXxNceOC/Rc+aC6upGB6KXxCtCxRzVQtCxaRGDZeUQaJyvlFTjfuAw5n/7cA2mJHXooVeLE1SKwfuFOyuv2cYp1Euh/aeVpmSqXuxjVg5WIhD6aorS6ZRDsTCYjEw==;5:fgTqAtt6tLmPbqIsbnrX3MQR793s09jXxkOWqAMsPw2h1Q9g0/ZLisY9wPTuwixVP78YKy4nWyg/RaPcekeufJZEG9gJxvP5WiteVHW+eFvaHT1S7r5qUWbsZ0pu68ne/OBXlvcgte/0jGabOfdp5ZN7Ti0rarIAHTcuOJF8hKaexuT3sI9hDkM96CVdvesBMvgJLDV2x7G/cQyXcaj7Aw==;7:2L1R2xbPckCs5/RPI/03tO7LBeoSbgEpMSUf6GYWHBMFVH4C17kDhIDcOVQ2gEaJ9C8qYeu7EH1MmvfrdF7lo82fMyRvotTmvEIaTu9UC/GSnPLKdmsIy31xHzKs1EooBgLkDZf8R19Ghqmw6DBFJA==
-x-ms-office365-filtering-correlation-id: 3e2e585e-9b8a-43db-1bb7-08d68e013ff1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1536;
-x-ms-traffictypediagnostic: MWHPR2201MB1536:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <MWHPR2201MB1536D134D4E6B4DBF8FCDA38C1690@MWHPR2201MB1536.namprd22.prod.outlook.com>
-x-forefront-prvs: 094213BFEA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(136003)(346002)(39840400004)(396003)(366004)(51444003)(189003)(199004)(66066001)(71190400001)(71200400001)(9686003)(97736004)(53936002)(6512007)(105586002)(99286004)(6306002)(44832011)(6916009)(486006)(476003)(106356001)(14454004)(4326008)(81156014)(6436002)(6116002)(42882007)(966005)(33716001)(26005)(1076003)(11346002)(256004)(81166006)(14444005)(25786009)(386003)(6506007)(68736007)(76176011)(7736002)(58126008)(8936002)(6246003)(305945005)(102836004)(186003)(229853002)(316002)(33896004)(8676002)(478600001)(52116002)(54906003)(6486002)(3846002)(446003)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1536;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dJUD18gERv/uyeYC+UcJecsDCw6+EChwUiqlhXMKKxz+BAtl5u6TK31bfsVhjCegqqQOrFQsxn4xSG3kR8AiKxwyNL/z/tpm1Ji4OG/RIxkus4P1tsLAG7P++Gn8MZqa3h3Eaf9rgdN/KSdy6KssOJfY76iLV+/j1AIHK5eq50N1Pcs9p6pchF3UytyhIB0Kmmk1OYzHF8460IK6ZKiah4i0T83La/nx08h0GMW6JwrGUBMiy88n9W3aVYIVov79CQ3n2jn87zJAnr0y8wVguHf3kKiVHHmacGQDQYOvgb7XpDNHlw/ywxpvac+GpawalRzlqWNAvuxkDXbcnECAS9FT5vLCQ6W4S9K6hNjLpixCRjq7yR+qlAqBS+Xp38xwWrqrgxjSCKvIET6cZ5QzM63aReeewRBOC6x2acgmeDE=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6668C8AF95730748ABCB4C72E233E229@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mATsU7hEh7kZVoTquuN9FM6TZX5IwX3YROvo0jkW6b8=;
+        b=d68G2VunuYtJlkHK5zhkl30YW6S2p+N5RU59ARk2L3/WRg1q0PpXReG/HT+twvVj7Y
+         QLcppi84u80GEMEDNIpPigkVcUkQd9GoMNdE8IX7b74+lKTqUYtCDOTUwnMnIeYemw6F
+         aG4TRGjcHaBcjEfWBs/IZTSLlOjPEmkQPIp+I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mATsU7hEh7kZVoTquuN9FM6TZX5IwX3YROvo0jkW6b8=;
+        b=NEFgAb19nkWvnXTHL7/2JDmlznyDGxvz8or/IQ4uynO79u4ThxqD7gjpP2+NZsuqku
+         mtQ9y9Nt7z3lKlnRUqG54RdufJ8RS31Q4w/1d72opf/sgfeSV5yep39z/cj1pXFq/Cib
+         CbatKlROqVpLm3Y79XG7thXopW+DbCXNaDzZybKWjdVroe2GbAScVuBuxPfuhcPxHueY
+         O+86VzF4AX2abUnCMv+dPqDqyaqPiUM40AkglAbkDfDB4hsnlAStu8qkPao5sX+54xAs
+         DFLf2kDzZbMgxC2esKrxz3jT0e9VM/N/vHIlLeD5t35rGz9/FwNZnlfWz9kaXJZdziLe
+         zcvQ==
+X-Gm-Message-State: AHQUAubH7JQ7UEQprtjV5BwZinvT1Cy2z/I0pUCNvkHejZIIOpHju9Af
+        vQ91HYwKWyGkcMlz/TnNacDUSw==
+X-Google-Smtp-Source: AHgI3Ib9AE7IXTWYzis/NG5Nryo1TTakvxX1jKcqTDFPjXl3hGOEwEefsg0xXmT5iBIkQT4BgmfcSg==
+X-Received: by 2002:a62:6e07:: with SMTP id j7mr24543734pfc.135.1549656577839;
+        Fri, 08 Feb 2019 12:09:37 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id g185sm4036569pfc.174.2019.02.08.12.09.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 12:09:36 -0800 (PST)
+Date:   Fri, 8 Feb 2019 12:09:36 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        srv_heupstream@mediatek.com
+Subject: Re: [PATCH 4/6] mfd: Add support for the MediaTek MT6358 PMIC
+Message-ID: <20190208200936.GN117604@google.com>
+References: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+ <1548839891-20932-5-git-send-email-hsin-hsiung.wang@mediatek.com>
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2e585e-9b8a-43db-1bb7-08d68e013ff1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 20:08:53.7810
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1536
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1548839891-20932-5-git-send-email-hsin-hsiung.wang@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
+Hi,
 
-On Fri, Feb 08, 2019 at 04:30:39PM +0800, Tom Li wrote:
-> Hello, Greg, Ralf, Paul, James, Alexandre and Huacai
->=20
-> Many years ago when I was still in the middle scheool, I got a Loongson
-> Yeeloong laptop to explore the world of non-x86 world, as Geert Uytterhoe=
-ven
-> once said, there's lots of Linux beyond IA-32. At that time I've noticed =
-there
-> was no platform driver for the laptop. I just assumed that nobody bothere=
-d
-> mainlining it and everyone were using Alexandre Oliva's tree. I've diffed
-> his tree, got the patches, discovered and fixed two minor bugs and submit=
-ted
-> to Alexandre, and called it a day.
->=20
-> Years later, I stared at my machine, and found Alexandre Oliva has stoppe=
-d
-> maintaining his tree, yet there is still no platform driver in the mainli=
-ne.
-> So I decided that submitting the Yeeloong driver to the mainline kernel i=
-s
-> the my current personal project of this year. I only work for myself for =
-fun,
-> not for profit. I see Loongson as an interesting non-x86 platform, but I =
-do
-> not work for Loongson, do not explictly support them, nor supported by th=
-em
-> in any way.
->=20
-> Reviewing the previous E-mails and patches at Linux/MIPS mailing list, I'=
-ve
-> noticed that, from 2009 to 2019, in a 10-year span, there have been at le=
-ast
-> 3 attempts by 3 people to submit the platform driver for Yeeloong laptop =
-to
-> the Linux/MIPS tree, all implicitly rejected. This is not meant to be a
-> criticism for maintainers' hard work and high quality standard, but rathe=
-r,
-> I think it shows a serious challenge on development of platform drivers t=
-hat
-> worth discussing. since there's even more unsubmitted platform drivers fo=
-r
-> more devices, especially Loongson3. We need to find a solution both for
-> short-term and long-term further development of these platform drivers.
->=20
-> Here, I give a quick summary about the situation, and see what can I/we
-> do about it. Digging into the mailing list, in the hindsight, it's clear
-> to see the fate of this platform driver. In December 2009, Wu Zhangin
-> submitted a refined version of the initial platform driver to the mailing
-> list.
->=20
-> His intention was to create a MIPS-equivalent version of the x86 platform
-> drivers, as he said,
->=20
-> > I like the folks did under drivers/platform/x86/ ;) which
-> > will be better to maintain. for all of these drivers are really only
-> > YeeLoong platform specific ;)
->=20
-> However, Ralf Baechle commented, that
->=20
-> > You split old, big driver into several individual drivers - good.
-> [...]
-> > Experience has shown that drivers for a particular subsystem are best
-> > combined in a single menu, in a single directory. Otherwise any changes
-> > to subsystem's internal APIs will become a major pain.
->=20
-> Dmitry Torokhov gave another response,
->=20
-> > Umm, it still mixes up bunch of stuff not directly related to input.
-> > I'd vote for drivers/platform/mips (since we have a few of kitchen-sink
-> > style drivers for x86-based laptops in drivers/platform/x86).
->=20
-> This discussion is frozen without any progress in the following years.
->=20
-> For example, when the driver was resubmitted to James Hogan in late 2018,
-> he noted, possibly without knowledge of the discussion in 2009,
->=20
-> > I can't help thinking it would be better to separate this into separate
-> > drivers for each part (backlight, power supply etc), and move them into
-> > the appropriate driver directories (drivers/power/supply,
-> > drivers/video/backlight etc). That way each part would get proper revie=
-w
-> > from the appropriate maintainers (or at least they should be Cc'd).
-> >=20
-> > Is there a particular reason for it to be a single driver?
->=20
-> So I think it's the time to restart this discussion. Should the driver be
-> submitted as a platform driver, or be splitted and merged into various
-> subsystems? I've considered reasons from both sides.
+A few comments inline.
 
-Right off the bat, let me express my whole-hearted agreement with James
-& the question he asked in that quote. If there is a good reason for
-some things to be one large driver then we can discuss that, but so far I
-don't believe anybody has given one - nobody replied to James' mail that
-you quote [1].
+On a general note I agree with others that this code would benefit
+from more comments.
 
-It looks to me like in 2009 someone did the work to split the driver up,
-which shows that it's possible, but the drivers were placed under
-arch/mips which is not where they belong. They should individually be
-placed at the right points under drivers/, and submitted to the relevant
-subsystem maintainers.
+On Wed, Jan 30, 2019 at 05:18:09PM +0800, Hsin-Hsiung Wang wrote:
+> This adds support for the MediaTek MT6358 PMIC. This is a
+> multifunction device with the following sub modules:
+> 
+> - Regulator
+> - RTC
+> - Codec
+> - Interrupt
+> 
+> It is interfaced to the host controller using SPI interface
+> by a proprietary hardware called PMIC wrapper or pwrap.
+> MT6358 MFD is a child device of the pwrap.
+> 
+> Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> ---
+>  drivers/mfd/Makefile                 |    2 +-
+>  drivers/mfd/mt6358-irq.c             |  236 +++++
+>  drivers/mfd/mt6397-core.c            |   62 +-
+>  include/linux/mfd/mt6358/core.h      |  158 +++
+>  include/linux/mfd/mt6358/registers.h | 1926 ++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/mt6397/core.h      |    3 +
+>  6 files changed, 2385 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/mfd/mt6358-irq.c
+>  create mode 100644 include/linux/mfd/mt6358/core.h
+>  create mode 100644 include/linux/mfd/mt6358/registers.h
+> 
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 088e249..50be021 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -230,7 +230,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+>  obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
+>  obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)	+= intel_soc_pmic_chtwc.o
+>  obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
+> -obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o mt6397-irq.o
+> +obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o mt6397-irq.o mt6358-irq.o
+>  
+>  obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
+>  obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
+> diff --git a/drivers/mfd/mt6358-irq.c b/drivers/mfd/mt6358-irq.c
+> new file mode 100644
+> index 0000000..b29fdc1
+> --- /dev/null
+> +++ b/drivers/mfd/mt6358-irq.c
+> @@ -0,0 +1,236 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (c) 2019 MediaTek Inc.
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/mt6358/core.h>
+> +#include <linux/mfd/mt6358/registers.h>
+> +#include <linux/mfd/mt6397/core.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +static struct irq_top_t mt6358_ints[] = {
+> +	MT6358_TOP_GEN(BUCK),
+> +	MT6358_TOP_GEN(LDO),
+> +	MT6358_TOP_GEN(PSC),
+> +	MT6358_TOP_GEN(SCK),
+> +	MT6358_TOP_GEN(BM),
+> +	MT6358_TOP_GEN(HK),
+> +	MT6358_TOP_GEN(AUD),
+> +	MT6358_TOP_GEN(MISC),
+> +};
+> +
+> +static int parsing_hwirq_to_top_group(unsigned int hwirq)
 
-To address the particular quote you give from Dmitry Torokhov on the
-yeeloong_hotkey driver - just because the driver as-is includes a bunch
-of non-input related things doesn't mean that it should or has to. From
-a look at the 2009 submission it seems to mix a bunch of policy into the
-kernel which really ought to be elsewhere. Generally the input driver
-reports that a key was pressed & something in userland decides what to
-do with it, whereas this driver seems to attempt to bypass that & prod
-at unrelated hardware all by itself.
+why 'parsing'?
 
-> Unsolved problems still remains, however. First, how to solve the coordin=
-ation
-> problem? Linux/MIPS is a relatively low-volume and slow list, what to do =
-if the
-> unmerged MIPS patches becomes a blocker for other drivers?
+IIUC the 'top's are interrupt groups for different functionalities.
+Could we get rid of the 'top' terminology in most of the code and just
+call it irq_grp or similar? Would be less obfuscated IMO.
 
-Anyone watching will have noticed that Ralf was only intermittently
-active for quite a while, and has more recently he's been absent due to
-ill health. Correspondingly there was a time when patches sent to
-linux-mips didn't go anywhere quickly. Towards the end of 2017 James
-Hogan stepped up & things started moving again, and more recently I've
-been maintaining arch/mips/. The number of patches being applied has
-increased, the frequency of pull requests has increased & stopped being
-so last minute, and hopefully responses on the mailing list have become
-more regular.
+> +{
+> +	int top_group;
+> +
+> +	for (top_group = 1; top_group < ARRAY_SIZE(mt6358_ints); top_group++) {
+> +		if (mt6358_ints[top_group].hwirq_base > hwirq) {
+> +			top_group--;
+> +			break;
+> +		}
+> +	}
+> +	return top_group;
+> +}
+> +
+> +static void pmic_irq_enable(struct irq_data *data)
+> +{
+> +	unsigned int hwirq = irqd_to_hwirq(data);
+> +	struct mt6397_chip *chip = irq_data_get_irq_chip_data(data);
+> +	struct pmic_irq_data *irq_data = chip->irq_data;
+> +
+> +	irq_data->enable_hwirq[hwirq] = 1;
 
-So if unmerged arch/mips/ patches are holding you up, ping me, but
-preferrably make sure code being added actually belongs under arch/mips/
-first.
+enable_hwirq should be boolean or - probably better - a bitmap
+(less memory usage and no need for dynamic allocation).
 
-On Loongson patches in particular there's a recurring theme in which
-patches are submitted, review comments are provided, they're ignored &
-the patches are later submitted again without addressing the review
-comments. That's not universally true of all Loongson-related patches,
-but there are plenty of examples of it. Of course when resubmitted the
-patches still don't get merged, because they still have unaddressed
-problems.
+> +static void pmic_irq_sync_unlock(struct irq_data *data)
+> +{
+> +	unsigned int i, top_gp, en_reg, int_regs, shift;
+> +	struct mt6397_chip *chip = irq_data_get_irq_chip_data(data);
+> +	struct pmic_irq_data *irq_data = chip->irq_data;
+> +
+> +	for (i = 0; i < irq_data->num_pmic_irqs; i++) {
+> +		if (irq_data->enable_hwirq[i] ==
+> +				irq_data->cache_hwirq[i])
+> +			continue;
+> +
+> +		top_gp = parsing_hwirq_to_top_group(i);
+> +		int_regs = mt6358_ints[top_gp].num_int_bits / MT6358_REG_WIDTH;
+> +		en_reg = mt6358_ints[top_gp].en_reg +
+> +			mt6358_ints[top_gp].en_reg_shift * int_regs;
+> +		shift = (i - mt6358_ints[top_gp].hwirq_base) % MT6358_REG_WIDTH;
+> +		regmap_update_bits(chip->regmap, en_reg, 0x1 << shift,
 
-The seeming lack of documentation for particular Loongson-based
-machines, lack of English documentation for the CPU cores & lack of
-detailed errata information all contribute to difficulties too. For a
-recent example see the loongson_llsc_mb() workaround currently in the
-mips-fixes branch - we got there in the end but it took a surprising
-amount of back & forth effort to obtain enough information about what
-the CPU bug actually is.
+use BIT()
 
-I want to be clear that I absolutely want Linux to have good support for
-Loongson hardware, but that doesn't mean I'll merge things before
-they're of sufficient quality & it doesn't mean I'll try to merge things
-that really belong under the care of other maintainers.
+> +static void mt6358_irq_sp_handler(struct mt6397_chip *chip,
+> +				  unsigned int top_gp)
+> +{
+> +	unsigned int sta_reg, int_status = 0;
 
-> Second, we already have a hwmon driver under drivers/platform/mips,
-> should we put a warning that says new drivers under this directory
-> shouldn't be written?
+initialization of int_status not needed.
 
-Personally I see no reason for that hwmon driver to live under
-drivers/platform/mips rather than drivers/hwmon. All that does is bypass
-the attention of the drivers/hwmon/ maintainers who would be best placed
-to offer input & ensure the driver is actually any good.
+nit: consider changing 'int_status' to just 'status' or 'irq_status'
 
-> Third, if we agree to create drivers/platform/loongson in the future,
-> how can we ask the maintainers of other subsystems to review the
-> drivers in it?
+> +	unsigned int hwirq, virq;
+> +	int ret, i, j;
+> +
+> +	for (i = 0; i < mt6358_ints[top_gp].num_int_regs; i++) {
+> +		sta_reg = mt6358_ints[top_gp].sta_reg +
+> +			mt6358_ints[top_gp].sta_reg_shift * i;
+> +		ret = regmap_read(chip->regmap, sta_reg, &int_status);
+> +		if (ret) {
+> +			dev_err(chip->dev,
+> +				"Failed to read irq status: %d\n", ret);
+> +			return;
+> +		}
+> +
+> +		if (!int_status)
+> +			continue;
+> +
+> +		for (j = 0; j < 16 ; j++) {
 
-I think that question should prompt another - if we have maintainers for
-various driver subsystems, why not place the drivers under their care in
-the already established directories?
+s/16/MT6358_REG_WIDTH/
 
-> I think Google bypassed the problem because they have lots of kernel
-> developers, but not us. Does anyone know more about Chromebook's
-> development procedures? Also, if we want drivers/platform/loongson and
-> its own tree, what are the procedures to get them created?
+> +			if ((int_status & BIT(j)) == 0)
 
-I can't speak to Google's intentions or methods, but would expect the
-procedure to be approximately:
+  			if (!(int_status & BIT(j)))
 
-  1) Have a generally agreed upon good reason for the new directory.
+> +				continue;
+> +			hwirq = mt6358_ints[top_gp].hwirq_base +
+> +				MT6358_REG_WIDTH * i + j;
+> +			virq = irq_find_mapping(chip->irq_domain, hwirq);
+> +			if (virq)
+> +				handle_nested_irq(virq);
+> +		}
+> +
+> +		regmap_write(chip->regmap, sta_reg, int_status);
+> +	}
+> +}
+> +
+> +static irqreturn_t mt6358_irq_handler(int irq, void *data)
+> +{
+> +	struct mt6397_chip *chip = data;
+> +	struct pmic_irq_data *mt6358_irq_data = chip->irq_data;
+> +	unsigned int top_int_status = 0;
 
-  2) Have someone willing & able to maintain it, preferrably with a good
-     track record of contributions to the kernel.
+initialization not needed
 
-  3) Ideally submit it for inclusion in linux-next.
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	ret = regmap_read(chip->regmap,
+> +			  mt6358_irq_data->top_int_status_reg,
+> +			  &top_int_status);
+> +	if (ret) {
+> +		dev_err(chip->dev, "Can't read TOP_INT_STATUS ret=%d\n", ret);
+> +		return IRQ_NONE;
+> +	}
+> +
+> +	for (i = 0; i < mt6358_irq_data->num_top; i++) {
+> +		if (top_int_status & BIT(mt6358_ints[i].top_offset))
+> +			mt6358_irq_sp_handler(chip, i);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
 
-  4) Send a pull request to Linus.
+Cheers
 
-  5) Wait & see if he accepts or says no.
-
-I think this particular case falls down at step 1.
-
-Thanks,
-    Paul
-
-[1] https://lore.kernel.org/linux-mips/20180124115833.GC5446@saruman/
+Matthias
