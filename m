@@ -2,106 +2,229 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E2AC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CDFC282C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCCDB2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B6DA21916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:24:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kQH68t4B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfBHBUM (ORCPT
+        id S1726979AbfBHBYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 20:20:12 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.163]:39638 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726792AbfBHBUM (ORCPT
+        Thu, 7 Feb 2019 20:24:06 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39377 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726793AbfBHBYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 20:20:12 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id E5B5312B97
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 19:10:53 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id rugvgEXSKiQerrugvgUvcu; Thu, 07 Feb 2019 19:10:53 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=47918 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1grugv-004Ngd-9D; Thu, 07 Feb 2019 19:10:53 -0600
-Date:   Thu, 7 Feb 2019 19:10:52 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] mpls_iptunnel: use struct_size() helper
-Message-ID: <20190208011052.GA646@embeddedor>
+        Thu, 7 Feb 2019 20:24:06 -0500
+Received: by mail-it1-f195.google.com with SMTP id a6so5117829itl.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 17:24:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ItD8k11L6xtqa4kWPSMRUT6dviicwC34ZPBasabvz2s=;
+        b=kQH68t4Bru1yFEAwDtHcNWGOAzHX74wluUSomAzM9zq5R3kVqBrzlQpOasPnN9npT2
+         Y8HdlwLfLcBQdjOF1A03ZYF0F1hEZZcU7tDHRkBRCk01dC4qgWwKmr0BPqabWn8ME69a
+         eiW4FbzQ+d2A088AEkEviAfjkHiRacjEoenNs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ItD8k11L6xtqa4kWPSMRUT6dviicwC34ZPBasabvz2s=;
+        b=TaUs2VLBOOI/B35TCAB/AeI8mx+OetiufLXZdzPgHyPqiC3UwlqeIbrQsnSqMmJjGg
+         NWaLSLNcj9G/TvDEe8SxFLh1LuSpzprQR/wKwERZjPgqKNsYt7AvusG+Fej776YPjv7H
+         q95RcpZDqquzN71p7RSTwsHrp/mj1FATJL9DiejOYMs2y5PNLHvsJRm48JwXUNqRoMCG
+         5k/FvC+rR/yKgYpaLJcqWca3xGcm9ZNzef7I2oTuH/RIqaUp/uxJ8z2SaN5CC2pSG8oF
+         Znq9mk+TBI1+izK0CRlJzq82DYEOcJ+v+gR9HQ3Oq9UDytMjn2rUFolMTwVhLiIeaWec
+         s+sg==
+X-Gm-Message-State: AHQUAuYwYae8TkxmuELA8Yi9Js+Pa1XuYrZgPSOoCndn77WHuEMvPJPs
+        2TMIjC/1UDVR1c37uIupJGJ+fupJj/Y=
+X-Google-Smtp-Source: AHgI3Ia4sOWxrU8ZvV6KA4p5mjZksByhWmgGAy1xDIfjxuQl0r9RYQ9B4pXDlfIhjHmjn8U7dOlLhA==
+X-Received: by 2002:a24:7907:: with SMTP id z7mr5859488itc.69.1549589044300;
+        Thu, 07 Feb 2019 17:24:04 -0800 (PST)
+Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
+        by smtp.gmail.com with ESMTPSA id c133sm519969itc.24.2019.02.07.17.24.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 17:24:03 -0800 (PST)
+From:   Nick Crews <ncrews@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     alexandre.belloni@bootlin.com, eballetbo@gmail.com,
+        sjg@chromium.org, dmitry.torokhov@gmail.com, groeck@chromium.org,
+        dlaurie@chromium.org, Nick Crews <ncrews@chromium.org>,
+        linux-rtc@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Duncan Laurie <dlaurie@google.com>
+Subject: [PATCH v6 0/4] platform/chrome: Add basic support for Wilco EC
+Date:   Thu,  7 Feb 2019 18:23:08 -0700
+Message-Id: <20190208012312.105259-1-ncrews@chromium.org>
+X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1grugv-004Ngd-9D
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:47918
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+There is a new chromebook that contains a different Embedded Controller
+(codename Wilco) than the rest of the chromebook series. Thus the kernel
+requires a different driver than the already existing and generalized
+cros_ec_* drivers. The core of the communication with the EC
+is implemented in wilco_ec/mailbox.c, using a simple byte-level protocol
+with a checksum, transmitted over an eSPI bus.
 
-instance = alloc(sizeof(struct foo) + count * sizeof(struct boo));
+In this patch series I only introduce a very barebones
+driver with a debugfs interface for sending/receiving raw byte
+sequences to the EC, as well as a standard RTC driver with read/write
+functionality.  Later, I will hopefully include more specialized
+drivers such as a keyboard backlight driver, an EC event notification node,
+telemetry data query node, etc.
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+The entry point of the driver is wilco_ec/core.c,
+which is responsible for several tasks:
+- Initialize the register interface that is used by wilco_ec_mailbox()
+- Create a platform device which is picked up by the debugfs driver
+- Create a platform device which is picked up by the RTC driver
 
-instance = alloc(struct_size(instance, entry, count));
+A full thread of the development of these patches can be found at
+https://chromium-review.googlesource.com/c/1356082. This thread contains
+comments and revisions that could be helpful in understanding how the
+driver arrived at the state it is in now. The thread also contains some
+ChromeOS specific patches that actually enable the driver. If you want
+to test the patch yourself, you would have to install the ChromeOS SDK
+and cherry pick in these patches, and even then you would need a Sarien
+device to actually run it.
 
-This code was detected with the help of Coccinelle.
+Thank you for your comments!
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/mpls/mpls_iptunnel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v6:
+- Re-added WILCO_EC_FLAG_EXTENDED_DATA and went back to always
+  reading either EC_MAILBOX_DATA_SIZE or EC_MAILBOX_DATA_SIZE_EXTENDED
+  bytes, since it turns out the EC always expects you to calculate the
+  checksum over all of them.
+- Split WILCO_EC_MSG_TELEMETRY into WILCO_EC_MSG_TELEMETRY_SHORT and
+  WILCO_EC_MSG_TELEMETRY_LONG, since there will be two different
+  commands.
+- A couple comment and err message polishes
+- s/4.19/5.1/ for kernel version in documentation, since that is
+  the version this patch should land in.
+- Instead of requiring at least 3 bytes for msg type and command,
+  now just require two for msg type. We can skip the command.
+- Fixed error checking in probe() so that errors are hidden, without
+  causing more errors or unextpected behavior.
+- Some comment polishing.
+- In the core, actually unregister the debugfs child platform_device
+- In the core, actually unregister the RTC child platform_device.
 
-diff --git a/net/mpls/mpls_iptunnel.c b/net/mpls/mpls_iptunnel.c
-index 94f53a9b7d1a..dda8930f20e7 100644
---- a/net/mpls/mpls_iptunnel.c
-+++ b/net/mpls/mpls_iptunnel.c
-@@ -183,8 +183,8 @@ static int mpls_build_state(struct nlattr *nla,
- 			   &n_labels, NULL, extack))
- 		return -EINVAL;
- 
--	newts = lwtunnel_state_alloc(sizeof(*tun_encap_info) +
--				     n_labels * sizeof(u32));
-+	newts = lwtunnel_state_alloc(struct_size(tun_encap_info, label,
-+						 n_labels));
- 	if (!newts)
- 		return -ENOMEM;
- 
+Changes in v5:
+- move checking of NO_RESPONSE flag before timeout check,
+  so now timeout doesn't always happen when EC isn't supposed
+  to respond.
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+- core now always continues regardless of debugfs failure
+- mv documentation to file header
+- Check for OOM
+- rm unneeded check if debug_info is allocqated
+- rm bogus comment
+- add space around "+"
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+
+Changes in v4:
+- add #define DRV_NAME
+- remove redundant Kconfig nesting
+- changed my email to @chromium.org
+- Add better explanation of what core.c does
+- Change debugfs driver to be a separate module
+- Change me email to @chromium.org from @google.com
+- Change CONFIG_WILCO_EC_SYSFS_RAW to
+  CONFIG_WILCO_EC_DEBUGFS
+- Change me email to @chromium.org from @google.com
+- Move "Add RTC driver" before "Add sysfs attributes" so that
+  it could get accepted earlier, since it is less contentious
+
+Changes in v3:
+- Change <= to >= in mec_in_range()
+- Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
+- remove unused ret in probe()
+- Add newline spacer in probe()
+- rm unnecessary res in get_resource()
+- s/8bit/8-bit
+- rm first sleep when sending command to EC
+- Move the attribute to the debugfs system
+- Move the implementation to debugfs.c
+- Improve the raw hex parsing
+- Encapsulate global variables in one object
+- Add safety check when passing less than 3 bytes
+- Move documentation to debugfs-wilco-ec
+- rm #define for driver name
+- Don't compute weekday when reading from RTC.
+  Still set weekday when writing, as RTC needs this
+  to control advanced power scheduling
+- rm check for invalid month data
+- Set range_min and range_max on rtc_device
+
+Changes in v2:
+- Fixed kernel-doc comments
+- Fixed include of linux/mfd/cros_ec_lpc_mec.h
+- cros_ec_lpc_mec_in_range() returns -EINVAL on error
+- Added parens around macro variables
+- Remove COMPILE_TEST from Kconfig because inb()/outb()
+won't work on anything but X86
+- Add myself as module author
+- Tweak mailbox()
+- Add sysfs documentation
+- rm duplicate EC_MAILBOX_DATA_SIZE defs
+- Make docstrings follow kernel style
+- Fix tags in commit msg
+- Move Kconfig to subdirectory
+- Reading raw now includes ASCII translation
+- rm license boiler plate
+- rm "wilco_ec_rtc -" prefix in docstring
+- Make rtc driver its own module within the drivers/rtc/ directory
+- Register a rtc device from core.c that is picked up by this driver
+
+Nick Crews (4):
+  cros_ec: Remove cros_ec dependency in lpc_mec
+  platform/chrome: Add new driver for Wilco EC
+  platform/chrome: Add support for raw commands in debugfs
+  platform/chrome: rtc: Add RTC driver
+
+ Documentation/ABI/testing/debugfs-wilco-ec |  23 ++
+ drivers/platform/chrome/Kconfig            |   4 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/cros_ec_lpc_mec.c  |  52 ++++-
+ drivers/platform/chrome/cros_ec_lpc_mec.h  |  43 ++--
+ drivers/platform/chrome/cros_ec_lpc_reg.c  |  47 ++--
+ drivers/platform/chrome/wilco_ec/Kconfig   |  21 ++
+ drivers/platform/chrome/wilco_ec/Makefile  |   6 +
+ drivers/platform/chrome/wilco_ec/core.c    | 136 ++++++++++++
+ drivers/platform/chrome/wilco_ec/debugfs.c | 238 +++++++++++++++++++++
+ drivers/platform/chrome/wilco_ec/mailbox.c | 236 ++++++++++++++++++++
+ drivers/rtc/Kconfig                        |  11 +
+ drivers/rtc/Makefile                       |   1 +
+ drivers/rtc/rtc-wilco-ec.c                 | 177 +++++++++++++++
+ include/linux/platform_data/wilco-ec.h     | 144 +++++++++++++
+ 15 files changed, 1081 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/ABI/testing/debugfs-wilco-ec
+ create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
+ create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
+ create mode 100644 drivers/platform/chrome/wilco_ec/core.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/debugfs.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
+ create mode 100644 drivers/rtc/rtc-wilco-ec.c
+ create mode 100644 include/linux/platform_data/wilco-ec.h
+
 -- 
-2.20.1
+2.20.1.611.gfbb209baf1-goog
 
