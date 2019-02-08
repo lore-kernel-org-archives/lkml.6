@@ -2,90 +2,115 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874DCC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D213C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC5421929
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:01:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB0A72147C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:01:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="htqmW5sk"
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="vk4hDK1a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfBHIBd (ORCPT
+        id S1727263AbfBHIBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 03:01:33 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:22677 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbfBHIBd (ORCPT
+        Fri, 8 Feb 2019 03:01:46 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40527 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfBHIBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 03:01:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549612888;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=2aEhNY60C8wSVyERlV/KFSAdO5upx69CAFmE37gPPQc=;
-        b=htqmW5skbjGRl1SlZy+j176vRMIm94kAgACYQr+qYoBmrWq6LZVoKsbb3cd/wwHr1r
-        wbzfrlNfX/k/RfPvo7fFm6A9zp5KtEvs0vteXNrKhFXAvP56epVO3Qxqrg3pV3bOsTvJ
-        Z97bnUA0eBEYgFeGyXM3Y83vqLQtlqQcQyLHWgI4upVTLvIDX75p1hEC5OO4q9LBGsCW
-        zr7bUY4+uFoM+qEpduRAB76ERqNLssWo/LWJDMe5F1TSNZxp8b5u94CyrcFZ1Zz1gLWl
-        K9sdRTzF6LxOzDxeWNCdXNYXvl3Vf6UzNyQmK+j9EdzE28M83smEBc3XQqtTNGycPkTO
-        w64Q==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzHHXDaIPSfWeq9"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 309bcfv1880x70Q
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 8 Feb 2019 09:00:59 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] General Key Derivation Function Support
-Date:   Fri, 08 Feb 2019 09:00:59 +0100
-Message-ID: <1798550.XZem68xxzE@tauon.chronox.de>
-In-Reply-To: <20190208074558.j3k6gw66q4e2y2lv@gondor.apana.org.au>
-References: <20190103143227.9138-1-jlee@suse.com> <12103603.N4N57GesWC@tauon.chronox.de> <20190208074558.j3k6gw66q4e2y2lv@gondor.apana.org.au>
+        Fri, 8 Feb 2019 03:01:46 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g22so2008009edr.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 00:01:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0UWWfzBZwmtp06MD7tTOFl15RNd95H3+jE26xLtAo0o=;
+        b=vk4hDK1a4WnrgVZQ9DH3JoG9ZUZRVrAj6UFzspIDJ92ZfwkC8sCe2pav/SycRKl8jE
+         zUbyNvATeAw2vpeG84dqH6rDPZijYqzwDzNqTuwgd2xnQk9EK2oyXqSNtbrfWHHREOtA
+         rzKh+xjNWDmENTQo4neqec4EyomlGub4Yb+fn1Ad0ciymaOtqocmBNy13+PmB5Us1qck
+         pvYwZTvraUHpVOsksyjT2VFlGcd1usL0PoLLjIQIVeRIxYP5nsvC7NtEl8eCB4+96v1e
+         B1dtEMvpVxAs0Rse/ZUpTUWG2nyneOYhs+CpQ+QHQkFCXA0i5qGJegORBJ4aLIal+a1n
+         fm+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0UWWfzBZwmtp06MD7tTOFl15RNd95H3+jE26xLtAo0o=;
+        b=puoooqbjIVsm+E94iOjOfOfONZheBeiC6gYz2oT8zTS9bch2NACOp3GA4fJhjLwBTu
+         1LgFr0cdGIHQEED+kLlJ11Vim8v+pKU+aPNjQtQBDPyeU3KXiDsjVfsn2+es5QMin/CF
+         oFxgBAuI5CGA3BrLAuSea1YYL19T+SltuX0wqFQu6DqZObkESqTsI86km5M8jgCYhd4/
+         TNl2NC/k8kiI+kE4SqXIDEGfTQf/OKiviFDEu3jGkdEIBx+2pStxq9JzkJc0eeWuMLKC
+         ETn5jaLaVWnWGKoN3LVktYecX6TCeJiT4l7ugv45uTKt3yzWaLv1vkWLE6C5oxcfNO5M
+         gnyw==
+X-Gm-Message-State: AHQUAuaMiDhhSNIGcA4XH5s31NnJiIJr63x2IHRcOYVgPwVJiLaxjfwx
+        9mf9f1BlFO8pZI0bwoj6JLZMqg==
+X-Google-Smtp-Source: AHgI3IaItRXpNpAKQ9wTPaXCwL98GYgdtWPeoEDGrHytX+U/Wg68/92RhzbP5eZBLg/t0oAwYsHSmw==
+X-Received: by 2002:aa7:c981:: with SMTP id c1mr15854411edt.54.1549612904379;
+        Fri, 08 Feb 2019 00:01:44 -0800 (PST)
+Received: from netronome.com ([2001:982:756:703:d63d:7eff:fe99:ac9d])
+        by smtp.gmail.com with ESMTPSA id x38sm448447edx.24.2019.02.08.00.01.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 00:01:43 -0800 (PST)
+Date:   Fri, 8 Feb 2019 09:01:42 +0100
+From:   Simon Horman <simon.horman@netronome.com>
+To:     Eli Cohen <eli@mellanox.com>
+Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jakub.kicinski@netronome.com,
+        dirk.vandermerwe@netronome.com, francois.theron@netronome.com,
+        quentin.monnet@netronome.com, john.hurley@netronome.com,
+        edwin.peer@netronome.com
+Subject: Re: [PATCH net-next 2/2] net: Change TCA_ACT_* to TCA_ID_* to match
+ that of TCA_ID_POLICE
+Message-ID: <20190208080141.dlksz5dfkufj2sbm@netronome.com>
+References: <20190207074549.29861-1-eli@mellanox.com>
+ <20190207074549.29861-3-eli@mellanox.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207074549.29861-3-eli@mellanox.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 8. Februar 2019, 08:45:58 CET schrieb Herbert Xu:
+On Thu, Feb 07, 2019 at 09:45:49AM +0200, Eli Cohen wrote:
+> Modify the kernel users of the TCA_ACT_* macros to use TCA_ID_*. For
+> example, use TCA_ID_GACT instead of TCA_ACT_GACT. This will align with
+> TCA_ID_POLICE and also differentiates these identifier, used in struct
+> tc_action_ops type field, from other macros starting with TCA_ACT_.
+> 
+> To make things clearer, we name the enum defining the TCA_ID_*
+> identifiers and also change the "type" field of struct tc_action to
+> id.
+> 
+> Signed-off-by: Eli Cohen <eli@mellanox.com>
+> Acked-by: Jiri Pirko <jiri@mellanox.com>
 
-Hi Herbert,
+...
 
-> We could easily add self-tests for the helper.
+> diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
+> index 7ab55f97e7c4..51a0496f78ea 100644
+> --- a/include/uapi/linux/pkt_cls.h
+> +++ b/include/uapi/linux/pkt_cls.h
+> @@ -85,7 +85,7 @@ enum {
+>  #define TCA_ACT_SAMPLE 26
+>  
+>  /* Action type identifiers*/
+> -enum {
+> +enum tca_id {
+>  	TCA_ID_UNSPEC = 0,
+>  	TCA_ID_POLICE = 1,
+>  	TCA_ID_GACT = TCA_ACT_GACT,
 
-Thanks for the clarification. And do you have a suggestion how we can should 
-ensure that the self-tests are run only once?
+This change updates the UAPI. It seems to me that it would not
+break existing users. But I would like to ask if this has been
+given due consideration.
 
-Also, shall we add the signature verification enforcemnt to the helper as 
-well?
-
-
-Ciao
-Stephan
-
-
+...
