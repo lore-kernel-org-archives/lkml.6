@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC61EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EC8C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A497321924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E80AD21929
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549663572;
-	bh=4PdXml2Jj2dIZnpsIlQi6Lz49LdsKlO4tL8ZZWuQB3Y=;
+	s=default; t=1549663580;
+	bh=Zac3uuXI+EZAa0ZMnATQm08w+nPsyRKuynkrrwcsQlY=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=ntqvsvI/dCJn8XzkkQc8QvjzEfijAhGgxf2eSzbruWbXHnNd18zcOCnvCEn5Ck9n+
-	 MNB3flHJtBUbwMtMBWT5sj6rdyvHB4NvfyFH405yQsSoKjDgTA0K4/U7Xe4fFiVBxS
-	 F6lm41D7U6vC0R4sh+zkewyRZbaYqv0YbZQxMcHg=
+	b=yiBmYMxwcBT/uqbCD4497mylNcx6sMOuejghvilYNXqWmx+y/CZxdkVkM1KlBgaoU
+	 Hg7rV7rKhpQRta366jebdo/tlz1QUlavRj9cMoLbjOr/t/7e1YFUJO45ZeVHIzlfZ7
+	 gpTrls5VMfuAeomWY1lvKaljc82FOa48o/MXzxmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfBHWGL (ORCPT
+        id S1727298AbfBHWGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:06:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54592 "EHLO mail.kernel.org"
+        Fri, 8 Feb 2019 17:06:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727226AbfBHWGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:06:11 -0500
+        id S1726974AbfBHWGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 17:06:18 -0500
 Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA78121908;
-        Fri,  8 Feb 2019 22:06:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7233F21908;
+        Fri,  8 Feb 2019 22:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549663570;
-        bh=4PdXml2Jj2dIZnpsIlQi6Lz49LdsKlO4tL8ZZWuQB3Y=;
+        s=default; t=1549663576;
+        bh=Zac3uuXI+EZAa0ZMnATQm08w+nPsyRKuynkrrwcsQlY=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BgGwA/GwZd5tSJU3bkh2HehPyBK8l+d1ba7kQNYYJ8wgUp65u48hyVbZBibG6SIWl
-         w6zDXU7XClbWiEFPShW4b11ELnth0MwHms2pNELAGK5xOFO1TvRIMmklKgsAO7h/Gh
-         kw+YN3Eh05G7HEdb/l/Co0DJpI5Sm391Uglw9v0s=
-Subject: [PATCH v1 4/7] iommu/vt-d: Remove unnecessary local variable
- initializations
+        b=L3ut5wX9xDT3ft4eNDshV7WuiaWKSGm9jPYooSl3qfCz0vcryFt52nXShRUKi9+x4
+         uZWoVe01GoPJBjFaS6tMH7wiKdOhHore3Ppr5DTLna+Aeah5r4Txr9g3Sq/qXthyZm
+         6CHIomhqq7EffbRn7LSWve3/+/gUZ/QXPRGIGY5E=
+Subject: [PATCH v1 5/7] iommu/vt-d: Remove unused dmar_remove_one_dev_info()
+ argument
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     David Woodhouse <dwmw2@infradead.org>,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Date:   Fri, 08 Feb 2019 16:06:08 -0600
-Message-ID: <154966356809.132359.5318207850182898116.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date:   Fri, 08 Feb 2019 16:06:15 -0600
+Message-ID: <154966357527.132359.18243836332587849601.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -59,144 +59,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bjorn Helgaas <bhelgaas@google.com>
 
-A local variable initialization is a hint that the variable will be used in
-an unusual way.  If the initialization is unnecessary, that hint becomes a
-distraction.
+domain_remove_dev_info() takes a struct dmar_domain * argument, but doesn't
+use it.  Remove it.  No functional change intended.
 
-Remove unnecessary initializations.  No functional change intended.
+The last use of this argument was removed by 127c761598f7 ("iommu/vt-d:
+Pass device_domain_info to __dmar_remove_one_dev_info").
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/iommu/intel-iommu.c |   27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ drivers/iommu/intel-iommu.c |   20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 81077803880f..2acd08c82cdc 100644
+index 2acd08c82cdc..6e9f277bfd6d 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -865,7 +865,7 @@ static void free_context_table(struct intel_iommu *iommu)
- static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
- 				      unsigned long pfn, int *target_level)
- {
--	struct dma_pte *parent, *pte = NULL;
-+	struct dma_pte *parent, *pte;
- 	int level = agaw_to_level(domain->agaw);
- 	int offset;
+@@ -343,8 +343,7 @@ static int g_num_of_iommus;
  
-@@ -922,7 +922,7 @@ static struct dma_pte *dma_pfn_level_pte(struct dmar_domain *domain,
- 					 unsigned long pfn,
- 					 int level, int *large_page)
- {
--	struct dma_pte *parent, *pte = NULL;
-+	struct dma_pte *parent, *pte;
- 	int total = agaw_to_level(domain->agaw);
- 	int offset;
+ static void domain_exit(struct dmar_domain *domain);
+ static void domain_remove_dev_info(struct dmar_domain *domain);
+-static void dmar_remove_one_dev_info(struct dmar_domain *domain,
+-				     struct device *dev);
++static void dmar_remove_one_dev_info(struct device *dev);
+ static void __dmar_remove_one_dev_info(struct device_domain_info *info);
+ static void domain_context_clear(struct intel_iommu *iommu,
+ 				 struct device *dev);
+@@ -2546,7 +2545,7 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 		ret = intel_pasid_alloc_table(dev);
+ 		if (ret) {
+ 			dev_err(dev, "PASID table allocation failed\n");
+-			dmar_remove_one_dev_info(domain, dev);
++			dmar_remove_one_dev_info(dev);
+ 			return NULL;
+ 		}
  
-@@ -954,7 +954,7 @@ static void dma_pte_clear_range(struct dmar_domain *domain,
- 				unsigned long start_pfn,
- 				unsigned long last_pfn)
- {
--	unsigned int large_page = 1;
-+	unsigned int large_page;
- 	struct dma_pte *first_pte, *pte;
+@@ -2561,14 +2560,14 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 		spin_unlock(&iommu->lock);
+ 		if (ret) {
+ 			dev_err(dev, "Setup RID2PASID failed\n");
+-			dmar_remove_one_dev_info(domain, dev);
++			dmar_remove_one_dev_info(dev);
+ 			return NULL;
+ 		}
+ 	}
  
- 	BUG_ON(!domain_pfn_supported(domain, start_pfn));
-@@ -1132,7 +1132,7 @@ static struct page *domain_unmap(struct dmar_domain *domain,
- 				 unsigned long start_pfn,
- 				 unsigned long last_pfn)
- {
--	struct page *freelist = NULL;
-+	struct page *freelist;
+ 	if (dev && domain_context_mapping(domain, dev)) {
+ 		dev_err(dev, "Domain context map failed\n");
+-		dmar_remove_one_dev_info(domain, dev);
++		dmar_remove_one_dev_info(dev);
+ 		return NULL;
+ 	}
  
- 	BUG_ON(!domain_pfn_supported(domain, start_pfn));
- 	BUG_ON(!domain_pfn_supported(domain, last_pfn));
-@@ -1763,7 +1763,7 @@ static int domain_attach_iommu(struct dmar_domain *domain,
- static int domain_detach_iommu(struct dmar_domain *domain,
- 			       struct intel_iommu *iommu)
- {
--	int num, count = INT_MAX;
-+	int num, count;
- 
- 	assert_spin_locked(&device_domain_lock);
- 	assert_spin_locked(&iommu->lock);
-@@ -1902,7 +1902,7 @@ static int domain_init(struct dmar_domain *domain, struct intel_iommu *iommu,
- 
- static void domain_exit(struct dmar_domain *domain)
- {
--	struct page *freelist = NULL;
-+	struct page *freelist;
- 
- 	/* Domain 0 is reserved, so dont process it */
+@@ -3621,7 +3620,7 @@ static int iommu_no_mapping(struct device *dev)
+ 			 * 32 bit DMA is removed from si_domain and fall back
+ 			 * to non-identity mapping.
+ 			 */
+-			dmar_remove_one_dev_info(si_domain, dev);
++			dmar_remove_one_dev_info(dev);
+ 			dev_info(dev, "32bit DMA uses non-identity mapping\n");
+ 			return 0;
+ 		}
+@@ -4567,7 +4566,7 @@ static int device_notifier(struct notifier_block *nb,
  	if (!domain)
-@@ -2583,7 +2583,7 @@ static int get_last_alias(struct pci_dev *pdev, u16 alias, void *opaque)
+ 		return 0;
  
- static struct dmar_domain *find_or_alloc_domain(struct device *dev, int gaw)
+-	dmar_remove_one_dev_info(domain, dev);
++	dmar_remove_one_dev_info(dev);
+ 	if (!domain_type_is_vm_or_si(domain) && list_empty(&domain->devices))
+ 		domain_exit(domain);
+ 
+@@ -4980,8 +4979,7 @@ static void __dmar_remove_one_dev_info(struct device_domain_info *info)
+ 	free_devinfo_mem(info);
+ }
+ 
+-static void dmar_remove_one_dev_info(struct dmar_domain *domain,
+-				     struct device *dev)
++static void dmar_remove_one_dev_info(struct device *dev)
  {
--	struct device_domain_info *info = NULL;
-+	struct device_domain_info *info;
- 	struct dmar_domain *domain = NULL;
- 	struct intel_iommu *iommu;
- 	u16 dma_alias;
-@@ -2807,7 +2807,7 @@ static int md_domain_init(struct dmar_domain *domain, int guest_width);
+ 	struct device_domain_info *info;
+ 	unsigned long flags;
+@@ -5070,7 +5068,7 @@ static int intel_iommu_attach_device(struct iommu_domain *domain,
+ 		old_domain = find_domain(dev);
+ 		if (old_domain) {
+ 			rcu_read_lock();
+-			dmar_remove_one_dev_info(old_domain, dev);
++			dmar_remove_one_dev_info(dev);
+ 			rcu_read_unlock();
  
- static int __init si_domain_init(int hw)
+ 			if (!domain_type_is_vm_or_si(old_domain) &&
+@@ -5117,7 +5115,7 @@ static int intel_iommu_attach_device(struct iommu_domain *domain,
+ static void intel_iommu_detach_device(struct iommu_domain *domain,
+ 				      struct device *dev)
  {
--	int nid, ret = 0;
-+	int nid, ret;
+-	dmar_remove_one_dev_info(to_dmar_domain(domain), dev);
++	dmar_remove_one_dev_info(dev);
+ }
  
- 	si_domain = alloc_domain(DOMAIN_FLAG_STATIC_IDENTITY);
- 	if (!si_domain)
-@@ -2931,7 +2931,6 @@ static bool device_is_rmrr_locked(struct device *dev)
- 
- static int iommu_should_identity_map(struct device *dev, int startup)
- {
--
- 	if (dev_is_pci(dev)) {
- 		struct pci_dev *pdev = to_pci_dev(dev);
- 
-@@ -3527,7 +3526,7 @@ static unsigned long intel_alloc_iova(struct device *dev,
- 				     struct dmar_domain *domain,
- 				     unsigned long nrpages, uint64_t dma_mask)
- {
--	unsigned long iova_pfn = 0;
-+	unsigned long iova_pfn;
- 
- 	/* Restrict dma_mask to the width that the iommu can handle */
- 	dma_mask = min_t(uint64_t, DOMAIN_MAX_ADDR(domain->gaw), dma_mask);
-@@ -4333,7 +4332,7 @@ int dmar_check_one_atsr(struct acpi_dmar_header *hdr, void *arg)
- 
- static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
- {
--	int sp, ret = 0;
-+	int sp, ret;
- 	struct intel_iommu *iommu = dmaru->iommu;
- 
- 	if (g_iommus[iommu->seq_id])
-@@ -4497,7 +4496,7 @@ int dmar_find_matched_atsr_unit(struct pci_dev *dev)
- 
- int dmar_iommu_notify_scope_dev(struct dmar_pci_notify_info *info)
- {
--	int ret = 0;
-+	int ret;
- 	struct dmar_rmrr_unit *rmrru;
- 	struct dmar_atsr_unit *atsru;
- 	struct acpi_dmar_atsr *atsr;
-@@ -4514,7 +4513,7 @@ int dmar_iommu_notify_scope_dev(struct dmar_pci_notify_info *info)
- 				((void *)rmrr) + rmrr->header.length,
- 				rmrr->segment, rmrru->devices,
- 				rmrru->devices_cnt);
--			if(ret < 0)
-+			if (ret < 0)
- 				return ret;
- 		} else if (info->event == BUS_NOTIFY_REMOVED_DEVICE) {
- 			dmar_remove_dev_scope(info, rmrr->segment,
-@@ -4534,7 +4533,7 @@ int dmar_iommu_notify_scope_dev(struct dmar_pci_notify_info *info)
- 					atsru->devices_cnt);
- 			if (ret > 0)
- 				break;
--			else if(ret < 0)
-+			else if (ret < 0)
- 				return ret;
- 		} else if (info->event == BUS_NOTIFY_REMOVED_DEVICE) {
- 			if (dmar_remove_dev_scope(info, atsr->segment,
+ static int intel_iommu_map(struct iommu_domain *domain,
 
