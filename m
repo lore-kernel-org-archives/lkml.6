@@ -2,180 +2,116 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA33DC282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DFAC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992FB21908
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CA521916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:07:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6QAn2pG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfBHGDK (ORCPT
+        id S1727085AbfBHGHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 01:03:10 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39751 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfBHGDE (ORCPT
+        Fri, 8 Feb 2019 01:07:42 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37838 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfBHGHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 01:03:04 -0500
-Received: by mail-qk1-f194.google.com with SMTP id x6so1470267qki.6
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 22:03:02 -0800 (PST)
+        Fri, 8 Feb 2019 01:07:42 -0500
+Received: by mail-ed1-f66.google.com with SMTP id g4so1843591eds.4;
+        Thu, 07 Feb 2019 22:07:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4kEPACT+cGX8sOqnTw34J+1Wi5NSgOceF8oPzUQ/5s0=;
+        b=l6QAn2pGqMp5uCwuPrlHle+YBgBMON1MYpzCw9LEfeY3MUaNqWFKMOZb/26QjRoVpJ
+         JFEUS4fZgQ5F1jyxhX6oDVaCPtH5ezafmA1FgrQ5k5W39Q+kIpjzYzUrPK6hn/FQZJVJ
+         /EY00ygar3sIpO0TXj2UlamkebfD3pHIbZCnnyIBQmnOUmBxEUY6Sj1JL+k68AQEomAg
+         xSxHVfTSPhTYwkshUtTwi9ls85+0I6y92uedoqWWh6ezBbxNXF7vXraZ1g1oDUERo0pw
+         ec8wP6j7+R+IARX+TIKAeQJ3jl9Y70CmPDOGnJU3+ouGW1a5kTeGAzafBxeSXKIeRZS0
+         KYJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+nXOz6pJ3BlFpyk91TAV6qomYY/ubiCtP1T6z27AOU8=;
-        b=LJy5Kg8romV9/Bl2vJu7vNfP1a5prEr1ZOnq1MxdLxmPV1oH3nWmrdf6xnuyotDMgt
-         hehc862xWhPkWFmVmzhYXkQ0RuesRAbVhsjCoKN5WgYbPVKQFYM3avLp2qEN+PK4gOG/
-         9jmwW02/qXM8opE7U/kGGr025LSvpxcmuF54CjevujkT0UVbINyvGbDrm5qV89EQ27CM
-         qQP8OgfzLgRCY+2SKIgNY9W+lsVyia55275dOn7fr6PLRQWMxzFbHnHpual12JV6YPOv
-         XBjq+QC+gBjx17mfhxUA9sJ/AQ9L/jSQzRBOs3UmVAk0/Zp5IIgchdYg2HCExzqwTylX
-         aSrg==
-X-Gm-Message-State: AHQUAuaI8WEHmZSAVj8AKSyJy0Rio0p+jBBhDV3UbBdbx3SFJKKPfEr7
-        RGXuadnG1YVE3IWd4XbeDJ2SR1Ag1qOnvA==
-X-Google-Smtp-Source: AHgI3IbuHaFaB9wArNOXePbo8MV6R3uJZMInumojzj3lxRwkyLUILfMNj7HegJ1LovNmUb6R+8Z3LQ==
-X-Received: by 2002:a37:5ac4:: with SMTP id o187mr14187576qkb.282.1549605782088;
-        Thu, 07 Feb 2019 22:03:02 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id 8sm1973905qtr.7.2019.02.07.22.03.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 22:03:01 -0800 (PST)
-Date:   Fri, 8 Feb 2019 01:03:00 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH 3/3] arch: move common mmap flags to linux/mman.h
-Message-ID: <20190124142448.23243-5-mst@redhat.com>
-References: <20190124142448.23243-1-mst@redhat.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4kEPACT+cGX8sOqnTw34J+1Wi5NSgOceF8oPzUQ/5s0=;
+        b=INzIRAB9u0IzzsWqR14Lh3QzX8KhJtZfR8KkQhSDvwmTZ/NcrbfEbFBkoDjZvxAwjB
+         erigLhjP2H+kdBuPVoxnin55cmCV0y8l/MMN+RtMQZGRX3WPWZlO4DvPzzfzJGu3v0ON
+         54NWU73EmcaaaqJG73cqjk47E7gt3UGa7rYJIlPjjfn8+mo60liklcg8nJ206O3H1ITk
+         rN+ySZwRF2kNkaMfbL6KepO3QPIU884N6gcpw0Qf+eeX4gJl+inEawc3XZTZYvc1cnGL
+         rZjkMQ6zg4qx6iGZxy4+LqG7aqZizmQ8ylLl9EAz4+Yqf4ISEPOODa4oBLh7BAuHJJwz
+         d+gg==
+X-Gm-Message-State: AHQUAua0lajW/j7hkczdrhQPTxsPsUJUjdvb6LcpbbHEj3+lWyzBngRX
+        HSqs1TTAaMKcw89sP5XRAY8=
+X-Google-Smtp-Source: AHgI3IYdJzqWymmvYzdd8VHzR7klzkuMKpuNzm5Rjl4eDKAoE5GK/mR2pA38t5nTaV4gpQRnz9zEvg==
+X-Received: by 2002:aa7:d802:: with SMTP id v2mr10213253edq.225.1549606060207;
+        Thu, 07 Feb 2019 22:07:40 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id z9sm378169edr.61.2019.02.07.22.07.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 07 Feb 2019 22:07:39 -0800 (PST)
+Date:   Thu, 7 Feb 2019 23:07:37 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     ndesaulniers@google.com
+Cc:     yamada.masahiro@socionext.com, Rui Ueyama <ruiu@google.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] Makefile: lld: set -O2 linker flag when linking with
+ LLD
+Message-ID: <20190208060737.GA12027@archlinux-ryzen>
+References: <20190207220155.81351-1-ndesaulniers@google.com>
+ <20190207220155.81351-4-ndesaulniers@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124142448.23243-1-mst@redhat.com>
-X-Mailer: git-send-email 2.17.1.1206.gb667731e2e.dirty
-X-Mutt-Fcc: =sent
+In-Reply-To: <20190207220155.81351-4-ndesaulniers@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have 3 mmap flags shared by all architectures,
-let's move them into the common header.
+On Thu, Feb 07, 2019 at 02:01:52PM -0800, ndesaulniers@google.com wrote:
+> -O2 enables tail merging of string table strings.
+> 
+> For arm64:
+> 0.34% size improvement with lld -O2 over lld for vmlinux.
+> 3.30% size improvement with lld -O2 over lld for Image.lz4-dtb.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/343
+> Suggested-by: Rui Ueyama <ruiu@google.com>
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-This will help discourage future architectures from duplicating code.
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- arch/alpha/include/uapi/asm/mman.h     | 4 +---
- arch/mips/include/uapi/asm/mman.h      | 4 +---
- arch/parisc/include/uapi/asm/mman.h    | 4 +---
- arch/xtensa/include/uapi/asm/mman.h    | 4 +---
- include/uapi/asm-generic/mman-common.h | 4 +---
- include/uapi/linux/mman.h              | 4 ++++
- 6 files changed, 9 insertions(+), 15 deletions(-)
-
-diff --git a/arch/alpha/include/uapi/asm/mman.h b/arch/alpha/include/uapi/asm/mman.h
-index f9d4e6b6d4bd..ac23379b7a87 100644
---- a/arch/alpha/include/uapi/asm/mman.h
-+++ b/arch/alpha/include/uapi/asm/mman.h
-@@ -10,9 +10,7 @@
- #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
- #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
- 
--#define MAP_SHARED	0x01		/* Share changes */
--#define MAP_PRIVATE	0x02		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x0f		/* Mask for type of mapping (OSF/1 is _wrong_) */
- #define MAP_FIXED	0x100		/* Interpret addr exactly */
- #define MAP_ANONYMOUS	0x10		/* don't use a file */
-diff --git a/arch/mips/include/uapi/asm/mman.h b/arch/mips/include/uapi/asm/mman.h
-index 3035ca499cd8..c2b40969eb1f 100644
---- a/arch/mips/include/uapi/asm/mman.h
-+++ b/arch/mips/include/uapi/asm/mman.h
-@@ -27,9 +27,7 @@
- /*
-  * Flags for mmap
-  */
--#define MAP_SHARED	0x001		/* Share changes */
--#define MAP_PRIVATE	0x002		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x003	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x00f		/* Mask for type of mapping */
- #define MAP_FIXED	0x010		/* Interpret addr exactly */
- 
-diff --git a/arch/parisc/include/uapi/asm/mman.h b/arch/parisc/include/uapi/asm/mman.h
-index 870fbf8c7088..c98162f494db 100644
---- a/arch/parisc/include/uapi/asm/mman.h
-+++ b/arch/parisc/include/uapi/asm/mman.h
-@@ -10,9 +10,7 @@
- #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
- #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
- 
--#define MAP_SHARED	0x01		/* Share changes */
--#define MAP_PRIVATE	0x02		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x2b		/* Mask for type of mapping, includes bits 0x08 and 0x20 */
- #define MAP_FIXED	0x04		/* Interpret addr exactly */
- #define MAP_ANONYMOUS	0x10		/* don't use a file */
-diff --git a/arch/xtensa/include/uapi/asm/mman.h b/arch/xtensa/include/uapi/asm/mman.h
-index 58f29a9d895d..be726062412b 100644
---- a/arch/xtensa/include/uapi/asm/mman.h
-+++ b/arch/xtensa/include/uapi/asm/mman.h
-@@ -34,9 +34,7 @@
- /*
-  * Flags for mmap
-  */
--#define MAP_SHARED	0x001		/* Share changes */
--#define MAP_PRIVATE	0x002		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x003	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x00f		/* Mask for type of mapping */
- #define MAP_FIXED	0x010		/* Interpret addr exactly */
- 
-diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
-index e7ee32861d51..abd238d0f7a4 100644
---- a/include/uapi/asm-generic/mman-common.h
-+++ b/include/uapi/asm-generic/mman-common.h
-@@ -15,9 +15,7 @@
- #define PROT_GROWSDOWN	0x01000000	/* mprotect flag: extend change to start of growsdown vma */
- #define PROT_GROWSUP	0x02000000	/* mprotect flag: extend change to end of growsup vma */
- 
--#define MAP_SHARED	0x01		/* Share changes */
--#define MAP_PRIVATE	0x02		/* Changes are private */
--#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+/* 0x01 - 0x03 are defined in linux/mman.h */
- #define MAP_TYPE	0x0f		/* Mask for type of mapping */
- #define MAP_FIXED	0x10		/* Interpret addr exactly */
- #define MAP_ANONYMOUS	0x20		/* don't use a file */
-diff --git a/include/uapi/linux/mman.h b/include/uapi/linux/mman.h
-index d0f515d53299..fc1a64c3447b 100644
---- a/include/uapi/linux/mman.h
-+++ b/include/uapi/linux/mman.h
-@@ -12,6 +12,10 @@
- #define OVERCOMMIT_ALWAYS		1
- #define OVERCOMMIT_NEVER		2
- 
-+#define MAP_SHARED	0x01		/* Share changes */
-+#define MAP_PRIVATE	0x02		/* Changes are private */
-+#define MAP_SHARED_VALIDATE 0x03	/* share + validate extension flags */
-+
- /*
-  * Huge page size encoding when MAP_HUGETLB is specified, and a huge page
-  * size other than the default is desired.  See hugetlb_encode.h.
--- 
-MST
-
+> ---
+>  Makefile | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Makefile b/Makefile
+> index 6307c17259ea..c07208ec49d4 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -718,6 +718,10 @@ else
+>  KBUILD_CFLAGS += -Wno-unused-but-set-variable
+>  endif
+>  
+> +ifdef CONFIG_LD_IS_LLD
+> +KBUILD_LDFLAGS += -O2
+> +endif
+> +
+>  KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+>  ifdef CONFIG_FRAME_POINTER
+>  KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+> -- 
+> 2.20.1.791.gb4d0f1c61a-goog
+> 
