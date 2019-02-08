@@ -2,140 +2,111 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909D2C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0FBC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633D6218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689C220823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:45:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uOhA3WNM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfBHLnU (ORCPT
+        id S1727168AbfBHLpJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:43:20 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49514 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726456AbfBHLnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:43:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 509AB80D;
-        Fri,  8 Feb 2019 03:43:19 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA42E3F719;
-        Fri,  8 Feb 2019 03:43:17 -0800 (PST)
-Date:   Fri, 8 Feb 2019 11:43:15 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        tj@kernel.org, longman@redhat.com, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
-Message-ID: <20190208114315.GD6972@fuggles.cambridge.arm.com>
-References: <20190111124835.GP1900@hirez.programming.kicks-ass.net>
- <1547222103.83374.72.camel@acm.org>
- <20190111165529.GA14054@worktop.programming.kicks-ass.net>
- <1547226101.83374.80.camel@acm.org>
- <20190114125235.GB20726@hirez.programming.kicks-ass.net>
- <1547484753.83374.109.camel@acm.org>
- <20190118094808.GA27931@hirez.programming.kicks-ass.net>
- <1250147c-27bc-92e1-3ff5-211f3ba56891@acm.org>
- <20190201121510.GC31516@hirez.programming.kicks-ass.net>
- <3c533b0e-b079-79ad-4935-cd61af000ce6@acm.org>
+        Fri, 8 Feb 2019 06:45:09 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47838 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHLpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:45:09 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x18Bhs5b122569;
+        Fri, 8 Feb 2019 05:43:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549626234;
+        bh=LzHUrENdQtad7aZ9C8w4CNHKlWbfppzru+yr3K9GrhE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=uOhA3WNMe86QOdtyAO3XEx52LK63fyqApmmHeXPr+/eMbjQCBBR9D5H6q50H13YeU
+         0miZqOAo1yKISS1AMRdQdhNR71gm+7KYkBa7ohBPPJCPFbyfUPu6H+wNTJaF1GQgCe
+         Poce4eAVF7ZnlkSb83W/CB/lhuNGoAkDfAJ9bLpM=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x18BhsdP081422
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Feb 2019 05:43:54 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 8
+ Feb 2019 05:43:53 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 8 Feb 2019 05:43:53 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x18Bhnvx007023;
+        Fri, 8 Feb 2019 05:43:51 -0600
+Subject: Re: [PATCH 00/35] ARM: davinci: modernize the irq support
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Lechner <david@lechnology.com>
+CC:     Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <edfcdc52-3ff0-ec58-94f7-4816d2b2b3f4@lechnology.com>
+ <CAMRc=MfPAg_j-DfaQCaTd2GmBDctv7L0eSzTET+fcj+WArejdg@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <b70bbda8-b448-d9d1-e3fa-57dbfa6c2fbb@ti.com>
+Date:   Fri, 8 Feb 2019 17:13:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c533b0e-b079-79ad-4935-cd61af000ce6@acm.org>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <CAMRc=MfPAg_j-DfaQCaTd2GmBDctv7L0eSzTET+fcj+WArejdg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart, Peter,
-
-On Sun, Feb 03, 2019 at 09:36:38AM -0800, Bart Van Assche wrote:
-> On 2/1/19 4:15 AM, Peter Zijlstra wrote:
-> > On Fri, Jan 18, 2019 at 06:34:20PM -0800, Bart Van Assche wrote:
-> > > I agree with what you wrote. The only code I know of that accesses list
-> > > entries using RCU is the __bfs() function. In that function I found the
-> > > following loop:
-> > > 
-> > > 	list_for_each_entry_rcu(entry, head, entry) { [ ... ] }
-> > 
-> > Thing is; I can't seem to find any __bfs() usage outside of graph_lock.
-> > 
-> >    count_{fwd,bwd}_deps() - takes graph lock
-> > 
-> >    check_{noncircular,redudant}() - called from check_prev_add() <-
-> >    check_prevs_add() <- validate_chain() which takes graph lock
-> > 
-> >    find_usage{,_fwd,_bwd}
-> >      <- check_usage() <- check_irq_usage() <- check_prev_add_irq() <-
-> >      check_prev_add <- check_prevs_add() <- validate_chain() which takes
-> >      graph lock
-> > 
-> >      <- check_usage_{fwd,bdw}() <- mark_lock_irq() <- mark_lock() which
-> >      takes graph lock
-> > 
-> > Or did I miss something? If there are no __bfs() users outside of graph
-> > lock, then we can simply remove that _rcu from the iteration, and
-> > simplify all that.
+On 05/02/19 9:41 PM, Bartosz Golaszewski wrote:
+> pon., 4 lut 2019 o 22:49 David Lechner <david@lechnology.com> napisał(a):
+>>
+>> On 1/31/19 7:38 AM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> This series ports the davinci platform to using SPARSE_IRQ, cleans up
+>>> the irqchip drivers and moves them over to drivers/irqchip.
+>>>
+>>
+>> This has been on my todo list for years, but I've never had enough
+>> time to figure it out. Nice to see it finally getting done!
+>>
+>> Series tested on LEGO MINDSTORMS EV3 (da850-like). I can now use
+>> IIO triggers without having to patch the kernel to add extra
+>> interrupts.
+>>
+>> Tested-by: David Lechner <david@lechnology.com>
+>>
+>>
 > 
-> Every time I make a single change to the lockdep code I have to rerun my
-> test case for a week to make sure that no regressions have been introduced.
-> In other words, I can make further changes but that could take some time. Do
-> you want me to look into this simplification now or after this patch series
-> went upstream?
+> Wow thanks for taking the time to review it!
 > 
-> > > Since zap_class() calls list_del_rcu(&entry->entry), since a grace period
-> > > occurs between the call_rcu() invocation and the RCU callback function,
-> > > since at least an RCU reader lock must be held around RCU loops and since
-> > > sleeping is not allowed while holding an RCU read lock I think there is
-> > > no risk that __bfs() will examine a list entry after it has been freed.
-> > 
-> > So you agree that list_entry_being_freed() should only check the current
-> > pf?
+> I'll address certain remarks - for those unaddressed - I'll fix them in v2.
 > 
-> Sorry if I wasn't clear enough. In a previous e-mail I tried to explain that
-> both pf's have to be checked. Another way to explain that is as follows:
-> - Each list entry has one of the following states: free, in use or being
->   freed.
-> - "Free" means that the corresponding bit in the list_entries_in_use
->   bitmap has not been set.
-> - "In use" means that the corresponding bit in the list_entries_in_use
->   bitmap has been set and that none of the corresponding bits in the
->   list_entries_being_freed bitmaps have been set.
-> - "Being freed" means that the corresponding bit in one of the
->   list_entries_being_freed bitmaps has been set.
-> 
-> Since it can happen that multiple elements of the pending_free[] array are
-> in the state where call_rcu() has been called but the RCU callback function
-> has not yet been called, I think that zap_class() must check the
-> list_entries_being_freed bitmaps in all pending_free[] array elements.
+> Sekhar: are you fine with sending both the clocksource and interrupt
+> series together next time with additional patches on top making
+> davinci part of multi_v5_defconfig?
 
-I've also been trying to understand why it's necessary to check both of the
-pending_free entries, and I'm still struggling somewhat. It's true that the
-wakeup in get_pending_free_lock() could lead to both entries being used
-without the RCU call back running in between, however in this scenario then
-any list entries marked for freeing in the first pf will have been unhashed
-and therefore made unreachable to look_up_lock_class().
-
-So I think the concern remains that entries are somehow remaining visible
-after being zapped.
-
-You mentioned earlier in the thread that people actually complained about
-list corruption if you only checked the current pf:
-
-  | The list_del_rcu() call must only happen once. I ran into complaints
-  | reporting that the list_del_rcu() call triggered list corruption. This
-  | change made these complaints disappear.
-
-Do you have any more details about these complaints (e.g. kernel logs etc)?
-Failing that, any idea how to reproduce them?
+I think its better to keep them separate. You can base both on latest
+mainline.
 
 Thanks,
-
-Will
+Sekhar
