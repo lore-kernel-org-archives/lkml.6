@@ -2,192 +2,102 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 380B7C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE767C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 078552086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C76EB217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbfBHNMo (ORCPT
+        id S1727593AbfBHNNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:12:44 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43740 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfBHNMo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:12:44 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gs5xJ-0001QT-Qz; Fri, 08 Feb 2019 14:12:34 +0100
-Date:   Fri, 8 Feb 2019 14:12:33 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v6] x86: load FPU registers on return to userland
-Message-ID: <20190208131233.5g5guefglq6ik2ow@linutronix.de>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190130113555.GC18383@zn.tnic>
- <20190130120647.abbf2cbbpguaz356@linutronix.de>
- <20190130122713.GG18383@zn.tnic>
+        Fri, 8 Feb 2019 08:13:01 -0500
+Received: from ozlabs.org ([203.11.71.1]:34041 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726465AbfBHNNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 08:13:01 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43wwbG3qW9z9sN9;
+        Sat,  9 Feb 2019 00:12:58 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     aneesh.kumar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, oohall@gmail.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-5.0-4 tag
+Date:   Sat, 09 Feb 2019 00:12:56 +1100
+Message-ID: <87r2ciiftz.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190130122713.GG18383@zn.tnic>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-30 13:27:13 [+0100], Borislav Petkov wrote:
-> On Wed, Jan 30, 2019 at 01:06:47PM +0100, Sebastian Andrzej Siewior wrote:
-> > I don't know if hackbench would show anything besides noise.
-> 
-> Yeah, if a sensible benchmark (dunno if hackbench is among them :))
-> shows no difference, is also saying something.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-"hackbench -g80 -l 1000 -s 255" shows just noise. I don't see any
-reasonable difference with or without the series.
+Hi Linus,
 
-Tracing. The following patch
+Please pull some more powerpc fixes for 5.0:
 
-diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-index c5a6edd92de4f..aa1914e5bf5c0 100644
---- a/arch/x86/include/asm/fpu/types.h
-+++ b/arch/x86/include/asm/fpu/types.h
-@@ -292,6 +292,7 @@ struct fpu {
- 	 * FPU state should be reloaded next time the task is run.
- 	 */
- 	unsigned int			last_cpu;
-+	unsigned int avoided_loads;
- 
- 	/*
- 	 * @state:
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index c98c54e796186..7560942a550ed 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -358,9 +358,11 @@ void fpu__clear(struct fpu *fpu)
-  */
- void switch_fpu_return(void)
- {
-+	struct fpu *fpu = &current->thread.fpu;
-+
- 	if (!static_cpu_has(X86_FEATURE_FPU))
- 		return;
--
-+	fpu->avoided_loads = 0;
- 	__fpregs_load_activate();
- }
- EXPORT_SYMBOL_GPL(switch_fpu_return);
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 37b2ecef041e6..875f74b1e8779 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -522,6 +522,10 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 
- 	if (!test_thread_flag(TIF_NEED_FPU_LOAD))
- 		switch_fpu_prepare(prev_fpu, cpu);
-+	else if (current->mm) {
-+		prev_fpu->avoided_loads++;
-+		trace_printk("skipped save %d\n", prev_fpu->avoided_loads);
-+	}
- 
- 	/* We must save %fs and %gs before load_TLS() because
- 	 * %fs and %gs may be cleared by load_TLS().
+The following changes since commit 7bea7ac0ca0121798f3618d16201ca4dc4e67a00:
 
-should help to spot the optimization. So if TIF_NEED_FPU_LOAD is set at
-this point then between this and the last invocation of schedule() we
-haven't been in userland and so we avoided loading + storing of FPU
-registers. I saw things like:
+  powerpc/syscalls: Fix syscall tracing (2019-01-15 21:32:25 +1100)
 
-|  http-1935  [001] d..2   223.460434: sched_switch: prev_comm=http prev_pid=1935 prev_prio=120 prev_state=R+ ==> next_comm=apt next_pid=1931 next_prio=120
-|   apt-1931  [001] d..2   223.460680: sched_switch: prev_comm=apt prev_pid=1931 prev_prio=120 prev_state=D ==> next_comm=http next_pid=1935 next_prio=120
-|  http-1935  [001] d..2   223.460729: sched_switch: prev_comm=http prev_pid=1935 prev_prio=120 prev_state=R+ ==> next_comm=apt next_pid=1931 next_prio=120
-|  http-1935  [001] d..2   223.460732: __switch_to: skipped save 1
-|   apt-1931  [001] d..2   223.461076: sched_switch: prev_comm=apt prev_pid=1931 prev_prio=120 prev_state=D ==> next_comm=http next_pid=1935 next_prio=120
-|  http-1935  [001] d..2   223.461111: sched_switch: prev_comm=http prev_pid=1935 prev_prio=120 prev_state=R+ ==> next_comm=apt next_pid=1931 next_prio=120
-|  http-1935  [001] d..2   223.461112: __switch_to: skipped save 2
+are available in the git repository at:
 
-which means we avoided loading FPU registers for `http' because for some
-reason it was not required. Here we switched between two user tasks so
-without the patches we would have to save and restore them.
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.0-4
 
-I captured a few instances of something like:
+for you to fetch changes up to 5a3840a470c41ec0b85cd36ca80370330656b163:
 
-|  rcu_preempt-10    [000] d..2  1032.867293: sched_switch: prev_comm=rcu_preempt prev_pid=10 prev_prio=98 prev_state=I ==> next_comm=kswapd0 next_pid=536 next_prio=120
-|          apt-1954  [001] d..2  1032.867435: sched_switch: prev_comm=apt prev_pid=1954 prev_prio=120 prev_state=R+ ==> next_comm=kworker/1:0 next_pid=1943 next_prio=120
-|          apt-1954  [001] d..2  1032.867436: __switch_to: skipped save 30
-|  kworker/1:0-1943  [001] d..2  1032.867455: sched_switch: prev_comm=kworker/1:0 prev_pid=1943 prev_prio=120 prev_state=I ==> next_comm=apt next_pid=1954 next_prio=120
-|          apt-1954  [001] d..2  1032.867459: sched_switch: prev_comm=apt prev_pid=1954 prev_prio=120 prev_state=D ==> next_comm=swapper/1 next_pid=0 next_prio=120
-|          apt-1954  [001] d..2  1032.867460: __switch_to: skipped save 31
+  powerpc/papr_scm: Use the correct bind address (2019-02-01 10:13:51 +1100)
 
-It has been avoided to restore and save the FPU register of `apt' 31
-times (in a row). This isn't 100% true. We switched to and from a kernel
-thread to `apt' so switch_fpu_finish() wouldn't load the registers
-because the switch to the kernel thread (switch_fpu_prepare()) would not
-destroy them. *However* the switch away from `apt' would save the FPU
-registers so we avoid this (current code always saves FPU registers on
-context switch, see switch_fpu_prepare()).
-My understanding is that if the CPU supports `xsaves' then it wouldn't
-save anything in this scenario because the CPU would notice that its FPU
-state didn't change since last time so no need to save anything.
+- ------------------------------------------------------------------
+powerpc fixes for 5.0 #4
 
-Then we have lat_sig [0]. Without the series 64bit:
-|Signal handler overhead: 2.6839 microseconds
-|Signal handler overhead: 2.6996 microseconds
-|Signal handler overhead: 2.6821 microseconds
+Just two fixes, both going to stable.
 
-with the series:
-|Signal handler overhead: 3.2976 microseconds
-|Signal handler overhead: 3.3033 microseconds
-|Signal handler overhead: 3.2980 microseconds
+Our support for split pmd page table lock had a bug which could lead to a crash
+on mremap() when using the Radix MMU (Power9 only).
 
-that is approximately 22% worse. Without the series 64bit kernel with
-32bit binary:
-| Signal handler overhead: 3.8139 microseconds
-| Signal handler overhead: 3.8035 microseconds
-| Signal handler overhead: 3.8127 microseconds
+A fix for the PAPR SCM driver (nvdimm) we added last release, which had a bug
+where we might mis-handle a hypervisor response leading to us failing to attach
+the memory region.
 
-with the series:
-| Signal handler overhead: 4.0434 microseconds
-| Signal handler overhead: 4.0438 microseconds
-| Signal handler overhead: 4.0408 microseconds
+Thanks to:
+  Aneesh Kumar K.V, Oliver O'Halloran.
 
-approximately 6% worse. I'm a little surprised in the 32bit case because
-it did save+copy earlier (while the 64bit saved it directly to signal
-stack).
+- ------------------------------------------------------------------
+Aneesh Kumar K.V (1):
+      powerpc/radix: Fix kernel crash with mremap()
 
-If we restore directly from signal stack (instead the copy_from_user())
-we get to (64bit only):
-| Signal handler overhead: 3.0376 microseconds
-| Signal handler overhead: 3.0687 microseconds
-| Signal handler overhead: 3.0510 microseconds
+Oliver O'Halloran (1):
+      powerpc/papr_scm: Use the correct bind address
 
-and if additionally save the registers to the signal stack:
-| Signal handler overhead: 2.7835 microseconds
-| Signal handler overhead: 2.7850 microseconds
-| Signal handler overhead: 2.7766 microseconds
 
-then we get almost to where we started. I will fire a commit per commit
-bench to see if I notice something.
-Ach and this was PREEMPT on a 
-|x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'compacted' format.
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 22 +++++++---------------
+ arch/powerpc/mm/pgtable-book3s64.c           | 22 ++++++++++++++++++++++
+ arch/powerpc/platforms/pseries/papr_scm.c    |  5 ++++-
+ 3 files changed, 33 insertions(+), 16 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-machine. So those with AVX-512 might be worse but I don't have any of
-those.
-
-[0] Part of lmbench, test
-    taskset 2 /usr/lib/lmbench/bin/x86_64-linux-gnu/lat_sig -P 1 -W 64 -N 5000 catch
-
-Sebastian
+iQIcBAEBAgAGBQJcXYAdAAoJEFHr6jzI4aWAGAwP/1VlkYVIU0gA+x3iifUW0vD+
+MhDhWuzFYpP1xfy5rMvEtwQ+IbwgO/j4220NilCAbCNbB69Ccj6x4mdPayTLWswi
+lVb8VVKG0kre0sj0hXm15j/ZEhkIwGuAzu1FH/q6mf0kyEOCsdUiZ1k+vDjWtgJS
+TzrpmstgCMlkAtJSq2RfGdWTqQc2N5uZktyjobpmkubvBm9PoEgjA/f+LwMmxZEa
+M83cOdQ8HXKV+tZVMftUR9dfDuDo2L+5EhXdrBgreAF0haEtVo9JALp4rwvCdS4H
+c5SzuJSNnaBvGTzCVmwOadWJHH8/Ok3N0ryC991SeAonYLedOQhSVZRzgqN9nCF2
+KIGahudY5djIMTe41FXDsHC95yYuH6C8rfDPJBZUj6o9I6N98Xjz0gASoMFRJ71p
+25kskxbH7ehL3ZdAENp93MmNS0gXyBkfhYs2JGKy+ufdlELUh8Yn6q0kJxrqgGnj
+Cc9i221OXkRbi8Z0eZeAdWzzz48cdmqio2bvT679xwghRtFXfy1BhGv0m9F9evS4
+TGTIKL/al/UVtCEStjdbTT9XGovGqrUSbIqe7MDaH478cGrQjBTVdwn6eU2G48Vh
+nZMyY7g5J3BQWeE9vOkX8T9T/9ChwIIXDDjiXYr76+7jcgamWH9VL6bCwKQO00Lx
++9G3ikkFDRcFqleuTrf3
+=BKaS
+-----END PGP SIGNATURE-----
