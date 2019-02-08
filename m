@@ -2,154 +2,194 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DF0C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C09C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27FEE218D2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:54:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="IaJwJvWW"
+	by mail.kernel.org (Postfix) with ESMTP id CBBDE218FF
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfBHUyX (ORCPT
+        id S1727067AbfBHUy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:54:23 -0500
-Received: from server.eikelenboom.it ([91.121.65.215]:39578 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfBHUyX (ORCPT
+        Fri, 8 Feb 2019 15:54:57 -0500
+Received: from gateway30.websitewelcome.com ([50.116.127.1]:15591 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726978AbfBHUy5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:54:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=u8i/k+R7MZKqKC3u1iAYYSpv9qKKki8PIqZ0YS8y7/s=; b=IaJwJvWWxNf2UD6MMH5kEKrk+G
-        /NQFj0Gr6SJW7273iSuyb1f+WvQjmUYyO8+YjF1tOwqn2BkSkHyVanzRrVTPl041F7L274Svim2sE
-        iZfOE7pRi+YdL7LaP6dohwXML/44mjrZqVsrzlod7kHNc/TrGSqaaUU5uO4C15nry9Uc=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:55962 helo=[172.16.1.50])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1gsDAM-0004xy-7Y; Fri, 08 Feb 2019 21:54:30 +0100
-Subject: Re: Linux 5.0 regression: rtl8169 / kernel BUG at
- lib/dynamic_queue_limits.c:27!
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-References: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
- <0f605e50-56fe-06b5-9b66-6aed89a608ce@gmail.com>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <471e550b-c227-22e6-19fd-5f9abd450e5f@eikelenboom.it>
-Date:   Fri, 8 Feb 2019 21:55:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 15:54:57 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id C41325125
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 14:54:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sDAlgcldpdnCesDAlgcf7f; Fri, 08 Feb 2019 14:54:55 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=34656 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gsDAk-001tFR-R9; Fri, 08 Feb 2019 14:54:55 -0600
+Date:   Fri, 8 Feb 2019 14:54:53 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] security: mark expected switch fall-throughs and add a
+ missing break
+Message-ID: <20190208205453.GA3232@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <0f605e50-56fe-06b5-9b66-6aed89a608ce@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1gsDAk-001tFR-R9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:34656
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2019 19:52, Heiner Kallweit wrote:
-> On 08.02.2019 19:29, Sander Eikelenboom wrote:
->> L.S.,
->>
->> While testing a linux 5.0-rc5 kernel (with some patches on top but they don't seem related) under Xen i the nasty splat below, 
->> that I haven encountered with Linux 4.20.x.
->>
->> Unfortunately I haven't got a clear reproducer for this and bisecting could be nasty due to another (networking related) kernel bug.
->>
->> If you need more info, want me to run a debug patch etc., please feel free to ask.
->>
-> Thanks for the report. However I see no change in the r8169 driver between
-> 4.20 and 5.0 with regard to BQL code. Having said that the root cause could
-> be somewhere else. Therefore I'm afraid a bisect will be needed.
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Hmm i did some diging and i think:
-bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
-2e6eedb4813e34d8d84ac0eb3afb668966f3f356 r8169: make use of xmit_more and __netdev_sent_queue
-620344c43edfa020bbadfd81a144ebe5181fc94f net: core: add __netdev_sent_queue as variant of __netdev_tx_sent_queue
+This patch fixes the following warnings:
 
-would be candidates, which were merged in 5.0.
+security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-I have reverted the first two, see how that works out.
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
---
-Sander
+Also, add a missing break statement to fix the following warning:
 
- 
->> --
->> Sander
->>
-> Heiner
-> 
->>
->> [ 6466.554866] kernel BUG at lib/dynamic_queue_limits.c:27!
->> [ 6466.571425] invalid opcode: 0000 [#1] SMP NOPTI
->> [ 6466.585890] CPU: 3 PID: 7057 Comm: as Not tainted 5.0.0-rc5-20190208-thp-net-florian-doflr+ #1
->> [ 6466.598693] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
->> [ 6466.611579] RIP: e030:dql_completed+0x126/0x140
->> [ 6466.624339] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
->> [ 6466.648130] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
->> [ 6466.659616] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
->> [ 6466.672835] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
->> [ 6466.684521] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
->> [ 6466.696824] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
->> [ 6466.709953] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
->> [ 6466.722165] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
->> [ 6466.733228] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [ 6466.746581] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
->> [ 6466.758366] Call Trace:
->> [ 6466.768118]  <IRQ>
->> [ 6466.778214]  rtl8169_poll+0x4f4/0x640
->> [ 6466.789198]  net_rx_action+0x23d/0x370
->> [ 6466.798467]  __do_softirq+0xed/0x229
->> [ 6466.807039]  irq_exit+0xb7/0xc0
->> [ 6466.815471]  xen_evtchn_do_upcall+0x27/0x40
->> [ 6466.826647]  xen_do_hypervisor_callback+0x29/0x40
->> [ 6466.835902]  </IRQ>
->> [ 6466.845361] RIP: e030:xen_hypercall_mmu_update+0xa/0x20
->> [ 6466.853390] Code: 51 41 53 b8 00 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 01 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
->> [ 6466.874031] RSP: e02b:ffffc90003c0bdd0 EFLAGS: 00000246
->> [ 6466.883452] RAX: 0000000000000000 RBX: 000000041f83bfe8 RCX: ffffffff8100102a
->> [ 6466.891986] RDX: deadbeefdeadf00d RSI: deadbeefdeadf00d RDI: deadbeefdeadf00d
->> [ 6466.903402] RBP: 0000000000000fe8 R08: 000000000000000b R09: 0000000000000000
->> [ 6466.911201] R10: deadbeefdeadf00d R11: 0000000000000246 R12: 800000050c346067
->> [ 6466.918491] R13: ffff8880607c4fe8 R14: ffff888005082800 R15: 0000000000000000
->> [ 6466.926647]  ? xen_hypercall_mmu_update+0xa/0x20
->> [ 6466.938195]  ? xen_set_pte_at+0x78/0xe0
->> [ 6466.947046]  ? __handle_mm_fault+0xc43/0x1060
->> [ 6466.955772]  ? do_mmap+0x44b/0x5b0
->> [ 6466.964410]  ? handle_mm_fault+0xf8/0x200
->> [ 6466.973290]  ? __do_page_fault+0x231/0x4a0
->> [ 6466.981973]  ? page_fault+0x8/0x30
->> [ 6466.990904]  ? page_fault+0x1e/0x30
->> [ 6466.999585] Modules linked in:
->> [ 6467.007533] ---[ end trace 94bec01608fe4061 ]---
->> [ 6467.016751] RIP: e030:dql_completed+0x126/0x140
->> [ 6467.024271] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
->> [ 6467.039726] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
->> [ 6467.047243] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
->> [ 6467.054202] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
->> [ 6467.062000] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
->> [ 6467.069664] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
->> [ 6467.077715] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
->> [ 6467.084916] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
->> [ 6467.093352] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [ 6467.101492] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
->> [ 6467.110542] Kernel panic - not syncing: Fatal exception in interrupt
->> [ 6467.118166] Kernel Offset: disabled
->> (XEN) [2019-02-08 18:04:48.854] Hardware Dom0 crashed: rebooting machine in 5 seconds.
->>
-> 
+security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Update Subject.
+ - Integrate a missing break in switch fix by Mimi Zohar.
+
+ security/apparmor/domain.c                | 2 +-
+ security/integrity/ima/ima_appraise.c     | 1 +
+ security/integrity/ima/ima_policy.c       | 4 ++++
+ security/integrity/ima/ima_template_lib.c | 1 +
+ security/smack/smack_lsm.c                | 3 +--
+ 5 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 3b266a438776..ca2dccf5b445 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+ 			stack = NULL;
+ 			break;
+ 		}
+-		/* fall through to X_NAME */
++		/* fall through - to X_NAME */
+ 	case AA_X_NAME:
+ 		if (xindex & AA_X_CHILD)
+ 			/* released by caller */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index a2baa85ea2f5..5fb7127bbe68 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+ 		break;
+ 	case CREDS_CHECK:
+ 		iint->ima_creds_status = status;
++		break;
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		iint->ima_file_status = status;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 26fa9d9723f6..e0cc323f948f 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -936,10 +936,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_uid_gt:
+ 		case Opt_euid_gt:
+ 			entry->uid_op = &uid_gt;
++			/* fall through */
+ 		case Opt_uid_lt:
+ 		case Opt_euid_lt:
+ 			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+ 				entry->uid_op = &uid_lt;
++			/* fall through */
+ 		case Opt_uid_eq:
+ 		case Opt_euid_eq:
+ 			uid_token = (token == Opt_uid_eq) ||
+@@ -968,9 +970,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			break;
+ 		case Opt_fowner_gt:
+ 			entry->fowner_op = &uid_gt;
++			/* fall through */
+ 		case Opt_fowner_lt:
+ 			if (token == Opt_fowner_lt)
+ 				entry->fowner_op = &uid_lt;
++			/* fall through */
+ 		case Opt_fowner_eq:
+ 			ima_log_string_op(ab, "fowner", args[0].from,
+ 					  entry->fowner_op);
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..513b457ae900 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 		/* skip ':' and '\0' */
+ 		buf_ptr += 2;
+ 		buflen -= buf_ptr - field_data->data;
++		/* fall through */
+ 	case DATA_FMT_DIGEST:
+ 	case DATA_FMT_HEX:
+ 		if (!buflen)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 587dc06eba33..5c1613519d5a 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3380,13 +3380,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+ 		 */
+ 		final = &smack_known_star;
+ 		/*
+-		 * Fall through.
+-		 *
+ 		 * If a smack value has been set we want to use it,
+ 		 * but since tmpfs isn't giving us the opportunity
+ 		 * to set mount options simulate setting the
+ 		 * superblock default.
+ 		 */
++		/* Fall through */
+ 	default:
+ 		/*
+ 		 * This isn't an understood special case.
+-- 
+2.20.1
 
