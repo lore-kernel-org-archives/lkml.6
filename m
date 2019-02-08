@@ -2,101 +2,130 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DADC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0CDC282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD9F218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3064A218D9
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:11:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfBHLKb (ORCPT
+        id S1727875AbfBHLLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:10:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33500 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726547AbfBHLKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:10:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BF4C5AE65;
-        Fri,  8 Feb 2019 11:10:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C875D1E3DB8; Fri,  8 Feb 2019 12:10:28 +0100 (CET)
-Date:   Fri, 8 Feb 2019 12:10:28 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190208111028.GD6353@quack2.suse.cz>
-References: <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard>
+        Fri, 8 Feb 2019 06:11:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:48604 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726205AbfBHLLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:11:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE55DA78;
+        Fri,  8 Feb 2019 03:11:03 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF3213F719;
+        Fri,  8 Feb 2019 03:11:01 -0800 (PST)
+Date:   Fri, 8 Feb 2019 11:10:58 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        l.stach@pengutronix.de, tpiepho@impinj.com,
+        leonard.crestez@nxp.com, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: dwc: allow to limit registers set length
+Message-ID: <20190208111058.GC13009@e107981-ln.cambridge.arm.com>
+References: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190208044302.GA20493@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 08-02-19 15:43:02, Dave Chinner wrote:
-> On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
-> > One approach that may be a clean way to solve this:
-> > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
-> >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
-> >    on the longterm pinned range until the long term pin is removed.
+On Wed, Feb 06, 2019 at 10:57:31AM +0100, Stefan Agner wrote:
+> Add length to the struct dw_pcie and check that the accessors
+> dw_pcie_(rd|wr)_conf() do not read/write beyond that point.
 > 
-> So, ummm, how do we do block allocation then, which is done on
-> demand during writes?
+> Suggested-by: Trent Piepho <tpiepho@impinj.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> Changes in v4:
+> - Move length check to dw_pcie_rd_conf
+> Changes in v5:
+> - Rebased ontop of pci/dwc
 > 
-> IOWs, this requires the application to set up the file in the
-> correct state for the filesystem to lock it down so somebody else
-> can write to it.  That means the file can't be sparse, it can't be
-> preallocated (i.e. can't contain unwritten extents), it must have zeroes
-> written to it's full size before being shared because otherwise it
-> exposes stale data to the remote client (secure sites are going to
-> love that!), they can't be extended, etc.
-> 
-> IOWs, once the file is prepped and leased out for RDMA, it becomes
-> an immutable for the purposes of local access.
-> 
-> Which, essentially we can already do. Prep the file, map it
-> read/write, mark it immutable, then pin it via the longterm gup
-> interface which can do the necessary checks.
+>  .../pci/controller/dwc/pcie-designware-host.c    | 16 ++++++++++++++--
+>  drivers/pci/controller/dwc/pcie-designware.h     |  1 +
+>  2 files changed, 15 insertions(+), 2 deletions(-)
 
-Hum, and what will you do if the immutable file that is target for RDMA
-will be a source of reflink? That seems to be currently allowed for
-immutable files but RDMA store would be effectively corrupting the data of
-the target inode. But we could treat it similarly as swapfiles - those also
-have to deal with writes to blocks beyond filesystem control. In fact the
-similarity seems to be quite large there. What do you think?
+Applied to pci/dwc for v5.1, thanks.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Lorenzo
+
+PS: Remember adding a version number to the patches next time please,
+thanks.
+
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 45ff5e4f8af6..bad54204fb52 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -612,14 +612,20 @@ static int dw_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
+>  			   int size, u32 *val)
+>  {
+>  	struct pcie_port *pp = bus->sysdata;
+> +	struct dw_pcie *pci;
+>  
+>  	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn))) {
+>  		*val = 0xffffffff;
+>  		return PCIBIOS_DEVICE_NOT_FOUND;
+>  	}
+>  
+> -	if (bus->number == pp->root_bus_nr)
+> +	if (bus->number == pp->root_bus_nr) {
+> +		pci = to_dw_pcie_from_pp(pp);
+> +		if (pci->dbi_length && where + size > pci->dbi_length)
+> +			return PCIBIOS_BAD_REGISTER_NUMBER;
+> +
+>  		return dw_pcie_rd_own_conf(pp, where, size, val);
+> +	}
+>  
+>  	return dw_pcie_rd_other_conf(pp, bus, devfn, where, size, val);
+>  }
+> @@ -628,12 +634,18 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
+>  			   int where, int size, u32 val)
+>  {
+>  	struct pcie_port *pp = bus->sysdata;
+> +	struct dw_pcie *pci;
+>  
+>  	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn)))
+>  		return PCIBIOS_DEVICE_NOT_FOUND;
+>  
+> -	if (bus->number == pp->root_bus_nr)
+> +	if (bus->number == pp->root_bus_nr) {
+> +		pci = to_dw_pcie_from_pp(pp);
+> +		if (pci->dbi_length && where + size > pci->dbi_length)
+> +			return PCIBIOS_BAD_REGISTER_NUMBER;
+> +
+>  		return dw_pcie_wr_own_conf(pp, where, size, val);
+> +	}
+>  
+>  	return dw_pcie_wr_other_conf(pp, bus, devfn, where, size, val);
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 279000255ad1..d1d95119a422 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -226,6 +226,7 @@ struct dw_pcie_ops {
+>  struct dw_pcie {
+>  	struct device		*dev;
+>  	void __iomem		*dbi_base;
+> +	int			dbi_length;
+>  	void __iomem		*dbi_base2;
+>  	/* Used when iatu_unroll_enabled is true */
+>  	void __iomem		*atu_base;
+> -- 
+> 2.20.1
+> 
