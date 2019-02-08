@@ -2,165 +2,108 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD80CC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7122EC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF1421924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549663592;
-	bh=8tDVX17sRWin87vNxwlD55rXBkN0csn6rNuDjvlpSVk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=TraVJOc8BUNLk2ToPCtYHChPNvYfzMPbrfmnNwzUkJVq/1a4j1pCJm38xSYLRKzxC
-	 G9hXAdtBRNYTWx+NmFv9jW6+exYjErtzY9xZ4X+Xjviysvym6SMu8lncoH+Q09xqQS
-	 PF3l15MprL82KQUGWE0F8pLnZOdXJ0QD8SpasfV4=
+	by mail.kernel.org (Postfix) with ESMTP id 4811821908
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfBHWGb (ORCPT
+        id S1727377AbfBHWGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:06:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726977AbfBHWGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:06:30 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01D6821908;
-        Fri,  8 Feb 2019 22:06:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549663590;
-        bh=8tDVX17sRWin87vNxwlD55rXBkN0csn6rNuDjvlpSVk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qsXrSu/OEbVX5GEjmN9dSod+irSrwiHMWkZ6FsQwS3oAHcSDebCB/FvPPzNTawwPh
-         JVgYxZ7VYYhkOQs15/fHAYnsGfcGQRDdmjoywLj+VshvZqSyH/kXRNh5O59L9N7kd7
-         /OiM+cqgGgLY6zSgMsbQ+PHzMc7V+soMRl6HqkIU=
-Subject: [PATCH v1 7/7] iommu/vt-d: Simplify control flow
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Date:   Fri, 08 Feb 2019 16:06:28 -0600
-Message-ID: <154966358874.132359.3411695261972962024.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <154966319813.132359.14641436497228395449.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        Fri, 8 Feb 2019 17:06:41 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39258 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726977AbfBHWGk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 17:06:40 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18Lx213012229
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 17:06:39 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhdyujfdh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 17:06:38 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 22:06:38 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 22:06:34 -0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18M6XAg22544416
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 22:06:34 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6B3BAC08F;
+        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C609EAC089;
+        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
+Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+ <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+ <20190118150011.GF4080@linux.intel.com>
+ <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
+ <20190208220025.GB13567@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 17:06:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190208220025.GB13567@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020822-0072-0000-0000-000003F75C0E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010561; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158259; UDB=6.00604340; IPR=6.00938792;
+ MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 22:06:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020822-0073-0000-0000-00004B1CBA75
+Message-Id: <d34dd6ec-248e-b7f8-edb0-367f1f4f9356@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On 2/8/19 5:00 PM, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 04:21:02PM -0500, Stefan Berger wrote:
+> I still think that in 5/5 branching could be better but is not a biggie
+> for me (does not make the implementation as whole any kind of mess) and
+> since it is now peer tested I rather would not modify it right now.
+>
+> Applied to master and next!
 
-Simplify control flow by returning immediately when we know the result.
-No functional change intended.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/iommu/intel-iommu.c |   31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+5/5 may cause a complaint about the scanf'ing of a single value in an 
+existing line. Let's see...
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index b0860a8c48d4..6eaa4ada6e1d 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -509,12 +509,12 @@ static void set_iommu_domain(struct intel_iommu *iommu, u16 did,
- void *alloc_pgtable_page(int node)
- {
- 	struct page *page;
--	void *vaddr = NULL;
- 
- 	page = alloc_pages_node(node, GFP_ATOMIC | __GFP_ZERO, 0);
--	if (page)
--		vaddr = page_address(page);
--	return vaddr;
-+	if (!page)
-+		return NULL;
-+
-+	return page_address(page);
- }
- 
- void free_pgtable_page(void *vaddr)
-@@ -2606,20 +2606,19 @@ static struct dmar_domain *find_or_alloc_domain(struct device *dev, int gaw)
- 
- 		/* DMA alias already has a domain, use it */
- 		if (info)
--			goto out;
-+			return domain;
- 	}
- 
- 	/* Allocate and initialize new domain for the device */
- 	domain = alloc_domain(0);
- 	if (!domain)
- 		return NULL;
-+
- 	if (domain_init(domain, iommu, gaw)) {
- 		domain_exit(domain);
- 		return NULL;
- 	}
- 
--out:
--
- 	return domain;
- }
- 
-@@ -2665,11 +2664,11 @@ static struct dmar_domain *get_domain_for_dev(struct device *dev, int gaw)
- 
- 	domain = find_domain(dev);
- 	if (domain)
--		goto out;
-+		return domain;
- 
- 	domain = find_or_alloc_domain(dev, gaw);
- 	if (!domain)
--		goto out;
-+		return NULL;
- 
- 	tmp = set_domain_for_dev(dev, domain);
- 	if (!tmp || domain != tmp) {
-@@ -2677,8 +2676,6 @@ static struct dmar_domain *get_domain_for_dev(struct device *dev, int gaw)
- 		domain = tmp;
- 	}
- 
--out:
--
- 	return domain;
- }
- 
-@@ -3558,11 +3555,13 @@ struct dmar_domain *get_valid_domain_for_dev(struct device *dev)
- 
- 	domain = find_domain(dev);
- 	if (domain)
--		goto out;
-+		return domain;
- 
- 	domain = find_or_alloc_domain(dev, DEFAULT_DOMAIN_ADDRESS_WIDTH);
--	if (!domain)
--		goto out;
-+	if (!domain) {
-+		dev_err(dev, "Allocating domain failed\n");
-+		return NULL;
-+	}
- 
- 	/* We have a new domain - setup possible RMRRs for the device */
- 	rcu_read_lock();
-@@ -3587,12 +3586,8 @@ struct dmar_domain *get_valid_domain_for_dev(struct device *dev)
- 		domain = tmp;
- 	}
- 
--out:
--
- 	if (!domain)
- 		dev_err(dev, "Allocating domain failed\n");
--
--
- 	return domain;
- }
- 
+    Thanks.
+
+       Stefan
+
 
