@@ -2,117 +2,85 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A48C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24778C282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F9121841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E751521841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfBHUiS convert rfc822-to-8bit (ORCPT
+        id S1726974AbfBHUil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:38:18 -0500
-Received: from elephants.elehost.com ([216.66.27.132]:49204 "EHLO
-        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbfBHUiS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:38:18 -0500
-X-Virus-Scanned: amavisd-new at elehost.com
-Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
-        (authenticated bits=0)
-        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18KcB00091756
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 8 Feb 2019 15:38:12 -0500 (EST)
-        (envelope-from rsbecker@nexbridge.com)
-From:   "Randall S. Becker" <rsbecker@nexbridge.com>
-To:     "'Jeff King'" <peff@peff.net>
-Cc:     "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
-        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
-        <git-packagers@googlegroups.com>
-References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net> <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com> <20190208193157.GA30952@sigill.intra.peff.net>
-In-Reply-To: <20190208193157.GA30952@sigill.intra.peff.net>
-Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-Date:   Fri, 8 Feb 2019 15:38:05 -0500
-Message-ID: <003a01d4bfee$349245b0$9db6d110$@nexbridge.com>
+        Fri, 8 Feb 2019 15:38:41 -0500
+Received: from mga06.intel.com ([134.134.136.31]:59858 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726351AbfBHUil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:38:41 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 12:38:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="116329394"
+Received: from szilberm-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.172])
+  by orsmga008.jf.intel.com with ESMTP; 08 Feb 2019 12:38:35 -0800
+Date:   Fri, 8 Feb 2019 22:38:34 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: =?iso-8859-1?Q?Uni?=
+ =?iso-8859-1?Q?fy_the_send_callback_behaviour=E4?=
+Message-ID: <20190208203834.GA24693@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+ <20190208191710.GA30645@linux.intel.com>
+ <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
+ <20190208202353.GB1836@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw84wKJiaU9Aj0+V9MB8y1xFgJaeDVqppjcFxA=
-Content-Language: en-ca
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208202353.GB1836@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Jeff King <peff@peff.net>
-> Sent: February 8, 2019 14:32
-> To: Randall S. Becker <rsbecker@nexbridge.com>
-> Cc: 'Junio C Hamano' <gitster@pobox.com>; git@vger.kernel.org; 'Linux
-> Kernel' <linux-kernel@vger.kernel.org>; git-packagers@googlegroups.com
-> Subject: Re: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+On Fri, Feb 08, 2019 at 10:23:53PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 02:27:31PM -0500, Stefan Berger wrote:
+> > On 2/8/19 2:17 PM, Jarkko Sakkinen wrote:
+> > > 
+> > >   */
+> > > if (rc > 0) {
+> > > 	dev_warn(&chip->dev,
+> > > 		 "%s: send(): invalid value %d\n", __func__, rc);
+> > > 	rc = 0;
+> > > }
+> > > 
+> > > Should be fairly safe play now.
+> > 
+> > Unfortuantely it isn't. You seemed to have lost the
+> > EXPORT_SYMBOL_GPL(tpm_chip_start/stop) and the tpm_chip_start/stop around
+> > the tpm2_shutdown()...
 > 
-> On Fri, Feb 08, 2019 at 02:26:17PM -0500, Randall S. Becker wrote:
-> 
-> > > > For this, we could use truncate -s count file instead of dd to get
-> > > > a fixed size file of nulls. This would remove the need for
-> > > > /dev/zero in
-> > > > t5318 (the patch below probably will wrap badly in my mailer so I
-> > > > can submit a real patch separately.
-> > >
-> > > I don't think "truncate" is portable, though.
-> >
-> > It is available AFAIK on Linux, POSIX, and Windows under Cygwin.
-> > That's more than /dev/zero has anyway. I have the patch ready if you
-> > want it.
-> 
-> Is it POSIX? Certainly truncate() is, but I didn't think the command-line tool
-> was. If it really is available everywhere, then yeah, I'd be fine with it.
-> 
-> > > > > Other cases don't seem to actually care that they're getting
-> > > > > NULs, and are just redirecting stdin from /dev/zero to get an
-> > > > > infinite amount of input. They could probably use "yes" for that.
-> > > >
-> > > > What about reading from /dev/null?
-> > >
-> > > That would yield zero bytes, not an infinite number of them.
-> >
-> > So something like: yes | tr 'y' '\0' | stuff?
-> 
-> Exactly (if we even care about them being NULs; otherwise, we can omit the
-> "tr" invocation).
+> OK, now those fixes are back. In tpm_pm_shutdown() case you need also
+> take the lock.
 
-I'm a bit perplexed about this... Obviously added some debugging info, but why we're getting No REQUEST_METHOD is perplexing. Is this a lack of an apache2 instance?
+I back tracked now what went wrong. When I first did these fixes I did
+git reset --hard next on master after doing them and not the other way
+around I supposed to. Apologies for the inconvenience...
 
-expecting success:
-        NOT_FIT_IN_SSIZE=$(ssize_b100dots) &&
-        env \
-                CONTENT_TYPE=application/x-git-upload-pack-request \
-                QUERY_STRING=/repo.git/git-upload-pack \
-                PATH_TRANSLATED="$PWD"/.git/git-upload-pack \
-                GIT_HTTP_EXPORT_ALL=TRUE \
-                REQUEST_METHOD=POST \
-                CONTENT_LENGTH="$NOT_FIT_IN_SSIZE" \
-                yes | tr "y" "\\0" | git http-backend 2>err &&
-        echo "Err is" &&
-        cat err &&
-        grep "fatal:.*CONTENT_LENGTH" err
-
-Status: 500 Internal Server Error
-Expires: Fri, 01 Jan 1980 00:00:00 GMT
-Pragma: no-cache
-Cache-Control: no-cache, max-age=0, must-revalidate
-
-Err is
-fatal: No REQUEST_METHOD from server
-not ok 15 - CONTENT_LENGTH overflow ssite_t
-
-Cheers,
-Randall
-
+/Jarkko
