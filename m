@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53368C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674A5C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C8E72146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EBCE20863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfBHRDb (ORCPT
+        id S1727879AbfBHRD2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:03:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54190 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727850AbfBHRD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:03:26 -0500
+        Fri, 8 Feb 2019 12:03:28 -0500
+Received: from foss.arm.com ([217.140.101.70]:54184 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727688AbfBHRDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:03:25 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 034961596;
-        Fri,  8 Feb 2019 09:03:26 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E800715AB;
+        Fri,  8 Feb 2019 09:03:24 -0800 (PST)
 Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3181B3F719;
-        Fri,  8 Feb 2019 09:03:25 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 081373F719;
+        Fri,  8 Feb 2019 09:03:23 -0800 (PST)
 From:   Julien Grall <julien.grall@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Julien Grall <julien.grall@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/3] arm: Remove documentation about TIF_USEDFPU
-Date:   Fri,  8 Feb 2019 17:03:14 +0000
-Message-Id: <20190208170315.10762-4-julien.grall@arm.com>
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>
+Subject: [PATCH 1/3] nds32: Removed unused thread flag TIF_USEDFPU
+Date:   Fri,  8 Feb 2019 17:03:13 +0000
+Message-Id: <20190208170315.10762-3-julien.grall@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190208170315.10762-1-julien.grall@arm.com>
 References: <20190208170315.10762-1-julien.grall@arm.com>
@@ -41,28 +41,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TIF_USEDFPU is not defined as thread flags for Arm. So drop it from
-the documentation.
+The bit TIF_USEDFPU is not used in the nds32 code.
 
 Signed-off-by: Julien Grall <julien.grall@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
----
- arch/arm/include/asm/thread_info.h | 1 -
- 1 file changed, 1 deletion(-)
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Vincent Chen <deanbo422@gmail.com>
 
-diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
-index 286eb61c632b..779927f0c3c1 100644
---- a/arch/arm/include/asm/thread_info.h
-+++ b/arch/arm/include/asm/thread_info.h
-@@ -132,7 +132,6 @@ extern int vfp_restore_user_hwstate(struct user_vfp *,
- 
- /*
-  * thread information flags:
+---
+    Untested as I don't have a cross-compiler for it.
+---
+ arch/nds32/include/asm/thread_info.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/nds32/include/asm/thread_info.h b/arch/nds32/include/asm/thread_info.h
+index bff741ff337b..8c610abe673a 100644
+--- a/arch/nds32/include/asm/thread_info.h
++++ b/arch/nds32/include/asm/thread_info.h
+@@ -42,7 +42,6 @@ struct thread_info {
+  *  TIF_SIGPENDING	- signal pending
+  *  TIF_NEED_RESCHED	- rescheduling necessary
+  *  TIF_NOTIFY_RESUME	- callback before returning to user
 - *  TIF_USEDFPU		- FPU was used by this task this quantum (SMP)
   *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
   */
- #define TIF_SIGPENDING		0	/* signal pending */
+ #define TIF_SIGPENDING		1
+@@ -50,7 +49,6 @@ struct thread_info {
+ #define TIF_SINGLESTEP		3
+ #define TIF_NOTIFY_RESUME	4	/* callback before returning to user */
+ #define TIF_SYSCALL_TRACE	8
+-#define TIF_USEDFPU             16
+ #define TIF_POLLING_NRFLAG	17
+ #define TIF_MEMDIE		18
+ #define TIF_FREEZE		19
 -- 
 2.11.0
 
