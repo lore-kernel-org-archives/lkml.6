@@ -2,134 +2,187 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EBBC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 391D5C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9365D20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:30:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="FEfpVoMj"
+	by mail.kernel.org (Postfix) with ESMTP id 0748F20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfBHUag (ORCPT
+        id S1727306AbfBHUbY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:30:36 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38923 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfBHUaZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:30:25 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b14so3899263edt.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 12:30:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4UFznljXd4IyrVSxwbopYcGR+HEQgH4TTL29XSymlWw=;
-        b=FEfpVoMjhsBIu9wGzcoHFMKCMQ2hdNr32nIKe1eEz7PmVsCpXelZQe05zRXiqbE60Q
-         7ojUBd3WsN7HmVl9x3q823CtYheh9y0op3XOz8RWW82esxnGLCtRKBG1TwhXAyYaR4i7
-         Q2+eReUPrEcfWripeN1VM3dvwgRvX2CFTvzts=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4UFznljXd4IyrVSxwbopYcGR+HEQgH4TTL29XSymlWw=;
-        b=bsVV7P9xyC/VgV4+YcHNfUCxwhp6hVRG46cv8TDCMhkYbx/Cc6DaV0SifuuooWSz6e
-         Kh6A55rrR8oo1N4+z4CpWrfKldcAkj9xTvJb4w7vs8tJYAqLGSua3ULPM38FEM71i3fT
-         89s44pRycw1SPrzJe0lg1QA0HtYuSwm6IDMdQWC0nJ2fEQlV3UL9B7iKLHG6CB+DaRVn
-         fJSW4VUe8hH8wg+fXMbz4WtHJKbqiu5bcZVZMgepjMcWTRbhSfjKWfOMWboh/FNpBM4u
-         jAi0UW4h3wwEAdARFWL5sA/jPod4d3wjydeB4r2uXdzZ29R8b9H8+q9E9FFPJ5Q98AAA
-         PCRg==
-X-Gm-Message-State: AHQUAuYm2aicfgPOB5EYfF8DJvpJpSHA33qzcyzMHnmKL1gowN8Wyu7V
-        x2DlBEhB/1a37nhgtIluLa3LhQ==
-X-Google-Smtp-Source: AHgI3IbnG/Av76F9Z7DV+2hqkZ/aYUyXJLI8VO9jcR5YhMkUiV69dr+vCbcV2mt9lso7nGWsigBgCw==
-X-Received: by 2002:a17:906:5053:: with SMTP id e19mr17478286ejk.9.1549657823568;
-        Fri, 08 Feb 2019 12:30:23 -0800 (PST)
-Received: from prevas-ravi.waoo.dk (ip-5-186-119-174.cgn.fibianet.dk. [5.186.119.174])
-        by smtp.gmail.com with ESMTPSA id p7sm680095ejb.15.2019.02.08.12.30.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 12:30:23 -0800 (PST)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 3/3] linux/fs.h: move member alignment check next to definition of struct filename
-Date:   Fri,  8 Feb 2019 21:30:15 +0100
-Message-Id: <20190208203015.29702-3-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190208203015.29702-1-linux@rasmusvillemoes.dk>
-References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
- <20190208203015.29702-1-linux@rasmusvillemoes.dk>
+        Fri, 8 Feb 2019 15:31:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52024 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726601AbfBHUbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:31:23 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A118637EC;
+        Fri,  8 Feb 2019 20:31:21 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-35.bos.redhat.com [10.18.17.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E87FC60474;
+        Fri,  8 Feb 2019 20:31:18 +0000 (UTC)
+Subject: Re: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new
+ rwsem features
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+References: <1549566446-27967-1-git-send-email-longman@redhat.com>
+ <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <d7476dfb-1653-747b-b865-5597ba5fc1c1@redhat.com>
+Date:   Fri, 8 Feb 2019 15:31:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 08 Feb 2019 20:31:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of doing this compile-time check in some slightly arbitrary
-user of struct filename, put it next to the definition.
+On 02/08/2019 02:50 PM, Linus Torvalds wrote:
+> On Thu, Feb 7, 2019 at 11:08 AM Waiman Long <longman@redhat.com> wrote:
+>> This patchset revamps the current rwsem-xadd implementation to make
+>> it saner and easier to work with. This patchset removes all the
+>> architecture specific assembly code and uses generic C code for all
+>> architectures. This eases maintenance and enables us to enhance the
+>> code more easily.
+>>
+>> This patchset also implements the following 3 new features:
+>>
+>>  1) Waiter lock handoff
+>>  2) Reader optimistic spinning
+>>  3) Store write-lock owner in the atomic count (x86-64 only)
+> The patches are kind of hard to read, with most of them just doing
+> prep-work that doesn't necessarily matter to the big picture.
+>
+> What I'd really like to see is
+>
+>  (a) an overview of the new locking logic
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-v2: added, mostly as an example of use of static_assert(), to check
-that the compiler actually groks it. Feel free to NAK it as useless
-churn.
+The new locking logic is similar to qrwlock (see patch 11). Cmpxchg is
+used to acquire the write lock, while xadd is still used for read lock.
+Some of the bits in the count are also reserved for special purpose like
+has waiter or lock handoff. Patch 15 tries to compress the write-lock
+owner task pointer and put it into the count field for x86-64 at the
+expense of less bits available for reader count. I have sent out an
+additional patch this morning to make sure that the reader count won't
+overflow.
 
- fs/namei.c         | 2 --
- include/linux/fs.h | 3 +++
- 2 files changed, 3 insertions(+), 2 deletions(-)
+In term of performance, there isn't much change with respect to
+read-lock performance. For write-lock, I saw a slight drop in some
+cases, but nothing significant. The merging of owner task pointer into
+the count field does impose a slightly bigger drop than I would have
+liked which I am going to look into a bit more.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 914178cdbe94..d604f6b3bcc3 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -39,7 +39,6 @@
- #include <linux/bitops.h>
- #include <linux/init_task.h>
- #include <linux/uaccess.h>
--#include <linux/build_bug.h>
- 
- #include "internal.h"
- #include "mount.h"
-@@ -131,7 +130,6 @@ getname_flags(const char __user *filename, int flags, int *empty)
- 	struct filename *result;
- 	char *kname;
- 	int len;
--	BUILD_BUG_ON(offsetof(struct filename, iname) % sizeof(long) != 0);
- 
- 	result = audit_reusename(filename);
- 	if (result)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 29d8e2cfed0e..8dce6932e620 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -37,6 +37,8 @@
- #include <linux/uuid.h>
- #include <linux/errseq.h>
- #include <linux/ioprio.h>
-+#include <linux/build_bug.h>
-+#include <linux/stddef.h>
- 
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -2487,6 +2489,7 @@ struct filename {
- 	struct audit_names	*aname;
- 	const char		iname[];
- };
-+static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
- 
- extern long vfs_truncate(const struct path *, loff_t);
- extern int do_truncate(struct dentry *, loff_t start, unsigned int time_attrs,
--- 
-2.20.1
+>
+>  (b) what's the new fastpath case
+
+The only change in the fastpath is the use of cmpxchg for writer lock.
+
+>
+>  (c) some performance numbers
+
+There are performance data at patches 11, 12, 15, 19, 20, 21. There was
+performance data for patch 4 as well for eliminating the arch specific
+file. Apparently, I might have deleted it accidentally. Anyway, no
+noticeable performance difference was observed when switching to use
+generic C code for x86, ppc and ARM64.
+
+The major gain in performance is due to reader optimistic spinning
+patches. The microbenchmark that I used shown an order of magnitude of
+performance improvement for mixed reader-writer workloads. Of course, we
+will see less performance gain with real world benchmarks.
+
+I am planning to run more performance test and post the data sometimes
+next week. Davidlohr is also going to run some of his rwsem performance
+test on this patchset.
+
+>
+> to explain the changes from a "this is the point of the whole
+> exercise" standpoint.
+>
+> And yes, I realize that the lock handoff and optimistic spinning is a
+> big deal, since I've seen the same regression numbers that presumably
+> caused this effort to be resurrected. So it's not that I don't find
+> this intriguing and worthwhile, it's literally that I'd like a summary
+> not so much of the individual patches, but of the new model.
+>
+> Please?
+
+Maybe I should break this patchset into a few smaller ones to make it
+easier to review. Any suggestion is welcome.
+
+Cheers,
+Longman
 
