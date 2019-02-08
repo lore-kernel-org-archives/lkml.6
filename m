@@ -2,238 +2,139 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DFBC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7919BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8182081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A6592077B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:25:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RgsjMhFi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfBHSWh (ORCPT
+        id S1727768AbfBHSZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:22:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47558 "EHLO mx1.redhat.com"
+        Fri, 8 Feb 2019 13:25:21 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:47758 "EHLO nat-hk.nvidia.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbfBHSWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:22:36 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C794C05B03C;
-        Fri,  8 Feb 2019 18:22:36 +0000 (UTC)
-Received: from [10.40.206.40] (unknown [10.40.206.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D5DD3383F;
-        Fri,  8 Feb 2019 18:22:23 +0000 (UTC)
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>, david@redhat.com,
-        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via
- static key
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-3-nitesh@redhat.com>
- <CAKgT0UfqtRigPwUaN=H_MrLgeXErkeOcpuPy6ys6A3UCLnMBPg@mail.gmail.com>
-Organization: Red Hat Inc,
-Message-ID: <eac2187a-e6e3-878a-7acc-f9963a61e6dc@redhat.com>
-Date:   Fri, 8 Feb 2019 13:22:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727084AbfBHSZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 13:25:21 -0500
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5dc98c0000>; Sat, 09 Feb 2019 02:25:16 +0800
+Received: from HKMAIL101.nvidia.com ([10.18.16.10])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 08 Feb 2019 10:25:16 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Fri, 08 Feb 2019 10:25:16 -0800
+Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL101.nvidia.com
+ (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
+ 2019 18:25:14 +0000
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (104.47.46.53) by
+ HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Fri, 8 Feb 2019 18:25:14 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB3445.namprd12.prod.outlook.com (20.178.196.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Fri, 8 Feb 2019 18:25:11 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
+ 18:25:11 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+CC:     "wsa@the-dreams.de" <wsa@the-dreams.de>,
+        "peda@axentia.se" <peda@axentia.se>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
+Thread-Topic: [PATCH V17 3/6] i2c: tegra: fix maximum transfer size
+Thread-Index: AQHUv9bE0/Y/Hcdfq0yQz/32u+ruR6XWMncAgAAB09CAAAIogIAAAGjw
+Date:   Fri, 8 Feb 2019 18:25:10 +0000
+Message-ID: <BYAPR12MB33981B3AD88271597CC4F7F5C2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549648195-3989-1-git-send-email-skomatineni@nvidia.com>
+ <1549648195-3989-3-git-send-email-skomatineni@nvidia.com>
+ <0c30dfe0-1174-0056-5ef6-432b75de2353@gmail.com>
+ <BYAPR12MB339810D394AC0A50934DD5EAC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <3e4db3e9-8198-f1bf-f909-492bf1ff8c56@gmail.com>
+In-Reply-To: <3e4db3e9-8198-f1bf-f909-492bf1ff8c56@gmail.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3445;6:rYMoYzQBWCncmP4mLE5kTtB/hoo47MaZwHMDEw2n6BW+MHSG6QLxLXojP3EuPfCkETFH97FsNMsR78KEHs+QYUKLg1M6Q7M5bsZFDFjFTUJYzUiW24EK7RmX6stKIzh3QgzNCDhD12cc6PGTMebWuEYmnHKlNUq7mHZYizesaGDJKzlPEN98xLZX86KCRmW43PfHRwPlQZMUZFWNnBDpVf33lzZiJOQSTLBhrvzDjm1AEMjwlIVaxrfI78roLZUm1ydDmeveYLp/dJ/zrNknsyayTiqoQa6WLllj+ZYDtujpVpLXyC9KBY6oyt944FUQAf0wYGSQJtwU7+m59fFb6+UJOJtPSKWZPlFnd+KOXGdvoOJAsAHiOhkXtXBgMOJih4Ud8LhotopptXXaeHdd40m8Xsv5dRS+XI5mJmpXp55i/6mwJSiemOnh6rLC08TKe9Z4tMTBYbCJbbFu0oBS1Q==;5:bQALM1YxAijDZFVn2tkH1CQpzjgdzX1pLO+Iaq3muQKPdsXRDV7vcK1sEC8Gid4kB1h4+UFSKUzvPWN/1IiAU1C764O8y7FpsGr/7sgE5B1MYLjCMrEhBzbwMGuF6Iyyhjs+wNQZyQz3yyX5ZE/MKNfShTBZ4DG1uHypv7i3eQDwHhs8bxTDxN5/IkS65wJo0EsKt9s6bKUDDNBP9EXSfw==;7:O6OaKKQqBoEBxjlJJdQj2zMU1io5enDYjvtMxTRWVCKucsxLpWAtDiR8WCCJW+u9Gb7R/VZlCvzaGAIFlbjvDjn0VxDsFiM5pNE8M3kjE7gq84vL4cKHrfsBeWEILbxwgNTbheP3hQ6om6hebMlsgw==
+x-ms-office365-filtering-correlation-id: 702f631b-6062-4335-f2d1-08d68df2c2e5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3445;
+x-ms-traffictypediagnostic: BYAPR12MB3445:
+x-microsoft-antispam-prvs: <BYAPR12MB3445C4301B131652D8025818C2690@BYAPR12MB3445.namprd12.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(39860400002)(396003)(376002)(199004)(189003)(229853002)(4326008)(186003)(99286004)(6246003)(54906003)(8936002)(2501003)(86362001)(6436002)(74316002)(4744005)(68736007)(6636002)(305945005)(81156014)(93886005)(14454004)(7696005)(8676002)(25786009)(55016002)(478600001)(53936002)(7736002)(9686003)(102836004)(81166006)(316002)(33656002)(26005)(71190400001)(3846002)(71200400001)(6116002)(476003)(2906002)(76176011)(11346002)(6506007)(66066001)(486006)(110136005)(14444005)(106356001)(97736004)(105586002)(446003)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3445;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: EkeSr2qwoe2ZnMq9FiwIikPS3lxxyxanaZwcl1akXTFx22KHBYEbs0PwdsaDlKaWILrOglfB6mnBliIlxCJZCU1+de47GCkwwWkg5SyRdAsIfnpjJlP7SNtoMoz02aA50tPstQ1U3cPNkEHXhF382x8c+p9J5gddieDtk1NtSj7YKdpTL9KzSEHynHAPMWuiSXEIDienW0999dwiMd2OkDhYA/+YJvM/7uXsZo2BhRPVx58kGufldMi2mE4WkjIsI86MuzLpUxijgDGm/7SIYLquU95fdvRZIIiX2ZxTI17yuc0L2q44AJGmueHXHGn6DE4xdikW8RWYvaDjRBjzF0O7jeCLrMGyH8HlM0065Dh1YDdAF8dSqka++gBBCjnSax04c6SS5/TOJNXsX4ZvHyNEOsjlrz/kZjq96Uzb0fs=
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UfqtRigPwUaN=H_MrLgeXErkeOcpuPy6ys6A3UCLnMBPg@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 08 Feb 2019 18:22:36 +0000 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 702f631b-6062-4335-f2d1-08d68df2c2e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 18:25:10.9274
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3445
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549650316; bh=gMAfhFn1ywfXwYzDfM2BWK7ZlOBbj8FmSVA6MDAIgRo=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=RgsjMhFioPUTh5T8cKmemrteLtYftiJXuaR0PQHIdg1iWpuxbzg71vfU1e/jeHeaN
+         yJ6jw/0FpKyuYgDo2VQqJFW6ISGKT6+2p+kcs4/oRYSlFtn0l4tG9a04gx5pP/lsXL
+         1ak/LNFwAdfDUHtwhEIKMjBZwh9C7umzHqfgQhAg75m5RuysOik5wV1xOqMm0vJI63
+         rxbgZgXQBEXLg0iiOFL2mV2v4l3+SAsucAM03BUeylDaPkTM7pYkGAMYoMer1hIKjB
+         qnrVhKnEsaDITawzLPp3ChL2eHim6khZgmzqse6xlas9hewgHAle8XWXX7jJDBmq0E
+         uscVLUHD0PPgw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8
-Content-Type: multipart/mixed; boundary="2Arqim0FweqXqCGWylmvZOpjMC27hDPHj";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
- pagupta@redhat.com, wei.w.wang@intel.com,
- Yang Zhang <yang.zhang.wz@gmail.com>, Rik van Riel <riel@surriel.com>,
- david@redhat.com, "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
- Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, dhildenb@redhat.com,
- Andrea Arcangeli <aarcange@redhat.com>
-Message-ID: <eac2187a-e6e3-878a-7acc-f9963a61e6dc@redhat.com>
-Subject: Re: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via
- static key
-
---2Arqim0FweqXqCGWylmvZOpjMC27hDPHj
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On 2/8/19 1:07 PM, Alexander Duyck wrote:
-> On Mon, Feb 4, 2019 at 2:11 PM Nitesh Narayan Lal <nitesh@redhat.com> w=
-rote:
->> This patch enables the guest free page hinting support
->> to enable or disable based on the STATIC key which
->> could be set via sysctl.
->>
->> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
->> ---
->>  include/linux/gfp.h          |  2 ++
->>  include/linux/page_hinting.h |  5 +++++
->>  kernel/sysctl.c              |  9 +++++++++
->>  virt/kvm/page_hinting.c      | 23 +++++++++++++++++++++++
->>  4 files changed, 39 insertions(+)
->>
->> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
->> index e596527284ba..8389219a076a 100644
->> --- a/include/linux/gfp.h
->> +++ b/include/linux/gfp.h
->> @@ -461,6 +461,8 @@ static inline struct zonelist *node_zonelist(int n=
-id, gfp_t flags)
->>  #define HAVE_ARCH_FREE_PAGE
->>  static inline void arch_free_page(struct page *page, int order)
->>  {
->> +       if (!static_branch_unlikely(&guest_page_hinting_key))
->> +               return;
->>         guest_free_page(page, order);
->>  }
->>  #endif
->> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting=
-=2Eh
->> index b54f7428f348..9bdcf63e1306 100644
->> --- a/include/linux/page_hinting.h
->> +++ b/include/linux/page_hinting.h
->> @@ -14,4 +14,9 @@ struct hypervisor_pages {
->>         unsigned int order;
->>  };
->>
->> +extern int guest_page_hinting_flag;
->> +extern struct static_key_false guest_page_hinting_key;
->> +
->> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
->> +                             void __user *buffer, size_t *lenp, loff_=
-t *ppos);
->>  void guest_free_page(struct page *page, int order);
->> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->> index ba4d9e85feb8..5d53629c9bfb 100644
->> --- a/kernel/sysctl.c
->> +++ b/kernel/sysctl.c
->> @@ -1690,6 +1690,15 @@ static struct ctl_table vm_table[] =3D {
->>                 .extra1         =3D (void *)&mmap_rnd_compat_bits_min,=
-
->>                 .extra2         =3D (void *)&mmap_rnd_compat_bits_max,=
-
->>         },
->> +#endif
->> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
->> +       {
->> +               .procname       =3D "guest-page-hinting",
->> +               .data           =3D &guest_page_hinting_flag,
->> +               .maxlen         =3D sizeof(guest_page_hinting_flag),
->> +               .mode           =3D 0644,
->> +               .proc_handler   =3D guest_page_hinting_sysctl,
->> +       },
->>  #endif
->>         { }
->>  };
-> Since you are adding a new sysctl shouldn't you also be updating
-> Documentation/sysctl/vm.txt?
-Indeed I will be doing that.
-However, I would first like to close other major issues with the design.
->
->> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
->> index 818bd6b84e0c..4a34ea8db0c8 100644
->> --- a/virt/kvm/page_hinting.c
->> +++ b/virt/kvm/page_hinting.c
->> @@ -1,6 +1,7 @@
->>  #include <linux/gfp.h>
->>  #include <linux/mm.h>
->>  #include <linux/kernel.h>
->> +#include <linux/kvm_host.h>
->>
->>  /*
->>   * struct kvm_free_pages - Tracks the pages which are freed by the gu=
-est.
->> @@ -31,6 +32,28 @@ struct page_hinting {
->>
->>  DEFINE_PER_CPU(struct page_hinting, hinting_obj);
->>
->> +struct static_key_false guest_page_hinting_key  =3D STATIC_KEY_FALSE_=
-INIT;
->> +EXPORT_SYMBOL(guest_page_hinting_key);
->> +static DEFINE_MUTEX(hinting_mutex);
->> +int guest_page_hinting_flag;
->> +EXPORT_SYMBOL(guest_page_hinting_flag);
-> I'm not entirely sure this flag makes sense to me. What is to prevent
-> someone from turning this on when there is no means of actually using
-> the hints. I understand right now that guest_free_page doesn't
-> actually do anything, but when it does I would assume it has to
-> interact with a device. If that device is not present would it still
-> make sense for us to be generating hints?
-Fair point, I will address this issue.
->
->> +
->> +int guest_page_hinting_sysctl(struct ctl_table *table, int write,
->> +                             void __user *buffer, size_t *lenp,
->> +                             loff_t *ppos)
->> +{
->> +       int ret;
->> +
->> +       mutex_lock(&hinting_mutex);
->> +       ret =3D proc_dointvec(table, write, buffer, lenp, ppos);
->> +       if (guest_page_hinting_flag)
->> +               static_key_enable(&guest_page_hinting_key.key);
->> +       else
->> +               static_key_disable(&guest_page_hinting_key.key);
->> +       mutex_unlock(&hinting_mutex);
->> +       return ret;
->> +}
->> +
->>  void guest_free_page(struct page *page, int order)
->>  {
->>  }
->> --
->> 2.17.2
->>
---=20
-Regards
-Nitesh
-
-
---2Arqim0FweqXqCGWylmvZOpjMC27hDPHj--
-
---tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxdyNwACgkQo4ZA3AYy
-ozlFwQ//cObQErrqLHor8mjiBfRaY95rCaA3wQ0TdKFMk+eXIhHeRuCgNLynVJKY
-Pyk/BgCLWNsE7YN6BiTCdWr1151r7vPMeq7jWb3F+Cm9guPE0LTluoQcINrQpHd7
-O6PYI1iHa2oliZVu4PmtHKdcNsi+BRkjaEJwI8InEi+8OuVc//RiVfQ9+DtRQK03
-oZAaZnLb807GZkcTnPdLCp0kEr9Q/ZqpVUgR+eW3kYaFEk8keWA4cn1VF5ZNlYov
-75wIOKRN4LtXWkQLNfrl9xKJd2gH1zSXPqL5a+71imM1pmwgkFo+UVgsD14Y6hL5
-yQ37f24wrtpAQeOR1nc+Pr4iJ0jemWOBYcLBJS0T7SngNzR9MGMJlFzN3kxgm/7c
-lxfJMob9TFv7jqoJQpODilJbEa1vDKT2Gi7YoQtVFSpNnzwY4WPRZYWMU7EMn3ho
-sL3+KagwxEJ1hAxJI5+Wvqn6BSJ779r7eRDbrXmUgqhl4xIwh7kIOHQ9EvK7wTXw
-87RFq0vfwYfv/13skHqEcytLzWp145OwqNCU2ndaOV7yUHVnBtrFNw6wG70Af05T
-POji67tuo9Nf8qd7lZNm+xrF65SaBowUV97GgkFiYh4kyJTsiF1XyBv5sf6QWKpS
-kDUYlVho6d5+3Qwoa3HUfnA/6ejk3GLFKrq9aF0y6D56gRsAg4Y=
-=5zZH
------END PGP SIGNATURE-----
-
---tOyS8UQhUdYqvCCSfi3g2hDllfG3CJmJ8--
+PiA+Pj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgaTJjX2FkYXB0ZXJfcXVpcmtzIHRlZ3JhMTk0X2ky
+Y19xdWlya3MgPSB7DQo+ID4+PiAgCS5mbGFncyA9IEkyQ19BUV9OT19aRVJPX0xFTiwNCj4gPj4+
+ICsJLm1heF93cml0ZV9sZW4gPSA2NTUzNSAtIEkyQ19QQUNLRVRfSEVBREVSX1NJWkUsDQo+ID4+
+DQo+ID4+IElkZWFsbHkgaXQgc2hvdWxkIGJlIFNaXzY0SyAtIEkyQ19QQUNLRVRfSEVBREVSX1NJ
+WkUgdG8gbm90IG1pc3MgdGhlIG9uZSBieXRlLCBvdGhlcndpc2UgZ29vZCB0byBtZToNCj4gPj4N
+Cj4gPj4gUmV2aWV3ZWQtYnk6IERtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT4NCj4g
+PiAgDQo+ID4gV2l0aCBTWl82NEsgLSBJMkNfUEFDS0VUX0hFQURSX1NpemUsIFdoZW4gd2UgY29t
+cHV0ZSBkbWFfYnVmX3NpemUgPSBtYXhfd3JpdGVfbGVuICsgSTJDX1BBQ0tFVF9IRUFERVJfU0la
+RSwgZG1hX2J1Zl9zaXplIHdpbGwgYmUgU1pfNjRLIHdoaWNoIGlzIDB4MTAwMDAgYXBiZG1hIGRt
+YSBjb3VudCBsaW1pdCBzaG91bGQgYmUgPCA2NEsgbWVhbmluZyA2NTUzNSBtYXggaXMgYWxsb3dl
+ZA0KPiA+IA0KPg0KPiBCdXQgaXQncyBmb3IgdGhlIEdQQ0RNQSwgZG9lcyBpdCBoYXZlIHRoZSBz
+YW1lIDY0SyBsaW1pdCBhcyBBUEIgRE1BPw0KDQo2NEsgbGltaXQgaXMgZm9yIEFQQkRNQS4gVGhp
+cyBwYXRjaCBoYXMgQVBCRE1BIHN1cHBvcnQgb25seS4gTm8gR1BDRE1BIHN1cHBvcnQgc28gYnVm
+IHNpemUgbGltaXQgaXMgYmFzZWQgb24gQVBCRE1BLg0KR1BDRE1BIHN1cHBvcnRzIHVwdG8gMUdC
+LiANCg==
