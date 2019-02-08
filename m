@@ -2,130 +2,340 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C03C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061CEC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C8F21908
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:27:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ThXe6xWi"
+	by mail.kernel.org (Postfix) with ESMTP id BECA52146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfBHR1b (ORCPT
+        id S1727986AbfBHR2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:27:31 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46783 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727689AbfBHR1b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:27:31 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190208172729euoutp01b1c5e9cb5bcf259d199d55ed899f9f7d~Bc5mFbaTZ2287522875euoutp01j
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 17:27:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190208172729euoutp01b1c5e9cb5bcf259d199d55ed899f9f7d~Bc5mFbaTZ2287522875euoutp01j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549646850;
-        bh=Znhp/LJksnAJsDWcHO6R7iJGDoj8DDEsrPiBQVqwXBM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ThXe6xWizut3xHJ/ntfw5b1BHU82N9HH3hGQlh8p684OCvHoat6Xq9XHuaSUpMQPv
-         OW/mqox/7SC8nltLNa76YrDyDtmpmHNd1ahYuTD3kViRWuOIWnqskcMwlO/sB7ElIe
-         1VJQ97fRbka4nzAmWJ3Wut+VV31YmSvZvL7n5GoM=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190208172729eucas1p128f9e68ca71a334b4fafa97ec05a47b6~Bc5lorLbP2285622856eucas1p1w;
-        Fri,  8 Feb 2019 17:27:29 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BA.AD.04294.10CBD5C5; Fri,  8
-        Feb 2019 17:27:29 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190208172728eucas1p1338278135ccc468e5bd828359dc225e6~Bc5k5wXRG0806808068eucas1p1M;
-        Fri,  8 Feb 2019 17:27:28 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190208172728eusmtrp2ebcbb0f706b672def082757eab26abcb~Bc5krrkDR0972409724eusmtrp2W;
-        Fri,  8 Feb 2019 17:27:28 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-43-5c5dbc01fba9
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F5.05.04284.00CBD5C5; Fri,  8
-        Feb 2019 17:27:28 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190208172728eusmtip1c565dcd47a6917896d7f825f8bf5f1a2~Bc5kdGOse1677016770eusmtip1g;
-        Fri,  8 Feb 2019 17:27:28 +0000 (GMT)
-Subject: Re: [PATCH] fbdev: mbx: fix up debugfs file creation
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <0d953f69-f112-6e1b-0ba3-02ce56e8d1c5@samsung.com>
-Date:   Fri, 8 Feb 2019 18:27:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Fri, 8 Feb 2019 12:28:03 -0500
+Received: from mga03.intel.com ([134.134.136.65]:46150 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbfBHR2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:28:02 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 09:28:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="142709133"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 09:27:58 -0800
+Received: from andy by smile with local (Exim 4.92-RC5)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gs9wU-0007pD-00; Fri, 08 Feb 2019 19:27:58 +0200
+Date:   Fri, 8 Feb 2019 19:27:57 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/9] vsprintf: Do not check address of well-known
+ strings
+Message-ID: <20190208172757.GX9224@smile.fi.intel.com>
+References: <20190208152310.29531-1-pmladek@suse.com>
+ <20190208152310.29531-4-pmladek@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <20190122152151.16139-16-gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42LZduznOV3GPbExBgtv8ltc+fqezaJ58Xo2
-        ixN9H1gtLu+aw+bA4rF/7hp2j/vdx5k8Pm+SC2CO4rJJSc3JLEst0rdL4Mr4cPAcU8Fj1orO
-        tswGxvssXYycHBICJhJrjm8Csrk4hARWMEqsnnOMHcL5wigx+e09VgjnM6PEnh972WBa/nZ3
-        QrUsZ5S4efAfG4TznlFietc3VpAqYQFbie0Lj7OD2CICxhL9Z2cB2RwczAIJErsXmYGE2QSs
-        JCa2r2IEsXkF7CSedzxmArFZBFQkHi+czQJSLioQIdF/Rh2iRFDi5MwnYGFOAUeJvbuVQMLM
-        AgYSRxbNYYWw5SW2v53DDHKNhMBvNompkzqhbnaRuLLqD9TLwhKvjm9hh7BlJP7vnM8E0TCd
-        UeLNr6UsEM56Rok1Z44xQVRZSxw+fpEVwnaUuNx2lQ3kCgkBPokbbwUhNvNJTNo2nRkizCvR
-        0SYEUa0msWHZBjaYXV07VzJD2B4S81f8YZ/AqDgLyWuzkPwzC8k/CxiZVzGKp5YW56anFhvl
-        pZbrFSfmFpfmpesl5+duYgQmjtP/jn/ZwbjrT9IhRgEORiUe3oiW2Bgh1sSy4srcQ4wSHMxK
-        IrwHtwOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ81YzPIgWEkhPLEnNTk0tSC2CyTJxcEo1MHbp
-        aJw5dc0lpaD3SGBhe3Lziq8tybGvZq1T9Dd4f+nsni62kNM/j3nPjRXdwO+wcNGNrlu3fCLD
-        inPCtut9bL6rdV5V0XZBa3+7b1dpm11gy3Nu41e5ZvUX9zadvDDpjaAWR0MJf3flB47/LV5F
-        J20/xGye90z180Lvm55bjZdq3Cx7WGD/Q4mlOCPRUIu5qDgRAJIINZsYAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4XV2GPbExBl/ny1hc+fqezaJ58Xo2
-        ixN9H1gtLu+aw+bA4rF/7hp2j/vdx5k8Pm+SC2CO0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAz
-        MrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mv4cPAcU8Fj1orOtswGxvssXYycHBICJhJ/uzuB
-        bC4OIYGljBJ/pnUwdjFyACVkJI6vL4OoEZb4c62LDaLmLaPE2o6NYM3CArYS2xceZwexRQSM
-        JfrPzmKHKJrCKPG59w8jSIJZIEFixdt2VhCbTcBKYmL7KrA4r4CdxPOOx0wgNouAisTjhbPB
-        hooKREjcetjBAlEjKHFy5hMWkIM4BRwl9u5WghipJ7Hj+i9WCFteYvvbOcwTGAVnIemYhaRs
-        FpKyBYzMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLjYduxn5t3MF7aGHyIUYCDUYmHl6Ep
-        NkaINbGsuDL3EKMEB7OSCO/B7UAh3pTEyqrUovz4otKc1OJDjKZAP0xklhJNzgfGal5JvKGp
-        obmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBsaZL+uNXc7yet/dnc7qq7Og
-        JKL2+mfHmR9uP4j/xmhwJGZFYISN5ARLC8afVhNVLlw//iS2Xuj2rVy5D7NTWSZ+jzfTaV+8
-        0D22ouWb5wy7LqEH/Z1+pts8Fsy6vG/hc6Vl3es+HYrddkRMIufFyQyeyh9LFHe/X55/9fgc
-        1o1sH2d/2/7ttyOvEktxRqKhFnNRcSIAUeDS/Z0CAAA=
-X-CMS-MailID: 20190208172728eucas1p1338278135ccc468e5bd828359dc225e6
-X-Msg-Generator: CA
-X-RootMTR: 20190122152306epcas1p4b57a2364aab23e4963f8c578ca73a197
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190122152306epcas1p4b57a2364aab23e4963f8c578ca73a197
-References: <CGME20190122152306epcas1p4b57a2364aab23e4963f8c578ca73a197@epcas1p4.samsung.com>
-        <20190122152151.16139-16-gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208152310.29531-4-pmladek@suse.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 01/22/2019 04:21 PM, Greg Kroah-Hartman wrote:
-> There is no need to keep the dentries around for the individual debugfs
-> files, just delete the whole directory all at once at shutdown instead.
+On Fri, Feb 08, 2019 at 04:23:04PM +0100, Petr Mladek wrote:
+> We are going to check the address using probe_kernel_address(). It will
+> be more expensive and it does not make sense for well known address.
 > 
-> This also fixes a tiny memory leak where the memory for the pointers to
-> the file dentries was never freed when the device shut down, as well as
-> making the logic of the code a lot simpler.
+> This patch splits the string() function. The variant without the check
+> is then used on locations that handle string constants or strings defined
+> as local variables.
 > 
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-fbdev@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> This patch does not change the existing behavior.
+> 
 
-Patch queued for v5.1, thanks.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  lib/vsprintf.c | 81 +++++++++++++++++++++++++++++++---------------------------
+>  1 file changed, 44 insertions(+), 37 deletions(-)
+> 
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 76ce12b278c3..0b6209854f5c 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -592,15 +592,13 @@ char *widen_string(char *buf, int n, char *end, struct printf_spec spec)
+>  	return buf;
+>  }
+>  
+> -static noinline_for_stack
+> -char *string(char *buf, char *end, const char *s, struct printf_spec spec)
+> +/* Handle string from a well known address. */
+> +static char *string_nocheck(char *buf, char *end, const char *s,
+> +			  struct printf_spec spec)
+>  {
+>  	int len = 0;
+>  	size_t lim = spec.precision;
+>  
+> -	if ((unsigned long)s < PAGE_SIZE)
+> -		s = "(null)";
+> -
+>  	while (lim--) {
+>  		char c = *s++;
+>  		if (!c)
+> @@ -614,6 +612,15 @@ char *string(char *buf, char *end, const char *s, struct printf_spec spec)
+>  }
+>  
+>  static noinline_for_stack
+> +char *string(char *buf, char *end, const char *s,
+> +		   struct printf_spec spec)
+> +{
+> +	if ((unsigned long)s < PAGE_SIZE)
+> +		s = "(null)";
+> +
+> +	return string_nocheck(buf, end, s, spec);
+> +}
+> +
+>  char *pointer_string(char *buf, char *end, const void *ptr,
+>  		     struct printf_spec spec)
+>  {
+> @@ -700,7 +707,7 @@ static char *ptr_to_id(char *buf, char *end, const void *ptr,
+>  	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
+>  		spec.field_width = 2 * sizeof(ptr);
+>  		/* string length must be less than default_width */
+> -		return string(buf, end, str, spec);
+> +		return string_nocheck(buf, end, str, spec);
+>  	}
+>  
+>  #ifdef CONFIG_64BIT
+> @@ -736,7 +743,7 @@ char *restricted_pointer(char *buf, char *end, const void *ptr,
+>  		if (in_irq() || in_serving_softirq() || in_nmi()) {
+>  			if (spec.field_width == -1)
+>  				spec.field_width = 2 * sizeof(ptr);
+> -			return string(buf, end, "pK-error", spec);
+> +			return string_nocheck(buf, end, "pK-error", spec);
+>  		}
+>  
+>  		/*
+> @@ -850,7 +857,7 @@ char *symbol_string(char *buf, char *end, void *ptr,
+>  	else
+>  		sprint_symbol_no_offset(sym, value);
+>  
+> -	return string(buf, end, sym, spec);
+> +	return string_nocheck(buf, end, sym, spec);
+>  #else
+>  	return special_hex_number(buf, end, value, sizeof(void *));
+>  #endif
+> @@ -936,27 +943,27 @@ char *resource_string(char *buf, char *end, struct resource *res,
+>  
+>  	*p++ = '[';
+>  	if (res->flags & IORESOURCE_IO) {
+> -		p = string(p, pend, "io  ", str_spec);
+> +		p = string_nocheck(p, pend, "io  ", str_spec);
+>  		specp = &io_spec;
+>  	} else if (res->flags & IORESOURCE_MEM) {
+> -		p = string(p, pend, "mem ", str_spec);
+> +		p = string_nocheck(p, pend, "mem ", str_spec);
+>  		specp = &mem_spec;
+>  	} else if (res->flags & IORESOURCE_IRQ) {
+> -		p = string(p, pend, "irq ", str_spec);
+> +		p = string_nocheck(p, pend, "irq ", str_spec);
+>  		specp = &default_dec_spec;
+>  	} else if (res->flags & IORESOURCE_DMA) {
+> -		p = string(p, pend, "dma ", str_spec);
+> +		p = string_nocheck(p, pend, "dma ", str_spec);
+>  		specp = &default_dec_spec;
+>  	} else if (res->flags & IORESOURCE_BUS) {
+> -		p = string(p, pend, "bus ", str_spec);
+> +		p = string_nocheck(p, pend, "bus ", str_spec);
+>  		specp = &bus_spec;
+>  	} else {
+> -		p = string(p, pend, "??? ", str_spec);
+> +		p = string_nocheck(p, pend, "??? ", str_spec);
+>  		specp = &mem_spec;
+>  		decode = 0;
+>  	}
+>  	if (decode && res->flags & IORESOURCE_UNSET) {
+> -		p = string(p, pend, "size ", str_spec);
+> +		p = string_nocheck(p, pend, "size ", str_spec);
+>  		p = number(p, pend, resource_size(res), *specp);
+>  	} else {
+>  		p = number(p, pend, res->start, *specp);
+> @@ -967,21 +974,21 @@ char *resource_string(char *buf, char *end, struct resource *res,
+>  	}
+>  	if (decode) {
+>  		if (res->flags & IORESOURCE_MEM_64)
+> -			p = string(p, pend, " 64bit", str_spec);
+> +			p = string_nocheck(p, pend, " 64bit", str_spec);
+>  		if (res->flags & IORESOURCE_PREFETCH)
+> -			p = string(p, pend, " pref", str_spec);
+> +			p = string_nocheck(p, pend, " pref", str_spec);
+>  		if (res->flags & IORESOURCE_WINDOW)
+> -			p = string(p, pend, " window", str_spec);
+> +			p = string_nocheck(p, pend, " window", str_spec);
+>  		if (res->flags & IORESOURCE_DISABLED)
+> -			p = string(p, pend, " disabled", str_spec);
+> +			p = string_nocheck(p, pend, " disabled", str_spec);
+>  	} else {
+> -		p = string(p, pend, " flags ", str_spec);
+> +		p = string_nocheck(p, pend, " flags ", str_spec);
+>  		p = number(p, pend, res->flags, default_flag_spec);
+>  	}
+>  	*p++ = ']';
+>  	*p = '\0';
+>  
+> -	return string(buf, end, sym, spec);
+> +	return string_nocheck(buf, end, sym, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1149,7 +1156,7 @@ char *mac_address_string(char *buf, char *end, u8 *addr,
+>  	}
+>  	*p = '\0';
+>  
+> -	return string(buf, end, mac_addr, spec);
+> +	return string_nocheck(buf, end, mac_addr, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1312,7 +1319,7 @@ char *ip6_addr_string(char *buf, char *end, const u8 *addr,
+>  	else
+>  		ip6_string(ip6_addr, addr, fmt);
+>  
+> -	return string(buf, end, ip6_addr, spec);
+> +	return string_nocheck(buf, end, ip6_addr, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1323,7 +1330,7 @@ char *ip4_addr_string(char *buf, char *end, const u8 *addr,
+>  
+>  	ip4_string(ip4_addr, addr, fmt);
+>  
+> -	return string(buf, end, ip4_addr, spec);
+> +	return string_nocheck(buf, end, ip4_addr, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1385,7 +1392,7 @@ char *ip6_addr_string_sa(char *buf, char *end, const struct sockaddr_in6 *sa,
+>  	}
+>  	*p = '\0';
+>  
+> -	return string(buf, end, ip6_addr, spec);
+> +	return string_nocheck(buf, end, ip6_addr, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1420,7 +1427,7 @@ char *ip4_addr_string_sa(char *buf, char *end, const struct sockaddr_in *sa,
+>  	}
+>  	*p = '\0';
+>  
+> -	return string(buf, end, ip4_addr, spec);
+> +	return string_nocheck(buf, end, ip4_addr, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1521,7 +1528,7 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
+>  
+>  	*p = 0;
+>  
+> -	return string(buf, end, uuid, spec);
+> +	return string_nocheck(buf, end, uuid, spec);
+>  }
+>  
+>  static noinline_for_stack
+> @@ -1735,13 +1742,13 @@ char *device_node_gen_full_name(const struct device_node *np, char *buf, char *e
+>  
+>  	/* special case for root node */
+>  	if (!parent)
+> -		return string(buf, end, "/", default_str_spec);
+> +		return string_nocheck(buf, end, "/", default_str_spec);
+>  
+>  	for (depth = 0; parent->parent; depth++)
+>  		parent = parent->parent;
+>  
+>  	for ( ; depth >= 0; depth--) {
+> -		buf = string(buf, end, "/", default_str_spec);
+> +		buf = string_nocheck(buf, end, "/", default_str_spec);
+>  		buf = string(buf, end, device_node_name_for_depth(np, depth),
+>  			     default_str_spec);
+>  	}
+> @@ -1769,10 +1776,10 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+>  	str_spec.field_width = -1;
+>  
+>  	if (!IS_ENABLED(CONFIG_OF))
+> -		return string(buf, end, "(!OF)", spec);
+> +		return string_nocheck(buf, end, "(!OF)", spec);
+>  
+>  	if ((unsigned long)dn < PAGE_SIZE)
+> -		return string(buf, end, "(null)", spec);
+> +		return string_nocheck(buf, end, "(null)", spec);
+>  
+>  	/* simple case without anything any more format specifiers */
+>  	fmt++;
+> @@ -1813,7 +1820,7 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+>  			tbuf[2] = of_node_check_flag(dn, OF_POPULATED) ? 'P' : '-';
+>  			tbuf[3] = of_node_check_flag(dn, OF_POPULATED_BUS) ? 'B' : '-';
+>  			tbuf[4] = 0;
+> -			buf = string(buf, end, tbuf, str_spec);
+> +			buf = string_nocheck(buf, end, tbuf, str_spec);
+>  			break;
+>  		case 'c':	/* major compatible string */
+>  			ret = of_property_read_string(dn, "compatible", &p);
+> @@ -1824,10 +1831,10 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+>  			has_mult = false;
+>  			of_property_for_each_string(dn, "compatible", prop, p) {
+>  				if (has_mult)
+> -					buf = string(buf, end, ",", str_spec);
+> -				buf = string(buf, end, "\"", str_spec);
+> +					buf = string_nocheck(buf, end, ",", str_spec);
+> +				buf = string_nocheck(buf, end, "\"", str_spec);
+>  				buf = string(buf, end, p, str_spec);
+> -				buf = string(buf, end, "\"", str_spec);
+> +				buf = string_nocheck(buf, end, "\"", str_spec);
+>  
+>  				has_mult = true;
+>  			}
+> @@ -1966,7 +1973,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>  		 */
+>  		if (spec.field_width == -1)
+>  			spec.field_width = default_width;
+> -		return string(buf, end, "(null)", spec);
+> +		return string_nocheck(buf, end, "(null)", spec);
+>  	}
+>  
+>  	switch (*fmt) {
+> @@ -2022,7 +2029,7 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>  			case AF_INET6:
+>  				return ip6_addr_string_sa(buf, end, &sa->v6, spec, fmt);
+>  			default:
+> -				return string(buf, end, "(invalid address)", spec);
+> +				return string_nocheck(buf, end, "(invalid address)", spec);
+>  			}}
+>  		}
+>  		break;
+> -- 
+> 2.13.7
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
