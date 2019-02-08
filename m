@@ -2,114 +2,96 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2952C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68CDC282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD4420855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92B7C20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:28:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfBHT1k (ORCPT
+        id S1727753AbfBHT22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:27:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52128 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727144AbfBHT1k (ORCPT
+        Fri, 8 Feb 2019 14:28:28 -0500
+Received: from gateway30.websitewelcome.com ([50.116.127.1]:37289 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727144AbfBHT21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:27:40 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18JIoH3088861
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 14:27:38 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qhd38fsup-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 14:27:37 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 19:27:37 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 19:27:32 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18JRV9Q23396414
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 19:27:31 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5630AC05B;
-        Fri,  8 Feb 2019 19:27:31 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6058AC05F;
-        Fri,  8 Feb 2019 19:27:31 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 19:27:31 +0000 (GMT)
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v4_1/2=5d_tpm=3a_Unify_the_send_callback_b?=
- =?UTF-8?Q?ehaviour=c3=a4?=
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        stable@vger.kernel.org
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
- <20190208190057.GA3439@linux.intel.com>
- <20190208191710.GA30645@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 8 Feb 2019 14:27:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 8 Feb 2019 14:28:27 -0500
+X-Greylist: delayed 1257 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 14:28:27 EST
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 5DD32780A
+        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 13:07:30 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sBUogazsDdnCesBUogauM1; Fri, 08 Feb 2019 13:07:30 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=59358 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gsBUn-000Wvz-Lg; Fri, 08 Feb 2019 13:07:29 -0600
+Date:   Fri, 8 Feb 2019 13:07:29 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Petko Manolov <petkan@nucleusys.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: usb: pegasus: Mark expected switch fall-through
+Message-ID: <20190208190729.GA3970@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190208191710.GA30645@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020819-0068-0000-0000-0000039125DA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010560; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158206; UDB=6.00604308; IPR=6.00938739;
- MB=3.00025496; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 19:27:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020819-0069-0000-0000-0000476FE0F4
-Message-Id: <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=778 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1gsBUn-000Wvz-Lg
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:59358
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 2:17 PM, Jarkko Sakkinen wrote:
->
->   */
-> if (rc > 0) {
-> 	dev_warn(&chip->dev,
-> 		 "%s: send(): invalid value %d\n", __func__, rc);
-> 	rc = 0;
-> }
->
-> Should be fairly safe play now.
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Unfortuantely it isn't. You seemed to have lost the 
-EXPORT_SYMBOL_GPL(tpm_chip_start/stop) and the tpm_chip_start/stop 
-around the tpm2_shutdown()...
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
+This patch is part of the ongoing efforts to enabling
+-Wimplicit-fallthrough.
 
->
-> /Jarkko
->
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/usb/pegasus.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/usb/pegasus.c b/drivers/net/usb/pegasus.c
+index f4247b275e09..63e44e746ccc 100644
+--- a/drivers/net/usb/pegasus.c
++++ b/drivers/net/usb/pegasus.c
+@@ -1011,6 +1011,7 @@ static int pegasus_ioctl(struct net_device *net, struct ifreq *rq, int cmd)
+ 	switch (cmd) {
+ 	case SIOCDEVPRIVATE:
+ 		data[0] = pegasus->phy;
++		/* fall through */
+ 	case SIOCDEVPRIVATE + 1:
+ 		read_mii_word(pegasus, data[0], data[1] & 0x1f, &data[3]);
+ 		res = 0;
+-- 
+2.20.1
 
