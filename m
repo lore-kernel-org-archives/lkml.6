@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04649C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87485C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45B521916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52F572147C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfBHETs (ORCPT
+        id S1727061AbfBHEXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 23:19:48 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.108]:21296 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726892AbfBHETr (ORCPT
+        Thu, 7 Feb 2019 23:23:01 -0500
+Received: from gateway20.websitewelcome.com ([192.185.47.18]:22131 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726793AbfBHEXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 23:19:47 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id C9B274436
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 22:19:46 -0600 (CST)
+        Thu, 7 Feb 2019 23:23:00 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id D4F92400C7B3E
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 22:22:59 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id rxdigG3VXiQerrxdigWQ6G; Thu, 07 Feb 2019 22:19:46 -0600
+        id rxgpg6vzT2qH7rxgpgfwlj; Thu, 07 Feb 2019 22:22:59 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=49852 helo=embeddedor)
+Received: from [189.250.49.191] (port=49886 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1grxdi-002DJ4-2m; Thu, 07 Feb 2019 22:19:46 -0600
-Date:   Thu, 7 Feb 2019 22:19:45 -0600
+        id 1grxgp-002GDf-3P; Thu, 07 Feb 2019 22:22:59 -0600
+Date:   Thu, 7 Feb 2019 22:22:58 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         "David S. Miller" <davem@davemloft.net>
 Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] igc: Use struct_size() helper
-Message-ID: <20190208041945.GA4687@embeddedor>
+Subject: [PATCH net-next] ixgbe: Use struct_size() helper
+Message-ID: <20190208042258.GA32468@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -52,13 +52,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.49.191
 X-Source-L: No
-X-Exim-ID: 1grxdi-002DJ4-2m
+X-Exim-ID: 1grxgp-002GDf-3P
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:49852
+X-Source-Sender: (embeddedor) [189.250.49.191]:49886
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
+X-Email-Count: 22
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,12 +76,12 @@ struct foo {
 };
 
 size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = kzalloc(size, GFP_KERNEL)
+instance = kzalloc(size, GFP_KERNEL);
 
 Instead of leaving these open-coded and prone to type mistakes, we can
 now use the new struct_size() helper:
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL)
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
 Notice that, in this case, variable size is not necessary, hence
 it is removed.
@@ -90,37 +90,38 @@ This code was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/ethernet/intel/igc/igc_main.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 11c75433fe22..87a11879bf2d 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -2958,22 +2958,21 @@ static int igc_alloc_q_vector(struct igc_adapter *adapter,
- {
- 	struct igc_q_vector *q_vector;
- 	struct igc_ring *ring;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+index 62e6499e4146..cc3196ae5aea 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
+@@ -836,12 +836,10 @@ static int ixgbe_alloc_q_vector(struct ixgbe_adapter *adapter,
+ 	struct ixgbe_ring *ring;
+ 	int node = NUMA_NO_NODE;
+ 	int cpu = -1;
 -	int ring_count, size;
 +	int ring_count;
+ 	u8 tcs = adapter->hw_tcs;
  
- 	/* igc only supports 1 Tx and/or 1 Rx queue per vector */
- 	if (txr_count > 1 || rxr_count > 1)
- 		return -ENOMEM;
+ 	ring_count = txr_count + rxr_count + xdp_count;
+-	size = sizeof(struct ixgbe_q_vector) +
+-	       (sizeof(struct ixgbe_ring) * ring_count);
  
- 	ring_count = txr_count + rxr_count;
--	size = sizeof(struct igc_q_vector) +
--		(sizeof(struct igc_ring) * ring_count);
+ 	/* customize cpu for Flow Director mapping */
+ 	if ((tcs <= 1) && !(adapter->flags & IXGBE_FLAG_SRIOV_ENABLED)) {
+@@ -855,9 +853,11 @@ static int ixgbe_alloc_q_vector(struct ixgbe_adapter *adapter,
+ 	}
  
  	/* allocate q_vector and rings */
- 	q_vector = adapter->q_vector[v_idx];
+-	q_vector = kzalloc_node(size, GFP_KERNEL, node);
++	q_vector = kzalloc_node(struct_size(q_vector, ring, ring_count),
++				GFP_KERNEL, node);
  	if (!q_vector)
 -		q_vector = kzalloc(size, GFP_KERNEL);
 +		q_vector = kzalloc(struct_size(q_vector, ring, ring_count),
 +				   GFP_KERNEL);
- 	else
--		memset(q_vector, 0, size);
-+		memset(q_vector, 0, struct_size(q_vector, ring, ring_count));
  	if (!q_vector)
  		return -ENOMEM;
  
