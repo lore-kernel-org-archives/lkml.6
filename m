@@ -2,90 +2,119 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CF0C282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577CBC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5C42080F
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28CAF2080F
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:34:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hdPySCvx"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Kfqg8l0B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfBHJef (ORCPT
+        id S1727269AbfBHJek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:34:35 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38893 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbfBHJee (ORCPT
+        Fri, 8 Feb 2019 04:34:40 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:28135 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725998AbfBHJek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:34:34 -0500
-Received: by mail-it1-f196.google.com with SMTP id z20so7357802itc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 01:34:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B51hzRtHxI8dz2WusjwLfXXJYO2Em0L5zJ4G84EilMQ=;
-        b=hdPySCvxx39ovYMxMmZbtXMkgI77AjPt4lqj/J+Ca8L3yF1pkfmFNmM0o6N1jeqA6c
-         qZJsvKY92DDlVrBfchOzB69WSVCos5ymscQU+jWpdJBzURFC6fPtDlQaFoGZ3qqu5WRO
-         wgRXgMYr9rNqMmMcUjV1SVudEknTsFUaNPNgY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B51hzRtHxI8dz2WusjwLfXXJYO2Em0L5zJ4G84EilMQ=;
-        b=h0MEbTfWOLjk1FBLfq4O2kgn6A0akAv8+Xd7CbOuNR7aJQqZt0rqgrMyleOBhF15bG
-         5YC8/qLN18GydsKQmMWQIicA8fAODBsYQYUtR/ATeodyCM9z+qudJ+0oT2mgAIw8Rd+x
-         bZGoUvRjT3+TT8bFa/47R/o9DW3Cz3ZikrMltW9lTmK7EbWxGUSFdblIUNUUjhP1Tp+y
-         2+ukfnvpScJP3D0S1te8gDodaCL0My99s5Js2Jldmdi+sb9DfgNsRuh1RMDZU2JagPpW
-         eyOA/jhVshp56T6AiBv3zfPfg0ZLBRCYEYWSf4+UzYBlLCdyQnC9P12pMSucsoPglY7G
-         29qw==
-X-Gm-Message-State: AHQUAuZCukNl6fa2Ry8GeO6JdetEJhg4YXbXfPUjsk2aQnH2p2vZPPB6
-        u0l3ZpNyJ+qwBtHMxrRsDAoYBWMvxIBkFpTOWyiasA==
-X-Google-Smtp-Source: AHgI3IZ9UB5lLvVuz2T0d3ECrt8MEguDnBb72LTzzaAfy3AU0vhzHnlGZCK7RcDYvKdSrg8KdQfkzKGcJxqrTkW9m5g=
-X-Received: by 2002:a24:94cb:: with SMTP id j194mr7463197ite.117.1549618473855;
- Fri, 08 Feb 2019 01:34:33 -0800 (PST)
+        Fri, 8 Feb 2019 04:34:40 -0500
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x189YAc3022967
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 18:34:10 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x189YAc3022967
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549618451;
+        bh=lt3wPoP+t27ffzMBv85cWeV71nOytCWkJfmB03BwrdI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Kfqg8l0Bs9Z2dEcs4DTj/fCg1t7QSlB78qgEZY7Q8FEZSIK9MkJSuXpfFaiY9FZGR
+         dQYbxUuMGQZfBQx9CKQe6da5A91BtVOkfsJ1zLix/MxDsW7+5PP0GOB+1ix2l7Idty
+         Fbwih19hGZ/o7K/oSZ6Rtf/MCJBbTzKqEsWNg5731Gd5aZCI2jci6dwOI/D2B0wDEU
+         uyhIE2ssMsE2yjFsicX/N1Euv2HrgZYQV+KV8SCocT22IH22zRR34nq3EopVnIY1fy
+         7DrMecBXgiXARLhH3siqEhBCfoMRZdt8aHwcG6gb2IUG+SJtntuxrj4VTwrvI2wV7O
+         cPyWtd85nOsDw==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id e16so1719515vsq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 01:34:10 -0800 (PST)
+X-Gm-Message-State: AHQUAuYVQvcokzRBQXTJv0GI4cv/H9Z8+R/zlvJmGL7CoPhJ7VMhVtwR
+        PIHyVhWbsvWIh0cZJmJ3XFp8gIPJLIrg+aLLvv0=
+X-Google-Smtp-Source: AHgI3Iaiw10ysv9Vo1vkQwNPbWBJBsErM9llboqiAR1sPdFHEwF4zOs92KsA19OXB9ixTrvrD7J0mZtYlmFAZCEVfV8=
+X-Received: by 2002:a67:f759:: with SMTP id w25mr2811450vso.215.1549618449330;
+ Fri, 08 Feb 2019 01:34:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20190208122744.4a63bec0@canb.auug.org.au> <20190208085333.GH23159@phenom.ffwll.local>
- <20190208202555.3aa6473c@canb.auug.org.au>
-In-Reply-To: <20190208202555.3aa6473c@canb.auug.org.au>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 8 Feb 2019 10:34:22 +0100
-Message-ID: <CAKMK7uGxXxFXLt2m5_3y2a2zi09WyUCkSMTnYQv7doswQZUbqg@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the drm tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com>
+ <1549613335-30319-8-git-send-email-yamada.masahiro@socionext.com> <7e1121479b38e98949b44c9fba91dee3adf97b99.camel@perches.com>
+In-Reply-To: <7e1121479b38e98949b44c9fba91dee3adf97b99.camel@perches.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 8 Feb 2019 18:33:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATbHBmu4a62rcBKmBR8eD=-pgUOW3mWh3PZtqOMPEpWJg@mail.gmail.com>
+Message-ID: <CAK7LNATbHBmu4a62rcBKmBR8eD=-pgUOW3mWh3PZtqOMPEpWJg@mail.gmail.com>
+Subject: Re: [PATCH 07/11] mtd: rawnand: denali: use bool type instead of int
+ where appropriate
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
+        Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 10:26 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Feb 8, 2019 at 6:24 PM Joe Perches <joe@perches.com> wrote:
 >
-> Hi Daniel,
->
-> On Fri, 8 Feb 2019 09:53:33 +0100 Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Fri, 2019-02-08 at 17:08 +0900, Masahiro Yamada wrote:
+> > Use 'bool' type for some function arguments.
 > >
-> > There isn't a "below" afaics ....
+> >  - write (write or read?)
+> >  - raw (the raw access mode or not?)
+> >
+> > It is true that denali_nand_info::dma_avail is also boolean, but
+> > I am keeping it as 'int' because 'scripts/checkpatch --strict' would
+> > report the following:
+> >
+> > CHECK: Avoid using bool structure members because of possible alignment issues
+> >   - see: https://lkml.org/lkml/2017/11/21/384
+> >
+> > I do not think it is a matter here, but I am sticking to the suggestion.
 >
-> Oops :-(  However the merge diff is not very enlightening in this case
-> anyway.  It makes more sense to look at the final result when I finish
-> up in a while.
+> just fyi: that suggestion has been removed by:
+>
+> commit 7967656ffbfa493f5546c0f18bf8a28f702c4baa
+> Author: Jason Gunthorpe <jgg@ziepe.ca>
+> Date:   Fri Jan 18 15:50:47 2019 -0700
+>
+>     coding-style: Clarify the expectations around bool
+>
+>     There has been some confusion since checkpatch started warning about bool
+>     use in structures, and people have been avoiding using it.
+>
+>     Many people feel there is still a legitimate place for bool in structures,
+>     so provide some guidance on bool usage derived from the entire thread that
+>     spawned the checkpatch warning.
+>
+>     Link: https://lkml.kernel.org/r/CA+55aFwVZk1OfB9T2v014PTAKFhtVan_Zj2dOjnCy3x
 
-Yeah conflict isn't too bad either, and we have it in the drm rr-cache
-already. So not worried, just wanted to check whether there's more.
--Daniel
+
+Thanks, this is good to know.
+
+
+I will use 'bool' for denali_nand_info::dma_avail in v2.
+
+I will wait for other comments until then.
+
+
+
+
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Best Regards
+Masahiro Yamada
