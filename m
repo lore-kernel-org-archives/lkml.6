@@ -2,115 +2,139 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2097DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECE8C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5887218FF
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD14A21841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:54:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBHWtr (ORCPT
+        id S1726832AbfBHWyQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:49:47 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37890 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfBHWtr (ORCPT
+        Fri, 8 Feb 2019 17:54:16 -0500
+Received: from elephants.elehost.com ([216.66.27.132]:36259 "EHLO
+        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfBHWyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:49:47 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 83684C36C;
-        Fri,  8 Feb 2019 22:49:45 +0000 (UTC)
-Date:   Fri, 8 Feb 2019 14:49:44 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dave Chinner <david@fromorbit.com>, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@kernel.org>, Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert
- "mm: don't reclaim inodes with many attached pages"
-Message-Id: <20190208144944.082a771e84f02a77bad3e292@linux-foundation.org>
-In-Reply-To: <20190208125049.GA11587@quack2.suse.cz>
-References: <20190130041707.27750-1-david@fromorbit.com>
-        <20190130041707.27750-2-david@fromorbit.com>
-        <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
-        <20190131013403.GI4205@dastard>
-        <20190131091011.GP18811@dhcp22.suse.cz>
-        <20190131185704.GA8755@castle.DHCP.thefacebook.com>
-        <20190131221904.GL4205@dastard>
-        <20190207102750.GA4570@quack2.suse.cz>
-        <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
-        <20190208095507.GB6353@quack2.suse.cz>
-        <20190208125049.GA11587@quack2.suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Feb 2019 17:54:15 -0500
+X-Virus-Scanned: amavisd-new at elehost.com
+Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
+        (authenticated bits=0)
+        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x18Ms0hu098317
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 8 Feb 2019 17:54:01 -0500 (EST)
+        (envelope-from rsbecker@nexbridge.com)
+From:   "Randall S. Becker" <rsbecker@nexbridge.com>
+To:     "'Jeff King'" <peff@peff.net>
+Cc:     "'brian m. carlson'" <sandals@crustytoothpaste.net>,
+        "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
+        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com> <20190208165052.GC23461@sigill.intra.peff.net> <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net> <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com> <20190208193157.GA30952@sigill.intra.peff.net> <20190208220714.GG11927@genre.crustytoothpaste.net> <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com> <20190208223512.GA2135@sigill.intra.peff.net>
+In-Reply-To: <20190208223512.GA2135@sigill.intra.peff.net>
+Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+Date:   Fri, 8 Feb 2019 17:53:53 -0500
+Message-ID: <006601d4c001$2de3a160$89aae420$@nexbridge.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE5rFddSF2c8coPnbFiKb9P+8bdAwH0igmPAiNgz5YBSIw84wKJiaU9Aj0+V9MB8y1xFgJaeDVqApzvLgABsopuUQKjTm1tpmFndgA=
+Content-Language: en-ca
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Feb 2019 13:50:49 +0100 Jan Kara <jack@suse.cz> wrote:
-
-> > > Has anyone done significant testing with Rik's maybe-fix?
-> > 
-> > I will give it a spin with bonnie++ today. We'll see what comes out.
+On February 8, 2019 17:35, Jeff King wrote:
+> On Fri, Feb 08, 2019 at 05:12:43PM -0500, Randall S. Becker wrote:
+> > On February 8, 2019 17:07, brian m. carlson wrote:
+> > > On Fri, Feb 08, 2019 at 02:31:57PM -0500, Jeff King wrote:
+> > > > > It is available AFAIK on Linux, POSIX, and Windows under Cygwin.
+> > > > > That's more than /dev/zero has anyway. I have the patch ready if
+> > > > > you want it.
+> > > >
+> > > > Is it POSIX? Certainly truncate() is, but I didn't think the
+> > > > command-line tool was. If it really is available everywhere, then
+> > > > yeah, I'd be fine with it.
+> > >
+> > > It's not. POSIX doesn't specify the command, and macOS lacks it, I
+> believe.
+> >
+> > I'm happy to modify the test (it is in one spot), to make a decision based
+> on:
+> > a) whether /dev/zero exists
+> > b) whether the system is a NonStop
+> > c) something else
+> >
+> > What would you all prefer? It doesn't matter to me one way or another,
+> > as long as I can get the dependency to /dev/zero removed so tests will
+> > run here.
 > 
-> OK, I did a bonnie++ run with Rik's patch (on top of 4.20 to rule out other
-> differences). This machine does not show so big differences in bonnie++
-> numbers but the difference is still clearly visible. The results are
-> (averages of 5 runs):
+> For the case in t5318, I think we can just put the NULs in a file. Does this
+> work on your platform?
+
+Yes, should work just fine.
+
 > 
-> 		 Revert			Base			Rik
-> SeqCreate del    78.04 (   0.00%)	98.18 ( -25.81%)	90.90 ( -16.48%)
-> RandCreate del   87.68 (   0.00%)	95.01 (  -8.36%)	87.66 (   0.03%)
-> 
-> 'Revert' is 4.20 with "mm: don't reclaim inodes with many attached pages"
-> and "mm: slowly shrink slabs with a relatively small number of objects"
-> reverted. 'Base' is the kernel without any reverts. 'Rik' is a 4.20 with
-> Rik's patch applied.
-> 
-> The numbers are time to do a batch of deletes so lower is better. You can see
-> that the patch did help somewhat but it was not enough to close the gap
-> when files are deleted in 'readdir' order.
+> ---
+> diff --git a/t/t5318-commit-graph.sh b/t/t5318-commit-graph.sh index
+> 16d10ebce8..6d0ccc7eba 100755
+> --- a/t/t5318-commit-graph.sh
+> +++ b/t/t5318-commit-graph.sh
+> @@ -383,7 +383,8 @@ corrupt_graph_and_verify() {
+>  	cp $objdir/info/commit-graph commit-graph-backup &&
+>  	printf "$data" | dd of="$objdir/info/commit-graph" bs=1
+> seek="$pos" conv=notrunc &&
+>  	dd of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" count=0
+> &&
+> -	dd if=/dev/zero of="$objdir/info/commit-graph" bs=1
+> seek="$zero_pos" count=$(($orig_size - $zero_pos)) &&
+> +	gen_zero_bytes $(($orig_size - $zero_pos)) >zeroes &&
+> +	dd if=zeroes of="$objdir/info/commit-graph" bs=1 seek="$zero_pos"
+> &&
+>  	test_must_fail git commit-graph verify 2>test_err &&
+>  	grep -v "^+" test_err >err &&
+>  	test_i18ngrep "$grepstr" err
+> diff --git a/t/test-lib-functions.sh b/t/test-lib-functions.sh index
+> 92cf8f812c..4afab14431 100644
+> --- a/t/test-lib-functions.sh
+> +++ b/t/test-lib-functions.sh
+> @@ -1302,3 +1302,8 @@ test_set_port () {
+>  	port=$(($port + ${GIT_TEST_STRESS_JOB_NR:-0}))
+>  	eval $var=$port
+>  }
+> +
+> +# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes).
+> +gen_zero_bytes () {
+> +	perl -e 'print "\0" x $ARGV[0]' "$@"
+> +}
 
-OK, thanks.
+This function does work on platform, so it's good.
 
-I guess we need a rethink on Roman's fixes.   I'll queued the reverts.
+> For the others that need infinite zeroes, I think using "yes" makes more
+> sense, though we could also teach this function to accept an "infinity"
+> parameter.
 
+You could be sneaky about it, I suppose
++# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes).
++ gen_zero_bytes () {
++ 	if [ $1 -eq -1 ]; then
++ 	        yes | tr 'y' '\0'
++ 	else
++ 	        perl -e 'print "\0" x $ARGV[0]' "$@"
++ }
+Or something alone those lines. It's not even slightly elegant, though. It would be better inside perl, so just
 
-BTW, one thing I don't think has been discussed (or noticed) is the
-effect of "mm: don't reclaim inodes with many attached pages" on 32-bit
-highmem machines.  Look why someone added that code in the first place:
++# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes). If $1 is < 0, output forever.
++ gen_zero_bytes () {
++ 	perl -e ' if ($ARGV[0] < 0) { while (-1) { print "\0" } } else { print "\0" x $ARGV[0] }' "$@"
++ }
 
-: commit f9a316fa9099053a299851762aedbf12881cff42
-: Author: Andrew Morton <akpm@digeo.com>
-: Date:   Thu Oct 31 04:09:37 2002 -0800
-: 
-:     [PATCH] strip pagecache from to-be-reaped inodes
-:     
-:     With large highmem machines and many small cached files it is possible
-:     to encounter ZONE_NORMAL allocation failures.  This can be demonstrated
-:     with a large number of one-byte files on a 7G machine.
-:     
-:     All lowmem is filled with icache and all those inodes have a small
-:     amount of highmem pagecache which makes them unfreeable.
-:     
-:     The patch strips the pagecache from inodes as they come off the tail of
-:     the inode_unused list.
-:     
-:     I play tricks in there peeking at the head of the inode_unused list to
-:     pick up the inode again after running iput().  The alternatives seemed
-:     to involve more widespread changes.
-:     
-:     Or running invalidate_inode_pages() under inode_lock which would be a
-:     bad thing from a scheduling latency and lock contention point of view.
+Cheers,
+Randall
 
-I guess I shold have added a comment.  Doh.
