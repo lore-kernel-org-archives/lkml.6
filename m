@@ -2,29 +2,29 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB15C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5489DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53E921916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29AA521916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfBHWXU (ORCPT
+        id S1727175AbfBHWX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:23:20 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:34280 "EHLO smtp4-g21.free.fr"
+        Fri, 8 Feb 2019 17:23:56 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:40342 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbfBHWXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:23:19 -0500
+        id S1726788AbfBHWX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 17:23:56 -0500
 Received: from [192.168.1.42] (unknown [77.207.133.132])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 914C019F54D;
-        Fri,  8 Feb 2019 23:22:40 +0100 (CET)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id EAC4519F58A;
+        Fri,  8 Feb 2019 23:23:18 +0100 (CET)
+Subject: [PATCH v4 1/7] dt-bindings: ufs: Fix the compatible string definition
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v4 0/7] UFS on APQ8098/MSM8998
 To:     MSM <linux-arm-msm@vger.kernel.org>,
         SCSI <linux-scsi@vger.kernel.org>
 Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
@@ -42,73 +42,81 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         Mark Brown <broonie@kernel.org>,
         Martin Petersen <martin.petersen@oracle.com>,
         LKML <linux-kernel@vger.kernel.org>
-Message-ID: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
-Date:   Fri, 8 Feb 2019 23:09:29 +0100
+References: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
+Message-ID: <be362056-2a34-f2fd-0495-1bc7524c67a5@free.fr>
+Date:   Fri, 8 Feb 2019 23:11:00 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
+In-Reply-To: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Douglas Anderson <dianders@chromium.org>
 
-This series adds support for the UFS host controller on
-APQ8098/MSM8998-based boards.
+If you look at the bindings for the UFS Host Controller it says:
 
-I CCed the regulator maintainers to discuss the revert in
-patch 6. Basically, the original patch added a quirk which
-forcefully disables vccq when the UFSHC is connected to a
-Samsung or Hynix Flash chip. Problem is, this disabling
-breaks init on my board, and Jeffrey's board as well.
-Hence the revert, for which I don't see any adverse
-consequences?
+- compatible: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+              also list one or more of the following:
+                 "qcom,msm8994-ufshc"
+                 "qcom,msm8996-ufshc"
+                 "qcom,ufshc"
 
-Differences between v3 and v4:
-- Rebase on top of -next
-- Pick up Douglas Anderson's UFSHC doc fix
-- Document 8998 UFSHC binding
-- Improve UFS PHY binding doc
-- Put the UFS DT patch at the end of the series
+My reading of that is that it's fine to just have either of these:
+1. "qcom,msm8996-ufshc", "jedec,ufs-2.0"
+2. "qcom,ufshc", "jedec,ufs-2.0"
 
-Difference between v2 and v3:
-- Add qcom,msm8998-qmp-ufs-phy compat string and match it in the PHY driver
-- Drop vdd-hba-fixed-regulator
-- Write the reg addresses with full 32-bit width
-- Set regulator-allow-set-load only on the 3 rails used by UFS.
-- Revert the patch introducing ufshcd_set_vccq_rail_unused
+As far as I can tell neither of the above is actually a good idea.
 
-Difference between v1 and v2:
-- New patch to add 'regulator-allow-set-load' prop to all vreg nodes
-- Rename rpmcc node to 'clock-controller' + Add Review tags
-- Drop UFS pinctrl gymnastics (not required, probably left enabled in bootloader)
-- Delete GCC_UFS_ICE_CORE_CLK (ICE not used upstream, I think)
-- Fix sizes of ufsphy register areas based on Jeffrey's feedback
-- Hack ufshcd_set_vccq_rail_unused into a NOP to work around lock up + reboot
+For #1 it turns out that the driver currently only keys off the
+compatible string "qcom,ufshc" so it won't actually probe.
 
-Douglas Anderson (1):
-  dt-bindings: ufs: Fix the compatible string definition
+For #2 the driver won't probe but it's not a good idea to keep the SoC
+name out of the compatible string.
 
-Marc Gonzalez (6):
-  dt-bindings: ufs: Add msm8998 compatible string
-  dt-bindings: phy-qcom-qmp: Add qcom,msm8998-qmp-ufs-phy
-  phy: qcom-qmp: Add QMP UFS PHY support for msm8998
-  arm64: dts: qcom: msm8998: Allow drivers to set-load
-  Revert "scsi: ufs: disable vccq if it's not needed by UFS device"
-  arm64: dts: qcom: msm8998: Add UFS nodes
+Let's update the compatible string to make it really explicit.  We'll
+include a nod to the existing driver and the old binding and say that
+we should always include the "qcom,ufshc" string in addition to the
+SoC compatible string.
 
- .../devicetree/bindings/phy/qcom-qmp-phy.txt  |  4 ++
- .../devicetree/bindings/ufs/ufshcd-pltfrm.txt | 14 +++--
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi     | 22 +++++++
- arch/arm64/boot/dts/qcom/msm8998.dtsi         | 62 +++++++++++++++++++
- drivers/phy/qualcomm/phy-qcom-qmp.c           |  3 +
- drivers/scsi/ufs/ufs.h                        |  1 -
- drivers/scsi/ufs/ufshcd.c                     | 59 ++----------------
- 7 files changed, 104 insertions(+), 61 deletions(-)
+While we're at it we'll also include another example SoC known to have
+UFS: sdm845.
 
+Fixes: 47555a5c8a11 ("scsi: ufs: make the UFS variant a platform device")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt       | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+index 8cf59452c675..5111e9130bc3 100644
+--- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
++++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+@@ -4,11 +4,14 @@ UFSHC nodes are defined to describe on-chip UFS host controllers.
+ Each UFS controller instance should have its own node.
+ 
+ Required properties:
+-- compatible		: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0", may
+-			  also list one or more of the following:
+-					  "qcom,msm8994-ufshc"
+-					  "qcom,msm8996-ufshc"
+-					  "qcom,ufshc"
++- compatible		: must contain "jedec,ufs-1.1" or "jedec,ufs-2.0"
++
++			  For Qualcomm SoCs must contain, as below, an
++			  SoC-specific compatible along with "qcom,ufshc" and
++			  the appropriate jedec string:
++			    "qcom,msm8994-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
++			    "qcom,msm8996-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
++			    "qcom,sdm845-ufshc", "qcom,ufshc", "jedec,ufs-2.0"
+ - interrupts        : <interrupt mapping for UFS host controller IRQ>
+ - reg               : <registers mapping>
+ 
 -- 
 2.17.1
