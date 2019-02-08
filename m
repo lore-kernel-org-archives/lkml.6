@@ -2,65 +2,71 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 980B8C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195AEC282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4B32146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B1020863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:04:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfBHRE1 (ORCPT
+        id S1727955AbfBHREb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:04:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49270 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727084AbfBHRE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:04:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 222A1AF1B;
-        Fri,  8 Feb 2019 17:04:25 +0000 (UTC)
-Subject: Re: [PATCH v2] mm: proc: smaps_rollup: Fix pss_locked calculation
-To:     Sandeep Patil <sspatil@android.com>, adobriyan@gmail.com,
-        akpm@linux-foundation.org, avagin@openvz.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        kernel-team@android.com, dancol@google.com
-References: <20190203065425.14650-1-sspatil@android.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <5b8e236d-7c43-6c2b-cb3f-cbb0b8923fe2@suse.cz>
-Date:   Fri, 8 Feb 2019 18:04:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190203065425.14650-1-sspatil@android.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Feb 2019 12:04:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54254 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727084AbfBHREb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:04:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB09E80D;
+        Fri,  8 Feb 2019 09:04:30 -0800 (PST)
+Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 412223F719;
+        Fri,  8 Feb 2019 09:04:29 -0800 (PST)
+From:   Julien Grall <julien.grall@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Julien Grall <julien.grall@arm.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH RESEND 0/3] Remove reference of TIF_USEDFPU on arch not using it
+Date:   Fri,  8 Feb 2019 17:04:22 +0000
+Message-Id: <20190208170425.10891-1-julien.grall@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/3/19 7:54 AM, Sandeep Patil wrote:
-> The 'pss_locked' field of smaps_rollup was being calculated incorrectly.
-> It accumulated the current pss everytime a locked VMA was found.  Fix
-> that by adding to 'pss_locked' the same time as that of 'pss' if the vma
-> being walked is locked.
-> 
-> Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
-> Cc: stable@vger.kernel.org # 4.14.y 4.19.y
-> Signed-off-by: Sandeep Patil <sspatil@android.com>
+Hi all,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+This small patch series remove reference of TIF_USEDFPU on nds32, arm and
+arm64 as the flag is not inuse.
 
-Thanks.
+Cheers,
 
-> ---
-> 
-> v1->v2
-> ------
-> - Move pss_locked accounting into smaps_account() inline with pss
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Vincent Chen <deanbo422@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+
+Julien Grall (3):
+  nds32: Removed unused thread flag TIF_USEDFPU
+  arm: Remove documentation about TIF_USEDFPU
+  arm64: Remove documentation about TIF_USEDFPU
+
+ arch/arm/include/asm/thread_info.h   | 1 -
+ arch/arm64/include/asm/thread_info.h | 1 -
+ arch/nds32/include/asm/thread_info.h | 2 --
+ 3 files changed, 4 deletions(-)
+
+-- 
+2.11.0
+
