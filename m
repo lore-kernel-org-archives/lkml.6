@@ -7,25 +7,24 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C490C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E979C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C14A20857
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E869720857
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfBIH6k (ORCPT
+        id S1726943AbfBIH7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 02:58:40 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:35564 "EHLO smtp4-g21.free.fr"
+        Sat, 9 Feb 2019 02:59:16 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:47910 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbfBIH6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 02:58:40 -0500
+        id S1725946AbfBIH7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 02:59:16 -0500
 Received: from [192.168.1.42] (unknown [77.207.133.132])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 3F4A919F4F3;
-        Sat,  9 Feb 2019 08:58:02 +0100 (CET)
-Subject: [PATCH v4 6/7] Revert "scsi: ufs: disable vccq if it's not needed by
- UFS device"
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id CEEAD19F4EA;
+        Sat,  9 Feb 2019 08:58:37 +0100 (CET)
+Subject: [PATCH v4 7/7] arm64: dts: qcom: msm8998: Add UFS nodes
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
 To:     MSM <linux-arm-msm@vger.kernel.org>,
         SCSI <linux-scsi@vger.kernel.org>
@@ -45,8 +44,8 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         Martin Petersen <martin.petersen@oracle.com>,
         LKML <linux-kernel@vger.kernel.org>
 References: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
-Message-ID: <817ff724-2a30-99fb-8a92-c77797651bde@free.fr>
-Date:   Fri, 8 Feb 2019 23:20:24 +0100
+Message-ID: <195f153d-9e66-d571-2c1a-1ec2c7c7d222@free.fr>
+Date:   Fri, 8 Feb 2019 23:22:09 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
@@ -58,139 +57,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 60f0187031c05e04cbadffb62f557d0ff3564490.
+Add UFS host controller and PHY DT nodes for msm8998.
 
-Calling ufshcd_set_vccq_rail_unused() breaks UFS init on two boards.
-I would say that vccq is *not* not needed.
-
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- drivers/scsi/ufs/ufs.h    |  1 -
- drivers/scsi/ufs/ufshcd.c | 59 +++------------------------------------
- 2 files changed, 4 insertions(+), 56 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 19 +++++++
+ arch/arm64/boot/dts/qcom/msm8998.dtsi     | 62 +++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 6d176815e6ce..21e4ccb5ba6e 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -514,7 +514,6 @@ struct ufs_vreg {
- 	struct regulator *reg;
- 	const char *name;
- 	bool enabled;
--	bool unused;
- 	int min_uV;
- 	int max_uV;
- 	int min_uA;
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 4bc55a2f5689..c78f5f199aff 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -254,7 +254,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba);
- static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
- 				 bool skip_ref_clk);
- static int ufshcd_setup_clocks(struct ufs_hba *hba, bool on);
--static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused);
- static int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
- static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba);
- static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba);
-@@ -5857,11 +5856,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
- 	ufs_fixup_device_setup(hba, &card);
- 	ufshcd_tune_unipro_params(hba);
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+index 19775cae1381..3e911488d4f3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+@@ -284,3 +284,22 @@
+ 	vdda-phy-supply = <&vreg_l1a_0p875>;
+ 	vdda-pll-supply = <&vreg_l2a_1p2>;
+ };
++
++&ufshc {
++	vcc-supply = <&vreg_l20a_2p95>;
++	vccq-supply = <&vreg_l26a_1p2>;
++	vccq2-supply = <&vreg_s4a_1p8>;
++	vcc-max-microamp = <750000>;
++	vccq-max-microamp = <560000>;
++	vccq2-max-microamp = <750000>;
++};
++
++&ufsphy {
++	vdda-phy-supply = <&vreg_l1a_0p875>;
++	vdda-pll-supply = <&vreg_l2a_1p2>;
++	vddp-ref-clk-supply = <&vreg_l26a_1p2>;
++	vdda-phy-max-microamp = <51400>;
++	vdda-pll-max-microamp = <14600>;
++	vddp-ref-clk-max-microamp = <100>;
++	vddp-ref-clk-always-on;
++};
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index 043ff2d2643c..d69401152089 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -983,6 +983,68 @@
+ 			redistributor-stride = <0x0 0x20000>;
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		ufshc: ufshc@1da4000 {
++			compatible = "qcom,msm8998-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
++			reg = <0x01da4000 0x2500>;
++			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
++			phys = <&ufsphy_lanes>;
++			phy-names = "ufsphy";
++			lanes-per-direction = <2>;
++			power-domains = <&gcc UFS_GDSC>;
++
++			clock-names =
++				"core_clk",
++				"bus_aggr_clk",
++				"iface_clk",
++				"core_clk_unipro",
++				"ref_clk",
++				"tx_lane0_sync_clk",
++				"rx_lane0_sync_clk",
++				"rx_lane1_sync_clk";
++			clocks =
++				<&gcc GCC_UFS_AXI_CLK>,
++				<&gcc GCC_AGGRE1_UFS_AXI_CLK>,
++				<&gcc GCC_UFS_AHB_CLK>,
++				<&gcc GCC_UFS_UNIPRO_CORE_CLK>,
++				<&rpmcc RPM_SMD_LN_BB_CLK1>,
++				<&gcc GCC_UFS_TX_SYMBOL_0_CLK>,
++				<&gcc GCC_UFS_RX_SYMBOL_0_CLK>,
++				<&gcc GCC_UFS_RX_SYMBOL_1_CLK>;
++			freq-table-hz =
++				<50000000 200000000>,
++				<0 0>,
++				<0 0>,
++				<37500000 150000000>,
++				<0 0>,
++				<0 0>,
++				<0 0>,
++				<0 0>;
++
++			resets = <&gcc GCC_UFS_BCR>;
++			reset-names = "rst";
++		};
++
++		ufsphy: phy@1da7000 {
++			compatible = "qcom,msm8998-qmp-ufs-phy";
++			reg = <0x01da7000 0x18c>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			clock-names = "ref", "ref_aux";
++			clocks =
++				<&gcc GCC_UFS_CLKREF_CLK>,
++				<&gcc GCC_UFS_PHY_AUX_CLK>;
++
++			ufsphy_lanes: lanes@1da7400 {
++				reg = <0x01da7400 0x128>,
++				      <0x01da7600 0x1fc>,
++				      <0x01da7c00 0x1dc>,
++				      <0x01da7800 0x128>,
++				      <0x01da7a00 0x1fc>;
++				#phy-cells = <0>;
++			};
++		};
+ 	};
+ };
  
--	ret = ufshcd_set_vccq_rail_unused(hba,
--		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
--	if (ret)
--		goto out;
--
- 	/* UFS device is also active now */
- 	ufshcd_set_ufs_dev_active(hba);
- 	ufshcd_force_reset_auto_bkops(hba);
-@@ -6030,24 +6024,13 @@ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
- static inline int ufshcd_config_vreg_lpm(struct ufs_hba *hba,
- 					 struct ufs_vreg *vreg)
- {
--	if (!vreg)
--		return 0;
--	else if (vreg->unused)
--		return 0;
--	else
--		return ufshcd_config_vreg_load(hba->dev, vreg,
--					       UFS_VREG_LPM_LOAD_UA);
-+	return ufshcd_config_vreg_load(hba->dev, vreg, UFS_VREG_LPM_LOAD_UA);
- }
- 
- static inline int ufshcd_config_vreg_hpm(struct ufs_hba *hba,
- 					 struct ufs_vreg *vreg)
- {
--	if (!vreg)
--		return 0;
--	else if (vreg->unused)
--		return 0;
--	else
--		return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
-+	return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
- }
- 
- static int ufshcd_config_vreg(struct device *dev,
-@@ -6085,9 +6068,7 @@ static int ufshcd_enable_vreg(struct device *dev, struct ufs_vreg *vreg)
- {
- 	int ret = 0;
- 
--	if (!vreg)
--		goto out;
--	else if (vreg->enabled || vreg->unused)
-+	if (!vreg || vreg->enabled)
- 		goto out;
- 
- 	ret = ufshcd_config_vreg(dev, vreg, true);
-@@ -6107,9 +6088,7 @@ static int ufshcd_disable_vreg(struct device *dev, struct ufs_vreg *vreg)
- {
- 	int ret = 0;
- 
--	if (!vreg)
--		goto out;
--	else if (!vreg->enabled || vreg->unused)
-+	if (!vreg || !vreg->enabled)
- 		goto out;
- 
- 	ret = regulator_disable(vreg->reg);
-@@ -6215,36 +6194,6 @@ static int ufshcd_init_hba_vreg(struct ufs_hba *hba)
- 	return 0;
- }
- 
--static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused)
--{
--	int ret = 0;
--	struct ufs_vreg_info *info = &hba->vreg_info;
--
--	if (!info)
--		goto out;
--	else if (!info->vccq)
--		goto out;
--
--	if (unused) {
--		/* shut off the rail here */
--		ret = ufshcd_toggle_vreg(hba->dev, info->vccq, false);
--		/*
--		 * Mark this rail as no longer used, so it doesn't get enabled
--		 * later by mistake
--		 */
--		if (!ret)
--			info->vccq->unused = true;
--	} else {
--		/*
--		 * rail should have been already enabled hence just make sure
--		 * that unused flag is cleared.
--		 */
--		info->vccq->unused = false;
--	}
--out:
--	return ret;
--}
--
- static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
- 					bool skip_ref_clk)
- {
 -- 
 2.17.1
