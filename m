@@ -2,147 +2,186 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB046C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECC6C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B59BA21919
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D237321917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 05:22:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ZY9qesP9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ug4sduE1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfBHFTy (ORCPT
+        id S1726864AbfBHFWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 00:19:54 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43915 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbfBHFTx (ORCPT
+        Fri, 8 Feb 2019 00:22:33 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40328 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfBHFWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 00:19:53 -0500
-Received: by mail-pl1-f194.google.com with SMTP id f90so894688plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 21:19:53 -0800 (PST)
+        Fri, 8 Feb 2019 00:22:32 -0500
+Received: by mail-lf1-f67.google.com with SMTP id t14so1632090lfk.7;
+        Thu, 07 Feb 2019 21:22:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BYbBSsXD8XXPJr8WmxtwPC6HBpOHhpTEB9wAZo2Q1Iw=;
-        b=ZY9qesP9VVn0x9e71+u4lkQ//uBh7kJgGvlvQKRWeoCf4hvZtlJxqBWlgNIsBozfuw
-         PdiI4WYxwxhuhA+2Sgprj5UL9o5hea0yoh9+Ctc3FowkhG51kFr8aedwRShg+QKcaDCW
-         tIY0lbhw0VWFe5rVm0M2wXVtSouGOAhLUfZ50+m3NGMVTTrnEeKRxLxi0BdKLdR7nIiA
-         XEYfw1JdCfICZ/gylNCtg2bIU+Rm1+9QUR+dnNgdoU5lcQEY8JXoxLEdbOeFNsjs58Ms
-         yjBkj2TK4LWgLjeiJEPhzVoyPpQRQIMnqvxzPKyKJF6lFGUzbvvWjTcEHrDFrmsmTVdQ
-         Iftw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oQ4Ilbn2E5O3fse3aFqgWsQmQAFvePOUeZWey4DXpkM=;
+        b=ug4sduE1Nnl6Ucdd6kGSolkdKH1uWHus2x+U5KYf2iN2rOsM9HLP3WTOmtwRbzp/vU
+         WmI7jBaiRmhbQxbwHIe1HKiSj7rT5Pv4oHUINwtri7G7ilhTP4D78Yq6vvJJUSwIrTRk
+         2ZUDMC1PaOffK1wF+qWJhW3jgyxtid/rRRhQV+FwutdaTY+tC2WlM9hOb7ujI5dOg5DP
+         EU9fmyUvSJJZv2KkRSduA90NhevjuS8YMcH4NWCpzE+PGCGGZkX1L5MalVS4z+wPl2v1
+         T8K0xfLoY4zbiJwnBzc2QcYZ5ejUJufl/jXJiF3yK/Xx/zcNB2iHuxOECHTIDbBUCpMu
+         3Lug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BYbBSsXD8XXPJr8WmxtwPC6HBpOHhpTEB9wAZo2Q1Iw=;
-        b=skKM9Zm/Ns5hP0G3+OGyX0ibu7shvOfIbjbPM2WSsmKiO/SSiE7DVQuuF5q3di0sLR
-         OjEpkfiAYvO9GeK/bj2OESJ+AVKD/KEIrMJvfz52Q5CP7j5zxTMh3X+IDU+dN91+KAfN
-         RMZHQBqvQJRr6doEZ0BsRlj9SQviKD/CIGo0XPfaNEHrTrnPiIyMaEjlmGE67LqZWrZq
-         fTSPRCQKHImLZi046fDRWRdsQyTd0WN8EkZxP2SOzvFeF1xwueILvhZUYU3tbrxkkJtJ
-         Zjz9m2Pfkjj7WGtef9D5AlqjrwrfaAY2fNny7w42tLI0kzV2Yh6Lj/vYhoddoNcDh6BY
-         4TQw==
-X-Gm-Message-State: AHQUAuYm9NIQP3yUi2GPtS8RujCHfUUxYhd9eMgVjF6shhVBsCSdsN3p
-        8dLlwDE17XxltjOK8Osk7nSEH/PswDo=
-X-Google-Smtp-Source: AHgI3Ib+Q8mmAigiLi1jjcsVDeZ6rNsQaeyBAKdrDXlYrjxQElJhijsWAqyqebNTeTb+oDehCRzanA==
-X-Received: by 2002:a17:902:298a:: with SMTP id h10mr20875446plb.312.1549603192845;
-        Thu, 07 Feb 2019 21:19:52 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id d16sm901999pgj.21.2019.02.07.21.19.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 21:19:51 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gryZq-0002AV-R9; Thu, 07 Feb 2019 22:19:50 -0700
-Date:   Thu, 7 Feb 2019 22:19:50 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190208051950.GA4283@ziepe.ca>
-References: <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <20190207035258.GD6173@dastard>
- <20190207052310.GA22726@ziepe.ca>
- <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
- <20190207171736.GD22726@ziepe.ca>
- <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oQ4Ilbn2E5O3fse3aFqgWsQmQAFvePOUeZWey4DXpkM=;
+        b=j9OmBml49Q9f4vZhvkAHb7ByNLI/RwVSBNSPE7WxHtxvYuLNaFfuX9/BzwLZnXXFyW
+         NMyzwcCClxTb+h8HRSxSh5JXXZ2UZnRSOxJqWzeNqGcFTnIvMptmKhV8Z73HTY27gNzR
+         M66LMj7ZVFG5jlEpuSi+Amf4ygTMnKUAMPgkQYQl+wMySNExr0vgZA7bdzp0wxr1dPIW
+         p57tPnG9QIyrzAj96dLqYJdidnj2JQXh+8yozfLcv6fSB7JOvQDrl4q2pFoHZlhnbYM5
+         N9IrldqmjgCdIT0oRnkD4N5s4ZHsgfzLG+g2x9feywSLQ/3T2iTG3VJGWS2oGLuwkgui
+         eTKA==
+X-Gm-Message-State: AHQUAuYtAa7HXOgFG0feo6SwYwphwVK9kpBdLpekV2iJqkXsmyLomcPl
+        24mzOsNvZkBtL/CWLdJqaQ+vHYLmc1iO5bJlJYU=
+X-Google-Smtp-Source: AHgI3IYz0SkMlWyxEeQhmXaahAF/5quTQnuzAn7bE9wiMnoPq679b6hVT3lDwP3on5fiZwP5X0S2WjPjR8kO/5pnmkU=
+X-Received: by 2002:ac2:5496:: with SMTP id t22mr1036162lfk.31.1549603349625;
+ Thu, 07 Feb 2019 21:22:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
+ <20190131083842.GE28876@rapoport-lnx> <CAFqt6za9xA_8OKiaaHXcO9go+RtPdjLY5Bz_fgQL+DZbermNhA@mail.gmail.com>
+ <20190207164739.GX21860@bombadil.infradead.org>
+In-Reply-To: <20190207164739.GX21860@bombadil.infradead.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Fri, 8 Feb 2019 10:52:16 +0530
+Message-ID: <CAFqt6zawBP5Yyy7nfoKz_6ugw8e4MVopvBaeKvaKoXcS-_oSNg@mail.gmail.com>
+Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and
+ vm_insert_range_buggy API
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 03:54:58PM -0800, Dan Williams wrote:
+On Thu, Feb 7, 2019 at 10:17 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Feb 07, 2019 at 09:19:47PM +0530, Souptick Joarder wrote:
+> > Just thought to take opinion for documentation before placing it in v3.
+> > Does it looks fine ?
+> >
+> > +/**
+> > + * __vm_insert_range - insert range of kernel pages into user vma
+> > + * @vma: user vma to map to
+> > + * @pages: pointer to array of source kernel pages
+> > + * @num: number of pages in page array
+> > + * @offset: user's requested vm_pgoff
+> > + *
+> > + * This allow drivers to insert range of kernel pages into a user vma.
+> > + *
+> > + * Return: 0 on success and error code otherwise.
+> > + */
+> > +static int __vm_insert_range(struct vm_area_struct *vma, struct page **pages,
+> > +                               unsigned long num, unsigned long offset)
+>
+> For static functions, I prefer to leave off the second '*', ie make it
+> formatted like a docbook comment, but not be processed like a docbook
+> comment.  That avoids cluttering the html with descriptions of internal
+> functions that people can't actually call.
+>
+> > +/**
+> > + * vm_insert_range - insert range of kernel pages starts with non zero offset
+> > + * @vma: user vma to map to
+> > + * @pages: pointer to array of source kernel pages
+> > + * @num: number of pages in page array
+> > + *
+> > + * Maps an object consisting of `num' `pages', catering for the user's
+>
+> Rather than using `num', you should use @num.
+>
+> > + * requested vm_pgoff
+> > + *
+> > + * If we fail to insert any page into the vma, the function will return
+> > + * immediately leaving any previously inserted pages present.  Callers
+> > + * from the mmap handler may immediately return the error as their caller
+> > + * will destroy the vma, removing any successfully inserted pages. Other
+> > + * callers should make their own arrangements for calling unmap_region().
+> > + *
+> > + * Context: Process context. Called by mmap handlers.
+> > + * Return: 0 on success and error code otherwise.
+> > + */
+> > +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
+> > +                               unsigned long num)
+> >
+> >
+> > +/**
+> > + * vm_insert_range_buggy - insert range of kernel pages starts with zero offset
+> > + * @vma: user vma to map to
+> > + * @pages: pointer to array of source kernel pages
+> > + * @num: number of pages in page array
+> > + *
+> > + * Similar to vm_insert_range(), except that it explicitly sets @vm_pgoff to
+>
+> But vm_pgoff isn't a parameter, so it's misleading to format it as such.
+>
+> > + * 0. This function is intended for the drivers that did not consider
+> > + * @vm_pgoff.
+> > + *
+> > + * Context: Process context. Called by mmap handlers.
+> > + * Return: 0 on success and error code otherwise.
+> > + */
+> > +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
+> > +                               unsigned long num)
+>
+> I don't think we should call it 'buggy'.  'zero' would make more sense
+> as a suffix.
 
-> > The only production worthy way is to have the FS be a partner in
-> > making this work without requiring revoke, so the critical RDMA
-> > traffic can operate safely.
-> 
-> ...belies a path forward. Just swap out "FS be a partner" with "system
-> administrator be a partner". In other words, If the RDMA stack can't
-> tolerate an MR being disabled then the administrator needs to actively
-> disable the paths that would trigger it. Turn off reflink, don't
-> truncate, avoid any future FS feature that might generate unwanted
-> lease breaks. 
+suffix can be *zero or zero_offset* whichever suits better.
 
-This is what I suggested already, except with explicit kernel aid, not
-left as some gordian riddle for the administrator to unravel.
+>
+> Given how this interface has evolved, I'm no longer sure than
+> 'vm_insert_range' makes sense as the name for it.  Is it perhaps
+> 'vm_map_object' or 'vm_map_pages'?
+>
 
-You already said it is too hard for expert FS developers to maintain a
-mode switch, it seems like a really big stretch to think application
-and systems architects will have any hope to do better.
+I prefer vm_map_pages. Considering it, both the interface name can be changed
+to *vm_insert_range -> vm_map_pages* and *vm_insert_range_buggy ->
+vm_map_pages_{zero/zero_offset}.
 
-It makes much more sense for the admin to flip some kind of bit and
-the FS guarentees the safety that you are asking the admin to create.
+As this is only change in interface name and rest of code remain same
+shall I post it in v3 ( with additional change log mentioned about interface
+name changed) ?
 
-> We would need to make sure that lease notifications include the
-> information to identify the lease breaker to debug escapes that
-> might happen, but it is a solution that can be qualified to not
-> lease break. 
+or,
 
-I think building a complicated lease framework and then telling
-everyone in user space to design around it so it never gets used would
-be very hard to explain and justify.
-
-Never mind the security implications if some seemingly harmless future
-filesystem change causes unexpected lease revokes across something
-like a tenant boundary.
-
-> In any event, this lets end users pick their filesystem
-> (modulo RDMA incompatible features), provides an enumeration of
-> lease break sources in the kernel, and opens up FS-DAX to a wider
-> array of RDMA adapters. In general this is what Linux has
-> historically done, give end users technology freedom.
-
-I think this is not the Linux model. The kernel should not allow
-unpriv user space to do an operation that could be unsafe.
-
-I continue to think this is is the best idea that has come up - but
-only if the filesystem is involved and expressly tells the kernel
-layers that this combination of DAX & filesystem is safe.
-
-Jason
+It will be a new patch series ( with carry forward all the Reviewed-by
+/ Tested-by on
+vm_insert_range/ vm_insert_range_buggy ) ?
