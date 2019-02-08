@@ -2,105 +2,175 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E708AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3840C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64CF2070B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:38:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826072146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:40:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q21IJUmW"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="O40UEtSQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfBHOix (ORCPT
+        id S1727750AbfBHOkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:38:53 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42404 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbfBHOiw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:38:52 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so3165986lja.9
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:38:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m1JV4UKGPid//QUWIswJKTDrZY8kaDLgj1mEClsy4p8=;
-        b=q21IJUmWmMU/bc69iD13ApG8isLgVQvWTNe0o325QU5FKBdIVXu0Sjmc1NQ5iYxNFX
-         uCrdmddKGdHtOPwMzJkeW9wpEV/HLQcycVSAfBBufzU+BHFrnfJHZnGe949clwlNtJBR
-         0y8Q3ZZKnuqXIkKuPFQSBcVLnbuaZRCYRUoEA2d5GGqzsBIWu6/zNQKVIJXAgPc9UGdf
-         kBxPZnizbxrCaIIF9U3sx8sHo41+PRncBk8BzqFC8WS7lbXd/xLlhRWGNmUr5TyxZFmF
-         rqlV0xox0BRUB3WaiW30AqOGYyWYdha9H2x5i0Pz2NjYWRmzcIv2ekNDNgKHbe2Kunyd
-         1Cvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m1JV4UKGPid//QUWIswJKTDrZY8kaDLgj1mEClsy4p8=;
-        b=uTlK3ms7qBAQEMVVTTblqYxCiU9GME4rGICHcj4mgZaitwdg886k8tndEZGDvUIqAo
-         Hf4mvyEFU3iP2x/ZddllRwg5qgEtef1CbLFV4oZCF+pvIEPahzvaG9K9x4pxpv7/IWDL
-         NW+q0JDqlkHEdnhjKdNI/v9PISJC74ZCu1dbFfb5b3fuJsHsFxU/q9i7lkqv2T5FWOKZ
-         JMv4yyf+dItuXzhjRhwMYjjzSxkWvyUgIWNXHjF/nm07ODAi4DEhi2jH+Buj2Y8H7Fix
-         4ChUoLSO8I3MO94cGYJMBZhlebvPR2L2dkQNaOZ9eQ+ir5tpeSHGH5ngcT6N0z8wLtWm
-         9Gmg==
-X-Gm-Message-State: AHQUAubkMkjiATNM0glyt5JpAVVWKPCz9/VOXs7isYg+uqrBMZQ9jxoI
-        91cztIS84m+vP3ZxNUnRQ46kXnJBQwbnjgLIZGFWWg==
-X-Google-Smtp-Source: AHgI3IbmU2DVVsqRSor+8xwjVZFQV0zJD7A3gaLJd96co/tYduJLXE2cmJYUuGNqBCZPD1fIGEw9gTzKWMmjnTjmfrI=
-X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr13903134ljb.153.1549636730629;
- Fri, 08 Feb 2019 06:38:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20190208123635.26755-1-masneyb@onstation.org>
-In-Reply-To: <20190208123635.26755-1-masneyb@onstation.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Feb 2019 15:38:38 +0100
-Message-ID: <CACRpkdab=MFffe27qK5qFo1kAKcZOOeGDkEwwHa3HF+EEq0qeQ@mail.gmail.com>
-Subject: Re: [PATCH -next] spmi: pmic-arb: revert "validate type when mapping IRQ"
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Feb 2019 09:40:49 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:19628 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726568AbfBHOkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 09:40:49 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43wyXY6gw7z9vBwc;
+        Fri,  8 Feb 2019 15:40:45 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=O40UEtSQ; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id zYTMgxMD0fV5; Fri,  8 Feb 2019 15:40:45 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43wyXY5PXkz9vBwZ;
+        Fri,  8 Feb 2019 15:40:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549636845; bh=5GG72cfsOyRs1FMwnBMqAfDwn15LcXCsOplueh6doO0=;
+        h=From:Subject:To:Cc:Date:From;
+        b=O40UEtSQxXdfDb/419Re+wWnkIIt+yZhnDbLDDNb+AktAn0M8c+EZhMz44A9SPEx8
+         DK2jD4twcM9JkfHglLX+MThSGZxrk3Tg84BzSvr1ikAfnrITj2QJCO19Ec21WRzBcN
+         dhupWUw05SB2gjleGFvIcmOH7kvp0Y/UNFFhEIjE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3B10F8B8DA;
+        Fri,  8 Feb 2019 15:40:47 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ejnY7pB_f5qS; Fri,  8 Feb 2019 15:40:47 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 05AF48B756;
+        Fri,  8 Feb 2019 15:40:47 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id CB010656D3; Fri,  8 Feb 2019 14:40:46 +0000 (UTC)
+Message-Id: <a952f14712b90f182c0fcace434b2a0e9f21ed9f.1549636481.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v1] powerpc/accounting: do not account system time on
+ transition to user.
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri,  8 Feb 2019 14:40:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brian,
+Time spent in kernel mode don't need to be accounted on transition
+to user space. As far as the time spent in user is known, it
+is possible to calculate the time spent in kernel by substracting
+the time spent in user.
 
-I simply applied this patch to the pin control tree so we get it
-in with the rest of the patches.
+To do so, this patch modifies vtime_delta() to substract the
+time spent in user since the last call to vtime_delta().
 
-On Fri, Feb 8, 2019 at 1:36 PM Brian Masney <masneyb@onstation.org> wrote:
+This patch gives a 2% improvment of null_syscall() selftest on a 83xx.
 
-> Validation of the IRQ type was added to spmi pmic-arb, however spmi-mpp
-> in device tree still uses IRQ_TYPE_NONE. This commit caused the
-> spmi-mpp probe to fail since platform_irq_count() would return 0.
-> Correct this by backing out the previous patch.
->
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Fixes: 135ef21ab064 ("spmi: pmic-arb: validate type when mapping IRQ")
-> ---
-> Linus: I think that the better longer-term approach is to just embed the
-> IRQ counts similar to what is now in spmi-gpio.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+But surprisingly, this patch degrades the null_syscall selftest by 20% on the 8xx. Any idea of the reason ?
 
-That is most certainly better.
+ arch/powerpc/include/asm/accounting.h | 1 +
+ arch/powerpc/include/asm/ppc_asm.h    | 8 +-------
+ arch/powerpc/kernel/asm-offsets.c     | 8 ++------
+ arch/powerpc/kernel/time.c            | 4 +++-
+ 4 files changed, 7 insertions(+), 14 deletions(-)
 
-> Since we are getting
-> close to the end of the dev cycle, I think it is safer to just drop
-> the old patch for the time being. I'll commit to doing that work for the
-> next dev cycle, although I can send you that change this weekend if you
-> prefer that we go that route instead.
+diff --git a/arch/powerpc/include/asm/accounting.h b/arch/powerpc/include/asm/accounting.h
+index c607c5d835cc..2f1ff5f9fd7a 100644
+--- a/arch/powerpc/include/asm/accounting.h
++++ b/arch/powerpc/include/asm/accounting.h
+@@ -27,6 +27,7 @@ struct cpu_accounting_data {
+ 	/* Internal counters */
+ 	unsigned long starttime;	/* TB value snapshot */
+ 	unsigned long starttime_user;	/* TB value on exit to usermode */
++	unsigned long utime_asm;
+ #ifdef CONFIG_ARCH_HAS_SCALED_CPUTIME
+ 	unsigned long startspurr;	/* SPURR value snapshot */
+ 	unsigned long utime_sspurr;	/* ->user_time when ->startspurr set */
+diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
+index e0637730a8e7..be17d570d484 100644
+--- a/arch/powerpc/include/asm/ppc_asm.h
++++ b/arch/powerpc/include/asm/ppc_asm.h
+@@ -28,9 +28,8 @@
+ #define ACCOUNT_STOLEN_TIME
+ #else
+ #define ACCOUNT_CPU_USER_ENTRY(ptr, ra, rb)				\
+-	MFTB(ra);			/* get timebase */		\
+ 	PPC_LL	rb, ACCOUNT_STARTTIME_USER(ptr);			\
+-	PPC_STL	ra, ACCOUNT_STARTTIME(ptr);				\
++	MFTB(ra);			/* get timebase */		\
+ 	subf	rb,rb,ra;		/* subtract start value */	\
+ 	PPC_LL	ra, ACCOUNT_USER_TIME(ptr);				\
+ 	add	ra,ra,rb;		/* add on to user time */	\
+@@ -38,12 +37,7 @@
+ 
+ #define ACCOUNT_CPU_USER_EXIT(ptr, ra, rb)				\
+ 	MFTB(ra);			/* get timebase */		\
+-	PPC_LL	rb, ACCOUNT_STARTTIME(ptr);				\
+ 	PPC_STL	ra, ACCOUNT_STARTTIME_USER(ptr);			\
+-	subf	rb,rb,ra;		/* subtract start value */	\
+-	PPC_LL	ra, ACCOUNT_SYSTEM_TIME(ptr);				\
+-	add	ra,ra,rb;		/* add on to system time */	\
+-	PPC_STL	ra, ACCOUNT_SYSTEM_TIME(ptr)
+ 
+ #ifdef CONFIG_PPC_SPLPAR
+ #define ACCOUNT_STOLEN_TIME						\
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
+index 7a1b93c5af63..f2ba7735f56f 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -260,19 +260,15 @@ int main(void)
+ 	OFFSET(PACAHWCPUID, paca_struct, hw_cpu_id);
+ 	OFFSET(PACAKEXECSTATE, paca_struct, kexec_state);
+ 	OFFSET(PACA_DSCR_DEFAULT, paca_struct, dscr_default);
+-	OFFSET(ACCOUNT_STARTTIME, paca_struct, accounting.starttime);
+ 	OFFSET(ACCOUNT_STARTTIME_USER, paca_struct, accounting.starttime_user);
+-	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime);
+-	OFFSET(ACCOUNT_SYSTEM_TIME, paca_struct, accounting.stime);
++	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime_asm);
+ 	OFFSET(PACA_TRAP_SAVE, paca_struct, trap_save);
+ 	OFFSET(PACA_NAPSTATELOST, paca_struct, nap_state_lost);
+ 	OFFSET(PACA_SPRG_VDSO, paca_struct, sprg_vdso);
+ #else /* CONFIG_PPC64 */
+ #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+-	OFFSET(ACCOUNT_STARTTIME, thread_info, accounting.starttime);
+ 	OFFSET(ACCOUNT_STARTTIME_USER, thread_info, accounting.starttime_user);
+-	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime);
+-	OFFSET(ACCOUNT_SYSTEM_TIME, thread_info, accounting.stime);
++	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime_asm);
+ #endif
+ #endif /* CONFIG_PPC64 */
+ 
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index bc0503ef9c9c..79420643b45f 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -331,8 +331,10 @@ static unsigned long vtime_delta(struct task_struct *tsk,
+ 	WARN_ON_ONCE(!irqs_disabled());
+ 
+ 	now = mftb();
+-	stime = now - acct->starttime;
++	stime = now - acct->starttime - acct->utime_asm;
+ 	acct->starttime = now;
++	acct->utime += acct->utime_asm;
++	acct->utime_asm = 0;
+ 
+ 	*stime_scaled = vtime_delta_scaled(acct, now, stime);
+ 
+-- 
+2.13.3
 
-It's fine like this.
-
-> My ssbi-gpio series does not have this issue.
-
-OK!
-
-Yours,
-Linus Walleij
