@@ -2,99 +2,113 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644B8C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE5EC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350B221924
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D5FF21924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:34:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Gf+VhSs9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdDY3gew"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfBHHdo (ORCPT
+        id S1727191AbfBHHeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:33:44 -0500
-Received: from ozlabs.org ([203.11.71.1]:42107 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726063AbfBHHdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:33:44 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43wn3n0pqMz9sLw;
-        Fri,  8 Feb 2019 18:33:40 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549611221;
-        bh=dJw8QvCG+hjAVGedbgsVA0Wf9FW34xRnIv295tt0hto=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Gf+VhSs9gj/5sYhR9gKWlJbH8eQFz1/meJUWNcudiDQWgIrd2ChEhrSextitmNuv1
-         /B7+cp7rlfrfn8fihfPtT2hWXTZYgtwwGOV6TwTiWt9YCeMvyazVjbRFWN6WXl6y9X
-         8Pdv0DceE9yQ9UmdLy+uOw+Hfi5kx1CtUNQBTSjSqJVJZrruGm2V1MomwfE+IYQPYK
-         S2oXGJwVY3UKgjHs85aON/R+3uJyGXYSVDDSkTreOkE9Edyb3+guu7p4XhSB8wBTcG
-         7shUljLRQOGH1u5p/btlwHynlccR+Gx1kHS3OHOfSEzCf0K9Wj8qF/3+BBpfhHqApi
-         81xld1nNsUGWw==
-Date:   Fri, 8 Feb 2019 18:33:32 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Coulson <chris.coulson@canonical.com>
-Subject: linux-next: build failure after merge of the apparmor tree
-Message-ID: <20190208183332.47dc655a@canb.auug.org.au>
+        Fri, 8 Feb 2019 02:34:08 -0500
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:40802 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfBHHeI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 02:34:08 -0500
+Received: by mail-wr1-f43.google.com with SMTP id q1so2443785wrp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 23:34:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=inJqTiEgrDhETE3bawzlt9w7vAaWsM+B/ix4JgWmlzQ=;
+        b=rdDY3gewVCY3boh17ik2SLDntkFFb4mCeaCS2w/ekFadHSdT0U0dBHDdyHMS/+6WMv
+         2/BJu9ajF7cMPRJiDPmjWq7tBwhIOdVB0QeVsGZzVnivdmZndB2RFHJRjMkpuWkvuPpJ
+         wlI4JshP1Ae3Pmtnf8eSTDcZ2myjkESMfYCg6GU8a+xoIn9bM9zC02tpMGr85pEgh1j7
+         VqBAQsvWqnxc69+ScarufyBVuZOdNaZz654nOE8W+NzhZJ0p2UhxZe0gbb79lesTl1yF
+         thQcYZqxnvSsAVhoWvxUdi8qSVvo3SR6qBqSB7+9loA6I+kwfDkTe8szcsWySvAgP2ht
+         PPWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=inJqTiEgrDhETE3bawzlt9w7vAaWsM+B/ix4JgWmlzQ=;
+        b=C3SdtBC6jlpZMDSdKa0Qxp299kpeUhyM/vWlk0yArsXivjpjvtct6iH1I048Bgt/8c
+         GkKyZPMuGS+J1Y/e4Cp1pUMX4O1/QYWqaR7VRwBlVa3koPdqAfuemkuopq/g5AWu3J/P
+         2pXemBJANX/f20VeoJeCpVmkRMOsABwKGnEL7pNw8X5CPKxLvbMLehei9X4Q9pWLzCqy
+         P9SFSxIx3MmI0Y7oASqqUuiyD7Q5ycP0M8ikB0IkcAHeA1/Ou+7FycWpKrZhv01P6Uzu
+         eQ8FZWnvFPVdHI3drk4X4P8EPHsdCuMS+aH6wRJlT9J0mmGeqrqqCwOvR0JU/Q0tNDjL
+         XKTg==
+X-Gm-Message-State: AHQUAuY8VT7rRujVye2RPePcKCNLbwSZmSyW6A/WsloDTgMwuv2v/UXD
+        PPio3TRZm3ztCqGtvVAKFGgivJk=
+X-Google-Smtp-Source: AHgI3IacUK1/HahP7D5gaAUBhhOmmxSB026i8vXdaAly6FdddQTtylJkJ9YedQcgVL5YpwvX2FUqug==
+X-Received: by 2002:a5d:5750:: with SMTP id q16mr15138329wrw.12.1549611246253;
+        Thu, 07 Feb 2019 23:34:06 -0800 (PST)
+Received: from avx2 ([46.53.243.121])
+        by smtp.gmail.com with ESMTPSA id d17sm679588wrw.68.2019.02.07.23.34.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 23:34:05 -0800 (PST)
+Date:   Fri, 8 Feb 2019 10:34:03 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] lib/string.c: make strncmp() smaller
+Message-ID: <20190208073403.GA19734@avx2>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uS4PLsnuHLrdg_ZH0=xgX/4"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/uS4PLsnuHLrdg_ZH0=xgX/4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Space savings on x86_64:
 
-Hi all,
+	add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-29 (-29)
+	Function                                     old     new   delta
+	strncmp                                       67      38     -29
 
-After merging the apparmor tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Space savings on arm:
 
-security/apparmor/policy_unpack.c: In function 'deflate_compress':
-security/apparmor/policy_unpack.c:1064:4: error: implicit declaration of fu=
-nction 'vfree'; did you mean 'kfree'? [-Werror=3Dimplicit-function-declarat=
-ion]
-    vfree(stgbuf);
-    ^~~~~
-    kfree
+	add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-60 (-60)
+	Function                                     old     new   delta
+	strncmp                                      116      56     -60
 
-Caused by commit
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-  876dd866c084 ("apparmor: Initial implementation of raw policy blob compre=
-ssion")
+ lib/string.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uS4PLsnuHLrdg_ZH0=xgX/4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxdMMwACgkQAVBC80lX
-0Gwzjwf/ZCSuAYz/zQuV2+5MzeQ2oW0vmlnjdR3sRRRm9e+HoGeD3//cFeKWsNPL
-JWus6w8GoJ+SifTg5Pplgc0uhHHPuNcTCEO0dxvRwf4jSWw46VSEv92BST2q9BV6
-BnfxXx0x5NIDGIVspOiLtbwQ+hn/7P7jF+F0nmGSnwxxHJEfaDIWCruOYGGrrSso
-NhsUCxpMMJQUSS27YSzmHMzR07ypgQRqTDyRV6h/vQJb5m1+3J5mGLE9EdPuerMe
-FZYR5FKugUcnvrLySbnZuxCrJfb1Re53sew5dESyrPcveiUgBq9a1OK7uz5AQcfi
-5QLxH6WAbBBi8fG7LGARuFBOsEQiUA==
-=efXZ
------END PGP SIGNATURE-----
-
---Sig_/uS4PLsnuHLrdg_ZH0=xgX/4--
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -344,16 +344,14 @@ EXPORT_SYMBOL(strcmp);
+  */
+ int strncmp(const char *cs, const char *ct, size_t count)
+ {
+-	unsigned char c1, c2;
++	while (count--) {
++		unsigned int c1 = *(unsigned char *)cs++;
++		unsigned int c2 = *(unsigned char *)ct++;
+ 
+-	while (count) {
+-		c1 = *cs++;
+-		c2 = *ct++;
+ 		if (c1 != c2)
+-			return c1 < c2 ? -1 : 1;
++			return c1 - c2;
+ 		if (!c1)
+ 			break;
+-		count--;
+ 	}
+ 	return 0;
+ }
