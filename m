@@ -6,142 +6,125 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F03EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC840C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45A920855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABDC820863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:02:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H6f91ByW"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nOkaxgYQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfBHRCW (ORCPT
+        id S1727812AbfBHRCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:02:22 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48731 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfBHRCV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:02:21 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190208170220euoutp0258768ae433b0d86d23143cc64bded04c~Bcjn0QBnP0990309903euoutp02X
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 17:02:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190208170220euoutp0258768ae433b0d86d23143cc64bded04c~Bcjn0QBnP0990309903euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549645340;
-        bh=v71pZnVPDWrGKDu/TlRu3LlfZ4qgxlQhPZCeS1BthZo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=H6f91ByWaqVFx1xAwiSg4xd31Tx7wIuxSnhYjzqdZBiEl5fHzgv+j+oWH0AOmcIQO
-         NJWrbZnZrP4oYXEJ2cevfVj9i2auDUc/5Aqwy1LZWd21TweLupJNe8E2oB0ZQAo8TY
-         XepWThKsgAbzIhLnpEOuU5tlat7j8Rn5eEe6k+nM=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190208170219eucas1p28d0c8bad0a4bdb0b10725bc2b972ad40~Bcjncj0f32524125241eucas1p24;
-        Fri,  8 Feb 2019 17:02:19 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 82.EB.04441.B16BD5C5; Fri,  8
-        Feb 2019 17:02:19 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190208170218eucas1p228ec2bb11ff97f28ec70c301e50f6b13~Bcjm0J3Yj1622516225eucas1p2d;
-        Fri,  8 Feb 2019 17:02:18 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190208170218eusmtrp1256086c9b9fee22f91207fbffc874751~Bcjmk-2Bh0221702217eusmtrp1W;
-        Fri,  8 Feb 2019 17:02:18 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-56-5c5db61b5a00
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1B.D3.04284.A16BD5C5; Fri,  8
-        Feb 2019 17:02:18 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190208170218eusmtip2c356bba6a8e60f085454a26feff75cdd~BcjmP8SYT0940909409eusmtip21;
-        Fri,  8 Feb 2019 17:02:18 +0000 (GMT)
-Subject: Re: [PATCH] fbcon: use kvmalloc() for scrollback buffer
-To:     Konstantin Khorenko <khorenko@virtuozzo.com>
-Cc:     "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        Fri, 8 Feb 2019 12:02:34 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:63545 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbfBHRCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:02:33 -0500
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5db6250000>; Sat, 09 Feb 2019 01:02:29 +0800
+Received: from HKMAIL101.nvidia.com ([10.18.16.10])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 08 Feb 2019 09:02:29 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Fri, 08 Feb 2019 09:02:29 -0800
+Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL101.nvidia.com
+ (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
+ 2019 17:02:28 +0000
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (104.47.46.53) by
+ HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Fri, 8 Feb 2019 17:02:28 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB2646.namprd12.prod.outlook.com (20.176.255.211) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.22; Fri, 8 Feb 2019 17:02:25 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
+ 17:02:25 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <ed53d034-9592-76e2-3122-dc2480890527@samsung.com>
-Date:   Fri, 8 Feb 2019 18:02:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V16 4/6] i2c: tegra: Add DMA support
+Thread-Topic: [PATCH V16 4/6] i2c: tegra: Add DMA support
+Thread-Index: AQHUv829t7ouq5xahU+WuWRXTJjcy6XWHr8AgAAA/AA=
+Date:   Fri, 8 Feb 2019 17:02:25 +0000
+Message-ID: <BYAPR12MB33980494FB2E5C439210124FC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1549644314-1481-1-git-send-email-skomatineni@nvidia.com>
+ <1549644314-1481-4-git-send-email-skomatineni@nvidia.com>
+ <dd2899ab-1a5f-834c-ab97-1654845c7de2@gmail.com>
+In-Reply-To: <dd2899ab-1a5f-834c-ab97-1654845c7de2@gmail.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB2646;6:GpTzCAfdZOrJNB4yMBu+8YvP4F4o4GsLCNbERqHDesw8Vsn9n9mmtOg/1xPk0sTK5Ro87aociRsapyh224Y742MjPMIoBMq0jNvdAFQyhfvjsTUKSKD6YngK/uzGKIpPSJ6GlzH+BbYct4ejEJCcdjubjzas7fuROB4KPoyVyahx1Jg19nTy11mZg3yNGDpU4NFaTaFRrd6NSFH+HF9tfrtw26A+tKMrR5AZpUXHajVZK3KllogYDeNb7dQ+IamNXLhhUlDe09iyk4A3gNO4pVwaxS0hFkLbIqiVLe5z08ma06y4JXrtfEQCjIVr15Nhk43zzxig3LO5Do0WL9Knbh1jekoLUf3T6urFuqERgjDcpqOSZbh2AbIB6hRMotKdAWG+paWAb0KghOo6dVU/+/W+MT2juEOeB32wftvVXcyUC2tBEM4vcxFA+sHHFO8LvQQujRbCConZrmQZK+/UUQ==;5:Prg9AS/2ZVBgsDNVOGD3zkmmMPJNtFPwAmf5OfTpgv8UdrTJEtB3KS3Aw/6Z26tXl392i8jM6Cv9h21wqg20dGHHKkk8tkXFBfm+yC6b7KE+6M2oMC6/JkDlSHAYaUX6b49R/cw468XDaMd9zcRhnm5KxtY2/CHOsAh3VO9dYLtgwowTymwPaWk7fP7BSOF4YqJ5CW47UlBRpoEsy0n9qA==;7:+MinfDv1yloL7/R+GqvIxGAWQpLXYbteDWgqdExdlVgg8I0pWfwcF0jDaemFAwFVCQYuO/ZIjKzScdQ8c/8O/2zqYpmmKd+24pf2i0/t3apysktyJqJeOhOLSHWsrtiwH0FmM3nJxukfiIixMWemSg==
+x-ms-office365-filtering-correlation-id: 17b1db5e-6ce8-44c1-2616-08d68de732fd
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2646;
+x-ms-traffictypediagnostic: BYAPR12MB2646:
+x-microsoft-antispam-prvs: <BYAPR12MB26464F880EDB9D000100803DC2690@BYAPR12MB2646.namprd12.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(346002)(376002)(366004)(396003)(189003)(199004)(74316002)(14444005)(2501003)(305945005)(33656002)(7736002)(97736004)(7696005)(99286004)(9686003)(76176011)(229853002)(478600001)(55016002)(54906003)(110136005)(316002)(14454004)(6436002)(71190400001)(71200400001)(11346002)(105586002)(476003)(106356001)(66066001)(486006)(256004)(81156014)(2906002)(25786009)(68736007)(8936002)(6506007)(6246003)(446003)(6636002)(102836004)(6346003)(86362001)(26005)(4744005)(4326008)(3846002)(6116002)(8676002)(53936002)(81166006)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2646;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: vtAOB/j+7LxobB++px4USPHAGE/vqjG0+8C1uFmvJWLRqfNpIBDyYHKWW4YacmNvhHERoxp5GbbWGp6SO5sQftL98tXg0vV8tTOEuWYkoy+mbs41FekWBl5jMxn9UV7nuLzC4017qHw+7I3L/V+8n7oLNO5m1Lfspe1/zSNrPF8hXtbuDL8X2z93aWApbLeTCw584vRWQX+jD0K8Xutfv8IIbQqjE7E6N11bRmrWFSt9UpaF08J/WuWO/qwhMsbG7c25Z/K8RsUzzPIyxgcAGO9iNfsex3kgxnGEwx9XE+j+eThlCqiHpPZSIci0dV4RBcm4fIq7rA7cULee/MnT11QceDkVOp4SBUfHWjxMPDSzQf4ywtzN1CN5GbZ5w6jQ/p6VhHQ5SaEWGMWl0esPDAx2ZG2165n3MNmVsWd+/7I=
 MIME-Version: 1.0
-In-Reply-To: <4eba60c6-4eb8-5a82-f394-307f835f41e1@virtuozzo.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42LZduznOV3pbbExBk2nxC2ufH3PZvF450tW
-        ixN9H1gtLu+aw+bA4nG/+ziTx+dNch6v9x9iDGCO4rJJSc3JLEst0rdL4MrYtXsRS8FSzorj
-        W1YzNTCuZ+9i5OSQEDCRODV1D1sXIxeHkMAKRomNy/awQDhfGCXmf7jGBlIlJPCZUWLTCw6Y
-        jkWrOpkhipYzSvz/fBGq/T2jRP+DC4wgVcICDhL/by4Es0UEDCQe7O9jBSliFjjOKLFk61lW
-        kASbgJXExPZVYEW8AnYSn5f2MoPYLAIqEpN6QFZzcIgKREj0n1GHKBGUODnzCQuIzSngKHFn
-        VxuYzSwgL7H97RywiyQE/rNJrDnTA/Wci8TCnzNZIGxhiVfHt0DFZSROT+5hgWiYzijx5tdS
-        KGc9I1D3MSaIKmuJw8cvsoJcwSygKbF+lz5E2FHi9oxdYGEJAT6JG28FIY7gk5i0bTozRJhX
-        oqNNCKJaTWLDsg1sMGu7dq6EKvGQ2NcbMIFRcRaSz2Yh+WYWwtoFjMyrGMVTS4tz01OLDfNS
-        y/WKE3OLS/PS9ZLzczcxAhPH6X/HP+1g/Hop6RCjAAejEg9vREtsjBBrYllxZe4hRgkOZiUR
-        3rRNQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK81QwPooUE0hNLUrNTUwtSi2CyTBycUg2Meon8
-        B7Mm5k3l+vhi1ibNvvb6AJ0IdoFtmeeWrT8Ua+gX0bWid6Mbj/CrgxLnJxsJv2ULs7tuXm22
-        Runq7UXXs6QljFb4+vBfieB60bFvQ9yC5MrkibHqzROdi5ZxfS7zN14kU1e577v72t/Vony5
-        fnH3GEPuHX4tefOPt1h/nY07q/7XmmglluKMREMt5qLiRAACXPL2GAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42I5/e/4PV2pbbExBhd/K1tc+fqezeLxzpes
-        Fif6PrBaXN41h82BxeN+93Emj8+b5Dxe7z/EGMAcpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFn
-        ZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJexa/ciloKlnBXHt6xmamBcz97FyMkhIWAisWhV
-        J3MXIxeHkMBSRonmq7eBHA6ghIzE8fVlEDXCEn+udbFB1LxllJjQdZwJJCEs4CDx/+ZCRhBb
-        RMBA4sH+PlaIol+MEidfzWQHcZgFjjNK/PrwC6yKTcBKYmL7KjCbV8BO4vPSXmYQm0VARWJS
-        zzU2EFtUIELi1sMOFogaQYmTM5+A2ZwCjhJ3drWB2cwC6hJ/5l1ihrDlJba/ncM8gVFwFpKW
-        WUjKZiEpW8DIvIpRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwKrYd+7l5B+OljcGHGAU4GJV4
-        eBmaYmOEWBPLiitzDzFKcDArifCmbQIK8aYkVlalFuXHF5XmpBYfYjQFemIis5Rocj4wYvNK
-        4g1NDc0tLA3Njc2NzSyUxHnPG1RGCQmkJ5akZqemFqQWwfQxcXBKNTBOU0r48Czi/28N0ZnG
-        OjwNFvnXPtf92puqPu8ts+OOpm2fehgfCH3S77PLObsv0i0hh2HbJuPq757mQve3aKZP5V3R
-        lm+in153ec4Nnoy8jV6BS52f7TytErVt1SfxMxK7Vu1de+/6rhciQe/fRL5d8aD7Xoe+a5yY
-        m4F92TRxbdvbBgwRLYlKLMUZiYZazEXFiQBu583poAIAAA==
-X-CMS-MailID: 20190208170218eucas1p228ec2bb11ff97f28ec70c301e50f6b13
-X-Msg-Generator: CA
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17b1db5e-6ce8-44c1-2616-08d68de732fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 17:02:25.0365
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2646
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181126100342epcas3p12a1e6505ff4b73375ac3fcf5d0355d3f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181126100342epcas3p12a1e6505ff4b73375ac3fcf5d0355d3f
-References: <CGME20181126100342epcas3p12a1e6505ff4b73375ac3fcf5d0355d3f@epcas3p1.samsung.com>
-        <20181126100253.3299-1-khorenko@virtuozzo.com>
-        <a7f6bf30-5094-b669-126d-e4751c17dcbb@samsung.com>
-        <4eba60c6-4eb8-5a82-f394-307f835f41e1@virtuozzo.com>
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549645349; bh=CDuFwBRvG9ymX7JN1BfVS5Tn46y22HQYzkosmeY+u7E=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:x-originating-ip:x-ms-publictraffictype:
+         x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         authentication-results:x-ms-exchange-senderadcheck:
+         x-microsoft-antispam-message-info:MIME-Version:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=nOkaxgYQW0LpCJoUQkIpnwqWqltlMYLjZzIdOK5pFPiwj6/6dlI6nUyf/QBGMDKLV
+         hLgE68n7ZEziQWlpL57kjSxtUjPERWW9v1BfR4gaIa+6ZNpTl1YrMw8fcB9WfMWWaq
+         +5SmfgwWaJPdE+9udCjXKJn5i4G4UAZuq189HtlVfDaooKrT5BWN7yD4vi35Ki5T8K
+         J9OCtGC1bvT4yNJKJ5AOk98tBGrx4nQjceWupkyCbW5PCE0LBUzdThm5oLCL5A5wsf
+         6DYG8doGNophHLFF86lDJDRIBGO7FZ3xSTrCGzUWogyzj0zq/Sgqyy9UKiyy6QxleO
+         7zku323hVx4tQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/21/2018 11:58 AM, Konstantin Khorenko wrote:
-> Hi Bartlomiej,
-> 
-> On 12/20/2018 07:21 PM, Bartlomiej Zolnierkiewicz wrote:
->> On 11/26/2018 11:02 AM, Konstantin Khorenko wrote:
->>> Scrollback frame buffer is rather big - 32K,
->>> so it requires 3rd order page, so let's use kvmalloc() instead of
->>> ordinary kmalloc() for it.
->>
->> Is it actually safe to use non-contiguous memory for softback_buf?
-> 
-> Well, that's why we need a review. :)
-
-:)
-
-> i've asked myself same question while fixing this,
-> i've dig sources a bit and did not find places when softback_buf is provided for DMA,
-> all other places seems to work with virtual addresses, so there should be no problem.
-> 
-> Even more i saw a function which mentions that softback might be non-contigious:
-> 
-> /* As we might be inside of softback, we may work with non-contiguous buffer,
->     that's why we have to use a separate routine. */
-> static void fbcon_invert_region(struct vc_data *vc, u16 * p, int cnt)
-> 
-> So i think it's safe to use kvmalloc() here.
-
-Patch queued for v5.1, thanks.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+DQo+IEknbSBzdGlsbCBhbHNvIHN1Z2dlc3RpbmcgdG8gc3F1YXNoICJmaXggbWF4aW11bSB0cmFu
+c2ZlciBzaXplIiBpbnRvIHRoaXMgcGF0Y2ggYmVjYXVzZSBpdCBpcyByZWFsbHkgcGFydCBvZiBE
+TUEtc3VwcG9ydCBlbmFibGluZy4NCg0KTWF4IHRyYW5zZmVyIGxlbmd0aCBsaW1pdHMgYXBwbHkg
+dG8gUElPIGFsc28gYnV0IGZvciBETUEgaXRzIG1vcmUgbmVlZGVkIHRvIHByZXZlbnQgY3Jhc2gu
+DQpTbyBoYWQgdGhpcyBhcyBwYXRjaCBiZWZvcmUgRE1BIGFzIGl0cyBhcHBsaWNhYmxlIGZvciBi
+b3RoIERNQSAmIFBJTy4NCldlIGV4Y2hhbmdlZCBvbiB0aGlzIHllc3RlcmRheSwgc28gdGhvdWdo
+dCB0aGUgcmVhc29uIHlvdSB3YW50IHRvIHNxdWFzaCBzZXBhcmF0ZSBwYXRjaCBhbmQgaW5jbHVk
+ZSBpbiB0aGlzIGlzIGR1ZSB0byBtYXggbXNnIGxlbiBsaW1pdCBhbmQgd2hlbiBtb3ZlZCBpbnRv
+IGh3IGZlYXR1cmUNCg==
