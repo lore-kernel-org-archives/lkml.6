@@ -2,201 +2,139 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E537C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72722C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED4E20823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:46:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 457EC217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfBHLqB (ORCPT
+        id S1727347AbfBHLqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:46:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727257AbfBHLqA (ORCPT
+        Fri, 8 Feb 2019 06:46:34 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:36619 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726456AbfBHLqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:46:00 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18Bhxok062365
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 06:45:59 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qh8t190bm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:45:57 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Fri, 8 Feb 2019 11:45:55 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 11:45:53 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18BjqlN9109728
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 11:45:52 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 973F9A4040;
-        Fri,  8 Feb 2019 11:45:52 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 05412A404D;
-        Fri,  8 Feb 2019 11:45:51 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.205.183])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  8 Feb 2019 11:45:50 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 08 Feb 2019 13:45:50 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] memblock: update comments and kernel-doc
-Date:   Fri,  8 Feb 2019 13:45:47 +0200
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19020811-0028-0000-0000-000003462BE3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020811-0029-0000-0000-00002404400E
-Message-Id: <1549626347-25461-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080086
+        Fri, 8 Feb 2019 06:46:33 -0500
+X-Greylist: delayed 506 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 06:46:31 EST
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.85)
+          with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1gs4Tq-001yqw-U6>; Fri, 08 Feb 2019 12:38:02 +0100
+Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
+          by inpost2.zedat.fu-berlin.de (Exim 4.85)
+          with esmtpsa (TLSv1.2:AES128-SHA:128)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1gs4Tq-001dPq-K5>; Fri, 08 Feb 2019 12:38:02 +0100
+Subject: Re: [PATCH v2] ata: add Buddha PATA controller driver
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-kernel@vger.kernel.org
+References: <CGME20190207122046eucas1p12d098289e0370252d341ccfed66b8295@eucas1p1.samsung.com>
+ <6924b9b1-6c38-2639-a824-f2d765abe437@samsung.com>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=glaubitz@physik.fu-berlin.de; keydata=
+ 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
+ scOkTAZQGVpD/8AaLH4v1w==
+Message-ID: <420634d6-c14f-8380-0980-548fc4740474@physik.fu-berlin.de>
+Date:   Fri, 8 Feb 2019 12:38:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <6924b9b1-6c38-2639-a824-f2d765abe437@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: 160.45.32.140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Remove comments mentioning bootmem
-* Extend "DOC: memblock overview"
-* Add kernel-doc comments for several more functions
+Hi!
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
+On 2/7/19 1:20 PM, Bartlomiej Zolnierkiewicz wrote:
+> Add Buddha PATA controller driver. It enables libata support for
+> the Buddha, Catweasel and X-Surf expansion boards on the Zorro
+> expansion bus.
+> 
+> Module removal is currently unsupported (the old IDE's buddha
+> driver also doesn't support it).
+> 
+> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Cc: Michael Schmitz <schmitzmic@gmail.com>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> v2:
+> - added Tested-by from John
 
-The patch is against the current -mm tree which seems the best route for it
-as well :)
+It's a bit confusing, but my primary name is Adrian, despite being
+the third one. So if this ends in a changelog, please change this
+to "- added Tested-by from Adrian".
 
- mm/memblock.c | 60 ++++++++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 43 insertions(+), 17 deletions(-)
+> - enhanced patch description
+> 
+> Jens, please consider merging for v5.1.
+Yes, that would be fantastic. We're working on addressing the module unload
+issue later. Michael has tried adding the appropriate function but we still
+ran into issues when trying to unload the driver.
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index f87d3ae..900c95b 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -69,8 +69,19 @@
-  * :c:func:`memblock_set_node`. The :c:func:`memblock_add_node`
-  * performs such an assignment directly.
-  *
-- * Once memblock is setup the memory can be allocated using either
-- * memblock or bootmem APIs.
-+ * Once memblock is setup the memory can be allocated using one of the
-+ * API variants:
-+ *
-+ * * :c:func:`memblock_phys_alloc*` - these functions return the
-+ *   **physical** address of the allocated memory
-+ * * :c:func:`memblock_alloc*` - these functions return the **virtual**
-+ *   address of the allocated memory.
-+ *
-+ * Note, that both API variants use implict assumptions about allowed
-+ * memory ranges and the fallback methods. Consult the documentation
-+ * of :c:func:`memblock_alloc_internal` and
-+ * :c:func:`memblock_alloc_range_nid` functions for more elaboarte
-+ * description.
-  *
-  * As the system boot progresses, the architecture specific
-  * :c:func:`mem_init` function frees all the memory to the buddy page
-@@ -428,17 +439,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
- 	else
- 		in_slab = &memblock_reserved_in_slab;
- 
--	/* Try to find some space for it.
--	 *
--	 * WARNING: We assume that either slab_is_available() and we use it or
--	 * we use MEMBLOCK for allocations. That means that this is unsafe to
--	 * use when bootmem is currently active (unless bootmem itself is
--	 * implemented on top of MEMBLOCK which isn't the case yet)
--	 *
--	 * This should however not be an issue for now, as we currently only
--	 * call into MEMBLOCK while it's still active, or much later when slab
--	 * is active for memory hotplug operations
--	 */
-+	/* Try to find some space for it */
- 	if (use_slab) {
- 		new_array = kmalloc(new_size, GFP_KERNEL);
- 		addr = new_array ? __pa(new_array) : 0;
-@@ -982,7 +983,7 @@ static bool should_skip_region(struct memblock_region *m, int nid, int flags)
- }
- 
- /**
-- * __next__mem_range - next function for for_each_free_mem_range() etc.
-+ * __next_mem_range - next function for for_each_free_mem_range() etc.
-  * @idx: pointer to u64 loop variable
-  * @nid: node selector, %NUMA_NO_NODE for all nodes
-  * @flags: pick from blocks based on memory attributes
-@@ -1392,6 +1393,18 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- 	return found;
- }
- 
-+/**
-+ * memblock_phys_alloc_range - allocate a memory block inside specified range
-+ * @size: size of memory block to be allocated in bytes
-+ * @align: alignment of the region and block's size
-+ * @start: the lower bound of the memory region to allocate (physical address)
-+ * @end: the upper bound of the memory region to allocate (physical address)
-+ *
-+ * Allocate @size bytes in the between @start and @end.
-+ *
-+ * Return: physical address of the allocated memory block on success,
-+ * %0 on failure.
-+ */
- phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
- 					     phys_addr_t align,
- 					     phys_addr_t start,
-@@ -1400,6 +1413,19 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
- 	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
- }
- 
-+/**
-+ * memblock_phys_alloc_range - allocate a memory block from specified MUMA node
-+ * @size: size of memory block to be allocated in bytes
-+ * @align: alignment of the region and block's size
-+ * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
-+ *
-+ * Allocates memory block from the specified NUMA node. If the node
-+ * has no available memory, attempts to allocated from any node in the
-+ * system.
-+ *
-+ * Return: physical address of the allocated memory block on success,
-+ * %0 on failure.
-+ */
- phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
- {
- 	return memblock_alloc_range_nid(size, align, 0,
-@@ -1526,13 +1552,13 @@ void * __init memblock_alloc_try_nid(
- }
- 
- /**
-- * __memblock_free_late - free bootmem block pages directly to buddy allocator
-+ * __memblock_free_late - free pages directly to buddy allocator
-  * @base: phys starting address of the  boot memory block
-  * @size: size of the boot memory block in bytes
-  *
-- * This is only useful when the bootmem allocator has already been torn
-+ * This is only useful when the memblock allocator has already been torn
-  * down, but we are still initializing the system.  Pages are released directly
-- * to the buddy allocator, no bootmem metadata is updated because it is gone.
-+ * to the buddy allocator.
-  */
- void __init __memblock_free_late(phys_addr_t base, phys_addr_t size)
- {
+Thanks,
+Adrian
+
 -- 
-2.7.4
-
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
