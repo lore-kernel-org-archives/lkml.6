@@ -2,104 +2,168 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29496C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E460CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F08C72081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:58:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB5D12081B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfBHJ6R (ORCPT
+        id S1727569AbfBHJ6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:58:17 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43226 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHJ6R (ORCPT
+        Fri, 8 Feb 2019 04:58:31 -0500
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:53605 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726524AbfBHJ6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:58:17 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gs2v0-0006To-Lj; Fri, 08 Feb 2019 10:57:58 +0100
-Date:   Fri, 8 Feb 2019 10:57:57 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-cc:     Dmitry Safonov <dima@arista.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andy Tucker <agtucker@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 16/32] x86/vdso: Generate vdso{,32}-timens.lds
-In-Reply-To: <a2bbe610-7553-0ba6-b58b-1013e034b8f6@rasmusvillemoes.dk>
-Message-ID: <alpine.DEB.2.21.1902081051410.1645@nanos.tec.linutronix.de>
-References: <20190206001107.16488-1-dima@arista.com> <20190206001107.16488-17-dima@arista.com> <a2bbe610-7553-0ba6-b58b-1013e034b8f6@rasmusvillemoes.dk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 8 Feb 2019 04:58:30 -0500
+Received: from [IPv6:2001:983:e9a7:1:5eb:9ad5:2371:b65a] ([IPv6:2001:983:e9a7:1:5eb:9ad5:2371:b65a])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id s2vSgzDDMBDyIs2vTgLrxf; Fri, 08 Feb 2019 10:58:28 +0100
+Subject: Re: [PATCH v3] [media] v4l: add I / P frame min max QP definitions
+To:     Fish Lin <linfish@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, trivial@kernel.org
+References: <20190128072948.45788-1-linfish@google.com>
+ <20190130091116.256989-1-linfish@google.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <66239266-1d83-8fde-1cd2-632be8f1d0e5@xs4all.nl>
+Date:   Fri, 8 Feb 2019 10:58:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20190130091116.256989-1-linfish@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfMItpaICBbtrhJ9KY159HKCvJST/ZaExwYr3iE79hTxuqO1rNlVNvrBQ/hAl2z/BPANjzp8Z0svaMf8JK4UrBH1kEuVoh/nzcyk+CzbUxGqNPjPmhBMN
+ EhXeriXXz8sb99G91Ngl4vEJpJ6uHovoycvajmPbeTT1SPlJHm7hVh7kDDqu2okRRFuaT2Dp3ixHQmQJecpHAqR2ijvI3IJ8j8HXeF7bqvl3QGiAkEQX9N+u
+ HL7C5Mk9ireA6sCZL3YZPig6g8lnYD80KbzPWEhBaCIWlZ6kmPCan2/nUUk61RAC7yrC3HkiJEt736gJ3M9shioQoepXEwbQrYBZWNf4S1jjZmnLPj6R77Lh
+ w0olC2svo/GuPsnQxtZcBSmUhOEMNzGfd1SGGGDDASXN2+qYMcyyp8PCo/lL4HT9ovWXtpIxNG/qvKIItWt+S1uI0RuGVbvt9Xefz1EnhxHdcPYNelTy3uwi
+ sY3NNICPHEv+sO7X3brYaiFsjiejqutidvCn8uWVeWJ4zwHGjOmKrfXuXfZahobjEWTKIRFQQo7m0UZEealAHz3DvGO7IrKpNiVs3XEwqKZ/VWXojOCzv3R+
+ T9JcI0Ux/RxXrUsNPWMLRSjW2S9annOfYYkKBaCsQ9RppA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019, Rasmus Villemoes wrote:
-
-Cc: + Vincenzo, Will
-
-> On 06/02/2019 01.10, Dmitry Safonov wrote:
-> > As it has been discussed on timens RFC, adding a new conditional branch
-> > `if (inside_time_ns)` on VDSO for all processes is undesirable.
-> > It will add a penalty for everybody as branch predictor may mispredict
-> > the jump. Also there are instruction cache lines wasted on cmp/jmp.
-> > 
-> > Those effects of introducing time namespace are very much unwanted
-> > having in mind how much work have been spent on micro-optimisation
-> > vdso code.
-> > 
-> > Addressing those problems, there are two versions of VDSO's .so:
-> > for host tasks (without any penalty) and for processes inside of time
-> > namespace with clk_to_ns() that subtracts offsets from host's time.
-> > 
-> > Unfortunately, to allow changing VDSO VMA on a running process,
-> > the entry points to VDSO should have the same offsets (addresses).
-> > That's needed as i.e. application that calls setns() may have already
-> > resolved VDSO symbols in GOT/PLT.
+On 1/30/19 10:11 AM, Fish Lin wrote:
+> Add following V4L2 QP parameters for H.264:
+>  * V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP
+>  * V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP
+>  * V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP
+>  * V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP
 > 
-> These (14-19, if I'm reading them right) seems to add quite a lot of
-> complexity and fragility to the build, and other architectures would
-> probably have to add something similar to their vdso builds.
+> These controls will limit QP range for intra and inter frame,
+> provide more manual control to improve video encode quality.
+> 
+> Signed-off-by: Fish Lin <linfish@google.com>
+> ---
+> Changelog since v2:
+> - Add interaction with V4L2_CID_MPEG_VIDEO_H264_MIN/MAX_QP
+>   description in the document.
+> 
+> Changelog since v1:
+> - Add description in document.
+> 
+>  .../media/uapi/v4l/extended-controls.rst      | 24 +++++++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls.c          |  4 ++++
+>  include/uapi/linux/v4l2-controls.h            |  6 +++++
+>  3 files changed, 34 insertions(+)
+> 
+> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+> index 286a2dd7ec36..402e41eb24ee 100644
+> --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> @@ -1214,6 +1214,30 @@ enum v4l2_mpeg_video_h264_entropy_mode -
+>      Quantization parameter for an B frame for H264. Valid range: from 0
+>      to 51.
+>  
+> +``V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP (integer)``
+> +    Minimum quantization parameter for H264 I frame, to limit I frame
+> +    quality in a range. Valid range: from 0 to 51. If
+> +    V4L2_CID_MPEG_VIDEO_H264_MIN_QP is set, the quantization parameter
 
-Yes and we really want to avoid that. The VDSO implementations are
-pointlessly different accross the architectures and there is effort on the
-way to consolidate them:
+is set -> is also set
 
-  https://lkml.kernel.org/r/20190115135539.24762-1-vincenzo.frascino@arm.com
+> +    should be chosen to meet both of the requirement.
 
-I talked to Vincenzo earlier this week and he's working on a new version of
-that. The timens stuff wants to go on top of the consolidation otherwise we
-end up with another set of pointlessly different and differently broken
-VDSO variants.
+both of the requirement -> both requirements
 
-Thanks,
+Ditto for the other three controls below.
 
-	tglx
+However, you might want to wait a little bit since I have this patch pending:
+
+https://patchwork.linuxtv.org/patch/54388/
+
+which will require a rebase of your patch anyway.
+
+Regards,
+
+	Hans
+
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP (integer)``
+> +    Maximum quantization parameter for H264 I frame, to limit I frame
+> +    quality in a range. Valid range: from 0 to 51. If
+> +    V4L2_CID_MPEG_VIDEO_H264_MAX_QP is set, the quantization parameter
+> +    should be chosen to meet both of the requirement.
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP (integer)``
+> +    Minimum quantization parameter for H264 P frame, to limit P frame
+> +    quality in a range. Valid range: from 0 to 51. If
+> +    V4L2_CID_MPEG_VIDEO_H264_MIN_QP is set, the quantization parameter
+> +    should be chosen to meet both of the requirement.
+> +
+> +``V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP (integer)``
+> +    Maximum quantization parameter for H264 P frame, to limit P frame
+> +    quality in a range. Valid range: from 0 to 51. If
+> +    V4L2_CID_MPEG_VIDEO_H264_MAX_QP is set, the quantization parameter
+> +    should be chosen to meet both of the requirement.
+> +
+>  ``V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP (integer)``
+>      Quantization parameter for an I frame for MPEG4. Valid range: from 1
+>      to 31.
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index 5e3806feb5d7..e2b0af0d2283 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -825,6 +825,10 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER:return "H264 Number of HC Layers";
+>  	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP:
+>  								return "H264 Set QP Value for HC Layers";
+> +	case V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP:		return "H264 I-Frame Minimum QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP:		return "H264 I-Frame Maximum QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP:		return "H264 P-Frame Minimum QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP:		return "H264 P-Frame Maximum QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP:		return "MPEG4 I-Frame QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP:		return "MPEG4 P-Frame QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP:		return "MPEG4 B-Frame QP Value";
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 3dcfc6148f99..9519673e6437 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -533,6 +533,12 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type {
+>  };
+>  #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER	(V4L2_CID_MPEG_BASE+381)
+>  #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP	(V4L2_CID_MPEG_BASE+382)
+> +
+> +#define V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP	(V4L2_CID_MPEG_BASE+390)
+> +#define V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP	(V4L2_CID_MPEG_BASE+391)
+> +#define V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP	(V4L2_CID_MPEG_BASE+392)
+> +#define V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP	(V4L2_CID_MPEG_BASE+393)
+> +
+>  #define V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP	(V4L2_CID_MPEG_BASE+400)
+>  #define V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP	(V4L2_CID_MPEG_BASE+401)
+>  #define V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP	(V4L2_CID_MPEG_BASE+402)
+> 
+
