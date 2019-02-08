@@ -2,104 +2,173 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C83C4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A1FC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0407621916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB612084D
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 04:32:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7VfV9lp"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AoQ8p9HV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfBHEcI (ORCPT
+        id S1727118AbfBHEcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 23:32:08 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39990 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbfBHEcI (ORCPT
+        Thu, 7 Feb 2019 23:32:53 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40418 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726793AbfBHEcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 23:32:08 -0500
-Received: by mail-lf1-f66.google.com with SMTP id t14so1575156lfk.7;
-        Thu, 07 Feb 2019 20:32:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CIitgqpj1Jx3VxIPRhUTrC/lUkFX1AVJEifvXimRfb8=;
-        b=G7VfV9lpiXWHYppcFqdErDeJIKYBxNarTdPae0yZNMZnEhowySqTN+Lmh/Q6Ojdsw7
-         HOBs7mwjeLZOrSe/io1L3KsmZ5+J/AK+KLqZSC8puFmcAL3ntbsf5fDSk676hx8gJUTf
-         T/JhXfrZbKFWaC+ijns4YASYMSBEtD2F6iKOejtSrscfLom2YMybXACwtCwsNdLJB4F6
-         L+Ct1Wv7fF9e4lI4qJnFP1rz6R95Jpmq5Zfv9n2/H7/KWg3gD1nCFvzZ4drpJhm+bVqn
-         e89k8hlMWusy2sKD88tW6vYiMewZT7j4wxpndPWk19ouUVhss2d3MxPkgavlWBJhk672
-         dY6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CIitgqpj1Jx3VxIPRhUTrC/lUkFX1AVJEifvXimRfb8=;
-        b=GHdYzht3IccW/jvnL7lcD0HajYvziBRKYkMbytRvwgAcF+TXvDHQyg5JUupyt0ak60
-         9aecs9VDWzCZmd6I9avhl1xTYXCEmi1N854punNauRkIWgqXqL78Q5K85Lq5uwHB+Hu3
-         466K4Ze6Uo5uPoL8YiIL4EO6LIAmaT8tcgZW+YIgVjBiagS58U/+ENehpPAlWIQeNXua
-         YUsXKVX2TVy3d/cdiWTsa3JJV+SnHE36JGIfwvn6e25tcD+1N7jRJ+KTRZ8y8E1HSk7H
-         BwEn81wQIXMn0niTBV//NEMCglsWykDV1tdP4IvD9kdGXpC1Ssx+PQgfW/0nCoVTn2QC
-         DL9g==
-X-Gm-Message-State: AHQUAuaghUJ7QwcL3eTaGd2FIVdxXJ2nSAh4o+zgPPDCASYQPuGKexTo
-        Sl9IcdsmkRGhJLYqAKxzpyseCV5JkiZLNqIhlFo=
-X-Google-Smtp-Source: AHgI3IYGxJECPQh9dULY/HA6hfWXKCbI8Q8hMLYUq7bibGnt1mvlIY0gCaEtmRMMI67Zkg+3LgM3JDoeOA+VyHGzEUU=
-X-Received: by 2002:ac2:43c6:: with SMTP id u6mr12062290lfl.151.1549600326193;
- Thu, 07 Feb 2019 20:32:06 -0800 (PST)
+        Thu, 7 Feb 2019 23:32:53 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x184WfSI073156;
+        Thu, 7 Feb 2019 22:32:41 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549600361;
+        bh=v7CNHDwI7JL9k+8CJw1FIo64pVpyZaEbNQHdnQYswL8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AoQ8p9HVhHtStavIVBw5Jr9ppG7bik7KZORGFqivoMo98suQblvYqQX3or+UjeY9G
+         jxt3upof9GP5o1BD6xrbRhcZ+PGdzY6rcAXBxyVvt7/JyUzBYL6OtWf2NUZ0wIxZSf
+         n2Gc+lTZ3CONuMjVm0eOomZaP+xVEL4pUx3L04QA=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x184WfpB104629
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Feb 2019 22:32:41 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 7
+ Feb 2019 22:32:40 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 7 Feb 2019 22:32:40 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x184WbF3015086;
+        Thu, 7 Feb 2019 22:32:38 -0600
+Subject: Re: [PATCH v2 2/9] PCI: keystone: Modify legacy_irq_handler to check
+ the IRQ_STATUS of INTA/B/C/D
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190207110924.30716-1-kishon@ti.com>
+ <20190207110924.30716-3-kishon@ti.com>
+ <20190207161502.GC21111@e107981-ln.cambridge.arm.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <55d1eeef-e8a5-1801-96e7-3cfed8f756fe@ti.com>
+Date:   Fri, 8 Feb 2019 10:02:05 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190207222647.GA30974@ziepe.ca>
-In-Reply-To: <20190207222647.GA30974@ziepe.ca>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 8 Feb 2019 05:31:55 +0100
-Message-ID: <CANiq72=qfNHf5zd8c8VkmrhE8U5_kH6yg3z4JD1N5yEfL727tA@mail.gmail.com>
-Subject: Re: [PATCH v2] lib/scatterlist: Provide a DMA page iterator
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Daniel Stone <daniel@fooishbar.org>, "hch@lst.de" <hch@lst.de>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190207161502.GC21111@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 11:28 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> Commit 2db76d7c3c6d ("lib/scatterlist: sg_page_iter: support sg lists w/o
-> backing pages") introduced the sg_page_iter_dma_address() function without
-> providing a way to use it in the general case. If the sg_dma_len() is not
-> equal to the sg length callers cannot safely use the
-> for_each_sg_page/sg_page_iter_dma_address combination.
->
-> Resolve this API mistake by providing a DMA specific iterator,
-> for_each_sg_dma_page(), that uses the right length so
-> sg_page_iter_dma_address() works as expected with all sglists.
->
-> A new iterator type is introduced to provide compile-time safety against
-> wrongly mixing accessors and iterators.
->
-> Acked-by: Christoph Hellwig <hch@lst.de> (for scatterlist)
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-> ---
->  .clang-format                              |  1 +
+Hi Lorenzo,
 
-Thanks for updating the .clang-format, Jason! :-)
+On 07/02/19 9:45 PM, Lorenzo Pieralisi wrote:
+> On Thu, Feb 07, 2019 at 04:39:17PM +0530, Kishon Vijay Abraham I wrote:
+>> The legacy interrupt handler directly checks the IRQ_STATUS register
+>> corresponding to a interrupt line inorder to invoke generic_handle_irq.
+>>
+>> While this is okay for K2G platform which has separate interrupt line for
+>> each of the 4 legacy interrupts, AM654 which uses the same PCIe wrapper
+>> has a single interrupt line for all the legacy interrupts. So for AM654
+>> the interrupt handler won't be able to directly check the IRQ_STATUS
+>> register corresponding to the interrupt line.
+>>
+>> Also the legacy interrupt handler uses 'virq' obtained from
+>> irq_of_parse_and_map to find the correct interrupt line which raised the
+>> interrupt. There is no guarantee that virq assigned for contiguous hardware
+>> irq will be contiguous and the interrupt handler might end up checking
+>> the wrong IRQ_STATUS register.
+>>
+>> In order to overcome the above issues, read the IRQ_STATUS register of
+>> all the 4 legacy interrupts to determine which interrupt was raised.
+>>
+>> Link: https://lkml.kernel.org/r/bb081d21-7c03-0357-4294-7e92d95d838c@arm.com
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++----------
+>>  1 file changed, 12 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+>> index 5286a480f76b..4cf9849d5a1d 100644
+>> --- a/drivers/pci/controller/dwc/pci-keystone.c
+>> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+>> @@ -214,16 +214,11 @@ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
+>>  {
+>>  	struct dw_pcie *pci = ks_pcie->pci;
+>>  	struct device *dev = pci->dev;
+>> -	u32 pending;
+>>  	int virq;
+>>  
+>> -	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
+>> -
+>> -	if (BIT(0) & pending) {
+>> -		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
+>> -		dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
+>> -		generic_handle_irq(virq);
+>> -	}
+>> +	virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
+>> +	dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
+>> +	generic_handle_irq(virq);
+>>  
+>>  	/* EOI the INTx interrupt */
+>>  	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
+>> @@ -607,8 +602,9 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+>>  	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+>>  	struct dw_pcie *pci = ks_pcie->pci;
+>>  	struct device *dev = pci->dev;
+>> -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
+>>  	struct irq_chip *chip = irq_desc_get_chip(desc);
+>> +	unsigned int irq_no;
+>> +	u32 reg;
+>>  
+>>  	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
+>>  
+>> @@ -618,7 +614,13 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+>>  	 * ack operation.
+>>  	 */
+>>  	chained_irq_enter(chip, desc);
+>> -	ks_pcie_handle_legacy_irq(ks_pcie, irq_offset);
+>> +	for (irq_no = 0; irq_no < PCI_NUM_INTX; irq_no++) {
+> 
+> I understand the aim of this code but now on platforms where there
+> is a 1:1 relationship between Linux IRQ and INTX this loop has
+> steps carried out for nothing.
+> 
+> If I understand the code correctly what this code does is force
+> looping over INTX status regs regardless of what linux IRQ number was
+> actually active.
 
-Cheers,
-Miguel
+right. This driver is used by 2 platforms K2G and AM654 (The patches are there
+on the list). K2G has 4 interrupt lines for each of the 4 legacy interrups
+while AM654 has a single interrupt line. One of the purpose of this patch is to
+have a single legacy interrupt handler for both K2G and AM654.
+> 
+> You could do something faster by creating a matrix LinuxIRQ x INTx to
+> detect what INTx status register should actually be checked.
+> 
+> This seems overkill to me but it is not that complicated to implement
+> and may clarify the code (and avoid reading up to three registers for
+> nothing on the IRQ code path, which can make things faster too).
+
+Agreed. But that's not possible for AM654 which has a single interrupt line and
+all the registers has to be read to identify the interrupt source.
+
+Thanks
+Kishon
