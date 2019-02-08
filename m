@@ -2,111 +2,105 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD150C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0634C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A6620855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4ED20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:21:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YD69Tp2H"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jLQew3c4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfBHRV2 (ORCPT
+        id S1727787AbfBHRV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:21:28 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33403 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbfBHRV1 (ORCPT
+        Fri, 8 Feb 2019 12:21:57 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54150 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHRV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:21:27 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z8so1996144plo.0;
-        Fri, 08 Feb 2019 09:21:27 -0800 (PST)
+        Fri, 8 Feb 2019 12:21:56 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d15so4269792wmb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:21:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dA62nlra0/aD+kLMcQn/LMHtOYaUk7vnUUfqDLXBMmU=;
-        b=YD69Tp2HqQT1F4vKzuZ4hZvG+/wtIp9voUeB4kMqvQP1VDAgEjv0MPUsqS8FLGMfh1
-         FhbcOX3JUmqNn7Ba0vhuDrPp3+j3vGhQpyscpz9+RZ7P/LAVpMWNfDcMGSzVc7HHjEiM
-         fsbwY+4z1pt9mMdZHrfW9ZQmYmnbflO21JDr6yeQ1FRajk1ArHWKZbR5SSwsbYidEnXt
-         MtUOCFMJm4Y1/NF2YB6pvxcT0j72pWRruZdJuTzatUAvsa4ZbYBvhpCIPgiMnZipe/Zv
-         9oAwbiVCw5JhmZZzbLCa6PBb6ikDkZiFcs5jbfyP1vMweNM/D+J09UwnEAP6By44LaCm
-         dZzA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=knS4i6xgOZz/mz8J43X7M1/Qd3FKTH7ujh7tUYXNntY=;
+        b=jLQew3c45KYmBgVsAuVYVMiGF20EenaPxST1N6IErKjLVqzDDkQDu1tyrmdfzFv7Yr
+         A8wUw/Hk0v+GNyxvtsH8EL/WcTP89V5/LovXQpEYLP8FC9U3c69nYipJg8Zlk3MCUB15
+         Ug7bm2zOM8ZmxsUzNuaeAi057fOee8TqJ0mEVh9BV8m3r695gCN2rhN5HjSk9RxATK1r
+         /iIh6PBTQ77VSPq5yy4wqzZxD4AJZKamHLtfDt866SPjVK8hLxBO4m5SWs8rnbk5sNLi
+         MoNKWbO7lycOsN4EvNx0xHvxtc4ELuW8SRN3kVogVN7WHxguAhFTr6rr3ccdxvOX15TL
+         joCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=dA62nlra0/aD+kLMcQn/LMHtOYaUk7vnUUfqDLXBMmU=;
-        b=GOc4b3SdkrKgAgrJTrTenowjtaTAfNFpYQ5rjkP8vhtaYURxVOI/hjWYJ7vAq41gqb
-         jBMUNpZGRazfZ3zTrt4IDQjHlduyHm1tst/K0YSq9xnJvgcNkm9W04Qwvytv8dgsD17J
-         CvUM9tmDOpNkzGZAZ7XPCaYWobY1P5a0RaMyu5+AD88nTwRvW4zX8rzAfxF0Mb9EbgDG
-         BLyH/PQRGajOTEyEUeo8aTnpyGaT4BAWG3BRfd1u3c7tnAgLVQUNS76JlO90N0RrFN5t
-         F9JI/0Qgo+rsDOHkf61bgF6bQAycGluyBecI70ChrEihzHzIivRWjGu4LymBL1P0OlUI
-         TwKw==
-X-Gm-Message-State: AHQUAuYpYwkz5I1QxQQI2ctrfGSDllNUudk0wChu+XDjoo3BFWTKXgjO
-        sL5uNidYxm+a1piDEfYMhaJq+5NH
-X-Google-Smtp-Source: AHgI3IbwBd/p+9FJK8Lvk/Ugun7pJz8qYBh68FAbehB1MEuhorTU5VvwrUjjDy6w6tjlEAKQLLNstg==
-X-Received: by 2002:a17:902:b20e:: with SMTP id t14mr24034124plr.128.1549646486668;
-        Fri, 08 Feb 2019 09:21:26 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id o4sm10775576pgs.12.2019.02.08.09.21.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:21:26 -0800 (PST)
-Subject: Re: [PATCH V16 4/6] i2c: tegra: Add DMA support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1549644314-1481-1-git-send-email-skomatineni@nvidia.com>
- <1549644314-1481-4-git-send-email-skomatineni@nvidia.com>
- <dd2899ab-1a5f-834c-ab97-1654845c7de2@gmail.com>
- <BYAPR12MB33980494FB2E5C439210124FC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB33987BF143F5903AE5DA196AC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4ba38a07-1953-9393-8756-ce555557017a@gmail.com>
-Date:   Fri, 8 Feb 2019 20:21:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        bh=knS4i6xgOZz/mz8J43X7M1/Qd3FKTH7ujh7tUYXNntY=;
+        b=Zm3lvGTJhBZjMdWYiqbZJQmM97Ru74gaa7+/l3ogjsL4tSkYsBqDpCa5Ht5gvqHU26
+         lJt6ksBvdhUja38V3D9/BqbV2u4Ol7vcSMFvW0a/ZixWk9eT4UkQ05QU/OBxU/XdgCAW
+         H4rs9fM2GJoeBBHZZOSsHG0hyGPIz1hujZ7gxau8KhxWrfYhLxNcbkRmongwvSeiAhaC
+         NTpYnqxsOcXJu7s02uEIchKP0J6AL51Bqw31S/SoFbZPRxQlZ/i0whnguUGW85GymFdV
+         YeYhieg4tDce6crG9eJq03o7RbNaNiuCKp/j1sedlDkk/czuLGu0m22diJZYUnnet2wA
+         J5Bg==
+X-Gm-Message-State: AHQUAuawhz3jtnaqPcp2gCcRaHy1xg8JeM1t/kOB1E1yqP2yBMbeapH2
+        LF273OKfw5trj7Gi7UIrwOaRfg==
+X-Google-Smtp-Source: AHgI3IbSkxE70hvE6hEsTR0dsK+wCs+VlcnFHXDYH5GnybORz2T0MG58aGjYmCf/4I4RpIKys9BUkQ==
+X-Received: by 2002:adf:bc87:: with SMTP id g7mr17136749wrh.250.1549646514707;
+        Fri, 08 Feb 2019 09:21:54 -0800 (PST)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id k23sm4097150wmj.32.2019.02.08.09.21.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 08 Feb 2019 09:21:53 -0800 (PST)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org
+Cc:     daidavid1@codeaurora.org, vincent.guittot@linaro.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        evgreen@chromium.org, dianders@chromium.org,
+        seansw@qti.qualcomm.com, mturquette@baylibre.com,
+        abailon@baylibre.com, thierry.reding@gmail.com,
+        ksitaraman@nvidia.com, sanjayc@nvidia.com,
+        henryc.chen@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v1 0/2] interconnect: Add path tagging support
+Date:   Fri,  8 Feb 2019 19:21:50 +0200
+Message-Id: <20190208172152.1807-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB33987BF143F5903AE5DA196AC2690@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-08.02.2019 20:06, Sowjanya Komatineni пишет:
-> 
->> I'm still also suggesting to squash "fix maximum transfer size" into this patch because it is really part of DMA-support enabling.
-> 
-> Max transfer length limits apply to PIO also but for DMA its more needed to prevent crash.
-> So had this as patch before DMA as its applicable for both DMA & PIO.
+SoCs that have multiple coexisting CPUs and DSPs, may have shared
+interconnect buses between them. In such cases, each CPU/DSP may have
+different bandwidth needs, depending on whether it is active or sleeping.
+This means that we have to keep different bandwidth configurations for
+the CPU (active/sleep). In such systems, usually there is a way to
+communicate and synchronize this information with some firmware or pass
+it to another processor responsible for monitoring and switching the
+interconnect configurations based on the state of each CPU/DSP.
 
-Oh, so the packet_header size also shall be excluded for the PIO as well, really? It looked to me that PIO doesn't have that restriction and we only need to exclude the header size for DMA..
+The above problem can be solved by introducing the path tagging concept,
+that allows consumers to optionally attach a tag to each path they use.
+This tag is used to differentiate between the aggregated bandwidth values
+for each state. The tag is generic and how it's handled is up to the
+platform specific interconnect provider drivers.
 
-> We exchanged on this yesterday, so thought the reason you want to squash separate patch and include in this is due to max msg len limit and when moved into hw feature.
+David Dai (1):
+  interconnect: qcom: Add tagging and wake/sleep support for sdm845
 
-If PIO limits are incorrect, then it's absolutely fine to do it in the separate patch. I probably just misunderstood your point.
+Georgi Djakov (1):
+  interconnect: Add support for path tags
 
-> Sorry should have verified before sending. Please confirm if I leave max transfer as separate patch or add to this DMA support. Will update along with dma buf size fix.
-> 
-> But max transfer limit applied to PIO also and that’s why added it before DMA patch to show its dependency
-> 
+ drivers/interconnect/core.c           |  27 ++++++-
+ drivers/interconnect/qcom/sdm845.c    | 103 +++++++++++++++++++-------
+ include/linux/interconnect-provider.h |   4 +-
+ include/linux/interconnect.h          |   5 ++
+ 4 files changed, 106 insertions(+), 33 deletions(-)
 
-And then you need to explicitly tell in the commit message that PIO limits are incorrect.
-
-It also probably worth to add a stable-tag to the commit message to request backporting of the limits-fixing patch to the stable kernels:
-
-Cc: stable@vger.kernel.org
