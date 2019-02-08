@@ -2,74 +2,114 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671BEC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A42C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F71821916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549591126;
-	bh=b+S0EFJwpzXXcIXWxFeOomz6lpqOHYC0b0kUYWYGRA8=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=YPw7y25piP+VsY22Hoz7GW7dLKYvmw4MQO8sEJ3SuMtLGt9URXaq3o4JCWf+72sq0
-	 YAZ77cEAPvPPqLU6A1Hq1jRkR8ZIqVbRGME9CN27CVTbc+UxzEEBVkk/qmkw+8GkZr
-	 vyU5Q4ZVp7f/QCdyZ6tWO0rW6jaxqPRCAVdKzQbs=
+	by mail.kernel.org (Postfix) with ESMTP id 708492146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:01:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t3SKHIz8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfBHB6o (ORCPT
+        id S1726975AbfBHCBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 20:58:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726775AbfBHB6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 20:58:43 -0500
-Received: from [192.168.0.111] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34D392146E;
-        Fri,  8 Feb 2019 01:58:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549591123;
-        bh=b+S0EFJwpzXXcIXWxFeOomz6lpqOHYC0b0kUYWYGRA8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=usPhDr1O+l4a3klZTbUJ0A9BEKhuoIZFHh9uiWLwFA3P3AIcYFF5MwksHmTYiDNm6
-         TfeXStxaysaSU7ijbogjWVVNBbRKmXoWmp72i5vgJ6RyFELSrkBmhYaQpglf7EuubZ
-         8WIuYi2xt5ZamT2+izszlEl9ZPp/BVWlYiQ9PiNw=
-Subject: Re: [PATCH v1 1/2] PCI: ATS: Add function to check ATS page aligned
- request status.
-To:     sathyanarayanan.kuppuswamy@linux.intel.com, bhelgaas@google.com,
-        joro@8bytes.org, dwmw2@infradead.org
-Cc:     linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Keith Busch <keith.busch@intel.com>
-References: <cover.1549478584.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <91bfae8b1d4b424219e3ce3c1fc03559c73f1ae7.1549478584.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <5d55e369-355f-b710-0594-03465aa985da@kernel.org>
- <a5a29eee-2e33-ba0c-67a6-69983fd0796d@linux.intel.com>
-From:   Sinan Kaya <okaya@kernel.org>
-Message-ID: <32ec3293-28ea-8f0f-f801-0370b4cf0453@kernel.org>
-Date:   Thu, 7 Feb 2019 20:58:39 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 7 Feb 2019 21:01:42 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42185 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbfBHCBm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 21:01:42 -0500
+Received: by mail-pf1-f195.google.com with SMTP id m6so914639pfa.9;
+        Thu, 07 Feb 2019 18:01:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rCXYuL2yAB+lK2US45/0mGxsgwjtq+ulyYDwTWv61C0=;
+        b=t3SKHIz8BoD7qGbeZngs12TnU5mv/oLSbdc3Aa4Sy5LggK3MnB3vo20Wgn/o/cg98k
+         60NDhIa35S38Duzo9bU4OjSFSG7A8G3CtfRtFlF3MtpfteAtnbgENz0TZlv2GGP+pCJT
+         LnA6Ne57lzA8S7HJpc83udB2BNF/emDruyTW31yikjUkh+/ITkE7c8cpFNmFoJiJBuFl
+         Pwe8PtHUg6XbGhqTolyhZO6vEn7EZhkMYRI9xUQc3CFbbZPfwFZECmeiPDGsjtYd8+xa
+         wgYmeyFW/5NonKtjaLD0dyUp/BslcoGtsrUAsxWRNOkhl9w/0T9mbuwDy+q2Tqh37YhW
+         Xtbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rCXYuL2yAB+lK2US45/0mGxsgwjtq+ulyYDwTWv61C0=;
+        b=RxErkFDtkCPX7QGMfsW8ZQ/SEIKS2VtSF68QNKBZ+jM9IMQXrPymcnhSPOQeDBp4S4
+         js7zhEp3uVgUhoH3fivDalsxlC3p97iPEXplVp6DS0C8pv6eNmOxBO7Hjy1tvMK8p+YY
+         wQCW4M2vmwr1oKaePIkViZy5XfjDWb7x5EFcW95R8PaLi8VF76cfSlFrY9dtVcmXQWD3
+         bCvREpiFhHyOv3ozflNv7SBTWsH1k8FZ3VVMMeaeIsEhBK/MVDBHuvMh1RqcxEphKQRZ
+         l98hzXsoviGuXx36SgD6yEkI3jN5+s6wRxMgEmU9Rj43nYucBVP+dXhpSsSpP/d1B/Ci
+         wKeQ==
+X-Gm-Message-State: AHQUAuZFybJcq5PdZ0jakFX8SMccI8piO03hrFH2f21dqlERvLxoOy8u
+        oSYCB1MWY1D9oTHvjkefUpQ=
+X-Google-Smtp-Source: AHgI3Ia3XMfxae7D9RdSp4kC4yA9+lfsmjUeA4uj2E54LxMcvUG1ISZrl0dFGrEqvsX9Bjqbzxa4Og==
+X-Received: by 2002:a63:ce08:: with SMTP id y8mr13032128pgf.388.1549591301268;
+        Thu, 07 Feb 2019 18:01:41 -0800 (PST)
+Received: from localhost ([110.70.55.31])
+        by smtp.gmail.com with ESMTPSA id q5sm588767pfi.165.2019.02.07.18.01.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 18:01:40 -0800 (PST)
+Date:   Fri, 8 Feb 2019 11:01:37 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@ozlabs.org, akpm@linux-foundation.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
+ description
+Message-ID: <20190208020137.GA22600@jagdpanzerIV>
+References: <20190207124635.3885-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <a5a29eee-2e33-ba0c-67a6-69983fd0796d@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207124635.3885-1-mpe@ellerman.id.au>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Cc-ing Steven
 
-On 2/7/2019 5:16 PM, sathyanarayanan kuppuswamy wrote:
->> If I remember this right, aligned request is only supported on ATS v1.1
->> but not supported on v1.0.
-> Its added in v1.1.
+  https://lore.kernel.org/lkml/20190207124635.3885-1-mpe@ellerman.id.au/T/#u
 
-This means that you should probably have some kind of version check
-here.
+On (02/07/19 23:46), Michael Ellerman wrote:
+> Arch code can set a "dump stack arch description string" which is
+> displayed with oops output to describe the hardware platform.
+> 
+> It is useful to initialise this as early as possible, so that an early
+> oops will have the hardware description.
+> 
+> However in practice we discover the hardware platform in stages, so it
+> would be useful to be able to incrementally fill in the hardware
+> description as we discover it.
+> 
+> This patch adds that ability, by creating dump_stack_add_arch_desc().
+> 
+> If there is no existing string it behaves exactly like
+> dump_stack_set_arch_desc(). However if there is an existing string it
+> appends to it, with a leading space.
+> 
+> This makes it easy to call it multiple times from different parts of the
+> code and get a reasonable looking result.
+> 
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+
+You probably can have a __init buffer somewhere in ppc code, append
+data to it, step by step, and call dump_stack_set_arch_desc() all
+the time.
+
+But no real objections; dump_stack_add_arch_desc() can do.
+
+FWIW,
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+	-ss
