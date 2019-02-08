@@ -2,103 +2,295 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3475EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 107B7C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DCC21919
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF55921917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:31:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="qoVDTpVs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbfBHITH convert rfc822-to-8bit (ORCPT
+        id S1727215AbfBHIau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 03:19:07 -0500
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:36456 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727166AbfBHITH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 03:19:07 -0500
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x188BTSB010616
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 08:19:06 GMT
-Received: from g9t5009.houston.hpe.com (g9t5009.houston.hpe.com [15.241.48.73])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qh21wsmgk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:19:05 +0000
-Received: from G2W6310.americas.hpqcorp.net (g2w6310.austin.hp.com [16.197.64.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g9t5009.houston.hpe.com (Postfix) with ESMTPS id 02C3782
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Feb 2019 08:19:04 +0000 (UTC)
-Received: from G4W9122.americas.hpqcorp.net (2002:10d2:1511::10d2:1511) by
- G2W6310.americas.hpqcorp.net (2002:10c5:4034::10c5:4034) with Microsoft SMTP
- Server (TLS) id 15.0.1367.3; Fri, 8 Feb 2019 08:18:52 +0000
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (15.241.52.13) by
- G4W9122.americas.hpqcorp.net (16.210.21.17) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3 via Frontend Transport; Fri, 8 Feb 2019 08:18:52 +0000
-Received: from TU4PR8401MB1168.NAMPRD84.PROD.OUTLOOK.COM (10.169.48.142) by
- TU4PR8401MB1197.NAMPRD84.PROD.OUTLOOK.COM (10.169.48.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Fri, 8 Feb 2019 08:18:50 +0000
-Received: from TU4PR8401MB1168.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::21e0:7d57:e370:3da8]) by TU4PR8401MB1168.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::21e0:7d57:e370:3da8%3]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
- 08:18:50 +0000
-From:   "Abraham, Santosh" <santosh.abraham@hpe.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Missing CR3 switch ?
-Thread-Topic: Missing CR3 switch ?
-Thread-Index: AdS/htzArBJYCzo8TASr3beYSGm5OA==
-Date:   Fri, 8 Feb 2019 08:18:50 +0000
-Message-ID: <TU4PR8401MB1168028587E7EB526C332214EE690@TU4PR8401MB1168.NAMPRD84.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [16.242.235.143]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TU4PR8401MB1197;6:KNsJSxbrFAlj2FmUcUfZR4hTCt6TLDr0eeCVHbLva+YytypHMKcmr7MLIALN0RM4O4V9i911pymIHaznGfmIDW5yuAJ4Uf7dzUAegMtmt27+Kv8spwrmGP2KNEIO/lqd+3CtN69BNLrBB4fylh/CQynA8qauHhcqudutP/YRpWiRYuIauxr8g5MZVxCPgWCA00b6lXzUeBC8M0Ew2yWfYJiOchhGoVTYcjK9+Aal4VC5BPBjzMU5FrxHrxHT/NqzezqcRToVcGj7UsT/Vt5NCMNusgqAmheaUvqApUwNUxsaiLRDaJIwWdwSoXX8lvp7y94ladXtwLb10hTFwWmDnLoDga1Usx+x27vSpzHoJyji8T2l/TyjiiScwd8ebR9yUd8fvuim1Th6iaIRi3QihIKM9SqK8iGkO8z5rWR0Zch7Ae5xV3+V+uvND/1hrO42JbOpL5lhGLLykHzhp5v8xQ==;5:iWwF6y86eCvyjpg8t1RCPEII5yj4oH11ngCnNXek7vEt3CzEDRfuHbQw65yDfmYPsCjOS0aylFkLNcfswOHzYNfXNXVGlhPar41+7RDpjbbUM4pb2+ahp8VG9FN6wRa1Ru1y6zSeFWVkv4laj4X8rDE043J5DPE++JXSrxg+KJl+StMYyFcilb5Y8enzMFmqCXVrSPImpGOTFVlzVylQ9w==;7:pSuOR91UUv99pOLtG0yPymFwdxdGQ5lx6avTFCwOPgWgcf3Nf83YL5YSXzLa2vd8oJqTAj8PqS/EaHVWVyhTcuDVtk/v8H1j6U9NuGytg06Hw6jaZyszR1hBHnv+oMiND641Tsfx20QybFWbwFvCXQ==
-x-ms-office365-filtering-correlation-id: 8926920e-7e30-408b-d23f-08d68d9e0e3e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TU4PR8401MB1197;
-x-ms-traffictypediagnostic: TU4PR8401MB1197:
-x-microsoft-antispam-prvs: <TU4PR8401MB1197AF7786BCEC7B299E08EBEE690@TU4PR8401MB1197.NAMPRD84.PROD.OUTLOOK.COM>
-x-forefront-prvs: 094213BFEA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(39860400002)(366004)(189003)(199004)(3846002)(6506007)(6116002)(102836004)(2351001)(55016002)(33656002)(4744005)(9686003)(99286004)(7116003)(26005)(86362001)(186003)(71190400001)(14454004)(2906002)(71200400001)(106356001)(478600001)(105586002)(97736004)(486006)(6916009)(25786009)(68736007)(256004)(66066001)(316002)(7736002)(305945005)(5640700003)(74316002)(2501003)(6436002)(53936002)(476003)(8936002)(7696005)(8676002)(81156014)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:TU4PR8401MB1197;H:TU4PR8401MB1168.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: jILEpCI7nWPOjVN4PfMKfXdpClJl4uePowN4nmbWBEYc+OtsByX89I9GRJccD6d23Bq00oYGiT+ibV6pfcSioui+VqKbQ3hmJcH3fi+gT4EnoYRIs3LeOAJyo6b1pERij16USYPY2cQHGX0Xa46g7LwkPf/qeSHQZMsi6kqbXzvFcWZIM5jqO3n4Y8nbdKbdPLeXbsl60IBrbfPuK1Cn9g3rq+zljl8Ys1zrvuYaP+/BXODIQXr/VlSKQUpkwyBp9cfajooccsxkh3NJdZwKLzQrTRMg5GqwoTyPlYjXKCZqIs+1ZQlrf+LkgLbVogGsDNc8F6Ch/Xjj74A3LGHbFBDKnNfqgFD3/38BmR6Kx+nIInZPuBQC3s60V1WFLAeQMlVjgv18PUZBPnEC+IugtyzO8ZFk2HBunmx7u51U9ec=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Fri, 8 Feb 2019 03:30:50 -0500
+Received: from tomli.me ([153.92.126.73]:53484 "EHLO tomli.me"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726115AbfBHIau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 03:30:50 -0500
+Received: from tomli.me (localhost [127.0.0.1])
+        by tomli.me (OpenSMTPD) with ESMTP id 45f807a7;
+        Fri, 8 Feb 2019 08:30:47 +0000 (UTC)
+X-HELO: localhost.localdomain
+Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli
+Received: from Unknown (HELO localhost.localdomain) (2402:f000:1:1501:200:5efe:7b75:4650)
+ by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Fri, 08 Feb 2019 08:30:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=date:from:to:cc:subject:message-id:mime-version:content-type; s=1490979754; bh=mFincKebPPpECswUFNTJz8kSm6XZOraDogWkrsWfW+8=; b=qoVDTpVsQRC6KxQn66wpQ+JHfmsc31x/6LLajCdcbDUrYuiUv/en/a2CDvT4Jshmk+oGnuJa4658oruqbE9GQerL7q69XBjGkWCp5j9nNEoTkdSD1MqIl64f1yfRN3RRhXOYwR1pir5DWUQOAssfUyjQ0w8XoJwiEWXSsaY698DEca2Nupc1syi0Mw7xAvWex/16lXr9aOy5rHac/dCbyvTum7bsjLZg/fLPtZ9XuflwaY13lYP4N3I4bDgnM7hOpp7nmEGmRmS3hhjFneVTWqTZc4ejvTd2U5HeJg6kWAdf3KiOph+RBHoR1bKj/zZHFbuei8H608StJSg+WURwbQ==
+Date:   Fri, 8 Feb 2019 16:30:39 +0800
+From:   Tom Li <tomli@tomli.me>
+To:     James Hogan <jhogan@kernel.org>
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Alexandre Oliva <lxoliva@fsfla.org>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC] On the Current Troubles of Mainlining Loongson Platform Drivers
+Message-ID: <20190208083038.GA1433@localhost.localdomain>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8926920e-7e30-408b-d23f-08d68d9e0e3e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 08:18:50.2230
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TU4PR8401MB1197
-X-OriginatorOrg: hpe.com
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=435 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080060
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Folks,
 
-I am trying to track down a strange application segfault error 15 bug - which is resisting any attempts to be explained by an application bug.
+--W/nzBZO5zC0uMSeA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hypothetically, if for some reason - the KPTI code failed to switch to the user CR3 while returning back, the kernel would presumably kill the application in the first instruction that it executed in user-space.   In this case, would there be any other helpful messages in the kernel syslog other than segfault error 15, or is a completely different error message dumped ?
+Hello, Greg, Ralf, Paul, James, Alexandre and Huacai
 
--santosh
+Many years ago when I was still in the middle scheool, I got a Loongson
+Yeeloong laptop to explore the world of non-x86 world, as Geert Uytterhoeven
+once said, there's lots of Linux beyond IA-32. At that time I've noticed th=
+ere
+was no platform driver for the laptop. I just assumed that nobody bothered
+mainlining it and everyone were using Alexandre Oliva's tree. I've diffed
+his tree, got the patches, discovered and fixed two minor bugs and submitted
+to Alexandre, and called it a day.
 
+Years later, I stared at my machine, and found Alexandre Oliva has stopped
+maintaining his tree, yet there is still no platform driver in the mainline.
+So I decided that submitting the Yeeloong driver to the mainline kernel is
+the my current personal project of this year. I only work for myself for fu=
+n,
+not for profit. I see Loongson as an interesting non-x86 platform, but I do
+not work for Loongson, do not explictly support them, nor supported by them
+in any way.
+
+Reviewing the previous E-mails and patches at Linux/MIPS mailing list, I've
+noticed that, from 2009 to 2019, in a 10-year span, there have been at least
+3 attempts by 3 people to submit the platform driver for Yeeloong laptop to
+the Linux/MIPS tree, all implicitly rejected. This is not meant to be a
+criticism for maintainers' hard work and high quality standard, but rather,
+I think it shows a serious challenge on development of platform drivers that
+worth discussing. since there's even more unsubmitted platform drivers for
+more devices, especially Loongson3. We need to find a solution both for
+short-term and long-term further development of these platform drivers.
+
+Here, I give a quick summary about the situation, and see what can I/we
+do about it. Digging into the mailing list, in the hindsight, it's clear
+to see the fate of this platform driver. In December 2009, Wu Zhangin
+submitted a refined version of the initial platform driver to the mailing
+list.
+
+His intention was to create a MIPS-equivalent version of the x86 platform
+drivers, as he said,
+
+> I like the folks did under drivers/platform/x86/ ;) which
+> will be better to maintain. for all of these drivers are really only
+> YeeLoong platform specific ;)
+
+However, Ralf Baechle commented, that
+
+> You split old, big driver into several individual drivers - good.
+[...]
+> Experience has shown that drivers for a particular subsystem are best
+> combined in a single menu, in a single directory. Otherwise any changes
+> to subsystem's internal APIs will become a major pain.
+
+Dmitry Torokhov gave another response,
+
+> Umm, it still mixes up bunch of stuff not directly related to input.
+> I'd vote for drivers/platform/mips (since we have a few of kitchen-sink
+> style drivers for x86-based laptops in drivers/platform/x86).
+
+This discussion is frozen without any progress in the following years.
+
+For example, when the driver was resubmitted to James Hogan in late 2018,
+he noted, possibly without knowledge of the discussion in 2009,
+
+> I can't help thinking it would be better to separate this into separate
+> drivers for each part (backlight, power supply etc), and move them into
+> the appropriate driver directories (drivers/power/supply,
+> drivers/video/backlight etc). That way each part would get proper review
+> from the appropriate maintainers (or at least they should be Cc'd).
+>=20
+> Is there a particular reason for it to be a single driver?
+
+So I think it's the time to restart this discussion. Should the driver be
+submitted as a platform driver, or be splitted and merged into various
+subsystems? I've considered reasons from both sides.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+Argument FOR platform driver
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+
+* Unlike other drivers, platform drivers are only written for a specific
+machine, or a specfic family of machines. They are usually useless for
+other computers. A central point-of-maintenance is easier to manage than
+running between different subsystems. Also, many drivers only have trivial
+code for each device, splitting it creates more boilerplates.
+
+* Platform drivers are not universal, architecture-wide, instead, they are
+tightly-coupled to a specfic hardware controller and/or BIOS firmware. On
+laptops, the Embedded Controller is responsible for controlling the battery,
+keyboard, backlights, and other opeartions. In this way, it's better to see
+a platform drivers as a driver for a single controller chip, instead of a
+series of drivers for a keyboard, a battery, or a screen. These kitchen-sink
+drivers don't really fit into a single category.
+
+* Since a platform driver talk to the same controller, shares the same head=
+er
+and I/O functions, it's difficult to split different operations on the same
+chipset. First, code-sharing of the underlying EC operations can be a probl=
+em.
+Also, modification to a single driver often touches the underlying EC logic,
+which need to touch the core architecture code, and it also affects on driv=
+ers
+in unrelated-subsystems, thus creating many troubles on coordination. Even =
+worse,
+they are only designed to interact on each other. For example, closing the =
+lid
+may deactivate the screen and changes the behavior of a light sensor, a pow=
+er
+button, and a 3G modem and their respective LED indicators. From a EC driver
+perspective, it's easy to manage, but harder to do so independent drivers.
+
+* Some computers have different hardware functionatilies, e.g. different
+screen sizes, types of batteries, or keymap, but often share a single family
+of the EC chipset and they can be controlled in a similar way, or have simi=
+lar
+characteristics. Using single platform drivers is easier to add support of =
+a=20
+new machise, or to reuse code among different computers - simply extend the
+existing platform driver is enough. In our case, It's expected to support m=
+ore
+Loongson PCs of the same family, such as Yeeloong laptops, MengLoong machin=
+es
+and FuLoong Mini PCs.
+
+The platform drivers in drivers/platform/x86 is representative for the poin=
+ts
+above. For example, Greg Kroah-Hartman's samsung-laptop.c.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+Argument AGAINST platform driver
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+
+* Loongson is only a subfamily of MIPS systems. Unlike x86, where there is a
+massive number of platforms which need custom platform drivers, the vast
+majority of MIPS are servers/workstations or embedded systems, which does n=
+ot
+use platform drivers. Introducing platform drivers will encourage unrelated
+drivers to be submitted to the Linux/MIPS mailing list, creating more press=
+ure
+to a small team like Linux/MIPS.
+
+* Linux/MIPS is specialized in maintaining core MIPS code. The developers
+should not be forced into reviewing and maintaining unrelated subsystems, s=
+uch
+as battery, LEDs, or hotkeys, which they are not responsible to. They should
+be reviewed by the maintainers of their respective subsystem, this also
+encourages higher-quality drivers.
+
+* x86 platform drivers are maintained independently from core x86 code. in a
+separate tree, and has its own community, platform-driver-x86@vger.kernel.o=
+rg.
+However, there is nothing is this in Linux/MIPS.
+
+* The code reuse and coordination problem is simply an excuse, it can be
+solved by providing a generic EC interface in arch/mips/loongson64 for each
+driver in its respective subsystem. Monolithic Kitchen-sink platform drivers
+are anti-patterns and they shouldn't be developed.
+
+In conclusion, in my opinion, although having a central location for Loongs=
+on
+platform driver is preferable, but consider the current circumstances, it's=
+ a
+bad idea, and in particular, bad for Linux/MIPS maintainers. I think the be=
+st
+way of doing it under the current system is splitting the drivers to their
+respective subsystems, and put the EC-related code in arch/mips/loongson64
+and export the symbols. If there's consensus on it, I think I can starting
+working on it immediately.
+
+Nevertheless, I think a longterm solution is needed to facilitate the
+development of lots more platform drivers of Loongson mainches. I've noticed
+that Google has a similar problem developing their own platform drivers
+for Chromebooks, their solution is creating drivers/platform/chrome, so
+they can work on i2c, lightbar, LED backlight, etc, drivers tightly-coupled
+with the Embedded Controller in a central location, with its dedicated tree
+chrome-platform.git, without disturbing the ARM developers by sending unrel=
+ated
+drivers. I think we should adopt this model, having a drivers/platform/loon=
+gson
+should make the development easier.
+
+Unsolved problems still remains, however. First, how to solve the coordinat=
+ion
+problem? Linux/MIPS is a relatively low-volume and slow list, what to do if=
+ the
+unmerged MIPS patches becomes a blocker for other drivers? Second, we alrea=
+dy
+have a hwmon driver under drivers/platform/mips, should we put a warning th=
+at
+says new drivers under this directory shouldn't be written? Third, if we ag=
+ree
+to create drivers/platform/loongson in the future, how can we ask the maint=
+ainers
+of other subsystems to review the drivers in it? I think Google bypassed the
+problem because they have lots of kernel developers, but not us. Does anyone
+know more about Chromebook's development procedures? Also, if we want
+drivers/platform/loongson and its own tree, what are the procedures to get =
+them
+created?
+
+All comments, suggestions, criticisms, etc, are appreciated.
+
+Thanks,
+Tom Li
+
+Beijing GNU/Linux User Group
+
+[1] 2009/12: https://lore.kernel.org/linux-mips/1259679137.12571.4.camel@fa=
+lcon/
+[2] 2010/05: https://lore.kernel.org/linux-mips/cover.1274622624.git.wuzhan=
+gjin@gmail.com/
+[3] 2017/11: https://lore.kernel.org/linux-mips/20171112063617.26546-3-jiax=
+un.yang@flygoat.com/
+[4] https://www.spinics.net/lists/platform-driver-x86/
+
+--W/nzBZO5zC0uMSeA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEJVIRsjlaWj4OSKDx+tPrBeiOjW0FAlxdPiYACgkQ+tPrBeiO
+jW3FOg/8Dzcq5uTWIoqQb0APzi1HUBspcWMZ/S4NNVXdx2bcePuEbTBijVT9P5fx
+0AluLKK0fTDGeM0YzPXHrumJp+IaOGE2RBeK9haH0Ye4U9eJcHqT5isLfLActkf+
+/l3KTleUmX4VT19e64H1aOirxJxCsOpEKG9cBnlBpjnVyCUE1zrFCViv5nrdYqKj
+qv3kDfdCrjtUa+/XUcIH5nxGDdb3DvsdqDrL8ZdbYQvW7NgR5vyp9W0xXuIViw1q
+CFfiUJmtfyZyjA0X/N+8kOc6/AinJxWwO0EV2y7waxSxeG0lVuelxQxQNBQRlZ5d
+4GXy9naLr4M93vv8+DwbCXsRe2LaMX+xeNQaXGNu22eCL6shpVJHxFr+3Q8BOkRl
+dES0K9b7IjeajUZ0EHUcUekdpIqNfhOdTjybA2nm96Y4hidtHQhaypfCJanUcIsg
+3GWucEpohvuuSwa5PsCWhNmIM82dhlRO0vum09NK7+ok66azrwP8huOqFy25u7Ir
+Xhy+gFK4WRc7z526k2cLU+QZ7PRvzwsfr7J5tNKjcY6cBuWHjjJ2gjJ/6DSuFy1I
+RYUGHIJuEtXH+zwuyc/eU9cq+SDVBtqZK1n4v+qJch9KX6nDz1QeDaHA096HLGWh
+3E2tOKa7HEUiL1EKHIYst8QyzBLKFIvAUhM0299tSBMkalrOUcw=
+=Xbyq
+-----END PGP SIGNATURE-----
+
+--W/nzBZO5zC0uMSeA--
