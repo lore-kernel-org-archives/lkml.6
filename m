@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77FEC4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C87C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B96FB217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A98DA2146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:37:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kfw4LKUk"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="AOTfbBMt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfBHRhq (ORCPT
+        id S1728449AbfBHRhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:37:46 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51900 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728104AbfBHRfZ (ORCPT
+        Fri, 8 Feb 2019 12:37:55 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50430 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728087AbfBHRfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:35:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so4377734wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:23 -0800 (PST)
+        Fri, 8 Feb 2019 12:35:22 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z5so4364145wmf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2ODe9/pBgLE4PrWfBJM71T1koYiCMuvoiVEkHhTfTA4=;
-        b=kfw4LKUkinrqgKxn2J44QnZKv+b6P2k6DkxPKpM4H+AERpC2TM6nRzevACIsMZM3mj
-         zGwHnvvpXxN28iUD50IcevhBfr6YWw++gbGBemLYfTNIsZ/9ljKroNt1g5hJQiSCnTxH
-         YK/2wf/f6JRjiBkJtwlEtadEZZ8ZKwz4KWTrJ0G+JGvi4BmXXnCvnYDiYm01hQuSrUp3
-         YLALrTl/sp52XGyBbyYy6aWiZ3JnvQeNrLj3qyH8O6rv9rtXjZ/x5c4/WlaaVXzZ449C
-         svgQgVdoY6zTLDABAfLAoagmBJ/FQyijjGUHd1huohVIHl55NXn5CDMRzoTHX960ZGdv
-         2o1Q==
+        bh=caGR+xPQP4nJO6Pesj45R1zU4S0+ykorYdgBwjiu6dQ=;
+        b=AOTfbBMtd23OZerUaD0B95Pp5TGB3kuH28oxVZjTikJdkKcIiiyvbmWes6cOim9gOC
+         lGXWdDyQS3OlvMPiVAgws09x3h1STpy9SC0Bth1NJa4DqFkJxGhkZrDYmgOQ306oxQUg
+         4TDHvshpLZigRehC8osZ1yDw96I9FEEIwMMQasgI/2XsPEi4aCvroyKCXF/P8pcWbvP/
+         7vRLv96EJF2mcTX9iriYQCjQv8pF7kaIbHPLk06H6yHc7nkhSjkz0t8xq9bPuGUKocR8
+         dVzdY/w2Ufw+8aHjBgC3gL8J7+9ORhgPMBrnKXeWJSStE1YnNHoYGxtpX3/iD1YX5dKX
+         4/CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2ODe9/pBgLE4PrWfBJM71T1koYiCMuvoiVEkHhTfTA4=;
-        b=ZDhLROb7Pai8XpPs4ti+hqNcvKeWOMMmjpKsHzfEP+sDhB8zw1WQQ7k3kXZuaZeiW5
-         r58Tqvd9+DuoqeV9VBC2gwExJWcI4+uXecrTB8fxMry1j/jEbMLiih0maPSrQdyJ9fYy
-         edmg+s+xIIixmak+Ljdj+fDJnL++SsGM7pADmucJwBnBeiLMNB+rPWlYKDf6wik1/ZZu
-         S54pRb/CKgtLVnUPJvcS5WIecTDRccRZDVDsDJAj8VWL2QmSaL83PaaBvzTTvYPbFAFR
-         EiipGOKztZYwCsTdXGkV0MH/uSj5ko0BbFLJLWKwJsewcy411qvKJuVfznIevGfMXiMI
-         oAvw==
-X-Gm-Message-State: AHQUAub3JO7rXK+zP/R19tjACgd+MLNUtLLCHXXcD8loF0GSe9jv1KSG
-        xsjNMRhuHQHnew4XeQUABUUWGw==
-X-Google-Smtp-Source: AHgI3Iah1Osavlul5DJpnUgS8LEdiyOze9kT8ZYuPBJcRdxjOb0Uv2+91dgBg3DzBcH3z0WPJdLu3w==
-X-Received: by 2002:a1c:c4c4:: with SMTP id u187mr7528513wmf.114.1549647323182;
-        Fri, 08 Feb 2019 09:35:23 -0800 (PST)
+        bh=caGR+xPQP4nJO6Pesj45R1zU4S0+ykorYdgBwjiu6dQ=;
+        b=CeT7/GPyzmOiyCKk5/17isaBdg8jvUtRmpeDV7sz8JsUWr8O0c0dMWnpdj+1gdXF3B
+         slDGeVkKeDsdr37cdbKXfzPTuTj71SKTvJ7dqUW8nu+rGy42mG5uPdBb44U1GJYyRUvk
+         c1Ve62vjh6rYpDl5ukcf2Glnmf325B1re9MJC5006q/AzVGbJ4HbBXCkH0fS6YH4/V07
+         J3r0jzFX5LnF5SCgI1HF/wvKGV0eaWkeLRjvUOQc7j46VS71OPEHmSVBHZkgzABwbuYU
+         iYM1XWL6mc/d7utT2wGcqdOv0aKwhMDRTRCR4KJxVkg0z6r+MN17bk8xBldFuF1m/ecp
+         147Q==
+X-Gm-Message-State: AHQUAubVq1MqMN3Ldj5ddcJujynsA8sTEl8p1aS6E+8ZQIb3NWozPjc/
+        Ro6k4UW/2fTrcx+gRvr9Fx4L6w==
+X-Google-Smtp-Source: AHgI3IZxcXqeoiwZnw6PdcCGq8zPSe28nDYpFBXgG8ubOglJV098dnQ1hr8jx7sG6Zy4cHQto2RADw==
+X-Received: by 2002:adf:9f10:: with SMTP id l16mr18123788wrf.206.1549647320827;
+        Fri, 08 Feb 2019 09:35:20 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.21
+        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:22 -0800 (PST)
+        Fri, 08 Feb 2019 09:35:20 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -66,9 +66,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 14/33] irqchip: davinci-aintc: add a new config structure
-Date:   Fri,  8 Feb 2019 18:34:39 +0100
-Message-Id: <20190208173458.4801-15-brgl@bgdev.pl>
+Subject: [PATCH v2 12/33] ARM: davinci: aintc: drop the 00 prefix from register offsets
+Date:   Fri,  8 Feb 2019 18:34:37 +0100
+Message-Id: <20190208173458.4801-13-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
 References: <20190208173458.4801-1-brgl@bgdev.pl>
@@ -81,47 +81,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a config structure that will be used by aintc-based platforms.
-It contains the register range resource, number of interrupts and
-a list of priorities.
+Since no offset goes past 0xff - let's drop the 00 prefix for better
+readability. While we're at it: convert all hex numbers to lower-case.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- include/linux/irqchip/irq-davinci-aintc.h | 25 +++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 include/linux/irqchip/irq-davinci-aintc.h
+ arch/arm/mach-davinci/irq.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/irqchip/irq-davinci-aintc.h b/include/linux/irqchip/irq-davinci-aintc.h
-new file mode 100644
-index 000000000000..2b2ace3c1b22
---- /dev/null
-+++ b/include/linux/irqchip/irq-davinci-aintc.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * Copyright (C) 2019 Texas Instruments
-+ */
-+
-+#ifndef _LINUX_IRQ_DAVINCI_AINTC_
-+#define _LINUX_IRQ_DAVINCI_AINTC_
-+
-+#include <linux/ioport.h>
-+
-+/**
-+ * struct davinci_aintc_config - configuration data for davinci-aintc driver.
-+ *
-+ * @reg: register range to map
-+ * @num_irqs: number of HW interrupts supported by the controller
-+ * @prios: an array of size num_irqs containing priority settings for
-+ *         each interrupt
-+ */
-+struct davinci_aintc_config {
-+	struct resource reg;
-+	unsigned int num_irqs;
-+	u8 *prios;
-+};
-+
-+#endif /* _LINUX_IRQ_DAVINCI_AINTC_ */
+diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
+index 145fda7e5a35..148c23728bdb 100644
+--- a/arch/arm/mach-davinci/irq.c
++++ b/arch/arm/mach-davinci/irq.c
+@@ -19,17 +19,17 @@
+ 
+ #include "irqs.h"
+ 
+-#define DAVINCI_AINTC_FIQ_REG0		0x0000
+-#define DAVINCI_AINTC_FIQ_REG1		0x0004
+-#define DAVINCI_AINTC_IRQ_REG0		0x0008
+-#define DAVINCI_AINTC_IRQ_REG1		0x000C
+-#define DAVINCI_AINTC_IRQ_IRQENTRY	0x0014
+-#define DAVINCI_AINTC_IRQ_ENT_REG0	0x0018
+-#define DAVINCI_AINTC_IRQ_ENT_REG1	0x001C
+-#define DAVINCI_AINTC_IRQ_INCTL_REG	0x0020
+-#define DAVINCI_AINTC_IRQ_EABASE_REG	0x0024
+-#define DAVINCI_AINTC_IRQ_INTPRI0_REG	0x0030
+-#define DAVINCI_AINTC_IRQ_INTPRI7_REG	0x004C
++#define DAVINCI_AINTC_FIQ_REG0		0x00
++#define DAVINCI_AINTC_FIQ_REG1		0x04
++#define DAVINCI_AINTC_IRQ_REG0		0x08
++#define DAVINCI_AINTC_IRQ_REG1		0x0c
++#define DAVINCI_AINTC_IRQ_IRQENTRY	0x14
++#define DAVINCI_AINTC_IRQ_ENT_REG0	0x18
++#define DAVINCI_AINTC_IRQ_ENT_REG1	0x1c
++#define DAVINCI_AINTC_IRQ_INCTL_REG	0x20
++#define DAVINCI_AINTC_IRQ_EABASE_REG	0x24
++#define DAVINCI_AINTC_IRQ_INTPRI0_REG	0x30
++#define DAVINCI_AINTC_IRQ_INTPRI7_REG	0x4c
+ 
+ static void __iomem *davinci_aintc_base;
+ static struct irq_domain *davinci_aintc_irq_domain;
 -- 
 2.20.1
 
