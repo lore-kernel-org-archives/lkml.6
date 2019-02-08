@@ -2,124 +2,135 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCBEC282C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 937C2C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06DA21916
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5762E21907
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 00:49:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JjZXKHNp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfBHApB (ORCPT
+        id S1726822AbfBHAtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:45:01 -0500
-Received: from gateway20.websitewelcome.com ([192.185.47.18]:20556 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727018AbfBHAo6 (ORCPT
+        Thu, 7 Feb 2019 19:49:07 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:36783 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbfBHAtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:44:58 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id C4289400CC7CD
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Feb 2019 18:44:57 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ruHpgURCb2PzOruHpg0YG2; Thu, 07 Feb 2019 18:44:57 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=46362 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gruHo-0044CX-O0; Thu, 07 Feb 2019 18:44:56 -0600
-Date:   Thu, 7 Feb 2019 18:44:56 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Wensong Zhang <wensong@linux-vs.org>,
-        Simon Horman <horms@verge.net.au>,
-        Julian Anastasov <ja@ssi.bg>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] ipvs: Use struct_size() helper
-Message-ID: <20190208004456.GA15845@embeddedor>
+        Thu, 7 Feb 2019 19:49:07 -0500
+Received: by mail-ua1-f67.google.com with SMTP id j3so609581uap.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:49:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DD5JBf4nQGLuF+lzKGNDCm3/IOXRWF6Ob4gNHEyfeT4=;
+        b=JjZXKHNpa52Tbs9SaCnsfTi+CUsMvGzGRibm5R+Lb/kMDnE1a6i4LZy+nDriJRyiTD
+         SkuklW7jel8E667O3Dab3U50NNZ4wbYbeKzImDZu4tm/VX9Psi/Zul4wxqFmbhvS0QWS
+         hSdQ775gec1fs9A9gqO1iWavg+IfvSquQcIuM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DD5JBf4nQGLuF+lzKGNDCm3/IOXRWF6Ob4gNHEyfeT4=;
+        b=K8LBM33HcY/TDn7wDstmcXrPIQ5y1qbss6s/psaYTh0TJYoCMfOJCxVKayChk6cZJe
+         /3OZ9PNBz6EOZLOLOD3hzdC7Hv8ONdSJkDBb7v8Km3g4tmdaJkK9z1aJ8tntnjNlbdlN
+         n9RXrS3rl6021a3syVm6AM8yda4KT82WDwbVE8Dj+SVV7d2Vwls0zZX+6ZsxjuPrjoBM
+         DsYx5sqJlMXBWN7sAA5uhOsO/9rxrjDA24FMBOSo4p2zh7gqFLxJy5f7a9XuptW9hYYE
+         11QlS3G5RQ61Z9puP/p+0WOdf5I/TPkXAQDmrYd8mADhoD7ja7M7SPFWALTWbBfplAot
+         6NPA==
+X-Gm-Message-State: AHQUAub0BY/0qh+wrlJZqfpTK0XPXZ7xcVakrTFABQ6orOw+URdVErkq
+        T0js3BEVFdPRv1Dk7QjJWOb7o4OtjdRyfg==
+X-Google-Smtp-Source: AHgI3IZ03SmmUASHIkk1yhKtqPUl+CNXFuggdvqstJVT1byFYju8PscwaeCjaeOX74CNu2XvnAgYdw==
+X-Received: by 2002:ab0:484b:: with SMTP id c11mr7054444uad.54.1549586945559;
+        Thu, 07 Feb 2019 16:49:05 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id e67sm668950vsd.32.2019.02.07.16.49.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 16:49:04 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id w12so606173uaq.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Feb 2019 16:49:04 -0800 (PST)
+X-Received: by 2002:ab0:470d:: with SMTP id h13mr3662134uac.122.1549586943793;
+ Thu, 07 Feb 2019 16:49:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gruHo-0044CX-O0
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:46362
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190207220155.81351-1-ndesaulniers@google.com>
+In-Reply-To: <20190207220155.81351-1-ndesaulniers@google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 8 Feb 2019 00:48:52 +0000
+X-Gmail-Original-Message-ID: <CAGXu5jKTZaDFDO95UF87kXZ4uODZ6JbZR7wMdVyYkC+JN1gtmQ@mail.gmail.com>
+Message-ID: <CAGXu5jKTZaDFDO95UF87kXZ4uODZ6JbZR7wMdVyYkC+JN1gtmQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] init/Kconfig: add config support for detecting linker
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Thu, Feb 7, 2019 at 10:02 PM <ndesaulniers@google.com> wrote:
+>
+> Similar to how we differentiate between CONFIG_CC_IS_GCC and
+> CONFIG_CC_IS_CLANG, add CONFIG_LD_IS_BFD, CONFIG_LD_IS_GOLD, and
+> CONFIG_LD_IS_LLD.
+>
+> This simiplifies patches to Makefiles that need to do different things
+> for different linkers.
+>
+> Cc: Nathan Chancellor <natechancellor@gmail.com>
+> Cc: Sami Tolvanen <samitolvanen@google.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = alloc(size, GFP_KERNEL)
+-Kees
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+> ---
+>  init/Kconfig | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index c9386a365eea..b6046dcf7794 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -26,6 +26,15 @@ config CLANG_VERSION
+>  config CC_HAS_ASM_GOTO
+>         def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+>
+> +config LD_IS_BFD
+> +       def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU ld')
+> +
+> +config LD_IS_GOLD
+> +       def_bool $(success,$(LD) --version | head -n 1 | grep -q 'GNU gold')
+> +
+> +config LD_IS_LLD
+> +       def_bool $(success,$(LD) --version | head -n 1 | grep -q 'LLD')
+> +
+>  config CONSTRUCTORS
+>         bool
+>         depends on !UML
+> --
+> 2.20.1.791.gb4d0f1c61a-goog
+>
 
-size = struct_size(instance, entry, count);
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/netfilter/ipvs/ip_vs_ctl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index 7d6318664eb2..bcd9112f47d9 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -2734,8 +2734,7 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
- 		int size;
- 
- 		get = (struct ip_vs_get_services *)arg;
--		size = sizeof(*get) +
--			sizeof(struct ip_vs_service_entry) * get->num_services;
-+		size = struct_size(get, entrytable, get->num_services);
- 		if (*len != size) {
- 			pr_err("length: %u != %u\n", *len, size);
- 			ret = -EINVAL;
-@@ -2776,8 +2775,7 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
- 		int size;
- 
- 		get = (struct ip_vs_get_dests *)arg;
--		size = sizeof(*get) +
--			sizeof(struct ip_vs_dest_entry) * get->num_dests;
-+		size = struct_size(get, entrytable, get->num_dests);
- 		if (*len != size) {
- 			pr_err("length: %u != %u\n", *len, size);
- 			ret = -EINVAL;
 -- 
-2.20.1
-
+Kees Cook
