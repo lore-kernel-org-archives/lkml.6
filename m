@@ -2,90 +2,153 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DDFC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B2CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF092146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:29:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B9DD2080F
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I82nPfYO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AdCGe60S"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eah2oOfB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbfBHP3G (ORCPT
+        id S1728021AbfBHP3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:29:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33564 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfBHP3G (ORCPT
+        Fri, 8 Feb 2019 10:29:17 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45924 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727467AbfBHP3R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:29:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1A8B660D2E; Fri,  8 Feb 2019 15:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549639745;
-        bh=RSivgelWf0tOpJcqIVSHPiViDNBZHs9eqkKhI4kyDgI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=I82nPfYOpCBiFBa/Bh6ARH7vjtBm+xkcfdTBHGolPJk29Tb7HGOmWSS2EPhUhm2es
-         rTs69E/gPvuTxPz9Um8u/ZaLs8Ktk9KwvwP8/UDP04WvNGUXBkp3AK0dAojI+gxYNw
-         FExr2hARr7XpxNl4t+VeOaIfT1AS2q/ISxOf4Z94=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7C2D560A60;
-        Fri,  8 Feb 2019 15:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549639743;
-        bh=RSivgelWf0tOpJcqIVSHPiViDNBZHs9eqkKhI4kyDgI=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=AdCGe60SyF7N99PFY9OPr9I7rbQdKCyGnAijZ0+T5CM2WbNzsV5cS+TPULNIxfRh+
-         HBhL1OTEEEVqRs4MfWY3wLV1gsZ8cRng5I4vdDDUPKqos4y8cAYrAhnkMjgD5mf7C4
-         xCAAHD7goyB57eCNPCEgibKLh/KqFLKh5UDJVP8g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7C2D560A60
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 8 Feb 2019 10:29:17 -0500
+Received: by mail-ed1-f68.google.com with SMTP id t6so3050623edw.12
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 07:29:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GYMyEi7yYvz1dJsk2dnsyi4Axq+WGCOtq6PFtPv8v+0=;
+        b=eah2oOfBg4vUKxZ1FqFCDWZvkmASM9JVl2WxqY/V/GbQcitg/mpqCL8BaaeXq6BTz+
+         Ph4e60J/HFFeR51NHwCr238dMmEP9vUbVMJZiHLM+AkBG4N/BSkIw3Bija8L8F7cFeMa
+         CT+TzySsO/VX2zrQCb0YXxg0qiO18LsDxT7pg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=GYMyEi7yYvz1dJsk2dnsyi4Axq+WGCOtq6PFtPv8v+0=;
+        b=h1itqGObBdEF8rfFpLSlW63uRo2uigvAoluEJBwWgJkMJgPx9XkV7zwio9lmsJysts
+         vfR765Cvb6P0YTww4nK53bg//dhTfFNMrzIbYKQqO3YouSV5qzdDGxl9NhB55Z91I48k
+         83F4cRSzdwCdl47SOK1Q0VX2NfA6N6ZKipYVTpWflTDtF82Fo2OxVZ4euLXtQ+6RWXAp
+         HbvDTUcZwCTNrj2OsMN5Wp7qH6EgVs/NxqhPtTglLABcFLmPKTfABqDdZlGvBNrZ//1G
+         ewjiQCJwtb5oe6pXIizam5QHygQQDrujd/WGJlttCrv/XUVrML8WqLoUhXvEzg9Iyu+k
+         x4TA==
+X-Gm-Message-State: AHQUAuYXuuNiMw0VM2jjp8r7MOPj1a/3rjMrVzKJ9sIcxf31tUe0mUJR
+        xSr1BKn4OHHij1GUONMpZG562A==
+X-Google-Smtp-Source: AHgI3Ia/sA2jyAFmdIYHdj6pZYb31ZRB2ksz/MNpS+nNfDVPWflL2wlLMYfZfEJ7BGW7j7IShL0wng==
+X-Received: by 2002:a05:6402:788:: with SMTP id d8mr7355848edy.148.1549639755165;
+        Fri, 08 Feb 2019 07:29:15 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x30sm688619edd.30.2019.02.08.07.29.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 07:29:14 -0800 (PST)
+Date:   Fri, 8 Feb 2019 16:29:11 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "C, Ramalingam" <ramalingam.c@intel.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 1/4] component: Add documentation
+Message-ID: <20190208152911.GM23159@phenom.ffwll.local>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "C, Ramalingam" <ramalingam.c@intel.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20190207232759.14553-1-daniel.vetter@ffwll.ch>
+ <20190208115123.GA19392@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][RESEND] rtlwifi: remove set but not used variable
- 'cmd_seq'
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190130031526.20308-1-yuehaibing@huawei.com>
-References: <20190130031526.20308-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <davem@davemloft.net>, <pkshih@realtek.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190208152905.1A8B660D2E@smtp.codeaurora.org>
-Date:   Fri,  8 Feb 2019 15:29:05 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208115123.GA19392@kroah.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
-
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, Feb 08, 2019 at 12:51:23PM +0100, Greg Kroah-Hartman wrote:
+> On Fri, Feb 08, 2019 at 12:27:56AM +0100, Daniel Vetter wrote:
+> > While typing these I think doing an s/component_master/aggregate/
+> > would be useful:
+> > - it's shorter :-)
+> > - I think component/aggregate is much more meaningful naming than
+> >   component/puppetmaster or something like that. At least to my
+> >   English ear "aggregate" emphasizes much more the "assemble a pile of
+> >   things into something bigger" aspect, and there's not really much
+> >   of a control hierarchy between aggregate and constituing components.
+> > 
+> > But that's way more than a quick doc typing exercise ...
+> > 
+> > Thanks to Ram for commenting on an initial draft of these docs.
+> > 
+> > v2: Review from Rafael:
+> > - git add Documenation/driver-api/component.rst
+> > - lots of polish to the wording + spelling fixes.
+> > 
+> > v3: Review from Russell:
+> > - s/framework/helper
+> > - clarify the documentation for component_match_add functions.
+> > 
+> > v4: Remove a few superflous "This".
+> > 
+> > Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: "C, Ramalingam" <ramalingam.c@intel.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> > Cc: Rafael J. Wysocki <rafael@kernel.org>
+> > Cc: Jaroslav Kysela <perex@perex.cz>
+> > Cc: Takashi Iwai <tiwai@suse.com>
+> > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> > Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 > 
-> drivers/net/wireless/realtek/rtlwifi/base.c: In function 'rtl_c2h_content_parsing':
-> drivers/net/wireless/realtek/rtlwifi/base.c:2313:13: warning:
->  variable 'cmd_seq' set but not used [-Wunused-but-set-variable]
+> Thanks for doing this!
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Patch applied to wireless-drivers-next.git, thanks.
+Thanks for reviewing (obviously includes Rafael and Russell too)!
 
-78f2ef18e185 rtlwifi: remove set but not used variable 'cmd_seq'
+For merging I see two options:
+- All through drm-intel, but will only land in 5.2 because the feature
+  cut-off has already happened for i915. So a bit awkward.
+- Topic branch with the 2 component patches plus the snd-hda/drm-i915
+  patch, so that you/Takashi/drm can pull it in as needed. The drm
+  component doc patch (3/4 in this series) I can pull in later on.
 
+Greg/Takashi, any preferences?
+
+Thanks, Daniel
 -- 
-https://patchwork.kernel.org/patch/10787619/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
