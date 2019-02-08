@@ -2,166 +2,146 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAB0C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0C8C282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D2E420857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:34:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JCI+OV6H";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JCI+OV6H"
+	by mail.kernel.org (Postfix) with ESMTP id 4DD8B20857
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549622130;
+	bh=BTNM4OSgPw0aPA8zl/Yl7WJgEFxl9DKiQCtMgXx46TU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=r6lJfqYeDKbjBAJX3CGzvEDPniAllyS9bj9exOwZCBKbFxXWruRB53XH4wCTLMCyK
+	 mKAM5jvgJaZYbPpCALF7daji9q8TFJ7W6I1l7qBEEN040z2dr5rC8UvT+y6wB9DsiK
+	 ZFludM1HcPzn5NKUSH91c+7PiIXXYEqwV6+ELB80=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfBHKel (ORCPT
+        id S1727674AbfBHKf2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:34:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46994 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfBHKel (ORCPT
+        Fri, 8 Feb 2019 05:35:28 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35130 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbfBHKf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 05:34:41 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D4C8D607DD; Fri,  8 Feb 2019 10:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549622079;
-        bh=O8TKgjndctFx0+oZYKhO5TRhW3gJ1HQ7s8fu+SbY+GU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JCI+OV6HCp8H/NUNNdPV8hfIscCQzqpqYynBVuWq4f2kVIapRxuQ2FDINgF1cmZFX
-         IdZUFj1wn8VLVojTjDohiWyCf4f6tghCdcuc5Fft+1daDYcQ1+jNNsFaXAcB6D6pV1
-         sg1V9EgoUNalJWAuILpgLjeRJHF3VlJAlBG8HrB4=
-Received: from [10.206.25.20] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: asutoshd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 421E2601CF;
-        Fri,  8 Feb 2019 10:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549622079;
-        bh=O8TKgjndctFx0+oZYKhO5TRhW3gJ1HQ7s8fu+SbY+GU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JCI+OV6HCp8H/NUNNdPV8hfIscCQzqpqYynBVuWq4f2kVIapRxuQ2FDINgF1cmZFX
-         IdZUFj1wn8VLVojTjDohiWyCf4f6tghCdcuc5Fft+1daDYcQ1+jNNsFaXAcB6D6pV1
-         sg1V9EgoUNalJWAuILpgLjeRJHF3VlJAlBG8HrB4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 421E2601CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=asutoshd@codeaurora.org
-Subject: Re: [PATCH 1/2] mmc: cqhci: replace NUM_SLOTS with cq_host->num_slots
-To:     Ritesh Harjani <riteshh@codeaurora.org>,
-        Alamy Liu <alamy.liu@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190114191724.29960-1-alamy.liu@gmail.com>
- <ee3dc963-53f0-e362-caa5-069ce0e6eae7@intel.com>
- <CAJ3kudsgJsZ1KFXdD9Vnfx0GypnEf+ba-D8t+Wy1e8GdLF=U0w@mail.gmail.com>
- <362c073b-d795-4431-f1dd-c203cc606a6f@codeaurora.org>
-From:   "Asutosh Das (asd)" <asutoshd@codeaurora.org>
-Message-ID: <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
-Date:   Fri, 8 Feb 2019 16:04:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 8 Feb 2019 05:35:28 -0500
+Received: by mail-ot1-f66.google.com with SMTP id z19so1013277otm.2;
+        Fri, 08 Feb 2019 02:35:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WJA4oBQW3H3CehjYV9j61O4YMjUk5a6LBQziyx0qEGI=;
+        b=sjvuPk9w+Jea/U17sO0SwTHKloP2p4knpxFHaIuXLwogU6+OVe/XiFr1i5nsPLKpvM
+         n0F3rLz9XQoL6djJNeIm3Wk726n/x/Jj+D21meLp0aK42+syusZ6L2wWOPBhrclpS5d+
+         r4Aq7j09soy2e4vJY0f02b5hrolWWjsX5K7WsXGozADtMmBIMKyOTu5bwa739EilnHtY
+         uBEqV9dx01JALGpcs4bNEIDlMNk0xLyl6wbk0Uz0uttuBkjFGp1Qm0L7eCFuZ+fVFYLr
+         MPsBH/rX1an/mJISQVCwe7Q7zdv9MnxW4+z639kMq7uVFDXSqgD9PFGdkEPIJsDByU/z
+         Pnow==
+X-Gm-Message-State: AHQUAub1Hn4bMR/JGK4Lai9Gns1fNGjz6BtUeMetSMMIBq8EHTzu9Aw6
+        4MhqBv2P5xzG0n650wWP62Ix6iKUzkhbKA0D6ik=
+X-Google-Smtp-Source: AHgI3IacHbQ/lWmO2VLbaUhVFCU/lPKkV5hafX1Ioytr/3mE5oYp7r9O5RA1eVbpS5Sgd17vwsutPZJKg3dJoz4At0k=
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr12823805otl.343.1549622126442;
+ Fri, 08 Feb 2019 02:35:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <362c073b-d795-4431-f1dd-c203cc606a6f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1547197612.git.viresh.kumar@linaro.org> <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
+ <20190208090912.43aao5kny42iirum@vireshk-i7> <CAJZ5v0iE9tFt9Xs27EYcjv6N1KAq-LaAQnv=QBvnbNRpfwrWCg@mail.gmail.com>
+ <20190208102346.ophy3eqhxjzaqsxr@vireshk-i7>
+In-Reply-To: <20190208102346.ophy3eqhxjzaqsxr@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 8 Feb 2019 11:35:15 +0100
+Message-ID: <CAJZ5v0gNhmqY_oem9SZk2fEkOikmjTK3YfFRuOi8f=66GSgVuw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/2019 8:07 AM, Ritesh Harjani wrote:
-> Hi Alamy,
-> 
-> On 2/8/2019 1:00 AM, Alamy Liu wrote:
->> It says in B.2.1 in the JESD84-B51.pdf (I don't have JESD84-B51A.pdf):
->>
->>     /The TDL is located in a memory location known to the CQE, and is
->>     comprised of up to 32 fixed-size slots. Each slot is comprised of
->>     one Task Descriptor and one Transfer Descriptor./
->>
->>
->> So if the IP has 16 slots, it should still meet the specification. 
->> Then the configuration could be moved to DTS, maybe:
->>
->>     cqhci-slotnum = <16>;
->>
->>     cqhci-dcmd-slotno = <15>;
->>
-> Does your IP defines this as 16 slots & DCMD slot to be 15?
-> Because if there is a deviation then IP may also define num_slots by 
-> using some reserved registers.
-> Also in JESD84-B51.pdf, specific slot no. is used extensively for 
-> defining policies(like in case of DCMD & CQCFG), so in that case 
-> defining via DT may not be that helpful.
-> Unless there is no other way in your IP to determine the num_slots 
-> except going via DT?
-> 
-> Let others also provide an opinion here.
-> 
-> Regards
-> Ritesh
-> 
-> 
->>
->> Please comment.
->>
->> Regards,
->> Alamy
->>
->>
->>
->> On Thu, Jan 31, 2019 at 1:34 AM Adrian Hunter <adrian.hunter@intel.com 
->> <mailto:adrian.hunter@intel.com>> wrote:
->>
->>     On 14/01/19 9:17 PM, Alamy Liu wrote:
->>     > Prevent to use fixed value (NUM_SLOTS) after it had been determined
->>     > and saved in a variable (cq_host->num_slots).
->>
->>     num_slots is always 32 (i.e. NUM_SLOTS) so why not go the other
->>     way and get
->>     rid of num_slots and just use NUM_SLOTS?
->>
->>     >
->>     > Signed-off-by: Alamy Liu <alamy.liu@gmail.com
->>     <mailto:alamy.liu@gmail.com>>
->>     > ---
->>     >  drivers/mmc/host/cqhci.c | 2 +-
->>     >  1 file changed, 1 insertion(+), 1 deletion(-)
->>     >
->>     > diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
->>     > index 159270e947..26d63594b7 100644
->>     > --- a/drivers/mmc/host/cqhci.c
->>     > +++ b/drivers/mmc/host/cqhci.c
->>     > @@ -699,7 +699,7 @@ static void cqhci_error_irq(struct mmc_host
->>     *mmc, u32 status, int cmd_error,
->>     >                * The only way to guarantee forward progress is
->>     to mark at
->>     >                * least one task in error, so if none is
->>     indicated, pick one.
->>     >                */
->>     > -             for (tag = 0; tag < NUM_SLOTS; tag++) {
->>     > +             for (tag = 0; tag < cq_host->num_slots; tag++) {
->>     >                       slot = &cq_host->slot[tag];
->>     >                       if (!slot->mrq)
->>     >                               continue;
->>     >
->>
-Is it worth exploring to tie up the TDL memory allocations with the 
-queue-depth? Because the queue-depth may vary with vendor; in most host 
-controllers the slot size is 32. And since memory allocations are done 
-on the basis of host slot size there's unused slots in the case of card 
-advertising less than 32 queue-depth.
-The tricky part would be the DCMD handling though.
+On Fri, Feb 8, 2019 at 11:23 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 08-02-19, 10:53, Rafael J. Wysocki wrote:
+> > On Fri, Feb 8, 2019 at 10:09 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > On 11-01-19, 10:47, Rafael J. Wysocki wrote:
+> > > > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > This commit introduces the frequency constraint infrastructure, which
+> > > > > provides a generic interface for parts of the kernel to constraint the
+> > > > > working frequency range of a device.
+> > > > >
+> > > > > The primary users of this are the cpufreq and devfreq frameworks. The
+> > > > > cpufreq framework already implements such constraints with help of
+> > > > > notifier chains (for thermal and other constraints) and some local code
+> > > > > (for user-space constraints). The devfreq framework developers have also
+> > > > > shown interest [1] in such a framework, which may use it at a later
+> > > > > point of time.
+> > > > >
+> > > > > The idea here is to provide a generic interface and get rid of the
+> > > > > notifier based mechanism.
+> > > > >
+> > > > > Only one constraint is added for now for the cpufreq framework and the
+> > > > > rest will follow after this stuff is merged.
+> > > > >
+> > > > > Matthias Kaehlcke was involved in the preparation of the first draft of
+> > > > > this work and so I have added him as Co-author to the first patch.
+> > > > > Thanks Matthias.
+> > > > >
+> > > > > FWIW, This doesn't have anything to do with the boot-constraints
+> > > > > framework [2] I was trying to upstream earlier :)
+> > > >
+> > > > This is quite a bit of code to review, so it will take some time.
+> > >
+> > > @Rafael: You are going to provide some more feedback here, right ?
+> >
+> > I think I've said something already.
+> >
+> > TLDR: I'm not convinced.
+> >
+> > PM QoS does similar things in a similar way.  Why does it have to be a
+> > different framework?
+>
+> I did it because no one objected to the initial proposal [1]. But you
+> weren't directly cc'd (but only PM list) so can't blame you either :)
+>
+> Maybe we can make it work with PM QoS as well, I will see that aspect.
 
-In the IP in question, what slot is assigned to DCMD?
+At least some of the underlying mechanics seem to be very similar.
+You have priority lists, addition and removal of requests etc.
 
+Arguably, PM QoS may be regarded as a bit overly complicated, but
+maybe they both can use a common library underneath?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+> > Using freq constraints for thermal reasons without coordinating it
+> > with scheduling is questionable in general, because thermal control
+> > may work against scheduling then.
+>
+> Sure, I agree but all we are talking about here is the mechanism with
+> which the constraints should be put and it doesn't make things bad
+> than they already are. With the notifiers in place currently, thermal
+> core doesn't talk to scheduler.
+>
+> I think a different set of people are trying to fix that by issuing
+> some calls to scheduler from thermal core, or something like that but
+> I still consider that work orthogonal to the way constraints should be
+> added instead of notifiers.
+>
+> Will implementing it the QoS way would be fine from thermal-scheduler
+> standpoint ?
+
+As I said I like the idea of replacing cpufreq notifiers with
+something nicer, so if you can avoid doing almost-the-same-ting in two
+different frameworks, it would be fine by me.
