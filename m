@@ -2,108 +2,148 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E001EC4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BEFC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF15B20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:33:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="DcdwDK8G"
+	by mail.kernel.org (Postfix) with ESMTP id B07C920844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 15:35:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfBHPdu (ORCPT
+        id S1727970AbfBHPfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 10:33:50 -0500
-Received: from a9-35.smtp-out.amazonses.com ([54.240.9.35]:56292 "EHLO
-        a9-35.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727473AbfBHPdu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 10:33:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549640028;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=YzFUGu859kPEo2hZyafj6+czbU6iIrLvVd2hSFt0EA0=;
-        b=DcdwDK8GKlrlp+j/BPj49Ohwy5qY4VbMcl1vFGR69Au2TBSk47MucreBAWCc/qIM
-        oKa96zjU9ZDlHhlf3j+o6aYmPUWAjAuZnFWwo6Ln1lLfSreZPnALHsN9wQvK0WYnnUV
-        eEb2bAdYLQaF0V1pEq/QP6B5FwSq0xolmm5GhEI4=
-Date:   Fri, 8 Feb 2019 15:33:48 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Dave Chinner <david@fromorbit.com>
-cc:     Doug Ledford <dledford@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
- usage by RDMA
-In-Reply-To: <20190208044302.GA20493@dastard>
-Message-ID: <01000168cdbe520b-2b2be741-8ceb-4a5d-92f2-9f68795d7db3-000000@email.amazonses.com>
-References: <20190206173114.GB12227@ziepe.ca> <20190206175233.GN21860@bombadil.infradead.org> <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com> <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com> <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca> <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com> <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com> <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com> <20190208044302.GA20493@dastard>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 8 Feb 2019 10:35:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33520 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727473AbfBHPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 10:35:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A601BABE4;
+        Fri,  8 Feb 2019 15:35:18 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 16:35:17 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+cc:     Petr Mladek <pmladek@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Alice Ferrazzi <alicef@alicef.me>, jeyu@kernel.org,
+        jikos@kernel.org, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Subject: Re: [PATCH v2] livepatch: core: Return EOPNOTSUPP instead of
+ ENOSYS
+In-Reply-To: <20190208132238.GA32656@JAVRIS.in.ibm.com>
+Message-ID: <alpine.LSU.2.21.1902081632590.24868@pobox.suse.cz>
+References: <20190204183324.30775-1-alicef@alicef.me> <20190205155933.r6ey474lq4m5nlmp@treble> <20190206102832.apa7sekkwljo4ejg@pathway.suse.cz> <20190208062005.GA21436@JAVRIS.in.ibm.com> <alpine.LSU.2.21.1902081013100.24868@pobox.suse.cz>
+ <20190208132238.GA32656@JAVRIS.in.ibm.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.08-54.240.9.35
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Feb 2019, Dave Chinner wrote:
+On Fri, 8 Feb 2019, Kamalesh Babulal wrote:
 
-> On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
-> > One approach that may be a clean way to solve this:
-> > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
-> >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
-> >    on the longterm pinned range until the long term pin is removed.
->
-> So, ummm, how do we do block allocation then, which is done on
-> demand during writes?
+> Hi Miroslav,
+> 
+> On Fri, Feb 08, 2019 at 10:24:21AM +0100, Miroslav Benes wrote:
+> > Hi Kamalesh,
+> > 
+> > On Fri, 8 Feb 2019, Kamalesh Babulal wrote:
+> > 
+> > > On Wed, Feb 06, 2019 at 11:28:32AM +0100, Petr Mladek wrote:
+> > > > On Tue 2019-02-05 09:59:33, Josh Poimboeuf wrote:
+> > > > > On Tue, Feb 05, 2019 at 03:33:28AM +0900, Alice Ferrazzi wrote:
+> > > > > > From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > > > > > 
+> > > > > > As a result of an unsupported operation is better to use EOPNOTSUPP
+> > > > > > as error code.
+> > > > > > ENOSYS is only used for 'invalid syscall nr' and nothing else.
+> 
+> [...]
+> 
+> > > After removal of the immediate flag by
+> > > commit d0807da78e11 ("livepatch: Remove immediate feature"), every
+> > > architecture enabling livepatching is required to have implemented
+> > > reliable stack trace.  Is it a better idea to make
+> > > HAVE_RELIABLE_STACKTRACE a config dependency, which will disable
+> > > livepatching support for architectures without reliable stack trace
+> > > function during kernel build?
+> > 
+> > if I am not mistaken, s390x is currently the only one which is supported 
+> > (the redirection works) but has no reliable stacktraces (so far, it is my 
+> > plan to take a look soon).
+> > 
+> > Theoretically, it could still work. We have the fake signal and we can 
+> > force the remaining tasks (kthreads). It is not something to be used in 
+> > production but it could make sense for a limited testing.
+> 
+> That was my understanding too, s390 doesn't set HAVE_RELIABLE_STACKTRACE.
+> 
+> (below output is right trimmed for readability)
+> 
+> arch $ find . -name 'Kconfig'|xargs egrep -an "HAVE_LIVEPATCH"                                                                                                                                                                               
+> ./powerpc/Kconfig:209:  select HAVE_LIVEPATCH ...
+> ./x86/Kconfig:171:      select HAVE_LIVEPATCH ...
+> ./s390/Kconfig:161:     select HAVE_LIVEPATCH
+> 
+> arch $ find . -name 'Kconfig'|xargs egrep -an "HAVE_RELIABLE_STACKTRACE"                                                                                                                                                                     
+> ./powerpc/Kconfig:223:  select HAVE_RELIABLE_STACKTRACE ...
+> ./x86/Kconfig:189:      select HAVE_RELIABLE_STACKTRACE ...
+> ./Kconfig:690:config HAVE_RELIABLE_STACKTRACE
+> 
+> klp_have_reliable_stack() will guard against loading of livepatching
+> module on s390, for the same reason being that HAVE_RELIABLE_STACKTRACE
+> is not set. My explanation is purely based on the above grep output
+> on Kconfig files, which might be partial. Am I missing something here?
 
-If a memory region is mapped by RDMA then this is essentially a long
-write. The allocation needs to happen then.
+No, I don't think so.
 
-> IOWs, this requires the application to set up the file in the
-> correct state for the filesystem to lock it down so somebody else
-> can write to it.  That means the file can't be sparse, it can't be
-> preallocated (i.e. can't contain unwritten extents), it must have zeroes
-> written to it's full size before being shared because otherwise it
-> exposes stale data to the remote client (secure sites are going to
-> love that!), they can't be extended, etc.
+I think I mentioned the theoretical possibility at the time the check was 
+introduced and we came to the conclusion that it is worth it and we should 
+enforce the reliable stacktraces.
+ 
+> > > The idea is to remove klp_have_reliable_stack() by moving
+> > > CONFIG_HAVE_RELIABLE_STACKTRACE as a config dependency to Kconfig file
+> > > and adding the other CONFIG_STACKTRACE as a config dependency is not
+> > > required, as it's selected via CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> > > dependency chain. With the patch on architecture without
+> > > HAVE_RELIABLE_STACKTRACE, the user should see:
+> 
+> [...]
+> 
+> > > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> > > index fe1993399823..9a80f7574d75 100644
+> > > --- a/kernel/livepatch/core.c
+> > > +++ b/kernel/livepatch/core.c
+> > > @@ -1002,12 +1002,6 @@ int klp_enable_patch(struct klp_patch *patch)
+> > >         if (!klp_initialized())
+> > >                 return -ENODEV;
+> > >  
+> > > -       if (!klp_have_reliable_stack()) {
+> > > -               pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
+> > > -               return -ENOSYS;
+> > > -       }
+> > > -
+> > > -
+> > >         mutex_lock(&klp_mutex);
+> > >  
+> > >         ret = klp_init_patch_early(patch);
+> > 
+> > On the other hand, I like this change. So we have two options, I think. 
+> > We can apply this and wait if someone complains (because of s390x 
+> > testing), or we can wait for the full support of s390x and then enforce 
+> > it.
 
-Yes. That is required.
+Scratch this. It is enforced even now.
+ 
+> Thanks, I am ok with either of the options.  We could enforce the config
+> dependency, in case the above assumption in regard to s390 is correct.
 
-> IOWs, once the file is prepped and leased out for RDMA, it becomes
-> an immutable for the purposes of local access.
+Yes, I think it is a nice cleanup.
 
-The contents are mutable but the mapping to the physical medium is
-immutable.
-
-
-> Which, essentially we can already do. Prep the file, map it
-> read/write, mark it immutable, then pin it via the longterm gup
-> interface which can do the necessary checks.
->
-> Simple to implement, the reasons for errors trying to modify the
-> file are already documented and queriable, and it's hard for
-> applications to get wrong.
-
-Yup. Why not do it this way? Just make the sections actually long term GUP
-mapped inmutable and not subject to the other page cache things.
-
-This is basically a straight through bypass of the page cache for a file.
-
-HEY! It may be used to map huge pages in the future too!!
+Miroslav
