@@ -2,110 +2,246 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7EEC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A75BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B74820857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:48:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B8D6218DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ieGfk5dQ"
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="eh/Bg0jU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbfBHMsI (ORCPT
+        id S1727166AbfBHMts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:48:08 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43527 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbfBHMsI (ORCPT
+        Fri, 8 Feb 2019 07:49:48 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55442 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfBHMts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:48:08 -0500
-Received: by mail-ot1-f66.google.com with SMTP id a11so5546175otr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:48:07 -0800 (PST)
+        Fri, 8 Feb 2019 07:49:48 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r17so3264472wmh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:49:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=mobiveil.co.in; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JWzV0M0DRGDSHP1/88xQPKP0xbprssAo28cl+Ap6wNM=;
-        b=ieGfk5dQ4O40tNc6NnZ4JeBT1H0kM6WLPymOjxvvkInUU1szdAv052OyksGLlVaeTj
-         hDJFRn+9OHbhXfIWpx0q//LKyMAn1B7TkEBe7lZh1I42nOf8ToYTxr9a3YQ4jVMoJEM6
-         6ZUa+yc8DStA524HuJ6zwZu93BWXvXetlgqMdANDJtnUdZScdvGbIN+lPUWfeyEVjAEk
-         RHLFA+S4CPkJpsHrmRYGvYjeT7v4CQKJfxHLwCLiV8oMPL/FR2ABQ+2JVmM2nEB3KGdJ
-         NjhyC8Cq3Fq+Q91eVmAb8jJen/YhWtJHpR0q5OrqHF+X5cIgnzHuU7NrrJ45mYDe98MM
-         qBGw==
+         :cc;
+        bh=xPcDhdgRfeCUFb0NzA1yOiOvgeXq4mBndVeTfOEslgQ=;
+        b=eh/Bg0jU9RaDR1LBeR3Gh1Q56m8LdqeMCjFymtwr+4RLIQKymhUKmPy7h8cE2dnt6I
+         MY2BcxyhOc37PCKHC09QEvo6SDg9KssZE/fXVFmu9gRRmyMIwtzLjj6dvRIoXbuJj/lf
+         F8RLPay1V2SCqepLMtout4X3rx5JR/99Q+y4A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JWzV0M0DRGDSHP1/88xQPKP0xbprssAo28cl+Ap6wNM=;
-        b=jw7/3Al246Aam5kcJZ3tBgYE3i1VV4Tz+L1vEOLoKvd8yBEcAE7dP8rsf7ojFOxrMU
-         KRcsLP65Q7hxS05ZOE0AHUz6TQFPh/u2fW3I8w0ph2X1BjovmBob+nEp9mNrgEGqiTJv
-         PDbaStmhtc1bNW8kX17vdAxbtHsIfvnQSc5SDzP3CdYKP1ioZ78Q1QIXdiAlxMu1nXWZ
-         53mLUK1hZouj/viE+Ws4aOmXiLhHw3IDJdQHto7BKa/cMaat2fN/LhCMA5tPwcANksRg
-         ycTCAfq5+I2cMLw2AzRSsnCbBv3r2v/cHkp1CIqPRPnDhET6NXJXw3TYs7iKc6Fr5U8J
-         xx3w==
-X-Gm-Message-State: AHQUAuZ2QyC2dYM1ps2kI+rO9LAZqP0DMCzecpuP6QB8mPd+wEFh3XmS
-        R6c8zEUEYxBuSyxu/CaLRHaZl4WtF9DimsRIJjMseQ==
-X-Google-Smtp-Source: AHgI3Ial+h5E9Y271MzSd0t0lZHzB/vXzwxcYRl1ZDWcV0xgScVWDgDusw+8T2RGaYgTewepPiemzptpCz2QRltdDe0=
-X-Received: by 2002:a9d:4595:: with SMTP id x21mr4070807ote.234.1549630087103;
- Fri, 08 Feb 2019 04:48:07 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=xPcDhdgRfeCUFb0NzA1yOiOvgeXq4mBndVeTfOEslgQ=;
+        b=mh/fzl+Eez+yva1k23FlPAHd4ebwsdT4SPUcpO1z08vLEX6Yh5Pwxrae1Y9IDqzbNG
+         hdEVQFVSnGP/0tykhL4f5cEpkVbjCCgc7QkeJisEeeWotk5+r+e6+2CvcasSTeEj5O0V
+         BrzTEMXM1NjN+hjlS8S0XV7knNhk1y08UV+avWg+vGr8adgS2N8x41I5oQpD+vL0AKz8
+         eL8ALacaQy7mBZ7PYrfZ2M3F//HhsTZC40qFbazVZiGE0qU7jl1+rkFgxh00+d80ib2s
+         +COOGmufkIueG2k+mcJx5MOhq5S3n8oUnxcKCx4iH2/Mvl4E6rkgPaC0BdnQ+gEosapU
+         NqcQ==
+X-Gm-Message-State: AHQUAubfzANGiNQcqV+f2JR8wPvkJ7rZFe8GVR3jZHzUdBObq7pZWMOB
+        t5dqXmcElFzRCGyz1NU7fKY2y+AnWE3cAquKTL580A==
+X-Google-Smtp-Source: AHgI3IY+i3iPNRf0lkCuV77xZsU23QrAtPoJon2X4xtGpT07Tf9p//8oHrYpsx85i6UZ8C+QSMmSG3ErzybDAESBhrE=
+X-Received: by 2002:a1c:9e4a:: with SMTP id h71mr11858445wme.82.1549630185604;
+ Fri, 08 Feb 2019 04:49:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20190204171757.32073-1-brgl@bgdev.pl> <20190204171757.32073-6-brgl@bgdev.pl>
- <9d423e18-8c85-731b-388a-1843067db242@ti.com> <CAMpxmJW0qMi0BmiK2SOwdagw2-t8+1g20XJR418mWb8f1dwxtQ@mail.gmail.com>
- <acd3f8ca-8ed7-f86a-9bdf-24e4e6e9a6a4@ti.com>
-In-Reply-To: <acd3f8ca-8ed7-f86a-9bdf-24e4e6e9a6a4@ti.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 8 Feb 2019 13:47:56 +0100
-Message-ID: <CAMpxmJUXuxEp+424Z_YtAq02XvBzcDAj73LgOBnXE-T0fhmCTQ@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] ARM: davinci: da850: switch to using the
- clocksource driver
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-25-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-25-Zhiqiang.Hou@nxp.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Fri, 8 Feb 2019 18:22:24 +0530
+Message-ID: <CAFZiPx0Qv6LN6mi4Z9fta2X=Rh85uk7bYGPHmncy=XYgBQOnAw@mail.gmail.com>
+Subject: Re: [PATCHv3 24/27] PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 8 lut 2019 o 13:37 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
->
-> On 08/02/19 6:04 PM, Bartosz Golaszewski wrote:
-> > pt., 8 lut 2019 o 13:06 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
-> >>
-> >> On 04/02/19 10:47 PM, Bartosz Golaszewski wrote:
-> >>> +static const struct davinci_timer_cfg da850_timer_cfg =3D {
-> >>> +     .reg =3D {
-> >>> +             .start          =3D DA8XX_TIMER64P0_BASE,
-> >>> +             .end            =3D DA8XX_TIMER64P0_BASE + SZ_4K,
-> >>
-> >> SZ_4K - 1
-> >>
-> >> This should have prevented watchdog timer from getting registered.
-> >>
-> >> Thanks,
-> >> Sekhar
-> >
-> > My clocksource driver doesn't call request_region() so a subsequent
-> > devm_ioremap_resource() in the watchdog driver would still succeed. I
-> > now fixed both the missing call and the value here.
->
-> Ah, got it. Perhaps a call to request_region() should be added to catch
-> issues?
->
+ZQ,
 
-Yes, that's what I meant by "fixing the missing call". It will be
-there in v3. Actually the kernel seems to be missing a non-managed
-ioremap_resource() helper. Maybe I should add it as well.
-
-Bart
+On Tue, Jan 29, 2019 at 1:41 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+>
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+> PCIe configuration access to non-existent function triggered
+> SERROR interrupt exception.
+>
+> Workaround:
+> Disable error reporting on AXI bus during the Vendor ID read
+> transactions in enumeration.
+>
+> This ERRATA is only for LX2160A Rev1.0, and it will be fixed
+> in Rev2.0.
+>
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> ---
+> V3:
+>  - Integrated without change from http://patchwork.ozlabs.org/patch/1006790/
+>
+>  .../controller/mobiveil/pci-layerscape-gen4.c | 37 +++++++++++++++++++
+>  .../controller/mobiveil/pcie-mobiveil-host.c  | 17 ++++++++-
+>  .../pci/controller/mobiveil/pcie-mobiveil.h   |  3 ++
+>  3 files changed, 56 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+> index 174cbcac4059..d2c5dbbd5e3c 100644
+> --- a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+> +++ b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+> @@ -22,8 +22,13 @@
+>
+>  #include "pcie-mobiveil.h"
+>
+> +#define REV_1_0                                (0x10)
+> +
+>  /* LUT and PF control registers */
+>  #define PCIE_LUT_OFF                   (0x80000)
+> +#define PCIE_LUT_GCR                   (0x28)
+> +#define PCIE_LUT_GCR_RRE               (0)
+> +
+>  #define PCIE_PF_OFF                    (0xc0000)
+>  #define PCIE_PF_INT_STAT               (0x18)
+>  #define PF_INT_STAT_PABRST             (31)
+> @@ -41,6 +46,7 @@ struct ls_pcie_g4 {
+>         struct mobiveil_pcie *pci;
+>         struct delayed_work dwork;
+>         int irq;
+> +       u8 rev;
+>  };
+>
+>  static inline u32 ls_pcie_g4_lut_readl(struct ls_pcie_g4 *pcie, u32 off)
+> @@ -76,6 +82,15 @@ static bool ls_pcie_g4_is_bridge(struct ls_pcie_g4 *pcie)
+>         return header_type == PCI_HEADER_TYPE_BRIDGE;
+>  }
+>
+> +static int ls_pcie_g4_host_init(struct mobiveil_pcie *pci)
+> +{
+> +       struct ls_pcie_g4 *pcie = to_ls_pcie_g4(pci);
+> +
+> +       pcie->rev = csr_readb(pci, PCI_REVISION_ID);
+> +
+> +       return 0;
+> +}
+> +
+>  static int ls_pcie_g4_link_up(struct mobiveil_pcie *pci)
+>  {
+>         struct ls_pcie_g4 *pcie = to_ls_pcie_g4(pci);
+> @@ -188,12 +203,34 @@ static void ls_pcie_g4_reset(struct work_struct *work)
+>         ls_pcie_g4_reinit_hw(pcie);
+>  }
+>
+> +static int ls_pcie_g4_read_other_conf(struct pci_bus *bus, unsigned int devfn,
+> +                                  int where, int size, u32 *val)
+> +{
+> +       struct mobiveil_pcie *pci = bus->sysdata;
+> +       struct ls_pcie_g4 *pcie = to_ls_pcie_g4(pci);
+> +       int ret;
+> +
+> +       if (pcie->rev == REV_1_0 && where == PCI_VENDOR_ID)
+> +               ls_pcie_g4_lut_writel(pcie, PCIE_LUT_GCR,
+> +                                     0 << PCIE_LUT_GCR_RRE);
+> +
+> +       ret = pci_generic_config_read(bus, devfn, where, size, val);
+> +
+> +       if (pcie->rev == REV_1_0 && where == PCI_VENDOR_ID)
+> +               ls_pcie_g4_lut_writel(pcie, PCIE_LUT_GCR,
+> +                                     1 << PCIE_LUT_GCR_RRE);
+> +
+> +       return ret;
+> +}
+> +
+>  static struct mobiveil_rp_ops ls_pcie_g4_rp_ops = {
+>         .interrupt_init = ls_pcie_g4_interrupt_init,
+> +       .read_other_conf = ls_pcie_g4_read_other_conf,
+>  };
+>
+>  static const struct mobiveil_pab_ops ls_pcie_g4_pab_ops = {
+>         .link_up = ls_pcie_g4_link_up,
+> +       .host_init = ls_pcie_g4_host_init,
+>  };
+>
+>  static int __init ls_pcie_g4_probe(struct platform_device *pdev)
+> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> index e8d0c4989013..5f51bc2dd6d7 100644
+> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> @@ -79,9 +79,20 @@ static void __iomem *mobiveil_pcie_map_bus(struct pci_bus *bus,
+>         return pcie->rp.config_axi_slave_base + where;
+>  }
+>
+> +static int mobiveil_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
+> +                                    int where, int size, u32 *val)
+> +{
+> +       struct mobiveil_pcie *pcie = bus->sysdata;
+> +       struct root_port *rp = &pcie->rp;
+> +
+> +       if (bus->number > rp->root_bus_nr && rp->ops->read_other_conf)
+> +               return rp->ops->read_other_conf(bus, devfn, where, size, val);
+> +
+> +       return pci_generic_config_read(bus, devfn, where, size, val);
+> +}
+>  static struct pci_ops mobiveil_pcie_ops = {
+>         .map_bus = mobiveil_pcie_map_bus,
+> -       .read = pci_generic_config_read,
+> +       .read = mobiveil_pcie_config_read,
+>         .write = pci_generic_config_write,
+>  };
+>
+> @@ -309,6 +320,10 @@ int mobiveil_host_init(struct mobiveil_pcie *pcie, bool reinit)
+>         value |= (PCI_CLASS_BRIDGE_PCI << 16);
+>         csr_writel(pcie, value, PAB_INTP_AXI_PIO_CLASS);
+>
+> +       /* Platform specific host init */
+> +       if (pcie->ops->host_init)
+> +               return pcie->ops->host_init(pcie);
+> +
+>         return 0;
+>  }
+>
+> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+> index 0ccd6cee5f8f..ab43de5e4b2b 100644
+> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
+> @@ -145,6 +145,8 @@ struct mobiveil_msi {                       /* MSI information */
+>
+>  struct mobiveil_rp_ops {
+>         int (*interrupt_init)(struct mobiveil_pcie *pcie);
+> +       int (*read_other_conf)(struct pci_bus *bus, unsigned int devfn,
+> +                              int where, int size, u32 *val);
+>  };
+>
+>  struct root_port {
+> @@ -160,6 +162,7 @@ struct root_port {
+>
+>  struct mobiveil_pab_ops {
+>         int (*link_up)(struct mobiveil_pcie *pcie);
+> +       int (*host_init)(struct mobiveil_pcie *pcie);
+>  };
+>
+>  struct mobiveil_pcie {
+> --
+> 2.17.1
+>
+can we have an english brief than having a internal cryptic
+number:A-011577, on the patch title?
