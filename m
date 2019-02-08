@@ -2,56 +2,201 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0A9C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E537C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901F320823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ED4E20823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 11:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfBHLpw convert rfc822-to-8bit (ORCPT
+        id S1727317AbfBHLqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:45:52 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:36970 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbfBHLpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:45:51 -0500
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gs4bL-0008Hd-VT; Fri, 08 Feb 2019 12:45:47 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>
-Subject: Re: linux-next: Fixes tag needs some work in the drm-fixes tree
-Date:   Fri, 08 Feb 2019 12:45:47 +0100
-Message-ID: <3023200.v8ugM0oLqk@diego>
-In-Reply-To: <20190208224022.6bfdd56d@canb.auug.org.au>
-References: <20190208220137.3b72799a@canb.auug.org.au> <2145777.rZLEu8YqWI@diego> <20190208224022.6bfdd56d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+        Fri, 8 Feb 2019 06:46:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49132 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727257AbfBHLqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 06:46:00 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18Bhxok062365
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 06:45:59 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qh8t190bm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:45:57 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 8 Feb 2019 11:45:55 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 11:45:53 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18BjqlN9109728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Feb 2019 11:45:52 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 973F9A4040;
+        Fri,  8 Feb 2019 11:45:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05412A404D;
+        Fri,  8 Feb 2019 11:45:51 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.205.183])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri,  8 Feb 2019 11:45:50 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Fri, 08 Feb 2019 13:45:50 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH] memblock: update comments and kernel-doc
+Date:   Fri,  8 Feb 2019 13:45:47 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19020811-0028-0000-0000-000003462BE3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020811-0029-0000-0000-00002404400E
+Message-Id: <1549626347-25461-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 8. Februar 2019, 12:40:22 CET schrieb Stephen Rothwell:
-> Hi Heiko,
-> 
-> On Fri, 08 Feb 2019 12:31:38 +0100 Heiko Stübner <heiko@sntech.de> wrote:
-> > we had this warning already from the drm-misc-fixes tree :-) .
-> 
-> Sorry about that ... there goes my memory again :-)
+* Remove comments mentioning bootmem
+* Extend "DOC: memblock overview"
+* Add kernel-doc comments for several more functions
 
-No worries :-D ... I don't really expect you to remember
-thousands of commits individually :-) .
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
 
+The patch is against the current -mm tree which seems the best route for it
+as well :)
+
+ mm/memblock.c | 60 ++++++++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 43 insertions(+), 17 deletions(-)
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index f87d3ae..900c95b 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -69,8 +69,19 @@
+  * :c:func:`memblock_set_node`. The :c:func:`memblock_add_node`
+  * performs such an assignment directly.
+  *
+- * Once memblock is setup the memory can be allocated using either
+- * memblock or bootmem APIs.
++ * Once memblock is setup the memory can be allocated using one of the
++ * API variants:
++ *
++ * * :c:func:`memblock_phys_alloc*` - these functions return the
++ *   **physical** address of the allocated memory
++ * * :c:func:`memblock_alloc*` - these functions return the **virtual**
++ *   address of the allocated memory.
++ *
++ * Note, that both API variants use implict assumptions about allowed
++ * memory ranges and the fallback methods. Consult the documentation
++ * of :c:func:`memblock_alloc_internal` and
++ * :c:func:`memblock_alloc_range_nid` functions for more elaboarte
++ * description.
+  *
+  * As the system boot progresses, the architecture specific
+  * :c:func:`mem_init` function frees all the memory to the buddy page
+@@ -428,17 +439,7 @@ static int __init_memblock memblock_double_array(struct memblock_type *type,
+ 	else
+ 		in_slab = &memblock_reserved_in_slab;
+ 
+-	/* Try to find some space for it.
+-	 *
+-	 * WARNING: We assume that either slab_is_available() and we use it or
+-	 * we use MEMBLOCK for allocations. That means that this is unsafe to
+-	 * use when bootmem is currently active (unless bootmem itself is
+-	 * implemented on top of MEMBLOCK which isn't the case yet)
+-	 *
+-	 * This should however not be an issue for now, as we currently only
+-	 * call into MEMBLOCK while it's still active, or much later when slab
+-	 * is active for memory hotplug operations
+-	 */
++	/* Try to find some space for it */
+ 	if (use_slab) {
+ 		new_array = kmalloc(new_size, GFP_KERNEL);
+ 		addr = new_array ? __pa(new_array) : 0;
+@@ -982,7 +983,7 @@ static bool should_skip_region(struct memblock_region *m, int nid, int flags)
+ }
+ 
+ /**
+- * __next__mem_range - next function for for_each_free_mem_range() etc.
++ * __next_mem_range - next function for for_each_free_mem_range() etc.
+  * @idx: pointer to u64 loop variable
+  * @nid: node selector, %NUMA_NO_NODE for all nodes
+  * @flags: pick from blocks based on memory attributes
+@@ -1392,6 +1393,18 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 	return found;
+ }
+ 
++/**
++ * memblock_phys_alloc_range - allocate a memory block inside specified range
++ * @size: size of memory block to be allocated in bytes
++ * @align: alignment of the region and block's size
++ * @start: the lower bound of the memory region to allocate (physical address)
++ * @end: the upper bound of the memory region to allocate (physical address)
++ *
++ * Allocate @size bytes in the between @start and @end.
++ *
++ * Return: physical address of the allocated memory block on success,
++ * %0 on failure.
++ */
+ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+ 					     phys_addr_t align,
+ 					     phys_addr_t start,
+@@ -1400,6 +1413,19 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+ 	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
+ }
+ 
++/**
++ * memblock_phys_alloc_range - allocate a memory block from specified MUMA node
++ * @size: size of memory block to be allocated in bytes
++ * @align: alignment of the region and block's size
++ * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
++ *
++ * Allocates memory block from the specified NUMA node. If the node
++ * has no available memory, attempts to allocated from any node in the
++ * system.
++ *
++ * Return: physical address of the allocated memory block on success,
++ * %0 on failure.
++ */
+ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
+ {
+ 	return memblock_alloc_range_nid(size, align, 0,
+@@ -1526,13 +1552,13 @@ void * __init memblock_alloc_try_nid(
+ }
+ 
+ /**
+- * __memblock_free_late - free bootmem block pages directly to buddy allocator
++ * __memblock_free_late - free pages directly to buddy allocator
+  * @base: phys starting address of the  boot memory block
+  * @size: size of the boot memory block in bytes
+  *
+- * This is only useful when the bootmem allocator has already been torn
++ * This is only useful when the memblock allocator has already been torn
+  * down, but we are still initializing the system.  Pages are released directly
+- * to the buddy allocator, no bootmem metadata is updated because it is gone.
++ * to the buddy allocator.
+  */
+ void __init __memblock_free_late(phys_addr_t base, phys_addr_t size)
+ {
+-- 
+2.7.4
 
