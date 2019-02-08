@@ -2,99 +2,115 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0365C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FC9C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB0E20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2217520844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="btBLGsbs"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hJ/gBzIB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfBHNcu (ORCPT
+        id S1727703AbfBHNc6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:32:50 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38268 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbfBHNct (ORCPT
+        Fri, 8 Feb 2019 08:32:58 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35274 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727174AbfBHNc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:32:49 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so1709022plb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 05:32:49 -0800 (PST)
+        Fri, 8 Feb 2019 08:32:57 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l142so2562713lfe.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 05:32:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=d/2FOjdb5DT51wxUvdVz5+XGFiv3LxVwvcKGgtXgyQg=;
-        b=btBLGsbsJDcjS6Q5qptg/tsWyMHZuj5rmcw1h1MUcVek99YYTARApGEGGZiIdtdZNu
-         +InK/kWgCGSvZ1x5007GOZeMHW/PL4O+xXfZu8KpbobFy6QLEk335AULVgjKYeM5UUdO
-         shxpX81tlfULmm99haj2Ex9p/esSg2kv824UPLcW1jmXosE7cFOD+dd/Aequl3TNa90i
-         w442fI2jqfZx8HZVof2OZJci/La5QxKo8/kG1v/oPNVzEYr8k72v1lwWvJJlQ5+lvnux
-         JSajTVJM548eT0P8WOo/hJcfwEHwCNGTfXIRlNf99pPxqZDhpkfS6m3/8EokpTWYzv0v
-         iCCw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zOKN2RtkqD3NhMxXTntaG9/up/T7KSnJjjnbyy1R1eQ=;
+        b=hJ/gBzIBCLQhm2rPw3nICW4FI+YX9FDpAGBDmZblsvklPtVgQkqbeK+W9uXIsO6m1Y
+         fOoPPn/tB5+fCM1fYzT2+zm1VK69ijYIk0FBrMzQy7MGGNwSU8yTQgDA6lccGuPnB3h5
+         Y4MEDVCpU+vdENq/lAbTxaXZwU5i2Ah8cfcwkW61MouNQOkDNpBSr+Z7+laM+HSOl9HH
+         yj0iDQ0qQM6Cbw4q2qFnRO27zhYYZ6zh707rHEVmeDSYWHUglGnd24Y0SYtNmu6I5A+o
+         rDr/mfWB+NRWnaijrBNLaJYGaRaAkfbvRKzwODHfWUnak9R3hP9oIEuoMOQ4hiU+3xZ2
+         X25g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=d/2FOjdb5DT51wxUvdVz5+XGFiv3LxVwvcKGgtXgyQg=;
-        b=HoSafX1+Dlv1eVM8rNOzMka5z3PTXIQ46HSRRAiqH9y1N35ICTSVszvBu/+ylURCQ2
-         OQOwtB28m8VEO7cTA4xySQtbWGV6XN9hNeFBoegEcPgp2dcJah33l7rIvmuLykf3hSm8
-         Jw1BWxxtEllmMxRKv3ob0XyDc2zoPho+cnG29eFrqTUaqwtVCYXcu/4bRso807lr+7k6
-         urNQfy01xa++K7BFPOc5EFOW9qXGXNVQYzrC3yDHAIKL7HjGVtx8i6bPM955AOAhKiHU
-         NChV+bgKCuvNPe+j6cvT6JbLLzscFyEaKopSh2jV3dHzA8tps7FEomamYT7CUPSOnCJ2
-         6RtQ==
-X-Gm-Message-State: AHQUAubTSRml6w7YGU11BeMlDpth52P9jpSUSuuDpxPPBGZMq7XUm6bI
-        o42J2odxDWRJRqxMjDHHS1WOqTygOX3W1A==
-X-Google-Smtp-Source: AHgI3IZTXz2gXgIVMctukQAwTyrOvsjppQGBCFVRh+Pis4c8G0t4q88vZGbMVgyzRfDjpkcONHmScQ==
-X-Received: by 2002:a17:902:f64:: with SMTP id 91mr22682126ply.132.1549632768150;
-        Fri, 08 Feb 2019 05:32:48 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id a13sm3431510pgq.65.2019.02.08.05.32.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 05:32:47 -0800 (PST)
-Subject: Re: [PATCH v2] ata: add Buddha PATA controller driver
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-ide@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org
-References: <CGME20190207122046eucas1p12d098289e0370252d341ccfed66b8295@eucas1p1.samsung.com>
- <6924b9b1-6c38-2639-a824-f2d765abe437@samsung.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <84b22f87-3301-523e-3966-cff233e740c7@kernel.dk>
-Date:   Fri, 8 Feb 2019 06:32:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zOKN2RtkqD3NhMxXTntaG9/up/T7KSnJjjnbyy1R1eQ=;
+        b=WY8N0q14vnpbTLygkWZ5nSsqqRj3JpSNsAAwMM37UMUhO68EoxIl6cr4fWa65gKvGI
+         zzZ4Ga7aKBPkjKr/1SaEwAzuE8iwZjP8/zAcmy3gHSaBjpnpRWruv7CFjfeFqi6kSSK5
+         HiIPDW1CnnAhBfc/UDtJxudw1KKOPuOgUzeypaIEt/fHNae0PUUARwc1+WASTCYo7rbh
+         V1WxouFCIBfGTiYnDtttZz/rfFjnPCKElpzcNeZtaMOl4pfwwUrv/dl5qJ/zlXzL0v52
+         e/2cCsu274esPPa1BK+zz+vIgkt8scFU5IPWWkg32UmSZgKnYv8puL3bW+/uuKEVxl4y
+         DXyQ==
+X-Gm-Message-State: AHQUAuYZ/5eFtKn+BPvUrczt07wIpKPiL0sG73xn5t/CJ5FArXRMsBMk
+        IoKCy/r5wJRCRSWPvc+n21IOfBajCAVksYh92NLLQA==
+X-Google-Smtp-Source: AHgI3Iaun5UChBVpgraPMeJiOXrr7LLPt7LegZUyY1EAUG1cB5RCgqZ5w6gktc+8ahXVjI1Rp1m/H6r2Vgq39tr+324=
+X-Received: by 2002:a19:c502:: with SMTP id w2mr13201900lfe.168.1549632775616;
+ Fri, 08 Feb 2019 05:32:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6924b9b1-6c38-2639-a824-f2d765abe437@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1549629187-3177-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1549629187-3177-1-git-send-email-sugaya.taichi@socionext.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 8 Feb 2019 14:32:44 +0100
+Message-ID: <CACRpkdYgTWffL3RcW7Xs7ve=9HhYyndth7RDX7sedeXytCZC1g@mail.gmail.com>
+Subject: Re: [PATCH v2 11/15] dt-bindings: pinctrl: milbeaut: Add Milbeaut
+ M10V pinctrl description
+To:     Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/7/19 5:20 AM, Bartlomiej Zolnierkiewicz wrote:
-> Add Buddha PATA controller driver. It enables libata support for
-> the Buddha, Catweasel and X-Surf expansion boards on the Zorro
-> expansion bus.
-> 
-> Module removal is currently unsupported (the old IDE's buddha
-> driver also doesn't support it).
-> 
-> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-> Cc: Michael Schmitz <schmitzmic@gmail.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hi Sugaya,
 
-Applied for 5.1 thanks Bart.
+thanks for your patch!
 
--- 
-Jens Axboe
+On Fri, Feb 8, 2019 at 1:32 PM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
 
+> Add DT bindings document for Milbeaut M10V pinctrl.
+>
+> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+
+(...)
+> +- interrupts: three interrupts specifer.
+> +- interrupt-names: corresponds "interrupts" factor.
+(...)
+> +               interrupts = <0 54 4>, <0 55 4>, <0 56 4>, <0 57 4>,
+> +                               <0 58 4>, <0 59 4>, <0 60 4>, <0 61 4>,
+> +                               <0 62 4>, <0 63 4>, <0 64 4>, <0 65 4>,
+> +                               <0 66 4>, <0 67 4>, <0 68 4>, <0 69 4>;
+> +               interrupt-names = "pin-48", "pin-49", "pin-50", "pin-51",
+> +                               "pin-52", "pin-53", "pin-54", "pin-55",
+> +                               "pin-56", "pin-57", "pin-58", "pin-59",
+> +                               "pin-60", "pin-61", "pin-62", "pin-63";
+
+As mentioned in the review of the driver, don't do this.
+
+This is a hierarchical interrupt controller, so these
+GIC-offset-to-GPIO-interrupt-offests should be hardcoded in
+the driver.
+
+If these interrupt offsets differ between difference instances of
+this pin controller, they should have different compatible strings.
+
+Yours,
+Linus Walleij
