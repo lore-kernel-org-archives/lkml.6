@@ -2,111 +2,108 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DE7C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C55C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC532147C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDF4021917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:05:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bL5jgRox"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rad8Vb6w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfBHIEw (ORCPT
+        id S1727266AbfBHIFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 03:04:52 -0500
-Received: from mail-it1-f182.google.com ([209.85.166.182]:34773 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfBHIEw (ORCPT
+        Fri, 8 Feb 2019 03:05:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36624 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbfBHIFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 03:04:52 -0500
-Received: by mail-it1-f182.google.com with SMTP id x124so7928788itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 00:04:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1ufDAy2oAX/EqvaxJnTOOBml597qgVOQCxkiW7B+Jgo=;
-        b=bL5jgRoxD8+hLoZj5dVoJP4VoABqt8Zc0M8ElyPaqVuYlc/718/fCGzHZs0+8UNxug
-         hcATpfBF279df+iwr1i5zcM1Q7doH39YMkNxiPu0uZm9Db61MbRoqOJdcrwIp+AuGlCL
-         hcBynm9jv6QrA4J4PYQMO/RHfv6dNE/yaY3XH04eGc1erNsUTjUnXy+fCeCSKl2HQghF
-         9NW9bYk4e6zXLEZSVRIYY8jdNn+0zP8TGvqbQiVx7YpxcW7lu/hJvY6sfBOBNdmmKFqk
-         wV697YSajeZ4PDD/vE9f/Hr7YUDx4RNin05TWDMbFn83VisZPn+fAGF0L6gVhgct0qUb
-         MTlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1ufDAy2oAX/EqvaxJnTOOBml597qgVOQCxkiW7B+Jgo=;
-        b=NvnDKlxPFicz84YkbNVqL/ueumnoWXzRK5ser91msWFGKEVMpK+IW6234AHjPc+DSq
-         +GAUetHt8LaXx8L3vqMd4qCsIN4VV8a5q60AM197XjMu5kEb5mxRekGnNU7RpeSsjm4m
-         RJgxOS6owrQIqqn0uPIKQt4F7uwXLOPnMdTOCd6asZpgiury8NOh6wct9jOdff/vehuh
-         m3h/wDU+in1tv/U8bYApnREZcz53gt4OLRIwJThcS/tqZJw8rF0TRBq5QREsd8ciPmWc
-         SOYBWh3uNQc3xrNOFYnqanPH8VOMIcIltMiUDig9ZWBfh5UVl9pcLHL/34QNJXqUNcRC
-         ufjA==
-X-Gm-Message-State: AHQUAuZJOJAZQtrSmIzW9bUtNxMLJU/X3IR+rUND4DWNrY2Q4U5xtWCK
-        q/ON4D1xWbOqZZrqn/tMgzu1ig==
-X-Google-Smtp-Source: AHgI3Ibyi0G2GFUw+SfUbtJczpANr+GcvVeioZspaqeLqe0lPqZy2bWkse/YzGdmiCHi09vlK7CnNg==
-X-Received: by 2002:a6b:dd16:: with SMTP id f22mr10548331ioc.148.1549613091568;
-        Fri, 08 Feb 2019 00:04:51 -0800 (PST)
-Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id t64sm978446itb.5.2019.02.08.00.04.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 00:04:50 -0800 (PST)
-From:   Yu Zhao <yuzhao@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
-Subject: [PATCH] mm: fix potential build error in compaction.h
-Date:   Fri,  8 Feb 2019 01:04:37 -0700
-Message-Id: <20190208080437.253322-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
+        Fri, 8 Feb 2019 03:05:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=X1F76fWoZNI6hEwrCsNg4vhyIqrimKHVVutkEcsBSuk=; b=Rad8Vb6wlSAhoSYZwFrZgbJiy
+        gQoxababoRVcz7XVxD0ZPGL4F06bJQb6/2npG8eHvQXIAqGxgZnHo0vDxcw+ZdgFqWvlCNKed6wiM
+        GsLO5TYCbGaYzMcP6/etyhLlEAKj7/Gzc+9+t+wPMzdwaqNMkNZiZZGPrMFqg4dgSuMRqq9j2qp2g
+        V+Z+5yv0tbhMR6/OVP2OIGDQaMDV+8j3Udt6lwxdtEyJJ+5VSY8QVdVjnA/WWrodLh3+4bF9YTN45
+        ZoK2tgiJ1jkFgzFx/+MfY77VmEBP9Rqc2pWdfZYCcxLeets6wzmG0vGCec3pNTdazpF1EmRklg/Iu
+        kmVdGzObw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gs19h-00052r-6y; Fri, 08 Feb 2019 08:05:01 +0000
+Date:   Fri, 8 Feb 2019 00:05:01 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Manoj N. Kumar" <manoj@linux.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
+        Uma Krishnan <ukrishn@linux.ibm.com>,
+        Brian King <brking@us.ibm.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com,
+        Bradley Grove <bgrove@attotech.com>,
+        Don Brace <don.brace@microsemi.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v5] scsi/ata: Use unsigned int for cmd's type in ioctls
+ in scsi_host_template
+Message-ID: <20190208080501.GA18530@infradead.org>
+References: <20190126075256.29608-1-natechancellor@gmail.com>
+ <20190207160719.28895-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207160719.28895-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Declaration of struct node is required regardless. On UMA system,
-including compaction.h without proceeding node.h shouldn't cause
-build error.
+On Thu, Feb 07, 2019 at 09:07:20AM -0700, Nathan Chancellor wrote:
+> Clang warns several times in the scsi subsystem (trimmed for brevity):
+> 
+> drivers/scsi/hpsa.c:6209:7: warning: overflow converting case value to
+> switch condition type (2147762695 to 18446744071562347015) [-Wswitch]
+>         case CCISS_GETBUSTYPES:
+>              ^
+> drivers/scsi/hpsa.c:6208:7: warning: overflow converting case value to
+> switch condition type (2147762694 to 18446744071562347014) [-Wswitch]
+>         case CCISS_GETHEARTBEAT:
+>              ^
+> 
+> The root cause is that the _IOC macro can generate really large numbers,
+> which don't fit into type 'int', which is used for the cmd parameter in
+> the ioctls in scsi_host_template. My research into how GCC and Clang are
+> handling this at a low level didn't prove fruitful. However, looking at
+> the rest of the kernel tree, all ioctls use an 'unsigned int' for the
+> cmd parameter, which will fit all of the _IOC values in the scsi/ata
+> subsystems.
+> 
+> Make that change because none of the ioctls expect a negative value for
+> any command, it brings the ioctls inline with the reset of the kernel,
+> and it removes ambiguity, which is never good when dealing with compilers.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/85
+> Link: https://github.com/ClangBuiltLinux/linux/issues/154
+> Link: https://github.com/ClangBuiltLinux/linux/issues/157
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Acked-by: Bradley Grove <bgrove@attotech.com>
+> Acked-by: Don Brace <don.brace@microsemi.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- include/linux/compaction.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good:
 
-diff --git a/include/linux/compaction.h b/include/linux/compaction.h
-index 68250a57aace..be165b220996 100644
---- a/include/linux/compaction.h
-+++ b/include/linux/compaction.h
-@@ -220,22 +220,22 @@ static inline int kcompactd_run(int nid)
- static inline void kcompactd_stop(int nid)
- {
- }
- 
- static inline void wakeup_kcompactd(pg_data_t *pgdat, int order, int classzone_idx)
- {
- }
- 
- #endif /* CONFIG_COMPACTION */
- 
--#if defined(CONFIG_COMPACTION) && defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
- struct node;
-+#if defined(CONFIG_COMPACTION) && defined(CONFIG_SYSFS) && defined(CONFIG_NUMA)
- extern int compaction_register_node(struct node *node);
- extern void compaction_unregister_node(struct node *node);
- 
- #else
- 
- static inline int compaction_register_node(struct node *node)
- {
- 	return 0;
- }
- 
--- 
-2.20.1.791.gb4d0f1c61a-goog
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
