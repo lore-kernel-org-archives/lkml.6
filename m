@@ -8,65 +8,67 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BB3C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACC8C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753D7217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D4C12177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ta7wPGWB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDAv/yoe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbfBHTTl (ORCPT
+        id S1727536AbfBHTTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:19:41 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45094 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfBHTTi (ORCPT
+        Fri, 8 Feb 2019 14:19:45 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42864 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfBHTTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:19:38 -0500
-Received: by mail-pf1-f194.google.com with SMTP id j3so2112741pfi.12;
-        Fri, 08 Feb 2019 11:19:38 -0800 (PST)
+        Fri, 8 Feb 2019 14:19:42 -0500
+Received: by mail-pf1-f196.google.com with SMTP id n74so872743pfi.9;
+        Fri, 08 Feb 2019 11:19:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FMVIZC+Ut3hCcGkIAGAKElPF0VEiGdyoGwVPSPpdJa0=;
-        b=Ta7wPGWBkdp/5vb9tEtLtLCG/RIYUlN6J8+HuOmvv5sgi2j6AbY9+7QNBhaGi848vF
-         o+818GtdTGn+h6sJqZooFlM9fkLAhP8iI9hUJvNMldMV5v+SiFgsCN2hTtWlXTPhrKkE
-         CL1vYywI67LlqzgrzlScRDUL++kAvK51xfnG6waV2izi1N2Y+AeKUob/iYtFwxiPVBqU
-         cVGSW9lOLA3zVKEve+qXKmO4oqyZOKlepoXArN0kO9LT48vJlRMtCEOKUJWNvQa2zKex
-         UAdLa5JDlaE2S4qIF6RPmp3JX9ZG7EUDubkKh6eJpgTS9WdGp58TbkYODf85nl5mH7eS
-         STsg==
+        bh=U26YXALvPL/5SPkHyPqlaMA16FEhlCL+u65z44XkYcY=;
+        b=gDAv/yoeqYfokxMgIq2+HeBzDmiHcZrXsGLa/hxzkVA3NSkHASUn4mv+OOpyVMidE2
+         8Wn1E8KLqYoR0pOH1jrJmm1R0trIxLxEnTZnmKbd5aXS3STPUFCFH9NS+R73fs5vVsH/
+         TSo4uKh7RR7U74HoEmWfXqXK/Lu+9hidncWANhqp2h45giYJWYNfWqpoLU8Uy4WYg0Zs
+         R6aLYravfJzHACIwQg1IfnUxr3kIkpEwbvP8aBTxC7mLjuGO8n6GuS0nITk6rzldYKjN
+         8BJFtr6rdzI24Rgzr6VWUHbIG/yTdBqibwQPS9y+FluXfvyRKvwCKB1J2rZgat4qEO7a
+         EXLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FMVIZC+Ut3hCcGkIAGAKElPF0VEiGdyoGwVPSPpdJa0=;
-        b=H0LrIGcWxnZXuUYNOcnj/vff7L3Q0k3JbqR0ocLoDFJRZlHcAoX+Othm267+Z7RQSP
-         gYPPLRiDLiwKdezTLRYtvjm7d40IVlH1Xe+3CiAUYluH62sffVcOOggV62zJLA7XonaK
-         TCKEvEIjLkMiWS1a9o/N2k2uugWo3pYc6/fzVqvsk6+FS1LdTGhXKvR2QyfkMSFVCTnN
-         /ENdG4o5anbAW09b2kXjfD80qxwdwxMCBvPqXm+t6e3Sbc4CODgrT+2GOa7FbKiyltvC
-         RP+uGvI/e+RYJgiBqSUbR8B6zRQ/vUSVMjJEBYdJUeisiGR25KxXeHtkKZTZim5dXmOA
-         59kw==
-X-Gm-Message-State: AHQUAuaTODqrPlP/cH8UdePhR7qzCLWlZu8I49jv/PDlR9VzADTMf7q4
-        YDEJQCM5lfHk0gRcITJtyEW+wv9K
-X-Google-Smtp-Source: AHgI3IY2oMmOmQmLij9hkZFlL8X+I4haiIzq8sW0jlH2v71bkIMkH9oajNof8unrgs+p1VFtdGDABQ==
-X-Received: by 2002:a63:5e43:: with SMTP id s64mr21933216pgb.101.1549653577436;
-        Fri, 08 Feb 2019 11:19:37 -0800 (PST)
+        bh=U26YXALvPL/5SPkHyPqlaMA16FEhlCL+u65z44XkYcY=;
+        b=hk5uZC9JNP2nfvfzZ87W9p8UlrV6cxqwaAP9BCPTjNidOyalqUv8SWDBF7Q449yLPo
+         8mN7IYTo1sKXp04/TWqpiGroj3Cofc+IAiqxDr9ly77bKTYnh7qqBuaZuGqo7gQL4gQq
+         IKAZ3Xse8EnGFPqaFiXPQxHsomL8T5UrXQ31J60dqI2aAvEs/iXCK32S5c7gwzsdmPCD
+         MaCnq4fsv1m+DreaUFyGgAZcO9XXNux4w7QN3F+fgE3DOKnz6R1R4SBelPQCQ7DwVw0q
+         NgxZ/u4ixtewHasNJpJLBm/NGJZmfmMPoiRqOqx/x3Y8hW/DL4vsBjVKfDyjgs46dzO/
+         EWSw==
+X-Gm-Message-State: AHQUAuZCDri9zv6rwDSK1WU+BaQWJCzD3Bz7I+IWTJjmCeJGR8Hvp+6W
+        6Q7GWYZsFUPLSVhso0Y7lUfH+ooh
+X-Google-Smtp-Source: AHgI3IYM4+lpa75pkDcWL010/7bijkNa7h5oEC1KCaUFtP6DM9mrWS+qtCbKMCXkTw5ox/j1hiQNOg==
+X-Received: by 2002:a63:b24a:: with SMTP id t10mr21152310pgo.223.1549653581218;
+        Fri, 08 Feb 2019 11:19:41 -0800 (PST)
 Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id o5sm4761817pgm.68.2019.02.08.11.19.36
+        by smtp.googlemail.com with ESMTPSA id o5sm4761817pgm.68.2019.02.08.11.19.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 11:19:36 -0800 (PST)
+        Fri, 08 Feb 2019 11:19:40 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Tim Harvey <tharvey@gateworks.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
-        IMX), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/4] gpu: ipu-v3: ipu-ic: Simplify selection of encoding matrix
-Date:   Fri,  8 Feb 2019 11:19:26 -0800
-Message-Id: <20190208191928.13273-3-steve_longerbeam@mentor.com>
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 4/4] media: imx: Allow BT.709 encoding for IC routes
+Date:   Fri,  8 Feb 2019 11:19:28 -0800
+Message-Id: <20190208191928.13273-5-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190208191928.13273-1-steve_longerbeam@mentor.com>
 References: <20190208191928.13273-1-steve_longerbeam@mentor.com>
@@ -75,40 +77,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify the selection of the Y'CbCr encoding matrices in init_csc().
-A side-effect of this change is that init_csc() now allows YUV->YUV
-using the identity matrix, intead of returning error.
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+The IC now supports BT.709 Y'CbCr encoding, in addition to existing BT.601
+encoding, so allow both, for pipelines that route through the IC.
+
+Reported-by: Tim Harvey <tharvey@gateworks.com>
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 ---
- drivers/gpu/ipu-v3/ipu-ic.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+Changes in v2:
+- move ic_route check above default colorimetry checks, and fill default
+  colorimetry for ic_route, otherwise it's not possible to set BT.709
+  encoding for ic routes.
+---
+ drivers/staging/media/imx/imx-media-utils.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
-index 3ef61f0b509b..e459615a49a1 100644
---- a/drivers/gpu/ipu-v3/ipu-ic.c
-+++ b/drivers/gpu/ipu-v3/ipu-ic.c
-@@ -244,16 +244,12 @@ static int init_csc(struct ipu_ic *ic,
- 	base = (u32 __iomem *)
- 		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
+diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/staging/media/imx/imx-media-utils.c
+index 5f110d90a4ef..dde0e47550d7 100644
+--- a/drivers/staging/media/imx/imx-media-utils.c
++++ b/drivers/staging/media/imx/imx-media-utils.c
+@@ -544,6 +544,19 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+ 	if (tryfmt->field == V4L2_FIELD_ANY)
+ 		tryfmt->field = fmt->field;
  
--	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
-+	if (inf == outf)
-+		params = &ic_csc_identity;
-+	else if (inf == IPUV3_COLORSPACE_YUV)
- 		params = &ic_csc_ycbcr2rgb_bt601;
--	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
-+	else
- 		params = &ic_csc_rgb2ycbcr_bt601;
--	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
--		params = &ic_csc_identity;
--	else {
--		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
--		return -EINVAL;
++	if (ic_route) {
++		if (tryfmt->colorspace == V4L2_COLORSPACE_DEFAULT)
++			tryfmt->colorspace = fmt->colorspace;
++
++		tryfmt->quantization = is_rgb ?
++			V4L2_QUANTIZATION_FULL_RANGE :
++			V4L2_QUANTIZATION_LIM_RANGE;
++
++		if (tryfmt->ycbcr_enc != V4L2_YCBCR_ENC_601 &&
++		    tryfmt->ycbcr_enc != V4L2_YCBCR_ENC_709)
++			tryfmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
++	}
++
+ 	/* fill colorimetry if necessary */
+ 	if (tryfmt->colorspace == V4L2_COLORSPACE_DEFAULT) {
+ 		tryfmt->colorspace = fmt->colorspace;
+@@ -566,13 +579,6 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
+ 					tryfmt->ycbcr_enc);
+ 		}
+ 	}
+-
+-	if (ic_route) {
+-		tryfmt->quantization = is_rgb ?
+-			V4L2_QUANTIZATION_FULL_RANGE :
+-			V4L2_QUANTIZATION_LIM_RANGE;
+-		tryfmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
 -	}
+ }
+ EXPORT_SYMBOL_GPL(imx_media_fill_default_mbus_fields);
  
- 	/* Cast to unsigned */
- 	c = (const u16 (*)[3])params->coeff;
 -- 
 2.17.1
 
