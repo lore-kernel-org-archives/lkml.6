@@ -2,126 +2,91 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AB0C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E19C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3FE21928
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:45:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="sAWi2INA"
+	by mail.kernel.org (Postfix) with ESMTP id CC7D3218D2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:46:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfBHUpB (ORCPT
+        id S1726989AbfBHUqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:45:01 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5355 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfBHUo7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:44:59 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5dea4f0000>; Fri, 08 Feb 2019 12:45:03 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 08 Feb 2019 12:44:59 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 08 Feb 2019 12:44:59 -0800
-Received: from [10.2.164.159] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 8 Feb
- 2019 20:44:58 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Mike Rapoport <rppt@linux.ibm.com>, <john.hubbard@gmail.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
+        Fri, 8 Feb 2019 15:46:42 -0500
+Received: from mga09.intel.com ([134.134.136.24]:1853 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726699AbfBHUqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 15:46:42 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 12:46:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="114775062"
+Received: from szilberm-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.172])
+  by orsmga006.jf.intel.com with ESMTP; 08 Feb 2019 12:46:36 -0800
+Date:   Fri, 8 Feb 2019 22:46:35 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20190208075649.3025-1-jhubbard@nvidia.com>
- <20190208075649.3025-2-jhubbard@nvidia.com>
- <20190208103211.GD11096@rapoport-lnx>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <9c1985cc-cd99-a950-5ea2-9df9f93eb98b@nvidia.com>
-Date:   Fri, 8 Feb 2019 12:44:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: =?iso-8859-1?Q?Uni?=
+ =?iso-8859-1?Q?fy_the_send_callback_behaviour=E4?=
+Message-ID: <20190208204635.GA24938@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+ <20190208191710.GA30645@linux.intel.com>
+ <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
+ <20190208202353.GB1836@linux.intel.com>
+ <36dc691e-4f00-7f6b-5a53-763c12d4fa16@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208103211.GD11096@rapoport-lnx>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549658703; bh=ogIholLrpKztcsDoAScWgBL1e5vfshGcZY+vwNC42rg=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=sAWi2INAdMFVha1o+0PxFQFpRxw0XUDZH6EHdS0tXI6IMWQabh2rAzTr96FGKQxAK
-         r0aikr3jTyoS3DxaYwrKX5T7q8ls1Aq584uHk8oBkugOH6hSCm3cDIQyxqepV0cPOn
-         QuUVL0k04OQP5WPYD9lo2wvJbSKKRMl3l9Xoaqhcad5u/ej2y8PCq9Y/ViixMdQHKb
-         kLoMbizF1iqWwlOGrhJoNu2oVKogaWbBomZlQxjQ6TdKT504r9P8hqkIi9AwKZnZB1
-         8OpYjxjN40TYgY15Ro/ABg0ylD2edugYItbNuT4lLwlr8I6X5zIoOE1csq+a+zruhC
-         5itwstqUV7DNw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36dc691e-4f00-7f6b-5a53-763c12d4fa16@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 2:32 AM, Mike Rapoport wrote:
-> On Thu, Feb 07, 2019 at 11:56:48PM -0800, john.hubbard@gmail.com wrote:
->> From: John Hubbard <jhubbard@nvidia.com>
-[...]
->> +/**
->> + * put_user_page() - release a gup-pinned page
->> + * @page:            pointer to page to be released
->> + *
->> + * Pages that were pinned via get_user_pages*() must be released via
->> + * either put_user_page(), or one of the put_user_pages*() routines
->> + * below. This is so that eventually, pages that are pinned via
->> + * get_user_pages*() can be separately tracked and uniquely handled. In
->> + * particular, interactions with RDMA and filesystems need special
->> + * handling.
->> + *
->> + * put_user_page() and put_page() are not interchangeable, despite this early
->> + * implementation that makes them look the same. put_user_page() calls must
+On Fri, Feb 08, 2019 at 03:32:32PM -0500, Stefan Berger wrote:
+> On 2/8/19 3:23 PM, Jarkko Sakkinen wrote:
+> > On Fri, Feb 08, 2019 at 02:27:31PM -0500, Stefan Berger wrote:
+> > > On 2/8/19 2:17 PM, Jarkko Sakkinen wrote:
+> > > >    */
+> > > > if (rc > 0) {
+> > > > 	dev_warn(&chip->dev,
+> > > > 		 "%s: send(): invalid value %d\n", __func__, rc);
+> > > > 	rc = 0;
+> > > > }
+> > > > 
+> > > > Should be fairly safe play now.
+> > > Unfortuantely it isn't. You seemed to have lost the
+> > > EXPORT_SYMBOL_GPL(tpm_chip_start/stop) and the tpm_chip_start/stop around
+> > > the tpm2_shutdown()...
+> > OK, now those fixes are back. In tpm_pm_shutdown() case you need also
+> > take the lock.
 > 
-> I just hope we'll remember to update when the real implementation will be
-> merged ;-)
-> 
-> Other than that, feel free to add
-> 
-> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>	# docs
-> 
+> tpm_del_char_device also needs the start/stop!
 
-Thanks for the review!
+Done and updated the commit message to have all the call sites:
 
-Yes, the follow-on patch that turns this into a real implementation is
-posted [1], and its documentation is updated accordingly.
+    * tpm_chip_register()
+    * tpm_class_shutdown()
+    * tpm_del_char_device()
+    * tpm_pm_suspend()
+    * tpm_try_get_ops() and tpm_put_ops()
+    * tpm2_del_space()
 
-(I've already changed "@Returns" to "@Return" locally in that patch, btw.)
-
-[1] https://lore.kernel.org/r/20190204052135.25784-5-jhubbard@nvidia.com
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+/Jarkko
