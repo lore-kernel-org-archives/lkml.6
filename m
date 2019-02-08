@@ -5,67 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F97C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE8FC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C291A20821
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 976612070B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1q8oisa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJkRVveb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfBHBtC (ORCPT
+        id S1727188AbfBHBtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 20:49:02 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39333 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbfBHBtB (ORCPT
+        Thu, 7 Feb 2019 20:49:14 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45377 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbfBHBtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 20:49:01 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so852861pgp.6;
-        Thu, 07 Feb 2019 17:49:01 -0800 (PST)
+        Thu, 7 Feb 2019 20:49:13 -0500
+Received: by mail-pl1-f195.google.com with SMTP id a14so896070plm.12;
+        Thu, 07 Feb 2019 17:49:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=XyA2pcmvE6gX2mfRHI2i1cBV8kEWCuMwrhdJsU/m3ls=;
-        b=j1q8oisa0nyB0QEarbzW8nsR3e9TzKoP8A8vMzq/BUNP/6b6eze6yvVRp8eUmzTxz4
-         EITZx06j6PL6bvIzz9U/NGjckypgRuQrXwInHldjS7e+acFqAMWxhvJmZtYuWcEDDoH2
-         NAslSpBcVpBJtgrc10CHOw1uiK/d+UJlmg30lj6WC8/Bof/5NDlH5VwqnLWvRteIws2Z
-         /6qe/hHcE9q3g6MuW7GueycD9p3UMcGWzAfyNYdJLjvGCbvnoy40kVDQggYcjNdpu7i6
-         iIHLwxWhrIm0nRHyFiRagdCvOxcpHpe+z6fAQoYoBVwX7xw0izlmbR1ilBmUJirtdwge
-         Iiyg==
+        bh=8saBs/ha8WBC8UhqXS1dzcwx+GqnE+SFkWlf6qOh+vI=;
+        b=XJkRVvebMMsXwXEiOrHL6dTL7oXnQ11wMgFCEt5bGLZ3uD9ODJqtUFmGb/iDEvo2b3
+         n7bvFATVBnUbxpdI+ic4HxN4gmn9I5Zfykq5QOWXUCaxBQ3oMgph+53bUFA1UrnNPDpq
+         TN+JZxISNz1aMVqvL9VtOAVCLKAnVXPDXxoT50Xbp3FsHGzOwQ/ErFQ0Kou7fI+Sn4wY
+         bLqldw1YsxKmHyOOB6w88IwLcE5ZjvFKGl3GSzkewdujdYwmEDN7vvgE8MZX3rYNA0Yo
+         l+VYvy42J37KcgJv4K1DujMI34K65AZ2g1ZpiULmRsD9J8z3I/njf1BnuRpHhQxapIvn
+         7LKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=XyA2pcmvE6gX2mfRHI2i1cBV8kEWCuMwrhdJsU/m3ls=;
-        b=QJ0ZmkGXGecDuXwK6S+qUdk6i9GK2BiEwAu1wOfaK2hdeGNk2ABWWQW0jrPPMcc2kT
-         GyNkIftOGyfmQP5XElrVSzRPICdr8650F4Z7gO7lRvj55rYp2+kE86iqjFU5WAJbOn+J
-         y7yjJdaH0DIxF7cot+xrJJaTYxRxsxN5OmieyGD4ZRyeeZxUwA+6aMOYnKCAc+V988NH
-         aPhT0mDctLT/RzgF2CCaGaBRlXe9UTPj3xkDlduclBnJK3xDI2Dmdu64TIP/Pf6j+UGz
-         o4MoeGOLK6mQyVybIm6V+zLNZVs2Lkw3obl7noXA+LMAHu9HfizPFbNS3hJoqTHRjVRQ
-         l+lw==
-X-Gm-Message-State: AHQUAuYM8r1qIvCQle870UWhK7Fx7oQD8xiwqRoOUjpfV9VTD/one3X3
-        QZ+Odf3IV/eTCxiMksTW/5qm5u+A
-X-Google-Smtp-Source: AHgI3IbLkY0FX3sX68rMRfP4cN//It8LcXWJbYjRLxbOpGwPvmgsdw7Smqif0Vh6PFRza0sqq7B1dg==
-X-Received: by 2002:a63:2f86:: with SMTP id v128mr17369855pgv.407.1549590540719;
-        Thu, 07 Feb 2019 17:49:00 -0800 (PST)
+        bh=8saBs/ha8WBC8UhqXS1dzcwx+GqnE+SFkWlf6qOh+vI=;
+        b=ZOAnLcChHla1b/y5LsVbpeHeHRWc8fBh3VGWDy6MSm++daqvDLlEjz5xugWZZ+snkO
+         U+zIb4uJ93jlW9kygkUCiUKls1YtNZs2vqwMJSx72x8uiCXqt9woExcd3p8SIKxP8a9x
+         302YyjiPa+CeIO7Gv7sFqjNLqMsuY9cOGtyr6QdeoFqQJUv0QdjCnGKMWNXiIcEugR0X
+         KOPtFtuHJIBuYEUKCu37tLczGkpoh5IMOzqJ/4gaMbKhivY49FypL0/8vD16J8Sc0HVr
+         DpKJ1Sl0Q4CmX45JyCfGKcUUjzoxtUufPfEyMovjbx/yKClzTLCbNO5MjupnraCXnyYK
+         KAGA==
+X-Gm-Message-State: AHQUAua5k+1L/vV/a9zAbL1YwVS43vkYGMHscGBWUZHi18bvOwMir8Gg
+        BOgVJ2YY45VgVt8BT5t2u8vizAo2
+X-Google-Smtp-Source: AHgI3IZxxMiS6MOyL6ASROoQZ6sg8Rp4q7EcZH9y8h0UHWaSGjReNLVPJLfRMHayy7M5AM4q1cR0rQ==
+X-Received: by 2002:a17:902:24a2:: with SMTP id w31mr19534536pla.216.1549590552907;
+        Thu, 07 Feb 2019 17:49:12 -0800 (PST)
 Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id 24sm518945pfr.75.2019.02.07.17.48.59
+        by smtp.gmail.com with ESMTPSA id v89sm561643pfk.12.2019.02.07.17.49.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 17:48:59 -0800 (PST)
+        Thu, 07 Feb 2019 17:49:12 -0800 (PST)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-usb@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] xhci: Use __ffs() to find page size in xhci_mem_init()
-Date:   Thu,  7 Feb 2019 17:48:54 -0800
-Message-Id: <20190208014854.22437-1-andrew.smirnov@gmail.com>
+Subject: [PATCH v2] xhci: Drop superfluous initialization in xhci_queue_ctrl_tx()
+Date:   Thu,  7 Feb 2019 17:49:06 -0800
+Message-Id: <20190208014906.22707-1-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,7 +73,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get page size order using __ffs() instead of open coding it with a loop.
+Simplify field's initialization by directly assigning its final value
+instead of initializing the variable to sero and then bitwise or-ing
+it.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Mathias Nyman <mathias.nyman@intel.com>
@@ -85,31 +86,27 @@ Cc: linux-kernel@vger.kernel.org
 
 Changes since [v1]:
 
-    - Code changed to use __ffs()
-    - Added check for page_size == 0
+    - Fixed a typo in commit message
 
-[v1] https://lore.kernel.org/lkml/20190207000349.7816-1-andrew.smirnov@gmail.com
+[v1] https://lore.kernel.org/lkml/20190207000331.7547-1-andrew.smirnov@gmail.com
 
- drivers/usb/host/xhci-mem.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/usb/host/xhci-ring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 36a3eb8849f1..4b350125e1cc 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -2362,11 +2362,7 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
- 	page_size = readl(&xhci->op_regs->page_size);
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Supported page size register = 0x%x", page_size);
--	for (i = 0; i < 16; i++) {
--		if ((0x1 & page_size) != 0)
--			break;
--		page_size = page_size >> 1;
--	}
-+	i = page_size ? __ffs(page_size) : INT_MAX;
- 	if (i < 16)
- 		xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"Supported page size of %iK", (1 << (i+12)) / 1024);
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 40fa25c4d041..91e592bfb80d 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -3379,8 +3379,7 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+ 	/* Queue setup TRB - see section 6.4.1.2.1 */
+ 	/* FIXME better way to translate setup_packet into two u32 fields? */
+ 	setup = (struct usb_ctrlrequest *) urb->setup_packet;
+-	field = 0;
+-	field |= TRB_IDT | TRB_TYPE(TRB_SETUP);
++	field = TRB_IDT | TRB_TYPE(TRB_SETUP);
+ 	if (start_cycle == 0)
+ 		field |= 0x1;
+ 
 -- 
 2.20.1
 
