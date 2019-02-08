@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E65C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEC9C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFB83218EA
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54A60218EA
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549631497;
-	bh=6WMapUN72qPW3G8nJ2fad4lOVRwVDvupjNe85n8J2RA=;
+	s=default; t=1549631502;
+	bh=TbsFMaEKtRn+tmJuvFwHZMLcQYEsRfU/n9GJBhtj8LU=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=BNas+Zo2DXLxrm9PF6Qf4suDQygB+DbP/E6DAr+5G/GmIRtB8SSrmD0H7xJPLk6Cc
-	 UcYqKbIDTqX5RVQ3lMQfParxMtq74IhsrPd90W32r1G5GSjss5ZJ5kO96wMYTyJ08F
-	 YWGPVTfAtWipiRigdj/2+T/4OTDzzLa4YywV7jZA=
+	b=Uv20NSgmGHA3Jv5phRPAKTcPXzrg8bn2WmFPSW3I2VK1vjqr26yHbx0vAGs2OkiR7
+	 JQjWDQ3sT/UfoVbQ3uO85PSCewQbu8RP8AqvhS8ikC8A18eAXFWdKjnEychWCPLmDl
+	 U0mfrSxlJOZvqsc8a3Eexzl+Roz0lGyY9qq6Z1v4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfBHNLf (ORCPT
+        id S1727812AbfBHNLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:11:35 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38510 "EHLO
+        Fri, 8 Feb 2019 08:11:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38544 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBHNLc (ORCPT
+        with ESMTP id S1727703AbfBHNLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:11:32 -0500
+        Fri, 8 Feb 2019 08:11:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=U1DSxI99NqnFxgHoTohvWUmfdJSYAKQ0LmnI1J0eDoE=; b=ufQhNqssaYZS
-        DvAm8y5NOFmMcWU5zOxMA1oguXhgbtFCTtJNW9uXzZ56dd4DJ8L1EDFGtfnlmLo21zhuSst2ky3Ff
-        K/Q1akeXpuqtAXR94RlPBTHwoJ7lAWo7Xj/mpPETvfLlYVoIL7KHuTvCYm82OentEpeUAlyvh0bVK
-        RSVIg=;
+        List-Archive; bh=/mTyLhy7ZUtDzrQsC6bemJjkeq5GEHL/3ZqUueosB1w=; b=nLRfHutuaqgy
+        kcLEZN3MDQWO7y0pqH5kz826saMzl8q6xFuIkA6d08LOC6fLJXEWXlgtF8Y7lw7z9kbB9rR8Lj78f
+        08YWym9f9EsMsctoRPAfPOU5pIkQMYJJi6oi7eR8kfo7s6T2CSqeCVxoHRIxFFykuu6DJ+2AhVqld
+        9zzLw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gs5wG-0001KQ-6N; Fri, 08 Feb 2019 13:11:28 +0000
+        id 1gs5wJ-0001KP-Fm; Fri, 08 Feb 2019 13:11:31 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B75BE1127F31; Fri,  8 Feb 2019 13:11:27 +0000 (GMT)
+        id 1DAFD1127F30; Fri,  8 Feb 2019 13:11:26 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: fix device unlinking" to the regulator tree
+Subject: Applied "regulator: rt5033: Constify rt5033_safe_ldo_ops and rt5033_buck_ops" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190208131127.B75BE1127F31@debutante.sirena.org.uk>
-Date:   Fri,  8 Feb 2019 13:11:27 +0000 (GMT)
+Message-Id: <20190208131126.1DAFD1127F30@debutante.sirena.org.uk>
+Date:   Fri,  8 Feb 2019 13:11:26 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: fix device unlinking
+   regulator: rt5033: Constify rt5033_safe_ldo_ops and rt5033_buck_ops
 
 has been applied to the regulator tree at
 
@@ -84,41 +84,39 @@ to this mail.
 Thanks,
 Mark
 
-From 82874ba4c6455ca8a90a8fe59834baa4cd4a1e50 Mon Sep 17 00:00:00 2001
-From: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Date: Fri, 8 Feb 2019 08:41:53 +0100
-Subject: [PATCH] regulator: fix device unlinking
+From dd4cae9ce661d3c6c7643bba2c19200cb7dd5339 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Fri, 8 Feb 2019 20:42:47 +0800
+Subject: [PATCH] regulator: rt5033: Constify rt5033_safe_ldo_ops and
+ rt5033_buck_ops
 
-Device links are refcounted, device_link_remove() has to be called as
-many times as device_link_add().
-
-Signed-off-by: Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/regulator/rt5033-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index b9d7b45c7295..2994ee023b40 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2058,15 +2058,7 @@ static void _regulator_put(struct regulator *regulator)
- 	debugfs_remove_recursive(regulator->debugfs);
+diff --git a/drivers/regulator/rt5033-regulator.c b/drivers/regulator/rt5033-regulator.c
+index 96d2c18e051a..639cbadc044a 100644
+--- a/drivers/regulator/rt5033-regulator.c
++++ b/drivers/regulator/rt5033-regulator.c
+@@ -16,14 +16,14 @@
+ #include <linux/mfd/rt5033-private.h>
+ #include <linux/regulator/of_regulator.h>
  
- 	if (regulator->dev) {
--		int count = 0;
--		struct regulator *r;
--
--		list_for_each_entry(r, &rdev->consumer_list, list)
--			if (r->dev == regulator->dev)
--				count++;
--
--		if (count == 1)
--			device_link_remove(regulator->dev, &rdev->dev);
-+		device_link_remove(regulator->dev, &rdev->dev);
+-static struct regulator_ops rt5033_safe_ldo_ops = {
++static const struct regulator_ops rt5033_safe_ldo_ops = {
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
+ 	.list_voltage		= regulator_list_voltage_linear,
+ };
  
- 		/* remove any sysfs entries */
- 		sysfs_remove_link(&rdev->dev.kobj, regulator->supply_name);
+-static struct regulator_ops rt5033_buck_ops = {
++static const struct regulator_ops rt5033_buck_ops = {
+ 	.is_enabled		= regulator_is_enabled_regmap,
+ 	.enable			= regulator_enable_regmap,
+ 	.disable		= regulator_disable_regmap,
 -- 
 2.20.1
 
