@@ -2,194 +2,200 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE90FC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED596C282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B609820863
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B31A42146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:43:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pndu+8wn"
+	dkim=pass (1024-bit key) header.d=MicronCorp.onmicrosoft.com header.i=@MicronCorp.onmicrosoft.com header.b="N8KAeQD0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfBHSlY (ORCPT
+        id S1727824AbfBHSnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:41:24 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:36776 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfBHSlY (ORCPT
+        Fri, 8 Feb 2019 13:43:40 -0500
+Received: from mailout.micron.com ([137.201.242.129]:30588 "EHLO
+        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfBHSnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:41:24 -0500
-Received: by mail-vk1-f196.google.com with SMTP id m13so1057165vkk.3;
-        Fri, 08 Feb 2019 10:41:23 -0800 (PST)
+        Fri, 8 Feb 2019 13:43:40 -0500
+Received: from mail.micron.com (bowex17h.micron.com [137.201.20.32])
+        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id x18IhSt8023636;
+        Fri, 8 Feb 2019 11:43:28 -0700
+Received: from BOWEX36H.micron.com (137.201.84.179) by BOWEX17H.micron.com
+ (137.201.20.32) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Fri, 8 Feb
+ 2019 11:43:28 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (137.201.84.23)
+ by BOWEX36H.micron.com (137.201.84.179) with Microsoft SMTP Server (TLS) id
+ 15.0.1365.1 via Frontend Transport; Fri, 8 Feb 2019 11:43:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Le/DZACXPOlmol6khm3F06DRG7ay1idhlfXwfW1ZEMk=;
-        b=pndu+8wnUAdXPKkfLXDiLr/cAPsYrak1QxEtgTgs0dR4+udw2Nc9B4T85/KCdrw74P
-         F8cITFN22VvYVFe/GkLIjwGX4N0ntpGnUEMPWLDdC/r3ai+4514fIlQqmdkr/YjC4nNM
-         UY2rlgMOOslUdx4xdywZisgzWzFYEunky85ePWPNHyBbTqFB+WyiV0fur/8c54nY602N
-         MJ+AgE9ps9nKGAgQ+XgZbV7YwD8dAmzrIQVRhXmDoSNBFjF2h7suC0rMfJ2uhZ9fZCjB
-         mLbUBmqCqdwOLg6rjt5P4hGyAh7EdmJd6XKpb3b2AIn/j28+fSM2feEqje5kYf9Htump
-         3U4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Le/DZACXPOlmol6khm3F06DRG7ay1idhlfXwfW1ZEMk=;
-        b=p+YZmkmjtPXa+YHOw7dJUote3lCIEEY3TJUZae8ULcoBeoC2xkbFgc2HoKMZUgDjWJ
-         e+NfS1M66ImyB5H9A2CtH4Kqb0/oulNY4AjaTMTk5iwfCGm8GCPaEeFMKLe+4rzASK6s
-         2YjHtIInsLBAQZuZdWeQs88Sa2kpdheEgKbks62ccXNO+DEz+g6IoOL4d1PEXnm8F4j4
-         I+NT6ObqozaDh/7gVrKOOAfIhXir9dba/pp68VNUeGFqFpme7ZVEFVZ4QTHDoYhbR/Pz
-         uFEaX/YtwIi1YRO0gfLcXR/QTLAFWic4FANCi/kjXHlCRwShYCE5xObvAIbS+fnyEl9K
-         ZLEg==
-X-Gm-Message-State: AHQUAuaWvIwfUzvT3gbu3Tx8W10zn2UpmbttrhjmDyRoUCbIqAGqcPUQ
-        ZfTc6PhE0eHy69wH0D131wZJ8C+gv+myI22PHr0=
-X-Google-Smtp-Source: AHgI3IYHGr+o0NUKePxeZsehtN/DTNzTxzJ+0D2pG6DtNeEfaZdwhtuqzEjd+Lm/EzvgInoClq3oSe5CKFxCSXqXyT4=
-X-Received: by 2002:a1f:d1c3:: with SMTP id i186mr9345380vkg.51.1549651282971;
- Fri, 08 Feb 2019 10:41:22 -0800 (PST)
+ d=MicronCorp.onmicrosoft.com; s=selector1-micron-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w0F0rx2QylR4ITi6AVSiVJYUDFxsI7ZeEsAczGF4UZc=;
+ b=N8KAeQD0CEzqPuzX9fCq2o1guNFexh0kfiDO0r+rMZeBSPofJ89Wz21D8wLrLOtZz3blAlXY6D+H7yaKsGywegZEZ+kMrbRIGm5MMgCEjRtSqyItXOeAr+Izpt54P+oSm/GrJwsnC5a2V5Ei/GY0fwgnl/RYhG8FBI++8XJqbTY=
+Received: from BYAPR08MB4533.namprd08.prod.outlook.com (52.135.234.15) by
+ BYAPR08MB6104.namprd08.prod.outlook.com (20.178.52.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.20; Fri, 8 Feb 2019 18:43:26 +0000
+Received: from BYAPR08MB4533.namprd08.prod.outlook.com
+ ([fe80::911c:eb84:5e0d:c669]) by BYAPR08MB4533.namprd08.prod.outlook.com
+ ([fe80::911c:eb84:5e0d:c669%3]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
+ 18:43:26 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Boris Brezillon <bbrezillon@kernel.org>
+CC:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "richard@nod.at" <richard@nod.at>
+Subject: RE: [EXT] Re: [PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
+Thread-Topic: [EXT] Re: [PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
+Thread-Index: AdS/uVD1jG3UvCBSRuC2oJ8LRRcc4gAA03cAAAFVpvAAAQltAAACntYgAAFvxgAAAWkB8A==
+Date:   Fri, 8 Feb 2019 18:43:26 +0000
+Message-ID: <BYAPR08MB453327FB53F7DFE50C55C1B4DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
+References: <BYAPR08MB4533C8EA6B775C7514FA7F82DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
+        <298d18cf-094b-d5d0-45d1-39c7b75ba309@microchip.com>
+        <BYAPR08MB45335415CC3690816C1FD603DB690@BYAPR08MB4533.namprd08.prod.outlook.com>
+        <a83a9655-0ce7-da15-ec17-80ef88764e21@microchip.com>
+        <BYAPR08MB4533DB0A7F4E30543750C83FDB690@BYAPR08MB4533.namprd08.prod.outlook.com>
+ <20190208184718.3c488d0d@kernel.org>
+In-Reply-To: <20190208184718.3c488d0d@kernel.org>
+Accept-Language: en-150, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.81.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR08MB6104;6:zEcYamUxx08ggiQwlT+MKgK/mV/RRblTJVIXgA4YaYo8hRvIb8EwpfVFgpvtfuWiWhR8WudFBOOv30DuM+hj+wdk4eMBR31LRxaLqm1+0osU09vsCtTzABJM4ROjBg4CqA3tR5h4urTqtPH4TAj8qRcbhFtju0gThx3yMCh0p0jYXz55QqmL35xhTs2OKXzGfxxbmqdeq3bxO70XMWVuQS8r5y2tdPpIi2zhG2d2m5MRCxBA3AgZXypTY2TLAR/y4PlvgQBp6SPYogqqxOWHFo11dKe9GrFBVBYGvBQ+Z2kabZQvOHtXD1jHwfrpAUBIIfSjGxKlQOIYdGlgMOhZDLYZeLJN0Oh35ulCvI20gjMzb/iWZSh+KWbWjnrAEOE5E3OsCXNldUAdUeckWxncOj9fRcmguXUyy33p+bPMmDK5voJ/OAl1fRHhYCXXBMo1BAgODUYfEJo5EnHhglzcZw==;5:eNPMRWJ1d9hAGs3zsKLBmr6gLbjP9xhA7pYHaFyN0zbEKeft9BUdhccMQtEPlBov7Y2oG5hZcbaQvIamhcl/4P6vlWY65VDGD6dTteeNUBmyTnU7b17jnK5V++vJCxj7eEJodpLC5KywhkiAqMgS/JuZkZIjBI3tXcHJ2+2uY5BqmKkOwnmcbaGuvbh/sAM1DUOyJMr71GQZ1xgST8AZ8Q==;7:80X8JBMHQVsfix1UnX1aqlpronDkPw0aXxU1GMYka7Tu7J5xpeUMpoum2h5lPtkfTs1xSJQC3eH3UHmno+xM6ffoqW1ps9cV+DnQsHD0UBpHW6wglCX1VHgywukox9JbLzaHCJ/5sSsciAxldg1ncQ==
+x-ms-office365-filtering-correlation-id: 7387386b-cbc8-4e91-a164-08d68df54ff0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB6104;
+x-ms-traffictypediagnostic: BYAPR08MB6104:|BYAPR08MB6104:
+x-microsoft-antispam-prvs: <BYAPR08MB610460A918BF7AC59DCDA552DB690@BYAPR08MB6104.namprd08.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(366004)(346002)(376002)(189003)(199004)(71200400001)(6436002)(26005)(86362001)(6916009)(99286004)(6246003)(7696005)(76176011)(446003)(4326008)(8936002)(55016002)(66066001)(476003)(25786009)(14444005)(54906003)(316002)(53936002)(9686003)(97736004)(71190400001)(229853002)(256004)(68736007)(3846002)(478600001)(6506007)(6116002)(102836004)(93886005)(2906002)(81156014)(74316002)(7736002)(106356001)(305945005)(81166006)(486006)(186003)(8676002)(33656002)(105586002)(11346002)(14454004)(55236004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR08MB6104;H:BYAPR08MB4533.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7nvIwH9WeLOVKYQHOwn5YL/x8nzfWd2j7TByciTKJpZH77UKzv1Z2hFJhVsuC46XIgt3Rv2AnXFBtEwQDzZ/ohRIlfy7pyXBwCTeuvNaGJhCnzVV+rMQKNgwKQlV4jY12e/gwkwrXp07Y3xCRj1O74NDLh4MP6bx2PMN/9/60xT0pwJSt3GCH1C0yKpXjU9HWPnLf3z8tzJqnJC9PZiRYfJfDC5lXhdzYhR1tNh8GhZD6+teQ2+UwsfqrXQi31TZrEOQESZZQFLAsTVdkymxguPZt/ReObrQmOhs+xlSWocYNeiXJU9WscVaEJ6wmNeqkADmvBWiH6b/Bd/IA+8pvhR7xPzfq/QCniZiYxS+hqzT9UZOVM+j1x0P6GFT+Cag37DjTB6wjc4pH5mTp9fbWmsUx7Z7TQNgY9S2nwZAMWY=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190114191724.29960-1-alamy.liu@gmail.com> <ee3dc963-53f0-e362-caa5-069ce0e6eae7@intel.com>
- <CAJ3kudsgJsZ1KFXdD9Vnfx0GypnEf+ba-D8t+Wy1e8GdLF=U0w@mail.gmail.com>
- <362c073b-d795-4431-f1dd-c203cc606a6f@codeaurora.org> <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
-In-Reply-To: <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
-From:   Alamy Liu <alamy.liu@gmail.com>
-Date:   Fri, 8 Feb 2019 10:41:11 -0800
-Message-ID: <CAJ3kuds-XgrhjiyS8j-5twOHde3NHsGaH5hFqeOm8HLXHi59aA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: cqhci: replace NUM_SLOTS with cq_host->num_slots
-To:     "Asutosh Das (asd)" <asutoshd@codeaurora.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7387386b-cbc8-4e91-a164-08d68df54ff0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 18:43:26.5226
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB6104
+X-OriginatorOrg: micron.com
+X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-24416.005
+X-TM-AS-Result: No--13.683100-0.000000-31
+X-TM-AS-MatchedID: 150567-701837-105250-780014-705178-703283-702050-700648-7
+        03523-700476-706719-851106-700074-187165-711518-701005-701618-702609-700782
+        -701702-707788-706249-121113-701305-703355-139010-700075-700107-701928-7014
+        61-705388-703747-700752-702020-705518-106230-701236-700546-703788-701499-70
+        1471-148004-148007-148020-148050-20043-36048-42000-42003-63
+X-TM-AS-User-Approved-Sender: Yes
+X-TM-AS-User-Blocked-Sender: No
+X-MT-CheckInternalSenderRule: True
+X-Scanned-By: MIMEDefang 2.78 on 137.201.130.65
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IP I'm using has fixed 32 slots for CQ once CQE is enabled in RTL.
-There is no other RO register to say the slot number & which slot that
-DCMD would use.
+Hi,Boris=20
+I sent three times, seems last time is successful. would you check that is =
+correct?
 
-I agree that most host controller would have 32 slots for CQ, and use
-the last one for DCMD if enabled (easier design & save gates
-count/size). (15th for DCMD if there were 16 slots in CQ, ...etc). It
-also doesn't make sense to use a slot in the middle of slots for DCMD,
-Both the code (both S.W. & H.W.) would become more complicated.
-Although I don't see it is defined somewhere, I believe that every
-designer would follow.
-(H.W.: increasing gate count -> increasing die size -> increase $;
-complicated design -> higher chance to have bug/error).
-(H.W.: SDHC cq_depth: longer cq_depth -> more memory -> more $. The
-decision would be the trade off between $ & performance. Also, the
-SDHC is not necessary to be used in Cortex-A/Linux. Thus, 16/8
-cq_depth is possible, although I don't know if there is one existed
-out there)
+git send-email 0001-mtd-spi-nor-Fix-wrong-abbreviation-HWCPAS.patch
+0001-mtd-spi-nor-Fix-wrong-abbreviation-HWCPAS.patch
+To whom should the emails be sent (if anyone)? linux-mtd@lists.infradead.or=
+g,Tudor.Ambarus@microchip.com,bbrezillon@kernel.org,linux-kernel@vger.kerne=
+l.org
+Message-ID to be used as In-Reply-To for the first email (if any)?=20
+(mbox) Adding cc: Bean Huo <beanhuo@micron.com> from line 'From: Bean Huo <=
+beanhuo@micron.com>'
+(body) Adding cc: Bean Huo <beanhuo@micron.com> from line 'Signed-off-by: B=
+ean Huo <beanhuo@micron.com>'
 
-Another thinking: If all cq_depth is fixed to 32, the mmc driver core
-doesn't even have to detect the cq_depth and eventually choose the
-small one between HC & eMMC (queue.c::mmc_init_queue)
+From: Bean Huo <beanhuo@micron.com>
+To: linux-mtd@lists.infradead.org,
+        Tudor.Ambarus@microchip.com,
+        bbrezillon@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Bean Huo <beanhuo@micron.com>
+Subject: [PATCH] mtd: spi-nor: Fix wrong abbreviation HWCPAS
+Date: Fri,  8 Feb 2019 18:00:12 +0000
+Message-Id: <20190208180012.25852-1-beanhuo@micron.com>
+X-Mailer: git-send-email 2.17.1
 
-Best Regards
+    The Cc list above has been expanded by additional
+    addresses found in the patch commit message. By default
+    send-email prompts before sending whenever this occurs.
+    This behavior is controlled by the sendemail.confirm
+    configuration setting.
 
+    For additional information, run 'git send-email --help'.
+    To retain the current behavior, but squelch this message,
+    run 'git config --global sendemail.confirm auto'.
 
-On Fri, Feb 8, 2019 at 2:34 AM Asutosh Das (asd)
-<asutoshd@codeaurora.org> wrote:
+Send this email? ([y]es|[n]o|[q]uit|[a]ll): y
+OK. Log says:
+Sendmail: /usr/sbin/sendmail -i linux-mtd@lists.infradead.org Tudor.Ambarus=
+@microchip.com bbrezillon@kernel.org linux-kernel@vger.kernel.org beanhuo@m=
+icron.com
+From: Bean Huo <beanhuo@micron.com>
+To: linux-mtd@lists.infradead.org,
+        Tudor.Ambarus@microchip.com,
+        bbrezillon@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Bean Huo <beanhuo@micron.com>
+Subject: [RESEND PATCH v2] mtd: spi-nor: Fix wrong abbreviation HWCPAS
+Date: Fri,  8 Feb 2019 18:00:12 +0000
+Message-Id: <20190208180012.25852-1-beanhuo@micron.com>
+X-Mailer: git-send-email 2.17.1
+
+Result: OK
+
 >
-> On 2/8/2019 8:07 AM, Ritesh Harjani wrote:
-> > Hi Alamy,
-> >
-> > On 2/8/2019 1:00 AM, Alamy Liu wrote:
-> >> It says in B.2.1 in the JESD84-B51.pdf (I don't have JESD84-B51A.pdf):
-> >>
-> >>     /The TDL is located in a memory location known to the CQE, and is
-> >>     comprised of up to 32 fixed-size slots. Each slot is comprised of
-> >>     one Task Descriptor and one Transfer Descriptor./
-> >>
-> >>
-> >> So if the IP has 16 slots, it should still meet the specification.
-> >> Then the configuration could be moved to DTS, maybe:
-> >>
-> >>     cqhci-slotnum = <16>;
-> >>
-> >>     cqhci-dcmd-slotno = <15>;
-> >>
-> > Does your IP defines this as 16 slots & DCMD slot to be 15?
-> > Because if there is a deviation then IP may also define num_slots by
-> > using some reserved registers.
-> > Also in JESD84-B51.pdf, specific slot no. is used extensively for
-> > defining policies(like in case of DCMD & CQCFG), so in that case
-> > defining via DT may not be that helpful.
-> > Unless there is no other way in your IP to determine the num_slots
-> > except going via DT?
-> >
-> > Let others also provide an opinion here.
-> >
-> > Regards
-> > Ritesh
-> >
-> >
-> >>
-> >> Please comment.
-> >>
-> >> Regards,
-> >> Alamy
-> >>
-> >>
-> >>
-> >> On Thu, Jan 31, 2019 at 1:34 AM Adrian Hunter <adrian.hunter@intel.com
-> >> <mailto:adrian.hunter@intel.com>> wrote:
-> >>
-> >>     On 14/01/19 9:17 PM, Alamy Liu wrote:
-> >>     > Prevent to use fixed value (NUM_SLOTS) after it had been determined
-> >>     > and saved in a variable (cq_host->num_slots).
-> >>
-> >>     num_slots is always 32 (i.e. NUM_SLOTS) so why not go the other
-> >>     way and get
-> >>     rid of num_slots and just use NUM_SLOTS?
-> >>
-> >>     >
-> >>     > Signed-off-by: Alamy Liu <alamy.liu@gmail.com
-> >>     <mailto:alamy.liu@gmail.com>>
-> >>     > ---
-> >>     >  drivers/mmc/host/cqhci.c | 2 +-
-> >>     >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>     >
-> >>     > diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-> >>     > index 159270e947..26d63594b7 100644
-> >>     > --- a/drivers/mmc/host/cqhci.c
-> >>     > +++ b/drivers/mmc/host/cqhci.c
-> >>     > @@ -699,7 +699,7 @@ static void cqhci_error_irq(struct mmc_host
-> >>     *mmc, u32 status, int cmd_error,
-> >>     >                * The only way to guarantee forward progress is
-> >>     to mark at
-> >>     >                * least one task in error, so if none is
-> >>     indicated, pick one.
-> >>     >                */
-> >>     > -             for (tag = 0; tag < NUM_SLOTS; tag++) {
-> >>     > +             for (tag = 0; tag < cq_host->num_slots; tag++) {
-> >>     >                       slot = &cq_host->slot[tag];
-> >>     >                       if (!slot->mrq)
-> >>     >                               continue;
-> >>     >
-> >>
-> Is it worth exploring to tie up the TDL memory allocations with the
-> queue-depth? Because the queue-depth may vary with vendor; in most host
-> controllers the slot size is 32. And since memory allocations are done
-> on the basis of host slot size there's unused slots in the case of card
-> advertising less than 32 queue-depth.
-> The tricky part would be the DCMD handling though.
+>Hi Bean,
 >
-> In the IP in question, what slot is assigned to DCMD?
+>On Fri, 8 Feb 2019 17:13:52 +0000
+>"Bean Huo (beanhuo)" <beanhuo@micron.com> wrote:
 >
+>> Hi, Tutor
+>> Thanks. unfortunately, it doesn't work on my side. Problem is on our ema=
+il
+>server side, not my local setting.
+>> I followed your configuration, then git-email failed.
 >
-> --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-> Linux Foundation Collaborative Project
+>Can you paste the output of git send-email and the [sendemail] section of
+>your .gitconfig so we can check.
+>It shouldn't fail, really, because the server shouldn't check the body sec=
+tion of
+>your email, and this is where the extra
+>
+>	From: First Last <foo@bar.com>
+>
+>line is placed.
+>
+>> Please just change my S-o-b to 'Bean Huo (beanhuo) <beanhuo@micron.com>'
+>in my patch to please checkpacth.pl.  It is not huge change.
+>
+>It's not a problem when an drive-by contributor posts a patch, but if you =
+don't
+>patch it that means we'll have to do it manually every time we apply one o=
+f your
+>patch, so please find a solution.
+>
+>Thanks,
+>
+>Boris
