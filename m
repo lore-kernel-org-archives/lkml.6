@@ -2,118 +2,121 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DF9C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EC1C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A33217D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E05F217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbfBHVUd (ORCPT
+        id S1727274AbfBHVVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:20:33 -0500
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:2430 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727083AbfBHVUc (ORCPT
+        Fri, 8 Feb 2019 16:21:08 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50128 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727045AbfBHVVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:20:32 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 09 Feb 2019 07:50:28 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gsDZS-0006P0-Be; Sat, 09 Feb 2019 08:20:26 +1100
-Date:   Sat, 9 Feb 2019 08:20:26 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190208212026.GB20493@dastard>
-References: <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
- <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard>
- <20190208111028.GD6353@quack2.suse.cz>
+        Fri, 8 Feb 2019 16:21:08 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18LDbnd036618
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 16:21:07 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qheny788c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:21:07 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 21:21:05 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 21:21:03 -0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18LL29m23593018
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 21:21:02 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4973AAC059;
+        Fri,  8 Feb 2019 21:21:02 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 37D84AC060;
+        Fri,  8 Feb 2019 21:21:02 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 21:21:02 +0000 (GMT)
+Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Safford, David (GE Global Research)" <david.safford@ge.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+ <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+ <20190118150011.GF4080@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 16:21:02 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208111028.GD6353@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190118150011.GF4080@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020821-0072-0000-0000-000003F75823
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010560; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158244; UDB=6.00604331; IPR=6.00938777;
+ MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 21:21:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020821-0073-0000-0000-00004B1C9FF0
+Message-Id: <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=868 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 12:10:28PM +0100, Jan Kara wrote:
-> On Fri 08-02-19 15:43:02, Dave Chinner wrote:
-> > On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
-> > > One approach that may be a clean way to solve this:
-> > > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
-> > >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
-> > >    on the longterm pinned range until the long term pin is removed.
-> > 
-> > So, ummm, how do we do block allocation then, which is done on
-> > demand during writes?
-> > 
-> > IOWs, this requires the application to set up the file in the
-> > correct state for the filesystem to lock it down so somebody else
-> > can write to it.  That means the file can't be sparse, it can't be
-> > preallocated (i.e. can't contain unwritten extents), it must have zeroes
-> > written to it's full size before being shared because otherwise it
-> > exposes stale data to the remote client (secure sites are going to
-> > love that!), they can't be extended, etc.
-> > 
-> > IOWs, once the file is prepped and leased out for RDMA, it becomes
-> > an immutable for the purposes of local access.
-> > 
-> > Which, essentially we can already do. Prep the file, map it
-> > read/write, mark it immutable, then pin it via the longterm gup
-> > interface which can do the necessary checks.
-> 
-> Hum, and what will you do if the immutable file that is target for RDMA
-> will be a source of reflink?
+On 1/18/19 10:00 AM, Jarkko Sakkinen wrote:
+> On Fri, Jan 11, 2019 at 08:28:00PM +0000, Safford, David (GE Global Research) wrote:
+>> You might mention that this is an important feature, as on at least some
+>> systems, ppi function 23 is the only way to enable/disable PCR banks.
+>>
+>> I have tested this patch set on my HP Spectre laptop, and I am finally
+>> able to turn the sha-1 bank on and off. Much appreciated!
+>>
+>> Tested-by: David Safford <david.safford@ge.com>
+> Great thanks David.
 
-I think we'd have to disallow it. reflink does actually change the
-source inode on XFS (adds an inode flag to say it has shared
-extents)...
 
-Similarly, we'd have to make sure the inode is pinned in memory
-but the gup_longterm operation, not jus thave it's pages pinned...
+While we are at it and for the grand finale of the day :-)
 
-> That seems to be currently allowed for
-> immutable files but RDMA store would be effectively corrupting the data of
-> the target inode. But we could treat it similarly as swapfiles - those also
-> have to deal with writes to blocks beyond filesystem control. In fact the
-> similarity seems to be quite large there. What do you think?
++All you people, keep yourself alive!
++Keep yourself alive!
++Keep yourself alive!
++C'mon, give me your reviewed's
++to keep me satisfied!
++Give me your signed-off's                       (1)
++to keep me satisfied!
++Keep yourself alive!
++A few test-by's will keep me satisfied!
++Keep yourself alive!
++Check-in!                                                (2)
++
++[In the style of Queen]
 
-Yes, swapfiles are probably a better analogy as the mm subsystem
-pins them, maps them checking the layout is appropriate (i.e. no
-holes) and then writes straight through them without the filesystem
-being aware of the IO....
 
-Cheers,
+Jarrko, do (1) and (2) to keep me satisfied :-)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
