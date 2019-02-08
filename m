@@ -2,181 +2,159 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E54C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE19C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847412081B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D604720821
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:53:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARkAVp7k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfBHSvX (ORCPT
+        id S1727013AbfBHSxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:51:23 -0500
-Received: from mga12.intel.com ([192.55.52.136]:32653 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726020AbfBHSvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:51:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 10:51:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="317456904"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Feb 2019 10:51:22 -0800
-Received: from orsmsx106.amr.corp.intel.com ([169.254.1.180]) by
- ORSMSX104.amr.corp.intel.com ([169.254.4.6]) with mapi id 14.03.0415.000;
- Fri, 8 Feb 2019 10:51:21 -0800
-From:   "Yu, Fenghua" <fenghua.yu@intel.com>
-To:     Andrew Cooper <andrew.cooper3@citrix.com>,
-        Andy Lutomirski <luto@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "Ingo Molnar" <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: RE: [PATCH v2 3/3] x86/umwait: Control umwait maximum time
-Thread-Topic: [PATCH v2 3/3] x86/umwait: Control umwait maximum time
-Thread-Index: AQHUreHhBUgO7GlyZkW7QVyIVWj7GaWzGaiAgAX4zoCAHU4mwA==
-Date:   Fri, 8 Feb 2019 18:51:20 +0000
-Message-ID: <3E5A0FA7E9CA944F9D5414FEC6C712209D86201B@ORSMSX106.amr.corp.intel.com>
-References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
- <1547673522-226408-4-git-send-email-fenghua.yu@intel.com>
- <CALCETrVenEpKH5O=Z6J+faWTcdZpa1xx4-dYwdWu1OSEDyiUWw@mail.gmail.com>
- <ae8d5a07-9fbc-7c76-fa88-ff2718696686@citrix.com>
-In-Reply-To: <ae8d5a07-9fbc-7c76-fa88-ff2718696686@citrix.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDhiOTEzMDMtNzIyNi00NDQ5LWE4MzYtNjllZGE3YzdjZDhmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiR0JOUWloVmF0T1ZxVjFLVXFZSzZSTFwvUno4Nnc2VDZ1alJ3UVpjeE44bjJLSnJ3UG9ISGFNZXIrXC81Y3Vhb1RcLyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 8 Feb 2019 13:53:07 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39416 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBHSxG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 13:53:06 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f16so4777200wmh.4;
+        Fri, 08 Feb 2019 10:53:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mW06J15iA8RJWyR956RTrFHmWmZ+yugmLE5+mhSHrQ4=;
+        b=ARkAVp7kJ1mi1nC70zsKUZ4hO26KTlmKEnsBBNt7d4Pew653glwzG5Y8Z7BaLmhPPp
+         6FWO9oVEzwBW57u640kbRczjxWrAPjdR1Ou6mlTB8QkGwJjPTQlMELVTfAtzuo8mJE1J
+         i1S+MtXzaE4/jTHvbzRtE1YZvF+/xpEfNQFhHNmbwtY2SY/DxYKVUpjNq2LmKLvkGInI
+         /2BFdRZ83642H0qNwT7qWOo++bmnazfFsFiKeprIsBy9u0pCFqYoFWgrNikhEj6xjIbj
+         +aq1RF8KAzK7I6A5iTzjblrUgwL/m+ICCMs/d9fQU3JZzENR1aaAlsou3IOHWGOKiWB6
+         nQAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mW06J15iA8RJWyR956RTrFHmWmZ+yugmLE5+mhSHrQ4=;
+        b=D7UpqqEj1iLvUyXuGp9Hp7X4dJzUe3rw3n+t+Qo+WlKOyVzAEH4whJ+i93V+5BtT89
+         2d9mUl8jyeC/yyPd+jHd5Ke/jRF5X35AwrxK93MwtfNDOSu4JSSutGy2msg7N8cKibB4
+         8VfcRKXcP34su89CjnrMuDfgWELKmdRwlefZ6k94qt7BMEty0bCW9KYbdfrPgQMzfDSq
+         D9Hw6izJDVF+/lsYMm15P9yrzYWG4jQVg0P6GyzI7+xJ6xpCLWHBXL4FGjCCysROUDwS
+         H+eahQ9uqQO5NcxmYqIpsbXCJjAt2FYF3Nn8FS+LHzUZ5rYZNQAfAeqbohsAYDh0xGJh
+         i8IA==
+X-Gm-Message-State: AHQUAua2E7PAaMSmXl9JvDD3D5gKVUzSEHDXTx9FjRK7ySSoeACwau76
+        tWBnkHjPwHTkDwAyA8WqutNE2rK9
+X-Google-Smtp-Source: AHgI3Ia5oSLL55n5dyEpzW4iJfLqYYSnztLYiw/jxSVr0IYhCjGYlkPOTchC0/LhOwpig8PqSzQNHg==
+X-Received: by 2002:adf:d0c9:: with SMTP id z9mr17043725wrh.317.1549651982882;
+        Fri, 08 Feb 2019 10:53:02 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bf1:e200:7cef:f5e9:d82c:bb62? (p200300EA8BF1E2007CEFF5E9D82CBB62.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:7cef:f5e9:d82c:bb62])
+        by smtp.googlemail.com with ESMTPSA id 65sm8405879wrb.62.2019.02.08.10.53.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 10:53:02 -0800 (PST)
+Subject: Re: Linux 5.0 regression: rtl8169 / kernel BUG at
+ lib/dynamic_queue_limits.c:27!
+To:     Sander Eikelenboom <linux@eikelenboom.it>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+References: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <0f605e50-56fe-06b5-9b66-6aed89a608ce@gmail.com>
+Date:   Fri, 8 Feb 2019 19:52:55 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
+In-Reply-To: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBBbmRyZXcgQ29vcGVyIFttYWlsdG86YW5kcmV3LmNvb3BlcjNAY2l0cml4LmNvbV0N
-Cj4gT24gMTcvMDEvMjAxOSAwMDowMCwgQW5keSBMdXRvbWlyc2tpIHdyb3RlOg0KPiA+IE9uIFdl
-ZCwgSmFuIDE2LCAyMDE5IGF0IDE6MjQgUE0gRmVuZ2h1YSBZdSA8ZmVuZ2h1YS55dUBpbnRlbC5j
-b20+DQo+IHdyb3RlOg0KPiA+PiBJQTMyX1VNV0FJVF9DT05UUk9MWzMxOjJdIGRldGVybWluZXMg
-dGhlIG1heGltdW0gdGltZSBpbiBUU0MtDQo+IHF1YW50YQ0KPiA+PiB0aGF0IHByb2Nlc3NvciBj
-YW4gc3RheSBpbiBDMC4xIG9yIEMwLjIuDQo+ID4+DQo+ID4+IFRoZSBtYXhpbXVtIHRpbWUgdmFs
-dWUgaW4gSUEzMl9VTVdBSVRfQ09OVFJPTFszMS0yXSBpcyBzZXQgYXMgemVybw0KPiA+PiB3aGlj
-aCBtZWFucyB0aGVyZSBpcyBubyBnbG9iYWwgdGltZSBsaW1pdCBmb3IgVU1XQUlUIGFuZCBUUEFV
-U0UNCj4gaW5zdHJ1Y3Rpb25zLg0KPiA+PiBFYWNoIHByb2Nlc3Mgc2V0cyBpdHMgb3duIHVtd2Fp
-dCBtYXhpbXVtIHRpbWUgYXMgdGhlIGluc3RydWN0aW9ucw0KPiBvcGVyYW5kLg0KPiA+Pg0KPiA+
-PiBVc2VyIGNhbiBzcGVjaWZ5IGdsb2JhbCB1bXdhaXQgbWF4aW11bSB0aW1lIHRocm91Z2ggaW50
-ZXJmYWNlOg0KPiA+PiAvc3lzL2RldmljZXMvc3lzdGVtL2NwdS91bXdhaXRfY29udHJvbC91bXdh
-aXRfbWF4X3RpbWUNCj4gPj4gVGhlIHZhbHVlIGluIHRoZSBpbnRlcmZhY2UgaXMgaW4gZGVjaW1h
-bCBpbiBUU0MtcXVhbnRhLiBCaXRzWzE6MF0gYXJlDQo+ID4+IGNsZWFyZWQgd2hlbiB0aGUgdmFs
-dWUgaXMgc3RvcmVkLg0KPiA+Pg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBGZW5naHVhIFl1IDxmZW5n
-aHVhLnl1QGludGVsLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9t
-c3ItaW5kZXguaCB8ICAyICsrDQo+ID4+ICBhcmNoL3g4Ni9wb3dlci91bXdhaXQuYyAgICAgICAg
-ICB8IDQyDQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystDQo+ID4+ICAyIGZpbGVz
-IGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPj4NCj4gPj4gZGlm
-ZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL21zci1pbmRleC5oDQo+ID4+IGIvYXJjaC94
-ODYvaW5jbHVkZS9hc20vbXNyLWluZGV4LmgNCj4gPj4gaW5kZXggYjU2YmZlY2FlMGRlLi40MmI5
-MTA0ZmMxNWIgMTAwNjQ0DQo+ID4+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL21zci1pbmRl
-eC5oDQo+ID4+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL21zci1pbmRleC5oDQo+ID4+IEBA
-IC02Miw2ICs2Miw4IEBADQo+ID4+ICAjZGVmaW5lIE1TUl9JQTMyX1VNV0FJVF9DT05UUk9MICAg
-ICAgICAgICAgICAgIDB4ZTENCj4gPj4gICNkZWZpbmUgVU1XQUlUX0NPTlRST0xfQzAyX0JJVCAg
-ICAgICAgIDB4MA0KPiA+PiAgI2RlZmluZSBVTVdBSVRfQ09OVFJPTF9DMDJfTUFTSyAgICAgICAg
-ICAgICAgICAweDAwMDAwMDAxDQo+ID4+ICsjZGVmaW5lIFVNV0FJVF9DT05UUk9MX01BWF9USU1F
-X0JJVCAgICAweDINCj4gPj4gKyNkZWZpbmUgVU1XQUlUX0NPTlRST0xfTUFYX1RJTUVfTUFTSyAg
-IDB4ZmZmZmZmZmMNCj4gPj4NCj4gPj4gICNkZWZpbmUgTVNSX1BLR19DU1RfQ09ORklHX0NPTlRS
-T0wgICAgIDB4MDAwMDAwZTINCj4gPj4gICNkZWZpbmUgTkhNX0MzX0FVVE9fREVNT1RFICAgICAg
-ICAgICAgICgxVUwgPDwgMjUpDQo+ID4+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9wb3dlci91bXdh
-aXQuYyBiL2FyY2gveDg2L3Bvd2VyL3Vtd2FpdC5jIGluZGV4DQo+ID4+IDk1YjM4NjdhYWMxZS4u
-NGExYTUwN2QzYmI3IDEwMDY0NA0KPiA+PiAtLS0gYS9hcmNoL3g4Ni9wb3dlci91bXdhaXQuYw0K
-PiA+PiArKysgYi9hcmNoL3g4Ni9wb3dlci91bXdhaXQuYw0KPiA+PiBAQCAtMTAsNiArMTAsNyBA
-QA0KPiA+PiAgI2luY2x1ZGUgPGFzbS9tc3IuaD4NCj4gPj4NCj4gPj4gIHN0YXRpYyBpbnQgdW13
-YWl0X2VuYWJsZV9jMF8yID0gMTsgLyogMDogZGlzYWJsZSBDMC4yLiAxOiBlbmFibGUNCj4gPj4g
-QzAuMi4gKi8NCj4gPj4gK3N0YXRpYyB1MzIgdW13YWl0X21heF90aW1lOyAvKiBJbiBUU0MtcXVh
-bnRhLiBPbmx5IGJpdHMgWzMxOjJdIGFyZQ0KPiA+PiArdXNlZC4gKi8NCj4gPj4gIHN0YXRpYyBE
-RUZJTkVfTVVURVgodW13YWl0X2xvY2spOw0KPiA+Pg0KPiA+PiAgLyogUmV0dXJuIHZhbHVlIHRo
-YXQgd2lsbCBiZSB1c2VkIHRvIHNldCB1bXdhaXQgY29udHJvbCBNU1IgKi8gQEANCj4gPj4gLTIw
-LDcgKzIxLDggQEAgc3RhdGljIGlubGluZSB1MzIgdW13YWl0X2NvbnRyb2xfdmFsKHZvaWQpDQo+
-ID4+ICAgICAgICAgICogV2hlbiBiaXQgMCBpcyAxLCBDMC4yIGlzIGRpc2FibGVkLiBPdGhlcndp
-c2UsIEMwLjIgaXMgZW5hYmxlZC4NCj4gPj4gICAgICAgICAgKiBTbyB2YWx1ZSBpbiBiaXQgMCBp
-cyBvcHBvc2l0ZSBvZiB1bXdhaXRfZW5hYmxlX2MwXzIuDQo+ID4+ICAgICAgICAgICovDQo+ID4+
-IC0gICAgICAgcmV0dXJuIH51bXdhaXRfZW5hYmxlX2MwXzIgJiBVTVdBSVRfQ09OVFJPTF9DMDJf
-TUFTSzsNCj4gPj4gKyAgICAgICByZXR1cm4gKH51bXdhaXRfZW5hYmxlX2MwXzIgJiBVTVdBSVRf
-Q09OVFJPTF9DMDJfTUFTSykgfA0KPiA+PiArICAgICAgICAgICAgICB1bXdhaXRfbWF4X3RpbWU7
-DQo+ID4+ICB9DQo+ID4+DQo+ID4+ICBzdGF0aWMgc3NpemVfdCB1bXdhaXRfZW5hYmxlX2MwXzJf
-c2hvdyhzdHJ1Y3QgZGV2aWNlICpkZXYsIEBAIC02MSw4DQo+ID4+ICs2Myw0NiBAQCBzdGF0aWMg
-c3NpemVfdCB1bXdhaXRfZW5hYmxlX2MwXzJfc3RvcmUoc3RydWN0IGRldmljZSAqZGV2LA0KPiA+
-Pg0KPiA+PiAgc3RhdGljIERFVklDRV9BVFRSX1JXKHVtd2FpdF9lbmFibGVfYzBfMik7DQo+ID4+
-DQo+ID4+ICtzdGF0aWMgc3NpemVfdCB1bXdhaXRfbWF4X3RpbWVfc2hvdyhzdHJ1Y3QgZGV2aWNl
-ICprb2JqLA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
-ZGV2aWNlX2F0dHJpYnV0ZSAqYXR0ciwNCj4gPj4gK2NoYXIgKmJ1Zikgew0KPiA+PiArICAgICAg
-IHJldHVybiBzcHJpbnRmKGJ1ZiwgIiV1XG4iLCB1bXdhaXRfbWF4X3RpbWUpOyB9DQo+ID4+ICsN
-Cj4gPj4gK3N0YXRpYyBzc2l6ZV90IHVtd2FpdF9tYXhfdGltZV9zdG9yZShzdHJ1Y3QgZGV2aWNl
-ICprb2JqLA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0
-IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBjb25zdCBjaGFyICpidWYsIHNpemVfdCBjb3VudCkgew0KPiA+PiArICAgICAg
-IHUzMiBtc3JfdmFsLCBtYXhfdGltZTsNCj4gPj4gKyAgICAgICBpbnQgY3B1LCByZXQ7DQo+ID4+
-ICsNCj4gPj4gKyAgICAgICByZXQgPSBrc3RydG91MzIoYnVmLCAxMCwgJm1heF90aW1lKTsNCj4g
-Pj4gKyAgICAgICBpZiAocmV0KQ0KPiA+PiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4g
-Pj4gKw0KPiA+PiArICAgICAgIG11dGV4X2xvY2soJnVtd2FpdF9sb2NrKTsNCj4gPj4gKw0KPiA+
-PiArICAgICAgIC8qIE9ubHkgZ2V0IG1heCB0aW1lIHZhbHVlIGZyb20gYml0cyBbMzE6Ml0gKi8N
-Cj4gPj4gKyAgICAgICBtYXhfdGltZSAmPSBVTVdBSVRfQ09OVFJPTF9NQVhfVElNRV9NQVNLOw0K
-PiA+PiArICAgICAgIC8qIFVwZGF0ZSB0aGUgbWF4IHRpbWUgdmFsdWUgaW4gbWVtb3J5ICovDQo+
-ID4+ICsgICAgICAgdW13YWl0X21heF90aW1lID0gbWF4X3RpbWU7DQo+ID4+ICsgICAgICAgbXNy
-X3ZhbCA9IHVtd2FpdF9jb250cm9sX3ZhbCgpOw0KPiA+PiArICAgICAgIGdldF9vbmxpbmVfY3B1
-cygpOw0KPiA+PiArICAgICAgIC8qIEFsbCBDUFVzIGhhdmUgc2FtZSB1bXdhaXQgbWF4IHRpbWUg
-Ki8NCj4gPj4gKyAgICAgICBmb3JfZWFjaF9vbmxpbmVfY3B1KGNwdSkNCj4gPj4gKyAgICAgICAg
-ICAgICAgIHdybXNyX29uX2NwdShjcHUsIE1TUl9JQTMyX1VNV0FJVF9DT05UUk9MLCBtc3JfdmFs
-LA0KPiAwKTsNCj4gPj4gKyAgICAgICBwdXRfb25saW5lX2NwdXMoKTsNCj4gPj4gKw0KPiA+PiAr
-ICAgICAgIG11dGV4X3VubG9jaygmdW13YWl0X2xvY2spOw0KPiA+PiArDQo+ID4+ICsgICAgICAg
-cmV0dXJuIGNvdW50Ow0KPiA+PiArfQ0KPiA+PiArDQo+ID4+ICtzdGF0aWMgREVWSUNFX0FUVFJf
-UlcodW13YWl0X21heF90aW1lKTsNCj4gPj4gKw0KPiA+PiAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1
-dGUgKnVtd2FpdF9hdHRyc1tdID0gew0KPiA+PiAgICAgICAgICZkZXZfYXR0cl91bXdhaXRfZW5h
-YmxlX2MwXzIuYXR0ciwNCj4gPj4gKyAgICAgICAmZGV2X2F0dHJfdW13YWl0X21heF90aW1lLmF0
-dHIsDQo+ID4+ICAgICAgICAgTlVMTA0KPiA+PiAgfTsNCj4gPiBZb3UgbmVlZCBzb21ldGhpbmcg
-dG8gbWFrZSBzdXJlIHRoYXQgbmV3bHkgb25saW5lZCBDUFVzIGdldCB0aGUgcmlnaHQNCj4gPiB2
-YWx1ZSBpbiB0aGUgTVNSLiAgWW91IGFsc28gbmVlZCB0byBtYWtlIHN1cmUgeW91IHJlc3RvcmUg
-aXQgb24gcmVzdW1lDQo+ID4gZnJvbSBzdXNwZW5kLiAgU29tZXRoaW5nIGxpa2UgY3B1X2luaXQo
-KSBtaWdodCBiZSB0aGUgcmlnaHQgcGxhY2UuDQo+ID4NCj4gPiBBbHNvLCBhcyBwcmV2aW91c2x5
-IGRpc2N1c3NlZCwgSSB0aGluayB3ZSBzaG91bGQgc2V0IHRoZSBkZWZhdWx0IHRvDQo+ID4gc29t
-ZXRoaW5nIHF1aXRlIHNtYWxsLCBtYXliZSAxMDAgbWljcm9zZWNvbmRzLiAgSU1PIHRoZSBnb2Fs
-IGlzIHRvDQo+ID4gcGljayBhIHZhbHVlIHRoYXQgaXMgYSBoaWdoIGVub3VnaCBtdWx0aXBsZSBv
-ZiB0aGUgQzAuMiBlbnRyeStleGl0DQo+ID4gbGF0ZW5jeSB0aGF0IHdlIGdldCBtb3N0IG9mIHRo
-ZSBwb3dlciBhbmQgU01UIHJlc291cmNlIHNhdmluZ3Mgd2hpbGUNCj4gPiBiZWluZyBzbWFsbCBl
-bm91Z2ggdGhhdCBubyBvbmUgdGhpbmdzIHRoYXQgVU1XQUlUIGlzIG1vcmUgdGhhbiBhDQo+ID4g
-Z2xvcmlmaWVkLCBzbGlnaHRseSBpbXByb3ZlZCwgYW5kIGZhciBtb3JlIG1pc2xlYWRpbmcgdmVy
-c2lvbiBvZiBSRVANCj4gPiBOT1AuDQo+ID4NCj4gPiBBbmRyZXcsIHdvdWxkIGhhdmluZyBMaW51
-eCBkZWZhdWx0IHRvIGEgc21hbGwgdmFsdWUgZG8gbXVjaCB0bw0KPiA+IG1pdGlnYXRlIHlvdXIg
-Y29uY2VybnMgdGhhdCBVTVdBSVQgaXMgcHJvYmxlbWF0aWMgZm9yIGh5cGVydmlzb3JzPw0KPiAN
-Cj4gU2FkbHkgbm8gLSBub3QgcmVhbGx5Lg0KPiANCj4gQmVpbmcgYW4gTVNSLCB0aGVyZSBpcyBu
-byB3YXkgdGhlIGd1ZXN0IGtlcm5lbCBpcyBoYXZpbmcgdW5maWx0ZXJlZCBhY2Nlc3MsDQo+IHNv
-IHRoZSBoeXBlcnZpc29yIGNhbiBzZXQgd2hhdGV2ZXIgYm91bmQgaXQgd2lzaGVzLg0KPiANCj4g
-Rm9yIGFueSBub24tdHJpdmlhbCB3YWl0IHBlcmlvZCwgaXQgd291bGQgYmUgYmV0dGVyIGZvciB0
-aGUgc3lzdGVtIGFzIGEgd2hvbGUNCj4gdG8gc3dpdGNoIHRvIGEgZGlmZmVyZW50IHZjcHUsIGJ1
-dCB0aGUgc2VtYW50aWNzIGRvbid0IGFsbG93IGZvcg0KPiB0aGF0LsKgIFNob3J0ZW5pbmcgdGhl
-IHRpbWVvdXQganVzdCByZXN1bHRzIGluIHVzZXJzcGFjZSB0YWtpbmcgb3ZlciBhZ2FpbiwNCj4g
-YW5kIG1vc3QgbGlrZWx5IGNvbmNsdWRpbmcgdGhhdCB0aGVyZSB3YXMgYW4gZWFybHkgd2FrZXVw
-IGFuZCBnb2luZyBiYWNrDQo+IHRvIHNsZWVwLg0KPiANCj4gTW9yZSB1c2VmdWwgc2VtYW50aWNz
-IHdvdWxkIGJlIHNvbWV0aGluZyBzaW1pbGFyIHRvIHBhdXNlLWxvb3AtZXhpdGluZyBzbw0KPiB3
-ZSBjYW4gc3dhcCBjb250ZXh0cyB3aGlsZSB0aGUgcHJvY2Vzc29yIGlzIGxvZ2ljYWxseSBpZGxl
-IGluIHVzZXJzcGFjZS4NCg0KU28gZG8gd2Ugc3RpbGwga2VlcCB0aGUgdW13YWl0IG1heCB0aW1l
-IG91dCB2YWx1ZSBhcyAwIHdoaWNoIG1lYW5zIHRoZXJlIGlzIG5vIGdsb2JhbCB0aW1lIG91dCBm
-b3IgdW13YWl0Pw0KU3lzIGFkbWluIGNhbiBhbHdheXMgY2hhbmdlIGl0IHRvIGRpZmZlcmVudCB0
-aW1lIG91dCBiYXNlZCBvbiB1c2FnZS4NCg0KQlRXLCBsYXRlbmN5IGV4aXRpbmcgZnJvbSB1bXdh
-aXQvdHBhdXNlIHZhcmllcyBkZXBlbmRpbmcgb24gc2xlZXBpbmcgaW4gQzAuMSBvciBDMC4yIHN0
-YXRlcy4NCk9uIG1hY2hpbmUsIGl0IHNob3dzIGEgZmV3IGN5Y2xlcyB0byBodW5kcmVkcyBjeWNs
-ZXMuIEJ1dCBJIGd1ZXNzIGl0IGNvdWxkIGJlIGRpZmZlcmVudCBvbiBkaWZmZXJlbnQgbWFjaGlu
-ZSBhcyB3ZWxsLiBTbyBJIGd1ZXNzIGl0J3MgaGFyZCB0byBnZXQgYSB1bmlmb3JtIGxhdGVuY3kg
-dmFsdWUgYW5kIHVzZSBpdC4NCg0KVGhhbmtzLg0KDQotRmVuZ2h1YQ0KDQoNCg==
+On 08.02.2019 19:29, Sander Eikelenboom wrote:
+> L.S.,
+> 
+> While testing a linux 5.0-rc5 kernel (with some patches on top but they don't seem related) under Xen i the nasty splat below, 
+> that I haven encountered with Linux 4.20.x.
+> 
+> Unfortunately I haven't got a clear reproducer for this and bisecting could be nasty due to another (networking related) kernel bug.
+> 
+> If you need more info, want me to run a debug patch etc., please feel free to ask.
+> 
+Thanks for the report. However I see no change in the r8169 driver between
+4.20 and 5.0 with regard to BQL code. Having said that the root cause could
+be somewhere else. Therefore I'm afraid a bisect will be needed.
+
+> --
+> Sander
+> 
+Heiner
+
+> 
+> [ 6466.554866] kernel BUG at lib/dynamic_queue_limits.c:27!
+> [ 6466.571425] invalid opcode: 0000 [#1] SMP NOPTI
+> [ 6466.585890] CPU: 3 PID: 7057 Comm: as Not tainted 5.0.0-rc5-20190208-thp-net-florian-doflr+ #1
+> [ 6466.598693] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+> [ 6466.611579] RIP: e030:dql_completed+0x126/0x140
+> [ 6466.624339] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+> [ 6466.648130] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+> [ 6466.659616] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+> [ 6466.672835] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+> [ 6466.684521] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+> [ 6466.696824] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+> [ 6466.709953] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+> [ 6466.722165] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+> [ 6466.733228] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 6466.746581] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+> [ 6466.758366] Call Trace:
+> [ 6466.768118]  <IRQ>
+> [ 6466.778214]  rtl8169_poll+0x4f4/0x640
+> [ 6466.789198]  net_rx_action+0x23d/0x370
+> [ 6466.798467]  __do_softirq+0xed/0x229
+> [ 6466.807039]  irq_exit+0xb7/0xc0
+> [ 6466.815471]  xen_evtchn_do_upcall+0x27/0x40
+> [ 6466.826647]  xen_do_hypervisor_callback+0x29/0x40
+> [ 6466.835902]  </IRQ>
+> [ 6466.845361] RIP: e030:xen_hypercall_mmu_update+0xa/0x20
+> [ 6466.853390] Code: 51 41 53 b8 00 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 01 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+> [ 6466.874031] RSP: e02b:ffffc90003c0bdd0 EFLAGS: 00000246
+> [ 6466.883452] RAX: 0000000000000000 RBX: 000000041f83bfe8 RCX: ffffffff8100102a
+> [ 6466.891986] RDX: deadbeefdeadf00d RSI: deadbeefdeadf00d RDI: deadbeefdeadf00d
+> [ 6466.903402] RBP: 0000000000000fe8 R08: 000000000000000b R09: 0000000000000000
+> [ 6466.911201] R10: deadbeefdeadf00d R11: 0000000000000246 R12: 800000050c346067
+> [ 6466.918491] R13: ffff8880607c4fe8 R14: ffff888005082800 R15: 0000000000000000
+> [ 6466.926647]  ? xen_hypercall_mmu_update+0xa/0x20
+> [ 6466.938195]  ? xen_set_pte_at+0x78/0xe0
+> [ 6466.947046]  ? __handle_mm_fault+0xc43/0x1060
+> [ 6466.955772]  ? do_mmap+0x44b/0x5b0
+> [ 6466.964410]  ? handle_mm_fault+0xf8/0x200
+> [ 6466.973290]  ? __do_page_fault+0x231/0x4a0
+> [ 6466.981973]  ? page_fault+0x8/0x30
+> [ 6466.990904]  ? page_fault+0x1e/0x30
+> [ 6466.999585] Modules linked in:
+> [ 6467.007533] ---[ end trace 94bec01608fe4061 ]---
+> [ 6467.016751] RIP: e030:dql_completed+0x126/0x140
+> [ 6467.024271] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+> [ 6467.039726] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+> [ 6467.047243] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+> [ 6467.054202] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+> [ 6467.062000] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+> [ 6467.069664] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+> [ 6467.077715] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+> [ 6467.084916] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+> [ 6467.093352] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 6467.101492] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+> [ 6467.110542] Kernel panic - not syncing: Fatal exception in interrupt
+> [ 6467.118166] Kernel Offset: disabled
+> (XEN) [2019-02-08 18:04:48.854] Hardware Dom0 crashed: rebooting machine in 5 seconds.
+> 
+
