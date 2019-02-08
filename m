@@ -2,266 +2,127 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D745AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1C5C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF332077B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D70C820863
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 18:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ojrVoAsc"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="YBm+C6Bp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfBHS0M (ORCPT
+        id S1727972AbfBHS2Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:26:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45838 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727084AbfBHS0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:26:12 -0500
-Received: from zn.tnic (p200300EC2BC9F9004919A03E6833219A.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:f900:4919:a03e:6833:219a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D24301EC0229;
-        Fri,  8 Feb 2019 19:26:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549650370;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=CYixVu4x5TADX2oI3c+NjHHhg0VjfDPTfakGnazhW6o=;
-        b=ojrVoAsclugmFnIkk9jGHoTHi57TOVzlve8lyyGp/V/KXLF63TKTiZ/bJMOa23o9XFsb5k
-        mDUrwazE3+qbQ8CWKmKCLtSwNrGiGH11YT3xFgR0Zhbp5V259Yc3uZDfrVLoVz6ut+9fTy
-        yW7c1JXrLKwlDMOQ/1nmVmiySFC6aU8=
-Date:   Fri, 8 Feb 2019 19:26:00 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-acpi@vger.kernel.org, mingo@redhat.com,
-        keescook@chromium.org, rjw@rjwysocki.net, lenb@kernel.org,
-        ard.biesheuvel@linaro.org, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20190208182600.GJ674@zn.tnic>
-References: <20181025103345.GF14020@nazgul.tnic>
- <20181025134050.ggiir77ehntikbwg@gabell>
- <20181106184519.GA16391@zn.tnic>
- <20181106193636.svyjwuwrlgnpuyyf@gabell>
- <20181106204511.GO13712@zn.tnic>
- <20181106222133.lb7674yzszivzihd@gabell>
- <20181108105129.GA7543@zn.tnic>
- <20181110105422.GA20023@zn.tnic>
- <20181111134556.qxv2v4g7dl5irzo7@gabell>
- <20190205150514.fvztftk75swgfayd@gabell>
+        Fri, 8 Feb 2019 13:28:16 -0500
+Received: from server.eikelenboom.it ([91.121.65.215]:38828 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbfBHS2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 13:28:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0oZ8OxPWb9b7WAjQEi4rGHFJVzAGMBwpjJs52ScK25g=; b=YBm+C6BpRT/olr4FeT0gT/yUP8
+        MjnV1KrAbTVbOf4im2XMr9ikjri4aFlKFvrVw+exGt6BWUUVXZ/qaI/75Gbg7Aq+DDakWiPOZK4jC
+        NNP+Yfef3Z0GC4vtYqaVxKRlge1qNO1cB98sKqgX6z/E8uPVikShApgHB3XBKC4EauUE=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:55180 helo=[172.16.1.50])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1gsAsw-0004fp-O5; Fri, 08 Feb 2019 19:28:22 +0100
+To:     Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Subject: Linux 5.0 regression: rtl8169 / kernel BUG at
+ lib/dynamic_queue_limits.c:27!
+Message-ID: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
+Date:   Fri, 8 Feb 2019 19:29:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190205150514.fvztftk75swgfayd@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 10:05:16AM -0500, Masayoshi Mizuma wrote:
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Date: Tue, 5 Feb 2019 10:00:59 -0500
-> Subject: [PATCH] x86/mm: Introduce adjustment the padding size for KASLR
+L.S.,
 
-			"Adjust the padding size for KASLR"
+While testing a linux 5.0-rc5 kernel (with some patches on top but they don't seem related) under Xen i the nasty splat below, 
+that I haven encountered with Linux 4.20.x.
 
-> If the physical memory layout has huge space for hotplug, the padding
-> used for the physical memory mapping section is not enough.
-> So, such system may crash while memory hot-adding on KASLR enabled system.
+Unfortunately I haven't got a clear reproducer for this and bisecting could be nasty due to another (networking related) kernel bug.
 
-Crash why?
+If you need more info, want me to run a debug patch etc., please feel free to ask.
 
-Why is the padding not enough?
+--
+Sander
 
-> For example, SRAT has the following layout, the maximum possible memory
-> size is 32TB, and the memory is installed as 2TB actually, then the padding
-> size should set 30TB (== possible memory size - actual memory size).
-> 
->   SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
 
-What is that supposed to exemplify: that range is 3T not 2 and that
-range start is not at 2T but 28T. So I have absolutely no clue what
-you're trying to explain here.
-
-Please go back, take your time and structure your commit message like
-this:
-
-Problem is A.
-
-It happens because of B.
-
-Fix it by doing C.
-
-(Potentially do D).
-
-For more detailed info, see
-Documentation/process/submitting-patches.rst, Section "2) Describe your
-changes".
-
-> This patch introduces adjustment the padding size if the default
-
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
-
-Also, do
-
-$ git grep 'This patch' Documentation/process
-
-for more details.
-
-> padding size isn't enough.
-> 
-> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> ---
->  Documentation/x86/zero-page.txt       |  1 +
->  arch/x86/boot/compressed/acpi.c       | 19 +++++++++++++++----
->  arch/x86/include/uapi/asm/bootparam.h |  2 +-
->  arch/x86/mm/kaslr.c                   | 26 +++++++++++++++++++++++++-
->  4 files changed, 42 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/x86/zero-page.txt b/Documentation/x86/zero-page.txt
-> index 68aed077f..343fe1a90 100644
-> --- a/Documentation/x86/zero-page.txt
-> +++ b/Documentation/x86/zero-page.txt
-> @@ -15,6 +15,7 @@ Offset	Proto	Name		Meaning
->  058/008	ALL	tboot_addr      Physical address of tboot shared page
->  060/010	ALL	ist_info	Intel SpeedStep (IST) BIOS support information
->  				(struct ist_info)
-> +078/010	ALL	possible_mem_addr The possible maximum physical memory address.
-
-Why isn't this called max_phys_addr then?
-
-Also, please explain what it means at the end of this file.
-
->  080/010	ALL	hd0_info	hd0 disk parameter, OBSOLETE!!
->  090/010	ALL	hd1_info	hd1 disk parameter, OBSOLETE!!
->  0A0/010	ALL	sys_desc_table	System description table (struct sys_desc_table),
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> index c5a949335..7dd61b943 100644
-> --- a/arch/x86/boot/compressed/acpi.c
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -288,6 +288,7 @@ int count_immovable_mem_regions(void)
->  	struct acpi_subtable_header *sub_table;
->  	struct acpi_table_header *table_header;
->  	char arg[MAX_ACPI_ARG_LENGTH];
-> +	unsigned long long possible_addr, max_possible_addr = 0;
->  	int num = 0;
->  
->  	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-> @@ -308,10 +309,19 @@ int count_immovable_mem_regions(void)
->  			struct acpi_srat_mem_affinity *ma;
->  
->  			ma = (struct acpi_srat_mem_affinity *)sub_table;
-> -			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) && ma->length) {
-> -				immovable_mem[num].start = ma->base_address;
-> -				immovable_mem[num].size = ma->length;
-> -				num++;
-> +			if (ma->length) {
-> +				if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
-> +					possible_addr =
-> +						ma->base_address + ma->length;
-> +					if (possible_addr > max_possible_addr)
-> +						max_possible_addr =
-> +							possible_addr;
-> +				} else {
-> +					immovable_mem[num].start =
-> +						ma->base_address;
-> +					immovable_mem[num].size = ma->length;
-> +					num++;
-> +				}
-
-This piece has some ugly linebreaks which makes it impossible to read.
-Perhaps because the variable names you're adding are too long.
-
-You can carve it out in a separate function, for example.
-
->  			if (num >= MAX_NUMNODES*2) {
-> @@ -320,6 +330,7 @@ int count_immovable_mem_regions(void)
->  			}
->  		}
->  		table += sub_table->length;
-> +		boot_params->possible_mem_addr = max_possible_addr;
-
-This assignment is inside the loop and happens potentially a bunch of
-times. Why?
-
->  	}
->  	return num;
->  }
-> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> index 60733f137..5b64b606e 100644
-> --- a/arch/x86/include/uapi/asm/bootparam.h
-> +++ b/arch/x86/include/uapi/asm/bootparam.h
-> @@ -156,7 +156,7 @@ struct boot_params {
->  	__u64  tboot_addr;				/* 0x058 */
->  	struct ist_info ist_info;			/* 0x060 */
->  	__u64 acpi_rsdp_addr;				/* 0x070 */
-> -	__u8  _pad3[8];					/* 0x078 */
-> +	__u64  possible_mem_addr;			/* 0x078 */
->  	__u8  hd0_info[16];	/* obsolete! */		/* 0x080 */
->  	__u8  hd1_info[16];	/* obsolete! */		/* 0x090 */
->  	struct sys_desc_table sys_desc_table; /* obsolete! */	/* 0x0a0 */
-> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> index 3f452ffed..71fc28570 100644
-> --- a/arch/x86/mm/kaslr.c
-> +++ b/arch/x86/mm/kaslr.c
-> @@ -70,6 +70,30 @@ static inline bool kaslr_memory_enabled(void)
->  	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
->  }
->  
-> +static unsigned int __init kaslr_padding(void)
-> +{
-> +	unsigned int rand_mem_physical_padding =
-> +				CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +	unsigned long long max_possible_phys, max_actual_phys, threshold;
-> +
-> +	if (!boot_params.possible_mem_addr)
-> +		goto out;
-> +
-> +	max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << TB_SHIFT);
-> +	max_possible_phys = roundup(boot_params.possible_mem_addr,
-> +					1ULL << TB_SHIFT);
-> +	threshold = max_actual_phys +
-> +		((unsigned long long)rand_mem_physical_padding << TB_SHIFT);
-> +
-> +	if (max_possible_phys > threshold)
-> +		rand_mem_physical_padding =
-> +			(max_possible_phys - max_actual_phys) >> TB_SHIFT;
-> +out:
-> +#endif
-> +	return rand_mem_physical_padding;
-
-Same problem: local variables with unnecessarily long names make the
-code hard to read. Pls shorten.
-
-Also, the types in that function are a total mess. An unsigned int which
-you cast to unsigned long long and return an unsigned int again to add
-into a sum with unsigned longs. Are you selecting the types randomly?
-Why aren't you using plain unsigned longs like the rest of the file does
-with memory addresses?
-
-Also, this function could have a comment above it explaining what all
-that threshold and actual and possible address arithmetic is supposed to
-do.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+[ 6466.554866] kernel BUG at lib/dynamic_queue_limits.c:27!
+[ 6466.571425] invalid opcode: 0000 [#1] SMP NOPTI
+[ 6466.585890] CPU: 3 PID: 7057 Comm: as Not tainted 5.0.0-rc5-20190208-thp-net-florian-doflr+ #1
+[ 6466.598693] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+[ 6466.611579] RIP: e030:dql_completed+0x126/0x140
+[ 6466.624339] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+[ 6466.648130] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+[ 6466.659616] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+[ 6466.672835] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+[ 6466.684521] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+[ 6466.696824] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+[ 6466.709953] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+[ 6466.722165] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+[ 6466.733228] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 6466.746581] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+[ 6466.758366] Call Trace:
+[ 6466.768118]  <IRQ>
+[ 6466.778214]  rtl8169_poll+0x4f4/0x640
+[ 6466.789198]  net_rx_action+0x23d/0x370
+[ 6466.798467]  __do_softirq+0xed/0x229
+[ 6466.807039]  irq_exit+0xb7/0xc0
+[ 6466.815471]  xen_evtchn_do_upcall+0x27/0x40
+[ 6466.826647]  xen_do_hypervisor_callback+0x29/0x40
+[ 6466.835902]  </IRQ>
+[ 6466.845361] RIP: e030:xen_hypercall_mmu_update+0xa/0x20
+[ 6466.853390] Code: 51 41 53 b8 00 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 01 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+[ 6466.874031] RSP: e02b:ffffc90003c0bdd0 EFLAGS: 00000246
+[ 6466.883452] RAX: 0000000000000000 RBX: 000000041f83bfe8 RCX: ffffffff8100102a
+[ 6466.891986] RDX: deadbeefdeadf00d RSI: deadbeefdeadf00d RDI: deadbeefdeadf00d
+[ 6466.903402] RBP: 0000000000000fe8 R08: 000000000000000b R09: 0000000000000000
+[ 6466.911201] R10: deadbeefdeadf00d R11: 0000000000000246 R12: 800000050c346067
+[ 6466.918491] R13: ffff8880607c4fe8 R14: ffff888005082800 R15: 0000000000000000
+[ 6466.926647]  ? xen_hypercall_mmu_update+0xa/0x20
+[ 6466.938195]  ? xen_set_pte_at+0x78/0xe0
+[ 6466.947046]  ? __handle_mm_fault+0xc43/0x1060
+[ 6466.955772]  ? do_mmap+0x44b/0x5b0
+[ 6466.964410]  ? handle_mm_fault+0xf8/0x200
+[ 6466.973290]  ? __do_page_fault+0x231/0x4a0
+[ 6466.981973]  ? page_fault+0x8/0x30
+[ 6466.990904]  ? page_fault+0x1e/0x30
+[ 6466.999585] Modules linked in:
+[ 6467.007533] ---[ end trace 94bec01608fe4061 ]---
+[ 6467.016751] RIP: e030:dql_completed+0x126/0x140
+[ 6467.024271] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+[ 6467.039726] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+[ 6467.047243] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+[ 6467.054202] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+[ 6467.062000] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+[ 6467.069664] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+[ 6467.077715] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+[ 6467.084916] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+[ 6467.093352] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 6467.101492] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+[ 6467.110542] Kernel panic - not syncing: Fatal exception in interrupt
+[ 6467.118166] Kernel Offset: disabled
+(XEN) [2019-02-08 18:04:48.854] Hardware Dom0 crashed: rebooting machine in 5 seconds.
