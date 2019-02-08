@@ -2,120 +2,228 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4DBC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE83C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6533021908
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2133921908
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:50:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qPguVUu9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfBHVuq (ORCPT
+        id S1726994AbfBHVuz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:50:46 -0500
-Received: from mga17.intel.com ([192.55.52.151]:42725 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbfBHVuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:50:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 13:50:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="125046985"
-Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
-  by orsmga003.jf.intel.com with ESMTP; 08 Feb 2019 13:50:45 -0800
-Subject: Re: [PATCH 1/3] x86/mpx: tweak header name
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-References: <20190124142448.23243-1-mst@redhat.com>
- <20190124142448.23243-2-mst@redhat.com> <20190208154239.GI674@zn.tnic>
- <20190208164206-mutt-send-email-mst@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <398c06e7-2d3e-1930-f1ec-58e36ccf9898@intel.com>
-Date:   Fri, 8 Feb 2019 13:50:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 16:50:55 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39085 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBHVuz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 16:50:55 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f16so5652059wmh.4;
+        Fri, 08 Feb 2019 13:50:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OalIMjkAU/zeu1cA7k4xWNWLmyHxIaxptSVZ/bZ2aMQ=;
+        b=qPguVUu9l00n6dT6an+BWt89YEsG6WjeBoYzRgXhAaW1t64iUZ+qPXVOrhNulJubn+
+         Zdl3obA6RJn45RKNY2dGvIepG+RksErgsOVWneFTCdXRv1YKwsSMkJLI//UmGM4BrM65
+         +GdqjQunQnA+oB7mtgqJTJhoBVrezoQJR5EGKIBek5aZ8bpY64vatG57Xdhj6cvye/U5
+         zhbvF/SyhE7qUrYgFnparf0518aVwkSxRRJ2HWAtiC93vaJw2ThmbmGRjhytbmaIAdUV
+         jXPrYggiP+4fxOnAAa4RtOQBhRHba3UL4yRrRRsb/vlysHHN5IUybuHTWt95WlgSh+eF
+         qYMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OalIMjkAU/zeu1cA7k4xWNWLmyHxIaxptSVZ/bZ2aMQ=;
+        b=WtDxQJVHbXggwwL1RXyYJ1BGIaGVbpNlfu1AvIGhntA6pd1aaoCqplOXh8COhokUwg
+         VUTiudBhfiSEG2Rbf5KRApUtqxlRdof5AziW/hWNbG4ErvD+cmrlAWOuKXfdxZ2+8cNu
+         pXnRgkjHU44WUcTgjUNnXDSI8lUgWFodUewzgd8IYZ/auNr1wrpgpH3ez4xXb/TnUVtQ
+         +ZW+oqBzxIewK9fKLOo+v1Yg9ykyGhQHMexufBkWJgx9LdD79CGteZ5PdTOdePGiKmsg
+         fpU62GHkSBlfwMVAw2szxGywMRcoveeZM6xLH5Y7La0nnu8F8W6dYsI78/vvt9NdCZlc
+         81Tg==
+X-Gm-Message-State: AHQUAuYgQNn8/sgpBp0EZwEfESxG69GUygEAQVk719oVoLWfn5G6H+H7
+        B7Xz8I9iLqea+kc+7VXXrrclJBRE
+X-Google-Smtp-Source: AHgI3IZ3GfJmlboeBZOOekp0IPmLhXgK6WcDx9mjLpqN2mj3eaRYKyS/V9teqMDPVdmnZPTnxZ/txg==
+X-Received: by 2002:adf:edd1:: with SMTP id v17mr5590782wro.300.1549662652015;
+        Fri, 08 Feb 2019 13:50:52 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bf1:e200:7cef:f5e9:d82c:bb62? (p200300EA8BF1E2007CEFF5E9D82CBB62.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:7cef:f5e9:d82c:bb62])
+        by smtp.googlemail.com with ESMTPSA id b16sm1699767wrt.55.2019.02.08.13.50.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 13:50:51 -0800 (PST)
+Subject: Re: Linux 5.0 regression: rtl8169 / kernel BUG at
+ lib/dynamic_queue_limits.c:27!
+To:     Sander Eikelenboom <linux@eikelenboom.it>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+References: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
+ <0f605e50-56fe-06b5-9b66-6aed89a608ce@gmail.com>
+ <471e550b-c227-22e6-19fd-5f9abd450e5f@eikelenboom.it>
+ <1265d424-4943-e571-a74b-b1512ebec179@gmail.com>
+ <059e59c6-2264-fd5c-068f-3656e39539c1@eikelenboom.it>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <140d0df7-1775-5457-aa03-b21ece250a72@gmail.com>
+Date:   Fri, 8 Feb 2019 22:50:43 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190208164206-mutt-send-email-mst@kernel.org>
+In-Reply-To: <059e59c6-2264-fd5c-068f-3656e39539c1@eikelenboom.it>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 1:43 PM, Michael S. Tsirkin wrote:
-> On Fri, Feb 08, 2019 at 04:42:39PM +0100, Borislav Petkov wrote:
->> On Fri, Feb 08, 2019 at 01:02:53AM -0500, Michael S. Tsirkin wrote:
->>> Use linux/mman.h to make sure we get all mmap flags we need.
->> Why, asm/mman.h is not enough or is this fixing a build issue or what is that
->> patch supposed to address?
-> Coding style violation: if a linux/foo.h exists then it must
-> be included in preference to asm/foo.h
+On 08.02.2019 22:45, Sander Eikelenboom wrote:
+> On 08/02/2019 22:22, Heiner Kallweit wrote:
+>> On 08.02.2019 21:55, Sander Eikelenboom wrote:
+>>> On 08/02/2019 19:52, Heiner Kallweit wrote:
+>>>> On 08.02.2019 19:29, Sander Eikelenboom wrote:
+>>>>> L.S.,
+>>>>>
+>>>>> While testing a linux 5.0-rc5 kernel (with some patches on top but they don't seem related) under Xen i the nasty splat below, 
+>>>>> that I haven encountered with Linux 4.20.x.
+>>>>>
+>>>>> Unfortunately I haven't got a clear reproducer for this and bisecting could be nasty due to another (networking related) kernel bug.
+>>>>>
+>>>>> If you need more info, want me to run a debug patch etc., please feel free to ask.
+>>>>>
+>>>> Thanks for the report. However I see no change in the r8169 driver between
+>>>> 4.20 and 5.0 with regard to BQL code. Having said that the root cause could
+>>>> be somewhere else. Therefore I'm afraid a bisect will be needed.
+>>>
+>>> Hmm i did some diging and i think:
+>>> bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
+>>> 2e6eedb4813e34d8d84ac0eb3afb668966f3f356 r8169: make use of xmit_more and __netdev_sent_queue
+>>> 620344c43edfa020bbadfd81a144ebe5181fc94f net: core: add __netdev_sent_queue as variant of __netdev_tx_sent_queue
+>>>
+>> You're right. Thought this was added in 4.20 already.
+>> The BQL code pattern I copied from the mlx4 driver and so far I haven't heard about
+>> this issue from any user of physical hw. And due to the fact that a lot of mainboards
+>> have onboard Realtek network I have quite a few testers out there.
+>> Does the issue occur under specific circumstances like very high load?
+> 
+> Yep, the box is already quite contented with the Xen VM's and if I remember correctly it occurred while kernel compiling
+> on the host.
+> 
+>> If indeed the xmit_more patch causes the issue, I think we have to involve Eric Dumazet
+>> as author of the underlying changes.
+> 
+> It could also be the barriers weren't that unneeded as assumed.
 
-Huh, I don't see that one in Documentation/process/coding-style.rst
+The barriers were removed after adding xmit_more handling. Therefore it would be good to
+test also with only 
+bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
+removed.
 
-> And the specific issue is that a follow-up patch moves code from
-> asm/mman.h to linux/mman.h so if any one was indirectly using
-> this header it will now miss the symbols that are being moved.
+> Since we are almost at RC6 i took the liberty to CC Eric now.
+> 
+Sure, thanks.
 
-Fair enough.  But, if this is the real reason, it belongs in the changelog.
+> BTW am i correct these patches are merely optimizations ?
 
+Yes
 
+> If so and concluding they revert cleanly, perhaps it should be considered at this point in the RC's
+> to revert them for 5.0 and try again for 5.1 ?
+> 
+Before removing both it would be good to test with only the barrier-removal removed.
+
+> --
+> Sander
+> 
+Heiner
+
+> 
+>>
+>>> would be candidates, which were merged in 5.0.
+>>>
+>>> I have reverted the first two, see how that works out.
+>>>
+>>> --
+>>> Sander
+>>>
+>> Heiner
+>>
+>>>  
+>>>>> --
+>>>>> Sander
+>>>>>
+>>>> Heiner
+>>>>
+>>>>>
+>>>>> [ 6466.554866] kernel BUG at lib/dynamic_queue_limits.c:27!
+>>>>> [ 6466.571425] invalid opcode: 0000 [#1] SMP NOPTI
+>>>>> [ 6466.585890] CPU: 3 PID: 7057 Comm: as Not tainted 5.0.0-rc5-20190208-thp-net-florian-doflr+ #1
+>>>>> [ 6466.598693] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+>>>>> [ 6466.611579] RIP: e030:dql_completed+0x126/0x140
+>>>>> [ 6466.624339] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+>>>>> [ 6466.648130] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+>>>>> [ 6466.659616] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+>>>>> [ 6466.672835] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+>>>>> [ 6466.684521] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+>>>>> [ 6466.696824] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+>>>>> [ 6466.709953] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+>>>>> [ 6466.722165] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+>>>>> [ 6466.733228] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> [ 6466.746581] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+>>>>> [ 6466.758366] Call Trace:
+>>>>> [ 6466.768118]  <IRQ>
+>>>>> [ 6466.778214]  rtl8169_poll+0x4f4/0x640
+>>>>> [ 6466.789198]  net_rx_action+0x23d/0x370
+>>>>> [ 6466.798467]  __do_softirq+0xed/0x229
+>>>>> [ 6466.807039]  irq_exit+0xb7/0xc0
+>>>>> [ 6466.815471]  xen_evtchn_do_upcall+0x27/0x40
+>>>>> [ 6466.826647]  xen_do_hypervisor_callback+0x29/0x40
+>>>>> [ 6466.835902]  </IRQ>
+>>>>> [ 6466.845361] RIP: e030:xen_hypercall_mmu_update+0xa/0x20
+>>>>> [ 6466.853390] Code: 51 41 53 b8 00 00 00 00 0f 05 41 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 51 41 53 b8 01 00 00 00 0f 05 <41> 5b 59 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc
+>>>>> [ 6466.874031] RSP: e02b:ffffc90003c0bdd0 EFLAGS: 00000246
+>>>>> [ 6466.883452] RAX: 0000000000000000 RBX: 000000041f83bfe8 RCX: ffffffff8100102a
+>>>>> [ 6466.891986] RDX: deadbeefdeadf00d RSI: deadbeefdeadf00d RDI: deadbeefdeadf00d
+>>>>> [ 6466.903402] RBP: 0000000000000fe8 R08: 000000000000000b R09: 0000000000000000
+>>>>> [ 6466.911201] R10: deadbeefdeadf00d R11: 0000000000000246 R12: 800000050c346067
+>>>>> [ 6466.918491] R13: ffff8880607c4fe8 R14: ffff888005082800 R15: 0000000000000000
+>>>>> [ 6466.926647]  ? xen_hypercall_mmu_update+0xa/0x20
+>>>>> [ 6466.938195]  ? xen_set_pte_at+0x78/0xe0
+>>>>> [ 6466.947046]  ? __handle_mm_fault+0xc43/0x1060
+>>>>> [ 6466.955772]  ? do_mmap+0x44b/0x5b0
+>>>>> [ 6466.964410]  ? handle_mm_fault+0xf8/0x200
+>>>>> [ 6466.973290]  ? __do_page_fault+0x231/0x4a0
+>>>>> [ 6466.981973]  ? page_fault+0x8/0x30
+>>>>> [ 6466.990904]  ? page_fault+0x1e/0x30
+>>>>> [ 6466.999585] Modules linked in:
+>>>>> [ 6467.007533] ---[ end trace 94bec01608fe4061 ]---
+>>>>> [ 6467.016751] RIP: e030:dql_completed+0x126/0x140
+>>>>> [ 6467.024271] Code: 2b 47 54 ba 00 00 00 00 c7 47 54 ff ff ff ff 0f 48 c2 48 8b 15 7b 39 4a 01 48 89 57 58 e9 48 ff ff ff 44 89 c0 e9 40 ff ff ff <0f> 0b 8b 47 50 29 e8 41 0f 48 c3 eb 9f 90 90 90 90 90 90 90 90 90
+>>>>> [ 6467.039726] RSP: e02b:ffff88807d4c3e78 EFLAGS: 00010297
+>>>>> [ 6467.047243] RAX: 0000000000000042 RBX: ffff8880049cf800 RCX: 0000000000000000
+>>>>> [ 6467.054202] RDX: 0000000000000001 RSI: 0000000000000042 RDI: ffff8880049cf8c0
+>>>>> [ 6467.062000] RBP: ffff888077df7260 R08: 0000000000000001 R09: 0000000000000000
+>>>>> [ 6467.069664] R10: 00000000387c2336 R11: 00000000387c2336 R12: 0000000010000000
+>>>>> [ 6467.077715] R13: ffff888077df6898 R14: ffff888077df75c0 R15: 0000000000454677
+>>>>> [ 6467.084916] FS:  00007fd869147200(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+>>>>> [ 6467.093352] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> [ 6467.101492] CR2: 00007fd867dfd000 CR3: 0000000074884000 CR4: 0000000000000660
+>>>>> [ 6467.110542] Kernel panic - not syncing: Fatal exception in interrupt
+>>>>> [ 6467.118166] Kernel Offset: disabled
+>>>>> (XEN) [2019-02-08 18:04:48.854] Hardware Dom0 crashed: rebooting machine in 5 seconds.
+>>>>>
+>>>>
+>>>
+>>>
+>>
+> 
+> 
 
