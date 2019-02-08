@@ -2,189 +2,105 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A23C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB282C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 293572177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B806F2177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:38:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a3XOjLvU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfBHMhB (ORCPT
+        id S1727421AbfBHMh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:37:01 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:54361 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbfBHMhA (ORCPT
+        Fri, 8 Feb 2019 07:37:59 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:57090 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbfBHMh6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:37:00 -0500
-Received: from cpe-2606-a000-111b-405a-9816-2c85-c514-8f7a.dyn6.twc.com ([2606:a000:111b:405a:9816:2c85:c514:8f7a] helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1gs5Ob-000635-Nt; Fri, 08 Feb 2019 07:36:54 -0500
-Date:   Fri, 8 Feb 2019 07:36:14 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>,
-        Julien Gomes <julien@arista.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "vyasevich@gmail.com" <vyasevich@gmail.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Message-ID: <20190208123614.GA13299@hmswarspite.think-freely.org>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
- <1257941619984a2a992af8d801855c04@AcuMS.aculab.com>
- <20190207174715.GF13621@localhost.localdomain>
- <0415888f34e7494e9879a77599c618e0@AcuMS.aculab.com>
+        Fri, 8 Feb 2019 07:37:58 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x18CbeXh083437;
+        Fri, 8 Feb 2019 06:37:40 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549629460;
+        bh=J5H1/KGfmAvzG6oKJoJn4IseVaJm3ElBp7a+t8K9gsE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=a3XOjLvUjHcNWSxpXvzmhVOupotH+rhFYbK6Z9klTrooPXtgJWDSq7HZZP/tiMp/0
+         XhNJ2CW1oFQ1iG6N68wJu3/vCrGZxl/bAgPGfBHfiymQ711npsmLmqT0mV12VEKcSZ
+         U364Nh2HSJd0LrMGqbJnLdZyKLHAgTWfnZK97Fwg=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x18CbeKR055428
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 8 Feb 2019 06:37:40 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 8
+ Feb 2019 06:37:39 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 8 Feb 2019 06:37:39 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x18Cbaf0004092;
+        Fri, 8 Feb 2019 06:37:36 -0600
+Subject: Re: [PATCH v2 05/12] ARM: davinci: da850: switch to using the
+ clocksource driver
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+CC:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>
+References: <20190204171757.32073-1-brgl@bgdev.pl>
+ <20190204171757.32073-6-brgl@bgdev.pl>
+ <9d423e18-8c85-731b-388a-1843067db242@ti.com>
+ <CAMpxmJW0qMi0BmiK2SOwdagw2-t8+1g20XJR418mWb8f1dwxtQ@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <acd3f8ca-8ed7-f86a-9bdf-24e4e6e9a6a4@ti.com>
+Date:   Fri, 8 Feb 2019 18:07:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0415888f34e7494e9879a77599c618e0@AcuMS.aculab.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMpxmJW0qMi0BmiK2SOwdagw2-t8+1g20XJR418mWb8f1dwxtQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 09:53:03AM +0000, David Laight wrote:
-> From: 'Marcelo Ricardo Leitner'
-> > Sent: 07 February 2019 17:47
-> ...
-> > > > Maybe what we want(ed) here then is explicit versioning, to have the 3
-> > > > definitions available. Then the application is able to use, say struct
-> > > > sctp_event_subscribe, and be happy with it, while there is struct
-> > > > sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
-> > > >
-> > > > But it's too late for that now because that would break applications
-> > > > already using the new fields in sctp_event_subscribe.
-> > >
-> > > It is probably better to break the recompilation of the few programs
-> > > that use the new fields (and have them not work on old kernels)
-> > > than to stop recompilations of old programs stop working on old
-> > > kernels or have requested new options silently ignored.
-> > 
-> > I got confused here, not sure what you mean. Seems there is one "stop"
-> > word too many.
+On 08/02/19 6:04 PM, Bartosz Golaszewski wrote:
+> pt., 8 lut 2019 o 13:06 Sekhar Nori <nsekhar@ti.com> napisał(a):
+>>
+>> On 04/02/19 10:47 PM, Bartosz Golaszewski wrote:
+>>> +static const struct davinci_timer_cfg da850_timer_cfg = {
+>>> +     .reg = {
+>>> +             .start          = DA8XX_TIMER64P0_BASE,
+>>> +             .end            = DA8XX_TIMER64P0_BASE + SZ_4K,
+>>
+>> SZ_4K - 1
+>>
+>> This should have prevented watchdog timer from getting registered.
+>>
+>> Thanks,
+>> Sekhar
 > 
-> More confusing than I intended...
-> 
-> With the current kernel and headers a 'new program' (one that
-> needs the new options) will fail to run on an old kernel - which is good.
-> However a recompilation of an 'old program' (that doesn't use
-> the new options) will also fail to run on an old kernel - which is bad.
-> 
-I disagree with this, at least as a unilateral statement.  I would assert that
-an old program, within the constraints of the issue being discussed here, will
-run perfectly well, when built and run against a new kernel.
+> My clocksource driver doesn't call request_region() so a subsequent
+> devm_ioremap_resource() in the watchdog driver would still succeed. I
+> now fixed both the missing call and the value here.
 
-At issue is the size of the structure sctp_event_subscribe, and the fact that in
-several instances over the last few years, its been extended to be larger and
-encompass more events to subscribe to.
+Ah, got it. Perhaps a call to request_region() should be added to catch
+issues?
 
-Nominally an application will use this structure (roughly) as follows:
-
-...
-struct sctp_event_subscribe events;
-size_t evsize = sizeof(events);
-
-memset(&events, 0, sizeof(events));
-
-events.sctp_send_failure_event = 1; /*example event subscription*/
-
-if (sctp_setsocktpt(sctp_fd, SOL_SCTP, SCTP_EVENTS, &events, &evsize) < 0) {
-	/* do error recovery */
-}
-
-....
-
-
-Assume this code will be built and run against kernel versions A and B, in
-which:
-A) has a struct sctp_event_subscribe with a size of 9 bytes
-B) has a struct sctp_event_subscribe with a size of 10 bytes (due to the added
-field sctp_sender_dry_event)
-
-That gives us 4 cases to handle
-
-1) Application build against kernel A and run on kernel A.  This works fine, the
-sizes of the struct in question will always match
-
-2) Application is built against kernel A and run on kernel B.  In this case,
-everything will work because the application passes a buffer of size 9, and the
-kernel accepts it, because it allows for buffers to be shorter than the current
-struct sctp_event_subscribe size. The kernel simply operates on the options
-available in the buffer.  The application is none the wiser, because it has no
-knoweldge of the new option, nor should it because it was built against kernel
-A, that never offered that option
-
-3) Application is built against kernel B and run on kernel B.  This works fine
-for the same reason as (1).
-
-4) Application is built against kernel B and run on kernel A.  This will break
-because the application is passing a buffer that is larger than what the kernel
-expects, and rightly so.   The application is passing in a buffer that is
-incompatible with what the running kernel expects.
-
-We could look into ways in which to detect the cases in which this might be
-'ok', but I don't see why we should bother, because at some point its still an
-error to pass in an incompatible buffer.  In my mind this is no different than
-trying to run a program that allocates hugepages on a kernel that doesn't
-support hugepages (just to make up an example).  Applications built against
-newer kernel can't expect all the features/semantics/etc to be identical to
-older kernels.
-
-> Changing the kernel to ignore extra events flags breaks the 'new'
-> program.
-> 
-It shouldn't.  Assuming you have a program built against headers from kernel B
-(above), if you set a field in the structure that only exists in kernel B, and
-try to run it on kernel A, you will get an EINVAL return, which is correct
-behavior because you are attempting to deliver information to the kernel that
-kernel A (the running kernel) doesn't know about.  Thats correct behavior.
-
-> Versioning the structure now (even though it should have been done
-> earlier) won't change the behaviour of existing binaries.
-> 
-I won't disagree about the niceness of versioning, but that ship has sailed.
-
-> However a recompilation of an 'old' program would use the 'old'
-> structure and work on old kernels.
-To be clear,  this is situation (1) above, and yeah, running on the kernel you
-built your application against should always work from a compatibility
-standpoint. 
-
-> Attempts to recompile a 'new' program will fail - until the structure
-> name (or some #define to enable the extra fields) is changed.
-> 
-Yes, but this is alawys the case for structures that change.  If you have an
-application built against kernel (B), and uses structure fields that only exist
-in that version of the kernel (and not earlier) will fail to compile when built
-against kernel (A) headers, and thats expected.  This happens with any kernel
-api that exists in a newer kernel but not an older kernel.
-
-> Breaking compilations is much better than unexpected run-time
-> behaviour.
-> 
-Any time you make a system call to the kernel, you have to be prepared to handle
-the resulting error condition, thats not unexpected.  To assume that a system
-call will always work is bad programming practice.
-
-Neil
-
-> 	David
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
-> 
+Thanks,
+Sekhar
