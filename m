@@ -2,115 +2,70 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F701C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3723CC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5911221907
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1077A21907
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 03:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfBHDDk (ORCPT
+        id S1727057AbfBHDKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 22:03:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44872 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfBHDDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 22:03:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9701BEBD;
-        Thu,  7 Feb 2019 19:03:39 -0800 (PST)
-Received: from [10.162.40.126] (p8cg001049571a15.blr.arm.com [10.162.40.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF7733F557;
-        Thu,  7 Feb 2019 19:03:36 -0800 (PST)
-Subject: Re: [PATCH] mm/memory-hotplug: Add sysfs hot-remove trigger
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Oscar Salvador <osalvador@suse.de>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org, mhocko@kernel.org,
-        akpm@linux-foundation.org
-References: <29ed519902512319bcc62e071d52b712fa97e306.1549469965.git.robin.murphy@arm.com>
- <20190207133620.a4vg2xqphsloke6i@d104.suse.de>
- <7bf25a0f-766e-7924-9a54-64cef9f53b57@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <bde72792-9116-f28d-f252-084345631f15@arm.com>
-Date:   Fri, 8 Feb 2019 08:33:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <7bf25a0f-766e-7924-9a54-64cef9f53b57@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Feb 2019 22:10:07 -0500
+Received: from mout.gmx.net ([212.227.17.22]:58961 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbfBHDKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 22:10:06 -0500
+Received: from homer.simpson.net ([185.221.151.12]) by mail.gmx.com (mrgmx101
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LqV4f-1hMrSQ1Fcf-00e33d; Fri, 08
+ Feb 2019 04:09:59 +0100
+Message-ID: <1549595398.26710.14.camel@gmx.de>
+Subject: Re: Kernel panics with recent 4.9 Kernels
+From:   Mike Galbraith <efault@gmx.de>
+To:     Michael Brunnbauer <brunni@netestate.de>,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 08 Feb 2019 04:09:58 +0100
+In-Reply-To: <20190207191359.GA14298@netestate.de>
+References: <20190205091239.GA3687@netestate.de>
+         <20190207191359.GA14298@netestate.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:gmJzOzW+ie9PPH5Y9PbesqxZ4zCBgQkaxiM+sF0nmMzgBEESUfC
+ QnpP3vVTVBzgFdc8mJdcivencZEToFjKt0Yb2t4H0RuMCt02QMWFiSaG9Os/9NxMmvZyKan
+ LBCGmIuuqKQDUCu984Swby2zTPXix6IH7NK/zHIsYZ37G8F9UezqxyF6N1m+FYCSPYpKsdv
+ +JMBWfseA4i2oPgxtZQTw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fW/t38JTaWM=:lAdsJHlZlfxidg9A6ifGVT
+ 8TDcgpqBbOFUhRot5hKGtbbM5Is+zBlV79GJaF9yWzcv47TDqXVtON/2gG4t7mbCu4t/hEYcS
+ uKnGML7YfoP9oqNtm3MHiWeG8iJsgnleKbBqznfByX//xbVnRi4rxP0pgiKNEusbGcwEHklhx
+ nW+hep8Bst/5mmifPF7Tq9uxFLht++yY5DTyNGxCd3czszsqHm2Ktf1DoctIn3KLm2MeE9ora
+ 2MPB9GKc+cY6u7pY0iOGA3s9kRWoCscLYhbZy+gIx/YAlJwD0ohjPWAtqT1EOFpv12moIDUI4
+ Ui1/Ph6tKCUhQAbqEEDZPDvC8J21D38Ql9n0UaTKmzHtpBnJJ/C00VfMJz/NWqjMNY50TmBjy
+ nFCFXZbKZf//iBDBX+VI862SehxMhVWuAu24vGYredYlBAuTSh9tbcr1EDGoKU1mUPy5nYX9M
+ mC7z7i8m4FvexYkzQpW0u0ho89R314CReMteVZFquyLXTXx/PrzFjHZorJvwrAyKtPNWKRh7O
+ Ir8EOo/pZsNzrkWYr33UQgJsc+EL6JlcZLzFb36TYc8MAzOdby0cSXps+ptlX1r/LMSeVgIp2
+ hbwGxakH6MuiUEUxxf2NjFSYQDyjZJfr1Os/VsJgqGWcox2y0yjVae6t0dYypzQQ0d1Fg1wB2
+ 0rzMu8GLi/YxR5bneq2txn37fWdHqpl/087BlQUS20STt4GToE6VEeNDVUWjaV1w5WC5FWLbY
+ fjLxlCaPCcmsQrnpWklz8YJ0DyYeV5XDySGxyPxUTOGzJK4GD61Lr26rVWJnZ8vlv38A1PdIa
+ kt7dfkHsBObZO671GBt8ykjAVvPjyRnWqKhRIfUlg7lG/qqyNGwNllWVxUJIOCdxyzYa/T2sU
+ yQ8g28MeSf7rYcd3Vef/Uq3+1xore+tXsJoqdbL8Ntfv/jpMgEiCR9jluIgkrt
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2019-02-07 at 20:13 +0100, Michael Brunnbauer wrote:
+> hi,
+> 
+> no replies to my mail. Any suggestions what I should do or where I
+> could ask for help?
 
+I'd suggest trying to capture events with something better than an
+incomplete screenshot, ie serial console, netconsole, anything that
+will let you show the full event and a few lines leading up to it.
 
-On 02/07/2019 09:02 PM, Robin Murphy wrote:
-> On 07/02/2019 13:36, Oscar Salvador wrote:
->> On Wed, Feb 06, 2019 at 05:03:53PM +0000, Robin Murphy wrote:
->>> ARCH_MEMORY_PROBE is a useful thing for testing and debugging hotplug,
->>> but being able to exercise the (arguably trickier) hot-remove path would
->>> be even more useful. Extend the feature to allow removal of offline
->>> sections to be triggered manually to aid development.
->>>
->>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>> ---
->>>
->>> This is inspired by a previous proposal[1], but in coming up with a
->>> more robust interface I ended up rewriting the whole thing from
->>> scratch. The lack of documentation is semi-deliberate, since I don't
->>> like the idea of anyone actually relying on this interface as ABI, but
->>> as a handy tool it felt useful enough to be worth sharing :)
->>
->> Hi Robin,
->>
->> I think this might come in handy, especially when trying to test hot-remove
->> on arch's that do not have any means to hot-remove memory, or even on virtual
->> platforms that do not have yet support for hot-remove depending on the platform,
->> like qemu/arm64.
->>
->>
->> I could have used this while testing hot-remove on other archs for [1]
->>
->>>
->>> Robin.
->>>
->>> [1] https://lore.kernel.org/lkml/22d34fe30df0fbacbfceeb47e20cb1184af73585.1511433386.git.ar@linux.vnet.ibm.com/
->>>
->>
->>> +    if (mem->state != MEM_OFFLINE)
->>> +        return -EBUSY;
->>
->> We do have the helper "is_memblock_offlined()", although it is only used in one place now.
->> So, I would rather use it here as well.
-> 
-> Ooh, if I'd actually noticed that that helper existed, I would indeed have used it - fixed.
-> 
->>> +
->>> +    ret = lock_device_hotplug_sysfs();
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    if (device_remove_file_self(dev, attr)) {
->>> +        __remove_memory(pfn_to_nid(start_pfn), PFN_PHYS(start_pfn),
->>> +                MIN_MEMORY_BLOCK_SIZE * sections_per_block);
->>
->> Sorry, I am not into sysfs inners, but I thought that:
->> device_del::device_remove_attrs::device_remove_groups::sysfs_remove_groups
->> would be enough to remove the dev attributes.
->> I guess in this case that is not enough, could you explain why?
-> 
-> As I found out the hard way, since the "remove" attribute itself belongs to the device being removed, the standard device teardown callchain would end up trying to remove the file from its own method, which results in deadlock. Fortunately, the PCI sysfs code has a similar "remove" attribute which showed me how it should be handled - following the kerneldoc breadcrumb trail to kernfs_remove_self() hopefully explains it more completely.
-Instead we could have an interface like /sys/devices/system/memory/[unprobe|remove]
-which would take a memory block start address looking into the existing ones and
-attempt to remove [addr, addr + memory_block_size] provided its already offlined.
-This will be exact opposite for /sys/devices/system/memory/probe except the fact
-that it can trigger onlining of the memory automatically (even this new one could
-trigger offlining automatically as well). But I dont have a preference between the
-proposed one or this one. Either of them should be okay.
+	-Mike
