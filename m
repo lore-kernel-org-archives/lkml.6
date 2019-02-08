@@ -2,152 +2,121 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D367CC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E20C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A46E62146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08E1720823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:17:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GzpPKauB"
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="dz4jWR3T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfBHRPQ (ORCPT
+        id S1727641AbfBHRRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:15:16 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42692 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfBHRPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:15:16 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y140so2523997qkb.9;
-        Fri, 08 Feb 2019 09:15:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1xMQEVP6TCnc/SzTIcoGln/5cNGj6+SOvsEQlmB7EdI=;
-        b=GzpPKauBCrG1z8aNFgM7xAA6svfg7EwUKVbwNOnB5PWR1leCjIH5oWtkQSBBTUFu7Z
-         WjTkJF5yuzLk6kaCrstA06WDvMFkNn380lAm7HF0I39j+1VmQxjDtNAVGWZJnF66s2hh
-         C3D3MmNugmuP2zMVmte2UR/hRrp+si8gatkBmTcE9cehrkZlJKh2yA+GU68c3PLwuVvk
-         jYeY/ydRdq31ahgzPqJx0TiGXkDyYCG5thcAeH3dfOxV/hcaV8G7MY4w66IeOur+Hg/Q
-         HE/hPS64JIPKPiYRycbRZguvW/vedH0J4HFgx6S7wfcn5AUoEAHyxAGoNARJ1F34fR2L
-         bGQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1xMQEVP6TCnc/SzTIcoGln/5cNGj6+SOvsEQlmB7EdI=;
-        b=EtEwQt5HefUnfWXlDiPcmhirFFGwnUqok5XUsXPq5f6sngJh4TDMhTfGclmZp8r6Ru
-         1fKTaskRs1yZDmVqEjfgXuyqNS/xpBc6kf9gNY2iNr0F+pJALyWvzn86TdeqrHA6ZT74
-         LfhWmtwV/l2AUuSC2VkrZ6/JM4N2KIbz47BJRvhImNDkc7bbOMC8ZkxetOxCBY6DXcRs
-         TKMkWVgqt96Z8busbBpEJ35FCNRu8Z5L4x/nbhfB3o94VR71i1StwlVJCsaP+925XRJq
-         cUJZS8uh076OLVt2H3v83TGlaM6PZadv7vEJwDnDOwlJ/25ymI+d4lO8h/wL/An5H0Xv
-         wkYw==
-X-Gm-Message-State: AHQUAuZt/BLGUOvNkkTMiSFi3JIK6WyGKRqYGZ+iJvtZ0Fh7CPsbUPQt
-        zmEQmOSe25eVkONda0UfUOu0bIZjsY50G5EBs5Y=
-X-Google-Smtp-Source: AHgI3IYb+IzHFn3uuHznRr8bRB4134rOHzqFQEoXipSlrf5o0H3GtcrUZJPjWARC7dqcynTwmGUVYAPfJFawS1vssuo=
-X-Received: by 2002:a37:be84:: with SMTP id o126mr17102368qkf.312.1549646115541;
- Fri, 08 Feb 2019 09:15:15 -0800 (PST)
+        Fri, 8 Feb 2019 12:17:06 -0500
+Received: from mail-eopbgr30104.outbound.protection.outlook.com ([40.107.3.104]:15675
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726747AbfBHRRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 12:17:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t4T8hASYBqrwrpYUTp1PkLOZ3+nitrNWIUrtVKluhEw=;
+ b=dz4jWR3T/mi7BizwOY6MHy1KXYIJxVMWXR8EWjqxu4Cpt8+9ss/I7mLUJyN82WtX+AqZEycc4euG2ONWhJjIq/s4k8BUBlX/vBTVLKNw0oBm8EEECbImYoq1o8ghNxyczl9mynjQ6o32NlZmPYCboQkEcuAlnq5hPW7HmpQwzOg=
+Received: from VI1PR02MB4542.eurprd02.prod.outlook.com (20.178.12.74) by
+ VI1PR02MB4943.eurprd02.prod.outlook.com (20.177.200.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.21; Fri, 8 Feb 2019 17:17:00 +0000
+Received: from VI1PR02MB4542.eurprd02.prod.outlook.com
+ ([fe80::a1f1:5dc8:99c1:c590]) by VI1PR02MB4542.eurprd02.prod.outlook.com
+ ([fe80::a1f1:5dc8:99c1:c590%5]) with mapi id 15.20.1601.016; Fri, 8 Feb 2019
+ 17:17:00 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     Federico Vaga <federico.vaga@cern.ch>,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/5] i2c:ocores: add SPDX tag
+Thread-Topic: [PATCH v3 4/5] i2c:ocores: add SPDX tag
+Thread-Index: AQHUv8klEzm21JdfA0iov9KxV4XLoaXWJJwA
+Date:   Fri, 8 Feb 2019 17:16:59 +0000
+Message-ID: <789738e8-609a-f20b-11c2-54089366f612@axentia.se>
+References: <20190208161201.7860-1-federico.vaga@cern.ch>
+ <20190208161201.7860-5-federico.vaga@cern.ch>
+In-Reply-To: <20190208161201.7860-5-federico.vaga@cern.ch>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR0902CA0057.eurprd09.prod.outlook.com
+ (2603:10a6:7:15::46) To VI1PR02MB4542.eurprd02.prod.outlook.com
+ (2603:10a6:803:b1::10)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR02MB4943;6:qJjrOHLrGC/ar4S5oUU0TXL8E5c6J0ip8gxYEH2J6MriZkz1dxtNss0pBzvlqrliGBc47zM/MxwsyqrTNkUqC5ozdPpuS4l85TSkHyJTePoKPp+dKvLM9oe8KzjaXJ5Pkb6X04db8SNB5kw79WolDGtsWdTN66UO5ZzVyGswQFekoEdWLJnyLwsjYinUW0EwSp5YcnicjbYP+lshO6T1bgmVNpp4oZ4BdvFqhDd5Eoc5iLWZaDkBzupKK3sSV7fPHumSFEhy5hGYW6bbBjW639IRp3eK2Sm+XSt26tmog+1cHpvHN/PHJHSuEm8jlW6ie6Q5Wf0SIJ/gs7SMor18I7l9nnEnelMIWGUbkyn9uqpatmHo8nGmXwzddxQWU8y9soXcmvDUt0MgvnAjtShpEmQ5k9Z+tSeaNBXyC3l7Hy8zoGaRqKYJliOZYgpa7kj1UAJRxBQntkXD6qel3paZLA==;5:xJjSg55Bayz+5S8k3oPt2dNMPQ1f1HV76bGPQQOXJJnEghj0TRbi1MGxwkXCOliKTi1yMfZHfClk6FWcMKjIvOGUM7riQb9yQxYpBV72+X9VilXrCr79wtet/2N34f+kFwNOhGaiOzieg2o6cARXo0dIQJ1SaHd08regn0yEvL1GfG61iviRqURzJ7lx68/5xCoroAKq2arEHMSa0+wpwQ==;7:Geolyqqjixk34VBsP22JSRS+5fSQeFu7D71GnlAs0lX2cOLF7ObmDLn5p+LqCZSxxgfokM9fQguX3qQbZg7pfUmoBcjPG5WIzLn7WMP2Ei2YQDx2SajqH/Ue3hxjvcW9DjaMV4rsi1UJtOLuDHruzA==
+x-ms-office365-filtering-correlation-id: d1b3c30e-9a30-48f0-0a4d-08d68de93b96
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB4943;
+x-ms-traffictypediagnostic: VI1PR02MB4943:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VI1PR02MB494368643BE7FDE7164BB8D8BC690@VI1PR02MB4943.eurprd02.prod.outlook.com>
+x-forefront-prvs: 094213BFEA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39830400003)(136003)(366004)(346002)(189003)(199004)(31686004)(81156014)(14454004)(486006)(186003)(6246003)(508600001)(53936002)(64126003)(97736004)(2616005)(65826007)(68736007)(52116002)(81166006)(74482002)(8936002)(256004)(476003)(8676002)(106356001)(386003)(26005)(105586002)(76176011)(102836004)(53546011)(6346003)(6506007)(11346002)(446003)(305945005)(54906003)(31696002)(316002)(7736002)(2906002)(86362001)(6436002)(65806001)(66066001)(58126008)(229853002)(6486002)(65956001)(99286004)(3846002)(6116002)(36756003)(4326008)(25786009)(71200400001)(71190400001)(6512007)(6306002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB4943;H:VI1PR02MB4542.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0oucR4mt6P+1QceKbhBdmhYAB68t2Nz+nxoxpRbodvJbO52Bp2LWc16yGsyb6ZoVhViyXD8pNyi/uPxaeUNFTsxsvDYN350AsVk/5XVMD+rstQeUFzo53ISbI4V8BPw8AH44qf9PBpcw/5DdFg6J5dBs/m98k8/2S9+W3qRjImoVqsbXjAZF/bp62VNTS9qfAuNAdAwemkkgSvcELKGTvrkxigXO5b5qv6X7039lsDtwHYs0J61uZ8x3HKH2z+7eOmUv3oktA9MxeDrDxlhGwaDk2jhehI4UM8lAISQXwFh78btCeRKcoGEFMIvIslVSOBQTNzLImDN1SP4exKc8t8JWSuv0AfgAHu/5qb8wqVWkw4CnSU+iGNXSDS96CZIL2PIGIImIpF5rEuS4wRrJwX7e9EX8qdKWywvjN9RW49A=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AE6712A6B1B87549B15C790ECF9C3DB6@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190208012312.105259-1-ncrews@chromium.org> <20190208012312.105259-5-ncrews@chromium.org>
- <4620e71f-9579-0d4e-2cf8-7851e77e81fc@collabora.com> <CAHX4x86pqUoo+v3FK3zY8Dyxgia9L8iGsYVYnfBA-OvRAm9HDw@mail.gmail.com>
-In-Reply-To: <CAHX4x86pqUoo+v3FK3zY8Dyxgia9L8iGsYVYnfBA-OvRAm9HDw@mail.gmail.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Fri, 8 Feb 2019 18:15:04 +0100
-Message-ID: <CAFqH_534v=_LxwVVn51SXmeocggvYQVjzq2GOvFs=mm7A7qhkA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/4] platform/chrome: rtc: Add RTC driver
-To:     Nick Crews <ncrews@chromium.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Benson Leung <bleung@chromium.org>,
-        Duncan Laurie <dlaurie@google.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        dlaurie@chromium.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, Simon Glass <sjg@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1b3c30e-9a30-48f0-0a4d-08d68de93b96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2019 17:16:58.0054
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB4943
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
-Missatge de Nick Crews <ncrews@chromium.org> del dia dv., 8 de febr.
-2019 a les 17:10:
->
-> Hi Enric and Alexandre,
->
-> On Fri, Feb 8, 2019 at 5:18 AM Enric Balletbo i Serra
-> <enric.balletbo@collabora.com> wrote:
-> >
-> > Hi,
-> >
-> > On 8/2/19 2:23, Nick Crews wrote:
-> > > This Embedded Controller has an internal RTC that is exposed
-> > > as a standard RTC class driver with read/write functionality.
-> > >
-> > > The driver is added to the drivers/rtc/ so that the maintainer of that
-> > > directory will be able to comment on this change, as that maintainer is
-> > > the expert on this system. In addition, the driver code is called
-> > > indirectly after a corresponding device is registered from core.c,
-> > > as opposed to core.c registering the driver callbacks directly.
-> > >
-> > > To test:
-> > >> hwclock --show --rtc /dev/rtc1
-> > > 2007-12-31 16:01:20.460959-08:00
-> > >> hwclock --systohc --rtc /dev/rtc1
-> > >> hwclock --show --rtc /dev/rtc1
-> > > 2018-11-29 17:08:00.780793-08:00
-> > >
-> > >> hwclock --show --rtc /dev/rtc1
-> > > 2007-12-31 16:01:20.460959-08:00
-> > >> hwclock --systohc --rtc /dev/rtc1
-> > >> hwclock --show --rtc /dev/rtc1
-> > > 2018-11-29 17:08:00.780793-08:00
-> > >
-> > > Signed-off-by: Duncan Laurie <dlaurie@google.com>
-> > > Signed-off-by: Nick Crews <ncrews@chromium.org>
-> >
-> > I think that you missed :)
-> >
-> > Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> >
->
-> Ah, I removed these because this version is a bit different from the
-> one that you Acked. Do you normally keep those sign-offs
-> even after making changes that you possibly might not like?
->
-
-Well, it's right that you did a small change in the core, so to be
-strict maybe you have reason, but I don't see as a big change so I
-expected you maintain my tag. Anyway it's not a problem at all, just
-that at least I expected the Alexandre ack :)
-
-[snip]
-
-> >
-> > Alexandre, this specific patch depends on the patches of the series to apply,
-> > and the first patches of the series also conflicts/depends on some patches
-> > queued in chrome-platform-5.1 branch [1]. Is it fine with you if I create an
-> > immutable branch and all go via your tree? Or what do you think? I am new here
-> > and I am not sure how to manage that.
-> >
-> > Thanks,
-> >   Enric
->
-> Let me know if I can help with this. I based this off what I thought was the
-> most current master, SHA 74e96711e3379fc66630f2a1d184947f80cf2c48.
-> Was this not the correct commit to base these off of?
->
-
-Yeah, it's fine, just that I queued recently some changes and I have
-trivial conflicts in Kconfig and Makefile, nothing that you need to
-worry.
-
-[snip]
+T24gMjAxOS0wMi0wOCAxNzoxMiwgRmVkZXJpY28gVmFnYSB3cm90ZToNCj4gSXQgYWRkcyB0aGUg
+U1BEWCB0YWcgYW5kIGl0IHJlbW92ZXMgdGhlIG9sZCB0ZXh0IGFib3V0IHRoZSBHUEx2Mi4NCj4g
+DQo+IFNpZ25lZC1vZmYtYnk6IEZlZGVyaWNvIFZhZ2EgPGZlZGVyaWNvLnZhZ2FAY2Vybi5jaD4N
+Cj4gLS0tDQo+ICBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLW9jb3Jlcy5jIHwgNiArKystLS0NCj4g
+IDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1vY29yZXMuYyBiL2RyaXZlcnMvaTJj
+L2J1c3Nlcy9pMmMtb2NvcmVzLmMNCj4gaW5kZXggYmJlM2U5Ni4uNWI4MDE5MCAxMDA2NDQNCj4g
+LS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy1vY29yZXMuYw0KPiArKysgYi9kcml2ZXJzL2ky
+Yy9idXNzZXMvaTJjLW9jb3Jlcy5jDQo+IEBAIC0xLDMgKzEsNCBAQA0KPiArLy8gU1BEWC1MaWNl
+bnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gIC8qDQo+ICAgKiBpMmMtb2NvcmVzLmM6IEkyQyBi
+dXMgZHJpdmVyIGZvciBPcGVuQ29yZXMgSTJDIGNvbnRyb2xsZXINCj4gICAqIChodHRwczovL29w
+ZW5jb3Jlcy5vcmcvcHJvamVjdC9pMmMvb3ZlcnZpZXcpDQo+IEBAIC03LDkgKzgsOCBAQA0KPiAg
+ICogU3VwcG9ydCBmb3IgdGhlIEdSTElCIHBvcnQgb2YgdGhlIGNvbnRyb2xsZXIgYnkNCj4gICAq
+IEFuZHJlYXMgTGFyc3NvbiA8YW5kcmVhc0BnYWlzbGVyLmNvbT4NCj4gICAqDQo+IC0gKiBUaGlz
+IGZpbGUgaXMgbGljZW5zZWQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJs
+aWMgTGljZW5zZQ0KPiAtICogdmVyc2lvbiAyLiAgVGhpcyBwcm9ncmFtIGlzIGxpY2Vuc2VkICJh
+cyBpcyIgd2l0aG91dCBhbnkgd2FycmFudHkgb2YgYW55DQo+IC0gKiBraW5kLCB3aGV0aGVyIGV4
+cHJlc3Mgb3IgaW1wbGllZC4NCj4gKyAqIFRoaXMgcHJvZ3JhbSBpcyBsaWNlbnNlZCAiYXMgaXMi
+IHdpdGhvdXQgYW55IHdhcnJhbnR5IG9mIGFueSBraW5kLA0KPiArICogd2hldGhlciBleHByZXNz
+IG9yIGltcGxpZWQuDQo+ICAgKi8NCj4gIA0KPiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiAN
+Cg0KSWYgeW91IGZlZWwgdGhhdCB5b3UgbmVlZCB0byBrZWVwIHNvbWUgbGljZW5zZSBib2lsZXJw
+bGF0ZSBhZnRlciBhZGRpbmcNCnRoZSBTUERYIHRhZywgdGhlbiB0aGUgU1BEWCB0YWcgaXMgcGVy
+IGRlZmF1bHQgd3JvbmcuIFRoZSBTUERYIHRhZyBzaG91bGQgYmUNCmEgZnVsbCBkZXNjcmlwdGlv
+biBvZiB0aGUgYXBwbGljYWJsZSBsaWNlbnNlLiBXaGF0J3MgdGhlIHBvaW50IG90aGVyd2lzZT8N
+CkluIHRoaXMgY2FzZSB0aG91Z2gsIEdQTHYyIGFscmVhZHkgY29udGFpbnMgdGhpcyBnaXN0IG9m
+IHRoZSBib2lsZXJwbGF0ZQ0KdGV4dCAoaW4gc2VjdGlvbiAxMSkgc28gcGxlYXNlIGp1c3Qga2ls
+bCB0aGUgd2hvbGUgcGFyYWdyYXBoLg0KDQpDaGVlcnMsDQpQZXRlcg0K
