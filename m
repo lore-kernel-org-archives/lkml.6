@@ -5,67 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007F1C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BB3C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A882177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 753D7217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:19:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwH0P+KH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ta7wPGWB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfBHTTi (ORCPT
+        id S1727500AbfBHTTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:19:38 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36709 "EHLO
+        Fri, 8 Feb 2019 14:19:41 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45094 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfBHTTh (ORCPT
+        with ESMTP id S1727417AbfBHTTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:19:37 -0500
-Received: by mail-pf1-f194.google.com with SMTP id d22so2094969pfo.3;
-        Fri, 08 Feb 2019 11:19:36 -0800 (PST)
+        Fri, 8 Feb 2019 14:19:38 -0500
+Received: by mail-pf1-f194.google.com with SMTP id j3so2112741pfi.12;
+        Fri, 08 Feb 2019 11:19:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9JhHL5/aksfCmH9dx827g1mYpbbDSTWhMDYItxweaDE=;
-        b=fwH0P+KH+AnXBQX9gQKdRgiLAPihtgoDmiPzLKxYB0yoWh72BnAUhPSfwDV1SzdG0z
-         Be7p2AYs3KpzTQLzNJagmOBOgUEEQqLmSx4Bhs59FdU3NHh8EDTOArfdPMx2KeZycl8C
-         Qbd2R2ZT/zOPVl5on7uTn5k9l1NU/lLelyyW1DxMomyIj62uu/gpDwoVpbLyoNTlNtkD
-         U9rRuLqRs4/5vACabF1lj9LiKS9UFPD8lOaqg+FJmORXMF0qy2gxcrytLjqR0RvRbaBQ
-         AFFEykW60pR3rxpM8hw1fxVHWEan0lTu0X4CDFwh6tvwA3huSN+pOqDh8v5jALe5pqrx
-         eOsA==
+        bh=FMVIZC+Ut3hCcGkIAGAKElPF0VEiGdyoGwVPSPpdJa0=;
+        b=Ta7wPGWBkdp/5vb9tEtLtLCG/RIYUlN6J8+HuOmvv5sgi2j6AbY9+7QNBhaGi848vF
+         o+818GtdTGn+h6sJqZooFlM9fkLAhP8iI9hUJvNMldMV5v+SiFgsCN2hTtWlXTPhrKkE
+         CL1vYywI67LlqzgrzlScRDUL++kAvK51xfnG6waV2izi1N2Y+AeKUob/iYtFwxiPVBqU
+         cVGSW9lOLA3zVKEve+qXKmO4oqyZOKlepoXArN0kO9LT48vJlRMtCEOKUJWNvQa2zKex
+         UAdLa5JDlaE2S4qIF6RPmp3JX9ZG7EUDubkKh6eJpgTS9WdGp58TbkYODf85nl5mH7eS
+         STsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9JhHL5/aksfCmH9dx827g1mYpbbDSTWhMDYItxweaDE=;
-        b=oMjHKmjDYYfuVEAy3QKBUJs8TyJ8Bke2TkGnuyg0rp9XYpamSyGaAn0O6PGwhkWxLM
-         DmdnpiJYneNc0KEIvwYgEgbPXfTTwnWnR6dFM8z6C9NsXkWzzbF/0l6/z3pot7C6gXNo
-         TvBzpV6ka3lNVW9VXuT/NwXr6Qab3Jj3JLJbPdjjGsFW3d6A1ozsbNK2l7m2g7SrBYc5
-         dhkpL2kGflGZOaz/wvHCTtsbjP+2WCux9C/hLi4vQvmozJgz66Q6fpH2WXwjZXUhuelp
-         j6Ds2itHKBl0SLeVSu9ANh45r3XYII6lKN5TEEDbhUQi/GcAD+Xn8+iJrLHyVMd+nlLG
-         Masw==
-X-Gm-Message-State: AHQUAubyckr1SdQNRwWol/OqnvhhTca1A74/6mlbdSSNAqXnqmVIGhs6
-        lA5nlrYMzyMxEoYRWd3aVeeejOyc
-X-Google-Smtp-Source: AHgI3IYN71jIZ/yGMj6QsDbb2Eu4vTRwKJZHUjVca+DC6pD2I+PTR6O/zg3L3m2vTlQubpsHnru5xQ==
-X-Received: by 2002:a63:fc59:: with SMTP id r25mr6725871pgk.302.1549653576047;
-        Fri, 08 Feb 2019 11:19:36 -0800 (PST)
+        bh=FMVIZC+Ut3hCcGkIAGAKElPF0VEiGdyoGwVPSPpdJa0=;
+        b=H0LrIGcWxnZXuUYNOcnj/vff7L3Q0k3JbqR0ocLoDFJRZlHcAoX+Othm267+Z7RQSP
+         gYPPLRiDLiwKdezTLRYtvjm7d40IVlH1Xe+3CiAUYluH62sffVcOOggV62zJLA7XonaK
+         TCKEvEIjLkMiWS1a9o/N2k2uugWo3pYc6/fzVqvsk6+FS1LdTGhXKvR2QyfkMSFVCTnN
+         /ENdG4o5anbAW09b2kXjfD80qxwdwxMCBvPqXm+t6e3Sbc4CODgrT+2GOa7FbKiyltvC
+         RP+uGvI/e+RYJgiBqSUbR8B6zRQ/vUSVMjJEBYdJUeisiGR25KxXeHtkKZTZim5dXmOA
+         59kw==
+X-Gm-Message-State: AHQUAuaTODqrPlP/cH8UdePhR7qzCLWlZu8I49jv/PDlR9VzADTMf7q4
+        YDEJQCM5lfHk0gRcITJtyEW+wv9K
+X-Google-Smtp-Source: AHgI3IY2oMmOmQmLij9hkZFlL8X+I4haiIzq8sW0jlH2v71bkIMkH9oajNof8unrgs+p1VFtdGDABQ==
+X-Received: by 2002:a63:5e43:: with SMTP id s64mr21933216pgb.101.1549653577436;
+        Fri, 08 Feb 2019 11:19:37 -0800 (PST)
 Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id o5sm4761817pgm.68.2019.02.08.11.19.34
+        by smtp.googlemail.com with ESMTPSA id o5sm4761817pgm.68.2019.02.08.11.19.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 11:19:35 -0800 (PST)
+        Fri, 08 Feb 2019 11:19:36 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Tim Harvey <tharvey@gateworks.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
         IMX), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding matrices
-Date:   Fri,  8 Feb 2019 11:19:25 -0800
-Message-Id: <20190208191928.13273-2-steve_longerbeam@mentor.com>
+Subject: [PATCH v2 2/4] gpu: ipu-v3: ipu-ic: Simplify selection of encoding matrix
+Date:   Fri,  8 Feb 2019 11:19:26 -0800
+Message-Id: <20190208191928.13273-3-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190208191928.13273-1-steve_longerbeam@mentor.com>
 References: <20190208191928.13273-1-steve_longerbeam@mentor.com>
@@ -74,85 +75,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+Simplify the selection of the Y'CbCr encoding matrices in init_csc().
+A side-effect of this change is that init_csc() now allows YUV->YUV
+using the identity matrix, intead of returning error.
 
-The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
-coefficients, so rename them to indicate that. And add some comments
-to make clear these are BT.601 coefficients encoding between YUV limited
-range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
-matrix, so rename to ic_csc_identity. No functional changes.
-
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
-Changes in v2:
-- rename ic_csc_rgb2rgb matrix to ic_csc_identity.
----
- drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/ipu-v3/ipu-ic.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
-index 594c3cbc8291..3ef61f0b509b 100644
+index 3ef61f0b509b..e459615a49a1 100644
 --- a/drivers/gpu/ipu-v3/ipu-ic.c
 +++ b/drivers/gpu/ipu-v3/ipu-ic.c
-@@ -183,11 +183,13 @@ struct ic_csc_params {
- };
- 
- /*
-+ * BT.601 encoding from RGB full range to YUV limited range:
-+ *
-  * Y = R *  .299 + G *  .587 + B *  .114;
-  * U = R * -.169 + G * -.332 + B *  .500 + 128.;
-  * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
-  */
--static const struct ic_csc_params ic_csc_rgb2ycbcr = {
-+static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
- 	.coeff = {
- 		{ 77, 150, 29 },
- 		{ 469, 427, 128 },
-@@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
- 	.scale = 1,
- };
- 
--/* transparent RGB->RGB matrix for graphics combining */
--static const struct ic_csc_params ic_csc_rgb2rgb = {
-+/*
-+ * identity matrix, used for transparent RGB->RGB graphics
-+ * combining.
-+ */
-+static const struct ic_csc_params ic_csc_identity = {
- 	.coeff = {
- 		{ 128, 0, 0 },
- 		{ 0, 128, 0 },
-@@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
- };
- 
- /*
-+ * Inverse BT.601 encoding from YUV limited range to RGB full range:
-+ *
-  * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
-  * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
-  * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
-  */
--static const struct ic_csc_params ic_csc_ycbcr2rgb = {
-+static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
- 	.coeff = {
- 		{ 149, 0, 204 },
- 		{ 149, 462, 408 },
-@@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
+@@ -244,16 +244,12 @@ static int init_csc(struct ipu_ic *ic,
+ 	base = (u32 __iomem *)
  		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
  
- 	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
--		params = &ic_csc_ycbcr2rgb;
-+		params = &ic_csc_ycbcr2rgb_bt601;
- 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
--		params = &ic_csc_rgb2ycbcr;
-+		params = &ic_csc_rgb2ycbcr_bt601;
- 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
--		params = &ic_csc_rgb2rgb;
+-	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
++	if (inf == outf)
 +		params = &ic_csc_identity;
- 	else {
- 		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
- 		return -EINVAL;
++	else if (inf == IPUV3_COLORSPACE_YUV)
+ 		params = &ic_csc_ycbcr2rgb_bt601;
+-	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
++	else
+ 		params = &ic_csc_rgb2ycbcr_bt601;
+-	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+-		params = &ic_csc_identity;
+-	else {
+-		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
+-		return -EINVAL;
+-	}
+ 
+ 	/* Cast to unsigned */
+ 	c = (const u16 (*)[3])params->coeff;
 -- 
 2.17.1
 
