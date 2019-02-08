@@ -2,123 +2,158 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18252C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DCEC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E3A2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51FE9206A3
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:23:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FENGPQuA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfBHKW1 (ORCPT
+        id S1727603AbfBHKXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:22:27 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48024 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbfBHKW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 05:22:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF9AFA78;
-        Fri,  8 Feb 2019 02:22:26 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 44F5C3F557;
-        Fri,  8 Feb 2019 02:22:25 -0800 (PST)
-Date:   Fri, 8 Feb 2019 10:22:22 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Murali Karicheri <m-karicheri2@ti.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/9] PCI: dwc: Add support to use non default
- msi_irq_chip
-Message-ID: <20190208102222.GB13009@e107981-ln.cambridge.arm.com>
-References: <20190207110924.30716-1-kishon@ti.com>
- <20190207110924.30716-7-kishon@ti.com>
- <20190207164853.GD21111@e107981-ln.cambridge.arm.com>
- <ff55a1e9-0998-685f-2d2c-e6cf522b0988@ti.com>
+        Fri, 8 Feb 2019 05:23:50 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41488 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbfBHKXu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 05:23:50 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so1466618pfi.8
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 02:23:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ompwQ1OdklRy24O9pJjo1FPddnXjgXtH+oByiW02lMI=;
+        b=FENGPQuAnWHfpAcIyywDFj42SPo2PY9re5BfGuFNz+jyyT12VEJinXPPRZ9zr3cIt+
+         gsfu+urzXcZyPvdcDYP2bx3sOT7wIN3ZZXvfcJFFJXW00YWMu+f0AdiP47C1VssQj4ob
+         aY3cj3iUirOue7TZ6FQinEDJusFZURz2yVCyS39uZb+wjgdHFaNL0/AekHKbyFYxWsIL
+         cKwztE+3TAlZoaWTx5J7CTYI2QDDcTvSv7zLKGXFivIai4auYYS5W2hYhbZHre7wA3n+
+         6q1thMatXQ/ychIeptNZuwLSrv3mmlUAfsxNcTyt2a1VPSsqJ4UF1QYCCqkHbqsNDCnE
+         ERWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ompwQ1OdklRy24O9pJjo1FPddnXjgXtH+oByiW02lMI=;
+        b=nThlheO5/7LvxyhI7eVT8fMBvCg0r9/RGnFoWdWuYEQX49NZlaA8JztfATzZEr5rx+
+         WV9S7CSvMALgC88RsLFZgBIHH5rEmqqnflTWTTSnQclTBEfZF6kXNuLf0mXeq2KKIPg/
+         UFKqWU31ZyYT5tEuOrSsRaj85H8iKZ9SNYJbjK5B+yyi+rZsRN9OcVTrQsCG+fmJghMx
+         0xJ2Ndb7sJtEBmhTWs6WF63kPBEnDZsYggmJ8mgPvqGKOY1KosDI9c2xpye5vI9+rw00
+         jqymYOyGRqzvkWsThUBgke8xO1i7qoE3L52WCUlvEYpbmyXBJUJaboeEgdOpYkDzNcvS
+         yejw==
+X-Gm-Message-State: AHQUAuaEkUKCYE8RPAXSHGhdSo4rDSSHqMoHR6BIZgOcQGkPKm8wXDOk
+        HOq/RPV6dgHnnhtzDhubrkzE+A==
+X-Google-Smtp-Source: AHgI3Iay3INKVAwWcLkDmNZEfaVGeTjNjir262wXwMUAHvELJm5fYgrb0qKjy1PVs1cQLGsohhbevg==
+X-Received: by 2002:a63:c01:: with SMTP id b1mr20018231pgl.182.1549621429334;
+        Fri, 08 Feb 2019 02:23:49 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id h15sm2024075pgl.43.2019.02.08.02.23.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 02:23:48 -0800 (PST)
+Date:   Fri, 8 Feb 2019 15:53:46 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
+Message-ID: <20190208102346.ophy3eqhxjzaqsxr@vireshk-i7>
+References: <cover.1547197612.git.viresh.kumar@linaro.org>
+ <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
+ <20190208090912.43aao5kny42iirum@vireshk-i7>
+ <CAJZ5v0iE9tFt9Xs27EYcjv6N1KAq-LaAQnv=QBvnbNRpfwrWCg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff55a1e9-0998-685f-2d2c-e6cf522b0988@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAJZ5v0iE9tFt9Xs27EYcjv6N1KAq-LaAQnv=QBvnbNRpfwrWCg@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 10:16:59AM +0530, Kishon Vijay Abraham I wrote:
-> Hi Lorenzo,
+On 08-02-19, 10:53, Rafael J. Wysocki wrote:
+> On Fri, Feb 8, 2019 at 10:09 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 11-01-19, 10:47, Rafael J. Wysocki wrote:
+> > > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > This commit introduces the frequency constraint infrastructure, which
+> > > > provides a generic interface for parts of the kernel to constraint the
+> > > > working frequency range of a device.
+> > > >
+> > > > The primary users of this are the cpufreq and devfreq frameworks. The
+> > > > cpufreq framework already implements such constraints with help of
+> > > > notifier chains (for thermal and other constraints) and some local code
+> > > > (for user-space constraints). The devfreq framework developers have also
+> > > > shown interest [1] in such a framework, which may use it at a later
+> > > > point of time.
+> > > >
+> > > > The idea here is to provide a generic interface and get rid of the
+> > > > notifier based mechanism.
+> > > >
+> > > > Only one constraint is added for now for the cpufreq framework and the
+> > > > rest will follow after this stuff is merged.
+> > > >
+> > > > Matthias Kaehlcke was involved in the preparation of the first draft of
+> > > > this work and so I have added him as Co-author to the first patch.
+> > > > Thanks Matthias.
+> > > >
+> > > > FWIW, This doesn't have anything to do with the boot-constraints
+> > > > framework [2] I was trying to upstream earlier :)
+> > >
+> > > This is quite a bit of code to review, so it will take some time.
+> >
+> > @Rafael: You are going to provide some more feedback here, right ?
 > 
-> On 07/02/19 10:18 PM, Lorenzo Pieralisi wrote:
-> > On Thu, Feb 07, 2019 at 04:39:21PM +0530, Kishon Vijay Abraham I wrote:
-> >> Platforms using Designware IP uses dw_pci_msi_bottom_irq_chip for
-> >> configuring the MSI controller logic within the Designware IP. However
-> >> certain platforms like Keystone (K2G) which uses Desingware IP has
-> >> it's own MSI controller logic. For handling such platforms,
-> >> the irqchip ops uses msi_irq_ack, msi_set_irq, msi_clear_irq callback
-> >> functions.
-> >>
-> >> Add support to use different msi_irq_chip with default as
-> >> dw_pci_msi_bottom_irq_chip. This is in preparation to get rid off
-> >> msi_irq_ack, msi_set_irq, msi_clear_irq and other Keystone specific
-> >> dw_pcie_host_ops. This will also help to get rid of get_msi_addr and
-> >> get_msi_data ops.
-> >>
-> >> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> >> ---
-> >>  drivers/pci/controller/dwc/pcie-designware-host.c | 5 ++++-
-> >>  drivers/pci/controller/dwc/pcie-designware.h      | 1 +
-> >>  2 files changed, 5 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> index 721d60a5d9e4..042de09b0451 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> >> @@ -245,7 +245,7 @@ static int dw_pcie_irq_domain_alloc(struct irq_domain *domain,
-> >>  
-> >>  	for (i = 0; i < nr_irqs; i++)
-> >>  		irq_domain_set_info(domain, virq + i, bit + i,
-> >> -				    &dw_pci_msi_bottom_irq_chip,
-> >> +				    pp->msi_irq_chip,
-> >>  				    pp, handle_edge_irq,
-> >>  				    NULL, NULL);
-> >>  
-> >> @@ -277,6 +277,9 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
-> >>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> >>  	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
-> >>  
-> >> +	if (!pp->msi_irq_chip)
-> >> +		pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
-> > 
-> > I think it is better to initialize pp->msi_irq_chip outside
-> > dw_pcie_allocate_domains(), it makes things clearer.
-> > 
-> > In:
-> > 
-> > dw_pcie_host_init() for dwc
-> > 
-> > or
-> > 
-> > msi_host_init() for platforms with that hook implemented.
-> > 
-> > Is there any gotcha I am missing ?
+> I think I've said something already.
 > 
-> I added here only to avoid breaking "git bisect". Next patch adds
-> ks_pcie_msi_irq_chip in msi_host_init of keystone. However till then it has to
-> use dw_pci_msi_bottom_irq_chip. Adding anywhere else in dw_pcie_host_init would
-> mean msi_irq_chip is uninitialized for keystone.
+> TLDR: I'm not convinced.
 > 
-> Maybe I can add that in the commit log and move it to dw_pcie_host_init?
+> PM QoS does similar things in a similar way.  Why does it have to be a
+> different framework?
 
-I do not think you need to mention that in the commit log but move the
-initialization of pp->msi_irq_chip in dw_pcie_host_init() in the next
-patch, yes.
+I did it because no one objected to the initial proposal [1]. But you
+weren't directly cc'd (but only PM list) so can't blame you either :)
 
-It is correct to keep bisectability, I should have read ahead.
+Maybe we can make it work with PM QoS as well, I will see that aspect.
 
-Lorenzo
+> Using freq constraints for thermal reasons without coordinating it
+> with scheduling is questionable in general, because thermal control
+> may work against scheduling then.
+
+Sure, I agree but all we are talking about here is the mechanism with
+which the constraints should be put and it doesn't make things bad
+than they already are. With the notifiers in place currently, thermal
+core doesn't talk to scheduler.
+
+I think a different set of people are trying to fix that by issuing
+some calls to scheduler from thermal core, or something like that but
+I still consider that work orthogonal to the way constraints should be
+added instead of notifiers.
+
+Will implementing it the QoS way would be fine from thermal-scheduler
+standpoint ?
+
+> AFAICS, the original reason for notifiers in cpufreq was to avoid
+> drawing too much power (and frequency was a proxy of power then) and
+> they allowed the firmware to set the additional limit when going from
+> AC to battery, for example.  That appears to be a different goal,
+> though.
+
+-- 
+viresh
+
+[1] https://marc.info/?l=linux-pm&m=153851798809709
