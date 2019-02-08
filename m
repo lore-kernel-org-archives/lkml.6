@@ -2,109 +2,114 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2983C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1143C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0F22177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:11:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="StFrvc4/"
+	by mail.kernel.org (Postfix) with ESMTP id 890B92177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfBHULg (ORCPT
+        id S1727509AbfBHUTP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:11:36 -0500
-Received: from pb-smtp2.pobox.com ([64.147.108.71]:54616 "EHLO
-        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727415AbfBHULd (ORCPT
+        Fri, 8 Feb 2019 15:19:15 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35103 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbfBHUTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:11:33 -0500
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 6CC4D149F6B;
-        Fri,  8 Feb 2019 15:11:31 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:message-id:references:mime-version:content-type
-        :in-reply-to:content-transfer-encoding; s=sasl; bh=3Zv1L31uLuHxE
-        GW6DIj7be3q+mw=; b=StFrvc4/+bm6pNuVI+QE+9M49is8e5Huy8g9MW3GfKj4Y
-        6D0JoKC9B8l0h9gBMjR/gz4lclI8hB4pVGYp+mFU+oYFxOJ0WckaR9aWwA/PVmxH
-        waH5J21T8CGGws3b5rFIV1N1/qNo+IF1spDoGsXrwGAHXNzVqwessS2N9IHhjM=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=date:from:to:cc
-        :subject:message-id:references:mime-version:content-type
-        :in-reply-to:content-transfer-encoding; q=dns; s=sasl; b=jcQn6+5
-        N3QKhCjOQ82RVLf6GyRo28PcajNlnsPl3x1s0/YYlec7D5wS9VFXCbNAJlcews6K
-        /Zph7DKCTE0y7k8GiVTHdexoqndnZwoSPE9TRsIJwRK9/0rzckdfOXxeXVaABn5C
-        akRhAwqN6XhjNFMnAZf/op+HjtfCk17Na5Rs=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp2.pobox.com (Postfix) with ESMTP id 636A5149F6A;
-        Fri,  8 Feb 2019 15:11:31 -0500 (EST)
-Received: from zaya.teonanacatl.net (unknown [71.173.194.225])
-        (using TLSv1.2 with cipher AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id CDE64149F69;
-        Fri,  8 Feb 2019 15:11:30 -0500 (EST)
-Date:   Fri, 8 Feb 2019 15:11:29 -0500
-From:   Todd Zullinger <tmz@pobox.com>
-To:     SZEDER =?iso-8859-1?Q?G=E1bor?= <szeder.dev@gmail.com>
-Cc:     "Randall S. Becker" <rsbecker@nexbridge.com>,
-        Jeff King <peff@peff.net>,
-        'Junio C Hamano' <gitster@pobox.com>, git@vger.kernel.org,
-        'Linux Kernel' <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: Re: [Breakage] Git v2.21.0-rc0 - t5403 (NonStop)
-Message-ID: <20190208201128.GD30548@zaya.teonanacatl.net>
-References: <000d01d4bf9b$d5d48da0$817da8e0$@nexbridge.com>
- <20190208111002.GU10587@szeder.dev>
+        Fri, 8 Feb 2019 15:19:14 -0500
+X-Originating-IP: 90.89.68.76
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 6C32CE0003;
+        Fri,  8 Feb 2019 20:19:08 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 21:19:08 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH v2 3/5] media: sunxi: Add A10 CSI driver
+Message-ID: <20190208201908.t5easf5uurvax7re@flea>
+References: <cover.ba7411f0c7155d0292b38d3dec698e26b5cc813b.1548687041.git-series.maxime.ripard@bootlin.com>
+ <c1a7d46f8504decb58ff224b0b5f2f0733282cc6.1548687041.git-series.maxime.ripard@bootlin.com>
+ <CAAEAJfAxWBvj6E1fJ8fy=F2xDXLHwRq7-2BT3tQqbPvbZxseyg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hsnrvmpmpg5r7wb2"
 Content-Disposition: inline
-In-Reply-To: <20190208111002.GU10587@szeder.dev>
-User-Agent: Mutt/1.11.1 (2018-12-01)
-X-Pobox-Relay-ID: B9646A38-2BDD-11E9-8887-DF19F34BB12D-09356542!pb-smtp2.pobox.com
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAEAJfAxWBvj6E1fJ8fy=F2xDXLHwRq7-2BT3tQqbPvbZxseyg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SZEDER G=E1bor wrote:
-> On Fri, Feb 08, 2019 at 05:48:27AM -0500, Randall S. Becker wrote:
->> We have a few new breakages on the NonStop port in 2.21.0-rc0. The fir=
-st is in t5403, as below:
-[...]
->> The post-checkout hook is:
->> #!/usr/local/bin/bash
->> echo "$@" >$GIT_DIR/post-checkout.args
->>=20
->> This looks like it is a "bash thing" and $GIT_DIR might have to be in =
-quotes, and is not be specific to the platform. If I replace=20
->>=20
->> echo "$@" >$GIT_DIR/post-checkout.args
->>=20
->> with
->>=20
->> echo "$@" >"$GIT_DIR/post-checkout.args"
->>=20
->> The test passes.
+
+--hsnrvmpmpg5r7wb2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Ezequiel,
+
+On Wed, Feb 06, 2019 at 07:59:43PM -0300, Ezequiel Garcia wrote:
+> > +       csi->isp_clk =3D devm_clk_get(&pdev->dev, "isp");
+> > +       if (IS_ERR(csi->isp_clk)) {
+> > +               dev_err(&pdev->dev, "Couldn't get our ISP clock\n");
+> > +               return PTR_ERR(csi->isp_clk);
+> > +       }
+> > +
+> > +       csi->mod_clk =3D devm_clk_get(&pdev->dev, "mod");
+> > +       if (IS_ERR(csi->mod_clk)) {
+> > +               dev_err(&pdev->dev, "Couldn't get our mod clock\n");
+> > +               return PTR_ERR(csi->mod_clk);
+> > +       }
+> > +
+> > +       csi->ram_clk =3D devm_clk_get(&pdev->dev, "ram");
+> > +       if (IS_ERR(csi->ram_clk)) {
+> > +               dev_err(&pdev->dev, "Couldn't get our ram clock\n");
+> > +               return PTR_ERR(csi->ram_clk);
+> > +       }
+> > +
 >=20
-> Wow, this is the second time this "redirection to a filename with
-> spaces under Bash" issue pops up today, see the other one here:
->=20
->   https://public-inbox.org/git/20190208031746.22683-2-tmz@pobox.com/T/#=
-u
+> Minor comment: perhaps you can take advantage
+> of the clock bulk API and simplify the clock management.
 
-Indeed, I was surprised to see another one today.
+Our clocks have usually very different usages for each IP (the RAM
+controls the DMA side of the IP, the mod one controls the "logic" part
+of it, the bus one the register, etc.) so they needed to be handled
+quite differently. I'd rather stick with the current API.
 
-It made me wonder how I had missed it in my own testing.
-This one requires SHELL_PATH to be bash, while I only set
-TEST_SHELL_PATH to bash for the improved -x tracing in the
-fedora builds.
-
-I ran the tests again with SHELL_PATH as bash on fedora and
-this was the only failure I saw (other than the one from my
-earlier message, that is).
+Thanks!
+Maxime
 
 --=20
-Todd
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--hsnrvmpmpg5r7wb2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXF3kPAAKCRDj7w1vZxhR
+xX7rAQDZ8SvZeMCDfXgbukEy4JMwmoZozb1nisAxIhaBIKTsAQD6A3Cj6WVtN5dP
+uR0AiYb1Sg3joHZ9DfaysXHNhYUXvA8=
+=uUw3
+-----END PGP SIGNATURE-----
+
+--hsnrvmpmpg5r7wb2--
