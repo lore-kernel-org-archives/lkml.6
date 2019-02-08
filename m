@@ -2,106 +2,197 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E6DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D1EC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C6C21908
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F89121916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:49:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aXIHfd20"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfBHVsw (ORCPT
+        id S1726883AbfBHVtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:48:52 -0500
-Received: from sauhun.de ([88.99.104.3]:59954 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbfBHVsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:48:52 -0500
-Received: from localhost (p54B331AB.dip0.t-ipconnect.de [84.179.49.171])
-        by pokefinder.org (Postfix) with ESMTPSA id 3DB5B2C282F;
-        Fri,  8 Feb 2019 22:48:50 +0100 (CET)
-Date:   Fri, 8 Feb 2019 22:48:49 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-Subject: Re: [PATCH] i2c: aspeed: Add multi-master use case support
-Message-ID: <20190208214849.GH12451@kunai>
-References: <20190116193958.6049-1-jae.hyun.yoo@linux.intel.com>
+        Fri, 8 Feb 2019 16:49:46 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44117 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHVtp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 16:49:45 -0500
+Received: by mail-vs1-f65.google.com with SMTP id u11so2989963vsp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 13:49:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4fRaS5HEGitPBMuZe/mI/6bybUFiM7/sj7x0YbePNjY=;
+        b=aXIHfd20YOICHLRxigPSutLUUA6kYK4NZVrf9MClkFK8qLumsLJdHErpIFkPz7VZwp
+         1QIXzZRMp+Vq1UigA5uj8WukuebbfHr83hFjjPC3kox3rspL9sy6U9KIU4lnmVytb31j
+         Se66MTZg1Lbx1T7tFRrtLK9DEg9xTBERYHVbE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4fRaS5HEGitPBMuZe/mI/6bybUFiM7/sj7x0YbePNjY=;
+        b=UH+BbQ5Lk3svX+VNnw4O0vjrhcx6QW2YPT2y/WOJQH2vgs0LD05yZScuWgvfzBjG1J
+         PecEbp0k5Q23ha8eixLOzVHcsoIxfNNeOg5FEDmyIg6gekUIN1xz49/0QaFTYh7D33Oi
+         JpgCuV9UTrk2Xve4Fcj2qqbxnzx/5Eh9pjBL1lkTPJa5a+If1oa192hLmQpRc+UtnsJx
+         Fv71LKuaUaZUMrBN2+7p9jnJ53LiDnI2S9XRSDd+G1/9mjxQYchMu1CGyKJ6EUe8s4NR
+         VkXlG8YHuAp9jeNLJ5dFpJnytdAlYYBUEqBelKCt6rHi1AEYQZ0Wh1vwQRp48RHhZBgR
+         W8aw==
+X-Gm-Message-State: AHQUAuZNRfvfaWgX+z3SM4vkDFt4nFNAk+k3+2/tt42PswZxMvjZH65j
+        eehQ7eXMZR16R3pMZiSzcyeAcObzkk4=
+X-Google-Smtp-Source: AHgI3IZhpgwV8TZactzizk7dKCkKFoUoi3++ZW6kNNtHzDwy5cyrYlsJEjnmeMnQk1/31YDjwdChKA==
+X-Received: by 2002:a67:f98e:: with SMTP id b14mr4648102vsq.130.1549662581914;
+        Fri, 08 Feb 2019 13:49:41 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id g203sm517149vsd.19.2019.02.08.13.49.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 13:49:40 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id z24so1622117ual.8
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 13:49:40 -0800 (PST)
+X-Received: by 2002:ab0:6151:: with SMTP id w17mr869203uan.114.1549662580116;
+ Fri, 08 Feb 2019 13:49:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SUk9VBj82R8Xhb8H"
-Content-Disposition: inline
-In-Reply-To: <20190116193958.6049-1-jae.hyun.yoo@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
+ <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com> <201902070230.x172UUG6002087@www262.sakura.ne.jp>
+ <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com> <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
+In-Reply-To: <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 8 Feb 2019 13:49:28 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJF1M8K39fT0ctOWKBJegboyvLD1pc9U2P_x=miENHw+A@mail.gmail.com>
+Message-ID: <CAGXu5jJF1M8K39fT0ctOWKBJegboyvLD1pc9U2P_x=miENHw+A@mail.gmail.com>
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@vger.kernel.org>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 8, 2019 at 2:52 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2019/02/08 1:24, Casey Schaufler wrote:
+> >>>> Then, I think that it is straightforward (and easier to manage) to ignore security= parameter
+> >>>> when lsm= parameter is specified.
+> >>> That reduces flexibility somewhat. If I am debugging security modules
+> >>> I may want to use lsm= to specify the order while using security= to
+> >>> identify a specific exclusive module. I could do that using lsm= by
+> >>> itself, but habits die hard.
+> >> "lsm=" can be used for identifying a specific exclusive module, and Ubuntu kernels would
+> >> have to use CONFIG_LSM (or "lsm=") for identifying the default exclusive module (in order
+> >> to allow enabling both TOMOYO and one of SELinux,Smack,AppArmor at the same time).
+> >>
+> >> Since "security=" can't be used for selectively enable/disable more than one of
+> >> SELinux,Smack,TOMOYO,AppArmor, I think that recommending users to migrate to "lsm=" is the
+> >> better direction. And ignoring "security=" when "lsm=" is specified is easier to understand.
+> >
+> > I added Kees to the CC list. Kees, what to you think about
+> > ignoring security= if lsm= is specified? I'm ambivalent.
+> >
+> >
+>
+> To help administrators easily understand what LSM modules are possibly enabled by default (which
+> have to be fetched from e.g. /boot/config-`uname -r`) and specify lsm= parameter when they need,
+> I propose changes shown below.
+>
+> diff --git a/security/security.c b/security/security.c
+> index 3147785e..051d708 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -51,8 +51,6 @@
+>  static __initdata const char *chosen_lsm_order;
+>  static __initdata const char *chosen_major_lsm;
+>
+> -static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
+> -
+>  /* Ordered list of LSMs to initialize. */
+>  static __initdata struct lsm_info **ordered_lsms;
+>  static __initdata struct lsm_info *exclusive;
+> @@ -284,14 +282,22 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+>  static void __init ordered_lsm_init(void)
+>  {
+>         struct lsm_info **lsm;
+> +       const char *order = CONFIG_LSM;
+> +       const char *origin = "builtin";
+>
+>         ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+>                                 GFP_KERNEL);
+>
+> -       if (chosen_lsm_order)
+> -               ordered_lsm_parse(chosen_lsm_order, "cmdline");
+> -       else
+> -               ordered_lsm_parse(builtin_lsm_order, "builtin");
+> +       if (chosen_lsm_order) {
+> +               if (chosen_major_lsm) {
+> +                       pr_info("security= is ignored because of lsm=\n");
 
---SUk9VBj82R8Xhb8H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is intended to be the new default way to change the LSM
+("lsm=..."), so I'd rather not have this appear every time. Also, it
+must continue to interact with the builtin ordering, so if you wanted
+this, I think better would be to do:
 
-On Wed, Jan 16, 2019 at 11:39:58AM -0800, Jae Hyun Yoo wrote:
-> In multi-master environment, this driver's master cannot know
-> exactly when a peer master sends data to this driver's slave so
-> cases can be happened that this master tries sending data through
-> the master_xfer function but slave data from a peer master is still
-> being processed or slave xfer is started by a peer immediately
-> after it queues a master command. To support multi-master use cases
-> properly, this H/W provides arbitration in physical level and it
-> provides priority based command handling too to avoid conflicts in
-> multi-master environment, means that if a master and a slave events
-> happen at the same time, H/W will handle a higher priority event
-> first and a pending event will be handled when bus comes back to
-> the idle state.
->=20
-> To support this H/W feature properly, this patch adds the 'pending'
-> state of master and its handling code so that the pending master
-> xfer can be continued after slave operation properly.
->=20
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+diff --git a/security/security.c b/security/security.c
+index 3147785e20d7..e6153ed54361 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
+        ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+                                GFP_KERNEL);
 
-Hmmm, the #ifdeffery quite increases with this patch. Maybe it is easier
-to select I2C_SLAVE in Kconfig? I'll let you decide.
+-       if (chosen_lsm_order)
++       if (chosen_lsm_order) {
++               if (chosen_major_lsm) {
++                       pr_info("security= is ignored because of lsm=\n");
++                       chosen_major_lsm = NULL;
++               }
+                ordered_lsm_parse(chosen_lsm_order, "cmdline");
+-       else
++       } else
+                ordered_lsm_parse(builtin_lsm_order, "builtin");
 
-My code checkers found this:
+        for (lsm = ordered_lsms; *lsm; lsm++)
 
-    CPPCHECK
-drivers/i2c/busses/i2c-aspeed.c:694:10: warning: Variable 'ret' is assigned=
- a value that is never used. [unreadVariable]
+> +       pr_info("Security Framework initializing: %s\n", order);
+> +       ordered_lsm_parse(order, origin);
+>
+>         for (lsm = ordered_lsms; *lsm; lsm++)
+>                 prepare_lsm(*lsm);
+> @@ -333,8 +339,6 @@ int __init security_init(void)
+>         int i;
+>         struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
+>
+> -       pr_info("Security Framework initializing\n");
+> -
+>         for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+>              i++)
+>                 INIT_HLIST_HEAD(&list[i]);
 
 
---SUk9VBj82R8Xhb8H
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxd+T0ACgkQFA3kzBSg
-KbYPvg/8CQ+tXkRGz8HmQGO9FCYbOYEFSlIz26yIOPrldRkZGuG+Kb+Fp+ges97e
-hx0VXsi7KmaQZwQl3GI9sttzjbINY11XCpERgpEdPumbQD/q2aEeyl1n7HlJ3la+
-Dpl5mzTO4Hma/PACdNoYY2PTYBrDz7GfrfiT5seRGr18Uc6LGlNMKGJnbPYrT5J8
-ZZthhAmN0EB2HCSQ0KF4OGZX6QUV1TjX2mka0qvP/TzL0RwhVE/xhLXNGf6TUcBp
-M7P7Was7AzUFETJdpELqSbL79tQH/2/1b2dGcG0ZRIXfo8DC4zekSlG5tprkA678
-uh8INIeg1nPxjj2S4aoOvR28XuUnOhWD/idAWu2ZwzcPj1ntZy0NZqQAbJ3+FZAu
-D9v7G8KZRbtMf6CGyBhZ2sVikTDwUkfErafXImXI0OesiBpB2c3m3ETS25bhiiHc
-yOMKWLauSuyYf4sKqTcHobJtd1MV4kSn37opY/ugvknEEsqAJT6Z2uGNF5/LXgDO
-ckyWHgFVkIZsDPkgeg+sCJZo+cLzaOMnPdUtNm0t+K7T4DaUL+tZxo+n3Hm8Qwvq
-zgdgFxQCtk2Cq8flR9F9TD/AkCxFllMEUzDSavqm7ndxscaONWLvEddf6qxFrZT6
-K8fymQrltfxpKmGc8r7LRnlhI728qamrLx/MKr/w96ByuPsdUgA=
-=6dhw
------END PGP SIGNATURE-----
-
---SUk9VBj82R8Xhb8H--
+-- 
+Kees Cook
