@@ -2,164 +2,110 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B031C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75166C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088832086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:52:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="aYMfm72z"
+	by mail.kernel.org (Postfix) with ESMTP id 442762086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549630345;
+	bh=gzsFFxhY/vxcDbusniXRM/csEGoQGw+/kSIDREfrnqI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=jyUzLkaSTEcA6kHR33FalwiwjszcOhAK6SChvl/Dl0ja01JjK6CfmzvwcJ6jaHM5y
+	 p/GZvXqXU1A/Uhg+FMCyKsB8eEo01oytVRQ7stBxet6Et22jQk0g9p01aaTFMqskon
+	 qrGcUcf5Ws0uTqpNaYWgyQNxNGxarmsKiSnUyWek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfBHMwV (ORCPT
+        id S1727541AbfBHMwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:52:21 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:20616 "EHLO pegase1.c-s.fr"
+        Fri, 8 Feb 2019 07:52:24 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3400 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S1726568AbfBHMwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 07:52:21 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43ww7N226tz9v0dH;
-        Fri,  8 Feb 2019 13:52:16 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=aYMfm72z; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id RPH8uguzozuR; Fri,  8 Feb 2019 13:52:16 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43ww7N0yfsz9v9DY;
-        Fri,  8 Feb 2019 13:52:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549630336; bh=S1kn21Xe7/docipPWcnKOsqhSa/YEFzLSyBpdTR2gLE=;
-        h=From:Subject:To:Cc:Date:From;
-        b=aYMfm72zUAsT4J2PvmbcJeFnvPe9AYVbn5/Mo2Ng6gJYvCN3f/E5hkCgseZk33qgl
-         d4FjRrm5iN0IbFkNoS9xcRy8uD1BMcyQZkBb4tVOge2qgfZBLeRGQj6NvHT0UVG37d
-         7bOsdzWvEQC+v0Q39WsrCT6QyUCvAoeCs+5Vttfc=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 678D88B756;
-        Fri,  8 Feb 2019 13:52:17 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id CUIsjZfggXVe; Fri,  8 Feb 2019 13:52:17 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 394F58B8D9;
-        Fri,  8 Feb 2019 13:52:17 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 11415653E8; Fri,  8 Feb 2019 12:52:16 +0000 (UTC)
-Message-Id: <cover.1549630193.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH v1 00/16] powerpc/32: Implement fast syscall entry
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri,  8 Feb 2019 12:52:16 +0000 (UTC)
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 04:52:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,347,1544515200"; 
+   d="asc'?scan'208";a="120948675"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Feb 2019 04:52:19 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Jochen Sprickerhof <jochen@sprickerhof.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] usb: dwc3: Enable GBit Ethernet on Odroid XU4
+In-Reply-To: <bdbce410-7f48-17a5-b58b-3ebd65ca6913@samsung.com>
+References: <20190121140204.GA2360@vis> <5C5A9DCB.8040507@ti.com> <20190206093830.GS26157@vis> <CGME20190206101740epcas2p131674b4b9733047711855ffb2e7a99a7@epcas2p1.samsung.com> <5C5AB41C.9080402@ti.com> <bdbce410-7f48-17a5-b58b-3ebd65ca6913@samsung.com>
+Date:   Fri, 08 Feb 2019 14:52:15 +0200
+Message-ID: <8736oyl9xc.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this series is to implement a fast syscall entry
-on ppc32.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Unlike all other exceptions which can happen at any time and
-require to preserve all registers, the syscalls do not
-require the preservation of volatile registers (except LR).
 
-Syscall entries can then be optimised with lighter entry code
-than the general exception handling.
+Hi,
 
-In the meantime this series refactorises the exception entry on
-40x/6xx/8xx as they are pretty similar, and it takes benh series
-on rationalise the settings of MSR_EE at exceptions/syscall entries
-as this change pretty simplies exception entries.
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
+>>>> On 21/01/19 16:02, Jochen Sprickerhof wrote:
+>>> [..]
+>>>>> I'm not sure why this it only works with the driver compiled into the
+>>>>> kernel nor why it needs a hard reset or why it was the line was dropp=
+ed
+>>>>> when the patch was accepted. Would be great to get some feedback of t=
+he
+>>>>> authors.
+>>>> When XHCI driver is compiled into the kernel are the relevant PHY driv=
+ers
+>>>> compiled in as well?
+>>> Only CONFIG_USB_PHY=3Dy (I took the config from the linux-image-4.19.0-=
+1-armmp_4.19.13-1_armhf.deb Debian package as a basis where this is the def=
+ault).
+>
+> I confirm that on Odroid XU4 USB 3.0 works only when all related drivers
+> (dwc3, xhci and exynos5 drd phy) are compiled into the kernel. If they
+> are compiled as modules, USB 3.0 calibration doesn't work. The mentioned
+> patch doesn't fix anything.
 
-On a 8xx, this series improves null_syscall selftest by 17%
-On a 83xx, this series improves null_syscall selftest by 12,5%
+cool, thanks. So the problem is elsewhere.
 
-Christophe Leroy (16):
-  powerpc: CONFIG_THREAD_INFO_IN_TASK series
-  powerpc/32: Refactor EXCEPTION entry macros for head_8xx.S and
-    head_32.S
-  powerpc/32: move LOAD_MSR_KERNEL() into head_32.h and use it
-  powerpc/32: make the 6xx/8xx EXC_XFER_TEMPLATE() similar to the
-    40x/booke one
-  powerpc/40x: Don't use SPRN_SPRG_SCRATCH2 in EXCEPTION_PROLOG
-  powerpc/40x: add exception frame marker
-  powerpc/40x: Split and rename NORMAL_EXCEPTION_PROLOG
-  powerpc/40x: Refactor exception entry macros by using head_32.h
-  powerpc/fsl_booke: ensure SPEFloatingPointException() reenables
-    interrupts
-  powerpc/32: enter syscall with MSR_EE inconditionaly set
-  powerpc/32: Enter exceptions with MSR_EE unset
-  powerpc/32: get rid of COPY_EE in exception entry
-  powerpc: Fix 32-bit handling of MSR_EE on exceptions
-  powerpc/32: implement fast entry for syscalls on non BOOKE
-  powerpc/32: Remove MSR_PR test when returning from syscall
-  powerpc/32: don't do syscall stuff in transfer_to_handler on non BOOKE
+=2D-=20
+balbi
 
- arch/powerpc/Kconfig                           |   1 +
- arch/powerpc/Makefile                          |   7 +
- arch/powerpc/include/asm/asm-prototypes.h      |   4 +-
- arch/powerpc/include/asm/book3s/64/mmu-hash.h  |   2 +-
- arch/powerpc/include/asm/exception-64s.h       |   4 +-
- arch/powerpc/include/asm/irq.h                 |  18 +-
- arch/powerpc/include/asm/livepatch.h           |   7 +-
- arch/powerpc/include/asm/processor.h           | 105 +---------
- arch/powerpc/include/asm/ptrace.h              |   2 +-
- arch/powerpc/include/asm/reg.h                 |   2 +-
- arch/powerpc/include/asm/smp.h                 |  17 +-
- arch/powerpc/include/asm/task_size_32.h        |  21 ++
- arch/powerpc/include/asm/task_size_64.h        |  79 ++++++++
- arch/powerpc/include/asm/thread_info.h         |  19 --
- arch/powerpc/kernel/asm-offsets.c              |  12 +-
- arch/powerpc/kernel/entry_32.S                 | 261 ++++++++++++++-----------
- arch/powerpc/kernel/entry_64.S                 |  12 +-
- arch/powerpc/kernel/epapr_hcalls.S             |   5 +-
- arch/powerpc/kernel/exceptions-64e.S           |  13 +-
- arch/powerpc/kernel/exceptions-64s.S           |   2 +-
- arch/powerpc/kernel/head_32.S                  | 182 ++++-------------
- arch/powerpc/kernel/head_32.h                  | 203 +++++++++++++++++++
- arch/powerpc/kernel/head_40x.S                 | 154 ++++-----------
- arch/powerpc/kernel/head_44x.S                 |  16 +-
- arch/powerpc/kernel/head_64.S                  |   1 +
- arch/powerpc/kernel/head_8xx.S                 | 133 ++-----------
- arch/powerpc/kernel/head_booke.h               |  44 ++---
- arch/powerpc/kernel/head_fsl_booke.S           |  44 ++---
- arch/powerpc/kernel/idle_6xx.S                 |   8 +-
- arch/powerpc/kernel/idle_book3e.S              |   2 +-
- arch/powerpc/kernel/idle_e500.S                |   8 +-
- arch/powerpc/kernel/idle_power4.S              |   2 +-
- arch/powerpc/kernel/irq.c                      | 114 ++---------
- arch/powerpc/kernel/kgdb.c                     |  28 ---
- arch/powerpc/kernel/machine_kexec_64.c         |   6 +-
- arch/powerpc/kernel/misc_32.S                  |  17 +-
- arch/powerpc/kernel/process.c                  |  63 +++---
- arch/powerpc/kernel/setup-common.c             |   2 +-
- arch/powerpc/kernel/setup_32.c                 |  26 ++-
- arch/powerpc/kernel/setup_64.c                 |  51 +----
- arch/powerpc/kernel/smp.c                      |  16 +-
- arch/powerpc/kernel/stacktrace.c               |  29 ++-
- arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   6 +-
- arch/powerpc/kernel/traps.c                    |   8 +
- arch/powerpc/kvm/book3s_hv_hmi.c               |   1 +
- arch/powerpc/mm/hash_low_32.S                  |  14 +-
- arch/powerpc/net/bpf_jit32.h                   |   5 +-
- arch/powerpc/sysdev/6xx-suspend.S              |   5 +-
- arch/powerpc/xmon/xmon.c                       |   2 +-
- 49 files changed, 816 insertions(+), 967 deletions(-)
- create mode 100644 arch/powerpc/include/asm/task_size_32.h
- create mode 100644 arch/powerpc/include/asm/task_size_64.h
- create mode 100644 arch/powerpc/kernel/head_32.h
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.13.3
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxde38ACgkQzL64meEa
+mQaIHQ//QFi3UZE7sCkB3cWqeSdCGJ0KIDQoOc9KqE06N0/dENnwJJTw6jYJXSWa
+CwreiMal7yKFy7ry/nZ2TQhgWXL/XDvk6444xRiFo4jFluKsSLZbq/rotyS9SOGy
+VMQYO/vWY7p8GwALoxz5ddCRDRi5HSkOx2aBRYk/51YC5rIeyHYKtXB+4vnKwtxD
+pbazMChgeLDZDcXUAO+RQYaDdamhvAadcX+8hzujA2IhYikym4XusnJvaNy/xF4N
+HpJMXjISUHsfLfQE+sSk+Wz+GcJgfQuUkHAnRABMVOWAj2iqw0IIDGQenDO9BUcT
+BRYNPbskE+YyXSK353XHYyuXtw7bxi7zr2DgLMFW72165PVMjSjwjJvh+0cRLpCn
+ywzH0SYX96J+JbTBqsiQ5Hc3Uf1oesz4gXX2467ZsQmcBDU6O+KDEj1lcCGS4d3C
+E1IQaLnBxTVvDl054o5ftVCo9NRM+iAKyl6LYSDk7aRhE0ya1QZe/ab0ByNbIJ3W
+bXBejFQTQzwJGt4IXKPsHRCTBqPXQ8myYqDdGFafUm2CFlfLJgZzZ2P6Xq3ubLNm
+ZwgqyKvQ46PoeYa7+A1Fi+AqpZolxv6bZvTG+aQYn3alf/6B8HxyhrUFSmQKVH/m
+V99SOsAR3pF93hGId8qBSNKaKB+YBIFfateUY3N8cCSYvrHxeH8=
+=Vf++
+-----END PGP SIGNATURE-----
+--=-=-=--
