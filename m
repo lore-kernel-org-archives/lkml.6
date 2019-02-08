@@ -2,126 +2,185 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524D5C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB97C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B2FA21841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:18:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (3072-bit key) header.d=crustytoothpaste.net header.i=@crustytoothpaste.net header.b="cNbaX0ws"
+	by mail.kernel.org (Postfix) with ESMTP id 6A93E21924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 22:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbfBHWSm (ORCPT
+        id S1727039AbfBHWWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:18:42 -0500
-Received: from injection.crustytoothpaste.net ([192.241.140.119]:33944 "EHLO
-        injection.crustytoothpaste.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726788AbfBHWSl (ORCPT
+        Fri, 8 Feb 2019 17:22:23 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:39278 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbfBHWWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:18:41 -0500
-Received: from genre.crustytoothpaste.net (unknown [IPv6:2001:470:b978:101:d42:63e7:5548:1ee8])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by injection.crustytoothpaste.net (Postfix) with ESMTPSA id 5B74B60737;
-        Fri,  8 Feb 2019 22:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=crustytoothpaste.net;
-        s=default; t=1549664319;
-        bh=ARixF0cIkQ8yXYyAVfBusTb+BGIQ7ib0QBuEGSuNF3U=;
-        h=Date:From:To:Cc:Subject:References:Content-Type:
-         Content-Disposition:In-Reply-To:From:Reply-To:Subject:Date:To:CC:
-         Resent-Date:Resent-From:Resent-To:Resent-Cc:In-Reply-To:References:
-         Content-Type:Content-Disposition;
-        b=cNbaX0wsBWDCcAdLKkQzp1NSt17DVTYWGBxcjt8Nsce9bft9dCVrrBTuYJvRa4+n0
-         v6+a33Lj5Skft0siM/Jtg2jBkr9zAxaOUezIvpcHtnjwYBQ5hPW8DSSlZD99pC/Thi
-         fO6LT8Ns7T37E8czE8ea8dSS3d2La6UHQKofHWtXSbsjPxtn9niuT4OYSUSBYcnvXe
-         nm1L4c4qWJrFwR+SrIYCEYvK3jUnmZEjSbiBw65Z8FJnfTbrucjw2ECAntVdujLXq8
-         PaPWGtZOWyR8GOBZGOzJXTPg9MvTMWXseOCdtZWEFtD/CRIMDIuRZTAZ4/PUKk2BOi
-         Ba6A9VkKWux97qFdzRQJrA7r+rVLlXt9SsIjwkJ1SXp41XpaCA3k0y53w59tqHSyf5
-         hEHqbfO+Nj+KMuMD/1fSehGrIBY4DDDa141X80Qva0BZBTKmH/+UZuTcqOM/SzRQi2
-         H6nOKxCyRchwlwknpnejB6wrAgESxnYJmTeXL5CjGE5N7C7iBiu
-Date:   Fri, 8 Feb 2019 22:18:35 +0000
-From:   "brian m. carlson" <sandals@crustytoothpaste.net>
-To:     "Randall S. Becker" <rsbecker@nexbridge.com>
-Cc:     'Jeff King' <peff@peff.net>, 'Junio C Hamano' <gitster@pobox.com>,
-        git@vger.kernel.org, 'Linux Kernel' <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: Re: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
-Message-ID: <20190208221835.GH11927@genre.crustytoothpaste.net>
-Mail-Followup-To: "brian m. carlson" <sandals@crustytoothpaste.net>,
-        "Randall S. Becker" <rsbecker@nexbridge.com>,
-        'Jeff King' <peff@peff.net>, 'Junio C Hamano' <gitster@pobox.com>,
-        git@vger.kernel.org, 'Linux Kernel' <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-References: <000f01d4bf9e$a508eab0$ef1ac010$@nexbridge.com>
- <20190208165052.GC23461@sigill.intra.peff.net>
- <001101d4bfd6$b9430230$2bc90690$@nexbridge.com>
- <20190208180321.GB27673@sigill.intra.peff.net>
- <002501d4bfde$b26e6050$174b20f0$@nexbridge.com>
- <20190208191519.GF27673@sigill.intra.peff.net>
- <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com>
- <20190208193157.GA30952@sigill.intra.peff.net>
- <20190208220714.GG11927@genre.crustytoothpaste.net>
- <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com>
+        Fri, 8 Feb 2019 17:22:23 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 88FA572CC53;
+        Sat,  9 Feb 2019 01:22:19 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 6BBF07CCE4E; Sat,  9 Feb 2019 01:22:19 +0300 (MSK)
+Date:   Sat, 9 Feb 2019 01:22:19 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 00/14] Prepare syscall_get_arch for
+ PTRACE_GET_SYSCALL_INFO
+Message-ID: <20190208222219.GA12864@altlinux.org>
+References: <20190109124044.GA11935@altlinux.org>
+ <20190117203444.jrnaoqnpuztcjfx3@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KscVNZbUup0vZz0f"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
 Content-Disposition: inline
-In-Reply-To: <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com>
-X-Machine: Running on genre using GNU/Linux on x86_64 (Linux kernel
- 4.19.0-2-amd64)
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 127.0.1.1
+In-Reply-To: <20190117203444.jrnaoqnpuztcjfx3@madcap2.tricolour.ca>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---KscVNZbUup0vZz0f
-Content-Type: text/plain; charset=utf-8
+--liOOAslEiF7prFVr
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 08, 2019 at 05:12:43PM -0500, Randall S. Becker wrote:
-> I'm happy to modify the test (it is in one spot), to make a decision base=
-d on:
-> a) whether /dev/zero exists
-> b) whether the system is a NonStop
-> c) something else
+On Thu, Jan 17, 2019 at 03:34:44PM -0500, Richard Guy Briggs wrote:
+> On 2019-01-09 15:40, Dmitry V. Levin wrote:
+> > syscall_get_arch() is required to be implemented on all architectures i=
+n order
+> > to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request:
+> > syscall_get_arch() is going to be called from ptrace_request() along wi=
+th
+> > syscall_get_nr(), syscall_get_arguments(), syscall_get_error(), and
+> > syscall_get_return_value() functions with a tracee as their argument.
+> >=20
+> > The primary intent is that the triple (audit_arch, syscall_nr, arg1..ar=
+g6)
+> > should describe what system call is being called and what its arguments=
+ are.
+> >=20
+> > This patchset began as a series called "Prepare for PTRACE_GET_SYSCALL_=
+INFO",
+> > then I merged it into a series called "ptrace: add PTRACE_GET_SYSCALL_I=
+NFO request"
+> > that also contains ptrace-specific changes.
+> >=20
+> > The ptrace-specific part, however, needs more attention to workaround p=
+roblems
+> > on niche architectures like alpha, while the syscall_get_arch() part is
+> > straightforward, so I decided to split it out into a separate patchset =
+that
+> > just prepares syscall_get_arch() for PTRACE_GET_SYSCALL_INFO: it adds
+> > syscall_get_arch() to those architectures that haven't implemented it y=
+et,
+> > and then adds "struct task_struct *" argument to syscall_get_arch()
+> > on all architectures.
 >=20
-> What would you all prefer? It doesn't matter to me one way or another, as=
- long as I can get the dependency to /dev/zero removed so tests will run he=
-re.
+> Glad to see syscall_get_arch() added to the remaining arches.  As Paul
+> said, it gets us closer to auditing syscalls on those remaining
+> unsupported arches and getting rid of the extra CONFIG_AUDITSYSCALL.
+> A little ironic that Eric (Paris) and I purged task_struct from
+> syscall_get_arch() 5 years ago since everything could use current.
+>=20
+> > All patches from this patchset have been already reviewed, so it's ready
+> > to be merged without waiting for the ptrace-specific part.  As it's all
+> > about syscall_get_arch(), it should probably go via audit tree.
+>=20
+> ACK.
+>=20
+> Thanks Dmitry.
 
-My preference is that we wrap the yes/tr invocation into a function
-(maybe "infinite_nul") and use that where we currently require
-/dev/zero.
+Thanks.
+Please let me know if some action related to this patch series is expected =
+=66rom me.
+
+> > Dmitry V. Levin (14):
+> >   Move EM_ARCOMPACT and EM_ARCV2 to uapi/linux/elf-em.h
+> >   arc: define syscall_get_arch()
+> >   c6x: define syscall_get_arch()
+> >   h8300: define syscall_get_arch()
+> >   Move EM_HEXAGON to uapi/linux/elf-em.h
+> >   hexagon: define syscall_get_arch()
+> >   m68k: define syscall_get_arch()
+> >   Move EM_NDS32 to uapi/linux/elf-em.h
+> >   nds32: define syscall_get_arch()
+> >   nios2: define syscall_get_arch()
+> >   riscv: define syscall_get_arch()
+> >   Move EM_UNICORE to uapi/linux/elf-em.h
+> >   unicore32: define syscall_get_arch()
+> >   syscall_get_arch: add "struct task_struct *" argument
+> >=20
+> >  arch/alpha/include/asm/syscall.h      |  2 +-
+> >  arch/arc/include/asm/elf.h            |  6 +-----
+> >  arch/arc/include/asm/syscall.h        | 11 +++++++++++
+> >  arch/arm/include/asm/syscall.h        |  2 +-
+> >  arch/arm64/include/asm/syscall.h      |  4 ++--
+> >  arch/c6x/include/asm/syscall.h        |  7 +++++++
+> >  arch/csky/include/asm/syscall.h       |  2 +-
+> >  arch/h8300/include/asm/syscall.h      |  6 ++++++
+> >  arch/hexagon/include/asm/elf.h        |  6 +-----
+> >  arch/hexagon/include/asm/syscall.h    |  8 ++++++++
+> >  arch/ia64/include/asm/syscall.h       |  2 +-
+> >  arch/m68k/include/asm/syscall.h       | 12 ++++++++++++
+> >  arch/microblaze/include/asm/syscall.h |  2 +-
+> >  arch/mips/include/asm/syscall.h       |  6 +++---
+> >  arch/mips/kernel/ptrace.c             |  2 +-
+> >  arch/nds32/include/asm/elf.h          |  3 +--
+> >  arch/nds32/include/asm/syscall.h      |  9 +++++++++
+> >  arch/nios2/include/asm/syscall.h      |  6 ++++++
+> >  arch/openrisc/include/asm/syscall.h   |  2 +-
+> >  arch/parisc/include/asm/syscall.h     |  4 ++--
+> >  arch/powerpc/include/asm/syscall.h    | 10 ++++++++--
+> >  arch/riscv/include/asm/syscall.h      | 10 ++++++++++
+> >  arch/s390/include/asm/syscall.h       |  4 ++--
+> >  arch/sh/include/asm/syscall_32.h      |  2 +-
+> >  arch/sh/include/asm/syscall_64.h      |  2 +-
+> >  arch/sparc/include/asm/syscall.h      |  5 +++--
+> >  arch/unicore32/include/asm/elf.h      |  3 +--
+> >  arch/unicore32/include/asm/syscall.h  | 12 ++++++++++++
+> >  arch/x86/include/asm/syscall.h        |  8 +++++---
+> >  arch/x86/um/asm/syscall.h             |  2 +-
+> >  arch/xtensa/include/asm/syscall.h     |  2 +-
+> >  include/asm-generic/syscall.h         |  5 +++--
+> >  include/uapi/linux/audit.h            | 14 ++++++++++++++
+> >  include/uapi/linux/elf-em.h           |  6 ++++++
+> >  kernel/auditsc.c                      |  4 ++--
+> >  kernel/seccomp.c                      |  4 ++--
+> >  36 files changed, 148 insertions(+), 47 deletions(-)
+> >  create mode 100644 arch/m68k/include/asm/syscall.h
+> >  create mode 100644 arch/unicore32/include/asm/syscall.h
+
 --=20
-brian m. carlson: Houston, Texas, US
-OpenPGP: https://keybase.io/bk2204
+ldv
 
---KscVNZbUup0vZz0f
+--liOOAslEiF7prFVr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.2.12 (GNU/Linux)
 
-iQIzBAABCgAdFiEEX8OngXdrJt+H9ww3v1NdgR9S9osFAlxeADoACgkQv1NdgR9S
-9osZSg//QkKj6S1GiL4MVZLB5Rqb0Qvd0NFmejDRnfP5uE1A4076j+huhpi7kQ1Z
-E0vJFVZECz3wXAEMR2I7nL5tJbPmbdCs3cenl0PME6HE1/3HKCz45kjve7lMY7zB
-sa9tnVnFzqUUNGhFx+Rvflwhu+d9oklWnqP3nTF5AqD26Fgf8N3evbcqnbjSS4wi
-lUnwGj6mkY/jwR67d0mtKcVd7Kk3leSkczmHAQhgQ6lBlts1DQ3Xu/W10sz8KBcC
-zyIT+1qYcHE+KZV01CSFbxvKjom5HifgAHi9K+7K3JK0s6BQ+fXB8zvYxU2SXqmv
-aE+Ro1oXAECLEiyYnFULSkmiIJxuYtRxoBFSQKw5liZRAMuPGvWqtM88sBL+jVaQ
-4ta/jnAU2KeOYgtVndo6StD4hhxsaENPiYp1h7/jC/MZU1i3fDqsl+nZz6dFEq2a
-9ydZYT60yXEvMzHwKt9Hp9ZIqMcib2KofUTbPj9uHiIPXMY9v5TAhLvymEHwQXW9
-L8+9uAK6LJqyIvVkTdjJmNdSZz2WIjIUzUy/urN+fRvVE9gxymQo6zav1Hb8uOnB
-p7pUU+giETGwqg+zIxbA04WIdvGLQ18b5LMeHTW1eSWgPjQNxylwLdQTB39g26iN
-cfawpyqWozEnwqEKolA4/2mLt964lvWM+FrcoKgPxr80eWZw6CY=
-=BJgl
+iQIcBAEBCAAGBQJcXgEbAAoJEAVFT+BVnCUInboP/Ay0iSoETIokLbNzBzSXzXlr
+erwpBUOIzJG9ZxQ3Tu+mhTQZbgb4EbjWku9Iquvuy9sOg3JfQ61pDD4/pVCUYo/r
+DEdGnAKde0O+VFe65VJgzG0L37zljkmVutDJG6K6B7+8AXt7NJ4XUIhoGDijAPrG
+xkv/lMEwwafKhYZUzNMGVNhIhhK9qpRDbmsl7qb4TAI6cV4K8XmT37e5Deyyxucl
+tl1UniBfO/Q+8IEJWt5ozBkjoxdQAM/v/QnTGEHGvebkGy4tKEFS/P+TXOK1OSG/
+lWjXnGLqdZV73JNNF7FhrrwXukwi2wN7z8Hfk8PoDA6/V6kcz7w+KXhC8td0I6Op
+n9NWgaIO0/Yc/uoSbZqlyh4pMtO5fFf+4ldVplahP/XPJxHpQwTCFuey0z+lCaDu
+mJ24/95QoCk9+6FFlO3BndrCAKeAANuDDG+2PwafaYrN5uIwTD7+nliJFjnj1S3m
+j8GI6ePElyBqgtGz1sSRuPr/FE85wY2AGc7uMviC9iRgGgRokCrwa32FvlM6Fwcd
+6G6atKmEmuyQEEKWGkPGpywFqgbQkp8ftf455yHCsD9RpCV5/eSh5sbkb7FbkyhT
+vdW0hCkyD5vgnS8Sdx9X6HK0RPA2YjHE2Gpl9I8v8C4s9ZR6yfid0fXhM4539Az1
+ZBFyB9op9QnrI+6xQZCK
+=h2FA
 -----END PGP SIGNATURE-----
 
---KscVNZbUup0vZz0f--
+--liOOAslEiF7prFVr--
