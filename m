@@ -2,433 +2,122 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_75_100,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CB7C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A47CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2C0620857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E468320857
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:28:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="L/fyudzr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbfBHM2Q (ORCPT
+        id S1727782AbfBHM2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:28:16 -0500
-Received: from mx.socionext.com ([202.248.49.38]:27828 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbfBHM2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:28:15 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 08 Feb 2019 21:28:13 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 66BC260062;
-        Fri,  8 Feb 2019 21:28:13 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 8 Feb 2019 21:28:13 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id DB6AC1A0508;
-        Fri,  8 Feb 2019 21:28:12 +0900 (JST)
-Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id BCE6D1202F1;
-        Fri,  8 Feb 2019 21:28:12 +0900 (JST)
-From:   Sugaya Taichi <sugaya.taichi@socionext.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH v2 14/15] ARM: configs: Add Milbeaut M10V defconfig
-Date:   Fri,  8 Feb 2019 21:28:57 +0900
-Message-Id: <1549628937-363-1-git-send-email-sugaya.taichi@socionext.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 8 Feb 2019 07:28:21 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40027 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBHM2U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:28:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q1so3363931wrp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:28:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U4llWnWHk/iioaBg109tqNu+HuUT0xmojGp7I0EC54Q=;
+        b=L/fyudzrkzoYTq4L/ntv6UXvIiIYQqA7Ub6OxQPODZcgS/4JVHGT856I6pqUC7Zb0G
+         tFb21UBAOnBWD35EphMs15SF7tcLOw0jAiGEHEe6OmRmpSUTj8c9+Qwc+Uru7p+SYopy
+         yhQ2gqJozThixs3FipH3W96aeQ/uAzyRp6uHo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U4llWnWHk/iioaBg109tqNu+HuUT0xmojGp7I0EC54Q=;
+        b=CW9yyyZuUvfw5iOe7Eu2ANdWyopHBVffbAgcz0R7oLB2qBO12duRwONRklLSR44/h+
+         AqXBiu228RqMOnRVDThXsx011y7iH/sYM8FC43UlJzrSvX+A821k6aFRGgFQl2uYaRnl
+         aAR3LtoNMR+mon/GASmx06Ll3Wzae8yeFQlpQupu7/lDackZ75ZCz76yclspfpdO4ie/
+         XqS/qlIgZqn2dH3fnKSqvRpWQESmH4oDhH6ge5AhXH6ax/QP99A1GGvp5U0qX4IPegCb
+         0fKR6lxq3e4BKzzZOg4eJcmqNJSLQBltamB3HhQhFTLaMre/snEunIvAPv/vssV2d0qH
+         JptQ==
+X-Gm-Message-State: AHQUAuYFjZ9RgJgKJioBXd3v6jSwQ5DA/8MAm6MfHHEOvaIriMfgFzvQ
+        fzBiLWAbdT5Y+V6zUgt31v+v8IjQDcSmKbb9R/ZsYg==
+X-Google-Smtp-Source: AHgI3IbX0QUvVY2C3pm3ZumTALuuw3Fd6Hjq/SfVvqMKAzNqiHmSISFhlnJFt3zuK1w52e5QmA/4xzfTVQs0EHUfML4=
+X-Received: by 2002:a5d:468e:: with SMTP id u14mr14259352wrq.253.1549628898050;
+ Fri, 08 Feb 2019 04:28:18 -0800 (PST)
+MIME-Version: 1.0
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-14-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-14-Zhiqiang.Hou@nxp.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Fri, 8 Feb 2019 18:00:57 +0530
+Message-ID: <CAFZiPx165X4AQqxFW4r_zZDNjB29-OQD46xce2Lhh4=n-qYHxw@mail.gmail.com>
+Subject: Re: [PATCHv3 13/27] PCI: mobiveil: move irq chained handler setup out
+ of DT parse
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the minimal defconfig for the Milbeaut M10V.
-
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
----
- arch/arm/configs/milbeaut_m10v_defconfig | 366 +++++++++++++++++++++++++++++++
- 1 file changed, 366 insertions(+)
- create mode 100644 arch/arm/configs/milbeaut_m10v_defconfig
-
-diff --git a/arch/arm/configs/milbeaut_m10v_defconfig b/arch/arm/configs/milbeaut_m10v_defconfig
-new file mode 100644
-index 0000000..c67c87f
---- /dev/null
-+++ b/arch/arm/configs/milbeaut_m10v_defconfig
-@@ -0,0 +1,366 @@
-+# CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_DEBUG_SEMIHOSTING=y
-+CONFIG_DEFAULT_HOSTNAME="mlbel"
-+CONFIG_SYSVIPC=y
-+CONFIG_POSIX_MQUEUE=y
-+CONFIG_FHANDLE=y
-+CONFIG_NO_HZ_FULL=y
-+CONFIG_NO_HZ_FULL_ALL=y
-+CONFIG_NO_HZ_FULL_SYSIDLE=y
-+CONFIG_NO_HZ_FULL_SYSIDLE_SMALL=4
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_BSD_PROCESS_ACCT=y
-+CONFIG_BSD_PROCESS_ACCT_V3=y
-+CONFIG_TASKSTATS=y
-+CONFIG_TASK_DELAY_ACCT=y
-+CONFIG_TASK_XACCT=y
-+CONFIG_TASK_IO_ACCOUNTING=y
-+CONFIG_IKCONFIG=y
-+CONFIG_IKCONFIG_PROC=y
-+CONFIG_CGROUPS=y
-+CONFIG_CGROUP_DEBUG=y
-+CONFIG_CPUSETS=y
-+CONFIG_CGROUP_SCHED=y
-+CONFIG_CFS_BANDWIDTH=y
-+CONFIG_RT_GROUP_SCHED=y
-+CONFIG_NAMESPACES=y
-+CONFIG_USER_NS=y
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_KALLSYMS_ALL=y
-+CONFIG_EMBEDDED=y
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_SLAB=y
-+CONFIG_PROFILING=y
-+CONFIG_OPROFILE=m
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_ARCH_MILBEAUT=y
-+CONFIG_ARCH_MILBEAUT_M10V=y
-+# CONFIG_CACHE_L2X0 is not set
-+CONFIG_ARM_ERRATA_754322=y
-+CONFIG_ARM_ERRATA_775420=y
-+# CONFIG_PCI is not set
-+# CONFIG_PCI_DEBUG is not set
-+# CONFIG_PCI_HOST_GENERIC is not set
-+# CONFIG_PCIE_SN_DW_PLAT is not set
-+# CONFIG_PCI_MSI is not set
-+# CONFIG_PCIEPORTBUS is not set
-+# CONFIG_PCIEAER is not set
-+# CONFIG_PCIEASPM is not set
-+CONFIG_SMP=y
-+# CONFIG_ARM_CPU_TOPOLOGY is not set
-+CONFIG_HAVE_ARM_ARCH_TIMER=y
-+CONFIG_VMSPLIT_2G=y
-+CONFIG_PREEMPT=y
-+CONFIG_THUMB2_KERNEL=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_COMPACTION is not set
-+CONFIG_CMA=y
-+# CONFIG_ATAGS is not set
-+CONFIG_ZBOOT_ROM_TEXT=0x0
-+CONFIG_ZBOOT_ROM_BSS=0x0
-+CONFIG_ARM_APPENDED_DTB=y
-+CONFIG_KEXEC=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPUFREQ_DT=y
-+CONFIG_CPU_IDLE=y
-+CONFIG_VFP=y
-+CONFIG_NEON=y
-+CONFIG_KERNEL_MODE_NEON=y
-+CONFIG_PM_RUNTIME=y
-+CONFIG_PM_DEBUG=y
-+CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_PACKET_DIAG=m
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_IP_MULTICAST=y
-+CONFIG_IP_MROUTE=y
-+CONFIG_IP_PIMSM_V1=y
-+CONFIG_IP_PIMSM_V2=y
-+CONFIG_SYN_COOKIES=y
-+CONFIG_NET_IPVTI=m
-+CONFIG_INET_AH=y
-+CONFIG_INET_ESP=y
-+CONFIG_INET_IPCOMP=y
-+CONFIG_INET_XFRM_MODE_TRANSPORT=m
-+CONFIG_INET_XFRM_MODE_TUNNEL=m
-+CONFIG_INET_XFRM_MODE_BEET=m
-+CONFIG_INET_UDP_DIAG=m
-+CONFIG_TCP_CONG_ADVANCED=y
-+CONFIG_IP_SCTP=m
-+CONFIG_SCTP_COOKIE_HMAC_SHA1=y
-+CONFIG_TIPC=y
-+CONFIG_L2TP=m
-+CONFIG_L2TP_DEBUGFS=m
-+CONFIG_L2TP_V3=y
-+CONFIG_L2TP_IP=y
-+CONFIG_L2TP_ETH=y
-+CONFIG_IPX=m
-+CONFIG_NETLINK_MMAP=y
-+CONFIG_NETLINK_DIAG=y
-+CONFIG_CFG80211=y
-+CONFIG_NL80211_TESTMODE=y
-+CONFIG_CFG80211_DEVELOPER_WARNINGS=y
-+CONFIG_CFG80211_REG_DEBUG=y
-+CONFIG_CFG80211_INTERNAL_REGDB=y
-+CONFIG_CFG80211_WEXT=y
-+CONFIG_MAC80211=y
-+# CONFIG_MAC80211_RC_MINSTREL is not set
-+CONFIG_MAC80211_LEDS=y
-+CONFIG_RFKILL=y
-+CONFIG_RFKILL_INPUT=y
-+CONFIG_RFKILL_REGULATOR=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_DMA_CMA=y
-+CONFIG_CMA_SIZE_MBYTES=16
-+CONFIG_MTD=y
-+CONFIG_MTD_BLOCK=y
-+CONFIG_MTD_M25P80=y
-+CONFIG_MTD_NAND=y
-+CONFIG_MTD_NAND_CDN_HPNFC=y
-+CONFIG_MTD_NAND_CDN_HPNFC_DT=y
-+CONFIG_MTD_NAND_PLATFORM=y
-+CONFIG_MTD_SPI_NOR=y
-+CONFIG_MTD_UBI=y
-+CONFIG_MTD_UBI_BEB_LIMIT=3
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_LOOP_MIN_COUNT=2
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_SCSI=y
-+CONFIG_BLK_DEV_SD=y
-+CONFIG_NETDEVICES=y
-+CONFIG_MACVLAN=y
-+CONFIG_TUN=y
-+CONFIG_VETH=y
-+# CONFIG_NET_CADENCE is not set
-+# CONFIG_NET_VENDOR_BROADCOM is not set
-+# CONFIG_NET_VENDOR_CIRRUS is not set
-+# CONFIG_NET_VENDOR_FARADAY is not set
-+# CONFIG_NET_VENDOR_INTEL is not set
-+# CONFIG_NET_VENDOR_MARVELL is not set
-+# CONFIG_NET_VENDOR_MICREL is not set
-+# CONFIG_NET_VENDOR_NATSEMI is not set
-+CONFIG_R8169=y
-+# CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SMSC is not set
-+# CONFIG_NET_SOCIONEXT_OGMA=y
-+# CONFIG_NET_VENDOR_STMICRO is not set
-+# CONFIG_NET_VENDOR_WIZNET is not set
-+CONFIG_REALTEK_PHY=y
-+CONFIG_MWIFIEX=m
-+CONFIG_MWIFIEX_SDIO=m
-+CONFIG_INPUT_POLLDEV=y
-+# CONFIG_INPUT_MOUSEDEV is not set
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+CONFIG_SERIO_LIBPS2=y
-+CONFIG_LEGACY_PTY_COUNT=4
-+# CONFIG_DEVKMEM is not set
-+#CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-+#CONFIG_SERIAL_8250_CONSOLE=y
-+# CONFIG_SERIAL_8250_DMA is not set
-+#CONFIG_SERIAL_8250_EXTENDED=y
-+#CONFIG_SERIAL_8250_DW=y
-+CONFIG_SERIAL_OF_PLATFORM=y
-+CONFIG_SERIAL_MILBEAUT_USIO=y
-+CONFIG_SERIAL_MILBEAUT_USIO_CONSOLE=y
-+# CONFIG_HW_RANDOM is not set
-+# CONFIG_I2C is not set
-+# CONFIG_I2C_BOARDINFO is not set
-+# CONFIG_I2C_COMPAT is not set
-+# CONFIG_I2C_CHARDEV is not set
-+# CONFIG_I2C_MUX is not set
-+# CONFIG_I2C_HELPER_AUTO is not set
-+# CONFIG_I2C_ALGOBIT is not set
-+# CONFIG_I2C_SNI_M10V is not set
-+CONFIG_SPI=y
-+# CONFIG_SPI_SN_USIO=y
-+#CONFIG_SPI_SNI is not set
-+#CONFIG_SPI_SPIDEV is not set
-+CONFIG_GPIOLIB=y
-+CONFIG_GPIO_SYSFS=y
-+CONFIG_GPIO_PCA953X=y
-+CONFIG_GPIO_PCA953X_IRQ=y
-+# CONFIG_HWMON is not set
-+CONFIG_WATCHDOG=y
-+CONFIG_SOFT_WATCHDOG=m
-+CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_DEBUG=y
-+CONFIG_REGULATOR_S6AP412=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_CONTROLLER=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
-+CONFIG_VIDEO_ADV_DEBUG=y
-+CONFIG_MEDIA_USB_SUPPORT=y
-+CONFIG_USB_VIDEO_CLASS=y
-+# CONFIG_USB_GSPCA is not set
-+CONFIG_V4L_PLATFORM_DRIVERS=y
-+CONFIG_SOC_CAMERA=y
-+CONFIG_SOC_CAMERA_PLATFORM=y
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
-+CONFIG_V4L_TEST_DRIVERS=y
-+CONFIG_VIDEO_VIVID=m
-+CONFIG_VIDEO_VIVID_MAX_DEVS=64
-+CONFIG_FB=y
-+# CONFIG_VGA_ARB is not set
-+# CONFIG_USB is not set
-+# CONFIG_USB_ANNOUNCE_NEW_DEVICES is not set
-+# CONFIG_USB_MON is not set
-+# CONFIG_USB_XHCI_HCD is not set
-+# CONFIG_USB_EHCI_HCD is not set
-+# CONFIG_USB_EHCI_ROOT_HUB_TT is not set
-+# CONFIG_USB_EHCI_HCD_PLATFORM is not set
-+# CONFIG_USB_OHCI_HCD is not set
-+# CONFIG_USB_OHCI_HCD_PCI is not set
-+# CONFIG_USB_OHCI_HCD_PLATFORM is not set
-+# CONFIG_USB_STORAGE is not set
-+# CONFIG_USB_SERIAL is not set
-+# CONFIG_USB_SERIAL_GENERIC is not set
-+# CONFIG_USB_SERIAL_CP210X is not set
-+# CONFIG_USB_SERIAL_FTDI_SIO is not set
-+# CONFIG_USB_SERIAL_PL2303 is not set
-+# CONFIG_USB_ULPI is not set
-+# CONFIG_USB_GADGET is not set
-+# CONFIG_USB_DWC3 is not set
-+# CONFIG_USB_DWC3_PCI is not set
-+# CONFIG_USB_DWC3_OTG is not set
-+# CONFIG_USB_DWC3_SN is not set
-+# CONFIG_USB_DWC3_OF_SIMPLE is not set
-+# CONFIG_USB_GADGET_SN_LAP is not set
-+# CONFIG_USB_CONFIGFS is not set
-+# CONFIG_USB_CONFIGFS_ACM is not set
-+# CONFIG_USB_CONFIGFS_MASS_STORAGE is not set
-+# CONFIG_USB_CONFIGFS_F_MTP is not set
-+# CONFIG_USB_CONFIGFS_F_UVC is not set
-+# CONFIG_USB_CONFIGFS_UEVENT is not set
-+# CONFIG_MMC is not set
-+# CONFIG_MMC_SDHCI is not set
-+# CONFIG_MMC_SDHCI_PLTFM is not set
-+# CONFIG_MMC_SDHCI_F_SDH30 is not set
-+# CONFIG_MMC_SDHCI_F_EMMC50 is not set
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_RTC_CLASS=y
-+# CONFIG_RTC_HCTOSYS is not set
-+# CONFIG_RTC_SYSTOHC is not set
-+CONFIG_RTC_DEBUG=y
-+CONFIG_RTC_DRV_RX8025=y
-+CONFIG_DMADEVICES=y
-+CONFIG_MB86S7X_HDMAC=y
-+CONFIG_MB8AC0300_XDMAC=y
-+CONFIG_UIO=y
-+CONFIG_UIO_SNI=y
-+# CONFIG_IOMMU_SUPPORT is not set
-+#CONFIG_PWM=y is not set
-+# CONFIG_PWM_SYSFS is not set
-+#CONFIG_PWM_M10V=y is not set
-+CONFIG_RESET_CONTROLLER=y
-+CONFIG_EXFAT=y
-+CONFIG_EXT4_FS=y
-+# CONFIG_EXT4_USE_FOR_EXT23 is not set
-+# CONFIG_XFS_FS is not set
-+CONFIG_FANOTIFY=y
-+CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
-+CONFIG_QUOTA=y
-+CONFIG_AUTOFS4_FS=y
-+# CONFIG_FUSE_FS is not set
-+CONFIG_FSCACHE=y
-+CONFIG_FSCACHE_STATS=y
-+CONFIG_FSCACHE_HISTOGRAM=y
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_FAT_DEFAULT_CODEPAGE=932
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+CONFIG_UBIFS_FS=y
-+CONFIG_UBIFS_FS_ADVANCED_COMPR=y
-+CONFIG_ROMFS_FS=y
-+CONFIG_ROMFS_BACKED_BY_BOTH=y
-+CONFIG_NFS_FS=m
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_CODEPAGE_737=y
-+CONFIG_NLS_CODEPAGE_775=y
-+CONFIG_NLS_CODEPAGE_850=y
-+CONFIG_NLS_CODEPAGE_852=y
-+CONFIG_NLS_CODEPAGE_855=y
-+CONFIG_NLS_CODEPAGE_857=y
-+CONFIG_NLS_CODEPAGE_860=y
-+CONFIG_NLS_CODEPAGE_861=y
-+CONFIG_NLS_CODEPAGE_862=y
-+CONFIG_NLS_CODEPAGE_863=y
-+CONFIG_NLS_CODEPAGE_864=y
-+CONFIG_NLS_CODEPAGE_865=y
-+CONFIG_NLS_CODEPAGE_866=y
-+CONFIG_NLS_CODEPAGE_869=y
-+CONFIG_NLS_CODEPAGE_936=y
-+CONFIG_NLS_CODEPAGE_950=y
-+CONFIG_NLS_CODEPAGE_932=y
-+CONFIG_NLS_CODEPAGE_949=y
-+CONFIG_NLS_CODEPAGE_874=y
-+CONFIG_NLS_ISO8859_8=y
-+CONFIG_NLS_CODEPAGE_1250=y
-+CONFIG_NLS_CODEPAGE_1251=y
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_NLS_ISO8859_2=y
-+CONFIG_NLS_ISO8859_3=y
-+CONFIG_NLS_ISO8859_4=y
-+CONFIG_NLS_ISO8859_5=y
-+CONFIG_NLS_ISO8859_6=y
-+CONFIG_NLS_ISO8859_7=y
-+CONFIG_NLS_ISO8859_9=y
-+CONFIG_NLS_ISO8859_13=y
-+CONFIG_NLS_ISO8859_14=y
-+CONFIG_NLS_ISO8859_15=y
-+CONFIG_NLS_KOI8_R=y
-+CONFIG_NLS_KOI8_U=y
-+CONFIG_NLS_MAC_ROMAN=y
-+CONFIG_NLS_MAC_CELTIC=y
-+CONFIG_NLS_MAC_CENTEURO=y
-+CONFIG_NLS_MAC_CROATIAN=y
-+CONFIG_NLS_MAC_CYRILLIC=y
-+CONFIG_NLS_MAC_GAELIC=y
-+CONFIG_NLS_MAC_GREEK=y
-+CONFIG_NLS_MAC_ICELAND=y
-+CONFIG_NLS_MAC_INUIT=y
-+CONFIG_NLS_MAC_ROMANIAN=y
-+CONFIG_NLS_MAC_TURKISH=y
-+CONFIG_NLS_UTF8=y
-+CONFIG_IPCU_FS=y
-+# CONFIG_TEST_IPCU_FS is not set
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_DEBUG_INFO=y
-+#CONFIG_DEBUG_INFO_REDUCED is not set
-+CONFIG_DEBUG_FS=y
-+CONFIG_DEBUG_GIC_BL=y
-+CONFIG_HEADERS_CHECK=y
-+CONFIG_DEBUG_SECTION_MISMATCH=y
-+CONFIG_DEBUG_MEMORY_INIT=y
-+# CONFIG_DEBUG_PREEMPT is not set
-+CONFIG_RCU_TORTURE_TEST=m
-+CONFIG_RCU_CPU_STALL_TIMEOUT=60
-+CONFIG_KGDB=y
-+CONFIG_DEBUG_USER=y
-+#CONFIG_DEBUG_LL=y
-+#CONFIG_DEBUG_LL_MILBEAUT_UART=y
-+#CONFIG_EARLY_PRINTK=y
-+CONFIG_SERIAL_EARLYCON=y
-+# CONFIG_EARLY_PRINTK_DIRECT is not set
-+CONFIG_KEYS=y
-+CONFIG_ENCRYPTED_KEYS=y
-+CONFIG_SECURITY=y
-+# CONFIG_CRYPTO_ANSI_CPRNG is not set
-+# CONFIG_CRYPTO_HW is not set
-+CONFIG_FONTS=y
--- 
-1.9.1
-
+On Tue, Jan 29, 2019 at 1:39 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+>
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+> Move irq_set_chained_handler_and_data() out of DT parse function.
+>
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> ---
+> V3:
+>  - No change
+>
+>  drivers/pci/controller/pcie-mobiveil.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index c2848c22b466..db7ecb021c63 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -460,8 +460,6 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
+>                 return -ENODEV;
+>         }
+>
+> -       irq_set_chained_handler_and_data(pcie->irq, mobiveil_pcie_isr, pcie);
+> -
+>         return 0;
+>  }
+>
+> @@ -902,6 +900,8 @@ static int mobiveil_pcie_probe(struct platform_device *pdev)
+>                 goto error;
+>         }
+>
+> +       irq_set_chained_handler_and_data(pcie->irq, mobiveil_pcie_isr, pcie);
+> +
+>         ret = devm_request_pci_bus_resources(dev, &pcie->resources);
+>         if (ret)
+>                 goto error;
+> --
+> 2.17.1
+>
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
