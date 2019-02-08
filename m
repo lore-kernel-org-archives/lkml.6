@@ -2,69 +2,90 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF942C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86254C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBDD2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D172146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 14:34:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UfmgS11b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbfBHOeF (ORCPT
+        id S1727869AbfBHOe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:34:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51598 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726600AbfBHOeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:34:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E3E96AE25;
-        Fri,  8 Feb 2019 14:34:03 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 43F7CE0142; Fri,  8 Feb 2019 15:34:03 +0100 (CET)
-Date:   Fri, 8 Feb 2019 15:34:03 +0100
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Sasha Neftin <sasha.neftin@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: Clang warning in drivers/net/ethernet/intel/igc/igc_ethtool.c
-Message-ID: <20190208143403.GD7035@unicorn.suse.cz>
-References: <20190208050921.GA8758@archlinux-ryzen>
+        Fri, 8 Feb 2019 09:34:28 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35954 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbfBHOe2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 09:34:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so3203685ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 06:34:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8GCOkO/IBbi3wq9vrh8TnsKVR8g+iPaU8EIWte2XV1o=;
+        b=UfmgS11b5iJGOzYnLGu/oP9mTJaXhVJVDbwtY/JXfXtK1ZFIFl9H3lLciuMkDNkIMK
+         ri4e6GqjuwpkukHWuG/GFlKtAsHZdkT6nTe4nbSYNmOT4WfR4ObZn4fd4PiNQUGg/3yz
+         HhR9xYbb60gn7gzcKc40KESJLLFReDjNTBoMnn8k8gB+wau3uPBt1X2oFKaZMOND79LK
+         zko+LsljQTlyAOroJuF/Q4w++3dPoQWmyjN9ywAZL1dLZE8I4R18hltapxl+XX2E1OGU
+         33eWA83Liez/eElt4h4njC6fs6kI7cRQNgKwRZ5QBSwCDWoSMc7zNEViILsyT/VZGhIz
+         h6nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8GCOkO/IBbi3wq9vrh8TnsKVR8g+iPaU8EIWte2XV1o=;
+        b=P0z4rMJuKOLoz1iYrGOjpDCVzwNP82ci20RffNc00J9zC0VXiuUdMMoJ5vLWyhRCrD
+         NE2W2WdWUcFRFg5AslkU8fTTiJVMb0JRJRhU4zna4wZRbdrK8PwFu8ghjv1FXK7GnZIc
+         FpEZ7bRhnLd8oHiDDvsWdmPpmxi4AJcMUHkQZJHjb7j52Q+/qB5vD67botYyABp9lfMy
+         IDBYZEzkOhfnSmizNcyW0/iwFXCgArsQ7bVdQRBTAPZpH9l8ej9mtOYuh8h13AIxKQ0p
+         ZN48mbwsM7T72xf+LW5JU07+SDgcuh5gjm/3LcrAEayTXMm13yaI6PSGvL41IIstGtEb
+         z2rQ==
+X-Gm-Message-State: AHQUAubgqZFoyQhJOG6zMtDmucPYf6gM4FpcqfCT0i3THs1DHXDjxdb/
+        G1WOfVZK0S0JLPkGRu8mW3I/sJ/nrh8DA8IfRHUtKw==
+X-Google-Smtp-Source: AHgI3IZkkce7zSgD3TezZQDa7UObHIOFYyYI0BMFPzEiSnjTFFVpf/Jl1pwaDQrVR80M3/QBSJmbBkg+CdPUaXeG6RE=
+X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr13733492ljh.135.1549636466209;
+ Fri, 08 Feb 2019 06:34:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208050921.GA8758@archlinux-ryzen>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190208115411.7675-1-thomas.petazzoni@bootlin.com>
+In-Reply-To: <20190208115411.7675-1-thomas.petazzoni@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 8 Feb 2019 15:34:14 +0100
+Message-ID: <CACRpkdbd8zEXVW_R-Qui89ot4JAGJB1HXZm65OWsbf=zfVn7bg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: drop Hoan Tran, e-mail is bouncing
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hoan Tran <Hoan@os.amperecomputing.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 10:09:21PM -0700, Nathan Chancellor wrote:
-> Hi all,
-> 
-> After commit 8c5ad0dae93c ("igc: Add ethtool support"), Clang warns:
-> 
-> drivers/net/ethernet/intel/igc/igc_ethtool.c:9:19: warning: variable 'igc_priv_flags_strings' is not needed and will not be emitted [-Wunneeded-internal-declaration]
-> static const char igc_priv_flags_strings[][ETH_GSTRING_LEN] = {
->                   ^
-> 1 warning generated.
-> 
-> igc_priv_flags_strings is only used in an ARRAY_SIZE macro, which is a
-> compile time evaluation, so no reference to it is being emitted in the
-> final assembly. Is it actually needed and was forgotten to be used
-> somewhere or could it be eliminated so that Clang no longer warns?
+On Fri, Feb 8, 2019 at 12:54 PM Thomas Petazzoni
+<thomas.petazzoni@bootlin.com> wrote:
 
-That's because the driver provides get_priv_flags() and set_priv_flags()
-callbacks in its ethtool_ops to allow querying and setting legacy-rx
-private flag but it does not provide get_sset_count() and get_strings()
-to provide list of private flags to userspace ethtool.
+> Hoan Tran's e-mail is bouncing:
+>
+> <hotran@apm.com>: host ASPMX.L.GOOGLE.COM[64.233.167.26] said: 550-5.2.1 The
+>     email account that you tried to reach is disabled. Learn more at 550 5.2.1
+>     https://support.google.com/mail/?p=DisabledUser q194si1780402wme.147 -
+>     gsmtp (in reply to RCPT TO command)
+>
+> So let's remove this e-mail address from the MAINTAINERS file, and
+> update the status of the driver he was maintaining.
+>
+> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 
-Michal Kubecek
+Hoan should we simply change it to:
+Hoan Tran <Hoan@os.amperecomputing.com> ?
+
+Yours,
+Linus Walleij
