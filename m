@@ -2,110 +2,84 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D8BC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F7AC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 707B9206B7
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:27:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="BuJgVxzH"
+	by mail.kernel.org (Postfix) with ESMTP id 2E16A206B7
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 16:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfBHQ1e (ORCPT
+        id S1727430AbfBHQ2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:27:34 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42885 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfBHQ1d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:27:33 -0500
-Received: by mail-ot1-f65.google.com with SMTP id v23so6706721otk.9
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 08:27:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4MrPTQfL+aqliH6C1atcII6SPJlu1ysjr91YRTpgFmE=;
-        b=BuJgVxzHyi1y7uQnhs6w7HKPQs4iM0vxEbQNuSuFbEd/7biWtL3H2C7hZKGjafvTvQ
-         sUkJpTsgqUQcaiaFVi5Z4F9pbKQkiFpj1nhw/JIfDE34PPDVkbH+Xw+enEf618vXwGoB
-         VRFwqtHcEdPJ40vNsDFf/MrzMphsCeSGhSVDMtqKpDYtDwDCXGDTyFVVk4lu7lbd5E/6
-         45xyEBFBF/mwHEIl++wXacjcPSZ6N24LMdI3gy5SjJdKUqKmMl053LSgxMsghLwTEogA
-         RwesFZP6ZKerisv+1tXyhSUi8kTmvbajckU4O+8LIkIvBc3fNv8YndyqeML5VvkDmZhf
-         8igA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4MrPTQfL+aqliH6C1atcII6SPJlu1ysjr91YRTpgFmE=;
-        b=r50qiuyDMDwdsjpcRWmKCjJS0VGpiwagBCW91A7cYMzvh4KB1Ysg3hrAr/gYntz6WU
-         3KawH7wZrgpA8pzhiO3NEfxyAwdU83HUZPL9GPtcSQQhtzDOYxpEWYlWeo3PEb1/dnDO
-         bqNV9wzKfr94bcYRyqd59BVTvDIGd69SoWtLoKgc6TgVZ6k2lLQb90RaDMv4rtoW01u5
-         lkLzJes8P9qHoMaO3L+MF2OW0m0gEax13zwHEZcggLKqDn6M6zNfbGUaq/cEEBoMRFpx
-         sZ2Q7Ys8TebrsGLKKVtHI8n2vySEy1hWNXnNvSDPD9FVKMxB6hISk6xmcqfo9a2LrK9b
-         e1zQ==
-X-Gm-Message-State: AHQUAuYJpQipzHqR3p1SF3qJ/TpT6Vsw9prrh/rm1BZePJkzaCC3XD4/
-        JHQZX+/BSxp/e707owrIIm6r36K/dq74uhEMMwyODehG
-X-Google-Smtp-Source: AHgI3Ia6gpOAthSEpzLP+vPzXW0Qx9oCEdIIRnwkCqfklMtUWvLhhBJKVFu9r+KSGST9fwgMqUCG89i4gvDUEnBsN3k=
-X-Received: by 2002:a9d:76c5:: with SMTP id p5mr13458873otl.108.1549643252459;
- Fri, 08 Feb 2019 08:27:32 -0800 (PST)
+        Fri, 8 Feb 2019 11:28:40 -0500
+Received: from mga17.intel.com ([192.55.52.151]:19730 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726524AbfBHQ2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 11:28:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 08:28:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="273542664"
+Received: from shivamur-mobl1.gar.corp.intel.com (HELO localhost) ([10.249.254.162])
+  by orsmga004.jf.intel.com with ESMTP; 08 Feb 2019 08:28:34 -0800
+Date:   Fri, 8 Feb 2019 18:28:33 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] tpm: Unify the send callback behaviour
+Message-ID: <20190208162833.GB25734@linux.intel.com>
+References: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
+ <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
+ <b53745b6-ed49-9e97-6f56-1378561888eb@linux.ibm.com>
+ <20190208154244.GA3963@linux.intel.com>
+ <89f94ccb-d63e-271c-a91b-cfe63e40f776@linux.ibm.com>
+ <20190208160723.GA23755@linux.intel.com>
+ <479945da-8e97-2ff5-c1c6-f77aaec86519@linux.ibm.com>
+ <20190208162615.GA25734@linux.intel.com>
 MIME-Version: 1.0
-References: <20190131133928.17985-1-brgl@bgdev.pl> <20190131133928.17985-26-brgl@bgdev.pl>
- <55b5797c-ee0b-c2d8-9eb9-0d681da08018@lechnology.com>
-In-Reply-To: <55b5797c-ee0b-c2d8-9eb9-0d681da08018@lechnology.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 8 Feb 2019 17:27:21 +0100
-Message-ID: <CAMpxmJWSJQyb+36ZEurULT+Bh306kiqXxkwUg_Yg-Jzu4GEpFQ@mail.gmail.com>
-Subject: Re: [PATCH 25/35] ARM: davinci: cp-intc: use the new-style config structure
-To:     David Lechner <david@lechnology.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208162615.GA25734@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 5 lut 2019 o 01:29 David Lechner <david@lechnology.com> napisa=C5=82(a=
-):
->
-> On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > Modify the cp-intc driver to take all its configuration from the new
-> > config structure. Stop referencing davinci_soc_info in any way.
-> > Move the declaration for davinci_cp_intc_init() to
-> > irq-davinci-cp-intc.h and make it take the new config structure as
-> > parameter. Convert all users to the new version.
-> >
-> > Also: since the two da8xx SoCs default all irq priorities to 7, just
-> > drop the priority configuration at all and hardcode the channels to 7.
->
-> As mentioned in a comment on a different patch, this isn't strictly
-> true (although in practice, it probably is).
->
-> This patch deletes a code path with the comment "Default everything
-> to channel 15 if priority not specified.", so it is possible (although
-> unlikely) that this patch could change a priority of some IRQ that is
-> being used.
->
+On Fri, Feb 08, 2019 at 06:26:15PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 11:19:04AM -0500, Stefan Berger wrote:
+> > On 2/8/19 11:07 AM, Jarkko Sakkinen wrote:
+> > > On Fri, Feb 08, 2019 at 10:45:53AM -0500, Stefan Berger wrote:
+> > > > On 2/8/19 10:42 AM, Jarkko Sakkinen wrote:
+> > > > > On Fri, Feb 08, 2019 at 09:42:16AM -0500, Stefan Berger wrote: > On 2/8/19 9:05 AM, Jarkko Sakkinen wrote:
+> > > > > > At least tpm_nsc_send (tpm_nsc.c) and tpm_inf_send (tpm_infineon.c) are also
+> > > > > > returning the number of bytes sent. I would consider tpm_crb the outlier
+> > > > > > that returns 0 and should return the length even though we don't need it...
+> > > > > That would be absolutely wrong way the fix the *actual* issue i.e.
+> > > > > callbacks returning garbage (sometimes just passing the length parameter
+> > > > > back as a return value).
+> > > > Then I guess you have to fixes those other two files as well...
+> > > That's still a better option.
+> > 
+> > tpm_tis_core.c's tpm_tis_send_main() also needs fixing...
+> 
+> Weird I had that fixed in my working area. Probably somehow managed
+> not to stage that change. It was like the very first things that
+> I fixed. Updating..
 
-This only happens if no priorities are specified. Otherwise we just
-iterate over the provided array and set priorities for all interrupts.
+tpm_tis_send() would be the right function.
 
-Bart
-
-> >
-> > It will simplify the driver code and make our lives easier when it
-> > comes to device-tree support.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
+/Jarkko
