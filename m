@@ -2,58 +2,128 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C47C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26C9C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355FF207E0
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 828422183F
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 19:51:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OyX0wzEF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfBHTrN (ORCPT
+        id S1727135AbfBHTvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 14:47:13 -0500
-Received: from ms.lwn.net ([45.79.88.28]:56240 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbfBHTrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 14:47:13 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id C16199AE;
-        Fri,  8 Feb 2019 19:47:12 +0000 (UTC)
-Date:   Fri, 8 Feb 2019 12:47:11 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Shayenne Moura <shayenneluzmoura@gmail.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/doc: Remove solved KMS cleanup task
-Message-ID: <20190208124711.030102e0@lwn.net>
-In-Reply-To: <20190208153539.esik2dy7xvoi4p4e@smtp.gmail.com>
-References: <20190208153539.esik2dy7xvoi4p4e@smtp.gmail.com>
-Organization: LWN.net
+        Fri, 8 Feb 2019 14:51:02 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37209 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbfBHTvB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 14:51:01 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r10-v6so4016451ljj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 11:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qOYQNrLIv4ghYg9cJs/kFayOVviMNWKea8x1M/btUwQ=;
+        b=OyX0wzEFwz/6B3oUovySoSdj87UyroJwU08G3xNJoOnjsbu6Dq0hCgkf1L42WN6nW1
+         jwoJPZp5H1TptNE7ujv4YSzeQ1S9iqAxD7F1/8fIrL0nE3FasZpSYcLqdNGwta+XmVQT
+         r5DkKnmqomQZhOV3nS7bhb+cUUVEYNQaa28wc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qOYQNrLIv4ghYg9cJs/kFayOVviMNWKea8x1M/btUwQ=;
+        b=mDGF3Qg0qg13tLcR8JkxzRd5tbfmOfnrczwjDKlAhFsN1xwS9MrhEN0gKUaB22YUE8
+         XrgERnpLQ4J+4XLSnLytWZNr7oa0BH9sv9NX/ubvgGVfG9q6bAySA4GeaMpG1zzQ3bh3
+         3Kh/18O3TL2D7C2HfmmjPmt60dj/5+aN+Vz4m7ymkl+2HYt5qu+N5KGfzNPq2unVLCki
+         btjbk9Kxf6IRv8iycVrHUT6w1q9097ukCDx9Ls3/eigA3o5STRJXXOx2b7zWwKyz5XyY
+         egEiZ//jE9ZsFr4HjP74KtMX8IbFwo4KLxACtrlKh3pUE9DvmWlbGRv5bDjcRZ8yZbvt
+         /M+Q==
+X-Gm-Message-State: AHQUAuYnl2ael6iHCD6e2vvTJSeJ1vP6mLa/CKAqq6/sUrsXP9TmgiRQ
+        i2UAtw7bfdTOrmxfIUAZUTW21f7b7zwD5A==
+X-Google-Smtp-Source: AHgI3IZfMV+hgppzYM9bSSnZw+hfpq7YTt9Zf7/fGRKpSwtS8iN8KRKPD94/1ZVhGUDfUmrQvbZvAw==
+X-Received: by 2002:a2e:7d04:: with SMTP id y4-v6mr9854031ljc.127.1549655458918;
+        Fri, 08 Feb 2019 11:50:58 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id l7sm574728lfc.55.2019.02.08.11.50.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 11:50:57 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id q12so3459732lfm.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 11:50:56 -0800 (PST)
+X-Received: by 2002:ac2:4191:: with SMTP id z17mr14335535lfh.117.1549655456495;
+ Fri, 08 Feb 2019 11:50:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+References: <1549566446-27967-1-git-send-email-longman@redhat.com>
+In-Reply-To: <1549566446-27967-1-git-send-email-longman@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 8 Feb 2019 11:50:40 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
+Message-ID: <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
+Subject: Re: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new
+ rwsem features
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Feb 2019 13:35:39 -0200
-Shayenne Moura <shayenneluzmoura@gmail.com> wrote:
+On Thu, Feb 7, 2019 at 11:08 AM Waiman Long <longman@redhat.com> wrote:
+>
+> This patchset revamps the current rwsem-xadd implementation to make
+> it saner and easier to work with. This patchset removes all the
+> architecture specific assembly code and uses generic C code for all
+> architectures. This eases maintenance and enables us to enhance the
+> code more easily.
+>
+> This patchset also implements the following 3 new features:
+>
+>  1) Waiter lock handoff
+>  2) Reader optimistic spinning
+>  3) Store write-lock owner in the atomic count (x86-64 only)
 
-> Remove KMS cleanup task from documentation solved by patchset
-> https://patchwork.freedesktop.org/series/54310/
-> 
-> Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
+The patches are kind of hard to read, with most of them just doing
+prep-work that doesn't necessarily matter to the big picture.
 
-This seems like a worthy change, but Documentation/gpu is managed by the
-DRM maintainers.  Could I ask you to resend the patch to them instead?
-You can find the relevant addresses in the MAINTAINERS file or with
-scripts/get_maintainer.pl.
+What I'd really like to see is
 
-Thanks,
+ (a) an overview of the new locking logic
 
-jon
+ (b) what's the new fastpath case
+
+ (c) some performance numbers
+
+to explain the changes from a "this is the point of the whole
+exercise" standpoint.
+
+And yes, I realize that the lock handoff and optimistic spinning is a
+big deal, since I've seen the same regression numbers that presumably
+caused this effort to be resurrected. So it's not that I don't find
+this intriguing and worthwhile, it's literally that I'd like a summary
+not so much of the individual patches, but of the new model.
+
+Please?
+
+             Linus
