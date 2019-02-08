@@ -2,86 +2,300 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E83DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C2AC282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3552B21917
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63E0721917
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 07:56:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/wV6iRQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfBHH4q (ORCPT
+        id S1727246AbfBHH4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 02:56:46 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:42153 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfBHH4q (ORCPT
+        Fri, 8 Feb 2019 02:56:54 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38691 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfBHH4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 02:56:46 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gs11O-00043h-3k; Fri, 08 Feb 2019 08:56:26 +0100
-Date:   Fri, 8 Feb 2019 08:56:25 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andy Tucker <agtucker@google.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 07/32] timens/kernel: Take into account timens clock
- offsets in clock_nanosleep
-In-Reply-To: <20190206001107.16488-8-dima@arista.com>
-Message-ID: <alpine.DEB.2.21.1902072242220.1645@nanos.tec.linutronix.de>
-References: <20190206001107.16488-1-dima@arista.com> <20190206001107.16488-8-dima@arista.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 8 Feb 2019 02:56:54 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so1235062pgc.5;
+        Thu, 07 Feb 2019 23:56:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pT1WR/BNCsrn3s1zGOcHcZxDWiKW2nJcicbtRI33DmE=;
+        b=T/wV6iRQr7x7NIcIDG0RCKUaxAf2cgP0IrBpw4EJvYfPGjQ/z4v70BwgC6cZqt2Vsm
+         PTMZ3iNCtuqPOv97h0qSrBTe6dPczibIOtGH3aH9J+LFt0796K+5BY3MIwxqiClXUrtG
+         zfEZ8UpZoj0GK53dVXEPVSCj3t80zjVu96b78fkI5/5zMzcg+g0f96nSe8F4Qr7v9m0c
+         PfYcLgUT7HU2NsCbdySHhXlNgpONEbnKWD1M6Vx+WcEJDSePG/ra/5ZIqfeRgYJ+gF/d
+         5WpZwicQgyAhIzy+hBSKR2UozlhLwkumeLjYKCu9ghA9xUcB7rM9vfP74a8tR8iRbKeK
+         K7xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pT1WR/BNCsrn3s1zGOcHcZxDWiKW2nJcicbtRI33DmE=;
+        b=BoLIPOhUy/49NORhEs8Vj8/29QyNSYlHzkmvPyXTgmVK0RB374j8JRg8qdcm1gPMdT
+         7WbRL0jl0RrQWE2hCYwBviCN1jH1TdlXj5Oc/6nQ7E2EcWR/jo19Sr63ZL9108hAljfK
+         SwTJ2Xq9+VrCTpEO6df9cY3W/BhSLmFWECo0NpyynNdYh274bA06MQyL/KbAHLXCFtaM
+         y0gVuoMhwS76j50StWBwTXCcvSV8okxLA1IDy3cwMlMs1bxJhyrzSW3J/an6Kcu2X1Tl
+         HelgJUancESL6YLmrpA+79l4cdLmihM7B5VMvgv/mpIRiuMN+oKGl1LOqVVQRiugPnQ1
+         ofGg==
+X-Gm-Message-State: AHQUAuatms+xTITtYPLfmWZ0kDjdmC7C62DYJTNIwXitNOTVis4U3Cew
+        13nqD/rBv6d+NSVuXy38iGs=
+X-Google-Smtp-Source: AHgI3IZz4fuyZl6IUy2+nVC8BROChMdiWSpD48h7UNHTUAFkBcmyi1gcJkeIVce5Yg1cAekMTPJpgw==
+X-Received: by 2002:a63:ce0e:: with SMTP id y14mr19350314pgf.145.1549612612922;
+        Thu, 07 Feb 2019 23:56:52 -0800 (PST)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id h64sm2642610pfc.142.2019.02.07.23.56.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Feb 2019 23:56:52 -0800 (PST)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Tom Talpey <tom@talpey.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 0/2] mm: put_user_page() call site conversion first
+Date:   Thu,  7 Feb 2019 23:56:47 -0800
+Message-Id: <20190208075649.3025-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-NVConfidentiality: public
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Feb 2019, Dmitry Safonov wrote:
->  
-> @@ -1721,9 +1722,16 @@ long hrtimer_nanosleep(const struct timespec64 *rqtp,
->  {
->  	struct restart_block *restart;
->  	struct hrtimer_sleeper t;
-> +	struct timespec64 tp;
->  	int ret = 0;
->  	u64 slack;
->  
-> +	if (!(mode & HRTIMER_MODE_REL)) {
-> +		tp = *rqtp;
-> +		rqtp = &tp;
+From: John Hubbard <jhubbard@nvidia.com>
 
-So every invocation of hrtimer_nanosleep() gains a copy of the timespec64
-even if the namespace muck is disabled.
+Hi,
 
-The only relevant caller of this is common_nsleep(). So it might make sense
-to have common_nsleep() separated for CLOCK_MONOTONIC/BOOTTIME and handle
-the thing there. That again avoids the switch() to and out of line calls.
+It seems about time to post these initial patches: I think we have pretty
+good consensus on the concept and details of the put_user_pages() approach.
+Therefore, here are the first two patches, to get started on converting the
+get_user_pages() call sites to use put_user_page(), instead of put_page().
+This is in order to implement tracking of get_user_page() pages.
 
-Thanks,
+A discussion of the overall problem is below.
 
-	tglx
+As mentioned in patch 0001, the steps are to fix the problem are:
 
+1) Provide put_user_page*() routines, intended to be used
+   for releasing pages that were pinned via get_user_pages*().
+
+2) Convert all of the call sites for get_user_pages*(), to
+   invoke put_user_page*(), instead of put_page(). This involves dozens of
+   call sites, and will take some time.
+
+3) After (2) is complete, use get_user_pages*() and put_user_page*() to
+   implement tracking of these pages. This tracking will be separate from
+   the existing struct page refcounting.
+
+4) Use the tracking and identification of these pages, to implement
+   special handling (especially in writeback paths) when the pages are
+   backed by a filesystem.
+
+This write up is lifted from the RFC v2 patchset cover letter [1]:
+
+Overview
+========
+
+Some kernel components (file systems, device drivers) need to access
+memory that is specified via process virtual address. For a long time, the
+API to achieve that was get_user_pages ("GUP") and its variations. However,
+GUP has critical limitations that have been overlooked; in particular, GUP
+does not interact correctly with filesystems in all situations. That means
+that file-backed memory + GUP is a recipe for potential problems, some of
+which have already occurred in the field.
+
+GUP was first introduced for Direct IO (O_DIRECT), allowing filesystem code
+to get the struct page behind a virtual address and to let storage hardware
+perform a direct copy to or from that page. This is a short-lived access
+pattern, and as such, the window for a concurrent writeback of GUP'd page
+was small enough that there were not (we think) any reported problems.
+Also, userspace was expected to understand and accept that Direct IO was
+not synchronized with memory-mapped access to that data, nor with any
+process address space changes such as munmap(), mremap(), etc.
+
+Over the years, more GUP uses have appeared (virtualization, device
+drivers, RDMA) that can keep the pages they get via GUP for a long period
+of time (seconds, minutes, hours, days, ...). This long-term pinning makes
+an underlying design problem more obvious.
+
+In fact, there are a number of key problems inherent to GUP:
+
+Interactions with file systems
+==============================
+
+File systems expect to be able to write back data, both to reclaim pages,
+and for data integrity. Allowing other hardware (NICs, GPUs, etc) to gain
+write access to the file memory pages means that such hardware can dirty
+the pages, without the filesystem being aware. This can, in some cases
+(depending on filesystem, filesystem options, block device, block device
+options, and other variables), lead to data corruption, and also to kernel
+bugs of the form:
+
+    kernel BUG at /build/linux-fQ94TU/linux-4.4.0/fs/ext4/inode.c:1899!
+    backtrace:
+        ext4_writepage
+        __writepage
+        write_cache_pages
+        ext4_writepages
+        do_writepages
+        __writeback_single_inode
+        writeback_sb_inodes
+        __writeback_inodes_wb
+        wb_writeback
+        wb_workfn
+        process_one_work
+        worker_thread
+        kthread
+        ret_from_fork
+
+...which is due to the file system asserting that there are still buffer
+heads attached:
+
+        ({                                                      \
+                BUG_ON(!PagePrivate(page));                     \
+                ((struct buffer_head *)page_private(page));     \
+        })
+
+Dave Chinner's description of this is very clear:
+
+    "The fundamental issue is that ->page_mkwrite must be called on every
+    write access to a clean file backed page, not just the first one.
+    How long the GUP reference lasts is irrelevant, if the page is clean
+    and you need to dirty it, you must call ->page_mkwrite before it is
+    marked writeable and dirtied. Every. Time."
+
+This is just one symptom of the larger design problem: filesystems do not
+actually support get_user_pages() being called on their pages, and letting
+hardware write directly to those pages--even though that pattern has been
+going on since about 2005 or so.
+
+Long term GUP
+=============
+
+Long term GUP is an issue when FOLL_WRITE is specified to GUP (so, a
+writeable mapping is created), and the pages are file-backed. That can lead
+to filesystem corruption. What happens is that when a file-backed page is
+being written back, it is first mapped read-only in all of the CPU page
+tables; the file system then assumes that nobody can write to the page, and
+that the page content is therefore stable. Unfortunately, the GUP callers
+generally do not monitor changes to the CPU pages tables; they instead
+assume that the following pattern is safe (it's not):
+
+    get_user_pages()
+
+    Hardware can keep a reference to those pages for a very long time,
+    and write to it at any time. Because "hardware" here means "devices
+    that are not a CPU", this activity occurs without any interaction
+    with the kernel's file system code.
+
+    for each page
+        set_page_dirty
+        put_page()
+
+In fact, the GUP documentation even recommends that pattern.
+
+Anyway, the file system assumes that the page is stable (nothing is writing
+to the page), and that is a problem: stable page content is necessary for
+many filesystem actions during writeback, such as checksum, encryption,
+RAID striping, etc. Furthermore, filesystem features like COW (copy on
+write) or snapshot also rely on being able to use a new page for as memory
+for that memory range inside the file.
+
+Corruption during write back is clearly possible here. To solve that, one
+idea is to identify pages that have active GUP, so that we can use a bounce
+page to write stable data to the filesystem. The filesystem would work
+on the bounce page, while any of the active GUP might write to the
+original page. This would avoid the stable page violation problem, but note
+that it is only part of the overall solution, because other problems
+remain.
+
+Other filesystem features that need to replace the page with a new one can
+be inhibited for pages that are GUP-pinned. This will, however, alter and
+limit some of those filesystem features. The only fix for that would be to
+require GUP users to monitor and respond to CPU page table updates.
+Subsystems such as ODP and HMM do this, for example. This aspect of the
+problem is still under discussion.
+
+Direct IO
+=========
+
+Direct IO can cause corruption, if userspace does Direct-IO that writes to
+a range of virtual addresses that are mmap'd to a file.  The pages written
+to are file-backed pages that can be under write back, while the Direct IO
+is taking place.  Here, Direct IO races with a write back: it calls
+GUP before page_mkclean() has replaced the CPU pte with a read-only entry.
+The race window is pretty small, which is probably why years have gone by
+before we noticed this problem: Direct IO is generally very quick, and
+tends to finish up before the filesystem gets around to do anything with
+the page contents.  However, it's still a real problem.  The solution is
+to never let GUP return pages that are under write back, but instead,
+force GUP to take a write fault on those pages.  That way, GUP will
+properly synchronize with the active write back.  This does not change the
+required GUP behavior, it just avoids that race.
+
+
+[1] https://lkml.kernel.org/r/20190204052135.25784-1-jhubbard@nvidia.com
+
+Cc: Christian Benvenuti <benve@cisco.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Tom Talpey <tom@talpey.com>
+
+John Hubbard (2):
+  mm: introduce put_user_page*(), placeholder versions
+  infiniband/mm: convert put_page() to put_user_page*()
+
+ drivers/infiniband/core/umem.c              |  7 +-
+ drivers/infiniband/core/umem_odp.c          |  2 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     | 11 +--
+ drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  | 11 +--
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |  6 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 +-
+ include/linux/mm.h                          | 24 ++++++
+ mm/swap.c                                   | 82 +++++++++++++++++++++
+ 9 files changed, 129 insertions(+), 27 deletions(-)
+
+-- 
+2.20.1
 
