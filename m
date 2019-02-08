@@ -2,99 +2,87 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 554D4C282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C9CC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32220206BA
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF886206BA
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549628477;
+	bh=GZ6AW5wIgM6oIvut/pjc/9ktHQtvkXmjNEUFLZCaFGs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nYyknGjobAbd+zMZCdRBEwmIWUpnyNbDDytmiCKvsS4yK1ITwEPx32dbjyoTUbk2r
+	 AnYZGwpbBh6dq9NUX8TChUljRh0euUl6UcZOa6rMOULUTut6P0RAnPgISg04T4mzgR
+	 0qtVxXb0pA7xLmDZ9N2/x3kppLCs3jpM06MZHlQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfBHMUd (ORCPT
+        id S1727482AbfBHMVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:20:33 -0500
-Received: from foss.arm.com ([217.140.101.70]:50054 "EHLO foss.arm.com"
+        Fri, 8 Feb 2019 07:21:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfBHMUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:20:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32CF680D;
-        Fri,  8 Feb 2019 04:20:32 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66BF33F719;
-        Fri,  8 Feb 2019 04:20:30 -0800 (PST)
-Date:   Fri, 8 Feb 2019 12:20:27 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Wen Yang <wen.yang99@zte.com.cn>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-Subject: Re: [PATCH v2] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-Message-ID: <20190208122027.GE13009@e107981-ln.cambridge.arm.com>
-References: <20181206125225.9497-1-wen.yang99@zte.com.cn>
+        id S1726230AbfBHMVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:21:16 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 262222086C;
+        Fri,  8 Feb 2019 12:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549628475;
+        bh=GZ6AW5wIgM6oIvut/pjc/9ktHQtvkXmjNEUFLZCaFGs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yHw6YcBZetX3TLrXnEF+nn7Ziasajufud4NDOGULycAY5lRzyyH3JDRpX6nEAFQei
+         5o2NRbB+NkCNowXB3ZPRSE9LPthSGATF89Okjg7PfTqfGajMsa1xNCGYt3zAocMY6q
+         B/SegHhU4JD1LuNz6VVa3XZHseIpGG9p04caAFZU=
+Date:   Fri, 8 Feb 2019 13:21:13 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     arnd@arndb.de, robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        Thierry Escande <thierry.escande@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 1/5] misc: dt-bindings: Add Qualcomm Fastrpc bindings
+Message-ID: <20190208122113.GG23483@kroah.com>
+References: <20190201130925.27066-1-srinivas.kandagatla@linaro.org>
+ <20190201130925.27066-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181206125225.9497-1-wen.yang99@zte.com.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190201130925.27066-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 08:52:25PM +0800, Wen Yang wrote:
-> kmemdup has implemented the function that kmalloc() + memcpy().
-> We prefer to kmemdup rather than code opened implementation.
+On Fri, Feb 01, 2019 at 01:09:21PM +0000, Srinivas Kandagatla wrote:
+> The FastRPC driver implements an IPC (Inter-Processor Communication)
+> mechanism that allows for clients to transparently make remote method
+> invocations across DSP and APPS boundaries. This enables developers
+> to offload tasks to the DSP and free up the application processor for
+> other tasks.
 > 
-> This issue was detected with the help of coccinelle.
-> 
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> CC: Kishon Vijay Abraham I <kishon@ti.com>
-> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> CC: Niklas Cassel <niklas.cassel@axis.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-> CC: linux-pci@vger.kernel.org (open list:PCI ENDPOINT SUBSYSTEM)
-> CC: linux-kernel@vger.kernel.org (open list)
+> Co-developed-by: Thierry Escande <thierry.escande@linaro.org>
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/pci/endpoint/functions/pci-epf-test.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  .../devicetree/bindings/misc/qcom,fastrpc.txt | 78 +++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
 
-Kishon,
+What changed from v4?  v2?  v3?
 
-this looks OK to me, anything I am missing ?
+That needs to be somewhere in here, below the --- line or in the 00
+email at the least to give us some idea of what is different.
 
-Lorenzo
+v6 please?
 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 3e86fa3c7da3..8df6c019f8a2 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -169,14 +169,12 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
->  		goto err_addr;
->  	}
->  
-> -	buf = kzalloc(reg->size, GFP_KERNEL);
-> +	buf = kmemdup(src_addr, reg->size, GFP_KERNEL);
->  	if (!buf) {
->  		ret = -ENOMEM;
->  		goto err_map_addr;
->  	}
->  
-> -	memcpy(buf, src_addr, reg->size);
-> -
->  	crc32 = crc32_le(~0, buf, reg->size);
->  	if (crc32 != reg->checksum)
->  		ret = -EIO;
-> -- 
-> 2.19.1
-> 
+thanks,
+
+greg k-h
