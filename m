@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66A0C282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC58C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D632080A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:06:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1606D2080A
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 10:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfBHKGg (ORCPT
+        id S1727731AbfBHKGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:06:36 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47554 "EHLO
+        Fri, 8 Feb 2019 05:06:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47570 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbfBHKGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 05:06:33 -0500
+        id S1726598AbfBHKGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 05:06:37 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DB721596;
-        Fri,  8 Feb 2019 02:06:33 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A481FA78;
+        Fri,  8 Feb 2019 02:06:36 -0800 (PST)
 Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 372033F557;
-        Fri,  8 Feb 2019 02:06:30 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8DAE43F557;
+        Fri,  8 Feb 2019 02:06:33 -0800 (PST)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-api@vger.kernel.org
@@ -43,9 +43,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v7 06/15] sched/core: uclamp: Reset uclamp values on RESET_ON_FORK
-Date:   Fri,  8 Feb 2019 10:05:45 +0000
-Message-Id: <20190208100554.32196-7-patrick.bellasi@arm.com>
+Subject: [PATCH v7 07/15] sched/core: uclamp: Set default clamps for RT tasks
+Date:   Fri,  8 Feb 2019 10:05:46 +0000
+Message-Id: <20190208100554.32196-8-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208100554.32196-1-patrick.bellasi@arm.com>
 References: <20190208100554.32196-1-patrick.bellasi@arm.com>
@@ -56,94 +56,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A forked tasks gets the same clamp values of its parent however, when
-the RESET_ON_FORK flag is set on parent, e.g. via:
+By default FAIR tasks start without clamps, i.e. neither boosted nor
+capped, and they run at the best frequency matching their utilization
+demand.  This default behavior does not fit RT tasks which instead are
+expected to run at the maximum available frequency, if not otherwise
+required by explicitly capping them.
 
-   sys_sched_setattr()
-      sched_setattr()
-         __sched_setscheduler(attr::SCHED_FLAG_RESET_ON_FORK)
+Enforce the correct behavior for RT tasks by setting util_min to max
+whenever:
 
-the new forked task is expected to start with all attributes reset to
-default values.
+ 1. a task is switched to the RT class and it does not already have a
+    user-defined clamp value assigned.
 
-Do that for utilization clamp values too by caching the reset request
-and propagating it into the existing uclamp_fork() call which already
-provides the required initialization for other uclamp related bits.
+ 2. a task is forked from a parent with RESET_ON_FORK set.
+
+NOTE: utilization clamp values are cross scheduling class attributes and
+thus they are never changed/reset once a value has been explicitly
+defined from user-space.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- kernel/sched/core.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ kernel/sched/core.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 070caa1f72eb..8b282616e9c9 100644
+index 8b282616e9c9..569564012ddc 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -1071,7 +1071,7 @@ static void __setscheduler_uclamp(struct task_struct *p,
- 	}
- }
- 
--static void uclamp_fork(struct task_struct *p)
-+static void uclamp_fork(struct task_struct *p, bool reset)
+@@ -1049,6 +1049,28 @@ static int uclamp_validate(struct task_struct *p,
+ static void __setscheduler_uclamp(struct task_struct *p,
+ 				  const struct sched_attr *attr)
  {
- 	unsigned int clamp_id;
- 
-@@ -1080,6 +1080,17 @@ static void uclamp_fork(struct task_struct *p)
- 
- 	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id)
- 		p->uclamp[clamp_id].active = false;
++	unsigned int clamp_id;
 +
-+	if (likely(!reset))
-+		return;
-+
++	/*
++	 * On scheduling class change, reset to default clamps for tasks
++	 * without a task-specific value.
++	 */
 +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
 +		unsigned int clamp_value = uclamp_none(clamp_id);
++		struct uclamp_se *uc_se = &p->uclamp[clamp_id];
 +
-+		p->uclamp[clamp_id].user_defined = false;
-+		p->uclamp[clamp_id].value = clamp_value;
-+		p->uclamp[clamp_id].bucket_id = uclamp_bucket_id(clamp_value);
++		/* Keep using defined clamps across class changes */
++		if (uc_se->user_defined)
++			continue;
++
++		/* By default, RT tasks always get 100% boost */
++		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
++			clamp_value = uclamp_none(UCLAMP_MAX);
++
++		uc_se->bucket_id = uclamp_bucket_id(clamp_value);
++		uc_se->value = clamp_value;
 +	}
- }
++
+ 	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
+ 		return;
  
- static void __init init_uclamp(void)
-@@ -1124,7 +1135,7 @@ static inline int uclamp_validate(struct task_struct *p,
- }
- static void __setscheduler_uclamp(struct task_struct *p,
- 				  const struct sched_attr *attr) { }
--static inline void uclamp_fork(struct task_struct *p) { }
-+static inline void uclamp_fork(struct task_struct *p, bool reset) { }
- static inline void init_uclamp(void) { }
- #endif /* CONFIG_UCLAMP_TASK */
+@@ -1087,6 +1109,10 @@ static void uclamp_fork(struct task_struct *p, bool reset)
+ 	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+ 		unsigned int clamp_value = uclamp_none(clamp_id);
  
-@@ -2711,6 +2722,7 @@ static inline void init_schedstats(void) {}
- int sched_fork(unsigned long clone_flags, struct task_struct *p)
- {
- 	unsigned long flags;
-+	bool reset;
- 
- 	__sched_fork(clone_flags, p);
- 	/*
-@@ -2728,7 +2740,8 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
- 	/*
- 	 * Revert to default priority/policy on fork if requested.
- 	 */
--	if (unlikely(p->sched_reset_on_fork)) {
-+	reset = p->sched_reset_on_fork;
-+	if (unlikely(reset)) {
- 		if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
- 			p->policy = SCHED_NORMAL;
- 			p->static_prio = NICE_TO_PRIO(0);
-@@ -2755,7 +2768,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
- 
- 	init_entity_runnable_average(&p->se);
- 
--	uclamp_fork(p);
-+	uclamp_fork(p, reset);
- 
- 	/*
- 	 * The child is not yet in the pid-hash so no cgroup attach races,
++		/* By default, RT tasks always get 100% boost */
++		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN))
++			clamp_value = uclamp_none(UCLAMP_MAX);
++
+ 		p->uclamp[clamp_id].user_defined = false;
+ 		p->uclamp[clamp_id].value = clamp_value;
+ 		p->uclamp[clamp_id].bucket_id = uclamp_bucket_id(clamp_value);
 -- 
 2.20.1
 
