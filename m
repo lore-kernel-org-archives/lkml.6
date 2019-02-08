@@ -2,141 +2,124 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32B0C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CD3C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DCE920857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 582D22086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:53:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="eWeKl4UQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjCDw6Ke"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbfBHMxm (ORCPT
+        id S1727937AbfBHMxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 8 Feb 2019 07:53:47 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36017 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfBHMxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 8 Feb 2019 07:53:42 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:63368 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbfBHMwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:52:24 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43ww7V1qJSz9v0dN;
-        Fri,  8 Feb 2019 13:52:22 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=eWeKl4UQ; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id zCn_h22xBjln; Fri,  8 Feb 2019 13:52:22 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43ww7V0pS0z9v0dJ;
-        Fri,  8 Feb 2019 13:52:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549630342; bh=v39Yv2nCAjGALaP9WAqaQxXxMbLYvvHMp4UEgCBdEzI=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=eWeKl4UQrEvU76ujptCMLEiIBPhdhGi0ThFgUKgVkPI8I/qwcSkutkCVmG38i1nAl
-         yt1a1wR0wUJrp8oP+33/9KdHmv3aYyLP/uHglq/K2C6xANN1NjrFTNByvMZI1yvZkJ
-         bnjiYpR3JXEjDqobF7Hyuuw8DGhL39oOVKDAPbEA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 28CDD8B8D9;
-        Fri,  8 Feb 2019 13:52:23 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id dLzLGRLd2gVy; Fri,  8 Feb 2019 13:52:23 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 092C58B756;
-        Fri,  8 Feb 2019 13:52:23 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id F3B4D653E8; Fri,  8 Feb 2019 12:52:22 +0000 (UTC)
-Message-Id: <1946d8ed86a92a9a6827ec260d0d9c99e0d88184.1549630193.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1549630193.git.christophe.leroy@c-s.fr>
-References: <cover.1549630193.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v1 03/16] powerpc/32: move LOAD_MSR_KERNEL() into
- head_32.h and use it
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri,  8 Feb 2019 12:52:22 +0000 (UTC)
+Received: by mail-lj1-f196.google.com with SMTP id g11-v6so2923159ljk.3;
+        Fri, 08 Feb 2019 04:53:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RS8RXRLCCkRTsbSyvhj6eHDiWxn674lyrxsU7sTrvZg=;
+        b=TjCDw6KeDB3v+98/3f0al4fmZj4T3v6WVywx4Yez0CVGKnbRUSYyFlyPhjWJhiOpP1
+         Az505JmLHgVLCYyRmi8bD+eDFGoKNJEZnOmocxOxVYmTE03HQIBK7hf3+/ulGGi3K6UO
+         ynqufbcoH8Jgz6OX6xe5dAVvhF9xsRsg7x4W3F6/uDtW1IVQ+PFDqxUExv9QHkN4rm0N
+         qX+guSmv9lFMs0GI+fOHA2lDH4R1ndNfJm9zR0BEAWjctbepAl4BGrgR3mVK4pXc5rBX
+         Sr8g3K/a7xC2+qY9mkcb0sgBDNHEHobo8lCy4VggPtVjamLDISQh0xIbCYp5OOkbQDF+
+         Xx1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RS8RXRLCCkRTsbSyvhj6eHDiWxn674lyrxsU7sTrvZg=;
+        b=qfNcqK6k8Far8QesxjLnD83eibwfiXOs4h3hKFNDUOE4RLZX5viQ5RV3julh+HPOED
+         BPK7PiopA5sxHfYfVw7+orGKN/PbQd5PXJw4tKUAdHOuCOzM0LRrf/VkeVquo/beH15x
+         PGkoQt5iTa35SnmE2n7fvdZw/dF049drLCqg+2i+RfeTJlwtzcBxIq9dm1mkw87m0jar
+         DOJkSIx491/cxntdjl7febMTJlhTvTYbrfsfShXsAcSPn+Q/ll5ySIKzNB5Ct1//DNBx
+         MX6o70LgSOinDeseV7lfFG+v02MVwSNvJt2aNuIGyum6ZdiNzd58FWU5W3YE8YJqAR6K
+         2rqg==
+X-Gm-Message-State: AHQUAuYu9z7v1MPW+mWPwzWcMYMhc4k1oK4Pio7i9becQ8jPRu6+OvnS
+        5xuD5blHW3C5LJiahkC7ioWy+iOg
+X-Google-Smtp-Source: AHgI3Ia0T7ZD8VptWRngd26Dp4HbIBpcD3YVigB4Nw9ryp8klgnBENjpk32A/KyXs1tr01yGsSrOvw==
+X-Received: by 2002:a2e:8006:: with SMTP id j6-v6mr13231245ljg.186.1549630418949;
+        Fri, 08 Feb 2019 04:53:38 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id f18sm387889lfk.18.2019.02.08.04.53.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 04:53:38 -0800 (PST)
+Subject: Re: [PATCH V15 6/6] i2c: tegra: add i2c interface timing support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549576040-15907-1-git-send-email-skomatineni@nvidia.com>
+ <1549576040-15907-6-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3824e7bd-e129-511a-358b-42391ccee0f9@gmail.com>
+Date:   Fri, 8 Feb 2019 15:53:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <1549576040-15907-6-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As preparation for using head_32.h for head_40x.S, move
-LOAD_MSR_KERNEL() there and use it to load r10 with MSR_KERNEL value.
+08.02.2019 0:47, Sowjanya Komatineni пишет:
+> This patch adds I2C interface timing registers support for
+> proper bus rate configuration along with meeting the I2C spec
+> setup and hold times based on the tuning performed on Tegra210,
+> Tegra186 and Tegra194 platforms.
+> 
+> I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
+> and Tegra I2C controller design uses them as a part of internal
+> clock divisor.
+> 
+> I2C_INTERFACE_TIMING_1 register contains the setup and hold times
+> for start and stop conditions.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
 
-In the mean time, this patch modifies it so that it takes into account
-the size of the passed value to determine if 'li' can be used or if
-'lis/ori' is needed instead of using the size of MSR_KERNEL. This is
-done by using gas macro.
+[snip]
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/entry_32.S |  9 +--------
- arch/powerpc/kernel/head_32.h  | 15 ++++++++++++++-
- 2 files changed, 15 insertions(+), 9 deletions(-)
+>  
+> +	if (i2c_dev->bus_clk_rate > I2C_STANDARD_MODE &&
+> +	    i2c_dev->bus_clk_rate <= I2C_FAST_PLUS_MODE) {
+> +		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
+> +		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
+> +		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
+> +	} else {
+> +		tlow = i2c_dev->hw->tlow_std_mode;
+> +		thigh = i2c_dev->hw->thigh_std_mode;
+> +		tsu_thd = i2c_dev->hw->setup_hold_time_std_mode;
+> +	}
+> +
+> +	if (i2c_dev->hw->has_interface_timing_reg && val) {
 
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index a5e2d5585dcb..b489aebdc5c5 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -37,14 +37,7 @@
- #include <asm/feature-fixups.h>
- #include <asm/barrier.h>
- 
--/*
-- * MSR_KERNEL is > 0x10000 on 4xx/Book-E since it include MSR_CE.
-- */
--#if MSR_KERNEL >= 0x10000
--#define LOAD_MSR_KERNEL(r, x)	lis r,(x)@h; ori r,r,(x)@l
--#else
--#define LOAD_MSR_KERNEL(r, x)	li r,(x)
--#endif
-+#include "head_32.h"
- 
- /*
-  * Align to 4k in order to ensure that all functions modyfing srr0/srr1
-diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32.h
-index 7456e2a45acc..cf3d00844597 100644
---- a/arch/powerpc/kernel/head_32.h
-+++ b/arch/powerpc/kernel/head_32.h
-@@ -5,6 +5,19 @@
- #include <asm/ptrace.h>	/* for STACK_FRAME_REGS_MARKER */
- 
- /*
-+ * MSR_KERNEL is > 0x8000 on 4xx/Book-E since it include MSR_CE.
-+ */
-+.macro __LOAD_MSR_KERNEL r, x
-+.if \x >= 0x8000
-+	lis \r, (\x)@h
-+	ori \r, \r, (\x)@l
-+.else
-+	li \r, (\x)
-+.endif
-+.endm
-+#define LOAD_MSR_KERNEL(r, x) __LOAD_MSR_KERNEL r, x
-+
-+/*
-  * Exception entry code.  This code runs with address translation
-  * turned off, i.e. using physical addresses.
-  * We assume sprg3 has the physical address of the current
-@@ -89,7 +102,7 @@
- #define EXC_XFER_TEMPLATE(n, hdlr, trap, copyee, tfer, ret)	\
- 	li	r10,trap;					\
- 	stw	r10,_TRAP(r11);					\
--	li	r10,MSR_KERNEL;					\
-+	LOAD_MSR_KERNEL(r10, MSR_KERNEL);			\
- 	copyee(r10, r9);					\
- 	bl	tfer;						\
- i##n:								\
--- 
-2.13.3
+Shouldn't it be "&& tlow"?
 
+> +		val = (thigh << I2C_THIGH_SHIFT) | tlow;
+> +		i2c_writel(i2c_dev, val, I2C_INTERFACE_TIMING_0);
+> +	}
+> +
+> +	if (i2c_dev->hw->has_interface_timing_reg && tsu_thd)
+> +		i2c_writel(i2c_dev, tsu_thd, I2C_INTERFACE_TIMING_1);
+
+Do we really need those "&& tlow" and "&& tsu_thd" at all? It looks to me that checking for "has_interface_timing_reg" should be enough.
