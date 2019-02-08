@@ -2,256 +2,100 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16DEC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1A2C282CB
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6331921841
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 006D721841
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 23:06:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549667174;
+	bh=1I7YXQ9OMI0R2q5KaU8/kaxb3WP0bqSIy1fzgUvUbiI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=t/t22UdlHcg5x9f4EDAP5yGJTiSRMJo4zjtS5IdiNe0skXGlt/b98C4bbKlMjVVp/
+	 FPOgO4zCmZvwbFJlUuW+vk7chwgyLuGntXvqJOeoJ5JPO9fendwfxtZVQOXDLW/1B5
+	 3A/MUvi3cfKugkDuGgN7J9mfpQeGXR993Ie6mXnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfBHXGI (ORCPT
+        id S1727125AbfBHXGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 18:06:08 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33563 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbfBHXGF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 18:06:05 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l11so5949199qtp.0;
-        Fri, 08 Feb 2019 15:06:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=/EtsipKJ1RpRo6vTVCi9tNpAH3XRBo5c4upUrfTm87A=;
-        b=ciVKMC1XMGvoMTlpa6huKnOoH/an1GIiftpkUaR9+RR8vbwtg/fgrSgfhQs7AggqXt
-         lNcxVDqpZUy9r3sMiCZESEnbBGvXJuylRiMJaD4Vne55MCgt8v/dPmYoMfJwF+3aEmnO
-         MOFYkB4sB88Z8xG4EYW9/RoDv3aYlsVSoMHkrssboLE2nJrQjp/XU1eZP+/iuu9ix8xa
-         PnMHZ9kFti1fMbs/UUZ+sQTe/cKssoipNV6hu4vrnek8a/THkeurVLCtkSo9Luo7QTq9
-         dWSHXLhpOH3rk/4R7AM03HaQYGqvLvdaLQ2foB7gGGmuA6o4vHmY+oYxYZzcLlV3va64
-         Ejig==
-X-Gm-Message-State: AHQUAuaVW9Qvmcn5GCjPW+iotCU/w8Ybkisl2Ddz/AMDFuj8Vqh1UzQH
-        6fAXlgNtLS8u1psz1Lo+7zdOEFny6I6XFA9Bod4=
-X-Google-Smtp-Source: AHgI3IasO1adjDHXKAxbVWv8YY8ix2MWH7vQSZHGMynT65pPYhkyLqCIkcZP6vX7nVOL4KHrhkff8PHf2f47pkQaIwc=
-X-Received: by 2002:a0c:c60f:: with SMTP id v15mr8252236qvi.40.1549667164572;
- Fri, 08 Feb 2019 15:06:04 -0800 (PST)
+        Fri, 8 Feb 2019 18:06:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727073AbfBHXGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 18:06:12 -0500
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9A072196E;
+        Fri,  8 Feb 2019 23:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549667171;
+        bh=1I7YXQ9OMI0R2q5KaU8/kaxb3WP0bqSIy1fzgUvUbiI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HYNSCaKJnDg8OaAjbwYMt79X3qWjpA1RPN3vid3cPyHHYJwPWheV+sAnZLto1D9Ak
+         Wt/S9YR3I++n58NofKm7eUUrn1knNsB2x6LjCV/oQZWle92KwMFs7UBIVJta4vpLeO
+         7qLTRFz6ZMgXWxDgLd6ptQzfXqpnbEFVf2Mc1pCs=
+From:   Shuah Khan <shuah@kernel.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        viro@zeniv.linux.org.uk
+Cc:     Shuah Khan <shuah@kernel.org>, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5] bluetooth: Fix WARNING in tty_set_termios()
+Date:   Fri,  8 Feb 2019 16:06:09 -0700
+Message-Id: <20190208230609.23926-1-shuah@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <CAK8P3a3pPwnOW7pXjOhU386zCekAda+p8AgzbOM6ybT=dKMGwA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3pPwnOW7pXjOhU386zCekAda+p8AgzbOM6ybT=dKMGwA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 9 Feb 2019 00:05:48 +0100
-Message-ID: <CAK8P3a2+NBY58T75zjSrE59+iOXuny+rpWfk_zfzzr3=PAsVuw@mail.gmail.com>
-Subject: Re: [GIT PULL 1/2] arch: System call unification and cleanup
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+tty_set_termios() has the following WARN_ON which can be triggered with a
+syscall to invoke TIOCSETD __NR_ioctl.
 
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+                tty->driver->subtype == PTY_TYPE_MASTER);
+Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
 
-are available in the Git repository at:
+"The problem started with commit 7721383f4199 ("Bluetooth: hci_uart: Support
+operational speed during setup") which introduced a new way for how
+tty_set_termios() could end up being called for a master pty."
 
-  git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
-tags/y2038-new-syscalls
+Fix hci_uart_tty_open() to check if tty supports set_termios in addition
+to write and error out, if it doesn't.
 
-for you to fetch changes up to 48166e6ea47d23984f0b481ca199250e1ce0730a:
+Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
+---
+ drivers/bluetooth/hci_ldisc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-  y2038: add 64-bit time_t syscalls to all 32-bit architectures
-(2019-02-07 00:13:28 +0100)
+diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+index fbf7b4df23ab..087ec2268744 100644
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -474,10 +474,10 @@ static int hci_uart_tty_open(struct tty_struct *tty)
+ 
+ 	BT_DBG("tty %p", tty);
+ 
+-	/* Error if the tty has no write op instead of leaving an exploitable
+-	 * hole
++	/* Error if the tty has no write/set_termios ops instead of leaving
++	 * an exploitable hole.
+ 	 */
+-	if (tty->ops->write == NULL)
++	if (!tty->ops->write || !tty->ops->set_termios)
+ 		return -EOPNOTSUPP;
+ 
+ 	hu = kzalloc(sizeof(struct hci_uart), GFP_KERNEL);
+-- 
+2.17.1
 
-----------------------------------------------------------------
-y2038: Add time64 system calls
-
-This series finally gets us to the point of having system calls with
-64-bit time_t on all architectures, after a long time of incremental
-preparation patches.
-
-There was actually one conversion that I missed during the summer,
-i.e. Deepa's timex series, which I now updated based the 5.0-rc1 changes
-and review comments.
-
-The following system calls are now added on all 32-bit architectures
-using the same system call numbers:
-
-403 clock_gettime64
-404 clock_settime64
-405 clock_adjtime64
-406 clock_getres_time64
-407 clock_nanosleep_time64
-408 timer_gettime64
-409 timer_settime64
-410 timerfd_gettime64
-411 timerfd_settime64
-412 utimensat_time64
-413 pselect6_time64
-414 ppoll_time64
-416 io_pgetevents_time64
-417 recvmmsg_time64
-418 mq_timedsend_time64
-419 mq_timedreceiv_time64
-420 semtimedop_time64
-421 rt_sigtimedwait_time64
-422 futex_time64
-423 sched_rr_get_interval_time64
-
-Each one of these corresponds directly to an existing system call
-that includes a 'struct timespec' argument, or a structure containing
-a timespec or (in case of clock_adjtime) timeval. Not included here
-are new versions of getitimer/setitimer and getrusage/waitid, which
-are planned for the future but only needed to make a consistent API
-rather than for correct operation beyond y2038. These four system
-calls are based on 'timeval', and it has not been finally decided
-what the replacement kernel interface will use instead.
-
-So far, I have done a lot of build testing across most architectures,
-which has found a number of bugs. Runtime testing so far included
-testing LTP on 32-bit ARM with the existing system calls, to ensure
-we do not regress for existing binaries, and a test with a 32-bit
-x86 build of LTP against a modified version of the musl C library
-that has been adapted to the new system call interface [3].
-This library can be used for testing on all architectures supported
-by musl-1.1.21, but it is not how the support is getting integrated
-into the official musl release. Official musl support is planned
-but will require more invasive changes to the library.
-
-Link: https://lore.kernel.org/lkml/20190110162435.309262-1-arnd@arndb.de/T/
-Link: https://lore.kernel.org/lkml/20190118161835.2259170-1-arnd@arndb.de/
-Link: https://git.linaro.org/people/arnd/musl-y2038.git/ [2]
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-----------------------------------------------------------------
-Arnd Bergmann (31):
-      s390: open-code s390_personality syscall
-      ipc: introduce ksys_ipc()/compat_ksys_ipc() for s390
-      s390: use generic UID16 implementation
-      s390: autogenerate compat syscall wrappers
-      s390: remove compat_wrapper.c
-      ia64: add __NR_umount2 definition
-      ia64: add statx and io_pgetevents syscalls
-      ia64: assign syscall numbers for perf and seccomp
-      alpha: wire up io_pgetevents system call
-      alpha: update syscall macro definitions
-      ARM: add migrate_pages() system call
-      ARM: add kexec_file_load system call number
-      m68k: assign syscall number for seccomp
-      sh: remove duplicate unistd_32.h file
-      sh: add statx system call
-      sparc64: fix sparc_ipc type conversion
-      ipc: rename old-style shmctl/semctl/msgctl syscalls
-      arch: add split IPC system calls where needed
-      arch: add pkey and rseq syscall numbers everywhere
-      alpha: add standard statfs64/fstatfs64 syscalls
-      alpha: add generic get{eg,eu,g,p,u,pp}id() syscalls
-      syscalls: remove obsolete __IGNORE_ macros
-      time: make adjtime compat handling available for 32 bit
-      time: fix sys_timer_settime prototype
-      sparc64: add custom adjtimex/clock_adjtime functions
-      x86/x32: use time64 versions of sigtimedwait and recvmmsg
-      y2038: syscalls: rename y2038 compat syscalls
-      y2038: use time32 syscall names on 32-bit
-      y2038: remove struct definition redirects
-      y2038: rename old time and utime syscalls
-      y2038: add 64-bit time_t syscalls to all 32-bit architectures
-
-Deepa Dinamani (3):
-      time: Add struct __kernel_timex
-      timex: use __kernel_timex internally
-      timex: change syscalls to use struct __kernel_timex
-
- arch/Kconfig                                |   2 +-
- arch/alpha/include/asm/unistd.h             |  21 --
- arch/alpha/include/uapi/asm/unistd.h        |  10 +
- arch/alpha/kernel/osf_sys.c                 |   5 +-
- arch/alpha/kernel/syscalls/syscall.tbl      |  22 +-
- arch/arm/include/asm/unistd.h               |   5 +-
- arch/arm/kernel/sys_oabi-compat.c           |   8 +-
- arch/arm/tools/syscall.tbl                  |  85 +++---
- arch/arm64/include/asm/unistd.h             |   2 +-
- arch/arm64/include/asm/unistd32.h           |  99 +++++--
- arch/ia64/include/asm/unistd.h              |  14 -
- arch/ia64/include/uapi/asm/unistd.h         |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |  11 +-
- arch/m68k/include/asm/unistd.h              |   4 +-
- arch/m68k/kernel/syscalls/syscall.tbl       |  88 ++++--
- arch/microblaze/include/asm/unistd.h        |   4 +-
- arch/microblaze/kernel/syscalls/syscall.tbl |  83 +++---
- arch/mips/include/asm/unistd.h              |  17 +-
- arch/mips/kernel/syscalls/syscall_n32.tbl   |  77 ++++--
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   7 +-
- arch/mips/kernel/syscalls/syscall_o32.tbl   |  85 ++++--
- arch/parisc/include/asm/unistd.h            |  13 +-
- arch/parisc/kernel/syscalls/syscall.tbl     | 109 ++++++--
- arch/powerpc/include/asm/unistd.h           |   8 +-
- arch/powerpc/kernel/syscalls/syscall.tbl    | 134 +++++++--
- arch/s390/Kconfig                           |   2 +
- arch/s390/include/asm/syscall_wrapper.h     | 135 ++++++++++
- arch/s390/include/asm/unistd.h              |   7 +-
- arch/s390/include/uapi/asm/posix_types.h    |   6 +
- arch/s390/kernel/Makefile                   |   2 +-
- arch/s390/kernel/compat_linux.c             | 235 +---------------
- arch/s390/kernel/compat_wrapper.c           | 186 -------------
- arch/s390/kernel/entry.S                    |   4 +-
- arch/s390/kernel/sys_s390.c                 |  16 +-
- arch/s390/kernel/syscalls/syscall.tbl       | 373 +++++++++++++------------
- arch/sh/include/asm/unistd.h                |   4 +-
- arch/sh/include/uapi/asm/unistd_32.h        | 403 ----------------------------
- arch/sh/kernel/syscalls/syscall.tbl         |  88 ++++--
- arch/sparc/include/asm/unistd.h             |  13 +-
- arch/sparc/kernel/sys_sparc_64.c            |  61 ++++-
- arch/sparc/kernel/syscalls/syscall.tbl      | 116 ++++++--
- arch/x86/entry/syscalls/syscall_32.tbl      |  85 ++++--
- arch/x86/entry/syscalls/syscall_64.tbl      |   6 +-
- arch/x86/include/asm/unistd.h               |   8 +-
- arch/xtensa/include/asm/unistd.h            |  14 +-
- arch/xtensa/kernel/syscalls/syscall.tbl     |  78 ++++--
- drivers/ptp/ptp_clock.c                     |   2 +-
- fs/aio.c                                    |  10 +-
- fs/select.c                                 |   4 +-
- fs/timerfd.c                                |   4 +-
- fs/utimes.c                                 |  10 +-
- include/linux/compat.h                      | 104 +------
- include/linux/posix-clock.h                 |   2 +-
- include/linux/syscalls.h                    |  72 ++++-
- include/linux/time32.h                      |  32 ++-
- include/linux/time64.h                      |   8 -
- include/linux/timex.h                       |   4 +-
- include/uapi/asm-generic/unistd.h           | 103 ++++---
- include/uapi/linux/time.h                   |   4 -
- include/uapi/linux/timex.h                  |  39 +++
- ipc/mqueue.c                                |  16 +-
- ipc/msg.c                                   |  39 ++-
- ipc/sem.c                                   |  41 ++-
- ipc/shm.c                                   |  40 ++-
- ipc/syscall.c                               |  32 ++-
- ipc/util.h                                  |  21 +-
- kernel/compat.c                             |  64 -----
- kernel/futex.c                              |   2 +-
- kernel/sched/core.c                         |   5 +-
- kernel/signal.c                             |   2 +-
- kernel/sys_ni.c                             |  22 +-
- kernel/time/hrtimer.c                       |   2 +-
- kernel/time/ntp.c                           |  18 +-
- kernel/time/ntp_internal.h                  |   2 +-
- kernel/time/posix-clock.c                   |   2 +-
- kernel/time/posix-stubs.c                   |  25 +-
- kernel/time/posix-timers.c                  |  72 +++--
- kernel/time/posix-timers.h                  |   2 +-
- kernel/time/time.c                          |  92 ++++++-
- kernel/time/timekeeping.c                   |   4 +-
- net/compat.c                                |   2 +-
- scripts/checksyscalls.sh                    |  40 +++
- 82 files changed, 1870 insertions(+), 1830 deletions(-)
- create mode 100644 arch/s390/include/asm/syscall_wrapper.h
- delete mode 100644 arch/s390/kernel/compat_wrapper.c
- delete mode 100644 arch/sh/include/uapi/asm/unistd_32.h
