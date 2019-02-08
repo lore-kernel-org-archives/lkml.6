@@ -2,105 +2,137 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD7FC282CC
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BA4C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CF732146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:10:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qp5Lk+Fd"
+	by mail.kernel.org (Postfix) with ESMTP id 4131B218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 13:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549631473;
+	bh=Mo5RwKPeFQupXDKrXFc1Ahkfm5TKQT8gxyRHapjGh+8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=l1vmG06aDUnUwN7Al0XpP01a/yvqc398oKQ8LhuDCmDoXU6OdYxPwsQMdjo13mU3o
+	 6Sj6Xu8q6PxFhXgndiIDxH2dBGnAqnCJJvGaCYLnWiZ6bYEW5oUKJdlcgoidEXp7/q
+	 3a56vvqN80SAipLgsc0py5luzz5XSBnFXdxfPsTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbfBHNKp (ORCPT
+        id S1727567AbfBHNLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:10:45 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:35836 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbfBHNKo (ORCPT
+        Fri, 8 Feb 2019 08:11:11 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37814 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbfBHNLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:10:44 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x18D9CMd023141;
-        Fri, 8 Feb 2019 07:09:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549631352;
-        bh=O8g8S2kcSDX2YUP4kXKQs1K4athPkpJdPZuH4Q8eASE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qp5Lk+FdDR5Ta3QPuiOMnWGc/Zswe0e9RwkT3y1CFx1V1vaNwAKefghnurpCI/Bmg
-         PXhWymeQxe40wqM+4o6SjSAL0Ky0pEKVmllHBCWCKJmWhZ2HGS7Kqgf5qWcoPut8vB
-         kJYTVU/YnIuSSItfUQ6B1Q2rswRQPKUgL4b7qnTc=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x18D9CWM040537
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 07:09:12 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 8
- Feb 2019 07:09:11 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 8 Feb 2019 07:09:11 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x18D97tR005676;
-        Fri, 8 Feb 2019 07:09:08 -0600
-Subject: Re: [PATCH v2 01/12] ARM: dts: da850: fix interrupt numbers for
- clocksource
-To:     David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 8 Feb 2019 08:11:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=7hfsyRifw4S3C/OKvZF9n7+rcSsdtnAF6uLl31JeAeA=; b=gJs8yKVfXLVa
+        6y800mcT7yId5UkCyqMFht1zymZeRYQm8LYwtFP/8FvpfPU5ioNZsqGiKiFfvvCUIUXrUaGq1J+fi
+        gTcvwY+HOzHoXFLy7IwC+msmlvxF7ZqbMbcDc7L2FImpNBfK9gxRlqzwZzzy5FKc1qtk4n6xAnDOH
+        XC+KQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gs5vt-0001JL-PE; Fri, 08 Feb 2019 13:11:05 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 5FAE01127F30; Fri,  8 Feb 2019 13:11:05 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     <devicetree@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190204171757.32073-1-brgl@bgdev.pl>
- <20190204171757.32073-2-brgl@bgdev.pl>
- <ce4c305e-7d76-6028-07e4-4922f3c700bf@lechnology.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <4325c375-0519-7775-e4a9-8bd70aa59f94@ti.com>
-Date:   Fri, 8 Feb 2019 18:39:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <ce4c305e-7d76-6028-07e4-4922f3c700bf@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "dt-bindings: sound: msm8916-wcd-analog: fix example regulator names" to the asoc tree
+In-Reply-To:  <20190207165755.1548-4-johan@kernel.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190208131105.5FAE01127F30@debutante.sirena.org.uk>
+Date:   Fri,  8 Feb 2019 13:11:05 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/19 6:48 AM, David Lechner wrote:
-> On 2/4/19 11:17 AM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> The timer interrupts specified in commit 3652e2741f42 ("ARM: dts:
->> da850: Add clocks") are wrong but since the current timer code
->> hard-codes them, the bug was never spotted.
->>
->> This patch must go into stable since, once we introduce a proper
->> clocksource driver, devices with buggy device tree will stop booting.
->>
->> Fixes: 3652e2741f42 ("ARM: dts: da850: Add clocks")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
-> 
-> Reviewed-by: David Lechner <david@lechnology.com>
+The patch
 
-This patch is already in ARM SoC. Should be soon in Linus's tree too.
+   dt-bindings: sound: msm8916-wcd-analog: fix example regulator names
 
-https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/commit/?h=fixes&id=e3966a766865da7ced1dece663697861dd5cf103
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Sekhar
+Mark
+
+From 510135535382db7f5ee8727818172e42c9c9cbd5 Mon Sep 17 00:00:00 2001
+From: Johan Hovold <johan@kernel.org>
+Date: Thu, 7 Feb 2019 17:57:55 +0100
+Subject: [PATCH] dt-bindings: sound: msm8916-wcd-analog: fix example regulator
+ names
+
+Fix upper-case regulator names in the binding example which do not match
+the corresponding required properties.
+
+While at it, add a blank line after the required-properties section to
+improve readability.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt  | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt b/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt
+index fdcea3d12ee5..e7d17dda55db 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt
++++ b/Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-analog.txt
+@@ -30,6 +30,7 @@ Required properties
+  - vdd-cdc-io-supply: phandle to VDD_CDC_IO regulator DT node.
+  - vdd-cdc-tx-rx-cx-supply: phandle to VDD_CDC_TX/RX/CX regulator DT node.
+  - vdd-micbias-supply: phandle of VDD_MICBIAS supply's regulator DT node.
++
+ Optional Properties:
+  - qcom,mbhc-vthreshold-low: Array of 5 threshold voltages in mV for 5 buttons
+ 			     detection on headset when the mbhc is powered up
+@@ -92,9 +93,9 @@ spmi_bus {
+ 				  "cdc_ear_cnp_int",
+ 				  "cdc_hphr_cnp_int",
+ 				  "cdc_hphl_cnp_int";
+-	               VDD-CDC-IO-supply = <&pm8916_l5>;
+-	               VDD-CDC-TX-RX-CX-supply = <&pm8916_l5>;
+-	               VDD-MICBIAS-supply = <&pm8916_l13>;
++	               vdd-cdc-io-supply = <&pm8916_l5>;
++	               vdd-cdc-tx-rx-cx-supply = <&pm8916_l5>;
++	               vdd-micbias-supply = <&pm8916_l13>;
+ 	               #sound-dai-cells = <1>;
+ 	};
+ };
+-- 
+2.20.1
+
