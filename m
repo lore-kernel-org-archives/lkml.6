@@ -2,105 +2,130 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB282C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C0C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B806F2177B
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DB032177B
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:38:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a3XOjLvU"
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="OVoNxJ6L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfBHMh7 (ORCPT
+        id S1727430AbfBHMii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:37:59 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:57090 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbfBHMh6 (ORCPT
+        Fri, 8 Feb 2019 07:38:38 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35763 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfBHMii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:37:58 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x18CbeXh083437;
-        Fri, 8 Feb 2019 06:37:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549629460;
-        bh=J5H1/KGfmAvzG6oKJoJn4IseVaJm3ElBp7a+t8K9gsE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=a3XOjLvUjHcNWSxpXvzmhVOupotH+rhFYbK6Z9klTrooPXtgJWDSq7HZZP/tiMp/0
-         XhNJ2CW1oFQ1iG6N68wJu3/vCrGZxl/bAgPGfBHfiymQ711npsmLmqT0mV12VEKcSZ
-         U364Nh2HSJd0LrMGqbJnLdZyKLHAgTWfnZK97Fwg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x18CbeKR055428
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 06:37:40 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 8
- Feb 2019 06:37:39 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 8 Feb 2019 06:37:39 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x18Cbaf0004092;
-        Fri, 8 Feb 2019 06:37:36 -0600
-Subject: Re: [PATCH v2 05/12] ARM: davinci: da850: switch to using the
- clocksource driver
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>
-References: <20190204171757.32073-1-brgl@bgdev.pl>
- <20190204171757.32073-6-brgl@bgdev.pl>
- <9d423e18-8c85-731b-388a-1843067db242@ti.com>
- <CAMpxmJW0qMi0BmiK2SOwdagw2-t8+1g20XJR418mWb8f1dwxtQ@mail.gmail.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <acd3f8ca-8ed7-f86a-9bdf-24e4e6e9a6a4@ti.com>
-Date:   Fri, 8 Feb 2019 18:07:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 07:38:38 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z18so3445505wrh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:38:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=za3n79uTXhuAg89Odl5K7zA3/4teHlFt8f/2UCul1pI=;
+        b=OVoNxJ6L+4h0zmcRL0/+4rPL4qAp+s8E3C9mBgNG/yVgl7yp+6sLCgN44Re9Gu9Wik
+         f5q3MpCGafDHKYYqZ/Yl9KI4QDOZQ+NY+A1WSs8brIvZ5W/8k1hH5FE+Ltz5vD5IW5Y0
+         t+A80vouwIa00ZgMDXFMn6bwZrkAi9VYz/t4k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=za3n79uTXhuAg89Odl5K7zA3/4teHlFt8f/2UCul1pI=;
+        b=nel/Tr5973l5cZYU9VO2LfIoXzvDCs5+d4yEIoymV9OefJ2aTsVpMxLW6jB5bIbpFd
+         Sz/DdldQNAkTTCxzJvMdKTiXlTsA9/Ar6peaXHlx4UQ6nSsy3UxC+6jxfVjyYczAgjGc
+         95jwn7cQ0Fr3dBFvBAxsaae0gpgf/d614KunpmKORdDozbGrQ/p/UMGI9tH9rATw6juI
+         G+iGZiw3jx4z15mTuX//h4gYN5BDrrH9c4EqVWbRyc3aQh08cTSDiFtdKIsL29Mz4ZGh
+         f9S85Iyx1ukHgcebmct2BBak54BcP+XCHgRiW/DUp9dlM1zm8EHEKv/PLoDGGmukdsxg
+         Lhgg==
+X-Gm-Message-State: AHQUAubA+GfJuL96hvm0Dq4fvCyIwl2Iblh3lSjKAghYYN82DuFtHz9y
+        BUlUkTIK9aj7OKMUDW1R7EZ/DZGJwBWT9uRsvyUImQ==
+X-Google-Smtp-Source: AHgI3Iatp5BtTgrEbIDAPsLDPC8Il8bwT1QG2XB42RwPY79StgZWtwjcGnSo0DQr+93S2X94tfqQdYfUBTw6ZWcFbfU=
+X-Received: by 2002:a5d:468e:: with SMTP id u14mr14295242wrq.253.1549629516223;
+ Fri, 08 Feb 2019 04:38:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJW0qMi0BmiK2SOwdagw2-t8+1g20XJR418mWb8f1dwxtQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-18-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-18-Zhiqiang.Hou@nxp.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Fri, 8 Feb 2019 18:11:15 +0530
+Message-ID: <CAFZiPx0faPHN1mqPV28XTZfOxA2GgDPuc=RVdXEiGGNAUe=Fxw@mail.gmail.com>
+Subject: Re: [PATCHv3 17/27] PCI: mobiveil: fix the checking of valid device
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/19 6:04 PM, Bartosz Golaszewski wrote:
-> pt., 8 lut 2019 o 13:06 Sekhar Nori <nsekhar@ti.com> napisał(a):
->>
->> On 04/02/19 10:47 PM, Bartosz Golaszewski wrote:
->>> +static const struct davinci_timer_cfg da850_timer_cfg = {
->>> +     .reg = {
->>> +             .start          = DA8XX_TIMER64P0_BASE,
->>> +             .end            = DA8XX_TIMER64P0_BASE + SZ_4K,
->>
->> SZ_4K - 1
->>
->> This should have prevented watchdog timer from getting registered.
->>
->> Thanks,
->> Sekhar
-> 
-> My clocksource driver doesn't call request_region() so a subsequent
-> devm_ioremap_resource() in the watchdog driver would still succeed. I
-> now fixed both the missing call and the value here.
+ZQ,
 
-Ah, got it. Perhaps a call to request_region() should be added to catch
-issues?
+On Tue, Jan 29, 2019 at 1:40 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+>
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+> Avoid to issue CFG transactions to link partner when the PCIe
+> link is not up. And allow CFG transactions to all functions of
+> Endpoint implemented multiple functions.
+>
+> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host
+> Bridge IP driver")
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> ---
+> V3:
+>  - No change
+>
+>  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> index dc5324d94466..1ae82e790562 100644
+> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> @@ -29,6 +29,10 @@ static bool mobiveil_pcie_valid_device(struct pci_bus *bus, unsigned int devfn)
+>  {
+>         struct mobiveil_pcie *pcie = bus->sysdata;
+>
+> +       /* If there is no link, then there is no device */
+> +       if (bus->number > pcie->rp.root_bus_nr && !mobiveil_pcie_link_up(pcie))
+> +               return false;
+> +
+>         /* Only one device down on each root port */
+>         if ((bus->number == pcie->rp.root_bus_nr) && (devfn > 0))
+>                 return false;
+> @@ -37,7 +41,7 @@ static bool mobiveil_pcie_valid_device(struct pci_bus *bus, unsigned int devfn)
+>          * Do not read more than one device on the bus directly
+>          * attached to RC
+>          */
+> -       if ((bus->primary == pcie->rp.root_bus_nr) && (devfn > 0))
+> +       if ((bus->primary == pcie->rp.root_bus_nr) && (PCI_SLOT(devfn) > 0))
+here change "primary" to "number", as it's a bug in the original driver too.
 
-Thanks,
-Sekhar
+>                 return false;
+>
+>         return true;
+> --
+> 2.17.1
+>
