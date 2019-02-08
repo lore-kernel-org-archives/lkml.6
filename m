@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1554BC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C766C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D87FC2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:35:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFDF5218D4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jD/4E8Dd"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ja9na4hr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfBHRfb (ORCPT
+        id S1728191AbfBHRfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:35:31 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51895 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbfBHRfY (ORCPT
+        Fri, 8 Feb 2019 12:35:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52377 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728147AbfBHRfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:35:24 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so4377600wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:22 -0800 (PST)
+        Fri, 8 Feb 2019 12:35:31 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m1so4365795wml.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5xoYgZeFd4jbYH06UIuAag4pMtuSlF7B4aVziE0WwaQ=;
-        b=jD/4E8DdS2MTQvD0NBcKMnWK2cKwqopPRaKfl+aaNLGRhW7PWtdF2k1Z1UQdWaBdcL
-         yGPJIo0MXD4BFBKDGSaI7YmYrG9t1a/dVcf1C9Q72VmPAl2syn9C8sN8jJST6Ns5AVdz
-         tbi/gIiyWgU73u2KVyf41OU+MPK459C0fyZFxQ2qXFKAcps0zFlpcbkWA8Pc2oD/HVsE
-         qB8FFdyV31z4mOeZzkoFU932QrlCLJvhe3NsOx67jklQPzgzoucVGgEyoB5tV5K45+eB
-         2Aqw86m91Fvn9Kz6CvR3YIjdddRFMbLdlQyTdEh4q/7wYjMm3qhU0T/vr881qdyXi5wN
-         x40Q==
+        bh=EZWE16C9ZjEItVcQFpDaRLfJ9IzuvKc+mM7HSbjjb18=;
+        b=ja9na4hrLEqf9BBxb/Q9vUHn/2UfLMGIKrO7JzHcjidT09Pfh9ijqDaONj/GVXC+1a
+         hTtNneIjRAS7ny//G5SuO0IJtqWvF/mf3OJJS4xxPsei5wvxrFoG5FNyofibvANSDm9h
+         W5aHT1q3JPfGn1/QJTDYVnZVafGvyFO+6q3tKrK2vrRVE1GW9tegckzN7HXSKmAJlAa8
+         LcmsQghFxpmxIXYUvUa7+dIiqwA/dZeJf16xK8rVcxMFn2x1FSvzz8/Z1wrEYfQODcix
+         7+6bNgqZxxGvhi0RgkYjoHSJ8PyJUCtkBliFMtMnooYPA32N+Q+qNpJrKgfvVU2J1/ma
+         NZbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5xoYgZeFd4jbYH06UIuAag4pMtuSlF7B4aVziE0WwaQ=;
-        b=YRmLxS0nvupHpCtSLgDZNxoZ2NdG9JHF6XPjHmmqL2wIREs3lOFAxyp4vxVCX8Fko+
-         n4hMhTVTGP11ob8sE7c+l3E+QB18DHm8Y67U81i1FQnpkuyA9qFEFWXQ6/IlOjI4XngU
-         vEIgQadUUA0k+AWryhbhb4T95eZrEluvMLdA3gZZkyZCRUcX9t0dwXebXv6IBSgSnIQz
-         +yP2WmY2zPQfJV93Mqk9+asuwT3l4X4I7/MeNA19cjxvUIY5QT5BCVXj4whwO/X+aSDk
-         5I4RJPUAlSehVL05RG47bXa/h204xJshutrxOIDoKcoWh9vo0DyQhF1jL3TZntiO9xzB
-         2qMw==
-X-Gm-Message-State: AHQUAuZkbdttt0li733HfpuC5B0X06jcRy4TnLAHNTGGZqzE3cEvIRAS
-        bPXIYaIQsE+aAjD33QEbziZSOw==
-X-Google-Smtp-Source: AHgI3Ib4uwqzIycD76Vwm/WlgnnMKFLp1gyu030lqPxI4JxPluFuqGuye8gSeDMn5wJkdBjI8YI8AQ==
-X-Received: by 2002:a1c:5fd7:: with SMTP id t206mr13143576wmb.145.1549647321932;
-        Fri, 08 Feb 2019 09:35:21 -0800 (PST)
+        bh=EZWE16C9ZjEItVcQFpDaRLfJ9IzuvKc+mM7HSbjjb18=;
+        b=F+Bbh1G2hpN7VVfZlf8p8Pvu5M6QqNotX3FhFO/ZTWBQ9xuU7/m7g70Ex5Zwovkt/5
+         3Mqgz7xbej4daQDV8Lk4rnuTl01DRpSB3ixIxcrlh0IKYeSz+CCTQVN8t09m/O+34nLB
+         Gg47JiOeqeeRtzT6KXEatfkdKX/c9Jusxu1pHWrUvVaDm9lkfuMEs9QxxzdW6DPfyZCe
+         lYYo8exapY/X0P5Z1KU+1vmR/SkvVcz0T2JJmV2lMwTNAmKlLlTRiZdlMtExTabWiuF6
+         lQ/5aaO17R/ngEZsEEPsdjvZ/TX42slz2m3y2yEOl0/YE9y9GvsnfowaHSTPJIXcWZE7
+         /1lA==
+X-Gm-Message-State: AHQUAuZYWoE/LxHk9hMr4vPWXiiOOeV/BEHd8C2/4Etx7ZzRumqfkBHH
+        v5hODPhxuV8zjN93PQQdt5B6it5YTms=
+X-Google-Smtp-Source: AHgI3Ib3yncqWWgyKhWwLZiEz6ncoiEG+asIv/V1QMhrMiQpKuHcepgxBmftoO0YU130KesJVfaLVw==
+X-Received: by 2002:a1c:c181:: with SMTP id r123mr12419558wmf.8.1549647329227;
+        Fri, 08 Feb 2019 09:35:29 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.20
+        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:21 -0800 (PST)
+        Fri, 08 Feb 2019 09:35:28 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -66,9 +66,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 13/33] ARM: davinci: aintc: use readl/writel_relaxed()
-Date:   Fri,  8 Feb 2019 18:34:38 +0100
-Message-Id: <20190208173458.4801-14-brgl@bgdev.pl>
+Subject: [PATCH v2 19/33] irqchip: davinci-aintc: move the driver to drivers/irqchip
+Date:   Fri,  8 Feb 2019 18:34:44 +0100
+Message-Id: <20190208173458.4801-20-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
 References: <20190208173458.4801-1-brgl@bgdev.pl>
@@ -81,34 +81,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Raplace all calls to __raw_readl() & __raw_writel() with readl_relaxed()
-and writel_relaxed() respectively. It's safe to do as there's no
-endianness conversion being done in the code.
+The aintc driver has now been cleaned up. Move it to drivers/irqchip
+where it belongs. There's no device-tree support for any dm* board so
+there's no IRQCHIP_OF_DECLARE() - there's only the exported init
+function called from machine code.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/irq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/Kconfig                         | 11 ++++-------
+ arch/arm/mach-davinci/Makefile                        |  1 -
+ drivers/irqchip/Kconfig                               |  5 +++++
+ drivers/irqchip/Makefile                              |  1 +
+ .../irq.c => drivers/irqchip/irq-davinci-aintc.c      |  0
+ 5 files changed, 10 insertions(+), 8 deletions(-)
+ rename arch/arm/mach-davinci/irq.c => drivers/irqchip/irq-davinci-aintc.c (100%)
 
-diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 148c23728bdb..6a7205a844e1 100644
---- a/arch/arm/mach-davinci/irq.c
-+++ b/arch/arm/mach-davinci/irq.c
-@@ -36,12 +36,12 @@ static struct irq_domain *davinci_aintc_irq_domain;
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index da8a039d65f9..71a4d875dd39 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -1,9 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ if ARCH_DAVINCI
  
- static inline void davinci_aintc_writel(unsigned long value, int offset)
- {
--	__raw_writel(value, davinci_aintc_base + offset);
-+	writel_relaxed(value, davinci_aintc_base + offset);
- }
+-config AINTC
+-	bool
+-
+ config CP_INTC
+ 	bool
+ 	select IRQ_DOMAIN
+@@ -17,17 +14,17 @@ comment "DaVinci Core Type"
  
- static inline unsigned long davinci_aintc_readl(int offset)
- {
--	return __raw_readl(davinci_aintc_base + offset);
-+	return readl_relaxed(davinci_aintc_base + offset);
- }
+ config ARCH_DAVINCI_DM644x
+ 	bool "DaVinci 644x based system"
+-	select AINTC
++	select DAVINCI_AINTC
+ 	select ARCH_DAVINCI_DMx
  
- static __init void
+ config ARCH_DAVINCI_DM355
+ 	bool "DaVinci 355 based system"
+-	select AINTC
++	select DAVINCI_AINTC
+ 	select ARCH_DAVINCI_DMx
+ 
+ config ARCH_DAVINCI_DM646x
+ 	bool "DaVinci 646x based system"
+-	select AINTC
++	select DAVINCI_AINTC
+ 	select ARCH_DAVINCI_DMx
+ 
+ config ARCH_DAVINCI_DA830
+@@ -49,7 +46,7 @@ config ARCH_DAVINCI_DA8XX
+ 
+ config ARCH_DAVINCI_DM365
+ 	bool "DaVinci 365 based system"
+-	select AINTC
++	select DAVINCI_AINTC
+ 	select ARCH_DAVINCI_DMx
+ 
+ comment "DaVinci Board Type"
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 93d271b4d84b..983865a99616 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -18,7 +18,6 @@ obj-$(CONFIG_ARCH_DAVINCI_DM365)	+= dm365.o devices.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA830)	+= da830.o devices-da8xx.o usb-da8xx.o
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= da850.o devices-da8xx.o usb-da8xx.o
+ 
+-obj-$(CONFIG_AINTC)			+= irq.o
+ obj-$(CONFIG_CP_INTC)			+= cp_intc.o
+ 
+ # Board specific
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 3d1e60779078..ea0eb82bf1d2 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -129,6 +129,11 @@ config BRCMSTB_L2_IRQ
+ 	select GENERIC_IRQ_CHIP
+ 	select IRQ_DOMAIN
+ 
++config DAVINCI_AINTC
++	bool
++	select GENERIC_IRQ_CHIP
++	select IRQ_DOMAIN
++
+ config DW_APB_ICTL
+ 	bool
+ 	select GENERIC_IRQ_CHIP
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index c93713d24b86..623e0ec5f9d0 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_ATH79)			+= irq-ath79-cpu.o
+ obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
+ obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
+ obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
++obj-$(CONFIG_DAVINCI_AINTC)		+= irq-davinci-aintc.o
+ obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
+ obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
+ obj-$(CONFIG_ARCH_HIP04)		+= irq-hip04.o
+diff --git a/arch/arm/mach-davinci/irq.c b/drivers/irqchip/irq-davinci-aintc.c
+similarity index 100%
+rename from arch/arm/mach-davinci/irq.c
+rename to drivers/irqchip/irq-davinci-aintc.c
 -- 
 2.20.1
 
