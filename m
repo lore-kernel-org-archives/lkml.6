@@ -2,116 +2,120 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F67C282CB
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF91C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA424218D9
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E96E20823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:54:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549619651;
+	bh=NgopAKlV3yAZFfu9l2ekqNSVVXiqkV1sF49ACTXXNFI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ZDWsnhEdgqu7epcBlcEIQqoPHtHpQWziFt5Rv83Mgmw3GFqP4EeJ0udrvcuTrL9Hx
+	 AwDfpn+N03OTZjZLBBPSXa4T4GqLpvNsR3zpjPUYAx64gf30/1LLqE2Htmfh4BkBIq
+	 sGiwMWZfy/0t4B3eVD9kMZ41Srq2DWyhPSK3n6Bk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbfBHJwZ convert rfc822-to-8bit (ORCPT
+        id S1727389AbfBHJyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:52:25 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:57711 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727127AbfBHJwY (ORCPT
+        Fri, 8 Feb 2019 04:54:09 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35525 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbfBHJyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:52:24 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-97-BZtxAGQ3OTypNMlgcy5_9g-1; Fri, 08 Feb 2019 09:52:21 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 8 Feb 2019 09:53:04 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 8 Feb 2019 09:53:04 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>
-CC:     Julien Gomes <julien@arista.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "nhorman@tuxdriver.com" <nhorman@tuxdriver.com>,
-        "vyasevich@gmail.com" <vyasevich@gmail.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>
-Subject: RE: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
- the option length
-Thread-Topic: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-Thread-Index: AQHUvmASGkCaWibVqE6iK21f5qVrJKXUlzwQgAAGVoCAAQsJ0A==
-Date:   Fri, 8 Feb 2019 09:53:03 +0000
-Message-ID: <0415888f34e7494e9879a77599c618e0@AcuMS.aculab.com>
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
- <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
- <20190206210723.GD13621@localhost.localdomain>
- <1257941619984a2a992af8d801855c04@AcuMS.aculab.com>
- <20190207174715.GF13621@localhost.localdomain>
-In-Reply-To: <20190207174715.GF13621@localhost.localdomain>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 8 Feb 2019 04:54:09 -0500
+Received: by mail-ot1-f66.google.com with SMTP id z19so851028otm.2;
+        Fri, 08 Feb 2019 01:54:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8VfsE/dzYczCUfX/n2vKlNRBDnNnPyv4tAwRHXUAldQ=;
+        b=c/hSIgShEa2qIVG2Gj5RNpmijhLgpTOhskdxCMnQSsJEOIHOfeLarW1k8Iy7dbZlsf
+         cHfB/aghLkdlKQa2I9iCtVZ2jjiqW9MoVgaUhqB8LAquFCQFpGWXe+isJVjdZ4WYWfoT
+         j8AaCGVP10TiFvbMo+L7vzgHwLcBCw9bu+ukfw3pgicsBkK8hTDnhHRLYUkQ1oe4AQPP
+         RJTz/cybe3r88mzuos2FeGDkiDpNffutlRe/ivZo01D5/wXL7VlCukrTykmbQ82cAu89
+         635A/bXrEoqKH00qkyTGFfbG/kxyBd5635JNsx9aE/kGnpzwV3yzDoPzg4vNSmezKefy
+         czpA==
+X-Gm-Message-State: AHQUAubc7Zq2txruNYhi2iC3un1lqwm48pTWSMtImkHmqd5MgpTkRNvn
+        z5R5ZWTLVa1W0UYANU0YPoOTmPjhdxMxOxIGfZw=
+X-Google-Smtp-Source: AHgI3IajVzFgWCoKQVSUfYA32BGpvovq0M2Y4leaXECJG9tw48W5QJzvsdjY7uSau46x6I/qAkNIfQmqwMUxSYufhQQ=
+X-Received: by 2002:a9d:63c1:: with SMTP id e1mr11325264otl.119.1549619648139;
+ Fri, 08 Feb 2019 01:54:08 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: BZtxAGQ3OTypNMlgcy5_9g-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <cover.1547197612.git.viresh.kumar@linaro.org> <CAJZ5v0gs3FnCgFS8rg7vwCeATJKfR+mfMVrpkTbM237XVhpDJQ@mail.gmail.com>
+ <20190208090912.43aao5kny42iirum@vireshk-i7>
+In-Reply-To: <20190208090912.43aao5kny42iirum@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 8 Feb 2019 10:53:55 +0100
+Message-ID: <CAJZ5v0iE9tFt9Xs27EYcjv6N1KAq-LaAQnv=QBvnbNRpfwrWCg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] drivers: Frequency constraint infrastructure
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: 'Marcelo Ricardo Leitner'
-> Sent: 07 February 2019 17:47
-...
-> > > Maybe what we want(ed) here then is explicit versioning, to have the 3
-> > > definitions available. Then the application is able to use, say struct
-> > > sctp_event_subscribe, and be happy with it, while there is struct
-> > > sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
+On Fri, Feb 8, 2019 at 10:09 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 11-01-19, 10:47, Rafael J. Wysocki wrote:
+> > On Fri, Jan 11, 2019 at 10:18 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 > > >
-> > > But it's too late for that now because that would break applications
-> > > already using the new fields in sctp_event_subscribe.
+> > > Hi,
+> > >
+> > > This commit introduces the frequency constraint infrastructure, which
+> > > provides a generic interface for parts of the kernel to constraint the
+> > > working frequency range of a device.
+> > >
+> > > The primary users of this are the cpufreq and devfreq frameworks. The
+> > > cpufreq framework already implements such constraints with help of
+> > > notifier chains (for thermal and other constraints) and some local code
+> > > (for user-space constraints). The devfreq framework developers have also
+> > > shown interest [1] in such a framework, which may use it at a later
+> > > point of time.
+> > >
+> > > The idea here is to provide a generic interface and get rid of the
+> > > notifier based mechanism.
+> > >
+> > > Only one constraint is added for now for the cpufreq framework and the
+> > > rest will follow after this stuff is merged.
+> > >
+> > > Matthias Kaehlcke was involved in the preparation of the first draft of
+> > > this work and so I have added him as Co-author to the first patch.
+> > > Thanks Matthias.
+> > >
+> > > FWIW, This doesn't have anything to do with the boot-constraints
+> > > framework [2] I was trying to upstream earlier :)
 > >
-> > It is probably better to break the recompilation of the few programs
-> > that use the new fields (and have them not work on old kernels)
-> > than to stop recompilations of old programs stop working on old
-> > kernels or have requested new options silently ignored.
-> 
-> I got confused here, not sure what you mean. Seems there is one "stop"
-> word too many.
+> > This is quite a bit of code to review, so it will take some time.
+>
+> @Rafael: You are going to provide some more feedback here, right ?
 
-More confusing than I intended...
+I think I've said something already.
 
-With the current kernel and headers a 'new program' (one that
-needs the new options) will fail to run on an old kernel - which is good.
-However a recompilation of an 'old program' (that doesn't use
-the new options) will also fail to run on an old kernel - which is bad.
+TLDR: I'm not convinced.
 
-Changing the kernel to ignore extra events flags breaks the 'new'
-program.
+PM QoS does similar things in a similar way.  Why does it have to be a
+different framework?
 
-Versioning the structure now (even though it should have been done
-earlier) won't change the behaviour of existing binaries.
+Using freq constraints for thermal reasons without coordinating it
+with scheduling is questionable in general, because thermal control
+may work against scheduling then.
 
-However a recompilation of an 'old' program would use the 'old'
-structure and work on old kernels.
-Attempts to recompile a 'new' program will fail - until the structure
-name (or some #define to enable the extra fields) is changed.
-
-Breaking compilations is much better than unexpected run-time
-behaviour.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+AFAICS, the original reason for notifiers in cpufreq was to avoid
+drawing too much power (and frequency was a proxy of power then) and
+they allowed the firmware to set the additional limit when going from
+AC to battery, for example.  That appears to be a different goal,
+though.
