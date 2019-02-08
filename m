@@ -2,124 +2,146 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E69C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1832EC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8289C20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:44:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C826720869
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 01:48:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lE6bdRkt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfBHBoW (ORCPT
+        id S1727070AbfBHBsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 20:44:22 -0500
-Received: from mga12.intel.com ([192.55.52.136]:39460 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbfBHBoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 20:44:22 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 17:44:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,346,1544515200"; 
-   d="scan'208";a="298118289"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga005.jf.intel.com with ESMTP; 07 Feb 2019 17:44:20 -0800
-Date:   Thu, 7 Feb 2019 17:44:04 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Dave Chinner <david@fromorbit.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190208014403.GA32701@iweiny-DESK2.sc.intel.com>
-References: <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
- <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
- <20190206210356.GZ6173@dastard>
- <20190206220828.GJ12227@ziepe.ca>
- <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
- <20190207035258.GD6173@dastard>
- <20190207052310.GA22726@ziepe.ca>
- <CAPcyv4jd4gxvt3faYYRbv5gkc6NGOKjY_Z-P0Ph=ss=gWZw7sA@mail.gmail.com>
- <20190207171736.GD22726@ziepe.ca>
- <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
+        Thu, 7 Feb 2019 20:48:42 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45681 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbfBHBsl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 20:48:41 -0500
+Received: by mail-pf1-f193.google.com with SMTP id j3so893491pfi.12;
+        Thu, 07 Feb 2019 17:48:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kyKqT67Ym+Kxym2IHpFSKTArXrd40CU9Yu3Owt+/PEA=;
+        b=lE6bdRkth3zCOMFrggLPHNFPNb0g0Lw6MSZGXx1wSM3yN8NWrzoMbganpEOp3FLKcv
+         LjVdhv3tVcb5RPmJ/Ljnh4wq7trvxZcE7pwc8x+ngE3v3clSeA7duQXFGyQUkD7zqygo
+         Pn4q24rfKUp54MoDVD5MI13yPY4Q0pXaodXm/V2mB7K9sBsAkvV0Y5cPRVX0/CUXRix8
+         GjhhSeXZ25jW+zgszM2CSNrhTuHlnlA+RL9klhvUa+TGn7Wv/RL4Nurc456EhT4wgR4F
+         qIQR/g/5WsyuvnU/+MFYkGS8DtbgSL+4cmZZY1MHYrVmDSbGDAyrEdf3oB2en4iYolvc
+         auwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kyKqT67Ym+Kxym2IHpFSKTArXrd40CU9Yu3Owt+/PEA=;
+        b=kTzFpvzDxZn5yt5WImtG1Cw78Nyc+UGDnHvwGmRaIQcrEN5U+LRk4+NPy7AsuYy3+3
+         sJNux/anfF53lJLmKpzz/4NhQQdTV2XyZpf3vVcZODUh9T+Zfs6B9Imtp7V28no4JLDK
+         2zcCTkV+Jybr5Tb8hosm8uRvE8sVo7+a9AIbEtnY2VVz96H8SGI1eZ8fwv/eAEabtkAS
+         1pVq7Dv7YQBmR85J4L17BdTXpoGiUGaRXSlb4wxM0teG6xaQKa/IquJFJp64MKSfxnuF
+         laqcj3v0tw8S5Wnol+Hc7/4ZcEWoW/ShsJytZnj3lYAvcgafRb/F6P8kUkT1s2fL6TDB
+         f82A==
+X-Gm-Message-State: AHQUAua4aJ6WTPUK+xEh28FkBfskj/c344An06VgoyOWpw4yle9cMkV9
+        qvoCVrcjV3L5gTDiELeUsA9uOBh1
+X-Google-Smtp-Source: AHgI3IZSLjX7L7BBsm9HhSOa9RSdttal/R1Tfvss4gL9w8rBStkQvErvpyFcrOdYYj5o5x6+7FJY7A==
+X-Received: by 2002:a62:4587:: with SMTP id n7mr19303812pfi.118.1549590519985;
+        Thu, 07 Feb 2019 17:48:39 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id o1sm504266pgn.63.2019.02.07.17.48.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 17:48:39 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-usb@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()
+Date:   Thu,  7 Feb 2019 17:48:16 -0800
+Message-Id: <20190208014816.21869-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hsHeCGjcJNEmMg_6FYEsQ_8Z=bvx+WmO1v_LmoXbJrxA@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 03:54:58PM -0800, Dan Williams wrote:
-> On Thu, Feb 7, 2019 at 9:17 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > Insisting to run RDMA & DAX without ODP and building an elaborate
-> > revoke mechanism to support non-ODP HW is inherently baroque.
-> >
-> > Use the HW that supports ODP.
-> >
-> > Since no HW can do disable of a MR, the escalation path is SIGKILL
-> > which makes it a non-production toy.
-> >
-> > What you keep missing is that for people doing this - the RDMA is a
-> > critical compoment of the system, you can't just say the kernel will
-> > randomly degrade/kill RDMA processes - that is a 'toy' configuration
-> > that is not production worthy.
-> >
-> > Especially since this revoke idea is basically a DOS engine for the
-> > RDMA protocol if another process can do actions to trigger revoke. Now
-> > we have a new class of security problems. (again, screams non
-> > production toy)
-> >
-> > The only production worthy way is to have the FS be a partner in
-> > making this work without requiring revoke, so the critical RDMA
-> > traffic can operate safely.
-> >
-> > Otherwise we need to stick to ODP.
-> 
-> Thanks for this it clears a lot of things up for me...
-> 
-> ...but this statement:
-> 
-> > The only production worthy way is to have the FS be a partner in
-> > making this work without requiring revoke, so the critical RDMA
-> > traffic can operate safely.
-> 
-> ...belies a path forward. Just swap out "FS be a partner" with "system
-> administrator be a partner". In other words, If the RDMA stack can't
-> tolerate an MR being disabled then the administrator needs to actively
-> disable the paths that would trigger it. Turn off reflink, don't
-> truncate, avoid any future FS feature that might generate unwanted
-> lease breaks. We would need to make sure that lease notifications
-> include the information to identify the lease breaker to debug escapes
-> that might happen, but it is a solution that can be qualified to not
-> lease break. In any event, this lets end users pick their filesystem
-> (modulo RDMA incompatible features), provides an enumeration of lease
-> break sources in the kernel, and opens up FS-DAX to a wider array of
-> RDMA adapters. In general this is what Linux has historically done,
-> give end users technology freedom.
+Xhci_handshake() implements the algorithm already captured by
+readl_poll_timeout_atomic(). Convert the former to use the latter to
+avoid repetition.
 
-To back off the details of this thread a bit...
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
 
-The details of limitations imposed and how they would be tracked within the
-kernel would be a great thing to discuss face to face.  Hence the reason for my
-proposal as a topic.
+Changes since [v1]:
 
-Ira
+    - Replaced readl_poll_timeout() with readl_poll_timeout_atomic()
+
+[v1] https://lore.kernel.org/lkml/20190207000308.7051-1-andrew.smirnov@gmail.com
+
+ drivers/usb/host/xhci.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 005e65922608..51c25a664ca4 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/pci.h>
++#include <linux/iopoll.h>
+ #include <linux/irq.h>
+ #include <linux/log2.h>
+ #include <linux/module.h>
+@@ -52,7 +53,6 @@ static bool td_on_ring(struct xhci_td *td, struct xhci_ring *ring)
+ 	return false;
+ }
+ 
+-/* TODO: copied from ehci-hcd.c - can this be refactored? */
+ /*
+  * xhci_handshake - spin reading hc until handshake completes or fails
+  * @ptr: address of hc register to be read
+@@ -69,18 +69,16 @@ static bool td_on_ring(struct xhci_td *td, struct xhci_ring *ring)
+ int xhci_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
+ {
+ 	u32	result;
++	int	ret;
+ 
+-	do {
+-		result = readl(ptr);
+-		if (result == ~(u32)0)		/* card removed */
+-			return -ENODEV;
+-		result &= mask;
+-		if (result == done)
+-			return 0;
+-		udelay(1);
+-		usec--;
+-	} while (usec > 0);
+-	return -ETIMEDOUT;
++	ret = readl_poll_timeout_atomic(ptr, result,
++					(result & mask) == done ||
++					result == U32_MAX,
++					1, usec);
++	if (result == U32_MAX)		/* card removed */
++		return -ENODEV;
++
++	return ret;
+ }
+ 
+ /*
+-- 
+2.20.1
 
