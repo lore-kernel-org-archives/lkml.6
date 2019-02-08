@@ -2,199 +2,164 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F927C4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B031C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7099B2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 088832086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:52:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="aYMfm72z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfBHMux (ORCPT
+        id S1727338AbfBHMwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:50:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58662 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726585AbfBHMuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:50:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9B245B66E;
-        Fri,  8 Feb 2019 12:50:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 78B751E3DB8; Fri,  8 Feb 2019 13:50:49 +0100 (CET)
-Date:   Fri, 8 Feb 2019 13:50:49 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
- pages"
-Message-ID: <20190208125049.GA11587@quack2.suse.cz>
-References: <20190130041707.27750-1-david@fromorbit.com>
- <20190130041707.27750-2-david@fromorbit.com>
- <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
- <20190131013403.GI4205@dastard>
- <20190131091011.GP18811@dhcp22.suse.cz>
- <20190131185704.GA8755@castle.DHCP.thefacebook.com>
- <20190131221904.GL4205@dastard>
- <20190207102750.GA4570@quack2.suse.cz>
- <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
- <20190208095507.GB6353@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208095507.GB6353@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 8 Feb 2019 07:52:21 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:20616 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726568AbfBHMwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 07:52:21 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43ww7N226tz9v0dH;
+        Fri,  8 Feb 2019 13:52:16 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=aYMfm72z; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id RPH8uguzozuR; Fri,  8 Feb 2019 13:52:16 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43ww7N0yfsz9v9DY;
+        Fri,  8 Feb 2019 13:52:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549630336; bh=S1kn21Xe7/docipPWcnKOsqhSa/YEFzLSyBpdTR2gLE=;
+        h=From:Subject:To:Cc:Date:From;
+        b=aYMfm72zUAsT4J2PvmbcJeFnvPe9AYVbn5/Mo2Ng6gJYvCN3f/E5hkCgseZk33qgl
+         d4FjRrm5iN0IbFkNoS9xcRy8uD1BMcyQZkBb4tVOge2qgfZBLeRGQj6NvHT0UVG37d
+         7bOsdzWvEQC+v0Q39WsrCT6QyUCvAoeCs+5Vttfc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 678D88B756;
+        Fri,  8 Feb 2019 13:52:17 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id CUIsjZfggXVe; Fri,  8 Feb 2019 13:52:17 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 394F58B8D9;
+        Fri,  8 Feb 2019 13:52:17 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 11415653E8; Fri,  8 Feb 2019 12:52:16 +0000 (UTC)
+Message-Id: <cover.1549630193.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v1 00/16] powerpc/32: Implement fast syscall entry
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri,  8 Feb 2019 12:52:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 08-02-19 10:55:07, Jan Kara wrote:
-> On Thu 07-02-19 21:37:27, Andrew Morton wrote:
-> > On Thu, 7 Feb 2019 11:27:50 +0100 Jan Kara <jack@suse.cz> wrote:
-> > 
-> > > On Fri 01-02-19 09:19:04, Dave Chinner wrote:
-> > > > Maybe for memcgs, but that's exactly the oppose of what we want to
-> > > > do for global caches (e.g. filesystem metadata caches). We need to
-> > > > make sure that a single, heavily pressured cache doesn't evict small
-> > > > caches that lower pressure but are equally important for
-> > > > performance.
-> > > > 
-> > > > e.g. I've noticed recently a significant increase in RMW cycles in
-> > > > XFS inode cache writeback during various benchmarks. It hasn't
-> > > > affected performance because the machine has IO and CPU to burn, but
-> > > > on slower machines and storage, it will have a major impact.
-> > > 
-> > > Just as a data point, our performance testing infrastructure has bisected
-> > > down to the commits discussed in this thread as the cause of about 40%
-> > > regression in XFS file delete performance in bonnie++ benchmark.
-> > > 
-> > 
-> > Has anyone done significant testing with Rik's maybe-fix?
-> 
-> I will give it a spin with bonnie++ today. We'll see what comes out.
+The purpose of this series is to implement a fast syscall entry
+on ppc32.
 
-OK, I did a bonnie++ run with Rik's patch (on top of 4.20 to rule out other
-differences). This machine does not show so big differences in bonnie++
-numbers but the difference is still clearly visible. The results are
-(averages of 5 runs):
+Unlike all other exceptions which can happen at any time and
+require to preserve all registers, the syscalls do not
+require the preservation of volatile registers (except LR).
 
-		 Revert			Base			Rik
-SeqCreate del    78.04 (   0.00%)	98.18 ( -25.81%)	90.90 ( -16.48%)
-RandCreate del   87.68 (   0.00%)	95.01 (  -8.36%)	87.66 (   0.03%)
+Syscall entries can then be optimised with lighter entry code
+than the general exception handling.
 
-'Revert' is 4.20 with "mm: don't reclaim inodes with many attached pages"
-and "mm: slowly shrink slabs with a relatively small number of objects"
-reverted. 'Base' is the kernel without any reverts. 'Rik' is a 4.20 with
-Rik's patch applied.
+In the meantime this series refactorises the exception entry on
+40x/6xx/8xx as they are pretty similar, and it takes benh series
+on rationalise the settings of MSR_EE at exceptions/syscall entries
+as this change pretty simplies exception entries.
 
-The numbers are time to do a batch of deletes so lower is better. You can see
-that the patch did help somewhat but it was not enough to close the gap
-when files are deleted in 'readdir' order.
+On a 8xx, this series improves null_syscall selftest by 17%
+On a 83xx, this series improves null_syscall selftest by 12,5%
 
-								Honza
+Christophe Leroy (16):
+  powerpc: CONFIG_THREAD_INFO_IN_TASK series
+  powerpc/32: Refactor EXCEPTION entry macros for head_8xx.S and
+    head_32.S
+  powerpc/32: move LOAD_MSR_KERNEL() into head_32.h and use it
+  powerpc/32: make the 6xx/8xx EXC_XFER_TEMPLATE() similar to the
+    40x/booke one
+  powerpc/40x: Don't use SPRN_SPRG_SCRATCH2 in EXCEPTION_PROLOG
+  powerpc/40x: add exception frame marker
+  powerpc/40x: Split and rename NORMAL_EXCEPTION_PROLOG
+  powerpc/40x: Refactor exception entry macros by using head_32.h
+  powerpc/fsl_booke: ensure SPEFloatingPointException() reenables
+    interrupts
+  powerpc/32: enter syscall with MSR_EE inconditionaly set
+  powerpc/32: Enter exceptions with MSR_EE unset
+  powerpc/32: get rid of COPY_EE in exception entry
+  powerpc: Fix 32-bit handling of MSR_EE on exceptions
+  powerpc/32: implement fast entry for syscalls on non BOOKE
+  powerpc/32: Remove MSR_PR test when returning from syscall
+  powerpc/32: don't do syscall stuff in transfer_to_handler on non BOOKE
 
-> > From: Rik van Riel <riel@surriel.com>
-> > Subject: mm, slab, vmscan: accumulate gradual pressure on small slabs
-> > 
-> > There are a few issues with the way the number of slab objects to scan is
-> > calculated in do_shrink_slab.  First, for zero-seek slabs, we could leave
-> > the last object around forever.  That could result in pinning a dying
-> > cgroup into memory, instead of reclaiming it.  The fix for that is
-> > trivial.
-> > 
-> > Secondly, small slabs receive much more pressure, relative to their size,
-> > than larger slabs, due to "rounding up" the minimum number of scanned
-> > objects to batch_size.
-> > 
-> > We can keep the pressure on all slabs equal relative to their size by
-> > accumulating the scan pressure on small slabs over time, resulting in
-> > sometimes scanning an object, instead of always scanning several.
-> > 
-> > This results in lower system CPU use, and a lower major fault rate, as
-> > actively used entries from smaller caches get reclaimed less aggressively,
-> > and need to be reloaded/recreated less often.
-> > 
-> > [akpm@linux-foundation.org: whitespace fixes, per Roman]
-> > [riel@surriel.com: couple of fixes]
-> >   Link: http://lkml.kernel.org/r/20190129142831.6a373403@imladris.surriel.com
-> > Link: http://lkml.kernel.org/r/20190128143535.7767c397@imladris.surriel.com
-> > Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
-> > Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
-> > Signed-off-by: Rik van Riel <riel@surriel.com>
-> > Tested-by: Chris Mason <clm@fb.com>
-> > Acked-by: Roman Gushchin <guro@fb.com>
-> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Jonathan Lemon <bsd@fb.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: <stable@vger.kernel.org>
-> > 
-> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> > ---
-> > 
-> > 
-> > --- a/include/linux/shrinker.h~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
-> > +++ a/include/linux/shrinker.h
-> > @@ -65,6 +65,7 @@ struct shrinker {
-> >  
-> >  	long batch;	/* reclaim batch size, 0 = default */
-> >  	int seeks;	/* seeks to recreate an obj */
-> > +	int small_scan;	/* accumulate pressure on slabs with few objects */
-> >  	unsigned flags;
-> >  
-> >  	/* These are for internal use */
-> > --- a/mm/vmscan.c~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
-> > +++ a/mm/vmscan.c
-> > @@ -488,18 +488,30 @@ static unsigned long do_shrink_slab(stru
-> >  		 * them aggressively under memory pressure to keep
-> >  		 * them from causing refetches in the IO caches.
-> >  		 */
-> > -		delta = freeable / 2;
-> > +		delta = (freeable + 1) / 2;
-> >  	}
-> >  
-> >  	/*
-> >  	 * Make sure we apply some minimal pressure on default priority
-> > -	 * even on small cgroups. Stale objects are not only consuming memory
-> > +	 * even on small cgroups, by accumulating pressure across multiple
-> > +	 * slab shrinker runs. Stale objects are not only consuming memory
-> >  	 * by themselves, but can also hold a reference to a dying cgroup,
-> >  	 * preventing it from being reclaimed. A dying cgroup with all
-> >  	 * corresponding structures like per-cpu stats and kmem caches
-> >  	 * can be really big, so it may lead to a significant waste of memory.
-> >  	 */
-> > -	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
-> > +	if (!delta && shrinker->seeks) {
-> > +		unsigned long nr_considered;
-> > +
-> > +		shrinker->small_scan += freeable;
-> > +		nr_considered = shrinker->small_scan >> priority;
-> > +
-> > +		delta = 4 * nr_considered;
-> > +		do_div(delta, shrinker->seeks);
-> > +
-> > +		if (delta)
-> > +			shrinker->small_scan -= nr_considered << priority;
-> > +	}
-> >  
-> >  	total_scan += delta;
-> >  	if (total_scan < 0) {
-> > _
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+ arch/powerpc/Kconfig                           |   1 +
+ arch/powerpc/Makefile                          |   7 +
+ arch/powerpc/include/asm/asm-prototypes.h      |   4 +-
+ arch/powerpc/include/asm/book3s/64/mmu-hash.h  |   2 +-
+ arch/powerpc/include/asm/exception-64s.h       |   4 +-
+ arch/powerpc/include/asm/irq.h                 |  18 +-
+ arch/powerpc/include/asm/livepatch.h           |   7 +-
+ arch/powerpc/include/asm/processor.h           | 105 +---------
+ arch/powerpc/include/asm/ptrace.h              |   2 +-
+ arch/powerpc/include/asm/reg.h                 |   2 +-
+ arch/powerpc/include/asm/smp.h                 |  17 +-
+ arch/powerpc/include/asm/task_size_32.h        |  21 ++
+ arch/powerpc/include/asm/task_size_64.h        |  79 ++++++++
+ arch/powerpc/include/asm/thread_info.h         |  19 --
+ arch/powerpc/kernel/asm-offsets.c              |  12 +-
+ arch/powerpc/kernel/entry_32.S                 | 261 ++++++++++++++-----------
+ arch/powerpc/kernel/entry_64.S                 |  12 +-
+ arch/powerpc/kernel/epapr_hcalls.S             |   5 +-
+ arch/powerpc/kernel/exceptions-64e.S           |  13 +-
+ arch/powerpc/kernel/exceptions-64s.S           |   2 +-
+ arch/powerpc/kernel/head_32.S                  | 182 ++++-------------
+ arch/powerpc/kernel/head_32.h                  | 203 +++++++++++++++++++
+ arch/powerpc/kernel/head_40x.S                 | 154 ++++-----------
+ arch/powerpc/kernel/head_44x.S                 |  16 +-
+ arch/powerpc/kernel/head_64.S                  |   1 +
+ arch/powerpc/kernel/head_8xx.S                 | 133 ++-----------
+ arch/powerpc/kernel/head_booke.h               |  44 ++---
+ arch/powerpc/kernel/head_fsl_booke.S           |  44 ++---
+ arch/powerpc/kernel/idle_6xx.S                 |   8 +-
+ arch/powerpc/kernel/idle_book3e.S              |   2 +-
+ arch/powerpc/kernel/idle_e500.S                |   8 +-
+ arch/powerpc/kernel/idle_power4.S              |   2 +-
+ arch/powerpc/kernel/irq.c                      | 114 ++---------
+ arch/powerpc/kernel/kgdb.c                     |  28 ---
+ arch/powerpc/kernel/machine_kexec_64.c         |   6 +-
+ arch/powerpc/kernel/misc_32.S                  |  17 +-
+ arch/powerpc/kernel/process.c                  |  63 +++---
+ arch/powerpc/kernel/setup-common.c             |   2 +-
+ arch/powerpc/kernel/setup_32.c                 |  26 ++-
+ arch/powerpc/kernel/setup_64.c                 |  51 +----
+ arch/powerpc/kernel/smp.c                      |  16 +-
+ arch/powerpc/kernel/stacktrace.c               |  29 ++-
+ arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   6 +-
+ arch/powerpc/kernel/traps.c                    |   8 +
+ arch/powerpc/kvm/book3s_hv_hmi.c               |   1 +
+ arch/powerpc/mm/hash_low_32.S                  |  14 +-
+ arch/powerpc/net/bpf_jit32.h                   |   5 +-
+ arch/powerpc/sysdev/6xx-suspend.S              |   5 +-
+ arch/powerpc/xmon/xmon.c                       |   2 +-
+ 49 files changed, 816 insertions(+), 967 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/task_size_32.h
+ create mode 100644 arch/powerpc/include/asm/task_size_64.h
+ create mode 100644 arch/powerpc/kernel/head_32.h
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.13.3
+
