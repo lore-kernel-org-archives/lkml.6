@@ -2,122 +2,125 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EAFC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD553C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77B3421920
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B31E21924
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 08:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jD7YDnew"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TJ710YP7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfBHIzt (ORCPT
+        id S1727432AbfBHI5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 03:55:49 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36700 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbfBHIzt (ORCPT
+        Fri, 8 Feb 2019 03:57:05 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38562 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfBHI5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 03:55:49 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g9so1393344plo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 00:55:48 -0800 (PST)
+        Fri, 8 Feb 2019 03:57:04 -0500
+Received: by mail-ed1-f65.google.com with SMTP id h50so2131556ede.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 00:57:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+IoXi6/wX3eVgVDyb+GtYCpOFNqboyDM2qzEvakKqDc=;
-        b=jD7YDnewE84yBR8+OjQj3WntieAgH0DSnhLlZEU33qoq5wgtu5J2kWSlVNO2Ae3B68
-         8LELJPMbKb6kzi858SdWX2Wk2RLapCAl0hwKl5vd4TFt2D59Hob2s1PxomTvXkhBwPt7
-         gWSXh05FvJTH/6ibNd51Hhqk2r0brPTFwDbdZNNZ/ll9O8/VRilSE15u7OtaS/AnQzH+
-         oztz9vYIOwCvEs0zgnPpbEghhPmNZu2gFr7Q1L7Gunv8dNRlysbJmVc5dsBRi582cMMC
-         OLjkemwOIqOnySOkhvi+uGdwGRDHEPXBPICq+Zgd0/QZ+FBj3OUdUwNVKLQcX1p6e0Jg
-         miGA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+7NDUQ5aQOIw2rFcRXYdkNTyYipiNPcJM26MgjQS3UU=;
+        b=TJ710YP7q9U8iZW95on41/B/jzfIOMX9fEr8YCkZQTpGqLeR3n1QnDEK2Qa/ibx7w9
+         c1YDT5EOlSih6NJFtaSSfRTm56Zka0WlgNAqVw8Go76JxB5nE5735ZDZpbKSsBWaIU4U
+         pB+Ofm+v7rdueux8N2x0xlANoTCYsVQSqQLeI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+IoXi6/wX3eVgVDyb+GtYCpOFNqboyDM2qzEvakKqDc=;
-        b=BKmQ7WNwfhGhVzouQVfE+5ClNsvL+Xk/FUFAH2HA6ekWlV0BXx44A1M96/Tf6UwoXc
-         H+cMnsuMyLrqtvs7BtmCJViiV01Op+uPMTQcXZTWVN0w1V7dd/qlQfkKH8KOuy4/tnk6
-         5yk3vuQLPaCfaohvw3cUKVxtZTkUqI65+Bsk0hp6RjWZ+Ps54ja1Vm52U+82wLhpOQRb
-         Tz8LD3bNV/7qqsPAoK/NSQ/Y5IejsjlQhEJT4L8TGER9fLtvGd7iIaZuDILle/rqqMFf
-         UvC2T/Ghuqaens7jBpDqjctKBpDzNnhoL8fhGK07F2aTs7Jsa1SNil9D2Y+4sKI4ekM4
-         GS+A==
-X-Gm-Message-State: AHQUAubzz00gDx4OTZAtfc4B++E9BXvH8JbCDpYTBH5ftn6Cg1DtGe0C
-        W0EQJKowMdmSf6SKgvYpr3zEbw==
-X-Google-Smtp-Source: AHgI3IZPJXr9IO2GZji/7ShvL6yppxJgb4HDPPsed1j7LXSnyGz2s8LmNnFkhjh0QWkpHvaAWrH9Eg==
-X-Received: by 2002:a17:902:bccc:: with SMTP id o12mr10966470pls.273.1549616147936;
-        Fri, 08 Feb 2019 00:55:47 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id b68sm2368577pfg.160.2019.02.08.00.55.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 00:55:46 -0800 (PST)
-Date:   Fri, 8 Feb 2019 14:25:44 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
-Message-ID: <20190208085544.vqkebcgg7jpbv2a6@vireshk-i7>
-References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
- <20190207122227.19873-1-m.szyprowski@samsung.com>
- <20190208064957.zhyue42kpgaoslwm@vireshk-i7>
- <dc3802db-2931-e4fa-72f4-fa6e9b5c0e9a@samsung.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=+7NDUQ5aQOIw2rFcRXYdkNTyYipiNPcJM26MgjQS3UU=;
+        b=F0Qr4BTOrUkrydqFDxRpx89kxGeXdemXoWAn2Szo2MCUwJDTwIUR4Ptb6hZr4iXbnQ
+         jvAtrAeBRvlG2XAQ3wiTpcRVoNnbCd/KKzpPOapGEnPoiQrmQefyHUAptYnv4RuG8dqI
+         XMznZrqoLix5sDGc9gebfW0Psz9NvCoX2MlVd9Br0G2hOTOsI+Mnp4F0wib/LtkLg/kk
+         a8FDazqFzwhIyHu8ITtiV58OMQ6ENS289hriFdoBWZuQEPdkgBYS88l0PJJB8Lm/sZWQ
+         Mqb4U2pW1+yoaXt8VewyP8H5AXCzp5yUo7v4TT95rMY8bfvXQAA5tiqXSehsumpCqZHn
+         Jhpw==
+X-Gm-Message-State: AHQUAuZzVtGHihUe4EFsJnqk0RYZfrRjuku5QTtB2zuVqSasABTytzh9
+        VRZq7TXxpVy2Vg6rpzk2M31FJA==
+X-Google-Smtp-Source: AHgI3Iaxrm9GZUtVBfB8l4as5+bmKhj98k4PUULRg7Hsj07BTnpDWeOC6yHTj7yHjaj6P8igd8lzEg==
+X-Received: by 2002:a17:906:b3c9:: with SMTP id cg9mr14996848ejb.159.1549616223007;
+        Fri, 08 Feb 2019 00:57:03 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id b45sm468260eda.34.2019.02.08.00.57.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 00:57:01 -0800 (PST)
+Date:   Fri, 8 Feb 2019 09:56:59 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 2/3] drm: tweak header name
+Message-ID: <20190208085659.GI23159@phenom.ffwll.local>
+Mail-Followup-To: "Michael S. Tsirkin" <mst@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+References: <20190124142448.23243-1-mst@redhat.com>
+ <20190124142448.23243-4-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc3802db-2931-e4fa-72f4-fa6e9b5c0e9a@samsung.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20190124142448.23243-4-mst@redhat.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-02-19, 09:12, Marek Szyprowski wrote:
-> On 2019-02-08 07:49, Viresh Kumar wrote:
-> > Why don't you get similar problem during suspend? I think you can get
-> > it when the CPUs are offlined as I2C would have gone by then. The
-> > cpufreq or OPP core can try and run some regulator or genpd or clk
-> > calls to disable resources, etc. Even if doesn't happen, it certainly
-> > can.
+On Fri, Feb 08, 2019 at 01:02:58AM -0500, Michael S. Tsirkin wrote:
+> Use linux/mman.h to make sure we get all mmap flags we need.
 > 
-> CPUfreq is suspended very early during system suspend and thus it does
-> nothing when CPUs are being offlined.
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-> > Also at resume the cpufreq core may try to change the frequency right
-> > from ->init() on certain cases, though not everytime and so the
-> > problem can come despite of this series.
+drmP.h is seriously deprecated (and a monster mess). If this fixes
+anything, I think would be better to include the right header in the right
+places, and leave drmP.h to die quietly ...
+
+What exactly does this fix?
+-Daniel
+
+> ---
+>  include/drm/drmP.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> cpufreq is still in suspended state (it is being 'resume' very late in
-> the system resume procedure), so if driver doesn't explicitly change any
-> opp in ->init(), then cpufreq core waits until everything is resumed. To
-> sum up, this seems to be fine, beside the issue with regulator
-> initialization I've addressed in this patchset.
-
-Yeah, the governors are suspended very soon, but any frequency change
-starting from cpufreq core can still happen. There are at least two
-points in cpufreq_online() where we may end up changing the frequency,
-but that is conditional and may not be getting hit.
-
-> > We guarantee that the resources are available during probe but not
-> > during resume, that's where the problem is.
+> diff --git a/include/drm/drmP.h b/include/drm/drmP.h
+> index bdb0d5548f39..a3184416ddc5 100644
+> --- a/include/drm/drmP.h
+> +++ b/include/drm/drmP.h
+> @@ -57,8 +57,7 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/dma-fence.h>
+>  #include <linux/module.h>
+> -
+> -#include <asm/mman.h>
+> +#include <linux/mman.h>
+>  #include <asm/pgalloc.h>
+>  #include <linux/uaccess.h>
+>  
+> -- 
+> MST
 > 
-> Yes, so I've changed cpufreq-dt to the common approach, in which the
-> driver keeps all needed resources for the whole lifetime of the device.
-
-That's not what I was saying actually. I was saying that it should be
-fine to do a I2C transfer during resume, else we will always have
-problems and have to fix them with hacks like the one you proposed
-where you acquire resources for all the possible CPUs. Maybe we can
-fix it once and for all.
 
 -- 
-viresh
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
