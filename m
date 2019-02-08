@@ -2,100 +2,174 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0DAC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884BDC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B95A21908
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:44:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ns5QJS7c"
+	by mail.kernel.org (Postfix) with ESMTP id 5B10221916
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 21:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfBHVoh (ORCPT
+        id S1727441AbfBHVpp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:44:37 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45786 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbfBHVoh (ORCPT
+        Fri, 8 Feb 2019 16:45:45 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:55947 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfBHVpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:44:37 -0500
-Received: by mail-ua1-f66.google.com with SMTP id e16so1602576uam.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 13:44:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YJW9rMF5DRZYQjdws4gaur4H8MyvRZ8SXf+L2porsaA=;
-        b=ns5QJS7c59bqnR5dfI9O8Dpz2Snqke6o/2UbEyWR5fxjOAgFSUMXgg2gk18oX2Oc8Y
-         uV3bY56NJa44RqhsZ5g+qiC7uPwODc9d6VnOJ1b6s0jYpiumVarKDkdUPmFKT3kLTlDJ
-         SBlU1/EanMQyMkYwq/4Ndr2OWBVzFu1n+QDrO5cS9aieV/ODJpJEtObQ1xkb6yGtyCWg
-         EI/BJCo5Hh7kEmRH1ikg1dRgNVe9ypVjsd5oUJiN0oQKE+MVJCC4ReksZwsAdA0dhi3D
-         tSfGK7DvoTgaV4ben/MqhHEfxSoxH2rulgL4VSl5r5gX9aFyDVYq5oACytv3lf02vNhp
-         atDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YJW9rMF5DRZYQjdws4gaur4H8MyvRZ8SXf+L2porsaA=;
-        b=l/XEmumEHu7LRM2fi6zK2qbYlMm07COtrvsB7HMyiGsD4W01xUGD8skAPLc8usORZb
-         XDtUVkb57Qe18Uyq/EhES+RH3EIqf5uY690hgO6AcZjQVIxZVGAz2zSuFNo2dK2Uex4t
-         BWAY4JiokVphpwrnm1WCuvJIWdKF22RavY5vnmStcNbLJ1Lq1ZfmLeIP4MzEJDV1vtQq
-         b+0t1y55gGSOfQuyAhzH7mviVC5IUufjKzbIxTp0Yp2Ql9L1dfqIOp1a2NsQagGELMLd
-         NAvJt7wpnOuhy4yKdImW6wBpM0qVfYW5w18ey5EsXRruRFMeZBmb5n9jq4Qd7QISkJf1
-         BYYw==
-X-Gm-Message-State: AHQUAuZ8mwswaxS1qbCdFL+43bt2GJ7E4l8fpx7pOh1clW637fG0H/yx
-        5bOko8iLRWdIjMB3o6a63UiEg2tczW7G0SAWKbM=
-X-Google-Smtp-Source: AHgI3IaT+q8xjSGUoJe8VIQuGevSW0/ZVvKsdb3G2YdA5C7Vjr1CHHY2vEH7w7b/OCICVOtDcID/REyHWlaDRnMI89A=
-X-Received: by 2002:ab0:6446:: with SMTP id j6mr9378857uap.2.1549662276126;
- Fri, 08 Feb 2019 13:44:36 -0800 (PST)
+        Fri, 8 Feb 2019 16:45:45 -0500
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 279CC240006;
+        Fri,  8 Feb 2019 21:45:41 +0000 (UTC)
+Date:   Fri, 8 Feb 2019 22:45:40 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH] mtd: rawnand: call onfi_fill_data_interface() once
+ again after nand_detect
+Message-ID: <20190208224540.7e5b628c@xps13>
+In-Reply-To: <CAK7LNAQ7P8iEkhyRBbHLdt6yN-dDgpLZOs256qwk2BpADiGcGw@mail.gmail.com>
+References: <1549533476-3742-1-git-send-email-yamada.masahiro@socionext.com>
+        <20190207111606.6b72dc34@xps13>
+        <CAK7LNASEvAUeJsBcp4eh+XW+gaVp921SU-d1m-DEs+Hs+YA8TA@mail.gmail.com>
+        <20190207140136.2ae62982@xps13>
+        <CAK7LNAQ7P8iEkhyRBbHLdt6yN-dDgpLZOs256qwk2BpADiGcGw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190204203254.4026-1-oded.gabbay@gmail.com> <20190206115237.GA6750@rapoport-lnx>
- <CAFCwf10K9Ejqm_=jrtOyXAs4yL-6zs1X79O=dwjg=2jmB3PPYA@mail.gmail.com> <1c29159a1b55cb6ad278023588861268e22e626c.camel@perches.com>
-In-Reply-To: <1c29159a1b55cb6ad278023588861268e22e626c.camel@perches.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Fri, 8 Feb 2019 23:44:11 +0200
-Message-ID: <CAFCwf12SPXjuDSfViSTLZexdi1YoNKqcGtb6k3H5bU6o2kzmeA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/15] Habana Labs kernel driver
-To:     Joe Perches <joe@perches.com>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 11:43 PM Joe Perches <joe@perches.com> wrote:
->
-> On Fri, 2019-02-08 at 23:33 +0200, Oded Gabbay wrote:
-> > On Wed, Feb 6, 2019 at 1:52 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > > On Mon, Feb 04, 2019 at 10:32:39PM +0200, Oded Gabbay wrote:
-> > > > Hello,
-> > > > This is v3 of the Habana Labs kernel driver patch-set. It contains minor fixes
-> > > > according to reviews done on v2. In addition, it is rebased on v5.0-rc5.
-> []
-> > > Nit: git am is unhappy about black lines at EOF, e.g:
+Hi Masahiro,
+
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Fri, 8 Feb
+2019 17:35:32 +0900:
+
+> HI Miquel,
+> 
+> On Thu, Feb 7, 2019 at 10:02 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >
+> > Hi Masahiro,
+> >
+> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Thu, 7 Feb
+> > 2019 19:46:54 +0900:
+> >  
+> > > On Thu, Feb 7, 2019 at 7:16 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:  
+> > > >
+> > > > Hi Masahiro,
+> > > >
+> > > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Thu,  7 Feb
+> > > > 2019 18:57:56 +0900:
+> > > >  
+> > > > > nand_scan_ident() calls onfi_fill_data_interface() at its entry
+> > > > > to set up the initial timing parameters.
+> > > > >
+> > > > > The timing parameters are needed not only for ->setup_data_interface(),
+> > > > > but also for giving the correct delay to NAND_OP_WAIT_RDY, for example.
+> > > > >
+> > > > > If the driver sets the NAND_KEEP_TIMINGS flag, or does not support  
+> > > > > ->setup_data_interface() hook, those parameters will never updated.  
+> > > >
+> > > >                                                             ^ be  
 > > >
-> > > Applying: habanalabs: add basic Goya support
-> > > .git/rebase-apply/patch:29: new blank line at EOF.
-> > > +
-> > Yes, but on the other hand, joe perches gave me a comment about
-> > missing newline at end of Makefile.
-> > So either diff will complain or git am.
->
-> Not really.
->
-> The desired modification was the last non-blank line of
-> the Makefile should have a terminating newline, not that
-> there was a blank line at EOF.
->
->
-ok, thanks for the clarification, I'll fix that.
-Oded
+> > > Will fix (if v2 is welcome)
+> > >
+> > >  
+> > > > >
+> > > > > Before nand_detect(), we never know whether the chip is ONFi or not.
+> > > > > So, onfi_fill_data_interface() has to assume the worst case, i.e.
+> > > > > non-ONFi.  
+> > > >
+> > > > s/ONFi/ONFI/?  
+> > >
+> > > Will fix.
+> > >
+> > > Looks like I was misunderstanding
+> > > maybe because the letter 'I' in the logo
+> > > (http://www.onfi.org/)
+> > > looks like a lowercase...
+> > >
+> > >  
+> >
+> > Oh right. I don't know what's best. Pick your favorite :)
+> >  
+> > >
+> > >  
+> > > >  
+> > > > >
+> > > > > After nand_detect(), if the chip turns out to be ONFi-compliant,
+> > > > > we can optimize tPROG_max, tBERS_max, etc.
+> > > > >
+> > > > > Call onfi_fill_data_interface() once again.  
+> > > >
+> > > > Sorry but I don't get why this is needed as there is the same call at
+> > > > the top of this function. Can you be more specific on where/when the
+> > > > missing call produces a failure?  
+> > >
+> > >
+> > > onfi_fill_data_interface() sets different values
+> > > for tPROG_max, tBER_max, tR_max, tCCS_min
+> > > depending on whether the chip is ONFI or not.
+> > >
+> > > For the first call, onfi_fill_data_interface()
+> > > chooses the else-part since we never know
+> > > the chip specification at this point.
+> > >
+> > > If we call onfi_fill_data_interface() once again
+> > > after nand_detect(), it may choose the if-part.
+> > >
+> > >
+> > > If a driver supports ->setup_data_interface(),
+> > > nand_init_data_interface() will set the optimal
+> > > timing parameters anyway.
+> > >
+> > > But, if a driver does not support ->setup_data_interface(),
+> > > it will not happen since nand_has_setup_data_iface() returns false.  
+> >
+> > And I think this is the expected behavior. Calling again
+> > onfi_fill_data_interface() would probably enhance a bit the timings.
+> > The effect is that later exchanges with the NAND chip would be just a
+> > bit faster. But if you care about performance, then why not implementing  
+> > ->setup_data_interface()? Even a dummy implementation would do the  
+> > trick: only accept timing mode 0 without any changes on the controller
+> > side.  
+> 
+> 
+> My driver (denali) does implement ->setup_data_interface().
+
+Fortunately, yes! :)
+
+> 
+> When I was testing this thoroughly on my board,
+> I noticed the timing parameters were slightly changed
+> after nand_detect() detected ONFI chip.
+
+I see.
+
+> 
+> > Unless you give me a use case where this is not possible, I don't think
+> > it is worth changing this path.  
+> 
+> Only the use case I can come up with is when NAND_KEEP_TIMINGS was set.
+> But, it is just a matter of timeout values.
+> 
+> So, please throw away this patch.
+
+Ok!
+
+
+Thanks anyway for the proposal!
+Miquèl
