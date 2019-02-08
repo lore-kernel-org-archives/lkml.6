@@ -2,60 +2,60 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA2EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E297BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9610F2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A94A92146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:36:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="YlgtiiAF"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yI2trusg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfBHRge (ORCPT
+        id S1728382AbfBHRgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:36:34 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55995 "EHLO
+        Fri, 8 Feb 2019 12:36:48 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55985 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728177AbfBHRff (ORCPT
+        with ESMTP id S1728168AbfBHRfd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:35:35 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r17so4322265wmh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:34 -0800 (PST)
+        Fri, 8 Feb 2019 12:35:33 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r17so4321982wmh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:35:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OE+68BkD2Gvi09w8U3xAg2OuU34U9g+A9X06DXSG8XE=;
-        b=YlgtiiAF+AvM6zkhhEmUfOtnG0N6MpYzvOfMvM/RA3KVT4ZJ80KCd186b5NdXKoFC1
-         DOJN9PGnAz+LWemGz/+qBieD39hfoDcecoVq3Jxv4xaefgrBCU3PzsOWOuhnmJdQTfte
-         559o3KshmtchmXfjfhpk9U/cAx5TVm+Pm1saM7JCXKrJTu8bDAKeALYe0U2yWm8R8RyC
-         ob2JunMKg4oF8IRdvtXRNmn+vTjNOw692XfOYtlfxc3DZRojSM2q+z69QHIH0HKMveOw
-         TVsN78lRIizirn93vfUv7Sy2Remc+GdgrKxq5RckHwFry1idz+vBmsK4adxNmO7Hu/Ey
-         xxyg==
+        bh=yRSCRg5rDKszKeNaGzOxkxAIRW2gEt2oxrvbVDGGZhU=;
+        b=yI2trusg39CqSSY1w5JVHaY8GJ2lA76s7TIlaufRNc+1O5UkB4tm3/3kJ1ebzOUJcl
+         x7B+uRTt5tCoXT6wqScf+AU2LiyjQ5vAsWaotGEC8u3Tj+0DNlTsh4/JhvC1l/oSqsJc
+         MGcNS2NcN9/axrZsnJuKojz5WwGdcqcWuFvSx0GGkgsvX7HTSNWAjFOnfpM41bervt1l
+         RFa9Orv8b51MUA9XTFaey6S+GJRlQtUA7V6dyhsWaLT+TCTfS/1LOO7MjhWMaN4Cbopf
+         MgCf/G6QxDyKHIuLos8WPItjzhV13bPCczU/M5m5EeTbwyc3TO+6XI6jueecJl8m6S8f
+         wPqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OE+68BkD2Gvi09w8U3xAg2OuU34U9g+A9X06DXSG8XE=;
-        b=N8G+iGKnvNhRh7V/DgAw5vyNi6MaL9jqeX20IYV2OvS/H4GjiRYTx3foX0Qr4olvt8
-         5QFnNfaOwieL5kVn78ACNbxcuw00/UQUYxpHpl0vnAU3qu383Umu71A5UrltbDVJ0Eci
-         2LHrxvI9NCRt9EqX5DjM36UNGK0Juzv8cJd7BTTxHJIAEysCpRFMN9Idxl8jBXK0V40s
-         V2KO5lmIqkii3X19rGiOKPsvKxhSQdafHqxsDr6oKV2M5gZxNylEmcxafD1YM1LZ9+k+
-         oLdtw+UIx98IOLXZhSXMHd/1/dN0ZUwmrl4laY8972tTTxIGXK7gp7q8I27vw0vBFSEB
-         wDKQ==
-X-Gm-Message-State: AHQUAuba/ETUdFII91UM85OcyoHusqsjhU4HzhMNMRaUiuVVCHEW3Stw
-        a8PvcPxD/igOsjBq+0nQig4cqA==
-X-Google-Smtp-Source: AHgI3IZda11KYRPw2eSJI8uzt5B/eMh/HR9zpmlIB9OgnhaCxWQ4r9hcIZrz5Ctai1T6vNsXlGhjbg==
-X-Received: by 2002:a1c:5656:: with SMTP id k83mr12651966wmb.125.1549647333817;
-        Fri, 08 Feb 2019 09:35:33 -0800 (PST)
+        bh=yRSCRg5rDKszKeNaGzOxkxAIRW2gEt2oxrvbVDGGZhU=;
+        b=W3oTQ4Thk9NwXxCbdK5BNOWalOrIGvNFNr0hdwtq8+CngBmpwQESyiP1BDF3XH8asJ
+         2uprsR7Wst1A7hTJ8DDD48L5uoAYzdF7DNQJvUOw9freBY0GSOuVVDbDZhaFWvdpUYhp
+         CsHLiMy0G9ETcTT8TU8tFuefXmNmUvK2ToL7KdEbf3GgXXFEwj5Q9vvlz0MAcfeMT42E
+         4/7mzVeh8YHFZwhdngGPPjl4ZT79XCyrhPctx+7yk+QkYNuFS/7srKyenHsyZpcbDSwn
+         HWhzNYborg8Qau5rmdnq3WBNJy5HauueSaYyWhYdWiQ85oRJh9lJDLwhdYcDR8FjskOh
+         3++A==
+X-Gm-Message-State: AHQUAuYCOwA6Rk8cbkrIJauaY4h+kI2KkuTS3yqAQptkaDn+di1cL0zt
+        RZwDTQHbAP16dvmsPVfp9nkVGhfYqjM=
+X-Google-Smtp-Source: AHgI3Ibae8GrffpMyzyML+a18ZhuluLag5gpbKjmTe+Iy3mLyhDZ1k1djQPSqMi4BX+CLHfZt3TvcQ==
+X-Received: by 2002:a1c:dc86:: with SMTP id t128mr13151890wmg.42.1549647331524;
+        Fri, 08 Feb 2019 09:35:31 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.32
+        by smtp.gmail.com with ESMTPSA id p17sm354714wrv.59.2019.02.08.09.35.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 09:35:33 -0800 (PST)
+        Fri, 08 Feb 2019 09:35:30 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -66,9 +66,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 23/33] ARM: davinci: cp-intc: add the new config structures for da8xx SoCs
-Date:   Fri,  8 Feb 2019 18:34:48 +0100
-Message-Id: <20190208173458.4801-24-brgl@bgdev.pl>
+Subject: [PATCH v2 21/33] ARM: davinci: cp-intc: add a wrapper around cp_intc_init()
+Date:   Fri,  8 Feb 2019 18:34:46 +0100
+Message-Id: <20190208173458.4801-22-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190208173458.4801-1-brgl@bgdev.pl>
 References: <20190208173458.4801-1-brgl@bgdev.pl>
@@ -81,71 +81,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add the new-style config structures for da8xx SoCs. They will be used
-once we make the cp-intc driver stop using davinci_soc_info.
+We're going to extend the cp_intc_init() function with a config
+structure so we can drop the intc-related fields from davinci_soc_info.
+
+Once we do it, we won't be able to use this routine directly as the
+init_irq callback. Wrap the calls in additional helpers that don't
+take parameters and can be assigned to init_irq.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/da830.c | 10 ++++++++++
- arch/arm/mach-davinci/da850.c | 10 ++++++++++
- 2 files changed, 20 insertions(+)
+ arch/arm/mach-davinci/board-da830-evm.c     | 2 +-
+ arch/arm/mach-davinci/board-da850-evm.c     | 2 +-
+ arch/arm/mach-davinci/board-mityomapl138.c  | 2 +-
+ arch/arm/mach-davinci/board-omapl138-hawk.c | 2 +-
+ arch/arm/mach-davinci/da830.c               | 5 +++++
+ arch/arm/mach-davinci/da850.c               | 5 +++++
+ arch/arm/mach-davinci/include/mach/da8xx.h  | 2 ++
+ 7 files changed, 16 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index f81c92b9cf07..1ae7dcb8f59d 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -694,7 +694,7 @@ static void __init da830_evm_map_io(void)
+ MACHINE_START(DAVINCI_DA830_EVM, "DaVinci DA830/OMAP-L137/AM17x EVM")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= da830_evm_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da830_init_irq,
+ 	.init_time	= da830_init_time,
+ 	.init_machine	= da830_evm_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 1cc49e7bf128..8022ca8ac4ef 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -1522,7 +1522,7 @@ static void __init da850_evm_map_io(void)
+ MACHINE_START(DAVINCI_DA850_EVM, "DaVinci DA850/OMAP-L138/AM18x EVM")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= da850_evm_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da850_init_irq,
+ 	.init_time	= da850_init_time,
+ 	.init_machine	= da850_evm_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
+index eb6a9465f229..815f155eb349 100644
+--- a/arch/arm/mach-davinci/board-mityomapl138.c
++++ b/arch/arm/mach-davinci/board-mityomapl138.c
+@@ -623,7 +623,7 @@ static void __init mityomapl138_map_io(void)
+ MACHINE_START(MITYOMAPL138, "MityDSP-L138/MityARM-1808")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= mityomapl138_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da850_init_irq,
+ 	.init_time	= da850_init_time,
+ 	.init_machine	= mityomapl138_init,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index 7f852722ff08..673d890c2e3e 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -461,7 +461,7 @@ static void __init omapl138_hawk_map_io(void)
+ MACHINE_START(OMAPL138_HAWKBOARD, "AM18x/OMAP-L138 Hawkboard")
+ 	.atag_offset	= 0x100,
+ 	.map_io		= omapl138_hawk_map_io,
+-	.init_irq	= cp_intc_init,
++	.init_irq	= da850_init_irq,
+ 	.init_time	= da850_init_time,
+ 	.init_machine	= omapl138_hawk_init,
+ 	.init_late	= davinci_init_late,
 diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 5cfd30c57429..38af72be1a85 100644
+index ca903c9105e4..5cfd30c57429 100644
 --- a/arch/arm/mach-davinci/da830.c
 +++ b/arch/arm/mach-davinci/da830.c
-@@ -12,6 +12,7 @@
- #include <linux/clk/davinci.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/platform_data/gpio-davinci.h>
- 
- #include <asm/mach/map.h>
-@@ -821,6 +822,15 @@ void __init da830_init(void)
+@@ -821,6 +821,11 @@ void __init da830_init(void)
  	WARN(!da8xx_syscfg0_base, "Unable to map syscfg0 module");
  }
  
-+static const struct davinci_cp_intc_config da830_cp_intc_config = {
-+	.reg = {
-+		.start		= DA8XX_CP_INTC_BASE,
-+		.end		= DA8XX_CP_INTC_BASE + SZ_8K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= DA830_N_CP_INTC_IRQ,
-+};
++void __init da830_init_irq(void)
++{
++	cp_intc_init();
++}
 +
- void __init da830_init_irq(void)
+ void __init da830_init_time(void)
  {
- 	cp_intc_init();
+ 	void __iomem *pll;
 diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 6df6994c0f26..9a3ce68c0de4 100644
+index 486d53481636..6df6994c0f26 100644
 --- a/arch/arm/mach-davinci/da850.c
 +++ b/arch/arm/mach-davinci/da850.c
-@@ -18,6 +18,7 @@
- #include <linux/cpufreq.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/mfd/da8xx-cfgchip.h>
- #include <linux/platform_data/clk-da8xx-cfgchip.h>
- #include <linux/platform_data/clk-davinci-pll.h>
-@@ -759,6 +760,15 @@ void __init da850_init(void)
+@@ -759,6 +759,11 @@ void __init da850_init(void)
  	WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module");
  }
  
-+static const struct davinci_cp_intc_config da850_cp_intc_config = {
-+	.reg = {
-+		.start		= DA8XX_CP_INTC_BASE,
-+		.end		= DA8XX_CP_INTC_BASE + SZ_8K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= DA850_N_CP_INTC_IRQ,
-+};
++void __init da850_init_irq(void)
++{
++	cp_intc_init();
++}
 +
- void __init da850_init_irq(void)
+ void __init da850_init_time(void)
  {
- 	cp_intc_init();
+ 	void __iomem *pll0;
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index ab4a57f433f4..1618b30661a9 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -88,10 +88,12 @@ extern unsigned int da850_max_speed;
+ #define DA8XX_ARM_RAM_BASE	0xffff0000
+ 
+ void da830_init(void);
++void da830_init_irq(void);
+ void da830_init_time(void);
+ void da830_register_clocks(void);
+ 
+ void da850_init(void);
++void da850_init_irq(void);
+ void da850_init_time(void);
+ void da850_register_clocks(void);
+ 
 -- 
 2.20.1
 
