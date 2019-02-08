@@ -2,85 +2,111 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 084B3C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF939C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9FC20857
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:54:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="V5Jx9/4E"
+	by mail.kernel.org (Postfix) with ESMTP id 8ABF620857
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 12:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfBHMyy (ORCPT
+        id S1727516AbfBHMzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 07:54:54 -0500
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:44325 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfBHMyy (ORCPT
+        Fri, 8 Feb 2019 07:55:50 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35622 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbfBHMzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 07:54:54 -0500
-Received: by mail-wr1-f50.google.com with SMTP id v16so3415310wrn.11
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:54:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=vWMJPrTFaawUpyMAT1M03LxVGxmrMKjEk7iqGZ/RXP4=;
-        b=V5Jx9/4EN9s1Y0b3BKgqLz7a8/G5FoHUFi7XyQd/c6z1ivOqntxVr7VFUkBjQiBWTH
-         8MdP+lDslUVDweVd8DwOjODvuHkKUSTzapkziVKL2uQ5L3SbJSUmJpRhZcl6aYG+orcf
-         6NTQRW1Skl4DRNaoPvC9gMis5WIPfZRxZVwixdSazs5K2pMOC9rgO2q9YxYlTKY3fnBt
-         wHnDWEP2SciSJxXVMpMmfDtNSxd95FS9j2mgAbN5P/3Syty95Qp5YHbRRCaA3l9nM/Kc
-         TvahPu7th0LTtjF0MRD6lTT4/lPAZfOK1nE2QwAcrSOwPUFLQOuBvWr6q0Ie2dFClbQo
-         KubA==
+        Fri, 8 Feb 2019 07:55:48 -0500
+Received: by mail-qk1-f194.google.com with SMTP id w204so2021989qka.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 04:55:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=vWMJPrTFaawUpyMAT1M03LxVGxmrMKjEk7iqGZ/RXP4=;
-        b=NQRTFlFV2pV9fM6f8Ywt4x5ZOkJ62tH9/7DrKLPSCIAmU5OV/8Gh8wLqSdfXbMPvAi
-         24/107RkF2Y2pnF7sqmJJyBAATD5qmlrgSG7KVw4LSRUCjt6a0eMoQJ8r+rNSRynZrRP
-         8tIlXK3FuGXGTWBoeqvuNmZm0rVxZyZfy0Bet6jDehl/Y9WRfSzyP7bdixGV34COGRfc
-         wBIYldXzIrg4Oq2x3s/FdULsy/bzxLJIeHawexapw5p2KKYE5DCNjheUgwlLCdX9K6+l
-         xqF/xIoaii+1eDwOOdnf1zvv8dFpVgZaUlTVPNjJRl7FH2/ahHENGmKatvBqD+FlqFc1
-         1upQ==
-X-Gm-Message-State: AHQUAuYCM5BqFznUDK4WSWQHq3+FO+0iqL2SVzDc6K9roncYYDB7w94U
-        5JxLQfc9FX1A/f3TvLHktRkQ6E1felZrHTIzUVcmUmd+wMI=
-X-Google-Smtp-Source: AHgI3Ia7dZLvF1RQhOkI9h1Xpfk0U4ldONETkgDnkA+qwgAh8GJTV3uHL2YYdPU/e+LUBPzT+Ba28oXdKB6UXOnHr6w=
-X-Received: by 2002:adf:a14d:: with SMTP id r13mr1213143wrr.169.1549630491993;
- Fri, 08 Feb 2019 04:54:51 -0800 (PST)
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jxZSHIIXnYa0atfMfkRqX7j1MVFSZueOBgyoPMU9Gtg=;
+        b=dC86O3Dwlf0U05U613Iqhhf7BK5td2K/DWUVvFHZSA5P1y21fK8/MXUEpagutJwuCk
+         hrREHVFfNjzjuF+0Biv3CesFqpUDc9A69oGKf3O4VwI2CDWPFXaUXi2wEdJ55RFnWEVX
+         R2UoGpEMkGDiuL5MKOKCAYvmobD6VsHbkTFyHKVQ3XbU8Ok6+ZHnaY/SA38sVqnT8V0z
+         PDIt/oGQH/jcgQ/x9HYVuVapCvYK59HTRsZMfL2y8PDgYFVIUgKjgfFfn1w+nGMjcZIQ
+         940Fl5yYCMLtONzNR1T6256BoKuHyMBYR/N+YInB3/5rrvQoDfaIZgOZWxVpPXf2guVY
+         PMJw==
+X-Gm-Message-State: AHQUAuaUSEqBHcRnunOtmn0vKNVnb8Up0/E7xcm4Vzejev6dUgX8R8Wy
+        qDdbmEQGWRP9D9eYvTPPmi6frE6hop4jag==
+X-Google-Smtp-Source: AHgI3IaVgr/EB5qMdrR23odnd4Wqyuy/FR5VKJbss+LvUxqesNlvwS9dFiC9Ukl63kzBOZrSWkB3NQ==
+X-Received: by 2002:a37:8784:: with SMTP id j126mr7370940qkd.228.1549630546713;
+        Fri, 08 Feb 2019 04:55:46 -0800 (PST)
+Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
+        by smtp.gmail.com with ESMTPSA id q2sm1523674qkc.68.2019.02.08.04.55.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 04:55:45 -0800 (PST)
+Date:   Fri, 8 Feb 2019 07:55:32 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 2/3] drm: tweak header name
+Message-ID: <20190208075408-mutt-send-email-mst@kernel.org>
+References: <20190124142448.23243-1-mst@redhat.com>
+ <20190124142448.23243-4-mst@redhat.com>
+ <20190208085659.GI23159@phenom.ffwll.local>
 MIME-Version: 1.0
-From:   Axel Lin <axel.lin@ingics.com>
-Date:   Fri, 8 Feb 2019 20:54:40 +0800
-Message-ID: <CAFRkauBgVjtjJPM_5GdNTrzUymMEo180xajYwT4Duk=yxwOcbg@mail.gmail.com>
-Subject: regulator: rt5033: Question regarding define for RT5033_REGULATOR_BUCK/LOD_VOLTAGE_MAX
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Beomho Seo <beomho.seo@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208085659.GI23159@phenom.ffwll.local>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Beomho,
-The code has below defines in include/linux/mfd/rt5033-private.h
-#define RT5033_REGULATOR_BUCK_VOLTAGE_MAX               3000000U
-#define RT5033_REGULATOR_LDO_VOLTAGE_MAX                3000000U
+On Fri, Feb 08, 2019 at 09:56:59AM +0100, Daniel Vetter wrote:
+> On Fri, Feb 08, 2019 at 01:02:58AM -0500, Michael S. Tsirkin wrote:
+> > Use linux/mman.h to make sure we get all mmap flags we need.
+> > 
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> 
+> drmP.h is seriously deprecated (and a monster mess). If this fixes
+> anything, I think would be better to include the right header in the right
+> places, and leave drmP.h to die quietly ...
+> 
+> What exactly does this fix?
+> -Daniel
 
-However, according to current settings in rt5033 regulator driver:
-For LDOs, it can support up to
-RT5033_REGULATOR_LDO_VOLTAGE_MIN + RT5033_REGULATOR_LDO_VOLTAGE_STEP *
-(RT5033_REGULATOR_LDO_VOLTAGE_STEP_NUM - 1)
-= 1200000 + 100000 * 31
-= 4300000 (This is different from the define of
-RT5033_REGULATOR_LDO_VOLTAGE_MAX)
+I don't know. I am moving flags from asm/mman.h and if there
+are direct users which there should not be, some code
+might break. Even if it's a bad header people copy
+code around, so why leave wrong examples there?
+What's the harm in being proactive?
 
-The same issue for BUCKs.
 
-I don't find the datasheet, can you check which part is incorrect that
-causes the inconsistent?
-
-Thanks,
-Axel
+> > ---
+> >  include/drm/drmP.h | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/include/drm/drmP.h b/include/drm/drmP.h
+> > index bdb0d5548f39..a3184416ddc5 100644
+> > --- a/include/drm/drmP.h
+> > +++ b/include/drm/drmP.h
+> > @@ -57,8 +57,7 @@
+> >  #include <linux/workqueue.h>
+> >  #include <linux/dma-fence.h>
+> >  #include <linux/module.h>
+> > -
+> > -#include <asm/mman.h>
+> > +#include <linux/mman.h>
+> >  #include <asm/pgalloc.h>
+> >  #include <linux/uaccess.h>
+> >  
+> > -- 
+> > MST
+> > 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
