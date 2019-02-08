@@ -2,179 +2,116 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C3AC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B94C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C84320823
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB6FD20823
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 09:56:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Psc6I4DF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfBHJzK (ORCPT
+        id S1727476AbfBHJ4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:55:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46574 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726081AbfBHJzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:55:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11216ABEC;
-        Fri,  8 Feb 2019 09:55:08 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 672FA1E3DB5; Fri,  8 Feb 2019 10:55:07 +0100 (CET)
-Date:   Fri, 8 Feb 2019 10:55:07 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
- pages"
-Message-ID: <20190208095507.GB6353@quack2.suse.cz>
-References: <20190130041707.27750-1-david@fromorbit.com>
- <20190130041707.27750-2-david@fromorbit.com>
- <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
- <20190131013403.GI4205@dastard>
- <20190131091011.GP18811@dhcp22.suse.cz>
- <20190131185704.GA8755@castle.DHCP.thefacebook.com>
- <20190131221904.GL4205@dastard>
- <20190207102750.GA4570@quack2.suse.cz>
- <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
+        Fri, 8 Feb 2019 04:56:54 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:45305 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfBHJ4x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 04:56:53 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 04DE325BE72;
+        Fri,  8 Feb 2019 20:56:51 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1549619811; bh=4iiox4Kt9PGuWxnqzfkvo074yaByLgoMV8mjvP/ryZg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Psc6I4DFHwwya6AqCfb33NuJXK1Mkx+rlogwf5X8mPA/FYtNE/vNcLkb4p/JjW1S1
+         r6awqVSDY/xs/xWAN0pzOCbL5DEDvRqqRbX0Azw0igdvddk1NF8dUYID8THpu2pn67
+         XITtZ7dS/5XptIIHrJCyD9Sc6yZfTzZXQ8s6aZ3k=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id A9BDB940ABA; Fri,  8 Feb 2019 10:56:48 +0100 (CET)
+Date:   Fri, 8 Feb 2019 10:56:48 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Wensong Zhang <wensong@linux-vs.org>, Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] ipvs: Use struct_size() helper
+Message-ID: <20190208095648.la4ushbjxkqgqzb6@verge.net.au>
+References: <20190208004456.GA15845@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190208004456.GA15845@embeddedor>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 07-02-19 21:37:27, Andrew Morton wrote:
-> On Thu, 7 Feb 2019 11:27:50 +0100 Jan Kara <jack@suse.cz> wrote:
+On Thu, Feb 07, 2019 at 06:44:56PM -0600, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 > 
-> > On Fri 01-02-19 09:19:04, Dave Chinner wrote:
-> > > Maybe for memcgs, but that's exactly the oppose of what we want to
-> > > do for global caches (e.g. filesystem metadata caches). We need to
-> > > make sure that a single, heavily pressured cache doesn't evict small
-> > > caches that lower pressure but are equally important for
-> > > performance.
-> > > 
-> > > e.g. I've noticed recently a significant increase in RMW cycles in
-> > > XFS inode cache writeback during various benchmarks. It hasn't
-> > > affected performance because the machine has IO and CPU to burn, but
-> > > on slower machines and storage, it will have a major impact.
-> > 
-> > Just as a data point, our performance testing infrastructure has bisected
-> > down to the commits discussed in this thread as the cause of about 40%
-> > regression in XFS file delete performance in bonnie++ benchmark.
-> > 
+> struct foo {
+>     int stuff;
+>     struct boo entry[];
+> };
 > 
-> Has anyone done significant testing with Rik's maybe-fix?
+> size = sizeof(struct foo) + count * sizeof(struct boo);
+> instance = alloc(size, GFP_KERNEL)
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> size = struct_size(instance, entry, count);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-I will give it a spin with bonnie++ today. We'll see what comes out.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-								Honza
+Pablo, could you consider applying this?
 
-> 
-> 
-> 
-> From: Rik van Riel <riel@surriel.com>
-> Subject: mm, slab, vmscan: accumulate gradual pressure on small slabs
-> 
-> There are a few issues with the way the number of slab objects to scan is
-> calculated in do_shrink_slab.  First, for zero-seek slabs, we could leave
-> the last object around forever.  That could result in pinning a dying
-> cgroup into memory, instead of reclaiming it.  The fix for that is
-> trivial.
-> 
-> Secondly, small slabs receive much more pressure, relative to their size,
-> than larger slabs, due to "rounding up" the minimum number of scanned
-> objects to batch_size.
-> 
-> We can keep the pressure on all slabs equal relative to their size by
-> accumulating the scan pressure on small slabs over time, resulting in
-> sometimes scanning an object, instead of always scanning several.
-> 
-> This results in lower system CPU use, and a lower major fault rate, as
-> actively used entries from smaller caches get reclaimed less aggressively,
-> and need to be reloaded/recreated less often.
-> 
-> [akpm@linux-foundation.org: whitespace fixes, per Roman]
-> [riel@surriel.com: couple of fixes]
->   Link: http://lkml.kernel.org/r/20190129142831.6a373403@imladris.surriel.com
-> Link: http://lkml.kernel.org/r/20190128143535.7767c397@imladris.surriel.com
-> Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
-> Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Tested-by: Chris Mason <clm@fb.com>
-> Acked-by: Roman Gushchin <guro@fb.com>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Jonathan Lemon <bsd@fb.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: <stable@vger.kernel.org>
-> 
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 > ---
+>  net/netfilter/ipvs/ip_vs_ctl.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
+> diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+> index 7d6318664eb2..bcd9112f47d9 100644
+> --- a/net/netfilter/ipvs/ip_vs_ctl.c
+> +++ b/net/netfilter/ipvs/ip_vs_ctl.c
+> @@ -2734,8 +2734,7 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
+>  		int size;
+>  
+>  		get = (struct ip_vs_get_services *)arg;
+> -		size = sizeof(*get) +
+> -			sizeof(struct ip_vs_service_entry) * get->num_services;
+> +		size = struct_size(get, entrytable, get->num_services);
+>  		if (*len != size) {
+>  			pr_err("length: %u != %u\n", *len, size);
+>  			ret = -EINVAL;
+> @@ -2776,8 +2775,7 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
+>  		int size;
+>  
+>  		get = (struct ip_vs_get_dests *)arg;
+> -		size = sizeof(*get) +
+> -			sizeof(struct ip_vs_dest_entry) * get->num_dests;
+> +		size = struct_size(get, entrytable, get->num_dests);
+>  		if (*len != size) {
+>  			pr_err("length: %u != %u\n", *len, size);
+>  			ret = -EINVAL;
+> -- 
+> 2.20.1
 > 
-> --- a/include/linux/shrinker.h~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
-> +++ a/include/linux/shrinker.h
-> @@ -65,6 +65,7 @@ struct shrinker {
->  
->  	long batch;	/* reclaim batch size, 0 = default */
->  	int seeks;	/* seeks to recreate an obj */
-> +	int small_scan;	/* accumulate pressure on slabs with few objects */
->  	unsigned flags;
->  
->  	/* These are for internal use */
-> --- a/mm/vmscan.c~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs
-> +++ a/mm/vmscan.c
-> @@ -488,18 +488,30 @@ static unsigned long do_shrink_slab(stru
->  		 * them aggressively under memory pressure to keep
->  		 * them from causing refetches in the IO caches.
->  		 */
-> -		delta = freeable / 2;
-> +		delta = (freeable + 1) / 2;
->  	}
->  
->  	/*
->  	 * Make sure we apply some minimal pressure on default priority
-> -	 * even on small cgroups. Stale objects are not only consuming memory
-> +	 * even on small cgroups, by accumulating pressure across multiple
-> +	 * slab shrinker runs. Stale objects are not only consuming memory
->  	 * by themselves, but can also hold a reference to a dying cgroup,
->  	 * preventing it from being reclaimed. A dying cgroup with all
->  	 * corresponding structures like per-cpu stats and kmem caches
->  	 * can be really big, so it may lead to a significant waste of memory.
->  	 */
-> -	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
-> +	if (!delta && shrinker->seeks) {
-> +		unsigned long nr_considered;
-> +
-> +		shrinker->small_scan += freeable;
-> +		nr_considered = shrinker->small_scan >> priority;
-> +
-> +		delta = 4 * nr_considered;
-> +		do_div(delta, shrinker->seeks);
-> +
-> +		if (delta)
-> +			shrinker->small_scan -= nr_considered << priority;
-> +	}
->  
->  	total_scan += delta;
->  	if (total_scan < 0) {
-> _
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
