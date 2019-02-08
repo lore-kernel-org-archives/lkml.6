@@ -2,92 +2,126 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C08C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A5BC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FE5120844
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4140F20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 20:30:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InHoeKb5"
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="BcabSrWZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfBHUaO (ORCPT
+        id S1727327AbfBHUaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 15:30:14 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50553 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726941AbfBHUaN (ORCPT
+        Fri, 8 Feb 2019 15:30:25 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39965 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfBHUaZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 15:30:13 -0500
-Received: by mail-wm1-f67.google.com with SMTP id z5so5395706wmf.0;
-        Fri, 08 Feb 2019 12:30:12 -0800 (PST)
+        Fri, 8 Feb 2019 15:30:25 -0500
+Received: by mail-ed1-f65.google.com with SMTP id g22so3891984edr.7
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 12:30:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N8XUDnBxo6TDJIBtLxa2VIBRe9T4v5JpJbJfBFf48Ys=;
-        b=InHoeKb56vcbVQJ3cxj6yCQwtCd5GkzuN+L9EiGCVwQBDCFfXTA19ikJhvESRXFdaF
-         lfD1yHhbyBcY2nQ3v0w0pr8+0BENxwqjFQiyd3H61zXeSaSl0UgANzER8KziLx7RpkD/
-         RzPbl107pN59x1a6Ry05u8dckOnIj8MXUQNU5mmYNFz+SwntUvudqg6xXmO0CzGkvIox
-         JXn2nTuOKoPtRU5tPAJZvo1U4FSgvrOA+RLoqsw0/N7ZN7kW2+jG9HPIyHSG2Ms9lIQU
-         g/B3p4YfGU2hkQ7WTQ8QDjRoq5CWRPYHM7Pdnck5UHT49IfP49g/CEr7ORJv8iw37xnm
-         Fi6Q==
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ehRHzTaTBAtmKBBVMIGuIbgV5NMuVN11Q5N0TGWbuOY=;
+        b=BcabSrWZ2yWPXvUUb9unJDNQRQqXyxjSBIpHdGiuAR8J9jCThI4iNErxiQjTIC+/C1
+         YE3G4IsC4XAg2XkmoI9gRO/L6dWVqcHRoN1gF1FeSj23il7cSz6KcIATvcZ/aSjlEA5Q
+         QZyduWwC+tMZZWmPzPcEV8j6p8RiyqZr7gOUA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N8XUDnBxo6TDJIBtLxa2VIBRe9T4v5JpJbJfBFf48Ys=;
-        b=UKJZlgBF5MaChJGEUwR3hoeej04NI34h4lU13IBzF/SAON4GS/ZIzYGtWsryC3qFev
-         T0f0MQ4JKhcqU7ytg6D0sbx39DI05no2HJlUZPN0lRlNAgH/hzNyfRzYz5s1K1iPgyju
-         gwgwA0DUfK1xjUVa90cMjJoewnYYvGd82T5WPtrabhymn5V06IOFcnOoBYC6+MQOkK/4
-         lISl2s32BR4+qBSz2Htg4rfxcHdA1o8lUN5oarweDmVKhBxRT4SAySZtrNg38gRlbLK0
-         vFVguiHhB8eShanA8SKt2zuWBEIGVMYKy+lFOh0MqIo3NbwS57/2ziMr6FK6M8FOEvPN
-         CjVw==
-X-Gm-Message-State: AHQUAuaHyvcRdTYSOEgRKTEL2xpfi/OoIbEDcr8TRMqT9BolXXJEWOcG
-        zCBdUmj3JcWv1aykblfYgpY=
-X-Google-Smtp-Source: AHgI3IYBBtLisXqIoEqQz3kThybLdcp4I/67lJ6vDFWPzpA1U09Aj6SdVK4LN9UGZD34ZpNlNRLNIQ==
-X-Received: by 2002:a7b:c34c:: with SMTP id l12mr208144wmj.147.1549657811728;
-        Fri, 08 Feb 2019 12:30:11 -0800 (PST)
-Received: from szeder.dev (x4db62aaa.dyn.telefonica.de. [77.182.42.170])
-        by smtp.gmail.com with ESMTPSA id x10sm1720120wmi.17.2019.02.08.12.30.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ehRHzTaTBAtmKBBVMIGuIbgV5NMuVN11Q5N0TGWbuOY=;
+        b=jhXESJ/N4/Ewrj+ZVEQ+NpFlnX+4hM85GMfvHTxvBv/b2d69eZv9M/G6Oh2A2JI/oi
+         RxyrkNOB8td0tbT4x4AyNaBlLulG6Ig0J7KRBDu+h1RNUOEMs7Dlss+hry9qez9hkt9P
+         gfPGSQd+owJkDPghOPQebCtGBRi8mzBBx/oXoxJlQs2DBccmlVh4oUhF907MZcKBIw71
+         avtnvSiMI7yn0cyBLe7dzyGEw5lgVRsJQXa3LS/Qr2/Efzf694Ad9ytxUNnFTxwGFy/c
+         CR95XNvCEWmmfojxnVtG0A03Ug4TC0Gpx2wQHSE2uXxZSduaI/ufpRwO+9kKnIzp/Kg3
+         NDfQ==
+X-Gm-Message-State: AHQUAubRiwVHkzmBNVlCgutIUfHbwVzWWvo0E5SZoMCpBOK2O0z7c4B7
+        MuGNEaPK91zgUTjY0OVg2OW87A==
+X-Google-Smtp-Source: AHgI3IbRc2D6Hrrr4yS5Wjds/QS8Qs1MzlnuOp2zmVzbKsOwGV4sesPw6j7CgFydCT959iQLPTAH4A==
+X-Received: by 2002:a17:906:c286:: with SMTP id r6mr859906ejz.7.1549657822458;
+        Fri, 08 Feb 2019 12:30:22 -0800 (PST)
+Received: from prevas-ravi.waoo.dk (ip-5-186-119-174.cgn.fibianet.dk. [5.186.119.174])
+        by smtp.gmail.com with ESMTPSA id p7sm680095ejb.15.2019.02.08.12.30.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 12:30:11 -0800 (PST)
-Date:   Fri, 8 Feb 2019 21:30:09 +0100
-From:   SZEDER =?utf-8?B?R8OhYm9y?= <szeder.dev@gmail.com>
-To:     Todd Zullinger <tmz@pobox.com>
-Cc:     "Randall S. Becker" <rsbecker@nexbridge.com>,
-        Jeff King <peff@peff.net>,
-        'Junio C Hamano' <gitster@pobox.com>, git@vger.kernel.org,
-        'Linux Kernel' <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: Re: [Breakage] Git v2.21.0-rc0 - t5403 (NonStop)
-Message-ID: <20190208203009.GC10587@szeder.dev>
-References: <000d01d4bf9b$d5d48da0$817da8e0$@nexbridge.com>
- <20190208111002.GU10587@szeder.dev>
- <20190208201128.GD30548@zaya.teonanacatl.net>
+        Fri, 08 Feb 2019 12:30:22 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 2/3] lib/vsprintf.c: move sizeof(struct printf_spec) next to its definition
+Date:   Fri,  8 Feb 2019 21:30:14 +0100
+Message-Id: <20190208203015.29702-2-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190208203015.29702-1-linux@rasmusvillemoes.dk>
+References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
+ <20190208203015.29702-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190208201128.GD30548@zaya.teonanacatl.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 03:11:29PM -0500, Todd Zullinger wrote:
-> It made me wonder how I had missed it in my own testing.
-> This one requires SHELL_PATH to be bash, while I only set
-> TEST_SHELL_PATH to bash for the improved -x tracing in the
-> fedora builds.
+At the time of d0484193 (lib/vsprintf.c: expand field_width to 24
+bits), there was no compiletime_assert/BUILD_BUG/.... variant that
+could be used outside function scope. Now we have static_assert(), so
+move the assertion next to the definition instead of hiding it in some
+arbitrary function.
 
-Note that you don't need Bash to use '-x' tracing since a5bf824f3b (t:
-prevent '-x' tracing from interfering with test helpers' stderr,
-2018-02-25) and the followup commits, except for 't1510-repo-setup.sh'
-(and even t1510 just falls back to ignore '-x' instead of causing
-failures).
+Also add the appropriate #include to avoid relying on build_bug.h
+being pulled in via some arbitrary chain of includes.
+
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+v2: added, mostly as an example of use of static_assert(), to check
+that the compiler actually groks it.
+
+ lib/vsprintf.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 3add92329bae..30b00de4f321 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -17,6 +17,7 @@
+  */
+ 
+ #include <stdarg.h>
++#include <linux/build_bug.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>	/* for KSYM_SYMBOL_LEN */
+@@ -405,6 +406,8 @@ struct printf_spec {
+ 	unsigned int	base:8;		/* number base, 8, 10 or 16 only */
+ 	signed int	precision:16;	/* # of digits/chars */
+ } __packed;
++static_assert(sizeof(struct printf_spec) == 8);
++
+ #define FIELD_WIDTH_MAX ((1 << 23) - 1)
+ #define PRECISION_MAX ((1 << 15) - 1)
+ 
+@@ -422,8 +425,6 @@ char *number(char *buf, char *end, unsigned long long num,
+ 	int field_width = spec.field_width;
+ 	int precision = spec.precision;
+ 
+-	BUILD_BUG_ON(sizeof(struct printf_spec) != 8);
+-
+ 	/* locase = 0 or 0x20. ORing digits or letters with 'locase'
+ 	 * produces same digits or (maybe lowercased) letters */
+ 	locase = (spec.flags & SMALL);
+-- 
+2.20.1
 
