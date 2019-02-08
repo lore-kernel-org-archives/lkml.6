@@ -2,178 +2,123 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0D2C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A69C282CC
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD2B21917
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31A621919
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 06:31:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfBHGUW (ORCPT
+        id S1727137AbfBHGbe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 01:20:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49638 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726353AbfBHGUV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 01:20:21 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x186J8x6021611
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 01:20:20 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qh3n0hrak-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 01:20:20 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Fri, 8 Feb 2019 06:20:18 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 06:20:14 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x186KDrS9044296
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Feb 2019 06:20:13 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08E4411C04A;
-        Fri,  8 Feb 2019 06:20:13 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F94C11C050;
-        Fri,  8 Feb 2019 06:20:11 +0000 (GMT)
-Received: from JAVRIS.in.ibm.com (unknown [9.124.35.53])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri,  8 Feb 2019 06:20:11 +0000 (GMT)
-Date:   Fri, 8 Feb 2019 11:50:05 +0530
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Alice Ferrazzi <alicef@alicef.me>, jeyu@kernel.org,
-        jikos@kernel.org, mbenes@suse.cz, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: Re: [PATCH v2] livepatch: core: Return EOPNOTSUPP instead of ENOSYS
-References: <20190204183324.30775-1-alicef@alicef.me>
- <20190205155933.r6ey474lq4m5nlmp@treble>
- <20190206102832.apa7sekkwljo4ejg@pathway.suse.cz>
+        Fri, 8 Feb 2019 01:31:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45640 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726004AbfBHGbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 01:31:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69734EBD;
+        Thu,  7 Feb 2019 22:31:33 -0800 (PST)
+Received: from [10.162.40.126] (p8cg001049571a15.blr.arm.com [10.162.40.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2D753F719;
+        Thu,  7 Feb 2019 22:31:30 -0800 (PST)
+Subject: Re: [LSF/MM TOPIC] Non standard size THP
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-fsdevel@vger.kernel.org
+References: <dcb0b2cf-ba5c-e6ef-0b05-c6006227b6a9@arm.com>
+ <20190208042448.GB21860@bombadil.infradead.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <a563592f-c01c-8dee-d743-6a1eb0b3f9d9@arm.com>
+Date:   Fri, 8 Feb 2019 12:01:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206102832.apa7sekkwljo4ejg@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 19020806-0016-0000-0000-00000253EC57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020806-0017-0000-0000-000032ADFDB0
-Message-Id: <20190208062005.GA21436@JAVRIS.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080046
+In-Reply-To: <20190208042448.GB21860@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 11:28:32AM +0100, Petr Mladek wrote:
-> On Tue 2019-02-05 09:59:33, Josh Poimboeuf wrote:
-> > On Tue, Feb 05, 2019 at 03:33:28AM +0900, Alice Ferrazzi wrote:
-> > > From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-> > > 
-> > > As a result of an unsupported operation is better to use EOPNOTSUPP
-> > > as error code.
-> > > ENOSYS is only used for 'invalid syscall nr' and nothing else.
-> > > 
-> > > Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-> > 
-> > Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+
+
+On 02/08/2019 09:54 AM, Matthew Wilcox wrote:
+> On Fri, Feb 08, 2019 at 07:43:57AM +0530, Anshuman Khandual wrote:
+>> How non-standard huge pages can be supported for THP
+>>
+>> 	- THP starts recognizing non standard huge page (exported by arch) like HPAGE_CONT_(PMD|PTE)_SIZE
+>> 	- THP starts operating for either on HPAGE_PMD_SIZE or HPAGE_CONT_PMD_SIZE or HPAGE_CONT_PTE_SIZE
+>> 	- set_pmd_at() only recognizes HPAGE_PMD_SIZE hence replace set_pmd_at() with set_huge_pmd_at()
+>> 	- set_huge_pmd_at() could differentiate between HPAGE_PMD_SIZE or HPAGE_CONT_PMD_SIZE
+>> 	- In case for HPAGE_CONT_PTE_SIZE extend page table walker till PTE level
+>> 	- Use set_huge_pte_at() which can operate on multiple contiguous PTE bits
 > 
-> I have applied the patch into for-5.1/atomic-replace branch.
+> I think your proposed solution reflects thinking like a hardware person
+> rather than like a software person.  Or maybe like an MM person rather
+> than a FS person.  I see the same problem with Kirill's solutions ;-)
 
-Sorry to jump into the discussion so late. Thinking a little more about
-the check itself, previously with immediate flag an architecture can do
-livepatching with limitations and without the reliable stack trace
-implemented yet.
+You might be right on this :) I was trying to derive a solution based on
+all existing semantics with limited code addition rather than inventing
+something completely different.
 
-After removal of the immediate flag by
-commit d0807da78e11 ("livepatch: Remove immediate feature"), every
-architecture enabling livepatching is required to have implemented
-reliable stack trace.  Is it a better idea to make
-HAVE_RELIABLE_STACKTRACE a config dependency, which will disable
-livepatching support for architectures without reliable stack trace
-function during kernel build?
+> 
+> Perhaps you don't realise that using larger pages when appropriate
+> would also benefit filesystems as well as CPUs.  You didn't include
+> linux-fsdevel on this submission, so that's a plausible explanation.
 
-The idea is to remove klp_have_reliable_stack() by moving
-CONFIG_HAVE_RELIABLE_STACKTRACE as a config dependency to Kconfig file
-and adding the other CONFIG_STACKTRACE as a config dependency is not
-required, as it's selected via CONFIG_DYNAMIC_FTRACE_WITH_REGS
-dependency chain. With the patch on architecture without
-HAVE_RELIABLE_STACKTRACE, the user should see:
+Yes that was an omission. Thanks for adding linux-fsdevel to the thread.
 
-# insmod ./livepatch-sample.ko 
-insmod: ERROR: could not insert module ./livepatch-sample.ko: Invalid module format
+> 
+> The XArray currently supports arbitrary power-of-two-naturally-aligned
+> page sizes, and conveniently so does the page allocator [1].  The problem
+> is that various bits of the MM have a very fixed mindset that pages are
+> PTE, PMD or PUD in size.
 
-# dmesg
-...
-[  286.453463] livepatch_sample: module is marked as livepatch module, but livepatch support is disabled
+I agree. But in general it works as allocated page with required order do
+reside in one of these levels in the page table.
 
-I have done limited testing on PowerPC and to test the unsupported case,
-the config dependency HAVE_RELIABLE_STACKTRACE was misspelled in Kconfig
-file. If the idea sounds ok I will send a formal patch.
+> 
+> We should enhance routines like vmf_insert_page() to handle
+> arbitrary sized pages rather than having separate vmf_insert_pfn()
+> and vmf_insert_pfn_pmd().  We probably need to enhance the set_pxx_at()
+> API to pass in an order, rather than explicitly naming pte/pmd/pud/...
 
--------8<----------------------------
+I agree. set_huge_pte_at() actually does that to some extent on ARM64.
+But thats just for HugeTLB.
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 53551f470722..7848c7bbffbb 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -214,12 +214,6 @@ static inline bool klp_patch_pending(struct task_struct *task)
-        return test_tsk_thread_flag(task, TIF_PATCH_PENDING);
- }
- 
--static inline bool klp_have_reliable_stack(void)
--{
--       return IS_ENABLED(CONFIG_STACKTRACE) &&
--              IS_ENABLED(CONFIG_HAVE_RELIABLE_STACKTRACE);
--}
--
- typedef int (*klp_shadow_ctor_t)(void *obj,
-                                 void *shadow_data,
-                                 void *ctor_data);
-diff --git a/kernel/livepatch/Kconfig b/kernel/livepatch/Kconfig
-index ec4565122e65..16b3692ddf9f 100644
---- a/kernel/livepatch/Kconfig
-+++ b/kernel/livepatch/Kconfig
-@@ -9,6 +9,7 @@ config LIVEPATCH
-        depends on MODULES
-        depends on SYSFS
-        depends on KALLSYMS_ALL
-+       depends on HAVE_RELIABLE_STACKTRACE
-        depends on HAVE_LIVEPATCH
-        depends on !TRIM_UNUSED_KSYMS
-        help
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index fe1993399823..9a80f7574d75 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -1002,12 +1002,6 @@ int klp_enable_patch(struct klp_patch *patch)
-        if (!klp_initialized())
-                return -ENODEV;
- 
--       if (!klp_have_reliable_stack()) {
--               pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
--               return -ENOSYS;
--       }
--
--
-        mutex_lock(&klp_mutex);
- 
-        ret = klp_init_patch_early(patch);
+> 
+> First, though, we need to actually get arbitrary sized pages handled
+> correctly in the page cache.  So if anyone's interested in talking about
+> this, but hasn't been reviewing or commenting on the patches I've been
+> sending to make this happen, I'm going to seriously question their actual
+> commitment to wanting this to happen, rather than wanting a nice holiday
+> in Puerto Rico.
+> 
+> Sorry to be so blunt about this, but I've only had review from Kirill,
+> which makes me think that nobody else actually cares about getting
+> this fixed.
 
+To be honest I have not been following your work in this regard. I started
+looking into this problem late last year and my goal has been more focused 
+towards a THP solution for intermediate page table level sized huge pages.
+
+But I agree to your point that there should be an wider solution which can
+make generic MM deal with page sizes of any order rather than page table
+level ones like PTE/PMD/PUD etc.
+
+> 
+> [1] Support for arbitrary sized and aligned entries is in progress for
+> the XArray, but I don't think there's any appetite for changing the buddy
+> allocator to let us allocate "pages" that are an arbitrary extent in size.
+> 
+> 
