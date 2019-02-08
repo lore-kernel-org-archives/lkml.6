@@ -2,63 +2,73 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8444AC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0A5C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D64421907
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93A9D21907
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 02:25:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfBHCTT (ORCPT
+        id S1726956AbfBHCZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 7 Feb 2019 21:19:19 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:55558 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbfBHCTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Feb 2019 21:19:19 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 781D8108B8734;
-        Thu,  7 Feb 2019 18:19:18 -0800 (PST)
-Date:   Thu, 07 Feb 2019 18:19:18 -0800 (PST)
-Message-Id: <20190207.181918.1582739067793552076.davem@davemloft.net>
-To:     arun.parameswaran@broadcom.com
-Cc:     f.fainelli@gmail.com, andrew@lunn.ch, vivien.didelot@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] net: dsa: b53: Fix for failure when irq is not
- defined in dt
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190208000118.9268-1-arun.parameswaran@broadcom.com>
-References: <20190208000118.9268-1-arun.parameswaran@broadcom.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 07 Feb 2019 18:19:18 -0800 (PST)
+        Thu, 7 Feb 2019 21:25:42 -0500
+Received: from mx.socionext.com ([202.248.49.38]:20693 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbfBHCZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Feb 2019 21:25:42 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 08 Feb 2019 11:25:40 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id E9A0C180C05;
+        Fri,  8 Feb 2019 11:25:40 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 8 Feb 2019 11:25:40 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 7F30B1A04E1;
+        Fri,  8 Feb 2019 11:25:40 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        linux-stable@vger.kernel.org
+Subject: [PATCH] clk: uniphier: Fix update register for CPU-gear
+Date:   Fri,  8 Feb 2019 11:25:23 +0900
+Message-Id: <1549592723-18494-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arun Parameswaran <arun.parameswaran@broadcom.com>
-Date: Thu,  7 Feb 2019 16:01:18 -0800
+Need to set the update bit in UNIPHIER_CLK_CPUGEAR_UPD to update
+the CPU-gear value.
 
-> Fixes the issues with non BCM58XX chips in the b53 driver
-> failing, when the irq is not specified in the device tree.
-> 
-> Removed the check for BCM58XX in b53_srab_prepare_irq(),
-> so the 'port->irq' will be set to '-EXIO' if the irq is not
-> specified in the device tree.
-> 
-> Fixes: 16994374a6fc ("net: dsa: b53: Make SRAB driver manage port interrupts")
-> Fixes: b2ddc48a81b5 ("net: dsa: b53: Do not fail when IRQ are not initialized")
-> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+Fixes: d08f1f0d596c ("clk: uniphier: add CPU-gear change (cpufreq) support")
+Cc: linux-stable@vger.kernel.org
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+---
+ drivers/clk/uniphier/clk-uniphier-cpugear.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied and queued up for -stable, thanks.
+diff --git a/drivers/clk/uniphier/clk-uniphier-cpugear.c b/drivers/clk/uniphier/clk-uniphier-cpugear.c
+index ec11f55..5d2d42b 100644
+--- a/drivers/clk/uniphier/clk-uniphier-cpugear.c
++++ b/drivers/clk/uniphier/clk-uniphier-cpugear.c
+@@ -47,7 +47,7 @@ static int uniphier_clk_cpugear_set_parent(struct clk_hw *hw, u8 index)
+ 		return ret;
+ 
+ 	ret = regmap_write_bits(gear->regmap,
+-				gear->regbase + UNIPHIER_CLK_CPUGEAR_SET,
++				gear->regbase + UNIPHIER_CLK_CPUGEAR_UPD,
+ 				UNIPHIER_CLK_CPUGEAR_UPD_BIT,
+ 				UNIPHIER_CLK_CPUGEAR_UPD_BIT);
+ 	if (ret)
+-- 
+2.7.4
+
