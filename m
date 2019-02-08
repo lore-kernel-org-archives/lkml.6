@@ -2,126 +2,115 @@ Return-Path: <SRS0=VkHl=QP=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4161C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DF4C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88F7320855
-	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61C52217D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  8 Feb 2019 17:27:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UN95Xl9N"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VSk4/BiA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfBHR1F (ORCPT
+        id S1727922AbfBHR1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:27:05 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38742 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBHR1E (ORCPT
+        Fri, 8 Feb 2019 12:27:12 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34510 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbfBHR1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:27:04 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so1996385plb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:27:04 -0800 (PST)
+        Fri, 8 Feb 2019 12:27:12 -0500
+Received: by mail-pf1-f195.google.com with SMTP id j18so1981799pfe.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 09:27:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vXLTCFZ1HjRvBrlYWB6YjgU815gezHUat637vTCfepU=;
-        b=UN95Xl9N9KKe/fX7/tfYXfC/qk/MpvTjl2b4ga7p8SZKFYIixmQLjM5KYB8QG/DKw4
-         BUTUAbpTwdsg2Hq12LOSVVRFOIhGJPk9pynUUWru7thTfHDKaQUzX7GO35yRtyIbRD9g
-         d0Y3ZCRJ4GWRRUZlGC46utuDpLDF7Lef9LSVg/JUixYGpwfw3Ebs4y9OPqP6Ps+IKx7H
-         LrucdpIRnJjgJknvr4dGs40S5AlWezLo3nvyStOIJZ/zufdd9Qndyz/xhoKx11tRgQkk
-         s316x5xOxooNaBGOILoQLjs08W16qMKWLgg+Ju32hy4Ea1EOjTTc45v4mJfipplhHjGt
-         vpGg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=A0SZoanrAhMzXgD1Yl9c3skIAdSpAApQYRd5mYRfnQI=;
+        b=VSk4/BiACZ1Y/PMAdarcrBEcjeZo8welwpoRceXK8Cx5fOfYcUuPMfwmWAiAwacALi
+         ccb2cyvsZpOvPqEDMsKWVd3uuDOxVp5PD7Pu50lEAxhPJb2TeLBWqCG/FY9INPsB4i7G
+         lkmL3QjaQhv2J5wKV7rKaztOcl20d6wkf0wzKAHMZF00hdfCbVlm2L+oshDQ39HVTym2
+         0/hV+NKocJju+qZbvd/JkKzbvWj68pDUAlBciIkdpVLkL3HKWywa95IMCmBzKaH0sQ7m
+         JvS0X2xcIue2K+U3rgbsuP6NwaYLd0Y4MJtHvjTeDSpws6vXR3vtlUFCE5G+OfmXOMDB
+         2sFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vXLTCFZ1HjRvBrlYWB6YjgU815gezHUat637vTCfepU=;
-        b=fFbHBRsQkGRJJp279JVSPplQu1vunETaFKyGZ556WwUzdj+56+OWp3NWdlX5qtIiG6
-         qKc/gihjjN7xDTKmM50fNYKqX0iZW1EtGsJYZefHQXqe7jN8j4whPGBMAHgDIsXnRRbY
-         7/4Gkrh7+KwfylBqJNZcIl4EzF5ffJSyV8/VfgpIRVm7nw+GRC796OFvDMMZc1gSBOLQ
-         tIZn9O8dz5cg2wjaYKBIRFb5mgjJfafChSBI6jmONKeVPD/cmXjSes0rbFQ3X8zp2NNA
-         NlXYDtjkDiCkIrDFYbqhFi/634/yK5ahKj4LUmZ4AEORWszkS+AoCzuvWiy0ENEFOcd5
-         JWWw==
-X-Gm-Message-State: AHQUAuawviDMAgpD7B7tqGE/EFKffeuqfujS/RXroahhlwOZgl+J/PnO
-        5AHAwG2ARKLsfmbswk9XJO35G+eoeI8TkeQaK5GVNQ==
-X-Google-Smtp-Source: AHgI3IacxZ8O/7ZZsS7MDcTwTYcwe11XiXUKH4FPViqa8NGU9T+EcXvVIqCY3VfU16kF5vcSJRCASUJW4LzyjCgdPSY=
-X-Received: by 2002:a17:902:8b81:: with SMTP id ay1mr17219420plb.320.1549646823136;
- Fri, 08 Feb 2019 09:27:03 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=A0SZoanrAhMzXgD1Yl9c3skIAdSpAApQYRd5mYRfnQI=;
+        b=TZh6iVKtxA7JfyfpNh8kpbwFwJVsrxTwFaFRwAgKfvYGZ0eaXt+ms/DkRsz3slEAvY
+         lfJLxGt38/ZAkhTxk+j/Ea+amB/xWI2GoMpYaZF1xtYEKZOuBiXQNfgmNDTlj+XbQY7f
+         /R41WckN2AphGHAEC/NkQLeJgOzbQdEWRZ5ad9NzCD48/XN+oWS06WwMRShpNNi6iOWS
+         lieYTBIzsDbCxiJWd7cSoe7CUCmNGzuejnCtQ1qHLAXbwzhyKxuq0K3XVRsdPvK03VtC
+         F+09GGvkmaitk8uSXkqHFNUtmo5n07Z1eQOt5Z0PpNOqCoTMEUjEgiASRWpa+0vEwDQa
+         xOKA==
+X-Gm-Message-State: AHQUAuY4FpVNc7SKvFuZ9Rh88yEGW12Q4CskpwIdq6D8gv2vVb/EDS+H
+        yMAWcLaf3wXgANyA0Rj2yEhzjg==
+X-Google-Smtp-Source: AHgI3IYoeeScEcUExZ2BexVMFqQeNiPz2KJ/io13uTDR4Zw6N7A9YTN5xoMYLZBSlVGDQ/JedtUZ1Q==
+X-Received: by 2002:aa7:8281:: with SMTP id s1mr4076534pfm.120.1549646830429;
+        Fri, 08 Feb 2019 09:27:10 -0800 (PST)
+Received: from localhost ([2601:602:9200:a1a5:551b:c3ab:6b62:8b9f])
+        by smtp.googlemail.com with ESMTPSA id w12sm2564435pgp.38.2019.02.08.09.27.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 08 Feb 2019 09:27:09 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     "open list\:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list\:ARM\/Amlogic Meson..." 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] pinctrl: meson: g12a fixes
+In-Reply-To: <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
+References: <20190117102315.1833-1-jbrunet@baylibre.com> <CACRpkdb7pje9mrgOQoiWTRxGQC8xsOvJ9a8PCguM807unPtpCg@mail.gmail.com> <a434c3b1c55a1b5a1485adc29cfe26b45131a936.camel@baylibre.com> <CACRpkdb4105RwXhiyVd1dz5mjYO_u6CxTbCySbqUWBv=yhF1qg@mail.gmail.com>
+Date:   Fri, 08 Feb 2019 09:27:07 -0800
+Message-ID: <7ho97mgphw.fsf@baylibre.com>
 MIME-Version: 1.0
-References: <20190207220155.81351-1-ndesaulniers@google.com>
- <20190207220155.81351-3-ndesaulniers@google.com> <20190208055059.GD9647@archlinux-ryzen>
-In-Reply-To: <20190208055059.GD9647@archlinux-ryzen>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 8 Feb 2019 09:27:19 -0800
-Message-ID: <CAKwvOd=ytsXYDzVZHUEjokHmW5kpqmCq4cnToOFJ4gwz8j7W=Q@mail.gmail.com>
-Subject: Re: [PATCH 3/4] Makefile: lld: tell clang to use lld
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, sedat.dilek@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 9:51 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Thu, Feb 07, 2019 at 02:01:51PM -0800, ndesaulniers@google.com wrote:
-> > This is needed because clang doesn't select which linker to use based on
-> > $LD but rather -fuse-ld=$(LD). This is problematic especially for
-> > cc-ldoption, which checks for linker flag support via invoking the
-> > compiler, rather than the linker.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/342
-> > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > ---
-> >  Makefile | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 0eae4277206e..6307c17259ea 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -502,6 +502,9 @@ endif
-> >  CLANG_FLAGS  += -no-integrated-as
-> >  KBUILD_CFLAGS        += $(CLANG_FLAGS)
-> >  KBUILD_AFLAGS        += $(CLANG_FLAGS)
-> > +ifneq ($(shell $(LD) --version 2>&1 | head -n 1 | grep LLD),)
-> > +CLANG_FLAGS  += -fuse-ld=lld
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-Sorry, Sedat reports [0] that this is not quite correct; if $(LD)
-matches LLD, then we need to set -fuse-ld=$(LD), not -fuse-ld=lld,
-since you may have lld installed as lld-7 or lld-8, for example:
-https://github.com/ClangBuiltLinux/linux/issues/358
-
-> > +endif
+> On Mon, Jan 21, 2019 at 4:36 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>> On Mon, 2019-01-21 at 14:53 +0100, Linus Walleij wrote:
+>> > On Thu, Jan 17, 2019 at 11:23 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>> >
+>> > > This patchset fixes the initial pinctrl support added for th g12a SoC
+>> > > family, which is mainly around the register regions claimed by the
+>> > > driver.
+>> > >
+>> > > Linus, would it possible for you to provide a tag with these changes to
+>> > > Kevin ?
+>> >
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=ib-meson-fixes
+>> >
+>> > > ATM, we can only use the devices for which the pinmux is already set by
+>> > > the bootloader. Enabling the broken pinctrl driver could cause regressions
+>> > > in kernelCI. Having a tag, would allow us to start using pinctrl on this
+>> > > SoC in this cycle, w/o regression. It would be nice :)
+>> >
+>> > When you say "this cycle" do you mean I should target fixes (v5.0-rcN)
+>> > or next (v5.1) with these patches?
+>>
+>> I was referring to the 5.1 release but it is a good question, I did not really
+>> think about 5.0.
+>>
+>> Those changes are mainly fixes, so guess it could go in the 5.0 but support
+>> for this SoC is still in its early stages, so either way is fine by me.
+>>
+>> Whatever is simpler for you I guess ;)
 >
-> This section needs to be moved up above KBUILD_CFLAGS otherwise it never
-> actually gets passed along.
->
-> With that change, please add:
->
-> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
->
-> >  export CLANG_FLAGS
-> >  endif
-> >
-> > --
-> > 2.20.1.791.gb4d0f1c61a-goog
-> >
+> I already merged it for devel and other stuff on top so it will be for v5.1
+> as it looks now.
 
+OK, assuming that tag is still valid (and immutable), that works for me.
 
-
--- 
-Thanks,
-~Nick Desaulniers
+Kevin
