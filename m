@@ -2,116 +2,134 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C917C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FBCC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B1D8218D2
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:00:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux-ipv6.be header.i=@linux-ipv6.be header.b="bfouYvkg"
+	by mail.kernel.org (Postfix) with ESMTP id 82CAD218D2
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549728238;
+	bh=FAK3Arn+dWh3DVlgEvmI+956ODQ0Wj03m+5yv59+AI4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=iVxAIzmATy8LQivKJ/9/AoubysNyW8IiNj2yE5IIuS1blRFpADPh8aFUt2n2hfAaI
+	 Ht5LUGsSapkDyPWJuWzMNzeFhuZ3JLpPap/O/oViilQdNZiW3KQ+rKhNfavTPPPuZk
+	 pPNniFKObDwzzK33VW6ks6SzHWns//pWX2/NMK3I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfBIQAu (ORCPT
+        id S1726990AbfBIQD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 11:00:50 -0500
-Received: from mail.tintel.eu ([54.36.12.13]:41690 "EHLO mail.tintel.eu"
+        Sat, 9 Feb 2019 11:03:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726894AbfBIQAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 11:00:50 -0500
-X-Greylist: delayed 455 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Feb 2019 11:00:48 EST
-Received: from localhost (localhost [IPv6:::1])
-        by mail.tintel.eu (Postfix) with ESMTP id 2FCFA424DC03;
-        Sat,  9 Feb 2019 16:53:11 +0100 (CET)
-Received: from mail.tintel.eu ([IPv6:::1])
-        by localhost (mail.tintel.eu [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id nhXsaBVFDLvC; Sat,  9 Feb 2019 16:53:10 +0100 (CET)
-Received: from localhost (localhost [IPv6:::1])
-        by mail.tintel.eu (Postfix) with ESMTP id B5DD2424DBFC;
-        Sat,  9 Feb 2019 16:53:10 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.tintel.eu B5DD2424DBFC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux-ipv6.be;
-        s=502B7754-045F-11E5-BBC5-64595FD46BE8; t=1549727590;
-        bh=OgugLh0YvI/wkG93AJWR1X2iSQ6uRFdoVFbvmNFEWzQ=;
-        h=From:To:Date:Message-Id:MIME-Version;
-        b=bfouYvkgiT84cafkoPNucUO0NoVyBPiEWL0cmRagbw+IHM5Ys3SgckWNRurkCQJFv
-         lVAzKQBpzx69QLkLAwcJqjFuMGo7DUsw0/Rso0f7IruwnL3U5P+JNbvgYYiQiYnlvM
-         6O8r8mfHQ/xoRJQ2vK6NmrLMn0OHZAeQbCIdKBks=
-X-Virus-Scanned: amavisd-new at mail.tintel.eu
-Received: from mail.tintel.eu ([IPv6:::1])
-        by localhost (mail.tintel.eu [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id UcrKXnOPeicR; Sat,  9 Feb 2019 16:53:10 +0100 (CET)
-Received: from taz.sof.bg.adlevio.net (taz.sof.bg.adlevio.net [IPv6:2001:67c:21bc:24::adb])
-        by mail.tintel.eu (Postfix) with SMTP id E97E6424DC03;
-        Sat,  9 Feb 2019 16:53:09 +0100 (CET)
-Received: (nullmailer pid 18505 invoked by uid 1000);
-        Sat, 09 Feb 2019 15:50:05 -0000
-From:   Stijn Tintel <stijn@linux-ipv6.be>
-To:     khilman@baylibre.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: meson-gxbb-odroidc2: enable I2C bus B
-Date:   Sat,  9 Feb 2019 17:50:05 +0200
-Message-Id: <20190209155005.18458-1-stijn@linux-ipv6.be>
-X-Mailer: git-send-email 2.19.2
+        id S1726894AbfBIQD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 11:03:56 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BE5920863;
+        Sat,  9 Feb 2019 16:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549728235;
+        bh=FAK3Arn+dWh3DVlgEvmI+956ODQ0Wj03m+5yv59+AI4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SbvjDpJL882Nm98wDAxpwngLSe0jWqLy0lrSYfjRqZcacPBsBRAZ+1vnwOPdXXD3i
+         x3m/+fjXj7iH6iEiEq0GHZiP5auzyR2UY7A/crx9kpNhui4KBFaWnaNkpbqlZBIyfP
+         GP58DX8xS7vt0o3jbMDwvdStji591MwBpn1n4z6E=
+Date:   Sat, 9 Feb 2019 16:03:51 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] iio:dac:dac7612: device tree bindings
+Message-ID: <20190209160351.5654f4d1@archlinux>
+In-Reply-To: <20190204124833.18779-2-ricardo@ribalda.com>
+References: <20190204124833.18779-1-ricardo@ribalda.com>
+        <20190204124833.18779-2-ricardo@ribalda.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: E97E6424DC03
-X-Spamd-Result: default: False [7.10 / 15.00];
-         ARC_NA(0.00)[];
-         R_SPF_FAIL(1.00)[-all];
-         FROM_HAS_DN(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         MIME_GOOD(-0.10)[text/plain];
-         TO_DN_NONE(0.00)[];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         RCPT_COUNT_FIVE(0.00)[5];
-         DMARC_NA(0.00)[linux-ipv6.be];
-         NEURAL_SPAM_SHORT(0.78)[0.389,0];
-         MID_CONTAINS_FROM(1.00)[];
-         IP_SCORE(0.32)[ip: (0.58), ipnet: 2001:67c:21bc::/48(0.56), asn: 200533(0.39), country: BG(0.07)];
-         RCVD_NO_TLS_LAST(0.10)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         R_DKIM_NA(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:200533, ipnet:2001:67c:21bc::/48, country:BG];
-         RCVD_COUNT_TWO(0.00)[2];
-         GREYLIST(0.00)[pass,body]
-X-Rspamd-Server: musltoo
-X-Spam: Yes
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ODROID C2 has 2 I2C buses, so enable both of them.
+On Mon,  4 Feb 2019 13:48:33 +0100
+Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
 
-Signed-off-by: Stijn Tintel <stijn@linux-ipv6.be>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+> Bindings for dac7612.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Simple binding so I'm happy to take with out a DT review unless someone
+feels like giving one.  Seems to have answered Rob's previous comments.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/a=
-rm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 1cc9dc68ef00..ee666471a580 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -180,6 +180,12 @@
- 	pinctrl-names =3D "default";
- };
-=20
-+&i2c_B {
-+	status =3D "okay";
-+	pinctrl-0 =3D <&i2c_b_pins>;
-+	pinctrl-names =3D "default";
-+};
-+
- &ir {
- 	status =3D "okay";
- 	pinctrl-0 =3D <&remote_input_ao_pins>;
---=20
-2.19.2
+Applied to the togreg branch of iio.git with the tiny tweak of dropping
+the extra blank line at the end of the file.
+
+Thanks,
+
+Jonathan
+> ---
+> v4 Changelog by Rob Herring <robh@kernel.org>
+> 
+> -Add ti, prefix to gpio
+> -Fix example da@1
+> -Fix partname
+> 
+>  .../bindings/iio/dac/ti,dac7612.txt           | 29 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> new file mode 100644
+> index 000000000000..14a66c0dcdaa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> @@ -0,0 +1,29 @@
+> +* Texas Instruments Dual, 12-Bit Serial Input Digital-to-Analog Converter
+> +
+> +The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with guaranteed
+> +12-bit monotonicity performance over the industrial temperature range.
+> +Is is programmable through an SPI interface.
+> +
+> +The internal DACs are loaded when the LOADDACS pin is pulled down.
+> +
+> +http://www.ti.com/lit/ds/sbas106/sbas106.pdf
+> +
+> +Required Properties:
+> +- compatible: Should be one of:
+> +		"ti,dac7612"
+> +		"ti,dac7612u"
+> +		"ti,dac7612ub"
+> +- reg: Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt
+> +
+> +Optional Properties:
+> +- ti,loaddacs-gpios: GPIO descriptor for the LOADDACS pin.
+> +- spi-*: Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt
+> +
+> +Example:
+> +
+> +	dac@1 {
+> +		compatible = "ti,dac7612";
+> +		reg = <0x1>;
+> +		ti,loaddacs-gpios = <&msmgpio 25 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 30ba5435906b..e28e5afaae16 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14882,6 +14882,7 @@ M:	Ricardo Ribalda <ricardo@ribalda.com>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/iio/dac/ti-dac7612.c
+> +F:	Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+>  
+>  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+>  M:	Hans Verkuil <hverkuil@xs4all.nl>
 
