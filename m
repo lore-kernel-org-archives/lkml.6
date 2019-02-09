@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AD7C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499A0C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BA72084D
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17B0B2084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfBIMpV (ORCPT
+        id S1726983AbfBIMpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:45:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56391 "EHLO
+        Sat, 9 Feb 2019 07:45:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36147 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfBIMpU (ORCPT
+        with ESMTP id S1726722AbfBIMpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:45:20 -0500
+        Sat, 9 Feb 2019 07:45:49 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CinD12631544
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19Ci9Hc2630021
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:44:49 -0800
+        Sat, 9 Feb 2019 04:44:10 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19Cinkc2631541;
-        Sat, 9 Feb 2019 04:44:49 -0800
-Date:   Sat, 9 Feb 2019 04:44:49 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19Ci9b02630017;
+        Sat, 9 Feb 2019 04:44:09 -0800
+Date:   Sat, 9 Feb 2019 04:44:09 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-159b0da50adb021fe452d849fb73b408f21de3f8@git.kernel.org>
-Cc:     adrian.hunter@intel.com, acme@redhat.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, suzuki.poulose@arm.com,
-        ast@kernel.org, mingo@kernel.org, heiko.carstens@de.ibm.com,
-        will.deacon@arm.com, hpa@zytor.com, tglx@linutronix.de,
-        namhyung@kernel.org, peterz@infradead.org,
-        mathieu.poirier@linaro.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        schwidefsky@de.ibm.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, will.deacon@arm.com,
-          heiko.carstens@de.ibm.com, alexander.shishkin@linux.intel.com,
-          mark.rutland@arm.com, acme@redhat.com, adrian.hunter@intel.com,
-          mingo@kernel.org, ast@kernel.org, suzuki.poulose@arm.com,
-          jolsa@redhat.com, linux-kernel@vger.kernel.org,
-          gregkh@linuxfoundation.org, schwidefsky@de.ibm.com,
-          namhyung@kernel.org, peterz@infradead.org,
-          mathieu.poirier@linaro.org
-In-Reply-To: <20190131184714.20388-8-mathieu.poirier@linaro.org>
-References: <20190131184714.20388-8-mathieu.poirier@linaro.org>
+Message-ID: <tip-1a89f1e2bec2e6537483b4d22cad62e1d8433686@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, will.deacon@arm.com,
+        gregkh@linuxfoundation.org, mark.rutland@arm.com,
+        heiko.carstens@de.ibm.com, alexander.shishkin@linux.intel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, ast@kernel.org, acme@redhat.com,
+        schwidefsky@de.ibm.com, adrian.hunter@intel.com,
+        peterz@infradead.org, mingo@kernel.org, namhyung@kernel.org,
+        tglx@linutronix.de, jolsa@redhat.com
+Reply-To: mathieu.poirier@linaro.org, gregkh@linuxfoundation.org,
+          will.deacon@arm.com, mark.rutland@arm.com,
+          heiko.carstens@de.ibm.com, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, alexander.shishkin@linux.intel.com,
+          ast@kernel.org, suzuki.poulose@arm.com, acme@redhat.com,
+          schwidefsky@de.ibm.com, adrian.hunter@intel.com,
+          mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+          namhyung@kernel.org, jolsa@redhat.com
+In-Reply-To: <20190131184714.20388-7-mathieu.poirier@linaro.org>
+References: <20190131184714.20388-7-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf pmu: Remove set_drv_config API
-Git-Commit-ID: 159b0da50adb021fe452d849fb73b408f21de3f8
+Subject: [tip:perf/core] perf coresight: Remove set_drv_config() API
+Git-Commit-ID: 1a89f1e2bec2e6537483b4d22cad62e1d8433686
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,17 +66,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  159b0da50adb021fe452d849fb73b408f21de3f8
-Gitweb:     https://git.kernel.org/tip/159b0da50adb021fe452d849fb73b408f21de3f8
+Commit-ID:  1a89f1e2bec2e6537483b4d22cad62e1d8433686
+Gitweb:     https://git.kernel.org/tip/1a89f1e2bec2e6537483b4d22cad62e1d8433686
 Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Thu, 31 Jan 2019 11:47:14 -0700
+AuthorDate: Thu, 31 Jan 2019 11:47:13 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 6 Feb 2019 10:00:39 -0300
 
-perf pmu: Remove set_drv_config API
+perf coresight: Remove set_drv_config() API
 
-CoreSight was the only client of the PMU's set_drv_config() API.  Now
-that it is no longer needed by CoreSight remove it from the code base.
+Now that the event's config2 attribute is used to communicate sink
+selection to the kernel, remove the old set_drv_config() implementation
+since it is no longer needed.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Acked-by: Suzuki K Poulouse <suzuki.poulose@arm.com>
@@ -95,262 +96,114 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-s390@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190131184714.20388-8-mathieu.poirier@linaro.org
+Link: http://lkml.kernel.org/r/20190131184714.20388-7-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c   | 10 ------
- tools/perf/builtin-stat.c     |  9 -----
- tools/perf/builtin-top.c      | 13 --------
- tools/perf/util/Build         |  1 -
- tools/perf/util/drv_configs.c | 78 -------------------------------------------
- tools/perf/util/drv_configs.h | 26 ---------------
- tools/perf/util/pmu.h         |  1 -
- 7 files changed, 138 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 54 ---------------------------------------
+ tools/perf/arch/arm/util/cs-etm.h |  3 ---
+ tools/perf/arch/arm/util/pmu.c    |  2 --
+ 3 files changed, 59 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 88ea11d57c6f..56e9d9e8c174 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -23,7 +23,6 @@
- #include "util/evlist.h"
- #include "util/evsel.h"
- #include "util/debug.h"
--#include "util/drv_configs.h"
- #include "util/session.h"
- #include "util/tool.h"
- #include "util/symbol.h"
-@@ -567,7 +566,6 @@ static int record__open(struct record *rec)
- 	struct perf_evlist *evlist = rec->evlist;
- 	struct perf_session *session = rec->session;
- 	struct record_opts *opts = &rec->opts;
--	struct perf_evsel_config_term *err_term;
- 	int rc = 0;
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 4f31cf0d1e6d..911426721170 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -27,9 +27,6 @@
+ #include <stdlib.h>
+ #include <sys/stat.h>
  
- 	/*
-@@ -620,14 +618,6 @@ try_again:
- 		goto out;
- 	}
- 
--	if (perf_evlist__apply_drv_configs(evlist, &pos, &err_term)) {
--		pr_err("failed to set config \"%s\" on event %s with %d (%s)\n",
--		      err_term->val.drv_cfg, perf_evsel__name(pos), errno,
--		      str_error_r(errno, msg, sizeof(msg)));
--		rc = -1;
--		goto out;
--	}
+-#define ENABLE_SINK_MAX	128
+-#define CS_BUS_DEVICE_PATH "/bus/coresight/devices/"
 -
- 	rc = record__mmap(rec);
- 	if (rc)
- 		goto out;
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index e587808591e8..bb24f9c17f9a 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -52,7 +52,6 @@
- #include "util/evlist.h"
- #include "util/evsel.h"
- #include "util/debug.h"
--#include "util/drv_configs.h"
- #include "util/color.h"
- #include "util/stat.h"
- #include "util/header.h"
-@@ -417,7 +416,6 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 	int status = 0;
- 	const bool forks = (argc > 0);
- 	bool is_pipe = STAT_RECORD ? perf_stat.data.is_pipe : false;
--	struct perf_evsel_config_term *err_term;
- 
- 	if (interval) {
- 		ts.tv_sec  = interval / USEC_PER_MSEC;
-@@ -514,13 +512,6 @@ try_again:
- 		return -1;
- 	}
- 
--	if (perf_evlist__apply_drv_configs(evsel_list, &counter, &err_term)) {
--		pr_err("failed to set config \"%s\" on event %s with %d (%s)\n",
--		      err_term->val.drv_cfg, perf_evsel__name(counter), errno,
--		      str_error_r(errno, msg, sizeof(msg)));
--		return -1;
--	}
+ struct cs_etm_recording {
+ 	struct auxtrace_record	itr;
+ 	struct perf_pmu		*cs_etm_pmu;
+@@ -642,54 +639,3 @@ struct auxtrace_record *cs_etm_record_init(int *err)
+ out:
+ 	return NULL;
+ }
 -
- 	if (STAT_RECORD) {
- 		int err, fd = perf_data__fd(&perf_stat.data);
- 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 619406339e4b..231a90daa958 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -25,7 +25,6 @@
- #include "util/bpf-event.h"
- #include "util/config.h"
- #include "util/color.h"
--#include "util/drv_configs.h"
- #include "util/evlist.h"
- #include "util/evsel.h"
- #include "util/event.h"
-@@ -1186,10 +1185,6 @@ static void init_process_thread(struct perf_top *top)
- 
- static int __cmd_top(struct perf_top *top)
- {
--	char msg[512];
--	struct perf_evsel *pos;
--	struct perf_evsel_config_term *err_term;
--	struct perf_evlist *evlist = top->evlist;
- 	struct record_opts *opts = &top->record_opts;
- 	pthread_t thread, thread_process;
- 	int ret;
-@@ -1240,14 +1235,6 @@ static int __cmd_top(struct perf_top *top)
- 	if (ret)
- 		goto out_delete;
- 
--	ret = perf_evlist__apply_drv_configs(evlist, &pos, &err_term);
--	if (ret) {
--		pr_err("failed to set config \"%s\" on event %s with %d (%s)\n",
--			err_term->val.drv_cfg, perf_evsel__name(pos), errno,
--			str_error_r(errno, msg, sizeof(msg)));
--		goto out_delete;
--	}
--
- 	top->session->evlist = top->evlist;
- 	perf_session__set_id_hdr_size(top->session);
- 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index b69d6294c88c..a36e6e5a6f4f 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -107,7 +107,6 @@ libperf-y += term.o
- libperf-y += help-unknown-cmd.o
- libperf-y += mem-events.o
- libperf-y += vsprintf.o
--libperf-y += drv_configs.o
- libperf-y += units.o
- libperf-y += time-utils.o
- libperf-y += expr-bison.o
-diff --git a/tools/perf/util/drv_configs.c b/tools/perf/util/drv_configs.c
-deleted file mode 100644
-index eec754243f4d..000000000000
---- a/tools/perf/util/drv_configs.c
-+++ /dev/null
-@@ -1,78 +0,0 @@
--/*
-- * drv_configs.h: Interface to apply PMU specific configuration
-- * Copyright (c) 2016-2018, Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- */
--
--#include "drv_configs.h"
--#include "evlist.h"
--#include "evsel.h"
--#include "pmu.h"
--#include <errno.h>
--
--static int
--perf_evsel__apply_drv_configs(struct perf_evsel *evsel,
--			      struct perf_evsel_config_term **err_term)
+-static FILE *cs_device__open_file(const char *name)
 -{
--	bool found = false;
--	int err = 0;
--	struct perf_evsel_config_term *term;
--	struct perf_pmu *pmu = NULL;
+-	struct stat st;
+-	char path[PATH_MAX];
+-	const char *sysfs;
 -
--	while ((pmu = perf_pmu__scan(pmu)) != NULL)
--		if (pmu->type == evsel->attr.type) {
--			found = true;
--			break;
--		}
+-	sysfs = sysfs__mountpoint();
+-	if (!sysfs)
+-		return NULL;
 -
--	list_for_each_entry(term, &evsel->config_terms, list) {
--		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
--			continue;
+-	snprintf(path, PATH_MAX,
+-		 "%s" CS_BUS_DEVICE_PATH "%s", sysfs, name);
 -
--		/*
--		 * We have a configuration term, report an error if we
--		 * can't find the PMU or if the PMU driver doesn't support
--		 * cmd line driver configuration.
--		 */
--		if (!found || !pmu->set_drv_config) {
--			err = -EINVAL;
--			*err_term = term;
--			break;
--		}
+-	if (stat(path, &st) < 0)
+-		return NULL;
 -
--		err = pmu->set_drv_config(term);
--		if (err) {
--			*err_term = term;
--			break;
--		}
--	}
+-	return fopen(path, "w");
 -
--	return err;
 -}
 -
--int perf_evlist__apply_drv_configs(struct perf_evlist *evlist,
--				   struct perf_evsel **err_evsel,
--				   struct perf_evsel_config_term **err_term)
+-static int __printf(2, 3) cs_device__print_file(const char *name, const char *fmt, ...)
 -{
--	struct perf_evsel *evsel;
--	int err = 0;
+-	va_list args;
+-	FILE *file;
+-	int ret = -EINVAL;
 -
--	evlist__for_each_entry(evlist, evsel) {
--		err = perf_evsel__apply_drv_configs(evsel, err_term);
--		if (err) {
--			*err_evsel = evsel;
--			break;
--		}
+-	va_start(args, fmt);
+-	file = cs_device__open_file(name);
+-	if (file) {
+-		ret = vfprintf(file, fmt, args);
+-		fclose(file);
 -	}
--
--	return err;
+-	va_end(args);
+-	return ret;
 -}
-diff --git a/tools/perf/util/drv_configs.h b/tools/perf/util/drv_configs.h
-deleted file mode 100644
-index 32bc9babc2e0..000000000000
---- a/tools/perf/util/drv_configs.h
-+++ /dev/null
-@@ -1,26 +0,0 @@
--/*
-- * drv_configs.h: Interface to apply PMU specific configuration
-- * Copyright (c) 2016-2018, Linaro Ltd.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- */
 -
--#ifndef __PERF_DRV_CONFIGS_H
--#define __PERF_DRV_CONFIGS_H
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
+-{
+-	int ret;
+-	char enable_sink[ENABLE_SINK_MAX];
 -
--#include "drv_configs.h"
--#include "evlist.h"
--#include "evsel.h"
+-	snprintf(enable_sink, ENABLE_SINK_MAX, "%s/%s",
+-		 term->val.drv_cfg, "enable_sink");
 -
--int perf_evlist__apply_drv_configs(struct perf_evlist *evlist,
--				   struct perf_evsel **err_evsel,
--				   struct perf_evsel_config_term **term);
--#endif
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 1c12a61ed0dc..47253c3daf55 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -31,7 +31,6 @@ struct perf_pmu {
- 	struct list_head format;  /* HEAD struct perf_pmu_format -> list */
- 	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
- 	struct list_head list;    /* ELEM */
--	int (*set_drv_config)	(struct perf_evsel_config_term *term);
- };
+-	ret = cs_device__print_file(enable_sink, "%d", 1);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
+index 1a12e64f5127..a3354bda4fe8 100644
+--- a/tools/perf/arch/arm/util/cs-etm.h
++++ b/tools/perf/arch/arm/util/cs-etm.h
+@@ -7,9 +7,6 @@
+ #ifndef INCLUDE__PERF_CS_ETM_H__
+ #define INCLUDE__PERF_CS_ETM_H__
  
- struct perf_pmu_info {
+-#include "../../util/evsel.h"
+-
+ struct auxtrace_record *cs_etm_record_init(int *err);
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term);
+ 
+ #endif
+diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
+index 64a677b518d0..bbc297a7e2e3 100644
+--- a/tools/perf/arch/arm/util/pmu.c
++++ b/tools/perf/arch/arm/util/pmu.c
+@@ -9,7 +9,6 @@
+ #include <linux/perf_event.h>
+ #include <linux/string.h>
+ 
+-#include "cs-etm.h"
+ #include "arm-spe.h"
+ #include "../../util/pmu.h"
+ 
+@@ -20,7 +19,6 @@ struct perf_event_attr
+ 	if (!strcmp(pmu->name, CORESIGHT_ETM_PMU_NAME)) {
+ 		/* add ETM default config here */
+ 		pmu->selectable = true;
+-		pmu->set_drv_config = cs_etm_set_drv_config;
+ #if defined(__aarch64__)
+ 	} else if (strstarts(pmu->name, ARM_SPE_PMU_NAME)) {
+ 		return arm_spe_pmu_default_config(pmu);
