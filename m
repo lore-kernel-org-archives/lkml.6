@@ -5,85 +5,82 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D675EC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 23:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F48C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 23:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7C721929
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 23:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD61821929
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 23:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfBIXMV (ORCPT
+        id S1727127AbfBIX3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 18:12:21 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:49710 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726933AbfBIXMU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 18:12:20 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id C9F7D14B3D8EC;
-        Sat,  9 Feb 2019 15:12:19 -0800 (PST)
-Date:   Sat, 09 Feb 2019 15:12:17 -0800 (PST)
-Message-Id: <20190209.151217.175627323493244750.davem@davemloft.net>
-To:     marcelo.leitner@gmail.com
-Cc:     julien@arista.com, netdev@vger.kernel.org,
-        linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nhorman@tuxdriver.com, vyasevich@gmail.com, lucien.xin@gmail.com
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
- about the option length
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190206203754.GC13621@localhost.localdomain>
-References: <20190206201430.18830-1-julien@arista.com>
-        <20190206203754.GC13621@localhost.localdomain>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 09 Feb 2019 15:12:20 -0800 (PST)
+        Sat, 9 Feb 2019 18:29:31 -0500
+Received: from cloud.peff.net ([104.130.231.41]:38846 "HELO cloud.peff.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1726956AbfBIX3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 18:29:30 -0500
+Received: (qmail 7980 invoked by uid 109); 9 Feb 2019 23:29:30 -0000
+Received: from Unknown (HELO peff.net) (10.0.1.2)
+ by cloud.peff.net (qpsmtpd/0.94) with SMTP; Sat, 09 Feb 2019 23:29:30 +0000
+Authentication-Results: cloud.peff.net; auth=none
+Received: (qmail 1085 invoked by uid 111); 9 Feb 2019 23:29:39 -0000
+Received: from sigill.intra.peff.net (HELO sigill.intra.peff.net) (10.0.0.7)
+ by peff.net (qpsmtpd/0.94) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) SMTP; Sat, 09 Feb 2019 18:29:39 -0500
+Authentication-Results: peff.net; auth=none
+Received: by sigill.intra.peff.net (sSMTP sendmail emulation); Sat, 09 Feb 2019 18:29:28 -0500
+Date:   Sat, 9 Feb 2019 18:29:28 -0500
+From:   Jeff King <peff@peff.net>
+To:     Johannes Sixt <j6t@kdbg.org>
+Cc:     "Randall S. Becker" <rsbecker@nexbridge.com>,
+        "'brian m. carlson'" <sandals@crustytoothpaste.net>,
+        'Junio C Hamano' <gitster@pobox.com>, git@vger.kernel.org,
+        'Linux Kernel' <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+Subject: Re: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+Message-ID: <20190209232928.GA7135@sigill.intra.peff.net>
+References: <002501d4bfde$b26e6050$174b20f0$@nexbridge.com>
+ <20190208191519.GF27673@sigill.intra.peff.net>
+ <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com>
+ <20190208193157.GA30952@sigill.intra.peff.net>
+ <20190208220714.GG11927@genre.crustytoothpaste.net>
+ <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com>
+ <20190208223512.GA2135@sigill.intra.peff.net>
+ <006601d4c001$2de3a160$89aae420$@nexbridge.com>
+ <20190209042456.GB18286@sigill.intra.peff.net>
+ <38f594ed-0787-aeb5-d34f-2f4775243eb7@kdbg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <38f594ed-0787-aeb5-d34f-2f4775243eb7@kdbg.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Date: Wed, 6 Feb 2019 18:37:54 -0200
+On Sat, Feb 09, 2019 at 09:39:43AM +0100, Johannes Sixt wrote:
 
-> On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
->> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
->> structures longer than the current definitions.
->> 
->> This should prevent unjustified setsockopt() failures due to struct
->> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
->> binaries that should be compatible, but were built with later kernel
->> uapi headers.
+> > Great. Since it sounds like you're preparing some patches to deal with
+> > /dev/zero elsewhere, do you want to wrap it up in a patch as part of
+> > that?
 > 
-> Not sure if we support backwards compatibility like this?
+> Please do not use yes to generate an infinite amount of bytes. Our
+> implementation of yes() in test-lib.sh generates only 99 lines.
 
-What a complete mess we have here.
+Ah, thanks. That doesn't matter here, but it would for the other patches
+under discussion.
 
-Use new socket option numbers next time, do not change the size and/or
-layout of existing socket options.
+> Perhaps do this.
+> [...]
+>  	dd of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" count=0 &&
+> -	dd if=/dev/zero of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" count=$(($orig_size - $zero_pos)) &&
+> +	printf "%0*d" $(($orig_size - $zero_pos)) 0 | tr 0 '\0' |
+> +		dd of="$objdir/info/commit-graph" bs=1 seek="$zero_pos" &&
 
-This whole thread, if you read it, is basically "if we compatability
-this way, that breaks, and if we do compatability this other way oh
-shit this other thing doesn't work."
+Using stdin instead of the tmpfile is nice, and shouldn't have any
+problems. I do think your printf suggestion looks nice, but I wondered
+if it might run into portability issues (not because of anything in
+particular, but I often find that the more clever a shell solution, the
+more likely we run into obscure problems).
 
-I think we really need to specifically check for the difference sizes
-that existed one by one, clear out the part not given by the user, and
-backport this as far back as possible in a way that in the older kernels
-we see if the user is actually trying to use the new features and if so
-error out.
+But if it works everywhere, that's fine by me.
 
-Which, btw, is terrible behavior.  Newly compiled apps should work on
-older kernels if they don't try to use the new features, and if they
-can the ones that want to try to use the new features should be able
-to fall back when that feature isn't available in a non-ambiguous
-and precisely defined way.
-
-The fact that the use of the new feature is hidden in the new
-structure elements is really rotten.
-
-This patch, at best, needs some work and definitely a longer and more
-detailed commit message.
+-Peff
