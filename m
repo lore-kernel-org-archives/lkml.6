@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC514C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 427FFC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A77BF20821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:53:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F354020821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:53:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738407;
-	bh=SQbUFCd+lKqKv/YYgzC/1cplw2hLs+9BnMUw0YhjiOI=;
+	s=default; t=1549738413;
+	bh=8WEVvIuTLU+SX/bciquEI/TeRbGgmd8id2j0Jmv2m60=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Infj5A7NOQWWW7ITigNkZC8kQ4hVboM5PPFvw79Qng6qPyT4+8u9PZOFO+8tUgBVW
-	 4ASsnP/IwaZQb1w3bQN7f8/xOTfNh3gSywp7+FacH5IqTRO1hARLKr8YG4lha/viIp
-	 46HTsH65ecWa233wJnmNZM6E7m6dfWx1YQ4WqvKs=
+	b=C9aivzN2ASnl9aOTJNxsQ3j2nafQPLULq5MI9cX/ZCZMznXzBO/xTfMfrfp5aAD01
+	 opnuTKvHV6HEW0Hhxi1rYZKcrZYonfje8blkm2tg1DKpDEEsM5A+vW2qpSS8tZGC8e
+	 eaEvwsO9Ksd+Q1F1MUZNouRPHNHxHK84vRu3nR3g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbfBIStV (ORCPT
+        id S1728143AbfBISxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:49:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34752 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:53:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728067AbfBIStS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:18 -0500
+        id S1728058AbfBIStR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B61F21919;
-        Sat,  9 Feb 2019 18:49:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC5EC21916;
+        Sat,  9 Feb 2019 18:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738158;
-        bh=SQbUFCd+lKqKv/YYgzC/1cplw2hLs+9BnMUw0YhjiOI=;
+        s=default; t=1549738156;
+        bh=8WEVvIuTLU+SX/bciquEI/TeRbGgmd8id2j0Jmv2m60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JvXyCrea7duX0wmtFl1ewY1yoint2Hqfug+aOzFYKhJFkla6/VXAGNxoe64/1paXy
-         bIfxY2/gd0FXqXWYpmXvIeG0z6YZKjshdPIPQjq1Q3RCGN2cVabIG753EFr0ktrBvt
-         X9Q+V/fN5bEzR2+zxKKHZD7/fjzMxLZXMGfzaGXI=
+        b=MNNuHP1LTmCwLiZT2brp48Q8Fs25Ng38h9ZpQ4dbsJX/JA6kqFJQQTjbP1kqSXpJ/
+         1Ki6wMINXFjW30LA7bpPF+tk+Ck7UtOErnBrTtBfv9WKAa5evUmegNyZpQhNC3sViE
+         qIsps9+WewJxFQZEnbjIAUK4RYUFG1Nv09SZ7Dow=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jamie Lentin <jm@lentin.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Julien D'Ascenzio <jdascenzio@posteo.net>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 23/28] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
-Date:   Sat,  9 Feb 2019 13:48:31 -0500
-Message-Id: <20190209184840.126418-23-sashal@kernel.org>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 22/28] ARM: dts: da850-lcdk: Correct the sound card name
+Date:   Sat,  9 Feb 2019 13:48:30 -0500
+Message-Id: <20190209184840.126418-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -63,48 +58,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
+[ Upstream commit c25748acc5c20786ecb7518bfeae8fcef93472d6 ]
 
-These two lines are active high, not active low. The bug was
-found when we changed the kernel to respect the polarity defined
-in the device tree.
+To avoid  the following error:
+asoc-simple-card sound: ASoC: Failed to create card debugfs directory
 
-Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
-Cc: Jamie Lentin <jm@lentin.co.uk>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Gregory Clement <gregory.clement@bootlin.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Tested-by: Jamie Lentin <jm@lentin.co.uk>
-Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Which is because the card name contains '/' character, which can not be
+used in file or directory names.
+
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/da850-lcdk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-index cbaf06f2f78e..eb917462b219 100644
---- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-+++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
-@@ -36,8 +36,8 @@
- 		compatible = "gpio-fan";
- 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
- 		pinctrl-names = "default";
--		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
--			 &gpio1 13 GPIO_ACTIVE_LOW>;
-+		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
-+			 &gpio1 13 GPIO_ACTIVE_HIGH>;
- 		gpio-fan,speed-map = <0    0
- 				      3000 1
- 				      6000 2>;
+diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
+index c196e37606c4..3a2fa6e035a3 100644
+--- a/arch/arm/boot/dts/da850-lcdk.dts
++++ b/arch/arm/boot/dts/da850-lcdk.dts
+@@ -71,7 +71,7 @@
+ 
+ 	sound {
+ 		compatible = "simple-audio-card";
+-		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
++		simple-audio-card,name = "DA850-OMAPL138 LCDK";
+ 		simple-audio-card,widgets =
+ 			"Line", "Line In",
+ 			"Line", "Line Out";
 -- 
 2.19.1
 
