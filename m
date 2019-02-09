@@ -2,104 +2,105 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A69C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AA0C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8A521773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:26:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1vmBKsa"
+	by mail.kernel.org (Postfix) with ESMTP id 7EA8F218D2
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfBIMZ7 (ORCPT
+        id S1726931AbfBIM2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:25:59 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35788 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfBIMZ7 (ORCPT
+        Sat, 9 Feb 2019 07:28:12 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53349 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbfBIM2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:25:59 -0500
-Received: by mail-qt1-f193.google.com with SMTP id p48so5571870qtk.2;
-        Sat, 09 Feb 2019 04:25:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5u2/GAeioG7owoyFoQbxP+8qPTyM3dGvgZ7aD2b1OEo=;
-        b=N1vmBKsav68a9OaBk5itoPsPF1pxc9/O/jDljvkDeIZn955qdQiW+3uq3X76bIlQHU
-         LMvYsUy0CU5JC4sHJH1UO5LdDXmsm9lX6kxz+6jNisDeoU7R5PtF+dcW+zXnD6BMzBdb
-         IRBgId8OfVjCikucn4r3BrcCheuOLomBYcxzWFQpW+cu8sshaq+nN1Xz1X90V0hh1TVy
-         kGncy2QAdZrIorz9uaklZRWnG9AClP3DK0dk+Fj9J3zma0WKLELilYrNBu7IGKwWFafI
-         DE0ZupcOUqtMeMtZ46sfy9tkO2FlfX5bPRGSTtBycrdEQkp/mU3OiolVQCgxx4BTlL9u
-         9DxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5u2/GAeioG7owoyFoQbxP+8qPTyM3dGvgZ7aD2b1OEo=;
-        b=BUqsAWs1gwRENxVvEzfHbDSOx/2FJBFuulrYQb0w149HNw/V8M6ojPppW0usB4S7tt
-         GW6aAGiCUCFoAyY3c69UX2w7dedTsEIuunKZgi3UuROWFvMrdwmko5Tq4J/Pm5HRDDQS
-         Qf4l0Vbe6OM8HdvutbJO+oP5peqKe9859MZ5hVKvzfzRyO9bxyPaqTZpDdMcRDuFawNV
-         N+LZs6ahYXgTOoPpyb+ESldbS2QxDMeq1dUcC1lkApTbtjSXAgJ3tcOFxZh7Oh1Q3EnW
-         9PbnCw9qskjl8ECUwHj6IPFFrC/qDvbRmn7dWvQFJGOQVtIlhUezygnBeVTSwiX319Q8
-         8PiA==
-X-Gm-Message-State: AHQUAuYyGZG5Fu9roTCIZ6FYoDGjnL4q0/0JUahnJSWs1NKA2pldy+Km
-        9fTkO8fKuIaoiWVQmRQXdzk=
-X-Google-Smtp-Source: AHgI3IYIgwktQVxnunn090pxbyqxRjL/LRLJ7NmkzFNlY5VMasTgn6IK3YxrhgdWYjSHSOs6/pQm8w==
-X-Received: by 2002:a0c:d6ca:: with SMTP id l10mr206861qvi.247.1549715158472;
-        Sat, 09 Feb 2019 04:25:58 -0800 (PST)
-Received: from localhost.localdomain ([191.255.193.149])
-        by smtp.gmail.com with ESMTPSA id g3sm4313286qkc.54.2019.02.09.04.25.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Feb 2019 04:25:57 -0800 (PST)
-From:   Luciana da Costa Marques <lucianadacostamarques@gmail.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-usp@googlegroups.com,
-        Luciana da Costa Marques <lucianadacostamarques@gmail.com>
-Subject: [PATCH v2] iio:accel:adxl345: Change alignment to match paranthesis
-Date:   Sat,  9 Feb 2019 10:25:42 -0200
-Message-Id: <20190209122542.4872-1-lucianadacostamarques@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 9 Feb 2019 07:28:12 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CS2gw2627423
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 9 Feb 2019 04:28:02 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CS1el2627420;
+        Sat, 9 Feb 2019 04:28:01 -0800
+Date:   Sat, 9 Feb 2019 04:28:01 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-j1nyksegpnz36wi3qx2p46i1@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, ravi.bangoria@linux.vnet.ibm.com,
+        namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        sukadev@linux.vnet.ibm.com, mingo@kernel.org,
+        adrian.hunter@intel.com, naveen.n.rao@linux.vnet.ibm.com,
+        maynard@us.ibm.com, acme@redhat.com, sandipan@linux.ibm.com,
+        tglx@linutronix.de
+Reply-To: sandipan@linux.ibm.com, acme@redhat.com, maynard@us.ibm.com,
+          tglx@linutronix.de, namhyung@kernel.org,
+          ravi.bangoria@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          naveen.n.rao@linux.vnet.ibm.com, sukadev@linux.vnet.ibm.com,
+          adrian.hunter@intel.com, mingo@kernel.org, hpa@zytor.com,
+          jolsa@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf powerpc: Add missing headers to
+ skip-callchain-idx.c
+Git-Commit-ID: d6e4ae499f25729c440714b0d902ed245a67c18f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Align broken line to match upper line parenthesis. Solves the
-checkpatch.pl's message:
+Commit-ID:  d6e4ae499f25729c440714b0d902ed245a67c18f
+Gitweb:     https://git.kernel.org/tip/d6e4ae499f25729c440714b0d902ed245a67c18f
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 6 Feb 2019 09:55:51 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 6 Feb 2019 10:00:38 -0300
 
-CHECK: Alignment should match open parenthesis
+perf powerpc: Add missing headers to skip-callchain-idx.c
 
-Signed-off-by: Luciana da Costa Marques <lucianadacostamarques@gmail.com>
+It uses several structs but don't explicitely includes the headers where
+they are defined, getting them by sheer luck from one of the headers it
+includes, since those are being streamlined to avoid unnecessary
+rebuilds when changes are made to a random header, they will break, fix
+them now so that they continue to build.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Maynard Johnson <maynard@us.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Sandipan Das <sandipan@linux.ibm.com>
+Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Link: https://lkml.kernel.org/n/tip-j1nyksegpnz36wi3qx2p46i1@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- changes in v2:
- - add full name to commit author
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/iio/accel/adxl345_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-index 780f87f72338..f03ed00685ea 100644
---- a/drivers/iio/accel/adxl345_core.c
-+++ b/drivers/iio/accel/adxl345_core.c
-@@ -150,8 +150,8 @@ static int adxl345_read_raw(struct iio_dev *indio_dev,
- }
+diff --git a/tools/perf/arch/powerpc/util/skip-callchain-idx.c b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+index 7c6eeb4633fe..2918bb16c892 100644
+--- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
++++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+@@ -16,6 +16,9 @@
+ #include "util/thread.h"
+ #include "util/callchain.h"
+ #include "util/debug.h"
++#include "util/dso.h"
++#include "util/map.h"
++#include "util/symbol.h"
  
- static int adxl345_write_raw(struct iio_dev *indio_dev,
--			    struct iio_chan_spec const *chan,
--			    int val, int val2, long mask)
-+			     struct iio_chan_spec const *chan,
-+			     int val, int val2, long mask)
- {
- 	struct adxl345_data *data = iio_priv(indio_dev);
- 	s64 n;
--- 
-2.17.1
-
+ /*
+  * When saving the callchain on Power, the kernel conservatively saves
