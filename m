@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5061C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E36EC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889A121919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B7521929
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738084;
-	bh=Oh/j8VqRQMVPxxX41V4Rs1fKk4xphirq4r9MmXVLvzw=;
+	s=default; t=1549738088;
+	bh=3w/TlQ//xRWYnpDfJVfrrkeTYwjK0ZZ0UUtN1F24KTM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I0rXq2zmjRv1gEVANSduX9ci0UmCSbNxYjqWALBabKOZINn8UTo9iJ2yg5e9woTGU
-	 Rddo5tHecqZ8qm1U6UdFMmGKKPExZbqP2uh+GNh7LsK6fucBIk5HKRG35coPVpSjJq
-	 DzQa0irAnyz6W14TfbPfIwMqZk9xWEsdPTT/2484=
+	b=GdkqZbiPf/v3cpzfSTBot0GPuGL3J94+LlDjpG4GZpKGapkyczgoehCrUteE44cWk
+	 xcAjy0s2zz8pQr8p8Fh7q3cohFndPKs3zh6v2/yUChYmGQdG12Wawdm0EShLEaQk0g
+	 JdVP4RqydDT7WoL7n2qoh7itce1ZWgnfpE6AGjdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfBISsC (ORCPT
+        id S1727124AbfBISsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60744 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:48:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727478AbfBISr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:47:57 -0500
+        id S1727478AbfBISsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 368D62192D;
-        Sat,  9 Feb 2019 18:47:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19D0921916;
+        Sat,  9 Feb 2019 18:48:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738076;
-        bh=Oh/j8VqRQMVPxxX41V4Rs1fKk4xphirq4r9MmXVLvzw=;
+        s=default; t=1549738082;
+        bh=3w/TlQ//xRWYnpDfJVfrrkeTYwjK0ZZ0UUtN1F24KTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fHRW+nOuLJr1CABdkI3Rqvb7aAKk4RSV+QiJVFS0GWUyjbSjN2cHn/sizwY74hMd6
-         rvQ+hUHPV0i+5Kskk5m+4riIhtqqEX/MOyHkdh3NOZlizRWgvOntnWpQ2mYbfIdHlq
-         Nmmsh02GzsdYci/k0oj07w8scBN53FaDFZkPD57Q=
+        b=ZkUkMXlWNHMSh5Ge7YYqCq/GyXGHdO3raw/U4SqunmbIWBwiGcEgiMsVM5u1jVUcG
+         2JM94AfBEHwKA5JQ4L53bGHykTIlI0LtDv8Y1M2GlhNiwElz4usgAOuDoF+GcQKeaa
+         WB19pivX8KWSjxsyFX/Nna9P76/cAWoJE8S+kzc0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 20/42] drm/bridge: tc358767: fix output H/V syncs
-Date:   Sat,  9 Feb 2019 13:47:12 -0500
-Message-Id: <20190209184734.125935-20-sashal@kernel.org>
+Cc:     James Dingwall <james@dingwall.me.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.20 25/42] nvme: introduce NVME_QUIRK_IGNORE_DEV_SUBNQN
+Date:   Sat,  9 Feb 2019 13:47:17 -0500
+Message-Id: <20190209184734.125935-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -58,46 +57,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: James Dingwall <james@dingwall.me.uk>
 
-[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
+[ Upstream commit 6299358d198a0635da2dd3c4b3ec37789e811e44 ]
 
-The H and V syncs of the DP output are always set to active high. This
-patch fixes the syncs by configuring them according to the videomode.
+If a device provides an NQN it is expected to be globally unique.
+Unfortunately some firmware revisions for Intel 760p/Pro 7600p devices did
+not satisfy this requirement.  In these circumstances if a system has >1
+affected device then only one device is enabled.  If this quirk is enabled
+then the device supplied subnqn is ignored and we fallback to generating
+one as if the field was empty.  In this case we also suppress the version
+check so we don't print a warning when the quirk is enabled.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: James Dingwall <james@dingwall.me.uk>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/nvme/host/core.c | 16 +++++++++-------
+ drivers/nvme/host/nvme.h |  5 +++++
+ drivers/nvme/host/pci.c  |  2 ++
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index a1f3dd2afbb1..391547358756 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -98,6 +98,8 @@
- #define DP0_STARTVAL		0x064c
- #define DP0_ACTIVEVAL		0x0650
- #define DP0_SYNCVAL		0x0654
-+#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
-+#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
- #define DP0_MISC		0x0658
- #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
- #define BPC_6				(0 << 5)
-@@ -726,7 +728,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 971ca6754959..5f9a5ef93969 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2084,14 +2084,16 @@ static void nvme_init_subnqn(struct nvme_subsystem *subsys, struct nvme_ctrl *ct
+ 	size_t nqnlen;
+ 	int off;
  
- 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
+-	nqnlen = strnlen(id->subnqn, NVMF_NQN_SIZE);
+-	if (nqnlen > 0 && nqnlen < NVMF_NQN_SIZE) {
+-		strlcpy(subsys->subnqn, id->subnqn, NVMF_NQN_SIZE);
+-		return;
+-	}
++	if(!(ctrl->quirks & NVME_QUIRK_IGNORE_DEV_SUBNQN)) {
++		nqnlen = strnlen(id->subnqn, NVMF_NQN_SIZE);
++		if (nqnlen > 0 && nqnlen < NVMF_NQN_SIZE) {
++			strlcpy(subsys->subnqn, id->subnqn, NVMF_NQN_SIZE);
++			return;
++		}
  
--	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
-+	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
+-	if (ctrl->vs >= NVME_VS(1, 2, 1))
+-		dev_warn(ctrl->device, "missing or invalid SUBNQN field.\n");
++		if (ctrl->vs >= NVME_VS(1, 2, 1))
++			dev_warn(ctrl->device, "missing or invalid SUBNQN field.\n");
++	}
  
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
+ 	/* Generate a "fake" NQN per Figure 254 in NVMe 1.3 + ECN 001 */
+ 	off = snprintf(subsys->subnqn, NVMF_NQN_SIZE,
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 081cbdcce880..6ffa99a10a60 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -90,6 +90,11 @@ enum nvme_quirks {
+ 	 * Set MEDIUM priority on SQ creation
+ 	 */
+ 	NVME_QUIRK_MEDIUM_PRIO_SQ		= (1 << 7),
++
++	/*
++	 * Ignore device provided subnqn.
++	 */
++	NVME_QUIRK_IGNORE_DEV_SUBNQN		= (1 << 8),
+ };
+ 
+ /*
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 47597046c14f..c0d01048ce4d 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2700,6 +2700,8 @@ static const struct pci_device_id nvme_id_table[] = {
+ 	{ PCI_VDEVICE(INTEL, 0xf1a5),	/* Intel 600P/P3100 */
+ 		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
+ 				NVME_QUIRK_MEDIUM_PRIO_SQ },
++	{ PCI_VDEVICE(INTEL, 0xf1a6),	/* Intel 760p/Pro 7600p */
++		.driver_data = NVME_QUIRK_IGNORE_DEV_SUBNQN, },
+ 	{ PCI_VDEVICE(INTEL, 0x5845),	/* Qemu emulated controller */
+ 		.driver_data = NVME_QUIRK_IDENTIFY_CNS, },
+ 	{ PCI_DEVICE(0x1bb1, 0x0100),   /* Seagate Nytro Flash Storage */
 -- 
 2.19.1
 
