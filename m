@@ -2,244 +2,155 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A33C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD29C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3990C21919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549729517;
-	bh=qg/bwWPtxo4f76ob4RqSbIT0MZBreCESvxJKz2oDHps=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=RTWe92GvS2oLYF72yYZ3GkLVXtz4TQH+3ss+apuQ1LhFeCMRBX6nhgGrGwfhFWUZF
-	 /9WNKB2MHlcEngFAnk17/VYyjaqFnTkPxyt5CQHUIT2tJ89S2b4fvEVpE7Z0Wa30L+
-	 +SiYIsCqHGwGKUCeJ2CKU4hvbCHDC0WdR8NNTMA4=
+	by mail.kernel.org (Postfix) with ESMTP id E6B6A21919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfBIQZP (ORCPT
+        id S1727099AbfBIQZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 11:25:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40892 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 11:25:20 -0500
+Received: from mout.gmx.net ([212.227.15.18]:44819 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfBIQZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 11:25:14 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8136A21773;
-        Sat,  9 Feb 2019 16:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549729513;
-        bh=qg/bwWPtxo4f76ob4RqSbIT0MZBreCESvxJKz2oDHps=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BQmaQfAtlQ6o192AnMoLAfHuVPYFTExY9ygfUaGJiCaOSCGsH0wiQ5lb5g4ADn6FH
-         lqdEWSNyXE9EU0IhLRI0VPaXzZ2L52he+TRdWZp0KobZZ6tP5YNRmH3J3L5We41Gq/
-         0xvdhUKGlo9B94M20gZtyyYu5qLCrhNpubrs2iW4=
-Date:   Sat, 9 Feb 2019 16:25:06 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Renato Lui Geh <renatogeh@gmail.com>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
-        giuliano.belinassi@usp.br, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-usp@googlegroups.com
-Subject: Re: [PATCH v3 1/4] staging: iio: ad7780: add gain & filter gpio
- support
-Message-ID: <20190209162506.0e790885@archlinux>
-In-Reply-To: <786543cbd8d60776083bcaca66f83502f23f561b.1549385784.git.renatogeh@gmail.com>
-References: <cover.1549385784.git.renatogeh@gmail.com>
-        <786543cbd8d60776083bcaca66f83502f23f561b.1549385784.git.renatogeh@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727012AbfBIQZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 11:25:19 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MexaL-1gUUMk3a7l-00Oblv; Sat, 09
+ Feb 2019 17:24:52 +0100
+Date:   Sat, 9 Feb 2019 17:24:49 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: sdhci-esdhc-imx/v5.0-rc5: i.MX50 system hangs when "per" clock
+ is disabled
+Message-ID: <20190209162449.GB2061@latitude>
+References: <20190207225211.GA17552@latitude>
+ <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:L4kPKEpMuxN8aBEbU5KwSiUdaaxSB6OC8L2m0BNA8rng1b30JcH
+ 8QfFXQfuY9+TDj3FmEZ2o05lN88mr8qZpsxfWIeo6qydiZ54+yQb1v04rwvpHeocLl7ca7a
+ /oCSe7OQpUynukPNAg0dAFnhMtW/d/Hfc0I7Tut2EsXmFSUjTSsF3rJ4oeK2SjcHsZwea5Z
+ qqJs2eiOYifys/PeDftQg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Dpiui8vaG0A=:Kc4n5gwv8Y8eFSHgWwqwmv
+ lDWTHlMsbLqQwwcZ6CUM2sBlAbF8PK0p74KGl2EGj3SHXrhneO6ivzUEFAykpdKC0sgxv6fbZ
+ nnf35kr9Q0Deqg7YVEjU6UVwAglz4Dxfim0kWVW9rlJaDBmu+klndoY40pJK5P+o2UgrQIm9t
+ hPGGoMKHTuJmEKQXsRj6tslnBXYPXHiBc+NrROl0ELEotJMsDSIY7//OEkwRu33WCKfOd7JFM
+ qJ0hkBF4BgOaxQ+hg4szQChjqDQxzg/8w4fjzwxoyqVeWRMA4WWZrHCwmA0GFqtnLekKaA+CG
+ zwxnN3NRbwUSIj51G5T3REJWyzH/X+ygkzdv/dk2Q9hPQXF4NaPDq3aJDV7LSzcexSmBWAsY7
+ LapBJNLXCz38Okx+RlYZjVGAKsDlZIb9R8gLhCqd9n0phuWKbfxbkFuZjCnbkix4Wdshi41/I
+ WE9ygV+4tiX7+DzoEHWsAHTHheDZpmPhP3n6Y0bYwrhkAKlY1rpDaQH6PcmqkfoexyH27h7VW
+ DrJg/oRJGE5vMoMe+KZ3nTUlHG0yd1vcQ+WulaZ45+ofo2a0i9GB+iNJ1mliw1gfI3tcwhyjC
+ aHJxSBbOt5jHvYLVh/9vLO1gglw8m7DS3puOcmhm8i7ljmpca37n/LTmzA9Gn6Mny0tKH3Wxt
+ 6LeWRkWB2i9AtwcfS/+PSKxSJWVx513g7eXuflo1DxWmfSYD/rwi0G4IHnjqBUEt8NOwlNWad
+ 4XaTYi4wOhLjSvNYPXjde1T4/vu1+hoLBZmW7wSfKCWbINPePojG2mbmh6j0hBuCScZhGoYRv
+ 1wQrEnG/cyReFEa5t4LqwtYP5Xk+UkCoh1Dn4yxQIH+LXX2cTJOIpCYQXNNO+T7o7DsFIlHai
+ 0yNqa/PQFs2Z+RdegzWrNgZrL6WOhTj3ZFFKPwv9YN1vXtb595ROIqMD35bb2l
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019 15:13:00 -0200
-Renato Lui Geh <renatogeh@gmail.com> wrote:
 
-> Previously, the AD7780 driver only supported gpio for the 'powerdown'
-> pin. This commit adds suppport for the 'gain' and 'filter' pin.
-> 
-> Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-> Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
-> Co-developed-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
-Comments inline.
+--neYutvxvOLaeuPCA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
-> Changes in v3:
-> 	- Renamed ad7780_chip_info's filter to odr
-> 	- Renamed ad778x_filter to ad778x_odr_avail
-> 	- Changed vref variable from unsigned int to unsigned long long to
-> 	  avoid overflow
-> 	- Removed unnecessary AD_SD_CHANNEL macro
-> 
->  drivers/staging/iio/adc/ad7780.c | 95 ++++++++++++++++++++++++++++++--
->  1 file changed, 89 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-> index c4a85789c2db..6e4357800d31 100644
-> --- a/drivers/staging/iio/adc/ad7780.c
-> +++ b/drivers/staging/iio/adc/ad7780.c
-> @@ -39,6 +39,15 @@
->  #define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
->  #define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)
->  
-> +#define AD7780_GAIN_GPIO	0
-> +#define AD7780_FILTER_GPIO	1
-What are these for?
+On Thu, Feb 07, 2019 at 10:50:28PM -0200, Fabio Estevam wrote:
+> On Thu, Feb 7, 2019 at 8:52 PM Jonathan Neusch=C3=A4fer
+[...]
+> > I tried to compare the CCM's clocks between i.MX50 and i.MX53, but
+> > unfortunately, the i.MX50 reference manual doesn't have the table called
+> > "Output clocks from CCM".
+>=20
+> Please check Table 5-10. CCM_CCGR3 Gated Clock Mapping to Target
+> Module from the MX50 Referene Manual.
 
-> +
-> +#define AD7780_GAIN_MIDPOINT	64
-> +#define AD7780_FILTER_MIDPOINT	13350
-> +
-> +static const unsigned int ad778x_gain[2]      = { 1, 128 };
-> +static const unsigned int ad778x_odr_avail[2] = { 10000, 16700 };
-> +
->  struct ad7780_chip_info {
->  	struct iio_chan_spec	channel;
->  	unsigned int		pattern_mask;
-> @@ -50,7 +59,11 @@ struct ad7780_state {
->  	const struct ad7780_chip_info	*chip_info;
->  	struct regulator		*reg;
->  	struct gpio_desc		*powerdown_gpio;
-> -	unsigned int	gain;
-> +	struct gpio_desc		*gain_gpio;
-> +	struct gpio_desc		*filter_gpio;
-> +	unsigned int			gain;
-> +	unsigned int			odr;
-> +	unsigned int			int_vref_mv;
->  
->  	struct ad_sigma_delta sd;
->  };
-> @@ -104,17 +117,65 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
->  		voltage_uv = regulator_get_voltage(st->reg);
->  		if (voltage_uv < 0)
->  			return voltage_uv;
-> -		*val = (voltage_uv / 1000) * st->gain;
-> +		voltage_uv /= 1000;
-> +		*val = voltage_uv * st->gain;
->  		*val2 = chan->scan_type.realbits - 1;
-> +		st->int_vref_mv = voltage_uv;
->  		return IIO_VAL_FRACTIONAL_LOG2;
->  	case IIO_CHAN_INFO_OFFSET:
->  		*val = -(1 << (chan->scan_type.realbits - 1));
->  		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val = st->odr;
-> +		return IIO_VAL_INT;
->  	}
->  
->  	return -EINVAL;
->  }
->  
-> +static int ad7780_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int val,
-> +			    int val2,
-> +			    long m)
-> +{
-> +	struct ad7780_state *st = iio_priv(indio_dev);
-> +	const struct ad7780_chip_info *chip_info = st->chip_info;
-> +	unsigned long long vref;
-> +	unsigned int full_scale, gain;
-> +
-> +	if (!chip_info->is_ad778x)
-> +		return 0;
-> +
-> +	switch (m) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		if (val != 0)
-> +			return -EINVAL;
-> +
-> +		vref = st->int_vref_mv * 1000000LL;
-> +		full_scale = 1 << (chip_info->channel.scan_type.realbits - 1);
-> +		gain = DIV_ROUND_CLOSEST(vref, full_scale);
-> +		gain = DIV_ROUND_CLOSEST(gain, val2);
-> +		st->gain = gain;
-> +		if (gain < AD7780_GAIN_MIDPOINT)
-> +			gain = 0;
-> +		else
-> +			gain = 1;
-> +		gpiod_set_value(st->gain_gpio, gain);
-> +	break;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		if (1000*val + val2/1000 < AD7780_FILTER_MIDPOINT)
-> +			val = 0;
-> +		else
-> +			val = 1;
-> +		st->odr = ad778x_odr_avail[val];
-> +		gpiod_set_value(st->filter_gpio, val);
-> +	break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
->  				     unsigned int raw_sample)
->  {
-> @@ -126,10 +187,8 @@ static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
->  		return -EIO;
->  
->  	if (chip_info->is_ad778x) {
-> -		if (raw_sample & AD7780_GAIN)
-> -			st->gain = 1;
-> -		else
-> -			st->gain = 128;
-> +		st->gain = ad778x_gain[raw_sample & AD7780_GAIN];
-> +		st->odr = ad778x_odr_avail[raw_sample & AD7780_FILTER];
->  	}
->  
->  	return 0;
-> @@ -173,6 +232,7 @@ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
->  
->  static const struct iio_info ad7780_info = {
->  	.read_raw = ad7780_read_raw,
-> +	.write_raw = ad7780_write_raw,
->  };
->  
->  static int ad7780_probe(struct spi_device *spi)
-> @@ -222,6 +282,29 @@ static int ad7780_probe(struct spi_device *spi)
->  		goto error_disable_reg;
->  	}
->  
-> +	if (st->chip_info->is_ad778x) {
-> +		st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
-> +							"gain",
+Ok, the tables show:
 
-These are not particularly standard names (basically not "reset"),
-so they should be vendor prefixed, so that people know to go
-look at the device specific binding.
+For i.MX50:
+[1:0] 0 ipg_clk_root    eSDHCv2_1
+[3:2] 1 esdhc1_clk_root eSDHCv2_1
 
-> +							GPIOD_OUT_HIGH);
-> +		if (IS_ERR(st->gain_gpio)) {
-> +			ret = PTR_ERR(st->gain_gpio);
-> +			dev_err(&spi->dev, "Failed to request gain GPIO: %d\n",
-> +				ret);
-> +			goto error_disable_reg;
-> +		}
-> +
-> +		st->filter_gpio = devm_gpiod_get_optional(&spi->dev,
-> +							  "filter",
-> +							  GPIOD_OUT_HIGH);
-> +		if (IS_ERR(st->filter_gpio)) {
-> +			ret = PTR_ERR(st->filter_gpio);
-> +			dev_err(&spi->dev,
-> +				"Failed to request filter GPIO: %d\n",
-> +				ret);
-> +			goto error_disable_reg;
-> +		}
-> +	}
-> +
->  	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
->  	if (ret)
->  		goto error_disable_reg;
+For i.MX53:
+1=E2=80=930 CG0 esdhc1_ipg_hclk: affects ipg_clk and hclk inputs of ESDEHC-=
+1 (esdhc1_clk_enable)
+3=E2=80=932 CG1 esdhc1_perclk:   affects ipg_clk_perclk   input  of ESDEHC-=
+1 (esdhc1_serial_clk_enable)
 
+Table 18-3 (Output clocks from CCM) in the iMX53RM shows that
+ESDHCv2-1's ipg_clk_perclk is esdhc1_clk_root, so the clock structure
+does seem to be the same here, between i.MX50 and i.MX53=E2=80=A6
+
+(The reason why I looked at i.MX53 is that there are several i.MX53
+boards in tree, so it appears to be well tested under mainline Linux)
+
+
+> Does the change below help?
+>=20
+> --- a/arch/arm/boot/dts/imx50.dtsi
+> +++ b/arch/arm/boot/dts/imx50.dtsi
+> @@ -102,7 +102,7 @@
+>                                         reg =3D <0x50004000 0x4000>;
+>                                         interrupts =3D <1>;
+>                                         clocks =3D <&clks IMX5_CLK_ESDHC1=
+_IPG_GATE>,
+> -                                                <&clks IMX5_CLK_DUMMY>,
+> +                                                <&clks IMX5_CLK_ESDHC1_I=
+PG_GATE>,
+>                                                  <&clks IMX5_CLK_ESDHC1_P=
+ER_GATE>;
+>                                         clock-names =3D "ipg", "ahb", "pe=
+r";
+
+Unfortunately, this doesn't help.
+
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--neYutvxvOLaeuPCA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlxe/skACgkQCDBEmo7z
+X9u2ohAAvLuVCy5ZxTQDN0CXlBDu1D7PpvjueQHOOrySP3dRUCnU+ClFXGmp7PSH
+ijXwP///CybSSTos9kfOKMqkyMauddznp13b+Gn0G0dankm8eAptjAoMV2puW6HY
+XbF3T+2ISbUWZDZCzaJxw29VsKjxLDcP6x1DDTIeNqVMwta9Bi3tIUIhwRDvxrAw
+UFsHmM2kyLqiAbjtMTHXKMtcK/QydZ1fZnv/tHZTZeeomAowNc5vxgnjINETb/PD
+mVRr9ZALblq+Z4vgLwIIAomcQyEU+kdJv3ebpR1q4J0oxkIceWl12+W9k1EUlLEN
+T4BUdxHEQ2kplvYFw1eoTLYK0P+HNoAdLlPUpzBxWo/Srxc8hnS61vs5IGIGzFAm
+qt1ZbVm95N5j6tgzmVefCClYdl389ReYyfKl6R0g/YKYhh9nSZvPfEFY5vWZB0pq
+msPMq95W7ivkMM43hydHqT2IHdl+CGeAcP8ldEBFoQUX8FHmbYnepHbL0ZgvgLTN
+dtFhHj6xvzfa8CxFMX8QUYen1bSYWc+/9Nxfrq8S9BZJs9mw7yHqKrdu1YYssKok
+f414MXSOjUIKV0Wjqhyn+CsAp/vD7/efrwl7+aayIfCjVGP+NYvgJ0a4vxvM0J5o
+dRLQL/r5Wn4l+IE73KjjNb+BtsKBnn2KvSOLdMT1lX4KNDp7Ti8=
+=hKLs
+-----END PGP SIGNATURE-----
+
+--neYutvxvOLaeuPCA--
