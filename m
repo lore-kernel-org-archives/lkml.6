@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C59C282CC
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CEDC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675A921773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEB0B21773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:46:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549734317;
-	bh=oVKv3HCbPxJxLLyGUN2bfP88tLrNh47ALHphJYOWvDo=;
+	s=default; t=1549734404;
+	bh=Brf+M1lHBNUMUy7IO1k87FbUF4obgcDm9IPURiOzZx4=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=d2zd25EWHnwxlY8AjKtB6KDMciy2YGXYqHtHazsQRjK2V34tuB6FUA1SyLXAPOt97
-	 siE17jhvG0UhM5T+6rdLykSULvRReOz7ntCgurVUHfNuETHzgKLG5UPOzeHlj93nsa
-	 I9A02EsQbU080Jf1eo+bRSe0CSIudUjyD6qh92v0=
+	b=o97MfqEAlVZcezbwd92ljzNzoRG9slKbVUiDpWoepW4kO8xqi1ckxoZuHjJRdEEPj
+	 odZMal/psMISfYskMWogIgFXeNhgNdsBpDVOUbcb2AkkP9jpAjxO0NEFmxNvUK59+p
+	 uPRyBrgTG3RtLKdv50kYAIUIkjA2BY9W0UH3ilnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfBIRpQ (ORCPT
+        id S1727351AbfBIRqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 12:45:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 12:46:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbfBIRpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 12:45:15 -0500
+        id S1727013AbfBIRql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 12:46:41 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB3DC214DA;
-        Sat,  9 Feb 2019 17:45:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 463B1214DA;
+        Sat,  9 Feb 2019 17:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549734314;
-        bh=oVKv3HCbPxJxLLyGUN2bfP88tLrNh47ALHphJYOWvDo=;
+        s=default; t=1549734400;
+        bh=Brf+M1lHBNUMUy7IO1k87FbUF4obgcDm9IPURiOzZx4=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UCR3FRa4XseCIl9Qqdj8YVAgywKAnKLucrxnJol6vXkUVTnyQQujCm/kFd6VpYi9F
-         gBtvOQGFPSfUYkmNlMa/n/XQEgbtD0zfcIdXeoBsSp88ZYkigTpdKb2teEWBtG2C9x
-         j550jCmo6eAEjxmUgFeRTUVv3vXIXB9fQEt8OBMQ=
-Date:   Sat, 9 Feb 2019 17:45:09 +0000
+        b=ZHY1PmGuBRQN6EkXxb9nHige8259KLMLdbMHY0ERVujDuJgs2Ug2Ps/t/4T1I6U7q
+         zHSYKStdxCxrlZxISlwyMZh/BB9oiODd7cbBVPztulWVQr3U/4zSdW882BhodMNYwI
+         8jvLAbpv6MkyJcpKDNHh1Yke4KfmmpR5qJxbwgyI=
+Date:   Sat, 9 Feb 2019 17:46:34 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Beniamin Bia <biabeniamin@outlook.com>
 Cc:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
@@ -46,11 +46,12 @@ Cc:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
         <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
         <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
         Beniamin Bia <beniamin.bia@analog.com>
-Subject: Re: [PATCH 1/2] staging: iio: frequency: ad9834: Move frequency to
- standard iio types
-Message-ID: <20190209174509.6277ef93@archlinux>
-In-Reply-To: <20190206120542.16617-1-biabeniamin@outlook.com>
+Subject: Re: [PATCH 2/2] staging: iio: frequency: ad9834: Move phase and
+ scale to standard iio attribute
+Message-ID: <20190209174634.45a37eba@archlinux>
+In-Reply-To: <20190206120542.16617-2-biabeniamin@outlook.com>
 References: <20190206120542.16617-1-biabeniamin@outlook.com>
+        <20190206120542.16617-2-biabeniamin@outlook.com>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -60,270 +61,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Feb 2019 14:05:41 +0200
+On Wed, 6 Feb 2019 14:05:42 +0200
 Beniamin Bia <biabeniamin@outlook.com> wrote:
 
-> Frequency attribute is added with a standard type from iio framework
-> instead of custom attribute. This is a small step towards removing any
-> unnecessary custom attribute.
+> The custom phase and scale attributes were moved to standard iio types.
 > 
 > Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+Similar comments apply as to patch 1.
+
+Jonathan
 > ---
->  drivers/staging/iio/frequency/ad9834.c | 97 +++++++++++++++++++++-----
->  1 file changed, 80 insertions(+), 17 deletions(-)
+>  drivers/staging/iio/frequency/ad9834.c | 54 +++++++++++++++-----------
+>  1 file changed, 32 insertions(+), 22 deletions(-)
 > 
 > diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
-> index f036f75d1f22..370e8263899e 100644
+> index 370e8263899e..3ecf976ddefe 100644
 > --- a/drivers/staging/iio/frequency/ad9834.c
 > +++ b/drivers/staging/iio/frequency/ad9834.c
-> @@ -29,8 +29,7 @@
->  /* Registers */
+> @@ -30,8 +30,7 @@
 >  
 >  #define AD9834_REG_CMD		0
-> -#define AD9834_REG_FREQ0	BIT(14)
-> -#define AD9834_REG_FREQ1	BIT(15)
-> +#define AD9834_REG_FREQ(chann)	(BIT(14) << (chann))
-
-That is rather confusing... 
-
-Perhaps we can represent this as a variable that is 3 bits wide, with values that
-correspond to the different settings.
-
-
-So define
-#define AD7834_REG_ADDR_MASK GENMASK(15,13)
-#define AD7834_REG_FREQ0 2
-#define AD7834_REG_FREQ1 4
-#define AD7834_REG_PHASE0 6
-#define AD7834_REG_PHASE0 7
-
-And use FIELD_SET(reg, AD7834_REG_ADDR_MASK, AD7834_REG_FREQ0) etc.
-
-or something along those lines. It's a bit nasty because in the FREQ
-case the bottom bit is actually part of the value.
-Hmm. May just need two definitions of the mask. how about.
-#define AD7834_REG_FREQ_MASK GENMASK(15,14)
-#define AD7834_REG_FREQ0 1
-#define AD7934_REG_FREQ1 2
- 
-#define AD7834_REG_PHASE_MASK GENMASK(15,13)
-#define AD7834_REG_PHASE0 6
-#define AD7834_REG_PHASE1 7
-?
-
->  #define AD9834_REG_PHASE0	(BIT(15) | BIT(14))
->  #define AD9834_REG_PHASE1	(BIT(15) | BIT(14) | BIT(13))
+>  #define AD9834_REG_FREQ(chann)	(BIT(14) << (chann))
+> -#define AD9834_REG_PHASE0	(BIT(15) | BIT(14))
+> -#define AD9834_REG_PHASE1	(BIT(15) | BIT(14) | BIT(13))
+> +#define AD9834_REG_PHASE(chann)	(BIT(15) | BIT(14) | ((chann) << 13UL))
 >  
-> @@ -81,6 +80,9 @@ struct ad9834_state {
->  	struct spi_message		freq_msg;
->  	struct mutex                    lock;   /* protect sensor state */
+>  /* Command Control Bits */
 >  
-> +	unsigned long			frequency0;
-> +	unsigned long			frequency1;
-> +
+> @@ -82,6 +81,8 @@ struct ad9834_state {
+>  
+>  	unsigned long			frequency0;
+>  	unsigned long			frequency1;
+> +	unsigned long			phase0;
+> +	unsigned long			phase1;
+>  
 >  	/*
 >  	 * DMA (thus cache coherency maintenance) requires the
->  	 * transfer buffers to live in their own cache lines.
-> @@ -100,6 +102,25 @@ enum ad9834_supported_device_ids {
->  	ID_AD9838,
->  };
+> @@ -109,6 +110,8 @@ enum ad9834_supported_device_ids {
+>  		.address = (_chan),					\
+>  		.channel = (_chan),					\
+>  		.info_mask_separate = BIT(IIO_CHAN_INFO_FREQUENCY)	\
+> +						| BIT(IIO_CHAN_INFO_PHASE),\
+> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+>  }
 >  
-> +#define AD9833_CHANNEL(_chan) {						\
-> +		.type = IIO_ALTVOLTAGE,					\
-> +		.indexed = 1,						\
-> +		.output = 1,						\
-> +		.address = (_chan),					\
-
-Not a lot of point in setting them both if they are always the same.
-
-> +		.channel = (_chan),					\
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_FREQUENCY)	\
-> +}
-> +
-> +static const struct iio_chan_spec ad9833_channels[] = {
-> +	AD9833_CHANNEL(0),
-> +	AD9833_CHANNEL(1),
-> +};
-> +
-> +static const struct iio_chan_spec ad9834_channels[] = {
-> +	AD9833_CHANNEL(0),
-> +	AD9833_CHANNEL(1),
-> +};
-
-Umm. That needs some explaining.  Why have two identical arrays?
-I'll guess that later patches will make them different?
-That is fine, but you need a comment in the patch description to give
-the reasoning.
-
-> +
->  static unsigned int ad9834_calc_freqreg(unsigned long mclk, unsigned long fout)
+>  static const struct iio_chan_spec ad9833_channels[] = {
+> @@ -164,11 +167,22 @@ static int ad9834_write_frequency(struct ad9834_state *st,
+>  static int ad9834_write_phase(struct ad9834_state *st,
+>  			      unsigned long addr, unsigned long phase)
 >  {
->  	unsigned long long freqreg = (u64)fout * (u64)BIT(AD9834_FREQ_BITS);
-> @@ -113,6 +134,7 @@ static int ad9834_write_frequency(struct ad9834_state *st,
->  {
->  	unsigned long clk_freq;
->  	unsigned long regval;
 > +	int ret;
->  
->  	clk_freq = clk_get_rate(st->mclk);
->  
-> @@ -121,13 +143,22 @@ static int ad9834_write_frequency(struct ad9834_state *st,
->  
->  	regval = ad9834_calc_freqreg(clk_freq, fout);
->  
-> -	st->freq_data[0] = cpu_to_be16(addr | (regval &
-> +	st->freq_data[0] = cpu_to_be16(AD9834_REG_FREQ(addr) | (regval &
->  				       RES_MASK(AD9834_FREQ_BITS / 2)));
-> -	st->freq_data[1] = cpu_to_be16(addr | ((regval >>
-> +	st->freq_data[1] = cpu_to_be16(AD9834_REG_FREQ(addr) | ((regval >>
->  				       (AD9834_FREQ_BITS / 2)) &
->  				       RES_MASK(AD9834_FREQ_BITS / 2)));
->  
-> -	return spi_sync(st->spi, &st->freq_msg);
-> +	ret = spi_sync(st->spi, &st->freq_msg);
+> +
+>  	if (phase > BIT(AD9834_PHASE_BITS))
+>  		return -EINVAL;
+> -	st->data = cpu_to_be16(addr | phase);
+> +	st->data = cpu_to_be16(AD9834_REG_PHASE(addr) | phase);
+> +
+> +	ret = spi_sync(st->spi, &st->msg);
 > +	if (ret)
 > +		return ret;
-> +
+>  
+> -	return spi_sync(st->spi, &st->msg);
 > +	if (addr == 0)
-> +		st->frequency0 = fout;
-
-How about moving to an array you can just index with addr?
-(or the enum I suggest below).
-
+> +		st->phase0 = phase;
 > +	else
-> +		st->frequency1 = fout;
+> +		st->phase1 = phase;
 > +
 > +	return 0;
 >  }
 >  
->  static int ad9834_write_phase(struct ad9834_state *st,
-> @@ -140,6 +171,40 @@ static int ad9834_write_phase(struct ad9834_state *st,
->  	return spi_sync(st->spi, &st->msg);
->  }
->  
-> +static int ad9834_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val, int *val2, long mask)
-> +{
-> +	struct ad9834_state *st = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_FREQUENCY:
+>  static int ad9834_read_raw(struct iio_dev *indio_dev,
+> @@ -184,6 +198,16 @@ static int ad9834_read_raw(struct iio_dev *indio_dev,
+>  		else
+>  			*val = st->frequency1;
+>  		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_PHASE:
 > +		if (chan->address == 0)
-> +			*val = st->frequency0;
-
-As above, an array for frequency would tidy this up.
-
+> +			*val = st->phase0;
 > +		else
-> +			*val = st->frequency1;
+> +			*val = st->phase1;
 > +		return IIO_VAL_INT;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ad9834_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int val, int val2, long mask)
-> +{
-> +	struct ad9834_state *st = iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_FREQUENCY:
-> +		return ad9834_write_frequency(st, chan->address, val);
-> +	default:
-> +		return  -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static ssize_t ad9834_write(struct device *dev,
->  			    struct device_attribute *attr,
->  			    const char *buf,
-> @@ -157,10 +222,6 @@ static ssize_t ad9834_write(struct device *dev,
+> +	case IIO_CHAN_INFO_SCALE:
+> +		/*1 hz */
+> +		*val = 1;
+> +		return IIO_VAL_INT;
+>  	}
+>  
+>  	return -EINVAL;
+> @@ -198,6 +222,8 @@ static int ad9834_write_raw(struct iio_dev *indio_dev,
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_FREQUENCY:
+>  		return ad9834_write_frequency(st, chan->address, val);
+> +	case IIO_CHAN_INFO_PHASE:
+> +		return ad9834_write_phase(st, chan->address, val);
+>  	default:
+>  		return  -EINVAL;
+>  	}
+> @@ -222,10 +248,6 @@ static ssize_t ad9834_write(struct device *dev,
 >  
 >  	mutex_lock(&st->lock);
 >  	switch ((u32)this_attr->address) {
-> -	case AD9834_REG_FREQ0:
-> -	case AD9834_REG_FREQ1:
-> -		ret = ad9834_write_frequency(st, this_attr->address, val);
+> -	case AD9834_REG_PHASE0:
+> -	case AD9834_REG_PHASE1:
+> -		ret = ad9834_write_phase(st, this_attr->address, val);
 > -		break;
->  	case AD9834_REG_PHASE0:
->  	case AD9834_REG_PHASE1:
->  		ret = ad9834_write_phase(st, this_attr->address, val);
-> @@ -323,8 +384,6 @@ static IIO_DEVICE_ATTR(out_altvoltage0_out1_wavetype_available, 0444,
->   * see dds.h for further information
+>  	case AD9834_OPBITEN:
+>  		if (st->control & AD9834_MODE) {
+>  			ret = -EINVAL;  /* AD9843 reserved mode */
+> @@ -385,12 +407,8 @@ static IIO_DEVICE_ATTR(out_altvoltage0_out1_wavetype_available, 0444,
 >   */
 >  
-> -static IIO_DEV_ATTR_FREQ(0, 0, 0200, NULL, ad9834_write, AD9834_REG_FREQ0);
-> -static IIO_DEV_ATTR_FREQ(0, 1, 0200, NULL, ad9834_write, AD9834_REG_FREQ1);
 >  static IIO_DEV_ATTR_FREQSYMBOL(0, 0200, NULL, ad9834_write, AD9834_FSEL);
->  static IIO_CONST_ATTR_FREQ_SCALE(0, "1"); /* 1Hz */
+> -static IIO_CONST_ATTR_FREQ_SCALE(0, "1"); /* 1Hz */
 >  
-> @@ -342,8 +401,6 @@ static IIO_DEV_ATTR_OUT_WAVETYPE(0, 0, ad9834_store_wavetype, 0);
+> -static IIO_DEV_ATTR_PHASE(0, 0, 0200, NULL, ad9834_write, AD9834_REG_PHASE0);
+> -static IIO_DEV_ATTR_PHASE(0, 1, 0200, NULL, ad9834_write, AD9834_REG_PHASE1);
+>  static IIO_DEV_ATTR_PHASESYMBOL(0, 0200, NULL, ad9834_write, AD9834_PSEL);
+> -static IIO_CONST_ATTR_PHASE_SCALE(0, "0.0015339808"); /* 2PI/2^12 rad*/
+>  
+>  static IIO_DEV_ATTR_PINCONTROL_EN(0, 0200, NULL,
+>  	ad9834_write, AD9834_PIN_SW);
+> @@ -401,10 +419,6 @@ static IIO_DEV_ATTR_OUT_WAVETYPE(0, 0, ad9834_store_wavetype, 0);
 >  static IIO_DEV_ATTR_OUT_WAVETYPE(0, 1, ad9834_store_wavetype, 1);
 >  
 >  static struct attribute *ad9834_attributes[] = {
-> -	&iio_dev_attr_out_altvoltage0_frequency0.dev_attr.attr,
-> -	&iio_dev_attr_out_altvoltage0_frequency1.dev_attr.attr,
->  	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
->  	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
->  	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
-> @@ -361,8 +418,6 @@ static struct attribute *ad9834_attributes[] = {
+> -	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
+> -	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
+> -	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
+> -	&iio_const_attr_out_altvoltage0_phase_scale.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_pincontrol_en.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_frequencysymbol.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_phasesymbol.dev_attr.attr,
+> @@ -418,10 +432,6 @@ static struct attribute *ad9834_attributes[] = {
 >  };
 >  
 >  static struct attribute *ad9833_attributes[] = {
-> -	&iio_dev_attr_out_altvoltage0_frequency0.dev_attr.attr,
-> -	&iio_dev_attr_out_altvoltage0_frequency1.dev_attr.attr,
->  	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
->  	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
->  	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
-> @@ -384,11 +439,15 @@ static const struct attribute_group ad9833_attribute_group = {
->  };
->  
->  static const struct iio_info ad9834_info = {
-> +	.write_raw = &ad9834_write_raw,
-> +	.read_raw = &ad9834_read_raw,
->  	.attrs = &ad9834_attribute_group,
->  	.driver_module = THIS_MODULE,
->  };
->  
->  static const struct iio_info ad9833_info = {
-> +	.write_raw = &ad9834_write_raw,
-> +	.read_raw = &ad9834_read_raw,
->  	.attrs = &ad9833_attribute_group,
->  	.driver_module = THIS_MODULE,
->  };
-> @@ -435,9 +494,13 @@ static int ad9834_probe(struct spi_device *spi)
->  	switch (st->devid) {
->  	case ID_AD9833:
->  	case ID_AD9837:
-> +		indio_dev->channels = ad9833_channels;
-> +		indio_dev->num_channels = ARRAY_SIZE(ad9833_channels);
->  		indio_dev->info = &ad9833_info;
->  		break;
->  	default:
-> +		indio_dev->channels = ad9834_channels;
-> +		indio_dev->num_channels = ARRAY_SIZE(ad9834_channels);
->  		indio_dev->info = &ad9834_info;
->  		break;
->  	}
-> @@ -474,11 +537,11 @@ static int ad9834_probe(struct spi_device *spi)
->  		goto error_clock_unprepare;
->  	}
->  
-> -	ret = ad9834_write_frequency(st, AD9834_REG_FREQ0, 1000000);
-> +	ret = ad9834_write_frequency(st, 0, 1000000);
-Use an enum for that second variable, to make it clear that we are
-picking which frequency value is being set and that there are only two
-possible.
-
+> -	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
+> -	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
+> -	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
+> -	&iio_const_attr_out_altvoltage0_phase_scale.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_frequencysymbol.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_phasesymbol.dev_attr.attr,
+>  	&iio_dev_attr_out_altvoltage0_out_enable.dev_attr.attr,
+> @@ -545,11 +555,11 @@ static int ad9834_probe(struct spi_device *spi)
 >  	if (ret)
 >  		goto error_clock_unprepare;
 >  
-> -	ret = ad9834_write_frequency(st, AD9834_REG_FREQ1, 5000000);
-> +	ret = ad9834_write_frequency(st, 1, 5000000);
+> -	ret = ad9834_write_phase(st, AD9834_REG_PHASE0, 512);
+> +	ret = ad9834_write_phase(st, 0, 512);
+>  	if (ret)
+>  		goto error_clock_unprepare;
+>  
+> -	ret = ad9834_write_phase(st, AD9834_REG_PHASE1, 1024);
+> +	ret = ad9834_write_phase(st, 1, 1024);
+Similar comments. Nicer to use an enum for this and name them.
+
 >  	if (ret)
 >  		goto error_clock_unprepare;
 >  
