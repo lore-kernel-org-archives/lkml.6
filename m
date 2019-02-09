@@ -4,48 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B62C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD74C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D3E2196E
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CC202192D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738216;
-	bh=SsWOM4TxlNBJYVQEMZdIeNzVIdzHMnJtg990g1RHgZI=;
+	s=default; t=1549738218;
+	bh=H2I9j7Z9RZpoUBHcjn2d9ThQxaoQidRr26MSQKPfPgw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mfucTvLuETxBLeF+ORxejw3gvErLI5fTLtwiR7mH1Tqy8W8yBJ+umzEpD60e5kSaS
-	 TAu6+et6J38b+P11O3eMLu7zsj1LUqwMJE3dFbvgFWjwMmPGAZ4EeqkgDuhKpzdLcm
-	 UDB3bhzNfzlIr/mQzztnjXQvQ5f47shKeYhOs9rw=
+	b=UF0x6Q/SKwUu23LQnimuNrriR7Fr1fabF8cFc/UoxU3VQ8rldL2ppugsT62vh3OS9
+	 hZS6eQ1X4AZf89VhEySvVMZvG/Prub8eVs5Jr84cEApZnGtksUUFuQ2fS7DR2z0Kxk
+	 mSNgP+yWIf7Igab+dnX9ygW365AMw53qdrsx5yRw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfBISuO (ORCPT
+        id S1728360AbfBISuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:50:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36796 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:50:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727639AbfBISuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:50:13 -0500
+        id S1728330AbfBISuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:50:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D35112192C;
-        Sat,  9 Feb 2019 18:50:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20F502195D;
+        Sat,  9 Feb 2019 18:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738212;
-        bh=SsWOM4TxlNBJYVQEMZdIeNzVIdzHMnJtg990g1RHgZI=;
+        s=default; t=1549738211;
+        bh=H2I9j7Z9RZpoUBHcjn2d9ThQxaoQidRr26MSQKPfPgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xeAQExdArN4df5UI+o72AP3hMovSRDK8xdkborOmDcmdppngO91hqOWwEEnoKCJpt
-         0KGhLhl4PQiRkhQvEeb4ErTx2SbMPern2QnynBalVJTiuYbvb8XsRklJ41/qoUJAad
-         8aXZjCcc+AUmnkcyRld7HnZbsQ+wdTMl3ZcPII98=
+        b=ACHtO4ZJeikQk5VMB8bclAke5/B278de0bI0jLa/FeFPy/cATKVfD6FmhV94WoEx9
+         kUk2lD71GVZ66yAXtqaSFeIaFTELiEdAk5sF+7PyrIxy5cQGQWmndgQMgRHhPvS5r4
+         DzzDV1/0sprc4qg2SsP7qDaw0MIlpDrjbjzOMVlM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 3/4] gpio: pl061: handle failed allocations
-Date:   Sat,  9 Feb 2019 13:50:06 -0500
-Message-Id: <20190209185007.127176-3-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jamie Lentin <jm@lentin.co.uk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Julien D'Ascenzio <jdascenzio@posteo.net>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 2/4] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
+Date:   Sat,  9 Feb 2019 13:50:05 -0500
+Message-Id: <20190209185007.127176-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209185007.127176-1-sashal@kernel.org>
 References: <20190209185007.127176-1-sashal@kernel.org>
@@ -57,43 +64,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit df209c43a0e8258e096fb722dfbdae4f0dd13fde ]
+[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
 
-devm_kzalloc(), devm_kstrdup() and devm_kasprintf() all can
-fail internal allocation and return NULL. Using any of the assigned
-objects without checking is not safe. As this is early in the boot
-phase and these allocations really should not fail, any failure here
-is probably an indication of a more serious issue so it makes little
-sense to try and rollback the previous allocated resources or try to
-continue;  but rather the probe function is simply exited with -ENOMEM.
+These two lines are active high, not active low. The bug was
+found when we changed the kernel to respect the polarity defined
+in the device tree.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 684284b64aae ("ARM: integrator: add MMCI device to IM-PD1")
+Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
+Cc: Jamie Lentin <jm@lentin.co.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Tested-by: Jamie Lentin <jm@lentin.co.uk>
+Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-integrator/impd1.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
-index 38b0da300dd5..423a88ff908c 100644
---- a/arch/arm/mach-integrator/impd1.c
-+++ b/arch/arm/mach-integrator/impd1.c
-@@ -394,7 +394,11 @@ static int __init_refok impd1_probe(struct lm_device *dev)
- 					      sizeof(*lookup) + 3 * sizeof(struct gpiod_lookup),
- 					      GFP_KERNEL);
- 			chipname = devm_kstrdup(&dev->dev, devname, GFP_KERNEL);
--			mmciname = kasprintf(GFP_KERNEL, "lm%x:00700", dev->id);
-+			mmciname = devm_kasprintf(&dev->dev, GFP_KERNEL,
-+						  "lm%x:00700", dev->id);
-+			if (!lookup || !chipname || !mmciname)
-+				return -ENOMEM;
-+
- 			lookup->dev_id = mmciname;
- 			/*
- 			 * Offsets on GPIO block 1:
+diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+index 113dcf056dcf..1b2dacfa6132 100644
+--- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
++++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+@@ -35,8 +35,8 @@
+ 		compatible = "gpio-fan";
+ 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
+ 		pinctrl-names = "default";
+-		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
+-			 &gpio1 13 GPIO_ACTIVE_LOW>;
++		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
++			 &gpio1 13 GPIO_ACTIVE_HIGH>;
+ 		gpio-fan,speed-map = <0    0
+ 				      3000 1
+ 				      6000 2>;
 -- 
 2.19.1
 
