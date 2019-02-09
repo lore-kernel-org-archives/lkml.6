@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2425C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916ABC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 715F620643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D71B20643
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738593;
-	bh=l5b9oeVKvvO/ON5fswllXO8ogbeNs033M5PTGo7XOT4=;
+	s=default; t=1549738597;
+	bh=GfBgCGk4g92oHtW1P0dpWO7xchTgnj88YDOjmgz10r4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=080Jz7GVsG22Mcoe3GKBFMbbgJc6zOwebXEqcTPkwUtByIH6PhBjlWS3KhugSyDoi
-	 fWRrih3T2kFTn4fraJ5ZOOGpYu/9dDyJBLZ2EgJi2ZIIMJCLPNHKv/VBBFrdg8MJM7
-	 7iezZQq98UhXAN7FcDgt0dnH+v/MR403UB24Q7C4=
+	b=yLzBW0kfiScU1X8xrNcox0MfjFTN6rT/QrdTcH90YDc+TCaz0GZxiOQiZMPIPFq4c
+	 bSWDwBpUJ/c6ShVg+bhFm8Ret//w42Q/M9OzK7H/5OR+1mu5DlsJ+80I4b48mqRuna
+	 PsT6pMpvQvHHE2+oC9eUMLtsLg0oFrU3doB4gfKI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbfBIS4b (ORCPT
+        id S1728278AbfBIS4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:56:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60874 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:56:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727504AbfBISsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:00 -0500
+        id S1727497AbfBISr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:47:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9205D2192B;
-        Sat,  9 Feb 2019 18:47:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7158221929;
+        Sat,  9 Feb 2019 18:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738080;
-        bh=l5b9oeVKvvO/ON5fswllXO8ogbeNs033M5PTGo7XOT4=;
+        s=default; t=1549738079;
+        bh=GfBgCGk4g92oHtW1P0dpWO7xchTgnj88YDOjmgz10r4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d8ojkPS2l9CWnkiLPjNZkvYw6uwb6iX2/2C3DBHRd6Hm5jrswT1k/VGBIqc6VAH2O
-         nwdRv3yeikLAuEhW9zvnremgz5I9D5CmK/L1NGBnLlHaHZQ33YYUHAuS6M4wYEv5Qe
-         o9kFwDeiVRFGswas73/o1V4fZ8tQBkJ8xXwiJinc=
+        b=OHudC1Zbc5aAVhJXgu6TvHoIR0dYAQZZawfkCQ971DTAQnSjGiUSamV2Io4EOj2ld
+         lTrg64J6fLmgXmXGr+WKvUHP8LTgsYfGeyWWI9uyMASdIIHSXj877FjVXF/il2/i/K
+         GfJNoJAGpzKChkWhEK+fC1+0A5erVnWSvgKcjbCM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
+Cc:     Hongbo Yao <yaohongbo@huawei.com>, Christoph Hellwig <hch@lst.de>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 23/42] nvme-multipath: zero out ANA log buffer
-Date:   Sat,  9 Feb 2019 13:47:15 -0500
-Message-Id: <20190209184734.125935-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 22/42] nvme-pci: fix out of bounds access in nvme_cqe_pending
+Date:   Sat,  9 Feb 2019 13:47:14 -0500
+Message-Id: <20190209184734.125935-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -57,38 +56,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hannes Reinecke <hare@suse.de>
+From: Hongbo Yao <yaohongbo@huawei.com>
 
-[ Upstream commit c7055fd15ff46d92eb0dd1c16a4fe010d58224c8 ]
+[ Upstream commit dcca1662727220d18fa351097ddff33f95f516c5 ]
 
-When nvme_init_identify() fails the ANA log buffer is deallocated
-but _not_ set to NULL. This can cause double free oops when this
-controller is deleted without ever being reconnected.
+There is an out of bounds array access in nvme_cqe_peding().
 
-Signed-off-by: Hannes Reinecke <hare@suse.com>
+When enable irq_thread for nvme interrupt, there is racing between the
+nvmeq->cq_head updating and reading.
+
+nvmeq->cq_head is updated in nvme_update_cq_head(), if nvmeq->cq_head
+equals nvmeq->q_depth and before its value set to zero, nvme_cqe_pending()
+uses its value as an array index, the index will be out of bounds.
+
+Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+[hch: slight coding style update]
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nvme/host/pci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 9901afd804ce..2b1d1f066efa 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -586,6 +586,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	return 0;
- out_free_ana_log_buf:
- 	kfree(ctrl->ana_log_buf);
-+	ctrl->ana_log_buf = NULL;
- out:
- 	return error;
- }
-@@ -593,5 +594,6 @@ out:
- void nvme_mpath_uninit(struct nvme_ctrl *ctrl)
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 0f45868e8af9..47597046c14f 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -913,9 +913,11 @@ static void nvme_complete_cqes(struct nvme_queue *nvmeq, u16 start, u16 end)
+ 
+ static inline void nvme_update_cq_head(struct nvme_queue *nvmeq)
  {
- 	kfree(ctrl->ana_log_buf);
-+	ctrl->ana_log_buf = NULL;
+-	if (++nvmeq->cq_head == nvmeq->q_depth) {
++	if (nvmeq->cq_head == nvmeq->q_depth - 1) {
+ 		nvmeq->cq_head = 0;
+ 		nvmeq->cq_phase = !nvmeq->cq_phase;
++	} else {
++		nvmeq->cq_head++;
+ 	}
  }
  
 -- 
