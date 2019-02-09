@@ -2,96 +2,154 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C2FC282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B380C169C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA90E217D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:44:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A93217D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDAZophP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnB8OTRp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfBIBos (ORCPT
+        id S1726892AbfBIBsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 20:44:48 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40427 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBIBos (ORCPT
+        Fri, 8 Feb 2019 20:48:00 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38694 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBIBr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 20:44:48 -0500
-Received: by mail-it1-f195.google.com with SMTP id h193so13771518ita.5;
-        Fri, 08 Feb 2019 17:44:47 -0800 (PST)
+        Fri, 8 Feb 2019 20:47:59 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g189so2347376pgc.5;
+        Fri, 08 Feb 2019 17:47:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ll6utr+E4KfSWBkxlzzCxCgAe0VO4EUDQW3TXLdDpGY=;
-        b=MDAZophPccpEBkwjEu0yNdj8ZjsQxHZoRWnzwamVRcFu8r7Ig0NhQlK0YvmzjRF5QR
-         TgcKGXaP4ee1P+S/a0rQ2+7UiyxnPbjp7wIKXUfbI1A+R0bjOHRwHykEAbVrKlZ5XMRy
-         lW4dGvuT+IedIGdh5nShDzxnMDdGO0txe51ksvaZbMsLRx23d76MnlG3BBi4Gmn69thl
-         xWzvM2aGsPw94MO+MhX6e4G6gJeopOb0pawYb13EVs+xmYELU+XgOdMRl1pmrIiKuJsU
-         tlFuRb0FOFESQgKh3xQyw6O3xR2F2JKb17js6wJUSX6C95W2N71tiA5RCxZ2f4L4Gh8H
-         cqKg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=LNLh7fiEUgpdrV87cZRzOzgatsSJFrmOUrkiGIqiIBs=;
+        b=TnB8OTRpB1FkqnKuYsYoMx0Lno9toRpZiFzo4v3777fuUfPLIX7wPx/SmpG9/Ohzyz
+         pA+djEy5+UVbjY9K3YvSC//zNjFf0LP/OdOFnrbO2ArQAq3c2Hu0sJUrph8HAcv/7K5A
+         j0qaOoecXnZdrZitbq0ATV4Q2bOcZJFYbEUxfAt7rVyjULLOmhE1X5ZtegsVl1ddbG+o
+         2k/TwLJ589ccKBhAKcb7AzVseR7K7sMlbeuO83J11Lr7nC6HsCsit9lesTXGfdrNIlN9
+         axuNhQ3WSB9F06kzw4/e6nq/a2rFvk3a5zEy9UjcvWjP6aLx46BlV64D2RQx8uXYdmOi
+         WeHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ll6utr+E4KfSWBkxlzzCxCgAe0VO4EUDQW3TXLdDpGY=;
-        b=H7c37JpxJhWgeBxeIkA7IGAtIG6D8Afn7nmxJDYkw4ymtMHbrq7EyZlKIvkLbCDhbl
-         O8ZwcayKALo4xVI6JcDJV7wf90DVnoweP7gZM8wvlKUH+U0x4r9fzSM42x1agNKkPRo/
-         dt80S4t/uFDQVkVCx9eJ6rlszInmAoKOqHk6M4a7/4Sq7CQaOLlkK2FIM9whx+SZaO37
-         D+EhDc9fxLGm685Af3uqwy/Whd//rGda8a9MNUFLpMz0lur8Qru7KygsBmzknQxQdxgg
-         oLslt6Lc4KXZxq5uKLZhLICEjW6nKAAhnG1QOrtbs4M2IkSfpeJBvHN9Lr3JMxOjdneE
-         hrrA==
-X-Gm-Message-State: AHQUAuZpsXJsOP+ZiOuOFJVeAeJ6GMnTuOEcgoEotSNPBF7Qa+qFxKgE
-        OvZI3+u+0AfhebZgMTJur69wO9iZJ7TgK5JMo3g=
-X-Google-Smtp-Source: AHgI3IY6QR0TgFBSRnx7k50PrdwZjR9n6uuI2e6b4PsPo9m4Lv9EuBSpIZeO3O5wiWXMtobd9tOzC4xAVsLdS+zi4Xs=
-X-Received: by 2002:a24:955:: with SMTP id 82mr788760itm.58.1549676686827;
- Fri, 08 Feb 2019 17:44:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20190202153454.7121-1-deepa.kernel@gmail.com> <20190202153454.7121-13-deepa.kernel@gmail.com>
- <87r2clku4j.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87r2clku4j.fsf@concordia.ellerman.id.au>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri, 8 Feb 2019 17:44:34 -0800
-Message-ID: <CABeXuvqpexo4g7xQihKPoOd4ce4rLq0Agy-jYMELYvOAnqmXJA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 12/12] sock: Add SO_RCVTIMEO_NEW and SO_SNDTIMEO_NEW
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        ccaulfie@redhat.com, Helge Deller <deller@gmx.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Richard Henderson <rth@twiddle.net>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-alpha@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=LNLh7fiEUgpdrV87cZRzOzgatsSJFrmOUrkiGIqiIBs=;
+        b=rZ7L0lRpoOQxQVL6vq6/4FvYFwXn64vJNwa4kcQbDicaMsBO4zSRnBwJG+/lx4o7yG
+         yLU8ksAnbG3MuKr+r2XIGCP5YogmsD+bFQzHEk6vF2eTxAFOB2tgIhJOTVEcpgXUl4gz
+         zM3IR3uVfJo7BfRnlsiRQRK/RIuqUp4L4GOQXI7TJtM6S+ZvvRJBy81XeGCw4iJZcpus
+         qJTHQv0Z/tWGqNLycQy1MWFfkCYNrAr/WuhwvxRY4/Lzx1ajpKxbU4S1y7ZCYXTBXqwN
+         2r8eu40mkw2kR7BjOrMSiZTErEUaK9db2MEuZuyqhLKXzmjcfx1fotD9tYwEd8WFnMay
+         oOSw==
+X-Gm-Message-State: AHQUAuZFrgxrck2HcYPhBqbLq9NqnVe2gWJIFrJanOB9rbiLTUChzLcN
+        e6vyrWBkxrd/T/tI+04rLNlNrb7+
+X-Google-Smtp-Source: AHgI3IYfH59fQQgl0GUSasdyDGQClQsutpvoNHOhBE5D4GX+ybxW12af5zlBsOKpn490RKwie2XNFA==
+X-Received: by 2002:aa7:8101:: with SMTP id b1mr19035568pfi.148.1549676877857;
+        Fri, 08 Feb 2019 17:47:57 -0800 (PST)
+Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
+        by smtp.googlemail.com with ESMTPSA id p67sm4305393pfg.44.2019.02.08.17.47.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 17:47:57 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
+        IMX), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding matrices
+Date:   Fri,  8 Feb 2019 17:47:45 -0800
+Message-Id: <20190209014748.10427-2-slongerbeam@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190209014748.10427-1-slongerbeam@gmail.com>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> You touched powerpc in the previous patch but not this one.
->
-> That's because we use the asm-generic version I assume.
+The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
+coefficients, so rename them to indicate that. And add some comments
+to make clear these are BT.601 coefficients encoding between YUV limited
+range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
+matrix, so rename to ic_csc_identity. No functional changes.
 
-That is correct.
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+---
+Changes in v2:
+- rename ic_csc_rgb2rgb matrix to ic_csc_identity.
+---
+ drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-> Would be good to mention in the change log though to avoid any confusion.
+diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+index 594c3cbc8291..3ef61f0b509b 100644
+--- a/drivers/gpu/ipu-v3/ipu-ic.c
++++ b/drivers/gpu/ipu-v3/ipu-ic.c
+@@ -183,11 +183,13 @@ struct ic_csc_params {
+ };
+ 
+ /*
++ * BT.601 encoding from RGB full range to YUV limited range:
++ *
+  * Y = R *  .299 + G *  .587 + B *  .114;
+  * U = R * -.169 + G * -.332 + B *  .500 + 128.;
+  * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
+  */
+-static const struct ic_csc_params ic_csc_rgb2ycbcr = {
++static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
+ 	.coeff = {
+ 		{ 77, 150, 29 },
+ 		{ 469, 427, 128 },
+@@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+ 	.scale = 1,
+ };
+ 
+-/* transparent RGB->RGB matrix for graphics combining */
+-static const struct ic_csc_params ic_csc_rgb2rgb = {
++/*
++ * identity matrix, used for transparent RGB->RGB graphics
++ * combining.
++ */
++static const struct ic_csc_params ic_csc_identity = {
+ 	.coeff = {
+ 		{ 128, 0, 0 },
+ 		{ 0, 128, 0 },
+@@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
+ };
+ 
+ /*
++ * Inverse BT.601 encoding from YUV limited range to RGB full range:
++ *
+  * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
+  * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
+  * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
+  */
+-static const struct ic_csc_params ic_csc_ycbcr2rgb = {
++static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+ 	.coeff = {
+ 		{ 149, 0, 204 },
+ 		{ 149, 462, 408 },
+@@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
+ 		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
+ 
+ 	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
+-		params = &ic_csc_ycbcr2rgb;
++		params = &ic_csc_ycbcr2rgb_bt601;
+ 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
+-		params = &ic_csc_rgb2ycbcr;
++		params = &ic_csc_rgb2ycbcr_bt601;
+ 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+-		params = &ic_csc_rgb2rgb;
++		params = &ic_csc_identity;
+ 	else {
+ 		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
+ 		return -EINVAL;
+-- 
+2.17.1
 
-I'm not sure how to do that now. It looks like the series has already
-been applied to net-next with a couple of merge conflicts fixed.
-
--Deepa
