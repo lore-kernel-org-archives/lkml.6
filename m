@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1F8C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07C7C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D4722192D
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 792CB2192D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738141;
-	bh=YhIMmOSwti1zPESoOl0fTvV5sFCRMp9I5uuDvqzkyWE=;
+	s=default; t=1549738145;
+	bh=Kzj2qF6PejyI4uKCWP4oKeQSSAMvGqgOB29qTWwE1S8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QEzLEZSyyY+3QiDgoOfxzfNDBvU48nyBBXoHqVn1T+zJyO4JojQw6VJuG7U+dHmMW
-	 5KvfWRafEoCcGpeenzy2FTyOLeH5BFQg8krFaANsoaywBmeedVXPuBLY+DR7o9z4JK
-	 D9ixLV1RFUedexz0tIFGPpB0il0dCrnH8JXhwoIQ=
+	b=hjpiS5XiRwbpj9fN1sOLtPhTLcFmuPrkfPlvC2WXpZrqH8Km3nsfOAlVOc4A2v5RR
+	 UIt7kgrgbiYw28eiRGOIfyyGkiPaHqLpWFfg7HxEl7hgueRu5lFwsfLNnaWRfshMzm
+	 ecu4JBI5W3qeel1/ivWdVgW+DVulwOCMzgxwHIVY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbfBISs7 (ORCPT
+        id S1727954AbfBIStE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:49:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727877AbfBISs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:56 -0500
+        id S1727923AbfBIStA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 090AD20821;
-        Sat,  9 Feb 2019 18:48:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8592621916;
+        Sat,  9 Feb 2019 18:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738135;
-        bh=YhIMmOSwti1zPESoOl0fTvV5sFCRMp9I5uuDvqzkyWE=;
+        s=default; t=1549738140;
+        bh=Kzj2qF6PejyI4uKCWP4oKeQSSAMvGqgOB29qTWwE1S8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uPPFy3GaqilZ+HbOHz1V6Zw/MdJ/pSQrO5DY5FfpDu4P/PazcROjdobMi/hDQU3In
-         kvjLhFyJVPJ0D1xdF5yV+BdcAX9oRhfnhNbr1/O/55uDnNW9/Ij5Op5xGec994L8u+
-         D+De9PDtC9KxSkeTqjNWAvmom3CmkkhLH2detKAk=
+        b=VClmYRe13d5wunqyXKn97hNRNfELYRwKWTWopZ9fskto//6pMSmrr+tJYImNxKSVD
+         TQCReP8zeeGRcV6VYdLa+pAQ7+NTAOKSkIjaO71dORb4edfqWrSb+tcO8rqXWzOvjB
+         gzYKNBuQENu2RwytnGDist+7O3rcBzGeoaRKpiWA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aurelien Jarno <aurelien@aurel32.net>,
-        Palmer Dabbelt <palmer@sifive.com>,
+Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 05/28] tools uapi: fix RISC-V 64-bit support
-Date:   Sat,  9 Feb 2019 13:48:13 -0500
-Message-Id: <20190209184840.126418-5-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 09/28] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
+Date:   Sat,  9 Feb 2019 13:48:17 -0500
+Message-Id: <20190209184840.126418-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -58,82 +58,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aurelien Jarno <aurelien@aurel32.net>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit d0df00e30e4bf9bc27ddbd092ad683ff6121b360 ]
+[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
 
-The BPF library is not built on 64-bit RISC-V, as the BPF feature is
-not detected. Looking more in details, feature/test-bpf.c fails to build
-with the following error:
+DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
+Add these.
 
-| In file included from /tmp/linux-4.19.12/tools/include/uapi/asm/bitsperlong.h:17,
-|                  from /tmp/linux-4.19.12/tools/include/uapi/asm-generic/unistd.h:2,
-|                  from /usr/include/riscv64-linux-gnu/asm/unistd.h:1,
-|                  from test-bpf.c:2:
-| /tmp/linux-4.19.12/tools/include/asm-generic/bitsperlong.h:14:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
-|  #error Inconsistent word size. Check asm/bitsperlong.h
-|   ^~~~~
-
-The UAPI from the tools directory is missing RISC-V support, therefore
-bitsperlong.h from asm-generic is used, defaulting to 32 bits.
-
-Fix that by adding tools/arch/riscv/include/uapi/asm/bitsperlong.h as
-a copy of arch/riscv/include/uapi/asm/bitsperlong.h and by updating
-tools/include/uapi/asm/bitsperlong.h.
-
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../arch/riscv/include/uapi/asm/bitsperlong.h | 25 +++++++++++++++++++
- tools/include/uapi/asm/bitsperlong.h          |  2 ++
- 2 files changed, 27 insertions(+)
- create mode 100644 tools/arch/riscv/include/uapi/asm/bitsperlong.h
+ drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/tools/arch/riscv/include/uapi/asm/bitsperlong.h b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
-new file mode 100644
-index 000000000000..0b3cb52fd29d
---- /dev/null
-+++ b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Copyright (C) 2012 ARM Ltd.
-+ * Copyright (C) 2015 Regents of the University of California
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 29a7e33e8ae0..5f0a666db2fd 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -142,6 +142,8 @@
+ #define DP0_LTLOOPCTRL		0x06d8
+ #define DP0_SNKLTCTRL		0x06e4
+ 
++#define DP1_SRCCTRL		0x07a0
 +
-+#ifndef _UAPI_ASM_RISCV_BITSPERLONG_H
-+#define _UAPI_ASM_RISCV_BITSPERLONG_H
+ /* PHY */
+ #define DP_PHY_CTRL		0x0800
+ #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
+@@ -150,6 +152,7 @@
+ #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
+ #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
+ #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
++#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
+ #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
+ #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
+ 
+@@ -564,7 +567,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
+ 
+-	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
++	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
+ 
+ 	/*
+ 	 * Initially PLLs are in bypass. Force PLL parameter update,
+@@ -834,7 +837,7 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
+ 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
+ 	/* from excel file - DP1_SrcCtrl */
+-	tc_write(0x07a0, 0x00003083);
++	tc_write(DP1_SRCCTRL, 0x00003083);
+ 
+ 	rate = clk_get_rate(tc->refclk);
+ 	switch (rate) {
+@@ -855,8 +858,9 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 	}
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
 +
-+#define __BITS_PER_LONG (__SIZEOF_POINTER__ * 8)
-+
-+#include <asm-generic/bitsperlong.h>
-+
-+#endif /* _UAPI_ASM_RISCV_BITSPERLONG_H */
-diff --git a/tools/include/uapi/asm/bitsperlong.h b/tools/include/uapi/asm/bitsperlong.h
-index 8dd6aefdafa4..fd92ce8388fc 100644
---- a/tools/include/uapi/asm/bitsperlong.h
-+++ b/tools/include/uapi/asm/bitsperlong.h
-@@ -13,6 +13,8 @@
- #include "../../arch/mips/include/uapi/asm/bitsperlong.h"
- #elif defined(__ia64__)
- #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
-+#elif defined(__riscv)
-+#include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
- #else
- #include <asm-generic/bitsperlong.h>
- #endif
+ 	/* Setup Main Link */
+-	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
++	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
+ 	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
+ 	msleep(100);
+ 
 -- 
 2.19.1
 
