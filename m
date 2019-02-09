@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F21C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25CFC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F207C20823
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE0F120643
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738620;
-	bh=usF7bQ3zN4VSY0Qbhe5+9OumbZ1jw9ho1p+MeIhxWtY=;
+	s=default; t=1549738628;
+	bh=qW+z8MhGd6bLcU4YlmTzmPD0Dg8jVyNexTCi9Tj9yZE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ipbhrnZjyzBJBqzj1HHPQK7Fv+8UnefEhqigZ2O0w+nRiBYp0ekr7KVmu9SJCYgk3
-	 X5WJEiIH7yM76ngountXXzD1l4jaVOZOh2e+awbf6co47dAc964nRor/PDes2jU6Iy
-	 PToLguT1IZac84VxM4hWCZ7aDRB3f76YL0ZzcEtc=
+	b=1H3zdo10+Cw3pqU/QQIrrgmSek1tsjpP68Yfm1gQksiDzxMT6sMR+VrObErvxX8Bv
+	 9zjiNsIsXagsOSnIxrgYBxOsjgCY2FL1xITzHmk8gu9GxmAmkh66hstFnD3LmXMdBl
+	 vq9YozbDP72i96rHIVKruY8Suye0GDmH9Y/hyAdg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbfBIS46 (ORCPT
+        id S1727884AbfBIS5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:56:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60558 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:57:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727424AbfBISrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:47:51 -0500
+        id S1727300AbfBISru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:47:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D76021916;
-        Sat,  9 Feb 2019 18:47:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80DB921929;
+        Sat,  9 Feb 2019 18:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738071;
-        bh=usF7bQ3zN4VSY0Qbhe5+9OumbZ1jw9ho1p+MeIhxWtY=;
+        s=default; t=1549738069;
+        bh=qW+z8MhGd6bLcU4YlmTzmPD0Dg8jVyNexTCi9Tj9yZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KWbWQ/5yqOzbbne089tKdCyj/en7sz/TWX77M5Ryu9vhRBRU8MpR+Mc27yC20WijY
-         j5YKjq8hkjsOjMLxnBrrGZwmlHMGaSKetcrHVy0UpBQ+eihlOBkIvhQBdWyHYDnzy5
-         OgqHdtnMnEiTzgPlRRmRn5CG185Ix7tzjN6N4W9M=
+        b=AbNJVBU3DhPIgfUWraBpCDm7XcCTSI1DD3+mntcDkZH3b9Ggk4bIoys70L15KP4j4
+         tRGILSaBexAO297Hufpm0MX1pgAemynzfYrOV73mV0/2nDlBAcl9K8CJu46wJo9ZnX
+         cBLmhGMJMI9n4yMcCtKe9EB6FKLQCD7VwjSsdEEo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 15/42] drm/bridge: tc358767: add bus flags
-Date:   Sat,  9 Feb 2019 13:47:07 -0500
-Message-Id: <20190209184734.125935-15-sashal@kernel.org>
+Cc:     Guo Ren <ren_guo@c-sky.com>, Lu Baoquan <lu.baoquan@intellif.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 13/42] irqchip/csky: fixup handle_irq_perbit break irq
+Date:   Sat,  9 Feb 2019 13:47:05 -0500
+Message-Id: <20190209184734.125935-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -58,40 +56,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Guo Ren <ren_guo@c-sky.com>
 
-[ Upstream commit 4842379cbe6e851de914a7132f76f4e200b9a98b ]
+[ Upstream commit 56752b21755aef598709d143684cb363db98a7d2 ]
 
-tc358767 driver does not set DRM bus_flags, even if it does configures
-the polarity settings into its registers. This means that the DPI source
-can't configure the polarities correctly.
+The handle_irq_perbit function loop every bit in hwirq local variable.
 
-Add sync flags accordingly.
+handle_irq_perbit(hwirq) {
+  for_everyt_bit_in(hwirq) {
+	handle_domain_irq()
+		->irq_exit()
+		->invoke_softirq()
+		->__do_softirq()
+		->local_irq_enable() // Here will cause new interrupt.
+  }
+}
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-2-tomi.valkeinen@ti.com
+When new interrupt coming at local_irq_enable, it will finish another
+interrupt handler and pull down the interrupt source. But hwirq is the
+local variable for handle_irq_perbit(), it can't get new interrupt
+controller pending reg status. So we need update hwirq with pending reg
+in every loop.
+
+Also change write_relax to writel could prevent stw from fast retire.
+When local_irq is enabled, intc regs is really set-in.
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Lu Baoquan <lu.baoquan@intellif.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/irqchip/irq-csky-apb-intc.c | 77 ++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 8e28e738cb52..29a7e33e8ae0 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -1195,6 +1195,10 @@ static int tc_bridge_attach(struct drm_bridge *bridge)
+diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
+index 2543baba8b1f..5a2ec43b7ddd 100644
+--- a/drivers/irqchip/irq-csky-apb-intc.c
++++ b/drivers/irqchip/irq-csky-apb-intc.c
+@@ -95,7 +95,7 @@ static inline void setup_irq_channel(u32 magic, void __iomem *reg_addr)
  
- 	drm_display_info_set_bus_formats(&tc->connector.display_info,
- 					 &bus_format, 1);
-+	tc->connector.display_info.bus_flags =
-+		DRM_BUS_FLAG_DE_HIGH |
-+		DRM_BUS_FLAG_PIXDATA_NEGEDGE |
-+		DRM_BUS_FLAG_SYNC_NEGEDGE;
- 	drm_connector_attach_encoder(&tc->connector, tc->bridge.encoder);
+ 	/* Setup 64 channel slots */
+ 	for (i = 0; i < INTC_IRQS; i += 4)
+-		writel_relaxed(build_channel_val(i, magic), reg_addr + i);
++		writel(build_channel_val(i, magic), reg_addr + i);
+ }
  
- 	return 0;
+ static int __init
+@@ -135,16 +135,10 @@ ck_intc_init_comm(struct device_node *node, struct device_node *parent)
+ static inline bool handle_irq_perbit(struct pt_regs *regs, u32 hwirq,
+ 				     u32 irq_base)
+ {
+-	u32 irq;
+-
+ 	if (hwirq == 0)
+ 		return 0;
+ 
+-	while (hwirq) {
+-		irq = __ffs(hwirq);
+-		hwirq &= ~BIT(irq);
+-		handle_domain_irq(root_domain, irq_base + irq, regs);
+-	}
++	handle_domain_irq(root_domain, irq_base + __fls(hwirq), regs);
+ 
+ 	return 1;
+ }
+@@ -154,12 +148,16 @@ static void gx_irq_handler(struct pt_regs *regs)
+ {
+ 	bool ret;
+ 
+-	do {
+-		ret  = handle_irq_perbit(regs,
+-				readl_relaxed(reg_base + GX_INTC_PEN31_00), 0);
+-		ret |= handle_irq_perbit(regs,
+-				readl_relaxed(reg_base + GX_INTC_PEN63_32), 32);
+-	} while (ret);
++retry:
++	ret = handle_irq_perbit(regs,
++			readl(reg_base + GX_INTC_PEN63_32), 32);
++	if (ret)
++		goto retry;
++
++	ret = handle_irq_perbit(regs,
++			readl(reg_base + GX_INTC_PEN31_00), 0);
++	if (ret)
++		goto retry;
+ }
+ 
+ static int __init
+@@ -174,14 +172,14 @@ gx_intc_init(struct device_node *node, struct device_node *parent)
+ 	/*
+ 	 * Initial enable reg to disable all interrupts
+ 	 */
+-	writel_relaxed(0x0, reg_base + GX_INTC_NEN31_00);
+-	writel_relaxed(0x0, reg_base + GX_INTC_NEN63_32);
++	writel(0x0, reg_base + GX_INTC_NEN31_00);
++	writel(0x0, reg_base + GX_INTC_NEN63_32);
+ 
+ 	/*
+ 	 * Initial mask reg with all unmasked, because we only use enalbe reg
+ 	 */
+-	writel_relaxed(0x0, reg_base + GX_INTC_NMASK31_00);
+-	writel_relaxed(0x0, reg_base + GX_INTC_NMASK63_32);
++	writel(0x0, reg_base + GX_INTC_NMASK31_00);
++	writel(0x0, reg_base + GX_INTC_NMASK63_32);
+ 
+ 	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
+ 
+@@ -204,20 +202,29 @@ static void ck_irq_handler(struct pt_regs *regs)
+ 	void __iomem *reg_pen_lo = reg_base + CK_INTC_PEN31_00;
+ 	void __iomem *reg_pen_hi = reg_base + CK_INTC_PEN63_32;
+ 
+-	do {
+-		/* handle 0 - 31 irqs */
+-		ret  = handle_irq_perbit(regs, readl_relaxed(reg_pen_lo), 0);
+-		ret |= handle_irq_perbit(regs, readl_relaxed(reg_pen_hi), 32);
++retry:
++	/* handle 0 - 63 irqs */
++	ret = handle_irq_perbit(regs, readl(reg_pen_hi), 32);
++	if (ret)
++		goto retry;
+ 
+-		if (nr_irq == INTC_IRQS)
+-			continue;
++	ret = handle_irq_perbit(regs, readl(reg_pen_lo), 0);
++	if (ret)
++		goto retry;
++
++	if (nr_irq == INTC_IRQS)
++		return;
+ 
+-		/* handle 64 - 127 irqs */
+-		ret |= handle_irq_perbit(regs,
+-			readl_relaxed(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
+-		ret |= handle_irq_perbit(regs,
+-			readl_relaxed(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
+-	} while (ret);
++	/* handle 64 - 127 irqs */
++	ret = handle_irq_perbit(regs,
++			readl(reg_pen_hi + CK_INTC_DUAL_BASE), 96);
++	if (ret)
++		goto retry;
++
++	ret = handle_irq_perbit(regs,
++			readl(reg_pen_lo + CK_INTC_DUAL_BASE), 64);
++	if (ret)
++		goto retry;
+ }
+ 
+ static int __init
+@@ -230,11 +237,11 @@ ck_intc_init(struct device_node *node, struct device_node *parent)
+ 		return ret;
+ 
+ 	/* Initial enable reg to disable all interrupts */
+-	writel_relaxed(0, reg_base + CK_INTC_NEN31_00);
+-	writel_relaxed(0, reg_base + CK_INTC_NEN63_32);
++	writel(0, reg_base + CK_INTC_NEN31_00);
++	writel(0, reg_base + CK_INTC_NEN63_32);
+ 
+ 	/* Enable irq intc */
+-	writel_relaxed(BIT(31), reg_base + CK_INTC_ICR);
++	writel(BIT(31), reg_base + CK_INTC_ICR);
+ 
+ 	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
+ 	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
+@@ -260,8 +267,8 @@ ck_dual_intc_init(struct device_node *node, struct device_node *parent)
+ 		return ret;
+ 
+ 	/* Initial enable reg to disable all interrupts */
+-	writel_relaxed(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
+-	writel_relaxed(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
++	writel(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
++	writel(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
+ 
+ 	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
+ 	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
 -- 
 2.19.1
 
