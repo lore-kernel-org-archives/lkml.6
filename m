@@ -2,109 +2,80 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8A9C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9C5C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8674B20857
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:07:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=digidescorp.com header.i=@digidescorp.com header.b="UWdvB8f7"
+	by mail.kernel.org (Postfix) with ESMTP id AC3FC20869
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBIEHC (ORCPT
+        id S1726836AbfBIEY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 23:07:02 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34375 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfBIEHC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 23:07:02 -0500
-Received: by mail-it1-f195.google.com with SMTP id x124so10502194itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 20:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=7LZNbZgGlOZ24T8n6zWfi9+M16V+/eb3pxq0kNbN8/k=;
-        b=UWdvB8f7wXTs1fxDk9GEu9D3xPwazb72vEcADoosrXbBjt7kilbo3HcPxMIfv3qeoV
-         n0Tk8UlLKeU53pHHkE6EleQGtMIJbioSoWgCm3QRT/Ok9J23TGuwtlyLL3n+rEILixgn
-         SqzUexU4HI5nfulR7tZ3AnIKLNFpfU9MDI+EA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=7LZNbZgGlOZ24T8n6zWfi9+M16V+/eb3pxq0kNbN8/k=;
-        b=PQGcwRCc5HGXq+ix0CBGFysz/4zLUfPQ8FY5rJGZuSqXz8SjXUwIgprdHYiC4j1H6V
-         LM1+YEVoMwY7RroYrCnmQON5Wn8tlle6eOBIL61zq1YVqna0d/IJOX5446uo0w77LTNb
-         8wFo0pihUTKywlBqjSQl//MqLL6PkXcpUoNOoKlUalleJU0equ+9chwqkaQKEer4ULvl
-         pG3CWlolSolnQhf/sQSXiQpKLoMVFvck9tDV0lYP0JY9C30QoG5o1LBmljSugQR40rsu
-         S5FPtY/QhwB5dpFyMQQBIyRbIn3eSoIbFzykzRcg+GWGZhbPKO/vVJKcqajuF2z1n0Sp
-         lpgQ==
-X-Gm-Message-State: AHQUAuauuouevQG3xABrEQmV4xamfUzKesJ2fHw3fJsBlzLHRF9N4atK
-        TyN6hve2w6xtPyWPvJ6d+bNSnrvCJrk=
-X-Google-Smtp-Source: AHgI3Ib3W0pOo9A6M7MIGf4zrONLxbmJL5OVNBpvw7wmCa1cq7c5HiU9urH2TcJxpxIiLzNRFiaTOQ==
-X-Received: by 2002:a02:5b05:: with SMTP id g5mr14160817jab.84.1549685221516;
-        Fri, 08 Feb 2019 20:07:01 -0800 (PST)
-Received: from [10.10.2.64] (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
-        by smtp.googlemail.com with ESMTPSA id q12sm295259ioi.54.2019.02.08.20.07.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 20:07:00 -0800 (PST)
-Subject: Re: [PATCH 0/2] udf: Fix corrupt on-disk integrity descriptor
- following sync()
-From:   Steve Magnani <steve.magnani@digidescorp.com>
-To:     jack@suse.com
-Cc:     linux-kernel@vger.kernel.org
-References: <20190208173455.20151-1-steve@digidescorp.com>
-Message-ID: <7ce9c657-efba-5dbb-441d-acb00a13044b@digidescorp.com>
-Date:   Fri, 8 Feb 2019 22:06:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 23:24:58 -0500
+Received: from cloud.peff.net ([104.130.231.41]:38384 "HELO cloud.peff.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1726699AbfBIEY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 23:24:58 -0500
+Received: (qmail 17445 invoked by uid 109); 9 Feb 2019 04:24:58 -0000
+Received: from Unknown (HELO peff.net) (10.0.1.2)
+ by cloud.peff.net (qpsmtpd/0.94) with SMTP; Sat, 09 Feb 2019 04:24:58 +0000
+Authentication-Results: cloud.peff.net; auth=none
+Received: (qmail 29462 invoked by uid 111); 9 Feb 2019 04:25:07 -0000
+Received: from sigill.intra.peff.net (HELO sigill.intra.peff.net) (10.0.0.7)
+ by peff.net (qpsmtpd/0.94) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) SMTP; Fri, 08 Feb 2019 23:25:07 -0500
+Authentication-Results: peff.net; auth=none
+Received: by sigill.intra.peff.net (sSMTP sendmail emulation); Fri, 08 Feb 2019 23:24:56 -0500
+Date:   Fri, 8 Feb 2019 23:24:56 -0500
+From:   Jeff King <peff@peff.net>
+To:     "Randall S. Becker" <rsbecker@nexbridge.com>
+Cc:     "'brian m. carlson'" <sandals@crustytoothpaste.net>,
+        'Junio C Hamano' <gitster@pobox.com>, git@vger.kernel.org,
+        'Linux Kernel' <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+Subject: Re: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+Message-ID: <20190209042456.GB18286@sigill.intra.peff.net>
+References: <001101d4bfd6$b9430230$2bc90690$@nexbridge.com>
+ <20190208180321.GB27673@sigill.intra.peff.net>
+ <002501d4bfde$b26e6050$174b20f0$@nexbridge.com>
+ <20190208191519.GF27673@sigill.intra.peff.net>
+ <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com>
+ <20190208193157.GA30952@sigill.intra.peff.net>
+ <20190208220714.GG11927@genre.crustytoothpaste.net>
+ <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com>
+ <20190208223512.GA2135@sigill.intra.peff.net>
+ <006601d4c001$2de3a160$89aae420$@nexbridge.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208173455.20151-1-steve@digidescorp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <006601d4c001$2de3a160$89aae420$@nexbridge.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 11:34 AM, Steve Magnani wrote:
-> In cases where the next unique ID or file/directory count of the
-> in-core Logical Volume Integrity Descriptor have been updated,
-> a sync() causes a (corrupt) LVID with a stale CRC to be written to disk.
->
-> Ordinarily, this is corrected by an update of the on-disk LVID that occurs
-> when the filesystem is unmounted. However, if power is lost or the
-> filesystem resides on a device that is surprise-removed, the corrupt LVID
-> remains and can complicate later remounting or fsck/chkdsk.
+On Fri, Feb 08, 2019 at 05:53:53PM -0500, Randall S. Becker wrote:
 
-"Complicate later remounting" turns out to be an understatement.
-Actually it seems that this one event can trigger more silent corruption
-of the filesystem on future remounts.
+> > diff --git a/t/test-lib-functions.sh b/t/test-lib-functions.sh index
+> > 92cf8f812c..4afab14431 100644
+> > --- a/t/test-lib-functions.sh
+> > +++ b/t/test-lib-functions.sh
+> > @@ -1302,3 +1302,8 @@ test_set_port () {
+> >  	port=$(($port + ${GIT_TEST_STRESS_JOB_NR:-0}))
+> >  	eval $var=$port
+> >  }
+> > +
+> > +# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes).
+> > +gen_zero_bytes () {
+> > +	perl -e 'print "\0" x $ARGV[0]' "$@"
+> > +}
+> 
+> This function does work on platform, so it's good.
 
-The driver will mount without complaint a filesystem that lacks a valid LVID.
-But in this scenario, every time lvid_get_unique_id() is called to generate
-an ID for a new inode or link, it returns zero. It appears that callers
-happily assign this zero to all new inodes or links, with no indication to
-the user or in the syslog that a problem is brewing.
+Great. Since it sounds like you're preparing some patches to deal with
+/dev/zero elsewhere, do you want to wrap it up in a patch as part of
+that?
 
-I lost the entire contents of a flash disk to what was probably an
-instance of this kind of corruption, when I told Windows chkdsk to
-repair it.
-
-I'll try to solve that in a separate followon patchset.
-The simplest solution I can think of is to force read-only mount when
-no LVID is available.
-
-Regards,
-------------------------------------------------------------------------
-  Steven J. Magnani               "I claim this network for MARS!
-  www.digidescorp.com              Earthling, return my space modulator!"
-
-  #include <standard.disclaimer>
-
+-Peff
