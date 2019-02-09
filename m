@@ -2,151 +2,135 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B51C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E8FC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C42020643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738488;
-	bh=smWLbY9mC4BvFwANtQ3WSWf9MCG3mYG/gn+P7zD+qSU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X5E/usdxlk10V/RXOCa6hzl+EzSAEyGVYW1aWtiZeQnUi8t/faPI5IWrTQUaVYVVT
-	 Q3GOmpSVL8Dzahjt6UJ4w6xeF8UeibSJtxYmtpZsiihSeh65NN14bILk+3ZtSBwpMU
-	 xbLe+yFrj1u0XTC590PGHG/gF+675ppFOsLLqkqI=
+	by mail.kernel.org (Postfix) with ESMTP id C342220823
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SbHWvxty"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbfBISyq (ORCPT
+        id S1728402AbfBISyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727911AbfBISs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:59 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4771D21919;
-        Sat,  9 Feb 2019 18:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738138;
-        bh=smWLbY9mC4BvFwANtQ3WSWf9MCG3mYG/gn+P7zD+qSU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sAuY2+oBGv1ThDpWz82Z014r4XYlJZC1Pc6cQatYfTY1pbur8UAEttJTX2oYmZ60i
-         2OX0aO68o9Aki05ebRVNzwx/hPNh2awBxDWf1tV0ivtArtNQW1zkrO8d+pcZVijJyk
-         mNMuwPSR8edexPKkPQBihyPWZqz1BJIOBX6lxUes=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 07/28] cpufreq: check if policy is inactive early in __cpufreq_get()
-Date:   Sat,  9 Feb 2019 13:48:15 -0500
-Message-Id: <20190209184840.126418-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
-References: <20190209184840.126418-1-sashal@kernel.org>
+        Sat, 9 Feb 2019 13:54:51 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46758 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728148AbfBISyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:54:47 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x25-v6so2042766ljj.13
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 10:54:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YYxAwFPICt9TibMfenX6wMGJAfvnFLVL6l1OJ0fn0cc=;
+        b=SbHWvxtyAersQBxhISFuLW5kA2E+zARouATr37N2I26NZTFMnKNqBalg3qb3xeauCs
+         dSr8X+iNVAXFRfZGpR379NIfDF2H6dXTKSzTeylxKrhCJFJVktLdPioKRHLLVTsKjOE+
+         FUlGvlEHZ7J2emYKs1c/uH4pMlGSXH9Uezqec=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YYxAwFPICt9TibMfenX6wMGJAfvnFLVL6l1OJ0fn0cc=;
+        b=I9gOYF+c2ndwGdTsOtPVMEkqpsZeDpuv9nH8ZPT1N3cZ9BEX5yIsj/9K3b21USvces
+         TmMzkxoRAEyBic7Hx/9ydHI/v0n3LdwgJyuDBwr9I2vOjeoVpUmCuVjYSDjU6jsT9UQ4
+         UvQTi7MT8XHOpKTGj4zWKVKweiNHV8zD+pVsMZDSdrYn1ypRVWM27dYMBqGvjkJSEeXh
+         4UcBrZMejuSQ8Lqwjesl0frPxefISjiSJuu986NzyZVRGVa4ilEq6hW/obefVkg5EWND
+         1e/BRKmK4QcFGO13CD/laR+mOfkSUalrkmvtbjnNTqUFmLKRstsbwgSlx+JOTn3POtQI
+         /wOA==
+X-Gm-Message-State: AHQUAualSoWDTDE2hqNZ/fc4S8VScuvCftSSB4bCIYQA2S8ovqO/UXCU
+        Lu3XN/OTtRf5tB6KZ9M4ZTxQUDhBgjM=
+X-Google-Smtp-Source: AHgI3IYp3t9iaaovulziUyFWprFPc7Z8VBPLdEN6XHeloL0i7KUaw2cbKU1eZOWXsxTUNaZfytta2w==
+X-Received: by 2002:a2e:7011:: with SMTP id l17-v6mr17056821ljc.147.1549738484907;
+        Sat, 09 Feb 2019 10:54:44 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id e132sm1237646lfg.22.2019.02.09.10.54.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 09 Feb 2019 10:54:43 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id r10-v6so5692201ljj.4
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 10:54:43 -0800 (PST)
+X-Received: by 2002:a2e:3509:: with SMTP id z9-v6mr4686247ljz.54.1549738482966;
+ Sat, 09 Feb 2019 10:54:42 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <39ae9195-cf8f-01fe-df83-38a9a4c52e48@eikelenboom.it>
+In-Reply-To: <39ae9195-cf8f-01fe-df83-38a9a4c52e48@eikelenboom.it>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 9 Feb 2019 10:54:27 -0800
+X-Gmail-Original-Message-ID: <CAHk-=winXFRv0KUa332spZx0yaDKMAbdKSeAcBATtacACLgm0A@mail.gmail.com>
+Message-ID: <CAHk-=winXFRv0KUa332spZx0yaDKMAbdKSeAcBATtacACLgm0A@mail.gmail.com>
+Subject: Re: Linux 5.0 regression: BUG: unable to handle kernel paging request
+ at ffff888023e26778
+To:     Sander Eikelenboom <linux@eikelenboom.it>
+Cc:     Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+On Sat, Feb 9, 2019 at 12:24 AM Sander Eikelenboom <linux@eikelenboom.it> wrote:
+>
+> I haven't got a reproducer so i might be hard to hit it again,
+> system is AMD and this is from the host kernel running under
+> the Xen hypervisor might it matter.
 
-[ Upstream commit 2f66196208c98b3d1b4294edffb2c5a8197be899 ]
+I think this is a Xen bug.
 
-cpuinfo_cur_freq gets current CPU frequency as detected by hardware
-while scaling_cur_freq last known CPU frequency. Some platforms may not
-allow checking the CPU frequency of an offline CPU or the associated
-resources may have been released via cpufreq_exit when the CPU gets
-offlined, in which case the policy would have been invalidated already.
-If we attempt to get current frequency from the hardware, it may result
-in hang or crash.
+In particular, there's a few poison values in there that look like
+zen. Like this:
 
-For example on Juno, I see:
+   R10: deadbeefdeadf00d
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000188
-[0000000000000188] pgd=0000000000000000
-Internal error: Oops: 96000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 5 PID: 4202 Comm: cat Not tainted 4.20.0-08251-ga0f2c0318a15-dirty #87
-Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform
-pstate: 40000005 (nZcv daif -PAN -UAO)
-pc : scmi_cpufreq_get_rate+0x34/0xb0
-lr : scmi_cpufreq_get_rate+0x34/0xb0
-Call trace:
- scmi_cpufreq_get_rate+0x34/0xb0
- __cpufreq_get+0x34/0xc0
- show_cpuinfo_cur_freq+0x24/0x78
- show+0x40/0x60
- sysfs_kf_seq_show+0xc0/0x148
- kernfs_seq_show+0x44/0x50
- seq_read+0xd4/0x480
- kernfs_fop_read+0x15c/0x208
- __vfs_read+0x60/0x188
- vfs_read+0x94/0x150
- ksys_read+0x6c/0xd8
- __arm64_sys_read+0x24/0x30
- el0_svc_common+0x78/0x100
- el0_svc_handler+0x38/0x78
- el0_svc+0x8/0xc
----[ end trace 3d1024e58f77f6b2 ]---
+looks like a special poison value that is from Xen itself.
 
-So fix the issue by checking if the policy is invalid early in
-__cpufreq_get before attempting to get the current frequency.
+It looks like the oops is around the TLB flushing code, looking at the
+code it's the
 
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+        arch_leave_lazy_mmu_mode();
+        if (force_flush)
+                flush_tlb_range(vma, old_end - len, old_end);
+        if (new_ptl != old_ptl)
+                spin_unlock(new_ptl);
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/cpufreq/cpufreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+sequence in move_page_tables. The oopsing code sequence is
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index f53fb41efb7b..b100260b6ed2 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1530,17 +1530,16 @@ static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
- {
- 	unsigned int ret_freq = 0;
- 
--	if (!cpufreq_driver->get)
-+	if (unlikely(policy_is_inactive(policy)) || !cpufreq_driver->get)
- 		return ret_freq;
- 
- 	ret_freq = cpufreq_driver->get(policy->cpu);
- 
- 	/*
--	 * Updating inactive policies is invalid, so avoid doing that.  Also
--	 * if fast frequency switching is used with the given policy, the check
-+	 * If fast frequency switching is used with the given policy, the check
- 	 * against policy->cur is pointless, so skip it in that case too.
- 	 */
--	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
-+	if (policy->fast_switch_enabled)
- 		return ret_freq;
- 
- 	if (ret_freq && policy->cur &&
-@@ -1569,10 +1568,7 @@ unsigned int cpufreq_get(unsigned int cpu)
- 
- 	if (policy) {
- 		down_read(&policy->rwsem);
--
--		if (!policy_is_inactive(policy))
--			ret_freq = __cpufreq_get(policy);
--
-+		ret_freq = __cpufreq_get(policy);
- 		up_read(&policy->rwsem);
- 
- 		cpufreq_cpu_put(policy);
--- 
-2.19.1
 
+  28:* 48 89 45 00          mov    %rax,0x0(%rbp) <-- trapping instruction
+  2c: 41 f6 46 52 40        testb  $0x40,0x52(%r14)
+
+and that "testb $0x40" instruction that comes after the trapping
+instruction is the
+
+                           ((vma)->vm_flags & VM_HUGETLB)               \
+
+from the flush_tlb_range() macro:
+
+#define flush_tlb_range(vma, start, end)                                \
+        flush_tlb_mm_range((vma)->vm_mm, start, end,                    \
+                           ((vma)->vm_flags & VM_HUGETLB)               \
+                                ? huge_page_shift(hstate_vma(vma))      \
+                                : PAGE_SHIFT, false)
+
+if I read that oops correctly.
+
+I have no idea what that store to 0(%rbp) is for, though - I can't
+line that up with anything I see with my own kernel config.
+
+We *do* have changes to 5.0 in the move_page_tables() code (mremap on
+a pmd level), so I'm cc'ing some of the people involved there, but
+that odd poison value does make me wonder abut Xen issues. When I
+google for that value, all I see is Xen reports (and your report for
+this).
+
+                    Linus
