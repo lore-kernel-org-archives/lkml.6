@@ -2,204 +2,187 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55DDC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD52FC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8955F21773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:20:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUw1+TkV"
+	by mail.kernel.org (Postfix) with ESMTP id 8B19021773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549729306;
+	bh=b+KHT29ZeKLsTBAEvpCqPqqPmSZcaSy2thRyQaseod8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=wJ7uh8GWXNuGHPqvffjuj425uKVaHxkaEUpU/xnnCDjMMR+txC3QGPOs8ozZ8/jIL
+	 k9HQ8H1iogV3lyEOMNSYYn/BcZjQfHcOWopHPjZRjPq9Fa/fpagYBbFvq2AxrMVoYr
+	 z5VUI602zeSWtv4n9M2sB8tJWBuHurOvtEXuth34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfBIQTh (ORCPT
+        id S1727057AbfBIQVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 11:19:37 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44231 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfBIQTh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 11:19:37 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so3092757pfh.11
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 08:19:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fTfTzdWgtBj2OIpypiaEbIqzqSKoyUzZbXVKzgKvFkk=;
-        b=XUw1+TkVqB/B+dNcH/LirnvTUxwW83Gkmn60SxjJJ5J9/ojgw37Q3DS58QwR5DuAYT
-         QYi5UiyaSuIV7tZEyUGYikTz2X+ioAhx2BqJ3NArlwrQvf2ICIRfH38L7ee52cWFP7sQ
-         H81zeV0Z03E5UB/GoK0YTeCyME2jtUuNCtg6i4wCHFhjPQiuirqnJqQWBqucf02ZTFSk
-         SkAsM2+anb33A1arFyLE2GCIj4Vtxb5PlMcaC5SlZOHs8QnESsPx0SLou1II5RskoWQz
-         OEDDciqmvti0zYcPIXgFnRLE/w3c9cJM7cGFx7GU5VIFsBtKu+MRCXDi0UO3T2Gg3DaX
-         s7DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fTfTzdWgtBj2OIpypiaEbIqzqSKoyUzZbXVKzgKvFkk=;
-        b=WaS2Rz4tv8C4zBbPm0wnQqavTZeL6pVwrzez5CTqHZJ+5Es468xOlvKJz43zje9hFe
-         P+CR6mxhXO85y3HAfNPpzgrHXsefoMYZkW7SgX5WbiBwpEOy+XLAIC7CM//Bolboz/Hx
-         aof7a3zKj4+r/aC5UxMwc+tZ1gtjhxG3HF0Pi2zUwogn7cF8wKGZUa8x9MTKOauXbZGL
-         oZ3nXP8CkOQ2sIATzhH/y751tJS27JH+fKng0mzWhb8aDZqt4BUScyF9/Z0PM+rLD2Uw
-         cf5QImQ7qd8wBzySaaxCLSbGW9/BI9lSDgGjjMNP2Bxx/aio0ensMb9hsuc0cud0Q+I8
-         5uag==
-X-Gm-Message-State: AHQUAubCji/bQk8Et86aNUTWWT9n/AE60nH+7K0LHI8W7dGxHgooxrXc
-        W6Fhy6to+TkOE7bHGhTiVSs=
-X-Google-Smtp-Source: AHgI3IaHlVmMtbA13sv0zmqoUQD9WU72duWycaQWdHLQSapGvC1CA/fllhtobMK2d5dvXErxaTmA8w==
-X-Received: by 2002:a63:e516:: with SMTP id r22mr21688823pgh.256.1549729175873;
-        Sat, 09 Feb 2019 08:19:35 -0800 (PST)
-Received: from localhost.localdomain ([104.238.181.70])
-        by smtp.gmail.com with ESMTPSA id u5sm6130005pgp.2.2019.02.09.08.19.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Feb 2019 08:19:34 -0800 (PST)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     rostedt@goodmis.org
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH] tracing: print function names instead of just address
-Date:   Sun, 10 Feb 2019 00:19:19 +0800
-Message-Id: <20190209161919.32350-1-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Sat, 9 Feb 2019 11:21:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726880AbfBIQVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 11:21:41 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D7C621773;
+        Sat,  9 Feb 2019 16:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549729300;
+        bh=b+KHT29ZeKLsTBAEvpCqPqqPmSZcaSy2thRyQaseod8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=yWgd0+UOoHooGSYlqa0T7782h063nHtNFqk3yc9RAF0/PwzvnDG9e9EX+QJrC0MXH
+         Au40D7x4/ywMkPZLWphXxBlBOfLOhpK2bg4UuTXF3JvAQPpIKwvUPwQIZCL3OyN97Y
+         MI16IhG68l7cfteEYPSvhFCEYsdq+g7Ic7Nlge28=
+Date:   Sat, 9 Feb 2019 16:21:33 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <alexandre.torgue@st.com>,
+        <mcoquelin.stm32@gmail.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <vilhelm.gray@gmail.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH 4/4] iio: counter: stm32-lptimer: Add power management
+ support
+Message-ID: <20190209162133.65e6fd93@archlinux>
+In-Reply-To: <1549370429-19116-5-git-send-email-fabrice.gasnier@st.com>
+References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
+        <1549370429-19116-5-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is an example for this change.
+On Tue, 5 Feb 2019 13:40:29 +0100
+Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
 
-$ sudo perf record -e 'ftrace:function' --filter='ip==schedule'
-$ sudo perf report
+> Add suspend/resume PM sleep ops. When going to low power, disable
+> active counter. Only active counter should be resumed: don't touch
+> disabled counter, as it may be used by other LPTimer MFD child driver.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+I think this looks fine.  I'm not totally sure if patches 3,4 are
+separable from 1,2 though so please let me know whether I should take
+these now, or let all 4 go in together via some path?
 
-The output of perf before this patch:
+Thanks,
 
-\# Samples: 100  of event 'ftrace:function'
-\# Event count (approx.): 100
-\#
-\# Overhead  Trace output
-\# ........  ......................................
-\#
-    51.00%   ffffffff81f6aaa0 <-- ffffffff81158e8d
-    29.00%   ffffffff81f6aaa0 <-- ffffffff8116ccb2
-     8.00%   ffffffff81f6aaa0 <-- ffffffff81f6f2ed
-     4.00%   ffffffff81f6aaa0 <-- ffffffff811628db
-     4.00%   ffffffff81f6aaa0 <-- ffffffff81f6ec5b
-     2.00%   ffffffff81f6aaa0 <-- ffffffff81f6f21a
-     1.00%   ffffffff81f6aaa0 <-- ffffffff811b04af
-     1.00%   ffffffff81f6aaa0 <-- ffffffff8143ce17
+Jonathan
 
-After this patch:
-
-\# Samples: 36  of event 'ftrace:function'
-\# Event count (approx.): 36
-\#
-\# Overhead  Trace output
-\# ........  ............................................
-\#
-    38.89%   schedule <-- schedule_hrtimeout_range_clock
-    27.78%   schedule <-- worker_thread
-    13.89%   schedule <-- schedule_timeout
-    11.11%   schedule <-- smpboot_thread_fn
-     5.56%   schedule <-- rcu_gp_kthread
-     2.78%   schedule <-- exit_to_usermode_loop
-
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- kernel/trace/trace_entries.h | 41 +++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 22 deletions(-)
-
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index 06bb2fd9a56c..fc8e97328e54 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -65,7 +65,8 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
- 		__field(	unsigned long,	parent_ip	)
- 	),
- 
--	F_printk(" %lx <-- %lx", __entry->ip, __entry->parent_ip),
-+	F_printk(" %ps <-- %ps",
-+		 (void *)__entry->ip, (void *)__entry->parent_ip),
- 
- 	FILTER_TRACE_FN,
- 
-@@ -83,7 +84,7 @@ FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
- 		__field_desc(	int,		graph_ent,	depth		)
- 	),
- 
--	F_printk("--> %lx (%d)", __entry->func, __entry->depth),
-+	F_printk("--> %ps (%d)", (void *)__entry->func, __entry->depth),
- 
- 	FILTER_OTHER
- );
-@@ -102,8 +103,8 @@ FTRACE_ENTRY_PACKED(funcgraph_exit, ftrace_graph_ret_entry,
- 		__field_desc(	int,		ret,		depth	)
- 	),
- 
--	F_printk("<-- %lx (%d) (start: %llx  end: %llx) over: %d",
--		 __entry->func, __entry->depth,
-+	F_printk("<-- %ps (%d) (start: %llx  end: %llx) over: %d",
-+		 (void *)__entry->func, __entry->depth,
- 		 __entry->calltime, __entry->rettime,
- 		 __entry->depth),
- 
-@@ -167,12 +168,6 @@ FTRACE_ENTRY_DUP(wakeup, ctx_switch_entry,
- 
- #define FTRACE_STACK_ENTRIES	8
- 
--#ifndef CONFIG_64BIT
--# define IP_FMT "%08lx"
--#else
--# define IP_FMT "%016lx"
--#endif
--
- FTRACE_ENTRY(kernel_stack, stack_entry,
- 
- 	TRACE_STACK,
-@@ -182,12 +177,13 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
- 		__dynamic_array(unsigned long,	caller	)
- 	),
- 
--	F_printk("\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n"
--		 "\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n"
--		 "\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n",
--		 __entry->caller[0], __entry->caller[1], __entry->caller[2],
--		 __entry->caller[3], __entry->caller[4], __entry->caller[5],
--		 __entry->caller[6], __entry->caller[7]),
-+	F_printk("\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-+		 "\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-+		 "\t=> %ps\n\t=> %ps\n",
-+		 (void *)__entry->caller[0], (void *)__entry->caller[1],
-+		 (void *)__entry->caller[2], (void *)__entry->caller[3],
-+		 (void *)__entry->caller[4], (void *)__entry->caller[5],
-+		 (void *)__entry->caller[6], (void *)__entry->caller[7]),
- 
- 	FILTER_OTHER
- );
-@@ -201,12 +197,13 @@ FTRACE_ENTRY(user_stack, userstack_entry,
- 		__array(	unsigned long,	caller, FTRACE_STACK_ENTRIES	)
- 	),
- 
--	F_printk("\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n"
--		 "\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n"
--		 "\t=> (" IP_FMT ")\n\t=> (" IP_FMT ")\n",
--		 __entry->caller[0], __entry->caller[1], __entry->caller[2],
--		 __entry->caller[3], __entry->caller[4], __entry->caller[5],
--		 __entry->caller[6], __entry->caller[7]),
-+	F_printk("\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-+		 "\t=> %ps\n\t=> %ps\n\t=> %ps\n"
-+		 "\t=> %ps\n\t=> %ps\n",
-+		 (void *)__entry->caller[0], (void *)__entry->caller[1],
-+		 (void *)__entry->caller[2], (void *)__entry->caller[3],
-+		 (void *)__entry->caller[4], (void *)__entry->caller[5],
-+		 (void *)__entry->caller[6], (void *)__entry->caller[7]),
- 
- 	FILTER_OTHER
- );
--- 
-2.19.1
+> ---
+>  drivers/iio/counter/stm32-lptimer-cnt.c | 55 +++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/iio/counter/stm32-lptimer-cnt.c b/drivers/iio/counter/stm32-lptimer-cnt.c
+> index 42fb8ba..2a49cce 100644
+> --- a/drivers/iio/counter/stm32-lptimer-cnt.c
+> +++ b/drivers/iio/counter/stm32-lptimer-cnt.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/mfd/stm32-lptimer.h>
+>  #include <linux/module.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include <linux/platform_device.h>
+>  
+>  struct stm32_lptim_cnt {
+> @@ -23,6 +24,7 @@ struct stm32_lptim_cnt {
+>  	u32 preset;
+>  	u32 polarity;
+>  	u32 quadrature_mode;
+> +	bool enabled;
+>  };
+>  
+>  static int stm32_lptim_is_enabled(struct stm32_lptim_cnt *priv)
+> @@ -50,6 +52,7 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
+>  
+>  	if (!enable) {
+>  		clk_disable(priv->clk);
+> +		priv->enabled = false;
+>  		return 0;
+>  	}
+>  
+> @@ -79,6 +82,7 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
+>  		regmap_write(priv->regmap, STM32_LPTIM_CR, 0);
+>  		return ret;
+>  	}
+> +	priv->enabled = true;
+>  
+>  	/* Start LP timer in continuous mode */
+>  	return regmap_update_bits(priv->regmap, STM32_LPTIM_CR,
+> @@ -361,6 +365,56 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+>  	return devm_iio_device_register(&pdev->dev, indio_dev);
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static int stm32_lptim_cnt_suspend(struct device *dev)
+> +{
+> +	struct stm32_lptim_cnt *priv = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	/* Only take care of enabled counter: don't disturb other MFD child */
+> +	if (priv->enabled) {
+> +		ret = stm32_lptim_setup(priv, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = stm32_lptim_set_enable_state(priv, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* Force enable state for later resume */
+> +		priv->enabled = true;
+> +	}
+> +
+> +	return pinctrl_pm_select_sleep_state(dev);
+> +}
+> +
+> +static int stm32_lptim_cnt_resume(struct device *dev)
+> +{
+> +	struct stm32_lptim_cnt *priv = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pinctrl_pm_select_default_state(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (priv->enabled) {
+> +		priv->enabled = false;
+> +		ret = stm32_lptim_setup(priv, 1);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = stm32_lptim_set_enable_state(priv, 1);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(stm32_lptim_cnt_pm_ops, stm32_lptim_cnt_suspend,
+> +			 stm32_lptim_cnt_resume);
+> +
+>  static const struct of_device_id stm32_lptim_cnt_of_match[] = {
+>  	{ .compatible = "st,stm32-lptimer-counter", },
+>  	{},
+> @@ -372,6 +426,7 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+>  	.driver = {
+>  		.name = "stm32-lptimer-counter",
+>  		.of_match_table = stm32_lptim_cnt_of_match,
+> +		.pm = &stm32_lptim_cnt_pm_ops,
+>  	},
+>  };
+>  module_platform_driver(stm32_lptim_cnt_driver);
 
