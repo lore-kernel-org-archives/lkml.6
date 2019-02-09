@@ -4,49 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B115DC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E9C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1AF21773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928B221919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfBIM6D (ORCPT
+        id S1727041AbfBIM6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:58:03 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51537 "EHLO
+        Sat, 9 Feb 2019 07:58:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39109 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBIM6C (ORCPT
+        with ESMTP id S1726703AbfBIM6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:58:02 -0500
+        Sat, 9 Feb 2019 07:58:20 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19Cupqv2633548
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CwDHH2633881
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:56:52 -0800
+        Sat, 9 Feb 2019 04:58:13 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CupGf2633545;
-        Sat, 9 Feb 2019 04:56:51 -0800
-Date:   Sat, 9 Feb 2019 04:56:51 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CwDlt2633877;
+        Sat, 9 Feb 2019 04:58:13 -0800
+Date:   Sat, 9 Feb 2019 04:58:13 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for William Cohen <tipbot@zytor.com>
-Message-ID: <tip-2d08f87fe7a2e4d74dc8b0eb645737d83dd932a9@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, ak@linux.intel.com, acme@redhat.com,
-        jolsa@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org, namhyung@kernel.org,
-        wcohen@redhat.com, alexander.shishkin@linux.intel.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, jolsa@redhat.com,
-          acme@redhat.com, linux-kernel@vger.kernel.org,
-          ak@linux.intel.com, alexander.shishkin@linux.intel.com,
-          wcohen@redhat.com, peterz@infradead.org, mingo@kernel.org,
-          namhyung@kernel.org
-In-Reply-To: <20190129170536.22510-1-wcohen@redhat.com>
-References: <20190129170536.22510-1-wcohen@redhat.com>
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-e7a3a055f2b88ebd0bdae8b0aade1e7d80c8a81e@git.kernel.org>
+Cc:     jolsa@kernel.org, acme@redhat.com, mingo@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        adrian.hunter@intel.com
+Reply-To: acme@redhat.com, jolsa@kernel.org, hpa@zytor.com,
+          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <20190109091835.5570-3-adrian.hunter@intel.com>
+References: <20190109091835.5570-3-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf vendor events intel: Fix
- Load_Miss_Real_Latency on CLX
-Git-Commit-ID: 2d08f87fe7a2e4d74dc8b0eb645737d83dd932a9
+Subject: [tip:perf/core] perf thread-stack: Tidy thread_stack__push_cp()
+ usage
+Git-Commit-ID: e7a3a055f2b88ebd0bdae8b0aade1e7d80c8a81e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,40 +57,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2d08f87fe7a2e4d74dc8b0eb645737d83dd932a9
-Gitweb:     https://git.kernel.org/tip/2d08f87fe7a2e4d74dc8b0eb645737d83dd932a9
-Author:     William Cohen <wcohen@redhat.com>
-AuthorDate: Tue, 29 Jan 2019 12:05:36 -0500
+Commit-ID:  e7a3a055f2b88ebd0bdae8b0aade1e7d80c8a81e
+Gitweb:     https://git.kernel.org/tip/e7a3a055f2b88ebd0bdae8b0aade1e7d80c8a81e
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Wed, 9 Jan 2019 11:18:31 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 6 Feb 2019 10:00:40 -0300
 
-perf vendor events intel: Fix Load_Miss_Real_Latency on CLX
+perf thread-stack: Tidy thread_stack__push_cp() usage
 
-Fix incorrect event names for the Load_Miss_Real_Latency metric for
-Cascadelake server in the same manner as commit 91b2b97025 for SKL/SKX.
+If 'cp' is checked in thread_stack__push_cp() a number of error checks
+can be removed, reducing code size and improving readability.
 
-Signed-off-by: William Cohen <wcohen@redhat.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190129170536.22510-1-wcohen@redhat.com
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20190109091835.5570-3-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/thread-stack.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json b/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
+diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
+index d52f27f373ce..93ba3ab6a602 100644
+--- a/tools/perf/util/thread-stack.c
++++ b/tools/perf/util/thread-stack.c
+@@ -493,6 +493,9 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 	struct thread_stack_entry *tse;
+ 	int err;
+ 
++	if (!cp)
++		return -ENOMEM;
++
+ 	if (ts->cnt == ts->sz) {
+ 		err = thread_stack__grow(ts);
+ 		if (err)
+@@ -576,8 +579,6 @@ static int thread_stack__bottom(struct thread_stack *ts,
+ 
+ 	cp = call_path__findnew(cpr, &cpr->call_path, sym, ip,
+ 				ts->kernel_start);
+-	if (!cp)
+-		return -ENOMEM;
+ 
+ 	return thread_stack__push_cp(ts, ip, sample->time, ref, cp,
+ 				     true, false);
+@@ -609,8 +610,6 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 			cp = call_path__findnew(cpr, &cpr->call_path,
+ 						to_al->sym, sample->addr,
+ 						ts->kernel_start);
+-			if (!cp)
+-				return -ENOMEM;
+ 			return thread_stack__push_cp(ts, 0, sample->time, ref,
+ 						     cp, true, false);
+ 		}
+@@ -633,8 +632,6 @@ static int thread_stack__no_call_return(struct thread *thread,
+ 	/* This 'return' had no 'call', so push and pop top of stack */
+ 	cp = call_path__findnew(cpr, parent, from_al->sym, sample->ip,
+ 				ts->kernel_start);
+-	if (!cp)
+-		return -ENOMEM;
+ 
+ 	err = thread_stack__push_cp(ts, sample->addr, sample->time, ref, cp,
+ 				    true, false);
+@@ -680,8 +677,6 @@ static int thread_stack__trace_end(struct thread_stack *ts,
+ 
+ 	cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp, NULL, 0,
+ 				ts->kernel_start);
+-	if (!cp)
+-		return -ENOMEM;
+ 
+ 	ret_addr = sample->ip + sample->insn_len;
+ 
+@@ -745,8 +740,6 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 		cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp,
+ 					to_al->sym, sample->addr,
+ 					ts->kernel_start);
+-		if (!cp)
+-			return -ENOMEM;
+ 		err = thread_stack__push_cp(ts, ret_addr, sample->time, ref,
+ 					    cp, false, trace_end);
+ 	} else if (sample->flags & PERF_IP_FLAG_RETURN) {
