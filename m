@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FACC169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E74C169C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D444821A4C
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24AB12177B
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:17:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ZDHZCL5F"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="KDdZcpcL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfBIBRR (ORCPT
+        id S1727073AbfBIBRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 20:17:17 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37170 "EHLO
+        Fri, 8 Feb 2019 20:17:25 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57212 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726524AbfBIBRP (ORCPT
+        by vger.kernel.org with ESMTP id S1726524AbfBIBRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 20:17:15 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x191AI70018801
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 17:17:12 -0800
+        Fri, 8 Feb 2019 20:17:21 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x191AcI1007146
+        for <linux-kernel@vger.kernel.org>; Fri, 8 Feb 2019 17:17:20 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=jegVyObA6tLFbHCCP8Nkf4ZVix5zo7fJqTjdfbo0CGU=;
- b=ZDHZCL5FTgZxT2f6HZVYGm0XIjnZxkIW/stp5+e/2/ZnbDUOp7cWQIHUjTfT0Cdwc0J5
- +mXTzBF71Vhu2QJBXZsQ7vmc88lguA+zaEN+B4rGrfz3yqTLDdzVr6Zi2hptbKg2Sp0r
- PoiEgHwx2EJfejbo5GNFtKwXF20cIaNK3rw= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qhkntg794-2
+ content-type; s=facebook; bh=ssCPaO8uIVt/v+Qv/3wrgPTpPrKwDI95IQdsxO18BHc=;
+ b=KDdZcpcLtmoVsVCBo0g4DmTKH2iGHhCPRXBBEV7lTmqsjO/B/cKemdEc18X4y1OoWvPh
+ cnOIPciCtmoow+1r76OgBGoMzpFSnV6gHh5Ktb3UJDOBgpDmEbU6QhJ1QV/IsRwEoaZG
+ V41OoKSyjdAerENuc8cy3OXOnJNq7PZBjV4= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qhk218b9r-4
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 17:17:12 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 17:17:20 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Fri, 8 Feb 2019 17:17:10 -0800
+ Fri, 8 Feb 2019 17:17:09 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id DE9E762E2A0A; Fri,  8 Feb 2019 17:17:08 -0800 (PST)
+        id C48B562E2A0D; Fri,  8 Feb 2019 17:17:08 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -50,9 +50,9 @@ CC:     <ast@kernel.org>, <daniel@iogearbox.net>, <kernel-team@fb.com>,
         <peterz@infradead.org>, <acme@redhat.com>,
         Song Liu <songliubraving@fb.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH 5/9] perf, bpf: save bpf_prog_info in a rbtree in perf_env
-Date:   Fri, 8 Feb 2019 17:17:01 -0800
-Message-ID: <20190209011705.2160185-6-songliubraving@fb.com>
+Subject: [PATCH 3/9] bpf: bpftool: use bpf_program__get_prog_info_linear() in prog.c:do_dump()
+Date:   Fri, 8 Feb 2019 17:16:59 -0800
+Message-ID: <20190209011705.2160185-4-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190209011705.2160185-1-songliubraving@fb.com>
 References: <20190209011705.2160185-1-songliubraving@fb.com>
@@ -68,526 +68,403 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bpf_prog_info contains information necessary to annotate bpf programs.
-This patch saves bpf_prog_info for bpf programs loaded in the system.
+This patches uses bpf_program__get_prog_info_linear() to simplify the
+logic in prog.c do_dump().
 
-perf-record saves bpf_prog_info information as headers to perf.data.
-A new header type HEADER_BPF_PROG_INFO is introduced for this data.
-
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- tools/perf/builtin-record.c |   2 +-
- tools/perf/builtin-top.c    |   2 +-
- tools/perf/util/bpf-event.c |  39 ++++++++---
- tools/perf/util/bpf-event.h |  15 +++-
- tools/perf/util/env.c       |  83 ++++++++++++++++++++++
- tools/perf/util/env.h       |   9 +++
- tools/perf/util/header.c    | 134 +++++++++++++++++++++++++++++++++++-
- tools/perf/util/header.h    |   1 +
- 8 files changed, 271 insertions(+), 14 deletions(-)
+ tools/bpf/bpftool/prog.c | 266 +++++++++------------------------------
+ 1 file changed, 59 insertions(+), 207 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 88ea11d57c6f..2355e0a9eda0 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1083,7 +1083,7 @@ static int record__synthesize(struct record *rec, bool tail)
- 		return err;
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 0640e9bc0ada..206b820df7c2 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -393,41 +393,31 @@ static int do_show(int argc, char **argv)
+ 
+ static int do_dump(int argc, char **argv)
+ {
+-	unsigned int finfo_rec_size, linfo_rec_size, jited_linfo_rec_size;
+-	void *func_info = NULL, *linfo = NULL, *jited_linfo = NULL;
+-	unsigned int nr_finfo, nr_linfo = 0, nr_jited_linfo = 0;
++	struct bpf_prog_info_linear *info_linear;
+ 	struct bpf_prog_linfo *prog_linfo = NULL;
+-	unsigned long *func_ksyms = NULL;
+-	struct bpf_prog_info info = {};
+-	unsigned int *func_lens = NULL;
++	enum {DUMP_JITED, DUMP_XLATED} mode;
+ 	const char *disasm_opt = NULL;
+-	unsigned int nr_func_ksyms;
+-	unsigned int nr_func_lens;
++	struct bpf_prog_info *info;
+ 	struct dump_data dd = {};
+-	__u32 len = sizeof(info);
++	void *func_info = NULL;
+ 	struct btf *btf = NULL;
+-	unsigned int buf_size;
+ 	char *filepath = NULL;
+ 	bool opcodes = false;
+ 	bool visual = false;
+ 	char func_sig[1024];
+ 	unsigned char *buf;
+ 	bool linum = false;
+-	__u32 *member_len;
+-	__u64 *member_ptr;
++	__u32 member_len;
++	__u64 arrays;
+ 	ssize_t n;
+-	int err;
+ 	int fd;
+ 
+ 	if (is_prefix(*argv, "jited")) {
+ 		if (disasm_init())
+ 			return -1;
+-
+-		member_len = &info.jited_prog_len;
+-		member_ptr = &info.jited_prog_insns;
++		mode = DUMP_JITED;
+ 	} else if (is_prefix(*argv, "xlated")) {
+-		member_len = &info.xlated_prog_len;
+-		member_ptr = &info.xlated_prog_insns;
++		mode = DUMP_XLATED;
+ 	} else {
+ 		p_err("expected 'xlated' or 'jited', got: %s", *argv);
+ 		return -1;
+@@ -466,175 +456,50 @@ static int do_dump(int argc, char **argv)
+ 		return -1;
  	}
  
--	err = perf_event__synthesize_bpf_events(tool, process_synthesized_event,
-+	err = perf_event__synthesize_bpf_events(session, process_synthesized_event,
- 						machine, opts);
- 	if (err < 0)
- 		pr_warning("Couldn't synthesize bpf events.\n");
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 5a486d4de56e..27d8d42e0a4d 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1216,7 +1216,7 @@ static int __cmd_top(struct perf_top *top)
+-	err = bpf_obj_get_info_by_fd(fd, &info, &len);
+-	if (err) {
+-		p_err("can't get prog info: %s", strerror(errno));
+-		return -1;
+-	}
+-
+-	if (!*member_len) {
+-		p_info("no instructions returned");
+-		close(fd);
+-		return 0;
+-	}
++	if (mode == DUMP_JITED)
++		arrays = 1UL << BPF_PROG_INFO_JITED_INSNS;
++	else
++		arrays = 1UL << BPF_PROG_INFO_XLATED_INSNS;
  
- 	init_process_thread(top);
- 
--	ret = perf_event__synthesize_bpf_events(&top->tool, perf_event__process,
-+	ret = perf_event__synthesize_bpf_events(top->session, perf_event__process,
- 						&top->session->machines.host,
- 						&top->record_opts);
- 	if (ret < 0)
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index e6dfb95029e5..ead599bc4f4e 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -1,15 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <errno.h>
- #include <stdlib.h>
--#include <bpf/bpf.h>
--#include <bpf/btf.h>
--#include <bpf/libbpf.h>
--#include <linux/btf.h>
- #include <linux/err.h>
- #include "bpf-event.h"
- #include "debug.h"
- #include "symbol.h"
- #include "machine.h"
-+#include "env.h"
-+#include "session.h"
- 
- #define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
- 
-@@ -42,7 +40,7 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
-  *   -1 for failures;
-  *   -2 for lack of kernel support.
-  */
--static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
-+static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
- 					       perf_event__handler_t process,
- 					       struct machine *machine,
- 					       int fd,
-@@ -52,17 +50,29 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
- 	struct ksymbol_event *ksymbol_event = &event->ksymbol_event;
- 	struct bpf_event *bpf_event = &event->bpf_event;
- 	struct bpf_prog_info_linear *info_linear;
-+	struct perf_tool *tool = session->tool;
-+	struct bpf_prog_info_node *info_node;
- 	struct bpf_prog_info *info;
- 	struct btf *btf = NULL;
- 	bool has_btf = false;
-+	struct perf_env *env;
- 	u32 sub_prog_cnt, i;
- 	int err = 0;
- 	u64 arrays;
- 
-+	/*
-+	 * for perf-record and perf-report use header.env;
-+	 * otherwise, use global perf_env.
-+	 */
-+	env = session->data ? &session->header.env : &perf_env;
-+
- 	arrays = 1UL << BPF_PROG_INFO_JITED_KSYMS;
- 	arrays |= 1UL << BPF_PROG_INFO_JITED_FUNC_LENS;
- 	arrays |= 1UL << BPF_PROG_INFO_FUNC_INFO;
- 	arrays |= 1UL << BPF_PROG_INFO_PROG_TAGS;
-+	arrays |= 1UL << BPF_PROG_INFO_JITED_INSNS;
+-	buf_size = *member_len;
++	arrays |= 1UL << BPF_PROG_INFO_JITED_KSYMS;
++	arrays |= 1UL << BPF_PROG_INFO_JITED_FUNC_LENS;
++	arrays |= 1UL << BPF_PROG_INFO_FUNC_INFO;
 +	arrays |= 1UL << BPF_PROG_INFO_LINE_INFO;
 +	arrays |= 1UL << BPF_PROG_INFO_JITED_LINE_INFO;
  
- 	info_linear = bpf_program__get_prog_info_linear(fd, arrays);
- 	if (IS_ERR_OR_NULL(info_linear)) {
-@@ -151,8 +161,8 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
- 						     machine, process);
+-	buf = malloc(buf_size);
+-	if (!buf) {
+-		p_err("mem alloc failed");
+-		close(fd);
++	info_linear = bpf_program__get_prog_info_linear(fd, arrays);
++	close(fd);
++	if (IS_ERR_OR_NULL(info_linear)) {
++		p_err("can't get prog info: %s", strerror(errno));
+ 		return -1;
  	}
  
--	/* Synthesize PERF_RECORD_BPF_EVENT */
- 	if (opts->bpf_event) {
-+		/* Synthesize PERF_RECORD_BPF_EVENT */
- 		*bpf_event = (struct bpf_event){
- 			.header = {
- 				.type = PERF_RECORD_BPF_EVENT,
-@@ -165,6 +175,19 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
- 		memcpy(bpf_event->tag, info->tag, BPF_TAG_SIZE);
- 		memset((void *)event + event->header.size, 0, machine->id_hdr_size);
- 		event->header.size += machine->id_hdr_size;
-+
-+		/* save bpf_prog_info to env */
-+		info_node = malloc(sizeof(struct bpf_prog_info_node));
-+		if (info_node) {
-+			info_node->info_linear = info_linear;
-+			perf_env__insert_bpf_prog_info(env, info_node);
-+			info_linear = NULL;
-+		}
-+
-+		/*
-+		 * process after saving bpf_prog_info to env, so that
-+		 * required information is ready for look up
-+		 */
- 		err = perf_tool__process_synth_event(tool, event,
- 						     machine, process);
+-	nr_func_ksyms = info.nr_jited_ksyms;
+-	if (nr_func_ksyms) {
+-		func_ksyms = malloc(nr_func_ksyms * sizeof(__u64));
+-		if (!func_ksyms) {
+-			p_err("mem alloc failed");
+-			close(fd);
+-			goto err_free;
+-		}
+-	}
+-
+-	nr_func_lens = info.nr_jited_func_lens;
+-	if (nr_func_lens) {
+-		func_lens = malloc(nr_func_lens * sizeof(__u32));
+-		if (!func_lens) {
+-			p_err("mem alloc failed");
+-			close(fd);
++	info = &info_linear->info;
++	if (mode == DUMP_JITED) {
++		if (info->jited_prog_len == 0) {
++			p_info("no instructions returned");
+ 			goto err_free;
+ 		}
+-	}
+-
+-	nr_finfo = info.nr_func_info;
+-	finfo_rec_size = info.func_info_rec_size;
+-	if (nr_finfo && finfo_rec_size) {
+-		func_info = malloc(nr_finfo * finfo_rec_size);
+-		if (!func_info) {
+-			p_err("mem alloc failed");
+-			close(fd);
++		buf = (unsigned char *)(info->jited_prog_insns);
++		member_len = info->jited_prog_len;
++	} else {	/* DUMP_XLATED */
++		if (info->xlated_prog_len == 0) {
++			p_err("error retrieving insn dump: kernel.kptr_restrict set?");
+ 			goto err_free;
+ 		}
++		buf = (unsigned char *)info->xlated_prog_insns;
++		member_len = info->xlated_prog_len;
  	}
-@@ -175,7 +198,7 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
- 	return err ? -1 : 0;
- }
  
--int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-+int perf_event__synthesize_bpf_events(struct perf_session *session,
- 				      perf_event__handler_t process,
- 				      struct machine *machine,
- 				      struct record_opts *opts)
-@@ -209,7 +232,7 @@ int perf_event__synthesize_bpf_events(struct perf_tool *tool,
- 			continue;
+-	linfo_rec_size = info.line_info_rec_size;
+-	if (info.nr_line_info && linfo_rec_size && info.btf_id) {
+-		nr_linfo = info.nr_line_info;
+-		linfo = malloc(nr_linfo * linfo_rec_size);
+-		if (!linfo) {
+-			p_err("mem alloc failed");
+-			close(fd);
+-			goto err_free;
+-		}
+-	}
+-
+-	jited_linfo_rec_size = info.jited_line_info_rec_size;
+-	if (info.nr_jited_line_info &&
+-	    jited_linfo_rec_size &&
+-	    info.nr_jited_ksyms &&
+-	    info.nr_jited_func_lens &&
+-	    info.btf_id) {
+-		nr_jited_linfo = info.nr_jited_line_info;
+-		jited_linfo = malloc(nr_jited_linfo * jited_linfo_rec_size);
+-		if (!jited_linfo) {
+-			p_err("mem alloc failed");
+-			close(fd);
+-			goto err_free;
+-		}
+-	}
+-
+-	memset(&info, 0, sizeof(info));
+-
+-	*member_ptr = ptr_to_u64(buf);
+-	*member_len = buf_size;
+-	info.jited_ksyms = ptr_to_u64(func_ksyms);
+-	info.nr_jited_ksyms = nr_func_ksyms;
+-	info.jited_func_lens = ptr_to_u64(func_lens);
+-	info.nr_jited_func_lens = nr_func_lens;
+-	info.nr_func_info = nr_finfo;
+-	info.func_info_rec_size = finfo_rec_size;
+-	info.func_info = ptr_to_u64(func_info);
+-	info.nr_line_info = nr_linfo;
+-	info.line_info_rec_size = linfo_rec_size;
+-	info.line_info = ptr_to_u64(linfo);
+-	info.nr_jited_line_info = nr_jited_linfo;
+-	info.jited_line_info_rec_size = jited_linfo_rec_size;
+-	info.jited_line_info = ptr_to_u64(jited_linfo);
+-
+-	err = bpf_obj_get_info_by_fd(fd, &info, &len);
+-	close(fd);
+-	if (err) {
+-		p_err("can't get prog info: %s", strerror(errno));
+-		goto err_free;
+-	}
+-
+-	if (*member_len > buf_size) {
+-		p_err("too many instructions returned");
+-		goto err_free;
+-	}
+-
+-	if (info.nr_jited_ksyms > nr_func_ksyms) {
+-		p_err("too many addresses returned");
+-		goto err_free;
+-	}
+-
+-	if (info.nr_jited_func_lens > nr_func_lens) {
+-		p_err("too many values returned");
+-		goto err_free;
+-	}
+-
+-	if (info.nr_func_info != nr_finfo) {
+-		p_err("incorrect nr_func_info %d vs. expected %d",
+-		      info.nr_func_info, nr_finfo);
+-		goto err_free;
+-	}
+-
+-	if (info.func_info_rec_size != finfo_rec_size) {
+-		p_err("incorrect func_info_rec_size %d vs. expected %d",
+-		      info.func_info_rec_size, finfo_rec_size);
+-		goto err_free;
+-	}
+-
+-	if (linfo && info.nr_line_info != nr_linfo) {
+-		p_err("incorrect nr_line_info %u vs. expected %u",
+-		      info.nr_line_info, nr_linfo);
+-		goto err_free;
+-	}
+-
+-	if (info.line_info_rec_size != linfo_rec_size) {
+-		p_err("incorrect line_info_rec_size %u vs. expected %u",
+-		      info.line_info_rec_size, linfo_rec_size);
+-		goto err_free;
+-	}
+-
+-	if (jited_linfo && info.nr_jited_line_info != nr_jited_linfo) {
+-		p_err("incorrect nr_jited_line_info %u vs. expected %u",
+-		      info.nr_jited_line_info, nr_jited_linfo);
+-		goto err_free;
+-	}
+-
+-	if (info.jited_line_info_rec_size != jited_linfo_rec_size) {
+-		p_err("incorrect jited_line_info_rec_size %u vs. expected %u",
+-		      info.jited_line_info_rec_size, jited_linfo_rec_size);
+-		goto err_free;
+-	}
+-
+-	if ((member_len == &info.jited_prog_len &&
+-	     info.jited_prog_insns == 0) ||
+-	    (member_len == &info.xlated_prog_len &&
+-	     info.xlated_prog_insns == 0)) {
+-		p_err("error retrieving insn dump: kernel.kptr_restrict set?");
+-		goto err_free;
+-	}
+-
+-	if (info.btf_id && btf__get_from_id(info.btf_id, &btf)) {
++	if (info->btf_id && btf__get_from_id(info->btf_id, &btf)) {
+ 		p_err("failed to get btf");
+ 		goto err_free;
+ 	}
+ 
+-	if (nr_linfo) {
+-		prog_linfo = bpf_prog_linfo__new(&info);
++	func_info = (void *)info->func_info;
++
++	if (info->nr_line_info) {
++		prog_linfo = bpf_prog_linfo__new(info);
+ 		if (!prog_linfo)
+ 			p_info("error in processing bpf_line_info.  continue without it.");
+ 	}
+@@ -647,9 +512,9 @@ static int do_dump(int argc, char **argv)
+ 			goto err_free;
  		}
  
--		err = perf_event__synthesize_one_bpf_prog(tool, process,
-+		err = perf_event__synthesize_one_bpf_prog(session, process,
- 							  machine, fd,
- 							  event, opts);
+-		n = write(fd, buf, *member_len);
++		n = write(fd, buf, member_len);
  		close(fd);
-diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
-index 7890067e1a37..11e6730b6105 100644
---- a/tools/perf/util/bpf-event.h
-+++ b/tools/perf/util/bpf-event.h
-@@ -3,19 +3,28 @@
- #define __PERF_BPF_EVENT_H
+-		if (n != *member_len) {
++		if (n != member_len) {
+ 			p_err("error writing output file: %s",
+ 			      n < 0 ? strerror(errno) : "short write");
+ 			goto err_free;
+@@ -657,19 +522,19 @@ static int do_dump(int argc, char **argv)
  
- #include <linux/compiler.h>
-+#include <bpf/bpf.h>
-+#include <bpf/btf.h>
-+#include <bpf/libbpf.h>
-+#include <linux/btf.h>
-+#include <linux/rbtree.h>
- #include "event.h"
+ 		if (json_output)
+ 			jsonw_null(json_wtr);
+-	} else if (member_len == &info.jited_prog_len) {
++	} else if (mode == DUMP_JITED) {
+ 		const char *name = NULL;
  
- struct machine;
- union perf_event;
- struct perf_sample;
--struct perf_tool;
- struct record_opts;
+-		if (info.ifindex) {
+-			name = ifindex_to_bfd_params(info.ifindex,
+-						     info.netns_dev,
+-						     info.netns_ino,
++		if (info->ifindex) {
++			name = ifindex_to_bfd_params(info->ifindex,
++						     info->netns_dev,
++						     info->netns_ino,
+ 						     &disasm_opt);
+ 			if (!name)
+ 				goto err_free;
+ 		}
  
-+struct bpf_prog_info_node {
-+	struct bpf_prog_info_linear	*info_linear;
-+	struct rb_node			rb_node;
-+};
-+
- #ifdef HAVE_LIBBPF_SUPPORT
- int machine__process_bpf_event(struct machine *machine, union perf_event *event,
- 			       struct perf_sample *sample);
+-		if (info.nr_jited_func_lens && info.jited_func_lens) {
++		if (info->nr_jited_func_lens && info->jited_func_lens) {
+ 			struct kernel_sym *sym = NULL;
+ 			struct bpf_func_info *record;
+ 			char sym_name[SYM_MAX_NAME];
+@@ -677,17 +542,16 @@ static int do_dump(int argc, char **argv)
+ 			__u64 *ksyms = NULL;
+ 			__u32 *lens;
+ 			__u32 i;
+-
+-			if (info.nr_jited_ksyms) {
++			if (info->nr_jited_ksyms) {
+ 				kernel_syms_load(&dd);
+-				ksyms = (__u64 *) info.jited_ksyms;
++				ksyms = (__u64 *) info->jited_ksyms;
+ 			}
  
--int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-+int perf_event__synthesize_bpf_events(struct perf_session *session,
- 				      perf_event__handler_t process,
- 				      struct machine *machine,
- 				      struct record_opts *opts);
-@@ -27,7 +36,7 @@ static inline int machine__process_bpf_event(struct machine *machine __maybe_unu
- 	return 0;
- }
+ 			if (json_output)
+ 				jsonw_start_array(json_wtr);
  
--static inline int perf_event__synthesize_bpf_events(struct perf_tool *tool __maybe_unused,
-+static inline int perf_event__synthesize_bpf_events(struct perf_session *session __maybe_unused,
- 						    perf_event__handler_t process __maybe_unused,
- 						    struct machine *machine __maybe_unused,
- 						    struct record_opts *opts __maybe_unused)
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index 4c23779e271a..665b6fe3c7b2 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -8,10 +8,86 @@
+-			lens = (__u32 *) info.jited_func_lens;
+-			for (i = 0; i < info.nr_jited_func_lens; i++) {
++			lens = (__u32 *) info->jited_func_lens;
++			for (i = 0; i < info->nr_jited_func_lens; i++) {
+ 				if (ksyms) {
+ 					sym = kernel_syms_search(&dd, ksyms[i]);
+ 					if (sym)
+@@ -699,7 +563,7 @@ static int do_dump(int argc, char **argv)
+ 				}
  
- struct perf_env perf_env;
+ 				if (func_info) {
+-					record = func_info + i * finfo_rec_size;
++					record = func_info + i * info->func_info_rec_size;
+ 					btf_dumper_type_only(btf, record->type_id,
+ 							     func_sig,
+ 							     sizeof(func_sig));
+@@ -736,49 +600,37 @@ static int do_dump(int argc, char **argv)
+ 			if (json_output)
+ 				jsonw_end_array(json_wtr);
+ 		} else {
+-			disasm_print_insn(buf, *member_len, opcodes, name,
++			disasm_print_insn(buf, member_len, opcodes, name,
+ 					  disasm_opt, btf, NULL, 0, 0, false);
+ 		}
+ 	} else if (visual) {
+ 		if (json_output)
+ 			jsonw_null(json_wtr);
+ 		else
+-			dump_xlated_cfg(buf, *member_len);
++			dump_xlated_cfg(buf, member_len);
+ 	} else {
+ 		kernel_syms_load(&dd);
+-		dd.nr_jited_ksyms = info.nr_jited_ksyms;
+-		dd.jited_ksyms = (__u64 *) info.jited_ksyms;
++		dd.nr_jited_ksyms = info->nr_jited_ksyms;
++		dd.jited_ksyms = (__u64 *) info->jited_ksyms;
+ 		dd.btf = btf;
+ 		dd.func_info = func_info;
+-		dd.finfo_rec_size = finfo_rec_size;
++		dd.finfo_rec_size = info->func_info_rec_size;
+ 		dd.prog_linfo = prog_linfo;
  
-+void perf_env__insert_bpf_prog_info(struct perf_env *env,
-+				    struct bpf_prog_info_node *info_node)
-+{
-+	__u32 prog_id = info_node->info_linear->info.id;
-+	struct bpf_prog_info_node *node;
-+	struct rb_node *parent = NULL;
-+	struct rb_node **p;
-+
-+	down_write(&env->bpf_info_lock);
-+	p = &env->bpf_prog_infos.rb_node;
-+
-+	while (*p != NULL) {
-+		parent = *p;
-+		node = rb_entry(parent, struct bpf_prog_info_node, rb_node);
-+		if (prog_id < node->info_linear->info.id) {
-+			p = &(*p)->rb_left;
-+		} else if (prog_id > node->info_linear->info.id) {
-+			p = &(*p)->rb_right;
-+		} else {
-+			pr_debug("duplicated bpf prog info %u\n", prog_id);
-+			up_write(&env->bpf_info_lock);
-+			return;
-+		}
-+	}
-+
-+	rb_link_node(&info_node->rb_node, parent, p);
-+	rb_insert_color(&info_node->rb_node, &env->bpf_prog_infos);
-+	up_write(&env->bpf_info_lock);
-+}
-+
-+struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
-+							__u32 prog_id)
-+{
-+	struct bpf_prog_info_node *node = NULL;
-+	struct rb_node *n;
-+
-+	down_read(&env->bpf_info_lock);
-+	n = env->bpf_prog_infos.rb_node;
-+
-+	while (n) {
-+		node = rb_entry(n, struct bpf_prog_info_node, rb_node);
-+		if (prog_id < node->info_linear->info.id)
-+			n = n->rb_left;
-+		else if (prog_id > node->info_linear->info.id)
-+			n = n->rb_right;
-+		else
-+			break;
-+	}
-+
-+	up_read(&env->bpf_info_lock);
-+	return node;
-+}
-+
-+/* purge data in bpf_prog_infos tree */
-+static void purge_bpf_info(struct perf_env *env)
-+{
-+	struct rb_root *root;
-+	struct rb_node *next;
-+
-+	down_write(&env->bpf_info_lock);
-+
-+	root = &env->bpf_prog_infos;
-+	next = rb_first(root);
-+
-+	while (next) {
-+		struct bpf_prog_info_node *node;
-+
-+		node = rb_entry(next, struct bpf_prog_info_node, rb_node);
-+		next = rb_next(&node->rb_node);
-+		rb_erase_init(&node->rb_node, root);
-+		free(node);
-+	}
-+	up_write(&env->bpf_info_lock);
-+}
-+
- void perf_env__exit(struct perf_env *env)
- {
- 	int i;
+ 		if (json_output)
+-			dump_xlated_json(&dd, buf, *member_len, opcodes,
++			dump_xlated_json(&dd, buf, member_len, opcodes,
+ 					 linum);
+ 		else
+-			dump_xlated_plain(&dd, buf, *member_len, opcodes,
++			dump_xlated_plain(&dd, buf, member_len, opcodes,
+ 					  linum);
+ 		kernel_syms_destroy(&dd);
+ 	}
  
-+	purge_bpf_info(env);
- 	zfree(&env->hostname);
- 	zfree(&env->os_release);
- 	zfree(&env->version);
-@@ -38,6 +114,12 @@ void perf_env__exit(struct perf_env *env)
- 	zfree(&env->memory_nodes);
- }
- 
-+static void init_bpf_rb_trees(struct perf_env *env)
-+{
-+	env->bpf_prog_infos = RB_ROOT;
-+	init_rwsem(&env->bpf_info_lock);
-+}
-+
- int perf_env__set_cmdline(struct perf_env *env, int argc, const char *argv[])
- {
- 	int i;
-@@ -59,6 +141,7 @@ int perf_env__set_cmdline(struct perf_env *env, int argc, const char *argv[])
- 
- 	env->nr_cmdline = argc;
- 
-+	init_bpf_rb_trees(env);
- 	return 0;
- out_free:
- 	zfree(&env->cmdline_argv);
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index d01b8355f4ca..5894a177b7cf 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -3,7 +3,10 @@
- #define __PERF_ENV_H
- 
- #include <linux/types.h>
-+#include <linux/rbtree.h>
- #include "cpumap.h"
-+#include "rwsem.h"
-+#include "bpf-event.h"
- 
- struct cpu_topology_map {
- 	int	socket_id;
-@@ -64,6 +67,8 @@ struct perf_env {
- 	struct memory_node	*memory_nodes;
- 	unsigned long long	 memory_bsize;
- 	u64                     clockid_res_ns;
-+	struct rw_semaphore	bpf_info_lock;
-+	struct rb_root		bpf_prog_infos;
- };
- 
- extern struct perf_env perf_env;
-@@ -80,4 +85,8 @@ const char *perf_env__arch(struct perf_env *env);
- const char *perf_env__raw_arch(struct perf_env *env);
- int perf_env__nr_cpus_avail(struct perf_env *env);
- 
-+void perf_env__insert_bpf_prog_info(struct perf_env *env,
-+				    struct bpf_prog_info_node *info_node);
-+struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
-+							__u32 prog_id);
- #endif /* __PERF_ENV_H */
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index dec6d218c31c..2ae76a9d06f6 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1080,6 +1080,51 @@ static int write_clockid(struct feat_fd *ff,
- 			sizeof(ff->ph->env.clockid_res_ns));
- }
- 
-+static int write_bpf_prog_info(struct feat_fd *ff,
-+			       struct perf_evlist *evlist __maybe_unused)
-+{
-+	struct perf_env *env = &ff->ph->env;
-+	struct rb_root *root;
-+	struct rb_node *next;
-+	u32 count = 0;
-+	int ret;
-+
-+	down_read(&env->bpf_info_lock);
-+
-+	root = &env->bpf_prog_infos;
-+	next = rb_first(root);
-+	while (next) {
-+		++count;
-+		next = rb_next(next);
-+	}
-+
-+	ret = do_write(ff, &count, sizeof(count));
-+
-+	if (ret < 0)
-+		goto out;
-+
-+	next = rb_first(root);
-+	while (next) {
-+		struct bpf_prog_info_node *node;
-+		size_t len;
-+
-+		node = rb_entry(next, struct bpf_prog_info_node, rb_node);
-+		next = rb_next(&node->rb_node);
-+		len = sizeof(struct bpf_prog_info_linear) +
-+			node->info_linear->data_len;
-+
-+		/* before writing to file, translate address to offset */
-+		bpf_program__bpil_addr_to_offs(node->info_linear);
-+		ret = do_write(ff, node->info_linear, len);
-+		bpf_program__bpil_offs_to_addr(node->info_linear);
-+		if (ret < 0)
-+			goto out;
-+	}
-+out:
-+	up_read(&env->bpf_info_lock);
-+	return ret;
-+}
-+
- static int cpu_cache_level__sort(const void *a, const void *b)
- {
- 	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
-@@ -1560,6 +1605,29 @@ static void print_clockid(struct feat_fd *ff, FILE *fp)
- 		ff->ph->env.clockid_res_ns * 1000);
- }
- 
-+static void print_bpf_prog_info(struct feat_fd *ff, FILE *fp)
-+{
-+	struct perf_env *env = &ff->ph->env;
-+	struct rb_root *root;
-+	struct rb_node *next;
-+
-+	down_read(&env->bpf_info_lock);
-+
-+	root = &env->bpf_prog_infos;
-+	next = rb_first(root);
-+
-+	while (next) {
-+		struct bpf_prog_info_node *node;
-+
-+		node = rb_entry(next, struct bpf_prog_info_node, rb_node);
-+		next = rb_next(&node->rb_node);
-+		fprintf(fp, "# bpf_prog_info of id %u\n",
-+			node->info_linear->info.id);
-+	}
-+
-+	up_read(&env->bpf_info_lock);
-+}
-+
- static void free_event_desc(struct perf_evsel *events)
- {
- 	struct perf_evsel *evsel;
-@@ -2592,6 +2660,69 @@ static int process_clockid(struct feat_fd *ff,
- 	return 0;
- }
- 
-+static int process_bpf_prog_info(struct feat_fd *ff,
-+				 void *data __maybe_unused)
-+{
-+	struct bpf_prog_info_linear *info_linear;
-+	struct bpf_prog_info_node *info_node;
-+	struct perf_env *env = &ff->ph->env;
-+	u32 count, i;
-+	int err = -1;
-+
-+	if (do_read_u32(ff, &count))
-+		return -1;
-+
-+	down_write(&env->bpf_info_lock);
-+
-+	for (i = 0; i < count; ++i) {
-+		u32 info_len, data_len;
-+
-+		info_linear = NULL;
-+		info_node = NULL;
-+		if (do_read_u32(ff, &info_len))
-+			goto out;
-+		if (do_read_u32(ff, &data_len))
-+			goto out;
-+
-+		if (info_len > sizeof(struct bpf_prog_info)) {
-+			pr_warning("detected invalid bpf_prog_info\n");
-+			goto out;
-+		}
-+
-+		info_linear = malloc(sizeof(struct bpf_prog_info_linear) +
-+				     data_len);
-+		if (!info_linear)
-+			goto out;
-+		info_linear->info_len = sizeof(struct bpf_prog_info);
-+		info_linear->data_len = data_len;
-+		if (do_read_u64(ff, (u64 *)(&info_linear->arrays)))
-+			goto out;
-+		if (__do_read(ff, &info_linear->info, info_len))
-+			goto out;
-+		if (info_len < sizeof(struct bpf_prog_info))
-+			memset(((void *)(&info_linear->info)) + info_len, 0,
-+			       sizeof(struct bpf_prog_info) - info_len);
-+
-+		if (__do_read(ff, info_linear->data, data_len))
-+			goto out;
-+		info_node = malloc(sizeof(struct bpf_prog_info_node));
-+		if (!info_node)
-+			goto out;
-+
-+		/* after reading from file, translate offset to address */
-+		bpf_program__bpil_offs_to_addr(info_linear);
-+		info_node->info_linear = info_linear;
-+		perf_env__insert_bpf_prog_info(env, info_node);
-+	}
-+
-+	return 0;
-+out:
+-	free(buf);
+-	free(func_ksyms);
+-	free(func_lens);
+-	free(func_info);
+-	free(linfo);
+-	free(jited_linfo);
+-	bpf_prog_linfo__free(prog_linfo);
 +	free(info_linear);
-+	free(info_node);
-+	up_write(&env->bpf_info_lock);
-+	return err;
-+}
-+
- struct feature_ops {
- 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
- 	void (*print)(struct feat_fd *ff, FILE *fp);
-@@ -2651,7 +2782,8 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
- 	FEAT_OPN(CACHE,		cache,		true),
- 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
- 	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
--	FEAT_OPR(CLOCKID,       clockid,        false)
-+	FEAT_OPR(CLOCKID,       clockid,        false),
-+	FEAT_OPR(BPF_PROG_INFO, bpf_prog_info,  false)
- };
+ 	return 0;
  
- struct header_print_data {
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index 0d553ddca0a3..0785c91b4c3a 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -39,6 +39,7 @@ enum {
- 	HEADER_SAMPLE_TIME,
- 	HEADER_MEM_TOPOLOGY,
- 	HEADER_CLOCKID,
-+	HEADER_BPF_PROG_INFO,
- 	HEADER_LAST_FEATURE,
- 	HEADER_FEAT_BITS	= 256,
- };
+ err_free:
+-	free(buf);
+-	free(func_ksyms);
+-	free(func_lens);
+-	free(func_info);
+-	free(linfo);
+-	free(jited_linfo);
+-	bpf_prog_linfo__free(prog_linfo);
++	free(info_linear);
+ 	return -1;
+ }
+ 
 -- 
 2.17.1
 
