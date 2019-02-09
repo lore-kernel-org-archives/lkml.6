@@ -4,49 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DE8C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB795C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB7C21916
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77BD621916
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738328;
-	bh=e2rUuGeVBb0hcmo3kJyKe0yIWs4a61HTgpDqUcLrqCQ=;
+	s=default; t=1549738339;
+	bh=SQbUFCd+lKqKv/YYgzC/1cplw2hLs+9BnMUw0YhjiOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CJc2twkpHuk5ITJsRRKeucASxzt/mf4cgueshvTBctGbr7jp2K8hbaE2WdOTpw8iG
-	 GjsAUX42E+zbHIf0zLZud3tgVXMllY5m6WTX0vQHTQs+5x1upNt4/diMblt0/4V0m0
-	 qq3Z3WRgvjgkfWeOtGGz0ZmQAaeDwf2CdYoqdjeg=
+	b=oAnqY/DnN1s9NjkhnY5atpdkvr8yuBQ+YKSOEvnKiwYwxwTu9k1tP+q4djyQcL5s2
+	 t9fvyGme12TrCu93+CBQgeKKF4TQJnIZSJuDn/TrqEvyN3zQLTStpJAjH8elvrS3YH
+	 DtAoCEjUYZuqRyEs4tjA/jT5DKeCXLB2MvUH89AA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfBISwG (ORCPT
+        id S1728303AbfBISwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:52:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35822 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:52:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728243AbfBIStu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:50 -0500
+        id S1728209AbfBISto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A6532192C;
-        Sat,  9 Feb 2019 18:49:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8D7320821;
+        Sat,  9 Feb 2019 18:49:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738190;
-        bh=e2rUuGeVBb0hcmo3kJyKe0yIWs4a61HTgpDqUcLrqCQ=;
+        s=default; t=1549738184;
+        bh=SQbUFCd+lKqKv/YYgzC/1cplw2hLs+9BnMUw0YhjiOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WhZTvZKSOCXCY8jLFFa7vaVCs7AihQgLCEIJ3A6PewS6mloyk7KQYBTV1nPGEYUZX
-         wyymX3eMgNHdrXO7VLSNkQZkv9o3134VWtDM4pCQbyoJx2wCl7b486tzcrjRXxaCde
-         Nv3NKXUIhEmosob3kAMgi+ZHvxyt2xER7hxxwf9k=
+        b=1bLUACq11PtHeESRAGuJgwFlRH243beefo3b+efapWQ/oUcIX2j9/AaGa+HATHYAn
+         3EMBw+tTyvyf6cBZ9G8GnzPwoobS4jI/EtSJNHEULsku+QsccZir69uOLO/IZh2Hch
+         +rtknx7Ig1v+1nvX+AJpi1ehEDW64T1FIz9ZTcjs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ilia Mirkin <imirkin@alum.mit.edu>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 15/16] drm/nouveau/falcon: avoid touching registers if engine is off
-Date:   Sat,  9 Feb 2019 13:49:26 -0500
-Message-Id: <20190209184927.126791-15-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jamie Lentin <jm@lentin.co.uk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Julien D'Ascenzio <jdascenzio@posteo.net>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 12/16] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
+Date:   Sat,  9 Feb 2019 13:49:23 -0500
+Message-Id: <20190209184927.126791-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184927.126791-1-sashal@kernel.org>
 References: <20190209184927.126791-1-sashal@kernel.org>
@@ -58,43 +64,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilia Mirkin <imirkin@alum.mit.edu>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit a5176a4cb85bb6213daadf691097cf411da35df2 ]
+[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108980
-Signed-off-by: Ilia Mirkin <imirkin@alum.mit.edu>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+These two lines are active high, not active low. The bug was
+found when we changed the kernel to respect the polarity defined
+in the device tree.
+
+Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
+Cc: Jamie Lentin <jm@lentin.co.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Tested-by: Jamie Lentin <jm@lentin.co.uk>
+Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/falcon.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/falcon.c b/drivers/gpu/drm/nouveau/nvkm/engine/falcon.c
-index 2e7b4e2105ef..62cb376e2c01 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/falcon.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/falcon.c
-@@ -22,6 +22,7 @@
- #include <engine/falcon.h>
- 
- #include <core/gpuobj.h>
-+#include <subdev/mc.h>
- #include <subdev/timer.h>
- #include <engine/fifo.h>
- 
-@@ -107,8 +108,10 @@ nvkm_falcon_fini(struct nvkm_engine *engine, bool suspend)
- 		}
- 	}
- 
--	nvkm_mask(device, base + 0x048, 0x00000003, 0x00000000);
--	nvkm_wr32(device, base + 0x014, 0xffffffff);
-+	if (nvkm_mc_enabled(device, engine->subdev.index)) {
-+		nvkm_mask(device, base + 0x048, 0x00000003, 0x00000000);
-+		nvkm_wr32(device, base + 0x014, 0xffffffff);
-+	}
- 	return 0;
- }
- 
+diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+index cbaf06f2f78e..eb917462b219 100644
+--- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
++++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+@@ -36,8 +36,8 @@
+ 		compatible = "gpio-fan";
+ 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
+ 		pinctrl-names = "default";
+-		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
+-			 &gpio1 13 GPIO_ACTIVE_LOW>;
++		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
++			 &gpio1 13 GPIO_ACTIVE_HIGH>;
+ 		gpio-fan,speed-map = <0    0
+ 				      3000 1
+ 				      6000 2>;
 -- 
 2.19.1
 
