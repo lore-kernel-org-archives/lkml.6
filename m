@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07BCC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4810AC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF95120855
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C86320855
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfBIMyY (ORCPT
+        id S1727080AbfBIMzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:54:24 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41587 "EHLO
+        Sat, 9 Feb 2019 07:55:05 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55815 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBIMyY (ORCPT
+        with ESMTP id S1726703AbfBIMzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:54:24 -0500
+        Sat, 9 Feb 2019 07:55:05 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CsBQZ2633273
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CsqE22633323
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:54:11 -0800
+        Sat, 9 Feb 2019 04:54:52 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CsANl2633268;
-        Sat, 9 Feb 2019 04:54:10 -0800
-Date:   Sat, 9 Feb 2019 04:54:10 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CsprB2633320;
+        Sat, 9 Feb 2019 04:54:51 -0800
+Date:   Sat, 9 Feb 2019 04:54:51 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Leo Yan <tipbot@zytor.com>
-Message-ID: <tip-95c6fe970a0160cb770c5dce9f80311b42d030c0@git.kernel.org>
-Cc:     acme@redhat.com, coresight@lists.linaro.org,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com,
-        mathieu.poirier@linaro.org, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, leo.yan@linaro.org, hpa@zytor.com,
-        suzuki.poulose@arm.com, mingo@kernel.org, tglx@linutronix.de,
-        robert.walker@arm.com, mike.leach@linaro.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, mike.leach@linaro.org,
-          robert.walker@arm.com, acme@redhat.com,
-          coresight@lists.linaro.org, hpa@zytor.com,
-          suzuki.poulose@arm.com, jolsa@redhat.com,
-          linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-          leo.yan@linaro.org
-In-Reply-To: <20190129122842.32041-6-leo.yan@linaro.org>
-References: <20190129122842.32041-6-leo.yan@linaro.org>
+Message-ID: <tip-03919e526b29be8d0c77142e008b397a2c089398@git.kernel.org>
+Cc:     coresight@lists.linaro.org, jolsa@redhat.com, leo.yan@linaro.org,
+        robert.walker@arm.com, mathieu.poirier@linaro.org, acme@redhat.com,
+        mike.leach@linaro.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, tglx@linutronix.de, suzuki.poulose@arm.com,
+        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+          suzuki.poulose@arm.com, tglx@linutronix.de, namhyung@kernel.org,
+          mathieu.poirier@linaro.org, acme@redhat.com,
+          mike.leach@linaro.org, alexander.shishkin@linux.intel.com,
+          robert.walker@arm.com, coresight@lists.linaro.org,
+          jolsa@redhat.com, leo.yan@linaro.org
+In-Reply-To: <20190129122842.32041-7-leo.yan@linaro.org>
+References: <20190129122842.32041-7-leo.yan@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Change tuple from traceID-CPU# to
- traceID-metadata
-Git-Commit-ID: 95c6fe970a0160cb770c5dce9f80311b42d030c0
+Subject: [tip:perf/core] perf cs-etm: Add traceID in packet
+Git-Commit-ID: 03919e526b29be8d0c77142e008b397a2c089398
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,31 +61,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  95c6fe970a0160cb770c5dce9f80311b42d030c0
-Gitweb:     https://git.kernel.org/tip/95c6fe970a0160cb770c5dce9f80311b42d030c0
+Commit-ID:  03919e526b29be8d0c77142e008b397a2c089398
+Gitweb:     https://git.kernel.org/tip/03919e526b29be8d0c77142e008b397a2c089398
 Author:     Leo Yan <leo.yan@linaro.org>
-AuthorDate: Tue, 29 Jan 2019 20:28:39 +0800
+AuthorDate: Tue, 29 Jan 2019 20:28:40 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 6 Feb 2019 10:00:40 -0300
 
-perf cs-etm: Change tuple from traceID-CPU# to traceID-metadata
+perf cs-etm: Add traceID in packet
 
-If packet processing wants to know the packet is bound with which ETM
-version, it needs to access metadata to decide that based on metadata
-magic number; but we cannot simply to use CPU logic ID number as index
-to access metadata sequential array, especially when system have
-hotplugged off CPUs, the metadata array are only allocated for online
-CPUs but not offline CPUs, so the CPU logic number doesn't match with
-its index in the array.
-
-This patch is to change tuple from traceID-CPU# to traceID-metadata,
-thus it can use the tuple to retrieve metadata pointer according to
-traceID.
-
-For safe accessing metadata fields, this patch provides helper function
-cs_etm__get_cpu() which is used to return CPU number according to
-traceID; cs_etm_decoder__buffer_packet() is the first consumer for this
-helper function.
+Add traceID in packet, thus we can use traceID to retrieve metadata
+pointer from traceID-metadata tuple.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -100,133 +83,42 @@ Cc: Robert Walker <robert.walker@arm.com>
 Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
 Cc: coresight ml <coresight@lists.linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190129122842.32041-6-leo.yan@linaro.org
+Link: http://lkml.kernel.org/r/20190129122842.32041-7-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  8 +++-----
- tools/perf/util/cs-etm.c                        | 26 +++++++++++++++++++------
- tools/perf/util/cs-etm.h                        |  9 ++++++++-
- 3 files changed, 31 insertions(+), 12 deletions(-)
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 2 ++
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 1 +
+ 2 files changed, 3 insertions(+)
 
 diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 294efa76c9e3..cdd38ffd10d2 100644
+index cdd38ffd10d2..ba4c623cd8de 100644
 --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
 +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -305,14 +305,12 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
- 			      enum cs_etm_sample_type sample_type)
- {
- 	u32 et = 0;
--	struct int_node *inode = NULL;
-+	int cpu;
- 
- 	if (decoder->packet_count >= MAX_BUFFER - 1)
- 		return OCSD_RESP_FATAL_SYS_ERR;
- 
--	/* Search the RB tree for the cpu associated with this traceID */
--	inode = intlist__find(traceid_list, trace_chan_id);
--	if (!inode)
-+	if (cs_etm__get_cpu(trace_chan_id, &cpu) < 0)
- 		return OCSD_RESP_FATAL_SYS_ERR;
- 
- 	et = decoder->tail;
-@@ -322,7 +320,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
- 
- 	decoder->packet_buffer[et].sample_type = sample_type;
- 	decoder->packet_buffer[et].isa = CS_ETM_ISA_UNKNOWN;
--	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
-+	decoder->packet_buffer[et].cpu = cpu;
- 	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
- 	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
- 	decoder->packet_buffer[et].instr_count = 0;
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 1aa29633ce77..a5497a761db7 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -97,6 +97,20 @@ static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
- 	return CS_ETM_PROTO_ETMV3;
- }
- 
-+int cs_etm__get_cpu(u8 trace_chan_id, int *cpu)
-+{
-+	struct int_node *inode;
-+	u64 *metadata;
-+
-+	inode = intlist__find(traceid_list, trace_chan_id);
-+	if (!inode)
-+		return -EINVAL;
-+
-+	metadata = inode->priv;
-+	*cpu = (int)metadata[CS_ETM_CPU];
-+	return 0;
-+}
-+
- static void cs_etm__packet_dump(const char *pkt_string)
- {
- 	const char *color = PERF_COLOR_BLUE;
-@@ -252,7 +266,7 @@ static void cs_etm__free(struct perf_session *session)
- 	cs_etm__free_events(session);
- 	session->auxtrace = NULL;
- 
--	/* First remove all traceID/CPU# nodes for the RB tree */
-+	/* First remove all traceID/metadata nodes for the RB tree */
- 	intlist__for_each_entry_safe(inode, tmp, traceid_list)
- 		intlist__remove(traceid_list, inode);
- 	/* Then the RB tree itself */
-@@ -1519,9 +1533,9 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
- 				    0xffffffff);
- 
- 	/*
--	 * Create an RB tree for traceID-CPU# tuple. Since the conversion has
--	 * to be made for each packet that gets decoded, optimizing access in
--	 * anything other than a sequential array is worth doing.
-+	 * Create an RB tree for traceID-metadata tuple.  Since the conversion
-+	 * has to be made for each packet that gets decoded, optimizing access
-+	 * in anything other than a sequential array is worth doing.
- 	 */
- 	traceid_list = intlist__new(NULL);
- 	if (!traceid_list) {
-@@ -1587,8 +1601,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
- 			err = -EINVAL;
- 			goto err_free_metadata;
- 		}
--		/* All good, associate the traceID with the CPU# */
--		inode->priv = &metadata[j][CS_ETM_CPU];
-+		/* All good, associate the traceID with the metadata pointer */
-+		inode->priv = metadata[j];
+@@ -295,6 +295,7 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
+ 		decoder->packet_buffer[i].last_instr_cond = 0;
+ 		decoder->packet_buffer[i].flags = 0;
+ 		decoder->packet_buffer[i].exception_number = UINT32_MAX;
++		decoder->packet_buffer[i].trace_chan_id = UINT8_MAX;
+ 		decoder->packet_buffer[i].cpu = INT_MIN;
  	}
+ }
+@@ -331,6 +332,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+ 	decoder->packet_buffer[et].last_instr_cond = 0;
+ 	decoder->packet_buffer[et].flags = 0;
+ 	decoder->packet_buffer[et].exception_number = UINT32_MAX;
++	decoder->packet_buffer[et].trace_chan_id = trace_chan_id;
  
- 	/*
-diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-index 37f8d48179ca..fb5fc6538b7f 100644
---- a/tools/perf/util/cs-etm.h
-+++ b/tools/perf/util/cs-etm.h
-@@ -53,7 +53,7 @@ enum {
- 	CS_ETMV4_PRIV_MAX,
+ 	if (decoder->packet_count == MAX_BUFFER - 1)
+ 		return OCSD_RESP_WAIT;
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+index 012b4728a46f..7e6a8850be4a 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+@@ -50,6 +50,7 @@ struct cs_etm_packet {
+ 	u8 last_instr_cond;
+ 	u8 last_instr_taken_branch;
+ 	u8 last_instr_size;
++	u8 trace_chan_id;
+ 	int cpu;
  };
  
--/* RB tree for quick conversion between traceID and CPUs */
-+/* RB tree for quick conversion between traceID and metadata pointers */
- struct intlist *traceid_list;
- 
- #define KiB(x) ((x) * 1024)
-@@ -69,6 +69,7 @@ static const u64 __perf_cs_etmv4_magic   = 0x4040404040404040ULL;
- #ifdef HAVE_CSTRACE_SUPPORT
- int cs_etm__process_auxtrace_info(union perf_event *event,
- 				  struct perf_session *session);
-+int cs_etm__get_cpu(u8 trace_chan_id, int *cpu);
- #else
- static inline int
- cs_etm__process_auxtrace_info(union perf_event *event __maybe_unused,
-@@ -76,6 +77,12 @@ cs_etm__process_auxtrace_info(union perf_event *event __maybe_unused,
- {
- 	return -1;
- }
-+
-+static inline int cs_etm__get_cpu(u8 trace_chan_id __maybe_unused,
-+				  int *cpu __maybe_unused)
-+{
-+	return -1;
-+}
- #endif
- 
- #endif
