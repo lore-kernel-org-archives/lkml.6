@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33BAC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7647C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE5B20821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92E7120821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738249;
-	bh=AIOstd+jvcycXhb8SM0dZxip7uWw/qkPZKyhl5a6Uq4=;
+	s=default; t=1549738263;
+	bh=69xwimEh0fPwgOkhqAtuTAZur9+nuswaj4+xP0IA/f0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GiUXnLnWfQRgavV848JeX4ftul4ZCjjljV0aimqLNk1CDylwHRCqtPGzDmXvnTmSj
-	 GXOYTuyVmQeDAyXXeIWiAqknY5XhPChqtK+Fvvli6RvLSVvtARY4ofrD2JeWWKIHTc
-	 9wFOywg0TlQ/YngpPr+zhpq6XIEtU9Tbsbx9tyhE=
+	b=ouGi3bb8O3a+oEtA0dZ5E4pUWjy1ewiHM63uF0dw3/jkxeNZ1qTFkUD3qHbvnegAb
+	 vMSLaQI6TcwrsG9Vkz8qaoO/ugSxZq/d6/S46brsVu9y4Np5uoTgpRq89ECdnLK75u
+	 T/kILWBKcR2aydZN/kXdDt06JU9lQGQAPq0n48pw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbfBISur (ORCPT
+        id S1727928AbfBISvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:50:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36846 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:51:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728341AbfBISuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:50:14 -0500
+        id S1727114AbfBISuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:50:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E249E21916;
-        Sat,  9 Feb 2019 18:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77FD12192C;
+        Sat,  9 Feb 2019 18:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738213;
-        bh=AIOstd+jvcycXhb8SM0dZxip7uWw/qkPZKyhl5a6Uq4=;
+        s=default; t=1549738207;
+        bh=69xwimEh0fPwgOkhqAtuTAZur9+nuswaj4+xP0IA/f0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WPx9CWKlcavmvZ5ZMJfGb5eW716kZxs5boe/RHF+21NINtaB/mYhyW6zHovDm26o1
-         s3qYs0fFQG0Z9Nb3XrxYzucMU2qx3WJ6EhSS084bTwPezMDCS43vfGihVOaJ0ZgRXT
-         gOzZNQAjzBc8IWUbieYvO91WrlNaKoVkq/X8yA9w=
+        b=g/FvpqIZVHOjhv+GZN1RcLkl0bC+haoxqf94ErTA/tF2XszWZzV+B9QQRpMqNt6tH
+         Z0FQEaWxD7v2fEwEgsvyh+DBElcM5aL7Xw46BzV0rvxiKhXAgrLa5+itKsOgJZLxnR
+         2EorRrAadOM54rGFlC0s2/pkKw1sJ+/i5N+SHIgQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
         Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 4/4] cifs: Limit memory used by lock request calls to a page
-Date:   Sat,  9 Feb 2019 13:50:07 -0500
-Message-Id: <20190209185007.127176-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 12/12] cifs: Limit memory used by lock request calls to a page
+Date:   Sat,  9 Feb 2019 13:49:52 -0500
+Message-Id: <20190209184952.127009-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190209185007.127176-1-sashal@kernel.org>
-References: <20190209185007.127176-1-sashal@kernel.org>
+In-Reply-To: <20190209184952.127009-1-sashal@kernel.org>
+References: <20190209184952.127009-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 12 insertions(+)
 
 diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 026b399af215..1062e96ee272 100644
+index a3046b6523c8..8ec296308729 100644
 --- a/fs/cifs/file.c
 +++ b/fs/cifs/file.c
-@@ -1081,6 +1081,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
+@@ -1126,6 +1126,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
  		return -EINVAL;
  	}
  
@@ -91,7 +91,7 @@ index 026b399af215..1062e96ee272 100644
  	max_num = (max_buf - sizeof(struct smb_hdr)) /
  						sizeof(LOCKING_ANDX_RANGE);
  	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
-@@ -1410,6 +1414,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+@@ -1462,6 +1466,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
  	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
  		return -EINVAL;
  
