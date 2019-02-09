@@ -5,64 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FD4C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1978FC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B19FF21934
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:19:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D64CA2192B
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:21:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOqJ0neR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxA/F5Rs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfBIRT3 (ORCPT
+        id S1727550AbfBIRVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 12:19:29 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36638 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfBIRT2 (ORCPT
+        Sat, 9 Feb 2019 12:21:02 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36385 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbfBIRVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 12:19:28 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so3193061plo.3;
-        Sat, 09 Feb 2019 09:19:28 -0800 (PST)
+        Sat, 9 Feb 2019 12:21:01 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n22so405766pfa.3;
+        Sat, 09 Feb 2019 09:21:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=hAOwpNEAeiEKjcjszxzZGOzOHXkIIcQmK9gcwo5oYdw=;
-        b=sOqJ0neRvDesm3I6+Saq1KBrbkBZ8hlkGeUnOuSZ7snIqZVgMJr+YV+8tdEKxrSVUz
-         i81FoForconY4KeJ5RG0JVMSyyqhTqRQlIyrkQInDxlZ0BJUktAz5CGfpSxSmjOyLdjU
-         X5NJEJB6HNhxiZIHyPwMdAIwq3+SBW9uXQtthAyK+LRODr9U3RP6oDykOx2F4lrBPATf
-         py74P8+uwGHl7oHhBp63WR//9w3eHWP0JvSuepMdCRDjidBNp7D5MEgN6fkVsh23wo80
-         ggfo8YyhXOR1/jC9PEDtJB48E2bS9dlf2eee23rm+uMwFP7Rp/R4Zklq3lFRrVUgvJE6
-         Fx2g==
+        bh=mwDTNGZBhxQ6pmkfNmueqYAGkhHuOxQ7llCcvtvJDgA=;
+        b=AxA/F5RsnSb+IUXGqnQfREOSFUZOQFU0xyBxpv7XGhccdPoJD/pInTAno9K82Taqra
+         b54Z/CHfaAA8M18OYXlK16bZf4KptO2V51yAoeUh6xJRiDTxx7eKo4rJtr4NVCiKwYZR
+         1xBv2ooepU7scNRJmjgnfotzhF26TxCYYB3n2RisBkTuBUB2+7oVQ/s5wc63ldTiI26J
+         TuNT4HGh7lnb8LC3Yq2STZ6wINLqRy96yG1xbiktpiXTH1/ciYYx3hjVvQsVmCpWjlvt
+         0KaJJSDmtgzVxHGTfQ4qzg/eayfVl0uhD4tzv2tn9uIGuMa9bZjXofbUVQEF1bg2tBne
+         rDZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=hAOwpNEAeiEKjcjszxzZGOzOHXkIIcQmK9gcwo5oYdw=;
-        b=OFFw40rqWUvlSFp50ouXx1GNFzmd6EWYJIYO5DuFO8viEhGIpoxJ1Is1tf8LOXf4Tj
-         c9QMWlUaSbW/oAeXGoxDB5LpKrXyI1ExEWV2Se08iEOtxPN+R6o97m6+iOi21ss31Bam
-         8wbll1QiXIOX8OsxSefbFORsqoRq9qnW7w0sZt+oNnnWEf/nonUMQ58cC0NpcA8c9C23
-         gnOumda2ptUUyXLZLUGIq3tWcQw8LkkBUVi6cO2Rh17AqCyk/+MlcU1sEl3wmQZQttGV
-         B/MmPOlNHODGw0mbbM655nZizxJ1feNyvmizHuG5SH6Rtw2G+5GCjd6hsh9xoQrwajZ8
-         OVfA==
-X-Gm-Message-State: AHQUAuYIgg/Vs9D3dIs5Fse0Y9+63RsVNXcAf2/C+k3bdEFtzs0LPE7m
-        pm0oaPMwJ3hB4IhVTux4JPF/VzUU
-X-Google-Smtp-Source: AHgI3IZhISqLh1JDI6jNDvSG3P61sLNkQjkqI5gco/89knORQVW5xQT/2T4T712ZInsSk7WLEIpedw==
-X-Received: by 2002:a17:902:7882:: with SMTP id q2mr29999592pll.305.1549732767472;
-        Sat, 09 Feb 2019 09:19:27 -0800 (PST)
+        bh=mwDTNGZBhxQ6pmkfNmueqYAGkhHuOxQ7llCcvtvJDgA=;
+        b=t0rVxUhuvjCZR8A5wjMwMBq/itWJopgRplIQlHawrLmmBwJ2QX/FRPu/3yXNyxfpoI
+         jlqJl87A49wcaVd2ya18qCCMIoA0w5D2XKsvISqVWXsw19YClZLt72BIYrf6zspdArF3
+         6SeN4JWY13NZfG5ClPOnCC5P6TcySKtJNfloQX5hytMWX8LbCiPmlTO4RuMDqKXaPXO6
+         UbVsWEYHflf+OB7QZnOc5lMSxkkhNB0ivzABHUZn4E6H/zBe/reWyQ9fIb2R5hjfnkQ5
+         K71m/GbUcQdm+HibFuDg6U1xq4crbCbv72LD5YXbu+bCvoCW7/RczE4v34YoNTWntUfA
+         cWxg==
+X-Gm-Message-State: AHQUAuaRqQIAR6mcLKaEnOtYa0ClVP7Pn6d2183412r+sZyTn5ArC9YO
+        +kwIQxNNz3QN7Y0Y5Yo0IrVIhUz6
+X-Google-Smtp-Source: AHgI3IbrUG4iYtnsbYS+egBMTekbkfDn22n6XmJ2fRwnqTNjCNgVC0ZazceggBOYE+L9fI8Bq9vGGg==
+X-Received: by 2002:a63:b94c:: with SMTP id v12mr25962218pgo.221.1549732860339;
+        Sat, 09 Feb 2019 09:21:00 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p81sm7258649pfa.107.2019.02.09.09.19.26
+        by smtp.gmail.com with ESMTPSA id l2sm8023591pgn.52.2019.02.09.09.20.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 09:19:26 -0800 (PST)
-Date:   Sat, 9 Feb 2019 09:19:25 -0800
+        Sat, 09 Feb 2019 09:20:59 -0800 (PST)
+Date:   Sat, 9 Feb 2019 09:20:58 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     linux-input@vger.kernel.org
-Cc:     iSven Van Asbroeck <thesven73@gmail.com>,
+Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: apanel - switch to using brightness_set_blocking()
-Message-ID: <20190209171925.GA24193@dtor-ws>
+Subject: [PATCH] Input: qt2160 - switch to using brightness_set_blocking()
+Message-ID: <20190209172058.GA24435@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -73,77 +74,142 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Now that LEDs core allows "blocking" flavor of "set brightness" method we
-can use it and get rid of private work item. As a bonus, we are no longer
-forgetting to cancel it when we unbind the driver.
+can use it and get rid of private work items.
 
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/input/misc/apanel.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ drivers/input/keyboard/qt2160.c | 69 +++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/input/misc/apanel.c b/drivers/input/misc/apanel.c
-index 094bddf56755..2e138fef1274 100644
---- a/drivers/input/misc/apanel.c
-+++ b/drivers/input/misc/apanel.c
-@@ -22,7 +22,6 @@
- #include <linux/io.h>
- #include <linux/input-polldev.h>
- #include <linux/i2c.h>
--#include <linux/workqueue.h>
- #include <linux/leds.h>
+diff --git a/drivers/input/keyboard/qt2160.c b/drivers/input/keyboard/qt2160.c
+index 43b86482dda0..d466bc07aebb 100644
+--- a/drivers/input/keyboard/qt2160.c
++++ b/drivers/input/keyboard/qt2160.c
+@@ -58,10 +58,9 @@ static unsigned char qt2160_key2code[] = {
+ struct qt2160_led {
+ 	struct qt2160_data *qt2160;
+ 	struct led_classdev cdev;
+-	struct work_struct work;
+ 	char name[32];
+ 	int id;
+-	enum led_brightness new_brightness;
++	enum led_brightness brightness;
+ };
+ #endif
  
- #define APANEL_NAME	"Fujitsu Application Panel"
-@@ -60,7 +59,6 @@ struct apanel {
- 	unsigned short keymap[MAX_PANEL_KEYS];
- 	u16    nkeys;
- 	u16    led_bits;
--	struct work_struct led_work;
- 	struct led_classdev mail_led;
+@@ -74,7 +73,6 @@ struct qt2160_data {
+ 	u16 key_matrix;
+ #ifdef CONFIG_LEDS_CLASS
+ 	struct qt2160_led leds[QT2160_NUM_LEDS_X];
+-	struct mutex led_lock;
+ #endif
  };
  
-@@ -109,15 +107,7 @@ static void apanel_poll(struct input_polled_dev *ipdev)
- 			report_key(idev, ap->keymap[i]);
- }
+@@ -83,46 +81,39 @@ static int qt2160_write(struct i2c_client *client, u8 reg, u8 data);
  
--/* Track state changes of LED */
--static void led_update(struct work_struct *work)
--{
--	struct apanel *ap = container_of(work, struct apanel, led_work);
--
--	i2c_smbus_write_word_data(ap->client, 0x10, ap->led_bits);
--}
--
--static void mail_led_set(struct led_classdev *led,
-+static int mail_led_set(struct led_classdev *led,
- 			 enum led_brightness value)
+ #ifdef CONFIG_LEDS_CLASS
+ 
+-static void qt2160_led_work(struct work_struct *work)
++static int qt2160_led_set(struct led_classdev *cdev,
++			  enum led_brightness value)
  {
- 	struct apanel *ap = container_of(led, struct apanel, mail_led);
-@@ -127,7 +117,7 @@ static void mail_led_set(struct led_classdev *led,
- 	else
- 		ap->led_bits &= ~0x8000;
+-	struct qt2160_led *led = container_of(work, struct qt2160_led, work);
++	struct qt2160_led *led = container_of(cdev, struct qt2160_led, cdev);
+ 	struct qt2160_data *qt2160 = led->qt2160;
+ 	struct i2c_client *client = qt2160->client;
+-	int value = led->new_brightness;
+ 	u32 drive, pwmen;
  
--	schedule_work(&ap->led_work);
-+	return i2c_smbus_write_word_data(ap->client, 0x10, ap->led_bits);
+-	mutex_lock(&qt2160->led_lock);
+-
+-	drive = qt2160_read(client, QT2160_CMD_DRIVE_X);
+-	pwmen = qt2160_read(client, QT2160_CMD_PWMEN_X);
+-	if (value != LED_OFF) {
+-		drive |= (1 << led->id);
+-		pwmen |= (1 << led->id);
+-
+-	} else {
+-		drive &= ~(1 << led->id);
+-		pwmen &= ~(1 << led->id);
+-	}
+-	qt2160_write(client, QT2160_CMD_DRIVE_X, drive);
+-	qt2160_write(client, QT2160_CMD_PWMEN_X, pwmen);
++	if (value != led->brightness) {
++		drive = qt2160_read(client, QT2160_CMD_DRIVE_X);
++		pwmen = qt2160_read(client, QT2160_CMD_PWMEN_X);
++		if (value != LED_OFF) {
++			drive |= BIT(led->id);
++			pwmen |= BIT(led->id);
+ 
+-	/*
+-	 * Changing this register will change the brightness
+-	 * of every LED in the qt2160. It's a HW limitation.
+-	 */
+-	if (value != LED_OFF)
+-		qt2160_write(client, QT2160_CMD_PWM_DUTY, value);
++		} else {
++			drive &= ~BIT(led->id);
++			pwmen &= ~BIT(led->id);
++		}
++		qt2160_write(client, QT2160_CMD_DRIVE_X, drive);
++		qt2160_write(client, QT2160_CMD_PWMEN_X, pwmen);
+ 
+-	mutex_unlock(&qt2160->led_lock);
+-}
++		/*
++		 * Changing this register will change the brightness
++		 * of every LED in the qt2160. It's a HW limitation.
++		 */
++		if (value != LED_OFF)
++			qt2160_write(client, QT2160_CMD_PWM_DUTY, value);
+ 
+-static void qt2160_led_set(struct led_classdev *cdev,
+-			   enum led_brightness value)
+-{
+-	struct qt2160_led *led = container_of(cdev, struct qt2160_led, cdev);
++		led->brightness = value;
++	}
+ 
+-	led->new_brightness = value;
+-	schedule_work(&led->work);
++	return 0;
  }
  
- static int apanel_remove(struct i2c_client *client)
-@@ -179,7 +169,7 @@ static struct apanel apanel = {
- 	},
- 	.mail_led = {
- 		.name = "mail:blue",
--		.brightness_set = mail_led_set,
-+		.brightness_set_blocking = mail_led_set,
- 	},
- };
+ #endif /* CONFIG_LEDS_CLASS */
+@@ -293,20 +284,16 @@ static int qt2160_register_leds(struct qt2160_data *qt2160)
+ 	int ret;
+ 	int i;
  
-@@ -235,7 +225,6 @@ static int apanel_probe(struct i2c_client *client,
- 	if (err)
- 		goto out3;
+-	mutex_init(&qt2160->led_lock);
+-
+ 	for (i = 0; i < QT2160_NUM_LEDS_X; i++) {
+ 		struct qt2160_led *led = &qt2160->leds[i];
  
--	INIT_WORK(&ap->led_work, led_update);
- 	if (device_chip[APANEL_DEV_LED] != CHIP_NONE) {
- 		err = led_classdev_register(&client->dev, &ap->mail_led);
- 		if (err)
+ 		snprintf(led->name, sizeof(led->name), "qt2160:x%d", i);
+ 		led->cdev.name = led->name;
+-		led->cdev.brightness_set = qt2160_led_set;
++		led->cdev.brightness_set_blocking = qt2160_led_set;
+ 		led->cdev.brightness = LED_OFF;
+ 		led->id = i;
+ 		led->qt2160 = qt2160;
+ 
+-		INIT_WORK(&led->work, qt2160_led_work);
+-
+ 		ret = led_classdev_register(&client->dev, &led->cdev);
+ 		if (ret < 0)
+ 			return ret;
+@@ -324,10 +311,8 @@ static void qt2160_unregister_leds(struct qt2160_data *qt2160)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < QT2160_NUM_LEDS_X; i++) {
++	for (i = 0; i < QT2160_NUM_LEDS_X; i++)
+ 		led_classdev_unregister(&qt2160->leds[i].cdev);
+-		cancel_work_sync(&qt2160->leds[i].work);
+-	}
+ }
+ 
+ #else
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
