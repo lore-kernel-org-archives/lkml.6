@@ -2,84 +2,79 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF18C169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 03:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A79AFC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 03:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974F8217D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 03:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 752BA2070B
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 03:41:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fRpytnAq"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tvpcKDdS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbfBIDSN (ORCPT
+        id S1726894AbfBIDlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 22:18:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55406 "EHLO
+        Fri, 8 Feb 2019 22:41:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55806 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbfBIDSN (ORCPT
+        with ESMTP id S1726522AbfBIDlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 22:18:13 -0500
+        Fri, 8 Feb 2019 22:41:21 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=h8f8smstUZQLCufTi9qiwOHuCg8qK2omLGGgf3XFc8Y=; b=fRpytnAqeIRYAO0nIK4sbTtwt
-        08CRQu7K8fjpFnNRHKZVWJAzIpfpOaapNXTnMm6ukDUeTm+rVQbvY7q1z0d5BgkYC7VLAxEZwECh8
-        T9vYI4WoEQVNycyNsvQy9+KiuBn+7Ilg1WCCVZiPsArV5rPFczmlnxAtL1e+bvGCXytagFPLCVhaO
-        P5eoK3oHOs+1gXoYdRhPS2TzwxdbeL4OxLLGQAMRkh0P3GzE+gJ6bLJ7d+wDjUMbA9yxsboVuYhPv
-        z1kwkV/vaiXf4Aa8Rp55acLVKC2x8JlZhZMsLEU0h7DhnlHfpzelKfME/mWItoN0chJWpfyZBH3ve
-        y/a5fflbA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gsJ9e-0005Cu-26; Sat, 09 Feb 2019 03:18:10 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -mmotm/-next] fs: fs_parser: fix printk format warning
-Message-ID: <19432668-ffd3-fbb2-af4f-1c8e48f6cc81@infradead.org>
-Date:   Fri, 8 Feb 2019 19:18:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+         bh=QaE7Zu+8gweRAP8duRl/JZNe/5/26RIXjEsLTjotRlk=; b=tvpcKDdSHodP1uwtNjW6PwDSq
+        iT/72/zCrS6XhPO8YYiSyfYjAPTzVK2K3HjxJ9PsPibqLrac3yErDHEnQ0lPIUShyOzxJvQyZpgzb
+        8fIwvYGdQwIvysTg+KO/tkId3KxN39VCt0qZid86WjtqKDN3beAycRHtbbWT91tisgzA8KXUxaEMR
+        U37L0Y9zcwv2tcu6BFxtRimkpoHBU/3YFJuNYZTh4fdrKb/0C6k1/9K8Rc2TEvmAKt0HsOUtNHY0T
+        w20q9oCAcoY9Ja1k+ePY7DpgAlk1g0lmhQFabjbnzKeDXBVoowM1eYbEQZgqlVl55jDFXO/cOpGP9
+        wSiARRvWA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gsJW1-00046C-CA; Sat, 09 Feb 2019 03:41:17 +0000
+Date:   Fri, 8 Feb 2019 19:41:17 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [patch V2 1/2] genriq: Avoid summation loops for /proc/stat
+Message-ID: <20190209034117.GC21860@bombadil.infradead.org>
+References: <20190208134802.218483159@linutronix.de>
+ <20190208135020.925487496@linutronix.de>
+ <20190208143255.9dec696b15f03bf00f4c60c2@linux-foundation.org>
+ <c40b7b94-00e3-9b59-fd66-904b54fc69b4@redhat.com>
+ <20190208152151.ed4cf0c52e5970fc7a7911f1@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208152151.ed4cf0c52e5970fc7a7911f1@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Fri, Feb 08, 2019 at 03:21:51PM -0800, Andrew Morton wrote:
+> It sounds like it.  A 10khz interrupt will overflow in 4 days...
 
-Fix printk format warning (seen on i386 builds) by using ptrdiff
-format specifier (%t):
+If you've got a 10kHz interrupt, you have a bigger problem.  Anything
+happening 10,000 times a second is going to need interrupt mitigation
+to perform acceptably.
 
-../fs/fs_parser.c:413:6: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
----
- fs/fs_parser.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- mmotm-2019-0208-1633.orig/fs/fs_parser.c
-+++ mmotm-2019-0208-1633/fs/fs_parser.c
-@@ -410,7 +410,7 @@ bool fs_validate_description(const struc
- 			for (param = desc->specs; param->name; param++) {
- 				if (param->opt == e->opt &&
- 				    param->type != fs_param_is_enum) {
--					pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
-+					pr_err("VALIDATE %s: e[%tu] enum val for %s\n",
- 					       name, e - desc->enums, param->name);
- 					good = false;
- 				}
-
-
+More importantly, userspace can (and must) cope with wrapping.  This isn't
+anything new from Thomas' patch.  As long as userspace is polling more
+often than once a day, it's going to see a wrapped value before it wraps
+again, so it won't miss 4 billion interrupts.
