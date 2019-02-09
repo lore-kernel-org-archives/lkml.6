@@ -2,116 +2,141 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79EDC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94DBC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950F521929
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549730832;
-	bh=iubSI39owbR/5OxgRxZL+pMKjJpk2EgAx+sbCmO8haI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=DqiOyQlS+G7Sc8rfOCmGiu8tqRVc851nMUyKJl3E4ntS8KlyKhVWY8GtsZpoe6bUX
-	 4FmZ8KA3tmJ+LD21xMJfKtLcfsYDlcW+7zfxgErHTAiztBBjcaqYWT/iXuUoEHj7YQ
-	 n67GHrCmNUOYYwZPUdOkoKMd2btGaXX3o9WngWQU=
+	by mail.kernel.org (Postfix) with ESMTP id B6841218D2
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:49:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWP8UNN7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfBIQrK (ORCPT
+        id S1727125AbfBIQti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 11:47:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfBIQrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 11:47:09 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F35D218D2;
-        Sat,  9 Feb 2019 16:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549730828;
-        bh=iubSI39owbR/5OxgRxZL+pMKjJpk2EgAx+sbCmO8haI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B9FUTGyPg6O451fRsNeG4ZwKX9Hnrpvj0eh+G8aQ4YUu4jmD86Uq4bkjnilur/d1Y
-         OuI2+ne2rFbXt0fdfWyYoT/QEdtMa63xGzRSkaCeq5mQKbRffeUD3p3wZvgytnhQjn
-         S6rx6jRxmjauifsP05eBGjEZAkz6CUJW7xHlDH04=
-Date:   Sat, 9 Feb 2019 16:47:02 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Kukjin Kim <kgene@kernel.org>,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        =?UTF-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH]  iio: adc: exynos-adc: Fix NULL pointer exception on
- unbind
-Message-ID: <20190209164702.697de406@archlinux>
-In-Reply-To: <20190208233927.5392-1-krzk@kernel.org>
-References: <20190208233927.5392-1-krzk@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 9 Feb 2019 11:49:38 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38119 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbfBIQth (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 11:49:37 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so5530403lja.5;
+        Sat, 09 Feb 2019 08:49:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=i1gI8Zrbgf67gTz6FH6HJeQDuuHQ1TpXgfCnjb7wzNo=;
+        b=JWP8UNN7Dnk9k46Hyia7Eb30yeuDaZO8ho467Jo1HYkbM6L2C96VT9+FLPAjPYni7g
+         K90yv/VwprRe4A5+Zp0+xr06/g5A7mz+OGGxnmEuQu5H6pxLyCUV4fcCDpK4dNr7VAwM
+         ncjGqUI3K4lkmOxv1TFinyEPg0HTalRAe0LMsZzQzfgVGqJ70E23kBCXlPrupKhjdpys
+         T6hTglwKZcVAFAtm9ZpVUFr4wIrraw5hRzAuk/AwZH9NyeEuN5R4ckfu9mPYEzOiDJ05
+         qVr56KTHljRRmfi5XiqYjO7RmPUCLItTuhOOeOgxaE0R4ru+NTsWnNBjQ2MxQd02AorU
+         fNvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i1gI8Zrbgf67gTz6FH6HJeQDuuHQ1TpXgfCnjb7wzNo=;
+        b=d8uCIUKU9aJEVhFit57jnIYk63rcM16kCmO1vVhm6vhLai2nFNVI9Eaqaool+cCbJL
+         0uxC0to8m2wQkGpWdHdgSnfCvtW67IpvDjnh2cFPTEyp+qqw5r80vqzzlGD4JdVbCjTy
+         gg6L8egC2+W4sI/5d122khbh+2siJxt03E0LH/7oahQr+4FT4f5D3l3lhwqgCA51vuAc
+         055OxsqKgli59fd4aSo6Ed1+TJXJB2H3rEvEU8WbSGZE3llQgPXjVs1Fshn+YkKHnNqO
+         6ASJCktD3Q8jg5WLyqiXHtf1/vnBapVRlDqJnNKHdcJwS+hlNAI+R0owVRbKeuxlXp4x
+         Fc3Q==
+X-Gm-Message-State: AHQUAuZKs3NLvMDHGo8cn+g8BA1CYboER2UKrAjOZSqeuT5ph7ZyDbOp
+        fXctoXLaD3RjqRhLRX7O2rc=
+X-Google-Smtp-Source: AHgI3IZUmKvyfkrCdtZPIF+67uFtSKXpnnDIJPhXtarKFzQWVImKSWWRSuUtc3tPL6YIxqlmyZ8vmA==
+X-Received: by 2002:a2e:9249:: with SMTP id v9-v6mr36050ljg.164.1549730975144;
+        Sat, 09 Feb 2019 08:49:35 -0800 (PST)
+Received: from localhost (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id a9-v6sm623591ljf.52.2019.02.09.08.49.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Feb 2019 08:49:34 -0800 (PST)
+Date:   Sat, 9 Feb 2019 17:49:12 +0100
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, pmeerw@pmeerw.net, johan@kernel.org
+Subject: Re: [PATCH v3 3/3] dt-bindings: iio: chemical: pms7003: add device
+ tree support
+Message-ID: <20190209164908.GA2888@arch>
+References: <20190201215759.14569-1-tduszyns@gmail.com>
+ <20190201215759.14569-4-tduszyns@gmail.com>
+ <20190202171247.0d0fc122@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190202171247.0d0fc122@archlinux>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  9 Feb 2019 00:39:27 +0100
-Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Sat, Feb 02, 2019 at 05:12:47PM +0000, Jonathan Cameron wrote:
+> On Fri,  1 Feb 2019 22:57:59 +0100
+> Tomasz Duszynski <tduszyns@gmail.com> wrote:
+>
+> > Add device tree support for Plantower PMS7003 particulate matter sensor.
+> >
+> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> Hi Tomasz,
+>
+> Sorry, I clearly didn't look at this in enough detail on earlier versions.
+> I think the set gpio is rather device specific so should have a vendor
+> prefix.
+>
+> I would also like to get an opinion on the generic name from the devicetree
+> maintainers before we start to standardise on it.
+>
+> Thanks,
+>
+> Jonathan
+>
+> > ---
+> >  .../iio/chemical/plantower,pms7003.txt        | 20 +++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> > new file mode 100644
+> > index 000000000000..cbad95480e04
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> > @@ -0,0 +1,20 @@
+> > +* Plantower PMS7003 particulate matter sensor
+> > +
+> > +Required properties:
+> > +- compatible: must be "plantower,pms7003"
+> > +- vcc-supply: phandle to the regulator that provides power to the sensor
+> > +
+> > +Optional properties:
+> > +- set-gpios: phandle to the GPIO connected to the SET line
+>
+> Hmm. This is a somewhat 'unusual' one so should probably have a vendor prefix.
+>
 
-> Fix NULL pointer exception on device unbind when device tree does not
-> contain "has-touchscreen" property.  In such case the input device is
-> not registered so it should not be unregistered.
-> 
->     $ echo "12d10000.adc" > /sys/bus/platform/drivers/exynos-adc/unbind
-> 
->     Unable to handle kernel NULL pointer dereference at virtual address 00000474
->     ...
->     (input_unregister_device) from [<c0772060>] (exynos_adc_remove+0x20/0x80)
->     (exynos_adc_remove) from [<c0587d5c>] (platform_drv_remove+0x20/0x40)
->     (platform_drv_remove) from [<c05860f0>] (device_release_driver_internal+0xdc/0x1ac)
->     (device_release_driver_internal) from [<c0583ecc>] (unbind_store+0x60/0xd4)
->     (unbind_store) from [<c031b89c>] (kernfs_fop_write+0x100/0x1e0)
->     (kernfs_fop_write) from [<c029709c>] (__vfs_write+0x2c/0x17c)
->     (__vfs_write) from [<c0297374>] (vfs_write+0xa4/0x184)
->     (vfs_write) from [<c0297594>] (ksys_write+0x4c/0xac)
->     (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
-> 
-> Fixes: 2bb8ad9b44c5 ("iio: exynos-adc: add experimental touchscreen support")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Given we have had this one for a little while and are late in the
-cycle I'm going to queue it up for the coming merge window.
+Makes sense. I'll respin the series with this extra change you're
+suggesting.
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-> ---
->  drivers/iio/adc/exynos_adc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index fa2d2b5767f3..41da522fc673 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -929,7 +929,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
->  	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
->  	struct exynos_adc *info = iio_priv(indio_dev);
->  
-> -	if (IS_REACHABLE(CONFIG_INPUT)) {
-> +	if (IS_REACHABLE(CONFIG_INPUT) && info->input) {
->  		free_irq(info->tsirq, info);
->  		input_unregister_device(info->input);
->  	}
-
+> > +- reset-gpios: phandle to the GPIO connected to the RESET line
+>
+> reset is common and clear in meaning, so vendor prefix probably not appropriate.
+> > +
+> > +Refer to serial/slave-device.txt for generic serial attached device bindings.
+> > +
+> > +Example:
+> > +
+> > +&uart0 {
+> > +	air-pollution-sensor {
+> > +		vcc-supply = <&reg_vcc5v0>;
+> > +		compatible = "plantower,pms7003";
+> > +	};
+> > +};
+>
