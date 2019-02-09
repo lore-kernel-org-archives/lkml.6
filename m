@@ -2,213 +2,109 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB183C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 03:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8A9C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FEC21903
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 03:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8674B20857
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="QXADtuH/";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="GD5OvFaS"
+	dkim=pass (1024-bit key) header.d=digidescorp.com header.i=@digidescorp.com header.b="UWdvB8f7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfBIDmq (ORCPT
+        id S1726796AbfBIEHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 22:42:46 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:37608 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726522AbfBIDmp (ORCPT
+        Fri, 8 Feb 2019 23:07:02 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34375 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfBIEHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 22:42:45 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x193cOTl030111;
-        Fri, 8 Feb 2019 19:42:34 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=f9oA2LbLNWpkczbTyDOtl3kXpJBnp+RAj1oKWYbirls=;
- b=QXADtuH/VSOWAF+5DDbiQJwgiMxQSOGhr+6D1Nfr0YZCQGV7T8qnRrKKl9FTAVPapZIG
- tG4QWREl28xewjiRHqTIYJRt4jaoEpkUFFyocxiHIQpryQ1+UHgJ+yAHXQPx3Cqja9gW
- yZ07GOB+kV686CIKENPVd8wSf5DMAiZraRk= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qhnea066c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 08 Feb 2019 19:42:34 -0800
-Received: from prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) by
- prn-hub05.TheFacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 8 Feb 2019 19:42:33 -0800
-Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
- prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 8 Feb 2019 19:42:33 -0800
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Fri, 8 Feb 2019 19:42:33 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f9oA2LbLNWpkczbTyDOtl3kXpJBnp+RAj1oKWYbirls=;
- b=GD5OvFaSpEYJU5C0sOb70fKAZ+5A9qwqGysYKZ7Wf8yoPndfT3ZuBK8M7TYt2ViBcwqmnyHHgg1hLuFRRwHIUjdB3VcGMpPfCAGh+KCmFFVfK3NdjCM4u9qyHLl/BSvi254zbzeDrYRKaqAMCkikcmkfcD9yM8WfjiYEW8gKUFo=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB3112.namprd15.prod.outlook.com (20.178.239.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Sat, 9 Feb 2019 03:42:31 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1601.016; Sat, 9 Feb 2019
- 03:42:31 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>, Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
- pages"
-Thread-Topic: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
- pages"
-Thread-Index: AQHUuFKyWLaITMbS90mKhttYYyCJLqXHu+eAgADdi4CAAH9ygIAAHdwAgAC+jQCACjmaAIABQTOAgABH/oCAADEXgIAAp1YAgABRyYA=
-Date:   Sat, 9 Feb 2019 03:42:30 +0000
-Message-ID: <20190209034223.GA2591@castle.DHCP.thefacebook.com>
-References: <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
- <20190131013403.GI4205@dastard> <20190131091011.GP18811@dhcp22.suse.cz>
- <20190131185704.GA8755@castle.DHCP.thefacebook.com>
- <20190131221904.GL4205@dastard> <20190207102750.GA4570@quack2.suse.cz>
- <20190207213727.a791db810341cec2c013ba93@linux-foundation.org>
- <20190208095507.GB6353@quack2.suse.cz>
- <20190208125049.GA11587@quack2.suse.cz>
- <20190208144944.082a771e84f02a77bad3e292@linux-foundation.org>
-In-Reply-To: <20190208144944.082a771e84f02a77bad3e292@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR07CA0092.namprd07.prod.outlook.com
- (2603:10b6:a03:12b::33) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:db87]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB3112;20:856hCyX4fJdMdWcIzpwY+PDNB1XYpsu70rELFTwp/wBEU2Ks+XNSQySv+jcKC57i4BA3Hq654Z/vkn+h3gjaxTlk7eOOevC1eJa9LClIVhofqBeezzyJ14mTwBBII+h2gNZSoS54xlGy/rkW2yDRxqcPg7KLnOavuBZLaoATEIo=
-x-ms-office365-filtering-correlation-id: 7b6751be-f96e-4da0-915a-08d68e409e57
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB3112;
-x-ms-traffictypediagnostic: BYAPR15MB3112:
-x-microsoft-antispam-prvs: <BYAPR15MB311218F81DB0959FAF368AD8BE6A0@BYAPR15MB3112.namprd15.prod.outlook.com>
-x-forefront-prvs: 09435FCA72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(39860400002)(346002)(366004)(199004)(189003)(97736004)(8676002)(106356001)(229853002)(6436002)(6116002)(446003)(4326008)(81166006)(11346002)(81156014)(8936002)(186003)(6916009)(6512007)(9686003)(256004)(478600001)(5024004)(14444005)(6486002)(68736007)(105586002)(33656002)(14454004)(386003)(46003)(33896004)(53936002)(99286004)(25786009)(6506007)(76176011)(71200400001)(52116002)(102836004)(71190400001)(93886005)(486006)(2906002)(6246003)(86362001)(476003)(305945005)(7736002)(316002)(54906003)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3112;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: vjLKh+N40P1WdqiNyE8of39w7Fj7AloVFPIWXny4F4Bxt3tBLR2Xpt5ToNi7IX9iSmjLGFV9+nrrzTqABJ3aEoxUTvC0/Ik0YusttJ1zcX0k4+nO+7nmMHJG/mVgLqMxNBvxoHBYPDa+549BGULswJFH+2QcxqgFgJrhKoOzy6YkCrWVN5xCIHoLjrxHda1bvOeoePtCeOpw6pP4NT0YJFDqHoxhsFR2CBHnbYidd2XAzVPm307n9vHSWTVh2ZpPKqOabRMxCD4xkDNqIgCzYzV2MW/5JfFf7jA6Or1C/bFTOP3odhJyaysVm3y/WVkzhl9oYwss5vzzUl4TMNpBVEMKd2AwDSzBvpCGvbrVbFZ++TJrwfqakQYAEbfp4rDBc9SgdFi5/vRlLZ+cliKv7peogm+v0KUXA59WeL66VIM=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <732A74A8901BE749BECB4649E223D905@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 8 Feb 2019 23:07:02 -0500
+Received: by mail-it1-f195.google.com with SMTP id x124so10502194itd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 20:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digidescorp.com; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=7LZNbZgGlOZ24T8n6zWfi9+M16V+/eb3pxq0kNbN8/k=;
+        b=UWdvB8f7wXTs1fxDk9GEu9D3xPwazb72vEcADoosrXbBjt7kilbo3HcPxMIfv3qeoV
+         n0Tk8UlLKeU53pHHkE6EleQGtMIJbioSoWgCm3QRT/Ok9J23TGuwtlyLL3n+rEILixgn
+         SqzUexU4HI5nfulR7tZ3AnIKLNFpfU9MDI+EA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=7LZNbZgGlOZ24T8n6zWfi9+M16V+/eb3pxq0kNbN8/k=;
+        b=PQGcwRCc5HGXq+ix0CBGFysz/4zLUfPQ8FY5rJGZuSqXz8SjXUwIgprdHYiC4j1H6V
+         LM1+YEVoMwY7RroYrCnmQON5Wn8tlle6eOBIL61zq1YVqna0d/IJOX5446uo0w77LTNb
+         8wFo0pihUTKywlBqjSQl//MqLL6PkXcpUoNOoKlUalleJU0equ+9chwqkaQKEer4ULvl
+         pG3CWlolSolnQhf/sQSXiQpKLoMVFvck9tDV0lYP0JY9C30QoG5o1LBmljSugQR40rsu
+         S5FPtY/QhwB5dpFyMQQBIyRbIn3eSoIbFzykzRcg+GWGZhbPKO/vVJKcqajuF2z1n0Sp
+         lpgQ==
+X-Gm-Message-State: AHQUAuauuouevQG3xABrEQmV4xamfUzKesJ2fHw3fJsBlzLHRF9N4atK
+        TyN6hve2w6xtPyWPvJ6d+bNSnrvCJrk=
+X-Google-Smtp-Source: AHgI3Ib3W0pOo9A6M7MIGf4zrONLxbmJL5OVNBpvw7wmCa1cq7c5HiU9urH2TcJxpxIiLzNRFiaTOQ==
+X-Received: by 2002:a02:5b05:: with SMTP id g5mr14160817jab.84.1549685221516;
+        Fri, 08 Feb 2019 20:07:01 -0800 (PST)
+Received: from [10.10.2.64] (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id q12sm295259ioi.54.2019.02.08.20.07.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 20:07:00 -0800 (PST)
+Subject: Re: [PATCH 0/2] udf: Fix corrupt on-disk integrity descriptor
+ following sync()
+From:   Steve Magnani <steve.magnani@digidescorp.com>
+To:     jack@suse.com
+Cc:     linux-kernel@vger.kernel.org
+References: <20190208173455.20151-1-steve@digidescorp.com>
+Message-ID: <7ce9c657-efba-5dbb-441d-acb00a13044b@digidescorp.com>
+Date:   Fri, 8 Feb 2019 22:06:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b6751be-f96e-4da0-915a-08d68e409e57
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Feb 2019 03:42:29.8119
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3112
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-09_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <20190208173455.20151-1-steve@digidescorp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 02:49:44PM -0800, Andrew Morton wrote:
-> On Fri, 8 Feb 2019 13:50:49 +0100 Jan Kara <jack@suse.cz> wrote:
->=20
-> > > > Has anyone done significant testing with Rik's maybe-fix?
-> > >=20
-> > > I will give it a spin with bonnie++ today. We'll see what comes out.
-> >=20
-> > OK, I did a bonnie++ run with Rik's patch (on top of 4.20 to rule out o=
-ther
-> > differences). This machine does not show so big differences in bonnie++
-> > numbers but the difference is still clearly visible. The results are
-> > (averages of 5 runs):
-> >=20
-> > 		 Revert			Base			Rik
-> > SeqCreate del    78.04 (   0.00%)	98.18 ( -25.81%)	90.90 ( -16.48%)
-> > RandCreate del   87.68 (   0.00%)	95.01 (  -8.36%)	87.66 (   0.03%)
-> >=20
-> > 'Revert' is 4.20 with "mm: don't reclaim inodes with many attached page=
-s"
-> > and "mm: slowly shrink slabs with a relatively small number of objects"
-> > reverted. 'Base' is the kernel without any reverts. 'Rik' is a 4.20 wit=
-h
-> > Rik's patch applied.
-> >=20
-> > The numbers are time to do a batch of deletes so lower is better. You c=
-an see
-> > that the patch did help somewhat but it was not enough to close the gap
-> > when files are deleted in 'readdir' order.
->=20
-> OK, thanks.
->=20
-> I guess we need a rethink on Roman's fixes.   I'll queued the reverts.
+On 2/8/19 11:34 AM, Steve Magnani wrote:
+> In cases where the next unique ID or file/directory count of the
+> in-core Logical Volume Integrity Descriptor have been updated,
+> a sync() causes a (corrupt) LVID with a stale CRC to be written to disk.
+>
+> Ordinarily, this is corrected by an update of the on-disk LVID that occurs
+> when the filesystem is unmounted. However, if power is lost or the
+> filesystem resides on a device that is surprise-removed, the corrupt LVID
+> remains and can complicate later remounting or fsck/chkdsk.
 
-Agree.
+"Complicate later remounting" turns out to be an understatement.
+Actually it seems that this one event can trigger more silent corruption
+of the filesystem on future remounts.
 
-I still believe that we should cause the machine-wide memory pressure
-to clean up any remains of dead cgroups, and Rik's patch is a step into
-the right direction. But we need to make some experiments and probably
-some code changes here to guarantee that we don't regress on performance.
+The driver will mount without complaint a filesystem that lacks a valid LVID.
+But in this scenario, every time lvid_get_unique_id() is called to generate
+an ID for a new inode or link, it returns zero. It appears that callers
+happily assign this zero to all new inodes or links, with no indication to
+the user or in the syslog that a problem is brewing.
 
->=20
->=20
-> BTW, one thing I don't think has been discussed (or noticed) is the
-> effect of "mm: don't reclaim inodes with many attached pages" on 32-bit
-> highmem machines.  Look why someone added that code in the first place:
->=20
-> : commit f9a316fa9099053a299851762aedbf12881cff42
-> : Author: Andrew Morton <akpm@digeo.com>
-> : Date:   Thu Oct 31 04:09:37 2002 -0800
-> :=20
-> :     [PATCH] strip pagecache from to-be-reaped inodes
-> :    =20
-> :     With large highmem machines and many small cached files it is possi=
-ble
-> :     to encounter ZONE_NORMAL allocation failures.  This can be demonstr=
-ated
-> :     with a large number of one-byte files on a 7G machine.
-> :    =20
-> :     All lowmem is filled with icache and all those inodes have a small
-> :     amount of highmem pagecache which makes them unfreeable.
-> :    =20
-> :     The patch strips the pagecache from inodes as they come off the tai=
-l of
-> :     the inode_unused list.
-> :    =20
-> :     I play tricks in there peeking at the head of the inode_unused list=
- to
-> :     pick up the inode again after running iput().  The alternatives see=
-med
-> :     to involve more widespread changes.
-> :    =20
-> :     Or running invalidate_inode_pages() under inode_lock which would be=
- a
-> :     bad thing from a scheduling latency and lock contention point of vi=
-ew.
->=20
-> I guess I shold have added a comment.  Doh.
->=20
+I lost the entire contents of a flash disk to what was probably an
+instance of this kind of corruption, when I told Windows chkdsk to
+repair it.
 
-It's a very useful link.
+I'll try to solve that in a separate followon patchset.
+The simplest solution I can think of is to force read-only mount when
+no LVID is available.
 
-Thanks!
+Regards,
+------------------------------------------------------------------------
+  Steven J. Magnani               "I claim this network for MARS!
+  www.digidescorp.com              Earthling, return my space modulator!"
+
+  #include <standard.disclaimer>
+
