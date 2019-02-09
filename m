@@ -2,115 +2,122 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DF0C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCCAC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7C4321916
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:34:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uQbVWXFe"
+	by mail.kernel.org (Postfix) with ESMTP id 8808420821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549738059;
+	bh=xlMinsUh28iFhejDQZ5kBMqcF4vRxA4M4wsvOhUNFSg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=DW+8Ij8KN6phGjgZQDBfwla7wsnmK+3D1if0papqJWI9x16GpWHHbPeVKOF/TYw4R
+	 Z04C/wfd1AOPS22pqVYkQljIiXzZ8u4BDvX89SuLHzxeP8+jaVLzsUpLDOeoe6hPlf
+	 O2F/f/vgiaBUyq+vl8cSMBoEo4DF2sC+OvEIGpmU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfBISe5 (ORCPT
+        id S1727247AbfBISrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:34:57 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52918 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfBISe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:34:57 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m1so9492755wml.2;
-        Sat, 09 Feb 2019 10:34:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=SYxH1yx8PgayeikM4YgapG+FoS6nT4L4Mzor/Idpn2g=;
-        b=uQbVWXFeij5Y5/wN+V5RzqQE5hPfuateLFSf1seTvd4L9cKgzxXZ0YjW8VlFsh9w5G
-         ApYjmCuLtrUogmbge27IP93g0rgjPVO313Dk8WI2ekC8NUJdzpVrxyYJrAs5zKHeNmyH
-         c/2ViAUSkvW5NWUDHWbVIAUQB+uQFA7rtuaysZiO4ltidS1ABAmlwMpzAULTny2eLBof
-         6aayIQyQkiPMiDEoS4yUSjdaLiU7SamB4pc44dE13izM5dmpHoKINOknh2bK66qv5pj0
-         ASqRwxca22tDGjKaG0ki5ze49uqoSWhF+Cwxi4LJpQ7QfWSLdjfOAniCzxzCK6yBJg5Q
-         YWpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=SYxH1yx8PgayeikM4YgapG+FoS6nT4L4Mzor/Idpn2g=;
-        b=NGNLWeRj13sw3vIpDSggX7O6k6IiVd+Mpt/8mdE7ldvIm1sfcIWArqVhOEj0xI+h29
-         7M4+vsW3kket7xNlHO9fuY6OxEivqFW8p91vi9pYHhaUNVvUK0hMpUeHuAkwvsQ7z/wO
-         3QWmjFZ84wyFFz/T4HQlC6ip3/1lIqv4u2mEO72Opq8fvBCk86if9iSyIKJjYGzYwcVA
-         NwhSm9W8AAXyQa5Cbn0IxEi/uGX4vaYOvofKgZucHg5avZqh3BCXhDDAT6aJ/debSZvj
-         jzNcIx6zQzR7PDVMu3XvBhJIWKs0cIrzCfuY/Zn90CClrfymvRlClzoEJ6T1Py7g1wl1
-         pmgQ==
-X-Gm-Message-State: AHQUAuaou2p/nDGXkMHeUU+TlTj1ruyIOUb3RIfnAVQn7/9OeNQXfeL5
-        Z3KPUdjuogRoYSBAxvc91ws=
-X-Google-Smtp-Source: AHgI3IaWBOsRg6JmG8tOQzmAPqqQR8GvhejxcmrsGr121gaQd0LtmpQLBdlBIX+wJVJW12C+eXIwfQ==
-X-Received: by 2002:adf:c5cc:: with SMTP id v12mr20698627wrg.176.1549737294680;
-        Sat, 09 Feb 2019 10:34:54 -0800 (PST)
-Received: from [192.168.1.100] ([93.51.16.173])
-        by smtp.gmail.com with ESMTPSA id s187sm3064346wms.8.2019.02.09.10.34.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 10:34:54 -0800 (PST)
-Message-ID: <68b71c15f32341468a868f6418e4fcb375bc49ba.camel@gmail.com>
-Subject: [PATCH] arm64/io: Don't use WZR in writel
-From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
-To:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Date:   Sat, 09 Feb 2019 19:34:53 +0100
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 9 Feb 2019 13:47:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727013AbfBISrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:47:37 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15C0A20821;
+        Sat,  9 Feb 2019 18:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549738056;
+        bh=xlMinsUh28iFhejDQZ5kBMqcF4vRxA4M4wsvOhUNFSg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=USQ3ADWu8U27CPoU7gXlQLWQBdVhiUq2xomSUlWQVsRWjKiHPH+U3rWcvCbeJwWdk
+         MkE+Msuh200A5+fK2wCd34BDmotw1lT8DW8IUnnkW0eMZHoMhp4We6ThAP9d5G0G14
+         o1NKXXPgoZlwuVnwe+TwR9zsH+NZFevbhrabiRgQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Emily Deng <Emily.Deng@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 01/42] drm/amdgpu/sriov:Correct pfvf exchange logic
+Date:   Sat,  9 Feb 2019 13:46:53 -0500
+Message-Id: <20190209184734.125935-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From 33fb6d036de273bb71ac1c67d7a91b7a5148e659 Mon Sep 17 00:00:00 2001
-From: "Angelo G. Del Regno" <kholk11@gmail.com>
-Date: Sat, 9 Feb 2019 18:56:46 +0100
-Subject: [PATCH] arm64/io: Don't use WZR in writel
+From: Emily Deng <Emily.Deng@amd.com>
 
-This is a partial revert of commit ee5e41b5f21a
-("arm64/io: Allow I/O writes to use {W,X}ZR")
+[ Upstream commit b8cf66182eddb22e9c7539821ed6eecdb4f86d1a ]
 
-When we try to use the zero register directly on some SoCs,
-their security will make them freeze due to a firmware bug.
-This behavior is seen with the arm-smmu driver freezing on
-TLBI and TLBSYNC on MSM8996, MSM8998, SDM630, SDM660.
+The pfvf exchange need be in exclusive mode. And add pfvf exchange in gpu
+reset.
 
-Allocating a temporary register to store the zero for the
-write actually solves the issue on these SoCs.
-
-Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+Signed-off-by: Emily Deng <Emily.Deng@amd.com>
+Reviewed-By: Xiangliang Yu <Xiangliang.Yu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/io.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++++----
+ drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c      | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index ee723835c1f4..a0a6d1aeb670 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -49,7 +49,7 @@ static inline void __raw_writew(u16 val, volatile void __iomem *addr)
- #define __raw_writel __raw_writel
- static inline void __raw_writel(u32 val, volatile void __iomem *addr)
- {
--	asm volatile("str %w0, [%1]" : : "rZ" (val), "r" (addr));
-+	asm volatile("str %w0, [%1]" : : "r" (val), "r" (addr));
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 30bc345d6fdf..8547fdaf8273 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1684,8 +1684,10 @@ static int amdgpu_device_ip_init(struct amdgpu_device *adev)
+ 	amdgpu_xgmi_add_device(adev);
+ 	amdgpu_amdkfd_device_init(adev);
  
- #define __raw_writeq __raw_writeq
+-	if (amdgpu_sriov_vf(adev))
++	if (amdgpu_sriov_vf(adev)) {
++		amdgpu_virt_init_data_exchange(adev);
+ 		amdgpu_virt_release_full_gpu(adev, true);
++	}
+ 
+ 	return 0;
+ }
+@@ -2597,9 +2599,6 @@ fence_driver_init:
+ 		goto failed;
+ 	}
+ 
+-	if (amdgpu_sriov_vf(adev))
+-		amdgpu_virt_init_data_exchange(adev);
+-
+ 	amdgpu_fbdev_init(adev);
+ 
+ 	r = amdgpu_pm_sysfs_init(adev);
+@@ -3271,6 +3270,7 @@ static int amdgpu_device_reset_sriov(struct amdgpu_device *adev,
+ 	r = amdgpu_ib_ring_tests(adev);
+ 
+ error:
++	amdgpu_virt_init_data_exchange(adev);
+ 	amdgpu_virt_release_full_gpu(adev, true);
+ 	if (!r && adev->virt.gim_feature & AMDGIM_FEATURE_GIM_FLR_VRAMLOST) {
+ 		atomic_inc(&adev->vram_lost_counter);
+diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+index 8cbb4655896a..b11a1c17a7f2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
++++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+@@ -174,7 +174,7 @@ static int xgpu_ai_send_access_requests(struct amdgpu_device *adev,
+ 			return r;
+ 		}
+ 		/* Retrieve checksum from mailbox2 */
+-		if (req == IDH_REQ_GPU_INIT_ACCESS) {
++		if (req == IDH_REQ_GPU_INIT_ACCESS || req == IDH_REQ_GPU_RESET_ACCESS) {
+ 			adev->virt.fw_reserve.checksum_key =
+ 				RREG32_NO_KIQ(SOC15_REG_OFFSET(NBIO, 0,
+ 					mmBIF_BX_PF0_MAILBOX_MSGBUF_RCV_DW2));
 -- 
 2.19.1
-
 
