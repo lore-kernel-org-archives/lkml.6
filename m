@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94386C4151A
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3817C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6209920821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A384A21939
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738176;
-	bh=N/UMkshsGoP29Llt4XiAfp+i34JTLqgRtXUlTfdAvqI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=k95vuW/WdHy2hMzeFgIIpC7IhIwqJbud86hoKPA0OZB76+tLydLEs6holYXjze69f
-	 6DX8iIovpr21eDIAAljaH65xcps61WPwTRfImYbBZ5pPc6QZXOL0IYQifuWi/bTVRu
-	 4/S7WJ8XTTKCzsLYYVxyY7qESlJsG1M+0bOuDmNc=
+	s=default; t=1549738178;
+	bh=ZPsXCgx9IhhGCaN1gN9l5yaP+1VlWm5h18wTfwdSJF4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=S1kAzIDOEIPKKx72Po2z4DevuR1OnhyhDZ9Y6dxd7wX20ToND9HP9eBk7KT162ts/
+	 ttcojNbSidkKn1yzwuZv8q1CtOJ/poBJZauboWUORJv5nL4LRpHKZg5ijlAXmAwn6B
+	 3ah+dm9bbP/OOem/dI30M9ODLO7ptX13evS9hdBg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfBISte (ORCPT
+        id S1728178AbfBISth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:49:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35088 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:49:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727476AbfBISta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:30 -0500
+        id S1728153AbfBISte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06FA520821;
-        Sat,  9 Feb 2019 18:49:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88CD42195D;
+        Sat,  9 Feb 2019 18:49:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738169;
-        bh=N/UMkshsGoP29Llt4XiAfp+i34JTLqgRtXUlTfdAvqI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NLZ9H1rMy3siCEFdSQA2zgYnd0BsNTyAkMRgsMOuvzYeQu0TkifdpZyhP9imO6XA5
-         Kt8ni2UfMeRsvovoO1ZlUGhtc2NxmMjytF69f8RMFXogKvh1x0k3pO4vz3caPVgwkV
-         sA+cHCEFnmpzha7L6Or99etD4qnnN2WlVf8tBSV8=
+        s=default; t=1549738173;
+        bh=ZPsXCgx9IhhGCaN1gN9l5yaP+1VlWm5h18wTfwdSJF4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zLjpXk3lnL/LyF7cuPOUwvp3tlQsI51rG4bdP1zPyG+x0SrHZZBmP96AjzVvPttvt
+         SvUdVh2DKJfb8BIRofDh7ka0k83hO5CIhJcQ5bepblpOWl36e2eIp0jD5FgBN7jJOW
+         GP4+yR13RzJjnPl69FhFW7mtpGgkRc7nSM6TDP0Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
         "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 01/16] ACPI: NUMA: Use correct type for printing addresses on i386-PAE
-Date:   Sat,  9 Feb 2019 13:49:12 -0500
-Message-Id: <20190209184927.126791-1-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 03/16] cpufreq: check if policy is inactive early in __cpufreq_get()
+Date:   Sat,  9 Feb 2019 13:49:14 -0500
+Message-Id: <20190209184927.126791-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190209184927.126791-1-sashal@kernel.org>
+References: <20190209184927.126791-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -56,89 +57,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Fan <fanc.fnst@cn.fujitsu.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-[ Upstream commit b9ced18acf68dffebe6888c7ec765a2b1db7a039 ]
+[ Upstream commit 2f66196208c98b3d1b4294edffb2c5a8197be899 ]
 
-The addresses of NUMA nodes are not printed correctly on i386-PAE
-which is misleading.
+cpuinfo_cur_freq gets current CPU frequency as detected by hardware
+while scaling_cur_freq last known CPU frequency. Some platforms may not
+allow checking the CPU frequency of an offline CPU or the associated
+resources may have been released via cpufreq_exit when the CPU gets
+offlined, in which case the policy would have been invalidated already.
+If we attempt to get current frequency from the hardware, it may result
+in hang or crash.
 
-Here is a debian9-32bit with PAE in a QEMU guest having more than 4G
-of memory:
+For example on Juno, I see:
 
-qemu-system-i386 \
--hda /var/lib/libvirt/images/debian32.qcow2 \
--m 5G \
--enable-kvm \
--smp 10 \
--numa node,mem=512M,nodeid=0,cpus=0 \
--numa node,mem=512M,nodeid=1,cpus=1 \
--numa node,mem=512M,nodeid=2,cpus=2 \
--numa node,mem=512M,nodeid=3,cpus=3 \
--numa node,mem=512M,nodeid=4,cpus=4 \
--numa node,mem=512M,nodeid=5,cpus=5 \
--numa node,mem=512M,nodeid=6,cpus=6 \
--numa node,mem=512M,nodeid=7,cpus=7 \
--numa node,mem=512M,nodeid=8,cpus=8 \
--numa node,mem=512M,nodeid=9,cpus=9 \
--serial stdio
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000188
+[0000000000000188] pgd=0000000000000000
+Internal error: Oops: 96000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 5 PID: 4202 Comm: cat Not tainted 4.20.0-08251-ga0f2c0318a15-dirty #87
+Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform
+pstate: 40000005 (nZcv daif -PAN -UAO)
+pc : scmi_cpufreq_get_rate+0x34/0xb0
+lr : scmi_cpufreq_get_rate+0x34/0xb0
+Call trace:
+ scmi_cpufreq_get_rate+0x34/0xb0
+ __cpufreq_get+0x34/0xc0
+ show_cpuinfo_cur_freq+0x24/0x78
+ show+0x40/0x60
+ sysfs_kf_seq_show+0xc0/0x148
+ kernfs_seq_show+0x44/0x50
+ seq_read+0xd4/0x480
+ kernfs_fop_read+0x15c/0x208
+ __vfs_read+0x60/0x188
+ vfs_read+0x94/0x150
+ ksys_read+0x6c/0xd8
+ __arm64_sys_read+0x24/0x30
+ el0_svc_common+0x78/0x100
+ el0_svc_handler+0x38/0x78
+ el0_svc+0x8/0xc
+---[ end trace 3d1024e58f77f6b2 ]---
 
-Because of the wrong value type, it prints as below:
+So fix the issue by checking if the policy is invalid early in
+__cpufreq_get before attempting to get the current frequency.
 
-[    0.021049] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.021740] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.022425] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.023092] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.023764] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.024431] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.025104] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.025791] ACPI: SRAT Memory (0x0 length 0x20000000) in proximity domain 6 enabled
-[    0.026412] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 7 enabled
-[    0.027118] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 8 enabled
-[    0.027802] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 9 enabled
-
-The upper half of the start address of the NUMA domains between 6
-and 9 inclusive was cut, so the printed values are incorrect.
-
-Fix the value type, to get the correct values in the log as follows:
-
-[    0.023698] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.024325] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.024981] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.025659] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.026317] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.026980] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.027635] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.028311] ACPI: SRAT Memory (0x100000000 length 0x20000000) in proximity domain 6 enabled
-[    0.028985] ACPI: SRAT Memory (0x120000000 length 0x20000000) in proximity domain 7 enabled
-[    0.029667] ACPI: SRAT Memory (0x140000000 length 0x20000000) in proximity domain 8 enabled
-[    0.030334] ACPI: SRAT Memory (0x160000000 length 0x20000000) in proximity domain 9 enabled
-
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-[ rjw: Subject & changelog ]
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/numa.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpufreq/cpufreq.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 8fb74d9011da..a7907b58562a 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -147,9 +147,9 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 		{
- 			struct acpi_srat_mem_affinity *p =
- 			    (struct acpi_srat_mem_affinity *)header;
--			pr_debug("SRAT Memory (0x%lx length 0x%lx) in proximity domain %d %s%s%s\n",
--				 (unsigned long)p->base_address,
--				 (unsigned long)p->length,
-+			pr_debug("SRAT Memory (0x%llx length 0x%llx) in proximity domain %d %s%s%s\n",
-+				 (unsigned long long)p->base_address,
-+				 (unsigned long long)p->length,
- 				 p->proximity_domain,
- 				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
- 				 "enabled" : "disabled",
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 93754300cb57..66c2790dcc5f 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1523,17 +1523,16 @@ static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
+ {
+ 	unsigned int ret_freq = 0;
+ 
+-	if (!cpufreq_driver->get)
++	if (unlikely(policy_is_inactive(policy)) || !cpufreq_driver->get)
+ 		return ret_freq;
+ 
+ 	ret_freq = cpufreq_driver->get(policy->cpu);
+ 
+ 	/*
+-	 * Updating inactive policies is invalid, so avoid doing that.  Also
+-	 * if fast frequency switching is used with the given policy, the check
++	 * If fast frequency switching is used with the given policy, the check
+ 	 * against policy->cur is pointless, so skip it in that case too.
+ 	 */
+-	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
++	if (policy->fast_switch_enabled)
+ 		return ret_freq;
+ 
+ 	if (ret_freq && policy->cur &&
+@@ -1562,10 +1561,7 @@ unsigned int cpufreq_get(unsigned int cpu)
+ 
+ 	if (policy) {
+ 		down_read(&policy->rwsem);
+-
+-		if (!policy_is_inactive(policy))
+-			ret_freq = __cpufreq_get(policy);
+-
++		ret_freq = __cpufreq_get(policy);
+ 		up_read(&policy->rwsem);
+ 
+ 		cpufreq_cpu_put(policy);
 -- 
 2.19.1
 
