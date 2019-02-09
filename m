@@ -2,120 +2,117 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A35C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 05:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52539C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 06:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB4F20855
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 05:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1771E20869
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 06:05:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sQNDh/mE"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="KJR1y8Y2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cRKKWckl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfBIFK4 (ORCPT
+        id S1726722AbfBIGBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 00:10:56 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37839 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfBIFKz (ORCPT
+        Sat, 9 Feb 2019 01:01:49 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:56653 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725925AbfBIGBt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 00:10:55 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so2652060pfb.4;
-        Fri, 08 Feb 2019 21:10:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LyeF4S+KpnMX6aFUJwIVzFd4RBQdNcQNYZAqpXdqF/Q=;
-        b=sQNDh/mERO68nhm7FMzjQswCVwPxYbOUa4bxg/YQDPnyr22WboLWyfpXKFsXz1jtqT
-         Gqsb4VmX2jp4F/2yhZ2DxOzO86QU/cPRI83s0AbXB68YyOnDcDXPtVH8YBPL6U7ImZ6E
-         DeAQ+BiRRDaPKd/doTr7dAWhd63GT6hn72y3Ie1s+Ixps3dOYcZrmQb85Wt6nIr2mniD
-         m2fhyg0ZR3xptU58f7DsCKsVktYusIEZyrgoauFJTDcbBKPPz9OZwuv46YmGuXk5bYY1
-         IDr28gJNai/lMlRjBfZ5Uk9+kcTqvz+Nj9i9nEBOFPXVOdQU1PZORnfJfamaaqMMV3Qk
-         HZSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LyeF4S+KpnMX6aFUJwIVzFd4RBQdNcQNYZAqpXdqF/Q=;
-        b=g80Lw1CBtWEPNER7fz96b2PNEt4Fmgsdwx/ZW2bX4CoeIRgCJlhLANyfiogTXQQqBI
-         CoK43FUhFienAG7MkLw6E3slnOZgjNKmf5lyi+hYpzBKqDzffDjMPdxHuN6/y/A8B6wt
-         BqceD+lvkr8rOxsqu3jaaaf9d0MuGaA37CMq/KXmtS/0fjILN/mAqbyEaGMlSoq/dbdQ
-         MZ3vnxM9/q9l6+QC64iPYzIKvYtCXt+3TLebGbQhooKEL4lBvHGkUCoANYDoCuFSG8oK
-         d2ZqmbI7tYUXbQxHVThqItXNJx5eT5Rt7+mct2B/RhbclWwF25irvVIKYy4MzgapNZLW
-         Fvrw==
-X-Gm-Message-State: AHQUAuZi4hPyJABwrVWnS3hjfXGuRTh8+uOS2q+xE4t5d75KlQt+jAfy
-        kqJ6KuQtXHEMevDwgi3mc9dHMCC2
-X-Google-Smtp-Source: AHgI3IZ68JSVdg6lXSQHYva1AAifak53KWgQfq3mYpMUHVPwZz5tYyxli3YZxKZnbtVNO/WcfC+oyQ==
-X-Received: by 2002:a63:9809:: with SMTP id q9mr24119070pgd.109.1549689054354;
-        Fri, 08 Feb 2019 21:10:54 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u186sm5168827pfu.51.2019.02.08.21.10.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 21:10:53 -0800 (PST)
-Subject: Re: [PATCH] watchdog/hpwdt: Update Kconfig documentation
-To:     Jerry Hoemann <jerry.hoemann@hpe.com>, wim@linux-watchdog.org
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1549648083-9501-1-git-send-email-jerry.hoemann@hpe.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <a20685a2-1f30-5088-7ad5-fe4d590e3a37@roeck-us.net>
-Date:   Fri, 8 Feb 2019 21:10:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 9 Feb 2019 01:01:49 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 966982FD4;
+        Sat,  9 Feb 2019 01:01:47 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 09 Feb 2019 01:01:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=02rqreOXmowRSv37xXHlpUW7Ay4
+        R4PELGgCx4jkxE4U=; b=KJR1y8Y2bJedPJO3WJFbOfidvsmWzwLUSMhkFgMgxyP
+        XKDoxHUuYQWRhps9dC6fK5XhxfA3dTt6AvPsUtLq1Vuf2z4X32UUtH6n3yn+LLzM
+        4QAw1WEdqQTrq7DewAXKqvr02IANOwBzJ/nK75mSThOoYsqkmbh366/Lcj4VljDC
+        t+YCeVCwk8vi64kZ2CR882uovNAfVQLvXc4SVaSpWVPlEBE4jmjQZE3aofg+bOi8
+        2iFnvPtazSzdTnok7cwWrkeP9HiPVTj4n6xONX+TiLxiZHzHXByGY7LEoPxBjjXJ
+        3l+9+J5VlvElRiTVIo5Wnd4MtSss+XxDxTWajG4IXow==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=02rqre
+        OXmowRSv37xXHlpUW7Ay4R4PELGgCx4jkxE4U=; b=cRKKWcklLZV1NX1pRA55si
+        f+5DYEbAxwT5oZRzdphKgAkpkFPu9fq4c1VTgceKdwk9JgNgNBkvb946etBrlKl1
+        BPZdYSqs90MCwierzfiIP+NlFGxpAnls1VA5OQamdYUihNLqqBuz9AMmjIJeHe+3
+        4HUe4xbhrzQFbPCQBWfbWl0JTujJEUtjve5ybyFANUnLUdBht9BQwhclNygjQbBs
+        +0JByzieyrulTLO21mdV0fPQ14gvxDXW5LVOfk035O2kLGQk/pF1oLVIVVsGl/3O
+        OF3Sf7U4b50niuic3qmm9PsYTmjICpCJZBpE0DE+YWy6wrc40iTh3950n5qKUFHg
+        ==
+X-ME-Sender: <xms:ymxeXIoMVWfJ8Tzri08ho755u_BUrRRwnsojb42RA6BfvDQLAdgshw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrleefgdekjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
+    enucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfv
+    ohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppe
+    duvdegrddugeelrdduvdefrdduvdeinecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvges
+    thhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:ymxeXICeGHWrSL_xvFqryb9zs9RAvSbUcRTqSIQTv1Z3kCK2TBiEhg>
+    <xmx:ymxeXFu64ee63-6Ol9x2veK8WpHquMl_z_LSEF6iOdSTKskm3Z9mpg>
+    <xmx:ymxeXPaYpnq8XSGRPgBcQj0TAfZUOQoF932q7B1fj1PM88luaOvNpg>
+    <xmx:y2xeXA5wnXEpdCebagHlOtm6t7iy2_T6EXYlZBTSISlyBW9MJ50Yqg>
+Received: from localhost (124-149-123-126.dyn.iinet.net.au [124.149.123.126])
+        by mail.messagingengine.com (Postfix) with ESMTPA id F186E10312;
+        Sat,  9 Feb 2019 01:01:45 -0500 (EST)
+Date:   Sat, 9 Feb 2019 17:01:35 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] leaking_addresses: Expand tilde in output file name
+Message-ID: <20190209060135.GA1389@eros.localdomain>
+References: <20190207225026.11723-1-tobin@kernel.org>
+ <20190207225026.11723-4-tobin@kernel.org>
+ <20190207233555.GA5122@cisco>
 MIME-Version: 1.0
-In-Reply-To: <1549648083-9501-1-git-send-email-jerry.hoemann@hpe.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207233555.GA5122@cisco>
+X-Mailer: Mutt 1.11.3 (2019-02-01)
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 9:48 AM, Jerry Hoemann wrote:
-> Update documentation relating to HPWDT_NMI_DECODING to reflect its
-> current usage.
+On Thu, Feb 07, 2019 at 04:35:55PM -0700, Tycho Andersen wrote:
+> On Fri, Feb 08, 2019 at 09:50:26AM +1100, Tobin C. Harding wrote:
+> > Currently if user passes an output file to the script via
+> > --output-raw we do not handle expansion of tilde.
+> > 
+> > Use perl function glob() to expand tilde in output file name.
+> > 
+> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+> > ---
+> >  scripts/leaking_addresses.pl | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
+> > index ef9e5b2a1614..ce545ca3fb70 100755
+> > --- a/scripts/leaking_addresses.pl
+> > +++ b/scripts/leaking_addresses.pl
+> > @@ -150,7 +150,7 @@ if (!(is_supported_architecture() or $opt_32bit or $page_offset_32bit)) {
+> >  }
+> >  
+> >  if ($output_raw) {
+> > -	open my $fh, '>', $output_raw or die "$0: $output_raw: $!\n";
+> > +	open my $fh, '>', glob($output_raw) or die "$0: $output_raw: $!\n";
 > 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> Seems like you might also have the same problem with $input_raw? I
+> wonder if you can just do this in GetOptions somehow, so that all
+> users of these further down in the script don't have to remember to do
+> this.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Thanks for the review, good idea - I'll look into it.
 
-> ---
->   drivers/watchdog/Kconfig | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 57f017d..846dd07 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -1145,7 +1145,7 @@ config HP_WATCHDOG
->   	select WATCHDOG_CORE
->   	depends on X86 && PCI
->   	help
-> -	  A software monitoring watchdog and NMI sourcing driver. This driver
-> +	  A software monitoring watchdog and NMI handling driver. This driver
->   	  will detect lockups and provide a stack trace. This is a driver that
->   	  will only load on an HP ProLiant system with a minimum of iLO2 support.
->   	  To compile this driver as a module, choose M here: the module will be
-> @@ -1163,12 +1163,13 @@ config KEMPLD_WDT
->   	  called kempld_wdt.
->   
->   config HPWDT_NMI_DECODING
-> -	bool "NMI decoding support for the HP ProLiant iLO2+ Hardware Watchdog Timer"
-> +	bool "NMI support for the HP ProLiant iLO2+ Hardware Watchdog Timer"
->   	depends on HP_WATCHDOG
->   	default y
->   	help
-> -	  When an NMI occurs this feature will make the necessary BIOS calls to
-> -	  log the cause of the NMI.
-> +	  Enables the NMI handler for the watchdog pretimeout NMI and the iLO
-> +	  "Generate NMI to System" virtual button.  When an NMI is claimed
-> +	  by the driver, panic is called.
->   
->   config SC1200_WDT
->   	tristate "National Semiconductor PC87307/PC97307 (ala SC1200) Watchdog"
-> 
-
+       Tobin
