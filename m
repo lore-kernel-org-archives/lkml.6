@@ -2,111 +2,87 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BA9C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 13:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5118CC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 13:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0803621773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 13:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BD6521773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 13:00:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7gwMPFA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfBINAU (ORCPT
+        id S1726978AbfBINAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 08:00:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35025 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBINAU (ORCPT
+        Sat, 9 Feb 2019 08:00:53 -0500
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:37714 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfBINAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 08:00:20 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19D0C2p2634322
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 05:00:12 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19D0C0c2634319;
-        Sat, 9 Feb 2019 05:00:12 -0800
-Date:   Sat, 9 Feb 2019 05:00:12 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-c3fcadf0bb765faf45d6d562246e1d08885466df@git.kernel.org>
-Cc:     mingo@kernel.org, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
-        jolsa@redhat.com, hpa@zytor.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, adrian.hunter@intel.com, acme@redhat.com,
-          jolsa@redhat.com, hpa@zytor.com
-In-Reply-To: <20190206103947.15750-2-adrian.hunter@intel.com>
-References: <20190206103947.15750-2-adrian.hunter@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf auxtrace: Define auxtrace record alignment
-Git-Commit-ID: c3fcadf0bb765faf45d6d562246e1d08885466df
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 9 Feb 2019 08:00:53 -0500
+Received: by mail-wm1-f44.google.com with SMTP id x10so2807962wmg.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 05:00:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9GAF514zp7u1ukVPMTmRTpOKo5aenr5g18trxp3tzpI=;
+        b=m7gwMPFAF5VB9ZJ5EVWDYX1RFP9XI2e0OQaVNQsYaUhnGBkjIy5nZ+8JkXLf56+OAJ
+         y6Em6ujzxx66e4Bzg0v6o2fO76SH07Qm7WTcsXv2ORZ1TSV5njJNTlP5rvVGzS82qoKW
+         nY3ioruCVM2qyDAE7q1vJP4tfuIIT3rsmg/vQrrcQyLdOec/7tGrbuhK3kOI6qwkKFuZ
+         OktrIGQ23QkeV2kgprT/3S0KETrVEdQw4TlSHVH5yUmEqy+z7J403g2JEtbiyWBlDjpu
+         CLNr89YlagOzhSRmVKP1cHFBzsSaFRNuyTXDAS01t1DMNvMSQep7PygtKrwCI/Tte4+s
+         2BKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9GAF514zp7u1ukVPMTmRTpOKo5aenr5g18trxp3tzpI=;
+        b=CdS6uTz3B+wO3FWJWj1b/LX36/m4Tmxq6DQacWwRJGQEnQVz6simS45IlchdBAiIgr
+         8L9H0jAAWf8yh6omzszASiTZjqjm8meDTMrBAgIG1q+YUVgaR4HsYPNWBi7PC03a5zSG
+         UMzy+0K6jBTnxQY3SYXyagWyeP4rWpFMfsurEztKMSswlPsZI9JVXK6hQp+UkQOgee29
+         0KGmrpUF2mbK47LGWH21D+nruUhuQO+YX566qTiv+ByC5ttejpUPg7MXJEbaS0ka1D1M
+         1ZlfJlItCnAFfnd/JXgIhHDNqwdUDBFov9jhsyMLtNTxHGUVEjG5WqBCltoNibW8gclD
+         XNFg==
+X-Gm-Message-State: AHQUAubEUCBIHICWZRT+ZAdcGt+jSipPYVUeSbpNcdhEdGbHNnxbdS2j
+        djthp8BcWutvKqCR4f843AdHIuM=
+X-Google-Smtp-Source: AHgI3IaG+7RrSKcGu74OBFGJUpOPgsoS9jVJQCAzw99XEVOoL4xgYwYqn9V1epplYrqPHFnB3F4Q2Q==
+X-Received: by 2002:a1c:f207:: with SMTP id s7mr2753841wmc.87.1549717250613;
+        Sat, 09 Feb 2019 05:00:50 -0800 (PST)
+Received: from avx2 ([46.53.242.39])
+        by smtp.gmail.com with ESMTPSA id u15sm11034196wrm.63.2019.02.09.05.00.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 09 Feb 2019 05:00:49 -0800 (PST)
+Date:   Sat, 9 Feb 2019 16:00:47 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     yamada.masahiro@socionext.com, ndesaulniers@google.com,
+        luc.vanoostenryck@gmail.com, keescook@chromium.org,
+        linux@rasmusvillemoes.dk
+Subject: Re: [to-be-updated] build_bugh-add-wrapper-for-_static_assert.patch
+ removed from -mm tree
+Message-ID: <20190209130047.GA11849@avx2>
+References: <20190208215824.zhXpv%akpm@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20190208215824.zhXpv%akpm@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c3fcadf0bb765faf45d6d562246e1d08885466df
-Gitweb:     https://git.kernel.org/tip/c3fcadf0bb765faf45d6d562246e1d08885466df
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Wed, 6 Feb 2019 12:39:43 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 6 Feb 2019 10:25:39 -0300
+On Fri, Feb 08, 2019 at 01:58:24PM -0800, akpm@linux-foundation.org wrote:
+> --- a/include/linux/build_bug.h~build_bugh-add-wrapper-for-_static_assert
+> +++ a/include/linux/build_bug.h
 
-perf auxtrace: Define auxtrace record alignment
+> +#define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+> +#define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "")
 
-Define auxtrace record alignment so that it can be referenced elsewhere.
+I suggest adding it to assert.h like userspace does:
 
-Note this is preparation for patch "perf intel-pt: Fix overlap calculation
-for padding"
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190206103947.15750-2-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/auxtrace.c | 4 ++--
- tools/perf/util/auxtrace.h | 3 +++
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 94a22cc8004c..ad186d3255d1 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1279,9 +1279,9 @@ static int __auxtrace_mmap__read(struct perf_mmap *map,
- 	}
- 
- 	/* padding must be written by fn() e.g. record__process_auxtrace() */
--	padding = size & 7;
-+	padding = size & (PERF_AUXTRACE_RECORD_ALIGNMENT - 1);
- 	if (padding)
--		padding = 8 - padding;
-+		padding = PERF_AUXTRACE_RECORD_ALIGNMENT - padding;
- 
- 	memset(&ev, 0, sizeof(ev));
- 	ev.auxtrace.header.type = PERF_RECORD_AUXTRACE;
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index 8e50f96d4b23..fac32482db61 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -40,6 +40,9 @@ struct record_opts;
- struct auxtrace_info_event;
- struct events_stats;
- 
-+/* Auxtrace records must have the same alignment as perf event records */
-+#define PERF_AUXTRACE_RECORD_ALIGNMENT 8
-+
- enum auxtrace_type {
- 	PERF_AUXTRACE_UNKNOWN,
- 	PERF_AUXTRACE_INTEL_PT,
+	#include <assert.h>
