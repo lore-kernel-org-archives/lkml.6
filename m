@@ -2,160 +2,149 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922E2C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F6EC282CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55C3320869
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C177420857
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 04:44:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Uyx8KnH0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k17/YU5p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBIElv (ORCPT
+        id S1726847AbfBIEog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 23:41:51 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36010 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfBIElv (ORCPT
+        Fri, 8 Feb 2019 23:44:36 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41463 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfBIEog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 23:41:51 -0500
-Received: by mail-qt1-f195.google.com with SMTP id r9so6437082qtt.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 20:41:50 -0800 (PST)
+        Fri, 8 Feb 2019 23:44:36 -0500
+Received: by mail-pl1-f193.google.com with SMTP id k15so2645306pls.8;
+        Fri, 08 Feb 2019 20:44:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=USeCh6j0FsmLopx2MZxpLbxv8BeR2zl+0L2tQUmFxuY=;
-        b=Uyx8KnH013ecHNcSjOImmFRrRi/e+kAFqBooYZeje3twAyxLmL8LfEDM1IT4kSf8u2
-         /YVdKthWzIS7yxtK5i10pc3c+/5W1oZREDNFnJzz3qHwnAAuzQ/9Fn7R+AzJ7DsKELoB
-         m4thanJUTuMXhg/zzwfh7v1TvnaXJ4c1Fp/JJtfTdJTCNutO/mb7n+M8hXaIOgIjE7EO
-         hO8lI6qO3hRrBRh66iNwU764tW7W6d+To7SFZP8aSSmy53Ae1AwsoxDSwgr4z3nAxAsI
-         bnQ90YffdslRz0Ljzh+QhPXYf3GAWNOtcjAAQG3FWLkTpejmlb837JdmpRdwvGoGv0BR
-         8y1w==
+        d=gmail.com; s=20161025;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=AALxpDedMUs9nfdvKWXFLMC4KQnRWD0CcD0vl2Y1cGU=;
+        b=k17/YU5pIbyxADDGA/Xue9WwrqcdL89bbYZ5RRX4NOaMaLAmmngiEgk8nhcLL+xaja
+         uARDGVzcCl6o4gS0rK/P7Zuk1cHyA6s8YA4Mb7x4Lx8T5UZSjsFrZFIZw+lFKyCIxe5g
+         9BUuY8Hkk94YqQqzJ6tDAp8s9QgTmBuLkQD3QuxvdUe/2uEsDgXfdciN9ntxrJ/dTPgq
+         JVQ1rqqfmZGMvS0E4M2tIMyEnhVTLMKEunvr+cGIU22LqSCuaQGMbFX/j5d2cKycGAJ0
+         cPEaCnKg51/vDrbW//MOKAQCf0ftm1ReC1+sLE4ZxkfRK57exbbk4k1eaIq6wXdus3qJ
+         Fz/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=USeCh6j0FsmLopx2MZxpLbxv8BeR2zl+0L2tQUmFxuY=;
-        b=ZO0JS81XSQ6g+EgI5N+jBFSIf/F2t/xm2ZJT987Hpmv/Um25advrr+MVK0VJ9DMnSs
-         c014P8vBeB1DeTX401c9LZM6jT+VydLhXmBOnSqh9nX2HUFzqX2afHMwCK1rVNO1h2Ng
-         sux3+evPIs30uQwX+tFwrdmNbnFiJEL3MC7zX4VfGrMrWACM8gYNCYwo9zQUt07Xy8Pf
-         ddBnDGVy6SdjUGDIlQ5gLjMT8i9C+Q0U/wOE0GWskmFK+nL7CflVVeDMVIYn+p9fZIMp
-         S5kvR7SwGwdu3e6EIrB1Fyxho9xrNjIk8emCuP+VVnmL+sOlrrUcVTTgFOGCdNvnCJlO
-         13QQ==
-X-Gm-Message-State: AHQUAubUJb74RfwBqCLE0wMERcs1fxcmTB4Dvw9v4zMfKtMBaIy6jvj9
-        FuU8jN1iUkZ68+rJyGr4FdWS2A==
-X-Google-Smtp-Source: AHgI3IYzSMi38GNhzPEP+51nPuIlZiOKRKouOQIjBm3cBD5rK5Ii5RCR2yrpxd835hPI04jUPpyrtA==
-X-Received: by 2002:a0c:8aa1:: with SMTP id 30mr3182502qvv.1.1549687309536;
-        Fri, 08 Feb 2019 20:41:49 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id r24sm5147743qtr.2.2019.02.08.20.41.48
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=AALxpDedMUs9nfdvKWXFLMC4KQnRWD0CcD0vl2Y1cGU=;
+        b=ixvrOKVQvvqTfn76PQ9aNOkYQmn2F33zkKVvlXlDkR856n0vnUmO5/zeTNrkaNDdlP
+         EQxdZJA7+6Cgt8e48CCqDIjrpeTszv8BambIUDP+7dauI0yBtVC3PRlsk3nMeW6YWP7v
+         MV3yVDKFiOZmFxD9SmsOcfjZTe2IBVBw2mObiAIAXLDNAIuHdmOuJW1bq9W4JDgpJvuy
+         kqqwkF5hin+qMasgsWQUzPh2DMY7sIMg9bU/cxHuifSMM+XbOvpp4cHHODCh45kT+dg7
+         gAnqOgNVm198BgVf6oqbWVwuhWFCyqJfhehXyxWEatjdqvA1BUlii5ZjK6Bze66ZqX+q
+         NPsQ==
+X-Gm-Message-State: AHQUAubHYjqeAKQrImnRG/UUfbgBZET+RfciX1q+14QN0QIBIAi28BlA
+        eTiDrWo3WFUlobXSjB3DjZ0=
+X-Google-Smtp-Source: AHgI3IZ65ptAw9F7ZGguALXhM+NGADMZOsrpmieK/FbjMiULvb4Zw1qqheVftIojamSx0KxU0qawAw==
+X-Received: by 2002:a17:902:5066:: with SMTP id f35mr26784701plh.78.1549687475387;
+        Fri, 08 Feb 2019 20:44:35 -0800 (PST)
+Received: from mdr-mbp.hsd1.ca.comcast.net (c-73-189-12-233.hsd1.ca.comcast.net. [73.189.12.233])
+        by smtp.gmail.com with ESMTPSA id s79sm5010057pgs.50.2019.02.08.20.44.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 20:41:48 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com
-Cc:     andreyknvl@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] slub: fix SLAB_CONSISTENCY_CHECKS + KASAN_SW_TAGS
-Date:   Fri,  8 Feb 2019 23:41:28 -0500
-Message-Id: <20190209044128.3290-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Fri, 08 Feb 2019 20:44:34 -0800 (PST)
+From:   Mark D Rustad <mrustad@gmail.com>
+Message-Id: <870EE9C6-3748-498C-B6E8-33724168C605@gmail.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_1E0B6E1E-DF4E-46D7-A520-668CC48C1F3F";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: Linux 4.4.174
+Date:   Fri, 8 Feb 2019 20:44:32 -0800
+In-Reply-To: <20190208105431.GB32328@kroah.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
+        Jiri Slaby <jslaby@suse.cz>
+To:     Greg KH <gregkh@linuxfoundation.org>
+References: <20190208105422.GA32328@kroah.com>
+ <20190208105431.GB32328@kroah.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling SLUB_DEBUG's SLAB_CONSISTENCY_CHECKS with KASAN_SW_TAGS
-triggers endless false positives during boot below due to
-check_valid_pointer() checks tagged pointers which have no addresses
-that is valid within slab pages.
 
-[    0.000000] BUG radix_tree_node (Tainted: G    B            ): Freelist Pointer check fails
-[    0.000000] -----------------------------------------------------------------------------
-[    0.000000]
-[    0.000000] INFO: Slab 0x(____ptrval____) objects=69 used=69 fp=0x          (null) flags=0x7ffffffc000200
-[    0.000000] INFO: Object 0x(____ptrval____) @offset=15060037153926966016 fp=0x(____ptrval____)
-[    0.000000]
-[    0.000000] Redzone (____ptrval____): bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb bb  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 18 6b 06 00 08 80 ff d0  .........k......
-[    0.000000] Object (____ptrval____): 18 6b 06 00 08 80 ff d0 00 00 00 00 00 00 00 00  .k..............
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Object (____ptrval____): 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[    0.000000] Redzone (____ptrval____): bb bb bb bb bb bb bb bb                          ........
-[    0.000000] Padding (____ptrval____): 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G    B             5.0.0-rc5+ #18
-[    0.000000] Call trace:
-[    0.000000]  dump_backtrace+0x0/0x450
-[    0.000000]  show_stack+0x20/0x2c
-[    0.000000]  __dump_stack+0x20/0x28
-[    0.000000]  dump_stack+0xa0/0xfc
-[    0.000000]  print_trailer+0x1bc/0x1d0
-[    0.000000]  object_err+0x40/0x50
-[    0.000000]  alloc_debug_processing+0xf0/0x19c
-[    0.000000]  ___slab_alloc+0x554/0x704
-[    0.000000]  kmem_cache_alloc+0x2f8/0x440
-[    0.000000]  radix_tree_node_alloc+0x90/0x2fc
-[    0.000000]  idr_get_free+0x1e8/0x6d0
-[    0.000000]  idr_alloc_u32+0x11c/0x2a4
-[    0.000000]  idr_alloc+0x74/0xe0
-[    0.000000]  worker_pool_assign_id+0x5c/0xbc
-[    0.000000]  workqueue_init_early+0x49c/0xd50
-[    0.000000]  start_kernel+0x52c/0xac4
-[    0.000000] FIX radix_tree_node: Marking all objects used
-[    0.000000]
+--Apple-Mail=_1E0B6E1E-DF4E-46D7-A520-668CC48C1F3F
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii;
+	delsp=yes;
+	format=flowed
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/slub.c | 1 +
- 1 file changed, 1 insertion(+)
+On Feb 8, 2019, at 2:54 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 1e3d0ec4e200..075ebc529788 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -507,6 +507,7 @@ static inline int check_valid_pointer(struct kmem_cache *s,
- 		return 1;
- 
- 	base = page_address(page);
-+	object = kasan_reset_tag(object);
- 	object = restore_red_left(s, object);
- 	if (object < base || object >= base + page->objects * s->size ||
- 		(object - base) % s->size) {
--- 
-2.17.2 (Apple Git-113)
+> diff --git a/Documentation/networking/ip-sysctl.txt  
+> b/Documentation/networking/ip-sysctl.txt
+> index 2ea4c45cf1c8..7c229f59016f 100644
+> --- a/Documentation/networking/ip-sysctl.txt
+> +++ b/Documentation/networking/ip-sysctl.txt
+> @@ -112,14 +112,11 @@ min_adv_mss - INTEGER
+>
+>  IP Fragmentation:
+>
+> -ipfrag_high_thresh - INTEGER
+> -	Maximum memory used to reassemble IP fragments. When
+> -	ipfrag_high_thresh bytes of memory is allocated for this purpose,
+> -	the fragment handler will toss packets until ipfrag_low_thresh
+> -	is reached. This also serves as a maximum limit to namespaces
+> -	different from the initial one.
+> -
+> -ipfrag_low_thresh - INTEGER
+> +ipfrag_high_thresh - LONG INTEGER
+> +	Maximum memory used to reassemble IP fragments.
+> +
+> +ipfrag_low_thresh - LONG INTEGER
+> +	(Obsolete since linux-4.17)
 
+It seems very strange to say that it is obsolete since 4.17 in a 4.4 kernel.
+
+>  	Maximum memory used to reassemble IP fragments before the kernel
+>  	begins to remove incomplete fragment queues to free up resources.
+>  	The kernel still accepts new fragments for defragmentation.
+
+--
+Mark Rustad, MRustad@gmail.com
+
+--Apple-Mail=_1E0B6E1E-DF4E-46D7-A520-668CC48C1F3F
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAlxeWrAACgkQPA7/547j
+7m50dRAAwvqysInLLQHKmYLLKyWaAByv2pgjwL54NmV0EM8b9qs21ZxyrX0NbLuf
+W4417uIusBn6VxA0fMQff/giJI1Pv67Fn+mLIVrTLhyCBzZrc5hUeOnQtvaG61X1
+THwNM6VPpdW2+df9BFXEYQtGihZkKHiLrahIbkaeyGQSvMmQocu2sGBbOOhgwyzq
+KpwKr7jOvgpPWPzLZGgWVgNwJn1g39Qtu3EgjDMIG+wspV/2F8U9Wj/jTWMH1+rv
+rTx0SmZc+6WXkTIxKmMnyeD1DHc5DYA1kVX2YPI/gQBHMBs2zfedS+OFlf7lBUhA
+f4zHNdaogIM6VlcXc0dQVBPwtp5MNrq/hs7EPMFi781NeO3tBOYffVqKrVMEUxtZ
+kC1U1o/e1XurTFDLjbJrQ79sgM6GKwOLbjIR84tACkuKkyLIG4LNnJ2xvyzQ3bB+
+HeP2RdIjC5jRo5wyoDY2rvof/K8Cg0xIyb3hKIV9yrdaf7nJFbVInIF9UDWhZIw5
+7jbGtq8mS92PYu9pf+WoXfweDBXa9CYBOdtgjY2xSA04O/HtYLkkN+8+nuaAkoBk
+MvDZFXSrdjTz5ZgBnTRJ23HYyn59Vhp8We52Zq1A3XcvK5cGe27eY+LgTMnO/PVa
+6oPy7rISVz0JrSkjJdblGLPXDH1eqkVBVA+dKFb9Tz7Tv5ixgUo=
+=wyM4
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_1E0B6E1E-DF4E-46D7-A520-668CC48C1F3F--
