@@ -2,95 +2,119 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A7AC282CC
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B7AC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5DAA2192B
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549732464;
-	bh=YUVvyFlWkHsaX3LHViOmkCsw4Y92yWA3dkANhsvpFjc=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=WkMo/k5+ntemXe/ZY1u0+Py1XRYen/xTCw5mTmWRBcz0Yf4Q78JcbJYXQgBABdp4W
-	 iaQHY6cjExobiMd6uDaxA/KG5SXqDe22DgLtrc3vxq916v/HiBPUXr9A8G1QPBSSYg
-	 7PQSFXsWa9G0Vz64LU0vb5UIkhj/KmJR06mxUD+Y=
+	by mail.kernel.org (Postfix) with ESMTP id 91EE02192B
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:15:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYQGDJKI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbfBIROX (ORCPT
+        id S1727430AbfBIRPe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 12:14:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727092AbfBIROX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 12:14:23 -0500
-Received: from localhost.localdomain (unknown [194.230.155.153])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C52B321919;
-        Sat,  9 Feb 2019 17:14:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549732462;
-        bh=YUVvyFlWkHsaX3LHViOmkCsw4Y92yWA3dkANhsvpFjc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=V8ZUreuylpyuJu+u0f9NnY9C2DzjbHneSFgBpzQQ7ih9uwoS480Nj4OICv4UWBrMu
-         YBQAP+/D9Pj89Nu4x3fvXEIEhUeCK7kgpBQbqXTqb8S/BXHmjwBJskpIFV4wtBGMP4
-         RXpT5rqQQUP/wLi74DKTfcjPS3qFsKogf2qyNqQ4=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sangbeom Kim <sbkim73@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: [PATCH] regulator: s2mps11: Fix steps for buck7, buck8 and LDO35
-Date:   Sat,  9 Feb 2019 18:14:14 +0100
-Message-Id: <20190209171414.28125-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Sat, 9 Feb 2019 12:15:34 -0500
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:43634 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbfBIRPd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 12:15:33 -0500
+Received: by mail-ot1-f49.google.com with SMTP id a11so11081496otr.10;
+        Sat, 09 Feb 2019 09:15:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9qChTi8SMBRLveg4fnNK/KJaekdRnZ4Y1/Qtmevu4po=;
+        b=iYQGDJKIi6yDRqyzS8+OE/Kuyehsr0k9FGiuwPrhae7zCTglVdwQpBj49ixSZiIGUN
+         2+6uq0/zR2rcklOcD/UGJdt21qSxl5Wyob4hz+84XgnWLoUTTxRQSnyUGaMouqXozo6l
+         jZCoBcl90BOpNTdh4+4RwehQgX/5H20i47bfcmizyi0ZbvF0zAqV7U7MVKIFV95W8wdC
+         uq3roS1P9PLuB7v4CIJFuVfPlaZpyhq/XTl7p6fU9YoQIv87WKYaIsWeVAnQhB/R8B04
+         WRgQaN5iYFNNMKJ2SRonwQWJtjn7rvR/UYsgawYksQCH78QFo4bbKAfoc0RcebpBqyMz
+         rB/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9qChTi8SMBRLveg4fnNK/KJaekdRnZ4Y1/Qtmevu4po=;
+        b=jbvS7zQkpKh1AZ3Nyyh0kniymgSOWjNq7iCTvD5Sat2gENYTBTuAOPoAWQxybhHTNW
+         TtygdvL264Ua0z0q9pnP779wBzmcbF6ZAxFZk+u6MC58hNAg/ZApP9lFtHpRi5CpG/gR
+         Vz3b5Il7lOlZI3QyxpIukI7T8jhGmPnzP4U1LUcFRDeL0wcTqzTpB4LN8XlYCzkNdM61
+         CyC83aJZbKq7Mq/85p9mVNGeftv5pvVgU6NdQyNi9UeumZZwbtcK8zbENuXyusaBRo0f
+         66FVS9frsv29T5kHACZiGBt3KcKD+TUDtmHSd/Jqinwpzp+tWr4NaFUqODhrbYRQ8spP
+         QQrg==
+X-Gm-Message-State: AHQUAuYn2/fB1ZMnMGAGIq92YPXFUuxdkQNb8aSR8Bcn5chVl68g/uCv
+        KrI52ZwuQ8Ahce7xe6LWxP0C5ZqlVOFkwPMwHRw=
+X-Google-Smtp-Source: AHgI3IaA970Ri472vY8MkUlG+2VTHxFxWhi9aTOtj7gH6nRmvJHl6WmbPWb4qjoave8CTBhtaeq3oXA0p56R+2NcVMI=
+X-Received: by 2002:a9d:77d4:: with SMTP id w20mr11361589otl.196.1549732532189;
+ Sat, 09 Feb 2019 09:15:32 -0800 (PST)
+MIME-Version: 1.0
+References: <20190207225211.GA17552@latitude> <CAOMZO5BH1Su=tKD8vV8+-i_0a_4fNDQKbk0q6DX5TZWYezeH9Q@mail.gmail.com>
+ <20190209162449.GB2061@latitude>
+In-Reply-To: <20190209162449.GB2061@latitude>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 9 Feb 2019 15:15:20 -0200
+Message-ID: <CAOMZO5DrtgQzjY7_9SCM_NKbKPxQyHBQNN+pmUPrqtFkARPdUg@mail.gmail.com>
+Subject: Re: sdhci-esdhc-imx/v5.0-rc5: i.MX50 system hangs when "per" clock is disabled
+To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LDO35 uses 25 mV step, not 50 mV.  Bucks 7 and 8 use 12.5 mV step
-instead of 6.25 mV.  Wrong step caused over-voltage (LDO35) or
-under-voltage (buck7 and 8) if regulators were used (e.g. on Exynos5420
-Arndale Octa board).
+On Sat, Feb 9, 2019 at 2:25 PM Jonathan Neusch=C3=A4fer
+<j.neuschaefer@gmx.net> wrote:
+>
+> On Thu, Feb 07, 2019 at 10:50:28PM -0200, Fabio Estevam wrote:
+> > On Thu, Feb 7, 2019 at 8:52 PM Jonathan Neusch=C3=A4fer
+> [...]
+> > > I tried to compare the CCM's clocks between i.MX50 and i.MX53, but
+> > > unfortunately, the i.MX50 reference manual doesn't have the table cal=
+led
+> > > "Output clocks from CCM".
+> >
+> > Please check Table 5-10. CCM_CCGR3 Gated Clock Mapping to Target
+> > Module from the MX50 Referene Manual.
+>
+> Ok, the tables show:
+>
+> For i.MX50:
+> [1:0] 0 ipg_clk_root    eSDHCv2_1
 
-Cc: <stable@vger.kernel.org>
-Fixes: cb74685ecb39 ("regulator: s2mps11: Add samsung s2mps11 regulator driver")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/regulator/s2mps11.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+and it also shows that ahb_clk_root is controlled by these same bits.
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index ee4a23ab0663..134c62db36c5 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -362,7 +362,7 @@ static const struct regulator_desc s2mps11_regulators[] = {
- 	regulator_desc_s2mps11_ldo(32, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(33, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(34, STEP_50_MV),
--	regulator_desc_s2mps11_ldo(35, STEP_50_MV),
-+	regulator_desc_s2mps11_ldo(35, STEP_25_MV),
- 	regulator_desc_s2mps11_ldo(36, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(37, STEP_50_MV),
- 	regulator_desc_s2mps11_ldo(38, STEP_50_MV),
-@@ -372,8 +372,8 @@ static const struct regulator_desc s2mps11_regulators[] = {
- 	regulator_desc_s2mps11_buck1_4(4),
- 	regulator_desc_s2mps11_buck5,
- 	regulator_desc_s2mps11_buck67810(6, MIN_600_MV, STEP_6_25_MV),
--	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_6_25_MV),
--	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_6_25_MV),
-+	regulator_desc_s2mps11_buck67810(7, MIN_600_MV, STEP_12_5_MV),
-+	regulator_desc_s2mps11_buck67810(8, MIN_600_MV, STEP_12_5_MV),
- 	regulator_desc_s2mps11_buck9,
- 	regulator_desc_s2mps11_buck67810(10, MIN_750_MV, STEP_12_5_MV),
- };
--- 
-2.17.1
+That's why I added the ahb entry in my suggestion.
 
+> [3:2] 1 esdhc1_clk_root eSDHCv2_1
+>
+> For i.MX53:
+> 1=E2=80=930 CG0 esdhc1_ipg_hclk: affects ipg_clk and hclk inputs of ESDEH=
+C-1 (esdhc1_clk_enable)
+> 3=E2=80=932 CG1 esdhc1_perclk:   affects ipg_clk_perclk   input  of ESDEH=
+C-1 (esdhc1_serial_clk_enable)
+>
+> Table 18-3 (Output clocks from CCM) in the iMX53RM shows that
+> ESDHCv2-1's ipg_clk_perclk is esdhc1_clk_root, so the clock structure
+> does seem to be the same here, between i.MX50 and i.MX53=E2=80=A6
+
+That's correct. The esdhc clocks seem to differ.
