@@ -2,102 +2,104 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDAAC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 21:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD721C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 21:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73F3A218D2
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 21:13:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="kbzM1SZB"
+	by mail.kernel.org (Postfix) with ESMTP id ACD0B21929
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 21:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfBIVNk (ORCPT
+        id S1727035AbfBIVdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 16:13:40 -0500
-Received: from vern.gendns.com ([98.142.107.122]:32930 "EHLO vern.gendns.com"
+        Sat, 9 Feb 2019 16:33:03 -0500
+Received: from sauhun.de ([88.99.104.3]:39906 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726898AbfBIVNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 16:13:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tI6HtZ+cou49J3I+feGLu6QXsuZ0+P4Rp4ag5PuTizc=; b=kbzM1SZB6JTJ4SIrpchZkS0mAR
-        onR1a3xSr3vbcAf5fswa0PNBk4Q9jE2iUwGPgR3/ZRZrJTB2Ih470w4PPsSkMCvBI/nB7fMkBrX8G
-        M8fvDXYkTiBk2vAA9UIzAxyseg/NzfVCru8hMYPO6gwqeiasNUmDHjsQMTUQgm7sdBHWav0wG1+n7
-        ARTNay87RiqeMzRvUF2rVi8CTQuHSdZ8EPHXGbnVA1QD37riSurxus3loXiiDVFZMZ7rzp4u8+orW
-        n/rEuq9zvKfsEgnPEr9OCXiCjLO4IZSIz7d/E5QKll+z/Jh/Hb2NdwnT2KAdbAB7tm97cB9ZPamcu
-        c0BGTu0w==;
-Received: from [38.123.241.2] (port=60095 helo=gerda-5.local)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gsZsd-0000CR-DF; Sat, 09 Feb 2019 16:09:43 -0500
-Subject: Re: [PATCH v2 03/33] ARM: davinci: select GENERIC_IRQ_MULTI_HANDLER
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190208173458.4801-1-brgl@bgdev.pl>
- <20190208173458.4801-4-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <c9dbec4e-8738-e2bf-9011-1cc1ac5f44dd@lechnology.com>
-Date:   Sat, 9 Feb 2019 15:13:04 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        id S1726898AbfBIVdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 16:33:02 -0500
+Received: from localhost (p5486C39D.dip0.t-ipconnect.de [84.134.195.157])
+        by pokefinder.org (Postfix) with ESMTPSA id C8AB02C7BF4;
+        Sat,  9 Feb 2019 22:32:59 +0100 (CET)
+Date:   Sat, 9 Feb 2019 22:32:59 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PULL REQUEST] i2c for v5.0
+Message-ID: <20190209213255.b2udenonysi4hgca@ninjato>
 MIME-Version: 1.0
-In-Reply-To: <20190208173458.4801-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7zuuuvhamouopxwh"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--7zuuuvhamouopxwh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2/8/19 11:34 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> In order to support SPARSE_IRQ we first need to make davinci use the
-> generic irq handler for ARM. Translate the legacy assembly to C and
-> put the irq handlers into their respective drivers (aintc and cp-intc).
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+Linus,
 
-Reviewed-by: David Lechner <david@lechnology.com>
+I2C has for you:
+
+one PM related driver bugfix and a MAINTAINERS update.
+
+Please pull.
+
+Thanks,
+
+   Wolfram
 
 
-> diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-> index 07d8ef8037e4..3ce821a06e52 100644
-> --- a/arch/arm/mach-davinci/irq.c
-> +++ b/arch/arm/mach-davinci/irq.c
-> @@ -29,11 +29,13 @@
->   #include <mach/cputype.h>
->   #include <mach/common.h>
->   #include <asm/mach/irq.h>
-> +#include <asm/exception.h>
+The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
 
-Alphabetical order?
+  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+
+for you to fetch changes up to 13c80dda84c4c0c0f52f8dc2e8f083ca3ccc2aa0:
+
+  MAINTAINERS: Update the ocores i2c bus driver maintainer, etc (2019-02-08 22:15:24 +0100)
+
+----------------------------------------------------------------
+Andrew Lunn (1):
+      MAINTAINERS: Update the ocores i2c bus driver maintainer, etc
+
+Tony Lindgren (1):
+      i2c: omap: Use noirq system sleep pm ops to idle device for suspend
+
+ MAINTAINERS                   |  2 ++
+ drivers/i2c/busses/i2c-omap.c | 13 +++++--------
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
+--7zuuuvhamouopxwh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxfRwIACgkQFA3kzBSg
+KbYq8w//W05tgEgkLAyFLN/FNRpmm47QEf18Eax20i9lhOwGHKEca7uFh+LsdKXs
+Oy6BMdyV0J1TRGFWFFhrB5FEqGLaMsRSxrfMW/h6lgp3Acv8o6s/Ceg7x88PmylE
+mIbvpX3zhp+aF0uq0Yct3PKqjmLVByhA4XWbHMNKegvLYsvcucZNn/S/CVQJhXqF
+9vWp1+b2tpIiXjdpQvoU6xLSEONomk0bzUXL5Lw1ElPQJe0kiilxW4by7PDJkaGD
+zv7OhNAbd66vJEkUgeUN9liApzUkL2M0b5byBM5LyAPnwTunR9p7Mhys0K0buIB+
+YT30Diqej9pAdnc+oiwZjYMwHlUl+Zm9oEmM3Tfu0PxcSX1w16KX8gdyZmz+Ixas
+T+GrkRuA1KxNmcExVCQ/jlpd0BBEIoGCmz75XFXlFHuTLEegFtvi4Iuif/TGbx/i
+c3xa7UAGqdP0uR6G+oo6exlsAHjLsGekrAjQTL6OspuS0EOJGIhkC6shwSuiuMKx
+LSgSHzShyOWFWCUaDbJuB/G/ii9JrZt3eLEaTPXQYAGHCxUGGqslkPuoVj2UOduY
+xH9DiiqIDsCH2DOIxuS2PfRTDHUoNEkDgOLPQZjHCylkVch1aih1RPuc8R5WyhMm
+DThlgPdZ1RpJkJ57jAypR738sRKzJLsqPRB5Y6wmLiW5n0CJL34=
+=3/zy
+-----END PGP SIGNATURE-----
+
+--7zuuuvhamouopxwh--
