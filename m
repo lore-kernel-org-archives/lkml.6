@@ -2,120 +2,78 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 923B3C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9DBC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE3C21929
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:52:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXBm4LbC"
+	by mail.kernel.org (Postfix) with ESMTP id 42D89218D2
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 16:53:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfBIQwy (ORCPT
+        id S1727140AbfBIQxm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 11:52:54 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35804 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727019AbfBIQwy (ORCPT
+        Sat, 9 Feb 2019 11:53:42 -0500
+Received: from elephants.elehost.com ([216.66.27.132]:35097 "EHLO
+        elephants.elehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbfBIQxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 11:52:54 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so3180667plo.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 08:52:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HCt0q6/pkcEB8YVJZU/dl0RyXRnuCIsWpGUBVL3gDlY=;
-        b=VXBm4LbCWn1wEr3yeLJ0nqsWZMUqe4ognp7mhaLqm1DVndWfO/Jvtcx3bjEEmKQWQY
-         zV7RaNwlyW+GJl/lEP9ePFnGX/MLEu4Y8UygZsXWwQWbpbsYDOcCm6rMAFZzxyn/MBj0
-         7L/BSfG2kBsVMmlTkw1p+gvEMrQSHoy7lMprQkdbXUyAPtUulI2fjnk20ioMrFjfZr/n
-         cNdo14d3hgneVYrlsQ+j58tbfFGYH1WCHvitLTD7qHlzaUptQC82mR5cB+wMCM1ihRCv
-         X8r1Hqpdyy5VC2USI2FJBoZfaunQ3FXcHqd8tNC3ISsR6kazK+pDKOy6st2T6C+x+hMR
-         wgMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HCt0q6/pkcEB8YVJZU/dl0RyXRnuCIsWpGUBVL3gDlY=;
-        b=aU0agv+uMTf5rC73CPF1iwY5txRfsRXPh9Vp1b+SNiYhHUdmknqiajcZR97VLO10Cz
-         VBWFFjNvvk6o4YT1KxSk8ciZ0SC6X0nhoCbvQ7FHjQdyXC5jyu3bH7RQKOuq2lIlGBEx
-         cAOTO/XlEfhfXFZLwTG73zvrJHCqHsmGbaCCi5A3Uj/LP6FW5N1pYQWPJv4cxEs5hEKN
-         FQwnSvAKi7sJhDp+CnsoUP9lJ8t0iw4mspYrnZbbX8c8nVBiddT0gy+nrc7lhJnPDZkO
-         bL5RCJuteZvnRcrVUHpdMDx7PwwAdAm7Kwntqj7eU2FUAvTXF4KOssMTaaN8ybgMFC6S
-         qrug==
-X-Gm-Message-State: AHQUAub6VHxa5vND6r9McVzPEkaCEwR82i6XAbvTwMjGgSwVuZFq1YBx
-        tnUNk8oW6Ba1IjsAY/QbJ5Q=
-X-Google-Smtp-Source: AHgI3IYMenMKgSISVGD7KAoyDLYTeQFoRtKJVyqzpoy5Z7ZDGvUaCF3HQSzuIiw8xCQbLR0CD5rY1g==
-X-Received: by 2002:a17:902:be03:: with SMTP id r3mr28478493pls.68.1549731173482;
-        Sat, 09 Feb 2019 08:52:53 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id k71sm9814214pga.44.2019.02.09.08.52.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 08:52:52 -0800 (PST)
-Date:   Sat, 9 Feb 2019 08:52:51 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Robin van der Gracht <robin@protonic.nl>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] auxdisplay: ht16k33: fix potential user-after-free on
- module unload
-Message-ID: <20190209165251.GC197782@dtor-ws>
-References: <20190209001522.GA11769@gmail.com>
+        Sat, 9 Feb 2019 11:53:42 -0500
+X-Virus-Scanned: amavisd-new at elehost.com
+Received: from gnash (CPE00fc8d49d843-CM00fc8d49d840.cpe.net.cable.rogers.com [99.229.179.249])
+        (authenticated bits=0)
+        by elephants.elehost.com (8.15.2/8.15.2) with ESMTPSA id x19GrQhD054892
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 9 Feb 2019 11:53:27 -0500 (EST)
+        (envelope-from rsbecker@nexbridge.com)
+From:   "Randall S. Becker" <rsbecker@nexbridge.com>
+To:     "'Jeff King'" <peff@peff.net>
+Cc:     "'brian m. carlson'" <sandals@crustytoothpaste.net>,
+        "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>,
+        "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <001101d4bfd6$b9430230$2bc90690$@nexbridge.com> <20190208180321.GB27673@sigill.intra.peff.net> <002501d4bfde$b26e6050$174b20f0$@nexbridge.com> <20190208191519.GF27673@sigill.intra.peff.net> <002b01d4bfe4$2d617f40$88247dc0$@nexbridge.com> <20190208193157.GA30952@sigill.intra.peff.net> <20190208220714.GG11927@genre.crustytoothpaste.net> <005901d4bffb$6d0c34c0$47249e40$@nexbridge.com> <20190208223512.GA2135@sigill.intra.peff.net> <006601d4c001$2de3a160$89aae420$@nexbridge.com> <20190209042456.GB18286@sigill.intra.peff.net>
+In-Reply-To: <20190209042456.GB18286@sigill.intra.peff.net>
+Subject: RE: [Breakage] Git v2.21.0-rc0 - t5318 (NonStop)
+Date:   Sat, 9 Feb 2019 11:53:19 -0500
+Message-ID: <000201d4c097$f91c4080$eb54c180$@nexbridge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190209001522.GA11769@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-ca
+Thread-Index: AQIjYM+W43sjzL92GGLCYaE3korh7wFIjDzjAomJpT0CPT5X0wHzLXEWAlp4NWoCnO8uAAGyim5RAqNObW0BvDqaKAIxfKrjpJCCF5A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 09, 2019 at 01:15:22AM +0100, Miguel Ojeda wrote:
-> On module unload/remove, we need to ensure that work does not run
-> after we have freed resources. Concretely, cancel_delayed_work()
-> may return while the callback function is still running.
+On February 8, 2019 23:25, Jeff King wrote:
+> On Fri, Feb 08, 2019 at 05:53:53PM -0500, Randall S. Becker wrote:
 > 
-> From kernel/workqueue.c:
+> > > diff --git a/t/test-lib-functions.sh b/t/test-lib-functions.sh index
+> > > 92cf8f812c..4afab14431 100644
+> > > --- a/t/test-lib-functions.sh
+> > > +++ b/t/test-lib-functions.sh
+> > > @@ -1302,3 +1302,8 @@ test_set_port () {
+> > >  	port=$(($port + ${GIT_TEST_STRESS_JOB_NR:-0}))
+> > >  	eval $var=$port
+> > >  }
+> > > +
+> > > +# Generate an output of $1 bytes of all zeroes (NULs, not ASCII zeroes).
+> > > +gen_zero_bytes () {
+> > > +	perl -e 'print "\0" x $ARGV[0]' "$@"
+> > > +}
+> >
+> > This function does work on platform, so it's good.
 > 
->     The work callback function may still be running on return,
->     unless it returns true and the work doesn't re-arm itself.
->     Explicitly flush or use cancel_delayed_work_sync() to wait on it.
-> 
-> Link: https://lore.kernel.org/lkml/20190204220952.30761-1-TheSven73@googlemail.com/
-> Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> Great. Since it sounds like you're preparing some patches to deal with
+> /dev/zero elsewhere, do you want to wrap it up in a patch as part of that?
 
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+That's the plan. 😊 We're currently running a full test, so that takes time (32 hours on this box).
 
-> ---
->  drivers/auxdisplay/ht16k33.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-> index a43276c76fc6..21393ec3b9a4 100644
-> --- a/drivers/auxdisplay/ht16k33.c
-> +++ b/drivers/auxdisplay/ht16k33.c
-> @@ -509,7 +509,7 @@ static int ht16k33_remove(struct i2c_client *client)
->  	struct ht16k33_priv *priv = i2c_get_clientdata(client);
->  	struct ht16k33_fbdev *fbdev = &priv->fbdev;
->  
-> -	cancel_delayed_work(&fbdev->work);
-> +	cancel_delayed_work_sync(&fbdev->work);
->  	unregister_framebuffer(fbdev->info);
->  	framebuffer_release(fbdev->info);
->  	free_page((unsigned long) fbdev->buffer);
-> -- 
-> 2.17.1
-> 
+Cheers,
+Randall
 
--- 
-Dmitry
