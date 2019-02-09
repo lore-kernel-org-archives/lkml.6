@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7424DC282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1FBC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E7C20643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:53:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912D720823
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738438;
-	bh=IrMHOl6TfBZD6srGScgGuoDRDUm6QL4cBNKIhCye2aE=;
+	s=default; t=1549738444;
+	bh=Vft07bYuclxmkMHY8imfxHe7D6BSLdZ2pcepE+dXe+c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XNdC/EL4Zxu0SXUhfKhXB1eO0BaJJMpraDoIog3zfQs7WaL2xLQxscxvDVjcT0RR7
-	 y49g0rqhE1ns9WVat4tqOerpSV/xJvkS1qMtCv3psvC4AC6YNlv5nF5s4HbBXKZonS
-	 uI1AWiT3jaaySssiI2gHlox+GtruMrkqN7oSzp7E=
+	b=gzBlk3W9rev7Reps+SuW6++9Yz25PXZwR51XVelUf2iQNxM3EI3dhZsRAEoCG95rT
+	 BsrfAdA14p54CBCGeGmX6cvZqkY2Mq7rgT0AjegOKyAVW9pYz15PCo1y7lTd4kqu/r
+	 GQTffq1LN/KmlYkFefXF0VyEQyozyoi2nc0pPII0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbfBIStK (ORCPT
+        id S1727854AbfBISyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:49:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34354 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:54:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbfBIStH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:07 -0500
+        id S1727997AbfBIStJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 408DD21916;
-        Sat,  9 Feb 2019 18:49:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 909C52192D;
+        Sat,  9 Feb 2019 18:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738147;
-        bh=IrMHOl6TfBZD6srGScgGuoDRDUm6QL4cBNKIhCye2aE=;
+        s=default; t=1549738149;
+        bh=Vft07bYuclxmkMHY8imfxHe7D6BSLdZ2pcepE+dXe+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1eTC3QIc7Re7xoV+CZhUAD/zFwUsePVZt7uCH3c9Yo5yIK47QAbZzxIo04H6KF0g/
-         PxumdoubKP9HIxD7zAaeMgWGZ98CQ44bCTNygOJzqpYJszLq82TuTlFXrcKndkoAUm
-         eaD6aRFnpLTHm6EIs9WnxGenNF2Sl9I7MnlaV9bc=
+        b=LS/udS4+ZEM+5bzENgoCM2nPufW1IFFfxaAIhdIuiy5cyqX0JBwDNFbdNJH/Euy+/
+         GP65R827XWeSmQX8cpE80w8mSC1fmhTSWQOXqaApMCLW4txrYhfL+jTL1mjEyjXw8W
+         glfpovGoXVW1RDWFH3mniKiZDrBJ0YweOvps9gPI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hongbo Yao <yaohongbo@huawei.com>, Christoph Hellwig <hch@lst.de>,
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 15/28] nvme-pci: fix out of bounds access in nvme_cqe_pending
-Date:   Sat,  9 Feb 2019 13:48:23 -0500
-Message-Id: <20190209184840.126418-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 17/28] nvme: pad fake subsys NQN vid and ssvid with zeros
+Date:   Sat,  9 Feb 2019 13:48:25 -0500
+Message-Id: <20190209184840.126418-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -56,44 +57,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hongbo Yao <yaohongbo@huawei.com>
+From: Keith Busch <keith.busch@intel.com>
 
-[ Upstream commit dcca1662727220d18fa351097ddff33f95f516c5 ]
+[ Upstream commit 3da584f57133e51aeb84aaefae5e3d69531a1e4f ]
 
-There is an out of bounds array access in nvme_cqe_peding().
+We need to preserve the leading zeros in the vid and ssvid when generating
+a unique NQN. Truncating these may lead to naming collisions.
 
-When enable irq_thread for nvme interrupt, there is racing between the
-nvmeq->cq_head updating and reading.
-
-nvmeq->cq_head is updated in nvme_update_cq_head(), if nvmeq->cq_head
-equals nvmeq->q_depth and before its value set to zero, nvme_cqe_pending()
-uses its value as an array index, the index will be out of bounds.
-
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
-[hch: slight coding style update]
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/nvme/host/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 40f76b4f08fc..f46313f441ec 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -908,9 +908,11 @@ static void nvme_complete_cqes(struct nvme_queue *nvmeq, u16 start, u16 end)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index e5bddae16ed4..e0d2b7473901 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2095,7 +2095,7 @@ static void nvme_init_subnqn(struct nvme_subsystem *subsys, struct nvme_ctrl *ct
  
- static inline void nvme_update_cq_head(struct nvme_queue *nvmeq)
- {
--	if (++nvmeq->cq_head == nvmeq->q_depth) {
-+	if (nvmeq->cq_head == nvmeq->q_depth - 1) {
- 		nvmeq->cq_head = 0;
- 		nvmeq->cq_phase = !nvmeq->cq_phase;
-+	} else {
-+		nvmeq->cq_head++;
- 	}
- }
- 
+ 	/* Generate a "fake" NQN per Figure 254 in NVMe 1.3 + ECN 001 */
+ 	off = snprintf(subsys->subnqn, NVMF_NQN_SIZE,
+-			"nqn.2014.08.org.nvmexpress:%4x%4x",
++			"nqn.2014.08.org.nvmexpress:%04x%04x",
+ 			le16_to_cpu(id->vid), le16_to_cpu(id->ssvid));
+ 	memcpy(subsys->subnqn + off, id->sn, sizeof(id->sn));
+ 	off += sizeof(id->sn);
 -- 
 2.19.1
 
