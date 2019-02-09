@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7390C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5061C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96BEF2192C
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889A121919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738079;
-	bh=Kzj2qF6PejyI4uKCWP4oKeQSSAMvGqgOB29qTWwE1S8=;
+	s=default; t=1549738084;
+	bh=Oh/j8VqRQMVPxxX41V4Rs1fKk4xphirq4r9MmXVLvzw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qO+nOV1BstIbTFxy0mIvKNTRNuwo09Qe4zhhzPCmKS6dSq+B+md3DRoF5acjJBhv6
-	 LGVgz6T+s0iKzb3yVlgnlzaplXIKpRBQtCpZJSe1aDX7rA9H7wpIaA2FGhAFkS+Ofc
-	 o3SpA0MceOs7tt2k5zTLN6ntq13OoZPfNJV5uvI0=
+	b=I0rXq2zmjRv1gEVANSduX9ci0UmCSbNxYjqWALBabKOZINn8UTo9iJ2yg5e9woTGU
+	 Rddo5tHecqZ8qm1U6UdFMmGKKPExZbqP2uh+GNh7LsK6fucBIk5HKRG35coPVpSjJq
+	 DzQa0irAnyz6W14TfbPfIwMqZk9xWEsdPTT/2484=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfBISr6 (ORCPT
+        id S1727534AbfBISsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60588 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:48:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727441AbfBISrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:47:53 -0500
+        id S1727478AbfBISr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:47:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADA922192D;
-        Sat,  9 Feb 2019 18:47:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 368D62192D;
+        Sat,  9 Feb 2019 18:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738072;
-        bh=Kzj2qF6PejyI4uKCWP4oKeQSSAMvGqgOB29qTWwE1S8=;
+        s=default; t=1549738076;
+        bh=Oh/j8VqRQMVPxxX41V4Rs1fKk4xphirq4r9MmXVLvzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1GqN3qtXMqVR1eplZSNPtn9U225pjMhKSha0kmLDGEUjnOdNm4QUFvHz8sXF5YVlX
-         zSWThv7UYVzSi6Gn+aEvcmxGA/B5d1FFcZ8rxSiqeubu8qFhpv1f78Ez6qum+micGD
-         hNt/sPvGsKJZTWB7Xc0/1iLY7qe6Y5B4FzZiT9nA=
+        b=fHRW+nOuLJr1CABdkI3Rqvb7aAKk4RSV+QiJVFS0GWUyjbSjN2cHn/sizwY74hMd6
+         rvQ+hUHPV0i+5Kskk5m+4riIhtqqEX/MOyHkdh3NOZlizRWgvOntnWpQ2mYbfIdHlq
+         Nmmsh02GzsdYci/k0oj07w8scBN53FaDFZkPD57Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 16/42] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
-Date:   Sat,  9 Feb 2019 13:47:08 -0500
-Message-Id: <20190209184734.125935-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 20/42] drm/bridge: tc358767: fix output H/V syncs
+Date:   Sat,  9 Feb 2019 13:47:12 -0500
+Message-Id: <20190209184734.125935-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -61,70 +60,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
+[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
 
-DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
-Add these.
+The H and V syncs of the DP output are always set to active high. This
+patch fixes the syncs by configuring them according to the videomode.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 29a7e33e8ae0..5f0a666db2fd 100644
+index a1f3dd2afbb1..391547358756 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -142,6 +142,8 @@
- #define DP0_LTLOOPCTRL		0x06d8
- #define DP0_SNKLTCTRL		0x06e4
+@@ -98,6 +98,8 @@
+ #define DP0_STARTVAL		0x064c
+ #define DP0_ACTIVEVAL		0x0650
+ #define DP0_SYNCVAL		0x0654
++#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
++#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
+ #define DP0_MISC		0x0658
+ #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
+ #define BPC_6				(0 << 5)
+@@ -726,7 +728,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
  
-+#define DP1_SRCCTRL		0x07a0
-+
- /* PHY */
- #define DP_PHY_CTRL		0x0800
- #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
-@@ -150,6 +152,7 @@
- #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
- #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
- #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
-+#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
- #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
- #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
+ 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
  
-@@ -564,7 +567,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
- 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
- 	tc_write(SYS_PLLPARAM, value);
+-	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
++	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
++		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
++		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
  
--	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
-+	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
- 
- 	/*
- 	 * Initially PLLs are in bypass. Force PLL parameter update,
-@@ -834,7 +837,7 @@ static int tc_main_link_setup(struct tc_data *tc)
- 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
- 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
- 	/* from excel file - DP1_SrcCtrl */
--	tc_write(0x07a0, 0x00003083);
-+	tc_write(DP1_SRCCTRL, 0x00003083);
- 
- 	rate = clk_get_rate(tc->refclk);
- 	switch (rate) {
-@@ -855,8 +858,9 @@ static int tc_main_link_setup(struct tc_data *tc)
- 	}
- 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
- 	tc_write(SYS_PLLPARAM, value);
-+
- 	/* Setup Main Link */
--	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
-+	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
- 	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
- 	msleep(100);
- 
+ 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
+ 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
 -- 
 2.19.1
 
