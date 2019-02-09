@@ -2,108 +2,185 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91674C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF78C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 664452192C
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A59B20821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549738119;
+	bh=iThR3mKlJ1nk04ZMqNj92svM0qttRENZ+VUtr1ZjBUQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Py5lvZD2/Tw8no6XLNgaQrTxMvGsB6uzp5hjJ1kA4FSs/aN8WQWXyzG00OBtX7FWC
+	 QQFHUaQIQUSmBonRn9MuYRwNx2AbkrmX7ZfR4rV0Y7QIrqI2fU0UZIlQ2nbnkJ4x8w
+	 zJVqHid4cl2Jkfczm4FZJ3uigKXbdDnjstl38wMM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfBISs3 (ORCPT
+        id S1727795AbfBISsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54258 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727678AbfBISs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:27 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 24B71ADD1;
-        Sat,  9 Feb 2019 18:48:25 +0000 (UTC)
-Subject: Re: Linux 5.0 regression: BUG: unable to handle kernel paging request
- at ffff888023e26778 RIP: e030:move_page_tables+0x7c1/0xae0
-To:     Sander Eikelenboom <linux@eikelenboom.it>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-References: <39ae9195-cf8f-01fe-df83-38a9a4c52e48@eikelenboom.it>
- <da8badb7-9743-020e-6891-dac944b61ee9@eikelenboom.it>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <094e923b-4e64-57d8-42c4-6e8890473035@suse.com>
-Date:   Sat, 9 Feb 2019 19:48:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sat, 9 Feb 2019 13:48:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727733AbfBISse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:34 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6AA92192D;
+        Sat,  9 Feb 2019 18:48:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549738113;
+        bh=iThR3mKlJ1nk04ZMqNj92svM0qttRENZ+VUtr1ZjBUQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YAJPf6Cq+W/z+/VXbNrj5RXRY8U6BjZ24B4TFvEftrFNmJEvufsQxA04yu2HisAnO
+         /yG02itFCMYGaKtZC19//1faxkZqGf+dSM/xzEgtZKcM2ykjF6EpsgNLAguxqcfbJA
+         tXQvpOn4pEmc07CCAtJmt+6sp3BiLYr7huG0L90g=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 40/42] CIFS: Move credit processing to mid callbacks for SMB3
+Date:   Sat,  9 Feb 2019 13:47:32 -0500
+Message-Id: <20190209184734.125935-40-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
+References: <20190209184734.125935-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <da8badb7-9743-020e-6891-dac944b61ee9@eikelenboom.it>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/2019 19:45, Sander Eikelenboom wrote:
-> On 09/02/2019 09:26, Sander Eikelenboom wrote:
->> L.S.,
->>
->>
->> While testing a Linux 5.0-rc5-ish kernel (pull of yesterday) with some additional patches for
->> already reported other issues i came across the issue below which i haven't seen with 4.20.x
->>
->> I haven't got a reproducer so i might be hard to hit it again, 
->> system is AMD and this is from the host kernel running under
->> the Xen hypervisor might it matter.
-> 
->> --
->>
->> Sander
-> 
-> Hi Boris / Juergen,
-> 
-> The commit causing this is:
-> 2c91bd4a4e2e530582d6fd643ea7b86b27907151 mm: speed up mremap by 20x on large regions
-> 
-> Since it seems there haven't been any other reports about this .. 
-> could it be this doesn't specifically work well with a Xen PVH dom0 ?
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-PVH? Not PV?
+[ Upstream commit ee258d79159afed52ca9372aeb9c1a51e89b32ee ]
 
+Currently we account for credits in the thread initiating a request
+and waiting for a response. The demultiplex thread receives the response,
+wakes up the thread and the latter collects credits from the response
+buffer and add them to the server structure on the client. This approach
+is not accurate, because it may race with reconnect events in the
+demultiplex thread which resets the number of credits.
 
-Juergen
+Fix this by moving credit processing to new mid callbacks that collect
+credits granted by the server from the response in the demultiplex thread.
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/cifs/transport.c | 51 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 17 deletions(-)
+
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index 4dbf62bb51b2..0dab276eced8 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -781,12 +781,7 @@ cifs_setup_request(struct cifs_ses *ses, struct smb_rqst *rqst)
+ }
+ 
+ static void
+-cifs_noop_callback(struct mid_q_entry *mid)
+-{
+-}
+-
+-static void
+-cifs_cancelled_callback(struct mid_q_entry *mid)
++cifs_compound_callback(struct mid_q_entry *mid)
+ {
+ 	struct TCP_Server_Info *server = mid->server;
+ 	unsigned int optype = mid->optype;
+@@ -799,10 +794,23 @@ cifs_cancelled_callback(struct mid_q_entry *mid)
+ 			cifs_dbg(FYI, "Bad state for cancelled MID\n");
+ 	}
+ 
+-	DeleteMidQEntry(mid);
+ 	add_credits(server, credits_received, optype);
+ }
+ 
++static void
++cifs_compound_last_callback(struct mid_q_entry *mid)
++{
++	cifs_compound_callback(mid);
++	cifs_wake_up_task(mid);
++}
++
++static void
++cifs_cancelled_callback(struct mid_q_entry *mid)
++{
++	cifs_compound_callback(mid);
++	DeleteMidQEntry(mid);
++}
++
+ int
+ compound_send_recv(const unsigned int xid, struct cifs_ses *ses,
+ 		   const int flags, const int num_rqst, struct smb_rqst *rqst,
+@@ -880,11 +888,14 @@ compound_send_recv(const unsigned int xid, struct cifs_ses *ses,
+ 		midQ[i]->mid_state = MID_REQUEST_SUBMITTED;
+ 		midQ[i]->optype = optype;
+ 		/*
+-		 * We don't invoke the callback compounds unless it is the last
+-		 * request.
++		 * Invoke callback for every part of the compound chain
++		 * to calculate credits properly. Wake up this thread only when
++		 * the last element is received.
+ 		 */
+ 		if (i < num_rqst - 1)
+-			midQ[i]->callback = cifs_noop_callback;
++			midQ[i]->callback = cifs_compound_callback;
++		else
++			midQ[i]->callback = cifs_compound_last_callback;
+ 	}
+ 	cifs_in_send_inc(ses->server);
+ 	rc = smb_send_rqst(ses->server, num_rqst, rqst, flags);
+@@ -898,8 +909,20 @@ compound_send_recv(const unsigned int xid, struct cifs_ses *ses,
+ 
+ 	mutex_unlock(&ses->server->srv_mutex);
+ 
+-	if (rc < 0)
++	if (rc < 0) {
++		/* Sending failed for some reason - return credits back */
++		for (i = 0; i < num_rqst; i++)
++			add_credits(ses->server, credits[i], optype);
+ 		goto out;
++	}
++
++	/*
++	 * At this point the request is passed to the network stack - we assume
++	 * that any credits taken from the server structure on the client have
++	 * been spent and we can't return them back. Once we receive responses
++	 * we will collect credits granted by the server in the mid callbacks
++	 * and add those credits to the server structure.
++	 */
+ 
+ 	/*
+ 	 * Compounding is never used during session establish.
+@@ -932,11 +955,6 @@ compound_send_recv(const unsigned int xid, struct cifs_ses *ses,
+ 		}
+ 	}
+ 
+-	for (i = 0; i < num_rqst; i++)
+-		if (!cancelled_mid[i] && midQ[i]->resp_buf
+-		    && (midQ[i]->mid_state == MID_RESPONSE_RECEIVED))
+-			credits[i] = ses->server->ops->get_credits(midQ[i]);
+-
+ 	for (i = 0; i < num_rqst; i++) {
+ 		if (rc < 0)
+ 			goto out;
+@@ -995,7 +1013,6 @@ out:
+ 	for (i = 0; i < num_rqst; i++) {
+ 		if (!cancelled_mid[i])
+ 			cifs_delete_mid(midQ[i]);
+-		add_credits(ses->server, credits[i], optype);
+ 	}
+ 
+ 	return rc;
+-- 
+2.19.1
+
