@@ -2,142 +2,96 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22654C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF85C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D8320821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738311;
-	bh=Yh5nsTBLoZuAempeSUiYyrRSi0iL8c7e7AI+MP6t90I=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=YD0GanX+dyeecW7ka5gDYTC7UvtbAEKn9Iylt/ZJoY9w2tsrtb5IdLmQzQdjdXVJs
-	 wqh2JL+Fe0kFkBpgUvq567oeXaK9/qVL5iu55vVBsnWPNWbu3MUxG3FS3iEf+w9Oj/
-	 4PsYiYVIOT1Xa1uNF+NLmvtXlInTTaUzzu38ki+E=
+	by mail.kernel.org (Postfix) with ESMTP id 4E25F21916
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="kyDIqzsy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfBISvt (ORCPT
+        id S1728254AbfBIStx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:51:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbfBIStz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:55 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61CDF21916;
-        Sat,  9 Feb 2019 18:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738194;
-        bh=Yh5nsTBLoZuAempeSUiYyrRSi0iL8c7e7AI+MP6t90I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ccnvdu1t5w1pcPL6YvvSNl3xRnpMFjuswDZjEbG5jgtwPJKExDaAI8/1eybuwosWs
-         Z3buyabBqSBYN8QabqclAosFKd609SUqFwb5vswL5Be43KcuyatJ8QpHC7+CxQnx57
-         5eCiYNNuw+m+zSWrlq0d7ssETCsqkJgC+RfupBCk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 01/12] ACPI: NUMA: Use correct type for printing addresses on i386-PAE
-Date:   Sat,  9 Feb 2019 13:49:41 -0500
-Message-Id: <20190209184952.127009-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Sat, 9 Feb 2019 13:49:53 -0500
+Received: from server.eikelenboom.it ([91.121.65.215]:47530 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728210AbfBIStp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Sq/gOVvgxP7lx7MAR6Fw6A6M85ThCs5LxdB8sVN8QSY=; b=kyDIqzsyLbo3rPeUo7mLdyyqBP
+        y7A2dvLz6xJb4oW05A7RNBiJnF0Sk40Dq4bY5yZ00+26mj7UCuG5qrH6gecc0n+FfRkF1ynBrJuPM
+        gpgQezKUpOYd4QxJpFwHU05cYPDhALoXfvyRa3InoQmX4D1ogrYcXWWiuSQw1u9mrsQg=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:50588 helo=[172.16.1.50])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1gsXhH-0007xQ-R8; Sat, 09 Feb 2019 19:49:51 +0100
+Subject: Re: Linux 5.0 regression: BUG: unable to handle kernel paging request
+ at ffff888023e26778 RIP: e030:move_page_tables+0x7c1/0xae0
+To:     Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+References: <39ae9195-cf8f-01fe-df83-38a9a4c52e48@eikelenboom.it>
+ <da8badb7-9743-020e-6891-dac944b61ee9@eikelenboom.it>
+ <094e923b-4e64-57d8-42c4-6e8890473035@suse.com>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <3be0ee8f-79d4-2a2f-59a5-71f3514d9dbd@eikelenboom.it>
+Date:   Sat, 9 Feb 2019 19:51:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <094e923b-4e64-57d8-42c4-6e8890473035@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Fan <fanc.fnst@cn.fujitsu.com>
+On 09/02/2019 19:48, Juergen Gross wrote:
+> On 09/02/2019 19:45, Sander Eikelenboom wrote:
+>> On 09/02/2019 09:26, Sander Eikelenboom wrote:
+>>> L.S.,
+>>>
+>>>
+>>> While testing a Linux 5.0-rc5-ish kernel (pull of yesterday) with some additional patches for
+>>> already reported other issues i came across the issue below which i haven't seen with 4.20.x
+>>>
+>>> I haven't got a reproducer so i might be hard to hit it again, 
+>>> system is AMD and this is from the host kernel running under
+>>> the Xen hypervisor might it matter.
+>>
+>>> --
+>>>
+>>> Sander
+>>
+>> Hi Boris / Juergen,
+>>
+>> The commit causing this is:
+>> 2c91bd4a4e2e530582d6fd643ea7b86b27907151 mm: speed up mremap by 20x on large regions
+>>
+>> Since it seems there haven't been any other reports about this .. 
+>> could it be this doesn't specifically work well with a Xen PVH dom0 ?
+> 
+> PVH? Not PV?
 
-[ Upstream commit b9ced18acf68dffebe6888c7ec765a2b1db7a039 ]
+Ah sorry, indeed PV !
 
-The addresses of NUMA nodes are not printed correctly on i386-PAE
-which is misleading.
-
-Here is a debian9-32bit with PAE in a QEMU guest having more than 4G
-of memory:
-
-qemu-system-i386 \
--hda /var/lib/libvirt/images/debian32.qcow2 \
--m 5G \
--enable-kvm \
--smp 10 \
--numa node,mem=512M,nodeid=0,cpus=0 \
--numa node,mem=512M,nodeid=1,cpus=1 \
--numa node,mem=512M,nodeid=2,cpus=2 \
--numa node,mem=512M,nodeid=3,cpus=3 \
--numa node,mem=512M,nodeid=4,cpus=4 \
--numa node,mem=512M,nodeid=5,cpus=5 \
--numa node,mem=512M,nodeid=6,cpus=6 \
--numa node,mem=512M,nodeid=7,cpus=7 \
--numa node,mem=512M,nodeid=8,cpus=8 \
--numa node,mem=512M,nodeid=9,cpus=9 \
--serial stdio
-
-Because of the wrong value type, it prints as below:
-
-[    0.021049] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.021740] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.022425] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.023092] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.023764] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.024431] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.025104] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.025791] ACPI: SRAT Memory (0x0 length 0x20000000) in proximity domain 6 enabled
-[    0.026412] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 7 enabled
-[    0.027118] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 8 enabled
-[    0.027802] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 9 enabled
-
-The upper half of the start address of the NUMA domains between 6
-and 9 inclusive was cut, so the printed values are incorrect.
-
-Fix the value type, to get the correct values in the log as follows:
-
-[    0.023698] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.024325] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.024981] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.025659] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.026317] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.026980] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.027635] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.028311] ACPI: SRAT Memory (0x100000000 length 0x20000000) in proximity domain 6 enabled
-[    0.028985] ACPI: SRAT Memory (0x120000000 length 0x20000000) in proximity domain 7 enabled
-[    0.029667] ACPI: SRAT Memory (0x140000000 length 0x20000000) in proximity domain 8 enabled
-[    0.030334] ACPI: SRAT Memory (0x160000000 length 0x20000000) in proximity domain 9 enabled
-
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-[ rjw: Subject & changelog ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/acpi/numa.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 17b518cb787c..0ea065c6725a 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -147,9 +147,9 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 		{
- 			struct acpi_srat_mem_affinity *p =
- 			    (struct acpi_srat_mem_affinity *)header;
--			pr_debug("SRAT Memory (0x%lx length 0x%lx) in proximity domain %d %s%s%s\n",
--				 (unsigned long)p->base_address,
--				 (unsigned long)p->length,
-+			pr_debug("SRAT Memory (0x%llx length 0x%llx) in proximity domain %d %s%s%s\n",
-+				 (unsigned long long)p->base_address,
-+				 (unsigned long long)p->length,
- 				 p->proximity_domain,
- 				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
- 				 "enabled" : "disabled",
--- 
-2.19.1
+> 
+> Juergen
+> 
 
