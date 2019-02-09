@@ -2,131 +2,132 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCDAC282CC
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B0DC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ABB21919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:40:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NlLq8Ixg"
+	by mail.kernel.org (Postfix) with ESMTP id 45C7C21919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549726993;
+	bh=54hQJezVpERzSpXE1RHScfzqKbUGqhClJ8H0c8ubSl4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Vo6rv1HXDMHBTr8CxHVwojnS8UvmGaw7w38hKaPSeJ8FCjZgvofPZN7ejNaiz6P5c
+	 8y0Jtg3nMBVKN1JHURAqbeoOIgqKpf0maMRujPekwQcLEZTBwo6T//KGbkeSDQGf1d
+	 8m24xcaA1Znd8aYWfN6Y9ADKqLoBiqW1fU3GmcmM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfBIPkJ (ORCPT
+        id S1726977AbfBIPnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 10:40:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34916 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfBIPkI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 10:40:08 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t200so8675608wmt.0;
-        Sat, 09 Feb 2019 07:40:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QiiHczim2JPtOsVn9eeNnwa3j9BEi1GOBpK9dZSUDLQ=;
-        b=NlLq8IxgOYpbdQwAlaZY4a2ywFdc7lrk8DxPpbEZkqs6cceOp2m6OQJtgUUrqZ/T7m
-         pDfQ06IUDdQzot/CxmJJxJ9ZQYDhj+wDnLTVTqYqAj5SnoB1c9lVCkGjaH4GKiNpoNIa
-         WmxQMO7ng4JOQDPgAAqzw3BMLzrsO2uVZxYf5Tvp3HAP5QE5/FP+21qnk6Luv6RvgPLY
-         au/xVSdeHZfuw+puGzDNv1dGEdXymNm4v/7R7s68rXk0kD08ydsyRr871H8/GNW6hOoG
-         zj0PW9aewhzaeikuKDOAZbBj4xj0P9He5Q8KTnWnhQSIYN2oJDF2ivxyHkOnqz/AdJWv
-         cRbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QiiHczim2JPtOsVn9eeNnwa3j9BEi1GOBpK9dZSUDLQ=;
-        b=ocodCg4Qkp+4VHlnyqGOycsI+M9npSy/VAGUf5PoaOTLiG2dCyZxMU+3V3KJ61scMm
-         jL44kspgv39HB9uCjiDdK+rUaaYB+hkT7Hj1gZV6rOeHrqEFC1i6NL5kqVTHvEpp3wv6
-         xF3jgKo8z8kabX1XLHYHt1O/XH9vc7wHrJu4OnPPmEHBJFFTtMicQvbg7nd/J1NUzR8P
-         GcUxCkTO4wl/SrzWvT6GrNcSVEb6qGMGePYKl3RBN3VR/ME1IeW085f8vVPJT+NW2+LF
-         P7SJ7OdvFarbHP0F0kJe+iN2xueeCCLikRmQQcGgHVpa8uMOQEpHkj2q5zZBPkoofyMv
-         69vQ==
-X-Gm-Message-State: AHQUAuZ/VirrgZhzquWoZK5YgsHcaR/sQsQYMNiXWt3/q/pgN3aZVMTI
-        LDXv2ryK82OkK8DgFFgCCZ0=
-X-Google-Smtp-Source: AHgI3IZ/LRJ2AU9GOxJVyVuPthGKLGKYp2nVXebAHBqBjrBRg03BIV8oMcltUsiRn9EB0OcEOMhKOw==
-X-Received: by 2002:adf:f84f:: with SMTP id d15mr16329500wrq.161.1549726806388;
-        Sat, 09 Feb 2019 07:40:06 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id a14sm4564284wrr.13.2019.02.09.07.40.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 07:40:05 -0800 (PST)
-Date:   Sat, 9 Feb 2019 16:40:04 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andreas Bombe <andreas.bombe@gmail.com>,
-        Andreas Henriksson <andreas@fatal.se>,
-        Jaroslav Skarvada <jskarvad@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        util-linux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mpluskal@suse.com, base-system@gentoo.org,
-        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-Subject: Re: Future of dosfstools project (FAT)
-Message-ID: <20190209154004.fwsfajwg75dadfbd@pali>
-References: <20181002081654.jxesr3kj62snzez5@pali>
- <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
- <20181012091941.o22srnhse4kzqjhf@fatal.se>
- <20181114113341.yx2wlzqku5yh3k4h@pali>
- <CAPXf_qN66-Mi+o+9ENGqCDe-_2tHaf9uM3moRcCGNvmxwH3ExQ@mail.gmail.com>
- <20181206083828.4bp3oypkto2ngobu@pali>
- <20181212135736.xtb57r2eatqsgenb@pali>
- <20181217095004.c6c6itvyfp7cf3ta@pali>
- <20181227221748.zsz6bwqqia7ybfwj@pali>
- <CAHp75VfJpy572t8swsEsz0kPKfpOE-v0SZVxM2aakX0hkjX4=Q@mail.gmail.com>
+        Sat, 9 Feb 2019 10:43:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726741AbfBIPnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 10:43:10 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8390E217D8;
+        Sat,  9 Feb 2019 15:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549726989;
+        bh=54hQJezVpERzSpXE1RHScfzqKbUGqhClJ8H0c8ubSl4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lBH4nYAW5NvJ5NIK3awTbzAmVHZX1pfz+JJWXnMsP/uh5cCs38mKaYY3Zcj7xXLUa
+         6mU9N+mbKo9uh2LRpfRnBnhp95GbzPotaZvjapLzSt4ixmWI5r/NRI/elByVpsQgZQ
+         tRHw/deE8C9S6bQugLNakoBr3v6exM29bKCQ2P5U=
+Date:   Sat, 9 Feb 2019 15:43:02 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH v2] drivers: iio: dac: Fix wrong license for ADI drivers
+Message-ID: <20190209154302.35a2cb7e@archlinux>
+In-Reply-To: <1549271975-15634-1-git-send-email-stefan.popa@analog.com>
+References: <1549271975-15634-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jjbqppa3api34i4g"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfJpy572t8swsEsz0kPKfpOE-v0SZVxM2aakX0hkjX4=Q@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 4 Feb 2019 11:19:35 +0200
+Stefan Popa <stefan.popa@analog.com> wrote:
 
---jjbqppa3api34i4g
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Analog Devices drivers are typically GPL v2 only. This patch fixes the
+> inconsistencies between the module license and SPDX.
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Applied, thanks.
 
-On Tuesday 08 January 2019 17:32:55 Andy Shevchenko wrote:
-> On Fri, Dec 28, 2018 at 12:18 AM Pali Roh=C3=A1r <pali.rohar@gmail.com> w=
-rote:
-> > On Monday 17 December 2018 10:50:04 Pali Roh=C3=A1r wrote:
-> > > On Wednesday 12 December 2018 14:57:36 Pali Roh=C3=A1r wrote:
->=20
-> > > Thanks for review of #94! As next you can take #92 from list.
-> >
-> > Andreas, can you look at next pull requests?
->=20
-> Looking from a side how slow this is being processed I think the best
-> option to fork and abandon the old project if author / maintainer by
-> some reason wouldn't like to give a push rights.
+Jonathan
 
-Just quick update: I got github permission for merging pull requests.
-I already merge some small changes. Others needs and waiting for review.
+> ---
+> Changes in v2:
+> 	- Modified only the drivers with inconsistencies.
+> 
+>  drivers/iio/dac/ad5686-spi.c | 2 +-
+>  drivers/iio/dac/ad5686.c     | 2 +-
+>  drivers/iio/dac/ad5686.h     | 2 +-
+>  drivers/iio/dac/ad5696-i2c.c | 2 +-
+>  drivers/iio/dac/ad5758.c     | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/ad5686-spi.c b/drivers/iio/dac/ad5686-spi.c
+> index 4d857c8..0188ded 100644
+> --- a/drivers/iio/dac/ad5686-spi.c
+> +++ b/drivers/iio/dac/ad5686-spi.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5672R, AD5674R, AD5676, AD5676R, AD5679R,
+>   * AD5681R, AD5682R, AD5683, AD5683R, AD5684,
+> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
+> index 6dd2759..e06b29c 100644
+> --- a/drivers/iio/dac/ad5686.c
+> +++ b/drivers/iio/dac/ad5686.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5686R, AD5685R, AD5684R Digital to analog converters  driver
+>   *
+> diff --git a/drivers/iio/dac/ad5686.h b/drivers/iio/dac/ad5686.h
+> index 4c3e171..70a7799 100644
+> --- a/drivers/iio/dac/ad5686.h
+> +++ b/drivers/iio/dac/ad5686.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> +/* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * This file is part of AD5686 DAC driver
+>   *
+> diff --git a/drivers/iio/dac/ad5696-i2c.c b/drivers/iio/dac/ad5696-i2c.c
+> index 7350d98..ccf794c 100644
+> --- a/drivers/iio/dac/ad5696-i2c.c
+> +++ b/drivers/iio/dac/ad5696-i2c.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5671R, AD5675R, AD5691R, AD5692R, AD5693, AD5693R,
+>   * AD5694, AD5694R, AD5695R, AD5696, AD5696R
+> diff --git a/drivers/iio/dac/ad5758.c b/drivers/iio/dac/ad5758.c
+> index ef41f12..2bdf1b0 100644
+> --- a/drivers/iio/dac/ad5758.c
+> +++ b/drivers/iio/dac/ad5758.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5758 Digital to analog converters driver
+>   *
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---jjbqppa3api34i4g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXF70UgAKCRCL8Mk9A+RD
-UldOAJ9S3QXS5zAFOgwUhz3o8m1tHxGvVACeJ5D6DpItKD+jyLWGPFOqxcsDFgc=
-=jDX8
------END PGP SIGNATURE-----
-
---jjbqppa3api34i4g--
