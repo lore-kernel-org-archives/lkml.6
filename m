@@ -2,133 +2,108 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DE4C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4EEC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC34218D2
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:28:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="io6gJ4n5"
+	by mail.kernel.org (Postfix) with ESMTP id 1599620823
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 17:31:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfBIR22 (ORCPT
+        id S1727847AbfBIRba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 12:28:28 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:56176 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbfBIR22 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 12:28:28 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7CA545C1E69;
-        Sat,  9 Feb 2019 18:28:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1549733305;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PW8zfQNBUwSdLd/R0RaFY9UOCwcevFz+HFnUPe87atQ=;
-        b=io6gJ4n5U+HR4miJoeDVnMdccujW0ZscC2xbNXYvqtM5sASYiREoFppsdE8b2TgHYiBJyX
-        TA0pGw87laYtP1Zyh2emQy5+3qDotXzn9DE3uo3j1ynkdr+MK4ajakqC3gmbrwTLdCmaWt
-        U3bKBJ2px0PF10y8WxckJ5McF5oWvJY=
+        Sat, 9 Feb 2019 12:31:30 -0500
+Received: from mga05.intel.com ([192.55.52.43]:3310 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727377AbfBIRba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 12:31:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 09:31:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,352,1544515200"; 
+   d="scan'208";a="132330281"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by FMSMGA003.fm.intel.com with ESMTP; 09 Feb 2019 09:31:29 -0800
+From:   ira.weiny@intel.com
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH] mm/gup.c: Remove unused write variable
+Date:   Sat,  9 Feb 2019 09:31:09 -0800
+Message-Id: <20190209173109.9361-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 09 Feb 2019 18:28:25 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     linux@armlinux.org.uk
-Cc:     ndesaulniers@google.com, natechancellor@gmail.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, nicolas.pitre@linaro.org,
-        thierry.reding@gmail.com, will.deacon@arm.com,
-        julien.thierry@arm.com, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/5] ARM: use unified assembler in c files
-In-Reply-To: <fed4850fb5d8a8ca874affa05d8d116d53e25b88.1549532513.git.stefan@agner.ch>
-References: <cover.1549532513.git.stefan@agner.ch>
- <fed4850fb5d8a8ca874affa05d8d116d53e25b88.1549532513.git.stefan@agner.ch>
-Message-ID: <db0e6b8f034f832c7e52fe3dd47073ad@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the reviews so far.
+From: Ira Weiny <ira.weiny@intel.com>
 
-During some more testing I stumbled upon another issue:
+write is unused in gup_fast_permitted so remove it.
 
-On 07.02.2019 10:48, Stefan Agner wrote:
-> Use unified assembler syntax (UAL) in inline assembler. Divided
-> syntax is considered depricated. This will also allow to build
-> the kernel using LLVM's integrated assembler.
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  arch/arm/mm/copypage-v4mc.c | 2 +-
->  arch/arm/mm/copypage-v4wb.c | 2 +-
->  arch/arm/mm/copypage-v4wt.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mm/copypage-v4mc.c b/arch/arm/mm/copypage-v4mc.c
-> index b03202cddddb..b19c7ad1a6de 100644
-> --- a/arch/arm/mm/copypage-v4mc.c
-> +++ b/arch/arm/mm/copypage-v4mc.c
-> @@ -56,7 +56,7 @@ static void mc_copy_user_page(void *from, void *to)
->  	ldmia	%0!, {r2, r3, ip, lr}		@ 4\n\
->  	subs	%2, %2, #1			@ 1\n\
->  	stmia	%1!, {r2, r3, ip, lr}		@ 4\n\
-> -	ldmneia	%0!, {r2, r3, ip, lr}		@ 4\n\
-> +	ldmiane	%0!, {r2, r3, ip, lr}		@ 4\n\
->  	bne	1b				@ "
->  	: "+&r" (from), "+&r" (to), "=&r" (tmp)
->  	: "2" (PAGE_SIZE / 64)
-> diff --git a/arch/arm/mm/copypage-v4wb.c b/arch/arm/mm/copypage-v4wb.c
-> index cd3e165afeed..6e3c9b69dd25 100644
-> --- a/arch/arm/mm/copypage-v4wb.c
-> +++ b/arch/arm/mm/copypage-v4wb.c
-> @@ -38,7 +38,7 @@ static void v4wb_copy_user_page(void *kto, const void *kfrom)
->  	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
->  	subs	%2, %2, #1			@ 1\n\
->  	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-> -	ldmneia	%1!, {r3, r4, ip, lr}		@ 4\n\
-> +	ldmiane	%1!, {r3, r4, ip, lr}		@ 4\n\
->  	bne	1b				@ 1\n\
->  	mcr	p15, 0, %1, c7, c10, 4		@ 1   drain WB"
->  	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
-> diff --git a/arch/arm/mm/copypage-v4wt.c b/arch/arm/mm/copypage-v4wt.c
-> index 8614572e1296..4a40fa1cbc2a 100644
-> --- a/arch/arm/mm/copypage-v4wt.c
-> +++ b/arch/arm/mm/copypage-v4wt.c
-> @@ -34,7 +34,7 @@ static void v4wt_copy_user_page(void *kto, const void *kfrom)
->  	ldmia	%1!, {r3, r4, ip, lr}		@ 4\n\
->  	subs	%2, %2, #1			@ 1\n\
->  	stmia	%0!, {r3, r4, ip, lr}		@ 4\n\
-> -	ldmneia	%1!, {r3, r4, ip, lr}		@ 4\n\
-> +	ldmiane	%1!, {r3, r4, ip, lr}		@ 4\n\
->  	bne	1b				@ 1\n\
->  	mcr	p15, 0, %2, c7, c7, 0		@ flush ID cache"
->  	: "+&r" (kto), "+&r" (kfrom), "=&r" (tmp)
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+---
+ arch/x86/include/asm/pgtable_64.h | 3 +--
+ mm/gup.c                          | 6 +++---
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-When compiling with gcc, this leads to:
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 9c85b54bf03c..0bb566315621 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -259,8 +259,7 @@ extern void init_extra_mapping_uc(unsigned long phys, unsigned long size);
+ extern void init_extra_mapping_wb(unsigned long phys, unsigned long size);
+ 
+ #define gup_fast_permitted gup_fast_permitted
+-static inline bool gup_fast_permitted(unsigned long start, int nr_pages,
+-		int write)
++static inline bool gup_fast_permitted(unsigned long start, int nr_pages)
+ {
+ 	unsigned long len, end;
+ 
+diff --git a/mm/gup.c b/mm/gup.c
+index 05acd7e2eb22..b63e88eca31b 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1786,7 +1786,7 @@ static void gup_pgd_range(unsigned long addr, unsigned long end,
+  * Check if it's allowed to use __get_user_pages_fast() for the range, or
+  * we need to fall back to the slow version:
+  */
+-bool gup_fast_permitted(unsigned long start, int nr_pages, int write)
++bool gup_fast_permitted(unsigned long start, int nr_pages)
+ {
+ 	unsigned long len, end;
+ 
+@@ -1828,7 +1828,7 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 	 * block IPIs that come from THPs splitting.
+ 	 */
+ 
+-	if (gup_fast_permitted(start, nr_pages, write)) {
++	if (gup_fast_permitted(start, nr_pages)) {
+ 		local_irq_save(flags);
+ 		gup_pgd_range(start, end, write, pages, &nr);
+ 		local_irq_restore(flags);
+@@ -1870,7 +1870,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 	if (unlikely(!access_ok((void __user *)start, len)))
+ 		return -EFAULT;
+ 
+-	if (gup_fast_permitted(start, nr_pages, write)) {
++	if (gup_fast_permitted(start, nr_pages)) {
+ 		local_irq_disable();
+ 		gup_pgd_range(addr, end, write, pages, &nr);
+ 		local_irq_enable();
+-- 
+2.20.1
 
-/tmp/ccrvA1wy.s: Assembler messages:
-/tmp/ccrvA1wy.s:180: Error: bad instruction `ldmiane r0!,{r3,r4,ip,lr}'
-make[1]: *** [scripts/Makefile.build:277: arch/arm/mm/copypage-v4wb.o]
-Error 1
-make: *** [Makefile:1042: arch/arm/mm] Error 2
-
-Unfortunately, the gcc option -masm-syntax-unified which allows unified
-syntax in inline assembly is broken (see also
-https://lkml.org/lkml/2019/1/7/1320).
-
-So this requires to sprinkle those inline assembly with ".syntax
-unified" strings, similar to how I've done it in uaccess.h.
-
---
-Stefan
