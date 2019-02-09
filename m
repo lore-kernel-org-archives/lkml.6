@@ -6,46 +6,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B73BDC282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3298BC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 874B821919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F40BA2192C
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738101;
-	bh=M0xUpen9jh4L/GKMQsRT3zrXLHdG3/AzVdvPNJz22S4=;
+	s=default; t=1549738104;
+	bh=SQbUFCd+lKqKv/YYgzC/1cplw2hLs+9BnMUw0YhjiOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hbRx5ux0Mv16NRoSq3tihn19dEFCwUQUt5QzUZheOKaD+c2NLcSQZQb19yY+UMRcl
-	 syu2XllxVnBieDveBIZ2HCUMnbwd48LCYQTEQ8U6R6NYE3gtZMt48R8ux/MwtCD/rA
-	 UlwdsKYJuHav4tesUMUeBSXV3eLhsRZKDMGaP5E8=
+	b=HLlNDHSczz2wVDJEUOZH982n8yqdUgTlenHxkP3kEME07/DX+3f//rG9+LUwdki0V
+	 DrOaKOeQvJFy+AyB/GhNxPUEPdZAXsPFAcGri6uL33acTNT5QNiO+kHAagT6bXYPlW
+	 FlC5oW7oKtmSj8z6khJjXoq11kb2w1tVEd7u7kKQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbfBISsT (ORCPT
+        id S1727660AbfBISsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33054 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:48:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbfBISsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:17 -0500
+        id S1727648AbfBISsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EA6B2192C;
-        Sat,  9 Feb 2019 18:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B76721929;
+        Sat,  9 Feb 2019 18:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738096;
-        bh=M0xUpen9jh4L/GKMQsRT3zrXLHdG3/AzVdvPNJz22S4=;
+        s=default; t=1549738099;
+        bh=SQbUFCd+lKqKv/YYgzC/1cplw2hLs+9BnMUw0YhjiOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y0USvc7MCeddZZLAg2dxgLXjSLk9RES+Lpr52bSQf2v7U23NP5DWM3g+9Wjpg4nGM
-         gVb8IJ/fkmfQN+kCobS+QSCOUwgSWUUhc5Chfxmmqf8LJjT0i04nyZV/mYjok8mjbi
-         J4ZXKcfNNb4QutjtyO16fm/9deb4UnTyHpFP/ZM8=
+        b=VcYLovEk5zcuPRJCJhl5XZk1krRvRPbIP71JP2wj1YYgcpH+hoLvmwbLkQcurRLZe
+         2eUH1zMEi2sBttl8NaJPppUfgdTaRrFnUYUEnpjtS9K1U2g9qKZfI4nt8KLVqTPeoI
+         zlozKtS3wriF9BgDt6qDIMqs+y+k+zT/hGwMBaSo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 31/42] ARM: dts: da850-lcdk: Correct the audio codec regulators
-Date:   Sat,  9 Feb 2019 13:47:23 -0500
-Message-Id: <20190209184734.125935-31-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jamie Lentin <jm@lentin.co.uk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Julien D'Ascenzio <jdascenzio@posteo.net>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 33/42] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
+Date:   Sat,  9 Feb 2019 13:47:25 -0500
+Message-Id: <20190209184734.125935-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -57,80 +63,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit bd540ebe68c3017194a1caa38e075bbbc0832749 ]
+[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
 
-Add the board level fixed regulators for 3.3V and 1.8V which is used to
-power - among other things - the tlv320aic3106 codec.
+These two lines are active high, not active low. The bug was
+found when we changed the kernel to respect the polarity defined
+in the device tree.
 
-Apart from removing the following warning during boot:
-tlv320aic3x-codec 0-0018: Invalid supply voltage(s) AVDD: -22, DVDD: -22
-
-With the correct voltages the driver can select correct OCMV value to
-reduce pop noise.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
+Cc: Jamie Lentin <jm@lentin.co.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Tested-by: Jamie Lentin <jm@lentin.co.uk>
+Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/da850-lcdk.dts | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
-index 0177e3ed20fe..c196e37606c4 100644
---- a/arch/arm/boot/dts/da850-lcdk.dts
-+++ b/arch/arm/boot/dts/da850-lcdk.dts
-@@ -39,6 +39,36 @@
- 		};
- 	};
- 
-+	vcc_5vd: fixedregulator-vcc_5vd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_5vd";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+	};
-+
-+	vcc_3v3d: fixedregulator-vcc_3v3d {
-+		/* TPS650250 - VDCDC1 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_3v3d";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc_5vd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vcc_1v8d: fixedregulator-vcc_1v8d {
-+		/* TPS650250 - VDCDC2 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_1v8d";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_5vd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
-@@ -221,6 +251,12 @@
- 		compatible = "ti,tlv320aic3106";
- 		reg = <0x18>;
- 		status = "okay";
-+
-+		/* Regulators */
-+		IOVDD-supply = <&vcc_3v3d>;
-+		AVDD-supply = <&vcc_3v3d>;
-+		DRVDD-supply = <&vcc_3v3d>;
-+		DVDD-supply = <&vcc_1v8d>;
- 	};
- };
- 
+diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+index cbaf06f2f78e..eb917462b219 100644
+--- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
++++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+@@ -36,8 +36,8 @@
+ 		compatible = "gpio-fan";
+ 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
+ 		pinctrl-names = "default";
+-		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
+-			 &gpio1 13 GPIO_ACTIVE_LOW>;
++		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
++			 &gpio1 13 GPIO_ACTIVE_HIGH>;
+ 		gpio-fan,speed-map = <0    0
+ 				      3000 1
+ 				      6000 2>;
 -- 
 2.19.1
 
