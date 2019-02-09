@@ -7,115 +7,162 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF5ACC169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06134C282CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6A22177B
+	by mail.kernel.org (Postfix) with ESMTP id C797721841
 	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:09:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBDNHARm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MirIZ+3P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfBIAJH (ORCPT
+        id S1726894AbfBIAJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:09:07 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35134 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfBIAJH (ORCPT
+        Fri, 8 Feb 2019 19:09:08 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52552 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfBIAJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:09:07 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t200so6175302wmt.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:09:05 -0800 (PST)
+        Fri, 8 Feb 2019 19:09:08 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m1so6280200wml.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oYZRhi80jnWf5lvJ9rxSq8k+5uIG9VwWaCu5KNmb2Io=;
-        b=fBDNHARmMKhmm+ePaNJj9txjNbOdazSkbZWB/n5YjOQJiidCJgtPUkWYcWKtUsrySa
-         trWv7EzzGxFKTM9ccHPDsc7WS8wtoOlUSU00LZPieepciKS24buQhuHPZFvVIRn+531E
-         WXI4lpQh/8WxwUBQRjxoDJhdHoBt66E/f63atN5vJMnc3ThZSTsQ4Sfu52xF44sOuN/B
-         TE10KX4vZtqb0SGWn2TObNYiAWh6hRVzo8h9o1Ako8t4KyfHIuMFlVsnHfG/afjhbNIN
-         haKI0M5yLUxjlEGqljgCH6x51eoDN5o5GVzckrZ1zUZDuRe5854+1nj6iZ4SKOFLM5/t
-         hg6g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5ORFvEqPg40FyrMt/fLXHHlLvflq3laGk3IRwh/eP24=;
+        b=MirIZ+3PsN5et4GxGn+L8yDCYRFmolz3ch2quRams1L4kezKyKP8T1h/lMWw4HLw3j
+         qflJWUF7dxCkRm9BZo5oB9P1g8LduJUF6eDllCAeVgX9Ucjiv9YL/CzuxxnMIcZCxhQ3
+         Cvaitucrcr2zoCbinGZJ3UTMc87z41zG++3beXvnGOW8yVGbD9SSsh+rnqC0zPT8/le6
+         ahFOr3X3hhXMequKxkYzpCl2B6rvjNHHKZAgHiWpfIFYdPXiNzw/ynmgjlE7d30YyEfJ
+         lCUE9f2pQkLwezxuilWYIRJzGpL6oFcbp7tncmhyw08pUI8DI/2BLVSq39ygOuxSXs+N
+         Yz5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oYZRhi80jnWf5lvJ9rxSq8k+5uIG9VwWaCu5KNmb2Io=;
-        b=EaydbtrOBjU5ArDWvIEICz9CCbooh+J6TlXBqzt2APusJL1ADHL7AiL3IFoZYivKAy
-         dLXHrxdC+hMc+C0rufUF1wvkTxF6SPYKcJTAUvfCoH1wkqarOXxObgmGmjeijAuUz288
-         VjD5hgExmBvZ+o66edIlkKQJsAWsIuDqXusyYilSoN5QYBYSBmB530Y2yfX+6gXM5Tn7
-         9ZrYp/qiujklOWITA1apRD4MMpP2b3P32zxvG/HzP33sm4EZVf935TaUlcjJkan7UqIs
-         ycdaD3KcYyiAbxn6hv0RrFV+bX2V7IaurX3cnF5iGt12WTYOtC2UizjA9vjC6Ns2zS+1
-         uejQ==
-X-Gm-Message-State: AHQUAuY6BHyRa9wiG2h1k9f9xax3Up2BqnNZu3xueFVVQc0q4ArgMZlr
-        s+LA0mz9JF3YQMPyfq9jGdJkNupaJ8fp5g==
-X-Google-Smtp-Source: AHgI3IbP7F6OnN6J3jwdNsAPLLKsA8GObtlao2W2lxU4EKIzxT9TvoA9f9ljD5W+YZ8ax1/9FCi/xw==
-X-Received: by 2002:adf:f487:: with SMTP id l7mr531117wro.86.1549670944704;
-        Fri, 08 Feb 2019 16:09:04 -0800 (PST)
+         :references:mime-version:content-transfer-encoding;
+        bh=5ORFvEqPg40FyrMt/fLXHHlLvflq3laGk3IRwh/eP24=;
+        b=VJIGQ/B70+kuZ0LEtdZ+dy4ex6I17bzPvCety3qDUtq1XpARIvFjmxjYdoXNPjbPpz
+         ma7ZZvXNVeDUTgAd2flnsyjzk9RMNokT2w7YWltBGZgiNxoPzrobHKhLyfdjUWgjo5FH
+         bHuUDJKAf6EMFUiMcWbgvXA7PTLvF2kZ0b9Sm5n+pViOQcdu6lHSbWb8nJgCcyoHNf0v
+         2Yv+wtop89bM3YkbE/pCq5XIepi6Po4gnmlmlRxrhGQ6/GWGcaxX2UeEb6nEXaQAXMjB
+         AwlzqzcATrbX6OFKYyfYv15g4ZRqHneZxyQPz76ntnlTqoDmZyFaD2sbLHb4ca50WqEX
+         ZXJw==
+X-Gm-Message-State: AHQUAuamoKJjvGO/OyguJDIQG1W8Frj/lI1c6vr8G/4NidoSHwrlsusG
+        k2VpBk2l8HS/ovAHysacldfMzUN77xdVvg==
+X-Google-Smtp-Source: AHgI3IYsXZWonq/T/Yz16YT3iZm6Rkmn7EyPr0s0FcW+a9bKEfN4EiUiDsqJUDrfOy02pYl4uzpiQA==
+X-Received: by 2002:adf:ca13:: with SMTP id o19mr18202139wrh.148.1549670946088;
+        Fri, 08 Feb 2019 16:09:06 -0800 (PST)
 Received: from localhost.localdomain (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
-        by smtp.gmail.com with ESMTPSA id 65sm10483171wrb.62.2019.02.08.16.09.03
+        by smtp.gmail.com with ESMTPSA id 65sm10483171wrb.62.2019.02.08.16.09.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 16:09:04 -0800 (PST)
+        Fri, 08 Feb 2019 16:09:05 -0800 (PST)
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
         Martin Sebor <msebor@gcc.gnu.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 1/3] lib/crc32.c: mark crc32_le_base/__crc32c_le_base aliases as __pure
-Date:   Sat,  9 Feb 2019 01:08:38 +0100
-Message-Id: <20190209000840.11018-2-miguel.ojeda.sandonis@gmail.com>
+        Laura Abbott <labbott@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH 2/3] Compiler Attributes: add support for __copy (gcc >= 9)
+Date:   Sat,  9 Feb 2019 01:08:39 +0100
+Message-Id: <20190209000840.11018-3-miguel.ojeda.sandonis@gmail.com>
 In-Reply-To: <20190209000840.11018-1-miguel.ojeda.sandonis@gmail.com>
 References: <20190209000840.11018-1-miguel.ojeda.sandonis@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From the GCC manual:
+
+  copy
+  copy(function)
+
+    The copy attribute applies the set of attributes with which function
+    has been declared to the declaration of the function to which
+    the attribute is applied. The attribute is designed for libraries
+    that define aliases or function resolvers that are expected
+    to specify the same set of attributes as their targets. The copy
+    attribute can be used with functions, variables, or types. However,
+    the kind of symbol to which the attribute is applied (either
+    function or variable) must match the kind of symbol to which
+    the argument refers. The copy attribute copies only syntactic and
+    semantic attributes but not attributes that affect a symbol’s
+    linkage or visibility such as alias, visibility, or weak.
+    The deprecated attribute is also not copied.
+
+  https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
+
 The upcoming GCC 9 release extends the -Wmissing-attributes warnings
 (enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target.
+attributes are missing in the aliases but not in their target, e.g.:
 
-In particular, it triggers here because crc32_le_base/__crc32c_le_base
-aren't __pure while their target crc32_le/__crc32c_le are.
+    void __cold f(void) {}
+    void __alias("f") g(void);
 
-These aliases are used by architectures as a fallback in accelerated
-versions of CRC32. See commit 9784d82db3eb ("lib/crc32: make core crc32()
-routines weak so they can be overridden").
+diagnoses:
 
-Therefore, being fallbacks, it is likely that even if the aliases
-were called from C, there wouldn't be any optimizations possible.
-Currently, the only user is arm64, which calls this from asm.
+    warning: 'g' specifies less restrictive attribute than
+    its target 'f': 'cold' [-Wmissing-attributes]
 
-Still, marking the aliases as __pure makes sense and is a good idea
-for documentation purposes and possible future optimizations,
-which also silences the warning.
+Using __copy(f) we can copy the __cold attribute from f to g:
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Laura Abbott <labbott@redhat.com>
+    void __cold f(void) {}
+    void __copy(f) __alias("f") g(void);
+
+This attribute is most useful to deal with situations where an alias
+is declared but we don't know the exact attributes the target has.
+
+For instance, in the kernel, the widely used module_init/exit macros
+define the init/cleanup_module aliases, but those cannot be marked
+always as __init/__exit since they some modules do not have their
+functions marked as such.
+
+Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
 Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 ---
- lib/crc32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/compiler_attributes.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/lib/crc32.c b/lib/crc32.c
-index 45b1d67a1767..4a20455d1f61 100644
---- a/lib/crc32.c
-+++ b/lib/crc32.c
-@@ -206,8 +206,8 @@ u32 __pure __weak __crc32c_le(u32 crc, unsigned char const *p, size_t len)
- EXPORT_SYMBOL(crc32_le);
- EXPORT_SYMBOL(__crc32c_le);
+diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+index 19f32b0c29af..6b318efd8a74 100644
+--- a/include/linux/compiler_attributes.h
++++ b/include/linux/compiler_attributes.h
+@@ -34,6 +34,7 @@
+ #ifndef __has_attribute
+ # define __has_attribute(x) __GCC4_has_attribute_##x
+ # define __GCC4_has_attribute___assume_aligned__      (__GNUC_MINOR__ >= 9)
++# define __GCC4_has_attribute___copy__                0
+ # define __GCC4_has_attribute___designated_init__     0
+ # define __GCC4_has_attribute___externally_visible__  1
+ # define __GCC4_has_attribute___noclone__             1
+@@ -100,6 +101,19 @@
+  */
+ #define __attribute_const__             __attribute__((__const__))
  
--u32 crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
--u32 __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
-+u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
-+u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
- 
++/*
++ * Optional: only supported since gcc >= 9
++ * Optional: not supported by clang
++ * Optional: not supported by icc
++ *
++ *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-copy-function-attribute
++ */
++#if __has_attribute(__copy__)
++# define __copy(symbol)                 __attribute__((__copy__(symbol)))
++#else
++# define __copy(symbol)
++#endif
++
  /*
-  * This multiplies the polynomials x and y modulo the given modulus.
+  * Don't. Just don't. See commit 771c035372a0 ("deprecate the '__deprecated'
+  * attribute warnings entirely and for good") for more information.
 -- 
 2.17.1
 
