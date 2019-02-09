@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5315EC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58479C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2C820821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2679B21A49
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738295;
-	bh=8/o753cGMQ1UiRqrZE9HIcZGKH2qMgdA5DKO9XJJiRI=;
+	s=default; t=1549738299;
+	bh=xI23ZscH4rvYNVKWdifupQzPBUXWKI8Ygz1ABjPk40g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Paj5liut68i3fG2bDNYJVnVyUN45Wdybl4GZjxH0vxo5G5lVvR8a+qaGTPWa35djE
-	 ztzKWEPLUNwE3AaVE9salmJFKXGKnm7aJh4L+lXb4hadyweVMmCGK5qIw9JROFiPv6
-	 +uzr57Fjc/oSG0ZAduwaynYX6n7xgg5vLqyQfAIw=
+	b=rugJXXuNhDQhf4qJS0V9dOOtNLMCOBxuTY7JSTrk/AjU/ZlxtqmtS0SfGYRxFKEjy
+	 EtABFRdkdAEfUyVe+EA7N/b37L4k7/GvFIX+U5eI8YZtOZXxSbQKkpkJlrhx4jOyCr
+	 xvKApe/wJx37nDTOeVnWtVxolUKXM1+sDK2AOwtU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbfBISvd (ORCPT
+        id S1728284AbfBISt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:51:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728282AbfBISt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 9 Feb 2019 13:49:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726977AbfBISt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09E8721916;
-        Sat,  9 Feb 2019 18:49:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 883E72192C;
+        Sat,  9 Feb 2019 18:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738198;
-        bh=8/o753cGMQ1UiRqrZE9HIcZGKH2qMgdA5DKO9XJJiRI=;
+        s=default; t=1549738195;
+        bh=xI23ZscH4rvYNVKWdifupQzPBUXWKI8Ygz1ABjPk40g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1dK80u/3YFuw+y9SCyxIngWkRMMy7Wkd/fyLMAldKtcov9ipM6y+ecpPileWPGCUP
-         tQkwXhEBrgFa8+MOViH4vVEO35VERy7uSbZsaqb6u6ZCE/NItb7DnDmFgIV8GHQ8/a
-         lSD0Bb9dcrwbzCP9znQN93zs9APO+HFHK4xn3EXs=
+        b=ZX5AEYHfFGenAjLyl2NzCKvvbYHCTHWwzX+pU0w/QFvXisDqSqd5tIGGjD+nWHRhx
+         xQol5REDThi8R3L8U6YTl9/tx8+5znny85i6dIR+KIxY1Ky6/ZS8FXKQ/zNTd9+RY/
+         6Ep3etJn7EQcJXAtQp+eM/LLmrvlVq4xuSHiAgqM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 05/12] drm/bridge: tc358767: fix initial DP0/1_SRCCTRL value
-Date:   Sat,  9 Feb 2019 13:49:45 -0500
-Message-Id: <20190209184952.127009-5-sashal@kernel.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 02/12] cpufreq: check if policy is inactive early in __cpufreq_get()
+Date:   Sat,  9 Feb 2019 13:49:42 -0500
+Message-Id: <20190209184952.127009-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184952.127009-1-sashal@kernel.org>
 References: <20190209184952.127009-1-sashal@kernel.org>
@@ -58,53 +57,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-[ Upstream commit 9a63bd6fe1b5590ffa42ae2ed22ee21363293e31 ]
+[ Upstream commit 2f66196208c98b3d1b4294edffb2c5a8197be899 ]
 
-Initially DP0_SRCCTRL is set to a static value which includes
-DP0_SRCCTRL_LANES_2 and DP0_SRCCTRL_BW27, even when only 1 lane of
-1.62Gbps speed is used. DP1_SRCCTRL is configured to a magic number.
+cpuinfo_cur_freq gets current CPU frequency as detected by hardware
+while scaling_cur_freq last known CPU frequency. Some platforms may not
+allow checking the CPU frequency of an offline CPU or the associated
+resources may have been released via cpufreq_exit when the CPU gets
+offlined, in which case the policy would have been invalidated already.
+If we attempt to get current frequency from the hardware, it may result
+in hang or crash.
 
-This patch changes the configuration as follows:
+For example on Juno, I see:
 
-Configure DP0_SRCCTRL by using tc_srcctrl() which provides the correct
-value.
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000188
+[0000000000000188] pgd=0000000000000000
+Internal error: Oops: 96000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 5 PID: 4202 Comm: cat Not tainted 4.20.0-08251-ga0f2c0318a15-dirty #87
+Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform
+pstate: 40000005 (nZcv daif -PAN -UAO)
+pc : scmi_cpufreq_get_rate+0x34/0xb0
+lr : scmi_cpufreq_get_rate+0x34/0xb0
+Call trace:
+ scmi_cpufreq_get_rate+0x34/0xb0
+ __cpufreq_get+0x34/0xc0
+ show_cpuinfo_cur_freq+0x24/0x78
+ show+0x40/0x60
+ sysfs_kf_seq_show+0xc0/0x148
+ kernfs_seq_show+0x44/0x50
+ seq_read+0xd4/0x480
+ kernfs_fop_read+0x15c/0x208
+ __vfs_read+0x60/0x188
+ vfs_read+0x94/0x150
+ ksys_read+0x6c/0xd8
+ __arm64_sys_read+0x24/0x30
+ el0_svc_common+0x78/0x100
+ el0_svc_handler+0x38/0x78
+ el0_svc+0x8/0xc
+---[ end trace 3d1024e58f77f6b2 ]---
 
-DP1_SRCCTRL needs two bits to be set to the same value as DP0_SRCCTRL:
-SSCG and BW27. All other bits can be zero.
+So fix the issue by checking if the policy is invalid early in
+__cpufreq_get before attempting to get the current frequency.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-5-tomi.valkeinen@ti.com
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/cpufreq/cpufreq.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 8098297c5fe5..dbe403ea130d 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -834,12 +834,11 @@ static int tc_main_link_setup(struct tc_data *tc)
- 	if (!tc->mode)
- 		return -EINVAL;
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index d6d91e8afa9e..61fe4bbc6dc0 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1496,17 +1496,16 @@ static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
+ {
+ 	unsigned int ret_freq = 0;
  
--	/* from excel file - DP0_SrcCtrl */
--	tc_write(DP0_SRCCTRL, DP0_SRCCTRL_SCRMBLDIS | DP0_SRCCTRL_EN810B |
--		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
--		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
--	/* from excel file - DP1_SrcCtrl */
--	tc_write(DP1_SRCCTRL, 0x00003083);
-+	tc_write(DP0_SRCCTRL, tc_srcctrl(tc));
-+	/* SSCG and BW27 on DP1 must be set to the same as on DP0 */
-+	tc_write(DP1_SRCCTRL,
-+		 (tc->link.spread ? DP0_SRCCTRL_SSCG : 0) |
-+		 ((tc->link.base.rate != 162000) ? DP0_SRCCTRL_BW27 : 0));
+-	if (!cpufreq_driver->get)
++	if (unlikely(policy_is_inactive(policy)) || !cpufreq_driver->get)
+ 		return ret_freq;
  
- 	rate = clk_get_rate(tc->refclk);
- 	switch (rate) {
+ 	ret_freq = cpufreq_driver->get(policy->cpu);
+ 
+ 	/*
+-	 * Updating inactive policies is invalid, so avoid doing that.  Also
+-	 * if fast frequency switching is used with the given policy, the check
++	 * If fast frequency switching is used with the given policy, the check
+ 	 * against policy->cur is pointless, so skip it in that case too.
+ 	 */
+-	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
++	if (policy->fast_switch_enabled)
+ 		return ret_freq;
+ 
+ 	if (ret_freq && policy->cur &&
 -- 
 2.19.1
 
