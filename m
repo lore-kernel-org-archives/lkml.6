@@ -6,62 +6,66 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678E5C169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B182C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3734420844
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E577021841
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549672841;
-	bh=nN15dXFZ65OCJ74j5NPxi9Q9vUAFHCTZxEHHSYuCpo0=;
+	s=default; t=1549672845;
+	bh=iuB1hrzKqonE67OPTY4bsWXBLdMrXxYfcAFc2Ofptkg=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=WQ+XFTD3Q+QN8BeVNyCAhKwWrZ8mAjACmTSVJkViyYY4Jc7VfkzvVfmXWgqzUp5AY
-	 svQUcCtMqTMgrd04lsMhazz3f/0xr9tpJbeAIx1fa0VW+/ajzpxWzzkouc6qXkHWUR
-	 5N3jN9qr6v3qJsaks1bYXs/pIyzof1SOy7K1iWkY=
+	b=JHG5+wagttmsnWd8BzgZU28l7V0KOisEGvPKXZrgKz9vexjJwH5jvRA3L7dks+hIR
+	 UQpiPDNI7LA9dn2WROxtqB7lNVWlMNX3sBHQlofWC8lRdQ3k8kN1hSYEtkRM+vjOc7
+	 4kFHEyxN09BRMsFxQxi8bH/ff4AluhXEOAa6PkNE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfBIAke (ORCPT
+        id S1727307AbfBIAkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:40:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55736 "EHLO mail.kernel.org"
+        Fri, 8 Feb 2019 19:40:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbfBIAkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:40:04 -0500
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-5.0-4 tag
+        id S1726906AbfBIAkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 19:40:05 -0500
+Subject: Re: [GIT PULL] signal fixes for v5.0-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549672803;
-        bh=nN15dXFZ65OCJ74j5NPxi9Q9vUAFHCTZxEHHSYuCpo0=;
+        s=default; t=1549672804;
+        bh=iuB1hrzKqonE67OPTY4bsWXBLdMrXxYfcAFc2Ofptkg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=uDy4DquZ5JKoBK8NRdmOAq2/lO87dGMGobdVHY1b/yafshkpBuQLe9WhvMuHSsyao
-         h8+vQaspUzPkzwIZZ+AMMW63cr/K01XkNZZ2iePYGCgcz1R6b20re3OjcFmnDiRz+1
-         wkwNlBHFlUmSPLHxeqpxx2WCZH9DX7P29aY7wsQA=
+        b=T38fpc0Y3pyag3PoYlP/aQ0bou7ExioyfY0XCWtBS6oQqKXnn05sQdQHHpyD6aVyi
+         NZjfAhajd3ys+FAT/KThzOd6UdQfBy/JwBKAvevzSsj/WD4fI5rxVVeWdChpWHl8Vu
+         XIy3r4HJSG76kCdSJaEOzN8JD+hmA5QaRkHEWwuk=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <87r2ciiftz.fsf@concordia.ellerman.id.au>
-References: <87r2ciiftz.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87mun6nuql.fsf@xmission.com>
+References: <87mun6nuql.fsf@xmission.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87r2ciiftz.fsf@concordia.ellerman.id.au>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
- tags/powerpc-5.0-4
-X-PR-Tracked-Commit-Id: 5a3840a470c41ec0b85cd36ca80370330656b163
+X-PR-Tracked-Message-Id: <87mun6nuql.fsf@xmission.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git
+ for-linus
+X-PR-Tracked-Commit-Id: 7146db3317c67b517258cb5e1b08af387da0618b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 820828bffeb11eee41e197a0c9be1b72afa37482
-Message-Id: <154967280358.26526.13984205969695833579.pr-tracker-bot@kernel.org>
-Date:   Sat, 09 Feb 2019 00:40:03 +0000
-To:     Michael Ellerman <mpe@ellerman.id.au>
+X-PR-Merge-Commit-Id: 6b2912cedc238c984e6a4039836ed9c911121076
+Message-Id: <154967280484.26526.9947869539158481559.pr-tracker-bot@kernel.org>
+Date:   Sat, 09 Feb 2019 00:40:04 +0000
+To:     ebiederm@xmission.com (Eric W. Biederman)
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        aneesh.kumar@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, oohall@gmail.com
+        <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jack Andersen <jackoalan@gmail.com>,
+        Christian Brauner <christian@brauner.io>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 09 Feb 2019 00:12:56 +1100:
+The pull request you sent on Fri, 08 Feb 2019 09:52:02 -0600:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-5.0-4
+> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/820828bffeb11eee41e197a0c9be1b72afa37482
+https://git.kernel.org/torvalds/c/6b2912cedc238c984e6a4039836ed9c911121076
 
 Thank you!
 
