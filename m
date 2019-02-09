@@ -2,156 +2,68 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3756DC169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B323C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065B020844
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V9RzXgcO"
+	by mail.kernel.org (Postfix) with ESMTP id 4AD8320844
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549672829;
+	bh=0zx7RiQVZGaeH7CoI/662vsUfRPvr4D3J8UUMGiI4UI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=teaDbWEu3TpX3taP7ny1OHYGaqjScTMsMA60xcG68C2urLdQF/FhVQfg5oZ49KghJ
+	 yw3xDIZRsXp314WMlQgKql+UVCoasqpgezXtU1FjaSdDSLWIS6YJJ6f9J0JoHaxacQ
+	 P9SllxmnOAvBB4Y+WlzQ37z8FAZfSKe8IS98GM0Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfBIAkW (ORCPT
+        id S1727073AbfBIAkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:40:22 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39746 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbfBIAkV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:40:21 -0500
-Received: by mail-ot1-f65.google.com with SMTP id n8so8928418otl.6
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:40:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0w3Ukbs+RXQR7C9N95F48Zuxzzs5y+qN9AJE71LlehA=;
-        b=V9RzXgcODcZdIhljMasYD7/kAPjEMdyucO1l6yTbIcevkoNPrxAEeDb9POCViuOTh5
-         cWhtLsQCmr8FbZHRoy7J+a3HzOBVPOAMtTqIGA05SFiaMHj5UX90JZVsWVnMrI0tIvm9
-         AElqeJm+39TJ+/oPIjEA6vnM56hn6QKjE8rQaENhlI0SDZAn4dVKZ3zwH1bwQ21Ne2nd
-         seEeolqbd3TXkA753po4l+cXpims2IVooKWeEqPVxv8d/lUTcOwbRdz8i3YJ+pzCLXa2
-         zO6JKm2qUZ8AkfyFzRFyeVzIhrvCp7HO5KAZE58lwUw5qcb07van8X+8QHydJnAV9XgI
-         nlcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0w3Ukbs+RXQR7C9N95F48Zuxzzs5y+qN9AJE71LlehA=;
-        b=GwF0MFeXbR0KrdetnLeuERLR5nvT29AcIGUWiT/vazXAih3IlFWsyZ8p6tGrQWYk2b
-         pEFS+uMlKpYzB3JjUnS81FHJxjdveP/GYEQtkNX1F3lh/eYRMqMjU6rw/cCkUHAx8jkI
-         V2aa18IQuIg+on5g4taxCbuL5CkySJrKLm1pgjwW2NwVv4Q04D7qiXIAjT24NxE/iwKz
-         4ms5BfY2qHDLbHDqZmG1M8jnI4osmUcGIN95uMyX+gdj2fKJpQLzINSsyaRKWpPuygGD
-         +wcI31MnOFV5pdbn1HSC+SrIM2NzcsxI9j1S+P8j8vv+FfSRGiJ8BFS4qi2sip2pBBsx
-         o7qQ==
-X-Gm-Message-State: AHQUAuatRSZUhfbBSmnlEOXBCdr8lCCus+6be/9iSHujAsaqNHjr00mA
-        I+jPzW/f0suL3pTU5FupNoudXZiSkrtLJOE0841Suw==
-X-Google-Smtp-Source: AHgI3IZ84Za4K9rvAjg0gu0mOFc8BJC6Qu9hsEOKfDL06SIIr9xF7+Z0i2QYx7pD57IZtneYPjhR3j/H+WKpVunXcds=
-X-Received: by 2002:a9d:6398:: with SMTP id w24mr4926405otk.364.1549672819885;
- Fri, 08 Feb 2019 16:40:19 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-12-brendanhiggins@google.com> <841cf4ae-501b-05ae-5863-a51010709b67@ideasonboard.com>
- <CAFd5g47x-UNja72k-CWPmWz9+LTn8pF8Wj5Poq+2FJ93E=vymA@mail.gmail.com>
- <20181204204701.GT28501@garbanzo.do-not-panic.com> <f8722f4a-44c8-24c2-c433-5178f9f40b82@ideasonboard.com>
- <20181206153718.GD24603@bombadil.infradead.org> <20181211140926.7wzd5jh6klcfsfgz@pathway.suse.cz>
- <20181211094140.2a928fe7@gandalf.local.home> <34f9e9f3-6bca-f11f-097c-c6e0cb779b61@cambridgegreys.com>
-In-Reply-To: <34f9e9f3-6bca-f11f-097c-c6e0cb779b61@cambridgegreys.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Fri, 8 Feb 2019 16:40:08 -0800
-Message-ID: <CAFd5g46kQ=x0PA+04qSm4At23cNvYTUszPb-6eadJ9N04POFUQ@mail.gmail.com>
-Subject: Re: [RFC v3 11/19] kunit: add Python libraries for handing KUnit
- config and kernel
-To:     Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>, brakmo@fb.com,
-        Knut Omang <knut.omang@oracle.com>, jeffm@suse.com,
-        dri-devel@lists.freedesktop.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-nvdimm@lists.01.org, mpe@ellerman.id.au,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Kent Overstreet <kent.overstreet@gmail.com>, jdike@addtoit.com,
-        Tim.Bird@sony.com, linux-um@lists.infradead.org,
-        Julia Lawall <julia.lawall@lip6.fr>, dan.j.williams@intel.com,
-        kunit-dev@googlegroups.com, richard@nod.at,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Eryu Guan <guaneryu@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kees Cook <keescook@google.com>, joe@perches.com,
-        linux-fsdevel@vger.kernel.org, khilman@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Feb 2019 19:40:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726941AbfBIAkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 8 Feb 2019 19:40:06 -0500
+Subject: Re: [git pull] IOMMU Fixes for Linux v5.0-rc5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549672805;
+        bh=0zx7RiQVZGaeH7CoI/662vsUfRPvr4D3J8UUMGiI4UI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=N9hIlH37xzCq2mmKhe4PYt0V7F7F8ZRiVi1SDvZhbinbwPXEKiBrEbhlwNCCQh3YG
+         DATRd+rT3j/Yvw8A67aLnwg9sB0F5zQ5Vcrqh4r00VSNYQz0hVlNLoxuKGK5BHMAed
+         D4/JxjR47YIiPWLHONTwHVdANTJ/hVLCNuER0st4=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190208164938.GA10077@8bytes.org>
+References: <20190208164938.GA10077@8bytes.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190208164938.GA10077@8bytes.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+ tags/iommu-fixes-v5.0-rc5
+X-PR-Tracked-Commit-Id: 8950dcd83ae7d62bdc2a60507949acebd85399f2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2e277fa0893936bb4ab8432828f5d422a9ed0a7f
+Message-Id: <154967280547.26526.1169469655849049899.pr-tracker-bot@kernel.org>
+Date:   Sat, 09 Feb 2019 00:40:05 +0000
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 9:02 AM Anton Ivanov
-<anton.ivanov@cambridgegreys.com> wrote:
->
->
-> On 12/11/18 2:41 PM, Steven Rostedt wrote:
-> > On Tue, 11 Dec 2018 15:09:26 +0100
-> > Petr Mladek <pmladek@suse.com> wrote:
-> >
-> >>> We have liburcu already, which is good.  The main sticking points are:
-> >>>
-> >>>   - printk has started adding a lot of %pX enhancements which printf
-> >>>     obviously doesn't know about.
-> >> I wonder how big problem it is and if it is worth using another
-> >> approach.
-> > No, please do not change the %pX approach.
-> >
-> >> An alternative would be to replace them with helper functions
-> >> the would produce the same string. The meaning would be easier
-> >> to understand. But concatenating with the surrounding text
-> >> would be less elegant. People might start using pr_cont()
-> >> that is problematic (mixed lines).
-> >>
-> >> Also the %pX formats are mostly used to print context of some
-> >> structures. Even the helper functions would need some maintenance
-> >> to keep them compatible.
-> >>
-> >> BTW: The printk() feature has been introduced 10 years ago by
-> >> the commit 4d8a743cdd2690c0bc8 ("vsprintf: add infrastructure
-> >> support for extended '%p' specifiers").
-> > trace-cmd and perf know about most of the %pX data and how to read it.
-> > Perhaps we can extend the libtraceevent library to export a generic way
-> > to read data from printk() output for other tools to use.
->
-> Going back for a second to using UML for this. UML console at present is
-> interrupt driven - it emulates serial IO using several different
-> back-ends (file descriptors, xterm or actual tty/ptys). Epoll events on
-> the host side are used to trigger the UML interrupts - both read and write.
->
-> This works OK for normal use, but may result in all kinds of interesting
-> false positives/false negatives when UML is used to run unit tests
-> against a change which changes interrupt behavior.
->
-> IMO it may be useful to consider some alternatives specifically for unit
-> test coverage purposes where printk and/or the whole console output
-> altogether bypass some of the IRQ driven semantics.
+The pull request you sent on Fri, 8 Feb 2019 17:49:43 +0100:
 
-Whoops, sorry, didn't see your comment before I went on vacation.
+> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.0-rc5
 
-I completely agree. It is also annoying when trying to test other
-really low level parts of the kernel. I would really like to get KUnit
-to the point where it does not have any dependencies on anything in
-the kernel, but that is very challenging for many reasons. This
-loosely relates to what Luis, myself, and others have talked about in
-other threads about having a stricter notion of code dependencies in
-the kernel. Thinking about it now, I suspect it might be easier to
-limit KUnit's dependency on kernel infrastructure first; that could
-kind of motivate the later work.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2e277fa0893936bb4ab8432828f5d422a9ed0a7f
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
