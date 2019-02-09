@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BBDC282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE77C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD4320643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F6F520643
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738461;
-	bh=Oh/j8VqRQMVPxxX41V4Rs1fKk4xphirq4r9MmXVLvzw=;
+	s=default; t=1549738470;
+	bh=vhSyGlSfNiaxv2u5D6pn5vHFf9zDklCeNazlJitckDE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0QWc0yAWLGgcseR+Lwthjq/2jw4GjTzBw10sT7RxPA5l+Qk0VfqbddXxDGygJn576
-	 lmhNoBEOwNC3ohjPajfovj1oMFuNkrlz2hGh+nm5TcYRm7J/GlaLAnchtbsagWhDjC
-	 q73OKVpQGHNrIbVIivDisRMjiZGxg+SvAlPmORdY=
+	b=uMsc3F7py3DDKjDBnujHPG/L0By17NaWl5+eHxSkdsFXE4Rc5TJR6WzxS7SZ+PI7r
+	 QhVWv1Spmd1jrC1AA966eSP/1JJcHqvR5cnROZ7dqJpc8fpW1ACafXr+Wq+RGXMH/C
+	 +vhFmsdL/x7/2M9cjXA1jfNj0vDpXEz+0werS5Z8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbfBISyT (ORCPT
+        id S1728274AbfBISy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:54:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34252 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:54:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727963AbfBIStF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:05 -0500
+        id S1727947AbfBIStE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AE1D21919;
-        Sat,  9 Feb 2019 18:49:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E60DE21916;
+        Sat,  9 Feb 2019 18:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738144;
-        bh=Oh/j8VqRQMVPxxX41V4Rs1fKk4xphirq4r9MmXVLvzw=;
+        s=default; t=1549738143;
+        bh=vhSyGlSfNiaxv2u5D6pn5vHFf9zDklCeNazlJitckDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lkywZJJAKqgVPxYlg3EHhAPPpB+oaFgy5BFa/hxppU0CsI7vaFufT/SbRcdqmPA7V
-         /ZKw8T8ASaIxjLO4VkpFj1qO6pJ8rJmgm7xe1+qwFCg/erwmKyHdMVBJZn9Bt7M67Y
-         z9C3SCMY8zchxaUYRE5Lq9QWHIN9adg4AuvQ0tsg=
+        b=fSb1NMxcLUSKxO8H/xq53EpiUIvYGhvuZdr7Kz7ur9AKWakK8yUO0c3lHnPTgDjam
+         CLLAE0C0B4/zokfbmpd1YOGLv+Lg/mC2cdc1irEJDuTU8RMBQwWdUg7kkxJSPIkO5F
+         vE+Xbcm91W/r464Awd2u7dFtpvVyPiaIO91U5Zkk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 13/28] drm/bridge: tc358767: fix output H/V syncs
-Date:   Sat,  9 Feb 2019 13:48:21 -0500
-Message-Id: <20190209184840.126418-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 12/28] drm/bridge: tc358767: reject modes which require too much BW
+Date:   Sat,  9 Feb 2019 13:48:20 -0500
+Message-Id: <20190209184840.126418-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -60,44 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
+[ Upstream commit 51b9e62eb6950c762162ab7eb8390990179be067 ]
 
-The H and V syncs of the DP output are always set to active high. This
-patch fixes the syncs by configuring them according to the videomode.
+The current driver accepts any videomode with pclk < 154MHz. This is not
+correct, as with 1 lane and/or 1.62Mbps speed not all videomodes can be
+supported.
+
+Add code to reject modes that require more bandwidth that is available.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-6-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/tc358767.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index a1f3dd2afbb1..391547358756 100644
+index ab299f4debfa..a1f3dd2afbb1 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -98,6 +98,8 @@
- #define DP0_STARTVAL		0x064c
- #define DP0_ACTIVEVAL		0x0650
- #define DP0_SYNCVAL		0x0654
-+#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
-+#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
- #define DP0_MISC		0x0658
- #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
- #define BPC_6				(0 << 5)
-@@ -726,7 +728,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
+@@ -1114,10 +1114,20 @@ static bool tc_bridge_mode_fixup(struct drm_bridge *bridge,
+ static enum drm_mode_status tc_connector_mode_valid(struct drm_connector *connector,
+ 				   struct drm_display_mode *mode)
+ {
++	struct tc_data *tc = connector_to_tc(connector);
++	u32 req, avail;
++	u32 bits_per_pixel = 24;
++
+ 	/* DPI interface clock limitation: upto 154 MHz */
+ 	if (mode->clock > 154000)
+ 		return MODE_CLOCK_HIGH;
  
- 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
++	req = mode->clock * bits_per_pixel / 8;
++	avail = tc->link.base.num_lanes * tc->link.base.rate;
++
++	if (req > avail)
++		return MODE_BAD;
++
+ 	return MODE_OK;
+ }
  
--	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
-+	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
- 
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
 -- 
 2.19.1
 
