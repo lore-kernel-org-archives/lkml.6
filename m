@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22CCC282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 19:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5C6C282CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 19:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4AF218D2
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 19:23:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A4D21916
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 19:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="LHxLZ115"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="HivDEbU8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfBITX3 (ORCPT
+        id S1727464AbfBITXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 14:23:29 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:42158 "EHLO
+        Sat, 9 Feb 2019 14:23:34 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:42208 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbfBITX3 (ORCPT
+        with ESMTP id S1727187AbfBITXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 14:23:29 -0500
+        Sat, 9 Feb 2019 14:23:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1549740206; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1549740211; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=1Li8TtRZ4NvB0BMR9KYjNdauVthk5yMzr9pBydX64Ag=;
-        b=LHxLZ115WHp+AC7BoJHhNW0OK59Ma8tBV3alTKobOkrNkkajsjQqIFNyUY3c8Bp+hrtb49
-        qinUqIAxKgXmo4oI+ByyPmRIA3E278HRt9Do1lqTFTf55KdrSukXQaVFpqKepHqqHZwBpU
-        jrp0yAtERJ1Nfv3KPEXLULEz6DJOeSk=
+        bh=IBnrvLm/CuhDgm6WMEETEN6lnr413251EOLYRQaxvzc=;
+        b=HivDEbU8G6/n22Y7JMbATV+lhtJ/qxSOPuRz7xgUjmJufOowkNzVWgZ2mHQ2o3GED0iajC
+        j4bJuoCHFoS9VylWQI2sYtTgJ06CfB5LRip7OaOZH7SJaJEFxtiGx6jpTWuvwlTIg3oC53
+        Jex/UCZuSY/yVc8ZTLGRfPwITDpcDgM=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -42,9 +42,9 @@ To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Harvey Hunt <harveyhuntnexus@gmail.com>
 Cc:     linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 2/9] dt-bindings: mtd: ingenic: Change 'BCH' to 'ECC' in documentation
-Date:   Sat,  9 Feb 2019 16:22:58 -0300
-Message-Id: <20190209192305.4434-2-paul@crapouillou.net>
+Subject: [PATCH v4 3/9] mtd: rawnand: Move drivers for Ingenic SoCs to subfolder
+Date:   Sat,  9 Feb 2019 16:22:59 -0300
+Message-Id: <20190209192305.4434-3-paul@crapouillou.net>
 In-Reply-To: <20190209192305.4434-1-paul@crapouillou.net>
 References: <20190209192305.4434-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,68 +52,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The JZ4740 ECC hardware is not BCH but Reed-Solomon, so it makes more
-sense to use the more generic ECC term.
+Before adding support for more SoCs and seeing the number of files for
+these drivers grow, we move them to their own subfolder to keep it tidy.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
 
 Changes:
 
-v3: New patch
+v2: New patch
+
+v3: No change
 
 v4: No change
 
- .../devicetree/bindings/mtd/ingenic,jz4780-nand.txt    | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/mtd/nand/raw/Kconfig                     | 14 +-------------
+ drivers/mtd/nand/raw/Makefile                    |  3 +--
+ drivers/mtd/nand/raw/ingenic/Kconfig             | 13 +++++++++++++
+ drivers/mtd/nand/raw/ingenic/Makefile            |  2 ++
+ drivers/mtd/nand/raw/{ => ingenic}/jz4740_nand.c |  0
+ drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.c  |  0
+ drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.h  |  0
+ drivers/mtd/nand/raw/{ => ingenic}/jz4780_nand.c |  0
+ 8 files changed, 17 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/mtd/nand/raw/ingenic/Kconfig
+ create mode 100644 drivers/mtd/nand/raw/ingenic/Makefile
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4740_nand.c (100%)
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.c (100%)
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.h (100%)
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4780_nand.c (100%)
 
-diff --git a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
-index a5b940f18bf6..5a45cc54f46d 100644
---- a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
-@@ -1,4 +1,4 @@
--* Ingenic JZ4780 NAND/BCH
-+* Ingenic JZ4780 NAND/ECC
+diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+index 1a55d3e3d4c5..d886be2fc174 100644
+--- a/drivers/mtd/nand/raw/Kconfig
++++ b/drivers/mtd/nand/raw/Kconfig
+@@ -470,19 +470,7 @@ config MTD_NAND_NUC900
+ 	  This enables the driver for the NAND Flash on evaluation board based
+ 	  on w90p910 / NUC9xx.
  
- This file documents the device tree bindings for NAND flash devices on the
- JZ4780. NAND devices are connected to the NEMC controller (described in
-@@ -14,10 +14,10 @@ Required NAND controller device properties:
-   an offset of 0 and a size of 0x1000000 (i.e. the whole NEMC bank).
+-config MTD_NAND_JZ4740
+-	tristate "Support for JZ4740 SoC NAND controller"
+-	depends on MACH_JZ4740 || COMPILE_TEST
+-	depends on HAS_IOMEM
+-	help
+-	  Enables support for NAND Flash on JZ4740 SoC based boards.
+-
+-config MTD_NAND_JZ4780
+-	tristate "Support for NAND on JZ4780 SoC"
+-	depends on JZ4780_NEMC
+-	help
+-	  Enables support for NAND Flash connected to the NEMC on JZ4780 SoC
+-	  based boards, using the BCH controller for hardware error correction.
++source "drivers/mtd/nand/raw/ingenic/Kconfig"
  
- Optional NAND controller device properties:
--- ingenic,bch-controller: To make use of the hardware BCH controller, this
--  property must contain a phandle for the BCH controller node. The required
-+- ingenic,bch-controller: To make use of the hardware ECC controller, this
-+  property must contain a phandle for the ECC controller node. The required
-   properties for this node are described below. If this is not specified,
--  software BCH will be used instead.
-+  software ECC will be used instead.
- 
- Optional children nodes:
- - Individual NAND chips are children of the NAND controller node.
-@@ -70,17 +70,17 @@ nemc: nemc@13410000 {
- 	};
- };
- 
--The BCH controller is a separate SoC component used for error correction on
-+The ECC controller is a separate SoC component used for error correction on
- NAND devices. The following is a description of the device properties for a
--BCH controller.
-+ECC controller.
- 
--Required BCH properties:
-+Required ECC properties:
- - compatible: Should be one of:
-   * ingenic,jz4740-ecc
-   * ingenic,jz4725b-bch
-   * ingenic,jz4780-bch
--- reg: Should specify the BCH controller registers location and length.
--- clocks: Clock for the BCH controller.
-+- reg: Should specify the ECC controller registers location and length.
-+- clocks: Clock for the ECC controller.
- 
- Example:
- 
+ config MTD_NAND_FSMC
+ 	tristate "Support for NAND on ST Micros FSMC"
+diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
+index 57159b349054..f419d373d090 100644
+--- a/drivers/mtd/nand/raw/Makefile
++++ b/drivers/mtd/nand/raw/Makefile
+@@ -45,8 +45,7 @@ obj-$(CONFIG_MTD_NAND_NUC900)		+= nuc900_nand.o
+ obj-$(CONFIG_MTD_NAND_MPC5121_NFC)	+= mpc5121_nfc.o
+ obj-$(CONFIG_MTD_NAND_VF610_NFC)	+= vf610_nfc.o
+ obj-$(CONFIG_MTD_NAND_RICOH)		+= r852.o
+-obj-$(CONFIG_MTD_NAND_JZ4740)		+= jz4740_nand.o
+-obj-$(CONFIG_MTD_NAND_JZ4780)		+= jz4780_nand.o jz4780_bch.o
++obj-y					+= ingenic/
+ obj-$(CONFIG_MTD_NAND_GPMI_NAND)	+= gpmi-nand/
+ obj-$(CONFIG_MTD_NAND_XWAY)		+= xway_nand.o
+ obj-$(CONFIG_MTD_NAND_BCM47XXNFLASH)	+= bcm47xxnflash/
+diff --git a/drivers/mtd/nand/raw/ingenic/Kconfig b/drivers/mtd/nand/raw/ingenic/Kconfig
+new file mode 100644
+index 000000000000..67806c87b2c4
+--- /dev/null
++++ b/drivers/mtd/nand/raw/ingenic/Kconfig
+@@ -0,0 +1,13 @@
++config MTD_NAND_JZ4740
++	tristate "Support for JZ4740 SoC NAND controller"
++	depends on MACH_JZ4740 || COMPILE_TEST
++	depends on HAS_IOMEM
++	help
++	  Enables support for NAND Flash on JZ4740 SoC based boards.
++
++config MTD_NAND_JZ4780
++	tristate "Support for NAND on JZ4780 SoC"
++	depends on JZ4780_NEMC
++	help
++	  Enables support for NAND Flash connected to the NEMC on JZ4780 SoC
++	  based boards, using the BCH controller for hardware error correction.
+diff --git a/drivers/mtd/nand/raw/ingenic/Makefile b/drivers/mtd/nand/raw/ingenic/Makefile
+new file mode 100644
+index 000000000000..44c2ca053d24
+--- /dev/null
++++ b/drivers/mtd/nand/raw/ingenic/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_MTD_NAND_JZ4740) += jz4740_nand.o
++obj-$(CONFIG_MTD_NAND_JZ4780) += jz4780_nand.o jz4780_bch.o
+diff --git a/drivers/mtd/nand/raw/jz4740_nand.c b/drivers/mtd/nand/raw/ingenic/jz4740_nand.c
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4740_nand.c
+rename to drivers/mtd/nand/raw/ingenic/jz4740_nand.c
+diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/ingenic/jz4780_bch.c
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4780_bch.c
+rename to drivers/mtd/nand/raw/ingenic/jz4780_bch.c
+diff --git a/drivers/mtd/nand/raw/jz4780_bch.h b/drivers/mtd/nand/raw/ingenic/jz4780_bch.h
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4780_bch.h
+rename to drivers/mtd/nand/raw/ingenic/jz4780_bch.h
+diff --git a/drivers/mtd/nand/raw/jz4780_nand.c b/drivers/mtd/nand/raw/ingenic/jz4780_nand.c
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4780_nand.c
+rename to drivers/mtd/nand/raw/ingenic/jz4780_nand.c
 -- 
 2.11.0
 
