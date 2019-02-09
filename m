@@ -2,104 +2,127 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB3BC282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108F4C169C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26CB220821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAF7C20821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:33:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dto7JMQx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfBIA3M (ORCPT
+        id S1726844AbfBIAdK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:29:12 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:14113 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfBIA3L (ORCPT
+        Fri, 8 Feb 2019 19:33:10 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43282 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBIAdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:29:11 -0500
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x190SIOO019237;
-        Sat, 9 Feb 2019 09:28:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Sat, 09 Feb 2019 09:28:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x190SEkZ019199
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 9 Feb 2019 09:28:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@vger.kernel.org>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
- <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
- <201902070230.x172UUG6002087@www262.sakura.ne.jp>
- <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
- <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
- <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
-Date:   Sat, 9 Feb 2019 09:28:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Feb 2019 19:33:09 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so2279623pgk.10;
+        Fri, 08 Feb 2019 16:33:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ALcFwzOq1HbIP5Zq0tFSEUjDJkjB3cx5B3JV7pwKHaY=;
+        b=Dto7JMQxP6sbs9m14Ys8hcTKshN6hPlRN1lHm2mMyNhCt78U56HSi91p6PwJIJ6sbn
+         Mlg0QWVSZeuwubERNnTN++5afWn5WXaPnm/JKwfjRmgNJed8jJSRrsY8RwLAo/PPiE8z
+         ekPpvbXD77gUeIPYJGpqxV1NzZc9H+9SJHGLK1mk5peklzDsgMsEBvZS3KVhzJ9fa2iZ
+         pXtoUm/ysi73Htg2m73UdPZRVnL9qQXb7xDE+6DSxnvw8hLNoIqIwRRWysPlWMcYQFlY
+         RKylH20mBGe/PVwt74F8BaFeU+T5phaMOft0c7jAnWGVcLk3UTsbQZr8I0JKWgcFxCWn
+         oDgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ALcFwzOq1HbIP5Zq0tFSEUjDJkjB3cx5B3JV7pwKHaY=;
+        b=tbA10RmmgcbYPzQywktr8ov2Y9ZJMT6RHsIzvLjZHuAlxApxSYzbKmV149yy4pdo4p
+         0o0M//3HpkeHvnrgB3LyKVFd0+4qDHWvfWA46XVrNr8H6MPOThRFjDuz23MJ4EYzQOOH
+         p3jZ3BqcRz2OgLeL0fLW+8Pc05SWOpET2oAPYV/W5DPuiAO8A84DaTO8C7kDeWtkmXv+
+         G6ay0UvimwDGGz8F8BRAxA6HciCQP6DRh2veqwzrpYeV0usa0JgzpTcOEUWfk/0eTKOk
+         3CyL8SPxsUtOFPT+LKKpVw51Wt2YXhcpq/PeH5W/opiUetwiic/clajpuGTb6nk/7zXw
+         UqKQ==
+X-Gm-Message-State: AHQUAuYkTIH+6wsIkj35AGc2Nw29kP/4593ARfK1aZ4zefFENL+jwY+U
+        2TO977bFBW+Cv1zBTmN/HrKUSKL1
+X-Google-Smtp-Source: AHgI3IY9YlCoUrz3ekM9g0i9T8Qg10yg6DESb+9LTCaBL1Ms3pbzoablCwZFMVt3ey/2Qo0rBFg1Gw==
+X-Received: by 2002:a65:6658:: with SMTP id z24mr23183240pgv.189.1549672387800;
+        Fri, 08 Feb 2019 16:33:07 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id i71sm372491pfi.170.2019.02.08.16.33.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Feb 2019 16:33:06 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: [PATCH net-next 00/16] net: Remove switchdev_ops
+Date:   Fri,  8 Feb 2019 16:32:32 -0800
+Message-Id: <20190209003248.31088-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/02/09 1:23, Casey Schaufler wrote:
-> On 2/8/2019 2:52 AM, Tetsuo Handa wrote:
->> To help administrators easily understand what LSM modules are possibly enabled by default (which
->> have to be fetched from e.g. /boot/config-`uname -r`)
-> 
-> $ cat /sys/kernel/security/lsm
-> 
+Hi all,
 
-/sys/kernel/security/lsm is list of "actually" enabled modules, isn't it?
-What I want is "possibly" enabled modules. Ubuntu would chose from either
+This patch series finishes by the removal of switchdev_ops. To get there
+we need to do a few things:
 
-  (a) explicitly add security=apparmor to kernel command line
+- get rid of the one and only call to switchdev_port_attr_get() which is
+  used to fetch the device's bridge port flags capabilities, instead we
+  can just check what flags are being programmed during the prepare
+  phase
 
-or
+- once we get rid of getting switchdev port attributes we convert the
+  setting of such attributes using a blocking notifier
 
-  (b) explicitly remove tomoyo from CONFIG_LSM at kernel config
+And then remove switchdev_ops completely.
 
-in order not to enable TOMOYO for those who want to enable only one of 
-SELinux/Smack/AppArmor. And for those who want to enable TOMOYO, I think
-that (b) (in other words, add
+Please review and let me know what you think!
 
-  lsm="modules listed in CONFIG_LSM" + ",tomoyo"
+Florian Fainelli (16):
+  Documentation: networking: switchdev: Update port parent ID section
+  mlxsw: spectrum: Check bridge flags during prepare phase
+  staging: fsl-dpaa2: ethsw: Check bridge port flags during set
+  net: dsa: Add setter for SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
+  rocker: Check bridge flags during prepare phase
+  net: bridge: Stop calling switchdev_port_attr_get()
+  net: Remove SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT
+  net: Get rid of switchdev_port_attr_get()
+  switchdev: Add SWITCHDEV_PORT_ATTR_SET
+  rocker: Handle SWITCHDEV_PORT_ATTR_SET
+  net: dsa: Handle SWITCHDEV_PORT_ATTR_SET
+  mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_SET
+  net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_SET
+  staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_SET
+  net: switchdev: Replace port attr set SDO with a notification
+  net: Remove switchdev_ops
 
-) will retain compatibility when it becomes possible to enable more than
-one of SELinux/Smack/AppArmor at the same time.
+ Documentation/networking/switchdev.txt        | 15 ++-
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    | 12 ---
+ .../net/ethernet/mellanox/mlxsw/spectrum.h    |  2 -
+ .../mellanox/mlxsw/spectrum_switchdev.c       | 72 +++++---------
+ drivers/net/ethernet/mscc/ocelot.c            | 25 ++++-
+ drivers/net/ethernet/rocker/rocker_main.c     | 99 +++++++++----------
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c       | 52 +++++-----
+ include/linux/netdevice.h                     |  3 -
+ include/net/switchdev.h                       | 37 ++-----
+ net/bridge/br_switchdev.c                     | 20 +---
+ net/dsa/dsa_priv.h                            |  3 +
+ net/dsa/port.c                                | 10 ++
+ net/dsa/slave.c                               | 44 +++++----
+ net/switchdev/switchdev.c                     | 92 +++++------------
+ 14 files changed, 190 insertions(+), 296 deletions(-)
 
-If we can know "possibly" enabled modules from dmesg, users don't need to
-look at e.g. /boot/config-`uname -r`. It is not essential, but it's handy.
+-- 
+2.17.1
 
