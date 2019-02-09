@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0077C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88851C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8924520643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463DD20643
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738547;
-	bh=8WEVvIuTLU+SX/bciquEI/TeRbGgmd8id2j0Jmv2m60=;
+	s=default; t=1549738557;
+	bh=jauBVuEMV0QV6+oecCgNQMEU3pLaZdlqhBWT1G9Cnzg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lodYU9pJUNxs7j3jXyhE0l6Ea9LqrOA7EBn1kB7HZolvw0Y8L97Ar96kpmGnGBdMZ
-	 F73hmUQ4iGU919OFEq2vnw4/lv4sE1DlKu0LVgJgg/lXUIWcvUSDcDtR6Ahvhb6A/D
-	 phTCmFKOFIsu7d6HjwcUYeQuGllEzd3j4vWHaXXA=
+	b=MlFsfYIfOiyvGGcckVYB6OIKqru16pK0DixLP0y2E0zAYBZYf/OK6z1hYzGOWN3mQ
+	 vq0Irh4FK3PdUDqZxi57GroMXmKWyyYkM97eZfryMCpsIQg6bsY+/4H4hgmYJ1lNYW
+	 /fmwpXfLI19oW8mObw0/qm7B/1gth7b78Xe9hKpA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbfBISzp (ORCPT
+        id S1728216AbfBISz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:55:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33082 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:55:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727630AbfBISsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:18 -0500
+        id S1727518AbfBISsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3990221919;
-        Sat,  9 Feb 2019 18:48:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0AE321929;
+        Sat,  9 Feb 2019 18:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738098;
-        bh=8WEVvIuTLU+SX/bciquEI/TeRbGgmd8id2j0Jmv2m60=;
+        s=default; t=1549738095;
+        bh=jauBVuEMV0QV6+oecCgNQMEU3pLaZdlqhBWT1G9Cnzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mT24pattO/hkzNLxldNXY7C+leooGWqksI7BOSEPvkn+HZqynE8/GO264iwuw2S0I
-         xUySwJUDNRGwtFCrMkZC58SzEvgiN9tpcEnA0ZPt9RhyfaCM5XSbcBV9H4o6uVJvVa
-         6L3e4j68NPDQacCsBfdWem8jmLdxPJiVqdbaMQ18=
+        b=qq/IouXMDPP9153ah16MgNrvUvmR9UpemeOynRWNBeOBa+wXU4Y6tbzC5U6G0jxpp
+         OJAzo/tpaIpPw4W3JE2ZhR2tNRGqZQZjOby4U9qFMqWL2efcJ3BLyTqN0ZOj7nmevQ
+         9WeOe550XpZlFIwxx1UEvRdz1OP3GAmwWd5cOTtw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>,
         devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 32/42] ARM: dts: da850-lcdk: Correct the sound card name
-Date:   Sat,  9 Feb 2019 13:47:24 -0500
-Message-Id: <20190209184734.125935-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 30/42] ARM: dts: da850-evm: Correct the sound card name
+Date:   Sat,  9 Feb 2019 13:47:22 -0500
+Message-Id: <20190209184734.125935-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-[ Upstream commit c25748acc5c20786ecb7518bfeae8fcef93472d6 ]
+[ Upstream commit 7fca69d4e43fa1ae9cb4f652772c132dc5a659c6 ]
 
 To avoid  the following error:
 asoc-simple-card sound: ASoC: Failed to create card debugfs directory
@@ -71,19 +71,19 @@ Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/da850-lcdk.dts | 2 +-
+ arch/arm/boot/dts/da850-evm.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
-index c196e37606c4..3a2fa6e035a3 100644
---- a/arch/arm/boot/dts/da850-lcdk.dts
-+++ b/arch/arm/boot/dts/da850-lcdk.dts
-@@ -71,7 +71,7 @@
+diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+index 482a54587b44..f04bc3e15332 100644
+--- a/arch/arm/boot/dts/da850-evm.dts
++++ b/arch/arm/boot/dts/da850-evm.dts
+@@ -127,7 +127,7 @@
  
  	sound {
  		compatible = "simple-audio-card";
--		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
-+		simple-audio-card,name = "DA850-OMAPL138 LCDK";
+-		simple-audio-card,name = "DA850/OMAP-L138 EVM";
++		simple-audio-card,name = "DA850-OMAPL138 EVM";
  		simple-audio-card,widgets =
  			"Line", "Line In",
  			"Line", "Line Out";
