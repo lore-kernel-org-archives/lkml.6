@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 959E1C282CC
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F253C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CBB32195D
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5C3020821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738151;
-	bh=hOTloWGpJnmMxI0RE3LVVNwrwMCU8PmCxLEC9D4HmvY=;
+	s=default; t=1549738154;
+	bh=WNmwQzlrVzbsoE9MjBNEWMfZNPbG3paqjmHW6U9+RFc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u4vtQqefHYiojhVbYclgnTEoyA5a9A8Iihe88N7z+XcbVxVhC5NZx65zmqrQj6SEv
-	 P4Q/1Pauj1Ioh5hIFuYrQ8LoxEsfCf5GbuvV6e5UeaHfp1ErsYQWPrVtTJWV67dS+j
-	 oyia8s1wDOMPhTU21Bhu+UkUTxAK/nZqpfxcNKsg=
+	b=TZ869gWGYtq9qmDsNYzgKxRKQNZjEzQnV0vY5PnoJAwPLKiuK+0sN9I0PHZKaUTQp
+	 RAJWL3mMK5WVBiDYn9r/Nhmwi1uIUHwxCNSz0A5cjZq6vKbCxgcSSXC/tgHA/Kb1bC
+	 qthxDP4uMddQ9WY6y6Bq+kyeV2Fk9oTtZ691QZ5I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbfBIStK (ORCPT
+        id S1728031AbfBIStM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:49:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34306 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:49:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727973AbfBIStG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:06 -0500
+        id S1727986AbfBIStI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 242EB2192C;
-        Sat,  9 Feb 2019 18:49:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5918E21919;
+        Sat,  9 Feb 2019 18:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738145;
-        bh=hOTloWGpJnmMxI0RE3LVVNwrwMCU8PmCxLEC9D4HmvY=;
+        s=default; t=1549738148;
+        bh=WNmwQzlrVzbsoE9MjBNEWMfZNPbG3paqjmHW6U9+RFc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iwk3yf4u2DmVo5KBmr7kng+/eG2dMdytYZK83WUz1Ev33v3yiLe+Od0KuGZEN0hFN
-         gubRJ73cmshHwiWgIXIpOA79ID5iCcV9lZzmoYRsVKMHOkl7McMxI9RQmo5KeKo6b/
-         +BHwTf+GKZ+6S6Fznd49GemzMfRJHW7j1iG/6b38=
+        b=mCH7Bafx/rplKAo78PqC7hwbNWEnSIN0lFeqAGNXqysBd+6UzassMXTM5kD0xNd0d
+         /5Hns6a6CtiAMGs9puaElgNWVVHgGEyRTLW8h0XvXmSDe6bIiguTJcw7IpzqOmCkqG
+         udIpp/+DGtCqFkMs6Eypyt1i4YnzeRe11AHM8nX0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Liviu Dudau <liviu@dudau.co.uk>, Christoph Hellwig <hch@lst.de>,
+Cc:     Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 14/28] nvme-pci: use the same attributes when freeing host_mem_desc_bufs.
-Date:   Sat,  9 Feb 2019 13:48:22 -0500
-Message-Id: <20190209184840.126418-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 16/28] nvme-multipath: zero out ANA log buffer
+Date:   Sat,  9 Feb 2019 13:48:24 -0500
+Message-Id: <20190209184840.126418-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -56,49 +57,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liviu Dudau <liviu@dudau.co.uk>
+From: Hannes Reinecke <hare@suse.de>
 
-[ Upstream commit cc667f6d5de023ee131e96bb88e5cddca23272bd ]
+[ Upstream commit c7055fd15ff46d92eb0dd1c16a4fe010d58224c8 ]
 
-When using HMB the PCIe host driver allocates host_mem_desc_bufs using
-dma_alloc_attrs() but frees them using dma_free_coherent(). Use the
-correct dma_free_attrs() function to free the buffers.
+When nvme_init_identify() fails the ANA log buffer is deallocated
+but _not_ set to NULL. This can cause double free oops when this
+controller is deleted without ever being reconnected.
 
-Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/nvme/host/multipath.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index d668682f91df..40f76b4f08fc 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1727,8 +1727,9 @@ static void nvme_free_host_mem(struct nvme_dev *dev)
- 		struct nvme_host_mem_buf_desc *desc = &dev->host_mem_descs[i];
- 		size_t size = le32_to_cpu(desc->size) * dev->ctrl.page_size;
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index c27af277e14e..815509dbed84 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -556,6 +556,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 	return 0;
+ out_free_ana_log_buf:
+ 	kfree(ctrl->ana_log_buf);
++	ctrl->ana_log_buf = NULL;
+ out:
+ 	return error;
+ }
+@@ -563,5 +564,6 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ void nvme_mpath_uninit(struct nvme_ctrl *ctrl)
+ {
+ 	kfree(ctrl->ana_log_buf);
++	ctrl->ana_log_buf = NULL;
+ }
  
--		dma_free_coherent(dev->dev, size, dev->host_mem_desc_bufs[i],
--				le64_to_cpu(desc->addr));
-+		dma_free_attrs(dev->dev, size, dev->host_mem_desc_bufs[i],
-+			       le64_to_cpu(desc->addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
- 
- 	kfree(dev->host_mem_desc_bufs);
-@@ -1794,8 +1795,9 @@ static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
- 	while (--i >= 0) {
- 		size_t size = le32_to_cpu(descs[i].size) * dev->ctrl.page_size;
- 
--		dma_free_coherent(dev->dev, size, bufs[i],
--				le64_to_cpu(descs[i].addr));
-+		dma_free_attrs(dev->dev, size, bufs[i],
-+			       le64_to_cpu(descs[i].addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
- 
- 	kfree(bufs);
 -- 
 2.19.1
 
