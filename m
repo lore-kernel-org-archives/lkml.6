@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED608C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9163FC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC3EB20643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 588F120643
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738639;
-	bh=59Vga8ht6ffSRgDIcUkB1REx/orLYMgBGQiMPWO+ESU=;
+	s=default; t=1549738644;
+	bh=YhIMmOSwti1zPESoOl0fTvV5sFCRMp9I5uuDvqzkyWE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ydzdFvEulgjFUPulo5yJBSr6wbb0X0hCAaC3i0MUbDiJjxklEhHkrl5K6UOgJd7Jx
-	 yzGcdPAkBUjKFrnWJdExqGOKna1HeV0FfsBx4Q3RcIyZydJzO0r5eqD7h9Z/oKQtM+
-	 GwKAVVYef+xbv/JTKMfG7pJsg/KrsJQNfASrE6GI=
+	b=rrE9bFk6UDlDiFJbgcdZxAcjWpP2fDzZxG4qPwXZHvnZy4uA9KHtkNXKZDOBL4iP4
+	 ycQMdjXSPXr3Xg1gCqFX2HTZFMmSuAIeSicncXfIdGeCFKD8WtPGe7qaNSAuQC5f0T
+	 nh28Bc7Zc4ELes4tO6PX/4+jzcz50UAfwKUrucFs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfBIS5S (ORCPT
+        id S1727383AbfBISrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:57:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:47:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727389AbfBISrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:47:47 -0500
+        id S1727331AbfBISro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:47:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A2AA2192B;
-        Sat,  9 Feb 2019 18:47:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C99C20821;
+        Sat,  9 Feb 2019 18:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738067;
-        bh=59Vga8ht6ffSRgDIcUkB1REx/orLYMgBGQiMPWO+ESU=;
+        s=default; t=1549738063;
+        bh=YhIMmOSwti1zPESoOl0fTvV5sFCRMp9I5uuDvqzkyWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UHBO6l4gYncxDLRgbWYXGCn/WHqFJ6GoIHpYz86hJNW5vJpkK323sG7s5gcF0yKMd
-         S3m3SwtFeeKfZ0Kg8ObbzcW5lKvYBo8p6zbf0wpC+p4yMhvryrKefUA81gQPQjiTF+
-         yMoCjoqDQw9hfQkP/zHl766G8lsEa9AILaY0VXJY=
+        b=MTQ6pQKudmnQrPEzZHttWIuKUGGulNEeNWvng3bVEc8hhui+7SSXUscudxfFyKzfS
+         Dzik9CQUeB8P3fckDhiO42FTFvnJbD3h5KMIYqcY/1bKbwCFdgTAjZYZFaLXJowKmj
+         WsK5aPq/5HfHhY7LLxZMDo/zWdLk6Vgg45CskOBI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guo Ren <ren_guo@c-sky.com>, Lu Baoquan <lu.baoquan@intellif.com>,
+Cc:     Aurelien Jarno <aurelien@aurel32.net>,
+        Palmer Dabbelt <palmer@sifive.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 11/42] csky: fixup CACHEV1 store instruction fast retire
-Date:   Sat,  9 Feb 2019 13:47:03 -0500
-Message-Id: <20190209184734.125935-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 07/42] tools uapi: fix RISC-V 64-bit support
+Date:   Sat,  9 Feb 2019 13:46:59 -0500
+Message-Id: <20190209184734.125935-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
 References: <20190209184734.125935-1-sashal@kernel.org>
@@ -56,66 +57,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+From: Aurelien Jarno <aurelien@aurel32.net>
 
-[ Upstream commit 96354ad79e2e59f9d620669c8e1ac2452440c260 ]
+[ Upstream commit d0df00e30e4bf9bc27ddbd092ad683ff6121b360 ]
 
-For I/O access, 810/807 store instruction fast retire will cause wrong
-primitive. For example:
+The BPF library is not built on 64-bit RISC-V, as the BPF feature is
+not detected. Looking more in details, feature/test-bpf.c fails to build
+with the following error:
 
-	stw (clear interrupt source)
-	stw (unmask interrupt controller)
-	enable interrupt
+| In file included from /tmp/linux-4.19.12/tools/include/uapi/asm/bitsperlong.h:17,
+|                  from /tmp/linux-4.19.12/tools/include/uapi/asm-generic/unistd.h:2,
+|                  from /usr/include/riscv64-linux-gnu/asm/unistd.h:1,
+|                  from test-bpf.c:2:
+| /tmp/linux-4.19.12/tools/include/asm-generic/bitsperlong.h:14:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
+|  #error Inconsistent word size. Check asm/bitsperlong.h
+|   ^~~~~
 
-stw is fast retire instruction. When PC is run at enable interrupt
-stage, the clear interrupt source hasn't finished. It will cause another
-wrong irq-enter.
+The UAPI from the tools directory is missing RISC-V support, therefore
+bitsperlong.h from asm-generic is used, defaulting to 32 bits.
 
-So use mb() to prevent above.
+Fix that by adding tools/arch/riscv/include/uapi/asm/bitsperlong.h as
+a copy of arch/riscv/include/uapi/asm/bitsperlong.h and by updating
+tools/include/uapi/asm/bitsperlong.h.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Lu Baoquan <lu.baoquan@intellif.com>
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/include/asm/io.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ .../arch/riscv/include/uapi/asm/bitsperlong.h | 25 +++++++++++++++++++
+ tools/include/uapi/asm/bitsperlong.h          |  2 ++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 tools/arch/riscv/include/uapi/asm/bitsperlong.h
 
-diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
-index ecae6b358f95..c1dfa9c10e36 100644
---- a/arch/csky/include/asm/io.h
-+++ b/arch/csky/include/asm/io.h
-@@ -15,6 +15,31 @@ extern void iounmap(void *addr);
- extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
- 		size_t size, unsigned long flags);
- 
+diff --git a/tools/arch/riscv/include/uapi/asm/bitsperlong.h b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
+new file mode 100644
+index 000000000000..0b3cb52fd29d
+--- /dev/null
++++ b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
+@@ -0,0 +1,25 @@
 +/*
-+ * I/O memory access primitives. Reads are ordered relative to any
-+ * following Normal memory access. Writes are ordered relative to any prior
-+ * Normal memory access.
++ * Copyright (C) 2012 ARM Ltd.
++ * Copyright (C) 2015 Regents of the University of California
 + *
-+ * For CACHEV1 (807, 810), store instruction could fast retire, so we need
-+ * another mb() to prevent st fast retire.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + *
-+ * For CACHEV2 (860), store instruction with PAGE_ATTR_NO_BUFFERABLE won't
-+ * fast retire.
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 + */
-+#define readb(c)		({ u8  __v = readb_relaxed(c); rmb(); __v; })
-+#define readw(c)		({ u16 __v = readw_relaxed(c); rmb(); __v; })
-+#define readl(c)		({ u32 __v = readl_relaxed(c); rmb(); __v; })
 +
-+#ifdef CONFIG_CPU_HAS_CACHEV2
-+#define writeb(v,c)		({ wmb(); writeb_relaxed((v),(c)); })
-+#define writew(v,c)		({ wmb(); writew_relaxed((v),(c)); })
-+#define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); })
-+#else
-+#define writeb(v,c)		({ wmb(); writeb_relaxed((v),(c)); mb(); })
-+#define writew(v,c)		({ wmb(); writew_relaxed((v),(c)); mb(); })
-+#define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); mb(); })
-+#endif
++#ifndef _UAPI_ASM_RISCV_BITSPERLONG_H
++#define _UAPI_ASM_RISCV_BITSPERLONG_H
 +
- #define ioremap_nocache(phy, sz)	ioremap(phy, sz)
- #define ioremap_wc ioremap_nocache
- #define ioremap_wt ioremap_nocache
++#define __BITS_PER_LONG (__SIZEOF_POINTER__ * 8)
++
++#include <asm-generic/bitsperlong.h>
++
++#endif /* _UAPI_ASM_RISCV_BITSPERLONG_H */
+diff --git a/tools/include/uapi/asm/bitsperlong.h b/tools/include/uapi/asm/bitsperlong.h
+index 8dd6aefdafa4..fd92ce8388fc 100644
+--- a/tools/include/uapi/asm/bitsperlong.h
++++ b/tools/include/uapi/asm/bitsperlong.h
+@@ -13,6 +13,8 @@
+ #include "../../arch/mips/include/uapi/asm/bitsperlong.h"
+ #elif defined(__ia64__)
+ #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
++#elif defined(__riscv)
++#include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
+ #else
+ #include <asm-generic/bitsperlong.h>
+ #endif
 -- 
 2.19.1
 
