@@ -2,134 +2,137 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE9DC169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13F0C282CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0259921908
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:31:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SF4oIoew"
+	by mail.kernel.org (Postfix) with ESMTP id AB09220869
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 01:41:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfBIBbS (ORCPT
+        id S1726864AbfBIBlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 20:31:18 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37223 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfBIBbS (ORCPT
+        Fri, 8 Feb 2019 20:41:12 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:28770 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfBIBlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 20:31:18 -0500
-Received: by mail-wm1-f65.google.com with SMTP id x10so1022199wmg.2;
-        Fri, 08 Feb 2019 17:31:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ue+kTTnhwZJlN7KH1RxSPq6F9+rsW1TLTtahEzOTXdg=;
-        b=SF4oIoew95mOs/d+z3RERph38b4fIzBlYaxhez3AHe5AdaaSGgyQkejP7Vq9NXrou9
-         fPQ/eNjotVn+oKykYZ6W/VuVADXo63xN9YHtbeFFhMqfy995j1bB0OdaH+URJhf2v5hF
-         PhtMNakgKbs9YWy6Zqumb4Z3wrhf0k3aMWj1ms56D4elQKdIguPLadB+ESM6mIx5/jJk
-         REIkT3Ia5ZZjWeNWXvkdkJBnVtfmcjK1B58vbdNp7kKZybBtzbjLgv9/B52CTmqLGpcv
-         Nh0CwkNGjnBsy3o1S2/VXLoZhsWOYPZagGK/hujG+ianKThu2xX355lH6EBHRJ5HWn9a
-         s6Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ue+kTTnhwZJlN7KH1RxSPq6F9+rsW1TLTtahEzOTXdg=;
-        b=hhIE7WKEplkBQ70JI6eJ2xE3a9ugLHENIcCES7djJ6V7lTADNsyHL+W1umlNXff6Mv
-         oV4ch6cMdppeLsONLRG1vH1kdic9NY36ZBrsMES9e08VsM8+tTDTy0CsOhwoqfK2CYxZ
-         gPsAkLqtPlN54B7RVgB/f071l26kfvcLHHzuACnTT9C2fDjtILc+GF0jFYY4k2NByU79
-         3hv3W7m+DOTrgdQz0SOgBS4b4SJH78l5UblFjxPibGGD/HOSLy/RjxiySrFAV5sMbFlP
-         SlBxc76f/hvrNraOaFYMZdBkCtTBG999rgt6oNsBEwbCVIt4L37tU4aezycG2tC3q72T
-         fPUA==
-X-Gm-Message-State: AHQUAuYCFWJBZYYLbvWcfakZTneiFSugw0sJ+bJNZjEeqIa2tFhoU3gU
-        Bz1ESHjb1+a3Z99apWxeCzubgbg0
-X-Google-Smtp-Source: AHgI3IYsrpubZr+4qySbe0QX0Vm7JhhnH5uRuGocvJAx2MAfbpx5CEk2uf25rh+P1xjGLxdFg9yY8w==
-X-Received: by 2002:a1c:f707:: with SMTP id v7mr1032512wmh.18.1549675875284;
-        Fri, 08 Feb 2019 17:31:15 -0800 (PST)
-Received: from [172.30.89.46] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id a12sm5958566wrm.45.2019.02.08.17.31.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 17:31:14 -0800 (PST)
-Subject: Re: [PATCH v3 3/4] gpu: ipu-v3: ipu-ic: Add support for BT.709
- encoding
-To:     Tim Harvey <tharvey@gateworks.com>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "open list:DRM DRIVERS FOR FREESCALE IMX" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
-References: <20190208192844.13930-1-slongerbeam@gmail.com>
- <20190208192844.13930-4-slongerbeam@gmail.com>
- <CAJ+vNU1O9E1Y=tvLvcL=0nrg6STwLxQFqOgfQpqvbTgPi4yo5w@mail.gmail.com>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <f02aa3a8-1767-d92d-a80e-0b618f9119a3@gmail.com>
-Date:   Fri, 8 Feb 2019 17:31:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 8 Feb 2019 20:41:12 -0500
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x191eIqT072452;
+        Sat, 9 Feb 2019 10:40:18 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
+ Sat, 09 Feb 2019 10:40:17 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x191eHjT072448
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 9 Feb 2019 10:40:17 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@vger.kernel.org>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
+ <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
+ <201902070230.x172UUG6002087@www262.sakura.ne.jp>
+ <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
+ <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
+ <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
+ <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
+Message-ID: <0dd46edc-d3ee-75ca-5e50-fee70bd83ddb@i-love.sakura.ne.jp>
+Date:   Sat, 9 Feb 2019 10:40:17 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <CAJ+vNU1O9E1Y=tvLvcL=0nrg6STwLxQFqOgfQpqvbTgPi4yo5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=iso-2022-jp
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/02/09 9:28, Tetsuo Handa wrote:
+> On 2019/02/09 1:23, Casey Schaufler wrote:
+>> On 2/8/2019 2:52 AM, Tetsuo Handa wrote:
+>>> To help administrators easily understand what LSM modules are possibly enabled by default (which
+>>> have to be fetched from e.g. /boot/config-`uname -r`)
+>>
+>> $ cat /sys/kernel/security/lsm
+>>
+> 
+> /sys/kernel/security/lsm is list of "actually" enabled modules, isn't it?
+> What I want is "possibly" enabled modules. Ubuntu would chose from either
+> 
+>   (a) explicitly add security=apparmor to kernel command line
+> 
+> or
+> 
+>   (b) explicitly remove tomoyo from CONFIG_LSM at kernel config
+> 
+> in order not to enable TOMOYO for those who want to enable only one of 
+> SELinux/Smack/AppArmor. And for those who want to enable TOMOYO, I think
+> that (b) (in other words, add
+> 
+>   lsm="modules listed in CONFIG_LSM" + ",tomoyo"
+> 
+> ) will retain compatibility when it becomes possible to enable more than
+> one of SELinux/Smack/AppArmor at the same time.
+> 
+> If we can know "possibly" enabled modules from dmesg, users don't need to
+> look at e.g. /boot/config-`uname -r`. It is not essential, but it's handy.
+> 
 
+Well, thinking again, specifying
 
-On 2/8/19 4:20 PM, Tim Harvey wrote:
-> On Fri, Feb 8, 2019 at 11:28 AM Steve Longerbeam <slongerbeam@gmail.com> wrote:
->>          if (inf == outf)
->>                  params = &ic_csc_identity;
->>          else if (inf == IPUV3_COLORSPACE_YUV)
->> -               params = &ic_csc_ycbcr2rgb_bt601;
->> +               params = &ic_csc_ycbcr2rgb;
->
-> Steve,
->
-> compile issue...
->
-> params = params_yuv2rgb;
->
->>          else
->> -               params = &ic_csc_rgb2ycbcr_bt601;
->> +               params = &ic_csc_rgb2ycbcr;
-> params = params_rgb2yuv;
+lsm="modules listed in /sys/kernel/security/lsm" + ",tomoyo"
 
-Wow, did I not even compile test that? Must be my head cold :-/
-Sending v4.
+makes sense, for there is no need to care about disabled modules when
+enabling TOMOYO. Therefore,
 
->
-> But, I'm still failing when using the mem2mem element (gst-launch-1.0
-> v4l2src device=/dev/video4 ! v4l2video8convert
-> output-io-mode=dmabuf-import ! fbdevsink) with 'Unsupported YCbCr
-> encoding' because of inf=IPU_COLORSPACE_YCBCR outf=IPU_COLORSPACE_RGB
-> and a seemingly unset encoding being passed in.
->
-> It looks like maybe something in the mem2mem driver isn't defaulting
-> encoding. The call path is (v4l2_m2m_streamon -> device_run ->
-> ipu_image_convert_queue -> convert_start -> ipu_ic_task_init_rsc ->
-> init_csc).
++	pr_info("Security Framework initializing: %s\n", order);
+-	pr_info("Security Framework initializing\n");
 
-Looking at v7 of the mem2mem driver, it will set ycbcr_enc at the output 
-side to V4L2_YCBCR_ENC_DEFAULT if colorspace is default. So colorspace 
-will need to be set to something non-default in addition to setting 
-ycbcr_enc, at the output side. I don't know whether gstreamer 
-v4l2videoNconvertelement will do this, but you could hack the driver for 
-now to get around it, and let Philipp know this may need a workaround in 
-mem2mem for v8.
+won't be needed.
 
-Steve
+On 2019/02/09 6:33, Kees Cook wrote:
+> On Thu, Feb 7, 2019 at 8:24 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> I added Kees to the CC list. Kees, what to you think about
+>> ignoring security= if lsm= is specified? I'm ambivalent.
+> 
+> This was one of many earlier suggestions, and the consensus seemed to
+> be "don't mix security= and lsm=". Why would anyone use both?
+> 
+
+Then, can we add this change?
+
++	if (chosen_lsm_order) {
++		if (chosen_major_lsm) {
++			pr_info("security= is ignored because of lsm=\n");
++			chosen_major_lsm = NULL;
++		}
++	}
+
