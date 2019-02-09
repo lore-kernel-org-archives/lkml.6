@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E105C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF7CC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A9F20855
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B13BC20855
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfBIMxo (ORCPT
+        id S1726962AbfBIMyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:53:44 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47819 "EHLO
+        Sat, 9 Feb 2019 07:54:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56797 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBIMxo (ORCPT
+        with ESMTP id S1726703AbfBIMyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:53:44 -0500
+        Sat, 9 Feb 2019 07:54:06 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CrWCM2633011
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CqrBo2632962
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:53:32 -0800
+        Sat, 9 Feb 2019 04:52:53 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CrVMd2633008;
-        Sat, 9 Feb 2019 04:53:31 -0800
-Date:   Sat, 9 Feb 2019 04:53:31 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CqrX12632959;
+        Sat, 9 Feb 2019 04:52:53 -0800
+Date:   Sat, 9 Feb 2019 04:52:53 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Leo Yan <tipbot@zytor.com>
-Message-ID: <tip-47106e7413f9fc10780d1ec7df3eaa725df6ebe8@git.kernel.org>
-Cc:     mathieu.poirier@linaro.org, mingo@kernel.org,
+Message-ID: <tip-465eaaa89e2b7e450d53f4d3a6845f0c595a5f59@git.kernel.org>
+Cc:     mingo@kernel.org, acme@redhat.com, hpa@zytor.com,
         linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        robert.walker@arm.com, suzuki.poulose@arm.com,
-        mike.leach@linaro.org, jolsa@redhat.com, acme@redhat.com,
-        namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        leo.yan@linaro.org, hpa@zytor.com, coresight@lists.linaro.org
-Reply-To: jolsa@redhat.com, mike.leach@linaro.org, suzuki.poulose@arm.com,
-          coresight@lists.linaro.org, leo.yan@linaro.org, hpa@zytor.com,
-          acme@redhat.com, namhyung@kernel.org,
-          alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, mathieu.poirier@linaro.org,
-          robert.walker@arm.com, tglx@linutronix.de
-In-Reply-To: <20190129122842.32041-5-leo.yan@linaro.org>
-References: <20190129122842.32041-5-leo.yan@linaro.org>
+        coresight@lists.linaro.org, alexander.shishkin@linux.intel.com,
+        suzuki.poulose@arm.com, leo.yan@linaro.org, mike.leach@linaro.org,
+        mathieu.poirier@linaro.org, robert.walker@arm.com,
+        namhyung@kernel.org, jolsa@redhat.com
+Reply-To: robert.walker@arm.com, namhyung@kernel.org, jolsa@redhat.com,
+          leo.yan@linaro.org, suzuki.poulose@arm.com,
+          mike.leach@linaro.org, mathieu.poirier@linaro.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          alexander.shishkin@linux.intel.com, coresight@lists.linaro.org,
+          mingo@kernel.org, acme@redhat.com, hpa@zytor.com
+In-Reply-To: <20190129122842.32041-4-leo.yan@linaro.org>
+References: <20190129122842.32041-4-leo.yan@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Add exception number in exception
- packet
-Git-Commit-ID: 47106e7413f9fc10780d1ec7df3eaa725df6ebe8
+Subject: [tip:perf/core] perf cs-etm: Set sample flags for trace
+ discontinuity
+Git-Commit-ID: 465eaaa89e2b7e450d53f4d3a6845f0c595a5f59
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,23 +63,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  47106e7413f9fc10780d1ec7df3eaa725df6ebe8
-Gitweb:     https://git.kernel.org/tip/47106e7413f9fc10780d1ec7df3eaa725df6ebe8
+Commit-ID:  465eaaa89e2b7e450d53f4d3a6845f0c595a5f59
+Gitweb:     https://git.kernel.org/tip/465eaaa89e2b7e450d53f4d3a6845f0c595a5f59
 Author:     Leo Yan <leo.yan@linaro.org>
-AuthorDate: Tue, 29 Jan 2019 20:28:38 +0800
+AuthorDate: Tue, 29 Jan 2019 20:28:37 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 6 Feb 2019 10:00:40 -0300
 
-perf cs-etm: Add exception number in exception packet
+perf cs-etm: Set sample flags for trace discontinuity
 
-When an exception packet comes, it contains the information for
-exception number; the exception number indicates the exception types, so
-from it we can know if the exception is taken for interrupt, system call
-or other traps, etc.
+In the middle of trace stream, it might be interrupted thus the trace
+data is not continuous, the trace stream firstly is ended for previous
+trace block and restarted for next block.
 
-This patch simply adds a field in cs_etm_packet struct, it records
-exception number for exception packet that will then be used to properly
-identify exception types to the perf synthesize mechanic.
+To display related information for showing trace is restarted, this
+patch set sample flags for trace discontinuity:
+
+- If one discontinuity packet is coming, append flag
+  PERF_IP_FLAG_TRACE_END to the previous packet to indicate the trace
+  has been ended;
+- If one instruction packet is following discontinuity packet, this
+  instruction packet is the first one packet to restarting trace.  So
+  set flag PERF_IP_FLAG_TRACE_START to discontinuity packet, this flag
+  will be used to generate sample when connect with the sequential
+  instruction packet.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -91,75 +98,48 @@ Cc: Robert Walker <robert.walker@arm.com>
 Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
 Cc: coresight ml <coresight@lists.linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190129122842.32041-5-leo.yan@linaro.org
+Link: http://lkml.kernel.org/r/20190129122842.32041-4-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 20 ++++++++++++++++----
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
- 2 files changed, 17 insertions(+), 4 deletions(-)
+ tools/perf/util/cs-etm.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index e98ee49a1527..294efa76c9e3 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -294,6 +294,7 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
- 		decoder->packet_buffer[i].last_instr_subtype = 0;
- 		decoder->packet_buffer[i].last_instr_cond = 0;
- 		decoder->packet_buffer[i].flags = 0;
-+		decoder->packet_buffer[i].exception_number = UINT32_MAX;
- 		decoder->packet_buffer[i].cpu = INT_MIN;
- 	}
- }
-@@ -331,6 +332,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
- 	decoder->packet_buffer[et].last_instr_subtype = 0;
- 	decoder->packet_buffer[et].last_instr_cond = 0;
- 	decoder->packet_buffer[et].flags = 0;
-+	decoder->packet_buffer[et].exception_number = UINT32_MAX;
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index d05cac5295f1..1aa29633ce77 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1111,6 +1111,7 @@ static int cs_etm__end_block(struct cs_etm_queue *etmq)
+ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
+ {
+ 	struct cs_etm_packet *packet = etmq->packet;
++	struct cs_etm_packet *prev_packet = etmq->prev_packet;
  
- 	if (decoder->packet_count == MAX_BUFFER - 1)
- 		return OCSD_RESP_WAIT;
-@@ -406,10 +408,20 @@ cs_etm_decoder__buffer_discontinuity(struct cs_etm_decoder *decoder,
- 
- static ocsd_datapath_resp_t
- cs_etm_decoder__buffer_exception(struct cs_etm_decoder *decoder,
-+				 const ocsd_generic_trace_elem *elem,
- 				 const uint8_t trace_chan_id)
--{
--	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
--					     CS_ETM_EXCEPTION);
-+{	int ret = 0;
-+	struct cs_etm_packet *packet;
+ 	switch (packet->sample_type) {
+ 	case CS_ETM_RANGE:
+@@ -1170,8 +1171,26 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
+ 		    packet->last_instr_subtype == OCSD_S_INSTR_V8_RET)
+ 			packet->flags = PERF_IP_FLAG_BRANCH |
+ 					PERF_IP_FLAG_RETURN;
 +
-+	ret = cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-+					    CS_ETM_EXCEPTION);
-+	if (ret != OCSD_RESP_CONT && ret != OCSD_RESP_WAIT)
-+		return ret;
-+
-+	packet = &decoder->packet_buffer[decoder->tail];
-+	packet->exception_number = elem->exception_number;
-+
-+	return ret;
- }
- 
- static ocsd_datapath_resp_t
-@@ -443,7 +455,7 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 						    trace_chan_id);
++		/*
++		 * Decoder might insert a discontinuity in the middle of
++		 * instruction packets, fixup prev_packet with flag
++		 * PERF_IP_FLAG_TRACE_BEGIN to indicate restarting trace.
++		 */
++		if (prev_packet->sample_type == CS_ETM_DISCONTINUITY)
++			prev_packet->flags |= PERF_IP_FLAG_BRANCH |
++					      PERF_IP_FLAG_TRACE_BEGIN;
  		break;
- 	case OCSD_GEN_TRC_ELEM_EXCEPTION:
--		resp = cs_etm_decoder__buffer_exception(decoder,
-+		resp = cs_etm_decoder__buffer_exception(decoder, elem,
- 							trace_chan_id);
- 		break;
- 	case OCSD_GEN_TRC_ELEM_EXCEPTION_RET:
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index 23600e57a215..012b4728a46f 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -46,6 +46,7 @@ struct cs_etm_packet {
- 	u32 last_instr_type;
- 	u32 last_instr_subtype;
- 	u32 flags;
-+	u32 exception_number;
- 	u8 last_instr_cond;
- 	u8 last_instr_taken_branch;
- 	u8 last_instr_size;
+ 	case CS_ETM_DISCONTINUITY:
++		/*
++		 * The trace is discontinuous, if the previous packet is
++		 * instruction packet, set flag PERF_IP_FLAG_TRACE_END
++		 * for previous packet.
++		 */
++		if (prev_packet->sample_type == CS_ETM_RANGE)
++			prev_packet->flags |= PERF_IP_FLAG_BRANCH |
++					      PERF_IP_FLAG_TRACE_END;
++		break;
+ 	case CS_ETM_EXCEPTION:
+ 	case CS_ETM_EXCEPTION_RET:
+ 	case CS_ETM_EMPTY:
