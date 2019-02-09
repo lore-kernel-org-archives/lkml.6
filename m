@@ -2,139 +2,355 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA453C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AD7C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 810A521919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:44:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84BA72084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfBIMoB (ORCPT
+        id S1726906AbfBIMpV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:44:01 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46775 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfBIMn7 (ORCPT
+        Sat, 9 Feb 2019 07:45:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56391 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbfBIMpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:43:59 -0500
-Received: by mail-qk1-f195.google.com with SMTP id q1so3736071qkf.13
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 04:43:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=MwBSvILaWD7Vm3fNl1FktF2rtQrZGKuMb4+yUb0mSp8=;
-        b=FnMRD1+dyLdvNzMTT1zB96lizK7zvRtnli2kKJpBBMqRxeRYbN4+kgAgtGzOp8L+8t
-         kAZXLCS1E3sjhiCmPgYppDMjc7NIZx25Z1cpbkCpYJfnDKUu2Gn8bUbMFGFf8KuHVh1V
-         acYkC3ptPt10TZiC/8X91Mpa35EUSsoXKJYfPqJaUlafrfJpIq39mR/FaZxs0BMKbVnW
-         bjzPdLsurFjaR9VFes6SguPA3z4VBwkonnIBMt+zO0C1HkOxmcIuOdYmP6DVnCWz+hcN
-         BDhLwltqUvcahdeU/rcp9QjLSRYvbEcBAzUpdRqodlmxD07xaeMYY9RKn9BdbJ0SZcLb
-         74zw==
-X-Gm-Message-State: AHQUAub6gm90ChBKqWW2tdLDmPchnOWbn0SBivew6xg3rAfiVY4PTJCE
-        NpCxeEr4zLhr4yW8NQJKUFh7tA==
-X-Google-Smtp-Source: AHgI3IY9eeYu+bCbWVt7mgxXs/GjMhd/VbUEeUHbDKb00UI0BUFsWs3eKdyEEvEFZT2MMBssumbZhA==
-X-Received: by 2002:a37:7847:: with SMTP id t68mr17724901qkc.254.1549716237744;
-        Sat, 09 Feb 2019 04:43:57 -0800 (PST)
-Received: from tleilax.poochiereds.net (cpe-2606-A000-1100-DB-0-0-0-150.dyn6.twc.com. [2606:a000:1100:db::150])
-        by smtp.gmail.com with ESMTPSA id u4sm3622453qkk.51.2019.02.09.04.43.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 04:43:56 -0800 (PST)
-Message-ID: <bbc264481c2368f1e7a386cafb0cd5fba6af7ecf.camel@redhat.com>
-Subject: Re: [PATCH 0/7] Eliminate delegation self-conflicts
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "J. Bruce Fields" <bfields@redhat.com>, linux-nfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        David Howells <dhowells@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shaohua Li <shli@fb.com>, Oleg Nesterov <oleg@redhat.com>
-Date:   Sat, 09 Feb 2019 07:43:54 -0500
-In-Reply-To: <1549656647-25115-1-git-send-email-bfields@redhat.com>
-References: <1549656647-25115-1-git-send-email-bfields@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Sat, 9 Feb 2019 07:45:20 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CinD12631544
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 9 Feb 2019 04:44:49 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19Cinkc2631541;
+        Sat, 9 Feb 2019 04:44:49 -0800
+Date:   Sat, 9 Feb 2019 04:44:49 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-159b0da50adb021fe452d849fb73b408f21de3f8@git.kernel.org>
+Cc:     adrian.hunter@intel.com, acme@redhat.com, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, suzuki.poulose@arm.com,
+        ast@kernel.org, mingo@kernel.org, heiko.carstens@de.ibm.com,
+        will.deacon@arm.com, hpa@zytor.com, tglx@linutronix.de,
+        namhyung@kernel.org, peterz@infradead.org,
+        mathieu.poirier@linaro.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        schwidefsky@de.ibm.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, will.deacon@arm.com,
+          heiko.carstens@de.ibm.com, alexander.shishkin@linux.intel.com,
+          mark.rutland@arm.com, acme@redhat.com, adrian.hunter@intel.com,
+          mingo@kernel.org, ast@kernel.org, suzuki.poulose@arm.com,
+          jolsa@redhat.com, linux-kernel@vger.kernel.org,
+          gregkh@linuxfoundation.org, schwidefsky@de.ibm.com,
+          namhyung@kernel.org, peterz@infradead.org,
+          mathieu.poirier@linaro.org
+In-Reply-To: <20190131184714.20388-8-mathieu.poirier@linaro.org>
+References: <20190131184714.20388-8-mathieu.poirier@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf pmu: Remove set_drv_config API
+Git-Commit-ID: 159b0da50adb021fe452d849fb73b408f21de3f8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-02-08 at 15:10 -0500, J. Bruce Fields wrote:
-> From: "J. Bruce Fields" <bfields@redhat.com>
-> 
-> These patches allow NFSv4 clients holding delegations to keep them when
-> the operation that would break a delegation comes from the same client.
-> 
-> To do that, we somehow need to pass the identity of the
-> delegation-breaker down through the VFS.
-> 
-> This series uses the tgid, a solution suggested by Trond.  To do that we
-> need nfsd tasks to share the same tgid.  I do that by extending the
-> kthread code slightly to allow knfsd to run the kthreadd main loop in a
-> task of its own, and spawn its server threads off of that task.
-> 
-> Part of Trond's thinking was that this would work for userspace too.
-> Delegations are currently only available to knfsd, but Ganesha and Samba
-> may eventually be interested in a userspace interface (probably a minor
-> variation on the fcntl F_{GET,SET}LEASE interface).  A threaded
-> userspace server would first resolve conflicts between its own clients,
-> and then call into the kernel to break any leases acquired by other
-> processes.  That may require some careful locking of the server's own
-> data structures, but it should work.
-> 
-> Previously I considered instead adding a new field somewhere in the
-> struct task.  That might require a new system call to expose to user
-> space.  Or we might be able to put this in a keyring, if David Howells
-> thought that would work.
-> 
-> Before that I tried passing the identity of the breaker explicitly, but
-> that looks like it would require passing the new argument around to huge
-> swaths of the VFS.
-> 
-> I'm testing this with some a locally modified pynfs; I'll fix that up
-> and push it out at some point, but pynfs has a number of bugs in this
-> area.
-> 
-> I wasn't sure who to ask about the kthread.c changes, so I'm cc'ing a
-> random assortment of developers in recent changelogs, hope that's OK.
-> 
-> --b.
-> 
-> J. Bruce Fields (7):
->   kthreads: minor kthreadd refactoring
->   kthreads: Simplify tsk_fork_get_node
->   kthreads: allow multiple kthreadd's
->   kthreads: allow cloning threads with different flags
->   rpc: separate out body of svc_start_kthreads
->   rpc: move rpc server threads into their own thread group
->   nfsd: ignore delegation self-conflicts
-> 
->  fs/locks.c                 |  39 +++++++++++
->  fs/nfsd/nfs4state.c        |  61 ++++++++++++++++
->  fs/nfsd/state.h            |   2 +
->  fs/nfsd/vfs.c              |  32 +++++++--
->  include/linux/fs.h         |   2 +
->  include/linux/kthread.h    |  21 +++++-
->  include/linux/sunrpc/svc.h |   1 +
->  init/init_task.c           |   3 +
->  init/main.c                |   4 +-
->  kernel/fork.c              |   4 ++
->  kernel/kthread.c           | 140 +++++++++++++++++++++++++++----------
->  net/sunrpc/svc.c           |  83 ++++++++++++++--------
->  12 files changed, 317 insertions(+), 75 deletions(-)
-> 
+Commit-ID:  159b0da50adb021fe452d849fb73b408f21de3f8
+Gitweb:     https://git.kernel.org/tip/159b0da50adb021fe452d849fb73b408f21de3f8
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Thu, 31 Jan 2019 11:47:14 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 6 Feb 2019 10:00:39 -0300
 
-Nice work! I like the basic idea, the changes seem to be well-organized, 
-and the tgid semantics are clear and make sense.
+perf pmu: Remove set_drv_config API
 
-Would this preclude us from moving to a workqueue-based model for knfsd
-later? It's likely to still be worth it, but it'd be good to understand
-the potential drawbacks.
+CoreSight was the only client of the PMU's set_drv_config() API.  Now
+that it is no longer needed by CoreSight remove it from the code base.
 
-Thanks,
--- 
-Jeff Layton <jlayton@redhat.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Acked-by: Suzuki K Poulouse <suzuki.poulose@arm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-s390@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190131184714.20388-8-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-record.c   | 10 ------
+ tools/perf/builtin-stat.c     |  9 -----
+ tools/perf/builtin-top.c      | 13 --------
+ tools/perf/util/Build         |  1 -
+ tools/perf/util/drv_configs.c | 78 -------------------------------------------
+ tools/perf/util/drv_configs.h | 26 ---------------
+ tools/perf/util/pmu.h         |  1 -
+ 7 files changed, 138 deletions(-)
 
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 88ea11d57c6f..56e9d9e8c174 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -23,7 +23,6 @@
+ #include "util/evlist.h"
+ #include "util/evsel.h"
+ #include "util/debug.h"
+-#include "util/drv_configs.h"
+ #include "util/session.h"
+ #include "util/tool.h"
+ #include "util/symbol.h"
+@@ -567,7 +566,6 @@ static int record__open(struct record *rec)
+ 	struct perf_evlist *evlist = rec->evlist;
+ 	struct perf_session *session = rec->session;
+ 	struct record_opts *opts = &rec->opts;
+-	struct perf_evsel_config_term *err_term;
+ 	int rc = 0;
+ 
+ 	/*
+@@ -620,14 +618,6 @@ try_again:
+ 		goto out;
+ 	}
+ 
+-	if (perf_evlist__apply_drv_configs(evlist, &pos, &err_term)) {
+-		pr_err("failed to set config \"%s\" on event %s with %d (%s)\n",
+-		      err_term->val.drv_cfg, perf_evsel__name(pos), errno,
+-		      str_error_r(errno, msg, sizeof(msg)));
+-		rc = -1;
+-		goto out;
+-	}
+-
+ 	rc = record__mmap(rec);
+ 	if (rc)
+ 		goto out;
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index e587808591e8..bb24f9c17f9a 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -52,7 +52,6 @@
+ #include "util/evlist.h"
+ #include "util/evsel.h"
+ #include "util/debug.h"
+-#include "util/drv_configs.h"
+ #include "util/color.h"
+ #include "util/stat.h"
+ #include "util/header.h"
+@@ -417,7 +416,6 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 	int status = 0;
+ 	const bool forks = (argc > 0);
+ 	bool is_pipe = STAT_RECORD ? perf_stat.data.is_pipe : false;
+-	struct perf_evsel_config_term *err_term;
+ 
+ 	if (interval) {
+ 		ts.tv_sec  = interval / USEC_PER_MSEC;
+@@ -514,13 +512,6 @@ try_again:
+ 		return -1;
+ 	}
+ 
+-	if (perf_evlist__apply_drv_configs(evsel_list, &counter, &err_term)) {
+-		pr_err("failed to set config \"%s\" on event %s with %d (%s)\n",
+-		      err_term->val.drv_cfg, perf_evsel__name(counter), errno,
+-		      str_error_r(errno, msg, sizeof(msg)));
+-		return -1;
+-	}
+-
+ 	if (STAT_RECORD) {
+ 		int err, fd = perf_data__fd(&perf_stat.data);
+ 
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 619406339e4b..231a90daa958 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -25,7 +25,6 @@
+ #include "util/bpf-event.h"
+ #include "util/config.h"
+ #include "util/color.h"
+-#include "util/drv_configs.h"
+ #include "util/evlist.h"
+ #include "util/evsel.h"
+ #include "util/event.h"
+@@ -1186,10 +1185,6 @@ static void init_process_thread(struct perf_top *top)
+ 
+ static int __cmd_top(struct perf_top *top)
+ {
+-	char msg[512];
+-	struct perf_evsel *pos;
+-	struct perf_evsel_config_term *err_term;
+-	struct perf_evlist *evlist = top->evlist;
+ 	struct record_opts *opts = &top->record_opts;
+ 	pthread_t thread, thread_process;
+ 	int ret;
+@@ -1240,14 +1235,6 @@ static int __cmd_top(struct perf_top *top)
+ 	if (ret)
+ 		goto out_delete;
+ 
+-	ret = perf_evlist__apply_drv_configs(evlist, &pos, &err_term);
+-	if (ret) {
+-		pr_err("failed to set config \"%s\" on event %s with %d (%s)\n",
+-			err_term->val.drv_cfg, perf_evsel__name(pos), errno,
+-			str_error_r(errno, msg, sizeof(msg)));
+-		goto out_delete;
+-	}
+-
+ 	top->session->evlist = top->evlist;
+ 	perf_session__set_id_hdr_size(top->session);
+ 
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index b69d6294c88c..a36e6e5a6f4f 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -107,7 +107,6 @@ libperf-y += term.o
+ libperf-y += help-unknown-cmd.o
+ libperf-y += mem-events.o
+ libperf-y += vsprintf.o
+-libperf-y += drv_configs.o
+ libperf-y += units.o
+ libperf-y += time-utils.o
+ libperf-y += expr-bison.o
+diff --git a/tools/perf/util/drv_configs.c b/tools/perf/util/drv_configs.c
+deleted file mode 100644
+index eec754243f4d..000000000000
+--- a/tools/perf/util/drv_configs.c
++++ /dev/null
+@@ -1,78 +0,0 @@
+-/*
+- * drv_configs.h: Interface to apply PMU specific configuration
+- * Copyright (c) 2016-2018, Linaro Ltd.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- */
+-
+-#include "drv_configs.h"
+-#include "evlist.h"
+-#include "evsel.h"
+-#include "pmu.h"
+-#include <errno.h>
+-
+-static int
+-perf_evsel__apply_drv_configs(struct perf_evsel *evsel,
+-			      struct perf_evsel_config_term **err_term)
+-{
+-	bool found = false;
+-	int err = 0;
+-	struct perf_evsel_config_term *term;
+-	struct perf_pmu *pmu = NULL;
+-
+-	while ((pmu = perf_pmu__scan(pmu)) != NULL)
+-		if (pmu->type == evsel->attr.type) {
+-			found = true;
+-			break;
+-		}
+-
+-	list_for_each_entry(term, &evsel->config_terms, list) {
+-		if (term->type != PERF_EVSEL__CONFIG_TERM_DRV_CFG)
+-			continue;
+-
+-		/*
+-		 * We have a configuration term, report an error if we
+-		 * can't find the PMU or if the PMU driver doesn't support
+-		 * cmd line driver configuration.
+-		 */
+-		if (!found || !pmu->set_drv_config) {
+-			err = -EINVAL;
+-			*err_term = term;
+-			break;
+-		}
+-
+-		err = pmu->set_drv_config(term);
+-		if (err) {
+-			*err_term = term;
+-			break;
+-		}
+-	}
+-
+-	return err;
+-}
+-
+-int perf_evlist__apply_drv_configs(struct perf_evlist *evlist,
+-				   struct perf_evsel **err_evsel,
+-				   struct perf_evsel_config_term **err_term)
+-{
+-	struct perf_evsel *evsel;
+-	int err = 0;
+-
+-	evlist__for_each_entry(evlist, evsel) {
+-		err = perf_evsel__apply_drv_configs(evsel, err_term);
+-		if (err) {
+-			*err_evsel = evsel;
+-			break;
+-		}
+-	}
+-
+-	return err;
+-}
+diff --git a/tools/perf/util/drv_configs.h b/tools/perf/util/drv_configs.h
+deleted file mode 100644
+index 32bc9babc2e0..000000000000
+--- a/tools/perf/util/drv_configs.h
++++ /dev/null
+@@ -1,26 +0,0 @@
+-/*
+- * drv_configs.h: Interface to apply PMU specific configuration
+- * Copyright (c) 2016-2018, Linaro Ltd.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- */
+-
+-#ifndef __PERF_DRV_CONFIGS_H
+-#define __PERF_DRV_CONFIGS_H
+-
+-#include "drv_configs.h"
+-#include "evlist.h"
+-#include "evsel.h"
+-
+-int perf_evlist__apply_drv_configs(struct perf_evlist *evlist,
+-				   struct perf_evsel **err_evsel,
+-				   struct perf_evsel_config_term **term);
+-#endif
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index 1c12a61ed0dc..47253c3daf55 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -31,7 +31,6 @@ struct perf_pmu {
+ 	struct list_head format;  /* HEAD struct perf_pmu_format -> list */
+ 	struct list_head aliases; /* HEAD struct perf_pmu_alias -> list */
+ 	struct list_head list;    /* ELEM */
+-	int (*set_drv_config)	(struct perf_evsel_config_term *term);
+ };
+ 
+ struct perf_pmu_info {
