@@ -2,325 +2,104 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FCAC169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB3BC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A159217D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:24:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/53AUJo"
+	by mail.kernel.org (Postfix) with ESMTP id 26CB220821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfBIAYL (ORCPT
+        id S1726824AbfBIA3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:24:11 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41316 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbfBIAYL (ORCPT
+        Fri, 8 Feb 2019 19:29:12 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:14113 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBIA3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:24:11 -0500
-Received: by mail-qt1-f195.google.com with SMTP id b15so6029682qto.8;
-        Fri, 08 Feb 2019 16:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lc6U+WtXJHw8gr9WOGULG8K+c8fVf4dRErxw0u5wuRA=;
-        b=H/53AUJoJn2W9We4Jn3x88E/Gj5cQtqiAJtYy+K79dXpkdcAsLuH5spOPjc50mt8eX
-         ES2+rJHMaqso2b24Ka25OfWuzFXZqR8drot+gcSJjgGE7UUvdVY/Jr97+Uxay5Q2v+vb
-         jWbcrFrRs1lZMEBRuWz96IloRpEKrOBRZQn9I4tSzfyr7U3IHBxkQVpC/g6LcWvIRRjN
-         vgsR+JoiLfbC2nd1VZ4mkptLe10GoJVLU4Z94sHGzkQ/b3wSX3qmot4kjfeVOjMcixXz
-         NwGzYSgyf0pIrIElU02eXdRhWIGj0a/W8Nh0zDVcjnD+bPF/AKqeG1DNsfokB3q0yikf
-         qNwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lc6U+WtXJHw8gr9WOGULG8K+c8fVf4dRErxw0u5wuRA=;
-        b=frtKQ7OUALjhRc1JuBwiM80HkiRhHtgoySSpShntlDlqQJQWzrM/szTTrKeu9C9vJi
-         vwaBPI8Tz+WW83zlQ1gyPJecSsOxst+Me2fWyAO+ccgWkKoPLwcJAZkw/5LSLaZ8oHZw
-         u3dlBnbxB2MsIsMOZ2edXFMjyudjtJu1ne+D8PeAzuxqujQd9yHISdVGRRzGL6Pzq7au
-         tv5tw3/gbN4EJxJDYi9G7fZ42VI9ganPmmxw22otBAVrrv1KxkF3pbVuy9nxJRtIQ5ph
-         3XubdalsaKnQjnSZsC0FvaxELxBxDaYhVc7TKJU/ZNsArStCdGU+xkW3teFOKXppfvtH
-         IqDg==
-X-Gm-Message-State: AHQUAuZli51J1FrnNSt7Jb/L0PObrer86nutvhhWCoWHhnLTYzeTttfU
-        JRCPTvPGWnCU/8LnQ5y07A==
-X-Google-Smtp-Source: AHgI3Ib9B/8BiMiSp6V+d0qXBFEpxeh55Whc9jNcUTTa3EA3XSVGQ2BhKsa4F8nnmHcO/snsOqLyww==
-X-Received: by 2002:a0c:e70f:: with SMTP id d15mr4564812qvn.223.1549671849399;
-        Fri, 08 Feb 2019 16:24:09 -0800 (PST)
-Received: from gabell (209-6-122-159.s2973.c3-0.arl-cbr1.sbo-arl.ma.cable.rcncustomer.com. [209.6.122.159])
-        by smtp.gmail.com with ESMTPSA id v1sm3822059qtj.68.2019.02.08.16.24.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Feb 2019 16:24:08 -0800 (PST)
-Date:   Fri, 8 Feb 2019 19:24:01 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-acpi@vger.kernel.org, mingo@redhat.com,
-        keescook@chromium.org, rjw@rjwysocki.net, lenb@kernel.org,
-        ard.biesheuvel@linaro.org, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20190209002400.ek7plbm6u43hvbic@gabell>
-References: <20181025134050.ggiir77ehntikbwg@gabell>
- <20181106184519.GA16391@zn.tnic>
- <20181106193636.svyjwuwrlgnpuyyf@gabell>
- <20181106204511.GO13712@zn.tnic>
- <20181106222133.lb7674yzszivzihd@gabell>
- <20181108105129.GA7543@zn.tnic>
- <20181110105422.GA20023@zn.tnic>
- <20181111134556.qxv2v4g7dl5irzo7@gabell>
- <20190205150514.fvztftk75swgfayd@gabell>
- <20190208182600.GJ674@zn.tnic>
+        Fri, 8 Feb 2019 19:29:11 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x190SIOO019237;
+        Sat, 9 Feb 2019 09:28:18 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sat, 09 Feb 2019 09:28:18 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x190SEkZ019199
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 9 Feb 2019 09:28:18 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@vger.kernel.org>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
+ <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
+ <201902070230.x172UUG6002087@www262.sakura.ne.jp>
+ <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
+ <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
+ <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
+Date:   Sat, 9 Feb 2019 09:28:14 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208182600.GJ674@zn.tnic>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On 2019/02/09 1:23, Casey Schaufler wrote:
+> On 2/8/2019 2:52 AM, Tetsuo Handa wrote:
+>> To help administrators easily understand what LSM modules are possibly enabled by default (which
+>> have to be fetched from e.g. /boot/config-`uname -r`)
+> 
+> $ cat /sys/kernel/security/lsm
+> 
 
-Thank you for your review.
+/sys/kernel/security/lsm is list of "actually" enabled modules, isn't it?
+What I want is "possibly" enabled modules. Ubuntu would chose from either
 
-On Fri, Feb 08, 2019 at 07:26:00PM +0100, Borislav Petkov wrote:
-> On Tue, Feb 05, 2019 at 10:05:16AM -0500, Masayoshi Mizuma wrote:
-> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> > Date: Tue, 5 Feb 2019 10:00:59 -0500
-> > Subject: [PATCH] x86/mm: Introduce adjustment the padding size for KASLR
-> 
-> 			"Adjust the padding size for KASLR"
-> 
-> > If the physical memory layout has huge space for hotplug, the padding
-> > used for the physical memory mapping section is not enough.
-> > So, such system may crash while memory hot-adding on KASLR enabled system.
-> 
-> Crash why?
-> 
-> Why is the padding not enough?
-> 
-> > For example, SRAT has the following layout, the maximum possible memory
-> > size is 32TB, and the memory is installed as 2TB actually, then the padding
-> > size should set 30TB (== possible memory size - actual memory size).
-> > 
-> >   SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
-> 
-> What is that supposed to exemplify: that range is 3T not 2 and that
-> range start is not at 2T but 28T. So I have absolutely no clue what
-> you're trying to explain here.
-> 
-> Please go back, take your time and structure your commit message like
-> this:
-> 
-> Problem is A.
-> 
-> It happens because of B.
-> 
-> Fix it by doing C.
-> 
-> (Potentially do D).
-> 
-> For more detailed info, see
-> Documentation/process/submitting-patches.rst, Section "2) Describe your
-> changes".
+  (a) explicitly add security=apparmor to kernel command line
 
-Got it, thanks.
+or
 
-> 
-> > This patch introduces adjustment the padding size if the default
-> 
-> Avoid having "This patch" or "This commit" in the commit message. It is
-> tautologically useless.
-> 
-> Also, do
-> 
-> $ git grep 'This patch' Documentation/process
-> 
-> for more details.
+  (b) explicitly remove tomoyo from CONFIG_LSM at kernel config
 
-Thanks. I see.
+in order not to enable TOMOYO for those who want to enable only one of 
+SELinux/Smack/AppArmor. And for those who want to enable TOMOYO, I think
+that (b) (in other words, add
 
-> 
-> > padding size isn't enough.
-> > 
-> > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> > ---
-> >  Documentation/x86/zero-page.txt       |  1 +
-> >  arch/x86/boot/compressed/acpi.c       | 19 +++++++++++++++----
-> >  arch/x86/include/uapi/asm/bootparam.h |  2 +-
-> >  arch/x86/mm/kaslr.c                   | 26 +++++++++++++++++++++++++-
-> >  4 files changed, 42 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/Documentation/x86/zero-page.txt b/Documentation/x86/zero-page.txt
-> > index 68aed077f..343fe1a90 100644
-> > --- a/Documentation/x86/zero-page.txt
-> > +++ b/Documentation/x86/zero-page.txt
-> > @@ -15,6 +15,7 @@ Offset	Proto	Name		Meaning
-> >  058/008	ALL	tboot_addr      Physical address of tboot shared page
-> >  060/010	ALL	ist_info	Intel SpeedStep (IST) BIOS support information
-> >  				(struct ist_info)
-> > +078/010	ALL	possible_mem_addr The possible maximum physical memory address.
-> 
-> Why isn't this called max_phys_addr then?
-> 
-> Also, please explain what it means at the end of this file.
-> 
-> >  080/010	ALL	hd0_info	hd0 disk parameter, OBSOLETE!!
-> >  090/010	ALL	hd1_info	hd1 disk parameter, OBSOLETE!!
-> >  0A0/010	ALL	sys_desc_table	System description table (struct sys_desc_table),
-> > diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> > index c5a949335..7dd61b943 100644
-> > --- a/arch/x86/boot/compressed/acpi.c
-> > +++ b/arch/x86/boot/compressed/acpi.c
-> > @@ -288,6 +288,7 @@ int count_immovable_mem_regions(void)
-> >  	struct acpi_subtable_header *sub_table;
-> >  	struct acpi_table_header *table_header;
-> >  	char arg[MAX_ACPI_ARG_LENGTH];
-> > +	unsigned long long possible_addr, max_possible_addr = 0;
-> >  	int num = 0;
-> >  
-> >  	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-> > @@ -308,10 +309,19 @@ int count_immovable_mem_regions(void)
-> >  			struct acpi_srat_mem_affinity *ma;
-> >  
-> >  			ma = (struct acpi_srat_mem_affinity *)sub_table;
-> > -			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) && ma->length) {
-> > -				immovable_mem[num].start = ma->base_address;
-> > -				immovable_mem[num].size = ma->length;
-> > -				num++;
-> > +			if (ma->length) {
-> > +				if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
-> > +					possible_addr =
-> > +						ma->base_address + ma->length;
-> > +					if (possible_addr > max_possible_addr)
-> > +						max_possible_addr =
-> > +							possible_addr;
-> > +				} else {
-> > +					immovable_mem[num].start =
-> > +						ma->base_address;
-> > +					immovable_mem[num].size = ma->length;
-> > +					num++;
-> > +				}
-> 
-> This piece has some ugly linebreaks which makes it impossible to read.
-> Perhaps because the variable names you're adding are too long.
-> 
-> You can carve it out in a separate function, for example.
+  lsm="modules listed in CONFIG_LSM" + ",tomoyo"
 
-Thanks. I will add a separate function like as:
+) will retain compatibility when it becomes possible to enable more than
+one of SELinux/Smack/AppArmor at the same time.
 
-static void subtable_parse(struct acpi_subtable_header *sub_table, int *num,
-		unsigned long *max_addr)
-{
-	struct acpi_srat_mem_affinity *ma;
-	unsigned long addr;
+If we can know "possibly" enabled modules from dmesg, users don't need to
+look at e.g. /boot/config-`uname -r`. It is not essential, but it's handy.
 
-	ma = (struct acpi_srat_mem_affinity *)sub_table;
-	if (ma->length) {
-		if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
-			addr = ma->base_address + ma->length;
-			if (addr > *max_addr)
-				*max_addr = addr;
-		} else {
-			immovable_mem[*num].start = ma->base_address;
-			immovable_mem[*num].size = ma->length;
-			(*num)++;
-		}
-	}
-}
-
-> 
-> >  			if (num >= MAX_NUMNODES*2) {
-> > @@ -320,6 +330,7 @@ int count_immovable_mem_regions(void)
-> >  			}
-> >  		}
-> >  		table += sub_table->length;
-> > +		boot_params->possible_mem_addr = max_possible_addr;
-> 
-> This assignment is inside the loop and happens potentially a bunch of
-> times. Why?
-
-
-I will move the assigment out of the loop, thanks.
-
-> 
-> >  	}
-> >  	return num;
-> >  }
-> > diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> > index 60733f137..5b64b606e 100644
-> > --- a/arch/x86/include/uapi/asm/bootparam.h
-> > +++ b/arch/x86/include/uapi/asm/bootparam.h
-> > @@ -156,7 +156,7 @@ struct boot_params {
-> >  	__u64  tboot_addr;				/* 0x058 */
-> >  	struct ist_info ist_info;			/* 0x060 */
-> >  	__u64 acpi_rsdp_addr;				/* 0x070 */
-> > -	__u8  _pad3[8];					/* 0x078 */
-> > +	__u64  possible_mem_addr;			/* 0x078 */
-> >  	__u8  hd0_info[16];	/* obsolete! */		/* 0x080 */
-> >  	__u8  hd1_info[16];	/* obsolete! */		/* 0x090 */
-> >  	struct sys_desc_table sys_desc_table; /* obsolete! */	/* 0x0a0 */
-> > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> > index 3f452ffed..71fc28570 100644
-> > --- a/arch/x86/mm/kaslr.c
-> > +++ b/arch/x86/mm/kaslr.c
-> > @@ -70,6 +70,30 @@ static inline bool kaslr_memory_enabled(void)
-> >  	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
-> >  }
-> >  
-> > +static unsigned int __init kaslr_padding(void)
-> > +{
-> > +	unsigned int rand_mem_physical_padding =
-> > +				CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-> > +#ifdef CONFIG_MEMORY_HOTPLUG
-> > +	unsigned long long max_possible_phys, max_actual_phys, threshold;
-> > +
-> > +	if (!boot_params.possible_mem_addr)
-> > +		goto out;
-> > +
-> > +	max_actual_phys = roundup(PFN_PHYS(max_pfn), 1ULL << TB_SHIFT);
-> > +	max_possible_phys = roundup(boot_params.possible_mem_addr,
-> > +					1ULL << TB_SHIFT);
-> > +	threshold = max_actual_phys +
-> > +		((unsigned long long)rand_mem_physical_padding << TB_SHIFT);
-> > +
-> > +	if (max_possible_phys > threshold)
-> > +		rand_mem_physical_padding =
-> > +			(max_possible_phys - max_actual_phys) >> TB_SHIFT;
-> > +out:
-> > +#endif
-> > +	return rand_mem_physical_padding;
-> 
-> Same problem: local variables with unnecessarily long names make the
-> code hard to read. Pls shorten.
-> 
-> Also, the types in that function are a total mess. An unsigned int which
-> you cast to unsigned long long and return an unsigned int again to add
-> into a sum with unsigned longs. Are you selecting the types randomly?
-> Why aren't you using plain unsigned longs like the rest of the file does
-> with memory addresses?
-
-Sorry. I will unify the type as unsinged long.
-
-> 
-> Also, this function could have a comment above it explaining what all
-> that threshold and actual and possible address arithmetic is supposed to
-> do.
-
-Got it.
-
-Thanks!
-Masa
