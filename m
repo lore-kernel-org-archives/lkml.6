@@ -2,503 +2,131 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F15C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCDAC282CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 356DB21773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549726801;
-	bh=tN9xO/VyHwuHTPAo0bUTDIZWfXZOmBGkjlNGYog2QTI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=SpXwoJktIp4PT7HScA+BWG+BRdI0OyuVaohwtaqyN9hpNj1ImgWViljdcpZsBPR41
-	 Q8Ny+wrL8AcbAHNA+gal6v2tmJ7EQsesVHupk7hlQDm78MC9EWUOhDNBFc/3dW0CD6
-	 SHgqEvQZQHhgWqBKOZAOw3MQyw1A8Y7aD2/gO+BM=
+	by mail.kernel.org (Postfix) with ESMTP id 29ABB21919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:40:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NlLq8Ixg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfBIPj7 (ORCPT
+        id S1727078AbfBIPkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 10:39:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726741AbfBIPj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 10:39:59 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F358821773;
-        Sat,  9 Feb 2019 15:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549726797;
-        bh=tN9xO/VyHwuHTPAo0bUTDIZWfXZOmBGkjlNGYog2QTI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ogtVQCqVfHBPLIq3QjbOzILhzF6LsQgZGTaR/EUERwDDSixcUROFB4m6aWqs1EoST
-         PsSS36m7mpS8ekKCscc8VmOyx5fBWZKFux+PVAqK+vYXYk2PXRiRAyOYXb8M8D9q8g
-         P6H2c5XuhHLSjp5nRiVgJxrYPZmvDQhYNbpfBYw0=
-Date:   Sat, 9 Feb 2019 15:39:52 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Artur Rojek <contact@artur-rojek.eu>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 3/3] IIO: add Ingenic JZ47xx ADC driver.
-Message-ID: <20190209153952.53c3f656@archlinux>
-In-Reply-To: <20190204001514.29891-3-contact@artur-rojek.eu>
-References: <20190204001514.29891-1-contact@artur-rojek.eu>
-        <20190204001514.29891-3-contact@artur-rojek.eu>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 9 Feb 2019 10:40:09 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34916 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbfBIPkI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 10:40:08 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t200so8675608wmt.0;
+        Sat, 09 Feb 2019 07:40:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QiiHczim2JPtOsVn9eeNnwa3j9BEi1GOBpK9dZSUDLQ=;
+        b=NlLq8IxgOYpbdQwAlaZY4a2ywFdc7lrk8DxPpbEZkqs6cceOp2m6OQJtgUUrqZ/T7m
+         pDfQ06IUDdQzot/CxmJJxJ9ZQYDhj+wDnLTVTqYqAj5SnoB1c9lVCkGjaH4GKiNpoNIa
+         WmxQMO7ng4JOQDPgAAqzw3BMLzrsO2uVZxYf5Tvp3HAP5QE5/FP+21qnk6Luv6RvgPLY
+         au/xVSdeHZfuw+puGzDNv1dGEdXymNm4v/7R7s68rXk0kD08ydsyRr871H8/GNW6hOoG
+         zj0PW9aewhzaeikuKDOAZbBj4xj0P9He5Q8KTnWnhQSIYN2oJDF2ivxyHkOnqz/AdJWv
+         cRbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QiiHczim2JPtOsVn9eeNnwa3j9BEi1GOBpK9dZSUDLQ=;
+        b=ocodCg4Qkp+4VHlnyqGOycsI+M9npSy/VAGUf5PoaOTLiG2dCyZxMU+3V3KJ61scMm
+         jL44kspgv39HB9uCjiDdK+rUaaYB+hkT7Hj1gZV6rOeHrqEFC1i6NL5kqVTHvEpp3wv6
+         xF3jgKo8z8kabX1XLHYHt1O/XH9vc7wHrJu4OnPPmEHBJFFTtMicQvbg7nd/J1NUzR8P
+         GcUxCkTO4wl/SrzWvT6GrNcSVEb6qGMGePYKl3RBN3VR/ME1IeW085f8vVPJT+NW2+LF
+         P7SJ7OdvFarbHP0F0kJe+iN2xueeCCLikRmQQcGgHVpa8uMOQEpHkj2q5zZBPkoofyMv
+         69vQ==
+X-Gm-Message-State: AHQUAuZ/VirrgZhzquWoZK5YgsHcaR/sQsQYMNiXWt3/q/pgN3aZVMTI
+        LDXv2ryK82OkK8DgFFgCCZ0=
+X-Google-Smtp-Source: AHgI3IZ/LRJ2AU9GOxJVyVuPthGKLGKYp2nVXebAHBqBjrBRg03BIV8oMcltUsiRn9EB0OcEOMhKOw==
+X-Received: by 2002:adf:f84f:: with SMTP id d15mr16329500wrq.161.1549726806388;
+        Sat, 09 Feb 2019 07:40:06 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id a14sm4564284wrr.13.2019.02.09.07.40.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Feb 2019 07:40:05 -0800 (PST)
+Date:   Sat, 9 Feb 2019 16:40:04 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Andreas Bombe <andreas.bombe@gmail.com>,
+        Andreas Henriksson <andreas@fatal.se>,
+        Jaroslav Skarvada <jskarvad@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        util-linux@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mpluskal@suse.com, base-system@gentoo.org,
+        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: Future of dosfstools project (FAT)
+Message-ID: <20190209154004.fwsfajwg75dadfbd@pali>
+References: <20181002081654.jxesr3kj62snzez5@pali>
+ <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
+ <20181012091941.o22srnhse4kzqjhf@fatal.se>
+ <20181114113341.yx2wlzqku5yh3k4h@pali>
+ <CAPXf_qN66-Mi+o+9ENGqCDe-_2tHaf9uM3moRcCGNvmxwH3ExQ@mail.gmail.com>
+ <20181206083828.4bp3oypkto2ngobu@pali>
+ <20181212135736.xtb57r2eatqsgenb@pali>
+ <20181217095004.c6c6itvyfp7cf3ta@pali>
+ <20181227221748.zsz6bwqqia7ybfwj@pali>
+ <CAHp75VfJpy572t8swsEsz0kPKfpOE-v0SZVxM2aakX0hkjX4=Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jjbqppa3api34i4g"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VfJpy572t8swsEsz0kPKfpOE-v0SZVxM2aakX0hkjX4=Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  4 Feb 2019 01:15:14 +0100
-Artur Rojek <contact@artur-rojek.eu> wrote:
 
-> Add an IIO driver for the ADC hardware present on Ingenic JZ47xx SoCs.
-> 
-> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+--jjbqppa3api34i4g
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-One note inline, but more for something general we should tidy up
-than a change in this driver!
+On Tuesday 08 January 2019 17:32:55 Andy Shevchenko wrote:
+> On Fri, Dec 28, 2018 at 12:18 AM Pali Roh=C3=A1r <pali.rohar@gmail.com> w=
+rote:
+> > On Monday 17 December 2018 10:50:04 Pali Roh=C3=A1r wrote:
+> > > On Wednesday 12 December 2018 14:57:36 Pali Roh=C3=A1r wrote:
+>=20
+> > > Thanks for review of #94! As next you can take #92 from list.
+> >
+> > Andreas, can you look at next pull requests?
+>=20
+> Looking from a side how slow this is being processed I think the best
+> option to fork and abandon the old project if author / maintainer by
+> some reason wouldn't like to give a push rights.
 
-Thanks,
+Just quick update: I got github permission for merging pull requests.
+I already merge some small changes. Others needs and waiting for review.
 
-Jonathan
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
-> ---
-> 
->  Changes:
-> 
->  v2: - prefix all platform defines with JZ_ADC_*,
->      - replace spinlock with a mutex,
->      - change devm_add_action to devm_add_action_or_reset,
->      - add a function wrapper for clk_unprepare,
->      - change iio_dev->name from "adc" to "jz-adc",
->      - simplify error handling code for devm_iio_device_register
-> 
->  drivers/iio/adc/Kconfig       |   9 +
->  drivers/iio/adc/Makefile      |   1 +
->  drivers/iio/adc/ingenic-adc.c | 363 ++++++++++++++++++++++++++++++++++
->  3 files changed, 373 insertions(+)
->  create mode 100644 drivers/iio/adc/ingenic-adc.c
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 7a3ca4ec0cb7..f9f349a22b04 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -367,6 +367,15 @@ config INA2XX_ADC
->  	  Say yes here to build support for TI INA2xx family of Power Monitors.
->  	  This driver is mutually exclusive with the HWMON version.
->  
-> +config INGENIC_ADC
-> +	tristate "Ingenic JZ47xx SoCs ADC driver"
-> +	depends on MIPS || COMPILE_TEST
-> +	help
-> +	  Say yes here to build support for the Ingenic JZ47xx SoCs ADC unit.
-> +
-> +	  This driver can also be built as a module. If so, the module will be
-> +	  called ingenic_adc.
-> +
->  config IMX7D_ADC
->  	tristate "Freescale IMX7D ADC driver"
->  	depends on ARCH_MXC || COMPILE_TEST
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index 07df37f621bd..0a7acab33b91 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_HI8435) += hi8435.o
->  obj-$(CONFIG_HX711) += hx711.o
->  obj-$(CONFIG_IMX7D_ADC) += imx7d_adc.o
->  obj-$(CONFIG_INA2XX_ADC) += ina2xx-adc.o
-> +obj-$(CONFIG_INGENIC_ADC) += ingenic-adc.o
->  obj-$(CONFIG_LP8788_ADC) += lp8788_adc.o
->  obj-$(CONFIG_LPC18XX_ADC) += lpc18xx_adc.o
->  obj-$(CONFIG_LPC32XX_ADC) += lpc32xx_adc.o
-> diff --git a/drivers/iio/adc/ingenic-adc.c b/drivers/iio/adc/ingenic-adc.c
-> new file mode 100644
-> index 000000000000..1f436df1fd45
-> --- /dev/null
-> +++ b/drivers/iio/adc/ingenic-adc.c
-> @@ -0,0 +1,363 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ADC driver for the Ingenic JZ47xx SoCs
-> + * Copyright (c) 2019 Artur Rojek <contact@artur-rojek.eu>
-> + *
-> + * based on drivers/mfd/jz4740-adc.c
-> + */
-> +
-> +#include <dt-bindings/iio/adc/ingenic,adc.h>
-> +#include <linux/clk.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define JZ_ADC_REG_ENABLE		0x00
-> +#define JZ_ADC_REG_CFG			0x04
-> +#define JZ_ADC_REG_CTRL			0x08
-> +#define JZ_ADC_REG_STATUS		0x0c
-> +#define JZ_ADC_REG_ADTCH		0x18
-> +#define JZ_ADC_REG_ADBDAT		0x1c
-> +#define JZ_ADC_REG_ADSDAT		0x20
-> +
-> +#define JZ_ADC_REG_CFG_BAT_MD		BIT(4)
-> +
-> +#define JZ_ADC_AUX_VREF				3300
-> +#define JZ_ADC_AUX_VREF_BITS			12
-> +#define JZ_ADC_BATTERY_LOW_VREF			2500
-> +#define JZ_ADC_BATTERY_LOW_VREF_BITS		12
-> +#define JZ4725B_ADC_BATTERY_HIGH_VREF		7500
-> +#define JZ4725B_ADC_BATTERY_HIGH_VREF_BITS	10
-> +#define JZ4740_ADC_BATTERY_HIGH_VREF		(7500 * 0.986)
-> +#define JZ4740_ADC_BATTERY_HIGH_VREF_BITS	12
-> +
-> +struct ingenic_adc_soc_data {
-> +	unsigned int battery_high_vref;
-> +	unsigned int battery_high_vref_bits;
-> +	const int *battery_raw_avail;
-> +	size_t battery_raw_avail_size;
-> +	const int *battery_scale_avail;
-> +	size_t battery_scale_avail_size;
-> +};
-> +
-> +struct ingenic_adc {
-> +	void __iomem *base;
-> +	struct clk *clk;
-> +	struct mutex lock;
-> +	const struct ingenic_adc_soc_data *soc_data;
-> +	bool low_vref_mode;
-> +};
-> +
-> +static void ingenic_adc_set_config(struct ingenic_adc *adc,
-> +				   uint32_t mask,
-> +				   uint32_t val)
-> +{
-> +	uint32_t cfg;
-> +
-> +	clk_enable(adc->clk);
-> +	mutex_lock(&adc->lock);
-> +
-> +	cfg = readl(adc->base + JZ_ADC_REG_CFG) & ~mask;
-> +	cfg |= val;
-> +	writel(cfg, adc->base + JZ_ADC_REG_CFG);
-> +
-> +	mutex_unlock(&adc->lock);
-> +	clk_disable(adc->clk);
-> +}
-> +
-> +static void ingenic_adc_enable(struct ingenic_adc *adc,
-> +			       int engine,
-> +			       bool enabled)
-> +{
-> +	u8 val;
-> +
-> +	mutex_lock(&adc->lock);
-> +	val = readb(adc->base + JZ_ADC_REG_ENABLE);
-> +
-> +	if (enabled)
-> +		val |= BIT(engine);
-> +	else
-> +		val &= ~BIT(engine);
-> +
-> +	writeb(val, adc->base + JZ_ADC_REG_ENABLE);
-> +	mutex_unlock(&adc->lock);
-> +}
-> +
-> +static int ingenic_adc_capture(struct ingenic_adc *adc,
-> +			       int engine)
-> +{
-> +	u8 val;
-> +	int ret;
-> +
-> +	ingenic_adc_enable(adc, engine, true);
-> +	ret = readb_poll_timeout(adc->base + JZ_ADC_REG_ENABLE, val,
-> +				 !(val & BIT(engine)), 250, 1000);
-> +	if (ret)
-> +		ingenic_adc_enable(adc, engine, false);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ingenic_adc_write_raw(struct iio_dev *iio_dev,
-> +				 struct iio_chan_spec const *chan,
-> +				 int val,
-> +				 int val2,
-> +				 long m)
-> +{
-> +	struct ingenic_adc *adc = iio_priv(iio_dev);
-> +
-> +	switch (m) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		switch (chan->channel) {
-> +		case INGENIC_ADC_BATTERY:
-> +			if (val > JZ_ADC_BATTERY_LOW_VREF) {
-> +				ingenic_adc_set_config(adc,
-> +						       JZ_ADC_REG_CFG_BAT_MD,
-> +						       0);
-> +				adc->low_vref_mode = false;
-> +			} else {
-> +				ingenic_adc_set_config(adc,
-> +						       JZ_ADC_REG_CFG_BAT_MD,
-> +						       JZ_ADC_REG_CFG_BAT_MD);
-> +				adc->low_vref_mode = true;
-> +			}
-> +			return 0;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static const int jz4725b_adc_battery_raw_avail[] = {
-> +	0, 1, (1 << JZ_ADC_BATTERY_LOW_VREF_BITS) - 1,
-> +};
-> +
-> +static const int jz4725b_adc_battery_scale_avail[] = {
-> +	JZ4725B_ADC_BATTERY_HIGH_VREF, JZ4725B_ADC_BATTERY_HIGH_VREF_BITS,
-> +	JZ_ADC_BATTERY_LOW_VREF, JZ_ADC_BATTERY_LOW_VREF_BITS,
-> +};
-> +
-> +static const int jz4740_adc_battery_raw_avail[] = {
-> +	0, 1, (1 << JZ_ADC_BATTERY_LOW_VREF_BITS) - 1,
-> +};
-> +
-> +static const int jz4740_adc_battery_scale_avail[] = {
-> +	JZ4740_ADC_BATTERY_HIGH_VREF, JZ4740_ADC_BATTERY_HIGH_VREF_BITS,
-> +	JZ_ADC_BATTERY_LOW_VREF, JZ_ADC_BATTERY_LOW_VREF_BITS,
-> +};
-> +
-> +static const struct ingenic_adc_soc_data jz4725b_adc_soc_data = {
-> +	.battery_high_vref = JZ4725B_ADC_BATTERY_HIGH_VREF,
-> +	.battery_high_vref_bits = JZ4725B_ADC_BATTERY_HIGH_VREF_BITS,
-> +	.battery_raw_avail = jz4725b_adc_battery_raw_avail,
-> +	.battery_raw_avail_size = ARRAY_SIZE(jz4725b_adc_battery_raw_avail),
-> +	.battery_scale_avail = jz4725b_adc_battery_scale_avail,
-> +	.battery_scale_avail_size = ARRAY_SIZE(jz4725b_adc_battery_scale_avail),
-> +};
-> +
-> +static const struct ingenic_adc_soc_data jz4740_adc_soc_data = {
-> +	.battery_high_vref = JZ4740_ADC_BATTERY_HIGH_VREF,
-> +	.battery_high_vref_bits = JZ4740_ADC_BATTERY_HIGH_VREF_BITS,
-> +	.battery_raw_avail = jz4740_adc_battery_raw_avail,
-> +	.battery_raw_avail_size = ARRAY_SIZE(jz4740_adc_battery_raw_avail),
-> +	.battery_scale_avail = jz4740_adc_battery_scale_avail,
-> +	.battery_scale_avail_size = ARRAY_SIZE(jz4740_adc_battery_scale_avail),
-> +};
-> +
-> +static int ingenic_adc_read_avail(struct iio_dev *iio_dev,
-> +				  struct iio_chan_spec const *chan,
-> +				  const int **vals,
-> +				  int *type,
-> +				  int *length,
-> +				  long m)
-> +{
-> +	struct ingenic_adc *adc = iio_priv(iio_dev);
-> +
-> +	switch (m) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		*type = IIO_VAL_INT;
-> +		*length = adc->soc_data->battery_raw_avail_size;
-> +		*vals = adc->soc_data->battery_raw_avail;
-> +		return IIO_AVAIL_RANGE;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*type = IIO_VAL_FRACTIONAL_LOG2;
-> +		*length = adc->soc_data->battery_scale_avail_size;
-> +		*vals = adc->soc_data->battery_scale_avail;
-> +		return IIO_AVAIL_LIST;
-> +	default:
-> +		return -EINVAL;
-> +	};
-> +}
-> +
-> +static int ingenic_adc_read_raw(struct iio_dev *iio_dev,
-> +				struct iio_chan_spec const *chan,
-> +				int *val,
-> +				int *val2,
-> +				long m)
-> +{
-> +	struct ingenic_adc *adc = iio_priv(iio_dev);
-> +	int ret;
-> +
-> +	switch (m) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		clk_enable(adc->clk);
-> +		ret = ingenic_adc_capture(adc, chan->channel);
-> +		if (ret) {
-> +			clk_disable(adc->clk);
-> +			return ret;
-> +		}
-> +
-> +		switch (chan->channel) {
-> +		case INGENIC_ADC_AUX:
-> +			*val = readw(adc->base + JZ_ADC_REG_ADSDAT);
-> +			break;
-> +		case INGENIC_ADC_BATTERY:
-> +			*val = readw(adc->base + JZ_ADC_REG_ADBDAT);
-> +			break;
-> +		}
-> +
-> +		clk_disable(adc->clk);
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		switch (chan->channel) {
-> +		case INGENIC_ADC_AUX:
-> +			*val = JZ_ADC_AUX_VREF;
-> +			*val2 = JZ_ADC_AUX_VREF_BITS;
-> +			break;
-> +		case INGENIC_ADC_BATTERY:
-> +			if (adc->low_vref_mode) {
-> +				*val = JZ_ADC_BATTERY_LOW_VREF;
-> +				*val2 = JZ_ADC_BATTERY_LOW_VREF_BITS;
-> +			} else {
-> +				*val = adc->soc_data->battery_high_vref;
-> +				*val2 = adc->soc_data->battery_high_vref_bits;
-> +			}
-> +			break;
-> +		}
-> +
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static void ingenic_adc_clk_cleanup(void *data)
-> +{
-> +	clk_unprepare(data);
-> +}
-> +
-> +static const struct iio_info ingenic_adc_info = {
-> +	.write_raw = ingenic_adc_write_raw,
-> +	.read_raw = ingenic_adc_read_raw,
-> +	.read_avail = ingenic_adc_read_avail,
-> +};
-> +
-> +static const struct iio_chan_spec ingenic_channels[] = {
-> +	{
-> +		.extend_name = "aux",
-> +		.type = IIO_VOLTAGE,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-> +				      BIT(IIO_CHAN_INFO_SCALE),
-> +		.indexed = 1,
-> +		.channel = INGENIC_ADC_AUX,
-> +	},
-> +	{
-> +		.extend_name = "battery",
-> +		.type = IIO_VOLTAGE,
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-> +				      BIT(IIO_CHAN_INFO_SCALE),
-> +		.info_mask_separate_available = BIT(IIO_CHAN_INFO_RAW) |
-> +						BIT(IIO_CHAN_INFO_SCALE),
-> +		.indexed = 1,
-> +		.channel = INGENIC_ADC_BATTERY,
-> +	},
-> +};
-> +
-> +static int ingenic_adc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct iio_dev *iio_dev;
-> +	struct ingenic_adc *adc;
-> +	struct resource *mem_base;
-> +	const struct ingenic_adc_soc_data *soc_data;
-> +	int ret;
-> +
-> +	soc_data = device_get_match_data(dev);
-> +	if (!soc_data)
-> +		return -EINVAL;
-> +
-> +	iio_dev = devm_iio_device_alloc(dev, sizeof(*adc));
-> +	if (!iio_dev)
-> +		return -ENOMEM;
-> +
-> +	adc = iio_priv(iio_dev);
-> +	mutex_init(&adc->lock);
-> +	adc->soc_data = soc_data;
-> +
-> +	mem_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	adc->base = devm_ioremap_resource(dev, mem_base);
-> +	if (IS_ERR(adc->base)) {
-> +		dev_err(dev, "Unable to ioremap mmio resource\n");
-> +		return PTR_ERR(adc->base);
-> +	}
-> +
-> +	adc->clk = devm_clk_get(dev, "adc");
-> +	if (IS_ERR(adc->clk)) {
-> +		dev_err(dev, "Unable to get clock\n");
-> +		return PTR_ERR(adc->clk);
-> +	}
-> +
-> +	ret = clk_prepare_enable(adc->clk);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable clock\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Put hardware in a known passive state. */
-> +	writeb(0x00, adc->base + JZ_ADC_REG_ENABLE);
-> +	writeb(0xff, adc->base + JZ_ADC_REG_CTRL);
-> +	clk_disable(adc->clk);
-> +
-> +	ret = devm_add_action_or_reset(dev, ingenic_adc_clk_cleanup, adc->clk);
-> +	if (ret) {
-> +		dev_err(dev, "Unable to add action\n");
-> +		return ret;
-> +	}
-> +
-> +	iio_dev->dev.parent = dev;
-> +	iio_dev->name = "jz-adc";
-> +	iio_dev->modes = INDIO_DIRECT_MODE;
-> +	iio_dev->channels = ingenic_channels;
-> +	iio_dev->num_channels = ARRAY_SIZE(ingenic_channels);
-> +	iio_dev->info = &ingenic_adc_info;
-> +
-> +	ret = devm_iio_device_register(dev, iio_dev);
-> +	if (ret)
-Hmm. Most of the error paths in there provide more specific info
-but there are a few with no error messages. I should clean that
-up then drop all the drivers that print a fairly uninformative
-message like this ;)
+--jjbqppa3api34i4g
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Oh well, not something to fix here. Either someone else will get
-to it first or I'll clean it up some day.
+-----BEGIN PGP SIGNATURE-----
 
-> +		dev_err(dev, "Unable to register IIO device\n");
-> +
-> +	return ret;
-> +}
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id ingenic_adc_of_match[] = {
-> +	{ .compatible = "ingenic,jz4725b-adc", .data = &jz4725b_adc_soc_data, },
-> +	{ .compatible = "ingenic,jz4740-adc", .data = &jz4740_adc_soc_data, },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, ingenic_adc_of_match);
-> +#endif
-> +
-> +static struct platform_driver ingenic_adc_driver = {
-> +	.driver = {
-> +		.name = "ingenic-adc",
-> +		.of_match_table = of_match_ptr(ingenic_adc_of_match),
-> +	},
-> +	.probe = ingenic_adc_probe,
-> +};
-> +module_platform_driver(ingenic_adc_driver);
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXF70UgAKCRCL8Mk9A+RD
+UldOAJ9S3QXS5zAFOgwUhz3o8m1tHxGvVACeJ5D6DpItKD+jyLWGPFOqxcsDFgc=
+=jDX8
+-----END PGP SIGNATURE-----
 
+--jjbqppa3api34i4g--
