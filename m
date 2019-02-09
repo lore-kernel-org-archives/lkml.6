@@ -2,53 +2,54 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAA3C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39D7C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10B4D21919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9329F2192D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738136;
-	bh=Avq+VJtqu1toCmKDyZ6RnlAVYN5fXXym5aXu4isq1v0=;
+	s=default; t=1549738138;
+	bh=j6KM484CHxQ5S3gq5QuaD5sBibRS636ktS5RuQTL5Dw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=txbETZIMyR7z73+9Q0CBc/ujIinzTFcGG3vuKFDMjw0zb1GkIBkdDXXCWEdaXdX1e
-	 upgJEUqIDQslbyalcXgIDaPcpxB+oWXbAEJs02HQfCCX5bTo5Iip4SzHfy6e2sS79c
-	 rvyQH5KeEZi9G98jasTO64XDkNvtJX9kZ+OFkUgI=
+	b=BNzmh/D7g40+jI2PecbPib6uCLma2KgFqAE8IIGs9VHMWlNazz38QX7jC5h620gQw
+	 +LHtNxcajKh1J83NEMowJIMBN2NZF04+kKSOVnc7tNkFyeYhxKw1h894xuytPAN2eW
+	 yDpv/tRIQikdR0h4reuOXYksvMdka+ukOy43SqQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbfBISsy (ORCPT
+        id S1727889AbfBISsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:48:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727877AbfBISsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:51 -0500
+        id S1727733AbfBISst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7C9B2192C;
-        Sat,  9 Feb 2019 18:48:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2235920821;
+        Sat,  9 Feb 2019 18:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738130;
-        bh=Avq+VJtqu1toCmKDyZ6RnlAVYN5fXXym5aXu4isq1v0=;
+        s=default; t=1549738128;
+        bh=j6KM484CHxQ5S3gq5QuaD5sBibRS636ktS5RuQTL5Dw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUL8f19I82hTvqqe7ZvQad0NfbrcYIWPfXhRVXX5BdyNTR6KeHuoGzToIwrQU+a2J
-         Fw//2PQ2es+Rj2+Vhxnr+bWkzYy7+tYsoeYqX/WafcDynvbtu7Hy7fUzjhVWLvG2ae
-         mTB8DLgTNrHUEjBUGxSVCTU8jIk/zjwxO4LxmsPA=
+        b=M+XZqbAl+Mbmyyxq2IjIqikr3yX/kFUa4Z1NS0nzxvGg991LR6qK4D9o1/ztwJtfx
+         z3d7Bt+A9xHtmETxUcGR9C3v0CY9WguzmQY8EVlv6Zp8JpbSbu4KbXxlokrzOUaXPU
+         dLVVSY0Lvp3LA4ZpRI4a0fEhkEfR15UzvP8po1uE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+Cc:     Jin Yao <yao.jin@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 04/28] perf test shell: Use a fallback to get the pathname in vfs_getname
-Date:   Sat,  9 Feb 2019 13:48:12 -0500
-Message-Id: <20190209184840.126418-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 03/28] perf report: Fix wrong iteration count in --branch-history
+Date:   Sat,  9 Feb 2019 13:48:11 -0500
+Message-Id: <20190209184840.126418-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -60,47 +61,225 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Jin Yao <yao.jin@linux.intel.com>
 
-[ Upstream commit 03fa483821c0b4db7c2b1453d3332f397d82313f ]
+[ Upstream commit a3366db06bb656cef2e03f30f780d93059bcc594 ]
 
-Some kernels, like 4.19.13-300.fc29.x86_64 in fedora 29, fail with the
-existing probe definition asking for the contents of result->name,
-working when we ask for the 'filename' variable instead, so add a
-fallback to that.
+By calculating the removed loops, we can get the iteration count.
 
-Now those tests are back working on fedora 29 systems with that kernel:
+But the iteration count could be reported incorrectly, reporting
+impossibly high counts.
 
-  # perf test vfs_getname
-  65: Use vfs_getname probe to get syscall args filenames   : Ok
-  66: Add vfs_getname probe to get syscall args filenames   : Ok
-  67: Check open filename arg using perf trace + vfs_getname: Ok
-  #
+That's because previous code uses the number of removed LBR entries for
+the iteration count. That's not good. Fix this by increasing the
+iteration count when a loop is detected.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+When matching the chain, the iteration count would be added up, finally we need
+to compute the average value when printing out.
+
+For example,
+
+  $ perf report --branch-history --stdio --no-children
+
+Before:
+
+  ---f2 +0
+     |
+     |--33.62%--f1 +9 (cycles:1)
+     |          f1 +0
+     |          main +22 (cycles:1)
+     |          main +17
+     |          main +38 (cycles:1)
+     |          main +27
+     |          f1 +26 (cycles:1)
+     |          f1 +24
+     |          f2 +27 (cycles:7)
+     |          f2 +0
+     |          f1 +19 (cycles:1)
+     |          f1 +14
+     |          f2 +27 (cycles:11)
+     |          f2 +0
+     |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
+     |          f1 +0
+     |          main +22 (cycles:1 iter:2968 avg_cycles:3)
+     |          main +17
+     |          main +38 (cycles:1 iter:2968 avg_cycles:3)
+
+2968 is an impossible high iteration count and avg_cycles is too small.
+
+After:
+
+  ---f2 +0
+     |
+     |--33.62%--f1 +9 (cycles:1)
+     |          f1 +0
+     |          main +22 (cycles:1)
+     |          main +17
+     |          main +38 (cycles:1)
+     |          main +27
+     |          f1 +26 (cycles:1)
+     |          f1 +24
+     |          f2 +27 (cycles:7)
+     |          f2 +0
+     |          f1 +19 (cycles:1)
+     |          f1 +14
+     |          f2 +27 (cycles:11)
+     |          f2 +0
+     |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
+     |          f1 +0
+     |          main +22 (cycles:1 iter:1 avg_cycles:23)
+     |          main +17
+     |          main +38 (cycles:1 iter:1 avg_cycles:23)
+
+avg_cycles:23 is the average cycles of this iteration.
+
+Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-klt3n0i58dfqttveti09q3fi@git.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1546582230-17507-1-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/shell/lib/probe_vfs_getname.sh | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
+ tools/perf/util/callchain.h |  1 +
+ tools/perf/util/machine.c   |  2 +-
+ 3 files changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-index 1c16e56cd93e..7cb99b433888 100644
---- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
-@@ -13,7 +13,8 @@ add_probe_vfs_getname() {
- 	local verbose=$1
- 	if [ $had_vfs_getname -eq 1 ] ; then
- 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
--		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=result->name:string"
-+		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
-+		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
- 	fi
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index 32ef7bdca1cf..dc2212e12184 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
+ 			cnode->cycles_count += node->branch_flags.cycles;
+ 			cnode->iter_count += node->nr_loop_iter;
+ 			cnode->iter_cycles += node->iter_cycles;
++			cnode->from_count++;
+ 		}
+ 	}
+ 
+@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
+ static int branch_from_str(char *bf, int bfsize,
+ 			   u64 branch_count,
+ 			   u64 cycles_count, u64 iter_count,
+-			   u64 iter_cycles)
++			   u64 iter_cycles, u64 from_count)
+ {
+ 	int printed = 0, i = 0;
+-	u64 cycles;
++	u64 cycles, v = 0;
+ 
+ 	cycles = cycles_count / branch_count;
+ 	if (cycles) {
+@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
+ 				bf + printed, bfsize - printed);
+ 	}
+ 
+-	if (iter_count) {
+-		printed += count_pri64_printf(i++, "iter",
+-				iter_count,
+-				bf + printed, bfsize - printed);
++	if (iter_count && from_count) {
++		v = iter_count / from_count;
++		if (v) {
++			printed += count_pri64_printf(i++, "iter",
++					v, bf + printed, bfsize - printed);
+ 
+-		printed += count_pri64_printf(i++, "avg_cycles",
+-				iter_cycles / iter_count,
+-				bf + printed, bfsize - printed);
++			printed += count_pri64_printf(i++, "avg_cycles",
++					iter_cycles / iter_count,
++					bf + printed, bfsize - printed);
++		}
+ 	}
+ 
+ 	if (i)
+@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
+ 			     u64 branch_count, u64 predicted_count,
+ 			     u64 abort_count, u64 cycles_count,
+ 			     u64 iter_count, u64 iter_cycles,
++			     u64 from_count,
+ 			     struct branch_type_stat *brtype_stat)
+ {
+ 	int printed;
+@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
+ 				predicted_count, abort_count, brtype_stat);
+ 	} else {
+ 		printed = branch_from_str(bf, bfsize, branch_count,
+-				cycles_count, iter_count, iter_cycles);
++				cycles_count, iter_count, iter_cycles,
++				from_count);
+ 	}
+ 
+ 	if (!printed)
+@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
+ 				   u64 branch_count, u64 predicted_count,
+ 				   u64 abort_count, u64 cycles_count,
+ 				   u64 iter_count, u64 iter_cycles,
++				   u64 from_count,
+ 				   struct branch_type_stat *brtype_stat)
+ {
+ 	char str[256];
+ 
+ 	counts_str_build(str, sizeof(str), branch_count,
+ 			 predicted_count, abort_count, cycles_count,
+-			 iter_count, iter_cycles, brtype_stat);
++			 iter_count, iter_cycles, from_count, brtype_stat);
+ 
+ 	if (fp)
+ 		return fprintf(fp, "%s", str);
+@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	u64 branch_count, predicted_count;
+ 	u64 abort_count, cycles_count;
+ 	u64 iter_count, iter_cycles;
++	u64 from_count;
+ 
+ 	branch_count = clist->branch_count;
+ 	predicted_count = clist->predicted_count;
+@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	cycles_count = clist->cycles_count;
+ 	iter_count = clist->iter_count;
+ 	iter_cycles = clist->iter_cycles;
++	from_count = clist->from_count;
+ 
+ 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
+ 				       predicted_count, abort_count,
+ 				       cycles_count, iter_count, iter_cycles,
+-				       &clist->brtype_stat);
++				       from_count, &clist->brtype_stat);
  }
  
+ static void free_callchain_node(struct callchain_node *node)
+diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+index 154560b1eb65..99d38ac019b8 100644
+--- a/tools/perf/util/callchain.h
++++ b/tools/perf/util/callchain.h
+@@ -118,6 +118,7 @@ struct callchain_list {
+ 		bool		has_children;
+ 	};
+ 	u64			branch_count;
++	u64			from_count;
+ 	u64			predicted_count;
+ 	u64			abort_count;
+ 	u64			cycles_count;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index d7403d1207d7..b1508ce3e412 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1988,7 +1988,7 @@ static void save_iterations(struct iterations *iter,
+ {
+ 	int i;
+ 
+-	iter->nr_loop_iter = nr;
++	iter->nr_loop_iter++;
+ 	iter->cycles = 0;
+ 
+ 	for (i = 0; i < nr; i++)
 -- 
 2.19.1
 
