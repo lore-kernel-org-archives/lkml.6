@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDA4C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09276C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A0632192D
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E192192C
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738195;
-	bh=Go7HErQGK653Sj/8z7JduZQ0EGs9iNZBoTnEDOWa/xo=;
+	s=default; t=1549738201;
+	bh=AcUyy7nKR+PgloZEKu+jKFa11FocM7kYRbcP6WBN4JQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZQdbACEQMVYiDcNSs2fJd8OMxaf+WtYTuQX3QWLugH4DfM90JVS3we64w907gV7f/
-	 VwgS+Ezwh1ZmzTPZQBGvXbIVP/dycdQJ5ZnP0Nz0NE2+Z5UAbhy04gPhISAnUvOvC4
-	 CjykNz77mnCYEvzyUBAV1uE7aHTKnoARh7IlLNZ0=
+	b=2gtdwzczyST7xPz6ivsgvafIjNO3p1ZbwTZdKW0bSUMkEz3LHjK3GClWRapm1TLTW
+	 n8YbOXiOtMX31xd45YskVtOgcqL1W+MCbsik17G8f8sxxDBFZyf4mfAJqFThULQqpu
+	 ArJVMwuGuafN5+K5YStQuHFzH0MzuJDEKlROWNVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbfBIStx (ORCPT
+        id S1728297AbfBISuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:49:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728227AbfBISts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:48 -0500
+        id S1727140AbfBISt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:49:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF2D2192C;
-        Sat,  9 Feb 2019 18:49:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEAFF2192D;
+        Sat,  9 Feb 2019 18:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738187;
-        bh=Go7HErQGK653Sj/8z7JduZQ0EGs9iNZBoTnEDOWa/xo=;
+        s=default; t=1549738196;
+        bh=AcUyy7nKR+PgloZEKu+jKFa11FocM7kYRbcP6WBN4JQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sRUnj74QAKNAcQqXCPuXNiZcYLdbghp3sZ4iqUBBUHqkq5m1Xf/dk8PHivgF4dT+3
-         tAmbd7XbnSm48RDTNEl9Ze3pn+Eu6Yy4Xm7hDAqzjB229BiHdVBzhrnR2iVMy7AvQY
-         z2126Df8/Qa1S5S+S/B+vTcpk3hwpNGGP6NtuBaQ=
+        b=CQFYQRMN4mIEQtCrAzcLrmxyVF56mPkCubJe1maVsckSyPucngB026NbSperwnTUF
+         XayurrV4Lh2aIwSYxYD3v0FYd89cJ5DfQZesGIMCuthkCDtKw0lU+uQHhtndceFEdr
+         KJckemYhYG4f+9E43XB2qDqeCoAKVttzPLUfVbOk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Ben Skeggs <bskeggs@redhat.com>,
+Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 14/16] drm/nouveau: Don't disable polling in fallback mode
-Date:   Sat,  9 Feb 2019 13:49:25 -0500
-Message-Id: <20190209184927.126791-14-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 03/12] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
+Date:   Sat,  9 Feb 2019 13:49:43 -0500
+Message-Id: <20190209184952.127009-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190209184927.126791-1-sashal@kernel.org>
-References: <20190209184927.126791-1-sashal@kernel.org>
+In-Reply-To: <20190209184952.127009-1-sashal@kernel.org>
+References: <20190209184952.127009-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,46 +58,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit 118780066e30c34de3d9349710b51780bfa0ba83 ]
+[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
 
-When a fan is controlled via linear fallback without cstate, we
-shouldn't stop polling.  Otherwise it won't be adjusted again and
-keeps running at an initial crazy pace.
+DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
+Add these.
 
-Fixes: 800efb4c2857 ("drm/nouveau/drm/therm/fan: add a fallback if no fan control is specified in the vbios")
-Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1103356
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107447
-Reported-by: Thomas Blume <thomas.blume@suse.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Reviewed-by: Martin Peres <martin.peres@free.fr>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
-index 952a7cb0a59a..692d4d96766a 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/therm/base.c
-@@ -131,11 +131,12 @@ nvkm_therm_update(struct nvkm_therm *therm, int mode)
- 			duty = nvkm_therm_update_linear(therm);
- 			break;
- 		case NVBIOS_THERM_FAN_OTHER:
--			if (therm->cstate)
-+			if (therm->cstate) {
- 				duty = therm->cstate;
--			else
-+				poll = false;
-+			} else {
- 				duty = nvkm_therm_update_linear_fallback(therm);
--			poll = false;
-+			}
- 			break;
- 		}
- 		immd = false;
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index f64f35cdc2ff..e67b163a8ce8 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -140,6 +140,8 @@
+ #define DP0_LTLOOPCTRL		0x06d8
+ #define DP0_SNKLTCTRL		0x06e4
+ 
++#define DP1_SRCCTRL		0x07a0
++
+ /* PHY */
+ #define DP_PHY_CTRL		0x0800
+ #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
+@@ -148,6 +150,7 @@
+ #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
+ #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
+ #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
++#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
+ #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
+ #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
+ 
+@@ -562,7 +565,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
+ 
+-	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
++	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
+ 
+ 	/*
+ 	 * Initially PLLs are in bypass. Force PLL parameter update,
+@@ -832,7 +835,7 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
+ 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
+ 	/* from excel file - DP1_SrcCtrl */
+-	tc_write(0x07a0, 0x00003083);
++	tc_write(DP1_SRCCTRL, 0x00003083);
+ 
+ 	rate = clk_get_rate(tc->refclk);
+ 	switch (rate) {
+@@ -853,8 +856,9 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 	}
+ 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
+ 	tc_write(SYS_PLLPARAM, value);
++
+ 	/* Setup Main Link */
+-	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
++	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
+ 	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
+ 	msleep(100);
+ 
 -- 
 2.19.1
 
