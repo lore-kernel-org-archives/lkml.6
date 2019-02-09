@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB0DC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB6EC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAAC921919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:52:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F06A21919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 15:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549727568;
-	bh=WLaB5j9fXDIXs7HAwPH/5lPuvZ9dAhX1k/iXjQuZtg0=;
+	s=default; t=1549727817;
+	bh=buf1gi2Y8ymXRv48z5g3r2fFgvnbxbuMsUUHlqcVba0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=XhSHGAw2eEk3r+bhNQ/VDuPGKaWqpFWtRig0bqvOVF/Z2lYbJlfwB7HNw18ISe2uK
-	 SxGOqLjv65tnNzhT99S0GkFisQjuIoXmpm6y8KlIDuqUI4558S9ni01l+JXGFUcuqJ
-	 TeHkR+j9ce4aY1lxsGEfoT581E7zN0NM1XH9XMDU=
+	b=VXcXKVR1nydhPfTjZmr2OWvUh1dRyzGranaK/LqFu57cNeekfL4pp/5D2RhrWR88X
+	 Kf2Cf9xs6mYtfrMcgo9OF1wx09OYcPGgJosvYFBfSW5VX+Nxd2peklKMyWd8fZM5E7
+	 pZCUIaWOcskOVZ10hnrTbvpP69ua+gMYkMbOjAx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfBIPwq (ORCPT
+        id S1726979AbfBIP44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 10:52:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50100 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 10:56:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726741AbfBIPwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 10:52:46 -0500
+        id S1726894AbfBIP4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 10:56:55 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37902217D8;
-        Sat,  9 Feb 2019 15:52:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51EB4217D8;
+        Sat,  9 Feb 2019 15:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549727564;
-        bh=WLaB5j9fXDIXs7HAwPH/5lPuvZ9dAhX1k/iXjQuZtg0=;
+        s=default; t=1549727814;
+        bh=buf1gi2Y8ymXRv48z5g3r2fFgvnbxbuMsUUHlqcVba0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BBHSY5UGjZvIB1MqlIKnFA/TIyB3T4S457KZNyQ7IA9uUnmB4ijC0gVakenM5JbPp
-         I8RqV2mnFLISTYE/4oyrvGFyIgDNUr+Eq9VoiRWL01e8WrUehZmIUa3yB7GBtQXUB5
-         69MXcIWiDWpMFyNWn9M9excUNyrYtIgMWNfaNLW4=
-Date:   Sat, 9 Feb 2019 15:52:39 +0000
+        b=ART72GWsXmhNJrfUlKAlD+fW+ZTl78njHkO07nQNpCO1/CynzyTMldV7O+yIBfM4X
+         +44H6ZTj4sIGoJDrFHe83nxq3nnYvpoKJsfHJqaIaguvsNQfsT4A8ZT0IEfPzZFo/A
+         j7KMH0h0sXBQiyDSPDxGSYPl5MG6Kuby+BS4Omxc=
+Date:   Sat, 9 Feb 2019 15:56:50 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: ad7768-1: Add support for setting the
- sampling frequency
-Message-ID: <20190209155239.3908b4fd@archlinux>
-In-Reply-To: <1549276215-29570-1-git-send-email-stefan.popa@analog.com>
-References: <1549276215-29570-1-git-send-email-stefan.popa@analog.com>
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     linux-iio@vger.kernel.org,
+        Alexandru Ardelean <ardeleanalex@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] iio: adc: ad7476: Add support for TI ADS786X ADCs
+Message-ID: <20190209155650.12e99647@archlinux>
+In-Reply-To: <20190204124441.18079-1-ricardo@ribalda.com>
+References: <20190204124441.18079-1-ricardo@ribalda.com>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -58,326 +57,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 12:30:15 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+On Mon,  4 Feb 2019 13:44:41 +0100
+Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
 
-> The AD7768-1 core ADC receives a master clock signal (MCLK). The MCLK
-> frequency combined with the MCLK division and the digital filter
-> decimation rates, determines the sampling frequency. Along with
-> MCLK_DIV, the power mode is also configured according to datasheet
-> recommendations.
+> Add support for Texas Instruments ADS7866, ADS7867 and ADS7868
+> 8/10/12 bit Single channel ADC.
 > 
-> From user space, available sampling frequencies can be read. However,
-> it is not required for an exact value to be entered, since the driver
-> will look for the closest available match.
+> Datasheet: http://www.ti.com/lit/ds/symlink/ads7868.pdf
 > 
-> When the device configuration changes (for example, if the filter
-> decimation rate changes), a SYNC_IN pulse is required.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-
-Interesting. The binding always required the clock, but the driver
-wasn't using it.  Handy now as we 'should' have no bindings out there
-that don't provide it.  Same with the sync in gpio.
-
-Was a fairly narrow window for anyone to have written such a binding
-even if this misses the merge window, but good forward thinking there :)
-+ keeps Rob happy by being as complete as possible from the start.
-
-Anyhow, looks good to me.
-
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
 Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to poke it.
+the autobuilders to play with it.
 
 Thanks,
 
 Jonathan
 
 > ---
->  drivers/iio/adc/ad7768-1.c | 202 ++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 199 insertions(+), 3 deletions(-)
+> v4: Changes by Alexandru Ardelean <ardeleanalex@gmail.com>
 > 
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index 78449e9..0d13270 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -9,6 +9,7 @@
->  #include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/regulator/consumer.h>
-> @@ -59,6 +60,18 @@
->  #define AD7768_REG_DIG_DIAG_STATUS	0x30
->  #define AD7768_REG_MCLK_COUNTER		0x31
+> Break Kconfig into a table
+> 
+>  drivers/iio/adc/Kconfig  | 11 +++++++----
+>  drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
+>  2 files changed, 27 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index f9354e5ee65c..3d82727fa977 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -57,14 +57,17 @@ config AD7298
+>  	  module will be called ad7298.
 >  
-> +/* AD7768_REG_POWER_CLOCK */
-> +#define AD7768_PWR_MCLK_DIV_MSK		GENMASK(5, 4)
-> +#define AD7768_PWR_MCLK_DIV(x)		FIELD_PREP(AD7768_PWR_MCLK_DIV_MSK, x)
-> +#define AD7768_PWR_PWRMODE_MSK		GENMASK(1, 0)
-> +#define AD7768_PWR_PWRMODE(x)		FIELD_PREP(AD7768_PWR_PWRMODE_MSK, x)
-> +
-> +/* AD7768_REG_DIGITAL_FILTER */
-> +#define AD7768_DIG_FIL_FIL_MSK		GENMASK(6, 4)
-> +#define AD7768_DIG_FIL_FIL(x)		FIELD_PREP(AD7768_DIG_FIL_FIL_MSK, x)
-> +#define AD7768_DIG_FIL_DEC_MSK		GENMASK(2, 0)
-> +#define AD7768_DIG_FIL_DEC_RATE(x)	FIELD_PREP(AD7768_DIG_FIL_DEC_MSK, x)
-> +
->  /* AD7768_REG_CONVERSION */
->  #define AD7768_CONV_MODE_MSK		GENMASK(2, 0)
->  #define AD7768_CONV_MODE(x)		FIELD_PREP(AD7768_CONV_MODE_MSK, x)
-> @@ -80,11 +93,51 @@ enum ad7768_pwrmode {
->  	AD7768_FAST_MODE = 3
+>  config AD7476
+> -	tristate "Analog Devices AD7476 and similar 1-channel ADCs driver"
+> +	tristate "Analog Devices AD7476 1-channel ADCs driver and other similar devices from AD an TI"
+>  	depends on SPI
+>  	select IIO_BUFFER
+>  	select IIO_TRIGGERED_BUFFER
+>  	help
+> -	  Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
+> -	  AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
+> -	  AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
+> +	  Say yes here to build support for the following SPI analog to
+> +	  digital converters (ADCs):
+> +	  Analog Devices: AD7273, AD7274, AD7276, AD7277, AD7278, AD7475,
+> +	  AD7476, AD7477, AD7478, AD7466, AD7467, AD7468, AD7495, AD7910,
+> +	  AD7920.
+> +	  Texas Instruments: ADS7866, ADS7867, ADS7868.
+>  
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called ad7476.
+> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> index 0549686b9ef8..76747488044b 100644
+> --- a/drivers/iio/adc/ad7476.c
+> +++ b/drivers/iio/adc/ad7476.c
+> @@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
+>  	ID_ADC081S,
+>  	ID_ADC101S,
+>  	ID_ADC121S,
+> +	ID_ADS7866,
+> +	ID_ADS7867,
+> +	ID_ADS7868,
 >  };
 >  
-> +enum ad7768_mclk_div {
-> +	AD7768_MCLK_DIV_16,
-> +	AD7768_MCLK_DIV_8,
-> +	AD7768_MCLK_DIV_4,
-> +	AD7768_MCLK_DIV_2
-> +};
-> +
-> +enum ad7768_dec_rate {
-> +	AD7768_DEC_RATE_32 = 0,
-> +	AD7768_DEC_RATE_64 = 1,
-> +	AD7768_DEC_RATE_128 = 2,
-> +	AD7768_DEC_RATE_256 = 3,
-> +	AD7768_DEC_RATE_512 = 4,
-> +	AD7768_DEC_RATE_1024 = 5,
-> +	AD7768_DEC_RATE_8 = 9,
-> +	AD7768_DEC_RATE_16 = 10
-> +};
-> +
-> +struct ad7768_clk_configuration {
-> +	enum ad7768_mclk_div mclk_div;
-> +	enum ad7768_dec_rate dec_rate;
-> +	unsigned int clk_div;
-> +	enum ad7768_pwrmode pwrmode;
-> +};
-> +
-> +static const struct ad7768_clk_configuration ad7768_clk_config[] = {
-> +	{ AD7768_MCLK_DIV_2, AD7768_DEC_RATE_8, 16,  AD7768_FAST_MODE },
-> +	{ AD7768_MCLK_DIV_2, AD7768_DEC_RATE_16, 32,  AD7768_FAST_MODE },
-> +	{ AD7768_MCLK_DIV_2, AD7768_DEC_RATE_32, 64, AD7768_FAST_MODE },
-> +	{ AD7768_MCLK_DIV_2, AD7768_DEC_RATE_64, 128, AD7768_FAST_MODE },
-> +	{ AD7768_MCLK_DIV_2, AD7768_DEC_RATE_128, 256, AD7768_FAST_MODE },
-> +	{ AD7768_MCLK_DIV_4, AD7768_DEC_RATE_128, 512, AD7768_MED_MODE },
-> +	{ AD7768_MCLK_DIV_4, AD7768_DEC_RATE_256, 1024, AD7768_MED_MODE },
-> +	{ AD7768_MCLK_DIV_4, AD7768_DEC_RATE_512, 2048, AD7768_MED_MODE },
-> +	{ AD7768_MCLK_DIV_4, AD7768_DEC_RATE_1024, 4096, AD7768_MED_MODE },
-> +	{ AD7768_MCLK_DIV_8, AD7768_DEC_RATE_1024, 8192, AD7768_MED_MODE },
-> +	{ AD7768_MCLK_DIV_16, AD7768_DEC_RATE_1024, 16384, AD7768_ECO_MODE },
-> +};
-> +
->  static const struct iio_chan_spec ad7768_channels[] = {
->  	{
->  		.type = IIO_VOLTAGE,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
->  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
->  		.indexed = 1,
->  		.channel = 0,
->  		.scan_index = 0,
-> @@ -102,8 +155,12 @@ struct ad7768_state {
->  	struct spi_device *spi;
->  	struct regulator *vref;
->  	struct mutex lock;
-> +	struct clk *mclk;
-> +	unsigned int mclk_freq;
-> +	unsigned int samp_freq;
->  	struct completion completion;
->  	struct iio_trigger *trig;
-> +	struct gpio_desc *gpio_sync_in;
->  	/*
->  	 * DMA (thus cache coherency maintenance) requires the
->  	 * transfer buffers to live in their own cache lines.
-> @@ -210,6 +267,90 @@ static int ad7768_reg_access(struct iio_dev *indio_dev,
->  	return ret;
->  }
+>  static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+> @@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+>  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+>  		BIT(IIO_CHAN_INFO_RAW))
+>  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> +#define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
+> +		BIT(IIO_CHAN_INFO_RAW))
 >  
-> +static int ad7768_set_dig_fil(struct ad7768_state *st,
-> +			      enum ad7768_dec_rate dec_rate)
-> +{
-> +	unsigned int mode;
-> +	int ret;
-> +
-> +	if (dec_rate == AD7768_DEC_RATE_8 || dec_rate == AD7768_DEC_RATE_16)
-> +		mode = AD7768_DIG_FIL_FIL(dec_rate);
-> +	else
-> +		mode = AD7768_DIG_FIL_DEC_RATE(dec_rate);
-> +
-> +	ret = ad7768_spi_reg_write(st, AD7768_REG_DIGITAL_FILTER, mode);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* A sync-in pulse is required every time the filter dec rate changes */
-> +	gpiod_set_value(st->gpio_sync_in, 1);
-> +	gpiod_set_value(st->gpio_sync_in, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad7768_set_freq(struct ad7768_state *st,
-> +			   unsigned int freq)
-> +{
-> +	unsigned int diff_new, diff_old, pwr_mode, i, idx;
-> +	int res, ret;
-> +
-> +	diff_old = U32_MAX;
-> +	idx = 0;
-> +
-> +	res = DIV_ROUND_CLOSEST(st->mclk_freq, freq);
-> +
-> +	/* Find the closest match for the desired sampling frequency */
-> +	for (i = 0; i < ARRAY_SIZE(ad7768_clk_config); i++) {
-> +		diff_new = abs(res - ad7768_clk_config[i].clk_div);
-> +		if (diff_new < diff_old) {
-> +			diff_old = diff_new;
-> +			idx = i;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Set both the mclk_div and pwrmode with a single write to the
-> +	 * POWER_CLOCK register
-> +	 */
-> +	pwr_mode = AD7768_PWR_MCLK_DIV(ad7768_clk_config[idx].mclk_div) |
-> +		   AD7768_PWR_PWRMODE(ad7768_clk_config[idx].pwrmode);
-> +	ret = ad7768_spi_reg_write(st, AD7768_REG_POWER_CLOCK, pwr_mode);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =  ad7768_set_dig_fil(st, ad7768_clk_config[idx].dec_rate);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	st->samp_freq = DIV_ROUND_CLOSEST(st->mclk_freq,
-> +					  ad7768_clk_config[idx].clk_div);
-> +
-> +	return 0;
-> +}
-> +
-> +static ssize_t ad7768_sampling_freq_avail(struct device *dev,
-> +					  struct device_attribute *attr,
-> +					  char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +	unsigned int freq;
-> +	int i, len = 0;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ad7768_clk_config); i++) {
-> +		freq = DIV_ROUND_CLOSEST(st->mclk_freq,
-> +					 ad7768_clk_config[i].clk_div);
-> +		len += scnprintf(buf + len, PAGE_SIZE - len, "%d ", freq);
-> +	}
-> +
-> +	buf[len - 1] = '\n';
-> +
-> +	return len;
-> +}
-> +
-> +static IIO_DEV_ATTR_SAMP_FREQ_AVAIL(ad7768_sampling_freq_avail);
-> +
->  static int ad7768_read_raw(struct iio_dev *indio_dev,
->  			   struct iio_chan_spec const *chan,
->  			   int *val, int *val2, long info)
-> @@ -242,13 +383,43 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
->  		*val2 = chan->scan_type.realbits;
->  
->  		return IIO_VAL_FRACTIONAL_LOG2;
-> +
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val = st->samp_freq;
-> +
-> +		return IIO_VAL_INT;
->  	}
->  
->  	return -EINVAL;
->  }
->  
-> +static int ad7768_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int val, int val2, long info)
-> +{
-> +	struct ad7768_state *st = iio_priv(indio_dev);
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		return ad7768_set_freq(st, val);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static struct attribute *ad7768_attributes[] = {
-> +	&iio_dev_attr_sampling_frequency_available.dev_attr.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group ad7768_group = {
-> +	.attrs = ad7768_attributes,
-> +};
-> +
->  static const struct iio_info ad7768_info = {
-> +	.attrs = &ad7768_group,
->  	.read_raw = &ad7768_read_raw,
-> +	.write_raw = &ad7768_write_raw,
->  	.debugfs_reg_access = &ad7768_reg_access,
+>  static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+>  	[ID_AD7091R] = {
+> @@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+>  		.channel[0] = ADC081S_CHAN(12),
+>  		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+>  	},
+> +	[ID_ADS7866] = {
+> +		.channel[0] = ADS786X_CHAN(12),
+> +		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	},
+> +	[ID_ADS7867] = {
+> +		.channel[0] = ADS786X_CHAN(10),
+> +		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	},
+> +	[ID_ADS7868] = {
+> +		.channel[0] = ADS786X_CHAN(8),
+> +		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	},
 >  };
 >  
-> @@ -270,9 +441,13 @@ static int ad7768_setup(struct ad7768_state *st)
->  	if (ret)
->  		return ret;
->  
-> -	/* Set power mode to fast */
-> -	return ad7768_spi_reg_write(st, AD7768_REG_POWER_CLOCK,
-> -				    AD7768_FAST_MODE);
-> +	st->gpio_sync_in = devm_gpiod_get(&st->spi->dev, "adi,sync-in",
-> +					  GPIOD_OUT_LOW);
-> +	if (IS_ERR(st->gpio_sync_in))
-> +		return PTR_ERR(st->gpio_sync_in);
-> +
-> +	/* Set the default sampling frequency to 32000 kSPS */
-> +	return ad7768_set_freq(st, 32000);
->  }
->  
->  static irqreturn_t ad7768_trigger_handler(int irq, void *p)
-> @@ -356,6 +531,13 @@ static void ad7768_regulator_disable(void *data)
->  	regulator_disable(st->vref);
->  }
->  
-> +static void ad7768_clk_disable(void *data)
-> +{
-> +	struct ad7768_state *st = data;
-> +
-> +	clk_disable_unprepare(st->mclk);
-> +}
-> +
->  static int ad7768_probe(struct spi_device *spi)
->  {
->  	struct ad7768_state *st;
-> @@ -383,6 +565,20 @@ static int ad7768_probe(struct spi_device *spi)
->  	if (ret)
->  		return ret;
->  
-> +	st->mclk = devm_clk_get(&spi->dev, "mclk");
-> +	if (IS_ERR(st->mclk))
-> +		return PTR_ERR(st->mclk);
-> +
-> +	ret = clk_prepare_enable(st->mclk);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret = devm_add_action_or_reset(&spi->dev, ad7768_clk_disable, st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->mclk_freq = clk_get_rate(st->mclk);
-> +
->  	spi_set_drvdata(spi, indio_dev);
->  	mutex_init(&st->lock);
->  
+>  static const struct iio_info ad7476_info = {
+> @@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
+>  	{"adc081s", ID_ADC081S},
+>  	{"adc101s", ID_ADC101S},
+>  	{"adc121s", ID_ADC121S},
+> +	{"ads7866", ID_ADS7866},
+> +	{"ads7867", ID_ADS7867},
+> +	{"ads7868", ID_ADS7868},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(spi, ad7476_id);
 
