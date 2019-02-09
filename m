@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B07C7C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6298C282CC
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792CB2192D
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDD821939
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738145;
-	bh=Kzj2qF6PejyI4uKCWP4oKeQSSAMvGqgOB29qTWwE1S8=;
+	s=default; t=1549738146;
+	bh=usF7bQ3zN4VSY0Qbhe5+9OumbZ1jw9ho1p+MeIhxWtY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hjpiS5XiRwbpj9fN1sOLtPhTLcFmuPrkfPlvC2WXpZrqH8Km3nsfOAlVOc4A2v5RR
-	 UIt7kgrgbiYw28eiRGOIfyyGkiPaHqLpWFfg7HxEl7hgueRu5lFwsfLNnaWRfshMzm
-	 ecu4JBI5W3qeel1/ivWdVgW+DVulwOCMzgxwHIVY=
+	b=MfTj6vGny9Tfr4/j++lv6wQXriqZZYt1S6ThxIulqVZF4G9gaF+Rl9Q+tN9ZDmGnH
+	 rowEgbmQCw4XbaEL9Wib/9odQGSi02L5CPcRbvfnB7OTTkjRjTj1HmcSj/oRj/pEvO
+	 nx2+2FADMoeeYPzMvv4zv9wnCrh+aiIMh8Wdlen4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbfBIStE (ORCPT
+        id S1727970AbfBIStF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:49:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34090 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:49:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727923AbfBIStA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:49:00 -0500
+        id S1727919AbfBISs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8592621916;
-        Sat,  9 Feb 2019 18:48:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B4F2192C;
+        Sat,  9 Feb 2019 18:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738140;
-        bh=Kzj2qF6PejyI4uKCWP4oKeQSSAMvGqgOB29qTWwE1S8=;
+        s=default; t=1549738139;
+        bh=usF7bQ3zN4VSY0Qbhe5+9OumbZ1jw9ho1p+MeIhxWtY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VClmYRe13d5wunqyXKn97hNRNfELYRwKWTWopZ9fskto//6pMSmrr+tJYImNxKSVD
-         TQCReP8zeeGRcV6VYdLa+pAQ7+NTAOKSkIjaO71dORb4edfqWrSb+tcO8rqXWzOvjB
-         gzYKNBuQENu2RwytnGDist+7O3rcBzGeoaRKpiWA=
+        b=rDdrbZHdwn6UMNJ9PARxGLqycAJR0kRZNoHRco0ggIuI+2aNn3m8lUCnv+qy9vx8R
+         NIlpWI+VD8CRDNxiMPYh6kkkOHzGc/mEJHFXIamF6unx/JmDT5SSIOOhSpGuAnKzPr
+         BiHDRZFMUqe43uADSSIvGgdEE3iXcCW0pSD0Hvgg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 09/28] drm/bridge: tc358767: add defines for DP1_SRCCTRL & PHY_2LANE
-Date:   Sat,  9 Feb 2019 13:48:17 -0500
-Message-Id: <20190209184840.126418-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 08/28] drm/bridge: tc358767: add bus flags
+Date:   Sat,  9 Feb 2019 13:48:16 -0500
+Message-Id: <20190209184840.126418-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -60,70 +61,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit adf4109896bbee27fd2ac3b48d22d6a0062fe517 ]
+[ Upstream commit 4842379cbe6e851de914a7132f76f4e200b9a98b ]
 
-DP1_SRCCTRL register and PHY_2LANE field did not have matching defines.
-Add these.
+tc358767 driver does not set DRM bus_flags, even if it does configures
+the polarity settings into its registers. This means that the DPI source
+can't configure the polarities correctly.
+
+Add sync flags accordingly.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-3-tomi.valkeinen@ti.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-2-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 29a7e33e8ae0..5f0a666db2fd 100644
+index 8e28e738cb52..29a7e33e8ae0 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -142,6 +142,8 @@
- #define DP0_LTLOOPCTRL		0x06d8
- #define DP0_SNKLTCTRL		0x06e4
+@@ -1195,6 +1195,10 @@ static int tc_bridge_attach(struct drm_bridge *bridge)
  
-+#define DP1_SRCCTRL		0x07a0
-+
- /* PHY */
- #define DP_PHY_CTRL		0x0800
- #define DP_PHY_RST			BIT(28)  /* DP PHY Global Soft Reset */
-@@ -150,6 +152,7 @@
- #define PHY_M1_RST			BIT(12)  /* Reset PHY1 Main Channel */
- #define PHY_RDY				BIT(16)  /* PHY Main Channels Ready */
- #define PHY_M0_RST			BIT(8)   /* Reset PHY0 Main Channel */
-+#define PHY_2LANE			BIT(2)   /* PHY Enable 2 lanes */
- #define PHY_A0_EN			BIT(1)   /* PHY Aux Channel0 Enable */
- #define PHY_M0_EN			BIT(0)   /* PHY Main Channel0 Enable */
+ 	drm_display_info_set_bus_formats(&tc->connector.display_info,
+ 					 &bus_format, 1);
++	tc->connector.display_info.bus_flags =
++		DRM_BUS_FLAG_DE_HIGH |
++		DRM_BUS_FLAG_PIXDATA_NEGEDGE |
++		DRM_BUS_FLAG_SYNC_NEGEDGE;
+ 	drm_connector_attach_encoder(&tc->connector, tc->bridge.encoder);
  
-@@ -564,7 +567,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
- 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
- 	tc_write(SYS_PLLPARAM, value);
- 
--	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN);
-+	tc_write(DP_PHY_CTRL, BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN);
- 
- 	/*
- 	 * Initially PLLs are in bypass. Force PLL parameter update,
-@@ -834,7 +837,7 @@ static int tc_main_link_setup(struct tc_data *tc)
- 		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
- 		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
- 	/* from excel file - DP1_SrcCtrl */
--	tc_write(0x07a0, 0x00003083);
-+	tc_write(DP1_SRCCTRL, 0x00003083);
- 
- 	rate = clk_get_rate(tc->refclk);
- 	switch (rate) {
-@@ -855,8 +858,9 @@ static int tc_main_link_setup(struct tc_data *tc)
- 	}
- 	value |= SYSCLK_SEL_LSCLK | LSCLK_DIV_2;
- 	tc_write(SYS_PLLPARAM, value);
-+
- 	/* Setup Main Link */
--	dp_phy_ctrl = BGREN | PWR_SW_EN | BIT(2) | PHY_A0_EN |  PHY_M0_EN;
-+	dp_phy_ctrl = BGREN | PWR_SW_EN | PHY_2LANE | PHY_A0_EN |  PHY_M0_EN;
- 	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
- 	msleep(100);
- 
+ 	return 0;
 -- 
 2.19.1
 
