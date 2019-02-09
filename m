@@ -2,236 +2,320 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9072C282CC
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 09:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FDFC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 09:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0A3218D2
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 09:32:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E4E92084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 09:37:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="EOmp6bOA"
+	dkim=pass (2048-bit key) header.d=nexb-com.20150623.gappssmtp.com header.i=@nexb-com.20150623.gappssmtp.com header.b="wA7mF+AG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfBIJcf (ORCPT
+        id S1726892AbfBIJh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 04:32:35 -0500
-Received: from server.eikelenboom.it ([91.121.65.215]:44548 "EHLO
-        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbfBIJce (ORCPT
+        Sat, 9 Feb 2019 04:37:56 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38229 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726058AbfBIJh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 04:32:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=K3HzAy9rtcMrK0BczBoUrSt1e18GIqvuenX+LoU/UgU=; b=EOmp6bOAbS/wmVet3Amlshk+Ok
-        zRspdpprL4dgu97Bq+FescguUESs14SNSmAhyKSOUwG20XofqctZznfGeCfXQEMM7NP0kVktC9Ft9
-        RlioxR64gRysrbobrP2X/bzW6Q7CQni9/1Z7wSEa9Y4QOYTghn2+wLafEM6CWPZycExk=;
-Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:35756 helo=[172.16.1.50])
-        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <linux@eikelenboom.it>)
-        id 1gsP05-0006kJ-DL; Sat, 09 Feb 2019 10:32:41 +0100
-Subject: Re: Linux 5.0 regression: rtl8169 / kernel BUG at
- lib/dynamic_queue_limits.c:27!
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        Eric Dumazet <edumazet@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-References: <6c389fde-4c8d-300b-8c3c-300d6105c30a@eikelenboom.it>
- <0f605e50-56fe-06b5-9b66-6aed89a608ce@gmail.com>
- <471e550b-c227-22e6-19fd-5f9abd450e5f@eikelenboom.it>
- <1265d424-4943-e571-a74b-b1512ebec179@gmail.com>
- <059e59c6-2264-fd5c-068f-3656e39539c1@eikelenboom.it>
- <140d0df7-1775-5457-aa03-b21ece250a72@gmail.com>
- <e6423f51-42cc-e49f-bb48-85ea922f01b6@gmail.com>
- <aa7eb814-ebf7-ffa5-ce61-317b9bbf2394@gmail.com>
-From:   Sander Eikelenboom <linux@eikelenboom.it>
-Message-ID: <6b4e8aa0-03c5-c0a8-439e-77daabb07416@eikelenboom.it>
-Date:   Sat, 9 Feb 2019 10:34:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 9 Feb 2019 04:37:56 -0500
+Received: by mail-wm1-f65.google.com with SMTP id v26so7477629wmh.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 01:37:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexb-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Uwry33ZHCThOYfueuVwhDMUhSVTxEJBtWp2owuBAqPs=;
+        b=wA7mF+AG74MTX3MQbGc/J7GiI8fMaCrP55FkmNkeSn2kJ2I/0Gf6lSjVb0r5eM7enl
+         6Hrcd4Qe0wxamO7YamGSVMF2Hp4V7kZGzNfj2SqrvBNjf58Z6Ue7+oxVUjHl6CwX9i17
+         fskve1ercHtDtZlfDJqqsO/S4Deb4UZcVJjF02crNN137lDbjGhM8UKssjAAPD2diXvR
+         R4BA9tBR3s0VrdGSKAsIodckzAe4A368OdN11ncqaDIh5YHuyfCnYUBEHZVn11nrbL4L
+         x1MR/vnUcJrTy+26Oe5a9g53WPNOovPE6Ady2WOMMeT5GSM9oti4KaAHjejfePGPMLnX
+         mZSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Uwry33ZHCThOYfueuVwhDMUhSVTxEJBtWp2owuBAqPs=;
+        b=OAGIWodYi1FG9QCJNjib8k6mP1eSBF5qJ41WpbHWYnJFQrUM+uF8C6gQbI0AbBqz8I
+         uNmdkGKwcvpvW4ZpiNlZcTfkvW80RVlLPmzgtyfTfIdMx571/ZNEJxJX91wcD0ZDIN6Z
+         sBr8v8hQmeNz2UYFdwUtu0VQO683pL06770GaU2lqUWyB1bvWCm8LzK3PD8V1AfiDNSH
+         62Wxd685P49JI889putBxqfEzXlnD6xO+tQorHZ+fU3m+PXeOH6GJoKYwnsEvPBIPFrd
+         vOrD3NifJGEYjUf9pZRdlQGLthdHckFtaYa8/eChPDe2InVp6kYGgGSN1WfR3x6L2aAN
+         khqw==
+X-Gm-Message-State: AHQUAuZKxPeOse5HfMluU+6kD8Wg29+pOVr6o7cl5tr8Ri0OQVZz38Vr
+        rU66L1uYtIr1VyWpFcyy6LoW1NNoP7tDFjBJE5onJA==
+X-Google-Smtp-Source: AHgI3IZgwfBxve78OWGzi4jw4aIuM4bn04zPCiNbZn/mGbSosAzFRyS3c3U+NGpfWgAczz6h4PNgtQPafybZL1sQTOI=
+X-Received: by 2002:a1c:2884:: with SMTP id o126mr2319563wmo.17.1549705073086;
+ Sat, 09 Feb 2019 01:37:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <aa7eb814-ebf7-ffa5-ce61-317b9bbf2394@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <alpine.DEB.2.21.1901282105450.1669@nanos.tec.linutronix.de>
+ <20190129130658.GA19205@linux-8ccs> <alpine.DEB.2.21.1901291510060.1513@nanos.tec.linutronix.de>
+ <20190206172151.56fcce6c@lwn.net> <alpine.DEB.2.21.1902081649290.2144@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1902081649290.2144@nanos.tec.linutronix.de>
+From:   Philippe Ombredanne <pombredanne@nexb.com>
+Date:   Sat, 9 Feb 2019 10:37:17 +0100
+Message-ID: <CAOFm3uE9DakoBsPv6GrSfeHMQOoGsFBj61o-p0YfxmEvjYRsvg@mail.gmail.com>
+Subject: Re: [PATCH v2] module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Jessica Yu <jeyu@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Christoph Hellwig <hch@lst.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/02/2019 10:02, Heiner Kallweit wrote:
-> On 09.02.2019 00:09, Eric Dumazet wrote:
->>
->>
->> On 02/08/2019 01:50 PM, Heiner Kallweit wrote:
->>> On 08.02.2019 22:45, Sander Eikelenboom wrote:
->>>> On 08/02/2019 22:22, Heiner Kallweit wrote:
->>>>> On 08.02.2019 21:55, Sander Eikelenboom wrote:
->>>>>> On 08/02/2019 19:52, Heiner Kallweit wrote:
->>>>>>> On 08.02.2019 19:29, Sander Eikelenboom wrote:
->>>>>>>> L.S.,
->>>>>>>>
->>>>>>>> While testing a linux 5.0-rc5 kernel (with some patches on top but they don't seem related) under Xen i the nasty splat below, 
->>>>>>>> that I haven encountered with Linux 4.20.x.
->>>>>>>>
->>>>>>>> Unfortunately I haven't got a clear reproducer for this and bisecting could be nasty due to another (networking related) kernel bug.
->>>>>>>>
->>>>>>>> If you need more info, want me to run a debug patch etc., please feel free to ask.
->>>>>>>>
->>>>>>> Thanks for the report. However I see no change in the r8169 driver between
->>>>>>> 4.20 and 5.0 with regard to BQL code. Having said that the root cause could
->>>>>>> be somewhere else. Therefore I'm afraid a bisect will be needed.
->>>>>>
->>>>>> Hmm i did some diging and i think:
->>>>>> bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
->>>>>> 2e6eedb4813e34d8d84ac0eb3afb668966f3f356 r8169: make use of xmit_more and __netdev_sent_queue
->>>>>> 620344c43edfa020bbadfd81a144ebe5181fc94f net: core: add __netdev_sent_queue as variant of __netdev_tx_sent_queue
->>>>>>
->>>>> You're right. Thought this was added in 4.20 already.
->>>>> The BQL code pattern I copied from the mlx4 driver and so far I haven't heard about
->>>>> this issue from any user of physical hw. And due to the fact that a lot of mainboards
->>>>> have onboard Realtek network I have quite a few testers out there.
->>>>> Does the issue occur under specific circumstances like very high load?
->>>>
->>>> Yep, the box is already quite contented with the Xen VM's and if I remember correctly it occurred while kernel compiling
->>>> on the host.
->>>>
->>>>> If indeed the xmit_more patch causes the issue, I think we have to involve Eric Dumazet
->>>>> as author of the underlying changes.
->>>>
->>>> It could also be the barriers weren't that unneeded as assumed.
->>>
->>> The barriers were removed after adding xmit_more handling. Therefore it would be good to
->>> test also with only 
->>> bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 r8169: remove unneeded mmiowb barriers
->>> removed.
->>>
->>>> Since we are almost at RC6 i took the liberty to CC Eric now.
->>>>
->>> Sure, thanks.
->>>
->>>> BTW am i correct these patches are merely optimizations ?
->>>
->>> Yes
->>>
->>>> If so and concluding they revert cleanly, perhaps it should be considered at this point in the RC's
->>>> to revert them for 5.0 and try again for 5.1 ?
->>>>
->>> Before removing both it would be good to test with only the barrier-removal removed.
->>>
->>
->> Commit 2e6eedb4813e34d8d84ac0eb3afb668966f3f356 r8169: make use of xmit_more and __netdev_sent_queue
->> looks buggy to me, since the skb might have been freed already on another cpu when you call
->>
->> You could try :
->>
->> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
->> index 3624e67aef72c92ed6e908e2c99ac2d381210126..f907d484165d9fd775e81bf2bfb9aa4ddedb1c93 100644
->> --- a/drivers/net/ethernet/realtek/r8169.c
->> +++ b/drivers/net/ethernet/realtek/r8169.c
->> @@ -6070,6 +6070,7 @@ static netdev_tx_t rtl8169_start_xmit(struct sk_buff *skb,
->>         dma_addr_t mapping;
->>         u32 opts[2], len;
->>         bool stop_queue;
->> +       bool door_bell;
->>         int frags;
->>  
->>         if (unlikely(!rtl_tx_slots_avail(tp, skb_shinfo(skb)->nr_frags))) {
->> @@ -6116,6 +6117,8 @@ static netdev_tx_t rtl8169_start_xmit(struct sk_buff *skb,
->>         /* Force memory writes to complete before releasing descriptor */
->>         dma_wmb();
->>  
->> +       door_bell = __netdev_sent_queue(dev, skb->len, skb->xmit_more);
->> +
->>         txd->opts1 = rtl8169_get_txd_opts1(opts[0], len, entry);
->>  
->>         /* Force all memory writes to complete before notifying device */
->> @@ -6127,7 +6130,7 @@ static netdev_tx_t rtl8169_start_xmit(struct sk_buff *skb,
->>         if (unlikely(stop_queue))
->>                 netif_stop_queue(dev);
->>  
->> -       if (__netdev_sent_queue(dev, skb->len, skb->xmit_more)) {
->> +       if (door_bell) {
->>                 RTL_W8(tp, TxPoll, NPQ);
->>                 mmiowb();
->>         }
->>
-> Thanks a lot for checking and for the proposed fix.
-> Sander, can you try with this patch on top of 5.0-rc5 w/o removing two two commits?
+Hi Thomas:
+On Fri, Feb 8, 2019 at 5:03 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> The original MODULE_LICENSE string for kernel modules licensed under the
+> GPL v2 (only / or later) was simply "GPL", which was - and still is -
+> completely sufficient for the purpose of module loading and checking
+> whether the module is free software or proprietary.
+>
+> In January 2003 this was changed with commit 3344ea3ad4b7 ("[PATCH]
+> MODULE_LICENSE and EXPORT_SYMBOL_GPL support"). This commit can be found in
+> the history git repository which holds the 1:1 import of Linus' bitkeeper
+> repository:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=3344ea3ad4b7c302c846a680dbaeedf96ed45c02
+>
+> The main intention of the patch was to refuse linking proprietary modules
+> against symbols exported with EXPORT_SYMBOL_GPL() at module load time.
+>
+> As a completely undocumented side effect it also introduced the distinction
+> between "GPL" and "GPL v2" MODULE_LICENSE() strings:
+>
+>  *      "GPL"                           [GNU Public License v2 or later]
+>  *      "GPL v2"                        [GNU Public License v2]
+>  *      "GPL and additional rights"     [GNU Public License v2 rights and more]
+>  *      "Dual BSD/GPL"                  [GNU Public License v2
+>  *                                       or BSD license choice]
+>  *      "Dual MPL/GPL"                  [GNU Public License v2
+>  *                                       or Mozilla license choice]
+>
+> This distinction was and still is wrong in several aspects:
+>
+>  1) It broke all modules which were using the "GPL" string in the
+>     MODULE_LICENSE() already and were licensed under GPL v2 only.
+>
+>     A quick license scan over the tree at that time shows that at least 480
+>     out of 1484 modules have been affected by this change back then. The
+>     number is probably way higher as this was just a quick check for
+>     clearly identifiable license information.
+>
+>     There was exactly ONE instance of a "GPL v2" module license string in
+>     the kernel back then - drivers/net/tulip/xircom_tulip_cb.c which
+>     otherwise had no license information at all. There is no indication
+>     that the change above is any way related to this driver. The change
+>     happend with the 2.4.11 release which was on Oct. 9 2001 - so quite
+>     some time before the above commit. Unfortunately there is no trace on
+>     the intertubes to any discussion of this.
+>
+>  2) The dual licensed strings became ill defined as well because following
+>     the "GPL" vs. "GPL v2" distinction all dual licensed (or additional
+>     rights) MODULE_LICENSE strings would either require those dual licensed
+>     modules to be licensed under GPL v2 or later or just be unspecified for
+>     the dual licensing case. Neither choice is coherent with the GPL
+>     distinction.
+>
+> Due to the lack of a proper changelog and no real discussion on the patch
+> submission other than a few implementation details, it's completely unclear
+> why this distinction was introduced at all. Other than the comment in the
+> module header file exists no documentation for this at all.
+>
+> From a license compliance and license scanning POV this distinction is a
+> total nightmare.
+>
+> As of 5.0-rc2 2873 out of 9200 instances of MODULE_LICENSE() strings are
+> conflicting with the actual license in the source code (either SPDX or
+> license boilerplate/reference). A comparison between the scan of the
+> history tree and a scan of current Linus tree shows to the extent that the
+> git rename detection over Linus tree grafted with the history tree is
+> halfways complete that almost none of the files which got broken in 2003
+> have been cleaned up vs. the MODULE_LICENSE string. So subtracting those
+> 480 known instances from the conflicting 2800 of today more than 25% of the
+> module authors got it wrong and it's a high propability that a large
+> portion of the rest just got it right by chance.
+>
+> There is no value for the module loader to convey the detailed license
+> information as the only decision to be made is whether the module is free
+> software or not.
+>
+> The "and additional rights", "BSD" and "MPL" strings are not conclusive
+> license information either. So there is no point in trying to make the GPL
+> part conclusive and exact. As shown above it's already non conclusive for
+> dual licensing and incoherent with a large portion of the module source.
+>
+> As an unintended side effect this distinction causes a major headache for
+> license compliance, license scanners and the ongoing effort to clean up the
+> license mess of the kernel.
+>
+> Therefore remove the well meant, but ill defined, distinction between "GPL"
+> and "GPL v2" and document that:
+>
+>   - "GPL" and "GPL v2" both express that the module is licensed under GPLv2
+>     (without a distinction of 'only' and 'or later') and is therefore kernel
+>     license compliant.
+>
+>   - None of the MODULE_LICENSE strings can be used for expressing or
+>     determining the exact license
+>
+>   - Their sole purpose is to decide whether the module is free software or
+>     not.
+>
+> Add a MODULE_LICENSE subsection to the license rule documentation as well.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+> Acked-by: Joe Perches <joe@perches.com>
+>
+> ---
+>
+> V2: Fixed the "GPL v2" hickup and the typo spotted by Jessica.
+>
+>  Documentation/process/license-rules.rst |   62 ++++++++++++++++++++++++++++++++
+>  include/linux/module.h                  |   18 ++++++++-
+>  2 files changed, 79 insertions(+), 1 deletion(-)
+>
+> --- a/Documentation/process/license-rules.rst
+> +++ b/Documentation/process/license-rules.rst
+> @@ -372,3 +372,65 @@ in the LICENSE subdirectories. This is r
+>  verification (e.g. checkpatch.pl) and to have the licenses ready to read
+>  and extract right from the source, which is recommended by various FOSS
+>  organizations, e.g. the `FSFE REUSE initiative <https://reuse.software/>`_.
+> +
+> +_`MODULE_LICENSE`
+> +-----------------
+> +
+> +   Loadable kernel modules also require a MODULE_LICENSE() tag. This tag is
+> +   neither a replacement for proper source code license information
+> +   (SPDX-License-Identifier) nor in any way relevant for expressing or
+> +   determining the exact license under which the source code of the module
+> +   is provided.
+> +
+> +   The sole purpose of this tag is to provide sufficient information
+> +   whether the module is free software or proprietary for the kernel
+> +   module loader and for user space tools.
+> +
+> +   The valid license strings for MODULE_LICENSE() are:
+> +
+> +    ============================= =============================================
+> +    "GPL"                        Module is licensed under GPL version 2. This
+> +                                 does not express any distinction between
+> +                                 GPL-2.0-only or GPL-2.0-or-later. The exact
+> +                                 license information can only be determined
+> +                                 via the license information in the
+> +                                 corresponding source files.
+> +
+> +    "GPL v2"                     Same as "GPL". It exists for historic
+> +                                 reasons.
+> +
+> +    "GPL and additional rights"   Historical variant of expressing that the
+> +                                 module source is dual licensed under a
+> +                                 GPL v2 variant and MIT license. Please do
+> +                                 not use in new code.
+> +
+> +    "Dual MIT/GPL"               The correct way of expressing that the
+> +                                 module is dual licensed under a GPL v2
+> +                                 variant or MIT license choice.
+> +
+> +    "Dual BSD/GPL"               The module is dual licensed under a GPL v2
+> +                                 variant or BSD license choice. The exact
+> +                                 variant of the BSD license can only be
+> +                                 determined via the license information
+> +                                 in the corresponding source files.
+> +
+> +    "Dual MPL/GPL"               The module is dual licensed under a GPL v2
+> +                                 variant or Mozilla Public License (MPL)
+> +                                 choice. The exact variant of the MPL
+> +                                 license can only be determined via the
+> +                                 license information in the corresponding
+> +                                 source files.
+> +
+> +    "Proprietary"                The module is under a proprietary license.
+> +                                 This string is solely for proprietary third
+> +                                 party modules and cannot be used for modules
+> +                                 which have their source code in the kernel
+> +                                 tree. Modules tagged that way are tainting
+> +                                 the kernel with the 'P' flag when loaded and
+> +                                 the kernel module loader refuses to link such
+> +                                 modules against symbols which are exported
+> +                                 with EXPORT_SYMBOL_GPL().
+> +    ============================= =============================================
+> +
+> +
+> +
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -172,7 +172,7 @@ extern void cleanup_module(void);
+>   * The following license idents are currently accepted as indicating free
+>   * software modules
+>   *
+> - *     "GPL"                           [GNU Public License v2 or later]
+> + *     "GPL"                           [GNU Public License v2]
+>   *     "GPL v2"                        [GNU Public License v2]
+>   *     "GPL and additional rights"     [GNU Public License v2 rights and more]
+>   *     "Dual BSD/GPL"                  [GNU Public License v2
+> @@ -186,6 +186,22 @@ extern void cleanup_module(void);
+>   *
+>   *     "Proprietary"                   [Non free products]
+>   *
+> + * Both "GPL v2" and "GPL" (the latter also in dual licensed strings) are
+> + * merily stating that the module is licensed under the GPL v2, but are not
 
-I have done that already during the night .. the results:
-- I can confirm 2e6eedb4813e34d8d84ac0eb3afb668966f3f356 is the first commit which causes hitting the BUG_ON in lib/dynamic_queue_limits.c.
-  (in other word, with only reverting bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 it still blows up).
+Nit: did you mean merely (as mere/just) ? or merily/merrily (as in
+cheerfully/happily) ? :D
 
-- The Eric's patch only applies cleanly with bd7153bd83b806bfcc2e79b7a6f43aa653d06ef3 reverted, so that's what I tested.
-  The patch seems to prevent hitting the BUG_ON in lib/dynamic_queue_limits.c, it has run this night and I gave done a few kernel compiles
-  this morning. How ever during these kernel compiles i'm getting a transmit queue timeout which i haven't seen with 4.20.x, although i regularly
-  compile kernels in the same way as I do now. The only thing I can't say if that is due to this change, or if it's again something else.
-  Which makes me somewhat inclined to go testing the complete revert some more and see if I can trigger the queue timeout on that or not.
+> + * telling whether "GPL v2 only" or "GPL v2 or later". The reason why there
+> + * are two variants is a historic and failed attempt to convey more
+> + * information in the MODULE_LICENSE string. For module loading the
+> + * "only/or later" distinction is completely irrelevant and does neither
+> + * replace the proper license identifiers in the corresponding source file
+> + * nor amends them in any way. The sole purpose is to make the
+> + * 'Proprietary' flagging work and to refuse to bind symbols which are
+> + * exported with EXPORT_SYMBOL_GPL when a non free module is loaded.
+> + *
+> + * In the same way "BSD" is not a clear license information. It merily
 
-  If I can, it is a separate issue.
-  If I can't it seems even with a patch it still seems as a regression in comparison with 4.20.x, for which
-  a revert would be the right thing to do (since as you indicated these are merely optimizations), 
-  which would give us more time for 5.1 to try to solve things on top of the 5.0-release-to-be.
-  (especially since I seem to still have other issues which need to be sorted out and time is limited)
+Nit: merily. same as above
 
-  The timeout in question:
-        [28336.869479] NETDEV WATCHDOG: eth1 (r8169): transmit queue 0 timed out
-        [28336.881498] WARNING: CPU: 0 PID: 6925 at net/sched/sch_generic.c:461 dev_watchdog+0x20b/0x210
-        [28336.893358] Modules linked in:
-        [28336.904106] CPU: 0 PID: 6925 Comm: cc1 Tainted: G      D           5.0.0-rc5-20190208-thp-net-florian-rtl8169-eric-doflr+ #1
-        [28336.917385] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
-        [28336.928988] RIP: e030:dev_watchdog+0x20b/0x210
-        [28336.940623] Code: 00 49 63 4e e0 eb 90 4c 89 e7 c6 05 ad d8 f1 00 01 e8 a9 32 fd ff 89 d9 48 89 c2 4c 89 e6 48 c7 c7 50 59 89 82 e8 e5 92 4d ff <0f> 0b eb c0 90 48 c7 47 08 00 00 00 00 48 c7 07 00 00 00 00 0f b7
-        [28336.965265] RSP: e02b:ffff88807d403ea0 EFLAGS: 00010286
-        [28336.977465] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff82a69db8
-        [28336.991265] RDX: 0000000000000001 RSI: 0000000000000001 RDI: 0000000000000200
-        [28337.008865] RBP: ffff88807936e41c R08: 0000000000000000 R09: 0000000000000819
-        [28337.022250] R10: 0000000000000202 R11: ffffffff8247ca80 R12: ffff88807936e000
-        [28337.035204] R13: 0000000000000000 R14: ffff88807936e440 R15: 0000000000000001
-        [28337.049832] FS:  00007f53e9bf3840(0000) GS:ffff88807d400000(0000) knlGS:0000000000000000
-        [28337.062524] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
-        [28337.075086] CR2: 00007f53e60c4000 CR3: 000000001a0be000 CR4: 0000000000000660
-        [28337.090052] Call Trace:
-        [28337.103615]  <IRQ>
-        [28337.116587]  ? qdisc_destroy+0x120/0x120
-        [28337.128905]  call_timer_fn+0x19/0x90
-        [28337.141892]  expire_timers+0x8b/0xa0
-        [28337.153354]  run_timer_softirq+0x7e/0x160
-        [28337.165931]  ? handle_irq_event_percpu+0x4c/0x70
-        [28337.176548]  ? handle_percpu_irq+0x32/0x50
-        [28337.186734]  __do_softirq+0xed/0x229
-        [28337.196404]  ? hypervisor_callback+0xa/0x20
-        [28337.207822]  irq_exit+0xb7/0xc0
-        [28337.218978]  xen_evtchn_do_upcall+0x27/0x40
-        [28337.230763]  xen_do_hypervisor_callback+0x29/0x40
-        [28337.241261]  </IRQ>
-        [28337.253283] RIP: e033:0xff7e62
-        [28337.264899] Code: 35 43 0f c7 00 4c 89 ef e8 8b 6d 67 ff 0f 1f 00 44 89 e0 44 89 e2 c1 e8 06 83 e2 3f 48 8b 0c c5 40 8d c6 01 48 0f a3 d1 72 0e <48> 8b 04 c5 50 8d c6 01 48 0f a3 d0 73 0b 44 89 e6 4c 89 ef e8 b5
-        [28337.288677] RSP: e02b:00007fff0fc6a340 EFLAGS: 00000202
-        [28337.299234] RAX: 0000000000000000 RBX: 00007f53e60c3580 RCX: 0000000000000000
-        [28337.309577] RDX: 0000000000000034 RSI: 0000000001e71a98 RDI: 00007fff0fc6a538
-        [28337.320724] RBP: 00007fff0fc6a4b0 R08: 0000000000000000 R09: 0000000000000000
-        [28337.331829] R10: 0000000000000001 R11: 00000000020cb3d0 R12: 0000000000000034
-        [28337.343900] R13: 00007fff0fc6a538 R14: 0000000000000000 R15: 0000000000000001
-        [28337.353977] ---[ end trace 6ff49f09286816b7 ]---
+> + * states, that the module is licensed under one of the compatible BSD
+> + * license variants. The detailed and correct license information is again
+> + * to be found in the corresponding source files.
+> + *
+>   * There are dual licensed components, but when running with Linux it is the
+>   * GPL that is relevant so this is a non issue. Similarly LGPL linked with GPL
+>   * is a GPL combined work.
+
+Just to add to your points, I have seen a few times folks create
+out-of-tree modules and use a MODULE_LICENSE "Proprietary" with a
+proper GPL license notice at the top just to ensure that the code
+would not be able to link with and use symbols exported with
+EXPORT_SYMBOL_GPL().
+
+This further reinforces the relevance of your argument as
+MODULE_LICENSE can be used also as a pure technical solution that is
+not making any licensing statement. So much so that a rewrite could
+instead use something akin to EXPORT_SYMBOL_PRIVATE/INTERNAL/NON_API (
+as 0 or 1) and MODULE_CAN_USE_PRIVATE/INTERNAL/NON_API_SYMBOLS ( as 0
+or 1) and not deal with anything license-related? After all this is
+mostly a binary flag.
 
 --
-Sander
+Cordially
 
- 
->>
->> .
->>
-> Heiner
-> 
-
+Philippe Ombredanne
