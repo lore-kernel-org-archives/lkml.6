@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116FBC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53342C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C70192192C
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 202D020821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738222;
-	bh=MQTGSY09TyUclca/OrHUfULTB8fjti+r8Lwuz1hHS3s=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ZQnoMLZJU110MIp3s82emi4PsZzIsfRE8LHm3KDxCnknHFWRq3kTsw60Ur4JRMKtw
-	 3HSvmUfvlWpjvb1E4P1lAgDF5QNtSYWXStBYoc6u59fegN3jRmkz7PeGu8YXsNI+QI
-	 LyvCBh5J8fscPYUpyNO6gpsygXeHPUJ62wVP2bNc=
+	s=default; t=1549738226;
+	bh=dYD2GRlrzaj4tWVTl1CsTuP/lztArw8MawALQxaP3kg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Exr38rjzuYD64SuUAaY+urQIh2Afwq7emoXeL9A9XI4a/bXmo0pSwpj4RQVF8FtV3
+	 JzDd9zRKGD8DM1mpjuIazXIhtKouKvGtpU5YNmnifznJE15bAX5Tt3xDFYb8oWWqfo
+	 zEpzKJq/C7gsfIu+ziIHd6G9y2lJHDIkRsGj55JQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbfBISuU (ORCPT
+        id S1728409AbfBISuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36962 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:50:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728357AbfBISuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:50:16 -0500
+        id S1728374AbfBISuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:50:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E28E2192D;
-        Sat,  9 Feb 2019 18:50:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F3FE2192C;
+        Sat,  9 Feb 2019 18:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738216;
-        bh=MQTGSY09TyUclca/OrHUfULTB8fjti+r8Lwuz1hHS3s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=wmwzcMxjo3xWgpkfoN80t1IcS5ZTehU1vQ4oEGLUGFVr6KT+7oB6onEmi9/2tsfYU
-         aprtlMEFE5epzl74nxFZ8wzFmhgOP6EtC90bya0mwu1iu83DFHJ4lIreA0h03cn4jx
-         632u7uElHeqGgtWLz7ytET1Vd1fuuhfWoEVkJQNU=
+        s=default; t=1549738220;
+        bh=dYD2GRlrzaj4tWVTl1CsTuP/lztArw8MawALQxaP3kg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aBQPm4zwhf7vWtho2pNbIwX7tqmbecdZ+7dd3Qg5QrAPDzChu4PAwHhr/QRytILa3
+         7ays9SB3Rved2ustnqAcs6dNPIc8/elBP5QfqtQVP1FGLjvM+tdZIBI4pbj0qUWpvy
+         1krKQVbJTPm3O5fuE9FxZK0dfumqhtN+8nEUqo2s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 1/4] ARM: dts: da850-evm: Correct the sound card name
-Date:   Sat,  9 Feb 2019 13:50:11 -0500
-Message-Id: <20190209185014.127264-1-sashal@kernel.org>
+Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 4/4] cifs: Limit memory used by lock request calls to a page
+Date:   Sat,  9 Feb 2019 13:50:14 -0500
+Message-Id: <20190209185014.127264-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190209185014.127264-1-sashal@kernel.org>
+References: <20190209185014.127264-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -56,36 +57,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-[ Upstream commit 7fca69d4e43fa1ae9cb4f652772c132dc5a659c6 ]
+[ Upstream commit 92a8109e4d3a34fb6b115c9098b51767dc933444 ]
 
-To avoid  the following error:
-asoc-simple-card sound: ASoC: Failed to create card debugfs directory
+The code tries to allocate a contiguous buffer with a size supplied by
+the server (maxBuf). This could fail if memory is fragmented since it
+results in high order allocations for commonly used server
+implementations. It is also wasteful since there are probably
+few locks in the usual case. Limit the buffer to be no larger than a
+page to avoid memory allocation failures due to fragmentation.
 
-Which is because the card name contains '/' character, which can not be
-used in file or directory names.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/da850-evm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/file.c     | 8 ++++++++
+ fs/cifs/smb2file.c | 4 ++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
-index 4f935ad9f27b..505ea30c9cb2 100644
---- a/arch/arm/boot/dts/da850-evm.dts
-+++ b/arch/arm/boot/dts/da850-evm.dts
-@@ -146,7 +146,7 @@
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 338c92620d07..5dd8165a5429 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1075,6 +1075,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 		return -EINVAL;
+ 	}
  
- 	sound {
- 		compatible = "simple-audio-card";
--		simple-audio-card,name = "DA850/OMAP-L138 EVM";
-+		simple-audio-card,name = "DA850-OMAPL138 EVM";
- 		simple-audio-card,widgets =
- 			"Line", "Line In",
- 			"Line", "Line Out";
++	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
++		     PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
++			PAGE_SIZE);
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+ 						sizeof(LOCKING_ANDX_RANGE);
+ 	buf = kzalloc(max_num * sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
+@@ -1410,6 +1414,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
+ 
++	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
++		     PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
++			PAGE_SIZE);
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+ 						sizeof(LOCKING_ANDX_RANGE);
+ 	buf = kzalloc(max_num * sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
+diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
+index fabeaa0ff1bf..df7f4515c63d 100644
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -110,6 +110,8 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
+ 
++	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	buf = kzalloc(max_num * sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf)
+@@ -246,6 +248,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 		return -EINVAL;
+ 	}
+ 
++	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	buf = kzalloc(max_num * sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf) {
 -- 
 2.19.1
 
