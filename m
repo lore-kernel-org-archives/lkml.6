@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 053D0C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 06:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79182C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 06:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A2E20857
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 06:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F04621773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 06:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfBIG6F (ORCPT
+        id S1727049AbfBIG6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 01:58:05 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:41366 "EHLO
+        Sat, 9 Feb 2019 01:58:11 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:41372 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbfBIG6D (ORCPT
+        with ESMTP id S1726949AbfBIG6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 01:58:03 -0500
+        Sat, 9 Feb 2019 01:58:09 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id AF541149CF792;
-        Fri,  8 Feb 2019 22:58:02 -0800 (PST)
-Date:   Fri, 08 Feb 2019 22:58:02 -0800 (PST)
-Message-Id: <20190208.225802.704784915757139721.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 83F84149D93E8;
+        Fri,  8 Feb 2019 22:58:08 -0800 (PST)
+Date:   Fri, 08 Feb 2019 22:58:08 -0800 (PST)
+Message-Id: <20190208.225808.269387328723471283.davem@davemloft.net>
 To:     gustavo@embeddedor.com
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: use struct_size() in devm_kzalloc()
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: usb: cdc-phonet: use struct_size() in
+ alloc_netdev()
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190208011603.GA927@embeddedor>
-References: <20190208011603.GA927@embeddedor>
+In-Reply-To: <20190208031313.GA2848@embeddedor>
+References: <20190208031313.GA2848@embeddedor>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 08 Feb 2019 22:58:03 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 08 Feb 2019 22:58:08 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Thu, 7 Feb 2019 19:16:03 -0600
+Date: Thu, 7 Feb 2019 21:13:13 -0600
 
 > One of the more common cases of allocation size calculations is finding
 > the size of a structure that has a zero-sized array at the end, along
@@ -54,19 +55,15 @@ Date: Thu, 7 Feb 2019 19:16:03 -0600
 > 
 > struct foo {
 >     int stuff;
->     struct boo entry[];
+>     void *entry[];
 > };
 > 
-> size = sizeof(struct foo) + count * sizeof(struct boo);
-> instance = alloc(size, GFP_KERNEL)
+> instance = alloc(sizeof(struct foo) + count * sizeof(void *));
 > 
 > Instead of leaving these open-coded and prone to type mistakes, we can
 > now use the new struct_size() helper:
 > 
-> instance = alloc(struct_size(instance, entry, count), GFP_KERNEL)
-> 
-> Notice that, in this case, variable size is not necessary, hence it is
-> removed.
+> instance = alloc(struct_size(instance, entry, count));
 > 
 > This code was detected with the help of Coccinelle.
 > 
