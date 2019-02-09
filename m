@@ -2,144 +2,291 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47484C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 11:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68C3C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 11:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C5D218D2
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 11:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41D3E21919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 11:55:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="v31TyR6A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfBILyL (ORCPT
+        id S1726952AbfBILzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 06:54:11 -0500
-Received: from mga14.intel.com ([192.55.52.115]:48859 "EHLO mga14.intel.com"
+        Sat, 9 Feb 2019 06:55:24 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:31836 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbfBILyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 06:54:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 03:54:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,351,1544515200"; 
-   d="scan'208";a="121162440"
-Received: from chenyu-office.sh.intel.com ([10.239.158.163])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Feb 2019 03:54:09 -0800
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH][RFC] ACPI: add "processor.broadcast_ppc" hook to broadcast  _PPC to all online CPUs
-Date:   Sat,  9 Feb 2019 20:02:32 +0800
-Message-Id: <20190209120232.21582-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726670AbfBILzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 06:55:23 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43xVqB33Nxz9vBHB;
+        Sat,  9 Feb 2019 12:55:18 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=v31TyR6A; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id P1a1gQype3dv; Sat,  9 Feb 2019 12:55:18 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43xVqB1gfMz9v9DQ;
+        Sat,  9 Feb 2019 12:55:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549713318; bh=uIpF2o0PUkmD2Z7xloiPgNRct+4OvUEy29HRtYfPDMA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=v31TyR6Adk0khmmZZuScPOal81Qx6UQkmw83Q05n74cPr9hLT57F/plDBf8XSATLy
+         bulArDO16Lz62CO0g37Ljj7enfpEOL8tk4jN0irYclNX/o7jqpblfbf5mQSjbNDf+E
+         wkD/i6jrH1t5RZ8MBA9SEtcZJvTiTar5PRNGG3f0=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4186E8B755;
+        Sat,  9 Feb 2019 12:55:21 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id LwhHPHj5wZZo; Sat,  9 Feb 2019 12:55:21 +0100 (CET)
+Received: from [192.168.232.53] (unknown [192.168.232.53])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BFDAB8B775;
+        Sat,  9 Feb 2019 12:55:18 +0100 (CET)
+Subject: Re: [PATCH v4 3/3] powerpc/32: Add KASAN support
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+References: <cover.1548166824.git.christophe.leroy@c-s.fr>
+ <1f5629e03181d0e30efc603f00dad78912991a45.1548166824.git.christophe.leroy@c-s.fr>
+ <87ef8i45km.fsf@dja-thinkpad.axtens.net>
+ <69720148-fd19-0810-5a1d-96c45e2ec00c@c-s.fr>
+ <CAAeHK+wcUwLiSQffUkcyiH2fuox=VihJadEqQqRG1YfU3Y2gDA@mail.gmail.com>
+From:   christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <f8b9e9ec-991b-6824-46c2-f7fc0aaa7fb8@c-s.fr>
+Date:   Sat, 9 Feb 2019 12:55:12 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAAeHK+wcUwLiSQffUkcyiH2fuox=VihJadEqQqRG1YfU3Y2gDA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Avast (VPS 190208-4, 08/02/2019), Outbound message
+X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Dell Inc. XPS13 9333, the BIOS changes the value of
-MSR_IA32_MISC_ENABLE_TURBO_DISABLE at runtime (e.g., when
-the power source changes), the maximum frequency of the
-CPU is not updated accordingly. This is due to the policy's
-cpuinfo.max is not updated when _PPC notifier fires.
+Hi Andrey,
 
-Fix this problem by updating the policy's cpuinfo.max
-and broadcast the _PPC notifier to all online CPUs.
+Le 08/02/2019 à 18:40, Andrey Konovalov a écrit :
+> On Fri, Feb 8, 2019 at 6:17 PM Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>
+>> Hi Daniel,
+>>
+>> Le 08/02/2019 à 17:18, Daniel Axtens a écrit :
+>>> Hi Christophe,
+>>>
+>>> I've been attempting to port this to 64-bit Book3e nohash (e6500),
+>>> although I think I've ended up with an approach more similar to Aneesh's
+>>> much earlier (2015) series for book3s.
+>>>
+>>> Part of this is just due to the changes between 32 and 64 bits - we need
+>>> to hack around the discontiguous mappings - but one thing that I'm
+>>> particularly puzzled by is what the kasan_early_init is supposed to do.
+>>
+>> It should be a problem as my patch uses a 'for_each_memblock(memory,
+>> reg)' loop.
+>>
+>>>
+>>>> +void __init kasan_early_init(void)
+>>>> +{
+>>>> +    unsigned long addr = KASAN_SHADOW_START;
+>>>> +    unsigned long end = KASAN_SHADOW_END;
+>>>> +    unsigned long next;
+>>>> +    pmd_t *pmd = pmd_offset(pud_offset(pgd_offset_k(addr), addr), addr);
+>>>> +    int i;
+>>>> +    phys_addr_t pa = __pa(kasan_early_shadow_page);
+>>>> +
+>>>> +    BUILD_BUG_ON(KASAN_SHADOW_START & ~PGDIR_MASK);
+>>>> +
+>>>> +    if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
+>>>> +            panic("KASAN not supported with Hash MMU\n");
+>>>> +
+>>>> +    for (i = 0; i < PTRS_PER_PTE; i++)
+>>>> +            __set_pte_at(&init_mm, (unsigned long)kasan_early_shadow_page,
+>>>> +                         kasan_early_shadow_pte + i,
+>>>> +                         pfn_pte(PHYS_PFN(pa), PAGE_KERNEL_RO), 0);
+>>>> +
+>>>> +    do {
+>>>> +            next = pgd_addr_end(addr, end);
+>>>> +            pmd_populate_kernel(&init_mm, pmd, kasan_early_shadow_pte);
+>>>> +    } while (pmd++, addr = next, addr != end);
+>>>> +}
+>>>
+>>> As far as I can tell it's mapping the early shadow page, read-only, over
+>>> the KASAN_SHADOW_START->KASAN_SHADOW_END range, and it's using the early
+>>> shadow PTE array from the generic code.
+>>>
+>>> I haven't been able to find an answer to why this is in the docs, so I
+>>> was wondering if you or anyone else could explain the early part of
+>>> kasan init a bit better.
+>>
+>> See https://www.kernel.org/doc/html/latest/dev-tools/kasan.html for an
+>> explanation of the shadow.
+>>
+>> When shadow is 0, it means the memory area is entirely accessible.
+>>
+>> It is necessary to setup a shadow area as soon as possible because all
+>> data accesses check the shadow area, from the begining (except for a few
+>> files where sanitizing has been disabled in Makefiles).
+>>
+>> Until the real shadow area is set, all access are granted thanks to the
+>> zero shadow area beeing for of zeros.
+> 
+> Not entirely correct. kasan_early_init() indeed maps the whole shadow
+> memory range to the same kasan_early_shadow_page. However as kernel
+> loads and memory gets allocated this shadow page gets rewritten with
+> non-zero values by different KASAN allocator hooks. Since these values
+> come from completely different parts of the kernel, but all land on
+> the same page, kasan_early_shadow_page's content can be considered
+> garbage. When KASAN checks memory accesses for validity it detects
+> these garbage shadow values, but doesn't print any reports, as the
+> reporting routine bails out on the current->kasan_depth check (which
+> has the value of 1 initially). Only after kasan_init() completes, when
+> the proper shadow memory is mapped, current->kasan_depth gets set to 0
+> and we start reporting bad accesses.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200759
-Reported-and-tested-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
-Originally-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+That's surprising, because in the early phase I map the shadow area 
+read-only, so I do not expect it to get modified unless RO protection is 
+failing for some reason.
+
+Next week I'll add a test in early_init() to check the content of the 
+early shadow area.
+
+Christophe
+
+> 
+>>
+>> I mainly used ARM arch as an exemple when I implemented KASAN for ppc32.
+>>
+>>>
+>>> At the moment, I don't do any early init, and like Aneesh's series for
+>>> book3s, I end up needing a special flag to disable kasan until after
+>>> kasan_init. Also, as with Balbir's seris for Radix, some tests didn't
+>>> fire, although my missing tests are a superset of his. I suspect the
+>>> early init has something to do with these...?
+>>
+>> I think you should really focus on establishing a zero shadow area as
+>> early as possible instead of trying to ack the core parts of KASAN.
+>>
+>>>
+>>> (I'm happy to collate answers into a patch to the docs, btw!)
+>>
+>> We can also have the discussion going via
+>> https://github.com/linuxppc/issues/issues/106
+>>
+>>>
+>>> In the long term I hope to revive Aneesh's and Balbir's series for hash
+>>> and radix as well.
+>>
+>> Great.
+>>
+>> Christophe
+>>
+>>>
+>>> Regards,
+>>> Daniel
+>>>
+>>>> +
+>>>> +static void __init kasan_init_region(struct memblock_region *reg)
+>>>> +{
+>>>> +    void *start = __va(reg->base);
+>>>> +    void *end = __va(reg->base + reg->size);
+>>>> +    unsigned long k_start, k_end, k_cur, k_next;
+>>>> +    pmd_t *pmd;
+>>>> +
+>>>> +    if (start >= end)
+>>>> +            return;
+>>>> +
+>>>> +    k_start = (unsigned long)kasan_mem_to_shadow(start);
+>>>> +    k_end = (unsigned long)kasan_mem_to_shadow(end);
+>>>> +    pmd = pmd_offset(pud_offset(pgd_offset_k(k_start), k_start), k_start);
+>>>> +
+>>>> +    for (k_cur = k_start; k_cur != k_end; k_cur = k_next, pmd++) {
+>>>> +            k_next = pgd_addr_end(k_cur, k_end);
+>>>> +            if ((void *)pmd_page_vaddr(*pmd) == kasan_early_shadow_pte) {
+>>>> +                    pte_t *new = pte_alloc_one_kernel(&init_mm);
+>>>> +
+>>>> +                    if (!new)
+>>>> +                            panic("kasan: pte_alloc_one_kernel() failed");
+>>>> +                    memcpy(new, kasan_early_shadow_pte, PTE_TABLE_SIZE);
+>>>> +                    pmd_populate_kernel(&init_mm, pmd, new);
+>>>> +            }
+>>>> +    };
+>>>> +
+>>>> +    for (k_cur = k_start; k_cur < k_end; k_cur += PAGE_SIZE) {
+>>>> +            void *va = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>>>> +            pte_t pte = pfn_pte(PHYS_PFN(__pa(va)), PAGE_KERNEL);
+>>>> +
+>>>> +            if (!va)
+>>>> +                    panic("kasan: memblock_alloc() failed");
+>>>> +            pmd = pmd_offset(pud_offset(pgd_offset_k(k_cur), k_cur), k_cur);
+>>>> +            pte_update(pte_offset_kernel(pmd, k_cur), ~0, pte_val(pte));
+>>>> +    }
+>>>> +    flush_tlb_kernel_range(k_start, k_end);
+>>>> +}
+>>>> +
+>>>> +void __init kasan_init(void)
+>>>> +{
+>>>> +    struct memblock_region *reg;
+>>>> +
+>>>> +    for_each_memblock(memory, reg)
+>>>> +            kasan_init_region(reg);
+>>>> +
+>>>> +    kasan_init_tags();
+>>>> +
+>>>> +    /* At this point kasan is fully initialized. Enable error messages */
+>>>> +    init_task.kasan_depth = 0;
+>>>> +    pr_info("KASAN init done\n");
+>>>> +}
+>>>> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+>>>> index 33cc6f676fa6..ae7db88b72d6 100644
+>>>> --- a/arch/powerpc/mm/mem.c
+>>>> +++ b/arch/powerpc/mm/mem.c
+>>>> @@ -369,6 +369,10 @@ void __init mem_init(void)
+>>>>       pr_info("  * 0x%08lx..0x%08lx  : highmem PTEs\n",
+>>>>               PKMAP_BASE, PKMAP_ADDR(LAST_PKMAP));
+>>>>    #endif /* CONFIG_HIGHMEM */
+>>>> +#ifdef CONFIG_KASAN
+>>>> +    pr_info("  * 0x%08lx..0x%08lx  : kasan shadow mem\n",
+>>>> +            KASAN_SHADOW_START, KASAN_SHADOW_END);
+>>>> +#endif
+>>>>    #ifdef CONFIG_NOT_COHERENT_CACHE
+>>>>       pr_info("  * 0x%08lx..0x%08lx  : consistent mem\n",
+>>>>               IOREMAP_TOP, IOREMAP_TOP + CONFIG_CONSISTENT_SIZE);
+>>>> --
+>>>> 2.13.3
+>>
+>> --
+>> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+>> To post to this group, send email to kasan-dev@googlegroups.com.
+>> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/69720148-fd19-0810-5a1d-96c45e2ec00c%40c-s.fr.
+>> For more options, visit https://groups.google.com/d/optout.
+
 ---
- drivers/acpi/processor_perflib.c | 16 ++++++++++++++--
- drivers/cpufreq/cpufreq.c        |  2 ++
- drivers/cpufreq/intel_pstate.c   | 15 ++++++++++++++-
- 3 files changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
-index a303fd0e108c..737dbf5aa7f7 100644
---- a/drivers/acpi/processor_perflib.c
-+++ b/drivers/acpi/processor_perflib.c
-@@ -63,6 +63,10 @@ module_param(ignore_ppc, int, 0644);
- MODULE_PARM_DESC(ignore_ppc, "If the frequency of your machine gets wrongly" \
- 		 "limited by BIOS, this should help");
- 
-+static int broadcast_ppc;
-+module_param(broadcast_ppc, int, 0644);
-+MODULE_PARM_DESC(broadcast_ppc, "Broadcast the ppc to all online CPUs");
-+
- #define PPC_REGISTERED   1
- #define PPC_IN_USE       2
- 
-@@ -180,8 +184,16 @@ void acpi_processor_ppc_has_changed(struct acpi_processor *pr, int event_flag)
- 		else
- 			acpi_processor_ppc_ost(pr->handle, 0);
- 	}
--	if (ret >= 0)
--		cpufreq_update_policy(pr->id);
-+	if (ret >= 0) {
-+		if (broadcast_ppc) {
-+			int cpu;
-+
-+			for_each_possible_cpu(cpu)
-+				cpufreq_update_policy(cpu);
-+		} else {
-+			cpufreq_update_policy(pr->id);
-+		}
-+	}
- }
- 
- int acpi_processor_get_bios_limit(int cpu, unsigned int *limit)
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index e35a886e00bc..95e08816b512 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2237,6 +2237,8 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
- 
- 	policy->min = new_policy->min;
- 	policy->max = new_policy->max;
-+	policy->cpuinfo.max_freq = new_policy->cpuinfo.max_freq;
-+	policy->cpuinfo.min_freq = new_policy->cpuinfo.min_freq;
- 	trace_cpu_frequency_limits(policy);
- 
- 	policy->cached_target_freq = UINT_MAX;
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index dd66decf2087..e1881313c396 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2081,11 +2081,24 @@ static void intel_pstate_adjust_policy_max(struct cpufreq_policy *policy,
- 
- static int intel_pstate_verify_policy(struct cpufreq_policy *policy)
- {
-+	int max_freq;
- 	struct cpudata *cpu = all_cpu_data[policy->cpu];
- 
- 	update_turbo_state();
-+	max_freq = intel_pstate_get_max_freq(cpu);
-+
-+	if (acpi_ppc && policy->max == policy->cpuinfo.max_freq &&
-+	    max_freq != policy->cpuinfo.max_freq) {
-+		/*
-+		 * System was not running under any constraints, but the
-+		 * current max possible frequency is changed. So reset
-+		 * policy limits.
-+		 */
-+		policy->cpuinfo.max_freq = policy->max = max_freq;
-+	}
-+
- 	cpufreq_verify_within_limits(policy, policy->cpuinfo.min_freq,
--				     intel_pstate_get_max_freq(cpu));
-+				     max_freq);
- 
- 	if (policy->policy != CPUFREQ_POLICY_POWERSAVE &&
- 	    policy->policy != CPUFREQ_POLICY_PERFORMANCE)
--- 
-2.17.1
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
 
