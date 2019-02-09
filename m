@@ -2,168 +2,92 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DATE_IN_PAST_06_12,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E979C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 149EBC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 08:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E869720857
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8FF820844
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 08:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549699985;
+	bh=v3Lc96q1keNpO9788i9qRecdSsvI3G8N7o1O1ebncx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wA8vpwYlM3Ase98R+D/u8MWUswlEcscx/BksQMlPSfVuOStf0PbFoVonWx1F0mZgk
+	 0Ikrc4sUWGlOWUlzLxR12e3zDw3cct6q21v7gSP0vDzfUU9Slyk6eqCK8KBbW59Wm5
+	 6U1Vow61iJPbrOowCs+p2OPK0Thm0+Mfr5QHysyY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfBIH7Q (ORCPT
+        id S1726834AbfBIINE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 02:59:16 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:47910 "EHLO smtp4-g21.free.fr"
+        Sat, 9 Feb 2019 03:13:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbfBIH7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 02:59:16 -0500
-Received: from [192.168.1.42] (unknown [77.207.133.132])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id CEEAD19F4EA;
-        Sat,  9 Feb 2019 08:58:37 +0100 (CET)
-Subject: [PATCH v4 7/7] arm64: dts: qcom: msm8998: Add UFS nodes
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-To:     MSM <linux-arm-msm@vger.kernel.org>,
-        SCSI <linux-scsi@vger.kernel.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kishon Vijay Abraham <kishon@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Martin Petersen <martin.petersen@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
-Message-ID: <195f153d-9e66-d571-2c1a-1ec2c7c7d222@free.fr>
-Date:   Fri, 8 Feb 2019 23:22:09 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Firefox/52.0 SeaMonkey/2.49.4
+        id S1725946AbfBIINE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 03:13:04 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E5EC20844;
+        Sat,  9 Feb 2019 08:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549699983;
+        bh=v3Lc96q1keNpO9788i9qRecdSsvI3G8N7o1O1ebncx0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OoU3pIbSgqAyGvBubUCvOVSKO2lhTI7MYnH5aJqN8XDz4umfv/OCDrxBRNjrG7R78
+         tbIdsHH7NEdmie/fR22F2EJlPfd+T+T4hNdANBNDvN824cOi7EN+vP+EPcOu04u1F2
+         AB0/nzTJrtripCJjpyc6LzcGbToxERk/yLeTS+R0=
+Date:   Sat, 9 Feb 2019 09:13:01 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mark D Rustad <mrustad@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: Re: Linux 4.4.174
+Message-ID: <20190209081301.GB30034@kroah.com>
+References: <20190208105422.GA32328@kroah.com>
+ <20190208105431.GB32328@kroah.com>
+ <870EE9C6-3748-498C-B6E8-33724168C605@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <09ce9c20-c47b-f936-a8a9-6c8ec8f0f867@free.fr>
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <870EE9C6-3748-498C-B6E8-33724168C605@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add UFS host controller and PHY DT nodes for msm8998.
+On Fri, Feb 08, 2019 at 08:44:32PM -0800, Mark D Rustad wrote:
+> On Feb 8, 2019, at 2:54 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > diff --git a/Documentation/networking/ip-sysctl.txt
+> > b/Documentation/networking/ip-sysctl.txt
+> > index 2ea4c45cf1c8..7c229f59016f 100644
+> > --- a/Documentation/networking/ip-sysctl.txt
+> > +++ b/Documentation/networking/ip-sysctl.txt
+> > @@ -112,14 +112,11 @@ min_adv_mss - INTEGER
+> > 
+> >  IP Fragmentation:
+> > 
+> > -ipfrag_high_thresh - INTEGER
+> > -	Maximum memory used to reassemble IP fragments. When
+> > -	ipfrag_high_thresh bytes of memory is allocated for this purpose,
+> > -	the fragment handler will toss packets until ipfrag_low_thresh
+> > -	is reached. This also serves as a maximum limit to namespaces
+> > -	different from the initial one.
+> > -
+> > -ipfrag_low_thresh - INTEGER
+> > +ipfrag_high_thresh - LONG INTEGER
+> > +	Maximum memory used to reassemble IP fragments.
+> > +
+> > +ipfrag_low_thresh - LONG INTEGER
+> > +	(Obsolete since linux-4.17)
+> 
+> It seems very strange to say that it is obsolete since 4.17 in a 4.4 kernel.
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 19 +++++++
- arch/arm64/boot/dts/qcom/msm8998.dtsi     | 62 +++++++++++++++++++++++
- 2 files changed, 81 insertions(+)
+4.17 is a point in time :)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 19775cae1381..3e911488d4f3 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -284,3 +284,22 @@
- 	vdda-phy-supply = <&vreg_l1a_0p875>;
- 	vdda-pll-supply = <&vreg_l2a_1p2>;
- };
-+
-+&ufshc {
-+	vcc-supply = <&vreg_l20a_2p95>;
-+	vccq-supply = <&vreg_l26a_1p2>;
-+	vccq2-supply = <&vreg_s4a_1p8>;
-+	vcc-max-microamp = <750000>;
-+	vccq-max-microamp = <560000>;
-+	vccq2-max-microamp = <750000>;
-+};
-+
-+&ufsphy {
-+	vdda-phy-supply = <&vreg_l1a_0p875>;
-+	vdda-pll-supply = <&vreg_l2a_1p2>;
-+	vddp-ref-clk-supply = <&vreg_l26a_1p2>;
-+	vdda-phy-max-microamp = <51400>;
-+	vdda-pll-max-microamp = <14600>;
-+	vddp-ref-clk-max-microamp = <100>;
-+	vddp-ref-clk-always-on;
-+};
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 043ff2d2643c..d69401152089 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -983,6 +983,68 @@
- 			redistributor-stride = <0x0 0x20000>;
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
-+
-+		ufshc: ufshc@1da4000 {
-+			compatible = "qcom,msm8998-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
-+			reg = <0x01da4000 0x2500>;
-+			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+			phys = <&ufsphy_lanes>;
-+			phy-names = "ufsphy";
-+			lanes-per-direction = <2>;
-+			power-domains = <&gcc UFS_GDSC>;
-+
-+			clock-names =
-+				"core_clk",
-+				"bus_aggr_clk",
-+				"iface_clk",
-+				"core_clk_unipro",
-+				"ref_clk",
-+				"tx_lane0_sync_clk",
-+				"rx_lane0_sync_clk",
-+				"rx_lane1_sync_clk";
-+			clocks =
-+				<&gcc GCC_UFS_AXI_CLK>,
-+				<&gcc GCC_AGGRE1_UFS_AXI_CLK>,
-+				<&gcc GCC_UFS_AHB_CLK>,
-+				<&gcc GCC_UFS_UNIPRO_CORE_CLK>,
-+				<&rpmcc RPM_SMD_LN_BB_CLK1>,
-+				<&gcc GCC_UFS_TX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_RX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_RX_SYMBOL_1_CLK>;
-+			freq-table-hz =
-+				<50000000 200000000>,
-+				<0 0>,
-+				<0 0>,
-+				<37500000 150000000>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>;
-+
-+			resets = <&gcc GCC_UFS_BCR>;
-+			reset-names = "rst";
-+		};
-+
-+		ufsphy: phy@1da7000 {
-+			compatible = "qcom,msm8998-qmp-ufs-phy";
-+			reg = <0x01da7000 0x18c>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			clock-names = "ref", "ref_aux";
-+			clocks =
-+				<&gcc GCC_UFS_CLKREF_CLK>,
-+				<&gcc GCC_UFS_PHY_AUX_CLK>;
-+
-+			ufsphy_lanes: lanes@1da7400 {
-+				reg = <0x01da7400 0x128>,
-+				      <0x01da7600 0x1fc>,
-+				      <0x01da7c00 0x1dc>,
-+				      <0x01da7800 0x128>,
-+				      <0x01da7a00 0x1fc>;
-+				#phy-cells = <0>;
-+			};
-+		};
- 	};
- };
- 
--- 
-2.17.1
