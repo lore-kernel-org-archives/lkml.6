@@ -2,50 +2,53 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1019AC282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAA3C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF0AF21916
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B4D21919
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738128;
-	bh=ArKN5lGSVrm1Im/GtslV+Q9YX5p/4swjLHVDUfSJjSA=;
+	s=default; t=1549738136;
+	bh=Avq+VJtqu1toCmKDyZ6RnlAVYN5fXXym5aXu4isq1v0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nlw0mDKkEzVIhcicB5JD3bARs9ltdBd9Ny8azuOhK2GOl7f6IK0kIuYAVd8S1rHbU
-	 lG5QJmrPC8CGW4wvsdg8Hl1jjs9uZzEmB+/klhjhQhJ54BrE2pLUSmIpHTFqhEK2LU
-	 qiVoHMHKXd2DP5UP2HZ/3ci+dOCXr2RXiBCCKHEc=
+	b=txbETZIMyR7z73+9Q0CBc/ujIinzTFcGG3vuKFDMjw0zb1GkIBkdDXXCWEdaXdX1e
+	 upgJEUqIDQslbyalcXgIDaPcpxB+oWXbAEJs02HQfCCX5bTo5Iip4SzHfy6e2sS79c
+	 rvyQH5KeEZi9G98jasTO64XDkNvtJX9kZ+OFkUgI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfBISss (ORCPT
+        id S1727902AbfBISsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33728 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:48:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfBISso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:44 -0500
+        id S1727877AbfBISsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F3F421916;
-        Sat,  9 Feb 2019 18:48:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7C9B2192C;
+        Sat,  9 Feb 2019 18:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738123;
-        bh=ArKN5lGSVrm1Im/GtslV+Q9YX5p/4swjLHVDUfSJjSA=;
+        s=default; t=1549738130;
+        bh=Avq+VJtqu1toCmKDyZ6RnlAVYN5fXXym5aXu4isq1v0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lF7PF7Uem9MNQRWVRuQd/CBHfbFIBOHOS+Muohb03ybiA9hRQkcBm7EKt2tIu7dic
-         h70T+RShmakD17BdCp/Ak2STeeDMWeAuREyDZSJ80xXGh7oZ8NQf55vPVNq4ldfTzW
-         Lmc13CzYwFYY4UcXEyphfiD98sR6gIBtV06F7JuY=
+        b=wUL8f19I82hTvqqe7ZvQad0NfbrcYIWPfXhRVXX5BdyNTR6KeHuoGzToIwrQU+a2J
+         Fw//2PQ2es+Rj2+Vhxnr+bWkzYy7+tYsoeYqX/WafcDynvbtu7Hy7fUzjhVWLvG2ae
+         mTB8DLgTNrHUEjBUGxSVCTU8jIk/zjwxO4LxmsPA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 02/28] ACPI: NUMA: Use correct type for printing addresses on i386-PAE
-Date:   Sat,  9 Feb 2019 13:48:10 -0500
-Message-Id: <20190209184840.126418-2-sashal@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 04/28] perf test shell: Use a fallback to get the pathname in vfs_getname
+Date:   Sat,  9 Feb 2019 13:48:12 -0500
+Message-Id: <20190209184840.126418-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -57,89 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Fan <fanc.fnst@cn.fujitsu.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit b9ced18acf68dffebe6888c7ec765a2b1db7a039 ]
+[ Upstream commit 03fa483821c0b4db7c2b1453d3332f397d82313f ]
 
-The addresses of NUMA nodes are not printed correctly on i386-PAE
-which is misleading.
+Some kernels, like 4.19.13-300.fc29.x86_64 in fedora 29, fail with the
+existing probe definition asking for the contents of result->name,
+working when we ask for the 'filename' variable instead, so add a
+fallback to that.
 
-Here is a debian9-32bit with PAE in a QEMU guest having more than 4G
-of memory:
+Now those tests are back working on fedora 29 systems with that kernel:
 
-qemu-system-i386 \
--hda /var/lib/libvirt/images/debian32.qcow2 \
--m 5G \
--enable-kvm \
--smp 10 \
--numa node,mem=512M,nodeid=0,cpus=0 \
--numa node,mem=512M,nodeid=1,cpus=1 \
--numa node,mem=512M,nodeid=2,cpus=2 \
--numa node,mem=512M,nodeid=3,cpus=3 \
--numa node,mem=512M,nodeid=4,cpus=4 \
--numa node,mem=512M,nodeid=5,cpus=5 \
--numa node,mem=512M,nodeid=6,cpus=6 \
--numa node,mem=512M,nodeid=7,cpus=7 \
--numa node,mem=512M,nodeid=8,cpus=8 \
--numa node,mem=512M,nodeid=9,cpus=9 \
--serial stdio
+  # perf test vfs_getname
+  65: Use vfs_getname probe to get syscall args filenames   : Ok
+  66: Add vfs_getname probe to get syscall args filenames   : Ok
+  67: Check open filename arg using perf trace + vfs_getname: Ok
+  #
 
-Because of the wrong value type, it prints as below:
-
-[    0.021049] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.021740] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.022425] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.023092] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.023764] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.024431] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.025104] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.025791] ACPI: SRAT Memory (0x0 length 0x20000000) in proximity domain 6 enabled
-[    0.026412] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 7 enabled
-[    0.027118] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 8 enabled
-[    0.027802] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 9 enabled
-
-The upper half of the start address of the NUMA domains between 6
-and 9 inclusive was cut, so the printed values are incorrect.
-
-Fix the value type, to get the correct values in the log as follows:
-
-[    0.023698] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.024325] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.024981] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.025659] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.026317] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.026980] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.027635] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.028311] ACPI: SRAT Memory (0x100000000 length 0x20000000) in proximity domain 6 enabled
-[    0.028985] ACPI: SRAT Memory (0x120000000 length 0x20000000) in proximity domain 7 enabled
-[    0.029667] ACPI: SRAT Memory (0x140000000 length 0x20000000) in proximity domain 8 enabled
-[    0.030334] ACPI: SRAT Memory (0x160000000 length 0x20000000) in proximity domain 9 enabled
-
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-[ rjw: Subject & changelog ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-klt3n0i58dfqttveti09q3fi@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/numa.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 85167603b9c9..0da58f0bf7e5 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -147,9 +147,9 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 		{
- 			struct acpi_srat_mem_affinity *p =
- 			    (struct acpi_srat_mem_affinity *)header;
--			pr_debug("SRAT Memory (0x%lx length 0x%lx) in proximity domain %d %s%s%s\n",
--				 (unsigned long)p->base_address,
--				 (unsigned long)p->length,
-+			pr_debug("SRAT Memory (0x%llx length 0x%llx) in proximity domain %d %s%s%s\n",
-+				 (unsigned long long)p->base_address,
-+				 (unsigned long long)p->length,
- 				 p->proximity_domain,
- 				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
- 				 "enabled" : "disabled",
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 1c16e56cd93e..7cb99b433888 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -13,7 +13,8 @@ add_probe_vfs_getname() {
+ 	local verbose=$1
+ 	if [ $had_vfs_getname -eq 1 ] ; then
+ 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
+-		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=result->name:string"
++		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
++		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
+ 	fi
+ }
+ 
 -- 
 2.19.1
 
