@@ -2,194 +2,239 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AE4C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4423DC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 857AA21773
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:24:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="h6tDkJ8D"
+	by mail.kernel.org (Postfix) with ESMTP id 0499521773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfBIMYM (ORCPT
+        id S1727076AbfBIMYc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:24:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:48310 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbfBIMYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:24:11 -0500
-Received: from zn.tnic (p200300EC2BDAE10070CE2F41E4E18639.dip0.t-ipconnect.de [IPv6:2003:ec:2bda:e100:70ce:2f41:e4e1:8639])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2FEB91EC01AF;
-        Sat,  9 Feb 2019 13:24:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549715050;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=0omCYf6Nq6i28AW2rkfg4AfQ6d0467vpPKNZc2u7Zsw=;
-        b=h6tDkJ8DNoNF9yjA8ONRsGTJRGJRlbFvR0/5r0Q035Cm7plcmXVzG3PD+aVsldeYohi7EL
-        e/aiq+P5p1ey1GEeHOaLV2b4GPwwDTUU0yNRON1TFUAvICLl4A3phkT5atqoVNmQg3HQEa
-        CbOER2v8qUuaOQ66uCTExmHQolCdUgc=
-Date:   Sat, 9 Feb 2019 13:24:05 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH v7 06/28] x86/asm: annotate local pseudo-functions
-Message-ID: <20190209122405.GB5089@zn.tnic>
-References: <20190130124711.12463-1-jslaby@suse.cz>
- <20190130124711.12463-7-jslaby@suse.cz>
+        Sat, 9 Feb 2019 07:24:32 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58121 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfBIMYb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 07:24:31 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19COKnI2626537
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 9 Feb 2019 04:24:20 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19COKNp2626534;
+        Sat, 9 Feb 2019 04:24:20 -0800
+Date:   Sat, 9 Feb 2019 04:24:20 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Tony Jones <tipbot@zytor.com>
+Message-ID: <tip-8f2f350cbdb2c2fbff654cb778139144b48a59ba@git.kernel.org>
+Cc:     ravi.bangoria@linux.ibm.com, hpa@zytor.com,
+        s1seetee@linux.vnet.ibm.com, tonyj@suse.de, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, jolsa@kernel.org,
+        acme@redhat.com, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, jolsa@kernel.org,
+          acme@redhat.com, tglx@linutronix.de, ravi.bangoria@linux.ibm.com,
+          hpa@zytor.com, tonyj@suse.de, s1seetee@linux.vnet.ibm.com,
+          corbet@lwn.net
+In-Reply-To: <20190124005229.16146-7-tonyj@suse.de>
+References: <20190124005229.16146-7-tonyj@suse.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf script python: Add Python3 support to
+ tests/attr.py
+Git-Commit-ID: 8f2f350cbdb2c2fbff654cb778139144b48a59ba
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190130124711.12463-7-jslaby@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 01:46:49PM +0100, Jiri Slaby wrote:
-> Use the newly added SYM_CODE_START_LOCAL* to annotate starts of all
-> pseudo-functions (those ending END until now) which do not have ".globl"
-> annotation. This is needed to balance END for tools that generate
-> debuginfo. Note that we switch from END to SYM_CODE_END too so that
-> everybody can see the pairing.
-> 
-> We are not annotating C-like functions (which handle frame ptr etc.)
-> here, hence we use SYM_CODE_* macros here, not SYM_FUNC_*.  Note that
-> early_idt_handler_common already had ENDPROC -- switch that to
-> SYM_CODE_END for the same reason as above.
-> 
-> bogus_64_magic, bad_address, bad_get_user*, and bad_put_user are now
-> aligned, as they are separate functions. They do not mind to be aligned
-> -- no need to be compact there.
-> 
-> early_idt_handler_common is aligned now too, as it is after
-> early_idt_handler_array, so as well no need to be compact there.
-> 
-> verify_cpu is self-standing and included in other .S files, so align it
-> too.
-> 
-> The others have alignment preserved to what it used to be (using the
-> _NOALIGN variant of macros).
-> 
-> [v3] annotate more functions
-> [v4] describe the alignments changes
-> 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: <x86@kernel.org>
-> ---
->  arch/x86/entry/entry_32.S        | 5 ++---
->  arch/x86/entry/entry_64.S        | 3 ++-
->  arch/x86/kernel/acpi/wakeup_64.S | 3 ++-
->  arch/x86/kernel/head_32.S        | 4 ++--
->  arch/x86/kernel/head_64.S        | 4 ++--
->  arch/x86/kernel/verify_cpu.S     | 4 ++--
->  arch/x86/lib/getuser.S           | 8 ++++----
->  arch/x86/lib/putuser.S           | 4 ++--
->  8 files changed, 18 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-> index d309f30cf7af..306ae3e9a24c 100644
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -737,8 +737,7 @@ END(ret_from_fork)
->   */
->  
->  	# userspace resumption stub bypassing syscall exit tracing
-> -	ALIGN
-> -ret_from_exception:
-> +SYM_CODE_START_LOCAL(ret_from_exception)
+Commit-ID:  8f2f350cbdb2c2fbff654cb778139144b48a59ba
+Gitweb:     https://git.kernel.org/tip/8f2f350cbdb2c2fbff654cb778139144b48a59ba
+Author:     Tony Jones <tonyj@suse.de>
+AuthorDate: Wed, 23 Jan 2019 16:52:29 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 5 Feb 2019 10:31:08 -0300
 
-This wants to be a local label instead, no?
+perf script python: Add Python3 support to tests/attr.py
 
-.Lret_from_exception:
+Support both Python 2 and Python 3 in tests/attr.py
 
-...
+The use of "except as" syntax implies the minimum supported Python2 version is
+now v2.6
 
->  	preempt_stop(CLBR_ANY)
->  ret_from_intr:
->  #ifdef CONFIG_VM86
-> @@ -761,7 +760,7 @@ ENTRY(resume_userspace)
->  	movl	%esp, %eax
->  	call	prepare_exit_to_usermode
->  	jmp	restore_all
-> -END(ret_from_exception)
-> +SYM_CODE_END(ret_from_exception)
->  
->  #ifdef CONFIG_PREEMPT
->  ENTRY(resume_kernel)
-> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> index 1f0efdb7b629..463f9edd78a4 100644
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -1006,7 +1006,7 @@ EXPORT_SYMBOL(native_load_gs_index)
->  	_ASM_EXTABLE(.Lgs_change, bad_gs)
->  	.section .fixup, "ax"
->  	/* running with kernelgs */
-> -bad_gs:
-> +SYM_CODE_START_LOCAL_NOALIGN(bad_gs)
+Committer testing:
 
-Ditto.
+  $ make -C tools/perf PYTHON3=python install-bin
 
->  	SWAPGS					/* switch back to user gs */
->  .macro ZAP_GS
->  	/* This can't be a string because the preprocessor needs to see it. */
-> @@ -1017,6 +1017,7 @@ bad_gs:
->  	xorl	%eax, %eax
->  	movl	%eax, %gs
->  	jmp	2b
-> +SYM_CODE_END(bad_gs)
->  	.previous
->  
->  /* Call softirq on interrupt stack. Interrupts are off. */
-> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-> index 551758f48eb7..6c60fe346583 100644
-> --- a/arch/x86/kernel/acpi/wakeup_64.S
-> +++ b/arch/x86/kernel/acpi/wakeup_64.S
-> @@ -36,8 +36,9 @@ ENTRY(wakeup_long64)
->  	jmp	*%rax
->  ENDPROC(wakeup_long64)
->  
-> -bogus_64_magic:
-> +SYM_CODE_START_LOCAL(bogus_64_magic)
+Before:
 
-Ditto.
+  # perf test attr
+  16: Setup struct perf_event_attr                          : FAILED!
+  48: Synthesize attr update                                : Ok
+  [root@quaco ~]# perf test -v attr
+  16: Setup struct perf_event_attr                          :
+  --- start ---
+  test child forked, pid 3121
+    File "/home/acme/libexec/perf-core/tests/attr.py", line 324
+      except Unsup, obj:
+                ^
+  SyntaxError: invalid syntax
+  test child finished with -1
+  ---- end ----
+  Setup struct perf_event_attr: FAILED!
+  48: Synthesize attr update                                :
+  --- start ---
+  test child forked, pid 3124
+  test child finished with 0
+  ---- end ----
+  Synthesize attr update: Ok
+  #
 
->  	jmp	bogus_64_magic
-> +SYM_CODE_END(bogus_64_magic)
->  
->  ENTRY(do_suspend_lowlevel)
->  	FRAME_BEGIN
-> diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-> index d1e213da4782..0bae769b7b59 100644
-> --- a/arch/x86/kernel/head_32.S
-> +++ b/arch/x86/kernel/head_32.S
-> @@ -409,7 +409,7 @@ ENTRY(early_idt_handler_array)
->  	.endr
->  ENDPROC(early_idt_handler_array)
->  	
-> -early_idt_handler_common:
-> +SYM_CODE_START_LOCAL(early_idt_handler_common)
+After:
 
-This one too - all those are used only in this compilation unit so not
-having them as symbols at all is fine AFAICT.
+   # perf test attr
+  16: Setup struct perf_event_attr                          : Ok
+  48: Synthesize attr update                                : Ok
+  #
 
-Same for the rest of the local symbols in this patch, except verify_cpu.
+Signed-off-by: Tony Jones <tonyj@suse.de>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20190124005229.16146-7-tonyj@suse.de
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/attr.py | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
+index 44090a9a19f3..e952127e4fb0 100644
+--- a/tools/perf/tests/attr.py
++++ b/tools/perf/tests/attr.py
+@@ -1,6 +1,8 @@
+ #! /usr/bin/python
+ # SPDX-License-Identifier: GPL-2.0
+ 
++from __future__ import print_function
++
+ import os
+ import sys
+ import glob
+@@ -8,7 +10,11 @@ import optparse
+ import tempfile
+ import logging
+ import shutil
+-import ConfigParser
++
++try:
++    import configparser
++except ImportError:
++    import ConfigParser as configparser
+ 
+ def data_equal(a, b):
+     # Allow multiple values in assignment separated by '|'
+@@ -100,20 +106,20 @@ class Event(dict):
+     def equal(self, other):
+         for t in Event.terms:
+             log.debug("      [%s] %s %s" % (t, self[t], other[t]));
+-            if not self.has_key(t) or not other.has_key(t):
++            if t not in self or t not in other:
+                 return False
+             if not data_equal(self[t], other[t]):
+                 return False
+         return True
+ 
+     def optional(self):
+-        if self.has_key('optional') and self['optional'] == '1':
++        if 'optional' in self and self['optional'] == '1':
+             return True
+         return False
+ 
+     def diff(self, other):
+         for t in Event.terms:
+-            if not self.has_key(t) or not other.has_key(t):
++            if t not in self or t not in other:
+                 continue
+             if not data_equal(self[t], other[t]):
+                 log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+@@ -134,7 +140,7 @@ class Event(dict):
+ #   - expected values assignments
+ class Test(object):
+     def __init__(self, path, options):
+-        parser = ConfigParser.SafeConfigParser()
++        parser = configparser.SafeConfigParser()
+         parser.read(path)
+ 
+         log.warning("running '%s'" % path)
+@@ -193,7 +199,7 @@ class Test(object):
+         return True
+ 
+     def load_events(self, path, events):
+-        parser_event = ConfigParser.SafeConfigParser()
++        parser_event = configparser.SafeConfigParser()
+         parser_event.read(path)
+ 
+         # The event record section header contains 'event' word,
+@@ -207,7 +213,7 @@ class Test(object):
+             # Read parent event if there's any
+             if (':' in section):
+                 base = section[section.index(':') + 1:]
+-                parser_base = ConfigParser.SafeConfigParser()
++                parser_base = configparser.SafeConfigParser()
+                 parser_base.read(self.test_dir + '/' + base)
+                 base_items = parser_base.items('event')
+ 
+@@ -322,9 +328,9 @@ def run_tests(options):
+     for f in glob.glob(options.test_dir + '/' + options.test):
+         try:
+             Test(f, options).run()
+-        except Unsup, obj:
++        except Unsup as obj:
+             log.warning("unsupp  %s" % obj.getMsg())
+-        except Notest, obj:
++        except Notest as obj:
+             log.warning("skipped %s" % obj.getMsg())
+ 
+ def setup_log(verbose):
+@@ -363,7 +369,7 @@ def main():
+     parser.add_option("-p", "--perf",
+                       action="store", type="string", dest="perf")
+     parser.add_option("-v", "--verbose",
+-                      action="count", dest="verbose")
++                      default=0, action="count", dest="verbose")
+ 
+     options, args = parser.parse_args()
+     if args:
+@@ -373,7 +379,7 @@ def main():
+     setup_log(options.verbose)
+ 
+     if not options.test_dir:
+-        print 'FAILED no -d option specified'
++        print('FAILED no -d option specified')
+         sys.exit(-1)
+ 
+     if not options.test:
+@@ -382,8 +388,8 @@ def main():
+     try:
+         run_tests(options)
+ 
+-    except Fail, obj:
+-        print "FAILED %s" % obj.getMsg();
++    except Fail as obj:
++        print("FAILED %s" % obj.getMsg())
+         sys.exit(-1)
+ 
+     sys.exit(0)
