@@ -2,74 +2,63 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98172C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC35EC282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB1E20857
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8012A20857
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 07:05:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfBIHEp (ORCPT
+        id S1726994AbfBIHFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 02:04:45 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:41532 "EHLO
+        Sat, 9 Feb 2019 02:05:39 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:41536 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbfBIHEl (ORCPT
+        with ESMTP id S1726047AbfBIHFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 02:04:41 -0500
+        Sat, 9 Feb 2019 02:05:39 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5B8BA149DE386;
-        Fri,  8 Feb 2019 23:04:41 -0800 (PST)
-Date:   Fri, 08 Feb 2019 23:04:41 -0800 (PST)
-Message-Id: <20190208.230441.540225772332738493.davem@davemloft.net>
-To:     gustavo@embeddedor.com
-Cc:     jeffrey.t.kirsher@intel.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] ixgbe: Use struct_size() helper
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 82162149D93E4;
+        Fri,  8 Feb 2019 23:05:38 -0800 (PST)
+Date:   Fri, 08 Feb 2019 23:05:38 -0800 (PST)
+Message-Id: <20190208.230538.156874402966618176.davem@davemloft.net>
+To:     natechancellor@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pablo@netfilter.org, jiri@mellanox.com, ndesaulniers@google.com
+Subject: Re: [PATCH net-next] ethtool: Remove unnecessary null check in
+ ethtool_rx_flow_rule_create
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190208042258.GA32468@embeddedor>
-References: <20190208042258.GA32468@embeddedor>
+In-Reply-To: <20190208044652.32166-1-natechancellor@gmail.com>
+References: <20190208044652.32166-1-natechancellor@gmail.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 08 Feb 2019 23:04:41 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 08 Feb 2019 23:05:38 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Thu, 7 Feb 2019 22:22:58 -0600
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Thu,  7 Feb 2019 21:46:53 -0700
 
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
+> net/core/ethtool.c:3023:19: warning: address of array
+> 'ext_m_spec->h_dest' will always evaluate to 'true'
+> [-Wpointer-bool-conversion]
+>                 if (ext_m_spec->h_dest) {
+>                 ~~  ~~~~~~~~~~~~^~~~~~
 > 
-> struct foo {
->     int stuff;
->     struct boo entry[];
-> };
+> h_dest is an array, it can't be null so remove this check.
 > 
-> size = sizeof(struct foo) + count * sizeof(struct boo);
-> instance = kzalloc(size, GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> Notice that, in this case, variable size is not necessary, hence
-> it is removed.
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Fixes: eca4205f9ec3 ("ethtool: add ethtool_rx_flow_spec to flow_rule structure translator")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/353
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
 Applied.
