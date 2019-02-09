@@ -2,110 +2,124 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F951C169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4710C169C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D740920869
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF38F20869
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/0Fmcm8"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="cbPykIdL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfBIAPc (ORCPT
+        id S1726873AbfBIAQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:15:32 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51324 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfBIAPb (ORCPT
+        Fri, 8 Feb 2019 19:16:39 -0500
+Received: from mx.aristanetworks.com ([162.210.129.12]:54406 "EHLO
+        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726522AbfBIAQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:15:31 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so6309441wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:15:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=wyReugPXrxIiS774VlKOeus0XlUa4VY30FlEPNXHAyg=;
-        b=o/0Fmcm87YMga4x6C8XfsoX8sIlAjswRgK2YhRPfwuCLV30yCBSIuRJJ7QiIOWCfMN
-         shWksOAsWQzyvXB8ucSAmGGU/ys+uWb+updPeL1B8hzcjpHqLV7KtZdhMo/QLscK43sP
-         /5InNCTrYlIX3rt2xxFw9+gbV33Fx+/NJm9h4s9sNrPUgWACHNAHypWpHo62L33E8geb
-         ujAdHjZPC7BliI8jnvA3d055z09KOG0ozRmKuQp41AOQO49Msf3YVIds2rstYGXGagsI
-         eSl/iGRpaj9xauF3OvRPFJlbceqbUWY51LtJACO5+mFhkaxaD9mkl0uiLB5r91RMtGlR
-         BpiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=wyReugPXrxIiS774VlKOeus0XlUa4VY30FlEPNXHAyg=;
-        b=f0JKEQMnfQYCyGr+6Tew/MniUofdmPmzluS3CGtMhLjpv5QDe41pPmsGs6MdZK2UCS
-         KYPu4VkhTrmgQnY6QOn69v4MWuInIJAY/4Y5l/40sXuWQOcrxW6dZj3ziMVu2farzn/n
-         Qn71Y0l6E1wi3QMnQ3i8hSPjwlnu0NnurKLuEkZjpisAd87chmiYsvRrKk48lvvrtZBA
-         AKbvPBJg4iMRbLkfzVaLY5BnCmcAHcJIUakKL7v9LFJynAIiKipagZz0I2Zpq+WMYUdB
-         TdMQ+XF5R5vuQTskMCe1JQwBnpj25cbKPqVqY9nvIV+Uim032SGMxYpOW4bL0aDrkEjF
-         nZ9Q==
-X-Gm-Message-State: AHQUAuanrD6JmR11KEXtlXa/80AJuv+c3vZC94NbNz8Htam7ch91s6y0
-        g9mKHGRKuu/7kQPkEgkQS8U=
-X-Google-Smtp-Source: AHgI3IaLHeZcarkdZ3PF4sPwwSjv5yRWS6VT3DwNGORZBkPmscnJK4AZNciQMHhzXRGY+DRNB+oxKg==
-X-Received: by 2002:adf:f692:: with SMTP id v18mr17492386wrp.229.1549671329355;
-        Fri, 08 Feb 2019 16:15:29 -0800 (PST)
-Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
-        by smtp.gmail.com with ESMTPSA id o64sm4975481wmo.47.2019.02.08.16.15.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Feb 2019 16:15:28 -0800 (PST)
-Date:   Sat, 9 Feb 2019 01:15:22 +0100
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Robin van der Gracht <robin@protonic.nl>
-Cc:     Sven Van Asbroeck <thesven73@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] auxdisplay: ht16k33: fix potential user-after-free on module
- unload
-Message-ID: <20190209001522.GA11769@gmail.com>
+        Fri, 8 Feb 2019 19:16:39 -0500
+Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id C6BF2E5F;
+        Fri,  8 Feb 2019 16:16:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1549671398;
+        bh=R7LyMcPXHlOVl1UD0M9CSASLtyZS2/6CtFGEODaNu1s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=cbPykIdLztrpZESk5irYbGbb15kb3VJTJipvSUNXHRBwaSTVQecuIEC8Ag84NPZ7t
+         XsFEISWyZaZCqm2adY01WA09jnW+FCHX62mRBA+WAe+s/oBaWQUJ9821wv5V9qUtua
+         RJd9iyci0L11buPyKP1ueMf/jbhgsAgBLHJdj9SDngTqBGp90VY3ShtSR3ZFfHbwC0
+         rCzZX6PWqf8BxHqnd5YUqit52FB+bEj4gqgkDFAOpdMOFpRh+A7PJIdCRMt9wHkVAu
+         VTZkol73sD4gORrZbcVJKc+YrULK/XOY+Rk8Vdat9bMJm0RtDbZaqQb7dAu+/sjTkQ
+         KtQuDYtx5YGsA==
+Received: from visor (unknown [172.20.208.17])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id B88B9E39;
+        Fri,  8 Feb 2019 16:16:38 -0800 (PST)
+Date:   Fri, 8 Feb 2019 16:16:38 -0800
+From:   Ivan Delalande <colona@arista.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v2] exec: don't force_sigsegv processes with a pending
+ fatal signal
+Message-ID: <20190209001638.GA14025@visor>
+References: <20190205025308.GA24455@visor>
+ <20190205131119.3e388a0a1a69c0a041ed87ef@linux-foundation.org>
+ <20190206031029.GB9368@visor>
+ <87pns2q2ug.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: elm/2
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87pns2q2ug.fsf@xmission.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On module unload/remove, we need to ensure that work does not run
-after we have freed resources. Concretely, cancel_delayed_work()
-may return while the callback function is still running.
+Hi Eric,
 
-From kernel/workqueue.c:
+On Thu, Feb 07, 2019 at 11:13:59PM -0600, Eric W. Biederman wrote:
+> I just noticed this.  From  my patch queue that I intend to send to
+> Linus tomorrow. I think this change fixes your issue of getting
+> the SIGSEGV instead of the already pending fatal signal.
+> 
+> So I think this fixes your issue without any other code changes.
+> Ivan can you verify that the patch below is enough?
 
-    The work callback function may still be running on return,
-    unless it returns true and the work doesn't re-arm itself.
-    Explicitly flush or use cancel_delayed_work_sync() to wait on it.
+I was having issues with just this patch applied on top of v5.0-rc5 or
+the latest master: defunct processes accumulating, exiting processes
+that would hang forever, and some kernel functions eating all the CPU
+(setup_sigcontext, common_interrupt, __clear_user, do_signal…).
 
-Link: https://lore.kernel.org/lkml/20190204220952.30761-1-TheSven73@googlemail.com/
-Reported-by: Sven Van Asbroeck <thesven73@gmail.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
- drivers/auxdisplay/ht16k33.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But using your user-namespace.git/for-linus worked great and I've been
+running my reproducer for a few hours now without issue. I'll probably
+keep it running over the week-end as it has been unreliable at times,
+but it looks promising so far.
 
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index a43276c76fc6..21393ec3b9a4 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -509,7 +509,7 @@ static int ht16k33_remove(struct i2c_client *client)
- 	struct ht16k33_priv *priv = i2c_get_clientdata(client);
- 	struct ht16k33_fbdev *fbdev = &priv->fbdev;
- 
--	cancel_delayed_work(&fbdev->work);
-+	cancel_delayed_work_sync(&fbdev->work);
- 	unregister_framebuffer(fbdev->info);
- 	framebuffer_release(fbdev->info);
- 	free_page((unsigned long) fbdev->buffer);
+
+A difference I've noticed with your tree (unrelated to my issue here but
+that you may want to look at) is when I run my reproducer under
+strace -f, I'm now getting quite a lot of "Exit of unknown pid 12345
+ignored" warnings from strace, which I've never seen with mainline.
+My reproducer simply fork-exec tail processes in a loop, and tries to
+sigkill them in the parent with a variable delay.
+
+Thank you,
+
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 9ca8e5278c8e..5424cb0006bc 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
+>                 goto relock;
+>         }
+>  
+> +       /* Has this task already been marked for death? */
+> +       ksig->info.si_signo = signr = SIGKILL;
+> +       if (signal_group_exit(signal))
+> +               goto fatal;
+> +
+>         for (;;) {
+>                 struct k_sigaction *ka;
+>  
+> @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
+>                         continue;
+>                 }
+>  
+> +       fatal:
+>                 spin_unlock_irq(&sighand->siglock);
+>  
+>    
+
 -- 
-2.17.1
-
+Ivan Delalande
+Arista Networks
