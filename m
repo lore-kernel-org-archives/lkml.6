@@ -6,50 +6,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39D7C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1F8C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9329F2192D
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D4722192D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:49:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738138;
-	bh=j6KM484CHxQ5S3gq5QuaD5sBibRS636ktS5RuQTL5Dw=;
+	s=default; t=1549738141;
+	bh=YhIMmOSwti1zPESoOl0fTvV5sFCRMp9I5uuDvqzkyWE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BNzmh/D7g40+jI2PecbPib6uCLma2KgFqAE8IIGs9VHMWlNazz38QX7jC5h620gQw
-	 +LHtNxcajKh1J83NEMowJIMBN2NZF04+kKSOVnc7tNkFyeYhxKw1h894xuytPAN2eW
-	 yDpv/tRIQikdR0h4reuOXYksvMdka+ukOy43SqQM=
+	b=QEzLEZSyyY+3QiDgoOfxzfNDBvU48nyBBXoHqVn1T+zJyO4JojQw6VJuG7U+dHmMW
+	 5KvfWRafEoCcGpeenzy2FTyOLeH5BFQg8krFaANsoaywBmeedVXPuBLY+DR7o9z4JK
+	 D9ixLV1RFUedexz0tIFGPpB0il0dCrnH8JXhwoIQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfBISsw (ORCPT
+        id S1727921AbfBISs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:48:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:48:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfBISst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:49 -0500
+        id S1727877AbfBISs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:48:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2235920821;
-        Sat,  9 Feb 2019 18:48:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 090AD20821;
+        Sat,  9 Feb 2019 18:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738128;
-        bh=j6KM484CHxQ5S3gq5QuaD5sBibRS636ktS5RuQTL5Dw=;
+        s=default; t=1549738135;
+        bh=YhIMmOSwti1zPESoOl0fTvV5sFCRMp9I5uuDvqzkyWE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M+XZqbAl+Mbmyyxq2IjIqikr3yX/kFUa4Z1NS0nzxvGg991LR6qK4D9o1/ztwJtfx
-         z3d7Bt+A9xHtmETxUcGR9C3v0CY9WguzmQY8EVlv6Zp8JpbSbu4KbXxlokrzOUaXPU
-         dLVVSY0Lvp3LA4ZpRI4a0fEhkEfR15UzvP8po1uE=
+        b=uPPFy3GaqilZ+HbOHz1V6Zw/MdJ/pSQrO5DY5FfpDu4P/PazcROjdobMi/hDQU3In
+         kvjLhFyJVPJ0D1xdF5yV+BdcAX9oRhfnhNbr1/O/55uDnNW9/Ij5Op5xGec994L8u+
+         D+De9PDtC9KxSkeTqjNWAvmom3CmkkhLH2detKAk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 03/28] perf report: Fix wrong iteration count in --branch-history
-Date:   Sat,  9 Feb 2019 13:48:11 -0500
-Message-Id: <20190209184840.126418-3-sashal@kernel.org>
+Cc:     Aurelien Jarno <aurelien@aurel32.net>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 05/28] tools uapi: fix RISC-V 64-bit support
+Date:   Sat,  9 Feb 2019 13:48:13 -0500
+Message-Id: <20190209184840.126418-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184840.126418-1-sashal@kernel.org>
 References: <20190209184840.126418-1-sashal@kernel.org>
@@ -61,225 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jin Yao <yao.jin@linux.intel.com>
+From: Aurelien Jarno <aurelien@aurel32.net>
 
-[ Upstream commit a3366db06bb656cef2e03f30f780d93059bcc594 ]
+[ Upstream commit d0df00e30e4bf9bc27ddbd092ad683ff6121b360 ]
 
-By calculating the removed loops, we can get the iteration count.
+The BPF library is not built on 64-bit RISC-V, as the BPF feature is
+not detected. Looking more in details, feature/test-bpf.c fails to build
+with the following error:
 
-But the iteration count could be reported incorrectly, reporting
-impossibly high counts.
+| In file included from /tmp/linux-4.19.12/tools/include/uapi/asm/bitsperlong.h:17,
+|                  from /tmp/linux-4.19.12/tools/include/uapi/asm-generic/unistd.h:2,
+|                  from /usr/include/riscv64-linux-gnu/asm/unistd.h:1,
+|                  from test-bpf.c:2:
+| /tmp/linux-4.19.12/tools/include/asm-generic/bitsperlong.h:14:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
+|  #error Inconsistent word size. Check asm/bitsperlong.h
+|   ^~~~~
 
-That's because previous code uses the number of removed LBR entries for
-the iteration count. That's not good. Fix this by increasing the
-iteration count when a loop is detected.
+The UAPI from the tools directory is missing RISC-V support, therefore
+bitsperlong.h from asm-generic is used, defaulting to 32 bits.
 
-When matching the chain, the iteration count would be added up, finally we need
-to compute the average value when printing out.
+Fix that by adding tools/arch/riscv/include/uapi/asm/bitsperlong.h as
+a copy of arch/riscv/include/uapi/asm/bitsperlong.h and by updating
+tools/include/uapi/asm/bitsperlong.h.
 
-For example,
-
-  $ perf report --branch-history --stdio --no-children
-
-Before:
-
-  ---f2 +0
-     |
-     |--33.62%--f1 +9 (cycles:1)
-     |          f1 +0
-     |          main +22 (cycles:1)
-     |          main +17
-     |          main +38 (cycles:1)
-     |          main +27
-     |          f1 +26 (cycles:1)
-     |          f1 +24
-     |          f2 +27 (cycles:7)
-     |          f2 +0
-     |          f1 +19 (cycles:1)
-     |          f1 +14
-     |          f2 +27 (cycles:11)
-     |          f2 +0
-     |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
-     |          f1 +0
-     |          main +22 (cycles:1 iter:2968 avg_cycles:3)
-     |          main +17
-     |          main +38 (cycles:1 iter:2968 avg_cycles:3)
-
-2968 is an impossible high iteration count and avg_cycles is too small.
-
-After:
-
-  ---f2 +0
-     |
-     |--33.62%--f1 +9 (cycles:1)
-     |          f1 +0
-     |          main +22 (cycles:1)
-     |          main +17
-     |          main +38 (cycles:1)
-     |          main +27
-     |          f1 +26 (cycles:1)
-     |          f1 +24
-     |          f2 +27 (cycles:7)
-     |          f2 +0
-     |          f1 +19 (cycles:1)
-     |          f1 +14
-     |          f2 +27 (cycles:11)
-     |          f2 +0
-     |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
-     |          f1 +0
-     |          main +22 (cycles:1 iter:1 avg_cycles:23)
-     |          main +17
-     |          main +38 (cycles:1 iter:1 avg_cycles:23)
-
-avg_cycles:23 is the average cycles of this iteration.
-
-Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1546582230-17507-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
- tools/perf/util/callchain.h |  1 +
- tools/perf/util/machine.c   |  2 +-
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ .../arch/riscv/include/uapi/asm/bitsperlong.h | 25 +++++++++++++++++++
+ tools/include/uapi/asm/bitsperlong.h          |  2 ++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 tools/arch/riscv/include/uapi/asm/bitsperlong.h
 
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index 32ef7bdca1cf..dc2212e12184 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
- 			cnode->cycles_count += node->branch_flags.cycles;
- 			cnode->iter_count += node->nr_loop_iter;
- 			cnode->iter_cycles += node->iter_cycles;
-+			cnode->from_count++;
- 		}
- 	}
- 
-@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
- static int branch_from_str(char *bf, int bfsize,
- 			   u64 branch_count,
- 			   u64 cycles_count, u64 iter_count,
--			   u64 iter_cycles)
-+			   u64 iter_cycles, u64 from_count)
- {
- 	int printed = 0, i = 0;
--	u64 cycles;
-+	u64 cycles, v = 0;
- 
- 	cycles = cycles_count / branch_count;
- 	if (cycles) {
-@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
- 				bf + printed, bfsize - printed);
- 	}
- 
--	if (iter_count) {
--		printed += count_pri64_printf(i++, "iter",
--				iter_count,
--				bf + printed, bfsize - printed);
-+	if (iter_count && from_count) {
-+		v = iter_count / from_count;
-+		if (v) {
-+			printed += count_pri64_printf(i++, "iter",
-+					v, bf + printed, bfsize - printed);
- 
--		printed += count_pri64_printf(i++, "avg_cycles",
--				iter_cycles / iter_count,
--				bf + printed, bfsize - printed);
-+			printed += count_pri64_printf(i++, "avg_cycles",
-+					iter_cycles / iter_count,
-+					bf + printed, bfsize - printed);
-+		}
- 	}
- 
- 	if (i)
-@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
- 			     u64 branch_count, u64 predicted_count,
- 			     u64 abort_count, u64 cycles_count,
- 			     u64 iter_count, u64 iter_cycles,
-+			     u64 from_count,
- 			     struct branch_type_stat *brtype_stat)
- {
- 	int printed;
-@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
- 				predicted_count, abort_count, brtype_stat);
- 	} else {
- 		printed = branch_from_str(bf, bfsize, branch_count,
--				cycles_count, iter_count, iter_cycles);
-+				cycles_count, iter_count, iter_cycles,
-+				from_count);
- 	}
- 
- 	if (!printed)
-@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
- 				   u64 branch_count, u64 predicted_count,
- 				   u64 abort_count, u64 cycles_count,
- 				   u64 iter_count, u64 iter_cycles,
-+				   u64 from_count,
- 				   struct branch_type_stat *brtype_stat)
- {
- 	char str[256];
- 
- 	counts_str_build(str, sizeof(str), branch_count,
- 			 predicted_count, abort_count, cycles_count,
--			 iter_count, iter_cycles, brtype_stat);
-+			 iter_count, iter_cycles, from_count, brtype_stat);
- 
- 	if (fp)
- 		return fprintf(fp, "%s", str);
-@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
- 	u64 branch_count, predicted_count;
- 	u64 abort_count, cycles_count;
- 	u64 iter_count, iter_cycles;
-+	u64 from_count;
- 
- 	branch_count = clist->branch_count;
- 	predicted_count = clist->predicted_count;
-@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
- 	cycles_count = clist->cycles_count;
- 	iter_count = clist->iter_count;
- 	iter_cycles = clist->iter_cycles;
-+	from_count = clist->from_count;
- 
- 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
- 				       predicted_count, abort_count,
- 				       cycles_count, iter_count, iter_cycles,
--				       &clist->brtype_stat);
-+				       from_count, &clist->brtype_stat);
- }
- 
- static void free_callchain_node(struct callchain_node *node)
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 154560b1eb65..99d38ac019b8 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -118,6 +118,7 @@ struct callchain_list {
- 		bool		has_children;
- 	};
- 	u64			branch_count;
-+	u64			from_count;
- 	u64			predicted_count;
- 	u64			abort_count;
- 	u64			cycles_count;
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index d7403d1207d7..b1508ce3e412 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1988,7 +1988,7 @@ static void save_iterations(struct iterations *iter,
- {
- 	int i;
- 
--	iter->nr_loop_iter = nr;
-+	iter->nr_loop_iter++;
- 	iter->cycles = 0;
- 
- 	for (i = 0; i < nr; i++)
+diff --git a/tools/arch/riscv/include/uapi/asm/bitsperlong.h b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
+new file mode 100644
+index 000000000000..0b3cb52fd29d
+--- /dev/null
++++ b/tools/arch/riscv/include/uapi/asm/bitsperlong.h
+@@ -0,0 +1,25 @@
++/*
++ * Copyright (C) 2012 ARM Ltd.
++ * Copyright (C) 2015 Regents of the University of California
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef _UAPI_ASM_RISCV_BITSPERLONG_H
++#define _UAPI_ASM_RISCV_BITSPERLONG_H
++
++#define __BITS_PER_LONG (__SIZEOF_POINTER__ * 8)
++
++#include <asm-generic/bitsperlong.h>
++
++#endif /* _UAPI_ASM_RISCV_BITSPERLONG_H */
+diff --git a/tools/include/uapi/asm/bitsperlong.h b/tools/include/uapi/asm/bitsperlong.h
+index 8dd6aefdafa4..fd92ce8388fc 100644
+--- a/tools/include/uapi/asm/bitsperlong.h
++++ b/tools/include/uapi/asm/bitsperlong.h
+@@ -13,6 +13,8 @@
+ #include "../../arch/mips/include/uapi/asm/bitsperlong.h"
+ #elif defined(__ia64__)
+ #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
++#elif defined(__riscv)
++#include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
+ #else
+ #include <asm-generic/bitsperlong.h>
+ #endif
 -- 
 2.19.1
 
