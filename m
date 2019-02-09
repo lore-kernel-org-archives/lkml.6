@@ -4,52 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0A2C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEF9C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC0820855
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:56:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D51DB21773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfBIM4Y (ORCPT
+        id S1726940AbfBIM5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:56:24 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48869 "EHLO
+        Sat, 9 Feb 2019 07:57:41 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59713 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBIM4Y (ORCPT
+        with ESMTP id S1726703AbfBIM5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:56:24 -0500
+        Sat, 9 Feb 2019 07:57:40 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CuCgs2633496
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CvW432633795
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:56:12 -0800
+        Sat, 9 Feb 2019 04:57:32 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CuB062633493;
-        Sat, 9 Feb 2019 04:56:11 -0800
-Date:   Sat, 9 Feb 2019 04:56:11 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CvWHR2633792;
+        Sat, 9 Feb 2019 04:57:32 -0800
+Date:   Sat, 9 Feb 2019 04:57:32 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Leo Yan <tipbot@zytor.com>
-Message-ID: <tip-173e65f6bc354dc07c6be399727a8a48335bccf2@git.kernel.org>
-Cc:     mike.leach@linaro.org, coresight@lists.linaro.org,
-        tglx@linutronix.de, leo.yan@linaro.org, suzuki.poulose@arm.com,
-        acme@redhat.com, linux-kernel@vger.kernel.org,
-        mathieu.poirier@linaro.org, namhyung@kernel.org, hpa@zytor.com,
-        jolsa@redhat.com, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, robert.walker@arm.com
-Reply-To: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-          namhyung@kernel.org, hpa@zytor.com, jolsa@redhat.com,
-          alexander.shishkin@linux.intel.com, mingo@kernel.org,
-          robert.walker@arm.com, mike.leach@linaro.org,
-          coresight@lists.linaro.org, tglx@linutronix.de,
-          leo.yan@linaro.org, suzuki.poulose@arm.com, acme@redhat.com
-In-Reply-To: <20190129122842.32041-9-leo.yan@linaro.org>
-References: <20190129122842.32041-9-leo.yan@linaro.org>
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-d6d457451eb94fa747dc202765592eb8885a7352@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
+        tglx@linutronix.de, acme@redhat.com
+Reply-To: jolsa@kernel.org, acme@redhat.com, tglx@linutronix.de,
+          hpa@zytor.com, adrian.hunter@intel.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org
+In-Reply-To: <20190109091835.5570-2-adrian.hunter@intel.com>
+References: <20190109091835.5570-2-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Set sample flags for exception return
- packet
-Git-Commit-ID: 173e65f6bc354dc07c6be399727a8a48335bccf2
+Subject: [tip:perf/core] perf tools: Fix split_kallsyms_for_kcore() for
+ trampoline symbols
+Git-Commit-ID: d6d457451eb94fa747dc202765592eb8885a7352
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,110 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  173e65f6bc354dc07c6be399727a8a48335bccf2
-Gitweb:     https://git.kernel.org/tip/173e65f6bc354dc07c6be399727a8a48335bccf2
-Author:     Leo Yan <leo.yan@linaro.org>
-AuthorDate: Tue, 29 Jan 2019 20:28:42 +0800
+Commit-ID:  d6d457451eb94fa747dc202765592eb8885a7352
+Gitweb:     https://git.kernel.org/tip/d6d457451eb94fa747dc202765592eb8885a7352
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Wed, 9 Jan 2019 11:18:30 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 6 Feb 2019 10:00:40 -0300
 
-perf cs-etm: Set sample flags for exception return packet
+perf tools: Fix split_kallsyms_for_kcore() for trampoline symbols
 
-When return from exception, we need to distinguish if it's system call
-return or for other type exceptions for setting sample flags.  Due to
-the exception return packet doesn't contain exception number, so we
-cannot decide sample flags based on exception number.
+Kallsyms symbols do not have a size, so the size becomes the distance to
+the next symbol.
 
-On the other hand, the exception return packet is followed by an
-instruction range packet; this range packet deliveries the start address
-after exception handling, we can check if it is a SVC instruction just
-before the start address.  If there has one SVC instruction is found
-ahead the return address, this means it's an exception return for system
-call; otherwise it is an normal return for other exceptions.
+Consequently the recently added trampoline symbols end up with large
+sizes because the trampolines are some distance from one another and the
+main kernel map.
 
-This patch is to set sample flags for exception return packet, firstly
-it simply set sample flags as PERF_IP_FLAG_INTERRUPT for all exception
-returns since at this point it doesn't know what's exactly the exception
-type.  We will defer to decide if it's an exception return for system
-call when the next instruction range packet comes, it checks if there
-has one SVC instruction prior to the start address and if so we will
-change sample flags to PERF_IP_FLAG_SYSCALLRET for system call return.
+However, symbols that end outside their map can disrupt the symbol tree
+because, after mapping, it can appear incorrectly that they overlap
+other symbols.
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
-Cc: coresight ml <coresight@lists.linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190129122842.32041-9-leo.yan@linaro.org
+Add logic to truncate symbol size to the end of the corresponding map.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: d83212d5dd67 ("kallsyms, x86: Export addresses of PTI entry trampolines")
+Link: http://lkml.kernel.org/r/20190109091835.5570-2-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ tools/perf/util/symbol.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index a714b31656ea..8b3f882d6e2f 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1372,6 +1372,20 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
- 		if (prev_packet->sample_type == CS_ETM_DISCONTINUITY)
- 			prev_packet->flags |= PERF_IP_FLAG_BRANCH |
- 					      PERF_IP_FLAG_TRACE_BEGIN;
-+
-+		/*
-+		 * If the previous packet is an exception return packet
-+		 * and the return address just follows SVC instuction,
-+		 * it needs to calibrate the previous packet sample flags
-+		 * as PERF_IP_FLAG_SYSCALLRET.
-+		 */
-+		if (prev_packet->flags == (PERF_IP_FLAG_BRANCH |
-+					   PERF_IP_FLAG_RETURN |
-+					   PERF_IP_FLAG_INTERRUPT) &&
-+		    cs_etm__is_svc_instr(etmq, packet, packet->start_addr))
-+			prev_packet->flags = PERF_IP_FLAG_BRANCH |
-+					     PERF_IP_FLAG_RETURN |
-+					     PERF_IP_FLAG_SYSCALLRET;
- 		break;
- 	case CS_ETM_DISCONTINUITY:
- 		/*
-@@ -1422,6 +1436,36 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
- 			prev_packet->flags = packet->flags;
- 		break;
- 	case CS_ETM_EXCEPTION_RET:
-+		/*
-+		 * When the exception return packet is inserted, since
-+		 * exception return packet is not used standalone for
-+		 * generating samples and it's affiliation to the previous
-+		 * instruction range packet; so set previous range packet
-+		 * flags to tell perf it is an exception return branch.
-+		 *
-+		 * The exception return can be for either system call or
-+		 * other exception types; unfortunately the packet doesn't
-+		 * contain exception type related info so we cannot decide
-+		 * the exception type purely based on exception return packet.
-+		 * If we record the exception number from exception packet and
-+		 * reuse it for excpetion return packet, this is not reliable
-+		 * due the trace can be discontinuity or the interrupt can
-+		 * be nested, thus the recorded exception number cannot be
-+		 * used for exception return packet for these two cases.
-+		 *
-+		 * For exception return packet, we only need to distinguish the
-+		 * packet is for system call or for other types.  Thus the
-+		 * decision can be deferred when receive the next packet which
-+		 * contains the return address, based on the return address we
-+		 * can read out the previous instruction and check if it's a
-+		 * system call instruction and then calibrate the sample flag
-+		 * as needed.
-+		 */
-+		if (prev_packet->sample_type == CS_ETM_RANGE)
-+			prev_packet->flags = PERF_IP_FLAG_BRANCH |
-+					     PERF_IP_FLAG_RETURN |
-+					     PERF_IP_FLAG_INTERRUPT;
-+		break;
- 	case CS_ETM_EMPTY:
- 	default:
- 		break;
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 7b194cf53cc0..758bf5f74e6e 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -718,6 +718,8 @@ static int map_groups__split_kallsyms_for_kcore(struct map_groups *kmaps, struct
+ 		}
+ 
+ 		pos->start -= curr_map->start - curr_map->pgoff;
++		if (pos->end > curr_map->end)
++			pos->end = curr_map->end;
+ 		if (pos->end)
+ 			pos->end -= curr_map->start - curr_map->pgoff;
+ 		symbols__insert(&curr_map->dso->symbols, pos);
