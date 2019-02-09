@@ -2,51 +2,52 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17D4C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03276C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9032A21919
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25172084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfBIMpx (ORCPT
+        id S1727086AbfBIMq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:45:53 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33721 "EHLO
+        Sat, 9 Feb 2019 07:46:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46221 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfBIMpu (ORCPT
+        with ESMTP id S1726722AbfBIMq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:45:50 -0500
+        Sat, 9 Feb 2019 07:46:27 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CjXud2631870
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CkECY2631955
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:45:33 -0800
+        Sat, 9 Feb 2019 04:46:14 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CjXLX2631866;
-        Sat, 9 Feb 2019 04:45:33 -0800
-Date:   Sat, 9 Feb 2019 04:45:33 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CkDEm2631951;
+        Sat, 9 Feb 2019 04:46:13 -0800
+Date:   Sat, 9 Feb 2019 04:46:13 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Alexey Budankov <tipbot@zytor.com>
-Message-ID: <tip-9d2ed64587c045304efe8872b0258c30803d370c@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        alexey.budankov@linux.intel.com, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        acme@redhat.com, ak@linux.intel.com, tglx@linutronix.de,
-        peterz@infradead.org, jolsa@redhat.com
-Reply-To: jolsa@redhat.com, tglx@linutronix.de, ak@linux.intel.com,
-          peterz@infradead.org, acme@redhat.com, hpa@zytor.com,
-          namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-          alexey.budankov@linux.intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <526fa2b0-07de-6dbd-a7e9-26ba875593c9@linux.intel.com>
-References: <526fa2b0-07de-6dbd-a7e9-26ba875593c9@linux.intel.com>
+Message-ID: <tip-c44a8b44ca9f156a5395597109987d1c462ba655@git.kernel.org>
+Cc:     peterz@infradead.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        acme@redhat.com, linux-kernel@vger.kernel.org,
+        alexey.budankov@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org, jolsa@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, jolsa@redhat.com, mingo@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
+          peterz@infradead.org, alexander.shishkin@linux.intel.com,
+          ak@linux.intel.com, alexey.budankov@linux.intel.com,
+          namhyung@kernel.org
+In-Reply-To: <20190205151526.GC10613@kernel.org>
+References: <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
+        <20190205151526.GC10613@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf record: Allocate affinity masks
-Git-Commit-ID: 9d2ed64587c045304efe8872b0258c30803d370c
+Subject: [tip:perf/core] perf record: Bind the AIO user space buffers to
+ nodes
+Git-Commit-ID: c44a8b44ca9f156a5395597109987d1c462ba655
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,17 +61,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9d2ed64587c045304efe8872b0258c30803d370c
-Gitweb:     https://git.kernel.org/tip/9d2ed64587c045304efe8872b0258c30803d370c
+Commit-ID:  c44a8b44ca9f156a5395597109987d1c462ba655
+Gitweb:     https://git.kernel.org/tip/c44a8b44ca9f156a5395597109987d1c462ba655
 Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate: Tue, 22 Jan 2019 20:47:43 +0300
+AuthorDate: Tue, 22 Jan 2019 20:48:54 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 6 Feb 2019 10:00:39 -0300
 
-perf record: Allocate affinity masks
+perf record: Bind the AIO user space buffers to nodes
 
-Allocate affinity option and masks for mmap data buffers and record
-thread as well as initialize allocated objects.
+Allocate and bind AIO user space buffers to the memory nodes that mmap
+kernel buffers are bound to.
 
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 Reviewed-by: Jiri Olsa <jolsa@redhat.com>
@@ -78,162 +79,146 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/526fa2b0-07de-6dbd-a7e9-26ba875593c9@linux.intel.com
+Link: http://lkml.kernel.org/r/5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com
+[ Do not use 'index' as a variable name, it is a define in older glibcs ]
+Link: http://lkml.kernel.org/r/20190205151526.GC10613@kernel.org
+[ Add -lnuma to the python build when -DHAVE_LIBNUMA_SUPPORT is present, fixing 'perf test python' ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c | 13 ++++++++++++-
- tools/perf/perf.h           |  8 ++++++++
- tools/perf/util/evlist.c    |  6 +++---
- tools/perf/util/evlist.h    |  2 +-
- tools/perf/util/mmap.c      |  2 ++
- tools/perf/util/mmap.h      |  3 ++-
- 6 files changed, 28 insertions(+), 6 deletions(-)
+ tools/perf/util/mmap.c   | 77 +++++++++++++++++++++++++++++++++++++++++++++---
+ tools/perf/util/setup.py |  5 ++++
+ 2 files changed, 78 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 56e9d9e8c174..7ced5f3e8100 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -81,12 +81,17 @@ struct record {
- 	bool			timestamp_boundary;
- 	struct switch_output	switch_output;
- 	unsigned long long	samples;
-+	cpu_set_t		affinity_mask;
- };
- 
- static volatile int auxtrace_record__snapshot_started;
- static DEFINE_TRIGGER(auxtrace_snapshot_trigger);
- static DEFINE_TRIGGER(switch_output_trigger);
- 
-+static const char *affinity_tags[PERF_AFFINITY_MAX] = {
-+	"SYS", "NODE", "CPU"
-+};
-+
- static bool switch_output_signal(struct record *rec)
- {
- 	return rec->switch_output.signal &&
-@@ -533,7 +538,8 @@ static int record__mmap_evlist(struct record *rec,
- 
- 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
- 				 opts->auxtrace_mmap_pages,
--				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
-+				 opts->auxtrace_snapshot_mode,
-+				 opts->nr_cblocks, opts->affinity) < 0) {
- 		if (errno == EPERM) {
- 			pr_err("Permission error mapping pages.\n"
- 			       "Consider increasing "
-@@ -1977,6 +1983,9 @@ int cmd_record(int argc, const char **argv)
- # undef REASON
- #endif
- 
-+	CPU_ZERO(&rec->affinity_mask);
-+	rec->opts.affinity = PERF_AFFINITY_SYS;
-+
- 	rec->evlist = perf_evlist__new();
- 	if (rec->evlist == NULL)
- 		return -ENOMEM;
-@@ -2140,6 +2149,8 @@ int cmd_record(int argc, const char **argv)
- 	if (verbose > 0)
- 		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
- 
-+	pr_debug("affinity: %s\n", affinity_tags[rec->opts.affinity]);
-+
- 	err = __cmd_record(&record, argc, argv);
- out:
- 	perf_evlist__delete(rec->evlist);
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 5941fb6eccfc..b120e547ddc7 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -84,6 +84,14 @@ struct record_opts {
- 	clockid_t    clockid;
- 	u64          clockid_res_ns;
- 	int	     nr_cblocks;
-+	int	     affinity;
-+};
-+
-+enum perf_affinity {
-+	PERF_AFFINITY_SYS = 0,
-+	PERF_AFFINITY_NODE,
-+	PERF_AFFINITY_CPU,
-+	PERF_AFFINITY_MAX
- };
- 
- struct option;
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 8c902276d4b4..08cedb643ea6 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1022,7 +1022,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
-  */
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite, int nr_cblocks)
-+			 bool auxtrace_overwrite, int nr_cblocks, int affinity)
- {
- 	struct perf_evsel *evsel;
- 	const struct cpu_map *cpus = evlist->cpus;
-@@ -1032,7 +1032,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	 * Its value is decided by evsel's write_backward.
- 	 * So &mp should not be passed through const pointer.
- 	 */
--	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
-+	struct mmap_params mp = { .nr_cblocks = nr_cblocks, .affinity = affinity };
- 
- 	if (!evlist->mmap)
- 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-@@ -1064,7 +1064,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
- {
--	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
-+	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0, PERF_AFFINITY_SYS);
- }
- 
- int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 00ab43c6dd15..744906dd4887 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -165,7 +165,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
- 
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite, int nr_cblocks);
-+			 bool auxtrace_overwrite, int nr_cblocks, int affinity);
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
- void perf_evlist__munmap(struct perf_evlist *evlist);
- 
 diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 8fc39311a30d..e68ba754a8e2 100644
+index e68ba754a8e2..d882f43148c3 100644
 --- a/tools/perf/util/mmap.c
 +++ b/tools/perf/util/mmap.c
-@@ -343,6 +343,8 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
- 	map->fd = fd;
- 	map->cpu = cpu;
+@@ -10,6 +10,9 @@
+ #include <sys/mman.h>
+ #include <inttypes.h>
+ #include <asm/bug.h>
++#ifdef HAVE_LIBNUMA_SUPPORT
++#include <numaif.h>
++#endif
+ #include "debug.h"
+ #include "event.h"
+ #include "mmap.h"
+@@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ }
  
-+	CPU_ZERO(&map->affinity_mask);
+ #ifdef HAVE_AIO_SUPPORT
 +
- 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
- 				&mp->auxtrace_mp, map->base, fd))
- 		return -1;
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index aeb6942fdb00..e566c19b242b 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -38,6 +38,7 @@ struct perf_mmap {
- 		int		 nr_cblocks;
- 	} aio;
- #endif
-+	cpu_set_t	affinity_mask;
- };
++#ifdef HAVE_LIBNUMA_SUPPORT
++static int perf_mmap__aio_alloc(struct perf_mmap *map, int idx)
++{
++	map->aio.data[idx] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
++				  MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
++	if (map->aio.data[idx] == MAP_FAILED) {
++		map->aio.data[idx] = NULL;
++		return -1;
++	}
++
++	return 0;
++}
++
++static void perf_mmap__aio_free(struct perf_mmap *map, int idx)
++{
++	if (map->aio.data[idx]) {
++		munmap(map->aio.data[idx], perf_mmap__mmap_len(map));
++		map->aio.data[idx] = NULL;
++	}
++}
++
++static int perf_mmap__aio_bind(struct perf_mmap *map, int idx, int cpu, int affinity)
++{
++	void *data;
++	size_t mmap_len;
++	unsigned long node_mask;
++
++	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
++		data = map->aio.data[idx];
++		mmap_len = perf_mmap__mmap_len(map);
++		node_mask = 1UL << cpu__get_node(cpu);
++		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
++			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
++				data, data + mmap_len, cpu__get_node(cpu));
++			return -1;
++		}
++	}
++
++	return 0;
++}
++#else
++static int perf_mmap__aio_alloc(struct perf_mmap *map, int idx)
++{
++	map->aio.data[idx] = malloc(perf_mmap__mmap_len(map));
++	if (map->aio.data[idx] == NULL)
++		return -1;
++
++	return 0;
++}
++
++static void perf_mmap__aio_free(struct perf_mmap *map, int idx)
++{
++	zfree(&(map->aio.data[idx]));
++}
++
++static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int idx __maybe_unused,
++		int cpu __maybe_unused, int affinity __maybe_unused)
++{
++	return 0;
++}
++#endif
++
+ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ {
+-	int delta_max, i, prio;
++	int delta_max, i, prio, ret;
  
- /*
-@@ -69,7 +70,7 @@ enum bkw_mmap_state {
- };
+ 	map->aio.nr_cblocks = mp->nr_cblocks;
+ 	if (map->aio.nr_cblocks) {
+@@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ 		}
+ 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+ 		for (i = 0; i < map->aio.nr_cblocks; ++i) {
+-			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
+-			if (!map->aio.data[i]) {
++			ret = perf_mmap__aio_alloc(map, i);
++			if (ret == -1) {
+ 				pr_debug2("failed to allocate data buffer area, error %m");
+ 				return -1;
+ 			}
++			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
++			if (ret == -1)
++				return -1;
+ 			/*
+ 			 * Use cblock.aio_fildes value different from -1
+ 			 * to denote started aio write operation on the
+@@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ 	int i;
  
- struct mmap_params {
--	int			    prot, mask, nr_cblocks;
-+	int			    prot, mask, nr_cblocks, affinity;
- 	struct auxtrace_mmap_params auxtrace_mp;
- };
+ 	for (i = 0; i < map->aio.nr_cblocks; ++i)
+-		zfree(&map->aio.data[i]);
++		perf_mmap__aio_free(map, i);
+ 	if (map->aio.data)
+ 		zfree(&map->aio.data);
+ 	zfree(&map->aio.cblocks);
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index d3ffc18424b5..5b5a167b43ce 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -53,9 +53,14 @@ ext_sources = [f.strip() for f in open('util/python-ext-sources')
+ # use full paths with source files
+ ext_sources = list(map(lambda x: '%s/%s' % (src_perf, x) , ext_sources))
  
++extra_libraries = []
++if '-DHAVE_LIBNUMA_SUPPORT' in cflags:
++    extra_libraries = [ 'numa' ]
++
+ perf = Extension('perf',
+ 		  sources = ext_sources,
+ 		  include_dirs = ['util/include'],
++		  libraries = extra_libraries,
+ 		  extra_compile_args = cflags,
+ 		  extra_objects = [libtraceevent, libapikfs],
+                  )
