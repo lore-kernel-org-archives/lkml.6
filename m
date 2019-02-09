@@ -2,105 +2,97 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF601C282CB
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C3BC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FE6520643
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738576;
-	bh=Ldo4ZIX2byNtz5roCMGL3G4+9TpmOw0RHg7YNpfk6Ss=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HZ6wvmWIDjzSwwP0CRuwX3dsD0QIPEEGQyg8soGsr5FiE/KBwieSlXYsyEP97BpmN
-	 jrX7NaLqgYzVH988plVVhMq3v6ClHBxSRqz9DqxCANvl/fJuNFAM6WXgEt8+BDrSl4
-	 jZt3WE/tXlaJ0llk/7WYr9A6/G/rtWpz4/BMAv+A=
+	by mail.kernel.org (Postfix) with ESMTP id A831820823
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:56:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Ra/i5C11"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfBIS4P (ORCPT
+        id S1728260AbfBIS4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:56:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32820 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:56:19 -0500
+Received: from vern.gendns.com ([98.142.107.122]:42554 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727478AbfBISsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:48:08 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 639BF21919;
-        Sat,  9 Feb 2019 18:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738087;
-        bh=Ldo4ZIX2byNtz5roCMGL3G4+9TpmOw0RHg7YNpfk6Ss=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H5/5bLBYwrI/0n9W5Y0KsJsDuxyCnhzsUm8v322gF5KrUtZ59tQaRXgn0XBjsawOa
-         ykAIaNKgXuoZuTXkeXYyygh45PBGqF3SjjiqR6swat4vBwSoP3Ma5rWjUP3LHXEC8U
-         Ma5CljbwPTUVIQ56qs7ObZ4HSToxl+3wGUrlD+Rg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tao Zhou <tao.zhou1@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 26/42] drm/amdgpu: fix CPDMA hang in PRT mode for VEGA20
-Date:   Sat,  9 Feb 2019 13:47:18 -0500
-Message-Id: <20190209184734.125935-26-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190209184734.125935-1-sashal@kernel.org>
-References: <20190209184734.125935-1-sashal@kernel.org>
+        id S1727478AbfBIS4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:56:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=g1vQtrMzSJBOpxZiNlEvjWT1VUNRvlBXleY3eINxXHg=; b=Ra/i5C113gY8Oa0rKOxB2hbJir
+        nMvZ4qCGmgG1As47600fQD4pQ88IiJnQ+r6qO3xfgmijmKZFwAqj+KWOVE4hnUiZM5gZjXjo7liDY
+        6aSQy+r8WveCYo6d/LC7TeCKblXy0m5YqDLEJNuWY0h39QX2z3UgZLG6HMzt41mm9P15LI3C/eUe/
+        AQJfFu3/ZibvfeCDqUD6OafJCYeRRBXjy18ODS+aKrIP5oH6tmV1v6IOmYY2LJyBxD93zAjYGvW9e
+        lWpSgS9XBlLpylmBWzHR9y8YX1WrM3byKo7X5VacjG+F0r/1blwzuMf6Oj/0Nl9ot4ACtbZgESZcv
+        x7WQgmTA==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:41636 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gsXjm-0006ae-PV; Sat, 09 Feb 2019 13:52:26 -0500
+Subject: Re: [PATCH] iio: adc: ti-ads7950: add GPIO support
+To:     Jonathan Cameron <jic23@kernel.org>, justinpopo6@gmail.com
+Cc:     linux-iio@vger.kernel.org, linux-gpio@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
+        bgolaszewski@baylibre.com, linus.walleij@linaro.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-kernel@vger.kernel.org
+References: <1549653856-47409-1-git-send-email-justinpopo6@gmail.com>
+ <20190209170042.69a78684@archlinux>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <2e692086-4be5-10ea-34b0-4444995c4275@lechnology.com>
+Date:   Sat, 9 Feb 2019 12:56:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190209170042.69a78684@archlinux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tao Zhou <tao.zhou1@amd.com>
+On 2/9/19 11:00 AM, Jonathan Cameron wrote:
+> Nope.  This is a state lock used to protect against transitions between
+> different modes of the IIO device (buffered vs polled), it
+> isn't suitable for general use.
+> 
+> The driver should be modified to handle that correctly.
+> We have iio_claim_direct_mode etc that deal with the case
+> where a device can't do certain operations whilst in buffered
+> mode.  Note it can fail and should.
+> 
+> Seems there are more drivers still doing this than I thought.
+> If anyone is bored and wants to clean them out, that would be
+> most appreciated!
+> 
+> If you need locking to protect a local buffer or the device
+> state, define a new lock to do it with clearly documented
+> scope.
 
-[ Upstream commit 3e958fe67720b37d04ab8ef81b9d507a56a09bbc ]
+Just as a reminder, there is a use case for this particular
+chip that requires buffered mode and direct mode at the same
+time.
 
-Fix CPDMA hang in PRT mode for both VEGA10 and VEGA20
-
-Signed-off-by: Tao Zhou <tao.zhou1@amd.com>
-Tested-by: Yukun.Li <yukun1.li@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 21363b2b2ee5..88ed064b3585 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -112,7 +112,10 @@ static const struct soc15_reg_golden golden_settings_gc_9_0[] =
- 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmTCP_CHAN_STEER_HI, 0xffffffff, 0x4a2c0e68),
- 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmTCP_CHAN_STEER_LO, 0xffffffff, 0xb5d3f197),
- 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmVGT_CACHE_INVALIDATION, 0x3fff3af3, 0x19200000),
--	SOC15_REG_GOLDEN_VALUE(GC, 0, mmVGT_GS_MAX_WAVE_ID, 0x00000fff, 0x000003ff)
-+	SOC15_REG_GOLDEN_VALUE(GC, 0, mmVGT_GS_MAX_WAVE_ID, 0x00000fff, 0x000003ff),
-+	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC1_F32_INT_DIS, 0x00000000, 0x00000800),
-+	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC2_F32_INT_DIS, 0x00000000, 0x00000800),
-+	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_DEBUG, 0x00000000, 0x00008000)
- };
- 
- static const struct soc15_reg_golden golden_settings_gc_9_0_vg10[] =
-@@ -134,10 +137,7 @@ static const struct soc15_reg_golden golden_settings_gc_9_0_vg10[] =
- 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmRMI_UTCL1_CNTL2, 0x00030000, 0x00020000),
- 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmSPI_CONFIG_CNTL_1, 0x0000000f, 0x01000107),
- 	SOC15_REG_GOLDEN_VALUE(GC, 0, mmTD_CNTL, 0x00001800, 0x00000800),
--	SOC15_REG_GOLDEN_VALUE(GC, 0, mmWD_UTCL1_CNTL, 0x08000000, 0x08000080),
--	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC1_F32_INT_DIS, 0x00000000, 0x00000800),
--	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_MEC2_F32_INT_DIS, 0x00000000, 0x00000800),
--	SOC15_REG_GOLDEN_VALUE(GC, 0, mmCP_DEBUG, 0x00000000, 0x00008000)
-+	SOC15_REG_GOLDEN_VALUE(GC, 0, mmWD_UTCL1_CNTL, 0x08000000, 0x08000080)
- };
- 
- static const struct soc15_reg_golden golden_settings_gc_9_0_vg20[] =
--- 
-2.19.1
-
+https://patchwork.kernel.org/patch/10539021/
+https://patchwork.kernel.org/patch/10527757/
