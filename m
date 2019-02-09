@@ -2,119 +2,106 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B00C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF24C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2989520811
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:05:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVnkzdcp"
+	by mail.kernel.org (Postfix) with ESMTP id 92C5D2084D
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfBISFi (ORCPT
+        id S1727198AbfBISOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:05:38 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46978 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfBISFh (ORCPT
+        Sat, 9 Feb 2019 13:14:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33022 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726979AbfBISOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:05:37 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f5so4823525lfc.13;
-        Sat, 09 Feb 2019 10:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cRLknLu4A+g/g+wyKtIaxVWuB/kRPxqIzMmPn314zsc=;
-        b=kVnkzdcpjllIK7cuO/ttSz1ktXQG5VczRC1iqOPB/ht6/O6soqTmqKTsFUCJpNIHsX
-         6BJSgX+MYt9JS+FFnqeK3gJGyMY0pJV1IYzBVJKMHvfcZjnN9owpM5l0coUA09v9Qv7r
-         g9WVUGabcnozYUPBfrRVaKzBwSQdOMgbbuDz2VszHP7CKKvtgz6QBZBxu2aZTO6YLdqk
-         no+vDpzkLhGoW4CYzy3Z4Y+39hHZvzTz7zDIqbhou827tf3CkxX9vMUWi1cRR8kUUbMA
-         BCxnFGjIL/YTqED4w4y1qBocghjZh1XtIBsYmhCAnkd9FgAzlIIPODprSC4oantlzR37
-         ivug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=cRLknLu4A+g/g+wyKtIaxVWuB/kRPxqIzMmPn314zsc=;
-        b=M9jNvp3JP6TETRfgVIj+TcUgZ4WTxN6sthsLt8T1cTg52lyhoHOzSTtW0kKOqg2bQX
-         PEjAbDZ6bWMUs/9Jc+mVX924lq+zuUasdTqv9jvdEi09AH7CSXV8qmK41rFFpDHq8s+r
-         GseQnMKyAMKOUpEQrNIaJZrg/GMNcbavibS/sx2JPEUtU4BGPDjfjXw43Or8LuyxHnQO
-         8hUxaj0Kh5gDhpw+tpQtgLmersnPDUYkeUf5uhL0Qo7eC4B+3oGDk2Nix1S8fFqVnXDE
-         Hskpkp80vWlP9a6baZuEJqbrA4epKBQs5HGTb8STvOlJS/4JomnEn/AE5mW8xEUyNhfx
-         1NjQ==
-X-Gm-Message-State: AHQUAubL7oxxHsEMpWagxzH5IVfZRB9Cs5sKM7FwEnP7zlqVIGrH3lO1
-        9q+SDNEgoBw2Q8vyOJPJjUQ=
-X-Google-Smtp-Source: AHgI3IYStgIJYBxLn8WOT2Q3bJ8T9MJouuwIR4gr2pUU5Zl/f3tQGoYAbrrqqbbnYxOcQOM6MXrXqA==
-X-Received: by 2002:a19:da1a:: with SMTP id r26mr9413537lfg.2.1549735535308;
-        Sat, 09 Feb 2019 10:05:35 -0800 (PST)
-Received: from localhost.localdomain (c80-216-88-47.bredband.comhem.se. [80.216.88.47])
-        by smtp.gmail.com with ESMTPSA id f10-v6sm1143585ljc.31.2019.02.09.10.05.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Feb 2019 10:05:34 -0800 (PST)
-From:   leakim.wikstrom@gmail.com
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     =?UTF-8?q?Mikael=20Wikstr=C3=B6m?= <leakim.wikstrom@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: multitouch: Lenovo X1 Tablet Gen3 trackpoint and buttons
-Date:   Sat,  9 Feb 2019 19:05:26 +0100
-Message-Id: <20190209180526.7564-1-leakim.wikstrom@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Sat, 9 Feb 2019 13:14:35 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x19IDhEI107080
+        for <linux-kernel@vger.kernel.org>; Sat, 9 Feb 2019 13:14:34 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qht38xb47-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 13:14:34 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pc@us.ibm.com>;
+        Sat, 9 Feb 2019 18:14:33 -0000
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 9 Feb 2019 18:14:31 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x19IEUHA19529934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 9 Feb 2019 18:14:30 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 520B07805E;
+        Sat,  9 Feb 2019 18:14:30 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 33B3D7805C;
+        Sat,  9 Feb 2019 18:14:30 +0000 (GMT)
+Received: from localhost (unknown [9.114.15.222])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sat,  9 Feb 2019 18:14:30 +0000 (GMT)
+From:   Paul Clarke <pc@us.ibm.com>
+To:     linux-perf-users@vger.kernel.org
+Cc:     linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, maddy@linux.vnet.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com, sukadev@linux.ibm.com,
+        mpe@ellerman.id.au, cel@us.ibm.com
+Subject: [PATCH v2 0/4] [powerpc] perf vendor events: Add JSON metrics for POWER9
+Date:   Sat,  9 Feb 2019 13:14:25 -0500
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+x-cbid: 19020918-8235-0000-0000-00000E59136A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010566; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158660; UDB=6.00604582; IPR=6.00939195;
+ MB=3.00025508; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-09 18:14:32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020918-8236-0000-0000-000044677F9C
+Message-Id: <20190209181429.23950-1-pc@us.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-09_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902090132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikael Wikström <leakim.wikstrom@gmail.com>
+[Note this is for POWER*9* and is different content than a
+previous patchset for POWER*8*.]
 
-Add support for the trackpoint and three mouse buttons on the type cover
-of the Lenovo X1 Tablet Gen3.
+The patches define metrics and metric groups for computation by "perf"
+for POWER9 processors.
 
-This is the same as with the 2nd generation Lenovo X1 Tablet.
+Paul Clarke (4):
+  [powerpc] perf vendor events: Add JSON metrics for POWER9
+  [powerpc] perf vendor events: Add JSON metrics for POWER9
+  [powerpc] perf vendor events: Add JSON metrics for POWER9
+  [powerpc] perf vendor events: Add JSON metrics for POWER9
 
-Signed-off-by: Mikael Wikström <leakim.wikstrom@gmail.com>
----
- drivers/hid/hid-ids.h        | 1 +
- drivers/hid/hid-multitouch.c | 6 ++++++
- 2 files changed, 7 insertions(+)
+v2:
+The content of these patches was sent previously, to LKML and
+linux-perf-users, but never showed up at linux-perf-users, so
+I split it into smaller patches and am resending.
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index f63489c882bb..500c8f64f7ae 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -703,6 +703,7 @@
- #define USB_DEVICE_ID_LENOVO_TPPRODOCK	0x6067
- #define USB_DEVICE_ID_LENOVO_X1_COVER	0x6085
- #define USB_DEVICE_ID_LENOVO_X1_TAB	0x60a3
-+#define USB_DEVICE_ID_LENOVO_X1_TAB3	0x60b5
- 
- #define USB_VENDOR_ID_LG		0x1fd2
- #define USB_DEVICE_ID_LG_MULTITOUCH	0x0064
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index f7c6de2b6730..03a69049ca52 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1780,6 +1780,12 @@ static const struct hid_device_id mt_devices[] = {
- 			   USB_VENDOR_ID_LENOVO,
- 			   USB_DEVICE_ID_LENOVO_X1_TAB) },
- 
-+	/* Lenovo X1 TAB Gen 3 */
-+	{ .driver_data = MT_CLS_WIN_8_DUAL,
-+		HID_DEVICE(BUS_USB, HID_GROUP_MULTITOUCH_WIN_8,
-+			   USB_VENDOR_ID_LENOVO,
-+			   USB_DEVICE_ID_LENOVO_X1_TAB3) },
-+
- 	/* Anton devices */
- 	{ .driver_data = MT_CLS_EXPORT_ALL_INPUTS,
- 		MT_USB_DEVICE(USB_VENDOR_ID_ANTON,
+ .../arch/powerpc/power9/metrics.json          | 1982 +++++++++++++++++
+ 1 file changed, 1982 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/powerpc/power9/metrics.json
+
 -- 
-2.20.1
+2.17.1
 
