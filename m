@@ -6,46 +6,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7647C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D3EFC282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E7120821
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 193AD20821
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 18:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549738263;
-	bh=69xwimEh0fPwgOkhqAtuTAZur9+nuswaj4+xP0IA/f0=;
+	s=default; t=1549738269;
+	bh=NpiwgPbR8jkpTn/CBAjIwpu9epTVizPRbnY9NUMKDyM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ouGi3bb8O3a+oEtA0dZ5E4pUWjy1ewiHM63uF0dw3/jkxeNZ1qTFkUD3qHbvnegAb
-	 vMSLaQI6TcwrsG9Vkz8qaoO/ugSxZq/d6/S46brsVu9y4Np5uoTgpRq89ECdnLK75u
-	 T/kILWBKcR2aydZN/kXdDt06JU9lQGQAPq0n48pw=
+	b=LPbcFa7IgPF2s8ZxB7VJbJsC0eRHePblt4O1MrfZ1hHAWRWbUIc0ku9kTpedlzy7g
+	 2c3BtrfFitv715NepMOkwNmvkHig9gxEtVESdXLuzRVjh/kOC6bS9UOqhf/RVPgw3B
+	 SBkowlMe5CWrN/izzjfca5EhupYjOO1Cg9dLDGDQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbfBISvC (ORCPT
+        id S1728428AbfBISvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 13:51:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36564 "EHLO mail.kernel.org"
+        Sat, 9 Feb 2019 13:51:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbfBISuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 13:50:08 -0500
+        id S1728316AbfBISuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 13:50:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77FD12192C;
-        Sat,  9 Feb 2019 18:50:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEC2320821;
+        Sat,  9 Feb 2019 18:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549738207;
-        bh=69xwimEh0fPwgOkhqAtuTAZur9+nuswaj4+xP0IA/f0=;
+        s=default; t=1549738205;
+        bh=NpiwgPbR8jkpTn/CBAjIwpu9epTVizPRbnY9NUMKDyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g/FvpqIZVHOjhv+GZN1RcLkl0bC+haoxqf94ErTA/tF2XszWZzV+B9QQRpMqNt6tH
-         Z0FQEaWxD7v2fEwEgsvyh+DBElcM5aL7Xw46BzV0rvxiKhXAgrLa5+itKsOgJZLxnR
-         2EorRrAadOM54rGFlC0s2/pkKw1sJ+/i5N+SHIgQ=
+        b=bzUivXitoGHnvEBxi0oBM93wgHleQj5+7aXXmth3btWtMbMg+hdPQ0QDLAo65k2tl
+         SF1Mw6/BIc2Q3cU09nWtYeuNut31j7S0LP9ra7LZG+UyulUHoKwd+8M35ljkHgbeSZ
+         g3QyWZdLyKBaKU0+eYDYXKzn1ESyjZcRzkXA4Jjk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 12/12] cifs: Limit memory used by lock request calls to a page
-Date:   Sat,  9 Feb 2019 13:49:52 -0500
-Message-Id: <20190209184952.127009-12-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jamie Lentin <jm@lentin.co.uk>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Julien D'Ascenzio <jdascenzio@posteo.net>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 10/12] ARM: dts: kirkwood: Fix polarity of GPIO fan lines
+Date:   Sat,  9 Feb 2019 13:49:50 -0500
+Message-Id: <20190209184952.127009-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190209184952.127009-1-sashal@kernel.org>
 References: <20190209184952.127009-1-sashal@kernel.org>
@@ -57,73 +63,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 92a8109e4d3a34fb6b115c9098b51767dc933444 ]
+[ Upstream commit b5f034845e70916fd33e172fad5ad530a29c10ab ]
 
-The code tries to allocate a contiguous buffer with a size supplied by
-the server (maxBuf). This could fail if memory is fragmented since it
-results in high order allocations for commonly used server
-implementations. It is also wasteful since there are probably
-few locks in the usual case. Limit the buffer to be no larger than a
-page to avoid memory allocation failures due to fragmentation.
+These two lines are active high, not active low. The bug was
+found when we changed the kernel to respect the polarity defined
+in the device tree.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Fixes: 1b90e06b1429 ("ARM: kirkwood: Use devicetree to define DNS-32[05] fan")
+Cc: Jamie Lentin <jm@lentin.co.uk>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Gregory Clement <gregory.clement@bootlin.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Julien D'Ascenzio <jdascenzio@posteo.net>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Tested-by: Jamie Lentin <jm@lentin.co.uk>
+Reported-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Tested-by: Julien D'Ascenzio <jdascenzio@posteo.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/file.c     | 8 ++++++++
- fs/cifs/smb2file.c | 4 ++++
- 2 files changed, 12 insertions(+)
+ arch/arm/boot/dts/kirkwood-dnskw.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index a3046b6523c8..8ec296308729 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1126,6 +1126,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
- 		return -EINVAL;
- 	}
- 
-+	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
-+		     PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
-+			PAGE_SIZE);
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
- 						sizeof(LOCKING_ANDX_RANGE);
- 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
-@@ -1462,6 +1466,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
- 		return -EINVAL;
- 
-+	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
-+		     PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
-+			PAGE_SIZE);
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
- 						sizeof(LOCKING_ANDX_RANGE);
- 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
-diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
-index b7885dc0d9bb..dee5250701de 100644
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -129,6 +129,8 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 	if (max_buf < sizeof(struct smb2_lock_element))
- 		return -EINVAL;
- 
-+	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
- 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
- 	if (!buf)
-@@ -265,6 +267,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
- 		return -EINVAL;
- 	}
- 
-+	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
- 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
- 	if (!buf) {
+diff --git a/arch/arm/boot/dts/kirkwood-dnskw.dtsi b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+index d8fca9db46d0..dddbc0d03da5 100644
+--- a/arch/arm/boot/dts/kirkwood-dnskw.dtsi
++++ b/arch/arm/boot/dts/kirkwood-dnskw.dtsi
+@@ -35,8 +35,8 @@
+ 		compatible = "gpio-fan";
+ 		pinctrl-0 = <&pmx_fan_high_speed &pmx_fan_low_speed>;
+ 		pinctrl-names = "default";
+-		gpios = <&gpio1 14 GPIO_ACTIVE_LOW
+-			 &gpio1 13 GPIO_ACTIVE_LOW>;
++		gpios = <&gpio1 14 GPIO_ACTIVE_HIGH
++			 &gpio1 13 GPIO_ACTIVE_HIGH>;
+ 		gpio-fan,speed-map = <0    0
+ 				      3000 1
+ 				      6000 2>;
 -- 
 2.19.1
 
