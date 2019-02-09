@@ -2,185 +2,235 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD5BC169C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C01C282CB
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE1B21841
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D06821841
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 00:37:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHajEVXO"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mpyZHyLi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfBIAgi (ORCPT
+        id S1727003AbfBIAh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 8 Feb 2019 19:36:38 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38135 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbfBIAgh (ORCPT
+        Fri, 8 Feb 2019 19:37:28 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55289 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbfBIAh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Feb 2019 19:36:37 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so2464894plb.5;
-        Fri, 08 Feb 2019 16:36:37 -0800 (PST)
+        Fri, 8 Feb 2019 19:37:28 -0500
+Received: by mail-it1-f195.google.com with SMTP id i145so13340435ita.4
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Feb 2019 16:37:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=R2CFd4nT6s5U7WPDk/xbX2i/XkxjBZlNWJin67NFxFA=;
-        b=HHajEVXOHW8tgLlm8sM6zc4xvBkSpBkbNS5QojxFUlnMwIZ46QKPPPK++Om6xSGL7c
-         zijf9nI6QbvJD9vE42Q0PgrKHN9cRW9HpAXiHWli0k8OOBYZ8MxDAf3h/IQFuLD/5NRy
-         1dVafTXgJCjhMbuhD4XTpzwRedjP+Z2oYe5VSxuz0T7tfeqSzxUQtt6WZzCIvsxhFPHK
-         x192NlonVNCKSmbsBlCzniRIirJ5+0HjReHJYrX5JCo2vqfJUKH6e4r6mLq31ynvqQQ0
-         YHSmv4O9NnF+dkyUMlpScV7oWhrluEKqXm7UO6CHDwcuxOJFbvh4VVtBHaDs5GZo+PFG
-         +z1w==
+        bh=0AwDFctvkVP4qZVeFKRxLFrV3QexC5S+ygXP8FqycL0=;
+        b=mpyZHyLiCI0al8zZXvE0bKBaz3dzid7B//eb5RVi9yk07DvKRAzbGOm3cpVGe3ql4W
+         FFJX+rAtsWNaGaKrb4/FnTCjxKhB4uHnA0j2Uow0Tl4Y0WA1FB4yAyvbPEHizA1Attre
+         PhT1R+08yeHrWmDgGrddRg+daMLHsNBozpPQY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=R2CFd4nT6s5U7WPDk/xbX2i/XkxjBZlNWJin67NFxFA=;
-        b=ayYiHCEYQ3xVSsMiXb7f+bl+A+uYUh1ev6RwRs9ky7Ih3KisenzPecYHRuUgTD1DkJ
-         fm53XJkdbV85n7mHUatWEJbkDGbrS2BRcjZOrBP1ouG4KqV7QVdgqyKVnEBnRe7UofVK
-         h85CkNRAeD7jLk/+J6e76UxIzAxvnl9aLnCv2T+zOHsU5CJoy9TJxmQVQxZWsbpiMsUW
-         MJje1mfNFuRJBRCnKD7Xd9mD1PqfEM39rcfaAZZDUytiQ606n4Xb/wjlhHGbvM/CCgRh
-         AHM0uLjGYKc2WRfKNeuC3pBqPdZV/NjCGMEMPZQj/4fVPu7e6aRIv9kN7IhUWJLkgRll
-         ujbw==
-X-Gm-Message-State: AHQUAubpJqGE/JoeUhsEg3OVxC/jF+/dMAFgXhukOf426BBUKsMQ4unx
-        g+ZSUglS79JTrsTjI4t/y0I=
-X-Google-Smtp-Source: AHgI3IYDqbF2b16HGquJEym3CgRTf/HWsZZtWuxL3/pzTbW5fnjnbMI+38QKdEb5/UdG5+mlu9DjLw==
-X-Received: by 2002:a17:902:1:: with SMTP id 1mr24508462pla.276.1549672596675;
-        Fri, 08 Feb 2019 16:36:36 -0800 (PST)
-Received: from [10.67.48.225] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id 128sm5596152pfu.129.2019.02.08.16.36.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0AwDFctvkVP4qZVeFKRxLFrV3QexC5S+ygXP8FqycL0=;
+        b=Hm9MgrrmA8QDyBzmengy7/BnvogShgA1DDb5hRc7kdKMo9jJH0y7ORrHpghnQqQ/Vl
+         dp5cNKfIkv3RB5cKfM5zrIrDW2sb6B9ngSJbuDAzpQ0YGmuPYO8et3kNDHvskNU//Jmb
+         unxOElHE4NF3eAabhYey5lJY5+7wObA8iyEuXdfQty0XmV5oDeE/gH3uUul0oawpGOvG
+         Hmi9FoMsipPuGepva8FW7jlllYKhKB0yDlhhDo0idJphNDt/SLfdnhm7KrULf8h3lTDX
+         WyuhyLsG8IrJweCfJr+ffZRC1+WcmspoBgdGeTLOK6eXae76v2n22T2no6Knm7TIiPeK
+         kDHA==
+X-Gm-Message-State: AHQUAuYPinLjtOI04aQJdH3MG2M31LfWMgJVGe1reF4KYtm2+EMFYR55
+        NOMkguu6kCtcBttr6I3Vfp2OKmNqACc=
+X-Google-Smtp-Source: AHgI3IaZrkBa1atlhXdtGSsolWd7iTc1QJ0/AZHrNlVuAKpUO+wYDO3v7K7v1JLKszNZxkkItZvkog==
+X-Received: by 2002:a6b:914:: with SMTP id t20mr2361974ioi.63.1549672646339;
+        Fri, 08 Feb 2019 16:37:26 -0800 (PST)
+Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
+        by smtp.gmail.com with ESMTPSA id s26sm1599631ioe.86.2019.02.08.16.37.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 16:36:35 -0800 (PST)
-Subject: Re: [PATCH net-next 15/16] net: switchdev: Replace port attr set SDO
- with a notification
-To:     netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
-        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-References: <20190209003248.31088-1-f.fainelli@gmail.com>
- <20190209003248.31088-16-f.fainelli@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <83d8f16f-a73d-5aa7-4718-fc45e0fed226@gmail.com>
-Date:   Fri, 8 Feb 2019 16:36:18 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 08 Feb 2019 16:37:25 -0800 (PST)
+From:   Nick Crews <ncrews@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     alexandre.belloni@bootlin.com, eballetbo@gmail.com,
+        sjg@chromium.org, dmitry.torokhov@gmail.com, groeck@chromium.org,
+        dlaurie@chromium.org, Nick Crews <ncrews@chromium.org>,
+        linux-rtc@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Duncan Laurie <dlaurie@google.com>
+Subject: [PATCH v8 0/4] platform/chrome: Add basic support for Wilco EC
+Date:   Fri,  8 Feb 2019 17:37:15 -0700
+Message-Id: <20190209003719.161500-1-ncrews@chromium.org>
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 MIME-Version: 1.0
-In-Reply-To: <20190209003248.31088-16-f.fainelli@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/8/19 4:32 PM, Florian Fainelli wrote:
-> Drop switchdev_ops.switchdev_port_attr_set. Drop the uses of this field
-> from all clients, which were migrated to use switchdev notification in
-> the previous patches.
-> 
-> Add a new function switchdev_port_attr_notify() that sends the switchdev
-> notifications SWITCHDEV_PORT_ATTR_SET.
-> 
-> Drop __switchdev_port_attr_set() and update switchdev_port_attr_set()
-> likewise.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  include/net/switchdev.h   | 18 --------
->  net/switchdev/switchdev.c | 92 ++++++++++-----------------------------
->  2 files changed, 22 insertions(+), 88 deletions(-)
-> 
-> diff --git a/include/net/switchdev.h b/include/net/switchdev.h
-> index 4c5f7e5430cf..5387ff6f41c5 100644
-> --- a/include/net/switchdev.h
-> +++ b/include/net/switchdev.h
-> @@ -111,21 +111,6 @@ void *switchdev_trans_item_dequeue(struct switchdev_trans *trans);
->  
->  typedef int switchdev_obj_dump_cb_t(struct switchdev_obj *obj);
->  
-> -/**
-> - * struct switchdev_ops - switchdev operations
-> - *
-> - * @switchdev_port_attr_get: Get a port attribute (see switchdev_attr).
-> - *
-> - * @switchdev_port_attr_set: Set a port attribute (see switchdev_attr).
-> - */
-> -struct switchdev_ops {
-> -	int	(*switchdev_port_attr_get)(struct net_device *dev,
-> -					   struct switchdev_attr *attr);
-> -	int	(*switchdev_port_attr_set)(struct net_device *dev,
-> -					   const struct switchdev_attr *attr,
-> -					   struct switchdev_trans *trans);
-> -};
-> -
 
-This and the hunk below bisection, I will move that into patch #16 after
-receiving feedback on this.
+There is a new chromebook that contains a different Embedded Controller
+(codename Wilco) than the rest of the chromebook series. Thus the kernel
+requires a different driver than the already existing and generalized
+cros_ec_* drivers. The core of the communication with the EC
+is implemented in wilco_ec/mailbox.c, using a simple byte-level protocol
+with a checksum, transmitted over an eSPI bus.
+
+In this patch series I only introduce a very barebones
+driver with a debugfs interface for sending/receiving raw byte
+sequences to the EC, as well as a standard RTC driver with read/write
+functionality.  Later, I will hopefully include more specialized
+drivers such as a keyboard backlight driver, an EC event notification node,
+telemetry data query node, etc.
+
+The entry point of the driver is wilco_ec/core.c,
+which is responsible for several tasks:
+- Initialize the register interface that is used by wilco_ec_mailbox()
+- Create a platform device which is picked up by the debugfs driver
+- Create a platform device which is picked up by the RTC driver
+
+A full thread of the development of these patches can be found at
+https://chromium-review.googlesource.com/c/1356082. This thread contains
+comments and revisions that could be helpful in understanding how the
+driver arrived at the state it is in now. The thread also contains some
+ChromeOS specific patches that actually enable the driver. If you want
+to test the patch yourself, you would have to install the ChromeOS SDK
+and cherry pick in these patches, and even then you would need a Sarien
+device to actually run it.
+
+Thank you for your comments!
+
+Changes in v8:
+- Fix a comment about registering the debugfs driver
+
+Changes in v7:
+- Switch to #define for MAX_WORD_SIZE so array size
+  can be determined at compile time.
+
+Changes in v6:
+- Re-added WILCO_EC_FLAG_EXTENDED_DATA and went back to always
+  reading either EC_MAILBOX_DATA_SIZE or EC_MAILBOX_DATA_SIZE_EXTENDED
+  bytes, since it turns out the EC always expects you to calculate the
+  checksum over all of them.
+- Split WILCO_EC_MSG_TELEMETRY into WILCO_EC_MSG_TELEMETRY_SHORT and
+  WILCO_EC_MSG_TELEMETRY_LONG, since there will be two different
+  commands.
+- A couple comment and err message polishes
+- s/4.19/5.1/ for kernel version in documentation, since that is
+  the version this patch should land in.
+- Instead of requiring at least 3 bytes for msg type and command,
+  now just require two for msg type. We can skip the command.
+- Fixed error checking in probe() so that errors are hidden, without
+  causing more errors or unextpected behavior.
+- Some comment polishing.
+- In the core, actually unregister the debugfs child platform_device
+- In the core, actually unregister the RTC child platform_device.
+
+Changes in v5:
+- move checking of NO_RESPONSE flag before timeout check,
+  so now timeout doesn't always happen when EC isn't supposed
+  to respond.
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+- core now always continues regardless of debugfs failure
+- mv documentation to file header
+- Check for OOM
+- rm unneeded check if debug_info is allocqated
+- rm bogus comment
+- add space around "+"
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+
+Changes in v4:
+- add #define DRV_NAME
+- remove redundant Kconfig nesting
+- changed my email to @chromium.org
+- Add better explanation of what core.c does
+- Change debugfs driver to be a separate module
+- Change me email to @chromium.org from @google.com
+- Change CONFIG_WILCO_EC_SYSFS_RAW to
+  CONFIG_WILCO_EC_DEBUGFS
+- Change me email to @chromium.org from @google.com
+- Move "Add RTC driver" before "Add sysfs attributes" so that
+  it could get accepted earlier, since it is less contentious
+
+Changes in v3:
+- Change <= to >= in mec_in_range()
+- Add " - EC_HOST_CMD_REGION0" to offset arg for io_bytes_mec()
+- remove unused ret in probe()
+- Add newline spacer in probe()
+- rm unnecessary res in get_resource()
+- s/8bit/8-bit
+- rm first sleep when sending command to EC
+- Move the attribute to the debugfs system
+- Move the implementation to debugfs.c
+- Improve the raw hex parsing
+- Encapsulate global variables in one object
+- Add safety check when passing less than 3 bytes
+- Move documentation to debugfs-wilco-ec
+- rm #define for driver name
+- Don't compute weekday when reading from RTC.
+  Still set weekday when writing, as RTC needs this
+  to control advanced power scheduling
+- rm check for invalid month data
+- Set range_min and range_max on rtc_device
+
+Changes in v2:
+- Fixed kernel-doc comments
+- Fixed include of linux/mfd/cros_ec_lpc_mec.h
+- cros_ec_lpc_mec_in_range() returns -EINVAL on error
+- Added parens around macro variables
+- Remove COMPILE_TEST from Kconfig because inb()/outb()
+won't work on anything but X86
+- Add myself as module author
+- Tweak mailbox()
+- Add sysfs documentation
+- rm duplicate EC_MAILBOX_DATA_SIZE defs
+- Make docstrings follow kernel style
+- Fix tags in commit msg
+- Move Kconfig to subdirectory
+- Reading raw now includes ASCII translation
+- rm license boiler plate
+- rm "wilco_ec_rtc -" prefix in docstring
+- Make rtc driver its own module within the drivers/rtc/ directory
+- Register a rtc device from core.c that is picked up by this driver
+
+Nick Crews (4):
+  cros_ec: Remove cros_ec dependency in lpc_mec
+  platform/chrome: Add new driver for Wilco EC
+  platform/chrome: Add support for raw commands in debugfs
+  platform/chrome: rtc: Add RTC driver
+
+ Documentation/ABI/testing/debugfs-wilco-ec |  23 ++
+ drivers/platform/chrome/Kconfig            |   4 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/cros_ec_lpc_mec.c  |  52 ++++-
+ drivers/platform/chrome/cros_ec_lpc_mec.h  |  43 ++--
+ drivers/platform/chrome/cros_ec_lpc_reg.c  |  47 ++--
+ drivers/platform/chrome/wilco_ec/Kconfig   |  21 ++
+ drivers/platform/chrome/wilco_ec/Makefile  |   6 +
+ drivers/platform/chrome/wilco_ec/core.c    | 136 ++++++++++++
+ drivers/platform/chrome/wilco_ec/debugfs.c | 238 +++++++++++++++++++++
+ drivers/platform/chrome/wilco_ec/mailbox.c | 236 ++++++++++++++++++++
+ drivers/rtc/Kconfig                        |  11 +
+ drivers/rtc/Makefile                       |   1 +
+ drivers/rtc/rtc-wilco-ec.c                 | 177 +++++++++++++++
+ include/linux/platform_data/wilco-ec.h     | 144 +++++++++++++
+ 15 files changed, 1081 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/ABI/testing/debugfs-wilco-ec
+ create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
+ create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
+ create mode 100644 drivers/platform/chrome/wilco_ec/core.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/debugfs.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
+ create mode 100644 drivers/rtc/rtc-wilco-ec.c
+ create mode 100644 include/linux/platform_data/wilco-ec.h
+
 -- 
-Florian
+2.20.1.791.gb4d0f1c61a-goog
+
