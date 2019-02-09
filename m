@@ -2,154 +2,194 @@ Return-Path: <SRS0=1U6d=QQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9006C282C4
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AE4C282C4
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C03F21916
-	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 857AA21773
+	for <linux-kernel@archiver.kernel.org>; Sat,  9 Feb 2019 12:24:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="h6tDkJ8D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfBIMXt (ORCPT
+        id S1727070AbfBIMYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 07:23:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52807 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfBIMXs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 07:23:48 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x19CNe3B2624685
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 9 Feb 2019 04:23:40 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x19CNcFu2624671;
-        Sat, 9 Feb 2019 04:23:38 -0800
-Date:   Sat, 9 Feb 2019 04:23:38 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-mv8kolk17xla1smvmp3qabv1@git.kernel.org>
-Cc:     hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mpetlan@redhat.com, adrian.hunter@intel.com,
-        namhyung@kernel.org, mingo@kernel.org, jolsa@redhat.com
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-          tglx@linutronix.de, mpetlan@redhat.com, namhyung@kernel.org,
-          adrian.hunter@intel.com, mingo@kernel.org, jolsa@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf trace: Support multiple "vfs_getname" probes
-Git-Commit-ID: 6ab3bc240ade47a0f52bc16d97edd9accbe0024e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 9 Feb 2019 07:24:12 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48310 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726703AbfBIMYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 07:24:11 -0500
+Received: from zn.tnic (p200300EC2BDAE10070CE2F41E4E18639.dip0.t-ipconnect.de [IPv6:2003:ec:2bda:e100:70ce:2f41:e4e1:8639])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2FEB91EC01AF;
+        Sat,  9 Feb 2019 13:24:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549715050;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=0omCYf6Nq6i28AW2rkfg4AfQ6d0467vpPKNZc2u7Zsw=;
+        b=h6tDkJ8DNoNF9yjA8ONRsGTJRGJRlbFvR0/5r0Q035Cm7plcmXVzG3PD+aVsldeYohi7EL
+        e/aiq+P5p1ey1GEeHOaLV2b4GPwwDTUU0yNRON1TFUAvICLl4A3phkT5atqoVNmQg3HQEa
+        CbOER2v8qUuaOQ66uCTExmHQolCdUgc=
+Date:   Sat, 9 Feb 2019 13:24:05 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH v7 06/28] x86/asm: annotate local pseudo-functions
+Message-ID: <20190209122405.GB5089@zn.tnic>
+References: <20190130124711.12463-1-jslaby@suse.cz>
+ <20190130124711.12463-7-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20190130124711.12463-7-jslaby@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6ab3bc240ade47a0f52bc16d97edd9accbe0024e
-Gitweb:     https://git.kernel.org/tip/6ab3bc240ade47a0f52bc16d97edd9accbe0024e
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 29 Jan 2019 15:12:34 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Feb 2019 15:50:38 -0300
+On Wed, Jan 30, 2019 at 01:46:49PM +0100, Jiri Slaby wrote:
+> Use the newly added SYM_CODE_START_LOCAL* to annotate starts of all
+> pseudo-functions (those ending END until now) which do not have ".globl"
+> annotation. This is needed to balance END for tools that generate
+> debuginfo. Note that we switch from END to SYM_CODE_END too so that
+> everybody can see the pairing.
+> 
+> We are not annotating C-like functions (which handle frame ptr etc.)
+> here, hence we use SYM_CODE_* macros here, not SYM_FUNC_*.  Note that
+> early_idt_handler_common already had ENDPROC -- switch that to
+> SYM_CODE_END for the same reason as above.
+> 
+> bogus_64_magic, bad_address, bad_get_user*, and bad_put_user are now
+> aligned, as they are separate functions. They do not mind to be aligned
+> -- no need to be compact there.
+> 
+> early_idt_handler_common is aligned now too, as it is after
+> early_idt_handler_array, so as well no need to be compact there.
+> 
+> verify_cpu is self-standing and included in other .S files, so align it
+> too.
+> 
+> The others have alignment preserved to what it used to be (using the
+> _NOALIGN variant of macros).
+> 
+> [v3] annotate more functions
+> [v4] describe the alignments changes
+> 
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: <x86@kernel.org>
+> ---
+>  arch/x86/entry/entry_32.S        | 5 ++---
+>  arch/x86/entry/entry_64.S        | 3 ++-
+>  arch/x86/kernel/acpi/wakeup_64.S | 3 ++-
+>  arch/x86/kernel/head_32.S        | 4 ++--
+>  arch/x86/kernel/head_64.S        | 4 ++--
+>  arch/x86/kernel/verify_cpu.S     | 4 ++--
+>  arch/x86/lib/getuser.S           | 8 ++++----
+>  arch/x86/lib/putuser.S           | 4 ++--
+>  8 files changed, 18 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index d309f30cf7af..306ae3e9a24c 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -737,8 +737,7 @@ END(ret_from_fork)
+>   */
+>  
+>  	# userspace resumption stub bypassing syscall exit tracing
+> -	ALIGN
+> -ret_from_exception:
+> +SYM_CODE_START_LOCAL(ret_from_exception)
 
-perf trace: Support multiple "vfs_getname" probes
+This wants to be a local label instead, no?
 
-With a suitably defined "probe:vfs_getname" probe, 'perf trace' can
-"beautify" its output, so syscalls like open() or openat() can print the
-"filename" argument instead of just its hex address, like:
+.Lret_from_exception:
 
-  $ perf trace -e open -- touch /dev/null
-  [...]
-       0.590 ( 0.014 ms): touch/18063 open(filename: /dev/null, flags: CREAT|NOCTTY|NONBLOCK|WRONLY, mode: IRUGO|IWUGO) = 3
-  [...]
+...
 
-The output without such beautifier looks like:
+>  	preempt_stop(CLBR_ANY)
+>  ret_from_intr:
+>  #ifdef CONFIG_VM86
+> @@ -761,7 +760,7 @@ ENTRY(resume_userspace)
+>  	movl	%esp, %eax
+>  	call	prepare_exit_to_usermode
+>  	jmp	restore_all
+> -END(ret_from_exception)
+> +SYM_CODE_END(ret_from_exception)
+>  
+>  #ifdef CONFIG_PREEMPT
+>  ENTRY(resume_kernel)
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index 1f0efdb7b629..463f9edd78a4 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -1006,7 +1006,7 @@ EXPORT_SYMBOL(native_load_gs_index)
+>  	_ASM_EXTABLE(.Lgs_change, bad_gs)
+>  	.section .fixup, "ax"
+>  	/* running with kernelgs */
+> -bad_gs:
+> +SYM_CODE_START_LOCAL_NOALIGN(bad_gs)
 
-     0.529 ( 0.011 ms): touch/18075 open(filename: 0xc78cf288, flags: CREAT|NOCTTY|NONBLOCK|WRONLY, mode: IRUGO|IWUGO) = 3
+Ditto.
 
-However, when the vfs_getname probe expands to multiple probes and it is
-not the first one that is hit, the beautifier fails, as following:
+>  	SWAPGS					/* switch back to user gs */
+>  .macro ZAP_GS
+>  	/* This can't be a string because the preprocessor needs to see it. */
+> @@ -1017,6 +1017,7 @@ bad_gs:
+>  	xorl	%eax, %eax
+>  	movl	%eax, %gs
+>  	jmp	2b
+> +SYM_CODE_END(bad_gs)
+>  	.previous
+>  
+>  /* Call softirq on interrupt stack. Interrupts are off. */
+> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+> index 551758f48eb7..6c60fe346583 100644
+> --- a/arch/x86/kernel/acpi/wakeup_64.S
+> +++ b/arch/x86/kernel/acpi/wakeup_64.S
+> @@ -36,8 +36,9 @@ ENTRY(wakeup_long64)
+>  	jmp	*%rax
+>  ENDPROC(wakeup_long64)
+>  
+> -bogus_64_magic:
+> +SYM_CODE_START_LOCAL(bogus_64_magic)
 
-     0.326 ( 0.010 ms): touch/18072 open(filename: , flags: CREAT|NOCTTY|NONBLOCK|WRONLY, mode: IRUGO|IWUGO) = 3
+Ditto.
 
-Fix it by hooking into all the expanded probes (inlines), now, for instance:
+>  	jmp	bogus_64_magic
+> +SYM_CODE_END(bogus_64_magic)
+>  
+>  ENTRY(do_suspend_lowlevel)
+>  	FRAME_BEGIN
+> diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
+> index d1e213da4782..0bae769b7b59 100644
+> --- a/arch/x86/kernel/head_32.S
+> +++ b/arch/x86/kernel/head_32.S
+> @@ -409,7 +409,7 @@ ENTRY(early_idt_handler_array)
+>  	.endr
+>  ENDPROC(early_idt_handler_array)
+>  	
+> -early_idt_handler_common:
+> +SYM_CODE_START_LOCAL(early_idt_handler_common)
 
-  [root@quaco ~]# perf probe -l
-    probe:vfs_getname    (on getname_flags:73@fs/namei.c with pathname)
-    probe:vfs_getname_1  (on getname_flags:73@fs/namei.c with pathname)
-  [root@quaco ~]# perf trace -e open* sleep 1
-       0.010 ( 0.005 ms): sleep/5588 openat(dfd: CWD, filename: /etc/ld.so.cache, flags: RDONLY|CLOEXEC)   = 3
-       0.029 ( 0.006 ms): sleep/5588 openat(dfd: CWD, filename: /lib64/libc.so.6, flags: RDONLY|CLOEXEC)   = 3
-       0.194 ( 0.008 ms): sleep/5588 openat(dfd: CWD, filename: /usr/lib/locale/locale-archive, flags: RDONLY|CLOEXEC) = 3
-  [root@quaco ~]#
+This one too - all those are used only in this compilation unit so not
+having them as symbols at all is fine AFAICT.
 
-Works, further verified with:
+Same for the rest of the local symbols in this patch, except verify_cpu.
 
-  [root@quaco ~]# perf test vfs
-  65: Use vfs_getname probe to get syscall args filenames   : Ok
-  66: Add vfs_getname probe to get syscall args filenames   : Ok
-  67: Check open filename arg using perf trace + vfs_getname: Ok
-  [root@quaco ~]#
+-- 
+Regards/Gruss,
+    Boris.
 
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Tested-by: Michael Petlan <mpetlan@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-mv8kolk17xla1smvmp3qabv1@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index ed4583128b9c..b36061cd1ab8 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2514,19 +2514,30 @@ static size_t trace__fprintf_thread_summary(struct trace *trace, FILE *fp);
- 
- static bool perf_evlist__add_vfs_getname(struct perf_evlist *evlist)
- {
--	struct perf_evsel *evsel = perf_evsel__newtp("probe", "vfs_getname");
-+	bool found = false;
-+	struct perf_evsel *evsel, *tmp;
-+	struct parse_events_error err = { .idx = 0, };
-+	int ret = parse_events(evlist, "probe:vfs_getname*", &err);
- 
--	if (IS_ERR(evsel))
-+	if (ret)
- 		return false;
- 
--	if (perf_evsel__field(evsel, "pathname") == NULL) {
-+	evlist__for_each_entry_safe(evlist, evsel, tmp) {
-+		if (!strstarts(perf_evsel__name(evsel), "probe:vfs_getname"))
-+			continue;
-+
-+		if (perf_evsel__field(evsel, "pathname")) {
-+			evsel->handler = trace__vfs_getname;
-+			found = true;
-+			continue;
-+		}
-+
-+		list_del_init(&evsel->node);
-+		evsel->evlist = NULL;
- 		perf_evsel__delete(evsel);
--		return false;
- 	}
- 
--	evsel->handler = trace__vfs_getname;
--	perf_evlist__add(evlist, evsel);
--	return true;
-+	return found;
- }
- 
- static struct perf_evsel *perf_evsel__new_pgfault(u64 config)
+Good mailing practices for 400: avoid top-posting and trim the reply.
