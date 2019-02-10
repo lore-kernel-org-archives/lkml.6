@@ -2,102 +2,89 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A57C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AE9C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A542D2146F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 116ED2146F
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:23:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAI+3Nmr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfBJTUj (ORCPT
+        id S1726896AbfBJTXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:20:39 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37285 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfBJTUi (ORCPT
+        Sun, 10 Feb 2019 14:23:19 -0500
+Received: from mail-qk1-f170.google.com ([209.85.222.170]:34977 "EHLO
+        mail-qk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfBJTXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:20:38 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gsueL-00005g-Cm; Sun, 10 Feb 2019 20:20:21 +0100
-Date:   Sun, 10 Feb 2019 20:20:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
-In-Reply-To: <20190205170415.GG17550@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1902102012520.8784@nanos.tec.linutronix.de>
-References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com> <1549084491-57808-9-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de> <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com> <20190204195704.GJ29639@zn.tnic>
- <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com> <20190205084857.GK17528@hirez.programming.kicks-ass.net> <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com> <20190205170415.GG17550@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Feb 2019 14:23:18 -0500
+Received: by mail-qk1-f170.google.com with SMTP id w204so5267448qka.2;
+        Sun, 10 Feb 2019 11:23:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=2fbE5WAXjNZWSpDLSLNpKZwdw5lQJeAWG6NbpXX+ob8=;
+        b=CAI+3NmrTZAUYQMtVTzbWvTWak2GXP/54xPJwPxVaEXbAQ9t+4PWJVkxK+ZhGNeL4/
+         fNsNH1RRfZUZ4qDCtXdPotA3jpq0XFzmnlzQDM9lJXkMZCH2qbLEY125/UA2vgcuQSNN
+         wT4vXPr95qHmrqhJKKKQl36WNr/EuFM3c4Ij+TEOF1csXo4YUf2UtDj1qtu86QVIwuy9
+         hF6T5xgM02puPt4uknWtDQU+MOk15GS/EDdllnFRhB/Yoke/euZBU0pwI3RN/JvTOzCN
+         9d7H4y7fJB1QLYLLmApB4oVYlATShFhTYW1NSl2vAgRXjbBwod9gA0mIhKX9lweL838q
+         BfyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2fbE5WAXjNZWSpDLSLNpKZwdw5lQJeAWG6NbpXX+ob8=;
+        b=kiim5qHTdy7qewhh5oosOjFwyijM4a1daODE62mNDSfVletQsoY5ys4evV4p+PvT4p
+         WCn9LbJsV2KQDJ0ejji4lz4G9FXEYBEIThq4MY/WnMN/dltH2fZ7OD0S8HvNbh3YNBPh
+         YhdcDvFoU4kXJBL75U4CJGCxSTTldNJRv9GWxpSgfsZ7fjSHbm13/msage3E4WgCDqkU
+         4aolu5g5Z9xtP0fJgsjOVpeEsCfBCYIYR8HJ7k8cGf/jhVcaTMf7Aqi1/AU+17T9o4Ea
+         3uFSijuQBPNYote+YAIzbyC3lxymAbWHzTGSoTqHX0SUEIlTrK1RJoUfW54clOeF2JJj
+         mhfw==
+X-Gm-Message-State: AHQUAubilDpwgGUoer3fDAtf4yjaUq0QBhKlUUxd0t5xV0hhzox1AH+R
+        yOYj6zos2vcDfiC+z1463eioE4/liHQ=
+X-Google-Smtp-Source: AHgI3Ibkg5cWuiQSvaAhvc6jRsguoQoO22eMS/4M+TaaokWJNNX0+K2ULIztLOPYaxfOQ9/6vYxE5w==
+X-Received: by 2002:a37:7d05:: with SMTP id y5mr22076500qkc.310.1549826597254;
+        Sun, 10 Feb 2019 11:23:17 -0800 (PST)
+Received: from bebop (189.26.177.147.dynamic.adsl.gvt.net.br. [189.26.177.147])
+        by smtp.gmail.com with ESMTPSA id o21sm10586687qto.18.2019.02.10.11.23.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 11:23:16 -0800 (PST)
+Date:   Sun, 10 Feb 2019 17:24:14 -0200
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     jprvita@endlessm.com, andriy.shevchenko@linux.intel.com,
+        platform-driver-x86@vger.kernel.org
+Subject: X450LCP lost abillity to turn the screen off
+Message-ID: <20190210192408.GA81989@bebop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019, Peter Zijlstra wrote:
-> On Tue, Feb 05, 2019 at 07:19:16AM -0800, Dave Hansen wrote:
-> > On 2/5/19 12:48 AM, Peter Zijlstra wrote:
-> > This isn't something we want everybody and their grandma to turn on;
-> > it's a rather specialized feature.  It's really only for folks that care
-> > about the latency incurred across the entire system on split lock
-> > operations.
-> 
-> That really should be everyone. That split lock stuff is horrible. There
-> is no real down-side to having it always enabled. Code that breaks is
-> bad code you want fixed anyway.
-> 
-> Like I said elsewhere, I wish it would #AC for any unaligned LOCK
-> prefix, not just cross-line. I see why we'd not want to traditional RISC
-> #AC for every load/store, but atomics really had better be aligned.
+Hi,
 
-Right, we should really make this default enabled.
+Since 5.0.0-rc4 I vefiried that my ASUS laptop cannot turn the screen of
+anymore. There were several commits in 5.0 merge window touching this
+functionality like:
 
-> > > Is this some transient state; where a few (early) models will not have
-> > > the enumeration sorted but all later models will have it all neat and
-> > > tidy?
-> > 
-> > From my understanding, it's not just an early stepping.  It's a
-> > generational thing.  The current generation lacks the enumeration and
-> > the next generation will get it.  Both have the silicon to implement the
-> > feature itself.
-> 
-> I never said stepping, in fact I explicitly said model.
-> 
-> > > If so, we can easily do the FMS solution for this.
-> > 
-> > Yeah, we can.  I honestly forget why we didn't do FMS. :)
-> 
-> Right so FMS is fairly horrible; but when it is a stop-gap for a limited
-> number of models it's waaay better than dodgy cmdline things.
+  71b12beaf12f platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
+  b3f2f3799a97 platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+  78f3ac76d9e5 platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
 
-One or two is fine. And _IF_ we get the enumeration sorted before we merge
-that, then we can declare the FM list as immutable :)
- 
-> We could of course try to wrmsr_safe() detect the feature; but that
-> might be a problem is the MSR exists on any other models and has a
-> different meaning.
+I didn't have time to track it down, and my previous working kernel was 4.12
+(default in openSUSE Leap 15), but I hope I will be able to test older kernels this week.
 
-Well, yes, but that would be pretty stupid.
-
+-- 
 Thanks,
-
-	tglx
-
+Marcos
