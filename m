@@ -2,187 +2,169 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE89C282C4
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 01:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEBDC282C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8571221773
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 01:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9204F217D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:55:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="1O0t1X+o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfBJA5g (ORCPT
+        id S1726796AbfBJCti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 19:57:36 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44172 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfBJA5g (ORCPT
+        Sat, 9 Feb 2019 21:49:38 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44824 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfBJCth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 19:57:36 -0500
-Received: by mail-qt1-f193.google.com with SMTP id n32so8314020qte.11
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 16:57:35 -0800 (PST)
+        Sat, 9 Feb 2019 21:49:37 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p4so3578402plq.11
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 18:49:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=mEhoN9b4j186tQMb1sXwn7pHKZnKhJYsf7okKF7chnA=;
+        b=1O0t1X+oVxCHgefwCJqqmGg5/EMRcIU2xR2CRehlGoaEpcWcorvywtA8BFwnAKeO/E
+         kWzxoBEQ/Fzfk5HdfCcUtvDS5fu6lB/ZbUQwKcsMdy+PDmo8p4BHntmmJ2oSKcxNGik8
+         aSFmmOqvLnEIHrYT0Txryfx0Xgi5PfJR48fSquKheRDKjV/gnuHnnH5wr9n6CpLmJuoj
+         lbwqIH1ZYkxKWQp4hzc+o9EWkMHi2vZnbjcCF+7WbzdCnaDGa9FbPhkF8RFFDfQBcqxC
+         8AhPHQuhsrJ7Dz7fB7VAFEY2cwc9twSKRWegTPp2wUmAQ5HUr9FuPMQxjaUDg7n9Xyo5
+         0xUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ET3v7BkipoqurcPSEZ9fdMwwDelU4jHvk4N7Q+tBmSg=;
-        b=QZfD85wVyr1xXTo4GlIttb8gE5DhvsOWuVhZKXve6TJtCSrVfikfzQINlvJnLPzMX2
-         iLBN27Ir5BP9ECGSTIWj9to/34yQmZAO4JClnCZ5W8AKrNUmVtJQju502yMxucdL/Qdt
-         pMH7PxCyKkal+9VuwMhm9VLkVdtFRI8Fl5ZCBNLQnvqVQrhReN7zxPbPDPBAalVnpMXw
-         Rp1C77EmNRfgUFm3aj0YJoHfRpqum0Un9cbC62EBb1SLG32jycrCYpnQAB8OwXQjiqXa
-         MvtmJ3GnVvBFyFGUBJHEgp/UfMRD7LLdJfH3aj30JRQhWD7htCLh3m/ptAg9z4lFVsme
-         kdEg==
-X-Gm-Message-State: AHQUAuaxvLuD80q+ksIJhkdCMhCZC3GzCBEodI3oKAZ3LLoGs5sN4COe
-        Fq4m5DoQPlzTfWblY/VDeXT/jw==
-X-Google-Smtp-Source: AHgI3IYfkc4tIvkXaGcFfDKXmmojMImhaOMR67w5y3mRuKgGyMlk4RMGWKLPxS0JodnKw57cMfa/3w==
-X-Received: by 2002:ac8:2211:: with SMTP id o17mr22572959qto.170.1549760255044;
-        Sat, 09 Feb 2019 16:57:35 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id b66sm8011335qkf.64.2019.02.09.16.57.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 16:57:34 -0800 (PST)
-Date:   Sat, 9 Feb 2019 19:57:31 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, rkrcmar@redhat.com,
-        alexander.h.duyck@linux.intel.com, x86@kernel.org,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
-        tglx@linutronix.de, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
-Message-ID: <20190209195325-mutt-send-email-mst@kernel.org>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
- <20190204181558.12095.83484.stgit@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204181558.12095.83484.stgit@localhost.localdomain>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mEhoN9b4j186tQMb1sXwn7pHKZnKhJYsf7okKF7chnA=;
+        b=Cx1pP19NyY9IVjJH+4meo9SMmMGFX3HIJmN41tiVmlfB6BXIXXhhe24IYw77Np/st+
+         pQWdt5nXeJ9aXWiczmNYb+6raQO3oQgnZpoJkJMDHdyGiuLNe8pd7piSgBYEKYw4WpIh
+         uA3ez1P9ukGTkRcK7JVkAgh5EN8xcbc6/pD0UVoo1sCkIS4XR8+/bHikbDFUgetpwcBJ
+         aBsjykEVnVHqzltMTLkaSPX2CQbHnXkxWXLs0oPwjypdSqQPiqz9JuuBuMmB6necR8wL
+         kqfHq7B8QIqqowDQJ3GAriHJsdQiIgPX1/1ajawtGgOO/IwDn9wslP+UeEVLPE4iYyht
+         j2pA==
+X-Gm-Message-State: AHQUAubgzN6X4JVCFVtABg1c7bqsldEglhm9QlctdlvvfGt7E7BsCyxT
+        wzBwyHRQCLhJG+X66Httz+qaIQ==
+X-Google-Smtp-Source: AHgI3IY8rpsNogU5dXzfsYOZ7s6HgRrP2Wok6dz96xasFzn6F6N9Ks3Jc3HD2kzWK7idmOcOQ8Qvfg==
+X-Received: by 2002:a17:902:c85:: with SMTP id 5mr31422285plt.339.1549766976671;
+        Sat, 09 Feb 2019 18:49:36 -0800 (PST)
+Received: from localhost.localdomain (36-239-237-75.dynamic-ip.hinet.net. [36.239.237.75])
+        by smtp.gmail.com with ESMTPSA id e86sm10066013pfb.6.2019.02.09.18.49.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 09 Feb 2019 18:49:35 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Milo Kim <milo.kim@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: lp8788-buck: Convert to linear range
+Date:   Sun, 10 Feb 2019 10:48:45 +0800
+Message-Id: <20190210024845.12698-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 10:15:58AM -0800, Alexander Duyck wrote:
-> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> 
-> Because the implementation was limiting itself to only providing hints on
-> pages huge TLB order sized or larger we introduced the possibility for free
-> pages to slip past us because they are freed as something less then
-> huge TLB in size and aggregated with buddies later.
-> 
-> To address that I am adding a new call arch_merge_page which is called
-> after __free_one_page has merged a pair of pages to create a higher order
-> page. By doing this I am able to fill the gap and provide full coverage for
-> all of the pages huge TLB order or larger.
-> 
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+linear range is suitable for this driver, let's convert it to linear range.
 
-Looks like this will be helpful whenever active free page
-hints are added. So I think it's a good idea to
-add a hook.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/lp8788-buck.c | 38 +++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
-However, could you split adding the hook to a separate
-patch from the KVM hypercall based implementation?
+diff --git a/drivers/regulator/lp8788-buck.c b/drivers/regulator/lp8788-buck.c
+index 30de784d8e30..a7d30550bb5f 100644
+--- a/drivers/regulator/lp8788-buck.c
++++ b/drivers/regulator/lp8788-buck.c
+@@ -95,12 +95,10 @@ struct lp8788_buck {
+ 	void *dvs;
+ };
+ 
+-/* BUCK 1 ~ 4 voltage table */
+-static const int lp8788_buck_vtbl[] = {
+-	 500000,  800000,  850000,  900000,  950000, 1000000, 1050000, 1100000,
+-	1150000, 1200000, 1250000, 1300000, 1350000, 1400000, 1450000, 1500000,
+-	1550000, 1600000, 1650000, 1700000, 1750000, 1800000, 1850000, 1900000,
+-	1950000, 2000000,
++/* BUCK 1 ~ 4 voltage ranges */
++static const struct regulator_linear_range buck_volt_ranges[] = {
++	REGULATOR_LINEAR_RANGE(500000, 0, 0, 0),
++	REGULATOR_LINEAR_RANGE(800000, 1, 25, 50000),
+ };
+ 
+ static void lp8788_buck1_set_dvs(struct lp8788_buck *buck)
+@@ -345,8 +343,8 @@ static unsigned int lp8788_buck_get_mode(struct regulator_dev *rdev)
+ }
+ 
+ static const struct regulator_ops lp8788_buck12_ops = {
+-	.list_voltage = regulator_list_voltage_table,
+-	.map_voltage = regulator_map_voltage_ascend,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
+ 	.set_voltage_sel = lp8788_buck12_set_voltage_sel,
+ 	.get_voltage_sel = lp8788_buck12_get_voltage_sel,
+ 	.enable = regulator_enable_regmap,
+@@ -358,8 +356,8 @@ static const struct regulator_ops lp8788_buck12_ops = {
+ };
+ 
+ static const struct regulator_ops lp8788_buck34_ops = {
+-	.list_voltage = regulator_list_voltage_table,
+-	.map_voltage = regulator_map_voltage_ascend,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.map_voltage = regulator_map_voltage_linear_range,
+ 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.enable = regulator_enable_regmap,
+@@ -375,8 +373,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
+ 		.name = "buck1",
+ 		.id = BUCK1,
+ 		.ops = &lp8788_buck12_ops,
+-		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
+-		.volt_table = lp8788_buck_vtbl,
++		.n_voltages = 26,
++		.linear_ranges = buck_volt_ranges,
++		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+ 		.enable_reg = LP8788_EN_BUCK,
+@@ -386,8 +385,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
+ 		.name = "buck2",
+ 		.id = BUCK2,
+ 		.ops = &lp8788_buck12_ops,
+-		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
+-		.volt_table = lp8788_buck_vtbl,
++		.n_voltages = 26,
++		.linear_ranges = buck_volt_ranges,
++		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+ 		.enable_reg = LP8788_EN_BUCK,
+@@ -397,8 +397,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
+ 		.name = "buck3",
+ 		.id = BUCK3,
+ 		.ops = &lp8788_buck34_ops,
+-		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
+-		.volt_table = lp8788_buck_vtbl,
++		.n_voltages = 26,
++		.linear_ranges = buck_volt_ranges,
++		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+ 		.vsel_reg = LP8788_BUCK3_VOUT,
+@@ -410,8 +411,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
+ 		.name = "buck4",
+ 		.id = BUCK4,
+ 		.ops = &lp8788_buck34_ops,
+-		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
+-		.volt_table = lp8788_buck_vtbl,
++		.n_voltages = 26,
++		.linear_ranges = buck_volt_ranges,
++		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
+ 		.type = REGULATOR_VOLTAGE,
+ 		.owner = THIS_MODULE,
+ 		.vsel_reg = LP8788_BUCK4_VOUT,
+-- 
+2.17.1
 
-Then e.g. Nilal's patches could reuse it too.
-
-
-
-> ---
->  arch/x86/include/asm/page.h |   12 ++++++++++++
->  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
->  include/linux/gfp.h         |    4 ++++
->  mm/page_alloc.c             |    2 ++
->  4 files changed, 46 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> index 4487ad7a3385..9540a97c9997 100644
-> --- a/arch/x86/include/asm/page.h
-> +++ b/arch/x86/include/asm/page.h
-> @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *page, unsigned int order)
->  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
->  		__arch_free_page(page, order);
->  }
-> +
-> +struct zone;
-> +
-> +#define HAVE_ARCH_MERGE_PAGE
-> +void __arch_merge_page(struct zone *zone, struct page *page,
-> +		       unsigned int order);
-> +static inline void arch_merge_page(struct zone *zone, struct page *page,
-> +				   unsigned int order)
-> +{
-> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> +		__arch_merge_page(zone, page, order);
-> +}
->  #endif
->  
->  #include <linux/range.h>
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 09c91641c36c..957bb4f427bb 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsigned int order)
->  		       PAGE_SIZE << order);
->  }
->  
-> +void __arch_merge_page(struct zone *zone, struct page *page,
-> +		       unsigned int order)
-> +{
-> +	/*
-> +	 * The merging logic has merged a set of buddies up to the
-> +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
-> +	 * advantage of this moment to notify the hypervisor of the free
-> +	 * memory.
-> +	 */
-> +	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
-> +		return;
-> +
-> +	/*
-> +	 * Drop zone lock while processing the hypercall. This
-> +	 * should be safe as the page has not yet been added
-> +	 * to the buddy list as of yet and all the pages that
-> +	 * were merged have had their buddy/guard flags cleared
-> +	 * and their order reset to 0.
-> +	 */
-> +	spin_unlock(&zone->lock);
-> +
-> +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
-> +		       PAGE_SIZE << order);
-> +
-> +	/* reacquire lock and resume freeing memory */
-> +	spin_lock(&zone->lock);
-> +}
-> +
->  #ifdef CONFIG_PARAVIRT_SPINLOCKS
->  
->  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index fdab7de7490d..4746d5560193 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
->  #ifndef HAVE_ARCH_FREE_PAGE
->  static inline void arch_free_page(struct page *page, int order) { }
->  #endif
-> +#ifndef HAVE_ARCH_MERGE_PAGE
-> +static inline void
-> +arch_merge_page(struct zone *zone, struct page *page, int order) { }
-> +#endif
->  #ifndef HAVE_ARCH_ALLOC_PAGE
->  static inline void arch_alloc_page(struct page *page, int order) { }
->  #endif
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index c954f8c1fbc4..7a1309b0b7c5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *page,
->  		page = page + (combined_pfn - pfn);
->  		pfn = combined_pfn;
->  		order++;
-> +
-> +		arch_merge_page(zone, page, order);
->  	}
->  	if (max_order < MAX_ORDER) {
->  		/* If we are here, it means order is >= pageblock_order.
