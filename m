@@ -2,47 +2,46 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A506C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C643C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7922145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:48:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48A052145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbfBJTsa (ORCPT
+        id S1726655AbfBJTw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:48:30 -0500
-Received: from shell.v3.sk ([90.176.6.54]:42472 "EHLO shell.v3.sk"
+        Sun, 10 Feb 2019 14:52:29 -0500
+Received: from shell.v3.sk ([90.176.6.54]:42509 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfBJTsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:48:30 -0500
+        id S1725958AbfBJTw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 14:52:29 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id AFA49CE774;
-        Sun, 10 Feb 2019 20:48:27 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id CB47FCE834;
+        Sun, 10 Feb 2019 20:52:26 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ZTz23JhNe9zo; Sun, 10 Feb 2019 20:48:25 +0100 (CET)
+        with ESMTP id 4JwHXKgPb4j4; Sun, 10 Feb 2019 20:52:21 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 03FC2CE830;
-        Sun, 10 Feb 2019 20:48:25 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id B412ACE835;
+        Sun, 10 Feb 2019 20:52:20 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id AOeyUViiJJHm; Sun, 10 Feb 2019 20:48:24 +0100 (CET)
+        with ESMTP id 1tWXBy-UYJ7s; Sun, 10 Feb 2019 20:52:20 +0100 (CET)
 Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 6734ACE822;
-        Sun, 10 Feb 2019 20:48:24 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id EADB0CE774;
+        Sun, 10 Feb 2019 20:52:19 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Kalle Valo <kvalo@codeaurora.org>
 Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] libertas_tf: fix signal reporting
-Date:   Sun, 10 Feb 2019 20:48:22 +0100
-Message-Id: <20190210194822.18539-1-lkundrak@v3.sk>
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] libertas_tf: fix setting the hardware address
+Date:   Sun, 10 Feb 2019 20:52:14 +0100
+Message-Id: <20190210195217.18817-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -51,43 +50,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of exposing the signal-to-noise ration, calculate the actual sign=
-al
-level taking the noise floor into account.
+Hi,
 
-Also, flip the SIGNAL_DBM bit on, so that mac80211 exposes the signal
-level along with the station info in scan results. This fills
-NetworkManager's "nmcli d wifi output" output with colors, bars and joy.
+this short patchset addresses a problem with libertas_tf driver, where
+the driver registers the interface without having the MAC address set,
+only setting it when the interface is brought up. That is generally too
+late, and it confuses NetworkManager.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/net/wireless/marvell/libertas_tf/main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Some restructuring is needed first, done in first two patches.
 
-diff --git a/drivers/net/wireless/marvell/libertas_tf/main.c b/drivers/ne=
-t/wireless/marvell/libertas_tf/main.c
-index c71ad87cdc44..f93b400db949 100644
---- a/drivers/net/wireless/marvell/libertas_tf/main.c
-+++ b/drivers/net/wireless/marvell/libertas_tf/main.c
-@@ -562,7 +562,7 @@ int lbtf_rx(struct lbtf_private *priv, struct sk_buff=
- *skb)
- 		stats.flag |=3D RX_FLAG_FAILED_FCS_CRC;
- 	stats.freq =3D priv->cur_freq;
- 	stats.band =3D NL80211_BAND_2GHZ;
--	stats.signal =3D prxpd->snr;
-+	stats.signal =3D prxpd->snr - prxpd->nf;
- 	priv->noise =3D prxpd->nf;
- 	/* Marvell rate index has a hole at value 4 */
- 	if (prxpd->rx_rate > 4)
-@@ -626,6 +626,7 @@ struct lbtf_private *lbtf_add_card(void *card, struct=
- device *dmdev)
-=20
- 	hw->queues =3D 1;
- 	ieee80211_hw_set(hw, HOST_BROADCAST_PS_BUFFERING);
-+	ieee80211_hw_set(hw, SIGNAL_DBM);
- 	hw->extra_tx_headroom =3D sizeof(struct txpd);
- 	memcpy(priv->channels, lbtf_channels, sizeof(lbtf_channels));
- 	memcpy(priv->rates, lbtf_rates, sizeof(lbtf_rates));
---=20
-2.20.1
+Tested on an OLPC XO laptop.
+
+Cheers,
+Lubo
+
 
