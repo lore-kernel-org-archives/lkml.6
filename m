@@ -2,99 +2,71 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87BEC282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B41C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99DC720873
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CCCD20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:56:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBJSt0 (ORCPT
+        id S1726699AbfBJS4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 13:49:26 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37242 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbfBJStZ (ORCPT
+        Sun, 10 Feb 2019 13:56:47 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34270 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbfBJS4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 13:49:25 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gsuAC-00089D-Rx; Sun, 10 Feb 2019 19:49:12 +0100
-Date:   Sun, 10 Feb 2019 19:49:12 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ming Lei <ming.lei@redhat.com>
-cc:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 4/5] nvme-pci: simplify nvme_setup_irqs() via .setup_affinity
- callback
-In-Reply-To: <20190125095347.17950-5-ming.lei@redhat.com>
-Message-ID: <alpine.DEB.2.21.1902101815260.8784@nanos.tec.linutronix.de>
-References: <20190125095347.17950-1-ming.lei@redhat.com> <20190125095347.17950-5-ming.lei@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Feb 2019 13:56:47 -0500
+Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:b93f:9fae:b276:a89a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E1850260547;
+        Sun, 10 Feb 2019 18:56:44 +0000 (GMT)
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Purna Chandra Mandal <purna.chandra.mandal@intel.com>,
+        Fred Bloggs <f.blogs@napier.co.nz>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>
+Cc:     Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: mtd: spi-nor: cadence-quadspi: write upto 8-bytes data in STIG mode
+Date:   Sun, 10 Feb 2019 19:56:41 +0100
+Message-Id: <20190210185641.29270-1-boris.brezillon@collabora.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190128050229.44965-1-purna.chandra.mandal@intel.com>
+References: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-linux-mtd-patch-notification: thanks
+X-linux-mtd-patch-commit: 9558281572e35a86c8072d47c23ae6c9cdae2149
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019, Ming Lei wrote:
-> +static int nvme_setup_affinity(const struct irq_affinity *affd,
-> +			       struct irq_affinity_desc *masks,
-> +			       unsigned int nmasks)
-> +{
-> +	struct nvme_dev *dev = affd->priv;
-> +	int affvecs = nmasks - affd->pre_vectors - affd->post_vectors;
-> +	int curvec, usedvecs;
-> +	int i;
-> +
-> +	nvme_calc_io_queues(dev, nmasks);
+From: Boris Brezillon <bbrezillon@kernel.org>
 
-So this is the only NVME specific information. Everything else can be done
-in generic code. So what you really want is:
+On Mon, 2019-01-28 at 05:02:29 UTC, Purna Chandra Mandal wrote:
+> cadence-quadspi controller allows upto eight bytes of data to
+> be written in software Triggered Instruction generator (STIG) mode
+> of operation. Lower 4 bytes are written through writedatalower and
+> upper 4 bytes by writedataupper register.
+> 
+> This patch allows all the 8 bytes to be written.
+> 
+> Signed-off-by: Purna Chandra Mandal <purna.chandra.mandal@intel.com>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Reviewed-by: Vignesh R <vigneshr@ti.com>
 
-	struct affd {
-		...
-+		calc_sets(struct affd *, unsigned int nvecs);
-		...
-	}
+Applied to http://git.infradead.org/linux-mtd.git spi-nor/next, thanks.
 
-And sets want to be actually inside of the affinity descriptor structure:
-
-        unsigned int num_sets;
-	unsigned int set_vectors[MAX_SETS];
-
-We surely can define a sensible maximum of sets for now. If that ever turns
-out to be insufficient, then struct affd might become to large for the
-stack, but for now, using e.g. 8, there is no need to do so.
-
-So then the logic in the generic code becomes exactly the same as what you
-added to nvme_setup_affinity():
-
-	if (affd->calc_sets) {
-		affd->calc_sets(affd, nvecs);
-	} else if (!affd->num_sets) {
-		affd->num_sets = 1;
-		affd->set_vectors[0] = affvecs;
-	}
-
-	for (i = 0; i < affd->num_sets; i++) {
-	    ....
-	}
-
-See?
-
-Thanks,
-
-	tglx
+Boris
