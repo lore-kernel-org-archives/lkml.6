@@ -2,120 +2,60 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20918C282D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1D4C282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DC3213F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1064213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:58:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfBJU5t (ORCPT
+        id S1727037AbfBJU57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:57:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39319 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbfBJU5t (ORCPT
+        Sun, 10 Feb 2019 15:57:59 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:39063 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbfBJU56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:57:49 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1AKv55E3236082
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 10 Feb 2019 12:57:06 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1AKv5Cb3236069;
-        Sun, 10 Feb 2019 12:57:05 -0800
-Date:   Sun, 10 Feb 2019 12:57:05 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Matthias Kaehlcke <tipbot@zytor.com>
-Message-ID: <tip-1342d8080f6183b0419a9246c6e6545e21fa1e05@git.kernel.org>
-Cc:     hpa@zytor.com, paulmck@linux.vnet.ibm.com, dianders@chromium.org,
-        swboyd@chromium.org, bigeasy@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mka@chromium.org, rostedt@goodmis.org
-Reply-To: dianders@chromium.org, hpa@zytor.com, paulmck@linux.vnet.ibm.com,
-          bigeasy@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-          swboyd@chromium.org, tglx@linutronix.de, mka@chromium.org,
-          rostedt@goodmis.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20190128234625.78241-3-mka@chromium.org>
-References: <20190128234625.78241-3-mka@chromium.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] softirq: Don't skip softirq execution when softirq
- thread is parking
-Git-Commit-ID: 1342d8080f6183b0419a9246c6e6545e21fa1e05
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 10 Feb 2019 15:57:58 -0500
+Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 63661100008;
+        Sun, 10 Feb 2019 20:57:56 +0000 (UTC)
+Date:   Sun, 10 Feb 2019 21:57:56 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Oliver.Rohe@wago.com
+Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rtc: rs5c372: Fix reading from rtc when the
+ oscillator got interrupted.
+Message-ID: <20190210205755.GG23062@piout.net>
+References: <1549632034-9195-1-git-send-email-oliver.rohe@wago.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1549632034-9195-1-git-send-email-oliver.rohe@wago.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1342d8080f6183b0419a9246c6e6545e21fa1e05
-Gitweb:     https://git.kernel.org/tip/1342d8080f6183b0419a9246c6e6545e21fa1e05
-Author:     Matthias Kaehlcke <mka@chromium.org>
-AuthorDate: Mon, 28 Jan 2019 15:46:25 -0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 10 Feb 2019 21:51:39 +0100
+On 08/02/2019 13:20:44+0000, Oliver.Rohe@wago.com wrote:
+> When the oscillator of the rtc gets interrupted,
+> e.g. due to an empty battery, reading from the rtc will now return an error
+> and the oscillator bit will be cleared, once the rtc is successfully reset.
+> 
+> Signed-off-by: Oliver Rohe <oliver.rohe@wago.com>
+> ---
+>  drivers/rtc/rtc-rs5c372.c | 54 +++++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 47 insertions(+), 7 deletions(-)
+> 
+Applied, thanks.
 
-softirq: Don't skip softirq execution when softirq thread is parking
-
-When a CPU is unplugged the kernel threads of this CPU are parked (see
-smpboot_park_threads()). kthread_park() is used to mark each thread as
-parked and wake it up, so it can complete the process of parking itselfs
-(see smpboot_thread_fn()).
-
-If local softirqs are pending on interrupt exit invoke_softirq() is called
-to process the softirqs, however it skips processing when the softirq
-kernel thread of the local CPU is scheduled to run. The softirq kthread is
-one of the threads that is parked when a CPU is unplugged. Parking the
-kthread wakes it up, however only to complete the parking process, not to
-process the pending softirqs. Hence processing of softirqs at the end of an
-interrupt is skipped, but not done elsewhere, which can result in warnings
-about pending softirqs when a CPU is unplugged:
-
-/sys/devices/system/cpu # echo 0 > cpu4/online
-[ ... ] NOHZ: local_softirq_pending 02
-[ ... ] NOHZ: local_softirq_pending 202
-[ ... ] CPU4: shutdown
-[ ... ] psci: CPU4 killed.
-
-Don't skip processing of softirqs at the end of an interrupt when the
-softirq thread of the CPU is parking.
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Stephen Boyd <swboyd@chromium.org>
-Link: https://lkml.kernel.org/r/20190128234625.78241-3-mka@chromium.org
-
----
- kernel/softirq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index d28813306b2c..10277429ed84 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -89,7 +89,8 @@ static bool ksoftirqd_running(unsigned long pending)
- 
- 	if (pending & SOFTIRQ_NOW_MASK)
- 		return false;
--	return tsk && (tsk->state == TASK_RUNNING);
-+	return tsk && (tsk->state == TASK_RUNNING) &&
-+		!__kthread_should_park(tsk);
- }
- 
- /*
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
