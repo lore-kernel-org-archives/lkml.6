@@ -2,30 +2,30 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE27C282C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2684EC282CC
 	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCCA021929
+	by mail.kernel.org (Postfix) with ESMTP id F0B6E21939
 	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBJC51 (ORCPT
+        id S1726974AbfBJC53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 21:57:27 -0500
-Received: from mga09.intel.com ([134.134.136.24]:14368 "EHLO mga09.intel.com"
+        Sat, 9 Feb 2019 21:57:29 -0500
+Received: from mga17.intel.com ([192.55.52.151]:14881 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726069AbfBJC51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 21:57:27 -0500
+        id S1726852AbfBJC52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 21:57:28 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:26 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,353,1544515200"; 
-   d="scan'208";a="319090702"
+   d="scan'208";a="319090723"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga005.fm.intel.com with ESMTP; 09 Feb 2019 18:57:26 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -40,129 +40,300 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Babu Moger" <babu.moger@amd.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v7 00/13] selftests/resctrl: Add resctrl selftest
-Date:   Sat,  9 Feb 2019 18:50:29 -0800
-Message-Id: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v7 07/13] selftests/resctrl: Add MBA test
+Date:   Sat,  9 Feb 2019 18:50:36 -0800
+Message-Id: <1549767042-95827-8-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
+References: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With more and more resctrl features are being added by Intel, AMD
-and ARM, a test tool is becoming more and more useful to validate
-that both hardware and software functionalities work as expected.
+From: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
 
-We introduce resctrl selftest to cover resctrl features on both
-X86 and ARM architectures. It first implements MBM (Memory Bandwidth
-Monitoring), MBA (Memory Bandwidth Allocation), L3 CAT (Cache Allocation
-Technology), and CQM (Cache QoS Monitoring)  tests. We can enhance
-the selftest tool to include more functionality tests in future.
+MBA (Memory Bandwidth Allocation) test starts a stressful memory
+bandwidth benchmark and allocates memory bandwidth from 100% down
+to 10% for the benchmark process. For each allocation, compare
+perf IMC counter and mbm total bytes from resctrl. The difference
+between the two values should be within a threshold to pass the test.
 
-The tool has been tested on both Intel RDT and AMD QoS.
+Default benchmark is built-in fill_buf. But users can specify their
+own benchmark by option "-b".
 
-There is an existing resctrl test suite 'intel_cmt_cat'. But the major
-purpose of the tool is to test Intel(R) RDT hardware via writing and
-reading MSR registers. It does access resctrl file system; but the
-functionalities are very limited. And it doesn't support automatic test
-and a lot of manual verifications are involved.
+We can add memory bandwidth allocation for multiple processes in the
+future.
 
-So the selftest tool we are introducing here provides a convenient
-tool which does automatic resctrl testing, is easily available in kernel
-tree, and will be extended to AMD QoS and ARM MPAM.
-
-The selftest tool is in tools/testing/selftests/resctrl in order to have
-generic test code for all architectures.
-
-Changelog:
-v7:
-- Fix a few warnings when compiling patches separately, pointed by Babu 
-
-v6:
-- Fix a benchmark reading optimized out issue in newer GCC.
-- Fix a few coding style issues.
-- Re-arrange code among patches to make cleaner code. No change in patches
-structure.
-
-v5:
-- Based the v4 patches submitted by Fenghua Yu and added changes to support
-  AMD.
-- Changed the function name get_sock_num to get_resource_id. Intel uses
-  socket number for schemata and AMD uses l3 index id. To generalize,
-  changed the function name to get_resource_id.
-- Added the code to detect vendor.
-- Disabled the few tests for AMD where the test results are not clear.
-  Also AMD does not have IMC.
-- Fixed few compile issues.
-- Some cleanup to make each patch independent.
-- Tested the patches on AMD system. Fenghua, Need your help to test on
-  Intel box. Please feel free to change and resubmit if something
-   broken.
-- Here is the link for previous version.
-  https://lore.kernel.org/lkml/1545438038-75107-1-git-send-email-fenghua.yu=
-@intel.com/
-
-v4:
-- address comments from Balu and Randy
-- Add CAT and CQM tests
-
-v3:
-- Change code based on comments from Babu Moger
-- Remove some unnessary code and use pipe to communicate b/w processes
-
-v2:
-- Change code based on comments from Babu Moger
-- Clean up other places.
-
-Arshiya Hayatkhan Pathan (4):
-  selftests/resctrl: Add MBM test
-  selftests/resctrl: Add MBA test
-  selftests/resctrl: Add Cache QoS Monitoring (CQM) selftest
-  selftests/resctrl: Add Cache Allocation Technology (CAT) selftest
-
-Babu Moger (3):
-  selftests/resctrl: Add vendor detection mechanism
-  selftests/resctrl: Use cache index3 id for AMD schemata masks
-  selftests/resctrl: Disable MBA and MBM tests for AMD
-
-Fenghua Yu (2):
-  selftests/resctrl: Add README for resctrl tests
-  selftests/resctrl: Add the test in MAINTAINERS
-
-Sai Praneeth Prakhya (4):
-  selftests/resctrl: Add basic resctrl file system operations and data
-  selftests/resctrl: Read memory bandwidth from perf IMC counter and
-    from resctrl file system
-  selftests/resctrl: Add callback to start a benchmark
-  selftests/resctrl: Add built in benchmark
-
- MAINTAINERS                                     |   1 +
- tools/testing/selftests/resctrl/Makefile        |  16 +
- tools/testing/selftests/resctrl/README          |  54 ++
- tools/testing/selftests/resctrl/cache.c         | 274 +++++++++
- tools/testing/selftests/resctrl/cat_test.c      | 242 ++++++++
- tools/testing/selftests/resctrl/cqm_test.c      | 173 ++++++
- tools/testing/selftests/resctrl/fill_buf.c      | 210 +++++++
- tools/testing/selftests/resctrl/mba_test.c      | 178 ++++++
- tools/testing/selftests/resctrl/mbm_test.c      | 150 +++++
- tools/testing/selftests/resctrl/resctrl.h       | 117 ++++
- tools/testing/selftests/resctrl/resctrl_tests.c | 238 ++++++++
- tools/testing/selftests/resctrl/resctrl_val.c   | 723 ++++++++++++++++++++++++
- tools/testing/selftests/resctrl/resctrlfs.c     | 668 ++++++++++++++++++++++
- 13 files changed, 3044 insertions(+)
- create mode 100644 tools/testing/selftests/resctrl/Makefile
- create mode 100644 tools/testing/selftests/resctrl/README
- create mode 100644 tools/testing/selftests/resctrl/cache.c
- create mode 100644 tools/testing/selftests/resctrl/cat_test.c
- create mode 100644 tools/testing/selftests/resctrl/cqm_test.c
- create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
+Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+---
+ tools/testing/selftests/resctrl/Makefile        |   2 +-
+ tools/testing/selftests/resctrl/mba_test.c      | 177 ++++++++++++++++++++++++
+ tools/testing/selftests/resctrl/resctrl.h       |   2 +
+ tools/testing/selftests/resctrl/resctrl_tests.c |  15 +-
+ 4 files changed, 194 insertions(+), 2 deletions(-)
  create mode 100644 tools/testing/selftests/resctrl/mba_test.c
- create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
- create mode 100644 tools/testing/selftests/resctrl/resctrl.h
- create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
- create mode 100644 tools/testing/selftests/resctrl/resctrl_val.c
- create mode 100644 tools/testing/selftests/resctrl/resctrlfs.c
 
+diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
+index eaa8b45de10d..141cbdb619af 100644
+--- a/tools/testing/selftests/resctrl/Makefile
++++ b/tools/testing/selftests/resctrl/Makefile
+@@ -8,7 +8,7 @@ all: resctrl_tests
+ 
+ resctrl_tests: *.o
+ 	$(CC) $(CFLAGS) -o resctrl_tests resctrl_tests.o resctrlfs.o \
+-		 resctrl_val.o fill_buf.o mbm_test.o
++		 resctrl_val.o fill_buf.o mbm_test.o mba_test.o
+ 
+ .PHONY: clean
+ 
+diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
+new file mode 100644
+index 000000000000..71d8feb93ac8
+--- /dev/null
++++ b/tools/testing/selftests/resctrl/mba_test.c
+@@ -0,0 +1,177 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Memory Bandwidth Allocation (MBA) test
++ *
++ * Copyright (C) 2018 Intel Corporation
++ *
++ * Authors:
++ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
++ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
++ *    Fenghua Yu <fenghua.yu@intel.com>
++ */
++#include "resctrl.h"
++
++#define RESULT_FILE_NAME	"result_mba"
++#define NUM_OF_RUNS		5
++#define MAX_DIFF		300
++#define ALLOCATION_MAX		100
++#define ALLOCATION_MIN		10
++#define ALLOCATION_STEP		10
++
++/*
++ * Change schemata percentage from 100 to 10%. Write schemata to specified
++ * con_mon grp, mon_grp in resctrl FS.
++ * For each allocation, run 5 times in order to get average values.
++ */
++static int mba_setup(int num, ...)
++{
++	static int runs_per_allocation, allocation = 100;
++	struct resctrl_val_param *p;
++	char allocation_str[64];
++	va_list param;
++
++	va_start(param, num);
++	p = va_arg(param, struct resctrl_val_param *);
++	va_end(param);
++
++	if (runs_per_allocation >= NUM_OF_RUNS)
++		runs_per_allocation = 0;
++
++	/* Only set up schemata once every NUM_OF_RUNS of allocations */
++	if (runs_per_allocation++ != 0)
++		return 0;
++
++	if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)
++		return -1;
++
++	sprintf(allocation_str, "%d", allocation);
++
++	write_schemata(p->ctrlgrp, allocation_str, p->cpu_no, p->resctrl_val);
++	printf("changed schemata to : %d\n", allocation);
++	allocation -= ALLOCATION_STEP;
++
++	return 0;
++}
++
++static void show_mba_info(unsigned long *bw_imc, unsigned long *bw_resc)
++{
++	int allocation, failed = 0, runs;
++
++	/* Memory bandwidth from 100% down to 10% */
++	for (allocation = 0; allocation < ALLOCATION_MAX / ALLOCATION_STEP;
++	     allocation++) {
++		unsigned long avg_bw_imc = 0, avg_bw_resc = 0;
++		unsigned long sum_bw_imc = 0, sum_bw_resc = 0;
++		long  avg_diff = 0;
++
++		/*
++		 * The first run is discarded due to inaccurate value from
++		 * phase transition.
++		 */
++		for (runs = NUM_OF_RUNS * allocation + 1;
++		     runs < NUM_OF_RUNS * allocation + NUM_OF_RUNS ; runs++) {
++			sum_bw_imc += bw_imc[runs];
++			sum_bw_resc += bw_resc[runs];
++		}
++
++		avg_bw_imc = sum_bw_imc / (NUM_OF_RUNS - 1);
++		avg_bw_resc = sum_bw_resc / (NUM_OF_RUNS - 1);
++		avg_diff = avg_bw_resc - avg_bw_imc;
++
++		printf("\nschemata percentage: %d \t",
++		       ALLOCATION_MAX - ALLOCATION_STEP * allocation);
++		printf("avg_bw_imc: %lu\t", avg_bw_imc);
++		printf("avg_bw_resc: %lu\t", avg_bw_resc);
++		printf("avg_diff: %lu\t", labs(avg_diff));
++		if (labs(avg_diff) > MAX_DIFF) {
++			printf("failed\n");
++			failed = 1;
++		} else {
++			printf("passed\n");
++		}
++	}
++
++	if (failed) {
++		printf("\nTest for schemata change using MBA failed");
++		printf("as atleast one test failed!\n");
++	} else {
++		printf("\nTests for changing schemata using MBA passed!\n\n");
++	}
++}
++
++static int check_results(void)
++{
++	char *token_array[8], output[] = RESULT_FILE_NAME, temp[512];
++	unsigned long bw_imc[1024], bw_resc[1024];
++	int runs;
++	FILE *fp;
++
++	printf("\nchecking for pass/fail\n");
++	fp = fopen(output, "r");
++	if (!fp) {
++		perror("Error in opening file\n");
++
++		return errno;
++	}
++
++	runs = 0;
++	while (fgets(temp, 1024, fp)) {
++		char *token = strtok(temp, ":\t");
++		int fields = 0;
++
++		while (token) {
++			token_array[fields++] = token;
++			token = strtok(NULL, ":\t");
++		}
++
++		/* Field 3 is perf imc value */
++		bw_imc[runs] = strtoul(token_array[3], NULL, 0);
++		/* Field 5 is resctrl value */
++		bw_resc[runs] = strtoul(token_array[5], NULL, 0);
++		runs++;
++	}
++
++	fclose(fp);
++
++	show_mba_info(bw_imc, bw_resc);
++
++	return 0;
++}
++
++void mba_test_cleanup(void)
++{
++	remove(RESULT_FILE_NAME);
++}
++
++int mba_schemata_change(int cpu_no, char *bw_report, char **benchmark_cmd)
++{
++	struct resctrl_val_param param = {
++		.resctrl_val	= "mba",
++		.ctrlgrp	= "c1",
++		.mongrp		= "m1",
++		.cpu_no		= cpu_no,
++		.mum_resctrlfs	= 1,
++		.filename	= RESULT_FILE_NAME,
++		.bw_report	= bw_report,
++		.setup		= mba_setup
++	};
++	int ret;
++
++	remove(RESULT_FILE_NAME);
++
++	ret = validate_resctrl_feature_request("mba");
++	if (ret)
++		return ret;
++
++	ret = resctrl_val(benchmark_cmd, &param);
++	if (ret)
++		return ret;
++
++	ret = check_results();
++	if (ret)
++		return ret;
++
++	mba_test_cleanup();
++
++	return 0;
++}
+diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
+index 7f7ea180478c..92e5f2930c68 100644
+--- a/tools/testing/selftests/resctrl/resctrl.h
++++ b/tools/testing/selftests/resctrl/resctrl.h
+@@ -74,5 +74,7 @@ int resctrl_val(char **benchmark_cmd, struct resctrl_val_param *param);
+ int mbm_bw_change(int span, int cpu_no, char *bw_report, char **benchmark_cmd);
+ void tests_cleanup(void);
+ void mbm_test_cleanup(void);
++int mba_schemata_change(int cpu_no, char *bw_report, char **benchmark_cmd);
++void mba_test_cleanup(void);
+ 
+ #endif /* RESCTRL_H */
+diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
+index a51780d28ff1..5fbfa8685b58 100644
+--- a/tools/testing/selftests/resctrl/resctrl_tests.c
++++ b/tools/testing/selftests/resctrl/resctrl_tests.c
+@@ -27,6 +27,7 @@ static void cmd_help(void)
+ void tests_cleanup(void)
+ {
+ 	mbm_test_cleanup();
++	mba_test_cleanup();
+ }
+ 
+ int main(int argc, char **argv)
+@@ -34,7 +35,7 @@ int main(int argc, char **argv)
+ 	char benchmark_cmd_area[BENCHMARK_ARGS][BENCHMARK_ARG_SIZE];
+ 	int res, c, cpu_no = 1, span = 250, argc_new = argc, i;
+ 	int ben_ind;
+-	bool has_ben = false, mbm_test = true;
++	bool has_ben = false, mbm_test = true, mba_test = true;
+ 	char *benchmark_cmd[BENCHMARK_ARGS];
+ 	char bw_report[64], bm_type[64];
+ 
+@@ -55,9 +56,12 @@ int main(int argc, char **argv)
+ 			token = strtok(optarg, ",");
+ 
+ 			mbm_test = false;
++			mba_test = false;
+ 			while (token) {
+ 				if (!strcmp(token, "mbm")) {
+ 					mbm_test = true;
++				} else if (!strcmp(token, "mba")) {
++					mba_test = true;
+ 				} else {
+ 					printf("invalid argument\n");
+ 
+@@ -110,5 +114,14 @@ int main(int argc, char **argv)
+ 			printf("Error in running tests for mbm bw change!\n");
+ 	}
+ 
++	if (mba_test) {
++		printf("\nMBA Schemata Change Starting..\n");
++		if (!has_ben)
++			sprintf(benchmark_cmd[1], "%d", span);
++		res = mba_schemata_change(cpu_no, bw_report, benchmark_cmd);
++		if (res)
++			printf("Error in tests for mba-change-schemata!\n");
++	}
++
+ 	return 0;
+ }
 -- 
 2.7.4
 
