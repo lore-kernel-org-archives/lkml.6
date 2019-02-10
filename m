@@ -2,87 +2,101 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DED5C282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484B5C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13AB21934
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:24:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="L4JJxMaF"
+	by mail.kernel.org (Postfix) with ESMTP id 168482145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBJPYj (ORCPT
+        id S1726267AbfBJPdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:24:39 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46883 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfBJPYi (ORCPT
+        Sun, 10 Feb 2019 10:33:31 -0500
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:46585 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfBJPdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:24:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id o6so4045522pls.13
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 07:24:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YkBV2Luy6JDa+eoYSZZrkwq1U1aY1C2Hv2PLNg6uGwU=;
-        b=L4JJxMaFo9uVK+ZxzcxAqG6d1cFl1z6A0CILcufJbOydfQgy5IB1BLhIbLFxN7FPps
-         b1OVtbns9HfRGw3jVmMRvSULWPUOyGyN+kM9HmB9VK+amNAKoUffmHen8+qZM3pno4mz
-         19Kj1BMV7Kwr9/8FLvXc1MXZ4CNQRq/sk84qP79X3pXiBYvGKdNAMdbQUybTNuUmFd6e
-         lQR8pHd9ezJgOMOH8/wo0CrG4jWjX720N3fFbML4H+x7fxkFk20A9ZngiQhIZHwY/pC9
-         5/6OnHTUNW9aC4uvcUpvXl9tZnoAWXLLc4PIgSGE8j1O+jRSho1zVl9DaOXgRaA5sVsW
-         QcTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YkBV2Luy6JDa+eoYSZZrkwq1U1aY1C2Hv2PLNg6uGwU=;
-        b=IMEdoIvD4ZKRPlopsEDhp1h79zvlVrjTdTY/DGLYarKy0QY7gQGKwd0CQVfn9Dm/NE
-         cQQdO+Q8XSVMgZ/w4nBVo53/ckUK1dFiSqgWXm2cuKgTfslSsycMc5QciMG7OqyhSFG8
-         dbMly8VNOkbzQbFRAKddrh1BnUs7AfHA5+vMJ7hp4Er8H4rMtaobSx4BFl4UjtOH5hM5
-         CXf8u5E7AihfASAqCOP4y21toX8IAtx0QkvAdxq4GDlCDMdqe0mLEQVluZyGDOa6gor3
-         3bNQ8tgrap4sepwuwdSK5ax0enuFRtwsMw9yGzJjwdxaUdC9OzJCyVXpBoqm2+qHnI7I
-         eIrw==
-X-Gm-Message-State: AHQUAubcHxjlbYw5PboRxmghEvGEUVwAu8Vr6LHQ9nLMe0Fj8dCD87L9
-        9aB01+i0cH5fyJW2djjSrKioN9Qkx57Vqw==
-X-Google-Smtp-Source: AHgI3IbPIp68qq0VR4xrdSYgqWF2qXE4rnN59/mQkdJOYePV4gUQw4xj3Uci5fTQk4lAs/Xn7EMV7w==
-X-Received: by 2002:a17:902:ab92:: with SMTP id f18mr32281119plr.221.1549812278401;
-        Sun, 10 Feb 2019 07:24:38 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id 125sm11804567pfx.159.2019.02.10.07.24.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 07:24:37 -0800 (PST)
-Subject: Re: [PATCH] blk-cgroup: Fix doc related to blkcg_exit_queue
-To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     "open list:BLOCK LAYER" <linux-block@vger.kernel.org>
-References: <20190125020142.921371-1-marcos.souza.org@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6ba6bb55-13bb-819e-f606-d599f8e6cc7e@kernel.dk>
-Date:   Sun, 10 Feb 2019 08:24:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 10 Feb 2019 10:33:31 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 48CA730000CC1;
+        Sun, 10 Feb 2019 16:33:29 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 093D6DFE15; Sun, 10 Feb 2019 16:33:28 +0100 (CET)
+Date:   Sun, 10 Feb 2019 16:33:28 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 14/28] thunderbolt: Extend tunnel creation to more
+ than 2 adjacent switches
+Message-ID: <20190210153328.44ur6o5z2xjae42c@wunner.de>
+References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+ <20190206131738.43696-15-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190125020142.921371-1-marcos.souza.org@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206131738.43696-15-mika.westerberg@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/19 7:01 PM, Marcos Paulo de Souza wrote:
-> Since 4cf6324b17e9, a portion of function blk_cleanup_queue was moved to
-> a newly created function called blk_exit_queue, including the call of
-> blkcg_exit_queue. So, adjust the documenation according.
+On Wed, Feb 06, 2019 at 04:17:24PM +0300, Mika Westerberg wrote:
+> Now that we can allocate hop IDs per port on a path, we can take
+> advantage of this and create tunnels covering longer paths than just
+> between two adjacent switches. PCIe actually does not need this as it is
+> always a daisy chain between two adjacent switches but this way we do
+> not need to hard-code creation of the tunnel.
 
-Applied, thanks.
+That doesn't seem to be correct, at the bottom of this page there's
+a figure showing a PCI tunnel between non-adjacent switches (blue line):
 
--- 
-Jens Axboe
+https://developer.apple.com/library/archive/documentation/HardwareDrivers/Conceptual/ThunderboltDevGuide/Basics/Basics.html
 
+I'm not sure if there are advantages to such tunnels:  Reduced latency
+perhaps because packets need not pass through PCIe adapters on the
+in-between device?  Or maybe this allows for more fine-grained traffic
+prioritization?
+
+
+> +	i = 0;
+> +	tb_for_each_port(in_port, src, dst)
+> +		i++;
+
+This looks more complicated than necessary.  Isn't the path length
+always the length of the route string from in_port switch to out_port
+switch, plus 2 for the adapter on each end?  Or do paths without
+adapters exist?
+
+
+> +	for (i = 0; i < num_hops; i++) {
+> +		in_port = tb_port_get_next(src, dst, out_port);
+> +
+> +		if (in_port->dual_link_port && in_port->link_nr != link_nr)
+> +			in_port = in_port->dual_link_port;
+> +
+> +		ret = tb_port_alloc_in_hopid(in_port, in_hopid, -1);
+> +		if (ret < 0)
+> +			goto err;
+> +		in_hopid = ret;
+> +
+> +		out_port = tb_port_get_next(src, dst, in_port);
+> +		if (!out_port)
+> +			goto err;
+
+There's a NULL pointer check here, but the invocation of tb_port_get_next()
+further up to assign in_port lacks such a check.  Is it guaranteed to never
+be NULL?
+
+Thanks,
+
+Lukas
