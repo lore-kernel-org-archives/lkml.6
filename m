@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F42DC282C4
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D8FC282C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0799E21939
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 936CC21929
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfBJC6R (ORCPT
+        id S1727397AbfBJC60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 21:58:17 -0500
-Received: from mga07.intel.com ([134.134.136.100]:31724 "EHLO mga07.intel.com"
+        Sat, 9 Feb 2019 21:58:26 -0500
+Received: from mga17.intel.com ([192.55.52.151]:14881 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbfBJC52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 21:57:28 -0500
+        id S1726530AbfBJC51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 21:57:27 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:28 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,353,1544515200"; 
-   d="scan'208";a="319090739"
+   d="scan'208";a="319090717"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga005.fm.intel.com with ESMTP; 09 Feb 2019 18:57:27 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 09 Feb 2019 18:57:26 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
 To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
@@ -40,9 +40,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Babu Moger" <babu.moger@amd.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v7 12/13] selftests/resctrl: Disable MBA and MBM tests for AMD
-Date:   Sat,  9 Feb 2019 18:50:41 -0800
-Message-Id: <1549767042-95827-13-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v7 05/13] selftests/resctrl: Add built in benchmark
+Date:   Sat,  9 Feb 2019 18:50:34 -0800
+Message-Id: <1549767042-95827-6-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
 References: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
@@ -51,53 +51,234 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Babu Moger <babu.moger@amd.com>
+From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 
-For now, disable MBA and MBM tests for AMD. Deciding test pass/fail
-is not clear right now. We can enable when we have some clarity.
+Built-in benchmark fill_buf generates stressful memory bandwidth
+and cache traffic.
 
-Signed-off-by: Babu Moger <babu.moger@amd.com>
+Later it will be used as a default benchmark by various resctrl tests
+such as MBA (Memory Bandwidth Allocation) and MBM (Memory Bandwidth
+Monitoring) tests.
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
 ---
- tools/testing/selftests/resctrl/cat_test.c      | 2 +-
- tools/testing/selftests/resctrl/resctrl_tests.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ tools/testing/selftests/resctrl/fill_buf.c | 204 +++++++++++++++++++++++++++++
+ 1 file changed, 204 insertions(+)
+ create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
 
-diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
-index 1a0f77e4f7bf..264bf2325f9e 100644
---- a/tools/testing/selftests/resctrl/cat_test.c
-+++ b/tools/testing/selftests/resctrl/cat_test.c
-@@ -69,7 +69,7 @@ static void show_cache_info(unsigned long sum_llc_perf_miss, int no_of_bits,
- 	printf("Allocated cache lines: %lu \t", allocated_cache_lines);
- 	printf("Percent diff=%d \t", abs((int)diff_percent));
- 
--	if (abs((int)diff_percent) > MAX_DIFF_PERCENT)
-+	if (genuine_intel && (abs((int)diff_percent) > MAX_DIFF_PERCENT))
- 		printf("Failed\n");
- 	else
- 		printf("Passed\n");
-diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
-index 1d9adcfbdb4c..620be40b8c01 100644
---- a/tools/testing/selftests/resctrl/resctrl_tests.c
-+++ b/tools/testing/selftests/resctrl/resctrl_tests.c
-@@ -197,7 +197,7 @@ int main(int argc, char **argv)
- 	sprintf(bw_report, "reads");
- 	sprintf(bm_type, "fill_buf");
- 
--	if (mbm_test) {
-+	if (genuine_intel && mbm_test) {
- 		printf("\nMBM BW Change Starting..\n");
- 		if (!has_ben)
- 			sprintf(benchmark_cmd[5], "%s", "mbm");
-@@ -207,7 +207,7 @@ int main(int argc, char **argv)
- 		mbm_test_cleanup();
- 	}
- 
--	if (mba_test) {
-+	if (genuine_intel && mba_test) {
- 		printf("\nMBA Schemata Change Starting..\n");
- 		if (!has_ben)
- 			sprintf(benchmark_cmd[5], "%s", "mba");
+diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
+new file mode 100644
+index 000000000000..792a5c40a32a
+--- /dev/null
++++ b/tools/testing/selftests/resctrl/fill_buf.c
+@@ -0,0 +1,204 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * fill_buf benchmark
++ *
++ * Copyright (C) 2018 Intel Corporation
++ *
++ * Authors:
++ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
++ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
++ *    Fenghua Yu <fenghua.yu@intel.com>
++ */
++#include <stdio.h>
++#include <unistd.h>
++#include <stdlib.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <inttypes.h>
++#include <malloc.h>
++#include <string.h>
++
++#include "resctrl.h"
++
++#define CL_SIZE			(64)
++#define PAGE_SIZE		(4 * 1024)
++#define MB			(1024 * 1024)
++
++static unsigned char *startptr;
++
++static void sb(void)
++{
++	asm volatile("sfence\n\t"
++		     : : : "memory");
++}
++
++static void ctrl_handler(int signo)
++{
++	free(startptr);
++	printf("\nEnding\n");
++	sb();
++	exit(EXIT_SUCCESS);
++}
++
++static void cl_flush(void *p)
++{
++	asm volatile("clflush (%0)\n\t"
++		     : : "r"(p) : "memory");
++}
++
++static void mem_flush(void *p, size_t s)
++{
++	char *cp = (char *)p;
++	size_t i = 0;
++
++	s = s / CL_SIZE; /* mem size in cache llines */
++
++	for (i = 0; i < s; i++)
++		cl_flush(&cp[i * CL_SIZE]);
++
++	sb();
++}
++
++static void *malloc_and_init_memory(size_t s)
++{
++	uint64_t *p64;
++	size_t s64;
++
++	void *p = memalign(PAGE_SIZE, s);
++
++	p64 = (uint64_t *)p;
++	s64 = s / sizeof(uint64_t);
++
++	while (s64 > 0) {
++		*p64 = (uint64_t)rand();
++		p64 += (CL_SIZE / sizeof(uint64_t));
++		s64 -= (CL_SIZE / sizeof(uint64_t));
++	}
++
++	return p;
++}
++
++static int fill_one_span_read(unsigned char *start_ptr, unsigned char *end_ptr)
++{
++	unsigned char sum, *p;
++
++	sum = 0;
++	p = start_ptr;
++	while (p < end_ptr) {
++		sum += *p;
++		p += (CL_SIZE / 2);
++	}
++
++	return sum;
++}
++
++static
++void fill_one_span_write(unsigned char *start_ptr, unsigned char *end_ptr)
++{
++	unsigned char *p;
++
++	p = start_ptr;
++	while (p < end_ptr) {
++		*p = '1';
++		p += (CL_SIZE / 2);
++	}
++}
++
++static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
++			   char *resctrl_val)
++{
++	int ret = 0;
++	FILE *fp;
++
++	while (1)
++		ret = fill_one_span_read(start_ptr, end_ptr);
++
++	/* Consume read result so that reading memory is not optimized out. */
++	fp = fopen("/dev/null", "w");
++	if (!fp)
++		perror("Unable to write to /dev/null");
++	fprintf(fp, "Sum: %d ", ret);
++	fclose(fp);
++
++	return 0;
++}
++
++static int fill_cache_write(unsigned char *start_ptr, unsigned char *end_ptr,
++			    char *resctrl_val)
++{
++	while (1)
++		fill_one_span_write(start_ptr, end_ptr);
++
++	return 0;
++}
++
++static int
++fill_cache(unsigned long long buf_size, int malloc_and_init, int memflush,
++	   int op, char *resctrl_val)
++{
++	unsigned char *start_ptr, *end_ptr;
++	unsigned long long i;
++	int ret;
++
++	if (malloc_and_init)
++		start_ptr = malloc_and_init_memory(buf_size);
++	else
++		start_ptr = malloc(buf_size);
++
++	if (!start_ptr)
++		return -1;
++
++	startptr = start_ptr;
++	end_ptr = start_ptr + buf_size;
++
++	/*
++	 * It's better to touch the memory once to avoid any compiler
++	 * optimizations
++	 */
++	if (!malloc_and_init) {
++		for (i = 0; i < buf_size; i++)
++			*start_ptr++ = (unsigned char)rand();
++	}
++
++	start_ptr = startptr;
++
++	/* Flush the memory before using to avoid "cache hot pages" effect */
++	if (memflush)
++		mem_flush(start_ptr, buf_size);
++
++	if (op == 0)
++		ret = fill_cache_read(start_ptr, end_ptr, resctrl_val);
++	else
++		ret = fill_cache_write(start_ptr, end_ptr, resctrl_val);
++
++	if (ret) {
++		printf("\n Errror in fill cache read/write...\n");
++		return -1;
++	}
++
++	free(startptr);
++
++	return 0;
++}
++
++int run_fill_buf(unsigned long span, int malloc_and_init_memory,
++		 int memflush, int op, char *resctrl_val)
++{
++	unsigned long long cache_size = span;
++	int ret;
++
++	/* set up ctrl-c handler */
++	if (signal(SIGINT, ctrl_handler) == SIG_ERR)
++		printf("Failed to catch SIGINT!\n");
++	if (signal(SIGHUP, ctrl_handler) == SIG_ERR)
++		printf("Failed to catch SIGHUP!\n");
++
++	ret = fill_cache(cache_size, malloc_and_init_memory, memflush, op,
++			 resctrl_val);
++	if (ret) {
++		printf("\n Errror in fill cache\n");
++		return -1;
++	}
++
++	return 0;
++}
 -- 
 2.7.4
 
