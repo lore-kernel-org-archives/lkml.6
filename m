@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D8FC282C4
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B8BC282C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 936CC21929
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4DE21929
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfBJC60 (ORCPT
+        id S1727421AbfBJC6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 21:58:26 -0500
-Received: from mga17.intel.com ([192.55.52.151]:14881 "EHLO mga17.intel.com"
+        Sat, 9 Feb 2019 21:58:31 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14368 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbfBJC51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726524AbfBJC51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 9 Feb 2019 21:57:27 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:27 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,353,1544515200"; 
-   d="scan'208";a="319090717"
+   d="scan'208";a="319090705"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga005.fm.intel.com with ESMTP; 09 Feb 2019 18:57:26 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -40,9 +40,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Babu Moger" <babu.moger@amd.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v7 05/13] selftests/resctrl: Add built in benchmark
-Date:   Sat,  9 Feb 2019 18:50:34 -0800
-Message-Id: <1549767042-95827-6-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v7 01/13] selftests/resctrl: Add README for resctrl tests
+Date:   Sat,  9 Feb 2019 18:50:30 -0800
+Message-Id: <1549767042-95827-2-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
 References: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
@@ -51,234 +51,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+resctrl tests will be implemented. README is added for the tool first.
 
-Built-in benchmark fill_buf generates stressful memory bandwidth
-and cache traffic.
-
-Later it will be used as a default benchmark by various resctrl tests
-such as MBA (Memory Bandwidth Allocation) and MBM (Memory Bandwidth
-Monitoring) tests.
-
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 ---
- tools/testing/selftests/resctrl/fill_buf.c | 204 +++++++++++++++++++++++++++++
- 1 file changed, 204 insertions(+)
- create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
+ tools/testing/selftests/resctrl/README | 54 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+ create mode 100644 tools/testing/selftests/resctrl/README
 
-diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
+diff --git a/tools/testing/selftests/resctrl/README b/tools/testing/selftests/resctrl/README
 new file mode 100644
-index 000000000000..792a5c40a32a
+index 000000000000..2bcd8739f1c6
 --- /dev/null
-+++ b/tools/testing/selftests/resctrl/fill_buf.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * fill_buf benchmark
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ *
-+ * Authors:
-+ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-+ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-+ *    Fenghua Yu <fenghua.yu@intel.com>
-+ */
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stdlib.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <inttypes.h>
-+#include <malloc.h>
-+#include <string.h>
++++ b/tools/testing/selftests/resctrl/README
+@@ -0,0 +1,54 @@
++resctrl_tests - resctrl file system test suit
 +
-+#include "resctrl.h"
++Authors:
++	Fenghua Yu <fenghua.yu@intel.com>
++	Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
++	Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
 +
-+#define CL_SIZE			(64)
-+#define PAGE_SIZE		(4 * 1024)
-+#define MB			(1024 * 1024)
++resctrl_tests tests various resctrl functionalities and interfaces including
++both software and hardware.
 +
-+static unsigned char *startptr;
++Currently it supports Memory Bandwidth Monitoring test and Memory Bandwidth
++Allocation test on Intel RDT hardware. More tests will be added in the future.
++And the test suit can be extended to cover AMD QoS and ARM MPAM hardware
++as well.
 +
-+static void sb(void)
-+{
-+	asm volatile("sfence\n\t"
-+		     : : : "memory");
-+}
++BUILD
++-----
 +
-+static void ctrl_handler(int signo)
-+{
-+	free(startptr);
-+	printf("\nEnding\n");
-+	sb();
-+	exit(EXIT_SUCCESS);
-+}
++Run "make" to build executable file "resctrl_tests".
 +
-+static void cl_flush(void *p)
-+{
-+	asm volatile("clflush (%0)\n\t"
-+		     : : "r"(p) : "memory");
-+}
++RUN
++---
 +
-+static void mem_flush(void *p, size_t s)
-+{
-+	char *cp = (char *)p;
-+	size_t i = 0;
++To use resctrl_tests, root or sudoer privileges are required. This is because
++the test needs to mount resctrl file system and change contents in the file
++system.
 +
-+	s = s / CL_SIZE; /* mem size in cache llines */
++Executing the test without any parameter will run all supported tests:
 +
-+	for (i = 0; i < s; i++)
-+		cl_flush(&cp[i * CL_SIZE]);
++	sudo ./resctrl_tests
 +
-+	sb();
-+}
++OVERVIEW OF EXECUTION
++---------------------
 +
-+static void *malloc_and_init_memory(size_t s)
-+{
-+	uint64_t *p64;
-+	size_t s64;
++A test case has four stages:
 +
-+	void *p = memalign(PAGE_SIZE, s);
++  - setup: mount resctrl file system, create group, setup schemata, move test
++    process pids to tasks, start benchmark.
++  - execute: let benchmark run
++  - verify: get resctrl data and verify the data with another source, e.g.
++    perf event.
++  - teardown: umount resctrl and clear temporary files.
 +
-+	p64 = (uint64_t *)p;
-+	s64 = s / sizeof(uint64_t);
++ARGUMENTS
++---------
 +
-+	while (s64 > 0) {
-+		*p64 = (uint64_t)rand();
-+		p64 += (CL_SIZE / sizeof(uint64_t));
-+		s64 -= (CL_SIZE / sizeof(uint64_t));
-+	}
++Parameter '-h' shows usage information.
 +
-+	return p;
-+}
-+
-+static int fill_one_span_read(unsigned char *start_ptr, unsigned char *end_ptr)
-+{
-+	unsigned char sum, *p;
-+
-+	sum = 0;
-+	p = start_ptr;
-+	while (p < end_ptr) {
-+		sum += *p;
-+		p += (CL_SIZE / 2);
-+	}
-+
-+	return sum;
-+}
-+
-+static
-+void fill_one_span_write(unsigned char *start_ptr, unsigned char *end_ptr)
-+{
-+	unsigned char *p;
-+
-+	p = start_ptr;
-+	while (p < end_ptr) {
-+		*p = '1';
-+		p += (CL_SIZE / 2);
-+	}
-+}
-+
-+static int fill_cache_read(unsigned char *start_ptr, unsigned char *end_ptr,
-+			   char *resctrl_val)
-+{
-+	int ret = 0;
-+	FILE *fp;
-+
-+	while (1)
-+		ret = fill_one_span_read(start_ptr, end_ptr);
-+
-+	/* Consume read result so that reading memory is not optimized out. */
-+	fp = fopen("/dev/null", "w");
-+	if (!fp)
-+		perror("Unable to write to /dev/null");
-+	fprintf(fp, "Sum: %d ", ret);
-+	fclose(fp);
-+
-+	return 0;
-+}
-+
-+static int fill_cache_write(unsigned char *start_ptr, unsigned char *end_ptr,
-+			    char *resctrl_val)
-+{
-+	while (1)
-+		fill_one_span_write(start_ptr, end_ptr);
-+
-+	return 0;
-+}
-+
-+static int
-+fill_cache(unsigned long long buf_size, int malloc_and_init, int memflush,
-+	   int op, char *resctrl_val)
-+{
-+	unsigned char *start_ptr, *end_ptr;
-+	unsigned long long i;
-+	int ret;
-+
-+	if (malloc_and_init)
-+		start_ptr = malloc_and_init_memory(buf_size);
-+	else
-+		start_ptr = malloc(buf_size);
-+
-+	if (!start_ptr)
-+		return -1;
-+
-+	startptr = start_ptr;
-+	end_ptr = start_ptr + buf_size;
-+
-+	/*
-+	 * It's better to touch the memory once to avoid any compiler
-+	 * optimizations
-+	 */
-+	if (!malloc_and_init) {
-+		for (i = 0; i < buf_size; i++)
-+			*start_ptr++ = (unsigned char)rand();
-+	}
-+
-+	start_ptr = startptr;
-+
-+	/* Flush the memory before using to avoid "cache hot pages" effect */
-+	if (memflush)
-+		mem_flush(start_ptr, buf_size);
-+
-+	if (op == 0)
-+		ret = fill_cache_read(start_ptr, end_ptr, resctrl_val);
-+	else
-+		ret = fill_cache_write(start_ptr, end_ptr, resctrl_val);
-+
-+	if (ret) {
-+		printf("\n Errror in fill cache read/write...\n");
-+		return -1;
-+	}
-+
-+	free(startptr);
-+
-+	return 0;
-+}
-+
-+int run_fill_buf(unsigned long span, int malloc_and_init_memory,
-+		 int memflush, int op, char *resctrl_val)
-+{
-+	unsigned long long cache_size = span;
-+	int ret;
-+
-+	/* set up ctrl-c handler */
-+	if (signal(SIGINT, ctrl_handler) == SIG_ERR)
-+		printf("Failed to catch SIGINT!\n");
-+	if (signal(SIGHUP, ctrl_handler) == SIG_ERR)
-+		printf("Failed to catch SIGHUP!\n");
-+
-+	ret = fill_cache(cache_size, malloc_and_init_memory, memflush, op,
-+			 resctrl_val);
-+	if (ret) {
-+		printf("\n Errror in fill cache\n");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
++usage: resctrl_tests [-h] [-b "benchmark_cmd [options]"] [-t test list] [-n no_of_bits]
++        -b benchmark_cmd [options]: run specified benchmark for MBM, MBA and CQM default benchmark is builtin fill_buf
++        -t test list: run tests specified in the test list, e.g. -t mbm, mba, cqm, cat
++        -n no_of_bits: run cache tests using specified no of bits in cache bit mask
++        -p cpu_no: specify CPU number to run the test. 1 is default
++        -h: help
 -- 
 2.7.4
 
