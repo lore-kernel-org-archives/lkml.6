@@ -7,49 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 753BBC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9285C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A222146F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DC3A213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBJU4S (ORCPT
+        id S1726914AbfBJU5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:56:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43837 "EHLO
+        Sun, 10 Feb 2019 15:57:08 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37367 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbfBJU4S (ORCPT
+        with ESMTP id S1726093AbfBJU5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:56:18 -0500
+        Sun, 10 Feb 2019 15:57:07 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1AKtgeK3235724
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1AKuO4q3235816
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 10 Feb 2019 12:55:42 -0800
+        Sun, 10 Feb 2019 12:56:25 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1AKtfcD3235720;
-        Sun, 10 Feb 2019 12:55:41 -0800
-Date:   Sun, 10 Feb 2019 12:55:41 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1AKuOF13235811;
+        Sun, 10 Feb 2019 12:56:24 -0800
+Date:   Sun, 10 Feb 2019 12:56:24 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-c2da3f1b711173b72378258496b49f74db7479de@git.kernel.org>
-Cc:     keescook@chromium.org, adobriyan@gmail.com,
-        linux-kernel@vger.kernel.org, dave@stgolabs.net,
-        marc.zyngier@arm.com, rdunlap@infradead.org, dbueso@suse.de,
-        hpa@zytor.com, david@fromorbit.com, willy@infradead.org,
-        mingo@kernel.org, miklos@szeredi.hu, tglx@linutronix.de,
-        dancol@google.com, akpm@linux-foundation.org, longman@redhat.com
-Reply-To: longman@redhat.com, akpm@linux-foundation.org, miklos@szeredi.hu,
-          willy@infradead.org, mingo@kernel.org, dancol@google.com,
-          tglx@linutronix.de, hpa@zytor.com, david@fromorbit.com,
-          rdunlap@infradead.org, dbueso@suse.de, dave@stgolabs.net,
-          linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-          adobriyan@gmail.com, keescook@chromium.org
-In-Reply-To: <20190208135021.013828701@linutronix.de>
-References: <20190208135021.013828701@linutronix.de>
+From:   tip-bot for Matthias Kaehlcke <tipbot@zytor.com>
+Message-ID: <tip-0121805d9d2b1fff371e195c28e9b86ae38b5e47@git.kernel.org>
+Cc:     peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        paulmck@linux.vnet.ibm.com, rostedt@goodmis.org, mka@chromium.org,
+        mingo@kernel.org, tglx@linutronix.de, bigeasy@linutronix.de,
+        dianders@chromium.org, swboyd@chromium.org
+Reply-To: peterz@infradead.org, mka@chromium.org, rostedt@goodmis.org,
+          hpa@zytor.com, linux-kernel@vger.kernel.org,
+          paulmck@linux.vnet.ibm.com, mingo@kernel.org,
+          swboyd@chromium.org, dianders@chromium.org,
+          bigeasy@linutronix.de, tglx@linutronix.de
+In-Reply-To: <20190128234625.78241-2-mka@chromium.org>
+References: <20190128234625.78241-2-mka@chromium.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] proc/stat: Make the interrupt statistics more
- efficient
-Git-Commit-ID: c2da3f1b711173b72378258496b49f74db7479de
+Subject: [tip:irq/core] kthread: Add __kthread_should_park()
+Git-Commit-ID: 0121805d9d2b1fff371e195c28e9b86ae38b5e47
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,105 +59,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c2da3f1b711173b72378258496b49f74db7479de
-Gitweb:     https://git.kernel.org/tip/c2da3f1b711173b72378258496b49f74db7479de
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Fri, 8 Feb 2019 14:48:04 +0100
+Commit-ID:  0121805d9d2b1fff371e195c28e9b86ae38b5e47
+Gitweb:     https://git.kernel.org/tip/0121805d9d2b1fff371e195c28e9b86ae38b5e47
+Author:     Matthias Kaehlcke <mka@chromium.org>
+AuthorDate: Mon, 28 Jan 2019 15:46:24 -0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 10 Feb 2019 21:34:46 +0100
+CommitDate: Sun, 10 Feb 2019 21:51:39 +0100
 
-proc/stat: Make the interrupt statistics more efficient
+kthread: Add __kthread_should_park()
 
-Waiman reported that on large systems with a large amount of interrupts the
-readout of /proc/stat takes a long time to sum up the interrupt
-statistics. In principle this is not a problem. but for unknown reasons
-some enterprise quality software reads /proc/stat with a high frequency.
+kthread_should_park() is used to check if the calling kthread ('current')
+should park, but there is no function to check whether an arbitrary kthread
+should be parked. The latter is required to plug a CPU hotplug race vs. a
+parking ksoftirqd thread.
 
-The reason for this is that interrupt statistics are accounted per cpu. So
-the /proc/stat logic has to sum up the interrupt stats for each interrupt.
+The new __kthread_should_park() receives a task_struct as parameter to
+check if the corresponding kernel thread should be parked.
 
-The interrupt core provides now a per interrupt summary counter which can
-be used to avoid the summation loops completely except for interrupts
-marked PER_CPU which are only a small fraction of the interrupt space if at
-all.
+Call __kthread_should_park() from kthread_should_park() to avoid code
+duplication.
 
-Another simplification is to iterate only over the active interrupts and
-skip the potentially large gaps in the interrupt number space and just
-print zeros for the gaps without going into the interrupt core in the first
-place.
-
-Waiman provided test results from a 4-socket IvyBridge-EX system (60-core
-120-thread, 3016 irqs) excuting a test program which reads /proc/stat
-50,000 times:
-
-   Before: 18.436s (sys 18.380s)
-   After:   3.769s (sys  3.742s)
-
-Reported-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Daniel Colascione <dancol@google.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Link: https://lkml.kernel.org/r/20190208135021.013828701@linutronix.de
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Stephen Boyd <swboyd@chromium.org>
+Link: https://lkml.kernel.org/r/20190128234625.78241-2-mka@chromium.org
 
 ---
- fs/proc/stat.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+ include/linux/kthread.h | 1 +
+ kernel/kthread.c        | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-index 535eda7857cf..76175211b304 100644
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -79,6 +79,31 @@ static u64 get_iowait_time(int cpu)
+diff --git a/include/linux/kthread.h b/include/linux/kthread.h
+index c1961761311d..1577a2d56e9d 100644
+--- a/include/linux/kthread.h
++++ b/include/linux/kthread.h
+@@ -56,6 +56,7 @@ void kthread_bind_mask(struct task_struct *k, const struct cpumask *mask);
+ int kthread_stop(struct task_struct *k);
+ bool kthread_should_stop(void);
+ bool kthread_should_park(void);
++bool __kthread_should_park(struct task_struct *k);
+ bool kthread_freezable_should_stop(bool *was_frozen);
+ void *kthread_data(struct task_struct *k);
+ void *kthread_probe_data(struct task_struct *k);
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 087d18d771b5..65234c89d85b 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -101,6 +101,12 @@ bool kthread_should_stop(void)
+ }
+ EXPORT_SYMBOL(kthread_should_stop);
  
- #endif
- 
-+static void show_irq_gap(struct seq_file *p, unsigned int gap)
++bool __kthread_should_park(struct task_struct *k)
 +{
-+	static const char zeros[] = " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
-+
-+	while (gap > 0) {
-+		unsigned int inc;
-+
-+		inc = min_t(unsigned int, gap, ARRAY_SIZE(zeros) / 2);
-+		seq_write(p, zeros, 2 * inc);
-+		gap -= inc;
-+	}
++	return test_bit(KTHREAD_SHOULD_PARK, &to_kthread(k)->flags);
 +}
++EXPORT_SYMBOL_GPL(__kthread_should_park);
 +
-+static void show_all_irqs(struct seq_file *p)
-+{
-+	unsigned int i, next = 0;
-+
-+	for_each_active_irq(i) {
-+		show_irq_gap(p, i - next);
-+		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
-+		next = i + 1;
-+	}
-+	show_irq_gap(p, nr_irqs - next);
-+}
-+
- static int show_stat(struct seq_file *p, void *v)
+ /**
+  * kthread_should_park - should this kthread park now?
+  *
+@@ -114,7 +120,7 @@ EXPORT_SYMBOL(kthread_should_stop);
+  */
+ bool kthread_should_park(void)
  {
- 	int i, j;
-@@ -156,9 +181,7 @@ static int show_stat(struct seq_file *p, void *v)
- 	}
- 	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
+-	return test_bit(KTHREAD_SHOULD_PARK, &to_kthread(current)->flags);
++	return __kthread_should_park(current);
+ }
+ EXPORT_SYMBOL_GPL(kthread_should_park);
  
--	/* sum again ? it could be updated? */
--	for_each_irq_nr(j)
--		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
-+	show_all_irqs(p);
- 
- 	seq_printf(p,
- 		"\nctxt %llu\n"
