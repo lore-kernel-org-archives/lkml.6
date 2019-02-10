@@ -2,151 +2,118 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C1CC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 09:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D0BC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 10:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BB42146F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 09:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ED2720863
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 10:57:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VcT41kpl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbfBJJz2 (ORCPT
+        id S1726124AbfBJK4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 04:55:28 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42382 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725948AbfBJJz2 (ORCPT
+        Sun, 10 Feb 2019 05:56:17 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36457 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfBJK4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 04:55:28 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1A9sTMH134273
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 04:55:27 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qjd74msxd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 04:55:27 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sun, 10 Feb 2019 09:55:24 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 10 Feb 2019 09:55:19 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1A9tIar54657110
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 10 Feb 2019 09:55:18 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E25E4C050;
-        Sun, 10 Feb 2019 09:55:18 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 647D84C046;
-        Sun, 10 Feb 2019 09:55:17 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sun, 10 Feb 2019 09:55:17 +0000 (GMT)
-Date:   Sun, 10 Feb 2019 11:55:15 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        "ghackmann@android.com" <ghackmann@android.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "logang@deltatee.com" <logang@deltatee.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Subject: Re: [PATCH] arm64: use memblocks_present
-References: <20190210093738.30923-1-peng.fan@nxp.com>
+        Sun, 10 Feb 2019 05:56:17 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p6so11345681wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 02:56:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:from:user-agent:mime-version:to:cc:subject
+         :references:in-reply-to:content-transfer-encoding;
+        bh=7oY8y/5KEU9g0VhG2/ILsB0AuA8IxVBBUO9nvWk0KyM=;
+        b=VcT41kpltmh5cgM3qum9dSbkysM0qJsdFOwCRuuKdUShepKgJe8A8QFyc7xeBlu2QM
+         I/StkV7SJBB9I8d0J26JJhxt2/g9Nv5Se3SUBDE8i5W6ABe9B+5ry/23TMOGCpA5SxiS
+         gAAuGinKXCOhGxzVMfPlEoMfA6si3s/+ZynSkfejcsdyXNP6e9dvRXaK64rsWWWrupjl
+         FuuHUjaPIEEjwEzq1S5n9MRVX5Q3bpTHxuxT3JFgFckyMJgV4nA0RCQ2Lku/DFdHYqJ3
+         4IRPUhUOVedSZCYYgE5IRMAHZOBlLKogD4B5/rKeHOidihoVFo9sFBI9QalAhdh59P61
+         quuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
+         :cc:subject:references:in-reply-to:content-transfer-encoding;
+        bh=7oY8y/5KEU9g0VhG2/ILsB0AuA8IxVBBUO9nvWk0KyM=;
+        b=hipyH8sn/ZSpGO5OHPZtnZ1bQ38eSOJHKXQiEhffk+dx1ynX0APDlTPOx679d2FaXC
+         1AYIMTwEG/MzQz++eVqmmcbfoI6cjrMpeQwcaiW22hEfp7vfukbruuhSupY0+yxcvNv1
+         ScVkCT6iPILyB6oamj8iv7ysLR6MSFK5PIFbBnqaZ+CYfhP5e6sm2b5I5ABCqgDVqeIX
+         ZjMV+D/zcF/ZIdnYQD48r/IeSMIj4Z+7695c2j1O3WlmmznufjW/eII+AfQ9SxLjbB4i
+         kUdbXXG6OUr3LxHNWSQ1uSSDZfhDxfZZeR9r2RoGa52GkWAxz/tjmS28/KV15lHf+qPI
+         R39w==
+X-Gm-Message-State: AHQUAuYc94aUdoSCW1QvnJV1Bx390X76PVi1liD/oEXDtiUSgCb1FPDI
+        N+3XYBokb0Z1BOsRMPJerHsH4g==
+X-Google-Smtp-Source: AHgI3Ia1Q1G98suQPYDhp2Vh6c9gUzIZxf6fP47l91UticAb0del3vUR4PibMIt43379ARmIXmSYjQ==
+X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr5954495wmf.32.1549796175600;
+        Sun, 10 Feb 2019 02:56:15 -0800 (PST)
+Received: from Armstrongs-MacBook-Pro.local (176-150-251-154.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id q21sm11054636wmc.14.2019.02.10.02.56.14
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 10 Feb 2019 02:56:15 -0800 (PST)
+Message-ID: <5C60034E.5030706@baylibre.com>
+Date:   Sun, 10 Feb 2019 11:56:14 +0100
+From:   Neil Armstrong <narmstrong@baylibre.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210093738.30923-1-peng.fan@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19021009-0028-0000-0000-00000346C58A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021009-0029-0000-0000-00002404DDD0
-Message-Id: <20190210095515.GA12403@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902100077
+To:     Stijn Tintel <stijn@linux-ipv6.be>, khilman@baylibre.com
+CC:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: meson-gxbb-odroidc2: enable I2C bus B
+References: <20190209155005.18458-1-stijn@linux-ipv6.be>
+In-Reply-To: <20190209155005.18458-1-stijn@linux-ipv6.be>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 09:28:43AM +0000, Peng Fan wrote:
-> arm64_memory_present is doing same thing as memblocks_present, so
-> let's use common code memblocks_present instead of platform
-> specific arm64_memory_present.
+Hi,
+
+Le 09/02/2019 16:50, Stijn Tintel a écrit :
+> The ODROID C2 has 2 I2C buses, so enable both of them.
+
+Thanks for the change, but this I2C bus is on the 40-pin header,
+until we have a way to add support for HATs/CAPEs/<whatever hooks on the header>
+upstream, we prefer not enabling any functions on these pins by default.
+
+You can, if you want add support for most functions, but "disabled" with a
+proper description of pins used by these functions.
+
+You can also maintain a set of overlay files like it's done for the
+libretech-cc boards https://github.com/libre-computer-project/libretech-overlays/tree/for-4.13.y/overlays
+and use them with the Armbian mainline based latest image for example.
+
+Neil
+
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-
+> Signed-off-by: Stijn Tintel <stijn@linux-ipv6.be>
 > ---
->  arch/arm64/mm/init.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
+>  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 7205a9085b4d..2302b4093a63 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -285,24 +285,6 @@ int pfn_valid(unsigned long pfn)
->  }
->  EXPORT_SYMBOL(pfn_valid);
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+> index 1cc9dc68ef00..ee666471a580 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+> @@ -180,6 +180,12 @@
+>  	pinctrl-names = "default";
+>  };
 >  
-> -#ifndef CONFIG_SPARSEMEM
-> -static void __init arm64_memory_present(void)
-> -{
-> -}
-> -#else
-> -static void __init arm64_memory_present(void)
-> -{
-> -	struct memblock_region *reg;
-> -
-> -	for_each_memblock(memory, reg) {
-> -		int nid = memblock_get_region_node(reg);
-> -
-> -		memory_present(nid, memblock_region_memory_base_pfn(reg),
-> -				memblock_region_memory_end_pfn(reg));
-> -	}
-> -}
-> -#endif
-> -
->  static phys_addr_t memory_limit = PHYS_ADDR_MAX;
->  
->  /*
-> @@ -489,7 +471,7 @@ void __init bootmem_init(void)
->  	 * Sparsemem tries to allocate bootmem in memory_present(), so must be
->  	 * done after the fixed reservations.
->  	 */
-> -	arm64_memory_present();
-> +	memblocks_present();
->  
->  	sparse_init();
->  	zone_sizes_init(min, max);
-> -- 
-> 2.14.1
+> +&i2c_B {
+> +	status = "okay";
+> +	pinctrl-0 = <&i2c_b_pins>;
+> +	pinctrl-names = "default";
+> +};
+> +
+>  &ir {
+>  	status = "okay";
+>  	pinctrl-0 = <&remote_input_ao_pins>;
 > 
-
--- 
-Sincerely yours,
-Mike.
-
