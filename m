@@ -2,198 +2,362 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AD9C282D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCAAC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7558D21736
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 852D8213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:14:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="zDpSN9fb"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UuXAH/C8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XxlAIFcw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbfBJUGB (ORCPT
+        id S1726130AbfBJUOW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:06:01 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:56574 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfBJUGA (ORCPT
+        Sun, 10 Feb 2019 15:14:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39028 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfBJUOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:06:00 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id D6203A011B;
-        Sun, 10 Feb 2019 21:05:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1549829156; i=@fjfi.cvut.cz;
-        bh=AGBoL+sILRpkIa8Ry2g9ONX4x1V/Owe+M90l7khOxP4=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References;
-        b=zDpSN9fbZOWQ4XJUM3edZhdp8HE0kN9DY9qniCy8aTHBJTHQvptuLT4mksfIJ7ARN
-         m+jr90Hq6HMASCqn9UXc0iq14vllfmbNKthmS7m3hSg2Mn0oKyb2OtNGTBAQnXBHMF
-         v8OlxHua+2hIRpiClp1pUekCHBt0PGPyts3QAZnQ=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id FRjG72vNAYC6; Sun, 10 Feb 2019 21:05:47 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 10 Feb 2019 15:14:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F0180605FC; Sun, 10 Feb 2019 20:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549829660;
+        bh=ikKJEH4RmBXZ2bJy9ZyrbKW9RnEG3zsXDA9QBc0+Udo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UuXAH/C8YYH6y9U2E+TUWUnx5tTexE7MoBAMXbPLT7fkGmOotas5T5iRrWzc1YW9/
+         EC+G+M1kPgMhLjHZULU/Evrm1nyxnCRynvHViWfvfEbiF3ksUHI5RMiXMBmXsUqwTA
+         QXxTqtLw1nCWF51scntO1vdCpFSZOuILrKveuXWk=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id DED33A2398;
-        Sun, 10 Feb 2019 21:05:29 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz DED33A2398
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 6DAB16004E; Sun, 10 Feb 2019 21:05:29 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by linux.fjfi.cvut.cz (Postfix) with ESMTP id 4FAD66004D;
-        Sun, 10 Feb 2019 21:05:29 +0100 (CET)
-Date:   Sun, 10 Feb 2019 21:05:29 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
-cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "sbauer@plzdonthack.me" <sbauer@plzdonthack.me>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jonas.rabenstein@studium.uni-erlangen.de" 
-        <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH v4 13/16] block: sed-opal: check size of shadow mbr
-In-Reply-To: <1549666730.10972.60.camel@intel.com>
-Message-ID: <alpine.LRH.2.21.1902101921530.28071@linux.fjfi.cvut.cz>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>  <1549054223-12220-14-git-send-email-zub@linux.fjfi.cvut.cz> <1549666730.10972.60.camel@intel.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BDD5760274;
+        Sun, 10 Feb 2019 20:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549829658;
+        bh=ikKJEH4RmBXZ2bJy9ZyrbKW9RnEG3zsXDA9QBc0+Udo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XxlAIFcwjdTnpF1wUrFLv3F6fMLVjTI3ZU8TxxyxVYD87bGZ1wOGHWKrrogSiAtM5
+         pKHr7YX0PdHA9yU09iQWnE4Y3HsaQ/FV2/zYNAvCI/nKhxugk0oqeSIvuWja5oLvFE
+         4+oUSg9kfdriwPyHI2SqGCIAlSrCpvWt2QBgO4Dk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDD5760274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: Make common clk_hw registrations
+Date:   Sun, 10 Feb 2019 13:14:05 -0700
+Message-Id: <1549829645-24400-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Feb 2019, Derrick, Jonathan wrote:
+Several clock controller drivers define a list of clk_hw devices, and then
+register those devices in probe() before using common code to process the
+rest of initialization.  Extend the common code to accept a list of clk_hw
+devices to process, thus eliminating many duplicate implementations.
 
-> On Fri, 2019-02-01 at 21:50 +0100, David Kozub wrote:
->> From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
->>
->> Check whether the shadow mbr does fit in the provided space on the
->> target. Also a proper firmware should handle this case and return an
->> error we may prevent problems or even damage with crappy firmwares.
->>
->> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
->> Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
->> ---
->>  block/opal_proto.h | 16 ++++++++++++++++
->>  block/sed-opal.c   | 39 +++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 55 insertions(+)
->>
->> diff --git a/block/opal_proto.h b/block/opal_proto.h
->> index b6e352cfe982..5e8df3245eb0 100644
->> --- a/block/opal_proto.h
->> +++ b/block/opal_proto.h
->> @@ -106,6 +106,7 @@ enum opal_uid {
->>  	OPAL_ENTERPRISE_BANDMASTER0_UID,
->>  	OPAL_ENTERPRISE_ERASEMASTER_UID,
->>  	/* tables */
->> +	OPAL_TABLE_TABLE,
->>  	OPAL_LOCKINGRANGE_GLOBAL,
->>  	OPAL_LOCKINGRANGE_ACE_RDLOCKED,
->>  	OPAL_LOCKINGRANGE_ACE_WRLOCKED,
->> @@ -160,6 +161,21 @@ enum opal_token {
->>  	OPAL_STARTCOLUMN = 0x03,
->>  	OPAL_ENDCOLUMN = 0x04,
->>  	OPAL_VALUES = 0x01,
->> +	/* table table */
->> +	OPAL_TABLE_UID = 0x00,
->> +	OPAL_TABLE_NAME = 0x01,
->> +	OPAL_TABLE_COMMON = 0x02,
->> +	OPAL_TABLE_TEMPLATE = 0x03,
->> +	OPAL_TABLE_KIND = 0x04,
->> +	OPAL_TABLE_COLUMN = 0x05,
->> +	OPAL_TABLE_COLUMNS = 0x06,
->> +	OPAL_TABLE_ROWS = 0x07,
->> +	OPAL_TABLE_ROWS_FREE = 0x08,
->> +	OPAL_TABLE_ROW_BYTES = 0x09,
->> +	OPAL_TABLE_LASTID = 0x0A,
->> +	OPAL_TABLE_MIN = 0x0B,
->> +	OPAL_TABLE_MAX = 0x0C,
->> +
->>  	/* authority table */
->>  	OPAL_PIN = 0x03,
->>  	/* locking tokens */
->> diff --git a/block/sed-opal.c b/block/sed-opal.c
->> index 2459ac4d523b..3493bb979978 100644
->> --- a/block/sed-opal.c
->> +++ b/block/sed-opal.c
->> @@ -139,6 +139,8 @@ static const u8 opaluid[][OPAL_UID_LENGTH] = {
->>
->>  	/* tables */
->>
->> +	[OPAL_TABLE_TABLE]
->> +		{ 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01 },
->>  	[OPAL_LOCKINGRANGE_GLOBAL] =
->>  		{ 0x00, 0x00, 0x08, 0x02, 0x00, 0x00, 0x00, 0x01 },
->>  	[OPAL_LOCKINGRANGE_ACE_RDLOCKED] =
->> @@ -1120,6 +1122,29 @@ static int generic_get_column(struct opal_dev *dev, const u8 *table,
->>  	return finalize_and_send(dev, parse_and_check_status);
->>  }
->>
->> +/*
->> + * see TCG SAS 5.3.2.3 for a description of the available columns
->> + *
->> + * the result is provided in dev->resp->tok[4]
->> + */
->> +static int generic_get_table_info(struct opal_dev *dev, enum opal_uid table,
->> +				  u64 column)
->> +{
->> +	u8 uid[OPAL_UID_LENGTH];
->> +	const unsigned int half = OPAL_UID_LENGTH/2;
->> +
->> +	/* sed-opal UIDs can be split in two halves:
->> +	 *  first:  actual table index
->> +	 *  second: relative index in the table
->> +	 * so we have to get the first half of the OPAL_TABLE_TABLE and use the
->> +	 * first part of the target table as relative index into that table
->> +	 */
->> +	memcpy(uid, opaluid[OPAL_TABLE_TABLE], half);
->> +	memcpy(uid+half, opaluid[table], half);
->> +
->> +	return generic_get_column(dev, uid, column);
->> +}
->> +
->>  static int gen_key(struct opal_dev *dev, void *data)
->>  {
->>  	u8 uid[OPAL_UID_LENGTH];
->> @@ -1535,6 +1560,20 @@ static int write_shadow_mbr(struct opal_dev *dev, void *data)
->>  	u64 len;
->>  	int err = 0;
->>
->> +	/* do we fit in the available shadow mbr space? */
->> +	err = generic_get_table_info(dev, OPAL_MBR, OPAL_TABLE_ROWS);
-> Wouldn't you need to multiply this by result from OPAL_TABLE_ROWBYTES?
-> What does ROWBYTES return for you?
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ drivers/clk/qcom/common.c       |  8 ++++++++
+ drivers/clk/qcom/common.h       |  2 ++
+ drivers/clk/qcom/gcc-ipq8074.c  | 10 ++--------
+ drivers/clk/qcom/gcc-mdm9615.c  | 11 ++---------
+ drivers/clk/qcom/gcc-msm8996.c  | 10 ++--------
+ drivers/clk/qcom/gcc-msm8998.c  | 10 ++++++----
+ drivers/clk/qcom/gcc-qcs404.c   |  9 ++-------
+ drivers/clk/qcom/gcc-sdm660.c   | 11 +++--------
+ drivers/clk/qcom/mmcc-msm8996.c | 10 ++--------
+ 9 files changed, 29 insertions(+), 52 deletions(-)
 
-Hi Jon,
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 0a48ed5..a6b2f861 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -231,6 +231,8 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 	struct gdsc_desc *scd;
+ 	size_t num_clks = desc->num_clks;
+ 	struct clk_regmap **rclks = desc->clks;
++	size_t num_clk_hws = desc->num_clk_hws;
++	struct clk_hw **clk_hws = desc->clk_hws;
+ 
+ 	cc = devm_kzalloc(dev, sizeof(*cc), GFP_KERNEL);
+ 	if (!cc)
+@@ -269,6 +271,12 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 
+ 	qcom_cc_drop_protected(dev, cc);
+ 
++	for (i = 0; i < num_clk_hws; i++) {
++		ret = devm_clk_hw_register(dev, clk_hws[i]);
++		if (ret)
++			return ret;
++	}
++
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rclks[i])
+ 			continue;
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 4aa33ee..1e2a8bd 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -27,6 +27,8 @@ struct qcom_cc_desc {
+ 	size_t num_resets;
+ 	struct gdsc **gdscs;
+ 	size_t num_gdscs;
++	struct clk_hw **clk_hws;
++	size_t num_clk_hws;
+ };
+ 
+ /**
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 505c626..0e32892 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -4715,18 +4715,12 @@ enum {
+ 	.num_clks = ARRAY_SIZE(gcc_ipq8074_clks),
+ 	.resets = gcc_ipq8074_resets,
+ 	.num_resets = ARRAY_SIZE(gcc_ipq8074_resets),
++	.clk_hws = gcc_ipq8074_hws,
++	.num_clk_hws = ARRAY_SIZE(gcc_ipq8074_hws),
+ };
+ 
+ static int gcc_ipq8074_probe(struct platform_device *pdev)
+ {
+-	int ret, i;
+-
+-	for (i = 0; i < ARRAY_SIZE(gcc_ipq8074_hws); i++) {
+-		ret = devm_clk_hw_register(&pdev->dev, gcc_ipq8074_hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	return qcom_cc_probe(pdev, &gcc_ipq8074_desc);
+ }
+ 
+diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+index 849046f..8c6d931 100644
+--- a/drivers/clk/qcom/gcc-mdm9615.c
++++ b/drivers/clk/qcom/gcc-mdm9615.c
+@@ -1702,6 +1702,8 @@ enum {
+ 	.num_clks = ARRAY_SIZE(gcc_mdm9615_clks),
+ 	.resets = gcc_mdm9615_resets,
+ 	.num_resets = ARRAY_SIZE(gcc_mdm9615_resets),
++	.clk_hws = gcc_mdm9615_hws,
++	.num_clk_hws = ARRAY_SIZE(gcc_mdm9615_hws),
+ };
+ 
+ static const struct of_device_id gcc_mdm9615_match_table[] = {
+@@ -1712,21 +1714,12 @@ enum {
+ 
+ static int gcc_mdm9615_probe(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+ 	struct regmap *regmap;
+-	int ret;
+-	int i;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_mdm9615_desc);
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	for (i = 0; i < ARRAY_SIZE(gcc_mdm9615_hws); i++) {
+-		ret = devm_clk_hw_register(dev, gcc_mdm9615_hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	return qcom_cc_really_probe(pdev, &gcc_mdm9615_desc, regmap);
+ }
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 9d13617..4632b92 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -3656,6 +3656,8 @@ enum {
+ 	.num_resets = ARRAY_SIZE(gcc_msm8996_resets),
+ 	.gdscs = gcc_msm8996_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(gcc_msm8996_gdscs),
++	.clk_hws = gcc_msm8996_hws,
++	.num_clk_hws = ARRAY_SIZE(gcc_msm8996_hws),
+ };
+ 
+ static const struct of_device_id gcc_msm8996_match_table[] = {
+@@ -3666,8 +3668,6 @@ enum {
+ 
+ static int gcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+-	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_msm8996_desc);
+@@ -3680,12 +3680,6 @@ static int gcc_msm8996_probe(struct platform_device *pdev)
+ 	 */
+ 	regmap_update_bits(regmap, 0x52008, BIT(21), BIT(21));
+ 
+-	for (i = 0; i < ARRAY_SIZE(gcc_msm8996_hws); i++) {
+-		ret = devm_clk_hw_register(dev, gcc_msm8996_hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	return qcom_cc_really_probe(pdev, &gcc_msm8996_desc, regmap);
+ }
+ 
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 3cbabbb..c240fba 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2959,6 +2959,10 @@ enum {
+ 	.fast_io	= true,
+ };
+ 
++static struct clk_hw *gcc_msm8998_hws[] = {
++	&xo.hw,
++};
++
+ static const struct qcom_cc_desc gcc_msm8998_desc = {
+ 	.config = &gcc_msm8998_regmap_config,
+ 	.clks = gcc_msm8998_clocks,
+@@ -2967,6 +2971,8 @@ enum {
+ 	.num_resets = ARRAY_SIZE(gcc_msm8998_resets),
+ 	.gdscs = gcc_msm8998_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(gcc_msm8998_gdscs),
++	.clk_hws = gcc_msm8998_hws,
++	.num_clk_hws = ARRAY_SIZE(gcc_msm8998_hws),
+ };
+ 
+ static int gcc_msm8998_probe(struct platform_device *pdev)
+@@ -2986,10 +2992,6 @@ static int gcc_msm8998_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = devm_clk_hw_register(&pdev->dev, &xo.hw);
+-	if (ret)
+-		return ret;
+-
+ 	return qcom_cc_really_probe(pdev, &gcc_msm8998_desc, regmap);
+ }
+ 
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 64da032..a7b2fe0 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -2692,6 +2692,8 @@ enum {
+ 	.num_clks = ARRAY_SIZE(gcc_qcs404_clocks),
+ 	.resets = gcc_qcs404_resets,
+ 	.num_resets = ARRAY_SIZE(gcc_qcs404_resets),
++	.clk_hws = gcc_qcs404_hws,
++	.num_clk_hws = ARRAY_SIZE(gcc_qcs404_hws),
+ };
+ 
+ static const struct of_device_id gcc_qcs404_match_table[] = {
+@@ -2703,7 +2705,6 @@ enum {
+ static int gcc_qcs404_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
+-	int ret, i;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_qcs404_desc);
+ 	if (IS_ERR(regmap))
+@@ -2711,12 +2712,6 @@ static int gcc_qcs404_probe(struct platform_device *pdev)
+ 
+ 	clk_alpha_pll_configure(&gpll3_out_main, regmap, &gpll3_config);
+ 
+-	for (i = 0; i < ARRAY_SIZE(gcc_qcs404_hws); i++) {
+-		ret = devm_clk_hw_register(&pdev->dev, gcc_qcs404_hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	return qcom_cc_really_probe(pdev, &gcc_qcs404_desc, regmap);
+ }
+ 
+diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
+index ba239ea..8827db2 100644
+--- a/drivers/clk/qcom/gcc-sdm660.c
++++ b/drivers/clk/qcom/gcc-sdm660.c
+@@ -2420,6 +2420,8 @@ enum {
+ 	.num_resets = ARRAY_SIZE(gcc_sdm660_resets),
+ 	.gdscs = gcc_sdm660_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(gcc_sdm660_gdscs),
++	.clk_hws = gcc_sdm660_hws,
++	.num_clk_hws = ARRAY_SIZE(gcc_sdm660_hws),
+ };
+ 
+ static const struct of_device_id gcc_sdm660_match_table[] = {
+@@ -2431,7 +2433,7 @@ enum {
+ 
+ static int gcc_sdm660_probe(struct platform_device *pdev)
+ {
+-	int i, ret;
++	int ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_sdm660_desc);
+@@ -2446,13 +2448,6 @@ static int gcc_sdm660_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Register the hws */
+-	for (i = 0; i < ARRAY_SIZE(gcc_sdm660_hws); i++) {
+-		ret = devm_clk_hw_register(&pdev->dev, gcc_sdm660_hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	return qcom_cc_really_probe(pdev, &gcc_sdm660_desc, regmap);
+ }
+ 
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 7d4ee10..7235510 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3347,6 +3347,8 @@ enum {
+ 	.num_resets = ARRAY_SIZE(mmcc_msm8996_resets),
+ 	.gdscs = mmcc_msm8996_gdscs,
+ 	.num_gdscs = ARRAY_SIZE(mmcc_msm8996_gdscs),
++	.clk_hws = mmcc_msm8996_hws,
++	.num_clk_hws = ARRAY_SIZE(mmcc_msm8996_hws),
+ };
+ 
+ static const struct of_device_id mmcc_msm8996_match_table[] = {
+@@ -3357,8 +3359,6 @@ enum {
+ 
+ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+-	int i, ret;
+ 	struct regmap *regmap;
+ 
+ 	regmap = qcom_cc_map(pdev, &mmcc_msm8996_desc);
+@@ -3370,12 +3370,6 @@ static int mmcc_msm8996_probe(struct platform_device *pdev)
+ 	/* Disable the NoC FSM for mmss_mmagic_cfg_ahb_clk */
+ 	regmap_update_bits(regmap, 0x5054, BIT(15), 0);
+ 
+-	for (i = 0; i < ARRAY_SIZE(mmcc_msm8996_hws); i++) {
+-		ret = devm_clk_hw_register(dev, mmcc_msm8996_hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	return qcom_cc_really_probe(pdev, &mmcc_msm8996_desc, regmap);
+ }
+ 
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-reading the spec[1], I think it defines the MBR table to be a "byte table" 
-(see 5.7.2.6 MBR (Byte Table)). For byte tables, it says (see 3.2.5.1 
-Kinds of Tables) "A byte table has one unnamed column of type bytes_1." I 
-think this implies that each row is 1 byte and so number of rows = size of 
-table in rows.
-
-When I actually try to get OPAL_TABLE_ROWS abd OPAL_TABLE_ROWBYTES of the 
-MBR table from a Samsung 840 EVO, I get:
-* OPAL_TABLE_ROWS 134217728 which is 128 MiB
-* OPAL_TABLE_ROWBYTES 0
-
-I'm not sure if I'm doing something wrong here. I just added:
-
- 	err = generic_get_table_info(dev, OPAL_MBR, OPAL_TABLE_ROW_BYTES);
- 	if (err) {
- 		pr_debug("MBR: could not get shadow row bytes size\n");
- 		return err;
- 	}
-
- 	row_bytes = response_get_u64(&dev->parsed, 4);
-
-Best regards,
-David
-
-[1] https://trustedcomputinggroup.org/wp-content/uploads/TCG_Storage_Architecture_Core_Spec_v2.01_r1.00.pdf
