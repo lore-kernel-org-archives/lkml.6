@@ -2,107 +2,177 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597FBC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C595BC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2140A20873
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:00:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ruB6mj8o"
+	by mail.kernel.org (Postfix) with ESMTP id 9F4CF213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:01:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfBJTAZ (ORCPT
+        id S1726969AbfBJTBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:00:25 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51499 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfBJTAZ (ORCPT
+        Sun, 10 Feb 2019 14:01:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34583 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfBJTBs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:00:25 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so13268758wmj.1;
-        Sun, 10 Feb 2019 11:00:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+eMmTfwODzLvEzByWZTx/8AnGc8y+MNL0RRcXP1LEg8=;
-        b=ruB6mj8opIwdf7cFefLjKj/IbICOZUBan906dBjoQNx7IJU+BhvIZnqNSUcNUmV+3V
-         Lo8wkMQr3KOHmQtMQfH72Ws32Y/w0fZuzaIF+chIBTSZsWNABY1sWtOM8emDy3SsClyl
-         TN4FadxzUZMTu6riTz9Rkh5dNGQH2VtknvUxH2TyjF2is3jnHJqMhH0ikRhjJsX3zjZA
-         NNiWZENn3n5mWwDCs7e9NNTSrPeXnEfNpt84U4+OoNqD8aOPjLkPtI1ahcpT3hm4Y/ku
-         CNbXz3ZI24TAjuhkXpWAtsJ2BQaOZTGOTJJX6ZCS/d2mJZeHIuaz4uz9u7jWiQsyaLPH
-         WMBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+eMmTfwODzLvEzByWZTx/8AnGc8y+MNL0RRcXP1LEg8=;
-        b=irmzPymWa0NneeHgkzKSSK8m5fmr+Ktg9yCbtWKe1hse9Jtdq2b+1CFpAyOJd0mQGp
-         FivwQ2XurW5EZ2crxjzh9k749ALaFKjoRpUYVfEV2+XpKfJYL8p9j/nlUgKj16dKuCZc
-         /hWPEcpudLCYKgD79nEWP8LvuKY3vXOyVgJsV6Uotr2MBSwnR/y/uYCZtqjZ0sAV9ebg
-         /Tqjw4Hfe7o8JmPavTbnkT3hcoDthYPVzSx+itqwPMNcOKBYF5e8cIV4uD5bzLouB7LD
-         0JWk2xcNxL7BBitLeauP0GoKp8f3GGcH3NyuGOS2VCjqcSbstY5XFVL5j3zxb++DXGWf
-         UlFw==
-X-Gm-Message-State: AHQUAuZuxNDH7t+4AQvRnn+N6upEI+83vD+BObBNJsN7Pqdd74AkwwjO
-        7VaHnLbwIPYIzMRq5m5A3dU=
-X-Google-Smtp-Source: AHgI3Iboze4MAOT7M75jcLt/i5BOKZkIEqQNluKzPOhijI898ysF/3kpni+STmhmgYX1/FAzHnb+IA==
-X-Received: by 2002:a1c:2c6:: with SMTP id 189mr6357904wmc.21.1549825223183;
-        Sun, 10 Feb 2019 11:00:23 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2dee:9f00:2436:5653:8de5:2886])
-        by smtp.gmail.com with ESMTPSA id l20sm16001287wrb.93.2019.02.10.11.00.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 11:00:22 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     paulmck@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
-Date:   Sun, 10 Feb 2019 20:00:09 +0100
-Message-Id: <20190210190009.9995-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 10 Feb 2019 14:01:48 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1AJ1GEJ3199790
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 10 Feb 2019 11:01:16 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1AJ1G0e3199786;
+        Sun, 10 Feb 2019 11:01:16 -0800
+Date:   Sun, 10 Feb 2019 11:01:16 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ming Lei <tipbot@zytor.com>
+Message-ID: <tip-347253c42d7c673aa2a659d756bc7ff893459247@git.kernel.org>
+Cc:     ming.lei@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com, hch@lst.de,
+        sagi@grimberg.me, hpa@zytor.com, axboe@kernel.dk
+Reply-To: sagi@grimberg.me, hpa@zytor.com, axboe@kernel.dk,
+          bhelgaas@google.com, hch@lst.de, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, ming.lei@redhat.com,
+          mingo@kernel.org
+In-Reply-To: <20190125095347.17950-2-ming.lei@redhat.com>
+References: <20190125095347.17950-2-ming.lei@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq/affinity: Move allocation of
+ 'node_to_cpumask' to irq_build_affinity_masks()
+Git-Commit-ID: 347253c42d7c673aa2a659d756bc7ff893459247
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-further maintainer to the KEYS-TRUSTED section entry. Paul McKenney also
-introduced a typo in Mimi Zohar's email address in the KEYS-TRUSTED section
-entry.
+Commit-ID:  347253c42d7c673aa2a659d756bc7ff893459247
+Gitweb:     https://git.kernel.org/tip/347253c42d7c673aa2a659d756bc7ff893459247
+Author:     Ming Lei <ming.lei@redhat.com>
+AuthorDate: Fri, 25 Jan 2019 17:53:43 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 10 Feb 2019 19:53:55 +0100
 
-The two issues were detected when writing a script that parses MAINTAINERS.
+genirq/affinity: Move allocation of 'node_to_cpumask' to irq_build_affinity_masks()
 
-Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
-Fixes: 1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
+'node_to_cpumask' is just one temparay variable for irq_build_affinity_masks(),
+so move it into irq_build_affinity_masks().
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+No functioanl change.
+
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-nvme@lists.infradead.org
+Cc: linux-pci@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190125095347.17950-2-ming.lei@redhat.com
+
 ---
-Mimi, please pick up this patch instead of
-  "[PATCH] MAINTAINERS: use tab instead of spaces". Thanks.
+ kernel/irq/affinity.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bf4965d6d5de..b4b62ea78eeb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8405,8 +8405,8 @@ F:	security/keys/encrypted-keys/
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index 45b68b4ea48b..118b66d64a53 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -175,18 +175,22 @@ out:
+  */
+ static int irq_build_affinity_masks(const struct irq_affinity *affd,
+ 				    int startvec, int numvecs, int firstvec,
+-				    cpumask_var_t *node_to_cpumask,
+ 				    struct irq_affinity_desc *masks)
+ {
+ 	int curvec = startvec, nr_present, nr_others;
+ 	int ret = -ENOMEM;
+ 	cpumask_var_t nmsk, npresmsk;
++	cpumask_var_t *node_to_cpumask;
  
- KEYS-TRUSTED
- M:	James Bottomley <jejb@linux.ibm.com>
--M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
--M:	Mimi Zohar <zohar@linuxibm.com>
-+M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-+M:	Mimi Zohar <zohar@linux.ibm.com>
- L:	linux-integrity@vger.kernel.org
- L:	keyrings@vger.kernel.org
- S:	Supported
--- 
-2.17.1
-
+ 	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
+ 		return ret;
+ 
+ 	if (!zalloc_cpumask_var(&npresmsk, GFP_KERNEL))
+-		goto fail;
++		goto fail_nmsk;
++
++	node_to_cpumask = alloc_node_to_cpumask();
++	if (!node_to_cpumask)
++		goto fail_npresmsk;
+ 
+ 	ret = 0;
+ 	/* Stabilize the cpumasks */
+@@ -217,9 +221,12 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
+ 	if (nr_present < numvecs)
+ 		WARN_ON(nr_present + nr_others < numvecs);
+ 
++	free_node_to_cpumask(node_to_cpumask);
++
++ fail_npresmsk:
+ 	free_cpumask_var(npresmsk);
+ 
+- fail:
++ fail_nmsk:
+ 	free_cpumask_var(nmsk);
+ 	return ret;
+ }
+@@ -236,7 +243,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ {
+ 	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+ 	int curvec, usedvecs;
+-	cpumask_var_t *node_to_cpumask;
+ 	struct irq_affinity_desc *masks = NULL;
+ 	int i, nr_sets;
+ 
+@@ -247,13 +253,9 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	if (nvecs == affd->pre_vectors + affd->post_vectors)
+ 		return NULL;
+ 
+-	node_to_cpumask = alloc_node_to_cpumask();
+-	if (!node_to_cpumask)
+-		return NULL;
+-
+ 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+ 	if (!masks)
+-		goto outnodemsk;
++		return NULL;
+ 
+ 	/* Fill out vectors at the beginning that don't need affinity */
+ 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
+@@ -271,11 +273,10 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 		int ret;
+ 
+ 		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+-						curvec, node_to_cpumask, masks);
++						curvec, masks);
+ 		if (ret) {
+ 			kfree(masks);
+-			masks = NULL;
+-			goto outnodemsk;
++			return NULL;
+ 		}
+ 		curvec += this_vecs;
+ 		usedvecs += this_vecs;
+@@ -293,8 +294,6 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
+ 		masks[i].is_managed = 1;
+ 
+-outnodemsk:
+-	free_node_to_cpumask(node_to_cpumask);
+ 	return masks;
+ }
+ 
