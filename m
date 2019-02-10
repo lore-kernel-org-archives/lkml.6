@@ -2,140 +2,143 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEA7C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8A7C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317B42176F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549811866;
-	bh=VnkLwyfz2y5oJ1AwrbXtdH8RHcIiOlUTEBTeXSz3IrI=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=U2yhkaMf4RID2vbtwNduzbz9s0ozEiFu2lnmZ8nqKtPGasxbgqa7Kx2+1jC3lgoa+
-	 BwWEoBn8mddP1CvyzJvz8ZhEYaAin39mlPFT0+OB0gc1W37wtk3HwpdZb544G0f0Ht
-	 8swMPCe+cFiBczqUld4FlLX/PXXyVUBUOE5HXF8g=
+	by mail.kernel.org (Postfix) with ESMTP id 6E83420869
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:23:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="AuMcXZWL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfBJPRc (ORCPT
+        id S1726340AbfBJPX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:17:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbfBJPRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:17:32 -0500
-Received: from localhost (unknown [117.99.91.83])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 032872176F;
-        Sun, 10 Feb 2019 15:17:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549811851;
-        bh=VnkLwyfz2y5oJ1AwrbXtdH8RHcIiOlUTEBTeXSz3IrI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=QnLjhIiWAMVl4mhyTb6mb1QI2y19Ejc6F8vOnWNEtg/xweis1K3GUQ7ekDqyYbU/G
-         KzDYvV0vwWH4nCSK+U1DcGVy74i484Fb5WuEP1p5y1kG7/2j944YELp2A2Zwj/KsyK
-         CmzA+t7HjWbGj5uKHQVTevFYzUfC0pQT2bk5YWxY=
-Date:   Sun, 10 Feb 2019 20:47:22 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] dmaengine fixes for v5.0-rc6
-Message-ID: <20190210151722.GM4296@vkoul-mobl>
+        Sun, 10 Feb 2019 10:23:29 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36844 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfBJPX3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 10:23:29 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so3797978pgm.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 07:23:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cwOfBmCsWpM2ET3DtQtEGtek6cK7DN1HHieUktob4oI=;
+        b=AuMcXZWL4HEjqA4r7F/JNZr0kRnk66YwIatOSFwyJTwng2Vt2M3YJnNNs7I92gi3M3
+         TXIzp4Ay+uMC6Ojukk66fmUjC/pW+E62/qZDh+Uabv4DJDJ05OxouhYyxu/4D8/8ULpL
+         G7DfW587MbMqnm+CSYBjv1wvVHAorL8h1hng3YPtC2sWZVkoiDxAMSdjd8Ski8tAr2HB
+         ITsgawq1+ldxjYwuf5LneyMwXsmWs9LAtnhow59Uqw5PCVQxK29sEiADEKSyVqyTenZW
+         gOgArzGPi2qri3uOWxf3lDLRUH5KtjUJtbEwIHtDAiFzIXe6HI6E5/8EBqWAsHh+pA7X
+         vLZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cwOfBmCsWpM2ET3DtQtEGtek6cK7DN1HHieUktob4oI=;
+        b=tEjZGEC3R7qElKSrgTVE7HjejDrDW5TbxPSJcujdwD1E/UxSr5lwJR+Qw5lSTmPEmG
+         Qr8qXhkO9gM/6QNU65nIgE6Z4PGgpK9IQBi5THkAO+CGNQRHzFQzUTbc6z2WtaNoNRF4
+         DJxRhOq43EcSIJ8HFfDaksSnW1eb/7RMy3VpiEA2gvFGj+bf5A5+fDTMJMdkqWC6uUBd
+         9IIQUWEfxq0vjxCMikkOriZ+NiQF5Yq86wCBckrxiGRCuB2t4SD8t9Hdp/Hbgx98HeHR
+         qLCigK0Gc+X943BukRMzw0juF8R83/AJ29q6B4FfHnvluCTzTBhyhlpV4wnfTjt1tfUH
+         Kb6Q==
+X-Gm-Message-State: AHQUAuaL1dNsd0+zizc7JlpNxA+BOIyzjKw+M33QqZ93eBfH3hF7rqGV
+        3vDeKPOCbFxm6UwCsNRziekcBA==
+X-Google-Smtp-Source: AHgI3IaNmd+SR87Jma4nbRVFfE/SMQdjSHDkwV/9F1e9juoQb6Zp8teOIKSrFf6Fnc66WbsAaQI4ZA==
+X-Received: by 2002:a63:ef50:: with SMTP id c16mr21041199pgk.3.1549812208052;
+        Sun, 10 Feb 2019 07:23:28 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id b26sm12132897pfe.91.2019.02.10.07.23.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Feb 2019 07:23:27 -0800 (PST)
+Subject: Re: [PATCH] blk-sysfs: Rework documention of __blk_release_queue
+To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     "open list:BLOCK LAYER" <linux-block@vger.kernel.org>
+References: <20190131011139.2264742-1-marcos.souza.org@gmail.com>
+ <02fcaaa4-3667-7144-5ca2-4e5346380439@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <813bdf91-83de-332d-5d6b-2287039578b5@kernel.dk>
+Date:   Sun, 10 Feb 2019 08:23:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <02fcaaa4-3667-7144-5ca2-4e5346380439@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2/9/19 11:34 AM, Marcos Paulo de Souza wrote:
+> Ping :)
+> 
+> On 1/30/19 11:11 PM, Marcos Paulo de Souza wrote:
+>> The Notes section of the comment was removed, because now
+>> blk_release_queue can only be executed from blk_cleanup_queue (being
+>> called when the q->kobj reaches zero), and also blk_init_queue was removed
+>> in a1ce35fa4985.
+>>
+>> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+>> ---
+>>  This is basically a v2 of https://lkml.org/lkml/2019/1/14/1098
+>>
+>>  But, I tried to describe when this function is called, removing redundancies.
+>>  Maybe it would be better placed in blk-core.c, where the q->kobj is initialized
+>>  with blk_queue_ktype (which .release pointer points to blk_release_queue)?
+>>
+>>  block/blk-sysfs.c | 19 +++++++------------
+>>  1 file changed, 7 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>> index 590d1ef2f961..d4dea9179fa6 100644
+>> --- a/block/blk-sysfs.c
+>> +++ b/block/blk-sysfs.c
+>> @@ -817,21 +817,16 @@ static void blk_free_queue_rcu(struct rcu_head *rcu_head)
+>>  }
+>>  
+>>  /**
+>> - * __blk_release_queue - release a request queue when it is no longer needed
+>> + * __blk_release_queue - release a request queue
+>>   * @work: pointer to the release_work member of the request queue to be released
+>>   *
+>>   * Description:
+>> - *     blk_release_queue is the counterpart of blk_init_queue(). It should be
+>> - *     called when a request queue is being released; typically when a block
+>> - *     device is being de-registered. Its primary task it to free the queue
+>> - *     itself.
+>> - *
+>> - * Notes:
+>> - *     The low level driver must have finished any outstanding requests first
+>> - *     via blk_cleanup_queue().
+>> - *
+>> - *     Although blk_release_queue() may be called with preemption disabled,
+>> - *     __blk_release_queue() may sleep.
+>> + *     This function is called when a block device is being de-registered. The
 
---HlL+5n6rz5pIUxbD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+unregistered
 
-Hi Linus,
+>> + *     process of releasing a request queue starts with blk_cleanup_queue, which
+>> + *     set the appropriate flags and the calls blk_put_queue, that decrements
 
-Please pull to receive the fixes for dmaengine. We have fixes in bunch
-of drivers like xdmac, imx, bcm etc.
+s/the/then
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+>> + *     the reference counter of the request queue. Once the reference counter
+>> + *     of the request queue reaches zero, blk_release_queue is called to release
+>> + *     all allocated resources of the request queue.
+>>   */
+>>  static void __blk_release_queue(struct work_struct *work)
+>>  {
+>>
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-are available in the Git repository at:
+-- 
+Jens Axboe
 
-  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.0-=
-rc6
-
-for you to fetch changes up to 6454368a804c4955ccd116236037536f81e5b1f1:
-
-  dmaengine: dmatest: Abort test in case of mapping error (2019-02-04 14:34=
-:22 +0530)
-
-----------------------------------------------------------------
-dmaengine-fix-5.0-rc6
-
-dmaengine fixes for v5.0-rc6
-
- - Fix in at_xdmac fr wrongful channel state
- - Fix for imx driver for wrong callback invocation
- - Fix to bcm driver for interrupt race & transaction abort.
- - Fix in dmatest to abort in mapping error
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      dmaengine: dmatest: Abort test in case of mapping error
-
-Codrin Ciubotariu (1):
-      dmaengine: at_xdmac: Fix wrongfull report of a channel as in use
-
-Leonid Iziumtsev (1):
-      dmaengine: imx-dma: fix wrong callback invoke
-
-Lukas Wunner (2):
-      dmaengine: bcm2835: Fix interrupt race on RT
-      dmaengine: bcm2835: Fix abort of transactions
-
-Vinod Koul (1):
-      Merge branch 'fix/brcm' into fixes
-
- drivers/dma/at_xdmac.c    | 19 +++++++------
- drivers/dma/bcm2835-dma.c | 70 +++++++++++++++++--------------------------=
-----
- drivers/dma/dmatest.c     | 32 ++++++++++------------
- drivers/dma/imx-dma.c     |  8 +++---
- 4 files changed, 53 insertions(+), 76 deletions(-)
-
---=20
-~Vinod
-
---HlL+5n6rz5pIUxbD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcYECCAAoJEHwUBw8lI4NHiQAP+wUw/7mrhiSILQWUdooqQaEW
-+VWczAx8hyj96Src6k6B9tgLEixkqoysLLZ57rkoh9yeW6L8G6INEL7QovXK6y30
-FpAWggydgL1Uqw+BXSsZNVELkqRCP2DtpHtu682/e2lamaQX6VqQ+STNlXbGZMPn
-r8mfZxKFDAqV+Oc6cg19izDqwFUfyrTHxRfnpPU6MWZqAtBG1JwnsBxDhp5zF4UZ
-mI18k/PAgh/1LTT2AAqaE0HXPogEOwoFcIS4VNdqH4X/ITrYnPWB4rTnm8IeTbZ4
-SSx+Oxwj6Sg8xmcIEXfm019zY0udA8ax6DE0sbIySuUvswNp02a4A0mpO+o382yd
-N441axXBacsALCec+jmP9FC3JxQQ4PcRVR9cDEIKKp63q/ZHxxD6BAKURSdZVz+s
-+7PO4IvASZxUU5Cl3Jr1E+GkZQ3iH0ZqQ6gFj+NnEQJeZIIi9b64MhcE2frNwXpb
-BMFQK44cDwarRT5CEeBQTkpctuPHeeR6w7X/IfHLefFHCPp6Tm807PduuEnYCdXg
-s+8wQ0iMcyx5OsFT3L0LrvJ1e3AHNUMYDHhvdRea89siBA8zw0VxtyaELCuubkSi
-6hi7pfckKYy6XkJjQ6cPJmn2IY13/2tApwuVbL3HeJ6qGZn63qTZyaH5zijTD/ul
-6nmebH1CzKWVtX5iEYsL
-=hYA0
------END PGP SIGNATURE-----
-
---HlL+5n6rz5pIUxbD--
