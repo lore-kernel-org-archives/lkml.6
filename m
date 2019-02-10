@@ -2,131 +2,107 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9011FC282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C14C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 670612145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AB2F2145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:36:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaBrvaaB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbfBJUcl (ORCPT
+        id S1726157AbfBJUg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:32:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52000 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725971AbfBJUcl (ORCPT
+        Sun, 10 Feb 2019 15:36:57 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36308 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfBJUg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:32:41 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1AKSWRP065499
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 15:32:39 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qjrwa4nrx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 15:32:39 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 10 Feb 2019 20:32:38 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 10 Feb 2019 20:32:36 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1AKWZfW24117460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 10 Feb 2019 20:32:35 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2570FB2066;
-        Sun, 10 Feb 2019 20:32:35 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 03E6CB2065;
-        Sun, 10 Feb 2019 20:32:34 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.196.105])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 10 Feb 2019 20:32:34 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7FA9816C35A3; Sun, 10 Feb 2019 12:32:35 -0800 (PST)
-Date:   Sun, 10 Feb 2019 12:32:35 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
-Reply-To: paulmck@linux.ibm.com
-References: <20190210190009.9995-1-lukas.bulwahn@gmail.com>
+        Sun, 10 Feb 2019 15:36:57 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p6so13021355wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 12:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Pd53kY7Zn/KTDbNDHPYJSH/JLmIxxzkNhX+LN2ZGuB4=;
+        b=OaBrvaaBaeLmkrrymGt8X3rplynAIGwTyJaRUKDU1LXH6fWuTo/rWXBGiys7EoMtD7
+         plvy72nzLPfg9DCTb86kJ1pT2AC4CXjgFngoP7RfRVhHqG/XkXmhGXE8vhSnWoFiPiT4
+         SXZewpIBSj4wwybEsZ+qFxK1YQdDrQiKKGo4mjYv1yF2owTJlEMNCWCjUFNXd4cp+WkI
+         NJ4EPjMUp/SFKvjAxaAO/adPKoKaOkPVOPUu36wg2PhNh8KdmpkD9XvlJsYFrIIWSQ2n
+         kL3bI9UxqE/fw/iD+bNPp3PDSb/zQoj5cjqtFMSwYEFqm1+mz+onHDPfKajz7nPqkbaW
+         qLlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Pd53kY7Zn/KTDbNDHPYJSH/JLmIxxzkNhX+LN2ZGuB4=;
+        b=f73KNgJXXU2sgN7ioVLus+zjipibTMf2PcNO2fcWfZhh/olmMkfDQXCk3WgiyhgMiS
+         OoaNXQ2k/3LjNARowUgRNQiV6cuq3JKE0ms0fAJar+rlDSeKpiea7evE9Qu7NNeY+NrS
+         ZwNXoj0mVyrrVJOznQV8SkchvQ1hVVbvuh2OViXwL/IJuDcWKC5tRgKfiqkNvOwchOO7
+         Uva7RXFMyBYyFF4V1FXa3iOErU830LyZ6+H/MWfzC3dD17xpwVQ0yhWU3I/1wcEFNXcr
+         ee5oGA02f3mJIzLC56ZtiXdmE4M8d9HBI97WV2DouH2gRtxq/Z8NwdZtW8ce5cEwVyOp
+         fkPg==
+X-Gm-Message-State: AHQUAuZdxFEIeVslVvQzc03wyHEDsne4q1S2UmJcjb+OLaSGrmjzCb38
+        lFJ9j7so0AIhsf2sWv3G8fFInBxR
+X-Google-Smtp-Source: AHgI3Ib+u6m6Vwu5Z8A5WHJ0w2oAxKxv7ZigtIHsS/BMzjyZvZ7Cz3qdSt+b+JP+BmjQe4Uf7HcN8Q==
+X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr6374798wmf.17.1549831015206;
+        Sun, 10 Feb 2019 12:36:55 -0800 (PST)
+Received: from localhost.localdomain ([46.216.193.115])
+        by smtp.gmail.com with ESMTPSA id u25sm15151903wml.31.2019.02.10.12.36.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 12:36:54 -0800 (PST)
+Received: from jek by localhost.localdomain with local (Exim 4.92-RC4)
+        (envelope-from <jekhor@gmail.com>)
+        id 1gsvqO-0005ed-Pf; Sun, 10 Feb 2019 23:36:52 +0300
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: [PATCH 0/2] extcon: Intel Cherry Trail Whiskey Cove PMIC and external charger tweaks
+Date:   Sun, 10 Feb 2019 23:36:47 +0300
+Message-Id: <20190210203649.21691-1-jekhor@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190210190009.9995-1-lukas.bulwahn@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19021020-0064-0000-0000-000003A6BD6E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010572; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01159183; UDB=6.00604896; IPR=6.00939720;
- MB=3.00025517; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-10 20:32:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021020-0065-0000-0000-00003C5EE468
-Message-Id: <20190210203235.GN4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-10_17:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902100158
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 08:00:09PM +0100, Lukas Bulwahn wrote:
-> Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen as
-> further maintainer to the KEYS-TRUSTED section entry. Paul McKenney also
-> introduced a typo in Mimi Zohar's email address in the KEYS-TRUSTED section
-> entry.
-> 
-> The two issues were detected when writing a script that parses MAINTAINERS.
-> 
-> Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for trusted keys")
-> Fixes: 1dfddcdb95c4 ("MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com")
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+At implementation of charging support for Lenovo Yoga Book (Intel Cherry Trail
+based with Whiskey Cove PMIC), two pitfalls were found:
 
-Good catch!
+- for detection of charger type by PMIC, bit 6 in the CHGRCTRL1 register
+  should be set in 0 (and set to 1 for Host mode). Pick up its definition
+  and logic from from Intel code drop[1];
 
-Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
+- "#CHARGE ENABLE" signal of external charger (bq25892) in Yoga Book is
+  connected to one of PMIC outputs controlled by CHGDISCTRL register.
+  Enable charging at driver initialization. Pick up this from Lenovo's code
+  drop[2,3].
 
-> ---
-> Mimi, please pick up this patch instead of
->   "[PATCH] MAINTAINERS: use tab instead of spaces". Thanks.
-> 
->  MAINTAINERS | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index bf4965d6d5de..b4b62ea78eeb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8405,8 +8405,8 @@ F:	security/keys/encrypted-keys/
-> 
->  KEYS-TRUSTED
->  M:	James Bottomley <jejb@linux.ibm.com>
-> -M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> -M:	Mimi Zohar <zohar@linuxibm.com>
-> +M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> +M:	Mimi Zohar <zohar@linux.ibm.com>
->  L:	linux-integrity@vger.kernel.org
->  L:	keyrings@vger.kernel.org
->  S:	Supported
-> -- 
-> 2.17.1
-> 
+Please keep in mind that I have no docs for Whiskey Cove PMIC, so this patches
+are based on some kind of reverse engineering and suppositions, correct me if
+this semantic is wrong for common case.
+
+[1]. https://github.com/01org/ProductionKernelQuilts/uefi/cht-m1stable/patches/0001-power_supply-intel-pmic-ccsm-driver.patch
+[2]. https://github.com/jekhor/yogabook-linux-android-kernel/blob/b7aa015ab794b516da7b6cb76e5e2d427e3b8b0c/drivers/power/bq2589x_charger.c#L2257
+[3]. https://github.com/01org/ProductionKernelQuilts/uefi/cht-m1stable/patches/EM-Charger-Disable-battery-charging-in-S3-and-enable.patch
+
+Yauhen Kharuzhy (2):
+  extcon-intel-cht-wc: Make charger detection co-existed with OTG host mode
+  extcon intel-cht-wc: Enable external charger
+
+ drivers/extcon/extcon-intel-cht-wc.c | 71 +++++++++++++++++++++++++++-
+ 1 file changed, 70 insertions(+), 1 deletion(-)
+
+-- 
+2.20.1
 
