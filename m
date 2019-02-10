@@ -2,69 +2,136 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB92BC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54502C282D7
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DFD520873
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549824305;
-	bh=cKGj6M4VOunsgjnt9kqQESz8y5FWILkPxpqGgJFzFZw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=EDItmPKBwnUDxIe1ShkX8PJiO6Uv1+ZAdTdfinqCgAIxkONHgqORCT8EEo6CSthfP
-	 t6r26WYNCnEeUfXO6Kb5VZj/dZ1Kxd3MALcLlwcXfjWUT8jwu9B965BOokMrI3PyPb
-	 HQlsd2SddbAy84z4hHE5eYtCY9j3SZV7vLqFuHMg=
+	by mail.kernel.org (Postfix) with ESMTP id 30C9520873
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfBJSpE (ORCPT
+        id S1726811AbfBJSqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 13:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfBJSpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 13:45:03 -0500
-Subject: Re: [GIT PULL] dmaengine fixes for v5.0-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549824303;
-        bh=cKGj6M4VOunsgjnt9kqQESz8y5FWILkPxpqGgJFzFZw=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=VjmCDWxT9zuTPYxWymcypqTdvq+8Xs1wTsudXK8FkfwvH3zwSwf8UXnAbk6ZmR/0E
-         HXQ+e01fa+8WdKF2C1RO6ZohiX++hYxGoyMjmuo2mjYlkL5p9gZs+FX/+CQ0VLxajj
-         ojZjjRvXA5aI1fM54FhYf3VQXqCbbLO5CUw1ZXFk=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190210151722.GM4296@vkoul-mobl>
-References: <20190210151722.GM4296@vkoul-mobl>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190210151722.GM4296@vkoul-mobl>
-X-PR-Tracked-Remote: git://git.infradead.org/users/vkoul/slave-dma.git
- tags/dmaengine-fix-5.0-rc6
-X-PR-Tracked-Commit-Id: 6454368a804c4955ccd116236037536f81e5b1f1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 68d94a8424352d723e4991de4745ce6795b23069
-Message-Id: <154982430304.5227.2428190352495582336.pr-tracker-bot@kernel.org>
-Date:   Sun, 10 Feb 2019 18:45:03 +0000
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Sun, 10 Feb 2019 13:46:32 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:50074 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfBJSqc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 13:46:32 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 2889472CC53;
+        Sun, 10 Feb 2019 21:46:29 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 0E3E34A4A14;
+        Sun, 10 Feb 2019 21:46:29 +0300 (MSK)
+Date:   Sun, 10 Feb 2019 21:46:28 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] X.509: Parse public key parameters from x509 for
+ akcipher
+Message-ID: <20190210184628.yupsxgjlaicwbxg6@altlinux.org>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190106133608.820-1-vt@altlinux.org>
+ <20190106133608.820-2-vt@altlinux.org>
+ <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20190209214240.56gq7ivn3pw3bssf@altlinux.org>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 10 Feb 2019 20:47:22 +0530:
+On Sun, Feb 10, 2019 at 12:42:40AM +0300, Vitaly Chikunov wrote:
+> On Sun, Jan 06, 2019 at 04:36:05PM +0300, Vitaly Chikunov wrote:
+> > Some public key algorithms (like ECDSA) keep in parameters field
+> > important data such as digest and curve OIDs (possibly more for
+> > different ECDSA variants). Thus, just setting a public key (as
+> > for RSA) is not enough.
+> > 
+> > Introduce set_params() callback for akcipher which will be used to
+> > pass DER encoded parameters array, with additional argument of
+> > algorithm OID.
+> > 
+> > This is done with the intent of adding support for EC-RDSA (ISO/IEC
+> > 14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
+> > will be finally used in IMA subsystem). Thus, also oid_registry.h is
+> > updated.
+> > 
+> > Rationale:
+> > 
+> > - For such keys just setting public key without parameters is
+> >   meaningless, so it would be possible to add parameters in
+> >   crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
+> >   needlessly change API for RSA akcipher. Also, additional callback
+> >   making it possible to pass parameters after
+> >   crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
+> >
+> > - Algorithm OID is passed to be validated in .set_params callback,
+> >   otherwise, it could have the wrong value.
+> > 
+> > - Particular algorithm OIDs are checked in x509_note_params, (because
+> >   this is called from AlgorithmIdentifier (ASN.1) parser, which is
+> >   called multiple times, as it's used multiple times in X.509
+> >   certificate), to distinguish a public key call from a signature call.
+> > 
+> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> > ---
+> 
+> > @@ -263,6 +274,11 @@ int public_key_verify_signature(const struct public_key *pkey,
+> >        if (pkey->key_is_private)
+> >                ret = crypto_akcipher_set_priv_key(tfm,
+> >                                                   pkey->key, pkey->keylen);
+> >        else
+> >                ret = crypto_akcipher_set_pub_key(tfm,
+> >                                                  pkey->key, pkey->keylen);
+> >        if (ret)
+> >                goto error_free_req;
+> > +	ret = crypto_akcipher_set_params(tfm, pkey->algo, pkey->params,
+> > +					 pkey->paramlen);
+> 
+> Nobody said anything if this is a good idea to call set_params after
+> set_{pub,priv}_key and not before.
+> 
+> When `struct crypto_akcipher' is allocated ctx data is never zeroed,
+> thus either call will be the first to zero ctx, making these calls not
+> swappable in the future.
+> 
+> Also, algorithm parameters could be interpreted without knowing the key,
+> but the key cannot be interpreted without knowing the parameters.
 
-> git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.0-rc6
+From the other point of view, set_params may never be called or
+implemented. So, making it called first and move memory zeroing
+into set_params may create more complications than simplicity.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/68d94a8424352d723e4991de4745ce6795b23069
+Making both callbacks callable in any order also will not make
+things simpler. (Need to be prepared to be called in different
+order.)
 
-Thank you!
+Maybe it's better to make memzero in akcipher_request_alloc() and allow
+optional call to crypto_akcipher_set_params() strictly before
+crypto_akcipher_set_{pub,priv}_key(), so, set_{pub,priv}_key will
+already know everything to set the key properly. set_params may not be
+implemented if akcipher does not need it (as with RSA).
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> 
+> > +	if (ret)
+> > +		goto error_free_req;
+> > +
+> >  	ret = -ENOMEM;
+> >  	outlen = crypto_akcipher_maxsize(tfm);
+> >  	output = kmalloc(outlen, GFP_KERNEL);
