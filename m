@@ -2,149 +2,170 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BF5C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3924C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924582145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAFE92145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfBJPkB (ORCPT
+        id S1726811AbfBJPla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:40:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56674 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726134AbfBJPkB (ORCPT
+        Sun, 10 Feb 2019 10:41:30 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:35202 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbfBJPla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:40:01 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1AFcmfj076855
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 10:39:59 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qjd10m2d4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 10:39:59 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 10 Feb 2019 15:39:57 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 10 Feb 2019 15:39:54 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1AFdroJ8192298
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 10 Feb 2019 15:39:53 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C706A4203F;
-        Sun, 10 Feb 2019 15:39:53 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DA5D42041;
-        Sun, 10 Feb 2019 15:39:52 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 10 Feb 2019 15:39:52 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        "Bruno E. O. Meneguele" <bmeneg@redhat.com>
-Date:   Sun, 10 Feb 2019 10:39:41 -0500
-In-Reply-To: <20190208192127.GO3218@ubuntu-xps13>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190205151859.GD16362@ubuntu-xps13>
-         <1549385244.4146.148.camel@linux.ibm.com>
-         <20190205183201.GA3218@ubuntu-xps13>
-         <1549392741.4146.161.camel@linux.ibm.com>
-         <20190208192127.GO3218@ubuntu-xps13>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021015-0016-0000-0000-00000254B542
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021015-0017-0000-0000-000032AECD69
-Message-Id: <1549813181.12743.139.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-10_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902100121
+        Sun, 10 Feb 2019 10:41:30 -0500
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1AFfHlu071760;
+        Mon, 11 Feb 2019 00:41:17 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
+ Mon, 11 Feb 2019 00:41:17 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
+Received: from [192.168.1.2] (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1AFfHZB071756
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 11 Feb 2019 00:41:17 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH] clk: fractional-divider: check parent rate only for
+ general approximation
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>
+References: <20190130235022.21949-1-katsuhiro@katsuster.net>
+ <154948200879.115909.2117234752247335645@swboyd.mtv.corp.google.com>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <079d43be-0643-a55b-5d88-3e5e900529ed@katsuster.net>
+Date:   Mon, 11 Feb 2019 00:41:17 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <154948200879.115909.2117234752247335645@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc'ing Bruno E. O. Meneguele]
+Hello Stephen,
 
-On Fri, 2019-02-08 at 13:21 -0600, Seth Forshee wrote:
-> On Tue, Feb 05, 2019 at 01:52:21PM -0500, Mimi Zohar wrote:
-> > On Tue, 2019-02-05 at 12:32 -0600, Seth Forshee wrote:
-> > > On Tue, Feb 05, 2019 at 11:47:24AM -0500, Mimi Zohar wrote:
-> > > > Hi Seth,
-> > > > 
-> > > > On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
-> > > > > On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> > > > > > Require signed kernel modules on systems with secure boot mode enabled.
-> > > > > > 
-> > > > > > To coordinate between appended kernel module signatures and IMA
-> > > > > > signatures, only define an IMA MODULE_CHECK policy rule if
-> > > > > > CONFIG_MODULE_SIG is not enabled.
-> > > > > > 
-> > > > > > This patch defines a function named set_module_sig_required() and renames
-> > > > > > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> > > > > > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> > > > > > being enabled.
-> > > > > > 
-> > > > > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > 
-> > > > > With respect to interactions with the kernel lockdown patches, this
-> > > > > looks better than the patches I saw previously. I don't feel like I know
-> > > > > enough about what's going on with IMA to ack the patch, but I feel
-> > > > > confident that it's at least not going to break signature enforcement
-> > > > > for us.
-> > > > 
-> > > > Thank you for testing!  Could this be translated into a "tested-by"
-> > > > "(for w/lockdown patches)"?
-> > > 
-> > > Yeah, that's fine. To be clear about what I tested, I've confirmed that
-> > > it doesn't interfere with requiring signed modules under lockdown with
-> > > CONFIG_IMA_ARCH_POLICY=n and IMA appraisal enabled.
-> > > 
-> > > Tested-by: Seth Forshee <seth.forshee@canonical.com>
-> > 
-> > Oh!  You've disabled the coordination of the two signature
-> > verification methods.  Any chance you could test with
-> > "CONFIG_IMA_ARCH_POLICY" enabled?
+Thanks a lot for your review. I choose clk_hw_can_set_parent_rate()
+macro and fix typo and patch description. And I post v2 patch.
+
+Best Regards,
+Katsuhiro Suzuki
+
+On 2019/02/07 4:40, Stephen Boyd wrote:
+> +Heiko because it mentions Rockchip
 > 
-> Ok, I've tested this now and it also seems to be working. However it
-> does seem redundant to have CONFIG_IMA_ARCH_POLICY alongside lockdown,
-> as it doesn't enforce anything not already being enforced by lockdown.
-
-Ok.  Based on Luis' and your comments, I'll defer this discussion to
-after IMA appended signature support is upstreamed.  At that point,
-for the finit_module syscall, IMA-appraisal at least won't fail the
-signature verification.  The same appended signature will be verified
-not once, but twice - once on the LSM security_kernel_read_file() hook
-and then again by module_sig_check().
-
-For the init_module() syscall, the only coordination needed will be
-updating is_module_sig_enforced(), based on either the "lockdown" or
-some other flag.
-
-Mimi
+> Quoting Katsuhiro Suzuki (2019-01-30 15:50:22)
+>> Custom approximation of fractional-divider may not need parent clock
+>> rate checking. For example Rockchip SoCs work fine using grand parent
+>> clock rate even if target rate is greater than parent.
+>>
+>> This patch removes parent clock rate check from custom approximation.
+>>
+>> For detailied example, clock tree of Rockchip I2S audio hardware.
+> 
+> s/detailied/detailed/
+> 
+>>    - A i2s1_div is integer divider can divide input clock 1/1 ~ 1/16.
+>>      Initialize divider value is 1.
+> 
+> s/Initialize/Initial/
+> 
+>>    - A i2s1_frac is fractional divider can divide input to x/y, x and
+>>      y are 16bit integer.
+>>    - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
+>>
+>> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
+>> GPLL --> |          | ,--------------'    |          |
+>>                        `--> i2s1_frac ---> |          |
+>>
+>> Clock mux system try to choose suitable one from i2s1_div and
+>> i2s1_frac for master clock (MCLK) of I2S1.
+>>
+>> Bad scenario as follows:
+>>    - Try to set MCLK to 8.192MHz (32kHz audio replay)
+>>      Candidate setting is
+>>      - i2s1_div : GPLL / 60           = 8.192MHz
+>>      i2s1_div is same as target clock rate, so mux choose this.
+>>      i2s1_div output rate is changed 491.52MHz -> 8.192MHz
+>>
+>>    - After that try to set to 11.2896MHz (44.1kHz audio replay)
+>>      Candidate settings are
+>>      - i2s1_div : CPLL / 107 = 11.214945MHz
+>>      - i2s1_frac: i2s1_div   = 8.192MHz
+>>        This is because clk_fd_round_rate() thinks target rate
+>>        (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
+>>        and returns parent clock rate.
+>>      Clock mux system choose i2s1_div, but this clock rate is not
+>>      acceptable for I2S driver, so users cannot replay audio.
+>>
+>> Expected behavior is:
+>>    - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
+>>      Candidate settings are
+>>      - i2s1_div : CPLL / 107          = 11.214945MHz
+>>      - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
+>>                   (change i2s1_div to GPLL / 1 = 491.52MHz)
+>>        If apply this commit, clk_fd_round_rate() calls custom
+>>        approximate function of Rockchip even if target rate is higher
+>>        than parent. Custom function changes both grand parent
+>>        (i2s1_div) and parent (i2s_frac) settings at same time.
+> 
+> Can you indicate what that function is? Is this merged upstream or
+> something you're developing now?
+> 
+>>      Clock mux system can choose i2s1_frac and audio works fine.
+> 
+> I think this last paragraph from "If apply this commit" can be
+> unindented from the expected behavior section.
+> 
+>>
+>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>> ---
+>>   drivers/clk/clk-fractional-divider.c | 10 +++++++---
+>>   1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+>> index 545dceec0bbf..b0fc5509e0ff 100644
+>> --- a/drivers/clk/clk-fractional-divider.c
+>> +++ b/drivers/clk/clk-fractional-divider.c
+>> @@ -79,13 +79,17 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+>>          unsigned long m, n;
+>>          u64 ret;
+>>   
+>> -       if (!rate || rate >= *parent_rate)
+>> +       if (!rate)
+>>                  return *parent_rate;
+> 
+> Ok. I think it would be clearer if we had
+> 
+> 	unsigned long flags = clk_hw_get_flags()
+> 
+> 	if (!rate ||
+> 	    !(flags & CLK_SET_PARENT_RATE) && rate >= *parent_rate)
+> 
+> indicating that the parent of the clk isn't expected to change rate so
+> we can only achieve that much frequency. Plus some sort of comment to
+> this effect would be helpful too.
+> 
+> We could also introduce macros to check clk flags. Then it would read
+> nicer:
+> 
+> 	if (!rate || clk_hw_can_set_parent_rate(hw) && rate >= ...)
+> 
+> 
+> 
 
