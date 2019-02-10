@@ -2,140 +2,315 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DEAR_SOMETHING,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B1CC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 10:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E67C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 11:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E864D20863
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 10:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DD1821736
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 11:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="U8m/duy0"
+	dkim=pass (1024-bit key) header.d=interia.pl header.i=@interia.pl header.b="mwcyC5Ej"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfBJK5n (ORCPT
+        id S1726093AbfBJLRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 05:57:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52090 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfBJK5m (ORCPT
+        Sun, 10 Feb 2019 06:17:00 -0500
+Received: from smtpo.poczta.interia.pl ([217.74.65.156]:49610 "EHLO
+        smtpo.poczta.interia.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfBJLQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 05:57:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b11so11783444wmj.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 02:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=bL53ccFYg2o18JIG+H4Z3TItp8QKfCnm04mqw0DTumM=;
-        b=U8m/duy06hjnME/XCippTTlf0nljfERLpKebyze+sgKrwWJ4oGJ59C8lDG+3HtERH+
-         ko3NVWHS1HUsRkeak3Wwk+WpysX4ITHIVPkqvg/DAC4iiKTYV+26br9lRVj9/F1rJ+3W
-         lEe9fcPcige3WU+bd2aHlpcbSTtnZJ3jxy5fvWn1zRZeE9NjPlA2lSmGWUPD2xLBpV4K
-         KtbfRwWJBoBYcNNEAYxO9vnzUY03FvgwlNKgHREq/qrtgrx931MSEOYuU0qzEhbbFW5L
-         s6gS1R8NjDlE7S8vjwf9/Nr1Kh1FlPW+nMXxk6g379HqYWvkqoF2y9czcpKkaQuTkcwN
-         O7AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-transfer-encoding;
-        bh=bL53ccFYg2o18JIG+H4Z3TItp8QKfCnm04mqw0DTumM=;
-        b=tf6Tc2nI+mamx2qPGGEhnmVxbWbNLGfFHmte3LC6Gzt5LpKzunDBOxMTNeq+UpMblr
-         CCZEo7jG0/Vxx6+/DfrTQsWdRUV1t3Bi7oVt+5I4/9Bv2LaVF52ejQS7ce1H6pNn155y
-         i7FWLlEMOMb84mu5sRC7IBNHHqZYwH6dd9QsjSCcJWc7pmD9VXvxRKK8gDmLkYcu4YW5
-         PwmuIfQDH+ltgLt10XzXTRwzQa49dlMzb7fDODliIgmpo1oKrG9J8lBSdVyJpkxu7W/0
-         m+J0v/k3GYwk7KGGGMZRq1QI8cQbtW9fZVCqzvnN58ibIQArXJ4oH0rFJ0iCV30hLuwO
-         HACA==
-X-Gm-Message-State: AHQUAubeP8r95RMQgy5OQMhzSepPQpLBBr/v96Q8YaNASaocFXDSqJ1l
-        jF4fAdVkHJpBjbO2JTtcBcATJQ==
-X-Google-Smtp-Source: AHgI3IZxTUlkCnrreqKuPXdGZy7tBs/HyH/At9cCxqjpL3Oe2U+QuKdJTj/yyjEdl+FIfA6vF2M8Bg==
-X-Received: by 2002:a05:6000:8b:: with SMTP id m11mr1384922wrx.243.1549796260348;
-        Sun, 10 Feb 2019 02:57:40 -0800 (PST)
-Received: from Armstrongs-MacBook-Pro.local (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id s3sm7595606wmj.23.2019.02.10.02.57.39
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 10 Feb 2019 02:57:39 -0800 (PST)
-Message-ID: <5C6003A2.1000301@baylibre.com>
-Date:   Sun, 10 Feb 2019 11:57:38 +0100
-From:   Neil Armstrong <narmstrong@baylibre.com>
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
+        Sun, 10 Feb 2019 06:16:59 -0500
+X-Greylist: delayed 460 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Feb 2019 06:16:56 EST
+X-Interia-R: Interia
+X-Interia-R-IP: 109.231.53.78
+X-Interia-R-Helo: <[192.168.1.2]>
+Received: from [192.168.1.2] (unknown [109.231.53.78])
+        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by poczta.interia.pl (INTERIA.PL) with ESMTPSA;
+        Sun, 10 Feb 2019 12:09:10 +0100 (CET)
+To:     dan.j.williams@intel.com
+Cc:     akpm@linux-foundation.org, dri-devel@lists.freedesktop.org,
+        hch@lst.de, jglisse@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, logang@deltatee.com, stable@vger.kernel.org,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH v8 3/7] mm, devm_memremap_pages: Fix shutdown handling
+From:   Krzysztof Grygiencz <kfgz@interia.pl>
+Message-ID: <30d86b36-8421-f899-205e-4b9c6a5fcc9d@interia.pl>
+Date:   Sun, 10 Feb 2019 12:09:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-To:     Wen Yang <yellowriver2010@hotmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>
-CC:     "linux-media@lists.freedesktop.org" 
-        <linux-media@lists.freedesktop.org>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] media: platform: meson-ao-cec: fix possible object
- reference leak
-References: <HK0PR02MB3634925866F426F86DD213BDB26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-In-Reply-To: <HK0PR02MB3634925866F426F86DD213BDB26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+ boundary="------------2A9A357F73A2C91AEDD30CF0"
+Content-Language: pl-PL
+X-Interia-Antivirus: OK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=interia.pl;
+        s=biztos; t=1549796952;
+        bh=p4qE1lxsnSdIGxqRlU0EPPkdDSe8IZ/w/KhYo5bMCgk=;
+        h=X-Interia-R:X-Interia-R-IP:X-Interia-R-Helo:To:Cc:Subject:From:
+         Message-ID:Date:User-Agent:MIME-Version:Content-Type:
+         Content-Language:X-Interia-Antivirus;
+        b=mwcyC5EjvMpjKR8lvf7y2D0XnkbiKIMmDQfKCvfrhiknOHSZNk9eMg4ec7NDP5U+M
+         UcNO+C8JUfAGOpQDJ9BvLkQRspaIrR5l+3A4q4RsepbyyCevk2tM7GL5N3RtIjHRIC
+         ScRUA0N4NSNsdlgsVYslweN96Odn7FcN2D1+FdZo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------2A9A357F73A2C91AEDD30CF0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Dear Sir,
 
-Le 09/02/2019 03:52, Wen Yang a écrit :
-> The call to of_parse_phandle() returns a node pointer with refcount
-> incremented thus it must be explicitly decremented here after the last
-> usage.
-> The of_find_device_by_node() takes a reference to the underlying device
-> structure, we also should release that reference.
-> This patch fixes those two issues.
-> 
-> Fixes: 7ec2c0f72cb1 ("media: platform: Add Amlogic Meson AO CEC Controller driver")
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
-> ---
->  drivers/media/platform/meson/ao-cec.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/meson/ao-cec.c b/drivers/media/platform/meson/ao-cec.c
-> index cd4be38..8ba8b46 100644
-> --- a/drivers/media/platform/meson/ao-cec.c
-> +++ b/drivers/media/platform/meson/ao-cec.c
-> @@ -613,18 +613,25 @@ static int meson_ao_cec_probe(struct platform_device *pdev)
->  	}
->  
->  	hdmi_dev = of_find_device_by_node(np);
-> -	if (hdmi_dev == NULL)
-> +	if (hdmi_dev == NULL) {
-> +		of_node_put(np);
->  		return -EPROBE_DEFER;
-> +	}
->  
-> +	of_node_put(np);
->  	ao_cec = devm_kzalloc(&pdev->dev, sizeof(*ao_cec), GFP_KERNEL);
-> -	if (!ao_cec)
-> +	if (!ao_cec) {
-> +		put_device(&hdmi_dev->dev);
->  		return -ENOMEM;
-> +	}
->  
->  	spin_lock_init(&ao_cec->cec_reg_lock);
->  
->  	ao_cec->notify = cec_notifier_get(&hdmi_dev->dev);
-> -	if (!ao_cec->notify)
-> +	if (!ao_cec->notify) {
-> +		put_device(&hdmi_dev->dev);
->  		return -ENOMEM;
-> +	}
->  
->  	ao_cec->adap = cec_allocate_adapter(&meson_ao_cec_ops, ao_cec,
->  					    "meson_ao_cec",
-> 
+I'm using ArchLinux distribution. After kernel upgrade form 4.19.14 to 
+4.19.15 my X environment stopped working. I have AMD HD3300 (RS780D) 
+graphics card. I have bisected kernel and found a failing commit:
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=v4.19.20&id=ec5471c92fb29ad848c81875840478be201eeb3f
 
-Thanks for the fix !
+I'm attaching Xorg.0.log file
 
-Neil
+Best Regards
+Krzysztof Grygiencz
+
+--------------2A9A357F73A2C91AEDD30CF0
+Content-Type: text/x-log;
+ name="Xorg.0.log"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="Xorg.0.log"
+
+[    22.027] 
+X.Org X Server 1.20.3
+X Protocol Version 11, Revision 0
+[    22.027] Build Operating System: Linux Arch Linux
+[    22.027] Current Operating System: Linux h4xxx 4.19.15-1-lts #1 SMP Sun Jan 13 13:53:52 CET 2019 x86_64
+[    22.027] Kernel command line: BOOT_IMAGE=../vmlinuz-linux-lts root=UUID=a6e22cbe-f0cd-4efc-b9c2-c9fe90e829d3 rw quiet loglevel=3 rd.systemd.show_status=auto rd.udev.log-priority=3 vt.global_cursor_default=0 net.ifnames=0 initrd=../initramfs-linux-lts.img
+[    22.027] Build Date: 25 October 2018  04:42:32PM
+[    22.027]  
+[    22.027] Current version of pixman: 0.36.0
+[    22.027] 	Before reporting problems, check http://wiki.x.org
+	to make sure that you have the latest version.
+[    22.027] Markers: (--) probed, (**) from config file, (==) default setting,
+	(++) from command line, (!!) notice, (II) informational,
+	(WW) warning, (EE) error, (NI) not implemented, (??) unknown.
+[    22.027] (==) Log file: "/var/log/Xorg.0.log", Time: Tue Jan 15 17:37:23 2019
+[    22.027] (==) Using config directory: "/etc/X11/xorg.conf.d"
+[    22.027] (==) Using system config directory "/usr/share/X11/xorg.conf.d"
+[    22.028] (==) No Layout section.  Using the first Screen section.
+[    22.028] (==) No screen section available. Using defaults.
+[    22.028] (**) |-->Screen "Default Screen Section" (0)
+[    22.028] (**) |   |-->Monitor "<default monitor>"
+[    22.028] (==) No monitor specified for screen "Default Screen Section".
+	Using a default monitor configuration.
+[    22.028] (==) Automatically adding devices
+[    22.028] (==) Automatically enabling devices
+[    22.028] (==) Automatically adding GPU devices
+[    22.028] (==) Automatically binding GPU devices
+[    22.028] (==) Max clients allowed: 256, resource mask: 0x1fffff
+[    22.028] (==) FontPath set to:
+	/usr/share/fonts/misc,
+	/usr/share/fonts/TTF,
+	/usr/share/fonts/OTF,
+	/usr/share/fonts/Type1,
+	/usr/share/fonts/100dpi,
+	/usr/share/fonts/75dpi
+[    22.028] (==) ModulePath set to "/usr/lib/xorg/modules"
+[    22.028] (II) The server relies on udev to provide the list of input devices.
+	If no devices become available, reconfigure udev or disable AutoAddDevices.
+[    22.028] (II) Module ABI versions:
+[    22.028] 	X.Org ANSI C Emulation: 0.4
+[    22.028] 	X.Org Video Driver: 24.0
+[    22.028] 	X.Org XInput driver : 24.1
+[    22.028] 	X.Org Server Extension : 10.0
+[    22.029] (++) using VT number 7
+
+[    22.029] (II) systemd-logind: logind integration requires -keeptty and -keeptty was not provided, disabling logind integration
+[    22.031] (--) PCI:*(1@0:5:0) 1002:9614:1043:834d rev 0, Mem @ 0xd0000000/268435456, 0xfe0f0000/65536, 0xfdf00000/1048576, I/O @ 0x0000c000/256, BIOS @ 0x????????/131072
+[    22.032] (II) Open ACPI successful (/var/run/acpid.socket)
+[    22.032] (II) LoadModule: "glx"
+[    22.032] (II) Loading /usr/lib/xorg/modules/extensions/libglx.so
+[    22.034] (II) Module glx: vendor="X.Org Foundation"
+[    22.034] 	compiled for 1.20.3, module version = 1.0.0
+[    22.034] 	ABI class: X.Org Server Extension, version 10.0
+[    22.034] (==) Matched ati as autoconfigured driver 0
+[    22.034] (==) Matched modesetting as autoconfigured driver 1
+[    22.034] (==) Matched fbdev as autoconfigured driver 2
+[    22.034] (==) Matched vesa as autoconfigured driver 3
+[    22.034] (==) Assigned the driver to the xf86ConfigLayout
+[    22.034] (II) LoadModule: "ati"
+[    22.034] (II) Loading /usr/lib/xorg/modules/drivers/ati_drv.so
+[    22.034] (II) Module ati: vendor="X.Org Foundation"
+[    22.034] 	compiled for 1.20.1, module version = 18.1.0
+[    22.034] 	Module class: X.Org Video Driver
+[    22.034] 	ABI class: X.Org Video Driver, version 24.0
+[    22.034] (II) LoadModule: "radeon"
+[    22.034] (II) Loading /usr/lib/xorg/modules/drivers/radeon_drv.so
+[    22.035] (II) Module radeon: vendor="X.Org Foundation"
+[    22.035] 	compiled for 1.20.1, module version = 18.1.0
+[    22.035] 	Module class: X.Org Video Driver
+[    22.035] 	ABI class: X.Org Video Driver, version 24.0
+[    22.035] (II) LoadModule: "modesetting"
+[    22.035] (II) Loading /usr/lib/xorg/modules/drivers/modesetting_drv.so
+[    22.035] (II) Module modesetting: vendor="X.Org Foundation"
+[    22.035] 	compiled for 1.20.3, module version = 1.20.3
+[    22.035] 	Module class: X.Org Video Driver
+[    22.035] 	ABI class: X.Org Video Driver, version 24.0
+[    22.035] (II) LoadModule: "fbdev"
+[    22.035] (WW) Warning, couldn't open module fbdev
+[    22.035] (EE) Failed to load module "fbdev" (module does not exist, 0)
+[    22.035] (II) LoadModule: "vesa"
+[    22.035] (WW) Warning, couldn't open module vesa
+[    22.035] (EE) Failed to load module "vesa" (module does not exist, 0)
+[    22.035] (II) RADEON: Driver for ATI/AMD Radeon chipsets:
+	ATI Radeon Mobility X600 (M24), ATI FireMV 2400,
+	ATI Radeon Mobility X300 (M24), ATI FireGL M24 GL,
+	ATI Radeon X600 (RV380), ATI FireGL V3200 (RV380),
+	ATI Radeon IGP320 (A3), ATI Radeon IGP330/340/350 (A4),
+	ATI Radeon 9500, ATI Radeon 9600TX, ATI FireGL Z1, ATI Radeon 9800SE,
+	ATI Radeon 9800, ATI FireGL X2, ATI Radeon 9600, ATI Radeon 9600SE,
+	ATI Radeon 9600XT, ATI FireGL T2, ATI Radeon 9650, ATI FireGL RV360,
+	ATI Radeon 7000 IGP (A4+), ATI Radeon 8500 AIW,
+	ATI Radeon IGP320M (U1), ATI Radeon IGP330M/340M/350M (U2),
+	ATI Radeon Mobility 7000 IGP, ATI Radeon 9000/PRO, ATI Radeon 9000,
+	ATI Radeon X800 (R420), ATI Radeon X800PRO (R420),
+	ATI Radeon X800SE (R420), ATI FireGL X3 (R420),
+	ATI Radeon Mobility 9800 (M18), ATI Radeon X800 SE (R420),
+	ATI Radeon X800XT (R420), ATI Radeon X800 VE (R420),
+	ATI Radeon X850 (R480), ATI Radeon X850 XT (R480),
+	ATI Radeon X850 SE (R480), ATI Radeon X850 PRO (R480),
+	ATI Radeon X850 XT PE (R480), ATI Radeon Mobility M7,
+	ATI Mobility FireGL 7800 M7, ATI Radeon Mobility M6,
+	ATI FireGL Mobility 9000 (M9), ATI Radeon Mobility 9000 (M9),
+	ATI Radeon 9700 Pro, ATI Radeon 9700/9500Pro, ATI FireGL X1,
+	ATI Radeon 9800PRO, ATI Radeon 9800XT,
+	ATI Radeon Mobility 9600/9700 (M10/M11),
+	ATI Radeon Mobility 9600 (M10), ATI Radeon Mobility 9600 (M11),
+	ATI FireGL Mobility T2 (M10), ATI FireGL Mobility T2e (M11),
+	ATI Radeon, ATI FireGL 8700/8800, ATI Radeon 8500, ATI Radeon 9100,
+	ATI Radeon 7500, ATI Radeon VE/7000, ATI ES1000,
+	ATI Radeon Mobility X300 (M22), ATI Radeon Mobility X600 SE (M24C),
+	ATI FireGL M22 GL, ATI Radeon X800 (R423), ATI Radeon X800PRO (R423),
+	ATI Radeon X800LE (R423), ATI Radeon X800SE (R423),
+	ATI Radeon X800 XTP (R430), ATI Radeon X800 XL (R430),
+	ATI Radeon X800 SE (R430), ATI Radeon X800 (R430),
+	ATI FireGL V7100 (R423), ATI FireGL V5100 (R423),
+	ATI FireGL unknown (R423), ATI Mobility FireGL V5000 (M26),
+	ATI Mobility Radeon X700 XL (M26), ATI Mobility Radeon X700 (M26),
+	ATI Radeon X550XTX, ATI Radeon 9100 IGP (A5),
+	ATI Radeon Mobility 9100 IGP (U3), ATI Radeon XPRESS 200,
+	ATI Radeon XPRESS 200M, ATI Radeon 9250, ATI Radeon 9200,
+	ATI Radeon 9200SE, ATI FireMV 2200, ATI Radeon X300 (RV370),
+	ATI Radeon X600 (RV370), ATI Radeon X550 (RV370),
+	ATI FireGL V3100 (RV370), ATI FireMV 2200 PCIE (RV370),
+	ATI Radeon Mobility 9200 (M9+), ATI Mobility Radeon X800 XT (M28),
+	ATI Mobility FireGL V5100 (M28), ATI Mobility Radeon X800 (M28),
+	ATI Radeon X850, ATI unknown Radeon / FireGL (R480),
+	ATI Radeon X800XT (R423), ATI FireGL V5000 (RV410),
+	ATI Radeon X700 XT (RV410), ATI Radeon X700 PRO (RV410),
+	ATI Radeon X700 SE (RV410), ATI Radeon X700 (RV410),
+	ATI Radeon X1800, ATI Mobility Radeon X1800 XT,
+	ATI Mobility Radeon X1800, ATI Mobility FireGL V7200,
+	ATI FireGL V7200, ATI FireGL V5300, ATI Mobility FireGL V7100,
+	ATI FireGL V7300, ATI FireGL V7350, ATI Radeon X1600, ATI RV505,
+	ATI Radeon X1300/X1550, ATI Radeon X1550, ATI M54-GL,
+	ATI Mobility Radeon X1400, ATI Radeon X1550 64-bit,
+	ATI Mobility Radeon X1300, ATI Radeon X1300, ATI FireGL V3300,
+	ATI FireGL V3350, ATI Mobility Radeon X1450,
+	ATI Mobility Radeon X2300, ATI Mobility Radeon X1350,
+	ATI FireMV 2250, ATI Radeon X1650, ATI Mobility FireGL V5200,
+	ATI Mobility Radeon X1600, ATI Radeon X1300 XT/X1600 Pro,
+	ATI FireGL V3400, ATI Mobility FireGL V5250,
+	ATI Mobility Radeon X1700, ATI Mobility Radeon X1700 XT,
+	ATI FireGL V5200, ATI Radeon X2300HD, ATI Mobility Radeon HD 2300,
+	ATI Radeon X1950, ATI Radeon X1900, ATI AMD Stream Processor,
+	ATI RV560, ATI Mobility Radeon X1900, ATI Radeon X1950 GT, ATI RV570,
+	ATI FireGL V7400, ATI Radeon 9100 PRO IGP,
+	ATI Radeon Mobility 9200 IGP, ATI Radeon X1200, ATI RS740,
+	ATI RS740M, ATI Radeon HD 2900 XT, ATI Radeon HD 2900 Pro,
+	ATI Radeon HD 2900 GT, ATI FireGL V8650, ATI FireGL V8600,
+	ATI FireGL V7600, ATI Radeon 4800 Series, ATI Radeon HD 4870 x2,
+	ATI Radeon HD 4850 x2, ATI FirePro V8750 (FireGL),
+	ATI FirePro V7760 (FireGL), ATI Mobility RADEON HD 4850,
+	ATI Mobility RADEON HD 4850 X2, ATI FirePro RV770,
+	AMD FireStream 9270, AMD FireStream 9250, ATI FirePro V8700 (FireGL),
+	ATI Mobility RADEON HD 4870, ATI Mobility RADEON M98,
+	ATI FirePro M7750, ATI M98, ATI Mobility Radeon HD 4650,
+	ATI Radeon RV730 (AGP), ATI Mobility Radeon HD 4670,
+	ATI FirePro M5750, ATI RV730XT [Radeon HD 4670], ATI RADEON E4600,
+	ATI Radeon HD 4600 Series, ATI RV730 PRO [Radeon HD 4650],
+	ATI FirePro V7750 (FireGL), ATI FirePro V5700 (FireGL),
+	ATI FirePro V3750 (FireGL), ATI Mobility Radeon HD 4830,
+	ATI Mobility Radeon HD 4850, ATI FirePro M7740, ATI RV740,
+	ATI Radeon HD 4770, ATI Radeon HD 4700 Series, ATI RV610,
+	ATI Radeon HD 2400 XT, ATI Radeon HD 2400 Pro,
+	ATI Radeon HD 2400 PRO AGP, ATI FireGL V4000, ATI Radeon HD 2350,
+	ATI Mobility Radeon HD 2400 XT, ATI Mobility Radeon HD 2400,
+	ATI RADEON E2400, ATI FireMV 2260, ATI RV670, ATI Radeon HD3870,
+	ATI Mobility Radeon HD 3850, ATI Radeon HD3850,
+	ATI Mobility Radeon HD 3850 X2, ATI Mobility Radeon HD 3870,
+	ATI Mobility Radeon HD 3870 X2, ATI Radeon HD3870 X2,
+	ATI FireGL V7700, ATI Radeon HD3690, AMD Firestream 9170,
+	ATI Radeon HD 4550, ATI Radeon RV710, ATI Radeon HD 4350,
+	ATI Mobility Radeon 4300 Series, ATI Mobility Radeon 4500 Series,
+	ATI FirePro RG220, ATI Mobility Radeon 4330, ATI RV630,
+	ATI Mobility Radeon HD 2600, ATI Mobility Radeon HD 2600 XT,
+	ATI Radeon HD 2600 XT AGP, ATI Radeon HD 2600 Pro AGP,
+	ATI Radeon HD 2600 XT, ATI Radeon HD 2600 Pro, ATI Gemini RV630,
+	ATI Gemini Mobility Radeon HD 2600 XT, ATI FireGL V5600,
+	ATI FireGL V3600, ATI Radeon HD 2600 LE,
+	ATI Mobility FireGL Graphics Processor, ATI Radeon HD 3470,
+	ATI Mobility Radeon HD 3430, ATI Mobility Radeon HD 3400 Series,
+	ATI Radeon HD 3450, ATI Radeon HD 3430, ATI FirePro V3700,
+	ATI FireMV 2450, ATI Radeon HD 3600 Series, ATI Radeon HD 3650 AGP,
+	ATI Radeon HD 3600 PRO, ATI Radeon HD 3600 XT,
+	ATI Mobility Radeon HD 3650, ATI Mobility Radeon HD 3670,
+	ATI Mobility FireGL V5700, ATI Mobility FireGL V5725,
+	ATI Radeon HD 3200 Graphics, ATI Radeon 3100 Graphics,
+	ATI Radeon HD 3300 Graphics, ATI Radeon 3000 Graphics, SUMO, SUMO2,
+	ATI Radeon HD 4200, ATI Radeon 4100, ATI Mobility Radeon HD 4200,
+	ATI Mobility Radeon 4100, ATI Radeon HD 4290, ATI Radeon HD 4250,
+	AMD Radeon HD 6310 Graphics, AMD Radeon HD 6250 Graphics,
+	AMD Radeon HD 6300 Series Graphics,
+	AMD Radeon HD 6200 Series Graphics, PALM, CYPRESS,
+	ATI FirePro (FireGL) Graphics Adapter, AMD Firestream 9370,
+	AMD Firestream 9350, ATI Radeon HD 5800 Series,
+	ATI Radeon HD 5900 Series, ATI Mobility Radeon HD 5800 Series,
+	ATI Radeon HD 5700 Series, ATI Radeon HD 6700 Series,
+	ATI Mobility Radeon HD 5000 Series, ATI Mobility Radeon HD 5570,
+	ATI Radeon HD 5670, ATI Radeon HD 5570, ATI Radeon HD 5500 Series,
+	REDWOOD, ATI Mobility Radeon Graphics, CEDAR, ATI FirePro 2270,
+	ATI Radeon HD 5450, CAYMAN, AMD Radeon HD 6900 Series,
+	AMD Radeon HD 6900M Series, Mobility Radeon HD 6000 Series, BARTS,
+	AMD Radeon HD 6800 Series, AMD Radeon HD 6700 Series, TURKS, CAICOS,
+	ARUBA, TAHITI, PITCAIRN, VERDE, OLAND, HAINAN, BONAIRE, KABINI,
+	MULLINS, KAVERI, HAWAII
+[    22.037] (II) modesetting: Driver for Modesetting Kernel Drivers: kms
+[    22.038] (II) [KMS] drm report modesetting isn't supported.
+[    22.038] (EE) open /dev/dri/card0: No such file or directory
+[    22.038] (WW) Falling back to old probe method for modesetting
+[    22.038] (EE) open /dev/dri/card0: No such file or directory
+[    22.038] (EE) Screen 0 deleted because of no matching config section.
+[    22.038] (II) UnloadModule: "radeon"
+[    22.038] (EE) Screen 0 deleted because of no matching config section.
+[    22.038] (II) UnloadModule: "modesetting"
+[    22.038] (EE) Device(s) detected, but none match those in the config file.
+[    22.038] (EE) 
+Fatal server error:
+[    22.038] (EE) no screens found(EE) 
+[    22.038] (EE) 
+Please consult the The X.Org Foundation support 
+	 at http://wiki.x.org
+ for help. 
+[    22.038] (EE) Please also check the log file at "/var/log/Xorg.0.log" for additional information.
+[    22.038] (EE) 
+[    22.038] (EE) Server terminated with error (1). Closing log file.
+
+--------------2A9A357F73A2C91AEDD30CF0--
