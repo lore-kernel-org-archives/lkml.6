@@ -2,114 +2,99 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26818C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A03EC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2798213F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B93214DA
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:51:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="GGLs5eMp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbfBJWej (ORCPT
+        id S1726530AbfBJWvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 17:34:39 -0500
-Received: from mga01.intel.com ([192.55.52.88]:3922 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726093AbfBJWei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 17:34:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2019 14:34:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,356,1544515200"; 
-   d="scan'208";a="143135415"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Feb 2019 14:34:38 -0800
-From:   ira.weiny@intel.com
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH V2] mm/gup: Remove write argument in gup_fast_permitted()
-Date:   Sun, 10 Feb 2019 14:34:24 -0800
-Message-Id: <20190210223424.13934-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190209173109.9361-1-ira.weiny@intel.com>
-References: <20190209173109.9361-1-ira.weiny@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 10 Feb 2019 17:51:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36292 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbfBJWvT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 17:51:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p6so13380873wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 14:51:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mathembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=Pi51Mueiz01jqmURtbglad6f6KeDug2dSwxXoF3nC+o=;
+        b=GGLs5eMpymB8AgB2Gbk2l763hDFn+qpOAaeQC35PF76pG1YUs3lXj4SYM/7R8pR+YI
+         pcP2Ve4OgpjAhK5ADJ9wUqTsRopHf8yAvO4/LLesq1Vmb+hfO/1rRKR0AXaEH0o8dwKJ
+         sdjIwDOTHsd9cNA4tSWVUo7AiKWj+9iCjPPgziyZIgz550QZ1QpXQkZ6TPaxSIHnVfeR
+         7pPzHgBbcRLGTFnURNpp3meu7CKM8bR3J2KM6dZKd1r44K0AH5z78tIF7sP/604Baea8
+         jjNuYeTYIthO2WmKSj3PqYnkN+iRpt7IipOrlXnTp4NJe5sqv21I2BanrjZ7yyGfFexk
+         TKzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=Pi51Mueiz01jqmURtbglad6f6KeDug2dSwxXoF3nC+o=;
+        b=LPw06rqpHNHFlE3ajsa7JAeMLJPJ9/DYSulP4n+5fdbKE8KEGVWXfnPewRfzXknzDY
+         zoFlZzTwYA3aXugo8+VQ/mwk9Tvo3mpTR4vUGps+DQi6gbTY02DNgVHBpJeKY5K72t7o
+         ZlNTD0++a1e1e0TT6PnEjmh7kQxhNJJVQEoBX3vEZLPDK1RWYq39/+M+FMAZSbKKucsU
+         32MdwPCTorplgHv99ndMvHdUSTvkhH0DAooqaEbRg5qWrRAgCAeCobo8iCy0E6nGh9G5
+         I7/Hwbbh2p94b0plVfqQVdn2Dy//s7xLeBej3vs9eq8x4lCA0R+QsEPsllWGy9rF9SJ6
+         ST6w==
+X-Gm-Message-State: AHQUAuYOxoY+mZZorfwd+Hk/sWuDPoWAAMGl3SnsHjcSE62OBsmZ/5pX
+        j0G51m2PJoRBm/O84jrFkyKtQg==
+X-Google-Smtp-Source: AHgI3IZMAXENriRqCnD09knJAHnUr2hVcIg8TPURsETLX9fU46ieXCFiVyIKMeaZwlCxnXJjyjuxFA==
+X-Received: by 2002:a05:6000:10cf:: with SMTP id b15mr24877948wrx.301.1549839077853;
+        Sun, 10 Feb 2019 14:51:17 -0800 (PST)
+Received: from localhost.localdomain (host86-176-243-198.range86-176.btcentralplus.com. [86.176.243.198])
+        by smtp.gmail.com with ESMTPSA id c139sm3904325wmd.13.2019.02.10.14.51.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 14:51:17 -0800 (PST)
+From:   Stuart Menefy <stuart.menefy@mathembedded.com>
+To:     linux-samsung-soc@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] Subject: [PATCH 0/2] clocksource: exynos_mct: Clear timer interrupt when shutting down
+Date:   Sun, 10 Feb 2019 22:51:12 +0000
+Message-Id: <20190210225114.20110-1-stuart.menefy@mathembedded.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+When debugging suspend problems on Exynos 5260, I had a large number
+of debugging prints going to the serial port after interrupts
+had been disabled but before the timer interrupt was shutdown. This
+was long enough for a timer tick to occur, but as interrupts were
+disabled the ISR didn't run, and so the interrupt wasn't cleared.
+Later when the timer was shutdown the interrupt was left asserted and
+so the wfi at the heart of the suspend code didn't wait, causing
+the suspend to fail.
 
-The write argument is unused in gup_fast_permitted() so remove it.
+Currently the code which stops the timer when it is on one-shot mode
+and the interrupt occurs is in exynos4_mct_tick_clear(), meaning if we
+called this from the shutdown code exynos4_mct_tick_stop() could be
+called twice. So first restructure the existing code, so the check for
+one-shot mode and stopping the timer is moved to the ISR, leaving
+exynos4_mct_tick_clear() just clearing the interrupt flag.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Once this has been done simply call exynos4_mct_tick_clear() from
+set_state_shutdown().
 
----
-Changes since V1
-	Clean up commit message
+Stuart Menefy (2):
+  clocksource: exynos_mct: Move one-shot check from tick clear to ISR
+  clocksource: exynos_mct: Clear timer interrupt when shutdown
 
- arch/x86/include/asm/pgtable_64.h | 3 +--
- mm/gup.c                          | 6 +++---
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/clocksource/exynos_mct.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 9c85b54bf03c..0bb566315621 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -259,8 +259,7 @@ extern void init_extra_mapping_uc(unsigned long phys, unsigned long size);
- extern void init_extra_mapping_wb(unsigned long phys, unsigned long size);
- 
- #define gup_fast_permitted gup_fast_permitted
--static inline bool gup_fast_permitted(unsigned long start, int nr_pages,
--		int write)
-+static inline bool gup_fast_permitted(unsigned long start, int nr_pages)
- {
- 	unsigned long len, end;
- 
-diff --git a/mm/gup.c b/mm/gup.c
-index 05acd7e2eb22..b63e88eca31b 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1786,7 +1786,7 @@ static void gup_pgd_range(unsigned long addr, unsigned long end,
-  * Check if it's allowed to use __get_user_pages_fast() for the range, or
-  * we need to fall back to the slow version:
-  */
--bool gup_fast_permitted(unsigned long start, int nr_pages, int write)
-+bool gup_fast_permitted(unsigned long start, int nr_pages)
- {
- 	unsigned long len, end;
- 
-@@ -1828,7 +1828,7 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	 * block IPIs that come from THPs splitting.
- 	 */
- 
--	if (gup_fast_permitted(start, nr_pages, write)) {
-+	if (gup_fast_permitted(start, nr_pages)) {
- 		local_irq_save(flags);
- 		gup_pgd_range(start, end, write, pages, &nr);
- 		local_irq_restore(flags);
-@@ -1870,7 +1870,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	if (unlikely(!access_ok((void __user *)start, len)))
- 		return -EFAULT;
- 
--	if (gup_fast_permitted(start, nr_pages, write)) {
-+	if (gup_fast_permitted(start, nr_pages)) {
- 		local_irq_disable();
- 		gup_pgd_range(addr, end, write, pages, &nr);
- 		local_irq_enable();
 -- 
-2.20.1
+2.13.6
 
