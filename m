@@ -2,130 +2,114 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4864AC282D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26818C282C2
 	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212A0214DA
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:34:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2798213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 22:34:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfBJWeq (ORCPT
+        id S1726274AbfBJWej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 17:34:46 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37466 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbfBJWeq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 17:34:46 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gsxg6-0001iM-KO; Sun, 10 Feb 2019 23:34:22 +0100
-Date:   Sun, 10 Feb 2019 23:34:21 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-cc:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] perf-security: document perf_events/Perf resource
- control
-In-Reply-To: <a108c800-d6c1-fac1-b73b-e390e579e6ef@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1902102300210.8784@nanos.tec.linutronix.de>
-References: <fd896eec-7833-f23a-ad2f-95005dca5fff@linux.intel.com> <a108c800-d6c1-fac1-b73b-e390e579e6ef@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Feb 2019 17:34:39 -0500
+Received: from mga01.intel.com ([192.55.52.88]:3922 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726093AbfBJWei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 17:34:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2019 14:34:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,356,1544515200"; 
+   d="scan'208";a="143135415"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Feb 2019 14:34:38 -0800
+From:   ira.weiny@intel.com
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH V2] mm/gup: Remove write argument in gup_fast_permitted()
+Date:   Sun, 10 Feb 2019 14:34:24 -0800
+Message-Id: <20190210223424.13934-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190209173109.9361-1-ira.weiny@intel.com>
+References: <20190209173109.9361-1-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019, Alexey Budankov wrote:
+From: Ira Weiny <ira.weiny@intel.com>
 
-General note: Please stay in the 80 char limit for all of the text.
+The write argument is unused in gup_fast_permitted() so remove it.
 
-> +The perf_events system call API [2]_ allocates file descriptors for every configured
-> +PMU event. Open file descriptors are a per-process accountable resource governed
-> +by the RLIMIT_NOFILE [11]_ limit (ulimit -n), which is usually derived from the login
-> +shell process. When configuring Perf collection for a long list of events on a
-> +large server system, this limit can be easily hit preventing required monitoring
-> +configuration.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-I'd move this sentence into a different paragraph and keep those related to
-RLIMIT_NOFILE together.
+---
+Changes since V1
+	Clean up commit message
 
-> ... RLIMIT_NOFILE limit can be increased on per-user basis modifying
-> +content of the limits.conf file [12]_ on some systems.
+ arch/x86/include/asm/pgtable_64.h | 3 +--
+ mm/gup.c                          | 6 +++---
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-On some systems?
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 9c85b54bf03c..0bb566315621 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -259,8 +259,7 @@ extern void init_extra_mapping_uc(unsigned long phys, unsigned long size);
+ extern void init_extra_mapping_wb(unsigned long phys, unsigned long size);
+ 
+ #define gup_fast_permitted gup_fast_permitted
+-static inline bool gup_fast_permitted(unsigned long start, int nr_pages,
+-		int write)
++static inline bool gup_fast_permitted(unsigned long start, int nr_pages)
+ {
+ 	unsigned long len, end;
+ 
+diff --git a/mm/gup.c b/mm/gup.c
+index 05acd7e2eb22..b63e88eca31b 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1786,7 +1786,7 @@ static void gup_pgd_range(unsigned long addr, unsigned long end,
+  * Check if it's allowed to use __get_user_pages_fast() for the range, or
+  * we need to fall back to the slow version:
+  */
+-bool gup_fast_permitted(unsigned long start, int nr_pages, int write)
++bool gup_fast_permitted(unsigned long start, int nr_pages)
+ {
+ 	unsigned long len, end;
+ 
+@@ -1828,7 +1828,7 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 	 * block IPIs that come from THPs splitting.
+ 	 */
+ 
+-	if (gup_fast_permitted(start, nr_pages, write)) {
++	if (gup_fast_permitted(start, nr_pages)) {
+ 		local_irq_save(flags);
+ 		gup_pgd_range(start, end, write, pages, &nr);
+ 		local_irq_restore(flags);
+@@ -1870,7 +1870,7 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 	if (unlikely(!access_ok((void __user *)start, len)))
+ 		return -EFAULT;
+ 
+-	if (gup_fast_permitted(start, nr_pages, write)) {
++	if (gup_fast_permitted(start, nr_pages)) {
+ 		local_irq_disable();
+ 		gup_pgd_range(addr, end, write, pages, &nr);
+ 		local_irq_enable();
+-- 
+2.20.1
 
-> Ordinarily, a Perf sampling session
-> +(perf record) requires an amount of open perf_event file descriptors that is not
-> +less than a number of monitored events multiplied by a number of monitored CPUs.
-
-  s/a number of/the number of/
-
-The ordinary use case is:
-
-    perf CMD pile-of-events PROCESS
-
-which does not specify the monitored CPUs at all. Then the number of file
-descriptors is NR_EVENTS * NR_ONLINE_CPUS.
-
-> +An amount of memory available to user processes for capturing performance monitoring
-
-The amount ...
-
-> +data is governed by the perf_event_mlock_kb [2]_ setting. This perf_event specific
-> +resource setting defines overall per-cpu limits of memory allowed for mapping
-> +by the user processes to execute performance monitoring. The setting essentially
-> +extends the RLIMIT_MEMLOCK [11]_ limit, but only for memory regions mapped specially
-
-s/specially/specifically/
-
-> +for capturing monitored performance events and related data.
-> +
-> +For example, if a machine has eight cores and perf_event_mlock_kb limit is set
-> +to 516 KiB, then a user process is provided with 516 KiB * 8 = 4128 KiB of memory
-> +above the RLIMIT_MEMLOCK limit (ulimit -l) for perf_event mmap buffers. In particular,
-> +this means that, if the user wants to start two or more performance monitoring
-> +processes, the user is required to manually distribute available 4128 KiB between the
-
-distribute the available
-
-> +monitoring processes, for example, using the --mmap-pages Perf record mode option.
-> +Otherwise, the first started performance monitoring process allocates all available
-> +4128 KiB and the other processes will fail to proceed due to the lack of memory.
-> +
-> +RLIMIT_MEMLOCK and perf_event_mlock_kb resource costraints are ignored for
-
-constraints.
-
-> +processes with the CAP_IPC_LOCK capability. Thus, perf_events/Perf privileged users
-
-what means perf_events/Perf ?
-
-> +can be provided with memory above the constraints for perf_events/Perf performance
-> +monitoring purpose by providing the Perf executable with CAP_IPC_LOCK capability.
-
-Thanks,
-
-	tglx
