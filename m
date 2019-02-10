@@ -2,98 +2,151 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B1AC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD41C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF961213F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:24:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076D7213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:26:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="utgU3lva"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="bB4C9sw+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfBJUYt (ORCPT
+        id S1726207AbfBJU0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:24:49 -0500
-Received: from ozlabs.org ([203.11.71.1]:54493 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfBJUYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:24:49 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Sun, 10 Feb 2019 15:26:03 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:47306 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfBJU0C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 15:26:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id C80E4A23A0;
+        Sun, 10 Feb 2019 21:25:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1549830359; i=@fjfi.cvut.cz;
+        bh=8+vPETOh21HZkj7Q1AJIt7PeOhTv3OGHRvFPTDOcldE=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References;
+        b=bB4C9sw+QsR57QG8EiKjszaVkiRn5PTkmNPI6Fw6JLVgyqzSII4dmgME/3Jzc8Kgg
+         ETPjdsbdY3c5UnUVlGlLu/xOm28eOYM65qt8zm2cAQS2YNA1nN7JGUejToonIP+f87
+         RHI4wqUk3NZznm628jmdt1UoSz7tX/fzx9m023pU=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id wKqFhbHanzBN; Sun, 10 Feb 2019 21:25:57 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43yL4Y4PKZz9sBZ;
-        Mon, 11 Feb 2019 07:24:45 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549830287;
-        bh=pUn343piUDzEpjT2ya6R4v8Tg/CCCIX338MU4PckrWU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=utgU3lvabmrLVW6qmEsl7gXQHdu7y3iwgy/ah1JOBMRuCNmYIbKmjSqOXt9EOPZDh
-         UHuea+2rFCNjsKAm+ge8hW5muU+gO6jTnk1fyTfCfLJ3DFp/Zgn1JnjmTwB71dWwI4
-         6kucjuws7/6xFjrQq85d2MHouNkoTN1XJ8GRLT48cDDGyonHD+SSwBdiAehiXH4bDl
-         Ln/T33U5zXIo6Y7eZEvH3X7a0n5ERZT4mOismvebWbGrBdQVdwtqHj2FtMP0SL9vml
-         0vwp1U44AgjqdoILqb/Jyhg8pg67EVMpwGVFU9dYYVCeE2mOzdcg+ZxJbUlN+Wt5MG
-         eEW6XVVsvzkuQ==
-Date:   Mon, 11 Feb 2019 07:24:43 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal =?UTF-8?B?Vm9rw6E=?= =?UTF-8?B?xI0=?= 
-        <michal.vokac@ysoft.com>
-Subject: linux-next: Fixes tag needs some work in the fbdev tree
-Message-ID: <20190211072443.1cbedb29@canb.auug.org.au>
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 619C4A040D;
+        Sun, 10 Feb 2019 21:25:55 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 619C4A040D
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 329AC6004E; Sun, 10 Feb 2019 21:25:55 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.fjfi.cvut.cz (Postfix) with ESMTP id 21C736004D;
+        Sun, 10 Feb 2019 21:25:55 +0100 (CET)
+Date:   Sun, 10 Feb 2019 21:25:55 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Scott Bauer <sbauer@plzdonthack.me>
+cc:     "Derrick, Jonathan" <jonathan.derrick@intel.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "jonas.rabenstein@studium.uni-erlangen.de" 
+        <jonas.rabenstein@studium.uni-erlangen.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH v4 10/16] block: sed-opal: add ioctl for done-mark of
+ shadow mbr
+In-Reply-To: <20190210182655.GA20491@hacktheplanet>
+Message-ID: <alpine.LRH.2.21.1902102117220.8545@linux.fjfi.cvut.cz>
+References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz> <1549054223-12220-11-git-send-email-zub@linux.fjfi.cvut.cz> <20190204145244.GJ31132@infradead.org> <alpine.LRH.2.21.1902072247060.29258@linux.fjfi.cvut.cz> <1549586652.11868.12.camel@intel.com>
+ <20190210182655.GA20491@hacktheplanet>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0jbvx2uDb=JZ6mlzAEZVh6q"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0jbvx2uDb=JZ6mlzAEZVh6q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, 10 Feb 2019, Scott Bauer wrote:
 
-Hi Bartlomiej,
+> On Fri, Feb 08, 2019 at 12:44:14AM +0000, Derrick, Jonathan wrote:
+>> On Thu, 2019-02-07 at 23:56 +0100, David Kozub wrote:
+>>> On Mon, 4 Feb 2019, Christoph Hellwig wrote:
+>>>>>  static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
+>>>>>  					  struct opal_mbr_data *opal_mbr)
+>>>>>  {
+>>>>> +	u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
+>>>>> +		? OPAL_TRUE : OPAL_FALSE;
+>>>>>  	const struct opal_step mbr_steps[] = {
+>>>>>  		{ opal_discovery0, },
+>>>>>  		{ start_admin1LSP_opal_session, &opal_mbr->key },
+>>>>> -		{ set_mbr_done, &opal_mbr->enable_disable },
+>>>>> +		{ set_mbr_done, &token },
+>
+>>> Am I missing something here? This seems wrong to me. And I think this
+>>> patch actually changes it by introducing:
+>>>
+>>> +    u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
+>>> +            ? OPAL_TRUE : OPAL_FALSE;
+>>>
+>>> which is essentially a negation (map 0 to 1 and 1 to 0).
+>
+> Agreed the original code did the opposite of what the user wanted, looks like
+> when I authored it I messed up that enum which set everything off.
+>
+>
+>
+>>> With regard to the new IOC_OPAL_MBR_STATUS: I find the usage of
+>>> OPAL_MBR_ENABLE/DISABLE for this confusing: what should passing
+>>> OPAL_MBR_ENABLE do? Should it enable the shadow MBR? Or should it
+>>> enable the MBR-done flag? I think the implementation in this patch
+>>> interprets OPAL_MBR_ENABLE as 'set the "done" flag to true', thus hiding
+>>> the shadow MBR. But this is not obvious looking at the IOCTL name.
+>
+> For the new ioctl I think we should just add a new enum with the correct
+> nomenclature.  So OPAL_MBR_DONE, OPAL_MBR_NOT_DONE.
+>
+>
+>> In order to keep the userspace interface consistent, I'll ACK your
+>> change in this patch, unless Scott can fill me in on why this looks
+>> wrong but is actually right.
+>
+> I think it is just wrong.
+>
+>
+>>
+>> We have 7 bytes in the opal_mbr_data struct we could use for DONE/NOT
+>> DONE. I'm not sure how to go about keeping it consistent with old uapi,
+>> although arguably opal_enable_disable_shadow_mbr is already doing the
+>> wrong thing with DONE and ENABLE so it's low impact.
+>
+> Can we keep the old mbr struct the same and just add a new struct with new enums
+> for the new done ioctl? I think this will keep the new ioctl cleaner instead
+> of trying to apply older, some what incorrectly named, enums.
 
-In commit
+I like this proposal, I'll try to implement it. Although currently I plan 
+to first re-submit the cleanup parts, as suggested by Christoph[1]. So 
+this will happen after that.
 
-  7d7e58d30e04 ("dt-bindings: display: ssd1307fb: Remove reset-active-low f=
-rom examples")
+> Lastly someone will need to backport his
+>
+>>>>> +       u8 token = opal_mbr->enable_disable == OPAL_MBR_ENABLE
+>>>>> +               ? OPAL_TRUE : OPAL_FALSE;
+>
+> to stable so we can fix up my broken coding in older kernels.
+>
+>
+> I can do that or, if David wants to do that that's fine... just want to coordinate.
 
-Fixes tag
+I'm quite busy juggling patches in this series. If you can find the time, 
+please do it.
 
-  Fixes: 519b4db ("fbdev: ssd1307fb: Remove reset-active-low from the DT bi=
-nding document")
+Best regards,
+David
 
-has these problem(s):
+[1] https://lore.kernel.org/lkml/20190204150415.GO31132@infradead.org/
 
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0jbvx2uDb=JZ6mlzAEZVh6q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxgiIsACgkQAVBC80lX
-0Gx8Owf/ef1b6SjQ6j0R8Pi+vN3kshSml97kMXbIWa4NNhcS1+7NuQ5kbNfFEl9O
-rR2nQWdUTsmgcm2b0E0CrySJvv4rmBdC7oNkz7BcuYs78GxXjhgpyrzBU0W3iADH
-vbDO3Lxn62d7ZMS7+Hb8S+WBWHB+Ei/yA7c3HLOZA7rRyUdFQoekuvbi9wKnmY3w
-NtLgIUokp61sCafaKpfXmld3R7jhHtvzlWXWrhHn1HZEuqredwp26AlX4Cqz5bgZ
-QCVK5ph7nrP/rN3KChV4dKKIl3VLOB93+T1M8qlvm8QP+9HX63P2iElEKBf43za6
-F3JikrgLYUemqNsNImPnthcbcXDSdQ==
-=d/FZ
------END PGP SIGNATURE-----
-
---Sig_/0jbvx2uDb=JZ6mlzAEZVh6q--
