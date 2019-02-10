@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FC6C282C2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D57C282D7
 	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E64320874
+	by mail.kernel.org (Postfix) with ESMTP id 9AF7A2173C
 	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:53:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVfJJ2Z3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaBWKmWU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbfBJRxU (ORCPT
+        id S1726788AbfBJRxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 12:53:20 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38876 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfBJRxS (ORCPT
+        Sun, 10 Feb 2019 12:53:22 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39976 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726243AbfBJRxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 12:53:18 -0500
-Received: by mail-ot1-f67.google.com with SMTP id m1so2175901otf.5;
-        Sun, 10 Feb 2019 09:53:17 -0800 (PST)
+        Sun, 10 Feb 2019 12:53:19 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s5so13890070oth.7;
+        Sun, 10 Feb 2019 09:53:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7L0xTa6HUjap5hvS5D6PfDYA/2qTJS8vMeAX54+U6P8=;
-        b=AVfJJ2Z3BJxohhvaJosGHfmuHpolN4+mn5xeHpQxDwgH3+SrEUl98/yXAbSXa6HrrI
-         4JvrRQVv7UzDD9bz2MhL4WnF+YaOqQNAFun0jH3RrPQinnlWTyhDy86oazrKG/TLUpwN
-         PwvUIgLrxVT4L4harlpMJVk2jgKcAEkmM/k+JkSvW1ESuJ6L/Bu3/L3JczIwvKGnEQhH
-         ZXBhOpqk4zcQBJ6zfETqsl/Jt3lo8zzqiss7oc01+1xpY8Hzs9Y1U6ehGcw4SeVkgoKi
-         5TEuayykwBgMfDShRSR+BIdrNZV53/w5T++btSZtuRGJVQYGaxm3Qdm7MAQtLtBHY+tD
-         Mp4A==
+        bh=zl/HyELvG6PMVqnH30RIyCX+2L6jJFk32RBdmwKy5nw=;
+        b=eaBWKmWU5SyOKj+LbsSWwDOhrBiQ2cqf21r3RepMklKAjTufvG1hTlZfeWTOb+XEb9
+         X3Jld52sQ88uD4NfzVXXQg927esA5dZ4ZGove6VQSzRAaZVXQ+3zgJDgOqDGuw+Q1isR
+         7eeJuJVvz/PrZLTeBPORVmzp/DPE7CazevMkRMOQ0Mt4LAo0vqtkUB8O3MlhA1qE1ioM
+         JRNTKtutzN6F8kGnf/6CkTaVsV4y3KzPexLCEx4ufXtH0EXO+IbB0AATN9/LViqr4EGq
+         IChZbcSsDfr/DdjutvJ1IwbaAn7eah1SV6fdn25L3GCnv7GGyit1jPtzfb79dwrSeAHy
+         Rr+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7L0xTa6HUjap5hvS5D6PfDYA/2qTJS8vMeAX54+U6P8=;
-        b=PymcQOU53JKKcxslbKbEZm/k0k4fHA7JkfEUdjehENhTqxG8iIb2nfTV3KSfZrAgZ6
-         Yms0/APDoubN/hKteBGdE9stVpoCgjxJfxAJS0WnP1Ju8te518FwjQX5EzeZfJYScX2K
-         GSuPf3lWWMWAOhev0OctKfBhC5GuSvK+NbDsMttO60RUzBfBNmSd+xfYCNCSxcWawXCb
-         uNZtRm87cMWKPWd7yeJRqOj5FQJdZTD7ZT5fUeGYgIyBxxkYabBVdR4BhY6od0OeL89j
-         XAXLaPpRu3CpgXO7L6d33djTY/CnzGKf0OP3GE0mXrRpRkIKHsA0AVKynXio6ErwnHb1
-         7lQA==
-X-Gm-Message-State: AHQUAuaPz7g1KFpVHCL/kdOybC5gCuHeuHautLU25EPKjs/veSN3NSmJ
-        8xVkyrjSoZYRzBcEFiUjwnO4AQdT
-X-Google-Smtp-Source: AHgI3Ib1A5lZZQ8e8yQ+YV5QbtehTyUkPyZ4hYHVIq/F2Eqg2s2apEjnRBiflVQripA0Mk+K9yQHAw==
-X-Received: by 2002:a9d:644b:: with SMTP id m11mr12312054otl.90.1549821196362;
-        Sun, 10 Feb 2019 09:53:16 -0800 (PST)
+        bh=zl/HyELvG6PMVqnH30RIyCX+2L6jJFk32RBdmwKy5nw=;
+        b=VZ9yoYaO/7dDKm5mQYw3leVNg7PCgorwhAKXN8UnBZ0ZgfoJ289awyPnIkcHayTbl6
+         KGxXPFZxgtgBx3ESo3YJKC1hbNoBseJ9IdhG+wBt2fZQwwr55MtXaRlA1lc1V0iJE1OK
+         JqqlJ+JbLt9EtdsiC0e7q6BpTYVogAH5pQIkw/vk4Em6Z22TaYPu2yeUQCQU/ZagS28y
+         omkE1LE9BGaHhue3MDodwcEUEdCkbXI2PDr+YvSQgrRjU+OvlgTHTVGh62e+gZDPdX3H
+         hVW3udCaarQdTJaUMhbYAUjQu7Lda3y8EhoxC9WSDud8zQFHyZxF7XgfXjzXIZQxlUDM
+         QUbw==
+X-Gm-Message-State: AHQUAuZfDrdRMT40gNdOxWQpbn4seqI9+IBjj7Z8dUt4W/D7Yi3pIBAB
+        tJfQjOVLhypUoatHGu2mab3xV7jv
+X-Google-Smtp-Source: AHgI3IYaa3rxlAqDUJi2c/r4ohl+9myzYVyr2o5t7r/G0iAx2+nBrV5+uTosTYviuDhE7H7hmdy6Mg==
+X-Received: by 2002:a05:6830:1609:: with SMTP id g9mr10421755otr.254.1549821198322;
+        Sun, 10 Feb 2019 09:53:18 -0800 (PST)
 Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id n9sm3156425otq.14.2019.02.10.09.53.14
+        by smtp.gmail.com with ESMTPSA id n9sm3156425otq.14.2019.02.10.09.53.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 09:53:15 -0800 (PST)
+        Sun, 10 Feb 2019 09:53:17 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>, idosch@mellanox.com,
         linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
         bridge@lists.linux-foundation.org, jiri@mellanox.com,
         andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v2 01/16] Documentation: networking: switchdev: Update port parent ID section
-Date:   Sun, 10 Feb 2019 09:50:50 -0800
-Message-Id: <20190210175105.31629-2-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 02/16] mlxsw: spectrum: Check bridge flags during prepare phase
+Date:   Sun, 10 Feb 2019 09:50:51 -0800
+Message-Id: <20190210175105.31629-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190210175105.31629-1-f.fainelli@gmail.com>
 References: <20190210175105.31629-1-f.fainelli@gmail.com>
@@ -76,40 +76,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the section about switchdev drivers having to implement a
-switchdev_port_attr_get() function to return
-SWITCHDEV_ATTR_ID_PORT_PARENT_ID since that is no longer valid after
-commit bccb30254a4a ("net: Get rid of
-SWITCHDEV_ATTR_ID_PORT_PARENT_ID").
+In preparation for getting rid of switchdev_port_attr_get(), have mlxsw
+check for the bridge flags being set through switchdev_port_attr_set()
+with the SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS attribute identifier.
 
-Fixes: bccb30254a4a ("net: Get rid of SWITCHDEV_ATTR_ID_PORT_PARENT_ID")
 Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- Documentation/networking/switchdev.txt | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/networking/switchdev.txt b/Documentation/networking/switchdev.txt
-index f3244d87512a..ea90243340a9 100644
---- a/Documentation/networking/switchdev.txt
-+++ b/Documentation/networking/switchdev.txt
-@@ -92,11 +92,11 @@ device.
- Switch ID
- ^^^^^^^^^
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 95e37de3e48f..468a6d513074 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -623,8 +623,11 @@ static int mlxsw_sp_port_attr_br_flags_set(struct mlxsw_sp_port *mlxsw_sp_port,
+ 	struct mlxsw_sp_bridge_port *bridge_port;
+ 	int err;
  
--The switchdev driver must implement the switchdev op switchdev_port_attr_get
--for SWITCHDEV_ATTR_ID_PORT_PARENT_ID for each port netdev, returning the same
--physical ID for each port of a switch.  The ID must be unique between switches
--on the same system.  The ID does not need to be unique between switches on
--different systems.
-+The switchdev driver must implement the net_device operation
-+ndo_get_port_parent_id for each port netdev, returning the same physical ID for
-+each port of a switch. The ID must be unique between switches on the same
-+system. The ID does not need to be unique between switches on different
-+systems.
+-	if (switchdev_trans_ph_prepare(trans))
++	if (switchdev_trans_ph_prepare(trans)) {
++		if (brport_flags & ~(BR_LEARNING | BR_FLOOD | BR_MCAST_FLOOD))
++			return -EOPNOTSUPP;
+ 		return 0;
++	}
  
- The switch ID is used to locate ports on a switch and to know if aggregated
- ports belong to the same switch.
+ 	bridge_port = mlxsw_sp_bridge_port_find(mlxsw_sp_port->mlxsw_sp->bridge,
+ 						orig_dev);
 -- 
 2.19.1
 
