@@ -2,65 +2,89 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C07D0C4151A
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAD2C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B24221736
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 641152145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:28:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JqZ00hbn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfBJU1I (ORCPT
+        id S1726882AbfBJU2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:27:08 -0500
-Received: from mx2.cyber.ee ([193.40.6.72]:45571 "EHLO mx2.cyber.ee"
+        Sun, 10 Feb 2019 15:28:19 -0500
+Received: from ozlabs.org ([203.11.71.1]:33169 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfBJU1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:27:06 -0500
-Subject: Re: ext4 corruption on alpha with 4.20.0-09062-gd8372ba8ce28
-To:     linux-alpha@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org
-References: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
-From:   Meelis Roos <mroos@linux.ee>
-Message-ID: <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
-Date:   Sun, 10 Feb 2019 22:27:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1725971AbfBJU2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 15:28:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43yL8c57d5z9sBZ;
+        Mon, 11 Feb 2019 07:28:16 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549830496;
+        bh=31VLEiluGFa3vuZq2kXP3V73Hjyx9SPv7gNM9CJ0Ios=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JqZ00hbnLTbVfBU8iLl7y4BbKUj2NRTSBNMD/7EZLBBuxwZ+6mDMNeXe5dGjU0u4S
+         MYuNzl8UL0t32tRLgTkdVnB2McQwMjM8uCxbvprXN4G6o1LKM+hN2c1imyWponVNTL
+         K3nVgJsR9XobXZwrcKP7ZCklTaTu1oMNL2mjMv2nzkGUGe/G6pHrDZdWDzqgXoMJKK
+         GC0sgN/M+G7QcuyiTnqgElODnsJQJjwd3wlgWPYTpg5+HU+/QN43merWa2SP1qBV2D
+         dgl4NuPp9l+gja/tujOunz3LZBI1cnQQPjnoq9BwPLyuhIr3Xnq40ctOyD/UttBZDA
+         j0GurHhlQ/8iQ==
+Date:   Mon, 11 Feb 2019 07:28:14 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        Wireless <linux-wireless@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Govind Singh <govinds@codeaurora.org>
+Subject: linux-next: Signed-off-by missing for commit in the
+ wireless-drivers-next tree
+Message-ID: <20190211072814.7428f192@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: et-EE
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=+Vr7I/S+AR2Prk0XMPrTzU"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-02.01.19 17:52 I wrote:
+--Sig_/=+Vr7I/S+AR2Prk0XMPrTzU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I have noticed ext4 filesystem corruption on two of my test alphas with 4.20.0-09062-gd8372ba8ce28.
+Hi all,
 
-Retried it, still happens with 5.0.0-rc5-00358-gdf3865f8f568 - rsync of emerge --sync just fail with nothing in dmesg.
-  
-> On AlphaServer DS10:
-> [10749.664418] EXT4-fs error (device sda2): __ext4_iget:5052: inode #1853093: block 1: comm rsync: invalid block
-> 
-> On AlphaServer DS10L:
-> [ 5325.064656] EXT4-fs error (device sda2): htree_dirblock_to_tree:1007: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
-> [ 5325.069539] EXT4-fs error (device sda2): htree_dirblock_to_tree:1007: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
-> [ 5325.077351] EXT4-fs error (device sda2): ext4_empty_dir:2718: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
-> 
-> Two other alphas, PC-164 and Eiger, worked fine with the same kernel version (different kernel configs according to hardware).
-> 
-> The details:
-> 4.20 worked fine, with gentoo emerge package update after bootup.
-> Next, 4.20.0-06428-g00c569b567c7 worked fine, with gentoo emerge after bootup.
-> Next, 4.20.0-09062-gd8372ba8ce28 booted up fine but rsync and rm during start of gentoo emerge errored out like above.
-> 
-> So the corruption _might_ have happened during bootup of previous kernel but it looks more likely that only the latest kernel with blk-mq introduced the problems. mq-deadline is in use on all the alphas.
-> 
-> DS10 has Symbios 53C896 SCSI (sym2 driver), DS10L has QLogic ISP1040, so they are different. Working Eiger and PC164 have sym2 based scsi controllers too.
+Commit
 
--- 
-Meelis Roos <mroos@linux.ee>
+  768ec4c012ac ("ath10k: update HOST capability qmi message")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=+Vr7I/S+AR2Prk0XMPrTzU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxgiV4ACgkQAVBC80lX
+0GwsJwf/Sk4k8MDS7E608Nw9IgJtE3R8dJMNktgQXGUawWGRVhVrKq2ytWodo8Bf
+0ymEvLu8UA6r3MDjqWu1GsGemPzzUa7T15RYxpKp7PXpILE/R4R+rd0w//FZpO34
+abwO4Bb32IqdP3ZtufHJxcHYDkaqTyAD9PZcpxkMa5kZMZruBb8AC0HDFpOIvsuw
+yUAKrQC6Cw5DxpNXS9LKqDOOkuQtPp9iQM7/GpZVxQH/GuxDYGNfGUpR66OPdY1p
+BFiXs5+z0Rmhx3teSAtfIkJaeq/qU6DWhVF+4ddlzfwIV6OeYgzhU9OQ6UfNnfRK
+sn0XQy3gIfDNDQ4m5TalLNnrndsIeg==
+=w5QZ
+-----END PGP SIGNATURE-----
+
+--Sig_/=+Vr7I/S+AR2Prk0XMPrTzU--
