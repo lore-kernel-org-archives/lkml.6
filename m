@@ -2,65 +2,65 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD6AC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07D0C4151A
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3ED2145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B24221736
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbfBJU1F (ORCPT
+        id S1726811AbfBJU1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:27:05 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37315 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfBJU1F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:27:05 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gsvgs-0000kn-22; Sun, 10 Feb 2019 21:27:02 +0100
-Date:   Sun, 10 Feb 2019 21:27:01 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [GIT PULL 1/2] arch: System call unification and cleanup
-In-Reply-To: <CAK8P3a3pPwnOW7pXjOhU386zCekAda+p8AgzbOM6ybT=dKMGwA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1902102125410.8784@nanos.tec.linutronix.de>
-References: <CAK8P3a3pPwnOW7pXjOhU386zCekAda+p8AgzbOM6ybT=dKMGwA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Feb 2019 15:27:08 -0500
+Received: from mx2.cyber.ee ([193.40.6.72]:45571 "EHLO mx2.cyber.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfBJU1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 15:27:06 -0500
+Subject: Re: ext4 corruption on alpha with 4.20.0-09062-gd8372ba8ce28
+To:     linux-alpha@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org
+References: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
+From:   Meelis Roos <mroos@linux.ee>
+Message-ID: <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
+Date:   Sun, 10 Feb 2019 22:27:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: et-EE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 9 Feb 2019, Arnd Bergmann wrote:
+02.01.19 17:52 I wrote:
 
-> The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+> I have noticed ext4 filesystem corruption on two of my test alphas with 4.20.0-09062-gd8372ba8ce28.
+
+Retried it, still happens with 5.0.0-rc5-00358-gdf3865f8f568 - rsync of emerge --sync just fail with nothing in dmesg.
+  
+> On AlphaServer DS10:
+> [10749.664418] EXT4-fs error (device sda2): __ext4_iget:5052: inode #1853093: block 1: comm rsync: invalid block
 > 
->   Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+> On AlphaServer DS10L:
+> [ 5325.064656] EXT4-fs error (device sda2): htree_dirblock_to_tree:1007: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
+> [ 5325.069539] EXT4-fs error (device sda2): htree_dirblock_to_tree:1007: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
+> [ 5325.077351] EXT4-fs error (device sda2): ext4_empty_dir:2718: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
 > 
-> are available in the Git repository at:
+> Two other alphas, PC-164 and Eiger, worked fine with the same kernel version (different kernel configs according to hardware).
 > 
->   git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
-> tags/y2038-syscall-cleanup
+> The details:
+> 4.20 worked fine, with gentoo emerge package update after bootup.
+> Next, 4.20.0-06428-g00c569b567c7 worked fine, with gentoo emerge after bootup.
+> Next, 4.20.0-09062-gd8372ba8ce28 booted up fine but rsync and rm during start of gentoo emerge errored out like above.
+> 
+> So the corruption _might_ have happened during bootup of previous kernel but it looks more likely that only the latest kernel with blk-mq introduced the problems. mq-deadline is in use on all the alphas.
+> 
+> DS10 has Symbios 53C896 SCSI (sym2 driver), DS10L has QLogic ISP1040, so they are different. Working Eiger and PC164 have sym2 based scsi controllers too.
 
-Went over the lot with a fine comb. This looks really good. Nice work!
-
-Pulled into tip timers/2038
-
-Thanks,
-
-	tglx
+-- 
+Meelis Roos <mroos@linux.ee>
