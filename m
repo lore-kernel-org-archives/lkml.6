@@ -2,94 +2,166 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9217DC282D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6AD7C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5404421736
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D107213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:16:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E3WLjB06"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBFEf1Iw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfBJUOx (ORCPT
+        id S1726756AbfBJUQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:14:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:60139 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725958AbfBJUOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:14:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43yKs56L7nz9sBZ;
-        Mon, 11 Feb 2019 07:14:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549829690;
-        bh=TAFYy5mOS/SqUhawxplg2GfDPHXhkeeu68IlmQPmGsk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=E3WLjB06FmHO9tYN6lhQ3Hr+CdPc4MQKDUoIcViN1HBTcgO5xUjU5Ta5LgqmC3qKx
-         39MQlrfEptWXb3LI3bmg43wQy6a9tE4EiPWxS5bqgDc9sTpnyTc7cvj/xKATDDVj3S
-         tQ1aZEJH7hsG40Cfh3QhkvIWXRGb4UrzuOiafGF8sP71ikPAtFVdfwfDLWpow4As2C
-         NAlIvOb3R5KvSiq5y8IF+UEowSJ1UdHzn02yD0RiF+WxG26I6jSKZeWfphgRoRN468
-         UurQUgtVFBDfjL58AvY7IUyMaUOviFY4dX78RrYzXcGhHkaa/q4gi+gY9rwcAsojmk
-         fy6FwHswTSDgA==
-Date:   Mon, 11 Feb 2019 07:14:42 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ursula Braun <ubraun@linux.ibm.com>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Message-ID: <20190211071442.153e158d@canb.auug.org.au>
+        Sun, 10 Feb 2019 15:16:05 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34774 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfBJUQE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 15:16:04 -0500
+Received: by mail-qt1-f193.google.com with SMTP id w4so1231771qtc.1;
+        Sun, 10 Feb 2019 12:16:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/xvioiBxcdnk7/NHUmyNNfdD6d+rkC/X2K5XviK/+JA=;
+        b=iBFEf1Iwxc2jta8r0plq4EcC9V2V1kO+q4uBzFHYQOv9fruR8MMeYzh+uJlP0xtlDq
+         9jyt+92W751eXMwiAZoxoowhAL5FZ5K1GYskdFY2L7JgdjCwV2CLk01TjGwom0BT80sk
+         Hf38c7VDSHspVXouqfvmFx0TupGJwQGnd9NQa+EHZ0W2zpB6oMhJWheXYXbhoYJde0+x
+         w4Mi2/Y0F1YfzieIjIP6zzN9n8sCj8kEOnen51x/kT8yC1ePDJNgijVHpwVqfffFZFe+
+         Td0RS3zcGyVnSE/DnL+G4vWmvRNmrkOiRN8vo4cQ7k3OPClZJzwDOlPVqv6GiVt5pcpY
+         KmRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/xvioiBxcdnk7/NHUmyNNfdD6d+rkC/X2K5XviK/+JA=;
+        b=aI8Uc0Wr2pIowx60aZ/ATNvKCtM+mcTH9G5IvPoX+d5xyMIwnEUPSCGvfUmlS4vzD6
+         39Zcl05CmgeSHEj3RkAQgBBFqWHIBTFrKwsPkJHKtjBvwYAgt/0L5jQLJf4shVAjY5tV
+         FE3LSAiaViHPdProwhbkWeF7pIWTE/pCgoQx5MwOuyKuHJ2TFyKMfPbuyKVC4Lu7SNJ4
+         /HEOUB0d7DslVLM5dZUlrpeYrAWoTxtlgvkGF2nyo+5Ir8oo9eiIuDp+sT/t3lnWDx8z
+         mqw7jIuW8qaIDHidnbv75ycH419AgZz3iCf6jiUTPL9c6cV7xLabP8/IMu1ZmxYpcmSo
+         pZVQ==
+X-Gm-Message-State: AHQUAubjLNKzmsLn0f0Qw+CeXdtSC/6/63zGjcE2wCU664KapCQLIP13
+        vOIEPLYn4rrKVySCBEO8AgU=
+X-Google-Smtp-Source: AHgI3IYWonCaPxbRuVAtWwE+l9zjSQGryy4Aqc+rMigZicZ+j98bdBCJhHFXqFNUCp2wGV/uAzFfJA==
+X-Received: by 2002:ac8:3273:: with SMTP id y48mr6093465qta.67.1549829762976;
+        Sun, 10 Feb 2019 12:16:02 -0800 (PST)
+Received: from localhost.localdomain ([2001:1284:f019:c4a1:e98a:edae:d055:8fc6])
+        by smtp.gmail.com with ESMTPSA id j129sm8464655qkd.18.2019.02.10.12.16.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 12:16:01 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 34176180B5B; Sun, 10 Feb 2019 18:15:59 -0200 (-02)
+Date:   Sun, 10 Feb 2019 18:15:59 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     julien@arista.com, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nhorman@tuxdriver.com, vyasevich@gmail.com, lucien.xin@gmail.com
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Message-ID: <20190210201559.GE10665@localhost.localdomain>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <20190209.151217.175627323493244750.davem@davemloft.net>
+ <20190210124616.GG13621@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JuyT=nG_xTwOHADdz3gBgWj"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190210124616.GG13621@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JuyT=nG_xTwOHADdz3gBgWj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Feb 10, 2019 at 10:46:16AM -0200, Marcelo Ricardo Leitner wrote:
+> On Sat, Feb 09, 2019 at 03:12:17PM -0800, David Miller wrote:
+> > From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+> > Date: Wed, 6 Feb 2019 18:37:54 -0200
+> > 
+> > > On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+> > >> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+> > >> structures longer than the current definitions.
+> > >> 
+> > >> This should prevent unjustified setsockopt() failures due to struct
+> > >> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+> > >> binaries that should be compatible, but were built with later kernel
+> > >> uapi headers.
+> > > 
+> > > Not sure if we support backwards compatibility like this?
+> > 
+> > What a complete mess we have here.
+> > 
+> > Use new socket option numbers next time, do not change the size and/or
+> > layout of existing socket options.
+> 
+> What about reusing the same socket option, but defining a new struct?
+> Say, MYSOCKOPT supports struct mysockopt, struct mysockopt2, struct
+> mysockopt3...
+> 
+> That way we have a clear definition of the user's intent.
+> 
+> > 
+> > This whole thread, if you read it, is basically "if we compatability
+> > this way, that breaks, and if we do compatability this other way oh
+> > shit this other thing doesn't work."
+> > 
+> > I think we really need to specifically check for the difference sizes
+> > that existed one by one, clear out the part not given by the user, and
+> > backport this as far back as possible in a way that in the older kernels
+> > we see if the user is actually trying to use the new features and if so
+> > error out.
+> 
+> I'm afraid clearing out may not be enough, though seems it's the best
+> we can do so far. If the struct is allocated but not fully initialized
+> via a memset, but by setting its fields one by one, the remaining new
+> fields will be left uninitinialized.
 
-Hi all,
+Need to clarify the "clearing out", I think it was meant differently.
+It was more about on how to ensure that the 16-bytes long of the v3
+supplied to a v1-only kernel is compatible with the 12-bytes long v1.
+The kernel would have to check the trailing 4 bytes after v1-size and
+make sure they are all zeroed in order for the old kernel to accept it
+as a v1. But, as I said above, there are situations that this will not
+be enough.
 
-In commit
+> 
+> > 
+> > Which, btw, is terrible behavior.  Newly compiled apps should work on
+> > older kernels if they don't try to use the new features, and if they
+> 
+> One use case here is: a given distro is using kernel X and app Foo is
+> built against it. Then upgrades to X+1, Foo is patched to fix an issue
+> and is rebuilt against X+1. The user upgrades Foo package but for
+> whatever reason, doesn't upgrade kernel or reboot the system. Here,
+> Foo doesn't work anymore until the new kernel is also running.
+> 
+> > can the ones that want to try to use the new features should be able
+> > to fall back when that feature isn't available in a non-ambiguous
+> > and precisely defined way.
+> > 
+> > The fact that the use of the new feature is hidden in the new
+> > structure elements is really rotten.
+> > 
+> > This patch, at best, needs some work and definitely a longer and more
+> > detailed commit message.
+> 
 
-  ccc8ca9b90ac ("net/smc: fix byte_order for rx_curs_confirmed")
+We have issues on read path too. 52ccb8e90c0a ("[SCTP]: Update
+SCTP_PEER_ADDR_PARAMS socket option to the latest api draft.")
+extended struct sctp_paddrparams and its getsockopt goes with:
 
-Fixes tag
+sctp_getsockopt_peer_addr_params()
+...
+        if (len < sizeof(struct sctp_paddrparams))
+                return -EINVAL;
+        len = sizeof(struct sctp_paddrparams);
 
-  Fixes: b8649efad879 ("net/smc: fix sender_free computation") (net-tree)
-
-has these problem(s):
-
-  - The trailing '(net-tree)' is unexpected
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JuyT=nG_xTwOHADdz3gBgWj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxghjIACgkQAVBC80lX
-0GwyXwf+POnzrOJWYp6o9ChWPy+nupuh/WVQ3ZoBfFWas4arHyu9HGjXTP/wSo8w
-KBQvgTwANygKb+zciao/0ACZtCC5qmZJTOQXAeo/vFn0gPnaJ3DHkN8Z5GSGBXvL
-OCk/LN+bQoHm6I1QFc+xlSye9d26S/o6jA/RPun4l7jPuu0Hd5uWdXef/KdkSWME
-6W7fM+BqK1nDvSxnaTOUDIULsTJPepShZi3vMFKD5ytzt8IT+qZ/RAYlbPYc7lVk
-rISKsO8cMdwYlzmtB5ocaYd83RKHMtj1fM/g9movwbrWQn39wpH0+KvAgSh5ZVNh
-9yWPoXa7HOa2M9g5o7VBD8/40MYHLg==
-=/Jb8
------END PGP SIGNATURE-----
-
---Sig_/JuyT=nG_xTwOHADdz3gBgWj--
+By then, we didn't have the /uapi/ folder yet. There may other cases.
