@@ -2,171 +2,107 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C093FC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 06:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3D9C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 07:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39D8B21773
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 06:51:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="FqXdhpjd"
+	by mail.kernel.org (Postfix) with ESMTP id 686492075C
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 07:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbfBJGvm (ORCPT
+        id S1726009AbfBJHlC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 01:51:42 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:58726 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfBJGvm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 01:51:42 -0500
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x1A6pbp9026765;
-        Sun, 10 Feb 2019 15:51:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x1A6pbp9026765
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549781498;
-        bh=jaBUTe8EM0j2z7G2BJ3pV9J7ecvkolch3EL9Lsq/e68=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FqXdhpjddgUe5l5lc9upP9HPdcJIJJGY5TMmYOM21t2mjowNadWTJYCcsMLs+lOAZ
-         iPo+bP6CUbvRepBYLAP0F9L8TKGnMb1ykGj45MWAUus0z905GW8sI2CtjHu97XgSGk
-         5xXB/2xj4QcgZhgEImd+tbCcrf3lLD93XNbJ3bXvloCGRH9KbAxzZPFY7MzJQYrcvp
-         0eXYKcRXOb5zLAcea1pu+IUrzf4ufnTSTzGu+aUBLorGtV4a4KByii3ZFy0bw9Nv3r
-         vUkZfMnbGVMDY2oExbJkH/Z5OS3pdrcLvQr1oKX+2M4IozKFvi8aQStqyKyPDUc7hl
-         gkpQZ4442Ciow==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id 66so438489vsk.7;
-        Sat, 09 Feb 2019 22:51:38 -0800 (PST)
-X-Gm-Message-State: AHQUAuYilwZTHgK7/8wRz5OhvCLUgt1sLmnlM8AB6gSGxYtSvPTOZgtN
-        a+H7QYVk4yZHgiFA9FQAe6TZJegKeZFYvOsun1c=
-X-Google-Smtp-Source: AHgI3IYnRkeQKjvhTnogL30mPzPcakWQgI0/Og44EV0rdZjJ0HM+SLRVQNff2s9gq+/UrMs/1qig64MH4h3n7PxEJ+o=
-X-Received: by 2002:a67:485:: with SMTP id 127mr12784216vse.54.1549781497006;
- Sat, 09 Feb 2019 22:51:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20190131115820.GF6749@zn.tnic> <CAK7LNATGUs0PPssA=WfHojEEPuztDcNHf0NdH6ohOdf8k8PZOQ@mail.gmail.com>
- <20190201094217.GB31854@zn.tnic> <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
- <20190201103038.GE31854@zn.tnic> <20190201103648.GF31854@zn.tnic>
- <CAK7LNAQ4juLxrdMoPumQQ-96fMorf+wfAqkNxq1X1k=0i_R4vQ@mail.gmail.com>
- <20190201151139.GK31854@zn.tnic> <CAK7LNATVeX=6Mmn6A4+EGmZ9OSf=ePwbQWV1m1c=e=_LiebdNQ@mail.gmail.com>
- <20190202144227.GC27822@zn.tnic> <20190206104729.GC7314@zn.tnic>
-In-Reply-To: <20190206104729.GC7314@zn.tnic>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 10 Feb 2019 15:51:01 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT+GhbEwP7v7NWd2kqW76qbXM1mtKhc21YXkp7BUJjzKQ@mail.gmail.com>
-Message-ID: <CAK7LNAT+GhbEwP7v7NWd2kqW76qbXM1mtKhc21YXkp7BUJjzKQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 10 Feb 2019 02:41:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725862AbfBJHlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 02:41:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 82894AE83;
+        Sun, 10 Feb 2019 07:40:59 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        linux@eikelenboom.it, torvalds@linux-foundation.org,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH] x86: make set_pmd_at() paravirt aware
+Date:   Sun, 10 Feb 2019 08:40:56 +0100
+Message-Id: <20190210074056.11842-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 7:49 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Sat, Feb 02, 2019 at 03:42:27PM +0100, Borislav Petkov wrote:
-> > On Sat, Feb 02, 2019 at 10:48:00PM +0900, Masahiro Yamada wrote:
-> > > '?=' is the same as '=' here.
-> >
-> > Sure but if the slowdown disappears, then make does something else for
-> > '?=' apparently vs for '='.
+set_pmd_at() calls native_set_pmd() unconditionally on x86. This was
+fine as long as only huge page entries were written via set_pmd_at(),
+as Xen pv guests don't support those.
 
-'=' and '?=' are the same in the sense that
-the right-hand side is evaluated when it is used.
+Commit 2c91bd4a4e2e53 ("mm: speed up mremap by 20x on large regions")
+introduced a usage of set_pmd_at() possible on pv guests, leading to
+failures like:
 
+[17035.016433] BUG: unable to handle kernel paging request at ffff888023e26778
+[17035.025887] #PF error: [PROT] [WRITE]
+[17035.035146] PGD 2a2a067 P4D 2a2a067 PUD 2a2b067 PMD 7fe01067 PTE 8010000023e26065
+[17035.044371] Oops: 0003 [#1] SMP NOPTI
+[17035.053720] CPU: 3 PID: 28310 Comm: apt-get Not tainted 5.0.0-rc5-20190208-thp-net-florian-rtl8169-eric-doflr+ #1
+[17035.063440] Hardware name: MSI MS-7640/890FXA-GD70 (MS-7640)  , BIOS V1.8B1 09/13/2010
+[17035.072635] RIP: e030:move_page_tables+0x7c1/0xae0
+[17035.081585] Code: ce 00 48 8b 03 31 ff 48 89 44 24 20 e8 9e 72 e4 ff 66 90 48 89 c6 48 89 df e8 8b 89 e4 ff 66 90 48 8b 44 24 20 b9 0c 00 00 00 <48> 89 45 00 41 f6 46 52 40 0f 85 3f 02 00 00 49 8b 7e 40 45 31 c0
+[17035.100225] RSP: e02b:ffffc90000f2bd40 EFLAGS: 00010282
+[17035.109208] RAX: 0000000475e42067 RBX: ffff888023e267e0 RCX: 000000000000000c
+[17035.118332] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000201
+[17035.127378] RBP: ffff888023e26778 R08: aaaaaaaaaaaaaaaa R09: 000000051c1d9000
+[17035.136310] R10: deadbeefdeadf00d R11: ffff88807fc17000 R12: 00007fc59fa00000
+[17035.145433] R13: ffffea00008f89a8 R14: ffff88801c2286c0 R15: 00007fc59f800000
+[17035.154171] FS:  00007fc5a5591100(0000) GS:ffff88807d4c0000(0000) knlGS:0000000000000000
+[17035.162730] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+[17035.171180] CR2: ffff888023e26778 CR3: 000000001c3f6000 CR4: 0000000000000660
+[17035.179545] Call Trace:
+[17035.187736]  move_vma.isra.3+0xd1/0x2d0
+[17035.195837]  __se_sys_mremap+0x3c6/0x5b0
+[17035.203986]  do_syscall_64+0x49/0x100
+[17035.212109]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[17035.219971] RIP: 0033:0x7fc5a453527a
+[17035.227558] Code: 73 01 c3 48 8b 0d 1e fc 2a 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 19 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ee fb 2a 00 f7 d8 64 89 01 48
+[17035.243255] RSP: 002b:00007ffda22d96f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000019
+[17035.251121] RAX: ffffffffffffffda RBX: 0000557d40923a30 RCX: 00007fc5a453527a
+[17035.258986] RDX: 0000000001a00000 RSI: 0000000001900000 RDI: 00007fc59f7ff000
+[17035.267127] RBP: 0000000001a00000 R08: 0000000000000020 R09: 0000000000000040
+[17035.275259] R10: 0000000000000001 R11: 0000000000000246 R12: 00007fc59f7ff060
+[17035.282681] R13: 00007fc59f7ff000 R14: 0000557d40923a30 R15: 0000557d40829aa0
+[17035.290322] Modules linked in:
+[17035.297875] CR2: ffff888023e26778
+[17035.305405] ---[ end trace 6ff49f09286816b6 ]---
 
-> Ok, let me ask a different question then: would a separate target which
-> will be used to generate only clean asm for debugging purposes ala
->
-> make <path-to-file>.asm
+Make set_pmd_at() paravirt aware by just letting it use set_pmd().
 
-Sorry, I do not like to duplicate the code.
+Fixes: 2c91bd4a4e2e53 ("mm: speed up mremap by 20x on large regions")
+Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/include/asm/pgtable.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e805292..2779ace16d23 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1065,7 +1065,7 @@ static inline void native_set_pte_at(struct mm_struct *mm, unsigned long addr,
+ static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+ 			      pmd_t *pmdp, pmd_t pmd)
+ {
+-	native_set_pmd(pmdp, pmd);
++	set_pmd(pmdp, pmd);
+ }
+ 
+ static inline void set_pud_at(struct mm_struct *mm, unsigned long addr,
+-- 
+2.16.4
 
-
-I do not understand why you need to test such complicated
-compiler flags in order to negate CONFIG_DEBUG_INFO.
-
-
-I am still wondering,
-but if this is really worth doing in upstream code,
-I think the following is a simpler idea.
-
-
-
-
-diff --git a/Makefile b/Makefile
-index 3142e67..131164a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -729,25 +729,28 @@ KBUILD_CFLAGS     += -fomit-frame-pointer
- endif
- endif
-
--KBUILD_CFLAGS   += $(call cc-option, -fno-var-tracking-assignments)
-+DEBUG_CFLAGS    := $(call cc-option, -fno-var-tracking-assignments)
-
- ifdef CONFIG_DEBUG_INFO
- ifdef CONFIG_DEBUG_INFO_SPLIT
--KBUILD_CFLAGS   += $(call cc-option, -gsplit-dwarf, -g)
-+DEBUG_CFLAGS    += $(call cc-option, -gsplit-dwarf, -g)
- else
--KBUILD_CFLAGS  += -g
-+DEBUG_CFLAGS   += -g
- endif
- KBUILD_AFLAGS  += -Wa,-gdwarf-2
- endif
- ifdef CONFIG_DEBUG_INFO_DWARF4
--KBUILD_CFLAGS  += $(call cc-option, -gdwarf-4,)
-+DEBUG_CFLAGS   += $(call cc-option, -gdwarf-4,)
- endif
-
- ifdef CONFIG_DEBUG_INFO_REDUCED
--KBUILD_CFLAGS  += $(call cc-option, -femit-struct-debug-baseonly) \
-+DEBUG_CFLAGS   += $(call cc-option, -femit-struct-debug-baseonly) \
-                   $(call cc-option,-fno-var-tracking)
- endif
-
-+KBUILD_CFLAGS += $(DEBUG_CFLAGS)
-+export DEBUG_CFLAGS
-+
- ifdef CONFIG_FUNCTION_TRACER
- ifdef CONFIG_FTRACE_MCOUNT_RECORD
-   # gcc 5 supports generating the mcount tables directly
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index fd03d60..bc8e0ae 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -104,7 +104,7 @@ modkern_cflags =                                          \
- quiet_modtag = $(if $(part-of-module),[M],   )
-
- quiet_cmd_cc_s_c = CC $(quiet_modtag)  $@
--cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) -fverbose-asm -S -o $@ $<
-+cmd_cc_s_c = $(CC) $(filter-out $(DEBUG_CFLAGS), $(c_flags))
-$(DISABLE_LTO) -fverbose-asm -S -o $@ $<
-
- $(obj)/%.s: $(src)/%.c FORCE
-        $(call if_changed_dep,cc_s_c)
-
-
-
-
-> or so be an acceptable approach?
->
-> Thx.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
-
---
-Best Regards
-Masahiro Yamada
