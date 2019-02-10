@@ -2,143 +2,94 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA94C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DF3C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3C120874
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95DE621736
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 18:06:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFF8qviz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oU8epz+t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfBJRy6 (ORCPT
+        id S1726104AbfBJSFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 12:54:58 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37556 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbfBJRxX (ORCPT
+        Sun, 10 Feb 2019 13:05:16 -0500
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:33474 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfBJSFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 12:53:23 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s13so13923182otq.4;
-        Sun, 10 Feb 2019 09:53:22 -0800 (PST)
+        Sun, 10 Feb 2019 13:05:15 -0500
+Received: by mail-ot1-f49.google.com with SMTP id i20so14003915otl.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 10:05:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RoEf5Fd90q4JOx/RAzYyPMDHBqBYHJwO/D8F0sElp4M=;
-        b=SFF8qviz4fxEwgKMc+kkg6W/Ia+3p6O64ML8ipA1mqvuZzVY1QeSYO1qYySPZluGzz
-         cKFVdjChvoM9H+3lvVUbPYj8UDvkllQkzkL/uMG3zhNOiX5wNGKa6jMHFqMbNbPb6WrC
-         iR2x2fwRPVf4QjfDlIgb5BY4dHf5W2K2vPFdR4wdqTeMW32mZXfmZUTxT2AgY2Jx3FDS
-         OCEi7lc1ci3tovGBKrGaAyZQJZ+NDm9IVGVWHoP71apdXRIfUuIgldIDQ/7C6C/OjW9a
-         r6h4+i+KTH6sUJG+OyfQOVCO2fBPqV9qbOPqvDPm4N43yarCJQoltXhp1zagIuEuc4AF
-         CW+w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aSxa0UyDrA9QxYPwTpkiPvl43IP9aW2jI6LsaSxwJ3o=;
+        b=oU8epz+tkKJ9q23WKBgkGxHBVkUNYqmIopLX8psRNMDDfgeqndTFb1mVsGKbCV9+Mh
+         XrBwsuZwBuOeUqsKijvtnA7FwCa8Gl6YT/KtB4N0ltowvo9iKc3k6X3kXupJHYS3bIxO
+         9raLythQIlk2owf1eoqZFxA7Q3TgfKlHiE9LIBZGJpFOUu6NTEkv3Ey2SuWHHNzncLSt
+         QbC+WJqitb89+OcbgTN+M8Qlca4VuijGMwAkZrT2oWsBTTAUcCVwx2v8iECOcXJ/nMLG
+         KtDx0VGGkNhXdP3+wvGvwn2zjDUW77Dc+ob4czu2Anc8rcU4WQMJRjh8O4uyS0PD4QON
+         CdPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RoEf5Fd90q4JOx/RAzYyPMDHBqBYHJwO/D8F0sElp4M=;
-        b=Z8/S+S31M3ZOile5mTQvnLq+hHX0GLlErUdG/ZHOyGQGWDLc+Aqs2eIkFNVsn24+do
-         4r/VZp2NCw5WaT2vphT0pruI7XcTrfmcprx0elOhlskQaN9lq5VOcFvllN6BsT+7HQY8
-         y2RgI4AZZN/pO+WeJqY0AaHBvgHww3xhI5JGDahR6fTrPY+DTKsHD9mEsVBZUK9jrTQa
-         TLmAjRibzx8mYCanTLHLGkCPzlMVSnbwpZC0SFiDAyXKH/xpm7vZAGgmdd0N/6Mpa0K8
-         sevl60KSkcJWCp1PsjP1bYklFtXeW8m5xj8YaQVQqXfhxcKuTajtoF1dl0UZGHTMRQzI
-         lZzA==
-X-Gm-Message-State: AHQUAuZt7KirsDfVKCHsTApiO4Xa89p0Z2dJJyGEMFpo5h5m+Slt5ysA
-        3XTJbvxH8sTolJCw0/iu5qrB667A
-X-Google-Smtp-Source: AHgI3IZOrGfct9pQPDz+2R+05bWF3KG7PVKyUmwyseCUEfLQtQpiCBcCUn6DlQQ2wMBGBVtmZ9RHPQ==
-X-Received: by 2002:a9d:6419:: with SMTP id h25mr22238071otl.34.1549821202084;
-        Sun, 10 Feb 2019 09:53:22 -0800 (PST)
-Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id n9sm3156425otq.14.2019.02.10.09.53.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 09:53:21 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>, idosch@mellanox.com,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        bridge@lists.linux-foundation.org, jiri@mellanox.com,
-        andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v2 04/16] net: dsa: Add setter for SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
-Date:   Sun, 10 Feb 2019 09:50:53 -0800
-Message-Id: <20190210175105.31629-5-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190210175105.31629-1-f.fainelli@gmail.com>
-References: <20190210175105.31629-1-f.fainelli@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aSxa0UyDrA9QxYPwTpkiPvl43IP9aW2jI6LsaSxwJ3o=;
+        b=UdnK1JX1TWNWlzou6sMKA08dmAz4eSw3LH+Rh2pB5aM7GtZXV1K8gee6bRCLiq4Rc1
+         jbBcs+T/3pmUh4teEq6nogv36zmk8OpQktFhXRAg777z6FUEnJlJ+HhQlFiBmUwNgrln
+         4ava5mzIuEVRiPSo5Plci3SaDyz174xKROiwcmxEdVyfbFlLGChBhvNPEUAKk1soCQw/
+         UI0xM1SNAADuNAIc5xm463Vtmh1JWaOSJiRUX5ECNTnElA8Hk+Aqwz2tsLblXosMlAd1
+         CDWzj38tqUnZiVyy4ceaE0BROKg8mThEf1rRfTFgDpb/C1J0fRNDtKHgEuIDSzNYMQiq
+         c7mQ==
+X-Gm-Message-State: AHQUAuY4axMhZ3zp9Ep7i/lB9laOE4y2Kqj9iiwQGWDqBhlRXaOtq5td
+        cPUm/2bURZSW7IU/5MRxmJpL59bgOy8OHseEG9U=
+X-Google-Smtp-Source: AHgI3IYddzSYYXHDuousDMAdmi2bL7WQfISMES5CPFXziI3UPbsWbeWViTgvUhG9KL5gRX8uA4oS0Elv/whTidltgSg=
+X-Received: by 2002:a9d:61c8:: with SMTP id h8mr22682791otk.279.1549821915033;
+ Sun, 10 Feb 2019 10:05:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190204220952.30761-1-TheSven73@googlemail.com>
+ <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
+ <CAGngYiUTJ0TjdTu=UB9yXRJ_mXG8LPmcuBQBDha+T5RHoRUvcQ@mail.gmail.com>
+ <CAKdAkRS3mxXO9+60Lu7_3gqN9XN1CYQJGM5fcta1pG8qXm9wqw@mail.gmail.com>
+ <CAGngYiWBdXc0VzpjBQmVyKi+E2rVaO2WsoiPLho0bxHnrdiDKw@mail.gmail.com> <CANiq72kw1=XhGhy8Ac2R9y3ws_jjo0YogoQ5D=tO+7oat=8swA@mail.gmail.com>
+In-Reply-To: <CANiq72kw1=XhGhy8Ac2R9y3ws_jjo0YogoQ5D=tO+7oat=8swA@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Sun, 10 Feb 2019 13:05:04 -0500
+Message-ID: <CAGngYiUwaWPp7=TTAN3tqPz+D+1GsPDM7uFNYY1XSTYMMm+=aA@mail.gmail.com>
+Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for removing SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
-add support for a function that processes the
-SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS attribute and returns not supported
-for any flag set, since DSA does not currently support toggling those
-bridge port attributes (yet).
+Hi Miguel,
 
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- net/dsa/dsa_priv.h |  3 +++
- net/dsa/port.c     | 10 ++++++++++
- net/dsa/slave.c    |  4 ++++
- 3 files changed, 17 insertions(+)
+On Thu, Feb 7, 2019 at 11:30 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> Similarly, in drivers/auxdisplay/ht16k33.c, the cancel_delayed_work()
+> is there, instead of cancel_delayed_work_sync(). Having the script
+> suggest this change would be useful, too (i.e. instead of the devm_
+> change, assuming the cancel_delayed_work() is already there).
+>
 
-diff --git a/net/dsa/dsa_priv.h b/net/dsa/dsa_priv.h
-index 1f4972dab9f2..97594f0b6efb 100644
---- a/net/dsa/dsa_priv.h
-+++ b/net/dsa/dsa_priv.h
-@@ -150,6 +150,9 @@ int dsa_port_vlan_filtering(struct dsa_port *dp, bool vlan_filtering,
- 			    struct switchdev_trans *trans);
- int dsa_port_ageing_time(struct dsa_port *dp, clock_t ageing_clock,
- 			 struct switchdev_trans *trans);
-+int dsa_port_bridge_port_flags_set(struct dsa_port *dp,
-+				   unsigned long brport_flags,
-+				   struct switchdev_trans *trans);
- int dsa_port_fdb_add(struct dsa_port *dp, const unsigned char *addr,
- 		     u16 vid);
- int dsa_port_fdb_del(struct dsa_port *dp, const unsigned char *addr,
-diff --git a/net/dsa/port.c b/net/dsa/port.c
-index 2d7e01b23572..2ce3752203cf 100644
---- a/net/dsa/port.c
-+++ b/net/dsa/port.c
-@@ -177,6 +177,16 @@ int dsa_port_ageing_time(struct dsa_port *dp, clock_t ageing_clock,
- 	return dsa_port_notify(dp, DSA_NOTIFIER_AGEING_TIME, &info);
- }
- 
-+int dsa_port_bridge_port_flags_set(struct dsa_port *dp,
-+				   unsigned long brport_flags,
-+				   struct switchdev_trans *trans)
-+{
-+	if (brport_flags)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+
- int dsa_port_fdb_add(struct dsa_port *dp, const unsigned char *addr,
- 		     u16 vid)
- {
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 2e5e7c04821b..9b499ba88aa7 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -295,6 +295,10 @@ static int dsa_slave_port_attr_set(struct net_device *dev,
- 	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
- 		ret = dsa_port_ageing_time(dp, attr->u.ageing_time, trans);
- 		break;
-+	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS:
-+		ret = dsa_port_bridge_port_flags_set(dp, attr->u.brport_flags,
-+						     trans);
-+		break;
- 	default:
- 		ret = -EOPNOTSUPP;
- 		break;
--- 
-2.19.1
+For relatively straightforward problems, I'd say yes.
 
+However, the problems flagged by this script are not trivial at all.
+In many cases, the missing _sync is just a symptom of general
+synchronization issues on disconnect(), and simply adding it
+will not fix the problem. Sometimes, it's just a false positive.
