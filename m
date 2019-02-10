@@ -2,170 +2,178 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3924C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 027B8C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAFE92145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD78720811
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:43:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="ZIbmoA6f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfBJPla (ORCPT
+        id S1726827AbfBJPnY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:41:30 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:35202 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbfBJPla (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:41:30 -0500
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1AFfHlu071760;
-        Mon, 11 Feb 2019 00:41:17 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Mon, 11 Feb 2019 00:41:17 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.2] (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1AFfHZB071756
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Mon, 11 Feb 2019 00:41:17 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Subject: Re: [PATCH] clk: fractional-divider: check parent rate only for
- general approximation
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Heiko Stuebner <heiko@sntech.de>
-References: <20190130235022.21949-1-katsuhiro@katsuster.net>
- <154948200879.115909.2117234752247335645@swboyd.mtv.corp.google.com>
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Message-ID: <079d43be-0643-a55b-5d88-3e5e900529ed@katsuster.net>
-Date:   Mon, 11 Feb 2019 00:41:17 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <154948200879.115909.2117234752247335645@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Sun, 10 Feb 2019 10:43:24 -0500
+Received: from mail-eopbgr130081.outbound.protection.outlook.com ([40.107.13.81]:65113
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726102AbfBJPnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 10:43:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PktgmW/25H7gITaw2osmVE+hXF9TEp3aHZOcofZkA/0=;
+ b=ZIbmoA6fi/gRHUIREDAhD0wHGTU1o/qzywaEe+n3qiMCK2XK6U2rXHGORMQ7v7yZ+HlDFt3TdwYYj0eN5KopWoZFgkX86oI/mp7tBErhJcf84b4asqVb8n1DTu/eoBf2be/cwHSarSVbqcIRun9m34wYOj3cOTx2UyN57KlXNCo=
+Received: from AM4PR0501MB2769.eurprd05.prod.outlook.com (10.172.216.13) by
+ AM4PR0501MB2723.eurprd05.prod.outlook.com (10.172.215.148) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.22; Sun, 10 Feb 2019 15:43:16 +0000
+Received: from AM4PR0501MB2769.eurprd05.prod.outlook.com
+ ([fe80::15bf:a58d:3097:bd00]) by AM4PR0501MB2769.eurprd05.prod.outlook.com
+ ([fe80::15bf:a58d:3097:bd00%4]) with mapi id 15.20.1601.023; Sun, 10 Feb 2019
+ 15:43:16 +0000
+From:   Ran Rozenstein <ranro@mellanox.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "y2038@lists.linaro.org" <y2038@lists.linaro.org>,
+        "chris@zankel.net" <chris@zankel.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "rth@twiddle.net" <rth@twiddle.net>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "ubraun@linux.ibm.com" <ubraun@linux.ibm.com>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: RE: [PATCH net-next v5 09/12] socket: Add SO_TIMESTAMPING_NEW
+Thread-Topic: [PATCH net-next v5 09/12] socket: Add SO_TIMESTAMPING_NEW
+Thread-Index: AQHUuw0UstR6Cw2r7kCu3tfALWKWF6XZLqiA
+Date:   Sun, 10 Feb 2019 15:43:16 +0000
+Message-ID: <AM4PR0501MB2769C4BE6CF1C5B051068D0BC56B0@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+References: <20190202153454.7121-1-deepa.kernel@gmail.com>
+ <20190202153454.7121-10-deepa.kernel@gmail.com>
+In-Reply-To: <20190202153454.7121-10-deepa.kernel@gmail.com>
+Accept-Language: he-IL, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ranro@mellanox.com; 
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR0501MB2723;6:APhytEhwtQB8KUH2PklVFQbX52CjpiV8MPaQdIsvEKubFG26tjCs99+uSfb2ZeyJglmdsrKkGYmtl73cGI76DejTpDN2zGiumtLe/xHSTe7LJ8/EwFLMTnA71JdrkRiPYx9mwL5uQSc2m3oE1ylfHn/4OO8+QE6I86sFRu0ce5BqNL2YFBJgBZhWSY2zyFv5/da6ViFKDsWMzXc+HEIPaCz1Yc7TWp4AZN150IB8g+cPTNs+EXNqqSshL969RTtnUNYARVRUmhrf7A7T7QTUCcnF8Ngb3wrerhVhJVfrtgns/1nU/Kav2UdBMSw5kMxAzK/KZr044nwQ8ZcYYoHJrnhOWm41ijr9bWeXk6qWdS7eKKEwY2ghr7gb7uNL3uOKILvkE2RXWlxwP1oy/4k0q/1qGiRCRbZ3h06BIII9k0kgL6acm6VQdQk0ISUnicp4wncpwEadl2ZNgYa+4h4QIQ==;5:waltn7Hjg6uB7ntJVQPXX488NnciKUdT8jjrdPnN2jFHDnZKO5Ok8Bu7DH76NH7LVr0EeKbz8CWmwuhEX7TiKjHQ90ZxhEySykjuoPTzExOT3myLHJDGvUnR+C+WH8NaBsPqn+hv7FNkl250qQDvfKKNidYYOEgXmFOrsk+1y1mt8QkGHdvifiF9geuHRaIx67Y7AydXwI/tXoUu3PDqHg==;7:BKi2EHnFiuwJ1UjU+iPLlxqCV9ZgvIdR4QpREBjkP65YhtF188RdUhm7g/wv7sDnfb893JAkoabExsmb51PbZNFqZ420APa+MNomNJB75SQCOvpI8Ag0Ct9WZuz1D1vluphq21OW9yO3NzK2QmghgQ==
+x-ms-office365-filtering-correlation-id: 2173d389-8eae-4f2e-01f5-08d68f6e794e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM4PR0501MB2723;
+x-ms-traffictypediagnostic: AM4PR0501MB2723:
+x-microsoft-antispam-prvs: <AM4PR0501MB27236C4BE91864FD6554EEDBC56B0@AM4PR0501MB2723.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09443CAA7E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(396003)(346002)(39860400002)(366004)(199004)(189003)(2501003)(33656002)(68736007)(229853002)(76176011)(7696005)(6436002)(11346002)(53936002)(446003)(6246003)(25786009)(99286004)(476003)(4326008)(486006)(97736004)(71190400001)(71200400001)(105586002)(26005)(102836004)(106356001)(14454004)(3846002)(6116002)(110136005)(54906003)(478600001)(316002)(74316002)(186003)(66066001)(81166006)(81156014)(7736002)(6506007)(2201001)(256004)(305945005)(9686003)(7416002)(8936002)(55016002)(8676002)(2906002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2723;H:AM4PR0501MB2769.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ONqfc8+cfPe9sjHmzY6hOwezk+Zpc45APK0BO2SHLeg+ydcDdbZcrH2QolekL1VlTpbnQtQJ1YpURGSeK5W8ywSfpHm48MEeIaHtT6vq+tar72lgm6xrSey3mxsq+RJEt9z8Fget+aYx5ordLM0NhfOts8cCxBX30jOb9oZknO1CjwwtomLZoXSVCxnyanqAhI0QGwKPWfVNpAQWYb5xuHmM2MD57/8tagZkEuiazlVWpk2pb/n3T6uFjhR16KPLZYnuDcmb8YzO08P4abzUCu/8OkpdE7IbK9Khzj5ikqlOuh48RkYwWQ5oi0w6awp3entVNKhJg7eZEzPFcp+V14UUxvmMYqKD4+UmB7Y52NhKT9oDJYyztdlKBTJ0x7E9dINB5lE76a6bgwQuKAZdC4nci4JLlxJbwWSGO6We3CE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2173d389-8eae-4f2e-01f5-08d68f6e794e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Feb 2019 15:43:16.3453
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2723
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+> Subject: [PATCH net-next v5 09/12] socket: Add SO_TIMESTAMPING_NEW
+>=20
+> Add SO_TIMESTAMPING_NEW variant of socket timestamp options.
+> This is the y2038 safe versions of the SO_TIMESTAMPING_OLD for all
+> architectures.
+>=20
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Acked-by: Willem de Bruijn <willemb@google.com>
 
-Thanks a lot for your review. I choose clk_hw_can_set_parent_rate()
-macro and fix typo and patch description. And I post v2 patch.
 
-Best Regards,
-Katsuhiro Suzuki
+Hi,
 
-On 2019/02/07 4:40, Stephen Boyd wrote:
-> +Heiko because it mentions Rockchip
-> 
-> Quoting Katsuhiro Suzuki (2019-01-30 15:50:22)
->> Custom approximation of fractional-divider may not need parent clock
->> rate checking. For example Rockchip SoCs work fine using grand parent
->> clock rate even if target rate is greater than parent.
->>
->> This patch removes parent clock rate check from custom approximation.
->>
->> For detailied example, clock tree of Rockchip I2S audio hardware.
-> 
-> s/detailied/detailed/
-> 
->>    - A i2s1_div is integer divider can divide input clock 1/1 ~ 1/16.
->>      Initialize divider value is 1.
-> 
-> s/Initialize/Initial/
-> 
->>    - A i2s1_frac is fractional divider can divide input to x/y, x and
->>      y are 16bit integer.
->>    - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
->>
->> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
->> GPLL --> |          | ,--------------'    |          |
->>                        `--> i2s1_frac ---> |          |
->>
->> Clock mux system try to choose suitable one from i2s1_div and
->> i2s1_frac for master clock (MCLK) of I2S1.
->>
->> Bad scenario as follows:
->>    - Try to set MCLK to 8.192MHz (32kHz audio replay)
->>      Candidate setting is
->>      - i2s1_div : GPLL / 60           = 8.192MHz
->>      i2s1_div is same as target clock rate, so mux choose this.
->>      i2s1_div output rate is changed 491.52MHz -> 8.192MHz
->>
->>    - After that try to set to 11.2896MHz (44.1kHz audio replay)
->>      Candidate settings are
->>      - i2s1_div : CPLL / 107 = 11.214945MHz
->>      - i2s1_frac: i2s1_div   = 8.192MHz
->>        This is because clk_fd_round_rate() thinks target rate
->>        (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
->>        and returns parent clock rate.
->>      Clock mux system choose i2s1_div, but this clock rate is not
->>      acceptable for I2S driver, so users cannot replay audio.
->>
->> Expected behavior is:
->>    - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
->>      Candidate settings are
->>      - i2s1_div : CPLL / 107          = 11.214945MHz
->>      - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
->>                   (change i2s1_div to GPLL / 1 = 491.52MHz)
->>        If apply this commit, clk_fd_round_rate() calls custom
->>        approximate function of Rockchip even if target rate is higher
->>        than parent. Custom function changes both grand parent
->>        (i2s1_div) and parent (i2s_frac) settings at same time.
-> 
-> Can you indicate what that function is? Is this merged upstream or
-> something you're developing now?
-> 
->>      Clock mux system can choose i2s1_frac and audio works fine.
-> 
-> I think this last paragraph from "If apply this commit" can be
-> unindented from the expected behavior section.
-> 
->>
->> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
->> ---
->>   drivers/clk/clk-fractional-divider.c | 10 +++++++---
->>   1 file changed, 7 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
->> index 545dceec0bbf..b0fc5509e0ff 100644
->> --- a/drivers/clk/clk-fractional-divider.c
->> +++ b/drivers/clk/clk-fractional-divider.c
->> @@ -79,13 +79,17 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->>          unsigned long m, n;
->>          u64 ret;
->>   
->> -       if (!rate || rate >= *parent_rate)
->> +       if (!rate)
->>                  return *parent_rate;
-> 
-> Ok. I think it would be clearer if we had
-> 
-> 	unsigned long flags = clk_hw_get_flags()
-> 
-> 	if (!rate ||
-> 	    !(flags & CLK_SET_PARENT_RATE) && rate >= *parent_rate)
-> 
-> indicating that the parent of the clk isn't expected to change rate so
-> we can only achieve that much frequency. Plus some sort of comment to
-> this effect would be helpful too.
-> 
-> We could also introduce macros to check clk flags. Then it would read
-> nicer:
-> 
-> 	if (!rate || clk_hw_can_set_parent_rate(hw) && rate >= ...)
-> 
-> 
-> 
+I have app that include:=20
+	#include <linux/errqueue.h>
 
+It now fail with this error:
+	In file included from timestamping.c:6:0:
+	/usr/include/linux/errqueue.h:46:27: error: array type has incomplete elem=
+ent type 'struct __kernel_timespec'
+	  struct __kernel_timespec ts[3];
+                			           ^~
+I tried to do the trivial fix, to include time.h:
+In include/uapi/linux/errqueue.h
+	#include <linux/time.h>
+	#include <linux/types.h>
+
+But it just add some other noises:
+                In file included from /usr/include/linux/errqueue.h:5:0,
+                                 from timestamping.c:6:
+                /usr/include/linux/time.h:10:8: error: redefinition of ?str=
+uct timespec?
+                 struct timespec {
+                        ^~~~~~~~
+                In file included from /usr/include/sys/select.h:39:0,
+                                 from /usr/include/sys/types.h:197,
+                                 from /usr/include/stdlib.h:279,
+                                 from timestamping.c:2:
+                /usr/include/bits/types/struct_timespec.h:8:8: note: origin=
+ally defined here
+                 struct timespec
+                        ^~~~~~~~
+                In file included from /usr/include/linux/errqueue.h:5:0,
+                                 from timestamping.c:6:
+                /usr/include/linux/time.h:16:8: error: redefinition of ?str=
+uct timeval?
+                 struct timeval {
+                        ^~~~~~~
+                In file included from /usr/include/sys/select.h:37:0,
+                                 from /usr/include/sys/types.h:197,
+                                 from /usr/include/stdlib.h:279,
+                                 from timestamping.c:2:
+                /usr/include/bits/types/struct_timeval.h:8:8: note: origina=
+lly defined here
+                 struct timeval
+                        ^~~~~~~
+
+
+Can you please advise how to solve it?
+
+Thanks,
+Ran
+
+
+> diff --git a/include/uapi/linux/errqueue.h b/include/uapi/linux/errqueue.=
+h
+> index c0151200f7d1..d955b9e32288 100644
+> --- a/include/uapi/linux/errqueue.h
+> +++ b/include/uapi/linux/errqueue.h
+> @@ -41,6 +41,10 @@ struct scm_timestamping {
+>  	struct timespec ts[3];
+>  };
+>=20
+> +struct scm_timestamping64 {
+> +	struct __kernel_timespec ts[3];
+> +};
+> +
+>  /* The type of scm_timestamping, passed in sock_extended_err ee_info.
+>   * This defines the type of ts[0]. For SCM_TSTAMP_SND only, if ts[0]
+>   * is zero, then this is a hardware timestamp and recorded in ts[2].
