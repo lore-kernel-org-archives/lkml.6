@@ -2,82 +2,90 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8B0C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 21:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5ABC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 21:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955402146F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 21:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA24213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 21:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfBJVde (ORCPT
+        id S1726253AbfBJVpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 16:33:34 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37901 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfBJVde (ORCPT
+        Sun, 10 Feb 2019 16:45:04 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:37909 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfBJVpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 16:33:34 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gswj4-0006G4-VQ; Sun, 10 Feb 2019 22:33:22 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gswj2-0007GC-4B; Sun, 10 Feb 2019 22:33:20 +0100
-Date:   Sun, 10 Feb 2019 22:33:20 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Fabrice Gasnier <fabrice.gasnier@st.com>, thierry.reding@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com,
-        mcoquelin.stm32@gmail.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        vilhelm.gray@gmail.com, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 4/4] iio: counter: stm32-lptimer: Add power management
- support
-Message-ID: <20190210213320.fs5kzezyzwd6akpx@pengutronix.de>
-References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
- <1549370429-19116-5-git-send-email-fabrice.gasnier@st.com>
- <20190209162133.65e6fd93@archlinux>
+        Sun, 10 Feb 2019 16:45:03 -0500
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 79927240004;
+        Sun, 10 Feb 2019 21:45:00 +0000 (UTC)
+Date:   Sun, 10 Feb 2019 22:45:00 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tty/nozomi: use pci_iomap instead of ioremap_nocache
+Message-ID: <20190210214500.GB22758@behemoth.owl.eu.com.local>
+References: <20190210171212.GA22758@behemoth.owl.eu.com.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190209162133.65e6fd93@archlinux>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190210171212.GA22758@behemoth.owl.eu.com.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 09, 2019 at 04:21:33PM +0000, Jonathan Cameron wrote:
-> On Tue, 5 Feb 2019 13:40:29 +0100
-> Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
-> 
-> > Add suspend/resume PM sleep ops. When going to low power, disable
-> > active counter. Only active counter should be resumed: don't touch
-> > disabled counter, as it may be used by other LPTimer MFD child driver.
-> > 
-> > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> I think this looks fine.  I'm not totally sure if patches 3,4 are
-> separable from 1,2 though so please let me know whether I should take
-> these now, or let all 4 go in together via some path?
 
-I'd say these are orthogonal, so if you are happy with patches 3 and 4
-you can take them without bothering for patches 1 and 2.
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards
-Uwe
+> Use pci_iomap instead of ioremap_nocache in nozomi_card_init(). This
+> is a cleaner way to do PCI MMIO (performs additional checks) and
+> allows to drop the manual call to pci_resource_start.
+>=20
+> pci_iomap relies on ioremap for MMIO and thus has uncached behavior.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+there's still something unclear to me about dc->card_type being used as
+size argument to ioremap_nocache().
+
+dc->base_addr is the sum of all six io region lengths, not the size of
+region 0 which we are trying to map here. Why not using the size of region
+0 instead ?
+
+If the goal is to map all six regions "at once", I'm not sure how this is
+supposed to work. Is there any kind of guarantee that all six regions will
+be adjacent?
+
+If this is a bug then this patch "somehow" already adresses it since
+pci_iomap calls pci_resource_len itself. Otherwise this patch is broken.
+
+--=20
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
+
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxgm1QACgkQZYVUZx9w
+0DRUzAf/eXMxyptRnl533KQxunRWWcdUaqYmlXqnnf27/hlz2GOwk/NoeMOLbAUc
+PLGilVn53z6jgfJJYAAyCbJ07gw2rrYWDwPO4m3wHdH3t28Mvix0ZcQOhswosffk
+hsIh2Is3WuYvt4Zr9wDvQ2tJTFDzETvkNh/zyCsi2Bpf8G26yjX9GMvLkmUOrcYU
+polMj5eS8DsFM8vmevewaWSPv/cInVKWWuU1THOsmMvHRIcu12b2Ubdpbees3yiU
+UJTHHa6f4DGa26MgCio6tK+3bV/0xr7nN3BLUehxBIpb5Rlbsk+ul4YOXyVySCbt
+RWOtrLIHOEgJysa4xJ65hr3xOuKm8Q==
+=zuNT
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
