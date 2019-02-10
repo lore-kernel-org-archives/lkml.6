@@ -2,169 +2,167 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEBDC282C4
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE27C282C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9204F217D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:55:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="1O0t1X+o"
+	by mail.kernel.org (Postfix) with ESMTP id CCCA021929
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 02:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBJCti (ORCPT
+        id S1726860AbfBJC51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 21:49:38 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44824 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfBJCth (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 21:49:37 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p4so3578402plq.11
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 18:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=mEhoN9b4j186tQMb1sXwn7pHKZnKhJYsf7okKF7chnA=;
-        b=1O0t1X+oVxCHgefwCJqqmGg5/EMRcIU2xR2CRehlGoaEpcWcorvywtA8BFwnAKeO/E
-         kWzxoBEQ/Fzfk5HdfCcUtvDS5fu6lB/ZbUQwKcsMdy+PDmo8p4BHntmmJ2oSKcxNGik8
-         aSFmmOqvLnEIHrYT0Txryfx0Xgi5PfJR48fSquKheRDKjV/gnuHnnH5wr9n6CpLmJuoj
-         lbwqIH1ZYkxKWQp4hzc+o9EWkMHi2vZnbjcCF+7WbzdCnaDGa9FbPhkF8RFFDfQBcqxC
-         8AhPHQuhsrJ7Dz7fB7VAFEY2cwc9twSKRWegTPp2wUmAQ5HUr9FuPMQxjaUDg7n9Xyo5
-         0xUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mEhoN9b4j186tQMb1sXwn7pHKZnKhJYsf7okKF7chnA=;
-        b=Cx1pP19NyY9IVjJH+4meo9SMmMGFX3HIJmN41tiVmlfB6BXIXXhhe24IYw77Np/st+
-         pQWdt5nXeJ9aXWiczmNYb+6raQO3oQgnZpoJkJMDHdyGiuLNe8pd7piSgBYEKYw4WpIh
-         uA3ez1P9ukGTkRcK7JVkAgh5EN8xcbc6/pD0UVoo1sCkIS4XR8+/bHikbDFUgetpwcBJ
-         aBsjykEVnVHqzltMTLkaSPX2CQbHnXkxWXLs0oPwjypdSqQPiqz9JuuBuMmB6necR8wL
-         kqfHq7B8QIqqowDQJ3GAriHJsdQiIgPX1/1ajawtGgOO/IwDn9wslP+UeEVLPE4iYyht
-         j2pA==
-X-Gm-Message-State: AHQUAubgzN6X4JVCFVtABg1c7bqsldEglhm9QlctdlvvfGt7E7BsCyxT
-        wzBwyHRQCLhJG+X66Httz+qaIQ==
-X-Google-Smtp-Source: AHgI3IY8rpsNogU5dXzfsYOZ7s6HgRrP2Wok6dz96xasFzn6F6N9Ks3Jc3HD2kzWK7idmOcOQ8Qvfg==
-X-Received: by 2002:a17:902:c85:: with SMTP id 5mr31422285plt.339.1549766976671;
-        Sat, 09 Feb 2019 18:49:36 -0800 (PST)
-Received: from localhost.localdomain (36-239-237-75.dynamic-ip.hinet.net. [36.239.237.75])
-        by smtp.gmail.com with ESMTPSA id e86sm10066013pfb.6.2019.02.09.18.49.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Feb 2019 18:49:35 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Milo Kim <milo.kim@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: lp8788-buck: Convert to linear range
-Date:   Sun, 10 Feb 2019 10:48:45 +0800
-Message-Id: <20190210024845.12698-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 9 Feb 2019 21:57:27 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14368 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbfBJC51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 9 Feb 2019 21:57:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2019 18:57:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,353,1544515200"; 
+   d="scan'208";a="319090702"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga005.fm.intel.com with ESMTP; 09 Feb 2019 18:57:26 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "H Peter Anvin" <hpa@zytor.com>, "Tony Luck" <tony.luck@intel.com>,
+        "Reinette Chatre" <reinette.chatre@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
+        "Xiaochen Shen" <xiaochen.shen@intel.com>,
+        "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>,
+        "Sai Praneeth Prakhya" <sai.praneeth.prakhya@intel.com>,
+        "Babu Moger" <babu.moger@amd.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v7 00/13] selftests/resctrl: Add resctrl selftest
+Date:   Sat,  9 Feb 2019 18:50:29 -0800
+Message-Id: <1549767042-95827-1-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-linear range is suitable for this driver, let's convert it to linear range.
+With more and more resctrl features are being added by Intel, AMD
+and ARM, a test tool is becoming more and more useful to validate
+that both hardware and software functionalities work as expected.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/lp8788-buck.c | 38 +++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+We introduce resctrl selftest to cover resctrl features on both
+X86 and ARM architectures. It first implements MBM (Memory Bandwidth
+Monitoring), MBA (Memory Bandwidth Allocation), L3 CAT (Cache Allocation
+Technology), and CQM (Cache QoS Monitoring)  tests. We can enhance
+the selftest tool to include more functionality tests in future.
 
-diff --git a/drivers/regulator/lp8788-buck.c b/drivers/regulator/lp8788-buck.c
-index 30de784d8e30..a7d30550bb5f 100644
---- a/drivers/regulator/lp8788-buck.c
-+++ b/drivers/regulator/lp8788-buck.c
-@@ -95,12 +95,10 @@ struct lp8788_buck {
- 	void *dvs;
- };
- 
--/* BUCK 1 ~ 4 voltage table */
--static const int lp8788_buck_vtbl[] = {
--	 500000,  800000,  850000,  900000,  950000, 1000000, 1050000, 1100000,
--	1150000, 1200000, 1250000, 1300000, 1350000, 1400000, 1450000, 1500000,
--	1550000, 1600000, 1650000, 1700000, 1750000, 1800000, 1850000, 1900000,
--	1950000, 2000000,
-+/* BUCK 1 ~ 4 voltage ranges */
-+static const struct regulator_linear_range buck_volt_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(500000, 0, 0, 0),
-+	REGULATOR_LINEAR_RANGE(800000, 1, 25, 50000),
- };
- 
- static void lp8788_buck1_set_dvs(struct lp8788_buck *buck)
-@@ -345,8 +343,8 @@ static unsigned int lp8788_buck_get_mode(struct regulator_dev *rdev)
- }
- 
- static const struct regulator_ops lp8788_buck12_ops = {
--	.list_voltage = regulator_list_voltage_table,
--	.map_voltage = regulator_map_voltage_ascend,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.map_voltage = regulator_map_voltage_linear_range,
- 	.set_voltage_sel = lp8788_buck12_set_voltage_sel,
- 	.get_voltage_sel = lp8788_buck12_get_voltage_sel,
- 	.enable = regulator_enable_regmap,
-@@ -358,8 +356,8 @@ static const struct regulator_ops lp8788_buck12_ops = {
- };
- 
- static const struct regulator_ops lp8788_buck34_ops = {
--	.list_voltage = regulator_list_voltage_table,
--	.map_voltage = regulator_map_voltage_ascend,
-+	.list_voltage = regulator_list_voltage_linear_range,
-+	.map_voltage = regulator_map_voltage_linear_range,
- 	.set_voltage_sel = regulator_set_voltage_sel_regmap,
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
- 	.enable = regulator_enable_regmap,
-@@ -375,8 +373,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
- 		.name = "buck1",
- 		.id = BUCK1,
- 		.ops = &lp8788_buck12_ops,
--		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
--		.volt_table = lp8788_buck_vtbl,
-+		.n_voltages = 26,
-+		.linear_ranges = buck_volt_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
- 		.enable_reg = LP8788_EN_BUCK,
-@@ -386,8 +385,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
- 		.name = "buck2",
- 		.id = BUCK2,
- 		.ops = &lp8788_buck12_ops,
--		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
--		.volt_table = lp8788_buck_vtbl,
-+		.n_voltages = 26,
-+		.linear_ranges = buck_volt_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
- 		.enable_reg = LP8788_EN_BUCK,
-@@ -397,8 +397,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
- 		.name = "buck3",
- 		.id = BUCK3,
- 		.ops = &lp8788_buck34_ops,
--		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
--		.volt_table = lp8788_buck_vtbl,
-+		.n_voltages = 26,
-+		.linear_ranges = buck_volt_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
- 		.vsel_reg = LP8788_BUCK3_VOUT,
-@@ -410,8 +411,9 @@ static const struct regulator_desc lp8788_buck_desc[] = {
- 		.name = "buck4",
- 		.id = BUCK4,
- 		.ops = &lp8788_buck34_ops,
--		.n_voltages = ARRAY_SIZE(lp8788_buck_vtbl),
--		.volt_table = lp8788_buck_vtbl,
-+		.n_voltages = 26,
-+		.linear_ranges = buck_volt_ranges,
-+		.n_linear_ranges = ARRAY_SIZE(buck_volt_ranges),
- 		.type = REGULATOR_VOLTAGE,
- 		.owner = THIS_MODULE,
- 		.vsel_reg = LP8788_BUCK4_VOUT,
+The tool has been tested on both Intel RDT and AMD QoS.
+
+There is an existing resctrl test suite 'intel_cmt_cat'. But the major
+purpose of the tool is to test Intel(R) RDT hardware via writing and
+reading MSR registers. It does access resctrl file system; but the
+functionalities are very limited. And it doesn't support automatic test
+and a lot of manual verifications are involved.
+
+So the selftest tool we are introducing here provides a convenient
+tool which does automatic resctrl testing, is easily available in kernel
+tree, and will be extended to AMD QoS and ARM MPAM.
+
+The selftest tool is in tools/testing/selftests/resctrl in order to have
+generic test code for all architectures.
+
+Changelog:
+v7:
+- Fix a few warnings when compiling patches separately, pointed by Babu 
+
+v6:
+- Fix a benchmark reading optimized out issue in newer GCC.
+- Fix a few coding style issues.
+- Re-arrange code among patches to make cleaner code. No change in patches
+structure.
+
+v5:
+- Based the v4 patches submitted by Fenghua Yu and added changes to support
+  AMD.
+- Changed the function name get_sock_num to get_resource_id. Intel uses
+  socket number for schemata and AMD uses l3 index id. To generalize,
+  changed the function name to get_resource_id.
+- Added the code to detect vendor.
+- Disabled the few tests for AMD where the test results are not clear.
+  Also AMD does not have IMC.
+- Fixed few compile issues.
+- Some cleanup to make each patch independent.
+- Tested the patches on AMD system. Fenghua, Need your help to test on
+  Intel box. Please feel free to change and resubmit if something
+   broken.
+- Here is the link for previous version.
+  https://lore.kernel.org/lkml/1545438038-75107-1-git-send-email-fenghua.yu=
+@intel.com/
+
+v4:
+- address comments from Balu and Randy
+- Add CAT and CQM tests
+
+v3:
+- Change code based on comments from Babu Moger
+- Remove some unnessary code and use pipe to communicate b/w processes
+
+v2:
+- Change code based on comments from Babu Moger
+- Clean up other places.
+
+Arshiya Hayatkhan Pathan (4):
+  selftests/resctrl: Add MBM test
+  selftests/resctrl: Add MBA test
+  selftests/resctrl: Add Cache QoS Monitoring (CQM) selftest
+  selftests/resctrl: Add Cache Allocation Technology (CAT) selftest
+
+Babu Moger (3):
+  selftests/resctrl: Add vendor detection mechanism
+  selftests/resctrl: Use cache index3 id for AMD schemata masks
+  selftests/resctrl: Disable MBA and MBM tests for AMD
+
+Fenghua Yu (2):
+  selftests/resctrl: Add README for resctrl tests
+  selftests/resctrl: Add the test in MAINTAINERS
+
+Sai Praneeth Prakhya (4):
+  selftests/resctrl: Add basic resctrl file system operations and data
+  selftests/resctrl: Read memory bandwidth from perf IMC counter and
+    from resctrl file system
+  selftests/resctrl: Add callback to start a benchmark
+  selftests/resctrl: Add built in benchmark
+
+ MAINTAINERS                                     |   1 +
+ tools/testing/selftests/resctrl/Makefile        |  16 +
+ tools/testing/selftests/resctrl/README          |  54 ++
+ tools/testing/selftests/resctrl/cache.c         | 274 +++++++++
+ tools/testing/selftests/resctrl/cat_test.c      | 242 ++++++++
+ tools/testing/selftests/resctrl/cqm_test.c      | 173 ++++++
+ tools/testing/selftests/resctrl/fill_buf.c      | 210 +++++++
+ tools/testing/selftests/resctrl/mba_test.c      | 178 ++++++
+ tools/testing/selftests/resctrl/mbm_test.c      | 150 +++++
+ tools/testing/selftests/resctrl/resctrl.h       | 117 ++++
+ tools/testing/selftests/resctrl/resctrl_tests.c | 238 ++++++++
+ tools/testing/selftests/resctrl/resctrl_val.c   | 723 ++++++++++++++++++++++++
+ tools/testing/selftests/resctrl/resctrlfs.c     | 668 ++++++++++++++++++++++
+ 13 files changed, 3044 insertions(+)
+ create mode 100644 tools/testing/selftests/resctrl/Makefile
+ create mode 100644 tools/testing/selftests/resctrl/README
+ create mode 100644 tools/testing/selftests/resctrl/cache.c
+ create mode 100644 tools/testing/selftests/resctrl/cat_test.c
+ create mode 100644 tools/testing/selftests/resctrl/cqm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/fill_buf.c
+ create mode 100644 tools/testing/selftests/resctrl/mba_test.c
+ create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl.h
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrl_val.c
+ create mode 100644 tools/testing/selftests/resctrl/resctrlfs.c
+
 -- 
-2.17.1
+2.7.4
 
