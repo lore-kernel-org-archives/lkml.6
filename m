@@ -2,81 +2,104 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2946C282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 16:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F291C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 16:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9AF213F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 16:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A60A213F2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 16:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBJQjb (ORCPT
+        id S1726938AbfBJQjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 11:39:31 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37170 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbfBJQja (ORCPT
+        Sun, 10 Feb 2019 11:39:35 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39175 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbfBJQjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 11:39:30 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gss8Y-0006jE-Ej; Sun, 10 Feb 2019 17:39:22 +0100
-Date:   Sun, 10 Feb 2019 17:39:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ming Lei <ming.lei@redhat.com>
-cc:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 4/5] nvme-pci: simplify nvme_setup_irqs() via .setup_affinity
- callback
-In-Reply-To: <20190125095347.17950-5-ming.lei@redhat.com>
-Message-ID: <alpine.DEB.2.21.1902101731370.8784@nanos.tec.linutronix.de>
-References: <20190125095347.17950-1-ming.lei@redhat.com> <20190125095347.17950-5-ming.lei@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Feb 2019 11:39:33 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id DB567804D1; Sun, 10 Feb 2019 17:39:23 +0100 (CET)
+Date:   Sun, 10 Feb 2019 17:39:30 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Yisheng Xie <ysxie@foxmail.com>
+Cc:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: pwm: fix max_brightness works abnormal when
+ active_low
+Message-ID: <20190210163929.GA5780@amd>
+References: <1549802229-31170-1-git-send-email-ysxie@foxmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Disposition: inline
+In-Reply-To: <1549802229-31170-1-git-send-email-ysxie@foxmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019, Ming Lei wrote:
 
-> Use the callback of .setup_affinity() to re-caculate number
-> of queues, and build irqs affinity with help of irq_build_affinity().
-> 
-> Then nvme_setup_irqs() gets simplified a lot.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm pretty sure you can achieve the same by reworking the core code without
-that callback.
- 
-> +	/* Fill out vectors at the beginning that don't need affinity */
-> +	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
-> +		cpumask_copy(&masks[curvec].mask, cpu_possible_mask);
+On Sun 2019-02-10 20:37:09, Yisheng Xie wrote:
+> When leds-pwm is active_low, smaller number of  duty kept in led_dat
+> means less brighness, so we should disable pwm when led_dat->duty is
+> equal to period instead of zero, which means max_brightness.
 
-cpu_possible_mask is wrong.  Why are you deliberately trying to make this
-special? There is absolutely no reason to do so.
+Will all pwm drivers leave the signal 'low' when pwm is disabled? Not
+tristate or something?
 
-These interrupts are not managed and therefore the initial affinity has to
-be irq_default_affinity. Setting them to cpu_possible_mask can and probably
-will evade a well thought out default affinity mask, which was set to
-isolate a set of cores from general purpose interrupts.
+Plus please use temporary variable. This is really hard to read.
 
-This is exactly the thing which happens with driver special stuff and which
-needs to be avoided. There is nothing special about this NVME setup and
-yes, I can see why the current core code is a bit tedious to work with, but
-that does not justify that extra driver magic by any means.
+Or maybe
 
-Thanks,
+   led_dat->active_low * new_duty =3D=3D led_dat->period
 
-	tglx
+?
+									Pavel
 
+> Signed-off-by: Yisheng Xie <ysxie@foxmail.com>
+> ---
+>  drivers/leds/leds-pwm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index df80c89..07fb772 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -41,7 +41,7 @@ static void __led_pwm_set(struct led_pwm_data *led_dat)
+> =20
+>  	pwm_config(led_dat->pwm, new_duty, led_dat->period);
+> =20
+> -	if (new_duty =3D=3D 0)
+> +	if (led_dat->active_low ? new_duty =3D=3D led_dat->period : new_duty =
+=3D=3D 0)
+>  		pwm_disable(led_dat->pwm);
+>  	else
+>  		pwm_enable(led_dat->pwm);
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxgU8EACgkQMOfwapXb+vKdQACgrOCDOEQ6ShjNRvdar2Rp99HI
+Om4AoKv2WMNlyJQ0BmYG7EzQSfx5PlXP
+=9Vrw
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
