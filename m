@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175AFC282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4281C282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D76DB2145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78EF42145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfBJTwi (ORCPT
+        id S1727068AbfBJTwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:52:38 -0500
-Received: from shell.v3.sk ([90.176.6.54]:42526 "EHLO shell.v3.sk"
+        Sun, 10 Feb 2019 14:52:47 -0500
+Received: from shell.v3.sk ([90.176.6.54]:42522 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726838AbfBJTwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:52:35 -0500
+        id S1725958AbfBJTwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 14:52:33 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D71AFCE7AD;
-        Sun, 10 Feb 2019 20:52:32 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 918D3CE834;
+        Sun, 10 Feb 2019 20:52:30 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 0YcrHebMhDPY; Sun, 10 Feb 2019 20:52:21 +0100 (CET)
+        with ESMTP id NQQVbHELpq97; Sun, 10 Feb 2019 20:52:21 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CDD82CE832;
+        by zimbra.v3.sk (Postfix) with ESMTP id 4749ECE838;
         Sun, 10 Feb 2019 20:52:21 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id cUnR16WnTUdH; Sun, 10 Feb 2019 20:52:20 +0100 (CET)
+        with ESMTP id P_nI234joZzG; Sun, 10 Feb 2019 20:52:20 +0100 (CET)
 Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 81AE9CE833;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 45EEDCE832;
         Sun, 10 Feb 2019 20:52:20 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Kalle Valo <kvalo@codeaurora.org>
 Cc:     "David S. Miller" <davem@davemloft.net>,
         linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 2/3] libertas_tf: don't defer firmware loading until start()
-Date:   Sun, 10 Feb 2019 20:52:16 +0100
-Message-Id: <20190210195217.18817-3-lkundrak@v3.sk>
+Subject: [PATCH 1/3] libertas_tf: move hardware callbacks to a separate structure
+Date:   Sun, 10 Feb 2019 20:52:15 +0100
+Message-Id: <20190210195217.18817-2-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190210195217.18817-1-lkundrak@v3.sk>
 References: <20190210195217.18817-1-lkundrak@v3.sk>
@@ -53,264 +53,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to be able to get a MAC address before we register the device
-with ieee80211 we'll need to load the firmware way earlier.
-
-There seems to be one problem with this: the device seems to start
-with radio enabled and starts sending in frames right after the firmware
-load finishes. This might be a firmware bug. Disable the radio as soon
-as possible.
+We'll need to talk to the firmware to get a hardware address before
+device is registered with ieee80211 subsystem at the end of
+lbtf_add_card(). Hooking the callbacks after that is too late.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- .../net/wireless/marvell/libertas_tf/if_usb.c | 24 +++++------
- .../marvell/libertas_tf/libertas_tf.h         |  5 +--
- .../net/wireless/marvell/libertas_tf/main.c   | 41 +++++++++++--------
- 3 files changed, 38 insertions(+), 32 deletions(-)
+ drivers/net/wireless/marvell/libertas_tf/cmd.c  |  2 +-
+ .../net/wireless/marvell/libertas_tf/if_usb.c   | 12 +++++++-----
+ .../wireless/marvell/libertas_tf/libertas_tf.h  | 17 +++++++++++------
+ drivers/net/wireless/marvell/libertas_tf/main.c | 10 ++++++----
+ 4 files changed, 25 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/net/wireless/marvell/libertas_tf/cmd.c b/drivers/net=
+/wireless/marvell/libertas_tf/cmd.c
+index 64b147dd2432..130f578daafd 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/cmd.c
++++ b/drivers/net/wireless/marvell/libertas_tf/cmd.c
+@@ -256,7 +256,7 @@ static void lbtf_submit_command(struct lbtf_private *=
+priv,
+ 		     command, le16_to_cpu(cmd->seqnum), cmdsize);
+ 	lbtf_deb_hex(LBTF_DEB_CMD, "DNLD_CMD", (void *) cmdnode->cmdbuf, cmdsiz=
+e);
+=20
+-	ret =3D priv->hw_host_to_card(priv, MVMS_CMD, (u8 *) cmd, cmdsize);
++	ret =3D priv->ops->hw_host_to_card(priv, MVMS_CMD, (u8 *)cmd, cmdsize);
+ 	spin_unlock_irqrestore(&priv->driver_lock, flags);
+=20
+ 	if (ret) {
 diff --git a/drivers/net/wireless/marvell/libertas_tf/if_usb.c b/drivers/=
 net/wireless/marvell/libertas_tf/if_usb.c
-index 7a5a1a85dcf7..a4b9ede70705 100644
+index 6ede6168bd85..7a5a1a85dcf7 100644
 --- a/drivers/net/wireless/marvell/libertas_tf/if_usb.c
 +++ b/drivers/net/wireless/marvell/libertas_tf/if_usb.c
-@@ -42,14 +42,14 @@ MODULE_DEVICE_TABLE(usb, if_usb_table);
+@@ -131,6 +131,12 @@ static void if_usb_fw_timeo(struct timer_list *t)
+ 	lbtf_deb_leave(LBTF_DEB_USB);
+ }
 =20
- static void if_usb_receive(struct urb *urb);
- static void if_usb_receive_fwload(struct urb *urb);
--static int if_usb_prog_firmware(struct if_usb_card *cardp);
-+static int if_usb_prog_firmware(struct lbtf_private *priv);
- static int if_usb_host_to_card(struct lbtf_private *priv, uint8_t type,
- 			       uint8_t *payload, uint16_t nb);
- static int usb_tx_block(struct if_usb_card *cardp, uint8_t *payload,
- 			uint16_t nb, u8 data);
- static void if_usb_free(struct if_usb_card *cardp);
- static int if_usb_submit_rx_urb(struct if_usb_card *cardp);
--static int if_usb_reset_device(struct if_usb_card *cardp);
-+static int if_usb_reset_device(struct lbtf_private *priv);
-=20
++static const struct lbtf_ops if_usb_ops =3D {
++	.hw_host_to_card =3D if_usb_host_to_card,
++	.hw_prog_firmware =3D if_usb_prog_firmware,
++	.hw_reset_device =3D if_usb_reset_device,
++};
++
  /**
-  *  if_usb_wrike_bulk_callback -  call back to handle URB status
-@@ -222,13 +222,11 @@ static int if_usb_probe(struct usb_interface *intf,
+  *  if_usb_probe - sets the configuration values
+  *
+@@ -216,15 +222,11 @@ static int if_usb_probe(struct usb_interface *intf,
  		goto dealloc;
  	}
 =20
-+	cardp->boot2_version =3D udev->descriptor.bcdDevice;
- 	priv =3D lbtf_add_card(cardp, &udev->dev, &if_usb_ops);
+-	priv =3D lbtf_add_card(cardp, &udev->dev);
++	priv =3D lbtf_add_card(cardp, &udev->dev, &if_usb_ops);
  	if (!priv)
  		goto dealloc;
 =20
--	cardp->priv =3D priv;
--	cardp->boot2_version =3D udev->descriptor.bcdDevice;
+ 	cardp->priv =3D priv;
 -
+-	priv->hw_host_to_card =3D if_usb_host_to_card;
+-	priv->hw_prog_firmware =3D if_usb_prog_firmware;
+-	priv->hw_reset_device =3D if_usb_reset_device;
+ 	cardp->boot2_version =3D udev->descriptor.bcdDevice;
+=20
  	usb_get_dev(udev);
- 	usb_set_intfdata(intf, cardp);
-=20
-@@ -253,7 +251,7 @@ static void if_usb_disconnect(struct usb_interface *i=
-ntf)
-=20
- 	lbtf_deb_enter(LBTF_DEB_MAIN);
-=20
--	if_usb_reset_device(cardp);
-+	if_usb_reset_device(priv);
-=20
- 	if (priv)
- 		lbtf_remove_card(priv);
-@@ -336,8 +334,9 @@ static int if_usb_send_fw_pkt(struct if_usb_card *car=
-dp)
- 	return 0;
- }
-=20
--static int if_usb_reset_device(struct if_usb_card *cardp)
-+static int if_usb_reset_device(struct lbtf_private *priv)
- {
-+	struct if_usb_card *cardp =3D priv->card;
- 	struct cmd_ds_802_11_reset *cmd =3D cardp->ep_out_buf + 4;
- 	int ret;
-=20
-@@ -808,14 +807,17 @@ static int check_fwfile_format(const u8 *data, u32 =
-totlen)
- }
-=20
-=20
--static int if_usb_prog_firmware(struct if_usb_card *cardp)
-+static int if_usb_prog_firmware(struct lbtf_private *priv)
- {
-+	struct if_usb_card *cardp =3D priv->card;
- 	int i =3D 0;
- 	static int reset_count =3D 10;
- 	int ret =3D 0;
-=20
- 	lbtf_deb_enter(LBTF_DEB_USB);
-=20
-+	cardp->priv =3D priv;
-+
- 	kernel_param_lock(THIS_MODULE);
- 	ret =3D request_firmware(&cardp->fw, lbtf_fw_name, &cardp->udev->dev);
- 	if (ret < 0) {
-@@ -851,7 +853,7 @@ static int if_usb_prog_firmware(struct if_usb_card *c=
-ardp)
-=20
- 	if (cardp->bootcmdresp <=3D 0) {
- 		if (--reset_count >=3D 0) {
--			if_usb_reset_device(cardp);
-+			if_usb_reset_device(priv);
- 			goto restart;
- 		}
- 		return -1;
-@@ -880,7 +882,7 @@ static int if_usb_prog_firmware(struct if_usb_card *c=
-ardp)
- 	if (!cardp->fwdnldover) {
- 		pr_info("failed to load fw, resetting device!\n");
- 		if (--reset_count >=3D 0) {
--			if_usb_reset_device(cardp);
-+			if_usb_reset_device(priv);
- 			goto restart;
- 		}
-=20
-@@ -889,8 +891,6 @@ static int if_usb_prog_firmware(struct if_usb_card *c=
-ardp)
- 		goto release_fw;
- 	}
-=20
--	cardp->priv->fw_ready =3D 1;
--
-  release_fw:
- 	release_firmware(cardp->fw);
- 	cardp->fw =3D NULL;
 diff --git a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h b/dri=
 vers/net/wireless/marvell/libertas_tf/libertas_tf.h
-index 11d5ff68bc5e..3ed1fbe28798 100644
+index ad77b92d0b41..11d5ff68bc5e 100644
 --- a/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
 +++ b/drivers/net/wireless/marvell/libertas_tf/libertas_tf.h
-@@ -177,8 +177,8 @@ struct lbtf_ops {
- 	/** Hardware access */
- 	int (*hw_host_to_card)(struct lbtf_private *priv, u8 type,
- 			       u8 *payload, u16 nb);
--	int (*hw_prog_firmware)(struct if_usb_card *cardp);
--	int (*hw_reset_device)(struct if_usb_card *cardp);
-+	int (*hw_prog_firmware)(struct lbtf_private *priv);
-+	int (*hw_reset_device)(struct lbtf_private *priv);
- };
+@@ -173,10 +173,19 @@ struct channel_range {
 =20
+ struct if_usb_card;
+=20
++struct lbtf_ops {
++	/** Hardware access */
++	int (*hw_host_to_card)(struct lbtf_private *priv, u8 type,
++			       u8 *payload, u16 nb);
++	int (*hw_prog_firmware)(struct if_usb_card *cardp);
++	int (*hw_reset_device)(struct if_usb_card *cardp);
++};
++
  /** Private structure for the MV device */
-@@ -254,7 +254,6 @@ struct lbtf_private {
- 	struct ieee80211_supported_band band;
- 	struct lbtf_offset_value offsetvalue;
+ struct lbtf_private {
+ 	void *card;
+ 	struct ieee80211_hw *hw;
++	const struct lbtf_ops *ops;
 =20
--	u8 fw_ready;
- 	u8 surpriseremoved;
- 	struct sk_buff_head bc_ps_buf;
+ 	/* Command response buffer */
+ 	u8 cmd_resp_buff[LBS_UPLD_SIZE];
+@@ -188,11 +197,6 @@ struct lbtf_private {
 =20
+ 	struct work_struct cmd_work;
+ 	struct work_struct tx_work;
+-	/** Hardware access */
+-	int (*hw_host_to_card) (struct lbtf_private *priv, u8 type, u8 *payload=
+, u16 nb);
+-	int (*hw_prog_firmware) (struct if_usb_card *cardp);
+-	int (*hw_reset_device) (struct if_usb_card *cardp);
+-
+=20
+ 	/** Wlan adapter data structure*/
+ 	/** STATUS variables */
+@@ -486,7 +490,8 @@ void lbtf_cmd_response_rx(struct lbtf_private *priv);
+ /* main.c */
+ struct chan_freq_power *lbtf_get_region_cfp_table(u8 region,
+ 	int *cfp_no);
+-struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev);
++struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev,
++				   const struct lbtf_ops *ops);
+ int lbtf_remove_card(struct lbtf_private *priv);
+ int lbtf_start_card(struct lbtf_private *priv);
+ int lbtf_rx(struct lbtf_private *priv, struct sk_buff *skb);
 diff --git a/drivers/net/wireless/marvell/libertas_tf/main.c b/drivers/ne=
 t/wireless/marvell/libertas_tf/main.c
-index 8ed3cd158cf5..b4bd3047eb4e 100644
+index f93b400db949..8ed3cd158cf5 100644
 --- a/drivers/net/wireless/marvell/libertas_tf/main.c
 +++ b/drivers/net/wireless/marvell/libertas_tf/main.c
-@@ -118,11 +118,6 @@ static void lbtf_cmd_work(struct work_struct *work)
- 	priv->cmd_timed_out =3D 0;
+@@ -281,7 +281,7 @@ static void lbtf_tx_work(struct work_struct *work)
+ 	BUG_ON(priv->tx_skb);
+ 	spin_lock_irq(&priv->driver_lock);
+ 	priv->tx_skb =3D skb;
+-	err =3D priv->hw_host_to_card(priv, MVMS_DAT, skb->data, skb->len);
++	err =3D priv->ops->hw_host_to_card(priv, MVMS_DAT, skb->data, skb->len)=
+;
  	spin_unlock_irq(&priv->driver_lock);
+ 	if (err) {
+ 		dev_kfree_skb_any(skb);
+@@ -301,7 +301,7 @@ static int lbtf_op_start(struct ieee80211_hw *hw)
 =20
--	if (!priv->fw_ready) {
--		lbtf_deb_leave_args(LBTF_DEB_CMD, "fw not ready");
--		return;
--	}
--
- 	/* Execute the next command */
- 	if (!priv->cur_cmd)
- 		lbtf_execute_next_command(priv);
-@@ -294,36 +289,29 @@ static void lbtf_tx_work(struct work_struct *work)
- static int lbtf_op_start(struct ieee80211_hw *hw)
- {
- 	struct lbtf_private *priv =3D hw->priv;
--	void *card =3D priv->card;
- 	int ret =3D -1;
+ 	if (!priv->fw_ready)
+ 		/* Upload firmware */
+-		if (priv->hw_prog_firmware(card))
++		if (priv->ops->hw_prog_firmware(card))
+ 			goto err_prog_firmware;
 =20
- 	lbtf_deb_enter(LBTF_DEB_MACOPS);
-=20
--	if (!priv->fw_ready)
--		/* Upload firmware */
--		if (priv->ops->hw_prog_firmware(card))
--			goto err_prog_firmware;
--
  	/* poke the firmware */
- 	priv->capability =3D WLAN_CAPABILITY_SHORT_PREAMBLE;
- 	priv->radioon =3D RADIO_ON;
- 	priv->mac_control =3D CMD_ACT_MAC_RX_ON | CMD_ACT_MAC_TX_ON;
- 	ret =3D lbtf_setup_firmware(priv);
- 	if (ret)
--		goto err_prog_firmware;
-+		goto err_setup_firmware;
-=20
- 	if ((priv->fwrelease < LBTF_FW_VER_MIN) ||
- 	    (priv->fwrelease > LBTF_FW_VER_MAX)) {
- 		ret =3D -1;
--		goto err_prog_firmware;
-+		goto err_setup_firmware;
- 	}
-=20
- 	lbtf_deb_leave(LBTF_DEB_MACOPS);
+@@ -322,7 +322,7 @@ static int lbtf_op_start(struct ieee80211_hw *hw)
  	return 0;
 =20
--err_prog_firmware:
--	priv->ops->hw_reset_device(card);
--	lbtf_deb_leave_args(LBTF_DEB_MACOPS, "error programming fw; ret=3D%d", =
+ err_prog_firmware:
+-	priv->hw_reset_device(card);
++	priv->ops->hw_reset_device(card);
+ 	lbtf_deb_leave_args(LBTF_DEB_MACOPS, "error programming fw; ret=3D%d", =
 ret);
-+err_setup_firmware:
-+	lbtf_deb_leave_args(LBTF_DEB_MACOPS, "fw setup error; ret=3D%d", ret);
  	return ret;
  }
-=20
-@@ -555,6 +543,11 @@ int lbtf_rx(struct lbtf_private *priv, struct sk_buf=
-f *skb)
-=20
- 	lbtf_deb_enter(LBTF_DEB_RX);
-=20
-+	if (priv->radioon !=3D RADIO_ON) {
-+		lbtf_deb_rx("rx before we turned on the radio");
-+		goto done;
-+	}
-+
- 	prxpd =3D (struct rxpd *) skb->data;
-=20
- 	memset(&stats, 0, sizeof(stats));
-@@ -593,13 +586,14 @@ int lbtf_rx(struct lbtf_private *priv, struct sk_bu=
-ff *skb)
-=20
- 	ieee80211_rx_irqsafe(priv->hw, skb);
-=20
-+done:
- 	lbtf_deb_leave(LBTF_DEB_RX);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(lbtf_rx);
-=20
- /**
-- * lbtf_add_card: Add and initialize the card, no fw upload yet.
-+ * lbtf_add_card: Add and initialize the card.
+@@ -605,7 +605,8 @@ EXPORT_SYMBOL_GPL(lbtf_rx);
   *
-  *  @card    A pointer to card
-  *
-@@ -648,6 +642,19 @@ struct lbtf_private *lbtf_add_card(void *card, struc=
-t device *dmdev,
+  *  Returns: pointer to struct lbtf_priv.
+  */
+-struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev)
++struct lbtf_private *lbtf_add_card(void *card, struct device *dmdev,
++				   const struct lbtf_ops *ops)
+ {
+ 	struct ieee80211_hw *hw;
+ 	struct lbtf_private *priv =3D NULL;
+@@ -622,6 +623,7 @@ struct lbtf_private *lbtf_add_card(void *card, struct=
+ device *dmdev)
 =20
- 	INIT_WORK(&priv->cmd_work, lbtf_cmd_work);
- 	INIT_WORK(&priv->tx_work, lbtf_tx_work);
-+
-+	if (priv->ops->hw_prog_firmware(priv)) {
-+		lbtf_deb_usbd(&udev->dev, "Error programming the firmware\n");
-+		priv->ops->hw_reset_device(priv);
-+		goto err_init_adapter;
-+	}
-+
-+	/* The firmware seems to start with the radio enabled. Turn it
-+	 * off before an actual mac80211 start callback is invoked.
-+	 */
-+	priv->radioon =3D RADIO_OFF;
-+	lbtf_set_radio_control(priv);
-+
- 	if (ieee80211_register_hw(hw))
- 		goto err_init_adapter;
+ 	priv->hw =3D hw;
+ 	priv->card =3D card;
++	priv->ops =3D ops;
+ 	priv->tx_skb =3D NULL;
 =20
+ 	hw->queues =3D 1;
 --=20
 2.20.1
 
