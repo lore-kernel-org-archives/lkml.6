@@ -2,119 +2,169 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2008FC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 09:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C92C282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 09:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25C62177B
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 09:17:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SG0RU987"
+	by mail.kernel.org (Postfix) with ESMTP id 7B1442177B
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 09:22:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726158AbfBJJRz (ORCPT
+        id S1726152AbfBJJWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 04:17:55 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41691 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfBJJRy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 04:17:54 -0500
-Received: by mail-ot1-f65.google.com with SMTP id u16so12848767otk.8;
-        Sun, 10 Feb 2019 01:17:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EFr+hrz2O53PiwqmX3QTtSp5XOzA10YBuRNlgpk5lRI=;
-        b=SG0RU9870xNNfMYjUSgdedMKAVqHQ/Gb5wx70W29faMoiyEyK/10ZJ0tWhkflRbqn5
-         uh63T5WBN3cGijq6MdV/LKswSWMSSdhtgQBAnkxFEfTB+7gBKFhZ6BNokS0mkGEFx55N
-         uU2/IvLfLzYAaKiSJunCpANsfTc6okCLOCwykwbs7CmAXbgTaEMxf2P9MUNwtQCDpaB0
-         K8+JCCuC51xB7zEqBT03Ounxe/9psbdT2mG8sSH0fazJMNBLdzxsiA6x4Ip0nJ9rcRFP
-         pvmeROZ3fo8ZmTtwqHSWIHI4cdziZroVWqnxPyLzGBahBw0n7j4zq1tod2YXQRSt7EFf
-         33cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EFr+hrz2O53PiwqmX3QTtSp5XOzA10YBuRNlgpk5lRI=;
-        b=JvJDwU4Y1XrGS0VtMW2Dks/QBegtOiGQi2QQyJsxdOVMiAOIUp7+DCB687+ORUQkLN
-         Y5Cu9+qu8mt+ChPD1V1+iKEtb2q7sv9/YqO31VddJ9zNBTZ9h7RQJ6dRNPJzsV4e6RfI
-         /1jmNBeIBhShD6wfbvb+VICvqVijP1Ub93j6JS5iLW9U8qZOC3hAAWWuHgCy5ng1LX3w
-         z8mFu9Yryl7PhpJ32b6a3SXZQO52LDWJs0qOju2ttT89g2zYfwtRtslKNxU6Xr7gaGRU
-         LzGjNbE2ZZrhVX3d5PiPwlRiCnZ4glx0YT3uFuEYccVsRTUZDgiYeDxs59JBRZw6ZjjS
-         RnYA==
-X-Gm-Message-State: AHQUAubFr7jD/QyeiCPQOoKAsyiLUyvTkaokbBDFwv2sO2HLfdMk7Z06
-        8n20QSn1TZUnnUwshY34NSGIHarTfiwpNOZMPIfy8w==
-X-Google-Smtp-Source: AHgI3Ia61A8ocEQHNaBrWbLS0V0k/nsaEzIySZDplbldwgnmc936zox5jw3CojIg10PjHY4Ab9/YRuHWBqZR2HL8tvU=
-X-Received: by 2002:a9d:61c8:: with SMTP id h8mr20982929otk.279.1549790273575;
- Sun, 10 Feb 2019 01:17:53 -0800 (PST)
+        Sun, 10 Feb 2019 04:22:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbfBJJW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 04:22:29 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C738488E52;
+        Sun, 10 Feb 2019 09:22:28 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 688F5600D7;
+        Sun, 10 Feb 2019 09:22:17 +0000 (UTC)
+Date:   Sun, 10 Feb 2019 17:22:09 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/5] genirq/affinity: allow driver to setup managed IRQ's
+ affinity
+Message-ID: <20190210092207.GA4832@ming.t460p>
+References: <20190125095347.17950-1-ming.lei@redhat.com>
+ <20190125095347.17950-3-ming.lei@redhat.com>
+ <20190207222130.GQ7268@google.com>
 MIME-Version: 1.0
-References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
- <1549736341.2971.7.camel@HansenPartnership.com>
-In-Reply-To: <1549736341.2971.7.camel@HansenPartnership.com>
-From:   Mikael Pettersson <mikpelinux@gmail.com>
-Date:   Sun, 10 Feb 2019 10:17:42 +0100
-Message-ID: <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
-Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes 5
- minute delay during boot on Sun Blade 2500
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190207222130.GQ7268@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sun, 10 Feb 2019 09:22:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 9, 2019 at 7:19 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Sat, 2019-02-09 at 18:04 +0100, Mikael Pettersson wrote:
-> > 4.20 and earlier kernels boot fine on my Sun Blade 2500 (UltraSPARC
-> > IIIi), but the 5.0-rc kernels consistently experience a 5 minute
-> > delay
-> > late during boot, after enabling networking but before allowing user
-> > logins.  E.g. 5.0-rc5 dmesg has:
-> >
-> > [Fri Feb  8 17:13:17 2019] random: dbus-daemon: uninitialized urandom
-> > read (12 bytes read)
-> > [Fri Feb  8 17:18:14 2019] random: crng init done
->
-> I've had the same problem on several of my test systems.  Are you sure
-> it's not this bug report:
->
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=912087
->
-> ?
->
-> The solution for me was to install the haveged package which does
-> active entropy gathering during boot and can make /dev/urandom
-> available much earlier.
+On Thu, Feb 07, 2019 at 04:21:30PM -0600, Bjorn Helgaas wrote:
+> On Fri, Jan 25, 2019 at 05:53:44PM +0800, Ming Lei wrote:
+> > This patch introduces callback of .setup_affinity into 'struct
+> > irq_affinity', so that:
+> > 
+> > 1) allow drivers to customize the affinity for managed IRQ, for
+> > example, now NVMe has special requirement for read queues & poll
+> > queues
+> > 
+> > 2) 6da4b3ab9a6e9 ("genirq/affinity: Add support for allocating interrupt sets")
+> > makes pci_alloc_irq_vectors_affinity() a bit difficult to use for
+> > allocating interrupt sets: 'max_vecs' is required to same with 'min_vecs'.
+> 
+> s/is required to same with/is required to be equal to/
+> 
+> > With this patch, driver can implement their own .setup_affinity to
+> > customize the affinity, then the above thing can be solved easily.
+> 
+> s/driver/drivers/
+> 
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  include/linux/interrupt.h | 26 +++++++++++++++++---------
+> >  kernel/irq/affinity.c     |  6 ++++++
+> >  2 files changed, 23 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> > index c672f34235e7..f6cea778cf50 100644
+> > --- a/include/linux/interrupt.h
+> > +++ b/include/linux/interrupt.h
+> > @@ -242,30 +242,38 @@ struct irq_affinity_notify {
+> >  };
+> >  
+> >  /**
+> > + * struct irq_affinity_desc - Interrupt affinity descriptor
+> > + * @mask:	cpumask to hold the affinity assignment
+> > + */
+> > +struct irq_affinity_desc {
+> > +	struct cpumask	mask;
+> > +	unsigned int	is_managed : 1;
+> > +};
+> 
+> I was going to comment that "managed" already has a common usage
+> related to the devm_*() functions, but I don't think that's what you
+> mean here.  But then I noticed that you're only *moving* this code,
+> so you couldn't change it anyway.
+> 
+> But I still wonder what "managed" means here.
 
-Thanks for the hint, I'll look into using haveged on this machine.
+'managed' irq's affinity is managed by kernel, and user space can't change
+it any more via /proc/irq/...
 
->
-> > During this interval the machine answers pings but won't allow user
-> > logins either on the console or over the network.
-> >
-> > A git bisect identified commit
-> > f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-> > Author: Jens Axboe <axboe@kernel.dk>
-> > Date:   Thu Nov 1 16:36:27 2018 -0600
-> >
-> >     scsi: kill off the legacy IO path
-> >
-> > as the point where this 5m delay was introduced.
->
-> I think the reason for this is that the block mq path doesn't feed the
-> kernel entropy pool correctly, hence the need to install an entropy
-> gatherer for systems that don't have other good random number sources.
+> 
+> > +
+> > +/**
+> >   * struct irq_affinity - Description for automatic irq affinity assignements
+> >   * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
+> >   *			the MSI(-X) vector space
+> >   * @post_vectors:	Don't apply affinity to @post_vectors at end of
+> >   *			the MSI(-X) vector space
+> > + * @setup_affinity:	Use driver's method to setup irq vectors affinity,
+> > + * 			and driver has to handle pre_vectors & post_vectors
+> > + * 			correctly, set 'is_managed' flag correct too
+> 
+> s/irq vectors/irq vector/
+> s/correct/correctly/
+> 
+> In general I don't think "correctly" is very useful in changelogs
+> and comments.  Usually it just means "how *I* think it should be
+> done", but it doesn't tell anybody else exactly *how* it should be
+> done.
 
-That does sound plausible, I admit I didn't even consider the possibility that
-the old block I/O path also was an entropy source.
+That is one nice question.
 
-/Mikael
+So far there are at least two rules related with correctness:
+
+1) 'is_managed' flag needs to be set
+
+2) for all managed irq vectors in one interrupt set of one device,
+all possible CPUs should be covered in the setup affinities, meantime
+one CPU can't be allocated to two irq vectors. The interrupt set is
+unique for NVMe actually now, such as, all READ queues' interrupts
+belong to one set, and other queues belong to another set. For other
+device, we can think there is only one set for one device.
+
+> 
+> What does it mean for a driver to handle pre_vectors & post_vectors
+> "correctly"?  The driver's .setup_affinity() method receives an array
+> of struct irq_affinity; maybe it means that method should set the
+> cpumask for each element as it desires.  For @pre_vectors and
+> @post_vectors, I suppose that means their cpumask would be
+> irq_default_affinity?
+
+So far the default affinity for pre_vectors & post_vectors is to use
+irq_default_affinity, and this patch changes it to cpu_possible_mask,
+and this change won't be one big deal from driver's view.
+
+> 
+> But I guess the .setup_affinity() method means the driver would have
+> complete flexibility for each vector, and it could use
+
+Yeah, together with simplification in both driver and genirq/affinity
+code.
+
+> irq_default_affinity for arbitrary vectors, not just the first few
+> (@pre_vectors) and the last few (@post_vectors)?
+> 
+> What's the rule for how a driver sets "is_managed"?
+
+Please see above, and I plan to enhance the rule in genirq/affinity code
+if this approach may be accepted.
+
+Thanks,
+Ming
