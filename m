@@ -2,76 +2,83 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1887AC282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3A2C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3FA4213F2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:39:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 895232145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfBJTjz (ORCPT
+        id S1726699AbfBJTrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:39:55 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37299 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbfBJTjz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:39:55 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gsux6-0000J7-Mf; Sun, 10 Feb 2019 20:39:44 +0100
-Date:   Sun, 10 Feb 2019 20:39:44 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ira Weiny <ira.weiny@intel.com>
-cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH] mm/gup.c: Remove unused write variable
-In-Reply-To: <20190209173109.9361-1-ira.weiny@intel.com>
-Message-ID: <alpine.DEB.2.21.1902102029560.8784@nanos.tec.linutronix.de>
-References: <20190209173109.9361-1-ira.weiny@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 10 Feb 2019 14:47:47 -0500
+Received: from shell.v3.sk ([90.176.6.54]:42432 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbfBJTrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 14:47:47 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 13B38CE822;
+        Sun, 10 Feb 2019 20:47:44 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id vyLzXK0_5dBI; Sun, 10 Feb 2019 20:47:41 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 80B80CE82E;
+        Sun, 10 Feb 2019 20:47:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id kr5Mrupa6cjr; Sun, 10 Feb 2019 20:47:41 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id AFB7DCE822;
+        Sun, 10 Feb 2019 20:47:40 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] libertas_tf: lower the debug level of command trace
+Date:   Sun, 10 Feb 2019 20:47:35 +0100
+Message-Id: <20190210194735.17939-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ira,
+Logging each and every command response is way too much for INFO level.
+Silence this, unless CONFIG_LIBERTAS_THINFIRM_DEBUG has been enabled.
 
-On Sat, 9 Feb 2019, ira.weiny@intel.com wrote:
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/net/wireless/marvell/libertas_tf/cmd.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-nice patch. Just a few nitpicks vs. the subject and the change log.
+diff --git a/drivers/net/wireless/marvell/libertas_tf/cmd.c b/drivers/net=
+/wireless/marvell/libertas_tf/cmd.c
+index 909ac3685010..64b147dd2432 100644
+--- a/drivers/net/wireless/marvell/libertas_tf/cmd.c
++++ b/drivers/net/wireless/marvell/libertas_tf/cmd.c
+@@ -737,10 +737,9 @@ int lbtf_process_rx_command(struct lbtf_private *pri=
+v)
+ 	respcmd =3D le16_to_cpu(resp->command);
+ 	result =3D le16_to_cpu(resp->result);
+=20
+-	if (net_ratelimit())
+-		pr_info("libertastf: cmd response 0x%04x, seq %d, size %d\n",
+-			respcmd, le16_to_cpu(resp->seqnum),
+-			le16_to_cpu(resp->size));
++	lbtf_deb_cmd("libertastf: cmd response 0x%04x, seq %d, size %d\n",
++		     respcmd, le16_to_cpu(resp->seqnum),
++		     le16_to_cpu(resp->size));
+=20
+ 	if (resp->seqnum !=3D priv->cur_cmd->cmdbuf->seqnum) {
+ 		spin_unlock_irqrestore(&priv->driver_lock, flags);
+--=20
+2.20.1
 
-> Subject: [PATCH] mm/gup.c: Remove unused write variable
-
-We usually avoid filenames in the subsystem prefix. mm/gup: is sufficient.
-
-But what's a bit more confusing is 'write variable'. You are not removing a
-variable, you are removing a unused function argument. That's two different
-things.
-
-> write is unused in gup_fast_permitted so remove it.
-
-When referencing functions please use brackets so it's clear that you talk
-about a function, i.e. gup_fast_permitted().
-
-So the correct subject line would be:
-
-  Subject: [PATCH] mm/gup: Remove write argument from gup_fast_permitted()
-
-Thanks,
-
-	tglx
