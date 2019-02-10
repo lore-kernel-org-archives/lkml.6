@@ -5,36 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F898C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DB5C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E8A2146F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:43:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 145D721736
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbfBJUnZ (ORCPT
+        id S1726699AbfBJUoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:43:25 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37343 "EHLO
+        Sun, 10 Feb 2019 15:44:10 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:37350 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfBJUnZ (ORCPT
+        with ESMTP id S1725971AbfBJUoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:43:25 -0500
+        Sun, 10 Feb 2019 15:44:10 -0500
 Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gsvwd-0000ws-BL; Sun, 10 Feb 2019 21:43:19 +0100
-Date:   Sun, 10 Feb 2019 21:43:18 +0100 (CET)
+        id 1gsvxO-0000xu-QD; Sun, 10 Feb 2019 21:44:07 +0100
+Date:   Sun, 10 Feb 2019 21:44:06 +0100 (CET)
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Robin Murphy <robin.murphy@arm.com>
 cc:     will.deacon@arm.com, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        suzuki.poulose@arm.com, peterz@infradead.org,
-        bigeasy@linutronix.de, "Li, Meng" <Meng.Li@windriver.com>
-Subject: Re: [PATCH 1/5] perf/arm-cci: Fix CPU hotplug race avoidance
-In-Reply-To: <606ff8c3f7f35ccdcb4b52a49f692fb20e27359c.1549299188.git.robin.murphy@arm.com>
-Message-ID: <alpine.DEB.2.21.1902102140080.8784@nanos.tec.linutronix.de>
-References: <cover.1549299188.git.robin.murphy@arm.com> <606ff8c3f7f35ccdcb4b52a49f692fb20e27359c.1549299188.git.robin.murphy@arm.com>
+        suzuki.poulose@arm.com, peterz@infradead.org, bigeasy@linutronix.de
+Subject: Re: [PATCH 3/5] perf/arm-ccn: Fix CPU hotplug race avoidance
+In-Reply-To: <d1118e5694694ee40d2e784b2af8745f2d1dce0a.1549299188.git.robin.murphy@arm.com>
+Message-ID: <alpine.DEB.2.21.1902102143290.8784@nanos.tec.linutronix.de>
+References: <cover.1549299188.git.robin.murphy@arm.com> <d1118e5694694ee40d2e784b2af8745f2d1dce0a.1549299188.git.robin.murphy@arm.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -47,12 +46,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, 4 Feb 2019, Robin Murphy wrote:
-> +
+>  	/* Pick one CPU which we will use to collect data from CCN... */
+> -	cpumask_set_cpu(get_cpu(), &ccn->dt.cpu);
 > +	cpus_read_lock();
-> +	cci_pmu->cpu = smp_processor_id();
+> +	ccn->dt.cpu = smp_processor_id();
 
-That wants to be raw_smp_processor_id() because this is preemptible
-context and debug_smp_processor_id() will complain. 
+Again raw_smp_processor_id()
 
 Thanks,
 
