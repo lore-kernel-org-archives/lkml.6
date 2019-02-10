@@ -2,165 +2,147 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57254C282D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DD9C282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28ADF20844
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA56820844
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:50:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="mfTqsZGI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBJPuy (ORCPT
+        id S1726858AbfBJPu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:50:54 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:48792 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfBJPux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:50:53 -0500
-Received: from p54b26fa7.dip0.t-ipconnect.de ([84.178.111.167] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gsrNU-0000MQ-SP; Sun, 10 Feb 2019 16:50:44 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: fractional-divider: check parent rate only if flag is set
-Date:   Sun, 10 Feb 2019 16:50:10 +0100
-Message-ID: <1772879.g6DUe2Ua28@phil>
-In-Reply-To: <20190210153806.24201-1-katsuhiro@katsuster.net>
-References: <20190210153806.24201-1-katsuhiro@katsuster.net>
+        Sun, 10 Feb 2019 10:50:59 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44071 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbfBJPu4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 10:50:56 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p4so4070047plq.11
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 07:50:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=u99vCrxZVjq6IAIyJDVCFPZjEfk9fl7g5jyYQ73Sl6o=;
+        b=mfTqsZGIGgRsiENXLeo/CEc3yhJ23to80nt3IGw2u5hdZ0N+hks6d+7Ajat1H9XAIy
+         3pdxzh9S/9mk2CfOCDnmF5POXVifwcLj/HQXy1C9fWqUQLMiXYH1+eUeFyYviDSeVR6C
+         pJtSq4zRKrnjBzsEtPtKFHhE56mkjiDeexih2IpI77jansNDVebTFfpNN87o3D09k5+U
+         kcWgzl8+zMf0c4WyaCvxrOCqw8pFiRkcD0d6UBUrcDpguTaVLHIuN9ISAeeLdZcblR0e
+         dN5J+rfREfVlu5nqehYG8devKJ0XifZv2yp1f5GmAB43dj34dB1Ykj8q05A6DKiQJT3d
+         qMFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u99vCrxZVjq6IAIyJDVCFPZjEfk9fl7g5jyYQ73Sl6o=;
+        b=ahPNH2N4RggkD1/IvXDbvwBnaUedbHP4LP94c23cTWHBUL10IAj7MIpPxiLdTV/wF9
+         x75f8MMS8p4rwsrizk79xCVmGQHx3G1dVNbWJJYIRt8s2iCQR3r+HZOQ4zTu9ocPuxy/
+         OpdjKoA7YDXeBRNKrdWODrYvnPS70Ro654UZctP9kGtt9oqwbyBOWQblFaABC4Kk9avf
+         E/A1d/V7q7sailMhA+IZFc2TdmsZrO4Ip1l3agwOP8PcrbQchm8c3Wq52V/0LJ5WRaRu
+         R2dD5FXfZiju17gWoQ40aEvMQGLXRdfNj6mULT0BGHLSVliqFFhjcjnIYjCSWCqI8xab
+         Qlsw==
+X-Gm-Message-State: AHQUAua8C892EKxW7jPILXnOaX2DdlWiH4gIs9muRDiIy2Ulpg9LpMGK
+        h1KfxbpunsROKZbXAoAu+QYaAg==
+X-Google-Smtp-Source: AHgI3IbGHP6t7A7zZPwI7XVGvbmETeO2TqmM1z1kHcsOyKC9z/K+aM2A+wumQO2XTTJHojyFxCR9hQ==
+X-Received: by 2002:a17:902:2e03:: with SMTP id q3mr25513080plb.330.1549813855552;
+        Sun, 10 Feb 2019 07:50:55 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id v13sm10543835pff.20.2019.02.10.07.50.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 10 Feb 2019 07:50:54 -0800 (PST)
+Subject: Re: [PATCH] blk-sysfs: Rework documention of __blk_release_queue
+To:     Marcos Souza <marcos.souza.org@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>
+References: <20190131011139.2264742-1-marcos.souza.org@gmail.com>
+ <02fcaaa4-3667-7144-5ca2-4e5346380439@gmail.com>
+ <813bdf91-83de-332d-5d6b-2287039578b5@kernel.dk>
+ <CAH0vN5JF6p0B+uO2CQ-+Bv_cEtBRtWdpLJHD9mYAf3Ht2GncdA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9d1b596a-e5c6-6ad4-0a03-789bddb3d090@kernel.dk>
+Date:   Sun, 10 Feb 2019 08:50:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAH0vN5JF6p0B+uO2CQ-+Bv_cEtBRtWdpLJHD9mYAf3Ht2GncdA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sonntag, 10. Februar 2019, 16:38:06 CET schrieb Katsuhiro Suzuki:
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate even if target rate is greater than parent.
+On 2/10/19 8:44 AM, Marcos Souza wrote:
 > 
-> This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
-> is set.
 > 
-> For detailed example, clock tree of Rockchip I2S audio hardware.
->   - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
->   - i2s1_div is integer divider can divide N (N is 1~128).
->     Input clock is CPLL or GPLL. Initial divider value is N = 1.
->     Ex) PLL = CPLL, N = 10, i2s1_div output rate is
->       CPLL / 10 = 1.2GHz / 10 = 120MHz
->   - i2s1_frac is fractional divider can divide input to x/y, x and
->     y are 16bit integer.
+> On Sun, Feb 10, 2019, 13:23 Jens Axboe <axboe@kernel.dk <mailto:axboe@kernel.dk> wrote:
 > 
-> CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
-> GPLL --> |          | ,--------------'    |          |
->                       `--> i2s1_frac ---> |          |
+>     On 2/9/19 11:34 AM, Marcos Paulo de Souza wrote:
+>     > Ping :)
+>     >
+>     > On 1/30/19 11:11 PM, Marcos Paulo de Souza wrote:
+>     >> The Notes section of the comment was removed, because now
+>     >> blk_release_queue can only be executed from blk_cleanup_queue (being
+>     >> called when the q->kobj reaches zero), and also blk_init_queue was removed
+>     >> in a1ce35fa4985.
+>     >>
+>     >> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com <mailto:marcos.souza.org@gmail.com>>
+>     >> ---
+>     >>  This is basically a v2 of https://lkml.org/lkml/2019/1/14/1098
+>     >>
+>     >>  But, I tried to describe when this function is called, removing redundancies.
+>     >>  Maybe it would be better placed in blk-core.c, where the q->kobj is initialized
+>     >>  with blk_queue_ktype (which .release pointer points to blk_release_queue)?
+>     >>
+>     >>  block/blk-sysfs.c | 19 +++++++------------
+>     >>  1 file changed, 7 insertions(+), 12 deletions(-)
+>     >>
+>     >> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>     >> index 590d1ef2f961..d4dea9179fa6 100644
+>     >> --- a/block/blk-sysfs.c
+>     >> +++ b/block/blk-sysfs.c
+>     >> @@ -817,21 +817,16 @@ static void blk_free_queue_rcu(struct rcu_head *rcu_head)
+>     >>  }
+>     >> 
+>     >>  /**
+>     >> - * __blk_release_queue - release a request queue when it is no longer needed
+>     >> + * __blk_release_queue - release a request queue
+>     >>   * @work: pointer to the release_work member of the request queue to be released
+>     >>   *
+>     >>   * Description:
+>     >> - *     blk_release_queue is the counterpart of blk_init_queue(). It should be
+>     >> - *     called when a request queue is being released; typically when a block
+>     >> - *     device is being de-registered. Its primary task it to free the queue
+>     >> - *     itself.
+>     >> - *
+>     >> - * Notes:
+>     >> - *     The low level driver must have finished any outstanding requests first
+>     >> - *     via blk_cleanup_queue().
+>     >> - *
+>     >> - *     Although blk_release_queue() may be called with preemption disabled,
+>     >> - *     __blk_release_queue() may sleep.
+>     >> + *     This function is called when a block device is being de-registered. The
 > 
-> Clock mux system try to choose suitable one from i2s1_div and
-> i2s1_frac for master clock (MCLK) of I2S1.
+>     unregistered
 > 
-> Bad scenario as follows:
->   - Try to set MCLK to 8.192MHz (32kHz audio replay)
->     Candidate setting is
->     - i2s1_div: GPLL / 60 = 8.192MHz
->     i2s1_div candidate is exactly same as target clock rate, so mux
->     choose this clock source. i2s1_div output rate is changed
->     491.52MHz -> 8.192MHz
+>     >> + *     process of releasing a request queue starts with blk_cleanup_queue, which
+>     >> + *     set the appropriate flags and the calls blk_put_queue, that decrements
 > 
->   - After that try to set to 11.2896MHz (44.1kHz audio replay)
->     Candidate settings are
->     - i2s1_div : CPLL / 107 = 11.214945MHz
->     - i2s1_frac: i2s1_div   = 8.192MHz
->       This is because clk_fd_round_rate() thinks target rate
->       (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
->       and returns parent clock rate.
+>     s/the/then
 > 
-> Above is current upstreamed behavior. Clock mux system choose
-> i2s1_div, but this clock rate is not acceptable for I2S driver, so
-> users cannot replay audio.
 > 
-> Expected behavior is:
->   - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
->     Candidate settings are
->     - i2s1_div : CPLL / 107          = 11.214945MHz
->     - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
->                  Change i2s1_div to GPLL / 1 = 491.52MHz at same
->                  time.
-> 
-> If apply this commit, clk_fd_round_rate() calls custom approximate
-> function of Rockchip even if target rate is higher than parent.
-> Custom function changes both grand parent (i2s1_div) and parent
-> (i2s_frac) settings at same time. Clock mux system can choose
-> i2s1_frac and audio works fine.
-> 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+> Thanks foe the review. Do you want me to send a v2?
 
-While it took me a bit to wrap my head around fractional dividers
-again :-) ... this sounds definitly sensible to do, especially
-as the clock driver should really take into account potentially
-setting the parent rate if possible, so
+Yes please.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-> ---
->  drivers/clk/clk-fractional-divider.c | 2 +-
->  drivers/clk/clk.c                    | 8 ++++++++
->  include/linux/clk-provider.h         | 1 +
->  3 files changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-> index 545dceec0bbf..fdfe2e423d15 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -79,7 +79,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->  	unsigned long m, n;
->  	u64 ret;
->  
-> -	if (!rate || rate >= *parent_rate)
-> +	if (!rate || (!clk_hw_can_set_rate_parent(hw) && rate >= *parent_rate))
->  		return *parent_rate;
->  
->  	if (fd->approximation)
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d2477a5058ac..070c0cb29ee8 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -518,6 +518,14 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
->  
-> +bool clk_hw_can_set_rate_parent(struct clk_hw *hw)
-> +{
-> +	unsigned long flags = clk_hw_get_flags(hw);
-> +
-> +	return flags & CLK_SET_RATE_PARENT;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_can_set_rate_parent);
-> +
->  /*
->   * Helper for finding best parent to provide a given frequency. This can be used
->   * directly as a determine_rate callback (e.g. for a mux), or from a more
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index e443fa9fa859..693a51937ded 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -808,6 +808,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
->  void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
->  void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
->  			   unsigned long max_rate);
-> +bool clk_hw_can_set_rate_parent(struct clk_hw *hw);
->  
->  static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
->  {
-> 
-
-
-
+-- 
+Jens Axboe
 
