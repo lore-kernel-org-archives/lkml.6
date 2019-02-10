@@ -2,77 +2,90 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DD9C282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADDBC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA56820844
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BA5120863
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:59:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="mfTqsZGI"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="L8f1IlKa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mpb+WRBt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfBJPu7 (ORCPT
+        id S1726340AbfBJP64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:50:59 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44071 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbfBJPu4 (ORCPT
+        Sun, 10 Feb 2019 10:58:56 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46910 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfBJP6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:50:56 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p4so4070047plq.11
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 07:50:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u99vCrxZVjq6IAIyJDVCFPZjEfk9fl7g5jyYQ73Sl6o=;
-        b=mfTqsZGIGgRsiENXLeo/CEc3yhJ23to80nt3IGw2u5hdZ0N+hks6d+7Ajat1H9XAIy
-         3pdxzh9S/9mk2CfOCDnmF5POXVifwcLj/HQXy1C9fWqUQLMiXYH1+eUeFyYviDSeVR6C
-         pJtSq4zRKrnjBzsEtPtKFHhE56mkjiDeexih2IpI77jansNDVebTFfpNN87o3D09k5+U
-         kcWgzl8+zMf0c4WyaCvxrOCqw8pFiRkcD0d6UBUrcDpguTaVLHIuN9ISAeeLdZcblR0e
-         dN5J+rfREfVlu5nqehYG8devKJ0XifZv2yp1f5GmAB43dj34dB1Ykj8q05A6DKiQJT3d
-         qMFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u99vCrxZVjq6IAIyJDVCFPZjEfk9fl7g5jyYQ73Sl6o=;
-        b=ahPNH2N4RggkD1/IvXDbvwBnaUedbHP4LP94c23cTWHBUL10IAj7MIpPxiLdTV/wF9
-         x75f8MMS8p4rwsrizk79xCVmGQHx3G1dVNbWJJYIRt8s2iCQR3r+HZOQ4zTu9ocPuxy/
-         OpdjKoA7YDXeBRNKrdWODrYvnPS70Ro654UZctP9kGtt9oqwbyBOWQblFaABC4Kk9avf
-         E/A1d/V7q7sailMhA+IZFc2TdmsZrO4Ip1l3agwOP8PcrbQchm8c3Wq52V/0LJ5WRaRu
-         R2dD5FXfZiju17gWoQ40aEvMQGLXRdfNj6mULT0BGHLSVliqFFhjcjnIYjCSWCqI8xab
-         Qlsw==
-X-Gm-Message-State: AHQUAua8C892EKxW7jPILXnOaX2DdlWiH4gIs9muRDiIy2Ulpg9LpMGK
-        h1KfxbpunsROKZbXAoAu+QYaAg==
-X-Google-Smtp-Source: AHgI3IbGHP6t7A7zZPwI7XVGvbmETeO2TqmM1z1kHcsOyKC9z/K+aM2A+wumQO2XTTJHojyFxCR9hQ==
-X-Received: by 2002:a17:902:2e03:: with SMTP id q3mr25513080plb.330.1549813855552;
-        Sun, 10 Feb 2019 07:50:55 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id v13sm10543835pff.20.2019.02.10.07.50.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 07:50:54 -0800 (PST)
-Subject: Re: [PATCH] blk-sysfs: Rework documention of __blk_release_queue
-To:     Marcos Souza <marcos.souza.org@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>
-References: <20190131011139.2264742-1-marcos.souza.org@gmail.com>
- <02fcaaa4-3667-7144-5ca2-4e5346380439@gmail.com>
- <813bdf91-83de-332d-5d6b-2287039578b5@kernel.dk>
- <CAH0vN5JF6p0B+uO2CQ-+Bv_cEtBRtWdpLJHD9mYAf3Ht2GncdA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9d1b596a-e5c6-6ad4-0a03-789bddb3d090@kernel.dk>
-Date:   Sun, 10 Feb 2019 08:50:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Sun, 10 Feb 2019 10:58:55 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A452B6085F; Sun, 10 Feb 2019 15:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549814334;
+        bh=jmOHNU0CmRxZY54rSe05cXFEg36E2/HFEJVI9ZJsafA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=L8f1IlKas4X4MazTn+BdSu/q5jp/9UcbLNVphyeCY+OwSDIZXG7O9wefEqV9QOVSB
+         Y/B951Rc+FXcZkuHer+midAfi0ku2qHt13nTls9IA2RzpU/QqFTe5s+78owRnOaR6N
+         289qChVqLb3d4gcjYFPl52RpzXJ6jLz5vAVlqpkU=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7A44F60274;
+        Sun, 10 Feb 2019 15:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549814332;
+        bh=jmOHNU0CmRxZY54rSe05cXFEg36E2/HFEJVI9ZJsafA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Mpb+WRBtqiPaqrBpr2gmJuT75zwDWludi0lcge+ZXHsBNPjDDFdglyorU0TUy8Mjs
+         opo8VoSZX8Q6Oa/mEw96oiw/rM2zvGEY92grBKlGG9ECWN+CBdCLzeWWv+KiK4tyos
+         HseoELyI3pbnKY0b1GhkLhzJUBlJaXLyh1GEdwCA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A44F60274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v3 5/5] Revert "scsi: ufs: disable vccq if it's not needed
+ by UFS device"
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        SCSI <linux-scsi@vger.kernel.org>, Hannes Reinecke <hare@suse.de>
+References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
+ <CGME20190204174549epcas4p4682667176f55101f69cc24cc455c9f3c@epcas4p4.samsung.com>
+ <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
+ <5f2a8378-1f22-6a52-356d-56d3b393ab1d@samsung.com>
+ <05d2d193-4181-12ce-b4fb-4e8dec5aef27@free.fr>
+ <7610c262-1451-9bb2-48a6-4daf6f534f6c@free.fr>
+ <42c86292-22e9-4c5e-d64d-bc6107af45bf@free.fr>
+ <740e6332-b54f-ab62-915a-0aec6be450d3@samsung.com>
+ <2a59c11a-037f-c8c3-235a-9b21183a0801@free.fr>
+ <90f24b35-89b0-cea0-1ab3-13c2a419b138@samsung.com>
+ <81b85f39-49b5-901b-ec79-19708509965e@codeaurora.org>
+ <2c0e5f03-0bb8-e5db-b5de-790da439fcfe@samsung.com>
+ <349da668-6bb5-fcf4-c3f2-f7f7e113ed67@codeaurora.org>
+ <fb4c17d4-977f-7737-6c2c-016b9f024d6c@samsung.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <91a85bc0-0bea-d1fc-0352-ada0f6d9d75e@codeaurora.org>
+Date:   Sun, 10 Feb 2019 08:58:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAH0vN5JF6p0B+uO2CQ-+Bv_cEtBRtWdpLJHD9mYAf3Ht2GncdA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <fb4c17d4-977f-7737-6c2c-016b9f024d6c@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,69 +93,196 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/10/19 8:44 AM, Marcos Souza wrote:
+On 2/9/2019 1:42 AM, Alim Akhtar wrote:
 > 
 > 
-> On Sun, Feb 10, 2019, 13:23 Jens Axboe <axboe@kernel.dk <mailto:axboe@kernel.dk> wrote:
+> On 08/02/19 8:29 PM, Jeffrey Hugo wrote:
+>> On 2/8/2019 2:09 AM, Alim Akhtar wrote:
+>>> Hi Jeffrey,
+>>>
+>>> On 07/02/19 8:22 PM, Jeffrey Hugo wrote:
+>>>> On 2/7/2019 1:50 AM, Alim Akhtar wrote:
+>>>>> Hi Marc,
+>>>>>
+>>>>> On 06/02/19 9:22 PM, Marc Gonzalez wrote:
+>>>>>> On 06/02/2019 16:27, Alim Akhtar wrote:
+>>>>>>
+>>>>>>> On 06/02/19 8:29 PM, Marc Gonzalez wrote:
+>>>>>>>
+>>>>>>>> [    2.405734] regulator_disable: ENTER vdd_l26
+>>>>>>>> [    2.405958] regulator_disable: EXIT vdd_l26
+>>>>>>>> [    2.406032]   regulator_set_load: vdd_l26 = 0 uA
+>>>>>>>> [    3.930447] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode
+>>>>>>>> 0x04 for idn 13 failed, index 0, err = -11
+>>>>>>>> [    5.434358] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode
+>>>>>>>> 0x04 for idn 13 failed, index 0, err = -11
+>>>>>>>> [    6.938318] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr: opcode
+>>>>>>>> 0x04 for idn 13 failed, index 0, err = -11
+>>>>>>>> [    6.938414] ufshcd-qcom 1da4000.ufshc: ufshcd_query_attr_retry:
+>>>>>>>> query attribute, idn 13, failed with error -11 after 3 retires
+>>>>>>>> [    6.946959] ufshcd-qcom 1da4000.ufshc:
+>>>>>>>> ufshcd_disable_auto_bkops: failed to enable exception event -11
+>>>>>>>> [    6.958523] ufshcd-qcom 1da4000.ufshc: dme-peer-get: attr-id
+>>>>>>>> 0x1587 failed 3 retries
+>>>>>>>> [    6.967730] ufshcd-qcom 1da4000.ufshc: dme-peer-get: attr-id
+>>>>>>>> 0x1586 failed 3 retries
+>>>>>>>> [    6.975576] ufshcd-qcom 1da4000.ufshc: ufshcd_get_max_pwr_mode:
+>>>>>>>> invalid max pwm tx gear read = 0
+>>>>>>>> [    6.983306] ufshcd-qcom 1da4000.ufshc: ufshcd_probe_hba: Failed
+>>>>>>>> getting max supported power mode
+>>>>>>>> [    8.506314] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag:
+>>>>>>>> Sending flag query for idn 3 failed, err = -11
+>>>>>>>> [   10.010352] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag:
+>>>>>>>> Sending flag query for idn 3 failed, err = -11
+>>>>>>>> [   11.514313] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag:
+>>>>>>>> Sending flag query for idn 3 failed, err = -11
+>>>>>>>> [   11.514412] ufshcd-qcom 1da4000.ufshc: ufshcd_query_flag_retry:
+>>>>>>>> query attribute, opcode 5, idn 3, failed with error -11 after 3
+>>>>>>>> retires
+>>>>>>>> [   13.050354] ufshcd-qcom 1da4000.ufshc:
+>>>>>>>> __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0,
+>>>>>>>> err = -11
+>>>>>>>> [   14.554313] ufshcd-qcom 1da4000.ufshc:
+>>>>>>>> __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0,
+>>>>>>>> err = -11
+>>>>>>>> [   16.058313] ufshcd-qcom 1da4000.ufshc:
+>>>>>>>> __ufshcd_query_descriptor: opcode 0x01 for idn 8 failed, index 0,
+>>>>>>>> err = -11
+>>>>>>>> [   16.058421] ufshcd-qcom 1da4000.ufshc: ufshcd_read_desc_param:
+>>>>>>>> Failed reading descriptor. desc_id 8, desc_index 0, param_offset 0,
+>>>>>>>> ret -11
+>>>>>>>> [   16.067654] ufshcd-qcom 1da4000.ufshc: ufshcd_init_icc_levels:
+>>>>>>>> Failed reading power descriptor.len = 98 ret = -11
+>>>>>>>> [   37.074334] ufshcd-qcom 1da4000.ufshc: link startup failed 1
+>>>>>>>
+>>>>>>> Can you check if your UFS device RESET_N is asserted correctly. It
+>>>>>>> might
+>>>>>>> be connected to some regulator and may be you can try keeping that
+>>>>>>> regulator as "regulator-always-on" from your DT node.
+>>>>>>
+>>>>>> How do I check RESET_N? In software or hardware?
+>>>>>>
+>>>>> RST_N is the reset logic for UFS device core logic and it is input to
+>>>>> the device from UFS host controller.So, in your platform please
+>>>>> check if
+>>>>> this line somehow connected to (pulled up) a PMIC supply. If that is
+>>>>> the
+>>>>> case, please keep that regulator ON and see if this issue is resolved.
+>>>>
+>>>> The reset line is routed though the global clock controller (GCC), and
+>>>> must be explicitly asserted within the GCC to trigger a reset.  As far
+>>>> as I am aware, Linux is not touching this.
+>>>>
+>>>> Additionally, I fail to see how if this was a reset issue, reverting
+>>>> 60f0187031c0 would have any impact (which doing so addresses our issue)
+>>>>
+>>> OK, that's again implementation dependent and your platform used that
+>>> way. My point was to make sure that reset part is ok, if reset/power is
+>>> not proper to the UFS device core logic this kind of issues comes.
+>>
+>> We are following the Hardware Programming Guide written by the platform
+>> designers with regard to UFS, including the reset logic.  I really don't
+>> think the reset logic is an issue here.
+>>
+>>>
+>>>>>> Do you think it is not a good idea to revert
+>>>>>> 60f0187031c05e04cbadffb62f557d0ff3564490 ?
+>>>>>>
+>>>>> Please hold on till we understand the real cause of this issue. Or we
+>>>>> have a consensuses for reverting the said commit.
+>>>>> Thanks!
+>>>>
+>>>> Did you see https://lkml.org/lkml/2019/2/5/659 where I indicated VCCQ
+>>>> powers components within the host controller, and by not setting load on
+>>>> the regulator properly, we are likely undervolting those components due
+>>>> to the current draw?
+>>>>
+>>> In theory may be true. But looks like we dont have a solid evidence yet
+>>> (correct me if I am wrong or misunderstood anything here
+>> The evidence seems simple.  We have properly described in DT all the
+>> regulators that are consumed by the UFS host controller, and by
+>> extension, the UFS storage chip as well.
+>>
+>> By default, with no kernel changes, UFS does not work.
+>>
+>> Marc and I debugged the issue, and found that the VCCQ regulator was not
+>> being handled properly, and reverting the change we are discussing fixes
+>> the the VCCQ regulator issue, and as a result UFS works.
+>>
+> Ok, fair, before we revert this patch, Marc can you try below patch, or
+> let me know if you have already tried this and share your
+> result/observation:
 > 
->     On 2/9/19 11:34 AM, Marcos Paulo de Souza wrote:
->     > Ping :)
->     >
->     > On 1/30/19 11:11 PM, Marcos Paulo de Souza wrote:
->     >> The Notes section of the comment was removed, because now
->     >> blk_release_queue can only be executed from blk_cleanup_queue (being
->     >> called when the q->kobj reaches zero), and also blk_init_queue was removed
->     >> in a1ce35fa4985.
->     >>
->     >> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com <mailto:marcos.souza.org@gmail.com>>
->     >> ---
->     >>  This is basically a v2 of https://lkml.org/lkml/2019/1/14/1098
->     >>
->     >>  But, I tried to describe when this function is called, removing redundancies.
->     >>  Maybe it would be better placed in blk-core.c, where the q->kobj is initialized
->     >>  with blk_queue_ktype (which .release pointer points to blk_release_queue)?
->     >>
->     >>  block/blk-sysfs.c | 19 +++++++------------
->     >>  1 file changed, 7 insertions(+), 12 deletions(-)
->     >>
->     >> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->     >> index 590d1ef2f961..d4dea9179fa6 100644
->     >> --- a/block/blk-sysfs.c
->     >> +++ b/block/blk-sysfs.c
->     >> @@ -817,21 +817,16 @@ static void blk_free_queue_rcu(struct rcu_head *rcu_head)
->     >>  }
->     >> 
->     >>  /**
->     >> - * __blk_release_queue - release a request queue when it is no longer needed
->     >> + * __blk_release_queue - release a request queue
->     >>   * @work: pointer to the release_work member of the request queue to be released
->     >>   *
->     >>   * Description:
->     >> - *     blk_release_queue is the counterpart of blk_init_queue(). It should be
->     >> - *     called when a request queue is being released; typically when a block
->     >> - *     device is being de-registered. Its primary task it to free the queue
->     >> - *     itself.
->     >> - *
->     >> - * Notes:
->     >> - *     The low level driver must have finished any outstanding requests first
->     >> - *     via blk_cleanup_queue().
->     >> - *
->     >> - *     Although blk_release_queue() may be called with preemption disabled,
->     >> - *     __blk_release_queue() may sleep.
->     >> + *     This function is called when a block device is being de-registered. The
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> index 50e9033aa7f6..b08e8d1ea0f3 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> @@ -212,6 +212,7 @@
+>                   vreg_l26a_1p2: l26 {
+>                           regulator-min-microvolt = <1200000>;
+>                           regulator-max-microvolt = <1200000>;
+> +                       regulator-always-on;
+>                   };
+>                   vreg_l28_3p0: l28 {
+>                           regulator-min-microvolt = <3008000>;
+> ---
 > 
->     unregistered
+> I believe "vreg_l26a_1p2" is supply for ufs's vccq.
 > 
->     >> + *     process of releasing a request queue starts with blk_cleanup_queue, which
->     >> + *     set the appropriate flags and the calls blk_put_queue, that decrements
+> check the result of this patch /wo reverting
+> 60f0187031c05e04cbadffb62f557d0ff3564490
 > 
->     s/the/then
-> 
-> 
-> Thanks foe the review. Do you want me to send a v2?
+>> Again, despite the fact that we may have a Samsung UFS storage chip,
+>> which triggers the quirk, the UFS host controller which talks to that
+>> chip requires VCCQ, therefore this quirk breaks us.
+>>
+>>> So that means its some short of hardware/board quirk, right?
+>>
+>> No
+>>
+>>> Can you please recheck the schematic and see what Bjorn is telling
+>>> (about having right entries in the DT for regulator) resolve your issue?
+>>
+>> Already done.  The schematic defines vcc, vccq, and vccq2.  All of those
+>> are listed in DT, and have been since Marc and I have been trying to
+>> utilize UFS.
+>>
+>>>
+>>> Marc, Can you disabled pmic on that board (hope your board boots with
+>>> default PMIC supply) and see if this issue still occurs?
+>>
+>> The PMIC is required the boot the board.  I doubt the board will be
+>> functional with the PMIC disabled.
+>>
+>>> I am just trying to understand and see what is the real cause.
+>>
+>> Our analysis is that VCCQ is required and
+>> 60f0187031c05e04cbadffb62f557d0ff3564490 prevents the proper
+>> configuration of VCCQ, thus a required resource (VCCQ) is not in the
+>> proper state.
+>>
+> Not in proper state or vccq regulator is disabled?
 
-Yes please.
+Proper state.  The PHY also consumes VCCQ, so it should be on, however 
+the regulators have multiple power savings states based on the amount of 
+load expressed.  The amount of load the PHY puts on the regulator is 
+minimal.  The load the controller puts on the regulator is significant 
+(which would result in a non-default state that would consume more 
+power), however the quirk prevents that load from being expressed, and 
+thus the regulator is in the wrong state for the system needs.
+
+>>>
+>>> @Yaniv Gardi, will you be able to comment on reason for adding
+>>> 60f0187031c05e04cbadffb62f557d0ff3564490 (any issue faced)?
+>>>
+>>
+>>
+
 
 -- 
-Jens Axboe
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
