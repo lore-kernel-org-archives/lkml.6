@@ -5,67 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D57C282D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9768C282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF7A2173C
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BECF620874
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 17:53:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaBWKmWU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgYAp9no"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfBJRxW (ORCPT
+        id S1726876AbfBJRxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 12:53:22 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39976 "EHLO
+        Sun, 10 Feb 2019 12:53:25 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42881 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbfBJRxT (ORCPT
+        with ESMTP id S1726655AbfBJRxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 12:53:19 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s5so13890070oth.7;
-        Sun, 10 Feb 2019 09:53:19 -0800 (PST)
+        Sun, 10 Feb 2019 12:53:21 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i5so3375202oto.9;
+        Sun, 10 Feb 2019 09:53:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zl/HyELvG6PMVqnH30RIyCX+2L6jJFk32RBdmwKy5nw=;
-        b=eaBWKmWU5SyOKj+LbsSWwDOhrBiQ2cqf21r3RepMklKAjTufvG1hTlZfeWTOb+XEb9
-         X3Jld52sQ88uD4NfzVXXQg927esA5dZ4ZGove6VQSzRAaZVXQ+3zgJDgOqDGuw+Q1isR
-         7eeJuJVvz/PrZLTeBPORVmzp/DPE7CazevMkRMOQ0Mt4LAo0vqtkUB8O3MlhA1qE1ioM
-         JRNTKtutzN6F8kGnf/6CkTaVsV4y3KzPexLCEx4ufXtH0EXO+IbB0AATN9/LViqr4EGq
-         IChZbcSsDfr/DdjutvJ1IwbaAn7eah1SV6fdn25L3GCnv7GGyit1jPtzfb79dwrSeAHy
-         Rr+g==
+        bh=exDgzfiqwA3z8lOpN/VUH5vzBnnYQ2SOMaSyGMBZROQ=;
+        b=AgYAp9no8pvAvhahS4zyEYOHWK5zf+kFJSllL5DEUXl1fxLONkSRzYz4e30Z0xlMaV
+         wfpgwhE5AK9LuE0/11ZRAf9Y6OKE81L+wgGo4AFfmqOj0rI+BZb9f3OzVoIB3niDuSt2
+         o0bDBjXzHFpV8o/TL2pSRAtMR3AEhGIgQpP4gGBAhRgbCWn+1rgjUOveU4h4thWPNwdn
+         nwTcYvzt9ODORTlV3z+NiFi3b0YoicrVfb3x3OypO8bMLZH/aLlJ5fpNIWZN/s6JIu3f
+         1YlizvlIgdvTt/VlS23Q19yObJzYbQlySh3ioBHmdRXX+GiiDoY6ZBhyKdso13kyh7MK
+         Uh1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zl/HyELvG6PMVqnH30RIyCX+2L6jJFk32RBdmwKy5nw=;
-        b=VZ9yoYaO/7dDKm5mQYw3leVNg7PCgorwhAKXN8UnBZ0ZgfoJ289awyPnIkcHayTbl6
-         KGxXPFZxgtgBx3ESo3YJKC1hbNoBseJ9IdhG+wBt2fZQwwr55MtXaRlA1lc1V0iJE1OK
-         JqqlJ+JbLt9EtdsiC0e7q6BpTYVogAH5pQIkw/vk4Em6Z22TaYPu2yeUQCQU/ZagS28y
-         omkE1LE9BGaHhue3MDodwcEUEdCkbXI2PDr+YvSQgrRjU+OvlgTHTVGh62e+gZDPdX3H
-         hVW3udCaarQdTJaUMhbYAUjQu7Lda3y8EhoxC9WSDud8zQFHyZxF7XgfXjzXIZQxlUDM
-         QUbw==
-X-Gm-Message-State: AHQUAuZfDrdRMT40gNdOxWQpbn4seqI9+IBjj7Z8dUt4W/D7Yi3pIBAB
-        tJfQjOVLhypUoatHGu2mab3xV7jv
-X-Google-Smtp-Source: AHgI3IYaa3rxlAqDUJi2c/r4ohl+9myzYVyr2o5t7r/G0iAx2+nBrV5+uTosTYviuDhE7H7hmdy6Mg==
-X-Received: by 2002:a05:6830:1609:: with SMTP id g9mr10421755otr.254.1549821198322;
-        Sun, 10 Feb 2019 09:53:18 -0800 (PST)
+        bh=exDgzfiqwA3z8lOpN/VUH5vzBnnYQ2SOMaSyGMBZROQ=;
+        b=jOGIkELMj2gmY+VTZpUR/dxQrnJqC2lCUdJHqpfCXUoBj6J2KNCKNG+heEFAgSlB3M
+         XPysvUWi8xamNf4YqEHZcxSED/9UG8WmQsPCwq/YqmH57PxJocoaY8Wou1jH6xpBzjxt
+         U5AZBBQus0mgc5YMHHZ/EVtPNW83Yv5Eo9ZLpeoTzgf92siTbJYnKAbpExZROQz50Oww
+         rnnIS1IhqGcUEkQVDMiS2g3dHiWgACPpSg5/NbczClCqThpZKpzhGvGZJKi7zpQcoeon
+         p6t6PFelto1wH9EcGhlJ4DZ3TIeZf5dxoqkPnkRaOjySOrJfgS5lfwphxhx40l7QfYkI
+         NUUA==
+X-Gm-Message-State: AHQUAubu+HcYY8doip8aS3k1pkUAAYKr5M2W+NVBX0NUtlbDXX0957UM
+        uTAGzseFV/a/Qjd9YF++tDl28GsY
+X-Google-Smtp-Source: AHgI3IYm7SbIUjsZ36F7ZxrQxeWde1DXAqNlFCXVt5TvxN78tG4vLheiH5pwd2DnQLuU4KNAifvPvw==
+X-Received: by 2002:a9d:491e:: with SMTP id e30mr24798987otf.131.1549821200246;
+        Sun, 10 Feb 2019 09:53:20 -0800 (PST)
 Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id n9sm3156425otq.14.2019.02.10.09.53.16
+        by smtp.gmail.com with ESMTPSA id n9sm3156425otq.14.2019.02.10.09.53.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 09:53:17 -0800 (PST)
+        Sun, 10 Feb 2019 09:53:19 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>, idosch@mellanox.com,
         linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
         bridge@lists.linux-foundation.org, jiri@mellanox.com,
         andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v2 02/16] mlxsw: spectrum: Check bridge flags during prepare phase
-Date:   Sun, 10 Feb 2019 09:50:51 -0800
-Message-Id: <20190210175105.31629-3-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 03/16] staging: fsl-dpaa2: ethsw: Check bridge port flags during set
+Date:   Sun, 10 Feb 2019 09:50:52 -0800
+Message-Id: <20190210175105.31629-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190210175105.31629-1-f.fainelli@gmail.com>
 References: <20190210175105.31629-1-f.fainelli@gmail.com>
@@ -76,33 +75,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for getting rid of switchdev_port_attr_get(), have mlxsw
-check for the bridge flags being set through switchdev_port_attr_set()
-with the SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS attribute identifier.
+In preparation for removing SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
+have ethsw check that the bridge port flags that are being set are
+supported.
 
 Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 5 ++++-
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index 95e37de3e48f..468a6d513074 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -623,8 +623,11 @@ static int mlxsw_sp_port_attr_br_flags_set(struct mlxsw_sp_port *mlxsw_sp_port,
- 	struct mlxsw_sp_bridge_port *bridge_port;
- 	int err;
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index e559f4c25cf7..6228c4375835 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -680,8 +680,11 @@ static int port_attr_br_flags_set(struct net_device *netdev,
+ 	struct ethsw_port_priv *port_priv = netdev_priv(netdev);
+ 	int err = 0;
  
 -	if (switchdev_trans_ph_prepare(trans))
 +	if (switchdev_trans_ph_prepare(trans)) {
-+		if (brport_flags & ~(BR_LEARNING | BR_FLOOD | BR_MCAST_FLOOD))
++		if (flags & ~(BR_LEARNING | BR_FLOOD))
 +			return -EOPNOTSUPP;
  		return 0;
 +	}
  
- 	bridge_port = mlxsw_sp_bridge_port_find(mlxsw_sp_port->mlxsw_sp->bridge,
- 						orig_dev);
+ 	/* Learning is enabled per switch */
+ 	err = ethsw_set_learning(port_priv->ethsw_data, flags & BR_LEARNING);
 -- 
 2.19.1
 
