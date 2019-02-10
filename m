@@ -2,126 +2,102 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D559DC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A57C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99E1020873
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:06:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYODRvqB"
+	by mail.kernel.org (Postfix) with ESMTP id A542D2146F
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 19:20:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfBJTGm (ORCPT
+        id S1726699AbfBJTUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 14:06:42 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52735 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbfBJTGl (ORCPT
+        Sun, 10 Feb 2019 14:20:39 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:37285 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfBJTUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 14:06:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so13277256wml.2;
-        Sun, 10 Feb 2019 11:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=EKjzv7Pv4TNnz2+MQrslpZJwfNPoJRTBvfVLHgHOxOE=;
-        b=iYODRvqBZuk6iTRsY65cJZof71V4wglY7fz5PhLo4pFhcXz3kErg/WHOARTCHniyS9
-         irM5vDDfDDd0T1ExDZYNrcHcBkwA0IoJ3ff4FMxrXBwDgHjbNdw5hsAw7cXIH5mZ2AJe
-         7IC4Q93UqEnInOmAvPbu3aAQlig6PhxUbn7EsVzw7ZbfKtjEtqINNAkSBWFee371XoW/
-         Wqx/n0/5wfueftRHjMDjM0n2hXo5NC3y4xCUI9X4H0P3GGRg6ARTXVcKVgTyyORL5sM3
-         Ps6ur/4XDxOpRs4N5HESGqevHbMbiaWMZ33w5ojYSd8vc+dSm8+1zgwFX2PvlvU5F7zs
-         d0BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=EKjzv7Pv4TNnz2+MQrslpZJwfNPoJRTBvfVLHgHOxOE=;
-        b=G4D9JkNEjnetoiCnGfL5VnW4UCf2fyebIWtDqzA6Xlgq3zDwhJoGBqveZKpk/wUZDz
-         VC0usb8gxYE+/V1Fa3yX0kMqsf9V/bltjkAo191FHmrq4lkQEgUWocjDy+A5Bdhs/6Gv
-         rlX5oBUxkABfxVtuEKYLZTzUqC7hg9pJOLjmUKT8vuqSzlazkNrRkqQSgxLFW+0+KdE5
-         ++QlTJQjgA6YoMmAQmS/2/USxgyVTzJyYPimu/15WK0IBmaPi2JIp3Ouxf2O0e+kzz1N
-         BtWlE+l1jRc+zIufbWskdFF4knRip+Z2vcwKVDuJ2GBH3FpoiCRQYyV8B6GEsscJUCaz
-         URVQ==
-X-Gm-Message-State: AHQUAuZS24SMlT8m4FZPxPYUDfmRw8UDdoT72BT5W7Wvp0fXyObWYr3Q
-        zqgf8hP0x9utHSsj897j800=
-X-Google-Smtp-Source: AHgI3IYwfX9oUBnuxmoYCydfrGj1gedZWXEQ/wK+wL+yNqkBYqJBcw6q5KCw8PuPG/h2fnnom95qHw==
-X-Received: by 2002:adf:ce91:: with SMTP id r17mr1011312wrn.80.1549825599435;
-        Sun, 10 Feb 2019 11:06:39 -0800 (PST)
-Received: from felia ([2001:16b8:2dee:9f00:2436:5653:8de5:2886])
-        by smtp.gmail.com with ESMTPSA id s5sm8112484wmh.37.2019.02.10.11.06.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Feb 2019 11:06:38 -0800 (PST)
-From:   "lukas.bulwahn" <lukas.bulwahn@gmail.com>
-X-Google-Original-From: "lukas.bulwahn" <lukas@gmail.com>
-Date:   Sun, 10 Feb 2019 20:06:20 +0100 (CET)
-X-X-Sender: lukas@felia
-To:     James Bottomley <jejb@linux.ibm.com>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: use tab instead of spaces
-In-Reply-To: <1549823158.4142.12.camel@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1902101954310.9405@felia>
-References: <20190210181011.6117-1-lukas.bulwahn@gmail.com> <1549823158.4142.12.camel@linux.ibm.com>
+        Sun, 10 Feb 2019 14:20:38 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gsueL-00005g-Cm; Sun, 10 Feb 2019 20:20:21 +0100
+Date:   Sun, 10 Feb 2019 20:20:20 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+In-Reply-To: <20190205170415.GG17550@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1902102012520.8784@nanos.tec.linutronix.de>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com> <1549084491-57808-9-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de> <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com> <20190204195704.GJ29639@zn.tnic>
+ <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com> <20190205084857.GK17528@hirez.programming.kicks-ass.net> <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com> <20190205170415.GG17550@hirez.programming.kicks-ass.net>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 5 Feb 2019, Peter Zijlstra wrote:
+> On Tue, Feb 05, 2019 at 07:19:16AM -0800, Dave Hansen wrote:
+> > On 2/5/19 12:48 AM, Peter Zijlstra wrote:
+> > This isn't something we want everybody and their grandma to turn on;
+> > it's a rather specialized feature.  It's really only for folks that care
+> > about the latency incurred across the entire system on split lock
+> > operations.
+> 
+> That really should be everyone. That split lock stuff is horrible. There
+> is no real down-side to having it always enabled. Code that breaks is
+> bad code you want fixed anyway.
+> 
+> Like I said elsewhere, I wish it would #AC for any unaligned LOCK
+> prefix, not just cross-line. I see why we'd not want to traditional RISC
+> #AC for every load/store, but atomics really had better be aligned.
 
+Right, we should really make this default enabled.
 
-On Sun, 10 Feb 2019, James Bottomley wrote:
-
-> On Sun, 2019-02-10 at 19:10 +0100, Lukas Bulwahn wrote:
-> > Mimi Zohar used spaces instead of a tab when adding Jarkko Sakkinen
-> > as
-> > further maintainer to the KEYS-TRUSTED section entry. So, we rectify
-> > this
-> > with this commit.
+> > > Is this some transient state; where a few (early) models will not have
+> > > the enumeration sorted but all later models will have it all neat and
+> > > tidy?
 > > 
-> > The issue was detected when writing a script that parses MAINTAINERS.
+> > From my understanding, it's not just an early stepping.  It's a
+> > generational thing.  The current generation lacks the enumeration and
+> > the next generation will get it.  Both have the silicon to implement the
+> > feature itself.
+> 
+> I never said stepping, in fact I explicitly said model.
+> 
+> > > If so, we can easily do the FMS solution for this.
 > > 
-> > Fixes: 34bccd61b139 ("MAINTAINERS: add Jarkko as maintainer for
-> > trusted keys")
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > Yeah, we can.  I honestly forget why we didn't do FMS. :)
 > 
-> This isn't really a bug, is it?
-> 
-> We have no formatting requirements for the MAINTAINERS file and the
-> section owner is free to align with tabs, spaces or nothing as they see
-> fit.  Most use a single tab, but a couple don't. The only real thing
-> that cares is get_maintainers.pl and it uses \s* as the parse regexp,
-> so it doesn't care either.
-> 
-> Now, we could possibly agree the file looks better with a single space
-> or a single tab between the tag and the value and thus we should be
-> doing this, but we'd need to agree on that and update the tag
-> description accordingly.
-> 
+> Right so FMS is fairly horrible; but when it is a stop-gap for a limited
+> number of models it's waaay better than dodgy cmdline things.
 
-It was the only line in MAINTAINERS remaining that used spaces instead of 
-a single tab. So, even if there is not an explicit formatting requirement, 
-changing a single line to have it consistent in one format seemed 
-reasonable to me.
+One or two is fine. And _IF_ we get the enumeration sorted before we merge
+that, then we can declare the FM list as immutable :)
+ 
+> We could of course try to wrmsr_safe() detect the feature; but that
+> might be a problem is the MSR exists on any other models and has a
+> different meaning.
 
-I just sent a new patch that also corrected the email address; 
-unfortunately, I was distracted and sent it out wrong twice before
-getting Mimi's email right on the third try.
-
-Please ignore this patch and consider the patch:
-
-MAINTAINERS: rectify two issues in KEYS-TRUSTED entry
+Well, yes, but that would be pretty stupid.
 
 Thanks,
 
-Lukas
+	tglx
+
