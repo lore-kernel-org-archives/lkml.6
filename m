@@ -2,272 +2,140 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8721C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 14:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AEA7C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9262F20844
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 14:36:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t8r0XghB"
+	by mail.kernel.org (Postfix) with ESMTP id 317B42176F
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:17:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549811866;
+	bh=VnkLwyfz2y5oJ1AwrbXtdH8RHcIiOlUTEBTeXSz3IrI=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=U2yhkaMf4RID2vbtwNduzbz9s0ozEiFu2lnmZ8nqKtPGasxbgqa7Kx2+1jC3lgoa+
+	 BwWEoBn8mddP1CvyzJvz8ZhEYaAin39mlPFT0+OB0gc1W37wtk3HwpdZb544G0f0Ht
+	 8swMPCe+cFiBczqUld4FlLX/PXXyVUBUOE5HXF8g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfBJOgc (ORCPT
+        id S1726267AbfBJPRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 09:36:32 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35292 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfBJOgc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 09:36:32 -0500
-Received: by mail-it1-f196.google.com with SMTP id r6so20275501itk.0;
-        Sun, 10 Feb 2019 06:36:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eD5m9zMxlfgHuAIqkZxDsujpqbo0M9bdBQpX2ZygQ5o=;
-        b=t8r0XghBdX7Kmdnzky3aka3Jy2IObCsrlGw4akVMf7hkxN8ViyfmlLY2j+Bc6t9idI
-         zd5jh6FObdkw28/e6YXRxqFyzUxsNRP2QyxlyKZaAk0R5pnsf9UUo39MyCh+azeaa9Iv
-         ujCrfaI+7ES2/1lJ6V371B7wcYYJq+2t/JHtqyqwFMmhxC0cbD9NJSjFHp8ZUBUUpwqC
-         z5ktt5G1PV4814ctnzlh9+IOEE6CaUmCZnAzOXyS0WlPMI6k8j1rjlhlK39T5NIlAFIy
-         +lkfpbEdauC4YttDhG76hkvHJ+lsljMUtnBaYgjjDVReXd4SgVhCXgC6UTzY08AenlCS
-         GqeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eD5m9zMxlfgHuAIqkZxDsujpqbo0M9bdBQpX2ZygQ5o=;
-        b=lLA/9OiG5GEkjn9eDWEc2UtWl/U3HQ4jejEu38ETcyLqtN/Eo5sp2yKFJ4lEYAaO0n
-         9auUfv55rNH8RZITP142Q2jzAyI5MG8Y7F7vaNQQjeX61aiUbyFfKlcjZZTRiIg9A7w9
-         LgRxtp1CBPYLgvaZdCDOvY0YSO3XKlscpL5/DCuc3N5rjiVjNV+HFWQZXhr7pz73zybX
-         r2ur3IKyOmpdgSeez5vx+C1A2H132u+CviYCVjTc7L1V84QLq/VEWjzg86Utb/H5NfZc
-         PIeie4vYpIwMg9ZfZgAT43IHMuFjmFmhUllMSlVcCRRAdWb7X+Q2/ep0fn9bsZExkt7E
-         Vlqw==
-X-Gm-Message-State: AHQUAuYTsmsKJCmjdHd5apkQwTvG2sn2y/ExvzivNpwfFncxt1sAGyCU
-        xjfZWJWjslQerlRoTetu/B3N7KGfQczcohqlXgM=
-X-Google-Smtp-Source: AHgI3Ib7l52HfJgNm5J5sygR/S5wFiIbuM5xog32O7rinNdSKJEZU/qBneVT6Gs13oB0Hwy16GsqtI8HvMRaXfl6smw=
-X-Received: by 2002:a05:660c:58a:: with SMTP id g10mr3363106itk.167.1549809390269;
- Sun, 10 Feb 2019 06:36:30 -0800 (PST)
+        Sun, 10 Feb 2019 10:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726042AbfBJPRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 10:17:32 -0500
+Received: from localhost (unknown [117.99.91.83])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 032872176F;
+        Sun, 10 Feb 2019 15:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549811851;
+        bh=VnkLwyfz2y5oJ1AwrbXtdH8RHcIiOlUTEBTeXSz3IrI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=QnLjhIiWAMVl4mhyTb6mb1QI2y19Ejc6F8vOnWNEtg/xweis1K3GUQ7ekDqyYbU/G
+         KzDYvV0vwWH4nCSK+U1DcGVy74i484Fb5WuEP1p5y1kG7/2j944YELp2A2Zwj/KsyK
+         CmzA+t7HjWbGj5uKHQVTevFYzUfC0pQT2bk5YWxY=
+Date:   Sun, 10 Feb 2019 20:47:22 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dma <dmaengine@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] dmaengine fixes for v5.0-rc6
+Message-ID: <20190210151722.GM4296@vkoul-mobl>
 MIME-Version: 1.0
-References: <000000000000f4f3ad0581140b3f@google.com>
-In-Reply-To: <000000000000f4f3ad0581140b3f@google.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Sun, 10 Feb 2019 22:36:18 +0800
-Message-ID: <CADvbK_fSqGky_Q-wFdfrQX55bA2mWsJg4jM9yDLQ8tkkFu0cPA@mail.gmail.com>
-Subject: Re: KASAN: invalid-free in sctp_stream_free
-To:     syzbot <syzbot+58e480e7b28f2d890bfd@syzkaller.appspotmail.com>
-Cc:     davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="HlL+5n6rz5pIUxbD"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 1:21 AM syzbot
-<syzbot+58e480e7b28f2d890bfd@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    dc4c89997735 Add linux-next specific files for 20190201
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17eb3dc4c00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=59aefae07c771af6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=58e480e7b28f2d890bfd
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117990e4c00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16758df8c00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+58e480e7b28f2d890bfd@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: double-free or invalid-free in sctp_stream_free+0xfa/0x190
-> net/sctp/stream.c:187
 
-The issue might be caused by "return -ENOMEM" in sctp_stream_alloc_out().
+--HlL+5n6rz5pIUxbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-sctp_stream_init() -> sctp_stream_outq_migrate():
-        for (i = outcnt; i < stream->outcnt; i++)
-                kfree(SCTP_SO(stream, i)->ext);
+Hi Linus,
 
-It will free the surplus streams' ext, but it doesn't set them to NULL. Then,
-sctp_stream_init() -> sctp_stream_alloc_out():
-        ret = sctp_stream_alloc_out(stream, outcnt, gfp);
-        if (ret)
-                goto out;
+Please pull to receive the fixes for dmaengine. We have fixes in bunch
+of drivers like xdmac, imx, bcm etc.
 
-        stream->outcnt = outcnt;
-when it returns err, stream->outcnt will not be set to the new outcnt.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-With the old outcnt(a bigger value), it will try to free those surplus
-streams' ext again when freeing the asoc.
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-So we can fix it simply by:
+are available in the Git repository at:
 
-diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-index 3892e76..9e317e5 100644
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -131,8 +131,10 @@ static void sctp_stream_outq_migrate(struct
-sctp_stream *stream,
-                }
-        }
+  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.0-=
+rc6
 
--       for (i = outcnt; i < stream->outcnt; i++)
-+       for (i = outcnt; i < stream->outcnt; i++) {
-                kfree(SCTP_SO(stream, i)->ext);
-+               SCTP_SO(stream, i)->ext = NULL;
-+       }
- }
+for you to fetch changes up to 6454368a804c4955ccd116236037536f81e5b1f1:
 
->
-> CPU: 0 PID: 7775 Comm: syz-executor682 Not tainted 5.0.0-rc4-next-20190201
-> #25
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
->   kasan_report_invalid_free+0x65/0xa0 mm/kasan/report.c:278
->   __kasan_slab_free+0x13a/0x150 mm/kasan/common.c:439
->   kasan_slab_free+0xe/0x10 mm/kasan/common.c:468
->   __cache_free mm/slab.c:3488 [inline]
->   kfree+0xcf/0x230 mm/slab.c:3807
->   sctp_stream_free+0xfa/0x190 net/sctp/stream.c:187
->   sctp_association_free+0x235/0x79a net/sctp/associola.c:373
->   sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:939 [inline]
->   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1353 [inline]
->   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->   sctp_do_sm+0x3c4e/0x5380 net/sctp/sm_sideeffect.c:1191
->   sctp_assoc_bh_rcv+0x343/0x660 net/sctp/associola.c:1074
->   sctp_inq_push+0x1ea/0x290 net/sctp/inqueue.c:95
->   sctp_backlog_rcv+0x196/0xbe0 net/sctp/input.c:354
->   sk_backlog_rcv include/net/sock.h:936 [inline]
->   __release_sock+0x12e/0x3a0 net/core/sock.c:2309
->   release_sock+0x59/0x1c0 net/core/sock.c:2825
->   sctp_close+0x4a4/0x860 net/sctp/socket.c:1550
->   inet_release+0x105/0x1f0 net/ipv4/af_inet.c:428
->   __sock_release+0xd3/0x250 net/socket.c:579
->   sock_close+0x1b/0x30 net/socket.c:1139
->   __fput+0x2df/0x8d0 fs/file_table.c:278
->   ____fput+0x16/0x20 fs/file_table.c:309
->   task_work_run+0x14a/0x1c0 kernel/task_work.c:113
->   exit_task_work include/linux/task_work.h:22 [inline]
->   do_exit+0x90a/0x2fa0 kernel/exit.c:876
->   do_group_exit+0x135/0x370 kernel/exit.c:980
->   __do_sys_exit_group kernel/exit.c:991 [inline]
->   __se_sys_exit_group kernel/exit.c:989 [inline]
->   __x64_sys_exit_group+0x44/0x50 kernel/exit.c:989
->   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x43edd8
-> Code: Bad RIP value.
-> RSP: 002b:00007fff92021088 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043edd8
-> RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-> RBP: 00000000004be688 R08: 00000000000000e7 R09: ffffffffffffffd0
-> R10: 0000000000000010 R11: 0000000000000246 R12: 0000000000000001
-> R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
->
-> Allocated by task 7775:
->   save_stack+0x45/0xd0 mm/kasan/common.c:75
->   set_track mm/kasan/common.c:87 [inline]
->   __kasan_kmalloc mm/kasan/common.c:498 [inline]
->   __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:471
->   kasan_kmalloc+0x9/0x10 mm/kasan/common.c:506
->   kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3610
->   kmalloc include/linux/slab.h:548 [inline]
->   kzalloc include/linux/slab.h:743 [inline]
->   sctp_stream_init_ext+0x51/0x110 net/sctp/stream.c:172
->   sctp_sendmsg_to_asoc+0x1273/0x17b0 net/sctp/socket.c:1896
->   sctp_sendmsg+0x81f/0x17f0 net/sctp/socket.c:2113
->   inet_sendmsg+0x147/0x5d0 net/ipv4/af_inet.c:798
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xdd/0x130 net/socket.c:631
->   ___sys_sendmsg+0x806/0x930 net/socket.c:2114
->   __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
->   __do_sys_sendmsg net/socket.c:2161 [inline]
->   __se_sys_sendmsg net/socket.c:2159 [inline]
->   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
->   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 7775:
->   save_stack+0x45/0xd0 mm/kasan/common.c:75
->   set_track mm/kasan/common.c:87 [inline]
->   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:460
->   kasan_slab_free+0xe/0x10 mm/kasan/common.c:468
->   __cache_free mm/slab.c:3488 [inline]
->   kfree+0xcf/0x230 mm/slab.c:3807
->   sctp_stream_outq_migrate+0x3e6/0x540 net/sctp/stream.c:88
->   sctp_stream_init+0xbc/0x410 net/sctp/stream.c:139
->   sctp_process_init+0x21c3/0x2b20 net/sctp/sm_make_chunk.c:2466
->   sctp_cmd_process_init net/sctp/sm_sideeffect.c:682 [inline]
->   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1410 [inline]
->   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->   sctp_do_sm+0x3145/0x5380 net/sctp/sm_sideeffect.c:1191
->   sctp_assoc_bh_rcv+0x343/0x660 net/sctp/associola.c:1074
->   sctp_inq_push+0x1ea/0x290 net/sctp/inqueue.c:95
->   sctp_backlog_rcv+0x196/0xbe0 net/sctp/input.c:354
->   sk_backlog_rcv include/net/sock.h:936 [inline]
->   __release_sock+0x12e/0x3a0 net/core/sock.c:2309
->   release_sock+0x59/0x1c0 net/core/sock.c:2825
->   sctp_wait_for_connect+0x316/0x540 net/sctp/socket.c:8998
->   sctp_sendmsg_to_asoc+0x13e3/0x17b0 net/sctp/socket.c:1967
->   sctp_sendmsg+0x81f/0x17f0 net/sctp/socket.c:2113
->   inet_sendmsg+0x147/0x5d0 net/ipv4/af_inet.c:798
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xdd/0x130 net/socket.c:631
->   ___sys_sendmsg+0x806/0x930 net/socket.c:2114
->   __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
->   __do_sys_sendmsg net/socket.c:2161 [inline]
->   __se_sys_sendmsg net/socket.c:2159 [inline]
->   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
->   do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8880a7e2c480
->   which belongs to the cache kmalloc-96 of size 96
-> The buggy address is located 0 bytes inside of
->   96-byte region [ffff8880a7e2c480, ffff8880a7e2c4e0)
-> The buggy address belongs to the page:
-> page:ffffea00029f8b00 count:1 mapcount:0 mapping:ffff88812c3f04c0
-> index:0xffff8880a7e2c300
-> flags: 0x1fffc0000000200(slab)
-> raw: 01fffc0000000200 ffffea00029f9908 ffff88812c3f1438 ffff88812c3f04c0
-> raw: ffff8880a7e2c300 ffff8880a7e2c000 0000000100000012 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff8880a7e2c380: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
->   ffff8880a7e2c400: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> > ffff8880a7e2c480: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->                     ^
->   ffff8880a7e2c500: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->   ffff8880a7e2c580: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+  dmaengine: dmatest: Abort test in case of mapping error (2019-02-04 14:34=
+:22 +0530)
+
+----------------------------------------------------------------
+dmaengine-fix-5.0-rc6
+
+dmaengine fixes for v5.0-rc6
+
+ - Fix in at_xdmac fr wrongful channel state
+ - Fix for imx driver for wrong callback invocation
+ - Fix to bcm driver for interrupt race & transaction abort.
+ - Fix in dmatest to abort in mapping error
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      dmaengine: dmatest: Abort test in case of mapping error
+
+Codrin Ciubotariu (1):
+      dmaengine: at_xdmac: Fix wrongfull report of a channel as in use
+
+Leonid Iziumtsev (1):
+      dmaengine: imx-dma: fix wrong callback invoke
+
+Lukas Wunner (2):
+      dmaengine: bcm2835: Fix interrupt race on RT
+      dmaengine: bcm2835: Fix abort of transactions
+
+Vinod Koul (1):
+      Merge branch 'fix/brcm' into fixes
+
+ drivers/dma/at_xdmac.c    | 19 +++++++------
+ drivers/dma/bcm2835-dma.c | 70 +++++++++++++++++--------------------------=
+----
+ drivers/dma/dmatest.c     | 32 ++++++++++------------
+ drivers/dma/imx-dma.c     |  8 +++---
+ 4 files changed, 53 insertions(+), 76 deletions(-)
+
+--=20
+~Vinod
+
+--HlL+5n6rz5pIUxbD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcYECCAAoJEHwUBw8lI4NHiQAP+wUw/7mrhiSILQWUdooqQaEW
++VWczAx8hyj96Src6k6B9tgLEixkqoysLLZ57rkoh9yeW6L8G6INEL7QovXK6y30
+FpAWggydgL1Uqw+BXSsZNVELkqRCP2DtpHtu682/e2lamaQX6VqQ+STNlXbGZMPn
+r8mfZxKFDAqV+Oc6cg19izDqwFUfyrTHxRfnpPU6MWZqAtBG1JwnsBxDhp5zF4UZ
+mI18k/PAgh/1LTT2AAqaE0HXPogEOwoFcIS4VNdqH4X/ITrYnPWB4rTnm8IeTbZ4
+SSx+Oxwj6Sg8xmcIEXfm019zY0udA8ax6DE0sbIySuUvswNp02a4A0mpO+o382yd
+N441axXBacsALCec+jmP9FC3JxQQ4PcRVR9cDEIKKp63q/ZHxxD6BAKURSdZVz+s
++7PO4IvASZxUU5Cl3Jr1E+GkZQ3iH0ZqQ6gFj+NnEQJeZIIi9b64MhcE2frNwXpb
+BMFQK44cDwarRT5CEeBQTkpctuPHeeR6w7X/IfHLefFHCPp6Tm807PduuEnYCdXg
+s+8wQ0iMcyx5OsFT3L0LrvJ1e3AHNUMYDHhvdRea89siBA8zw0VxtyaELCuubkSi
+6hi7pfckKYy6XkJjQ6cPJmn2IY13/2tApwuVbL3HeJ6qGZn63qTZyaH5zijTD/ul
+6nmebH1CzKWVtX5iEYsL
+=hYA0
+-----END PGP SIGNATURE-----
+
+--HlL+5n6rz5pIUxbD--
