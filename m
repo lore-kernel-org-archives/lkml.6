@@ -2,101 +2,163 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484B5C282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6543FC282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 168482145D
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E2C02145D
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 15:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfBJPdb (ORCPT
+        id S1726310AbfBJPie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 10:33:31 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:46585 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfBJPdb (ORCPT
+        Sun, 10 Feb 2019 10:38:34 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:31067 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfBJPid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 10:33:31 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 48CA730000CC1;
-        Sun, 10 Feb 2019 16:33:29 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 093D6DFE15; Sun, 10 Feb 2019 16:33:28 +0100 (CET)
-Date:   Sun, 10 Feb 2019 16:33:28 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 14/28] thunderbolt: Extend tunnel creation to more
- than 2 adjacent switches
-Message-ID: <20190210153328.44ur6o5z2xjae42c@wunner.de>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
- <20190206131738.43696-15-mika.westerberg@linux.intel.com>
+        Sun, 10 Feb 2019 10:38:33 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1AFcC2U070970;
+        Mon, 11 Feb 2019 00:38:12 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Mon, 11 Feb 2019 00:38:12 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from localhost.localdomain (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1AFc9M3070960
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 11 Feb 2019 00:38:12 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH v2] clk: fractional-divider: check parent rate only if flag is set
+Date:   Mon, 11 Feb 2019 00:38:06 +0900
+Message-Id: <20190210153806.24201-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206131738.43696-15-mika.westerberg@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:17:24PM +0300, Mika Westerberg wrote:
-> Now that we can allocate hop IDs per port on a path, we can take
-> advantage of this and create tunnels covering longer paths than just
-> between two adjacent switches. PCIe actually does not need this as it is
-> always a daisy chain between two adjacent switches but this way we do
-> not need to hard-code creation of the tunnel.
+Custom approximation of fractional-divider may not need parent clock
+rate checking. For example Rockchip SoCs work fine using grand parent
+clock rate even if target rate is greater than parent.
 
-That doesn't seem to be correct, at the bottom of this page there's
-a figure showing a PCI tunnel between non-adjacent switches (blue line):
+This patch checks parent clock rate only if CLK_SET_RATE_PARENT flag
+is set.
 
-https://developer.apple.com/library/archive/documentation/HardwareDrivers/Conceptual/ThunderboltDevGuide/Basics/Basics.html
+For detailed example, clock tree of Rockchip I2S audio hardware.
+  - Clock rate of CPLL is 1.2GHz, GPLL is 491.52MHz.
+  - i2s1_div is integer divider can divide N (N is 1~128).
+    Input clock is CPLL or GPLL. Initial divider value is N = 1.
+    Ex) PLL = CPLL, N = 10, i2s1_div output rate is
+      CPLL / 10 = 1.2GHz / 10 = 120MHz
+  - i2s1_frac is fractional divider can divide input to x/y, x and
+    y are 16bit integer.
 
-I'm not sure if there are advantages to such tunnels:  Reduced latency
-perhaps because packets need not pass through PCIe adapters on the
-in-between device?  Or maybe this allows for more fine-grained traffic
-prioritization?
+CPLL --> | selector | ---> i2s1_div -+--> | selector | --> I2S1 MCLK
+GPLL --> |          | ,--------------'    |          |
+                      `--> i2s1_frac ---> |          |
 
+Clock mux system try to choose suitable one from i2s1_div and
+i2s1_frac for master clock (MCLK) of I2S1.
 
-> +	i = 0;
-> +	tb_for_each_port(in_port, src, dst)
-> +		i++;
+Bad scenario as follows:
+  - Try to set MCLK to 8.192MHz (32kHz audio replay)
+    Candidate setting is
+    - i2s1_div: GPLL / 60 = 8.192MHz
+    i2s1_div candidate is exactly same as target clock rate, so mux
+    choose this clock source. i2s1_div output rate is changed
+    491.52MHz -> 8.192MHz
 
-This looks more complicated than necessary.  Isn't the path length
-always the length of the route string from in_port switch to out_port
-switch, plus 2 for the adapter on each end?  Or do paths without
-adapters exist?
+  - After that try to set to 11.2896MHz (44.1kHz audio replay)
+    Candidate settings are
+    - i2s1_div : CPLL / 107 = 11.214945MHz
+    - i2s1_frac: i2s1_div   = 8.192MHz
+      This is because clk_fd_round_rate() thinks target rate
+      (11.2896MHz) is higher than parent rate (i2s1_div = 8.192MHz)
+      and returns parent clock rate.
 
+Above is current upstreamed behavior. Clock mux system choose
+i2s1_div, but this clock rate is not acceptable for I2S driver, so
+users cannot replay audio.
 
-> +	for (i = 0; i < num_hops; i++) {
-> +		in_port = tb_port_get_next(src, dst, out_port);
-> +
-> +		if (in_port->dual_link_port && in_port->link_nr != link_nr)
-> +			in_port = in_port->dual_link_port;
-> +
-> +		ret = tb_port_alloc_in_hopid(in_port, in_hopid, -1);
-> +		if (ret < 0)
-> +			goto err;
-> +		in_hopid = ret;
-> +
-> +		out_port = tb_port_get_next(src, dst, in_port);
-> +		if (!out_port)
-> +			goto err;
+Expected behavior is:
+  - Try to set master clock to 11.2896MHz (44.1kHz audio replay)
+    Candidate settings are
+    - i2s1_div : CPLL / 107          = 11.214945MHz
+    - i2s1_frac: i2s1_div * 147/6400 = 11.2896MHz
+                 Change i2s1_div to GPLL / 1 = 491.52MHz at same
+                 time.
 
-There's a NULL pointer check here, but the invocation of tb_port_get_next()
-further up to assign in_port lacks such a check.  Is it guaranteed to never
-be NULL?
+If apply this commit, clk_fd_round_rate() calls custom approximate
+function of Rockchip even if target rate is higher than parent.
+Custom function changes both grand parent (i2s1_div) and parent
+(i2s_frac) settings at same time. Clock mux system can choose
+i2s1_frac and audio works fine.
 
-Thanks,
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ drivers/clk/clk-fractional-divider.c | 2 +-
+ drivers/clk/clk.c                    | 8 ++++++++
+ include/linux/clk-provider.h         | 1 +
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-Lukas
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 545dceec0bbf..fdfe2e423d15 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -79,7 +79,7 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long m, n;
+ 	u64 ret;
+ 
+-	if (!rate || rate >= *parent_rate)
++	if (!rate || (!clk_hw_can_set_rate_parent(hw) && rate >= *parent_rate))
+ 		return *parent_rate;
+ 
+ 	if (fd->approximation)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d2477a5058ac..070c0cb29ee8 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -518,6 +518,14 @@ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_set_rate_range);
+ 
++bool clk_hw_can_set_rate_parent(struct clk_hw *hw)
++{
++	unsigned long flags = clk_hw_get_flags(hw);
++
++	return flags & CLK_SET_RATE_PARENT;
++}
++EXPORT_SYMBOL_GPL(clk_hw_can_set_rate_parent);
++
+ /*
+  * Helper for finding best parent to provide a given frequency. This can be used
+  * directly as a determine_rate callback (e.g. for a mux), or from a more
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index e443fa9fa859..693a51937ded 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -808,6 +808,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
+ void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+ 			   unsigned long max_rate);
++bool clk_hw_can_set_rate_parent(struct clk_hw *hw);
+ 
+ static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+ {
+-- 
+2.20.1
+
