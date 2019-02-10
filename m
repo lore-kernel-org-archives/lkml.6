@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ECBC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753BBC282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9CB2146F
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A222146F
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 20:56:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBJUzr (ORCPT
+        id S1726869AbfBJU4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 15:55:47 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53079 "EHLO
+        Sun, 10 Feb 2019 15:56:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43837 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbfBJUzr (ORCPT
+        with ESMTP id S1726093AbfBJU4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 15:55:47 -0500
+        Sun, 10 Feb 2019 15:56:18 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1AKt4SA3235652
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1AKtgeK3235724
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 10 Feb 2019 12:55:04 -0800
+        Sun, 10 Feb 2019 12:55:42 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1AKt1MU3235592;
-        Sun, 10 Feb 2019 12:55:01 -0800
-Date:   Sun, 10 Feb 2019 12:55:01 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1AKtfcD3235720;
+        Sun, 10 Feb 2019 12:55:41 -0800
+Date:   Sun, 10 Feb 2019 12:55:41 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-1136b0728969901a091f0471968b2b76ed14d9ad@git.kernel.org>
-Cc:     marc.zyngier@arm.com, akpm@linux-foundation.org, mingo@kernel.org,
-        dbueso@suse.de, david@fromorbit.com, willy@infradead.org,
-        miklos@szeredi.hu, rdunlap@infradead.org, tglx@linutronix.de,
-        dave@stgolabs.net, adobriyan@gmail.com, dancol@google.com,
-        keescook@chromium.org, longman@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: mingo@kernel.org, akpm@linux-foundation.org,
-          marc.zyngier@arm.com, dbueso@suse.de, david@fromorbit.com,
-          willy@infradead.org, miklos@szeredi.hu, rdunlap@infradead.org,
-          tglx@linutronix.de, adobriyan@gmail.com, dave@stgolabs.net,
-          linux-kernel@vger.kernel.org, dancol@google.com,
-          keescook@chromium.org, longman@redhat.com, hpa@zytor.com
-In-Reply-To: <20190208135020.925487496@linutronix.de>
-References: <20190208135020.925487496@linutronix.de>
+Message-ID: <tip-c2da3f1b711173b72378258496b49f74db7479de@git.kernel.org>
+Cc:     keescook@chromium.org, adobriyan@gmail.com,
+        linux-kernel@vger.kernel.org, dave@stgolabs.net,
+        marc.zyngier@arm.com, rdunlap@infradead.org, dbueso@suse.de,
+        hpa@zytor.com, david@fromorbit.com, willy@infradead.org,
+        mingo@kernel.org, miklos@szeredi.hu, tglx@linutronix.de,
+        dancol@google.com, akpm@linux-foundation.org, longman@redhat.com
+Reply-To: longman@redhat.com, akpm@linux-foundation.org, miklos@szeredi.hu,
+          willy@infradead.org, mingo@kernel.org, dancol@google.com,
+          tglx@linutronix.de, hpa@zytor.com, david@fromorbit.com,
+          rdunlap@infradead.org, dbueso@suse.de, dave@stgolabs.net,
+          linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+          adobriyan@gmail.com, keescook@chromium.org
+In-Reply-To: <20190208135021.013828701@linutronix.de>
+References: <20190208135021.013828701@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq: Avoid summation loops for /proc/stat
-Git-Commit-ID: 1136b0728969901a091f0471968b2b76ed14d9ad
+Subject: [tip:irq/core] proc/stat: Make the interrupt statistics more
+ efficient
+Git-Commit-ID: c2da3f1b711173b72378258496b49f74db7479de
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,14 +63,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1136b0728969901a091f0471968b2b76ed14d9ad
-Gitweb:     https://git.kernel.org/tip/1136b0728969901a091f0471968b2b76ed14d9ad
+Commit-ID:  c2da3f1b711173b72378258496b49f74db7479de
+Gitweb:     https://git.kernel.org/tip/c2da3f1b711173b72378258496b49f74db7479de
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Fri, 8 Feb 2019 14:48:03 +0100
+AuthorDate: Fri, 8 Feb 2019 14:48:04 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 10 Feb 2019 21:34:45 +0100
+CommitDate: Sun, 10 Feb 2019 21:34:46 +0100
 
-genirq: Avoid summation loops for /proc/stat
+proc/stat: Make the interrupt statistics more efficient
 
 Waiman reported that on large systems with a large amount of interrupts the
 readout of /proc/stat takes a long time to sum up the interrupt
@@ -79,22 +80,31 @@ some enterprise quality software reads /proc/stat with a high frequency.
 The reason for this is that interrupt statistics are accounted per cpu. So
 the /proc/stat logic has to sum up the interrupt stats for each interrupt.
 
-This can be largely avoided for interrupts which are not marked as
-'PER_CPU' interrupts by simply adding a per interrupt summation counter
-which is incremented along with the per interrupt per cpu counter.
+The interrupt core provides now a per interrupt summary counter which can
+be used to avoid the summation loops completely except for interrupts
+marked PER_CPU which are only a small fraction of the interrupt space if at
+all.
 
-The PER_CPU interrupts need to avoid that and use only per cpu accounting
-because they share the interrupt number and the interrupt descriptor and
-concurrent updates would conflict or require unwanted synchronization.
+Another simplification is to iterate only over the active interrupts and
+skip the potentially large gaps in the interrupt number space and just
+print zeros for the gaps without going into the interrupt core in the first
+place.
+
+Waiman provided test results from a 4-socket IvyBridge-EX system (60-core
+120-thread, 3016 irqs) excuting a test program which reads /proc/stat
+50,000 times:
+
+   Before: 18.436s (sys 18.380s)
+   After:   3.769s (sys  3.742s)
 
 Reported-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
 Reviewed-by: Waiman Long <longman@redhat.com>
 Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Davidlohr Bueso <dave@stgolabs.net>
@@ -102,119 +112,56 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Daniel Colascione <dancol@google.com>
 Cc: Dave Chinner <david@fromorbit.com>
 Cc: Randy Dunlap <rdunlap@infradead.org>
-Link: https://lkml.kernel.org/r/20190208135020.925487496@linutronix.de
-
-
-8<-------------
-
-v2: Undo the unintentional layout change of struct irq_desc.
-
- include/linux/irqdesc.h |    1 +
- kernel/irq/chip.c       |   12 ++++++++++--
- kernel/irq/internals.h  |    8 +++++++-
- kernel/irq/irqdesc.c    |    7 ++++++-
- 4 files changed, 24 insertions(+), 4 deletions(-)
-
+Link: https://lkml.kernel.org/r/20190208135021.013828701@linutronix.de
 
 ---
- include/linux/irqdesc.h |  1 +
- kernel/irq/chip.c       | 12 ++++++++++--
- kernel/irq/internals.h  |  8 +++++++-
- kernel/irq/irqdesc.c    |  7 ++++++-
- 4 files changed, 24 insertions(+), 4 deletions(-)
+ fs/proc/stat.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
-index dd1e40ddac7d..875c41b23f20 100644
---- a/include/linux/irqdesc.h
-+++ b/include/linux/irqdesc.h
-@@ -65,6 +65,7 @@ struct irq_desc {
- 	unsigned int		core_internal_state__do_not_mess_with_it;
- 	unsigned int		depth;		/* nested irq disables */
- 	unsigned int		wake_depth;	/* nested wake enables */
-+	unsigned int		tot_count;
- 	unsigned int		irq_count;	/* For detecting broken IRQs */
- 	unsigned long		last_unhandled;	/* Aging timer for unhandled count */
- 	unsigned int		irqs_unhandled;
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 34e969069488..e960c4f46ee0 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -855,7 +855,11 @@ void handle_percpu_irq(struct irq_desc *desc)
- {
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
+diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+index 535eda7857cf..76175211b304 100644
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -79,6 +79,31 @@ static u64 get_iowait_time(int cpu)
  
--	kstat_incr_irqs_this_cpu(desc);
-+	/*
-+	 * PER CPU interrupts are not serialized. Do not touch
-+	 * desc->tot_count.
-+	 */
-+	__kstat_incr_irqs_this_cpu(desc);
+ #endif
  
- 	if (chip->irq_ack)
- 		chip->irq_ack(&desc->irq_data);
-@@ -884,7 +888,11 @@ void handle_percpu_devid_irq(struct irq_desc *desc)
- 	unsigned int irq = irq_desc_get_irq(desc);
- 	irqreturn_t res;
- 
--	kstat_incr_irqs_this_cpu(desc);
-+	/*
-+	 * PER CPU interrupts are not serialized. Do not touch
-+	 * desc->tot_count.
-+	 */
-+	__kstat_incr_irqs_this_cpu(desc);
- 
- 	if (chip->irq_ack)
- 		chip->irq_ack(&desc->irq_data);
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index ca6afa267070..e74e7eea76cf 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -242,12 +242,18 @@ static inline void irq_state_set_masked(struct irq_desc *desc)
- 
- #undef __irqd_to_state
- 
--static inline void kstat_incr_irqs_this_cpu(struct irq_desc *desc)
-+static inline void __kstat_incr_irqs_this_cpu(struct irq_desc *desc)
- {
- 	__this_cpu_inc(*desc->kstat_irqs);
- 	__this_cpu_inc(kstat.irqs_sum);
- }
- 
-+static inline void kstat_incr_irqs_this_cpu(struct irq_desc *desc)
++static void show_irq_gap(struct seq_file *p, unsigned int gap)
 +{
-+	__kstat_incr_irqs_this_cpu(desc);
-+	desc->tot_count++;
++	static const char zeros[] = " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
++
++	while (gap > 0) {
++		unsigned int inc;
++
++		inc = min_t(unsigned int, gap, ARRAY_SIZE(zeros) / 2);
++		seq_write(p, zeros, 2 * inc);
++		gap -= inc;
++	}
 +}
 +
- static inline int irq_desc_get_node(struct irq_desc *desc)
- {
- 	return irq_common_data_get_node(&desc->irq_common_data);
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index ee062b7939d3..f98293d0e173 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -119,6 +119,7 @@ static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
- 	desc->depth = 1;
- 	desc->irq_count = 0;
- 	desc->irqs_unhandled = 0;
-+	desc->tot_count = 0;
- 	desc->name = NULL;
- 	desc->owner = owner;
- 	for_each_possible_cpu(cpu)
-@@ -919,11 +920,15 @@ unsigned int kstat_irqs_cpu(unsigned int irq, int cpu)
- unsigned int kstat_irqs(unsigned int irq)
- {
- 	struct irq_desc *desc = irq_to_desc(irq);
--	int cpu;
- 	unsigned int sum = 0;
-+	int cpu;
- 
- 	if (!desc || !desc->kstat_irqs)
- 		return 0;
-+	if (!irq_settings_is_per_cpu_devid(desc) &&
-+	    !irq_settings_is_per_cpu(desc))
-+	    return desc->tot_count;
++static void show_all_irqs(struct seq_file *p)
++{
++	unsigned int i, next = 0;
 +
- 	for_each_possible_cpu(cpu)
- 		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
- 	return sum;
++	for_each_active_irq(i) {
++		show_irq_gap(p, i - next);
++		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
++		next = i + 1;
++	}
++	show_irq_gap(p, nr_irqs - next);
++}
++
+ static int show_stat(struct seq_file *p, void *v)
+ {
+ 	int i, j;
+@@ -156,9 +181,7 @@ static int show_stat(struct seq_file *p, void *v)
+ 	}
+ 	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
+ 
+-	/* sum again ? it could be updated? */
+-	for_each_irq_nr(j)
+-		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
++	show_all_irqs(p);
+ 
+ 	seq_printf(p,
+ 		"\nctxt %llu\n"
