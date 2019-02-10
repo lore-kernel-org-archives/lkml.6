@@ -2,71 +2,71 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A5BC282C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 04:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04668C282C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 05:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B934B20873
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 04:25:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549772718;
-	bh=QZdY96758MYTeMTMbyqYuZiLjS7QEqyCQ6Iin8bWa9Y=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=CpVGKi3vRHI0qnYMs5Klcdfw+MTrwXYvkebJYkn2GxiMCXs6OJbMEGRg+CeKMIUZD
-	 o1q9nOqkvNsX9OFb8Yqu02inVvJwze6+pi8mbsIEqj3kooElH7RPxpvKPx1bgevEhO
-	 N3gp0lSmp36Z9Dl4XWhJ39e5km9poIz4t3dN4MlU=
+	by mail.kernel.org (Postfix) with ESMTP id C36B821736
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 05:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfBJEZR (ORCPT
+        id S1725984AbfBJF17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 23:25:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfBJEZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 23:25:16 -0500
-Subject: Re: [GIT PULL] Thermal-SoC management fixes for v5.0-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549772716;
-        bh=QZdY96758MYTeMTMbyqYuZiLjS7QEqyCQ6Iin8bWa9Y=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=y7m7J4yP1pI+yQMjsf9/hTzVJx1qnhPdkTgNHlExsWe0XySXZ3f8XHX3mNZUV0SvS
-         wajxfHBDBFdYv1tij2pd3PvUbdqQCopON9Dvi9e6w/D3Rf3Rf3P8FCD6HC6J/OC2OE
-         IDXHV73t4pWBGLKnJyL9DQIT80hltsmuyxuylIik=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190210041721.GA2805@localhost.localdomain>
-References: <20190210041721.GA2805@localhost.localdomain>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190210041721.GA2805@localhost.localdomain>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
- fixes
-X-PR-Tracked-Commit-Id: a6d25f4c951b8b28f2eaec6f891ff834622532f2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7ad915f5ebf5b9e7ca98a7048d8f84a631fe388b
-Message-Id: <154977271617.2362.11794417398216386913.pr-tracker-bot@kernel.org>
-Date:   Sun, 10 Feb 2019 04:25:16 +0000
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Sun, 10 Feb 2019 00:27:59 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36340 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725862AbfBJF17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 00:27:59 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7B19F9A484A186AA9593;
+        Sun, 10 Feb 2019 13:27:55 +0800 (CST)
+Received: from HGHY2Y004646261.china.huawei.com (10.184.12.158) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Sun, 10 Feb 2019 13:27:46 +0800
+From:   Zenghui Yu <yuzenghui@huawei.com>
+To:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>
+CC:     <shankerd@codeaurora.org>, <wanghaibin.wang@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH] irqchip/gic-v3-its: Avoid parsing _indirect_ twice for Device table
+Date:   Sun, 10 Feb 2019 05:24:10 +0000
+Message-ID: <1549776250-4464-1-git-send-email-yuzenghui@huawei.com>
+X-Mailer: git-send-email 2.6.4.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 9 Feb 2019 20:17:23 -0800:
+In current logic, its_parse_indirect_baser() will be invoked twice
+when allocating Device tables. Add a *break* to omit the unnecessary
+and annoying (might be ...) invoking.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7ad915f5ebf5b9e7ca98a7048d8f84a631fe388b
-
-Thank you!
-
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index db20e99..9f529a6 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1946,6 +1946,8 @@ static int its_alloc_tables(struct its_node *its)
+ 			indirect = its_parse_indirect_baser(its, baser,
+ 							    psz, &order,
+ 							    its->device_ids);
++			break;
++
+ 		case GITS_BASER_TYPE_VCPU:
+ 			indirect = its_parse_indirect_baser(its, baser,
+ 							    psz, &order,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+1.8.3.1
+
+
