@@ -2,109 +2,131 @@ Return-Path: <SRS0=kemo=QR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F41E8C282C4
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 00:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFECC282C4
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 00:52:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1DC21929
-	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 00:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D6A21934
+	for <linux-kernel@archiver.kernel.org>; Sun, 10 Feb 2019 00:52:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfBJAvb (ORCPT
+        id S1727236AbfBJAwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 9 Feb 2019 19:51:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60594 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727067AbfBJAva (ORCPT
+        Sat, 9 Feb 2019 19:52:01 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34224 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfBJAwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Feb 2019 19:51:30 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1A0iQhI081693
-        for <linux-kernel@vger.kernel.org>; Sat, 9 Feb 2019 19:51:29 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhv9mr0hf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 19:51:29 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 10 Feb 2019 00:51:28 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 10 Feb 2019 00:51:23 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1A0pMaC23592998
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 10 Feb 2019 00:51:22 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44FFAB2064;
-        Sun, 10 Feb 2019 00:51:22 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 25605B205F;
-        Sun, 10 Feb 2019 00:51:22 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.132.243])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 10 Feb 2019 00:51:22 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D65E616C3A6E; Sat,  9 Feb 2019 08:53:25 -0800 (PST)
-Date:   Sat, 9 Feb 2019 08:53:25 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, peterz@infradead.org, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 0/19] SPDX changes for v5.1
-Reply-To: paulmck@linux.ibm.com
-References: <20190206131614.GA17320@linux.ibm.com>
- <alpine.DEB.2.21.1902090847070.8784@nanos.tec.linutronix.de>
+        Sat, 9 Feb 2019 19:52:00 -0500
+Received: by mail-qt1-f193.google.com with SMTP id b8so8395992qtj.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Feb 2019 16:51:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XJkLelzdLzhK7WMM4z+zshrLTbNUKoX1y7BTB8bNEug=;
+        b=ZTa4FT6ByE9V6J78OlPVnC4xzkHx9MxFL9lWI81z6Gf8elXd20/KD1d+NVTbfpWIhA
+         J0rR3aikyijNULn1vUl20NJSrhLyqnMYZB62wkh+zLIFhEHr9oQ3qJemuHZ2prw+2vBz
+         7N+SkVTINZsBNMrle4kO6+uLkAnu7npBDxfjV7tGrU5swjiNzE7MjW8XkYUekG9BaYXa
+         xoGTiERbwDu6lgxzm2wKg7jvxQEFnBuc6cuJuiDdPINgxpUDnHN5qVVa0L/4EWSvaa1U
+         MMJTW9nKgU7h5FqHUaFYutc5k0fhn8r1M+bpaTEHeARBmzWGkBekGYfhYB9D7WOjy1Rr
+         aYLg==
+X-Gm-Message-State: AHQUAubCA+otRGgFmZDBTu16ktpLGE7gynfhSiAwUT/9VPKUgAukIW6C
+        bv0MZ2QKjtbrdrEhnUPPk4vLAQ==
+X-Google-Smtp-Source: AHgI3IZTmPLlMBxSzkSawrG90tnOTcF+/r4MRX0lJPE9fQXEMCoIjJgJWuQBpx666vPlTv3Zzrm7tg==
+X-Received: by 2002:a0c:8542:: with SMTP id n60mr21644167qva.205.1549759919435;
+        Sat, 09 Feb 2019 16:51:59 -0800 (PST)
+Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
+        by smtp.gmail.com with ESMTPSA id w123sm19025314qkw.80.2019.02.09.16.51.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Feb 2019 16:51:58 -0800 (PST)
+Date:   Sat, 9 Feb 2019 19:51:56 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, rkrcmar@redhat.com,
+        alexander.h.duyck@linux.intel.com, x86@kernel.org,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
+        tglx@linutronix.de, akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 0/4] kvm: Report unused guest pages to host
+Message-ID: <20190209194940-mutt-send-email-mst@kernel.org>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1902090847070.8784@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19021000-0072-0000-0000-000003F7B5DD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010567; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158792; UDB=6.00604660; IPR=6.00939327;
- MB=3.00025509; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-10 00:51:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021000-0073-0000-0000-00004B2009C6
-Message-Id: <20190209165325.GH4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-09_21:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902100005
+In-Reply-To: <20190204181118.12095.38300.stgit@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 09, 2019 at 08:47:48AM +0100, Thomas Gleixner wrote:
-> On Wed, 6 Feb 2019, Paul E. McKenney wrote:
-> > 
-> > This series makes SPDX and email-address changes to RCU source files.
+On Mon, Feb 04, 2019 at 10:15:33AM -0800, Alexander Duyck wrote:
+> This patch set provides a mechanism by which guests can notify the host of
+> pages that are not currently in use. Using this data a KVM host can more
+> easily balance memory workloads between guests and improve overall system
+> performance by avoiding unnecessary writing of unused pages to swap.
+
+There's an obvious overlap with Nilal's work and already merged Wei's
+work here.  So please Cc people reviewing Nilal's and Wei's
+patches.
+
+
+> In order to support this I have added a new hypercall to provided unused
+> page hints and made use of mechanisms currently used by PowerPC and s390
+> architectures to provide those hints. To reduce the overhead of this call
+> I am only using it per huge page instead of of doing a notification per 4K
+> page. By doing this we can avoid the expense of fragmenting higher order
+> pages, and reduce overall cost for the hypercall as it will only be
+> performed once per huge page.
 > 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-
-Applied, thank you!
-
-> >  26 files changed, 56 insertions(+), 394 deletions(-)
+> Because we are limiting this to huge pages it was necessary to add a
+> secondary location where we make the call as the buddy allocator can merge
+> smaller pages into a higher order huge page.
 > 
-> Nice! Thanks for doing that!
-
-Glad to help!  I also intend to queue similar changes in the files in
-tools/testing/selftests/rcutorture because I need to get rid of the
-"vnet" in my email address there as well.
-
-							Thanx, Paul
-
+> This approach is not usable in all cases. Specifically, when KVM direct
+> device assignment is used, the memory for a guest is permanently assigned
+> to physical pages in order to support DMA from the assigned device. In
+> this case we cannot give the pages back, so the hypercall is disabled by
+> the host.
+> 
+> Another situation that can lead to issues is if the page were accessed
+> immediately after free. For example, if page poisoning is enabled the
+> guest will populate the page *after* freeing it. In this case it does not
+> make sense to provide a hint about the page being freed so we do not
+> perform the hypercalls from the guest if this functionality is enabled.
+> 
+> My testing up till now has consisted of setting up 4 8GB VMs on a system
+> with 32GB of memory and 4GB of swap. To stress the memory on the system I
+> would run "memhog 8G" sequentially on each of the guests and observe how
+> long it took to complete the run. The observed behavior is that on the
+> systems with these patches applied in both the guest and on the host I was
+> able to complete the test with a time of 5 to 7 seconds per guest. On a
+> system without these patches the time ranged from 7 to 49 seconds per
+> guest. I am assuming the variability is due to time being spent writing
+> pages out to disk in order to free up space for the guest.
+> 
+> ---
+> 
+> Alexander Duyck (4):
+>       madvise: Expose ability to set dontneed from kernel
+>       kvm: Add host side support for free memory hints
+>       kvm: Add guest side support for free memory hints
+>       mm: Add merge page notifier
+> 
+> 
+>  Documentation/virtual/kvm/cpuid.txt      |    4 ++
+>  Documentation/virtual/kvm/hypercalls.txt |   14 ++++++++
+>  arch/x86/include/asm/page.h              |   25 +++++++++++++++
+>  arch/x86/include/uapi/asm/kvm_para.h     |    3 ++
+>  arch/x86/kernel/kvm.c                    |   51 ++++++++++++++++++++++++++++++
+>  arch/x86/kvm/cpuid.c                     |    6 +++-
+>  arch/x86/kvm/x86.c                       |   35 +++++++++++++++++++++
+>  include/linux/gfp.h                      |    4 ++
+>  include/linux/mm.h                       |    2 +
+>  include/uapi/linux/kvm_para.h            |    1 +
+>  mm/madvise.c                             |   13 +++++++-
+>  mm/page_alloc.c                          |    2 +
+>  12 files changed, 158 insertions(+), 2 deletions(-)
+> 
+> --
