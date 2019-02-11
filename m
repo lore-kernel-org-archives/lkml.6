@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5251C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742EAC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A12920675
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 467BA20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895472;
-	bh=D+vhLWJYRHFnrnTCB3LuxHeOXUWvnVhZ2cKZDFu9r2E=;
+	s=default; t=1549895475;
+	bh=Enu4ctradxyBZdgzdrzNB4zd6gHjAy/IJFIWQJzxvBo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bp3h7WS3u854cT0eZJ9aDf4KnrQIdr66NckSc0fLlZjzkX0pH/Mm+ktfTiAH/6UR8
-	 hGT7aqPi7fb0fly1cEPov7V83JV/+8jAGpwQzkgbFJ1ZMdZqAlMvfnCVWh3VbRg/nJ
-	 KVCVslRsuUgLtKr5aKgoZAzetxqpeFxcGKyD8/fc=
+	b=P4iYRZykom4ltmgJuYyEBsxE2jqy9AlsVFnXwQIzcwHh44dkbToKY1kWbFSTbdyY+
+	 Bz6CghPg5hvsc1klqM1EgOg/esOobco1TYv6XCBx2LPzn5JGI8ws0gCkqgIEjXvmh2
+	 SM811DopWhhuhp1/IOVkmTlgbH2vL/ii1+pZOOmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730251AbfBKObK (ORCPT
+        id S1730263AbfBKObN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:31:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37830 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:31:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730241AbfBKObH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:07 -0500
+        id S1729670AbfBKObK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:31:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C612B20675;
-        Mon, 11 Feb 2019 14:31:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8969C20838;
+        Mon, 11 Feb 2019 14:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895467;
-        bh=D+vhLWJYRHFnrnTCB3LuxHeOXUWvnVhZ2cKZDFu9r2E=;
+        s=default; t=1549895470;
+        bh=Enu4ctradxyBZdgzdrzNB4zd6gHjAy/IJFIWQJzxvBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t8e829+8PNaqUy/UM06JkRCf4Q9q0NkWGu6s0IjZJCjI+mlxLIhvvq4GGyaS+8Qkd
-         S9JciBoniMkKI/c7HJ7PMpmOLqClfGT4UAIoPL9jKtAc4ZvlEL6gkWQBEOatAND0vk
-         w661u+BTjEBXYmsr9j5FyRv+BwGoAy47Jdtb4sD8=
+        b=a6j5MfQENwa0KCLLz5T+aaLTHrELWZUwP7LDCP2qSc6NlRh52buNPLhjfXoVKWzNm
+         tdXUXtsFtEZ2/9Th7qheijK1t376KI7Z5jZZG/wi83KkwjtbG8AYFqPn6XJqUrpQ9e
+         kvZs516Ulqzgil+mzjMGKfeKQA/6ie39lx2d56Q8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        stable@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 183/352] serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
-Date:   Mon, 11 Feb 2019 15:16:50 +0100
-Message-Id: <20190211141858.751418868@linuxfoundation.org>
+Subject: [PATCH 4.20 184/352] tty: serial: samsung: Properly set flags in autoCTS mode
+Date:   Mon, 11 Feb 2019 15:16:51 +0100
+Message-Id: <20190211141858.828673041@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,75 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 71ab1c0336c71ace5725740f200beca9667a339f ]
+[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
 
-On (H)SCIF, sci_submit_rx() is called in the receive interrupt handler.
-Hence if DMA submission fails, the interrupt handler should resume
-handling reception using PIO, else no more data is received.
+Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
+has changed the way the autoCTS mode is handled.
 
-Make sci_submit_rx() return an error indicator, so the receive interrupt
-handler can act appropriately.
+According to that change, serial drivers which enable H/W autoCTS mode must
+set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
+TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+[mszyprow: rephrased commit message]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sh-sci.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/tty/serial/samsung.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 613007d7165e..21fd3f6ad28e 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	dma_release_channel(chan);
- }
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index da1bd4bba8a9..2a49b6d876b8 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1365,11 +1365,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
  
--static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
-+static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
- {
- 	struct dma_chan *chan = s->chan_rx;
- 	struct uart_port *port = &s->port;
-@@ -1359,7 +1359,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 	s->active_rx = s->cookie_rx[0];
- 
- 	dma_async_issue_pending(chan);
--	return;
-+	return 0;
- 
- fail:
- 	/* Switch to PIO */
-@@ -1374,6 +1374,7 @@ fail:
- 	sci_start_rx(port);
- 	if (!port_lock_held)
- 		spin_unlock_irqrestore(&port->lock, flags);
-+	return -EAGAIN;
- }
- 
- static void work_fn_tx(struct work_struct *work)
-@@ -1668,8 +1669,10 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			disable_irq_nosync(irq);
- 			scr |= SCSCR_RDRQE;
- 		} else {
-+			if (sci_submit_rx(s, false) < 0)
-+				goto handle_pio;
++	port->status &= ~UPSTAT_AUTOCTS;
 +
- 			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s, false);
- 		}
- 		serial_port_out(port, SCSCR, scr);
- 		/* Clear current interrupt */
-@@ -1681,6 +1684,8 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 
- 		return IRQ_HANDLED;
+ 	umcon = rd_regl(port, S3C2410_UMCON);
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		umcon |= S3C2410_UMCOM_AFC;
+ 		/* Disable RTS when RX FIFO contains 63 bytes */
+ 		umcon &= ~S3C2412_UMCON_AFC_8;
++		port->status = UPSTAT_AUTOCTS;
+ 	} else {
+ 		umcon &= ~S3C2410_UMCOM_AFC;
  	}
-+
-+handle_pio:
- #endif
- 
- 	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0) {
 -- 
 2.19.1
 
