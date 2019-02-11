@@ -2,82 +2,239 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C75C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E97C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 512C6217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2FF217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfBKU7m (ORCPT
+        id S1727153AbfBKVAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:59:42 -0500
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:54605 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726080AbfBKU7l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:59:41 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl2.internode.on.net with ESMTP; 12 Feb 2019 07:29:40 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gtIfy-0002Bw-Dx; Tue, 12 Feb 2019 07:59:38 +1100
-Date:   Tue, 12 Feb 2019 07:59:38 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Tavian Barnes <tavianator@tavianator.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: d_type and bind mounts
-Message-ID: <20190211205938.GE20493@dastard>
-References: <CABg4E-mbCk-jeRjETEtXk+ZHVub00_G5QaOnxbf5fgKd5MpD+A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABg4E-mbCk-jeRjETEtXk+ZHVub00_G5QaOnxbf5fgKd5MpD+A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 11 Feb 2019 16:00:55 -0500
+Received: from mga03.intel.com ([134.134.136.65]:11721 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfBKVAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 16:00:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 13:00:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
+   d="scan'208";a="133476917"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga002.jf.intel.com with ESMTP; 11 Feb 2019 13:00:53 -0800
+Message-ID: <770615ef2db838775fb68130ca60711c6e593f3d.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
+ hints
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
+        akpm@linux-foundation.org
+Date:   Mon, 11 Feb 2019 13:00:53 -0800
+In-Reply-To: <20190211142902-mutt-send-email-mst@kernel.org>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+         <20190204181552.12095.46287.stgit@localhost.localdomain>
+         <20190209194437-mutt-send-email-mst@kernel.org>
+         <869a170e9232ffbc8ddbcf3d15535e8c6daedbde.camel@linux.intel.com>
+         <20190211122321-mutt-send-email-mst@kernel.org>
+         <44d0848e62f6d5237b60d209265dbcdf58ade1b9.camel@linux.intel.com>
+         <20190211142902-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 02:59:29PM -0500, Tavian Barnes wrote:
-> It seems that readdir()/getdents() fill d_type from the underlying
-> filesystem, not respecting bind mounts of non-directories:
+On Mon, 2019-02-11 at 14:54 -0500, Michael S. Tsirkin wrote:
+> On Mon, Feb 11, 2019 at 10:10:06AM -0800, Alexander Duyck wrote:
+> > On Mon, 2019-02-11 at 12:36 -0500, Michael S. Tsirkin wrote:
+> > > On Mon, Feb 11, 2019 at 08:31:34AM -0800, Alexander Duyck wrote:
+> > > > On Sat, 2019-02-09 at 19:49 -0500, Michael S. Tsirkin wrote:
+> > > > > On Mon, Feb 04, 2019 at 10:15:52AM -0800, Alexander Duyck wrote:
+> > > > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > > > > > 
+> > > > > > Add guest support for providing free memory hints to the KVM hypervisor for
+> > > > > > freed pages huge TLB size or larger. I am restricting the size to
+> > > > > > huge TLB order and larger because the hypercalls are too expensive to be
+> > > > > > performing one per 4K page.
+> > > > > 
+> > > > > Even 2M pages start to get expensive with a TB guest.
+> > > > 
+> > > > Agreed.
+> > > > 
+> > > > > Really it seems we want a virtio ring so we can pass a batch of these.
+> > > > > E.g. 256 entries, 2M each - that's more like it.
+> > > > 
+> > > > The only issue I see with doing that is that we then have to defer the
+> > > > freeing. Doing that is going to introduce issues in the guest as we are
+> > > > going to have pages going unused for some period of time while we wait
+> > > > for the hint to complete, and we cannot just pull said pages back. I'm
+> > > > not really a fan of the asynchronous nature of Nitesh's patches for
+> > > > this reason.
+> > > 
+> > > Well nothing prevents us from doing an extra exit to the hypervisor if
+> > > we want. The asynchronous nature is there as an optimization
+> > > to allow hypervisor to do its thing on a separate CPU.
+> > > Why not proceed doing other things meanwhile?
+> > > And if the reason is that we are short on memory, then
+> > > maybe we should be less aggressive in hinting?
+> > > 
+> > > E.g. if we just have 2 pages:
+> > > 
+> > > hint page 1
+> > > page 1 hint processed?
+> > > 	yes - proceed to page 2
+> > > 	no - wait for interrupt
+> > > 
+> > > get interrupt that page 1 hint is processed
+> > > hint page 2
+> > > 
+> > > 
+> > > If hypervisor happens to be running on same CPU it
+> > > can process things synchronously and we never enter
+> > > the no branch.
+> > > 
+> > 
+> > Another concern I would have about processing this asynchronously is
+> > that we have the potential for multiple guest CPUs to become
+> > bottlenecked by a single host CPU. I am not sure if that is something
+> > that would be desirable.
 > 
-> $ touch mount_point
-> $ sudo mount --bind /dev/null mount_point
-> $ find -name mount_point -type c
-> $ find -name mount_point -type f
-> ./mount_point
+> Well with a hypercall per page the fix is to block VCPU
+> completely which is also not for everyone.
 > 
-> (Requires a fairly recent GNU findutils to reproduce, older ones
-> always call stat().)  I've seen similar discussions about d_ino being
-> for the underlying file, not the mount point, which people have said
+> If you can't push a free page hint to host, then
+> ideally you just won't. That's a nice property of
+> hinting we have upstream right now.
+> Host too busy - hinting is just skipped.
 
-Find is using readdir to look up the directory entry, so what it
-finds is the underlying filesystem dirent that is completely unaware
-that the dentry cache has an overlayed mountpoint above the
-filesystem.  d_type is stored in the underlying directory, so it is
-reported from the on-disk information in the underlying filesystem,
-not the dentry cache that is aware of the mount point at that
-location.
+Right, but if you do that then there is a potential to end up missing
+hints for a large portion of memory. It seems like you would end up
+with even bigger issues since then at that point you have essentially
+leaked memory.
 
-> is technically a POSIX violation but also unlikely to be fixed.  Is
-> the same true of d_type?  And is there some workaround a program could
-> use to get the actual type without the overhead of a whole stat()
-> call? For example, a way to tell whether a directory entry is a mount
-> point?
+I would think you would need a way to resync the host and the guest
+after something like that. Otherwise you can have memory that will just
+go unused for an extended period if a guest just goes idle.
 
-Not that I know of, but that doesn't mean there isn't one. In
-general, though, if you are looking for something overlaid on the
-underlying dirent (like a mount point) then you have to trigger a
-path walk to find whatever is overlaid on that location.
+> > > > > > Using the huge TLB order became the obvious
+> > > > > > choice for the order to use as it allows us to avoid fragmentation of higher
+> > > > > > order memory on the host.
+> > > > > > 
+> > > > > > I have limited the functionality so that it doesn't work when page
+> > > > > > poisoning is enabled. I did this because a write to the page after doing an
+> > > > > > MADV_DONTNEED would effectively negate the hint, so it would be wasting
+> > > > > > cycles to do so.
+> > > > > 
+> > > > > Again that's leaking host implementation detail into guest interface.
+> > > > > 
+> > > > > We are giving guest page hints to host that makes sense,
+> > > > > weird interactions with other features due to host
+> > > > > implementation details should be handled by host.
+> > > > 
+> > > > I don't view this as a host implementation detail, this is guest
+> > > > feature making use of all pages for debugging. If we are placing poison
+> > > > values in the page then I wouldn't consider them an unused page, it is
+> > > > being actively used to store the poison value.
+> > > 
+> > > Well I guess it's a valid point of view for a kernel hacker, but they are
+> > > unused from application's point of view.
+> > > However poisoning is transparent to users and most distro users
+> > > are not aware of it going on. They just know that debug kernels
+> > > are slower.
+> > > User loading a debug kernel and immediately breaking overcommit
+> > > is an unpleasant experience.
+> > 
+> > How would that be any different then a user loading an older kernel
+> > that doesn't have this feature and breaking overcommit as a result?
+> 
+> Well old kernel does not have the feature so nothing to debug.
+> When we have a new feature that goes away in the debug kernel,
+> that's a big support problem since this leads to heisenbugs.
 
-Cheers,
+Trying to debug host features from the guest would be a pain anyway as
+a guest shouldn't even really know what the underlying setup of the
+guest is supposed to be.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> > I still think it would be better if we left the poisoning enabled in
+> > such a case and just displayed a warning message if nothing else that
+> > hinting is disabled because of page poisoning.
+> > 
+> > One other thought I had on this is that one side effect of page
+> > poisoning is probably that KSM would be able to merge all of the poison
+> > pages together into a single page since they are all set to the same
+> > values. So even with the poisoned pages it would be possible to reduce
+> > total memory overhead.
+> 
+> Right. And BTW one thing that host can do is pass
+> the hinted area to KSM for merging.
+> That requires an alloc hook to free it though.
+> 
+> Or we could add a per-VMA byte with the poison
+> value and use that on host to populate pages on fault.
+> 
+> 
+> > > > If we can achieve this
+> > > > and free the page back to the host then even better, but until the
+> > > > features can coexist we should not use the page hinting while page
+> > > > poisoning is enabled.
+> > > 
+> > > Existing hinting in balloon allows them to coexist so I think we
+> > > need to set the bar just as high for any new variant.
+> > 
+> > That is what I heard. I will have to look into this.
+> 
+> It's not doing anything smart right now, just checks
+> that poison == 0 and skips freeing if not.
+> But it can be enhanced transparently to guests.
+
+Okay, so it probably should be extended to add something like poison
+page that could replace the zero page for reads to a page that has been
+unmapped.
+
+> > > > This is one of the reasons why I was opposed to just disabling page
+> > > > poisoning when this feature was enabled in Nitesh's patches. If the
+> > > > guest has page poisoning enabled it is doing something with the page.
+> > > > It shouldn't be prevented from doing that because the host wants to
+> > > > have the option to free the pages.
+> > > 
+> > > I agree but I think the decision belongs on the host. I.e.
+> > > hint the page but tell the host it needs to be careful
+> > > about the poison value. It might also mean we
+> > > need to make sure poisoning happens after the hinting, not before.
+> > 
+> > The only issue with poisoning after instead of before is that the hint
+> > is ignored and we end up triggering a page fault and zero as a result.
+> > It might make more sense to have an architecture specific call that can
+> > be paravirtualized to handle the case of poisoning the page for us if
+> > we have the unused page hint enabled. Otherwise the write to the page
+> > is a given to invalidate the hint.
+> 
+> Sounds interesting. So the arch hook will first poison and
+> then pass the page to the host?
+> 
+> Or we can also ask the host to poison for us, problem is this forces
+> host to either always write into page, or call MADV_DONTNEED,
+> without it could do MADV_FREE. Maybe that is not a big issue.
+
+I would think we would ask the host to poison for us. If I am not
+mistaken both solutions right now are using MADV_DONTNEED. I would tend
+to lean that way if we are doing page poisoning since the cost for
+zeroing/poisoning the page on the host could be canceled out by
+dropping the page poisoning on the guest.
+
+Then again since we are doing higher order pages only, and the
+poisoning is supposed to happen before we get into __free_one_page we
+would probably have to do both the poisoning, and the poison on fault.
+
