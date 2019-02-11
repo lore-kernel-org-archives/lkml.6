@@ -2,120 +2,139 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007ADC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2415EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC9320821
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0A7F2080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfBKKWp (ORCPT
+        id S1726914AbfBKKYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:22:45 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfBKKWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:22:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9204BA78;
-        Mon, 11 Feb 2019 02:22:44 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6B0B3F557;
-        Mon, 11 Feb 2019 02:22:42 -0800 (PST)
-Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
- devres release
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190207193653.18221-1-geert+renesas@glider.be>
- <20190208164019.GY32526@8bytes.org>
- <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
- <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6e64e564-aa6c-4193-1f57-ebf88d6932d5@arm.com>
-Date:   Mon, 11 Feb 2019 10:22:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 05:24:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33634 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725931AbfBKKYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:24:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 77BAEAEE1;
+        Mon, 11 Feb 2019 10:24:04 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 684271E09A8; Mon, 11 Feb 2019 11:24:02 +0100 (CET)
+Date:   Mon, 11 Feb 2019 11:24:02 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190211102402.GF19029@quack2.suse.cz>
+References: <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206210356.GZ6173@dastard>
+ <20190206220828.GJ12227@ziepe.ca>
+ <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+ <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+ <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
+ <20190208044302.GA20493@dastard>
+ <20190208111028.GD6353@quack2.suse.cz>
+ <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02/2019 18:55, Geert Uytterhoeven wrote:
-> Hi Robin,
+On Fri 08-02-19 12:50:37, Dan Williams wrote:
+> On Fri, Feb 8, 2019 at 3:11 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 08-02-19 15:43:02, Dave Chinner wrote:
+> > > On Thu, Feb 07, 2019 at 04:55:37PM +0000, Christopher Lameter wrote:
+> > > > One approach that may be a clean way to solve this:
+> > > > 3. Filesystems that allow bypass of the page cache (like XFS / DAX) will
+> > > >    provide the virtual mapping when the PIN is done and DO NO OPERATIONS
+> > > >    on the longterm pinned range until the long term pin is removed.
+> > >
+> > > So, ummm, how do we do block allocation then, which is done on
+> > > demand during writes?
+> > >
+> > > IOWs, this requires the application to set up the file in the
+> > > correct state for the filesystem to lock it down so somebody else
+> > > can write to it.  That means the file can't be sparse, it can't be
+> > > preallocated (i.e. can't contain unwritten extents), it must have zeroes
+> > > written to it's full size before being shared because otherwise it
+> > > exposes stale data to the remote client (secure sites are going to
+> > > love that!), they can't be extended, etc.
+> > >
+> > > IOWs, once the file is prepped and leased out for RDMA, it becomes
+> > > an immutable for the purposes of local access.
+> > >
+> > > Which, essentially we can already do. Prep the file, map it
+> > > read/write, mark it immutable, then pin it via the longterm gup
+> > > interface which can do the necessary checks.
+> >
+> > Hum, and what will you do if the immutable file that is target for RDMA
+> > will be a source of reflink? That seems to be currently allowed for
+> > immutable files but RDMA store would be effectively corrupting the data of
+> > the target inode. But we could treat it similarly as swapfiles - those also
+> > have to deal with writes to blocks beyond filesystem control. In fact the
+> > similarity seems to be quite large there. What do you think?
 > 
-> On Fri, Feb 8, 2019 at 6:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
->> On 08/02/2019 16:40, Joerg Roedel wrote:
->>> On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
->>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->>>> index 8ac10af17c0043a3..d62487d024559620 100644
->>>> --- a/drivers/base/dd.c
->>>> +++ b/drivers/base/dd.c
->>>> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->>>>                       drv->remove(dev);
->>>>
->>>>               device_links_driver_cleanup(dev);
->>>> -            arch_teardown_dma_ops(dev);
->>>>
->>>>               devres_release_all(dev);
->>>> +            arch_teardown_dma_ops(dev);
->>>>               dev->driver = NULL;
->>>>               dev_set_drvdata(dev, NULL);
->>>>               if (dev->pm_domain && dev->pm_domain->dismiss)
->>>
->>> Thanks for the fix! Should it also be tagged for stable and get a Fixes
+> This sounds so familiar...
 > 
-> FTR, Greg has added it to driver-core-testing, with a CC to stable.
+>     https://lwn.net/Articles/726481/
+> 
+> I'm not opposed to trying again, but leases was what crawled out
+> smoking crater when this last proposal was nuked.
 
-So I see, great!
+Umm, don't think this is that similar to daxctl() discussion. We are not
+speaking about providing any new userspace API for this. Also I think the
+situation about leases has somewhat cleared up with this discussion - ODP
+hardware does not need leases since it can use MMU notifiers, for non-ODP
+hardware it is difficult to handle leases as such hardware has only one big
+kill-everything call and using that would effectively mean lot of work on
+the userspace side to resetup everything to make things useful if workable
+at all.
 
->>> tag? I know it only triggers with a fix in v5.0-rc, but still...
->>
->> I think so:
->>
->> Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time
->> for platform/amba/pci bus devices")
-> 
-> Thanks! It won't backport cleanly due to commit dc3c05504d38849f
-> ("dma-mapping: remove dma_deconfigure") in v4.20, though.
+So my proposal would be:
 
-Ah yes - backports beyond that should simply be a case of moving the 
-dma_deconfigure() wrapper in the same manner.
+1) ODP hardward uses gup_fast() like direct IO and uses MMU notifiers to do
+its teardown when fs needs it.
 
-Thanks,
-Robin.
+2) Hardware not capable of tearing down pins from MMU notifiers will have
+to use gup_longterm() (we may actually rename it to a more suitable name).
+FS may just refuse such calls (for normal page cache backed file, it will
+just return success but for DAX file it will do sanity checks whether the
+file is fully allocated etc. like we currently do for swapfiles) but if
+gup_longterm() returns success, it will provide the same guarantees as for
+swapfiles. So the only thing that we need is some call from gup_longterm()
+to a filesystem callback to tell it - this file is going to be used by a
+third party as an IO buffer, don't touch it. And we can (and should)
+probably refactor the handling to be shared between swapfiles and
+gup_longterm().
 
->> There aren't many drivers using dmam_alloc_*(), let alone which would
->> also find themselves behind an IOMMU on an Arm system, but it turns out
->> I actually have another one which can reproduce the BUG() with 5.0-rc.
-> 
-> SATA core uses dmam_alloc_*().
-> 
->> I've tried a 4.12 kernel with a bit of instrumentation[1] and sure
->> enough the devres-managed buffer is freed with the wrong ops[2] even
->> then. How it manages not to blow up more catastrophically I have no
->> idea... I guess at best it just leaks the buffers and IOMMU mappings,
->> and at worst quietly frees random other pages instead.
-> 
-> May depend on the actual ops, and whether CMA is used or not.
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+								Honza
+
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
