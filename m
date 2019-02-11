@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE4EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD1EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7A221B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26E7721B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898469;
-	bh=Mc+rxYaqlX3nW+DOTE9RU1DpywvZoaoEj9HB1ELDw0s=;
+	s=default; t=1549898478;
+	bh=xtZNzy9pgX4ZWk7d2fypnRxP+IKwcaldcI+P4cJAUgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1WbuhceQkS6aSbfJ8b+Yr61CNfYbv9qoaEugRPbvaDfSZ/7tT4Tar3ybBmdVneA4O
-	 gBHrHt8CKWUUWZMOOQwlM7VvlA8tIFa2dmRwbuPa4nkVVm6jE6fd7BJ1oaKZPxiPJU
-	 8dwXgEgDfIf8Ly9T4CdtE8RpigOUPPPzbFcDdwxI=
+	b=poE8kKIMmCgcTArYueVD2EkIuD6MNlEHQZotHv+QWhQdC7MzpQuVuev2c6n5ARHwG
+	 Ej7hKMAAh7ZPyr0QkPL6ZSM8JDmj12RQbcg0uA4iYj3VImDSspc+K4M4YZonafZBgI
+	 oiu+d83ORJ8eBGWp42t0uwoNN6YGZOqXX2cUD6XI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391130AbfBKPVH (ORCPT
+        id S2391267AbfBKPVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:21:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53822 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:21:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390851AbfBKPEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:45 -0500
+        id S2389611AbfBKPEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C81EF222A7;
-        Mon, 11 Feb 2019 15:04:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2321B222B0;
+        Mon, 11 Feb 2019 15:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897484;
-        bh=Mc+rxYaqlX3nW+DOTE9RU1DpywvZoaoEj9HB1ELDw0s=;
+        s=default; t=1549897480;
+        bh=xtZNzy9pgX4ZWk7d2fypnRxP+IKwcaldcI+P4cJAUgo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w/RuCBCBlsNKq5qLpkoOFzBR3Ta05qPaFu+mD0EIQxbtbD53fX4BFDUzlX1ZQUlOi
-         8MqyD7uAVDdz5AlbHYHHT/jf35qYSYaCrt3dHFbyX41kmM7p/8ZBXQeybwpT1HP7Cl
-         kbinwVn07BydAbZViPoizOpCWD3cDwB0qtTh8nhY=
+        b=cUEXHVENOy711FEB6lkoKZwOFqkOyi4+nfqGwqNVG/38K0VkaNOQpBdnZAG9Fg58z
+         rPHukqC7beLea+N62bWzO6I3NFti5YkuQcnNFKU3VquusYS7j4Hi1zT3/McIDHYRS/
+         AneznS4P4O5mmbuB+zr/OdE2BRx1iWNgv1Tv6hAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 004/137] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
-Date:   Mon, 11 Feb 2019 15:18:05 +0100
-Message-Id: <20190211141812.346049749@linuxfoundation.org>
+Subject: [PATCH 4.9 003/137] ASoC: Intel: mrfld: fix uninitialized variable access
+Date:   Mon, 11 Feb 2019 15:18:04 +0100
+Message-Id: <20190211141812.254483408@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,70 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
+[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
 
-Prevent possible race by parallel threads between ipu_image_convert_run()
-and ipu_image_convert_unprepare(). This involves setting ctx->aborting
-to true unconditionally so that no new job runs can be queued during
-unprepare, and holding the ctx->aborting flag until the context is freed.
+Randconfig testing revealed a very old bug, with gcc-8:
 
-Note that the "normal" ipu_image_convert_abort() case (e.g. not during
-context unprepare) should clear the ctx->aborting flag after aborting
-any active run and clearing the context's pending queue. This is because
-it should be possible to continue to use the conversion context and queue
-more runs after an abort.
+sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
+sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (fw == NULL) {
+     ^
+sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
+  const struct firmware *fw;
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+We must check the return code of request_firmware() before we look at the
+pointer result that may be uninitialized when the function fails.
+
+Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
-index 805b6fa7b5f4..50b73f3876fb 100644
---- a/drivers/gpu/ipu-v3/ipu-image-convert.c
-+++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
-@@ -1513,7 +1513,7 @@ unlock:
- EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
+diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+index 33917146d9c4..054b1d514e8a 100644
+--- a/sound/soc/intel/atom/sst/sst_loader.c
++++ b/sound/soc/intel/atom/sst/sst_loader.c
+@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
+ 	const struct firmware *fw;
  
- /* Abort any active or pending conversions for this context */
--void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- {
- 	struct ipu_image_convert_chan *chan = ctx->chan;
- 	struct ipu_image_convert_priv *priv = chan->priv;
-@@ -1540,7 +1540,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 
- 	need_abort = (run_count || active_run);
- 
--	ctx->aborting = need_abort;
-+	ctx->aborting = true;
- 
- 	spin_unlock_irqrestore(&chan->irqlock, flags);
- 
-@@ -1561,7 +1561,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
- 		force_abort(ctx);
+ 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+-	if (fw == NULL) {
+-		dev_err(sst->dev, "fw is returning as null\n");
+-		return -EINVAL;
+-	}
+ 	if (retval) {
+ 		dev_err(sst->dev, "request fw failed %d\n", retval);
+ 		return retval;
  	}
-+}
- 
-+void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+{
-+	__ipu_image_convert_abort(ctx);
- 	ctx->aborting = false;
- }
- EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
-@@ -1575,7 +1579,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
- 	bool put_res;
- 
- 	/* make sure no runs are hanging around */
--	ipu_image_convert_abort(ctx);
-+	__ipu_image_convert_abort(ctx);
- 
- 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
- 		chan->ic_task, ctx);
++	if (fw == NULL) {
++		dev_err(sst->dev, "fw is returning as null\n");
++		return -EINVAL;
++	}
+ 	mutex_lock(&sst->sst_lock);
+ 	retval = sst_cache_and_parse_fw(sst, fw);
+ 	mutex_unlock(&sst->sst_lock);
 -- 
 2.19.1
 
