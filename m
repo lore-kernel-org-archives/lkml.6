@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD14C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD1FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E071C20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CB0120700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896091;
-	bh=Ikb70c7BJL+y5eLbPxkXoO4xAhLnEXnvm/1Q8syK6MQ=;
+	s=default; t=1549896095;
+	bh=Bb1NEyrgA5loNil8p1yXdNyS5pz97RQTEmH9kLDHW/k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=isMXsL/UrAg037xsZbSbI5314SkaLwFwzgU0yrHPSXyAlFfT0CtaHtum17NZyoq9i
-	 WzZAhx3pHm9F+K9iLnQPq1knKGWBMage7PaXDtbnKCz9ilhhynut5MbBHCn/4bfdbF
-	 W5Wr6sy4O6P7nmQb63gtaF3PgCzrTpbw3tsXcltw=
+	b=I5QbU/KYHxuWd1q2k6YeRETrekSSAVL09wdVlWyzFo4OR2CNKfLPdhljRl8ytbOpm
+	 WoLmYqazLT1v30rF7qhl5tADLfI2wFLnUix5WoHpIWFEk/Kkvpsfqx1v1qLKi5p0y0
+	 cRxURYfLN1tbHoNHKAPBmeXUT5m5hL2mPWavPz/g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732244AbfBKOl3 (ORCPT
+        id S1732262AbfBKOld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:41:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52740 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732222AbfBKOl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:27 -0500
+        id S1732222AbfBKOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4531E2082F;
-        Mon, 11 Feb 2019 14:41:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF07320700;
+        Mon, 11 Feb 2019 14:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896086;
-        bh=Ikb70c7BJL+y5eLbPxkXoO4xAhLnEXnvm/1Q8syK6MQ=;
+        s=default; t=1549896090;
+        bh=Bb1NEyrgA5loNil8p1yXdNyS5pz97RQTEmH9kLDHW/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bueetvEVZq8osYmHOwZ2hmW+RqPeCeJkeLeWnQyK8Yqx6YENVHIj8yI1ruP+VPhW+
-         MzUBjgILlcsfjYuj7QWMbN1d1ZjUEpw2bnUuJcYhPSiJrWEvFzqU0GjVQvjeyqYoPj
-         aa3hH/u+YqzBuYFQ5pl+9Pmp3mfX8dOkL10yBylo=
+        b=ex1xANE0OtpL0OXc7MUpbnHrgmoiUVNCSTQ5XrHjCzgyMhR06dR0RHecaSJGqwdbC
+         1Tcz2jRFZxAMeOtferQAADjfbO0PKJISFg8BrmJaVh5IyRWF0fa2saZYRpJv30sTdq
+         cC4s7ZpcVg1py85riMUjWkvatsNp6de5OEa9hyrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sheng Yong <shengyong1@huawei.com>,
+        stable@vger.kernel.org, Tiezhu Yang <kernelpatch@126.com>,
         Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 069/313] f2fs: fix race between write_checkpoint and write_begin
-Date:   Mon, 11 Feb 2019 15:15:49 +0100
-Message-Id: <20190211141858.475510133@linuxfoundation.org>
+Subject: [PATCH 4.19 070/313] f2fs: fix wrong return value of f2fs_acl_create
+Date:   Mon, 11 Feb 2019 15:15:50 +0100
+Message-Id: <20190211141858.538745575@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,88 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2866fb16d67992195b0526d19e65acb6640fb87f ]
+[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
 
-The following race could lead to inconsistent SIT bitmap:
+When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
+should return -EIO instead of -ENOMEM, this patch makes it consistent
+with posix_acl_create() which has been fixed in commit beaf226b863a
+("posix_acl: don't ignore return value of posix_acl_create_masq()").
 
-Task A                          Task B
-======                          ======
-f2fs_write_checkpoint
-  block_operations
-    f2fs_lock_all
-      down_write(node_change)
-      down_write(node_write)
-      ... sync ...
-      up_write(node_change)
-                                f2fs_file_write_iter
-                                  set_inode_flag(FI_NO_PREALLOC)
-                                  ......
-                                  f2fs_write_begin(index=0, has inline data)
-                                    prepare_write_begin
-                                      __do_map_lock(AIO) => down_read(node_change)
-                                      f2fs_convert_inline_page => update SIT
-                                      __do_map_lock(AIO) => up_read(node_change)
-  f2fs_flush_sit_entries <= inconsistent SIT
-  finish write checkpoint
-  sudden-power-off
-
-If SPO occurs after checkpoint is finished, SIT bitmap will be set
-incorrectly.
-
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
+Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/data.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/f2fs/acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 11f28342f641..08314fb42652 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2259,6 +2259,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	bool locked = false;
- 	struct extent_info ei = {0,0,0};
- 	int err = 0;
-+	int flag;
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 111824199a88..b9fe937a3c70 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 		return PTR_ERR(p);
  
- 	/*
- 	 * we already allocated all the blocks, so we don't need to get
-@@ -2268,9 +2269,15 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 			!is_inode_flag_set(inode, FI_NO_PREALLOC))
- 		return 0;
+ 	clone = f2fs_acl_clone(p, GFP_NOFS);
+-	if (!clone)
+-		goto no_mem;
++	if (!clone) {
++		ret = -ENOMEM;
++		goto release_acl;
++	}
  
-+	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
-+	if (f2fs_has_inline_data(inode) && pos + len > MAX_INLINE_DATA(inode))
-+		flag = F2FS_GET_BLOCK_DEFAULT;
-+	else
-+		flag = F2FS_GET_BLOCK_PRE_AIO;
-+
- 	if (f2fs_has_inline_data(inode) ||
- 			(pos & PAGE_MASK) >= i_size_read(inode)) {
--		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
-+		__do_map_lock(sbi, flag, true);
- 		locked = true;
- 	}
- restart:
-@@ -2308,6 +2315,7 @@ restart:
- 				f2fs_put_dnode(&dn);
- 				__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO,
- 								true);
-+				WARN_ON(flag != F2FS_GET_BLOCK_PRE_AIO);
- 				locked = true;
- 				goto restart;
- 			}
-@@ -2321,7 +2329,7 @@ out:
- 	f2fs_put_dnode(&dn);
- unlock_out:
- 	if (locked)
--		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
-+		__do_map_lock(sbi, flag, false);
- 	return err;
+ 	ret = f2fs_acl_create_masq(clone, mode);
+ 	if (ret < 0)
+-		goto no_mem_clone;
++		goto release_clone;
+ 
+ 	if (ret == 0)
+ 		posix_acl_release(clone);
+@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 
+ 	return 0;
+ 
+-no_mem_clone:
++release_clone:
+ 	posix_acl_release(clone);
+-no_mem:
++release_acl:
+ 	posix_acl_release(p);
+-	return -ENOMEM;
++	return ret;
  }
  
+ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
 
