@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10171C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4637CC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92FD206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A67920700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896331;
-	bh=t3Z3UC1H3BvnPEfAjft8EBHjMxVLIFKasujIj++WxTw=;
+	s=default; t=1549896335;
+	bh=dwqIzyW1NJovQoX0LVGnXHkGXqr3JhnF3DUOI40Wwbg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JwxxW7HxjEtVoM7Nu4j0/Kik58DxjntJJhHyY1wwnBb9xP1ReNsFIH0tTjSozRPRJ
-	 LHgP/4M0eCk3VomyUFvoQ4cz84xpH3ba1FKHq3PMPPjRwYF+p3W9drv+oP3p7CohdP
-	 YOfZ1rrOtBiZxwiCtiPShVRVP/aoWVGMFYNd0rQ0=
+	b=qR7cTpGXH7q/9b3G/yWPgsBQl9gGh0ix7XsYJAOX6kwUzcO5QxmlAd47spE4Wq3CH
+	 VKkwoe7roWsLfnPtJRfFXsnxkjN7umn/QMNI73T0hCIOcidZoNA3KbYJxGsS0c+ipp
+	 z1iKrJjkQQjMLrB21gM9bgNXDGn++a9Y2M2/qZ6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733057AbfBKOpa (ORCPT
+        id S1733069AbfBKOpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:45:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58516 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:45:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732608AbfBKOp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:45:28 -0500
+        id S1732387AbfBKOpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:45:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1281F20700;
-        Mon, 11 Feb 2019 14:45:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD3D62081B;
+        Mon, 11 Feb 2019 14:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896327;
-        bh=t3Z3UC1H3BvnPEfAjft8EBHjMxVLIFKasujIj++WxTw=;
+        s=default; t=1549896330;
+        bh=dwqIzyW1NJovQoX0LVGnXHkGXqr3JhnF3DUOI40Wwbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=buazbOkU7bI5+nXnbnaeN6VgIbR2+5iqQdDgxJJ8GsGgB5viUKZqDn5UofODp4rmc
-         H++xwuM+ntvkKMcAJl/8+jCNPEvkQCmfIfa6wXe8NAew4wHW71rn8qqD8lOUhMHEof
-         Z+7sLFdF5/Cj7/LkVbzbSbfx1RctP0ETJZx3NTaY=
+        b=uWLuLOJirt0XhlhnoUytMV40SqIsr/bm3+YX5zbXgnc9WY6OKSU5IYdoinK25ieta
+         FfR5fCnz21HiTmcKev0I8ECRfchaHObUuFGkB/2IvDPqMPfu8oyuWUfqSaunoIjaHj
+         6VBVkfx6dwVxO5EkebVxDyYB09gDIp4KMraK/QL0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 147/313] mmc: sdhci-of-esdhc: Fix timeout checks
-Date:   Mon, 11 Feb 2019 15:17:07 +0100
-Message-Id: <20190211141903.414917559@linuxfoundation.org>
+Subject: [PATCH 4.19 148/313] mmc: sdhci-omap: Fix timeout checks
+Date:   Mon, 11 Feb 2019 15:17:08 +0100
+Message-Id: <20190211141903.475739367@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,52 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ea6d027312111c6d96309ad1a684b33cb37e6764 ]
+[ Upstream commit 9f0ea0bda1d06120b053bb0c283f54afec59293d ]
 
 Always check the wait condition before returning timeout.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-of-esdhc.c | 16 ++++++++++++----
+ drivers/mmc/host/sdhci-omap.c | 16 ++++++++++++----
  1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index 9cb7554a463d..a7bf8515116f 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -526,8 +526,12 @@ static void esdhc_clock_enable(struct sdhci_host *host, bool enable)
- 	/* Wait max 20 ms */
- 	timeout = ktime_add_ms(ktime_get(), 20);
- 	val = ESDHC_CLOCK_STABLE;
--	while (!(sdhci_readl(host, ESDHC_PRSSTAT) & val)) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while  (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		if (sdhci_readl(host, ESDHC_PRSSTAT) & val)
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Internal clock never stabilised.\n",
- 				mmc_hostname(host->mmc));
- 			break;
-@@ -591,8 +595,12 @@ static void esdhc_of_set_clock(struct sdhci_host *host, unsigned int clock)
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index d264391616f9..d02f5cf76b3d 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -220,8 +220,12 @@ static void sdhci_omap_conf_bus_power(struct sdhci_omap_host *omap_host,
  
- 	/* Wait max 20 ms */
- 	timeout = ktime_add_ms(ktime_get(), 20);
--	while (!(sdhci_readl(host, ESDHC_PRSSTAT) & ESDHC_CLOCK_STABLE)) {
--		if (ktime_after(ktime_get(), timeout)) {
+ 	/* wait 1ms */
+ 	timeout = ktime_add_ms(ktime_get(), SDHCI_OMAP_TIMEOUT);
+-	while (!(sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL) & HCTL_SDBP)) {
+-		if (WARN_ON(ktime_after(ktime_get(), timeout)))
 +	while (1) {
 +		bool timedout = ktime_after(ktime_get(), timeout);
 +
-+		if (sdhci_readl(host, ESDHC_PRSSTAT) & ESDHC_CLOCK_STABLE)
++		if (sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL) & HCTL_SDBP)
 +			break;
-+		if (timedout) {
- 			pr_err("%s: Internal clock never stabilised.\n",
- 				mmc_hostname(host->mmc));
++		if (WARN_ON(timedout))
  			return;
+ 		usleep_range(5, 10);
+ 	}
+@@ -653,8 +657,12 @@ static void sdhci_omap_init_74_clocks(struct sdhci_host *host, u8 power_mode)
+ 
+ 	/* wait 1ms */
+ 	timeout = ktime_add_ms(ktime_get(), SDHCI_OMAP_TIMEOUT);
+-	while (!(sdhci_omap_readl(omap_host, SDHCI_OMAP_STAT) & INT_CC_EN)) {
+-		if (WARN_ON(ktime_after(ktime_get(), timeout)))
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		if (sdhci_omap_readl(omap_host, SDHCI_OMAP_STAT) & INT_CC_EN)
++			break;
++		if (WARN_ON(timedout))
+ 			return;
+ 		usleep_range(5, 10);
+ 	}
 -- 
 2.19.1
 
