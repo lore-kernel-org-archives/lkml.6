@@ -2,119 +2,94 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3B3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD21C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 541B82186A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F13A92186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:30:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWinqYJ/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icc2XmBa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388161AbfBKT3N (ORCPT
+        id S2388199AbfBKTaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:29:13 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38973 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732364AbfBKT3N (ORCPT
+        Mon, 11 Feb 2019 14:30:10 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46426 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731518AbfBKTaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:29:13 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e16so39833vsq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:29:12 -0800 (PST)
+        Mon, 11 Feb 2019 14:30:09 -0500
+Received: by mail-ot1-f68.google.com with SMTP id w25so19476185otm.13;
+        Mon, 11 Feb 2019 11:30:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pg6m4puueGSKgxFi2uNwC9kugYg5UTfpjB90FPweV/Y=;
-        b=hWinqYJ/c2te/mMDwRkz4RGJ6q9hQd0b9oB5Su5BNgJ1rB5H/5fLVvhH/JNk9EGi3I
-         cUYGO6xtpyJQIVlRvwmMIOzI1g9QV1tBJeYO6s//zxjUBEsxfOSKnTrRGWLK7rc0mqqv
-         gnhBDMILghoWVTItSD6WU3WZfQx2F7FgO0T7s=
+        bh=EKAzz2XWoprRBdkir+vqxJ/iQwVJe2PSVps01FW5WcE=;
+        b=icc2XmBak//btrTimEluXCbFltzdckF3x/2AASq48Eru+JAooR+aQt1P8YG+cdIMEH
+         AenYZz8Qp7D2j7ltMxeKuUv1OsYQYKryb+CVArAA/wqfacNA0ng0qR9F/V0kqLfNBIFb
+         Gos+AsLMygXgEd4/jFDmWmZ5ISUqjh0DgxQkhACZFaZoU5+TfJyN5QbOd5+YP47Y5N8J
+         UX8YSBBkd2XpZGvTSC0FP6OGP0sJlZNkVyQJfee0qGOuzx8GCmMXTpnhqcSl3wxBE/qx
+         chJLUBO3V9LyzTUR/tMPoHcUuwI8bKqSwYQ6x72fOo6THVhxOd0NhhyBTRoP87MvUF3h
+         yg1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pg6m4puueGSKgxFi2uNwC9kugYg5UTfpjB90FPweV/Y=;
-        b=HUfVGtCVUu4cErOq/x5P58dR43Cs2RcEwMalYlaaSqRbvhTntdfaalOoG5Cfv9Aq2u
-         AueUpEcSijHxUP87XWAx/rJwn9XRzF+M5ISQa+sk+Tu3gK29UQfYJtGt7841c+K/50Vq
-         DbQFHeC3V+EIIbK4Szp/ZjhyDf1cxScXB6vEnvqva5BGGzv7G3lXzKOPcl3ERKktQOMa
-         UNOOw0Z3vfN+4SgHQsi/omgvFW9FG1LSTTm1QDaY8rhjVFbXrOS1ozWhMQPsuMvq7H/7
-         zszFv1OU88Rec7KzoISvEkTJKjP2irM8THyM5LwTmnr+wssOiDCdvhxLWYddlsOMETgA
-         k33A==
-X-Gm-Message-State: AHQUAua7NSknze7qvYwODQREtAdulqM0FpMukEcID+8AOwuhGmY1gtiT
-        nNgRED9JQ0O2GVxnAZPLC34eRZHIo7U=
-X-Google-Smtp-Source: AHgI3Ia9NuD19p/SbmJrHv676AmYQr6mgr81ec8Wi2FQm7VY4rB7ykwr4Pdr5fl0z39VV9+7aGqbpw==
-X-Received: by 2002:a67:fc48:: with SMTP id p8mr8735768vsq.17.1549913351587;
-        Mon, 11 Feb 2019 11:29:11 -0800 (PST)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id p6sm163828uaa.2.2019.02.11.11.29.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 11:29:10 -0800 (PST)
-Received: by mail-vk1-f176.google.com with SMTP id v70so13955vkv.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 11:29:09 -0800 (PST)
-X-Received: by 2002:a1f:e7c5:: with SMTP id e188mr15096131vkh.92.1549913349277;
- Mon, 11 Feb 2019 11:29:09 -0800 (PST)
+        bh=EKAzz2XWoprRBdkir+vqxJ/iQwVJe2PSVps01FW5WcE=;
+        b=ZNplpTapzHvfyDCdLmyN1Z3Osj16Bhe50imOO8p51wqT5wK6lSjLh7xUlsh6NUWiEW
+         7Ao7frlszpHqS19N3ZYgee/oBfPnOwAoO3kMPVxYcEF4f3rEiB/yeb+ZfSivVAEPF7iv
+         xzxlybpy4QvtIOLd7MSpTK7eV1h2Us1X7caREtTPku9tHoRVwySEE2fBCskkvgMHeKle
+         wMr4Hneq326VEHBmW/ww2wvvxls7q/qvPi89YzSTTgHaevaxA+oUJwZhIPieC5mAAH4g
+         qfhq8BiBncOmNsWrgl776+cvEEvRyZYy3J3Di/UzaDf+D8cw9K4o3AHPx/E6RvwGCYNf
+         zKDg==
+X-Gm-Message-State: AHQUAuaWRYQ7BCmAJADBQK1gQW3wMq2WsLAwWkTnEFcCPq1LSYzsD/BN
+        OZi0nqQWUiI52AoojEPuw4RjGtkFyq8taYwVF40=
+X-Google-Smtp-Source: AHgI3IZT2WGNybPLA0Hk5aCWWYnO5OZEjm4uY+YJLFa1nj0zfOiwbG/8cLcr7KxYh3D79W3igVwkE7BajDmIyebPe5A=
+X-Received: by 2002:a9d:781:: with SMTP id 1mr28018388oto.250.1549913408913;
+ Mon, 11 Feb 2019 11:30:08 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1549540487.git.efremov@ispras.ru>
-In-Reply-To: <cover.1549540487.git.efremov@ispras.ru>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 11 Feb 2019 11:28:57 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
-Message-ID: <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] LSM documentation update
-To:     Denis Efremov <efremov@ispras.ru>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Eric Paris <eparis@parisplace.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
+In-Reply-To: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 11 Feb 2019 14:29:58 -0500
+Message-ID: <CAGngYiXPsj-TAZxC43UtAZYTkbztFtDB-z4jW29CthmaoeNy_w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
+To:     Robert Eshleman <bobbyeshleman@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 7, 2019 at 4:45 AM Denis Efremov <efremov@ispras.ru> wrote:
+On Sun, Feb 10, 2019 at 3:39 PM Robert Eshleman <bobbyeshleman@gmail.com> wrote:
 >
-> Recent "New LSM Hooks" discussion has led me to the
-> thought that it might be a good idea to slightly
-> update the current documentation. The patchset adds
-> nothing new to the documentation, only fixes the old
-> description of hooks to reflect their current state.
+> This patch adds support for the ap3216c ambient light and proximity
+> sensor.
 
-Do these fixes silence any warnings during the documentation build?
-(i.e. how did you verify the results beyond eyeballing the changes)
+PS
 
--Kees
+Why not use the chip in the mode where the interrupt is automatically cleared by
+reading the data? This could work if you read the data in the
+interrupt routine, store
+it in a buffer, then send the event to iio. Then when userspace wants
+to read out the
+value, don't actually touch the hardware, but return the buffered value.
 
->
-> Denis Efremov (10):
->   security: fix documentation for the sb_copy_data hook
->   security: fix documentation for the syslog hook
->   security: fix documentation for the socket_post_create hook
->   security: fix documentation for the task_setscheduler hook
->   security: fix documentation for the socket_getpeersec_dgram hook
->   security: fix documentation for the path_chmod hook
->   security: fix documentation for the audit_* hooks
->   security: fix documentation for the msg_queue_* hooks
->   security: fix documentation for the sem_* hooks
->   security: fix documentation for the shm_* hooks
->
->  include/linux/lsm_hooks.h | 127 ++++++++++++++++++--------------------
->  1 file changed, 61 insertions(+), 66 deletions(-)
->
-> --
-> 2.17.2
->
+I don't think you then need any synchronization primitives to
+accomplish this, such as
+mutexes, spin locks, etc. Because the interrupt routine is single-threaded.
 
-
--- 
-Kees Cook
+You don't even need a memory barrier for the buffered value,
+because the iio core uses a waitqueue internally, which automatically issues
+an mb(). As far as I know.
