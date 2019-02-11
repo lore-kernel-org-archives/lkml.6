@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605CBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5315C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31815222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57AC218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896804;
-	bh=lxOIkyuVOWhp6XGcq53PkEpOVnRjzyDJQL9FGkO5XPU=;
+	s=default; t=1549896807;
+	bh=oHet8ROheHeX2He9j8+BARHMHlmwvauX3Tlb3uGhHxw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F7L+AyNi5Z+OoICOScT16Wjg+7UAFOy5kDz/BDmlwVCwaM8wlvROdWldxOlu+ArMX
-	 KnBE5nZzHHFkclPuKHwVyvvjMhgrSMf11nLAHEGHtrU5qTOKw1XNJcbv25jN3/nF7h
-	 dZzzAUk5CPyyZTFdhQRmgJuL4z8Ib4mpcRMEvAzQ=
+	b=WvkXR1ZAwg+ETZ8FAwbmb//DzZqhzpro6iqMVsA8q1UhFKgR0TAK0hcFy/XsO/i5l
+	 f31AvobEHtVPjEuOH281qQvZsIox2B8yVx9ZUSOvOIfGUudEGXyZzx+dMpgeojURf1
+	 MkI1O1OQlh9D0cY/BQAmBiiMSNX1aVB/ZTQC9TlM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388622AbfBKOxW (ORCPT
+        id S2388632AbfBKOx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39708 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:53:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388603AbfBKOxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:18 -0500
+        id S2388603AbfBKOxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:53:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6282E2081B;
-        Mon, 11 Feb 2019 14:53:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55D92214DA;
+        Mon, 11 Feb 2019 14:53:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896797;
-        bh=lxOIkyuVOWhp6XGcq53PkEpOVnRjzyDJQL9FGkO5XPU=;
+        s=default; t=1549896803;
+        bh=oHet8ROheHeX2He9j8+BARHMHlmwvauX3Tlb3uGhHxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jcMiCbhgSo7z+IXHqmQhIrfu6PgpZXeE3sEwPjvgdaZvue0WzKoMEcFPo3iTeWZ66
-         6J5TUHxPvRIJF6CUm6o9Cyboeh+ar8s/Qrwzh7FRwo+FLseFxp9+uVT4ojifKayaRe
-         H05SkD6DjRCPdugzwNwHU+WImeJ1iAwtI/bWJjB4=
+        b=tf1kfDZtIGS2Oluzb3EkHki/DR0QDh5muafW+Dmc9RUDAdn1azIK/GjqZFCdijHDe
+         dZloObiv4nECr+8hY72k/jdoEJLpbpZ4rnKUMF7U2okFGh+/t8aLL5aoU791fipuK9
+         hJw3kTl+NGnHWihsXTeb6NNbwUgy1RMdZrv27+C8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        x86-ml <x86@kernel.org>
-Subject: [PATCH 4.19 305/313] x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()
-Date:   Mon, 11 Feb 2019 15:19:45 +0100
-Message-Id: <20190211141913.208777329@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 307/313] perf tests evsel-tp-sched: Fix bitwise operator
+Date:   Mon, 11 Feb 2019 15:19:47 +0100
+Message-Id: <20190211141913.335275129@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,51 +70,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Luck <tony.luck@intel.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit d28af26faa0b1daf3c692603d46bc4687c16f19e upstream.
+commit 489338a717a0dfbbd5a3fabccf172b78f0ac9015 upstream.
 
-Internal injection testing crashed with a console log that said:
+Notice that the use of the bitwise OR operator '|' always leads to true
+in this particular case, which seems a bit suspicious due to the context
+in which this expression is being used.
 
-  mce: [Hardware Error]: CPU 7: Machine Check Exception: f Bank 0: bd80000000100134
+Fix this by using bitwise AND operator '&' instead.
 
-This caused a lot of head scratching because the MCACOD (bits 15:0) of
-that status is a signature from an L1 data cache error. But Linux says
-that it found it in "Bank 0", which on this model CPU only reports L1
-instruction cache errors.
+This bug was detected with the help of Coccinelle.
 
-The answer was that Linux doesn't initialize "m->bank" in the case that
-it finds a fatal error in the mce_no_way_out() pre-scan of banks. If
-this was a local machine check, then this partially initialized struct
-mce is being passed to mce_panic().
-
-Fix is simple: just initialize m->bank in the case of a fatal error.
-
-Fixes: 40c36e2741d7 ("x86/mce: Fix incorrect "Machine check from unknown source" message")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Cc: stable@vger.kernel.org # v4.18 Note pre-v5.0 arch/x86/kernel/cpu/mce/core.c was called arch/x86/kernel/cpu/mcheck/mce.c
-Link: https://lkml.kernel.org/r/20190201003341.10638-1-tony.luck@intel.com
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
+Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mcheck/mce.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/tests/evsel-tp-sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -783,6 +783,7 @@ static int mce_no_way_out(struct mce *m,
- 			quirk_no_way_out(i, m, regs);
+--- a/tools/perf/tests/evsel-tp-sched.c
++++ b/tools/perf/tests/evsel-tp-sched.c
+@@ -17,7 +17,7 @@ static int perf_evsel__test_field(struct
+ 		return -1;
+ 	}
  
- 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
-+			m->bank = i;
- 			mce_read_aux(m, i);
- 			*msg = tmp;
- 			return 1;
+-	is_signed = !!(field->flags | FIELD_IS_SIGNED);
++	is_signed = !!(field->flags & FIELD_IS_SIGNED);
+ 	if (should_be_signed && !is_signed) {
+ 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
+ 			 evsel->name, name, is_signed, should_be_signed);
 
 
