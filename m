@@ -2,105 +2,91 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B396C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E77E2C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1365021773
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:10:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fG6iuFbp"
+	by mail.kernel.org (Postfix) with ESMTP id BF78B218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfBKWKP (ORCPT
+        id S1727120AbfBKWKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:10:15 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42096 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbfBKWKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:10:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s1so208339plp.9;
-        Mon, 11 Feb 2019 14:10:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LxcC57AYJDo5lH5zr4TmrdEFiY3rzHyU9M3v9CWzcGM=;
-        b=fG6iuFbpTY+GGY9cDzGLj91T/DGLd6gH1b+eqyJVb654VALHOY4v828m0FI8QYho3Y
-         biOYxRbO3jzRTLw1/hzNHptD2VsddjrBcsFkksxv8inPic07KIuvWwPBTA5MLUjo1khu
-         v5g//K3z6GBn/rh09Pn5T7B2KdHbF/I5q6lbn/o70NApT5rFwUAme6OcJj/MbH1ABmG6
-         KP2n7Ri50FUuqqhCXcTDdOAHpySt2sb9AO9ppdkGQE0ICrA6QN+L3GdtuRMrjfB7JZ/R
-         QgdXo8nLePLs4zO34iP6nBuB3YlvVxPRdZxRcZO35hEcE7zuJPuJpOASn3edcKTKO5CX
-         OFDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LxcC57AYJDo5lH5zr4TmrdEFiY3rzHyU9M3v9CWzcGM=;
-        b=lQZ0frtUtyF568wLrVX/aRxxT4NL1HCyktwj8o7uAD12bRQDOajcVuE+/+99Wv7ipT
-         NN6DEEIvbKetnBeslUnOnaftPmaCSQ9F6dYbeGJamlTFR/E9djTrZKy+DJQHFWlyejph
-         yiNttmqSTmVHgPdQ4b7Web9fijNUFRi47mgU6xzruiLTYfTNJlOQfY9NU8vZTdhF7YhY
-         D31dsdOkksObDPUYxOwjdzM7CY0HXu0ZLb/2VhThE9koa5/1CSA91t8ubrhsbkTzJIWD
-         JT9beDWYa6UEbLOsWmD7TP45qE2HLBxBIq4eKrixUmJDMUj/7tz0fGujR64JmUKv7c+O
-         Yd1w==
-X-Gm-Message-State: AHQUAuYcd/Y0M0JXa7nrB2YctlbR4HTHKcflmowMIGg2L3Zq43BFnlky
-        Pg9lCu3XpH+y9oHywh3gbOw=
-X-Google-Smtp-Source: AHgI3IY64Yo0AfrzfDwTjD+ZV2DFiLkPgasxWlYLeXYogmPqcgE6PQbXVkDMd/9zpk3gesqfbk61aw==
-X-Received: by 2002:a17:902:6f09:: with SMTP id w9mr470097plk.309.1549923013739;
-        Mon, 11 Feb 2019 14:10:13 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 1sm215206pfy.68.2019.02.11.14.10.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 14:10:12 -0800 (PST)
-Date:   Mon, 11 Feb 2019 14:10:11 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: input: ti-tsc-adc: Add new compatible
- for AM654 SoCs
-Message-ID: <20190211221011.GA149505@dtor-ws>
-References: <20190108052631.4169-1-vigneshr@ti.com>
- <3623af02-063d-9077-1e59-99d8cfe93ddd@ti.com>
+        Mon, 11 Feb 2019 17:10:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbfBKWKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:10:37 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 140B8218A3;
+        Mon, 11 Feb 2019 22:10:36 +0000 (UTC)
+Date:   Mon, 11 Feb 2019 17:10:33 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] uprobes: convert uprobe.ref to refcount_t
+Message-ID: <20190211171033.4691d581@gandalf.local.home>
+In-Reply-To: <CAGXu5jKgqHyji+W5coyeMmO7wQpJ_mxHK9Rga4UD=65kFavMEQ@mail.gmail.com>
+References: <1547637627-29526-1-git-send-email-elena.reshetova@intel.com>
+        <20190201172150.GA1853@linux.vnet.ibm.com>
+        <2236FBA76BA1254E88B949DDB74E612BA4BA0C70@IRSMSX102.ger.corp.intel.com>
+        <CAGXu5jJdeQ5DOZj_nPkWWBn8y0fRg2UEUGhd_seHL=KmKJey2g@mail.gmail.com>
+        <20190211152725.65d0ed18@gandalf.local.home>
+        <20190211152842.6a2a7794@gandalf.local.home>
+        <CAGXu5jKgqHyji+W5coyeMmO7wQpJ_mxHK9Rga4UD=65kFavMEQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3623af02-063d-9077-1e59-99d8cfe93ddd@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vignesh,
+On Mon, 11 Feb 2019 13:49:27 -0800
+Kees Cook <keescook@chromium.org> wrote:
 
-On Mon, Feb 11, 2019 at 11:10:59AM +0530, Vignesh R wrote:
-> Hi Dmitry,
+> On Mon, Feb 11, 2019 at 12:28 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Mon, 11 Feb 2019 15:27:25 -0500
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> >  
+> > > On Mon, 11 Feb 2019 12:21:32 -0800
+> > > Kees Cook <keescook@chromium.org> wrote:
+> > >  
+> > > > > > Looks good to me.
+> > > > > >
+> > > > > > Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>  
+> > > > >
+> > > > > Thank you very much Srikar!
+> > > > > Would you be able to take this patch to integration?  
+> > > >
+> > > > Steve can you pick this up with Srikar's Reviewed-by?  
+> > >
+> > > Yep. And I'll also add Oleg's acked-by. (Currently doing my "urgent"
+> > > patches now).
+> > >  
+> >
+> > Or is this something that can wait till the next merge window?  
 > 
-> On 08/01/19 10:56 AM, Vignesh R wrote:
-> > AM654 SoCs has ADC IP which is similar to AM335x, but without the
-> > touchscreen part. Add new compatible to handle AM654 SoCs. Also, it
-> > seems that existing compatible strings used in the kernel DTs were never
-> > documented. So, document them now.
-> > 
-> > Signed-off-by: Vignesh R <vigneshr@ti.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> 
-> If there are no comments, could you queue this bindings patch? This will
-> help me in getting ADC DT nodes to be merged into ARM SoC tree.
+> I wouldn't classify the change as _urgent_, no. For "next merge
+> window" you mean v5.1, I assume? I think that'd be fine unless Elena
+> sees something I don't.
 
-Sorry I did not realize you waited for me. Yes, please feel free to
-merge through your tree.
+OK, then I'll just place this in the "for-next" branch of mine. Still
+need to test what I current have ;-)
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+-- Steve
 
-Thanks,
-
--- 
-Dmitry
