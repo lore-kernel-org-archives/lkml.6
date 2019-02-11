@@ -4,56 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C49C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5576C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576FC21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC3221B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898579;
-	bh=xb8K4WplBUz8MhpTMWm/UXJHim8mfzicEkObr2l7gsU=;
+	s=default; t=1549898594;
+	bh=0PQXRgnZf2J5HVkB0d/pTRumzsfj+AI4/IQL6UeKebM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0ZadXHUFOZJ+zfFLNHGqzrQtUwHAwZl7GDrnNgUgR6bp0eRL+fqeqBc+aSIW74Rdx
-	 5YzzB76D6HJ2St0Mh+uy1N9ZkpBEGOgi+WswaD75KkyjbrgMW8OXyIxogYV68G7t/y
-	 KqJsW6CZAGsHMz4L0eBaytt1HUKK+PKyVLR9gDic=
+	b=drHDlAiAN1v5LXDd8djK/NcR2ZU8qwEyx1Q6/8+oh1HieefVkcTXZ1eIhD/rFjac0
+	 tvh5fZ+QSk0u1OHQLEMJry2ZJxPzFlTYNvM8Lf4iKBcWQEaGs7A9a+j/uuUfQlo1cA
+	 9qELfCbuW355PMXonhAbhS7H9zCZrnBMIKKQ2yZ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391919AbfBKPW5 (ORCPT
+        id S2390917AbfBKPXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:22:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52262 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:23:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390652AbfBKPDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:03:35 -0500
+        id S2390085AbfBKPD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D52E8222B5;
-        Mon, 11 Feb 2019 15:03:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 930E5222B5;
+        Mon, 11 Feb 2019 15:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897415;
-        bh=xb8K4WplBUz8MhpTMWm/UXJHim8mfzicEkObr2l7gsU=;
+        s=default; t=1549897407;
+        bh=0PQXRgnZf2J5HVkB0d/pTRumzsfj+AI4/IQL6UeKebM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xg8U65Xtte5SHz4Rva4riZf7w+JtbtQawajou61xhfoRgkPBBcpqUagnjR3TyuVpI
-         yyfxhp14r/NnbQ61vfzPHtSprWftRa+nSt7khJ8Ur3P6eLjKxyyGrtW5by6NQMaanB
-         7yyOXcsksCGP8Q3RzBRGGW15ycSWDxnrTBVA4SKQ=
+        b=V1pq6P/8/Ll0xNdZdypTWHaq6dJPkN7ALlP1/3mRXJakTFjd8v3Eu7sUogSTG7PIl
+         gKBGbKKkDiPvTluzRiXcYnGW35xB2QwoIWONN5+3Nr9ImqehzIiKfxpSyVFB4mT0mH
+         X2HPiyqfyoeOFFW6aV5IOmsb+Prr/txhI0XaJ03s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 196/205] perf/x86/intel/uncore: Add Node ID mask
-Date:   Mon, 11 Feb 2019 15:19:54 +0100
-Message-Id: <20190211141841.238833344@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 193/205] kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
+Date:   Mon, 11 Feb 2019 15:19:51 +0100
+Message-Id: <20190211141841.033392607@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -72,63 +65,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Jann Horn <jannh@google.com>
 
-commit 9e63a7894fd302082cf3627fe90844421a6cbe7f upstream.
+commit cfa39381173d5f969daf43582c95ad679189cbc9 upstream.
 
-Some PCI uncore PMUs cannot be registered on an 8-socket system (HPE
-Superdome Flex).
+kvm_ioctl_create_device() does the following:
 
-To understand which Socket the PCI uncore PMUs belongs to, perf retrieves
-the local Node ID of the uncore device from CPUNODEID(0xC0) of the PCI
-configuration space, and the mapping between Socket ID and Node ID from
-GIDNIDMAP(0xD4). The Socket ID can be calculated accordingly.
+1. creates a device that holds a reference to the VM object (with a borrowed
+   reference, the VM's refcount has not been bumped yet)
+2. initializes the device
+3. transfers the reference to the device to the caller's file descriptor table
+4. calls kvm_get_kvm() to turn the borrowed reference to the VM into a real
+   reference
 
-The local Node ID is only available at bit 2:0, but current code doesn't
-mask it. If a BIOS doesn't clear the rest of the bits, an incorrect Node ID
-will be fetched.
+The ownership transfer in step 3 must not happen before the reference to the VM
+becomes a proper, non-borrowed reference, which only happens in step 4.
+After step 3, an attacker can close the file descriptor and drop the borrowed
+reference, which can cause the refcount of the kvm object to drop to zero.
 
-Filter the Node ID by adding a mask.
+This means that we need to grab a reference for the device before
+anon_inode_getfd(), otherwise the VM can disappear from under us.
 
-Reported-by: Song Liu <songliubraving@fb.com>
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: <stable@vger.kernel.org> # v3.7+
-Fixes: 7c94ee2e0917 ("perf/x86: Add Intel Nehalem and Sandy Bridge-EP uncore support")
-Link: https://lkml.kernel.org/r/1548600794-33162-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 852b6d57dc7f ("kvm: add device control API")
+Cc: stable@kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore_snbep.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ virt/kvm/kvm_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -1221,6 +1221,8 @@ static struct pci_driver snbep_uncore_pc
- 	.id_table	= snbep_uncore_pci_ids,
- };
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2912,8 +2912,10 @@ static int kvm_ioctl_create_device(struc
+ 	if (ops->init)
+ 		ops->init(dev);
  
-+#define NODE_ID_MASK	0x7
-+
- /*
-  * build pci bus to socket mapping
-  */
-@@ -1242,7 +1244,7 @@ static int snbep_pci2phy_map_init(int de
- 		err = pci_read_config_dword(ubox_dev, nodeid_loc, &config);
- 		if (err)
- 			break;
--		nodeid = config;
-+		nodeid = config & NODE_ID_MASK;
- 		/* get the Node ID mapping */
- 		err = pci_read_config_dword(ubox_dev, idmap_loc, &config);
- 		if (err)
++	kvm_get_kvm(kvm);
+ 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
+ 	if (ret < 0) {
++		kvm_put_kvm(kvm);
+ 		mutex_lock(&kvm->lock);
+ 		list_del(&dev->vm_node);
+ 		mutex_unlock(&kvm->lock);
+@@ -2921,7 +2923,6 @@ static int kvm_ioctl_create_device(struc
+ 		return ret;
+ 	}
+ 
+-	kvm_get_kvm(kvm);
+ 	cd->fd = ret;
+ 	return 0;
+ }
 
 
