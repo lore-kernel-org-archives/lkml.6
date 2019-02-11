@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A612C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E585C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBFD214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4054F20700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896102;
-	bh=s82KheIBmAfWzDrl96WIiQ2NzTDwrmSYPGJGjlXUKdU=;
+	s=default; t=1549896106;
+	bh=G2SkOh9dlrlUid8qi+B7zV2CvdAjaa3fJSafC6Cd36s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OEjckDXcdSnOhM05vtY0duI22PSnLETEaXEL27OBN65UiQkPaoAzRX7AP4J7l5HM5
-	 fBX2AKZvXQ5QarB6iMKzXv8F3EsJQdsVui1a+vPo1N3l2sJSJZ2Zy4Lf4s8I9I1/dv
-	 7kNqVBcClqJWkdRj7dg/F7VPg03Y7CmtzHLYEMCc=
+	b=clFqOSGkbOZLDXz5YT0LMmynhn1NCoaH/RjR5xkpdvQCeKSu9nOzyp0esHMOsIIIw
+	 cTBOcq/L27iFpvjO8l0HYr23fKV/27OnxNPmVzZnSmuZASkGQdoiVF13Dbp1BkhzBO
+	 vL7K8H84gd3S/l7SqBIlBvQ3j7pd17zxX4oTgh1E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732278AbfBKOlk (ORCPT
+        id S1732289AbfBKOlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:41:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52936 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732266AbfBKOlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:37 -0500
+        id S1731214AbfBKOln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D341A20700;
-        Mon, 11 Feb 2019 14:41:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E313320700;
+        Mon, 11 Feb 2019 14:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896096;
-        bh=s82KheIBmAfWzDrl96WIiQ2NzTDwrmSYPGJGjlXUKdU=;
+        s=default; t=1549896102;
+        bh=G2SkOh9dlrlUid8qi+B7zV2CvdAjaa3fJSafC6Cd36s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hl5RkIq7JjFB3zAm4kNT5qMtAan9lG7hGbjoWlcTqMVTbxKi+MvRDGxDPgHqWinLu
-         A+Hg+P2hb8xB8CtvwT7tM7tCyS6MB/wMr62qJRXLjUkJSVt9olvmZCKg7ldi3t/pSw
-         V52naA0TGrFt/Jw4MEpKoJPf4KP5O+wg5cN1AQNA=
+        b=jBg+7x5c3aLBTw6dpFjnfXxo+tiC3/rzCnBwoYzRHEFoYvs0xs1WUYQNf+irKw5SJ
+         wzch2MbZmQxP9WghQcrwzxxa9YlNjNypegaX/ET+Z+rBl+/nAt5VSBAw6Z9g+dMvaQ
+         wlL6gyKsHDbgWqX++OGbIRfpT5MyyhE+RnFMZHek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 072/313] arm64: io: Ensure calls to delay routines are ordered against prior readX()
-Date:   Mon, 11 Feb 2019 15:15:52 +0100
-Message-Id: <20190211141858.671706440@linuxfoundation.org>
+Subject: [PATCH 4.19 056/313] clk: meson: meson8b: fix the width of the cpu_scale_div clock
+Date:   Mon, 11 Feb 2019 15:15:36 +0100
+Message-Id: <20190211141857.536028832@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,96 +67,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
+[ Upstream commit a8662eadd1032018f31e37deda811790b2326662 ]
 
-A relatively standard idiom for ensuring that a pair of MMIO writes to a
-device arrive at that device with a specified minimum delay between them
-is as follows:
+According to the public S805 datasheet HHI_SYS_CPU_CLK_CNTL1[29:20] is
+the register for the CPU scale_div clock. This matches the code in
+Amlogic's 3.10 GPL kernel sources:
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
 
-	writel_relaxed(42, dev_base + CTL1);
-	readl(dev_base + CTL1);
-	udelay(10);
-	writel_relaxed(42, dev_base + CTL2);
+This means that the divider register is 10 bit wide instead of 9 bits.
+So far this is not a problem since all u-boot versions I have seen are
+not using the cpu_scale_div clock at all (instead they are configuring
+the CPU clock to run off cpu_in_sel directly).
 
-the intention being that the read-back from the device will push the
-prior write to CTL1, and the udelay will hold up the write to CTL1 until
-at least 10us have elapsed.
+The fixes tag points to the latest rework of the CPU clocks. However,
+even before the rework it was wrong. Commit 7a29a869434e8b ("clk: meson:
+Add support for Meson clock controller") defines MESON_N_WIDTH as 9 (in
+drivers/clk/meson/clk-cpu.c). But since the old clk-cpu implementation
+this only carries the fixes tag for the CPU clock rewordk.
 
-Unfortunately, on arm64 where the underlying delay loop is implemented
-as a read of the architected counter, the CPU does not guarantee
-ordering from the readl() to the delay loop and therefore the delay loop
-could in theory be speculated and not provide the desired interval
-between the two writes.
-
-Fix this in a similar manner to PowerPC by introducing a dummy control
-dependency on the output of readX() which, combined with the ISB in the
-read of the architected counter, guarantees that a subsequent delay loop
-can not be executed until the readX() has returned its result.
-
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20180927085921.24627-3-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 35b2e50f17fb..b2bc7dbc1fa6 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -106,7 +106,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
- }
- 
- /* IO barriers */
--#define __iormb()		rmb()
-+#define __iormb(v)							\
-+({									\
-+	unsigned long tmp;						\
-+									\
-+	rmb();								\
-+									\
-+	/*								\
-+	 * Create a dummy control dependency from the IO read to any	\
-+	 * later instructions. This ensures that a subsequent call to	\
-+	 * udelay() will be ordered due to the ISB in get_cycles().	\
-+	 */								\
-+	asm volatile("eor	%0, %1, %1\n"				\
-+		     "cbnz	%0, ."					\
-+		     : "=r" (tmp) : "r" (v) : "memory");		\
-+})
-+
- #define __iowmb()		wmb()
- 
- #define mmiowb()		do { } while (0)
-@@ -131,10 +146,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
-  * following Normal memory access. Writes are ordered relative to any prior
-  * Normal memory access.
-  */
--#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
--#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
--#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
--#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
-+#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
-+#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
-+#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
-+#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
-@@ -185,9 +200,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
- /*
-  * io{read,write}{16,32,64}be() macros
-  */
--#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
--#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
--#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
-+#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
-+#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
-+#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
- 
- #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
- #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 580a86d120e8..0da8334f2e43 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -583,7 +583,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset =  HHI_SYS_CPU_CLK_CNTL1,
+ 		.shift = 20,
+-		.width = 9,
++		.width = 10,
+ 		.table = cpu_scale_table,
+ 		.flags = CLK_DIVIDER_ALLOW_ZERO,
+ 	},
 -- 
 2.19.1
 
