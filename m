@@ -3,93 +3,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF96C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3644EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73701218A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2C82218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732884AbfBKTx3 (ORCPT
+        id S1733178AbfBKTxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:53:29 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:39106 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728124AbfBKTx2 (ORCPT
+        Mon, 11 Feb 2019 14:53:42 -0500
+Received: from www62.your-server.de ([213.133.104.62]:57206 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbfBKTxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:53:28 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 83B9B27EC6B
-Message-ID: <092de35bb41cdf278212297996ff46181458c6f4.camel@collabora.com>
-Subject: Re: [PATCH v3 1/2] media: uapi: Add H264 low-level decoder API
- compound controls.
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        jernej.skrabec@gmail.com, jonas@kwiboo.se,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>
-Date:   Mon, 11 Feb 2019 16:53:16 -0300
-In-Reply-To: <562aefcd53a1a30d034e97f177096d70fb705f2b.1549895062.git-series.maxime.ripard@bootlin.com>
-References: <cover.d3bb4d93da91ed5668025354ee1fca656e7d5b8b.1549895062.git-series.maxime.ripard@bootlin.com>
-         <562aefcd53a1a30d034e97f177096d70fb705f2b.1549895062.git-series.maxime.ripard@bootlin.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1 
+        Mon, 11 Feb 2019 14:53:41 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gtHe5-0001mx-V5; Mon, 11 Feb 2019 20:53:38 +0100
+Received: from [178.197.249.40] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gtHe5-000VgN-PE; Mon, 11 Feb 2019 20:53:37 +0100
+Subject: Re: [PATCH v2] xsk: share the mmap_sem for page pinning
+To:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Bjorn Topel <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        netdev@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+References: <20190207053740.26915-1-dave@stgolabs.net>
+ <20190207053740.26915-2-dave@stgolabs.net>
+ <20190211161529.uskq5ca7y3j5522i@linux-r8p5>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <ec544ae4-4671-de96-69c2-2f438f048a83@iogearbox.net>
+Date:   Mon, 11 Feb 2019 20:53:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
+In-Reply-To: <20190211161529.uskq5ca7y3j5522i@linux-r8p5>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25357/Mon Feb 11 11:38:50 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-11 at 15:39 +0100, Maxime Ripard wrote:
-> From: Pawel Osciak <posciak@chromium.org>
+On 02/11/2019 05:15 PM, Davidlohr Bueso wrote:
+> Holding mmap_sem exclusively for a gup() is an overkill.
+> Lets share the lock and replace the gup call for gup_longterm(),
+> as it is better suited for the lifetime of the pinning.
 > 
-> Stateless video codecs will require both the H264 metadata and slices in
-> order to be able to decode frames.
-> 
-> This introduces the definitions for a new pixel format for H264 slices that
-> have been parsed, as well as the structures used to pass the metadata from
-> the userspace to the kernel.
-> 
-> Co-Developed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> Signed-off-by: Guenter Roeck <groeck@chromium.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-[..]
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * These are the H.264 state controls for use with stateless H.264
-> + * codec drivers.
-> + *
-> + * It turns out that these structs are not stable yet and will undergo
-> + * more changes. So keep them private until they are stable and ready to
-> + * become part of the official public API.
-> + */
-> +
-> +#ifndef _H264_CTRLS_H_
-> +#define _H264_CTRLS_H_
-> +
-> +#define V4L2_CID_MPEG_VIDEO_H264_SPS		(V4L2_CID_MPEG_BASE+383)
-> +#define V4L2_CID_MPEG_VIDEO_H264_PPS		(V4L2_CID_MPEG_BASE+384)
-> +#define V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX	(V4L2_CID_MPEG_BASE+385)
-> +#define V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS	(V4L2_CID_MPEG_BASE+386)
-> +#define V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAMS	(V4L2_CID_MPEG_BASE+387)
-> +
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Bjorn Topel <bjorn.topel@intel.com>
+> Cc: Magnus Karlsson <magnus.karlsson@intel.com>
+> CC: netdev@vger.kernel.org
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 
-Note that these integers (+383, ..) are already in-use.
-
-Since the controls are non-public, perhaps we could use upper integers,
-say +1000 or something?
-
+Applied, thanks!
