@@ -2,109 +2,99 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D712BC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03519C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D45421B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898601;
-	bh=WE1lVhiA52E9KYMV6zuETERSiAfOS1RvrLR/iFhckro=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fdgzufm5GI9IcoylduSL3fW3Ij624cWJK/TvGkowmzmCG4Vabxx0lvaoKzwZTrYEB
-	 6H00OwTaoUQUKoGMelUtHl8DaVfdqh5XGcYG2pglzmbkcfma1Wvor71JMCo0zR53TN
-	 X9A6flV2btNKCUaX384GXIe/zOVgRH+Uh1zpK5wU=
+	by mail.kernel.org (Postfix) with ESMTP id C9BB421B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391930AbfBKPXU (ORCPT
+        id S2391937AbfBKPX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:23:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51904 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:23:27 -0500
+Received: from mga05.intel.com ([192.55.52.43]:40484 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390619AbfBKPDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:03:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02EF0222B4;
-        Mon, 11 Feb 2019 15:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897404;
-        bh=WE1lVhiA52E9KYMV6zuETERSiAfOS1RvrLR/iFhckro=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bMbw0ZgVj/cmc91Qawf8yWBm32+bdXEF0cdjQla45X2S1zTGiLOa1k7ZPlh/yTu3s
-         Es9Oz6DEt1Gi2ZKYdE5BaQK9YlSF+/aIFUcET6P/RKHa9B3QRXkWXCkXMNA/1mPSVh
-         z4inYW1Xe5SldJr1XZSdDQuwlD/uR8WAzmC1RPuk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
-        stable@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 192/205] KVM: x86: work around leak of uninitialized stack contents (CVE-2019-7222)
-Date:   Mon, 11 Feb 2019 15:19:50 +0100
-Message-Id: <20190211141840.968851002@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
-References: <20190211141827.214852402@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S2390619AbfBKPXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:23:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 07:23:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="274157759"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2019 07:23:24 -0800
+Date:   Mon, 11 Feb 2019 08:23:04 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Brice Goglin <Brice.Goglin@inria.fr>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: [PATCHv4 10/13] node: Add memory caching attributes
+Message-ID: <20190211152303.GA4525@localhost.localdomain>
+References: <20190116175804.30196-1-keith.busch@intel.com>
+ <20190116175804.30196-11-keith.busch@intel.com>
+ <4a7d1c0c-c269-d7b2-11cb-88ad62b70a06@inria.fr>
+ <20190210171958.00003ab2@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190210171958.00003ab2@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Feb 10, 2019 at 09:19:58AM -0800, Jonathan Cameron wrote:
+> On Sat, 9 Feb 2019 09:20:53 +0100
+> Brice Goglin <Brice.Goglin@inria.fr> wrote:
+> 
+> > Hello Keith
+> > 
+> > Could we ever have a single side cache in front of two NUMA nodes ? I
+> > don't see a way to find that out in the current implementation. Would we
+> > have an "id" and/or "nodemap" bitmask in the sidecache structure ?
+> 
+> This is certainly a possible thing for hardware to do.
+>
+> ACPI IIRC doesn't provide any means of representing that - your best
+> option is to represent it as two different entries, one for each of the
+> memory nodes.  Interesting question of whether you would then claim
+> they were half as big each, or the full size.  Of course, there are
+> other possible ways to get this info beyond HMAT, so perhaps the interface
+> should allow it to be exposed if available?
 
-------------------
+HMAT doesn't do this, but I want this interface abstracted enough from
+HMAT to express whatever is necessary.
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+The CPU cache is the closest existing exported attributes to this,
+and they provide "shared_cpu_list". To that end, I can export a
+"shared_node_list", though previous reviews strongly disliked multi-value
+sysfs entries. :(
 
-commit 353c0956a618a07ba4bbe7ad00ff29fe70e8412a upstream.
-
-Bugzilla: 1671930
-
-Emulation of certain instructions (VMXON, VMCLEAR, VMPTRLD, VMWRITE with
-memory operand, INVEPT, INVVPID) can incorrectly inject a page fault
-when passed an operand that points to an MMIO address.  The page fault
-will use uninitialized kernel stack memory as the CR2 and error code.
-
-The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
-exit to userspace; however, it is not an easy fix, so for now just
-ensure that the error code and CR2 are zero.
-
-Embargoed until Feb 7th 2019.
-
-Reported-by: Felix Wilhelm <fwilhelm@google.com>
-Cc: stable@kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/kvm/x86.c |    7 +++++++
- 1 file changed, 7 insertions(+)
-
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4611,6 +4611,13 @@ int kvm_read_guest_virt(struct kvm_vcpu
- {
- 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
+Would shared-node symlinks capture the need, and more acceptable?
  
-+	/*
-+	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
-+	 * is returned, but our callers are not ready for that and they blindly
-+	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
-+	 * uninitialized kernel stack memory into cr2 and error code.
-+	 */
-+	memset(exception, 0, sizeof(*exception));
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
- 					  exception);
- }
+> Also, don't know if it's just me, but calling these sidecaches is
+> downright confusing.  In ACPI at least they are always
+> specifically referred to as Memory Side Caches.
+> I'd argue there should even by a hyphen Memory-Side Caches, the point
+> being that that they are on the memory side of the interconnected
+> rather than the processor side.  Of course an implementation
+> choice might be to put them off to the side (as implied by sidecaches)
+> in some sense, but it's not the only one.
+> 
+> </terminology rant> :)
 
-
+Now that you mention it, I agree "side" is ambiguous.  Maybe call it
+"numa_cache" or "node_cache"?
