@@ -2,154 +2,129 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60437C4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DC0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8B02229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6EC621B68
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 19:10:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="taMfTJfj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387691AbfBKTJj (ORCPT
+        id S2387716AbfBKTK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:09:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58570 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387609AbfBKTJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:09:38 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E64F8831F;
-        Mon, 11 Feb 2019 19:09:37 +0000 (UTC)
-Received: from redhat.com (ovpn-123-21.rdu2.redhat.com [10.10.123.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74BD819C7D;
-        Mon, 11 Feb 2019 19:09:33 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 14:09:31 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Peter Xu <peterx@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] Restore change_pte optimization to its former
- glory
-Message-ID: <20190211190931.GA3908@redhat.com>
-References: <20190131183706.20980-1-jglisse@redhat.com>
- <20190201235738.GA12463@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190201235738.GA12463@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 19:09:37 +0000 (UTC)
+        Mon, 11 Feb 2019 14:10:26 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35420 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732529AbfBKTKZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 14:10:25 -0500
+Received: by mail-pg1-f195.google.com with SMTP id s198so10636pgs.2;
+        Mon, 11 Feb 2019 11:10:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=SkmoCuGIG7bBgkarhLHVf2wX33rKnc3mr2F6ISg3h5w=;
+        b=taMfTJfj4E+6QegTRVG2Wr9ySYJobUOvxco2ghCl1lfCGwEqglH/PXOhQ5HSPMYKg8
+         45Tf2UPVyberzHQ8+x5vsvwYmCFjY/tNbuAubqsoN2KotHzI0qvwgmL2uitpMDxI/tQ4
+         YMLQDD316l10/ZfuIfrS6ermOaK0fz4qw1cTsYE+y1kVfUDgaZToPgyGZFj4NbfN4ppC
+         MdfQrnptrz88EXmr2vsJwCXGup/2RQWyqW1KsxK8FnkwFvFAUYvXfr7VRTa1Nvhc1MYq
+         Grb6pAouoUBFcCLGKPmMgnQFDW+hYx9SBGuYJANfZBkCgGSJjba8w3Mc82LLELn3Q+3c
+         Pw4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SkmoCuGIG7bBgkarhLHVf2wX33rKnc3mr2F6ISg3h5w=;
+        b=EywZq1YjAFtkZXsIcx6MncZnzRGlVqmAIe9mAwFMUFq9/AqGkYQarzKjPjpNfefGTo
+         BRE9Rcyjvu5uyjiUydmt5dGRAGa1nFDiLrj3oKJaR1XkzfvWW26gcU7ydxACh3iJ0X2o
+         CkFVhY0yq2VlJx6N2kIrMeh/PohZGk4aQUP0BGJ1GCu585YnDPR8Usf8e8UHdqr6G2ga
+         tb0ixPzc1b3hs8MWTiuUmasTOQPB9ZtQMTDyscjEyryM2eNgcAd6WQgrQ4h+snT2KX4B
+         QqvG7FdxrlbO1ZGwLoTYeULUnlJQborRuW2AFj6gdyE5ah2qPtOrHAnZ9PoYoWp6uGct
+         uOrg==
+X-Gm-Message-State: AHQUAubfxEPOMupfuW8D9N1S6os/UCiVGR5KD40RkjKE3xlMs7BfkSf0
+        YGoJ5ZzutioZpqabB/qHW39taQ3h
+X-Google-Smtp-Source: AHgI3Ia67RRL7TOe3P8EdiKAMeH46zySHSkMj8kkjS0gfwkd6VqA4ziMFHiJZVfR9jsa3/DRkK74Ww==
+X-Received: by 2002:a65:62da:: with SMTP id m26mr34934837pgv.278.1549912224264;
+        Mon, 11 Feb 2019 11:10:24 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id i24sm2167206pgg.14.2019.02.11.11.10.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 11:10:23 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: [PATCH net-next v4 0/9] net: Remove switchdev_ops
+Date:   Mon, 11 Feb 2019 11:09:52 -0800
+Message-Id: <20190211191001.8623-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 06:57:38PM -0500, Andrea Arcangeli wrote:
-> Hello everyone,
-> 
-> On Thu, Jan 31, 2019 at 01:37:02PM -0500, Jerome Glisse wrote:
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > This patchset is on top of my patchset to add context information to
-> > mmu notifier [1] you can find a branch with everything [2]. I have not
-> > tested it but i wanted to get the discussion started. I believe it is
-> > correct but i am not sure what kind of kvm test i can run to exercise
-> > this.
-> > 
-> > The idea is that since kvm will invalidate the secondary MMUs within
-> > invalidate_range callback then the change_pte() optimization is lost.
-> > With this patchset everytime core mm is using set_pte_at_notify() and
-> > thus change_pte() get calls then we can ignore the invalidate_range
-> > callback altogether and only rely on change_pte callback.
-> > 
-> > Note that this is only valid when either going from a read and write
-> > pte to a read only pte with same pfn, or from a read only pte to a
-> > read and write pte with different pfn. The other side of the story
-> > is that the primary mmu pte is clear with ptep_clear_flush_notify
-> > before the call to change_pte.
-> 
-> If it's cleared with ptep_clear_flush_notify, change_pte still won't
-> work. The above text needs updating with
-> "ptep_clear_flush". set_pte_at_notify is all about having
-> ptep_clear_flush only before it or it's the same as having a range
-> invalidate preceding it.
-> 
-> With regard to the code, wp_page_copy() needs
-> s/ptep_clear_flush_notify/ptep_clear_flush/ before set_pte_at_notify.
-> 
-> change_pte relies on the ptep_clear_flush preceding the
-> set_pte_at_notify that will make sure if the secondary MMU mapping
-> randomly disappears between ptep_clear_flush and set_pte_at_notify,
-> gup_fast will wait and block on the PT lock until after
-> set_pte_at_notify is completed before trying to re-establish a
-> secondary MMU mapping.
-> 
-> So then we've only to worry about what happens because we left the
-> secondary MMU mapping potentially intact despite we flushed the
-> primary MMU mapping with ptep_clear_flush (as opposed to
-> ptep_clear_flush_notify which would teardown the secondary MMU mapping
-> too).
+Hi all,
 
-So all the above is moot since as you pointed out in the other email
-ptep_clear_flush_notify does not invalidate kvm secondary mmu hence.
+This patch series finishes by the removal of switchdev_ops. To get there
+we convert the existing switchdev_port_attr_{set,get} switchdev_ops to
+use a blocking notifier, thus making it consistent with how the objects
+are pushed to the switchdev enabled devices.
 
+Please review and let me know what you think!
 
-> 
-> In you wording above at least the "with a different pfn" is
-> superflous. I think it's ok if the protection changes from read-only
-> to read-write and the pfn remains the same. Like when we takeover a
-> page because it's not shared anymore (fork child quit).
-> 
-> It's also ok to change pfn if the mapping is read-only and remains
-> read-only, this is what KSM does in replace_page.
+David, I would like to get Ido's feedback on this to make sure I did not
+miss something, thank you!
 
-Yes i thought this was obvious i will reword and probably just do a
-list of every case that is fine.
+Changes in v4:
+- removed double space in Documentation/networking/switchdev.txt
+- added Jiri's Acked-by tags
+- added fall through annotations where appropriate
 
-> 
-> The read-write to read-only case must not change pfn to avoid losing
-> coherency from the secondary MMU point of view. This isn't so much
-> about change_pte itself, but the fact that the page-copy generally
-> happens well before the pte mangling starts. This case never presents
-> itself in the code because KSM is first write protecting the page and
-> only later merging it, regardless of change_pte or not.
-> 
-> The important thing is that the secondary MMU must be updated first
-> (unlike the invalidates) to be sure the secondary MMU already points
-> to the new page when the pfn changes and the protection changes from
-> read-only to read-write (COW fault). The primary MMU cannot read/write
-> to the page anyway while we update the secondary MMU because we did
-> ptep_clear_flush() before calling set_pte_at_notify(). So this
-> ordering of "ptep_clear_flush; change_pte; set_pte_at" ensures
-> whenever the CPU can access the memory, the access is synchronous
-> with the secondary MMUs because they've all been updated already.
-> 
-> If (in set_pte_at_notify) we were to call change_pte() after
-> set_pte_at() what would happen is that the CPU could write to the page
-> through a TLB fill without page fault while the secondary MMUs still
-> read the old memory in the old readonly page.
+Changes in v3:
+- dropped patches removing te need to get the attribute since we
+  still need that in order to support different sleeping vs.
+  non-sleeping contexts
 
-Yeah, between do you have any good workload for me to test this ? I
-was thinking of running few same VM and having KSM work on them. Is
-there some way to trigger KVM to fork ? As the other case is breaking
-COW after fork.
+Changes in v2:
+- fixed bisectability issues in patch #15
+- added Acked-by from Jiri where necessary
+- fixed a few minor issues according to Jiri's feedback:
+	- rename port_attr_event -> port_attr_set_event
+	- moved SWITCHDEV_PORT_ATTR_SET closer to other blocking events
 
-Cheers,
-Jérôme
+Florian Fainelli (9):
+  Documentation: networking: switchdev: Update port parent ID section
+  switchdev: Add SWITCHDEV_PORT_ATTR_SET, SWITCHDEV_PORT_ATTR_GET
+  rocker: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  net: dsa: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  net: switchdev: Replace port attr get/set SDO with a notification
+  net: Remove switchdev_ops
+
+ Documentation/networking/switchdev.txt        |  10 +-
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    |  12 --
+ .../net/ethernet/mellanox/mlxsw/spectrum.h    |   2 -
+ .../mellanox/mlxsw/spectrum_switchdev.c       |  36 +++---
+ drivers/net/ethernet/mscc/ocelot.c            |  26 ++++-
+ drivers/net/ethernet/rocker/rocker_main.c     |  30 ++++-
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c       |  30 ++++-
+ include/linux/netdevice.h                     |   3 -
+ include/net/switchdev.h                       |  28 ++---
+ net/dsa/slave.c                               |  30 ++++-
+ net/switchdev/switchdev.c                     | 107 ++++++------------
+ 11 files changed, 168 insertions(+), 146 deletions(-)
+
+-- 
+2.17.1
+
