@@ -4,49 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD98C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF02C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6B521B69
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A8EB214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896237;
-	bh=Qy7WiXNkhrRFJNMcNKA2cVA+HoDwlk7HF4ZsS+KmdfA=;
+	s=default; t=1549896241;
+	bh=6oMa6hyWG6ixEvU3IKZcCdhZnI93M4uuNL38M6dELfA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vfXs4jmi4Al5MRRtuMVhdJqJPo9h7Juzg1z2qAkHKAZN6w+LR9HKMEpANJOm3S8uW
-	 6LLBJfGYzSCZgiWC8Hh8+Hv+PpeHD94oDPaj2BHy+zaQGYmCdExHZRpXxw3/w6qUwG
-	 2VM+MnSycv83joTmzWnwYav5mtUWcxmSmJx16M2Y=
+	b=RmT7BPmeLWlW/8X/VvvGswtFH0hAV4PxpekqFaRvwBWvLIIyNr9c/gdr0ZC7VmsmL
+	 vbmXNDEmb+xjjJ2YCXR+/D618Yc3y12XMJcHJWJKZCndeMyq7xBrYuGDuz4sYV4/UE
+	 zLNIwc3oFuEWzRe1Yu5sYCw/iWZUIO7SuzAC2SuM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732749AbfBKOnz (ORCPT
+        id S1728253AbfBKOn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56278 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbfBKOnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:51 -0500
+        id S1728736AbfBKOn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ABCB222A6;
-        Mon, 11 Feb 2019 14:43:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B722F20844;
+        Mon, 11 Feb 2019 14:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896230;
-        bh=Qy7WiXNkhrRFJNMcNKA2cVA+HoDwlk7HF4ZsS+KmdfA=;
+        s=default; t=1549896236;
+        bh=6oMa6hyWG6ixEvU3IKZcCdhZnI93M4uuNL38M6dELfA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j88UrKwRC/7DebzQHFoyd5k9rAQk/OnNXcH1ViNpz7Na+YukwNpMKxAaj3YrBswuN
-         cTRdKmGjm/yvmUm7xr5QGSAlgr2XHj7+SoDe5OjQ6kGU6dVK1Kjp1draZK5icoeXUi
-         bMBSN0UU2hKI6aqUbxpwWyEgsgy9MXDkabRw95ro=
+        b=EYA1306Eeti8vCw2jwRXvXoYn27lErffFOzfboHIhdgM0Ofc4BcdUf8/l39rtKVxr
+         Y2G25l84uXON7pl3KD6+NNIU/ocM2/qYemiYG7V5hXofXRNkJQdZEPSbkabqaBDnj+
+         KF2YFbBkECZBv7jIgx5FnOl9wjjx9IYDYX+vDyYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, Rik van Riel <riel@surriel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kvm ML <kvm@vger.kernel.org>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 115/313] ARM: dts: Fix up the D-Link DIR-685 MTD partition info
-Date:   Mon, 11 Feb 2019 15:16:35 +0100
-Message-Id: <20190211141901.538732097@linuxfoundation.org>
+Subject: [PATCH 4.19 090/313] x86/fpu: Add might_fault() to user_insn()
+Date:   Mon, 11 Feb 2019 15:16:10 +0100
+Message-Id: <20190211141859.868429614@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -65,72 +76,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 738a05e673435afb986b53da43befd83ad87ec3b ]
+[ Upstream commit 6637401c35b2f327a35d27f44bda05e327f2f017 ]
 
-The vendor firmware was analyzed to get the right idea about
-this flash layout. /proc/mtd contains:
+Every user of user_insn() passes an user memory pointer to this macro.
 
-dev:    size   erasesize  name
-mtd0: 01e7ff40 00020000 "rootfs"
-mtd1: 01f40000 00020000 "upgrade"
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd4: 00040000 00020000 "RedBoot"
-mtd5: 00020000 00020000 "LangPack"
-mtd6: 02000000 00020000 "flash"
+Add might_fault() to user_insn() so we can spot users which are using
+this macro in sections where page faulting is not allowed.
 
-Here "flash" is obviously the whole device and we know "rootfs"
-is a bogus hack to point to a squashfs rootfs inside of the main
-"upgrade partition". We know "RedBoot" is the first 0x40000 of
-the flash and the "upgrade" partition follows from 0x40000 to
-0x1f8000. So we have mtd0, 1, 4 and 6 covered.
+ [ bp: Space it out to make it more visible. ]
 
-Remains:
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd5: 00020000 00020000 "LangPack"
-
-Inspecting the flash at 0x1f8000 and 0x1fa000 reveals each of
-these starting with "RGCFG1" so we assume 0x1f8000-1fbfff is
-"rgdb" of 0x40000.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181128222035.2996-6-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/gemini-dlink-dir-685.dts | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-index 6f258b50eb44..502a361d1fe9 100644
---- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-+++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-@@ -274,20 +274,16 @@
- 				read-only;
- 			};
- 			/*
--			 * Between the boot loader and the rootfs is the kernel
--			 * in a custom Storlink format flashed from the boot
--			 * menu. The rootfs is in squashfs format.
-+			 * This firmware image contains the kernel catenated
-+			 * with the squashfs root filesystem. For some reason
-+			 * this is called "upgrade" on the vendor system.
- 			 */
--			partition@1800c0 {
--				label = "rootfs";
--				reg = <0x001800c0 0x01dbff40>;
--				read-only;
--			};
--			partition@1f40000 {
-+			partition@40000 {
- 				label = "upgrade";
--				reg = <0x01f40000 0x00040000>;
-+				reg = <0x00040000 0x01f40000>;
- 				read-only;
- 			};
-+			/* RGDB, Residental Gateway Database? */
- 			partition@1f80000 {
- 				label = "rgdb";
- 				reg = <0x01f80000 0x00040000>;
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 69dcdf195b61..fa2c93cb42a2 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -106,6 +106,9 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ #define user_insn(insn, output, input...)				\
+ ({									\
+ 	int err;							\
++									\
++	might_fault();							\
++									\
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1:" #insn "\n\t"					\
+ 		     "2: " ASM_CLAC "\n"				\
 -- 
 2.19.1
 
