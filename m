@@ -2,110 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1980C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 912B9C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6530C21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899209;
-	bh=kOOuDYxLlLuHkGpwAxNoAzS/LbcpM4yvs8HpCFSIufQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Jh0UU07vWkszd9RZUTY8jk/C7HzISFhgeyGG+YOWzSiUkRh5m8qd80yQgErX6V4N
-	 gfaqeplIz5Cgr71kMOPw9Se2YTy2+RurmndASZJntOOl/eX5xBCZvSnV7fYI9twd2B
-	 yoxk0yBCbdpmNWGKmtj1DQyTYQ09Z2kvY5ju4Oa8=
+	by mail.kernel.org (Postfix) with ESMTP id 6A6FE21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:33:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388684AbfBKOxp (ORCPT
+        id S2389318AbfBKPdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387780AbfBKOxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:37 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0C2220700;
-        Mon, 11 Feb 2019 14:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896816;
-        bh=kOOuDYxLlLuHkGpwAxNoAzS/LbcpM4yvs8HpCFSIufQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XahRh13aqdJcp13ZRjGVzqKr8K0d2QD4IXzqPW74lscjsaBzYtTOb6pcK4ADJSfJf
-         yRi8pb0RX9JDEqWEgX35aziXJezJaZNle8BYtIjqpHptZ9bmfjhjyhqUJ3ry7WzgmZ
-         m6aZ7QlgMnDru3OI1kS4GgK9Rh37XHYSNS2BKuf0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 4.19 311/313] cacheinfo: Keep the old value if of_property_read_u32 fails
-Date:   Mon, 11 Feb 2019 15:19:51 +0100
-Message-Id: <20190211141913.562283614@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:33:35 -0500
+Received: from www62.your-server.de ([213.133.104.62]:41086 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728364AbfBKPdd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:33:33 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gtDaM-0007KE-6j; Mon, 11 Feb 2019 16:33:30 +0100
+Received: from [2a02:1203:ecb1:b710:c81f:d2d6:50a9:c2d] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gtDaL-000Ow1-WC; Mon, 11 Feb 2019 16:33:30 +0100
+Subject: Re: [PATCH 1/2] xsk: do not use mmap_sem
+To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Bjorn Topel <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Netdev <netdev@vger.kernel.org>,
+        Davidlohr Bueso <dbueso@suse.de>, dan.j.williams@intel.com
+References: <20190207053740.26915-1-dave@stgolabs.net>
+ <20190207053740.26915-2-dave@stgolabs.net>
+ <CAJ+HfNg=Wikc_uY9W1QiVCONq3c1GyS44-xbrq-J4gqfth2kwQ@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <d92b7b49-81e6-1ac5-4ae4-4909f87bbea8@iogearbox.net>
+Date:   Mon, 11 Feb 2019 16:33:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAJ+HfNg=Wikc_uY9W1QiVCONq3c1GyS44-xbrq-J4gqfth2kwQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25357/Mon Feb 11 11:38:50 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+[ +Dan ]
 
-------------------
+On 02/07/2019 08:43 AM, Björn Töpel wrote:
+> Den tors 7 feb. 2019 kl 06:38 skrev Davidlohr Bueso <dave@stgolabs.net>:
+>>
+>> Holding mmap_sem exclusively for a gup() is an overkill.
+>> Lets replace the call for gup_fast() and let the mm take
+>> it if necessary.
+>>
+>> Cc: David S. Miller <davem@davemloft.net>
+>> Cc: Bjorn Topel <bjorn.topel@intel.com>
+>> Cc: Magnus Karlsson <magnus.karlsson@intel.com>
+>> CC: netdev@vger.kernel.org
+>> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+>> ---
+>>  net/xdp/xdp_umem.c | 6 ++----
+>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
+>> index 5ab236c5c9a5..25e1e76654a8 100644
+>> --- a/net/xdp/xdp_umem.c
+>> +++ b/net/xdp/xdp_umem.c
+>> @@ -265,10 +265,8 @@ static int xdp_umem_pin_pages(struct xdp_umem *umem)
+>>         if (!umem->pgs)
+>>                 return -ENOMEM;
+>>
+>> -       down_write(&current->mm->mmap_sem);
+>> -       npgs = get_user_pages(umem->address, umem->npgs,
+>> -                             gup_flags, &umem->pgs[0], NULL);
+>> -       up_write(&current->mm->mmap_sem);
+>> +       npgs = get_user_pages_fast(umem->address, umem->npgs,
+>> +                                  gup_flags, &umem->pgs[0]);
+>>
+> 
+> Thanks for the patch!
+> 
+> The lifetime of the pinning is similar to RDMA umem mapping, so isn't
+> gup_longterm preferred?
 
-From: Huacai Chen <chenhc@lemote.com>
+Seems reasonable from reading what gup_longterm seems to do. Davidlohr
+or Dan, any thoughts on the above?
 
-commit 3a34c986324c07dde32903f7bb262e6138e77c2a upstream.
-
-Commit 448a5a552f336bd7b847b1951 ("drivers: base: cacheinfo: use OF
-property_read_u32 instead of get_property,read_number") makes cache
-size and number_of_sets be 0 if DT doesn't provide there values. I
-think this is unreasonable so make them keep the old values, which is
-the same as old kernels.
-
-Fixes: 448a5a552f33 ("drivers: base: cacheinfo: use OF property_read_u32 instead of get_property,read_number")
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/base/cacheinfo.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -79,8 +79,7 @@ static void cache_size(struct cacheinfo
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	propname = cache_type_info[ct_idx].size_prop;
- 
--	if (of_property_read_u32(np, propname, &this_leaf->size))
--		this_leaf->size = 0;
-+	of_property_read_u32(np, propname, &this_leaf->size);
- }
- 
- /* not cache_line_size() because that's a macro in include/linux/cache.h */
-@@ -114,8 +113,7 @@ static void cache_nr_sets(struct cachein
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	propname = cache_type_info[ct_idx].nr_sets_prop;
- 
--	if (of_property_read_u32(np, propname, &this_leaf->number_of_sets))
--		this_leaf->number_of_sets = 0;
-+	of_property_read_u32(np, propname, &this_leaf->number_of_sets);
- }
- 
- static void cache_associativity(struct cacheinfo *this_leaf)
-
-
+Thanks,
+Daniel
