@@ -4,51 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1906EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78782C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA4E20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ABA7217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895748;
-	bh=E3fT51L7YF4Cqj+aCsb8x+Eq5msbVWATHLj/2M5L07E=;
+	s=default; t=1549895752;
+	bh=neWf4RQVzFBxfFot5Cf+CP3nX2xICvTTyVgxkyVOMCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Rmmb54sp9dXWHdjSW9bQtIrcUfcjxbLz8i3Rc3IomZn7uECNaVWdz9xL9vC1k0CPt
-	 Ujk9qS963GdfCncXxplLeDy0+nfGrzsJu5JLJ5AyDaZ8ut/oikDVM42lPOyZQJQaJP
-	 HejzG2qrrEyhw1S/rU7R9cqRKa4RXCgBx5nzOF9Y=
+	b=Bb4ZAl5sgDOJ4XUcr88imkXnSe1FO/g8YDHP6q8pUYAoZnkC/Weg61vCX9nX+qtnu
+	 rLBFPF2ZEMVwtFDQYsHEYzUwomPRCFl771xPJJBI4caiclvBurnu7MXIT7J7wSd5KL
+	 jaW3Kx8iQz6lexIJQuMjmfqupzfs43Rqs/5+japo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbfBKOfr (ORCPT
+        id S1731120AbfBKOfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:35:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44370 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:35:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731076AbfBKOfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:38 -0500
+        id S1731112AbfBKOfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FB4620700;
-        Mon, 11 Feb 2019 14:35:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C305320700;
+        Mon, 11 Feb 2019 14:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895738;
-        bh=E3fT51L7YF4Cqj+aCsb8x+Eq5msbVWATHLj/2M5L07E=;
+        s=default; t=1549895747;
+        bh=neWf4RQVzFBxfFot5Cf+CP3nX2xICvTTyVgxkyVOMCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cE30sRyZ974jgaTbd4HXpIh4XTHTQg+5/Knqb8ip3VxX50VTujMCFbH0x/L+vosqb
-         AACATugIMkAEyoON6A1yxhTtZF7fIkLcby/e0VK8p3ARZxB56WRdrfc9brYorA1U7C
-         NlH1RmqhN9rCo9xR/OJVc9BdywfGCVwRfQIOXUS8=
+        b=kC2vtS/N7Zg/YAcK3UKJCwmacE3Ywt4VM22iz/GXDkIRc/zGs6JWJ0ZQsc4kAhT/x
+         YptSLHTDModa0fMCKMm6FMjTc9f84YJjTFmD2nKa1HHCBj58l16pd3ZEaRnekuded8
+         +fCZc70OSzLyVBE12ywxF9p6QQci/zLQwo/IoIos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Benjamin Gordon <bmgordon@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Oren Laadan <orenl@cellrox.com>,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Rom Lemarchand <romlem@android.com>,
+        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
+        Nick Kralevich <nnk@google.com>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Elliott Hughes <enh@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 279/352] thermal: generic-adc: Fix adc to temp interpolation
-Date:   Mon, 11 Feb 2019 15:18:26 +0100
-Message-Id: <20190211141904.721757286@linuxfoundation.org>
+Subject: [PATCH 4.20 282/352] fs/proc/base.c: use ns_capable instead of capable for timerslack_ns
+Date:   Mon, 11 Feb 2019 15:18:29 +0100
+Message-Id: <20190211141904.885459037@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,61 +81,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
+[ Upstream commit 8da0b4f692c6d90b09c91f271517db746a22ff67 ]
 
-First correct the edge case to return the last element if we're
-outside the range, rather than at the last element, so that
-interpolation is not omitted for points between the two last entries in
-the table.
+Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
+in its effective capability set, but the current check looks in the root
+namespace instead of the process' user namespace.  Since a process is
+allowed to do other activities controlled by CAP_SYS_NICE inside a
+namespace, it should also be able to adjust timerslack_ns.
 
-Then correct the formula to perform linear interpolation based the two
-points surrounding the read ADC value. The indices for temp are kept as
-"hi" and "lo" to pair with the adc indices, but there's no requirement
-that the temperature is provided in descendent order. mult_frac() is
-used to prevent issues with overflowing the int.
-
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Link: http://lkml.kernel.org/r/20181030180012.232896-1-bmgordon@google.com
+Signed-off-by: Benjamin Gordon <bmgordon@google.com>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Oren Laadan <orenl@cellrox.com>
+Cc: Ruchi Kandoi <kandoiruchi@google.com>
+Cc: Rom Lemarchand <romlem@android.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Colin Cross <ccross@android.com>
+Cc: Nick Kralevich <nnk@google.com>
+Cc: Dmitry Shmidt <dimitrysh@google.com>
+Cc: Elliott Hughes <enh@google.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/proc/base.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-index bf1c628d4a7a..e22fc60ad36d 100644
---- a/drivers/thermal/thermal-generic-adc.c
-+++ b/drivers/thermal/thermal-generic-adc.c
-@@ -26,7 +26,7 @@ struct gadc_thermal_info {
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ce3465479447..98525af0953e 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2356,10 +2356,13 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
+ 		return -ESRCH;
  
- static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
- {
--	int temp, adc_hi, adc_lo;
-+	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
- 	int i;
+ 	if (p != current) {
+-		if (!capable(CAP_SYS_NICE)) {
++		rcu_read_lock();
++		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
++			rcu_read_unlock();
+ 			count = -EPERM;
+ 			goto out;
+ 		}
++		rcu_read_unlock();
  
- 	for (i = 0; i < gti->nlookup_table; i++) {
-@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ 		err = security_task_setscheduler(p);
+ 		if (err) {
+@@ -2392,11 +2395,14 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
+ 		return -ESRCH;
  
- 	if (i == 0) {
- 		temp = gti->lookup_table[0];
--	} else if (i >= (gti->nlookup_table - 1)) {
-+	} else if (i >= gti->nlookup_table) {
- 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
- 	} else {
- 		adc_hi = gti->lookup_table[2 * i - 1];
- 		adc_lo = gti->lookup_table[2 * i + 1];
--		temp = gti->lookup_table[2 * i];
--		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
+ 	if (p != current) {
+-
+-		if (!capable(CAP_SYS_NICE)) {
++		rcu_read_lock();
++		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
++			rcu_read_unlock();
+ 			err = -EPERM;
+ 			goto out;
+ 		}
++		rcu_read_unlock();
 +
-+		temp_hi = gti->lookup_table[2 * i - 2];
-+		temp_lo = gti->lookup_table[2 * i];
-+
-+		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
-+					   adc_lo - adc_hi);
- 	}
- 
- 	return temp;
+ 		err = security_task_getscheduler(p);
+ 		if (err)
+ 			goto out;
 -- 
 2.19.1
 
