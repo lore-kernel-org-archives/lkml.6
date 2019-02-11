@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C07FAC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD47C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 882D9218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D994A218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:05:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549901094;
-	bh=huWnGPNCVeJWvkX8MsbMHTObWK0fw4Ut4nx2x9UOWEQ=;
+	s=default; t=1549901108;
+	bh=sQTRKy3+4q+5ueS/b4/wzN3bw+raermDVbyqjvqam5Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u/e66BIQFtBiiULm2WIYROoBROF6RB4p3ggXYB0ozCKhZcFGL2YnhEMAI+d+wB+ZD
-	 0BOA7LiBoslwJckhrc6Z1djtDwFz9LANsEZP3kC/c46zgdGGIIlMZTLUresmrFwbIO
-	 HeW7bhY6e62npcn6/v/yGhc9nhIj5d+p5CwfMEoQ=
+	b=1Xbqmv3v9EOYeC1EthFmAzaRC4siD4fA4zzWnONgeOKStcl6Awj9AeOiNxO4BCrot
+	 KKvCrP8D0x+IxOoGpcp9eswaAJiQ2ljBC3GF/Z7UiqgCf655RNtYfnnv7831lF6qVZ
+	 qJtkOJpyp61g1B3mNr4+xIrhI2t6umtWj/Pa5ggc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbfBKO2V (ORCPT
+        id S1730215AbfBKQFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:28:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34094 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:05:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728915AbfBKO2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:28:12 -0500
+        id S1728881AbfBKO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:28:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52B8120821;
-        Mon, 11 Feb 2019 14:28:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4A0820838;
+        Mon, 11 Feb 2019 14:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895291;
-        bh=huWnGPNCVeJWvkX8MsbMHTObWK0fw4Ut4nx2x9UOWEQ=;
+        s=default; t=1549895281;
+        bh=sQTRKy3+4q+5ueS/b4/wzN3bw+raermDVbyqjvqam5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lP/GJoqHGMPZLuV023ZGY95IHd3L0e+t3aiqMiFkVix5A8zUKG8RlGU27BrHPW1t0
-         Qgfs6GOu3koO9wBYKbqyBdUl2tOR91Zid8xzoKD14tU3tSbY4AdKCy/Wf/Ao8ewcyD
-         mHarqWCJozgmBlqBvHexu1h5sSFYS7mB9dJjrVj8=
+        b=lWODCCKW0haH1Taa1iZqXfgX1Bu4SPGaZ1G/T4VkpsbOgiWN6ZyYlBG8zq+MwY+Zz
+         EwsnYeOpe8b/GxfSXq6KBXaTmiPEN8Ck6yP0rj5dZCxMkLAwVtjg28QwzwF1vAbb0W
+         650WC6TJ26GtCxv8c+a05V0j/GeTwDQ2TBp15Q7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 157/352] phy: sun4i-usb: add support for missing USB PHY index
-Date:   Mon, 11 Feb 2019 15:16:24 +0100
-Message-Id: <20190211141856.772346406@linuxfoundation.org>
+        stable@vger.kernel.org, Hua Su <suhua.tanke@gmail.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 154/352] lightnvm: pblk: add lock protection to list operations
+Date:   Mon, 11 Feb 2019 15:16:21 +0100
+Message-Id: <20190211141856.526780630@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,53 +67,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2659392e5c08dff626e6db1d739adff58a94604d ]
+[ Upstream commit fde201a466c6ad5efd72cb54fdf2cefa8b6c6ad7 ]
 
-The new Allwinner H6 SoC's USB2 PHY has two holes -- USB1 (which is a
-3.0 port with dedicated PHY) and USB2 (which doesn't exist at all).
+Protect the list_add on the pblk_line_init_bb() error
+path in case this code is used for some other purpose
+in the future.
 
-Add support for this kind of missing USB PHY index.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Hua Su <suhua.tanke@gmail.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/allwinner/phy-sun4i-usb.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/lightnvm/pblk-core.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-index d4dcd39b8d76..881078ff73f6 100644
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -126,6 +126,7 @@ struct sun4i_usb_phy_cfg {
- 	bool dedicated_clocks;
- 	bool enable_pmu_unk1;
- 	bool phy0_dual_route;
-+	int missing_phys;
- };
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 6944aac43b01..247112e1db94 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1295,15 +1295,22 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
  
- struct sun4i_usb_phy_data {
-@@ -646,6 +647,9 @@ static struct phy *sun4i_usb_phy_xlate(struct device *dev,
- 	if (args->args[0] >= data->cfg->num_phys)
- 		return ERR_PTR(-ENODEV);
+ 	ret = pblk_line_alloc_bitmaps(pblk, line);
+ 	if (ret)
+-		return ret;
++		goto fail;
  
-+	if (data->cfg->missing_phys & BIT(args->args[0]))
-+		return ERR_PTR(-ENODEV);
+ 	if (!pblk_line_init_bb(pblk, line, 0)) {
+-		list_add(&line->list, &l_mg->free_list);
+-		return -EINTR;
++		ret = -EINTR;
++		goto fail;
+ 	}
+ 
+ 	pblk_rl_free_lines_dec(&pblk->rl, line, true);
+ 	return 0;
 +
- 	return data->phys[args->args[0]].phy;
++fail:
++	spin_lock(&l_mg->free_lock);
++	list_add(&line->list, &l_mg->free_list);
++	spin_unlock(&l_mg->free_lock);
++
++	return ret;
  }
  
-@@ -741,6 +745,9 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
- 		struct sun4i_usb_phy *phy = data->phys + i;
- 		char name[16];
- 
-+		if (data->cfg->missing_phys & BIT(i))
-+			continue;
-+
- 		snprintf(name, sizeof(name), "usb%d_vbus", i);
- 		phy->vbus = devm_regulator_get_optional(dev, name);
- 		if (IS_ERR(phy->vbus)) {
+ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
 -- 
 2.19.1
 
