@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B699FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE6B204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7838204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895640;
-	bh=ieiwnAJO+rS8b6oJr17uZhN4tnm095mIePEvGJ+odlg=;
+	s=default; t=1549895643;
+	bh=yyUylN4xcwBqmaik1W2T4pY5Lg6XQO75ZYDXQMZRNV8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S02yF9xJGrfWTcXR0IaU357sB5MaiTs/u2MdDBRrlE9TP/+uABgJtUcY4TkVzQrr3
-	 hFTIo22pUWL7ak/qrF0M4tKvUHRPPk9ZDkm6fZEssqt00BHdAqAt46COt66l0bAe7Q
-	 rMO5L2rmDa7EQFzNerRO+pX8A+cVozjRgEIBPN98=
+	b=v5ju2Er/2XXAgF5NpZigTll1kIZW4hgkIJzZpRWY9TxEuI0nbNanlRRjrsCo6N+az
+	 hPCmRSVlS0+iTJgPfR1x0yBeYlNEmvNpCmx13nOsRWDVuYQ2KK4C+jZjRMf+KUmcSD
+	 OpFd/3RAOvWcaXXHNoTB8VrE9T6bKbsPBzaLOJJg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbfBKOd7 (ORCPT
+        id S1730777AbfBKOeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:33:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41878 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:34:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730759AbfBKOdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:54 -0500
+        id S1730732AbfBKOd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:33:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5825204EC;
-        Mon, 11 Feb 2019 14:33:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77698204EC;
+        Mon, 11 Feb 2019 14:33:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895633;
-        bh=ieiwnAJO+rS8b6oJr17uZhN4tnm095mIePEvGJ+odlg=;
+        s=default; t=1549895636;
+        bh=yyUylN4xcwBqmaik1W2T4pY5Lg6XQO75ZYDXQMZRNV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=il5Nof00XrLmGbR9By+XVhNtS7jM4ChxbgI9+DmVcPDb30+iNZVqirHvqhg1jdUf6
-         SqxPK2hzmUHxCn7xoOvfPvOlrDiBbxlz5xq8ZQVQXNb5RnQLcvJrmDlSjgB3eEK4oi
-         p9Xpw+ubPdlO0qnK9rpzcU4z1T5sNtpGJOfLjHBI=
+        b=BqAZ7qTE2ANh2vLNuWENnku2vfm12HCz6IP6TufXUgDigJ6HeXg+uMDtUDMtZDhUM
+         GGb5eG0siAan/3ImoiVUgkumGeMcmhDxlMgySnY5Cemvh9vRVYpdzxNeahvtQu1RVo
+         BW0OB55OnZBzNHk0Pqq54PtiuxEhXbVCC+ReN+DQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 270/352] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
-Date:   Mon, 11 Feb 2019 15:18:17 +0100
-Message-Id: <20190211141904.181569597@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 271/352] gdrom: fix a memory leak bug
+Date:   Mon, 11 Feb 2019 15:18:18 +0100
+Message-Id: <20190211141904.232262469@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,50 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7418e6520f22a2e35815122fa5a53d5bbfa2c10f ]
+[ Upstream commit 093c48213ee37c3c3ff1cf5ac1aa2a9d8bc66017 ]
 
-In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
-HFCPCI_l1hw() may be concurrently executed.
+In probe_gdrom(), the buffer pointed by 'gd.cd_info' is allocated through
+kzalloc() and is used to hold the information of the gdrom device. To
+register and unregister the device, the pointer 'gd.cd_info' is passed to
+the functions register_cdrom() and unregister_cdrom(), respectively.
+However, this buffer is not freed after it is used, which can cause a
+memory leak bug.
 
-HFCPCI_l1hw()
-  line 1173: if (!cs->tx_skb)
+This patch simply frees the buffer 'gd.cd_info' in exit_gdrom() to fix the
+above issue.
 
-hfcpci_interrupt()
-  line 942: spin_lock_irqsave();
-  line 1066: dev_kfree_skb_irq(cs->tx_skb);
-
-Thus, a possible concurrency use-after-free bug may occur
-in HFCPCI_l1hw().
-
-To fix these bugs, the calls to spin_lock_irqsave() and
-spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
-access to cs->tx_skb.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hisax/hfc_pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/cdrom/gdrom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index ea0e4c6de3fb..0109e0e8bcb6 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1170,11 +1170,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
- 		if (cs->debug & L1_DEB_LAPD)
- 			debugl1(cs, "-> PH_REQUEST_PULL");
- #endif
-+		spin_lock_irqsave(&cs->lock, flags);
- 		if (!cs->tx_skb) {
- 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
- 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
- 		} else
- 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
-+		spin_unlock_irqrestore(&cs->lock, flags);
- 		break;
- 	case (HW_RESET | REQUEST):
- 		spin_lock_irqsave(&cs->lock, flags);
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index a5b8afe3609c..f8b7345fe1cb 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -873,6 +873,7 @@ static void __exit exit_gdrom(void)
+ 	platform_device_unregister(pd);
+ 	platform_driver_unregister(&gdrom_driver);
+ 	kfree(gd.toc);
++	kfree(gd.cd_info);
+ }
+ 
+ module_init(init_gdrom);
 -- 
 2.19.1
 
