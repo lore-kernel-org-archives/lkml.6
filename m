@@ -2,202 +2,189 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2589CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E531C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF93214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AABA214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:33:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0Rzbxd5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tfJMpQia"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbfBKX3E (ORCPT
+        id S1727766AbfBKXd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:29:04 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55215 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbfBKX2e (ORCPT
+        Mon, 11 Feb 2019 18:33:29 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51886 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727424AbfBKXd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:28:34 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a62so1002900wmh.4;
-        Mon, 11 Feb 2019 15:28:31 -0800 (PST)
+        Mon, 11 Feb 2019 18:33:29 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b11so1029749wmj.1;
+        Mon, 11 Feb 2019 15:33:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=FDryqu5ur4j9ePg/wc9MnpTPYVkBg8AjJFLLJs3gfA8=;
-        b=h0Rzbxd5vn6TVM2F2wuqMENuqEgutSdwfh3qz1lUYLLEMfzzzFr+9FKaWiM0SL7W/l
-         PMFr/LndNJVr8UlZOHtY8hVVLm1ymPo6bBVirh1KqTOo1QuyQ10b8dyw6Up5cQgDaCI1
-         MqMBnExiZM6pKTNfcEJSMM6f+AP7TnRUhahb1YCl/NAT19yR8i9SdJIdijWHiJAsJHOH
-         rA/m0TBUELlebS6i3BK6rYJIqveTENGDdz52jo5px/scN6ruwhzpSOrXXFX86fD/rg/U
-         DWtGaSmXDyNtXRrLF30Q6TRcElVr7wnfYYgwhiq9Pjo/v/ZbTPeSEW/poumVo6sQ/JpM
-         tlNw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=4YsmXbJZrgA9KlysuvIxL9L2aT/wmgrin1tjWxSQvBE=;
+        b=tfJMpQiazUSzR2qIVuT0xukmGuQjxoqz3KItn52+wHoAjme1fx6romoXUzRZ1SBMvS
+         RLKIyyL4vgaArpImqkRlTjYMJLCPdupolf199NH/Ucx3FGnRKWIo7h/Aahkg7pOz0dm4
+         BTEmf/K/5ZylkFK+OwbLAda1X/JEcFGOYva7Q4+OdHrxFh8adWEYqmQUldEkv3wZQcOu
+         rH2Wa7ekxk/LSrfrY4dEFqLW2zQzxNiTo9dPwva+75WoSm6KV8qMvIq5rbN7CGMiWcoA
+         bLK0GCGOJhny9IcVb+2lxC51hzyq+GcKMkjtopuk4UkTFU3gKQjaOrk21RvUb3ixZaDY
+         ZUTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:reply-to:mime-version:content-transfer-encoding;
-        bh=FDryqu5ur4j9ePg/wc9MnpTPYVkBg8AjJFLLJs3gfA8=;
-        b=Bs9fmlM4KP1sp6K3TIPQkMy1wO9uRNH749IY4ntUWbAdUr05Cpj+qKcEmrqXsNcFjy
-         TH9Q9O9108+cUnlzLgixsfqYES6Nq0e0N0yRQ44BOtJqWSpnMHduUu5WY4ZYaTvGM5HL
-         UN0p7r6WzqwNDzad3x28aWQNCDvDWTGEVZRMsn0AZyb38hp4DVHspVPaxgcZ1YbMnsIs
-         lymcwy1tooplCRQNz3n2Uh0QcbxAXszdpJEgC6nCIAUf6z7BYhebc8wJ23MMvkbmj5Bd
-         ZXuLf5iLbIE3+41OE/qYS8oQe1Y4vT2bStNgyhOg1VMHVnmI8Xa9BmhcLT0ZyCXvGMyk
-         ihMw==
-X-Gm-Message-State: AHQUAuavb6O69K7nMG77ATFY9Qzd6ZkdVEmw3TEb+DrNYmhixvojQxpU
-        w52WAPJS+S9ZLPwtwhnbBmNlMVKbO7g=
-X-Google-Smtp-Source: AHgI3IbtlJdoliv99+hxRUZolITpfcILFWmzZayl1QjTtb4jAfcYq8ZcflEbQCEsF264j4rFm1ARKw==
-X-Received: by 2002:a1c:4044:: with SMTP id n65mr477987wma.85.1549927710788;
-        Mon, 11 Feb 2019 15:28:30 -0800 (PST)
-Received: from localhost.localdomain (bba134232.alshamil.net.ae. [217.165.113.120])
-        by smtp.gmail.com with ESMTPSA id e67sm1470295wmg.1.2019.02.11.15.28.27
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=4YsmXbJZrgA9KlysuvIxL9L2aT/wmgrin1tjWxSQvBE=;
+        b=sFcn8V3n6iSsRmYPmqXdPBBGIqsvTqBgxqy0C1lc78nz00BTFPl2pl15c/5f++Y8Fq
+         DXK1sknvF3c5IFk0gzRm2Qhs579A0/D/3byGDOEhwD3bC1qqBWiY1WlSYlSENJIne401
+         Jv/gbhgzvKQSwIXY3cwgL2oVFf8E376q46lT2qlCHmwIiJ5TG7p3m90si6K1xF8b1rKF
+         mKizLdpxMQpjOH091V5aCpr8CM3cCS6fkdDg1al+7t9IB088f9UOtE3v4aXtn2dwbKn+
+         nQo/0AMT+my5jgw0Qi07K7pzqqdZkJf5WJ1AgPiy72pKoBVtmi/UeVJAztz2YAI8+sf8
+         0qow==
+X-Gm-Message-State: AHQUAubwLrdAnPjTv5+6OQwYub+x8hFMA5K8iJUfc7/RKNLkcZhR78uv
+        1MKWPzB6aQ+J/zeRrPJjWwLN0TAR
+X-Google-Smtp-Source: AHgI3IZ0kop33OzKaHrXPmJt6bncCCyRrsJQLIVm+Xbf2Eied9mtC8rmTcBToP0r5QKsFAyzUkND7w==
+X-Received: by 2002:a7b:c854:: with SMTP id c20mr506627wml.153.1549928005622;
+        Mon, 11 Feb 2019 15:33:25 -0800 (PST)
+Received: from [172.30.89.184] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id q21sm934970wmc.14.2019.02.11.15.33.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 15:28:30 -0800 (PST)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 08/12] __wr_after_init: lkdtm test
-Date:   Tue, 12 Feb 2019 01:27:45 +0200
-Message-Id: <8708f8d2c541ce803072acec153f38011b271e90.1549927666.git.igor.stoppa@huawei.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1549927666.git.igor.stoppa@huawei.com>
-References: <cover.1549927666.git.igor.stoppa@huawei.com>
-Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
+        Mon, 11 Feb 2019 15:33:24 -0800 (PST)
+Subject: Re: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding
+ matrices
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190209014748.10427-1-slongerbeam@gmail.com>
+ <20190209014748.10427-2-slongerbeam@gmail.com>
+ <1549879117.7687.2.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <8a3a9c63-d466-e328-d49a-1810952d2e9a@gmail.com>
+Date:   Mon, 11 Feb 2019 15:33:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <1549879117.7687.2.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Verify that trying to modify a variable with the __wr_after_init
-attribute will cause a crash.
 
-Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Nadav Amit <nadav.amit@gmail.com>
-CC: Matthew Wilcox <willy@infradead.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Dave Hansen <dave.hansen@linux.intel.com>
-CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
-CC: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-CC: linux-integrity@vger.kernel.org
-CC: kernel-hardening@lists.openwall.com
-CC: linux-mm@kvack.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/misc/lkdtm/core.c  |  3 +++
- drivers/misc/lkdtm/lkdtm.h |  3 +++
- drivers/misc/lkdtm/perms.c | 29 +++++++++++++++++++++++++++++
- 3 files changed, 35 insertions(+)
+On 2/11/19 1:58 AM, Philipp Zabel wrote:
+> On Fri, 2019-02-08 at 17:47 -0800, Steve Longerbeam wrote:
+>> The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
+>> coefficients, so rename them to indicate that. And add some comments
+>> to make clear these are BT.601 coefficients encoding between YUV limited
+>> range and RGB full range. The ic_csc_rgb2rgb matrix is just an identity
+>> matrix, so rename to ic_csc_identity. No functional changes.
+>>
+>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>> ---
+>> Changes in v2:
+>> - rename ic_csc_rgb2rgb matrix to ic_csc_identity.
+>> ---
+>>   drivers/gpu/ipu-v3/ipu-ic.c | 21 ++++++++++++++-------
+>>   1 file changed, 14 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+>> index 594c3cbc8291..3ef61f0b509b 100644
+>> --- a/drivers/gpu/ipu-v3/ipu-ic.c
+>> +++ b/drivers/gpu/ipu-v3/ipu-ic.c
+>> @@ -183,11 +183,13 @@ struct ic_csc_params {
+>>   };
+>>   
+>>   /*
+>> + * BT.601 encoding from RGB full range to YUV limited range:
+>> + *
+>>    * Y = R *  .299 + G *  .587 + B *  .114;
+>>    * U = R * -.169 + G * -.332 + B *  .500 + 128.;
+>>    * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
+> Hm, this is a conversion to full range BT.601. For limited range, the
+> matrix coefficients
+>
+>     0.2990  0.5870  0.1140
+>    -0.1687 -0.3313  0.5000
+>     0.5000 -0.4187 -0.0813
+>
+> should be multiplied with 219/255 (Y) and 224/255 (U,V), respectively:
+>
+>    Y = R *  .2568 + G *  .5041 + B *  .0979 + 16;
+>    U = R * -.1482 + G * -.2910 + B *  .4392 + 128;
+>    V = R *  .4392 + G * -.3678 + B * -.0714 + 128;
+>
+>>    */
+>> -static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+>> +static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
+>>   	.coeff = {
+>>   		{ 77, 150, 29 },
+>>   		{ 469, 427, 128 },
+>> @@ -197,8 +199,11 @@ static const struct ic_csc_params ic_csc_rgb2ycbcr = {
+>>   	.scale = 1,
+>>   };
+>>   
+>> -/* transparent RGB->RGB matrix for graphics combining */
+>> -static const struct ic_csc_params ic_csc_rgb2rgb = {
+>> +/*
+>> + * identity matrix, used for transparent RGB->RGB graphics
+>> + * combining.
+>> + */
+>> +static const struct ic_csc_params ic_csc_identity = {
+>>   	.coeff = {
+>>   		{ 128, 0, 0 },
+>>   		{ 0, 128, 0 },
+>> @@ -208,11 +213,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
+>>   };
+>>   
+>>   /*
+>> + * Inverse BT.601 encoding from YUV limited range to RGB full range:
+>> + *
+>>    * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
+>>    * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
+>>    * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
+>>    */
+> This looks correct.
 
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index 2837dc77478e..73c34b17c433 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(ACCESS_USERSPACE),
- 	CRASHTYPE(WRITE_RO),
- 	CRASHTYPE(WRITE_RO_AFTER_INIT),
-+#ifdef CONFIG_PRMEM
-+	CRASHTYPE(WRITE_WR_AFTER_INIT),
-+#endif
- 	CRASHTYPE(WRITE_KERN),
- 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
- 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index 3c6fd327e166..abba2f52ffa6 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -38,6 +38,9 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
- void __init lkdtm_perms_init(void);
- void lkdtm_WRITE_RO(void);
- void lkdtm_WRITE_RO_AFTER_INIT(void);
-+#ifdef CONFIG_PRMEM
-+void lkdtm_WRITE_WR_AFTER_INIT(void);
-+#endif
- void lkdtm_WRITE_KERN(void);
- void lkdtm_EXEC_DATA(void);
- void lkdtm_EXEC_STACK(void);
-diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
-index 53b85c9d16b8..f681730aa652 100644
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -9,6 +9,7 @@
- #include <linux/vmalloc.h>
- #include <linux/mman.h>
- #include <linux/uaccess.h>
-+#include <linux/prmem.h>
- #include <asm/cacheflush.h>
- 
- /* Whether or not to fill the target memory area with do_nothing(). */
-@@ -27,6 +28,10 @@ static const unsigned long rodata = 0xAA55AA55;
- /* This is marked __ro_after_init, so it should ultimately be .rodata. */
- static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
- 
-+/* This is marked __wr_after_init, so it should be in .rodata. */
-+static
-+unsigned long wr_after_init __wr_after_init = 0x55AA5500;
-+
- /*
-  * This just returns to the caller. It is designed to be copied into
-  * non-executable memory regions.
-@@ -104,6 +109,28 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
- 	*ptr ^= 0xabcd1234;
- }
- 
-+#ifdef CONFIG_PRMEM
-+
-+void lkdtm_WRITE_WR_AFTER_INIT(void)
-+{
-+	unsigned long *ptr = &wr_after_init;
-+
-+	/*
-+	 * Verify we were written to during init. Since an Oops
-+	 * is considered a "success", a failure is to just skip the
-+	 * real test.
-+	 */
-+	if ((*ptr & 0xAA) != 0xAA) {
-+		pr_info("%p was NOT written during init!?\n", ptr);
-+		return;
-+	}
-+
-+	pr_info("attempting bad wr_after_init write at %p\n", ptr);
-+	*ptr ^= 0xabcd1234;
-+}
-+
-+#endif
-+
- void lkdtm_WRITE_KERN(void)
- {
- 	size_t size;
-@@ -200,4 +227,6 @@ void __init lkdtm_perms_init(void)
- 	/* Make sure we can write to __ro_after_init values during __init */
- 	ro_after_init |= 0xAA;
- 
-+	/* Make sure we can write to __wr_after_init during __init */
-+	wr_after_init |= 0xAA;
- }
--- 
-2.19.1
+Agreed, the coefficients in the comments are correct, but the actual 
+table values were a bit off. I will correct them for v5 (Green offset 
+should be 272 in the table, not 266).
+
+Steve
+
+>
+>> -static const struct ic_csc_params ic_csc_ycbcr2rgb = {
+>> +static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+>>   	.coeff = {
+>>   		{ 149, 0, 204 },
+>>   		{ 149, 462, 408 },
+>> @@ -238,11 +245,11 @@ static int init_csc(struct ipu_ic *ic,
+>>   		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
+>>   
+>>   	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
+>> -		params = &ic_csc_ycbcr2rgb;
+>> +		params = &ic_csc_ycbcr2rgb_bt601;
+>>   	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
+>> -		params = &ic_csc_rgb2ycbcr;
+>> +		params = &ic_csc_rgb2ycbcr_bt601;
+>>   	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+>> -		params = &ic_csc_rgb2rgb;
+>> +		params = &ic_csc_identity;
+>>   	else {
+>>   		dev_err(priv->ipu->dev, "Unsupported color space conversion\n");
+>>   		return -EINVAL;
+> regards
+> Philipp
 
