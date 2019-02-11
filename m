@@ -4,65 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8684C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8060C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7CE222A8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 784B7222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898048;
-	bh=aGf5p7LVkmUUX7b00AkKm0v4mSTy6mSDSGcdgCRreZg=;
+	s=default; t=1549898055;
+	bh=uGtmWpC0VLJ1fhdJH8NEumbpfQnumNwyWYoxf14uDUg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jK7B+NpxTwjJld8Uz5lxHfCBafppifQ/rEe34DGo76tMLEEeRJp8fOFiJ/RFNAl8b
-	 kiqROQHM4siZFLTPeubUL6LpqLuoLLojQV0ucjqyMg+mjBXR1gDoxTYPSfGTw1macM
-	 nplCOHOZmrOdsOewXaQwPCDou04E/OlzYfYH6E+0=
+	b=IKjJO8RKb5428khgYWowOWYnGypm/ywGi1kEptvi8auGo5meoa+LXvcrGjqd8lfXy
+	 TTfgJc7DOCtx6E1O3Wxac5dALFyNlvX+VSEY5ZlO1X0ThFdsNKY2nEs0891PDjmlWP
+	 /j8zOWBZ9gjKdjDl55tIpWWbulKGUU5kuunLBP20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391560AbfBKPOB (ORCPT
+        id S2391512AbfBKPIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:14:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391077AbfBKPJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:09:00 -0500
+        id S2403877AbfBKPIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 391C2222B0;
-        Mon, 11 Feb 2019 15:08:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E28A217D9;
+        Mon, 11 Feb 2019 15:08:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897739;
-        bh=aGf5p7LVkmUUX7b00AkKm0v4mSTy6mSDSGcdgCRreZg=;
+        s=default; t=1549897721;
+        bh=uGtmWpC0VLJ1fhdJH8NEumbpfQnumNwyWYoxf14uDUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tqg3QJNCuSUSbeDFJicVLSEzuazjBUzD29jfkmgvrijliHVTFKR8CVoB/I1yQztSr
-         Y87YA1nHhy55eM2rRLR/XAFCA3SV4rUffcUr1RA5249HfSmojCT5CptVq/+JGJa1wc
-         NEWOEquByZLBJ43soPVuhEdpot1F/bqYend5Afmg=
+        b=yAJ77Dj4T07uW6FoQISxigLonTozUbrIh7WvjeE/bPrgyR/J0xciY6Sx1/xtNSCKp
+         VIdWToj2JqXN3uKOEQH4wvX9ksuKaofuV01AMpykTHhMNDH4JUnT+mIzBxR2m+r0fh
+         5Wf8W3FZHAsfAY0b0cnyF03FpkkrhBxICTaq0YA4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Gordon <bmgordon@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Oren Laadan <orenl@cellrox.com>,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Rom Lemarchand <romlem@android.com>,
-        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 099/137] fs/proc/base.c: use ns_capable instead of capable for timerslack_ns
-Date:   Mon, 11 Feb 2019 15:19:40 +0100
-Message-Id: <20190211141821.248273587@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 094/137] gdrom: fix a memory leak bug
+Date:   Mon, 11 Feb 2019 15:19:35 +0100
+Message-Id: <20190211141820.763284668@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -81,75 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8da0b4f692c6d90b09c91f271517db746a22ff67 ]
+[ Upstream commit 093c48213ee37c3c3ff1cf5ac1aa2a9d8bc66017 ]
 
-Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
-in its effective capability set, but the current check looks in the root
-namespace instead of the process' user namespace.  Since a process is
-allowed to do other activities controlled by CAP_SYS_NICE inside a
-namespace, it should also be able to adjust timerslack_ns.
+In probe_gdrom(), the buffer pointed by 'gd.cd_info' is allocated through
+kzalloc() and is used to hold the information of the gdrom device. To
+register and unregister the device, the pointer 'gd.cd_info' is passed to
+the functions register_cdrom() and unregister_cdrom(), respectively.
+However, this buffer is not freed after it is used, which can cause a
+memory leak bug.
 
-Link: http://lkml.kernel.org/r/20181030180012.232896-1-bmgordon@google.com
-Signed-off-by: Benjamin Gordon <bmgordon@google.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Oren Laadan <orenl@cellrox.com>
-Cc: Ruchi Kandoi <kandoiruchi@google.com>
-Cc: Rom Lemarchand <romlem@android.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Colin Cross <ccross@android.com>
-Cc: Nick Kralevich <nnk@google.com>
-Cc: Dmitry Shmidt <dimitrysh@google.com>
-Cc: Elliott Hughes <enh@google.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This patch simply frees the buffer 'gd.cd_info' in exit_gdrom() to fix the
+above issue.
+
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/base.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/cdrom/gdrom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 79702d405ba7..f73de326c630 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2337,10 +2337,13 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
- 		return -ESRCH;
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index e2808fefbb78..1852d19d0d7b 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -882,6 +882,7 @@ static void __exit exit_gdrom(void)
+ 	platform_device_unregister(pd);
+ 	platform_driver_unregister(&gdrom_driver);
+ 	kfree(gd.toc);
++	kfree(gd.cd_info);
+ }
  
- 	if (p != current) {
--		if (!capable(CAP_SYS_NICE)) {
-+		rcu_read_lock();
-+		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-+			rcu_read_unlock();
- 			count = -EPERM;
- 			goto out;
- 		}
-+		rcu_read_unlock();
- 
- 		err = security_task_setscheduler(p);
- 		if (err) {
-@@ -2373,11 +2376,14 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
- 		return -ESRCH;
- 
- 	if (p != current) {
--
--		if (!capable(CAP_SYS_NICE)) {
-+		rcu_read_lock();
-+		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-+			rcu_read_unlock();
- 			err = -EPERM;
- 			goto out;
- 		}
-+		rcu_read_unlock();
-+
- 		err = security_task_getscheduler(p);
- 		if (err)
- 			goto out;
+ module_init(init_gdrom);
 -- 
 2.19.1
 
