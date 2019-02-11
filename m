@@ -2,151 +2,293 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D82C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EC9C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D622E21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78C4021B69
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:05:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GydORsWG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfBKSEA (ORCPT
+        id S1731489AbfBKSFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:04:00 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.96]:15335 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727896AbfBKSD7 (ORCPT
+        Mon, 11 Feb 2019 13:05:03 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37803 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727896AbfBKSFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:03:59 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 7282C179510
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:03:58 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tFvygdrfm4FKptFvygym6R; Mon, 11 Feb 2019 12:03:58 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=41304 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtFvx-001s9Q-Mh; Mon, 11 Feb 2019 12:03:57 -0600
-Date:   Mon, 11 Feb 2019 12:03:56 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc:     linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] firewire: mark expected switch fall-throughs
-Message-ID: <20190211180356.GA27613@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gtFvx-001s9Q-Mh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:41304
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 11 Feb 2019 13:05:03 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so5660689plr.4;
+        Mon, 11 Feb 2019 10:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=AUsdeBs8TwVgEYdmAcctLfA3NsYpeVedAfShAvqLCSQ=;
+        b=GydORsWGsWvaK37KjDS0hKIrZCViWp2jnMBbmaJP55UDxAfk6Lpjo3/bo26Ccs1V+w
+         Rx9UAFtFx0BLH9ij6rFgtj7xLiFwLHHvYpCslgRZ2Y5bJY7rmQIs38sQwb1ztEcTOlZG
+         Mbk6gy2n1DYs4cCff9biQQ2Yi4AYE8GurcGLbonmcUaXgvD3t6EDJUSjzmAk3hv42xZx
+         4TcEcJxNFK3xqbfHtLztg/WOeGgGZk5YOu6gwCZhyyVmTX7AGxyTei39eSFz7ZToM6/N
+         CHynptnAS6T+5A0Mg0uYa1UiXlqlz1Q0Vx77VlFdVpD7z3Pv1QL0sEdBq4yVHtchqpfP
+         vWPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=AUsdeBs8TwVgEYdmAcctLfA3NsYpeVedAfShAvqLCSQ=;
+        b=S5espi1gnFCUbgCKpSHM8aZHKPDood/JddbqQSf1fqVPEUwT0I13Citxyzum/LzNzL
+         yEGols4nR47+8KztFfbes9XBMtiZy1/LxZ/0+eHSddCu1fLiXjRbEuUuqchhsk+A0OGe
+         wAY0o/HMeD8ScQfT9QyRRvqto9uObKoqbLAglboxOYXrM4cQ58ti8+ihBDZoeJc/ZOG/
+         G1OJjvhRb9/JJwzsgcsJwu+jpR9TYLipoGG0IXrFdUTf/e3KEkzIBAQ95jY3eyrIsFMD
+         LYq0sDX6hwKa9+//EMEnV6KlaRWH5+tS4n0HCoxpPPDWk3PiXlDZf2cV/J7Cr5kid68C
+         72mw==
+X-Gm-Message-State: AHQUAub4zX/rpBb6H7BtVCBxsf8AVecaOun+kILUMhOB4u2d+LJxdrjO
+        CCj9AeYdULqGBejJ1Y5baXU=
+X-Google-Smtp-Source: AHgI3IahTZgfrp8L0NmonDNlgVSC6Taf0HBldEkpa1Q8EcssFEiNuhJtYHQnYzeDyoJKeaT4IFbqeQ==
+X-Received: by 2002:a17:902:2887:: with SMTP id f7mr37670181plb.176.1549908301976;
+        Mon, 11 Feb 2019 10:05:01 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id 15sm16807648pfr.55.2019.02.11.10.05.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 10:05:01 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
+Date:   Mon, 11 Feb 2019 10:04:59 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+ <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
+ <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
+To:     Andy Lutomirski <luto@amacapital.net>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+> On Feb 10, 2019, at 9:18 PM, Andy Lutomirski <luto@amacapital.net> =
+wrote:
+>=20
+>=20
+>=20
+> On Feb 10, 2019, at 4:39 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+>=20
+>>> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
+<rick.p.edgecombe@intel.com> wrote:
+>>>=20
+>>> From: Nadav Amit <namit@vmware.com>
+>>>=20
+>>> To prevent improper use of the PTEs that are used for text patching, =
+we
+>>> want to use a temporary mm struct. We initailize it by copying the =
+init
+>>> mm.
+>>>=20
+>>> The address that will be used for patching is taken from the lower =
+area
+>>> that is usually used for the task memory. Doing so prevents the need =
+to
+>>> frequently synchronize the temporary-mm (e.g., when BPF programs are
+>>> installed), since different PGDs are used for the task memory.
+>>>=20
+>>> Finally, we randomize the address of the PTEs to harden against =
+exploits
+>>> that use these PTEs.
+>>>=20
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Dave Hansen <dave.hansen@intel.com>
+>>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Suggested-by: Andy Lutomirski <luto@kernel.org>
+>>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> ---
+>>> arch/x86/include/asm/pgtable.h       |  3 +++
+>>> arch/x86/include/asm/text-patching.h |  2 ++
+>>> arch/x86/kernel/alternative.c        |  3 +++
+>>> arch/x86/mm/init_64.c                | 36 =
+++++++++++++++++++++++++++++
+>>> init/main.c                          |  3 +++
+>>> 5 files changed, 47 insertions(+)
+>>>=20
+>>> diff --git a/arch/x86/include/asm/pgtable.h =
+b/arch/x86/include/asm/pgtable.h
+>>> index 40616e805292..e8f630d9a2ed 100644
+>>> --- a/arch/x86/include/asm/pgtable.h
+>>> +++ b/arch/x86/include/asm/pgtable.h
+>>> @@ -1021,6 +1021,9 @@ static inline void __meminit =
+init_trampoline_default(void)
+>>>   /* Default trampoline pgd value */
+>>>   trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
+>>> }
+>>> +
+>>> +void __init poking_init(void);
+>>> +
+>>> # ifdef CONFIG_RANDOMIZE_MEMORY
+>>> void __meminit init_trampoline(void);
+>>> # else
+>>> diff --git a/arch/x86/include/asm/text-patching.h =
+b/arch/x86/include/asm/text-patching.h
+>>> index f8fc8e86cf01..a75eed841eed 100644
+>>> --- a/arch/x86/include/asm/text-patching.h
+>>> +++ b/arch/x86/include/asm/text-patching.h
+>>> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
+*opcode, size_t len);
+>>> extern int poke_int3_handler(struct pt_regs *regs);
+>>> extern void *text_poke_bp(void *addr, const void *opcode, size_t =
+len, void *handler);
+>>> extern int after_bootmem;
+>>> +extern __ro_after_init struct mm_struct *poking_mm;
+>>> +extern __ro_after_init unsigned long poking_addr;
+>>>=20
+>>> #endif /* _ASM_X86_TEXT_PATCHING_H */
+>>> diff --git a/arch/x86/kernel/alternative.c =
+b/arch/x86/kernel/alternative.c
+>>> index 12fddbc8c55b..ae05fbb50171 100644
+>>> --- a/arch/x86/kernel/alternative.c
+>>> +++ b/arch/x86/kernel/alternative.c
+>>> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void =
+*addr, const void *opcode,
+>>>   return addr;
+>>> }
+>>>=20
+>>> +__ro_after_init struct mm_struct *poking_mm;
+>>> +__ro_after_init unsigned long poking_addr;
+>>> +
+>>> static void *__text_poke(void *addr, const void *opcode, size_t len)
+>>> {
+>>>   unsigned long flags;
+>>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+>>> index bccff68e3267..125c8c48aa24 100644
+>>> --- a/arch/x86/mm/init_64.c
+>>> +++ b/arch/x86/mm/init_64.c
+>>> @@ -53,6 +53,7 @@
+>>> #include <asm/init.h>
+>>> #include <asm/uv/uv.h>
+>>> #include <asm/setup.h>
+>>> +#include <asm/text-patching.h>
+>>>=20
+>>> #include "mm_internal.h"
+>>>=20
+>>> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+>>>   return memory_block_size_probed;
+>>> }
+>>>=20
+>>> +/*
+>>> + * Initialize an mm_struct to be used during poking and a pointer =
+to be used
+>>> + * during patching.
+>>> + */
+>>> +void __init poking_init(void)
+>>> +{
+>>> +    spinlock_t *ptl;
+>>> +    pte_t *ptep;
+>>> +
+>>> +    poking_mm =3D copy_init_mm();
+>>> +    BUG_ON(!poking_mm);
+>>> +
+>>> +    /*
+>>> +     * Randomize the poking address, but make sure that the =
+following page
+>>> +     * will be mapped at the same PMD. We need 2 pages, so find =
+space for 3,
+>>> +     * and adjust the address if the PMD ends after the first one.
+>>> +     */
+>>> +    poking_addr =3D TASK_UNMAPPED_BASE;
+>>> +    if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>>> +        poking_addr +=3D (kaslr_get_random_long("Poking") & =
+PAGE_MASK) %
+>>> +            (TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
+>>> +
+>>> +    if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
+>>> +        poking_addr +=3D PAGE_SIZE;
+>>=20
+>> Further thinking about it, I think that allocating the virtual =
+address for
+>> poking from user address-range is problematic. The user can set =
+watchpoints
+>> on different addresses, cause some static-keys to be =
+enabled/disabled, and
+>> monitor the signals to derandomize the poking address.
+>=20
+> Hmm, I hadn=E2=80=99t thought about watchpoints. I=E2=80=99m not sure =
+how much we care
+> about possible derandomization like this, but we certainly don=E2=80=99t=
+ want to
+> send signals or otherwise malfunction.
+>=20
+>> Andy, I think you were pushing this change. Can I go back to use a =
+vmalloc=E2=80=99d
+>> address instead, or do you have a better solution?
+>=20
+> Hmm. If we use a vmalloc address, we have to make sure it=E2=80=99s =
+not actually
+> allocated. I suppose we could allocate one once at boot and use that. =
+We
+> also have the problem that the usual APIs for handling =E2=80=9Cuser=E2=80=
+=9D addresses
+> might assume they=E2=80=99re actually in the user range, although this =
+seems
+> unlikely to be a problem in practice. More seriously, though, the code
+> that manipulates per-mm paging structures assumes that *all* of the
+> structures up to the top level are per-mm, and, if we use anything =
+less
+> than a private pgd, this isn=E2=80=99t the case.
 
-This patch fixes the following warnings:
+I forgot that I only had this conversation in my mind ;-)
 
-drivers/firewire/core-device.c: In function ‘set_broadcast_channel’:
-drivers/firewire/core-device.c:969:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    if (data & cpu_to_be32(1 << 31)) {
-       ^
-drivers/firewire/core-device.c:974:3: note: here
-   case RCODE_ADDRESS_ERROR:
-   ^~~~
-drivers/firewire/core-iso.c: In function ‘manage_channel’:
-drivers/firewire/core-iso.c:308:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    if ((data[0] & bit) == (data[1] & bit))
-       ^
-drivers/firewire/core-iso.c:312:3: note: here
-   default:
-   ^~~~~~~
-drivers/firewire/core-topology.c: In function ‘count_ports’:
-drivers/firewire/core-topology.c:69:23: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    (*child_port_count)++;
-    ~~~~~~~~~~~~~~~~~~~^~
-drivers/firewire/core-topology.c:70:3: note: here
-   case SELFID_PORT_PARENT:
-   ^~~~
+Well, I did write some code that kept some vmalloc=E2=80=99d area =
+private, and it
+did require more synchronization between the pgd=E2=80=99s. It is still =
+possible
+to use another top-level PGD, but =E2=80=A6 (continued below)
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+>=20
+>> I prefer not to
+>> save/restore DR7, of course.
+>=20
+> I suspect we may want to use the temporary mm concept for EFI, too, so =
+we
+> may want to just suck it up and save/restore DR7. But only if a =
+watchpoint
+> is in use, of course. I have an old patch I could dust off that tracks =
+DR7
+> to make things like this efficient.
 
-Notice that in some cases, the code comment is modified in
-accordance with what GCC is expecting to find.
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/firewire/core-device.c   | 2 +-
- drivers/firewire/core-iso.c      | 2 +-
- drivers/firewire/core-topology.c | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index 7c2eed76011e..0c86548fa4a7 100644
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -970,7 +970,7 @@ static void set_broadcast_channel(struct fw_device *device, int generation)
- 				device->bc_implemented = BC_IMPLEMENTED;
- 				break;
- 			}
--			/* else fall through to case address error */
-+			/* else, fall through - to case address error */
- 		case RCODE_ADDRESS_ERROR:
- 			device->bc_implemented = BC_UNIMPLEMENTED;
- 		}
-diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-index 35e784cffc23..7e5c98840b80 100644
---- a/drivers/firewire/core-iso.c
-+++ b/drivers/firewire/core-iso.c
-@@ -308,7 +308,7 @@ static int manage_channel(struct fw_card *card, int irm_id, int generation,
- 			if ((data[0] & bit) == (data[1] & bit))
- 				continue;
- 
--			/* 1394-1995 IRM, fall through to retry. */
-+			/* fall through - to retry for 1394-1995 IRM */
- 		default:
- 			if (retry) {
- 				retry--;
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
-index 7db234d3fbdd..82c67e900aad 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -67,6 +67,7 @@ static u32 *count_ports(u32 *sid, int *total_port_count, int *child_port_count)
- 		switch (port_type) {
- 		case SELFID_PORT_CHILD:
- 			(*child_port_count)++;
-+			/* fall through */
- 		case SELFID_PORT_PARENT:
- 		case SELFID_PORT_NCONN:
- 			(*total_port_count)++;
--- 
-2.20.1
+=E2=80=A6 but, if this is the case, then I will just make =
+(un)use_temporary_mm() to
+save/restore DR7. I guess you are ok with such a solution. I will
+incorporate it into Rick=E2=80=99s v3.
 
