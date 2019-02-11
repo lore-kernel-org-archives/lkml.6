@@ -2,87 +2,181 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897EDC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18EFC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D47F20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5B320844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:23:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="dUmkFV5r"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uELLepg3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbfBKHVV (ORCPT
+        id S1726811AbfBKHXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:21:21 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:13362 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfBKHVV (ORCPT
+        Mon, 11 Feb 2019 02:23:04 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38439 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKHXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:21:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549869677;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=2+Wj7m7ySIuMfGlN7asIXsR+ghoPH8tIEa6cdB4icBU=;
-        b=dUmkFV5rSIJebTEL7agFsmT8sWXeA5VIskO2jwVZjoWXDolGR7SZo28pmJ49ujIBfN
-        O0XVly3OX6GQlnR2AERXTHuiujneC5Yqj61G6RLV8NCDtJ4aN6DEWQGq8IVC2MX30RMM
-        O7e/rlE6KoWYsMp5hRoAZ1Hl+sM1PHCAa7D8vEuC19ok2iMWizCH2ABfT3uDa+ciQsQL
-        0VyTXGkqkloAIDCpUva8uMmXbBWy1V3AQmb31/SOYDJzXw2Kjy7tlGxCacJtJFs+vLeT
-        VgkBAmWHxNrbz/eAwJv1c02fnzkFmyBxFcK9W0KMWKtD30N/kmK4XHWJjqc557yFsUE0
-        atSg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7R7NWZ5grpnxnRrZcnSnXxCNGtcwUruZsoM1Hh3rrCw"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a01:598:8189:222c:8934:2abd:8ff5:5de2]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv1B7LBGUZ
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 11 Feb 2019 08:21:11 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <0042290A-2939-4EBA-A638-D404FA2055ED@xenosoft.de>
-Date:   Mon, 11 Feb 2019 08:21:11 +0100
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0807B9CE-69E6-45A6-A029-1AAE5615CC8E@xenosoft.de>
-References: <9632DCDF-B9D9-416C-95FC-006B6005E2EC@xenosoft.de> <594beaae-9681-03de-9f42-191cc7d2f8e3@xenosoft.de> <20190204075616.GA5408@lst.de> <ffbf56ae-c259-47b5-9deb-7fb21fead254@xenosoft.de> <20190204123852.GA10428@lst.de> <b1c0161f-4211-03af-022d-0db7237516e9@xenosoft.de> <20190206151505.GA31065@lst.de> <20190206151655.GA31172@lst.de> <61EC67B1-12EF-42B6-B69B-B59F9E4FC474@xenosoft.de> <7c1f208b-6909-3b0a-f9f9-38ff1ac3d617@xenosoft.de> <20190208091818.GA23491@lst.de> <4e7137db-e600-0d20-6fb2-6d0f9739aca3@xenosoft.de> <0042290A-2939-4EBA-A638-D404FA2055ED@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
+        Mon, 11 Feb 2019 02:23:04 -0500
+Received: by mail-ed1-f68.google.com with SMTP id h58so686679edb.5
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 23:23:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CaqWqsLs9EomuSLT8M1ERzqjllVxsqYYGyTiilGwlrU=;
+        b=uELLepg3hqmPGqNuatK88S73cqcmMCHbRo8pmi5wbA/nj2NCVYPEgM0dwKE6woD/lF
+         Y+uIioFSReB0qx4175TwM8dPXGcAj1oo3UYSjHHZhoKRRZS2PnhBww1FMv00FMfVUTX5
+         4CVAjzDDUHxD/G5v0TX5CTqspfygn79fwWXT4tXyglOwVDLomC8B6afBIA3gTmwZk63K
+         PLVXnuyBi637WNnxalRde2yXRCiVFmfkHvNJTQZXq2eBlKaYy3drK7upRVEKsnl8vOvY
+         ZmpWtUw9z8p/a3BMC+8ZyVuXlBTWR83w5nF2j147XhOAJb0Bh1cCPF7bilbmcF1Uvcjs
+         u3jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CaqWqsLs9EomuSLT8M1ERzqjllVxsqYYGyTiilGwlrU=;
+        b=o3y0RggWGegawJOTh2MK/sTDggnVO3IxP+LyqfmPXsd1yi+PkrwN71bQ1VAR0vFhAx
+         ELJTktmVhEuVz1FfecZCm/8noxe3lucnpG9bUdaA3l47//DMdnyVDxYPrZZwGgT56Xe4
+         7UGBFOpZOPuz8VIALR5RhosUcs7tKLxvRYibUF5mL4rbxX4AHxm8eZHmnKElp5sF2c8B
+         hudpNb6PiQWt3Ul0tpnwI+8srIs3Kg4r1FNGDzdxvH7es7iY0fcjoy5KBLfSl//xxa3q
+         1hKwkUNX9646quH+JkSUpv69nLeG3uW7yFyDQYdY3oNEMoiphi/5Bbs74Al7Z3CgnDaY
+         J26g==
+X-Gm-Message-State: AHQUAuaAje96p57T5IPjaJHuLWlzT+8lOZvUbrUy3k8cgBEOO27wlZ4y
+        jievPbZ+IdLoVZpnidUbUcQ6r6Rl8S+cPw==
+X-Google-Smtp-Source: AHgI3IZfNPAGNT3NE/KQG1ri2pEMV8WZK+u8YbK6TS+E+QUpWlaBsIKnTWDJ4HciSVmGg/kOIDN18Q==
+X-Received: by 2002:a50:86cf:: with SMTP id 15mr552302edu.239.1549869782296;
+        Sun, 10 Feb 2019 23:23:02 -0800 (PST)
+Received: from nouveau (ip4da2e549.direct-adsl.nl. [77.162.229.73])
+        by smtp.gmail.com with ESMTPSA id a5sm85451edt.41.2019.02.10.23.23.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 10 Feb 2019 23:23:01 -0800 (PST)
+Date:   Mon, 11 Feb 2019 08:22:59 +0100
+From:   Domenico Andreoli <cavok@debian.org>
+To:     Kristian Fiskerstrand <k_f@gentoo.org>
+Cc:     Ben Finney <bignose@debian.org>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        919356@bugs.debian.org, debian-legal@lists.debian.org,
+        linux-kernel@vger.kernel.org,
+        Martin Steigerwald <martin.steigerwald@proact.de>,
+        Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: Licensing of include/linux/hash.h
+Message-ID: <20190211072259.GA19224@nouveau>
+References: <20190115170017.5gxarqxzfezgr5ld@dumbo>
+ <20190123085000.fp7lhtjxcyzw3m4x@dumbo>
+ <c3aa1b37-60bb-aceb-10ba-9768157a2a5a@gentoo.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Disposition: inline
+In-Reply-To: <c3aa1b37-60bb-aceb-10ba-9768157a2a5a@gentoo.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
 
-Mario successfully tested a kernel from your Git [1] on his T2080rdb today.
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Link to the log:=20
-https://gitlab.com/oshw-powerpc-notebook/T2080customizations/blob/master/ker=
-nel/dma_fix/kernel_dma_fix_log.txt
+On Mon, Feb 11, 2019 at 12:08:32AM +0100, Kristian Fiskerstrand wrote:
+> On 1/23/19 9:50 AM, Domenico Andreoli wrote:
+> > Ben Finney <bignose@debian.org> writes:
+> >> Domenico Andreoli <cavok@debian.org> writes:
 
-He wrote:
+[...]
 
-Please, note that all of the above kernel runs just fine with the T2080rdb, h=
-owever did not had the time to test extensively (tested: login into MATE gra=
-phical desktop environment, used ArctiFox for opening couple of websites, th=
-en played Neverball).
+> >>> the only knot left is now the license of hash.h
+> >>>
+> >>> This file is also present in the kernel [0] with an updated copyright
+> >>> but still without license.
 
-=E2=80=94=E2=80=94
+[...]
 
-Cheers,
-Christian
+> >> To know that work (that file) is free software, we need a clear grant =
+of
+> >> some specific license, for that work.
+> >>
+> >> If the work is not free, it would be incorrect to have the work in Deb=
+ian.
+> >=20
+> > Is it possible that for the kernel it is instead correct because it is,
+> > as whole, covered by its COPYING?
+> >=20
+> >> Alternatives, for complying with the Debian Free Software Guidelines w=
+ith
+> >> this package, include:
+> >>
+> >> * Find a credible grant of license under some GPL-compatible free
+> >>   license to that exact file. Document that explicit grant in the Debi=
+an
+> >>   package. This demonstrates the work is DFSG-free.
+> >>
+> >> * Convince ???dwarves-dfsg??? upstream to replace that file with a dif=
+ferent
+> >>   implementation (I don't know whether such an implementation exists)
+> >>   under a license compatible with the same version of GNU GPL. Document
+> >>   that explicit grant in the Debian package. This demonstrates the
+> >>   modified work is DFSG-free.
+> >>
+> >> * Replace that file in Debian only, with a different implementation as
+> >>   above. Document that explicit grant in the Debian package. This
+> >>   demonstrates the modified Debian package is DFSG-free.
+> >>
+> >> * Move the work to the ???non-free??? area.
+> >>
+> >> * Remove the work altogether.
+> >>
+> >> Those are in descending order of (my recommended) preference.
 
-[1] http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-=
-dma.6=
+[...]
+
+> It was [pointed out] by one of our license group that [hash.h]  is the
+> same that has a GPL-2+ in [fio] which has a signed-off-by.
+>=20
+> References:
+> [pointed out]
+> https://bugs.gentoo.org/677586#c1
+>=20
+> [hash.h]
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/fio.git/commit/hash=
+=2Eh?id=3Dbdc7211e190482f0c17c109a0d90834a6611be1c
+
+Yes, the Signed-off-by is from Jens Axboe (in CC) but he's not the
+original author, I guess he just copied the file as Arnaldo did. The
+file he committed has not any reference to the license.
+
+> [fio]
+> https://metadata.ftp-master.debian.org/changelogs/main/f/fio/fio_3.12-2_c=
+opyright
+
+I'm afraid that this entry in wrong. I'll seek confirmation with Martin Ste=
+igerwald.
+
+Regards,
+Domenico
+
+--=20
+3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iLMEAAEKAB0WIQT3MNZB0x8uuvIYPAfQqOu9Y5cS/AUCXGEi0wAKCRDQqOu9Y5cS
+/AJoBADW7jeMKSKDCh94jLW7cNHGMbgBio0cdpyxlpOY0hoDdqCqsi7HINRwGoAO
+FblEExhynQxalzc/rmeWRaKBKNN0pXxFm4/V2VPoFVmUGzMaRNG67axgMaqnOyb4
+cvIZCdpNDCB3WH7HqPxL6N95Wo7NmovoEMaahtY3gJofkn4NNw==
+=SD6I
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
