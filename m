@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1DDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850D1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4DE02081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5593B2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896818;
-	bh=Tb65VDAzKMhpRA8zRt2w32UidqnNVmyMSM1wlDis+3w=;
+	s=default; t=1549896823;
+	bh=GlQIYNAE6jRqKANaJ4A8vSe+jJI1X49qao2L/Msl244=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VNx5/p5AAfnSjasB7+jmRgTwSZLEOGi0llJB7jSfGDLcb/4H0g82vCx17yPOjkiVM
-	 ZOP3dbcU86phODzdaHxYlDK6ive1KbneZQvUONzFY7HJBEwlAWedqjSQMxiLRuE8MQ
-	 16h5LahdTu8zFNpe0IgfxUdQNyi6qFamoAgSmx2E=
+	b=hHxO71De1lA67p0If7z+hsxxMxdWVQ1SAQnPsqNy53PMmAg7qM3WKq63474KRaDz7
+	 ZFzk21zKbC09aw5Na/MgxJRii45dky6YU7Oc9VrBNpWxSLaEAe67ShhOuylfT611vM
+	 eLZqfTSqn1m1dmjd7f1wSKf+lnOAs4plOYoEvxPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388661AbfBKOxh (ORCPT
+        id S2388672AbfBKOxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40040 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:53:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729682AbfBKOxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:34 -0500
+        id S1729682AbfBKOxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:53:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B11720700;
-        Mon, 11 Feb 2019 14:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2F920855;
+        Mon, 11 Feb 2019 14:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896813;
-        bh=Tb65VDAzKMhpRA8zRt2w32UidqnNVmyMSM1wlDis+3w=;
+        s=default; t=1549896819;
+        bh=GlQIYNAE6jRqKANaJ4A8vSe+jJI1X49qao2L/Msl244=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LR1Vew1Up0m4B29UBjQIWiyy3S5N84aBVfrtKn0df36cmBZY5tYQtxeFv74Um/MMu
-         5joVEQQl54IXsD/ti/foSgFxNt7daWY8979H1sfbR85SroHb2VpHQnEFnHU1+25Do7
-         FIbzrpuFiQqaiJBbE4+f0BeBNb1klOEum7ILmyP8=
+        b=rMiwHvZ5A4xoKB6TkJn4ZBm2VAqaDzwWrH1XFxYmsmZWClLeMV5mR4SFym1qBRJLd
+         a1Iv7/ID8HXO9I4oXpLWURKXYAehUMnt8ck6Z5gLvBfnusC7kQKXOhoBfg5mTJLo4Z
+         lYfN6ArzyVWRo7yIuWXpVzoDImvM0FL4EC/X0gtw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 4.19 310/313] serial: sh-sci: Do not free irqs that have already been freed
-Date:   Mon, 11 Feb 2019 15:19:50 +0100
-Message-Id: <20190211141913.504580446@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 312/313] IB/hfi1: Add limit test for RC/UC send via loopback
+Date:   Mon, 11 Feb 2019 15:19:52 +0100
+Message-Id: <20190211141913.632141883@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -64,47 +68,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit 4d95987a32db53f3beca76f8c4c8309ef6a5f192 upstream.
+commit 09ce351dff8e7636af0beb72cd4a86c3904a0500 upstream.
 
-Since IRQs might be muxed on some parts, we need to pay attention when we
-are freeing them.
-Otherwise we get the ugly WARNING "Trying to free already-free IRQ 20".
+Fix potential memory corruption and panic in loopback for IB_WR_SEND
+variants.
 
-Fixes: 628c534ae735 ("serial: sh-sci: Improve support for separate TEI and DRI interrupts")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+The code blindly assumes the posted length will fit in the fetched rwqe,
+which is not a valid assumption.
+
+Fix by adding a limit test, and triggering the appropriate send completion
+and putting the QP in an error state.  This mimics the handling for
+non-loopback QPs.
+
+Fixes: 15703461533a ("IB/{hfi1, qib, rdmavt}: Move ruc_loopback to rdmavt")
+Cc: <stable@vger.kernel.org> #v4.20+
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
 ---
- drivers/tty/serial/sh-sci.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/ruc.c    |    7 ++++++-
+ drivers/infiniband/hw/qib/qib_ruc.c |    7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1921,7 +1921,7 @@ out_nomem:
+--- a/drivers/infiniband/hw/hfi1/ruc.c
++++ b/drivers/infiniband/hw/hfi1/ruc.c
+@@ -278,6 +278,8 @@ send:
+ 			goto op_err;
+ 		if (!ret)
+ 			goto rnr_nak;
++		if (wqe->length > qp->r_len)
++			goto inv_err;
+ 		break;
  
- static void sci_free_irq(struct sci_port *port)
- {
--	int i;
-+	int i, j;
+ 	case IB_WR_RDMA_WRITE_WITH_IMM:
+@@ -445,7 +447,10 @@ op_err:
+ 	goto err;
  
- 	/*
- 	 * Intentionally in reverse order so we iterate over the muxed
-@@ -1937,6 +1937,13 @@ static void sci_free_irq(struct sci_port
- 		if (unlikely(irq < 0))
- 			continue;
+ inv_err:
+-	send_status = IB_WC_REM_INV_REQ_ERR;
++	send_status =
++		sqp->ibqp.qp_type == IB_QPT_RC ?
++			IB_WC_REM_INV_REQ_ERR :
++			IB_WC_SUCCESS;
+ 	wc.status = IB_WC_LOC_QP_OP_ERR;
+ 	goto err;
  
-+		/* Check if already freed (irq was muxed) */
-+		for (j = 0; j < i; j++)
-+			if (port->irqs[j] == irq)
-+				j = i + 1;
-+		if (j > i)
-+			continue;
-+
- 		free_irq(port->irqs[i], port);
- 		kfree(port->irqstr[i]);
+--- a/drivers/infiniband/hw/qib/qib_ruc.c
++++ b/drivers/infiniband/hw/qib/qib_ruc.c
+@@ -274,6 +274,8 @@ again:
+ 			goto op_err;
+ 		if (!ret)
+ 			goto rnr_nak;
++		if (wqe->length > qp->r_len)
++			goto inv_err;
+ 		break;
+ 
+ 	case IB_WR_RDMA_WRITE_WITH_IMM:
+@@ -434,7 +436,10 @@ op_err:
+ 	goto err;
+ 
+ inv_err:
+-	send_status = IB_WC_REM_INV_REQ_ERR;
++	send_status =
++		sqp->ibqp.qp_type == IB_QPT_RC ?
++			IB_WC_REM_INV_REQ_ERR :
++			IB_WC_SUCCESS;
+ 	wc.status = IB_WC_LOC_QP_OP_ERR;
+ 	goto err;
  
 
 
