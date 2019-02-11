@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC2EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB069C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E1C21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2FA420700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbfBKQKt (ORCPT
+        id S1731715AbfBKQKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:10:49 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:32839 "EHLO
+        Mon, 11 Feb 2019 11:10:51 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:42261 "EHLO
         relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbfBKOZv (ORCPT
+        with ESMTP id S1729438AbfBKOZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:51 -0500
+        Mon, 11 Feb 2019 09:25:49 -0500
 X-Originating-IP: 90.88.22.177
 Received: from mc-bl-xps13.lan (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
         (Authenticated sender: maxime.chevallier@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 48994240011;
-        Mon, 11 Feb 2019 14:25:47 +0000 (UTC)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 86C1124000F;
+        Mon, 11 Feb 2019 14:25:41 +0000 (UTC)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -38,9 +38,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         mw@semihalf.com
-Subject: [PATCH net-next 2/4] net: phy: Move of_set_phy_eee_broken to phy-core.c
-Date:   Mon, 11 Feb 2019 15:25:27 +0100
-Message-Id: <20190211142529.22885-3-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 1/4] net: phy: Mask-out non-compatible modes when setting the max-speed
+Date:   Mon, 11 Feb 2019 15:25:26 +0100
+Message-Id: <20190211142529.22885-2-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
 References: <20190211142529.22885-1-maxime.chevallier@bootlin.com>
@@ -51,32 +51,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since of_set_phy_supported was moved to phy-core.c, we can also move
-of_set_phy_eee_broken to the same location, so that we have all OF
-functions in the same place.
-
-This patch doesn't intend to introduce any change in behaviour.
+When setting a PHY's max speed using either the max-speed DT property
+or ethtool, we should mask-out all non-compatible modes according to the
+settings table, instead of just the 10/100BASET modes.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/net/phy/phy-core.c   | 27 +++++++++++++++++++++++++++
- drivers/net/phy/phy_device.c | 28 ----------------------------
+ drivers/net/phy/phy-core.c   | 45 ++++++++++++++++++++++++++++++
+ drivers/net/phy/phy_device.c | 53 ------------------------------------
  include/linux/phy.h          |  1 +
- 3 files changed, 28 insertions(+), 28 deletions(-)
+ 3 files changed, 46 insertions(+), 53 deletions(-)
 
 diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
-index 855abf487279..de58a59815d5 100644
+index cdea028d1328..855abf487279 100644
 --- a/drivers/net/phy/phy-core.c
 +++ b/drivers/net/phy/phy-core.c
-@@ -383,6 +383,33 @@ void of_set_phy_supported(struct phy_device *phydev)
- 		__set_phy_supported(phydev, max_speed);
+@@ -4,6 +4,7 @@
+  */
+ #include <linux/export.h>
+ #include <linux/phy.h>
++#include <linux/of.h>
+ 
+ const char *phy_speed_to_str(int speed)
+ {
+@@ -338,6 +339,50 @@ size_t phy_speeds(unsigned int *speeds, size_t size,
+ 	return count;
  }
  
-+void of_set_phy_eee_broken(struct phy_device *phydev)
++static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
++{
++	const struct phy_setting *p;
++	int i;
++
++	for (i = 0, p = settings; i < ARRAY_SIZE(settings); i++, p++) {
++		if (p->speed > max_speed)
++			linkmode_clear_bit(p->bit, phydev->supported);
++		else
++			break;
++	}
++
++	return 0;
++}
++
++int phy_set_max_speed(struct phy_device *phydev, u32 max_speed)
++{
++	int err;
++
++	err = __set_phy_supported(phydev, max_speed);
++	if (err)
++		return err;
++
++	linkmode_copy(phydev->advertising, phydev->supported);
++
++	return 0;
++}
++EXPORT_SYMBOL(phy_set_max_speed);
++
++void of_set_phy_supported(struct phy_device *phydev)
 +{
 +	struct device_node *node = phydev->mdio.dev.of_node;
-+	u32 broken = 0;
++	u32 max_speed;
 +
 +	if (!IS_ENABLED(CONFIG_OF_MDIO))
 +		return;
@@ -84,45 +120,70 @@ index 855abf487279..de58a59815d5 100644
 +	if (!node)
 +		return;
 +
-+	if (of_property_read_bool(node, "eee-broken-100tx"))
-+		broken |= MDIO_EEE_100TX;
-+	if (of_property_read_bool(node, "eee-broken-1000t"))
-+		broken |= MDIO_EEE_1000T;
-+	if (of_property_read_bool(node, "eee-broken-10gt"))
-+		broken |= MDIO_EEE_10GT;
-+	if (of_property_read_bool(node, "eee-broken-1000kx"))
-+		broken |= MDIO_EEE_1000KX;
-+	if (of_property_read_bool(node, "eee-broken-10gkx4"))
-+		broken |= MDIO_EEE_10GKX4;
-+	if (of_property_read_bool(node, "eee-broken-10gkr"))
-+		broken |= MDIO_EEE_10GKR;
-+
-+	phydev->eee_broken_modes = broken;
++	if (!of_property_read_u32(node, "max-speed", &max_speed))
++		__set_phy_supported(phydev, max_speed);
 +}
 +
  /**
   * phy_resolve_aneg_linkmode - resolve the advertisements into phy settings
   * @phydev: The phy_device struct
 diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 65e18293d8e5..626f0527f36a 100644
+index 3d14e48aebc5..65e18293d8e5 100644
 --- a/drivers/net/phy/phy_device.c
 +++ b/drivers/net/phy/phy_device.c
-@@ -30,7 +30,6 @@
- #include <linux/mdio.h>
- #include <linux/io.h>
- #include <linux/uaccess.h>
--#include <linux/of.h>
+@@ -1964,44 +1964,6 @@ int genphy_loopback(struct phy_device *phydev, bool enable)
+ }
+ EXPORT_SYMBOL(genphy_loopback);
  
- MODULE_DESCRIPTION("PHY library");
- MODULE_AUTHOR("Andy Fleming");
-@@ -2094,33 +2093,6 @@ bool phy_validate_pause(struct phy_device *phydev,
+-static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
+-{
+-	switch (max_speed) {
+-	case SPEED_10:
+-		linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
+-				   phydev->supported);
+-		linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+-				   phydev->supported);
+-		/* fall through */
+-	case SPEED_100:
+-		linkmode_clear_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
+-				   phydev->supported);
+-		linkmode_clear_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+-				   phydev->supported);
+-		break;
+-	case SPEED_1000:
+-		break;
+-	default:
+-		return -ENOTSUPP;
+-	}
+-
+-	return 0;
+-}
+-
+-int phy_set_max_speed(struct phy_device *phydev, u32 max_speed)
+-{
+-	int err;
+-
+-	err = __set_phy_supported(phydev, max_speed);
+-	if (err)
+-		return err;
+-
+-	linkmode_copy(phydev->advertising, phydev->supported);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(phy_set_max_speed);
+-
+ /**
+  * phy_remove_link_mode - Remove a supported link mode
+  * @phydev: phy_device structure to remove link mode from
+@@ -2132,21 +2094,6 @@ bool phy_validate_pause(struct phy_device *phydev,
  }
  EXPORT_SYMBOL(phy_validate_pause);
  
--static void of_set_phy_eee_broken(struct phy_device *phydev)
+-static void of_set_phy_supported(struct phy_device *phydev)
 -{
 -	struct device_node *node = phydev->mdio.dev.of_node;
--	u32 broken = 0;
+-	u32 max_speed;
 -
 -	if (!IS_ENABLED(CONFIG_OF_MDIO))
 -		return;
@@ -130,34 +191,22 @@ index 65e18293d8e5..626f0527f36a 100644
 -	if (!node)
 -		return;
 -
--	if (of_property_read_bool(node, "eee-broken-100tx"))
--		broken |= MDIO_EEE_100TX;
--	if (of_property_read_bool(node, "eee-broken-1000t"))
--		broken |= MDIO_EEE_1000T;
--	if (of_property_read_bool(node, "eee-broken-10gt"))
--		broken |= MDIO_EEE_10GT;
--	if (of_property_read_bool(node, "eee-broken-1000kx"))
--		broken |= MDIO_EEE_1000KX;
--	if (of_property_read_bool(node, "eee-broken-10gkx4"))
--		broken |= MDIO_EEE_10GKX4;
--	if (of_property_read_bool(node, "eee-broken-10gkr"))
--		broken |= MDIO_EEE_10GKR;
--
--	phydev->eee_broken_modes = broken;
+-	if (!of_property_read_u32(node, "max-speed", &max_speed))
+-		__set_phy_supported(phydev, max_speed);
 -}
 -
- static bool phy_drv_supports_irq(struct phy_driver *phydrv)
+ static void of_set_phy_eee_broken(struct phy_device *phydev)
  {
- 	return phydrv->config_intr && phydrv->ack_interrupt;
+ 	struct device_node *node = phydev->mdio.dev.of_node;
 diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 20344c7744d8..1a1d93a2a906 100644
+index 378da9a6165e..20344c7744d8 100644
 --- a/include/linux/phy.h
 +++ b/include/linux/phy.h
-@@ -674,6 +674,7 @@ phy_lookup_setting(int speed, int duplex, const unsigned long *mask,
+@@ -673,6 +673,7 @@ phy_lookup_setting(int speed, int duplex, const unsigned long *mask,
+ 		   bool exact);
  size_t phy_speeds(unsigned int *speeds, size_t size,
  		  unsigned long *mask);
- void of_set_phy_supported(struct phy_device *phydev);
-+void of_set_phy_eee_broken(struct phy_device *phydev);
++void of_set_phy_supported(struct phy_device *phydev);
  
  static inline bool __phy_is_started(struct phy_device *phydev)
  {
