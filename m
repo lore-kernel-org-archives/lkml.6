@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B744BC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A65C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD1D222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43AB4222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897763;
-	bh=9Cj/t3o1koyJM2yAT7pt7UikivJsldCBlgBJ670loVg=;
+	s=default; t=1549897769;
+	bh=G9KKHQeSjPwDyo24VkP2HbIWfA9aqgzl+KbRdFiRAug=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DY9u1KrWUNsUwKjvf2B7clqujc5zE6rBIlSAYnI1rV1aBgOlIkGRKib7xZM3y5Yiz
-	 NrZZIreFZg0JryXhESyvI7t9xHOHRF8Zp64yEflG342jXDKtyzs1LQo8Ckl1ODIstD
-	 Is4g//3Sa5no0LUlf16wi6sMYRqRdC5OvrEoH7go=
+	b=nPGZoXBfiII918THmbcWnS3hKvRr39nBPuDlftn3N5ljeIHZ9ZpmY3SuKsNqfaQd2
+	 e8JwGjupqbUy14zoVOkPxyu6glI8721MsH+sr77RW8cNc9z4WVXSIJ7uYS8zHY5BFR
+	 xJGGr/mRAR5FiWVnpl3oriRkIBDqDPys8HgfysWw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391635AbfBKPJV (ORCPT
+        id S2391656AbfBKPJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:09:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59244 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:09:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391616AbfBKPJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:09:19 -0500
+        id S2391290AbfBKPJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:09:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB1BF222B4;
-        Mon, 11 Feb 2019 15:09:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5C9C222A7;
+        Mon, 11 Feb 2019 15:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897758;
-        bh=9Cj/t3o1koyJM2yAT7pt7UikivJsldCBlgBJ670loVg=;
+        s=default; t=1549897764;
+        bh=G9KKHQeSjPwDyo24VkP2HbIWfA9aqgzl+KbRdFiRAug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kDQ11R5IEaKJGPAVJF9OzbBIlCtW1lEPYVOHAnYAJAlJv9fdnW7OxLD2jI/PvLFmh
-         qYQJEsGbu1+NRinmnNXk4WEM0y1eGmbEBn8d+L+7eGBNfpPpL5+BFKFE59iAiNeMj5
-         9twCfUKPaSDrt/ruMNJIQXRpU6ZVTitdtxJFQ/HQ=
+        b=wT3VS3lNiHO6F8q3GwZ52UaDwwHc7oGzqyzQwopkDLP7XDdYPhqLP8i6HJ4AviY5N
+         vYDamYTPcvoNazIhYF8lZ8XfjoS7Y6I1MO1YBKpataRlEml9r82xL34K3DwVTivsED
+         Fo0OZyw6eRy31eQkbqaF7/tZId+qfuSYDNwKvonQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        David Howells <dhowells@redhat.com>,
         syzbot <syzkaller@googlegroups.com>,
-        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 105/137] dccp: fool proof ccid_hc_[rt]x_parse_options()
-Date:   Mon, 11 Feb 2019 15:19:46 +0100
-Message-Id: <20190211141821.964638594@linuxfoundation.org>
+Subject: [PATCH 4.9 107/137] rxrpc: bad unlock balance in rxrpc_recvmsg
+Date:   Mon, 11 Feb 2019 15:19:48 +0100
+Message-Id: <20190211141822.115312692@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -68,104 +69,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 9b1f19d810e92d6cdc68455fbc22d9f961a58ce1 ]
+[ Upstream commit 6dce3c20ac429e7a651d728e375853370c796e8d ]
 
-Similarly to commit 276bdb82dedb ("dccp: check ccid before dereferencing")
-it is wise to test for a NULL ccid.
+When either "goto wait_interrupted;" or "goto wait_error;"
+paths are taken, socket lock has already been released.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 16 Comm: ksoftirqd/1 Not tainted 5.0.0-rc3+ #37
+This patch fixes following syzbot splat :
+
+WARNING: bad unlock balance detected!
+5.0.0-rc4+ #59 Not tainted
+-------------------------------------
+syz-executor223/8256 is trying to release lock (sk_lock-AF_RXRPC) at:
+[<ffffffff86651353>] rxrpc_recvmsg+0x6d3/0x3099 net/rxrpc/recvmsg.c:598
+but there are no more locks to release!
+
+other info that might help us debug this:
+1 lock held by syz-executor223/8256:
+ #0: 00000000fa9ed0f4 (slock-AF_RXRPC){+...}, at: spin_lock_bh include/linux/spinlock.h:334 [inline]
+ #0: 00000000fa9ed0f4 (slock-AF_RXRPC){+...}, at: release_sock+0x20/0x1c0 net/core/sock.c:2798
+
+stack backtrace:
+CPU: 1 PID: 8256 Comm: syz-executor223 Not tainted 5.0.0-rc4+ #59
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
-RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
-Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-kobject: 'loop5' (0000000080f78fc1): kobject_uevent_env
-RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
-RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
-RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
-R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0defa33518 CR3: 000000008db5e000 CR4: 00000000001406e0
-kobject: 'loop5' (0000000080f78fc1): fill_kobj_path: path = '/devices/virtual/block/loop5'
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- dccp_rcv_state_process+0x2b6/0x1af6 net/dccp/input.c:654
- dccp_v4_do_rcv+0x100/0x190 net/dccp/ipv4.c:688
- sk_backlog_rcv include/net/sock.h:936 [inline]
- __sk_receive_skb+0x3a9/0xea0 net/core/sock.c:473
- dccp_v4_rcv+0x10cb/0x1f80 net/dccp/ipv4.c:880
- ip_protocol_deliver_rcu+0xb6/0xa20 net/ipv4/ip_input.c:208
- ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
- NF_HOOK include/linux/netfilter.h:289 [inline]
- NF_HOOK include/linux/netfilter.h:283 [inline]
- ip_local_deliver+0x1f0/0x740 net/ipv4/ip_input.c:255
- dst_input include/net/dst.h:450 [inline]
- ip_rcv_finish+0x1f4/0x2f0 net/ipv4/ip_input.c:414
- NF_HOOK include/linux/netfilter.h:289 [inline]
- NF_HOOK include/linux/netfilter.h:283 [inline]
- ip_rcv+0xed/0x620 net/ipv4/ip_input.c:524
- __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
- __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
- process_backlog+0x206/0x750 net/core/dev.c:5923
- napi_poll net/core/dev.c:6346 [inline]
- net_rx_action+0x76d/0x1930 net/core/dev.c:6412
- __do_softirq+0x30b/0xb11 kernel/softirq.c:292
- run_ksoftirqd kernel/softirq.c:654 [inline]
- run_ksoftirqd+0x8e/0x110 kernel/softirq.c:646
- smpboot_thread_fn+0x6ab/0xa10 kernel/smpboot.c:164
- kthread+0x357/0x430 kernel/kthread.c:246
- ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 58a0ba03bea2c376 ]---
-RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
-RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
-Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
-RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
-RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
-R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0defa33518 CR3: 0000000009871000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_unlock_imbalance_bug kernel/locking/lockdep.c:3391 [inline]
+ print_unlock_imbalance_bug.cold+0x114/0x123 kernel/locking/lockdep.c:3368
+ __lock_release kernel/locking/lockdep.c:3601 [inline]
+ lock_release+0x67e/0xa00 kernel/locking/lockdep.c:3860
+ sock_release_ownership include/net/sock.h:1471 [inline]
+ release_sock+0x183/0x1c0 net/core/sock.c:2808
+ rxrpc_recvmsg+0x6d3/0x3099 net/rxrpc/recvmsg.c:598
+ sock_recvmsg_nosec net/socket.c:794 [inline]
+ sock_recvmsg net/socket.c:801 [inline]
+ sock_recvmsg+0xd0/0x110 net/socket.c:797
+ __sys_recvfrom+0x1ff/0x350 net/socket.c:1845
+ __do_sys_recvfrom net/socket.c:1863 [inline]
+ __se_sys_recvfrom net/socket.c:1859 [inline]
+ __x64_sys_recvfrom+0xe1/0x1a0 net/socket.c:1859
+ do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446379
+Code: e8 2c b3 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe5da89fd98 EFLAGS: 00000246 ORIG_RAX: 000000000000002d
+RAX: ffffffffffffffda RBX: 00000000006dbc28 RCX: 0000000000446379
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00000000006dbc20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc2c
+R13: 0000000000000000 R14: 0000000000000000 R15: 20c49ba5e353f7cf
 
+Fixes: 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: David Howells <dhowells@redhat.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/ccid.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/rxrpc/recvmsg.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/dccp/ccid.h
-+++ b/net/dccp/ccid.h
-@@ -202,7 +202,7 @@ static inline void ccid_hc_tx_packet_rec
- static inline int ccid_hc_tx_parse_options(struct ccid *ccid, struct sock *sk,
- 					   u8 pkt, u8 opt, u8 *val, u8 len)
- {
--	if (ccid->ccid_ops->ccid_hc_tx_parse_options == NULL)
-+	if (!ccid || !ccid->ccid_ops->ccid_hc_tx_parse_options)
- 		return 0;
- 	return ccid->ccid_ops->ccid_hc_tx_parse_options(sk, pkt, opt, val, len);
+--- a/net/rxrpc/recvmsg.c
++++ b/net/rxrpc/recvmsg.c
+@@ -552,6 +552,7 @@ error:
+ 	rxrpc_put_call(call, rxrpc_call_put);
+ error_no_call:
+ 	release_sock(&rx->sk);
++error_trace:
+ 	trace_rxrpc_recvmsg(call, rxrpc_recvmsg_return, 0, 0, 0, ret);
+ 	return ret;
+ 
+@@ -560,7 +561,7 @@ wait_interrupted:
+ wait_error:
+ 	finish_wait(sk_sleep(&rx->sk), &wait);
+ 	call = NULL;
+-	goto error_no_call;
++	goto error_trace;
  }
-@@ -214,7 +214,7 @@ static inline int ccid_hc_tx_parse_optio
- static inline int ccid_hc_rx_parse_options(struct ccid *ccid, struct sock *sk,
- 					   u8 pkt, u8 opt, u8 *val, u8 len)
- {
--	if (ccid->ccid_ops->ccid_hc_rx_parse_options == NULL)
-+	if (!ccid || !ccid->ccid_ops->ccid_hc_rx_parse_options)
- 		return 0;
- 	return ccid->ccid_ops->ccid_hc_rx_parse_options(sk, pkt, opt, val, len);
- }
+ 
+ /**
 
 
