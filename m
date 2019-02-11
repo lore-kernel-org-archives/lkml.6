@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7F0C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28590C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F95B2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED3A4214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896059;
-	bh=PydW0YDZknXimo8mvWD/NZEe7P9K2HpG6x63754TK5U=;
+	s=default; t=1549896063;
+	bh=BCtdXOL9hqYQhvk0FzH8JxEVulc92xq/NUu+7gqz7m4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DxNzUj3ToHczrchOLPEQ68t57VcfV1XEdTnZY2+DjramrM9LOA0YSFcWmID4aTLYp
-	 hJ+7HB6zYKxB4p/3Iudb5Enkzt+uTHG5o1VBJ54rKe22feiDJTsFiTga2Vq4T/kEF+
-	 EA5StUMl9SxohqYRr79CdSUDVAkyGABqcrbhY3tE=
+	b=x+eWOM1nhD4qrLd7nj2Y5oK0Xj+jd7/0jyj9j2kKkhqhTALg/tOy6U3rjENx6VLjA
+	 zqZLNetVtRoqs5g4IfUFw7k+zeYNX8aMNJciHofQHT/9r2QXo3UwHNjqyq2go567IC
+	 UMuDBt5AyKRfsevgVzI/xsGCt2f8F2y1mCoVV1N4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732150AbfBKOk5 (ORCPT
+        id S1732160AbfBKOlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:40:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51988 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732096AbfBKOky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:40:54 -0500
+        id S1731756AbfBKOk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:40:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67DF22082F;
-        Mon, 11 Feb 2019 14:40:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D6DE20700;
+        Mon, 11 Feb 2019 14:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896053;
-        bh=PydW0YDZknXimo8mvWD/NZEe7P9K2HpG6x63754TK5U=;
+        s=default; t=1549896056;
+        bh=BCtdXOL9hqYQhvk0FzH8JxEVulc92xq/NUu+7gqz7m4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wtTX0xQRcrR/iqPhDAbgalQdVFJvGoylkqxtimopGReJIlZoBuqG9201nZdP0e6ft
-         BLXhJoL66T3+kb5AVg97gcMN3oZZKzDOySig1Sll+LfTDCC7opeRJhsvmA2ZTWIhzr
-         hLg+gqH4DnNFs5SgIjhvJzj+IM1ZneCk1hRElp+k=
+        b=QAFxUKWEanynV2/hAGWo3iZ78ydS3/Iqk+6uBy+Fz11UHiulvk425l/zJFM7cOMhS
+         fX4l9YpI/6vrsLa8+27IQHrTaG1keI1ZNeR7HSzbmYrAYCXrWlW1V0/yvPM/FUCw9A
+         Ctqs5+XM25ISDIannOzF/xvW+CWMbV0GMPVHfJAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/313] MIPS: Boston: Disable EG20T prefetch
-Date:   Mon, 11 Feb 2019 15:15:08 +0100
-Message-Id: <20190211141855.302860400@linuxfoundation.org>
+        stable@vger.kernel.org, Ioana Ciornei <ioana.ciornei@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 029/313] dpaa2-ptp: defer probe when portal allocation failed
+Date:   Mon, 11 Feb 2019 15:15:09 +0100
+Message-Id: <20190211141855.364128805@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -65,47 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5ec17af7ead09701e23d2065e16db6ce4e137289 ]
+[ Upstream commit 5500598abbfb5b46201b9768bd9ea873a5eeaece ]
 
-The Intel EG20T Platform Controller Hub used on the MIPS Boston
-development board supports prefetching memory to optimize DMA transfers.
-Unfortunately for unknown reasons this doesn't work well with some MIPS
-CPUs such as the P6600, particularly when using an I/O Coherence Unit
-(IOCU) to provide cache-coherent DMA. In these systems it is common for
-DMA data to be lost, resulting in broken access to EG20T devices such as
-the MMC or SATA controllers.
+The fsl_mc_portal_allocate can fail when the requested MC portals are
+not yet probed by the fsl_mc_allocator. In this situation, the driver
+should defer the probe.
 
-Support for a DT property to configure the prefetching was added a while
-back by commit 549ce8f134bd ("misc: pch_phub: Read prefetch value from
-device tree if passed") but we never added the DT snippet to make use of
-it. Add that now in order to disable the prefetching & fix DMA on the
-affected systems.
-
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21068/
-Cc: linux-mips@linux-mips.org
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/boot/dts/img/boston.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/staging/fsl-dpaa2/rtc/rtc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/boot/dts/img/boston.dts b/arch/mips/boot/dts/img/boston.dts
-index 65af3f6ba81c..84328afa3a55 100644
---- a/arch/mips/boot/dts/img/boston.dts
-+++ b/arch/mips/boot/dts/img/boston.dts
-@@ -141,6 +141,12 @@
- 				#size-cells = <2>;
- 				#interrupt-cells = <1>;
+diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.c b/drivers/staging/fsl-dpaa2/rtc/rtc.c
+index 0d52cb85441f..318a33c2f7a7 100644
+--- a/drivers/staging/fsl-dpaa2/rtc/rtc.c
++++ b/drivers/staging/fsl-dpaa2/rtc/rtc.c
+@@ -142,7 +142,10 @@ static int rtc_probe(struct fsl_mc_device *mc_dev)
  
-+				eg20t_phub@2,0,0 {
-+					compatible = "pci8086,8801";
-+					reg = <0x00020000 0 0 0 0>;
-+					intel,eg20t-prefetch = <0>;
-+				};
-+
- 				eg20t_mac@2,0,1 {
- 					compatible = "pci8086,8802";
- 					reg = <0x00020100 0 0 0 0>;
+ 	err = fsl_mc_portal_allocate(mc_dev, 0, &mc_dev->mc_io);
+ 	if (err) {
+-		dev_err(dev, "fsl_mc_portal_allocate err %d\n", err);
++		if (err == -ENXIO)
++			err = -EPROBE_DEFER;
++		else
++			dev_err(dev, "fsl_mc_portal_allocate err %d\n", err);
+ 		goto err_exit;
+ 	}
+ 
 -- 
 2.19.1
 
