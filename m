@@ -2,134 +2,156 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D424FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD49C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23CE218A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 924A72084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:40:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lEHdGLTD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8Dpw+3t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfBKUjT (ORCPT
+        id S1727597AbfBKUkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:39:19 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43464 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbfBKUjS (ORCPT
+        Mon, 11 Feb 2019 15:40:33 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34990 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfBKUkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:39:18 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q17so103747pfh.10
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:39:17 -0800 (PST)
+        Mon, 11 Feb 2019 15:40:33 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t18so284967wrx.2;
+        Mon, 11 Feb 2019 12:40:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=P7ipRFd0lGsbjldrU5cPVYjS4TXNP1GlOAkJ0yUCCXI=;
-        b=lEHdGLTDe+z9XOLq92061yRszuQ30L0Ah2rmiBbRpewl+TcyLhd4uxI4utvOvqyaI2
-         aj7uUuX092yr34YJFyYkt43rtb2Dkfumt2dbyWXGRWWzWz+mQH0n4KTPptuX0vmorWcU
-         1W/+eazIscUyvxqV3K5ydoWP/wMD9KxZf9OYLLotNpA6ZOOGTYWv10ulE12tdrSoJjen
-         a+l3YkwfqqnVqdLyeRlfhC2S4LulZqlNGf3+NZZS6ipLnh30ZGDMnZJfMHV+zx8QMtqX
-         yAp75P/0zxF3T+6bl4zNzfa24iMzHvsrXSC5noAUxB++IktCPa99pDvyTnh8U3xFfhyM
-         eZ6Q==
+        bh=aRRtjcrcVo+Gfaj/zX8Bw1iJ3MLE2kmxEDTa4rlrB10=;
+        b=c8Dpw+3tPDH4dqPl8avgxjKxKfbxB7sXLA1eCltNVPmOgXV49okHrFlPpvJiBkUJOU
+         CVYJyM/WWWE95z+5t1CscflAI3ljDt7nltAPQlUSDZIFc5t/AWddrIWKXEM9hH27Kdjq
+         jdjkv7NcUJmEqxDJCg8LtVbyj7seo/r96FOuqwMvPlCY3RoyuPX6htWxj1KYM14PDxTy
+         mSZhMDVKDx8rIFLr+GnLXOsSJSvGRfJpiPZHRLyuOdwsslNOI2fR3CcyBkhnwxNhvUNA
+         2xLzXdhYPWsMcKwxYMl5P9Aub8MGdL9ZtQ7d334VMYiJgAqT3/4Rrumi2lxnQpiwtU+E
+         oGQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P7ipRFd0lGsbjldrU5cPVYjS4TXNP1GlOAkJ0yUCCXI=;
-        b=rQ/vlTgUWJPj+Pj7Gf8fVOzBhyhjq0L0wuZmujb1yq36AfLWuE99sPt68i11rnhbYq
-         +xEfITbmR6GMYcEYa+BN6OGVvBN4kdJrihBTSxaFP64gikxoysQ3n3nDXKt1FsvkLdMn
-         Wht/lQfRfMT3/Xdux05IkVy4s2DTCcd/3jRRiOaI3OBp+DGTnligjSNXA7rFMG5NBeGj
-         V6HWX0ArspR/WPBlto/xxOOs5DpSksJTHWwuqC7w7aAMMNvwe80C0QZDr8z+Mj/IsHjw
-         04jjOhajYapL2Oyn5KoGamaOwSyQufLf5nsOTn2TSu/Lk4qHQ7nV025woDNP1dZGau0H
-         6MEA==
-X-Gm-Message-State: AHQUAubHsuf/0btrtp1f3gLOK/GpIPWR9PU23g3FB1IRAyFqdlSXz0pf
-        o33OmeEl7+NiUSUNS9BAlxndtQ==
-X-Google-Smtp-Source: AHgI3IbMSgV+Og1cgwCH3tEJ/kPJXOw9ltVSJm+RBFJMVVHZk30d9/NcXwyU987scjvfQpHKM+tRtw==
-X-Received: by 2002:a63:eb49:: with SMTP id b9mr115173pgk.196.1549917557390;
-        Mon, 11 Feb 2019 12:39:17 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id b13sm22468326pfj.66.2019.02.11.12.39.16
+        bh=aRRtjcrcVo+Gfaj/zX8Bw1iJ3MLE2kmxEDTa4rlrB10=;
+        b=DKcs11v17xDSgz3Swb7/Co0G7XlUyJcKZSc+VsRWdKsn750FoE2MxdPuM0DMBXRlrv
+         pQvwVVDmtEMEhBU+3n1k/75jQfQfiI81hwv+7CUgWFNHy6Q7tSGvQxzW70ewL4GosIaq
+         XDOEKT22NFW59yr3xPWeQ1cdxaw/nRwHRto4ui7YsJoTPU8qw+CmAb1W1aLEYpeIf2vu
+         AS4jFSVxRj+YyExlrT4fy8xScDTnSGTDM/fGm4xY+lVltJK7wohDoOQ+lC55++XzXN7d
+         WpogTdVM5EI657zwzenrpuSadyO6O5ql2i8nRrWw9GXzMCjdFbu0IXI6wrbvPvTD6Vg3
+         H9GQ==
+X-Gm-Message-State: AHQUAua41+JeRoLjjEMY3mkLepKbsQjbmM9iaMCsRgcoq2ZoH/JxwxKy
+        /1yjZhTXkLRjI7D3eJCDWw==
+X-Google-Smtp-Source: AHgI3IY5TG3Z9EP68R9xnD7caOTWZlOc+FwnEu9lJPOMZgKlSDNrTR1qwhbn4mTnEhZftd2y09+ejQ==
+X-Received: by 2002:adf:ee82:: with SMTP id b2mr57625wro.185.1549917630648;
+        Mon, 11 Feb 2019 12:40:30 -0800 (PST)
+Received: from localhost ([95.238.120.247])
+        by smtp.gmail.com with ESMTPSA id e4sm10742811wrt.53.2019.02.11.12.40.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 12:39:16 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gtIMG-0000kK-7Q; Mon, 11 Feb 2019 13:39:16 -0700
-Date:   Mon, 11 Feb 2019 13:39:16 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     ira.weiny@intel.com
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Davidlohr Bueso <dave@stgolabs.net>, netdev@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
-Message-ID: <20190211203916.GA2771@ziepe.ca>
-References: <20190211201643.7599-1-ira.weiny@intel.com>
- <20190211201643.7599-3-ira.weiny@intel.com>
+        Mon, 11 Feb 2019 12:40:30 -0800 (PST)
+Date:   Mon, 11 Feb 2019 21:40:29 +0100
+From:   Andrea Righi <righi.andrea@gmail.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jens Axboe <axboe@kernel.dk>, Vivek Goyal <vgoyal@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>, cgroups@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] blkcg: prevent priority inversion problem during
+ sync()
+Message-ID: <20190211204029.GB1520@xps-13>
+References: <20190209140749.GB1910@xps-13>
+ <20190211153933.p26pu5jmbmisbkos@macbook-pro-91.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211201643.7599-3-ira.weiny@intel.com>
+In-Reply-To: <20190211153933.p26pu5jmbmisbkos@macbook-pro-91.dhcp.thefacebook.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 12:16:42PM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Mon, Feb 11, 2019 at 10:39:34AM -0500, Josef Bacik wrote:
+> On Sat, Feb 09, 2019 at 03:07:49PM +0100, Andrea Righi wrote:
+> > This is an attempt to mitigate the priority inversion problem of a
+> > high-priority blkcg issuing a sync() and being forced to wait the
+> > completion of all the writeback I/O generated by any other low-priority
+> > blkcg, causing massive latencies to processes that shouldn't be
+> > I/O-throttled at all.
+> > 
+> > The idea is to save a list of blkcg's that are waiting for writeback:
+> > every time a sync() is executed the current blkcg is added to the list.
+> > 
+> > Then, when I/O is throttled, if there's a blkcg waiting for writeback
+> > different than the current blkcg, no throttling is applied (we can
+> > probably refine this logic later, i.e., a better policy could be to
+> > adjust the throttling I/O rate using the blkcg with the highest speed
+> > from the list of waiters - priority inheritance, kinda).
+> > 
+> > This topic has been discussed here:
+> > https://lwn.net/ml/cgroups/20190118103127.325-1-righi.andrea@gmail.com/
+> > 
+> > But we didn't come up with any definitive solution.
+> > 
+> > This patch is not a definitive solution either, but it's an attempt to
+> > continue addressing this issue and handling the priority inversion
+> > problem with sync() in a better way.
+> > 
+> > Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
 > 
-> Users of get_user_pages_fast are not protected against mapping
-> pages within FS DAX.  Introduce a call which protects them.
-> 
-> We do this by checking for DEVMAP pages during the fast walk and
-> falling back to the longterm gup call to check for FS DAX if needed.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
->  include/linux/mm.h |   8 ++++
->  mm/gup.c           | 102 +++++++++++++++++++++++++++++++++++----------
->  2 files changed, 88 insertions(+), 22 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 80bb6408fe73..8f831c823630 100644
-> +++ b/include/linux/mm.h
-> @@ -1540,6 +1540,8 @@ long get_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
->  long get_user_pages_longterm(unsigned long start, unsigned long nr_pages,
->  			    unsigned int gup_flags, struct page **pages,
->  			    struct vm_area_struct **vmas);
-> +int get_user_pages_fast_longterm(unsigned long start, int nr_pages, bool write,
-> +				 struct page **pages);
->  #else
->  static inline long get_user_pages_longterm(unsigned long start,
->  		unsigned long nr_pages, unsigned int gup_flags,
-> @@ -1547,6 +1549,11 @@ static inline long get_user_pages_longterm(unsigned long start,
->  {
->  	return get_user_pages(start, nr_pages, gup_flags, pages, vmas);
->  }
-> +static inline int get_user_pages_fast_longterm(unsigned long start, int nr_pages,
-> +					       bool write, struct page **pages)
-> +{
-> +	return get_user_pages_fast(start, nr_pages, write, pages);
-> +}
->  #endif /* CONFIG_FS_DAX */
->  
->  int get_user_pages_fast(unsigned long start, int nr_pages, int write,
-> @@ -2615,6 +2622,7 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
->  #define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
->  #define FOLL_COW	0x4000	/* internal GUP flag */
->  #define FOLL_ANON	0x8000	/* don't do file mappings */
-> +#define FOLL_LONGTERM	0x10000	/* mapping is intended for a long term pin */
+> Talked with Tejun about this some and we agreed the following is probably the
+> best way forward
 
-If we are adding a new flag, maybe we should get rid of the 'longterm'
-entry points and just rely on the callers to pass the flag?
+First of all thanks for the update!
 
-Jason
+> 
+> 1) Track the submitter of the wb work to the writeback code.
+
+Are we going to track the cgroup that originated the dirty pages (or
+maybe dirty inodes) or do you have any idea in particular?
+
+> 2) Sync() defaults to the root cg, and and it writes all the things as the root
+>    cg.
+
+OK.
+
+> 3) Add a flag to the cgroups that would make sync()'ers in that group only be
+>    allowed to write out things that belong to its group.
+
+So, IIUC, when this flag is enabled a cgroup that is doing sync() would
+trigger the writeback of the pages that belong to that cgroup only and
+it waits only for these pages to be sync-ed, right? In this case
+writeback can still go at cgroup's speed.
+
+Instead when the flag is disabled, sync() would trigger writeback I/O
+globally, as usual, and it goes at full speed (root cgroup's speed).
+
+Am I understanding correctly?
+
+> 
+> This way we avoid the priority inversion of having things like systemd or random
+> logged in user doing sync() and having to wait, and we keep low prio cgroups
+> from causing big IO storms by syncing out stuff and getting upgraded to root
+> priority just to avoid the inversion.
+> 
+> Obviously by default we want this flag to be off since its such a big change,
+> but people/setups really worried about this behavior (Facebook for instance
+> would likely use this flag) can go ahead and set it and be sure we're getting
+> good isolation and still avoiding the priority inversion associated with running
+> sync from a high priority context.  Thanks,
+> 
+> Josef
+
+Thanks,
+-Andrea
