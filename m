@@ -2,209 +2,148 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F0CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B938AC4151A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2172082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:04:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbNZmVvf"
+	by mail.kernel.org (Postfix) with ESMTP id 824CE2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfBKXEl (ORCPT
+        id S1727711AbfBKXEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:04:41 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38388 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfBKXEk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:04:40 -0500
-Received: by mail-vs1-f67.google.com with SMTP id t7so425588vsq.5;
-        Mon, 11 Feb 2019 15:04:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zPZjxBDQH+NV7JKXucIbr+EFpmx0WbE34tUIwnLqAAs=;
-        b=RbNZmVvfL4+UtvAgtyC5JFdVVaGJ21grbk24hW1bg0HHgfkUUajf+rAyUoq13HNc2k
-         gaiUJkenALrN78AcFQXYLlbM6yYkm7mmSoHkJv46t4Cq6jyeMpKil7m79WbqKluE/VLf
-         LZ9iE9Qhy8nX7ozd3t8nonD0Qo88GsKnzVEPBnPlAk8AErx4X3dcU7lGlWGVun8LluTQ
-         5piNsuIbk1DwvRlfHkyrmNycLF19u7FmZhkeqTZEzIlZlAyQJ19dnesFNi7SmBOStcJa
-         zn3xG/MBqwwwtOGUtEY7R03a7hDgeqW1eSq60eOSSjYLUo4LIy1r+rgZr3XfLjGY2Wjv
-         n6qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zPZjxBDQH+NV7JKXucIbr+EFpmx0WbE34tUIwnLqAAs=;
-        b=iSfqLsqL5+nuRgiRvkELZsDEnla3KDsmEwdBo8Ghw8IkPgfSVzwzs1hNZk7BTawG4m
-         QvAXT4w9fmbaiqEJ0haMTLkKxC4LP6lmxhdPCUSAScV6c4H2rY3W3nj26HFBnD22Jl3E
-         6TklpvAcLZ/P9Jx1fg1p1ufbQF0hEyvDgR2YO9h22Dah7QstMJtsddanTEuSWycA9dRR
-         lVRhyddFtwwlLO2V9W8/SXsUsAIcajA5cUHt6k+FEVBRVc5BuBJgeQTXTbzGcYfvqWex
-         pdC5P9C0s+YEbWPzk+tHnKjZUmEEyKOEP/0FhLKdPUzxrWWMb4tWdjQ9eUyrm+gT1lzo
-         65NA==
-X-Gm-Message-State: AHQUAubC6/Gx5iocX8cfASBTauCXxE8dBKNEBuvNeQN2Ic+2CjGfOQdT
-        joeUgHTgt6YoGZDOLSodNN9p32A9qmDh7Y0Av14=
-X-Google-Smtp-Source: AHgI3IZPUsvvguevC6QwZCtiXmEPOzyWrCcB4+EA7yvMfGvRKCDFpZiGCPCpnv5u6xN35W9R7SJNOaNW9MKF8/RNXCQ=
-X-Received: by 2002:a67:744:: with SMTP id 65mr287618vsh.101.1549926279431;
- Mon, 11 Feb 2019 15:04:39 -0800 (PST)
+        Mon, 11 Feb 2019 18:04:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:40157 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbfBKXEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:04:52 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 15:04:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
+   d="scan'208";a="132811013"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Feb 2019 15:04:51 -0800
+Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 11 Feb 2019 15:04:51 -0800
+Received: from crsmsx102.amr.corp.intel.com (172.18.63.137) by
+ fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 11 Feb 2019 15:04:51 -0800
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
+ CRSMSX102.amr.corp.intel.com ([169.254.2.54]) with mapi id 14.03.0415.000;
+ Mon, 11 Feb 2019 17:04:48 -0600
+From:   "Weiny, Ira" <ira.weiny@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC:     John Hubbard <jhubbard@nvidia.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Netdev <netdev@vger.kernel.org>,
+        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: RE: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
+Thread-Topic: [PATCH 2/3] mm/gup: Introduce get_user_pages_fast_longterm()
+Thread-Index: AQHUwkbKPZQIC0o+Ik+rfr1Js7w1daXbc70AgAAJrwD//32BAIAAiY8A//99pACAAIoeAIAADXcA//+bucA=
+Date:   Mon, 11 Feb 2019 23:04:48 +0000
+Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79BCF467@CRSMSX101.amr.corp.intel.com>
+References: <20190211201643.7599-1-ira.weiny@intel.com>
+ <20190211201643.7599-3-ira.weiny@intel.com> <20190211203916.GA2771@ziepe.ca>
+ <bcc03ee1-4c42-48c3-bc67-942c0f04875e@nvidia.com>
+ <20190211212652.GA7790@iweiny-DESK2.sc.intel.com>
+ <fc9c880b-24f8-7063-6094-00175bc27f7d@nvidia.com>
+ <20190211215238.GA23825@iweiny-DESK2.sc.intel.com>
+ <20190211220658.GH24692@ziepe.ca>
+ <CAPcyv4htDHmH7PVm_=HOWwRKtpcKTPSjrHPLqhwp2vhBUWL4-w@mail.gmail.com>
+In-Reply-To: <CAPcyv4htDHmH7PVm_=HOWwRKtpcKTPSjrHPLqhwp2vhBUWL4-w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTY0ZWIwYzgtYjAyMy00Mzk5LWI1YTItNjA5MzNjMWExZjQ2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMGtueitJaVdKa0RGRUlHVUpneWIrTDdEajUxbmFwUnRjR2ViK205WVMxQ3pYT05XRTMrUXI3c21KbnhlNWxaVyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190114191724.29960-1-alamy.liu@gmail.com> <ee3dc963-53f0-e362-caa5-069ce0e6eae7@intel.com>
- <CAJ3kudsgJsZ1KFXdD9Vnfx0GypnEf+ba-D8t+Wy1e8GdLF=U0w@mail.gmail.com>
- <362c073b-d795-4431-f1dd-c203cc606a6f@codeaurora.org> <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
- <CAJ3kuds-XgrhjiyS8j-5twOHde3NHsGaH5hFqeOm8HLXHi59aA@mail.gmail.com> <7614ec08-aac4-a82e-2534-262828aeec19@intel.com>
-In-Reply-To: <7614ec08-aac4-a82e-2534-262828aeec19@intel.com>
-From:   Alamy Liu <alamy.liu@gmail.com>
-Date:   Mon, 11 Feb 2019 15:04:28 -0800
-Message-ID: <CAJ3kudvp11_6PdiHZA66ZHHHbH-ODTzNOQh4XUCh7dHRC8sO2Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: cqhci: replace NUM_SLOTS with cq_host->num_slots
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     "Asutosh Das (asd)" <asutoshd@codeaurora.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the clarification.
-
-On Mon, Feb 11, 2019 at 12:57 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 8/02/19 8:41 PM, Alamy Liu wrote:
-> > The IP I'm using has fixed 32 slots for CQ once CQE is enabled in RTL.
-> > There is no other RO register to say the slot number & which slot that
-> > DCMD would use.
-> >
-> > I agree that most host controller would have 32 slots for CQ, and use
-> > the last one for DCMD if enabled (easier design & save gates
-> > count/size). (15th for DCMD if there were 16 slots in CQ, ...etc). It
-> > also doesn't make sense to use a slot in the middle of slots for DCMD,
-> > Both the code (both S.W. & H.W.) would become more complicated.
-> > Although I don't see it is defined somewhere, I believe that every
-> > designer would follow.
-> > (H.W.: increasing gate count -> increasing die size -> increase $;
-> > complicated design -> higher chance to have bug/error).
-> > (H.W.: SDHC cq_depth: longer cq_depth -> more memory -> more $. The
-> > decision would be the trade off between $ & performance. Also, the
-> > SDHC is not necessary to be used in Cortex-A/Linux. Thus, 16/8
-> > cq_depth is possible, although I don't know if there is one existed
-> > out there)
-> >
-> > Another thinking: If all cq_depth is fixed to 32, the mmc driver core
-> > doesn't even have to detect the cq_depth and eventually choose the
-> > small one between HC & eMMC (queue.c::mmc_init_queue)
->
-> The cqe_qdepth changes depending on whether DCMD is supported.  That is the
-> kind of detail that belongs to the CQHCI driver not the mmc core.  For
-> example, theoretically there could be more than one CQE driver
-> implementation, but it is also nicer to keep a separation between CQHCI and
-> mmc core.
->
-> >
-> > Best Regards
-> >
-> >
-> > On Fri, Feb 8, 2019 at 2:34 AM Asutosh Das (asd)
-> > <asutoshd@codeaurora.org> wrote:
-> >>
-> >> On 2/8/2019 8:07 AM, Ritesh Harjani wrote:
-> >>> Hi Alamy,
-> >>>
-> >>> On 2/8/2019 1:00 AM, Alamy Liu wrote:
-> >>>> It says in B.2.1 in the JESD84-B51.pdf (I don't have JESD84-B51A.pdf):
-> >>>>
-> >>>>     /The TDL is located in a memory location known to the CQE, and is
-> >>>>     comprised of up to 32 fixed-size slots. Each slot is comprised of
-> >>>>     one Task Descriptor and one Transfer Descriptor./
-> >>>>
-> >>>>
-> >>>> So if the IP has 16 slots, it should still meet the specification.
-> >>>> Then the configuration could be moved to DTS, maybe:
-> >>>>
-> >>>>     cqhci-slotnum = <16>;
-> >>>>
-> >>>>     cqhci-dcmd-slotno = <15>;
-> >>>>
-> >>> Does your IP defines this as 16 slots & DCMD slot to be 15?
-> >>> Because if there is a deviation then IP may also define num_slots by
-> >>> using some reserved registers.
-> >>> Also in JESD84-B51.pdf, specific slot no. is used extensively for
-> >>> defining policies(like in case of DCMD & CQCFG), so in that case
-> >>> defining via DT may not be that helpful.
-> >>> Unless there is no other way in your IP to determine the num_slots
-> >>> except going via DT?
-> >>>
-> >>> Let others also provide an opinion here.
-> >>>
-> >>> Regards
-> >>> Ritesh
-> >>>
-> >>>
-> >>>>
-> >>>> Please comment.
-> >>>>
-> >>>> Regards,
-> >>>> Alamy
-> >>>>
-> >>>>
-> >>>>
-> >>>> On Thu, Jan 31, 2019 at 1:34 AM Adrian Hunter <adrian.hunter@intel.com
-> >>>> <mailto:adrian.hunter@intel.com>> wrote:
-> >>>>
-> >>>>     On 14/01/19 9:17 PM, Alamy Liu wrote:
-> >>>>     > Prevent to use fixed value (NUM_SLOTS) after it had been determined
-> >>>>     > and saved in a variable (cq_host->num_slots).
-> >>>>
-> >>>>     num_slots is always 32 (i.e. NUM_SLOTS) so why not go the other
-> >>>>     way and get
-> >>>>     rid of num_slots and just use NUM_SLOTS?
-> >>>>
-> >>>>     >
-> >>>>     > Signed-off-by: Alamy Liu <alamy.liu@gmail.com
-> >>>>     <mailto:alamy.liu@gmail.com>>
-> >>>>     > ---
-> >>>>     >  drivers/mmc/host/cqhci.c | 2 +-
-> >>>>     >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>     >
-> >>>>     > diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-> >>>>     > index 159270e947..26d63594b7 100644
-> >>>>     > --- a/drivers/mmc/host/cqhci.c
-> >>>>     > +++ b/drivers/mmc/host/cqhci.c
-> >>>>     > @@ -699,7 +699,7 @@ static void cqhci_error_irq(struct mmc_host
-> >>>>     *mmc, u32 status, int cmd_error,
-> >>>>     >                * The only way to guarantee forward progress is
-> >>>>     to mark at
-> >>>>     >                * least one task in error, so if none is
-> >>>>     indicated, pick one.
-> >>>>     >                */
-> >>>>     > -             for (tag = 0; tag < NUM_SLOTS; tag++) {
-> >>>>     > +             for (tag = 0; tag < cq_host->num_slots; tag++) {
-> >>>>     >                       slot = &cq_host->slot[tag];
-> >>>>     >                       if (!slot->mrq)
-> >>>>     >                               continue;
-> >>>>     >
-> >>>>
-> >> Is it worth exploring to tie up the TDL memory allocations with the
-> >> queue-depth? Because the queue-depth may vary with vendor; in most host
-> >> controllers the slot size is 32. And since memory allocations are done
-> >> on the basis of host slot size there's unused slots in the case of card
-> >> advertising less than 32 queue-depth.
-> >> The tricky part would be the DCMD handling though.
-> >>
-> >> In the IP in question, what slot is assigned to DCMD?
-> >>
-> >>
-> >> --
-> >> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
-> >> Linux Foundation Collaborative Project
-> >
->
+PiANCj4gT24gTW9uLCBGZWIgMTEsIDIwMTkgYXQgMjowNyBQTSBKYXNvbiBHdW50aG9ycGUgPGpn
+Z0B6aWVwZS5jYT4gd3JvdGU6DQo+ID4NCj4gPiBPbiBNb24sIEZlYiAxMSwgMjAxOSBhdCAwMTo1
+MjozOFBNIC0wODAwLCBJcmEgV2Vpbnkgd3JvdGU6DQo+ID4gPiBPbiBNb24sIEZlYiAxMSwgMjAx
+OSBhdCAwMTozOToxMlBNIC0wODAwLCBKb2huIEh1YmJhcmQgd3JvdGU6DQo+ID4gPiA+IE9uIDIv
+MTEvMTkgMToyNiBQTSwgSXJhIFdlaW55IHdyb3RlOg0KPiA+ID4gPiA+IE9uIE1vbiwgRmViIDEx
+LCAyMDE5IGF0IDAxOjEzOjU2UE0gLTA4MDAsIEpvaG4gSHViYmFyZCB3cm90ZToNCj4gPiA+ID4g
+Pj4gT24gMi8xMS8xOSAxMjozOSBQTSwgSmFzb24gR3VudGhvcnBlIHdyb3RlOg0KPiA+ID4gPiA+
+Pj4gT24gTW9uLCBGZWIgMTEsIDIwMTkgYXQgMTI6MTY6NDJQTSAtMDgwMCwgaXJhLndlaW55QGlu
+dGVsLmNvbQ0KPiB3cm90ZToNCj4gPiA+ID4gPj4+PiBGcm9tOiBJcmEgV2VpbnkgPGlyYS53ZWlu
+eUBpbnRlbC5jb20+DQo+ID4gPiA+ID4+IFsuLi5dDQo+ID4gPiA+ID4+IEl0IHNlZW1zIHRvIG1l
+IHRoYXQgdGhlIGxvbmd0ZXJtIHZzLiBzaG9ydC10ZXJtIGlzIG9mIHF1ZXN0aW9uYWJsZQ0KPiB2
+YWx1ZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRoaXMgaXMgZXhhY3RseSB3aHkgSSBkaWQgbm90
+IHBvc3QgdGhpcyBiZWZvcmUuICBJJ3ZlIGJlZW4NCj4gPiA+ID4gPiB3YWl0aW5nIG91ciBvdGhl
+ciBkaXNjdXNzaW9ucyBvbiBob3cgR1VQIHBpbnMgYXJlIGdvaW5nIHRvIGJlDQo+ID4gPiA+ID4g
+aGFuZGxlZCB0byBwbGF5IG91dC4gIEJ1dCB3aXRoIHRoZSBuZXRkZXYgdGhyZWFkIHRvZGF5WzFd
+IGl0DQo+ID4gPiA+ID4gc2VlbXMgbGlrZSB3ZSBuZWVkIHRvIG1ha2Ugc3VyZSB3ZSBoYXZlIGEg
+InNhZmUiIGZhc3QgdmFyaWFudA0KPiA+ID4gPiA+IGZvciBhIHdoaWxlLiAgSW50cm9kdWNpbmcg
+Rk9MTF9MT05HVEVSTSBzZWVtZWQgbGlrZSB0aGUgY2xlYW5lc3QNCj4gPiA+ID4gPiB3YXkgdG8g
+ZG8gdGhhdCBldmVuIGlmIHdlIHdpbGwgbm90IG5lZWQgdGhlIGRpc3RpbmN0aW9uIGluIHRoZQ0K
+PiA+ID4gPiA+IGZ1dHVyZS4uLiAgOi0oDQo+ID4gPiA+DQo+ID4gPiA+IFllcywgSSBhZ3JlZS4g
+QmVsb3cuLi4NCj4gPiA+ID4NCj4gPiA+ID4gPiBbLi4uXQ0KPiA+ID4gPiA+IFRoaXMgaXMgYWxz
+byB3aHkgSSBkaWQgbm90IGNoYW5nZSB0aGUgZ2V0X3VzZXJfcGFnZXNfbG9uZ3Rlcm0NCj4gPiA+
+ID4gPiBiZWNhdXNlIHdlIGNvdWxkIGJlIHJpcHBpbmcgdGhpcyBhbGwgb3V0IGJ5IHRoZSBlbmQg
+b2YgdGhlDQo+ID4gPiA+ID4geWVhci4uLiAgKEkgaG9wZS4gOi0pDQo+ID4gPiA+ID4NCj4gPiA+
+ID4gPiBTbyB3aGlsZSB0aGlzIGRvZXMgInBvbGx1dGUiIHRoZSBHVVAgZmFtaWx5IG9mIGNhbGxz
+IEknbSBob3BpbmcNCj4gPiA+ID4gPiBpdCBpcyBub3QgZm9yZXZlci4NCj4gPiA+ID4gPg0KPiA+
+ID4gPiA+IElyYQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gWzFdIGh0dHBzOi8vbGttbC5vcmcvbGtt
+bC8yMDE5LzIvMTEvMTc4OQ0KPiA+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IFllcywgYW5kIHRv
+IGJlIGNsZWFyLCBJIHRoaW5rIHlvdXIgcGF0Y2hzZXQgaGVyZSBpcyBmaW5lLiBJdCBpcw0KPiA+
+ID4gPiBlYXN5IHRvIGZpbmQgdGhlIEZPTExfTE9OR1RFUk0gY2FsbGVycyBpZiBhbmQgd2hlbiB3
+ZSB3YW50IHRvDQo+ID4gPiA+IGNoYW5nZSBhbnl0aGluZy4gSSBqdXN0IHRoaW5rIGFsc28gaXQn
+cyBhcHBvcHJpYXRlIHRvIGdvIGEgYml0IGZ1cnRoZXIsIGFuZA0KPiB1c2UgRk9MTF9MT05HVEVS
+TSBhbGwgYnkgaXRzZWxmLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGF0J3MgYmVjYXVzZSBpbiBlaXRo
+ZXIgZGVzaWduIG91dGNvbWUsIGl0J3MgYmV0dGVyIHRoYXQgd2F5Og0KPiA+ID4gPg0KPiA+ID4g
+PiBpcyBqdXN0IHJpZ2h0LiBUaGUgZ3VwIEFQSSBhbHJlYWR5IGhhcyBfZmFzdCBhbmQgbm9uLWZh
+c3QNCj4gPiA+ID4gdmFyaWFudHMsIGFuZCBvbmNlIHlvdSBnZXQgcGFzdCBhIGNvdXBsZSwgeW91
+IGVuZCB1cCB3aXRoIGENCj4gPiA+ID4gbXVsdGlwbGljYXRpb24gb2YgbmFtZXMgdGhhdCByZWFs
+bHkgd29yayBiZXR0ZXIgYXMgZmxhZ3MuIFdlJ3JlIHRoZXJlLg0KPiA+ID4gPg0KPiA+ID4gPiB0
+aGUgX2xvbmd0ZXJtIEFQSSB2YXJpYW50cy4NCj4gPiA+DQo+ID4gPiBGYWlyIGVub3VnaC4gICBC
+dXQgdG8gZG8gdGhhdCBjb3JyZWN0bHkgSSB0aGluayB3ZSB3aWxsIG5lZWQgdG8gY29udmVydA0K
+PiA+ID4gZ2V0X3VzZXJfcGFnZXNfZmFzdCgpIHRvIHVzZSBmbGFncyBhcyB3ZWxsLiAgSSBoYXZl
+IGEgdmVyc2lvbiBvZg0KPiA+ID4gdGhpcyBzZXJpZXMgd2hpY2ggaW5jbHVkZXMgYSBwYXRjaCBk
+b2VzIHRoaXMsIGJ1dCB0aGUgcGF0Y2ggdG91Y2hlZA0KPiA+ID4gYSBsb3Qgb2Ygc3Vic3lzdGVt
+cyBhbmQgYSBjb3VwbGUgb2YgZGlmZmVyZW50IGFyY2hpdGVjdHVyZXMuLi5bMV0NCj4gPg0KPiA+
+IEkgdGhpbmsgdGhpcyBzaG91bGQgYmUgZG9uZSBhbnlob3csIGl0IGlzIHRyb3VibGUgdGhlIHR3
+byBiYXNpY2FsbHkNCj4gPiBpZGVudGljYWwgaW50ZXJmYWNlcyBoYXZlIGRpZmZlcmVudCBzaWdu
+YXR1cmVzLiBUaGlzIGFscmVhZHkgY2F1c2VkIGENCj4gPiBidWcgaW4gdmZpby4uDQo+ID4NCj4g
+PiBJIGFsc28gd29uZGVyIGlmIHNvbWVvbmUgc2hvdWxkIHRoaW5rIGFib3V0IG1ha2luZyBmYXN0
+IGludG8gYSBmbGFnDQo+ID4gdG9vLi4NCj4gPg0KPiA+IEJ1dCBJJ20gbm90IHN1cmUgd2hlbiBm
+YXN0IHNob3VsZCBiZSB1c2VkIHZzIHdoZW4gaXQgc2hvdWxkbid0IDooDQo+IA0KPiBFZmZlY3Rp
+dmVseSBmYXN0IHNob3VsZCBhbHdheXMgYmUgdXNlZCBqdXN0IGluIGNhc2UgdGhlIHVzZXIgY2Fy
+ZXMgYWJvdXQNCj4gcGVyZm9ybWFuY2UuIEl0J3MganVzdCB0aGF0IGl0IG1heSBmYWlsIGFuZCBu
+ZWVkIHRvIGZhbGwgYmFjayB0byByZXF1aXJpbmcgdGhlDQo+IHZtYS4NCj4gDQo+IFBlcnNvbmFs
+bHkgSSB0aG91Z2h0IFJETUEgbWVtb3J5IHJlZ2lzdHJhdGlvbiBpcyBhIG9uZS10aW1lIC8gdXBm
+cm9udCBzbG93DQo+IHBhdGggc28gdGhhdCBub24tZmFzdC1HVVAgaXMgdG9sZXJhYmxlLg0KPiAN
+Cj4gVGhlIHdvcmtsb2FkcyB0aGF0ICpuZWVkKiBpdCBhcmUgT19ESVJFQ1QgdXNlcnMgdGhhdCBj
+YW4ndCB0b2xlcmF0ZSBhIHZtYQ0KPiBsb29rdXAgb24gZXZlcnkgSS9PLg0KDQpUaGVyZSBhcmUg
+c29tZSB1c2VycyB3aG8gbmVlZCB0byBbdW5dcmVnaXN0ZXIgbWVtb3J5IG1vcmUgb2Z0ZW4uICBX
+aGlsZSBub3QgaW4gdGhlIHN0cmljdCBmYXN0IHBhdGggdGhlc2UgdXNlcnMgd291bGQgbGlrZSB0
+aGUgcmVnaXN0cmF0aW9ucyB0byBvY2N1ciBhcyBmYXN0IGFzIHBvc3NpYmxlLiAgSSBkb24ndCBw
+ZXJzb25hbGx5IGhhdmUgdGhlIHJlc3VsdHMgYnV0IG91ciBPUEEgdGVhbSBkaWQgZG8gcGVyZm9y
+bWFuY2UgdGVzdHMgb24gdGhlIEdVUCB2cyBHVVAgZmFzdCBhbmQgZm9yIHRoZSBoZmkxIGNhc2Ug
+ZmFzdCB3YXMgYmV0dGVyLiAgSSBkb24ndCBoYXZlIGFueSByZWFzb24gdG8gYmVsaWV2ZSB0aGF0
+IHJlZ3VsYXIgUkRNQSB1c2VycyB3b3VsZCBub3QgYWxzbyBiZW5lZml0Lg0KDQpJcmENCg0K
