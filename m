@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4637CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEBAC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A67920700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D76920700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896335;
-	bh=dwqIzyW1NJovQoX0LVGnXHkGXqr3JhnF3DUOI40Wwbg=;
+	s=default; t=1549896338;
+	bh=ic37TjdIhhgYoSIC47UKzKjYpsTbb3grnyQaQSDLJeA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qR7cTpGXH7q/9b3G/yWPgsBQl9gGh0ix7XsYJAOX6kwUzcO5QxmlAd47spE4Wq3CH
-	 VKkwoe7roWsLfnPtJRfFXsnxkjN7umn/QMNI73T0hCIOcidZoNA3KbYJxGsS0c+ipp
-	 z1iKrJjkQQjMLrB21gM9bgNXDGn++a9Y2M2/qZ6E=
+	b=RB7sn4Qkbry/R3pH8yaemhvEegTLRsL+/15vJKa7FE6pHCZklWDrSBc15DIe6ddT5
+	 UR9UiHQbFhkv3cp2TVc8tYO1YzFGtdEA811E6D4qD3VhqH0iaaY85A8RLax99ckZpD
+	 1pTiVJ7q9J6B9QkJoz5AcQW6otoI1qTtFmVXNbck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733069AbfBKOpd (ORCPT
+        id S1733084AbfBKOpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:45:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58588 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:45:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732387AbfBKOpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:45:31 -0500
+        id S1733070AbfBKOpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:45:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD3D62081B;
-        Mon, 11 Feb 2019 14:45:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C8E2206BA;
+        Mon, 11 Feb 2019 14:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896330;
-        bh=dwqIzyW1NJovQoX0LVGnXHkGXqr3JhnF3DUOI40Wwbg=;
+        s=default; t=1549896333;
+        bh=ic37TjdIhhgYoSIC47UKzKjYpsTbb3grnyQaQSDLJeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uWLuLOJirt0XhlhnoUytMV40SqIsr/bm3+YX5zbXgnc9WY6OKSU5IYdoinK25ieta
-         FfR5fCnz21HiTmcKev0I8ECRfchaHObUuFGkB/2IvDPqMPfu8oyuWUfqSaunoIjaHj
-         6VBVkfx6dwVxO5EkebVxDyYB09gDIp4KMraK/QL0=
+        b=m6OZguWuTWvCmXJUC0AGjFbD7qqT31ySiSfVy/YjDszv9jzP3o2GlBt7YX8Kvh8Oi
+         QT690ztDKXviZ+S0i31OYjyCLRnpKHQ2x19CxyKWNnSvqrXFAyDylYjrQbFBbT0eks
+         ATQhdbqMTbFI0/XbWqXDAkc054pAuSgM4a0tPWMY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        Zhoujie Wu <zjwu@marvell.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 148/313] mmc: sdhci-omap: Fix timeout checks
-Date:   Mon, 11 Feb 2019 15:17:08 +0100
-Message-Id: <20190211141903.475739367@linuxfoundation.org>
+Subject: [PATCH 4.19 149/313] mmc: sdhci-xenon: Fix timeout checks
+Date:   Mon, 11 Feb 2019 15:17:09 +0100
+Message-Id: <20190211141903.532350119@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,52 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9f0ea0bda1d06120b053bb0c283f54afec59293d ]
+[ Upstream commit 0e6e7c2ff397e1bbebc882ca3132148aaaef1ddd ]
 
 Always check the wait condition before returning timeout.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Reviewed-by: Zhoujie Wu <zjwu@marvell.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-omap.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/mmc/host/sdhci-xenon-phy.c | 10 +++++++---
+ drivers/mmc/host/sdhci-xenon.c     | 10 +++++++---
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index d264391616f9..d02f5cf76b3d 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -220,8 +220,12 @@ static void sdhci_omap_conf_bus_power(struct sdhci_omap_host *omap_host,
+diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
+index c335052d0c02..caccedc836dc 100644
+--- a/drivers/mmc/host/sdhci-xenon-phy.c
++++ b/drivers/mmc/host/sdhci-xenon-phy.c
+@@ -357,9 +357,13 @@ static int xenon_emmc_phy_enable_dll(struct sdhci_host *host)
  
- 	/* wait 1ms */
- 	timeout = ktime_add_ms(ktime_get(), SDHCI_OMAP_TIMEOUT);
--	while (!(sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL) & HCTL_SDBP)) {
--		if (WARN_ON(ktime_after(ktime_get(), timeout)))
+ 	/* Wait max 32 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 32);
+-	while (!(sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
+-		XENON_DLL_LOCK_STATE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
 +	while (1) {
 +		bool timedout = ktime_after(ktime_get(), timeout);
 +
-+		if (sdhci_omap_readl(omap_host, SDHCI_OMAP_HCTL) & HCTL_SDBP)
++		if (sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
++		    XENON_DLL_LOCK_STATE)
 +			break;
-+		if (WARN_ON(timedout))
- 			return;
- 		usleep_range(5, 10);
- 	}
-@@ -653,8 +657,12 @@ static void sdhci_omap_init_74_clocks(struct sdhci_host *host, u8 power_mode)
- 
- 	/* wait 1ms */
- 	timeout = ktime_add_ms(ktime_get(), SDHCI_OMAP_TIMEOUT);
--	while (!(sdhci_omap_readl(omap_host, SDHCI_OMAP_STAT) & INT_CC_EN)) {
--		if (WARN_ON(ktime_after(ktime_get(), timeout)))
++		if (timedout) {
+ 			dev_err(mmc_dev(host->mmc), "Wait for DLL Lock time-out\n");
+ 			return -ETIMEDOUT;
+ 		}
+diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+index 4d0791f6ec23..a0b5089b3274 100644
+--- a/drivers/mmc/host/sdhci-xenon.c
++++ b/drivers/mmc/host/sdhci-xenon.c
+@@ -34,9 +34,13 @@ static int xenon_enable_internal_clk(struct sdhci_host *host)
+ 	sdhci_writel(host, reg, SDHCI_CLOCK_CONTROL);
+ 	/* Wait max 20 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 20);
+-	while (!((reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+-			& SDHCI_CLOCK_INT_STABLE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
 +	while (1) {
 +		bool timedout = ktime_after(ktime_get(), timeout);
 +
-+		if (sdhci_omap_readl(omap_host, SDHCI_OMAP_STAT) & INT_CC_EN)
++		reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++		if (reg & SDHCI_CLOCK_INT_STABLE)
 +			break;
-+		if (WARN_ON(timedout))
- 			return;
- 		usleep_range(5, 10);
- 	}
++		if (timedout) {
+ 			dev_err(mmc_dev(host->mmc), "Internal clock never stabilised.\n");
+ 			return -ETIMEDOUT;
+ 		}
 -- 
 2.19.1
 
