@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906F8C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A67C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CEC021B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1F0121B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:29:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898934;
-	bh=l5vx3LgoG1dFp+HxbHEI7mj4ZNN6wXqk30fN8mDcxcY=;
+	s=default; t=1549898941;
+	bh=NQqslhLa5D7VA/EnBM1NgVMWAyMS7plTlpfuGxSEyts=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fsG83qqUfZJNTxxVJDg8bTla3uiOR4AN21AxCegGSWGH8IbyvEAq+4OxZQ7OcAaRn
-	 Dpum+L4URaWp1cDJRL9mAZei8xZCcdr4xQv+W0f9mMMCCvzYJ0WaEzQyJoa+tKqPBi
-	 02IDZoreMtQmHcYt3gUy0jSzzG2L/WYpUcOcrUTg=
+	b=s8kD6EkMe2uzE622ITuRxtu2I2Aoo3zixY4vyKX2EOh0Ze8L/nDXDEnkWQmfpMmm+
+	 KVruKHdDZzoWgr+ukpO3pVBrnQt5J+SrFzRqPHGpJcULajs7n6lKP8iXy3iTVu8Gen
+	 H9HTbGtRH+Fz/qZLIUg1IdAc8JAClAab5DwrgctU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390422AbfBKP2x (ORCPT
+        id S2389078AbfBKO6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:28:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45788 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:58:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389090AbfBKO6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:58:13 -0500
+        id S2389471AbfBKO6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:58:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC990222A6;
-        Mon, 11 Feb 2019 14:58:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27C4D2229E;
+        Mon, 11 Feb 2019 14:58:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897093;
-        bh=l5vx3LgoG1dFp+HxbHEI7mj4ZNN6wXqk30fN8mDcxcY=;
+        s=default; t=1549897084;
+        bh=NQqslhLa5D7VA/EnBM1NgVMWAyMS7plTlpfuGxSEyts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WsMXW6rzjgllpwSGumYT/F0l+eOEXq+oT06tAi99GtVaXKibeQMDVFh5+VENuhQwy
-         B3BTlj7gAajRNxVvTVczU5fEtr9Iz7JNU+2/7yC+he+vVu/LpYa8YUJKiek4sNC2Bv
-         Y4v6J4vfd4Nk585HQtnZdcwXC18EMcd0lxCZ/ADc=
+        b=E8qPvom9qbTj5CtdMeOdGiyrDQVEbs/OeOd8ieE408J8m1ozoIFjnnUqiY78qbKps
+         6ulIfXum1UJAn2odAuAjjfIatqohIbeEk0IAiH+X9lg4PCd2/E4Bmmbx1YhYY8UqF3
+         SoaJ5y9/bYsWs4gVv/e8R2aHwz1ijKWFSLxV1xfI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 058/205] ARM: mmp/mmp2: dt: enable the clock
-Date:   Mon, 11 Feb 2019 15:17:36 +0100
-Message-Id: <20190211141832.594303634@linuxfoundation.org>
+Subject: [PATCH 4.14 055/205] s390/zcrypt: improve special ap message cmd handling
+Date:   Mon, 11 Feb 2019 15:17:33 +0100
+Message-Id: <20190211141832.414886842@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,151 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
+[ Upstream commit be534791011100d204602e2e0496e9e6ce8edf63 ]
 
-The device-tree booted MMP2 needs to enable the timer clock, otherwise
-it would stop ticking when the boot finishes.
+There exist very few ap messages which need to have the 'special' flag
+enabled. This flag tells the firmware layer to do some pre- and maybe
+postprocessing. However, it may happen that this special flag is
+enabled but the firmware is unable to deal with this kind of message
+and thus returns with reply code 0x41. For example older firmware may
+not know the newest messages triggered by the zcrypt device driver and
+thus react with reject and the named reply code. Unfortunately this
+reply code is not known to the zcrypt error routines and thus default
+behavior is to switch the ap queue offline.
 
-It can also use the clock rate from the clk, the non-DT boards need to
-keep using the hardcoded rates.
+This patch now makes the ap error routine aware of the reply code and
+so userspace is informed about the bad processing result but the queue
+is not switched to offline state any more.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Harald Freudenberger <freude@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h |  2 +-
- arch/arm/mach-mmp/mmp2.c   |  2 +-
- arch/arm/mach-mmp/pxa168.c |  2 +-
- arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
- 4 files changed, 23 insertions(+), 15 deletions(-)
+ arch/s390/include/uapi/asm/zcrypt.h | 4 ++--
+ drivers/s390/crypto/zcrypt_error.h  | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 7e284d9c429f..5ac2851ef5d3 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -2,7 +2,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
- 
--extern void timer_init(int irq);
-+extern void timer_init(int irq, unsigned long rate);
- 
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index afba5460cdaf..fb3e7e32c882 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
- 
--	timer_init(IRQ_MMP2_TIMER1);
-+	timer_init(IRQ_MMP2_TIMER1, 6500000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 0f5f16fb8c66..77a358165a56 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1);
-+	timer_init(IRQ_PXA168_TIMER1, 6500000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index 96ad1db0b04b..eab0fd8a7343 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -22,6 +22,7 @@
- #include <linux/kernel.h>
- #include <linux/interrupt.h>
- #include <linux/clockchips.h>
-+#include <linux/clk.h>
- 
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -38,12 +39,6 @@
- #include "cputype.h"
- #include "clock.h"
- 
--#ifdef CONFIG_CPU_MMP2
--#define MMP_CLOCK_FREQ		6500000
--#else
--#define MMP_CLOCK_FREQ		3250000
--#endif
--
- #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
- 
- #define MAX_DELTA		(0xfffffffe)
-@@ -189,19 +184,18 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq)
-+void __init timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
--	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
-+	sched_clock_register(mmp_read_sched_clock, 32, rate);
- 
- 	ckevt.cpumask = cpumask_of(0);
- 
- 	setup_irq(irq, &timer_irq);
- 
--	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
--	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
--					MIN_DELTA, MAX_DELTA);
-+	clocksource_register_hz(&cksrc, rate);
-+	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
- }
- 
- #ifdef CONFIG_OF
-@@ -213,7 +207,9 @@ static const struct of_device_id mmp_timer_dt_ids[] = {
- void __init mmp_dt_init_timer(void)
- {
- 	struct device_node *np;
-+	struct clk *clk;
- 	int irq, ret;
-+	unsigned long rate;
- 
- 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
- 	if (!np) {
-@@ -221,6 +217,18 @@ void __init mmp_dt_init_timer(void)
- 		goto out;
- 	}
- 
-+	clk = of_clk_get(np, 0);
-+	if (!IS_ERR(clk)) {
-+		ret = clk_prepare_enable(clk);
-+		if (ret)
-+			goto out;
-+		rate = clk_get_rate(clk) / 2;
-+	} else if (cpu_is_pj4()) {
-+		rate = 6500000;
-+	} else {
-+		rate = 3250000;
-+	}
-+
- 	irq = irq_of_parse_and_map(np, 0);
- 	if (!irq) {
- 		ret = -EINVAL;
-@@ -231,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq);
-+	timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+diff --git a/arch/s390/include/uapi/asm/zcrypt.h b/arch/s390/include/uapi/asm/zcrypt.h
+index 137ef473584e..b9fb42089760 100644
+--- a/arch/s390/include/uapi/asm/zcrypt.h
++++ b/arch/s390/include/uapi/asm/zcrypt.h
+@@ -161,8 +161,8 @@ struct ica_xcRB {
+  * @cprb_len:		CPRB header length [0x0020]
+  * @cprb_ver_id:	CPRB version id.   [0x04]
+  * @pad_000:		Alignment pad bytes
+- * @flags:		Admin cmd [0x80] or functional cmd [0x00]
+- * @func_id:		Function id / subtype [0x5434]
++ * @flags:		Admin bit [0x80], Special bit [0x20]
++ * @func_id:		Function id / subtype [0x5434] "T4"
+  * @source_id:		Source id [originator id]
+  * @target_id:		Target id [usage/ctrl domain id]
+  * @ret_code:		Return code
+diff --git a/drivers/s390/crypto/zcrypt_error.h b/drivers/s390/crypto/zcrypt_error.h
+index 13df60209ed3..9499cd3a05f8 100644
+--- a/drivers/s390/crypto/zcrypt_error.h
++++ b/drivers/s390/crypto/zcrypt_error.h
+@@ -65,6 +65,7 @@ struct error_hdr {
+ #define REP82_ERROR_FORMAT_FIELD	    0x29
+ #define REP82_ERROR_INVALID_COMMAND	    0x30
+ #define REP82_ERROR_MALFORMED_MSG	    0x40
++#define REP82_ERROR_INVALID_SPECIAL_CMD	    0x41
+ #define REP82_ERROR_INVALID_DOMAIN_PRECHECK 0x42
+ #define REP82_ERROR_RESERVED_FIELDO	    0x50 /* old value	*/
+ #define REP82_ERROR_WORD_ALIGNMENT	    0x60
+@@ -103,6 +104,7 @@ static inline int convert_error(struct zcrypt_queue *zq,
+ 	case REP88_ERROR_MESSAGE_MALFORMD:
+ 	case REP82_ERROR_INVALID_DOMAIN_PRECHECK:
+ 	case REP82_ERROR_INVALID_DOMAIN_PENDING:
++	case REP82_ERROR_INVALID_SPECIAL_CMD:
+ 	//   REP88_ERROR_INVALID_KEY		// '82' CEX2A
+ 	//   REP88_ERROR_OPERAND		// '84' CEX2A
+ 	//   REP88_ERROR_OPERAND_EVEN_MOD	// '85' CEX2A
 -- 
 2.19.1
 
