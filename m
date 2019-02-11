@@ -2,239 +2,141 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB455C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3397FC282C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9E5214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:39:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQvVKtfi"
+	by mail.kernel.org (Postfix) with ESMTP id 005472146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 00:56:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbfBKAj0 (ORCPT
+        id S1726226AbfBKAxB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 19:39:26 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33188 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfBKAjZ (ORCPT
+        Sun, 10 Feb 2019 19:53:01 -0500
+Received: from [223.203.96.18] ([223.203.96.18]:33239 "EHLO
+        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726032AbfBKAxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 19:39:25 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c123so4453104pfb.0;
-        Sun, 10 Feb 2019 16:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
-        b=UQvVKtfiCr2EL7+vDHwobTr3K/ATiEL/6IaQ02QiiMOUdtOTSwVzMksz6CS8ZV0yRJ
-         +ba/xxOchi8VyXAnM7fVo60oRNFj2udtb1MmjepZeHgrxDVhybrDVbj5WnMxeBHOoSbd
-         0Z4ougOyd3gTbL/2dtgAdkuVZoPi7UgLUoLhCdvNzCWYP7JyWQGoErFnT2bIT8jpwJmW
-         nl39hGFURBJeHi1zjBdzVmWXygssw8dBEZN8YX3pDj+23Sy5XTbd9Z4jeitLC9T6yCR+
-         E1iLowwEvYjOZ49Ev4OpC1K+CVW6/aZvC6taNcnStgVkXC3RxCvWyjQ73aHhhLIXT7n4
-         svbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vlsxxAOCWdf1tlqbQayeYqdEQq3U0CPDi/Q8SjZG81o=;
-        b=WFmylVds/qwlFy7kn9NP/xhxD8x8/bQXNsJGdwsPJcxY/cXTssYcfC3JHGoVmCMSWS
-         +5Z2YY6kKFJUDgXi/SZ7vIJtR6USqcUP3X9ROzZ9jyWVg0LLL0gBe4nJWDnpeJeKOiIm
-         SvVghhN/WghUPkS/5G1Kl8c2hZ6/+nVOPtGxdUPX0VNwEaNvDOrM69EMyKPWRSqLPHOh
-         TAh7zDC20b4St3abwL0RpiS4mBcYijS+/ha4bYQCJhZjBEl20PyOnUKEF8rfs4EorXeY
-         ngXgys6XSkgZL7P6CV//bM56RQquIWhvxOlO5wDIfF0ZVzPyk0NAoW069X/h65zwPZqB
-         TwGA==
-X-Gm-Message-State: AHQUAuYmyPEhADTKFF60l7j+f7QYPR1Uh8MncpwJKHBf0A0xD9AqbsAv
-        L9NP499sd4+2qU/VxBpQHFU=
-X-Google-Smtp-Source: AHgI3Ia6ifDLiDziehHa+LGRKtMr/aFcCrLoukw/oRH9ekCRaSYyb/4JRm26BQzyIcR0N6IRbjlQYw==
-X-Received: by 2002:a63:5d20:: with SMTP id r32mr15872762pgb.329.1549845563697;
-        Sun, 10 Feb 2019 16:39:23 -0800 (PST)
-Received: from [10.50.121.96] (c-73-202-78-81.hsd1.ca.comcast.net. [73.202.78.81])
-        by smtp.gmail.com with ESMTPSA id x2sm13973798pfx.78.2019.02.10.16.39.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 16:39:22 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
- patching
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
-Date:   Sun, 10 Feb 2019 16:39:19 -0800
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-6-rick.p.edgecombe@intel.com>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Sun, 10 Feb 2019 19:53:00 -0500
+X-ASG-Debug-ID: 1549846375-107606139f22d880001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda02.hxt-semitech.com with ESMTP id WkIMzeO3k6z2ICeR (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Mon, 11 Feb 2019 08:52:55 +0800 (CST)
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 11 Feb 2019 08:52:29 +0800
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1]) by
+ HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1%12]) with mapi id
+ 15.00.1395.000; Mon, 11 Feb 2019 08:52:29 +0800
+From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     "okaya@kernel.org" <okaya@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH v2 1/2] PCI: Add HXT vendor ID and ACS quirk
+Thread-Topic: [PATCH v2 1/2] PCI: Add HXT vendor ID and ACS quirk
+X-ASG-Orig-Subj: Re: [PATCH v2 1/2] PCI: Add HXT vendor ID and ACS quirk
+Thread-Index: AQHUdmrlIch2nulfZ0GbPXTu9T/GHw==
+Date:   Mon, 11 Feb 2019 00:52:29 +0000
+Message-ID: <6b4a41788f0d4b1c8388ebfb4d5abea4@HXTBJIDCEMVIW01.hxtcorp.net>
+References: <bcaf1d5d-23a6-d4e6-08e8-587daf6cca06@kernel.org>
+ <ccf67e5f70f2d09d07268a5735ac6cee801eb9ca.1541574331.git.shunyong.yang@hxt-semitech.com>
+ <20190201231947.GV229773@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.6.235]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1549846375
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 2344
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4327 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.67228
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
-<rick.p.edgecombe@intel.com> wrote:
->=20
-> From: Nadav Amit <namit@vmware.com>
->=20
-> To prevent improper use of the PTEs that are used for text patching, =
-we
-> want to use a temporary mm struct. We initailize it by copying the =
-init
-> mm.
->=20
-> The address that will be used for patching is taken from the lower =
-area
-> that is usually used for the task memory. Doing so prevents the need =
-to
-> frequently synchronize the temporary-mm (e.g., when BPF programs are
-> installed), since different PGDs are used for the task memory.
->=20
-> Finally, we randomize the address of the PTEs to harden against =
-exploits
-> that use these PTEs.
->=20
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
-> arch/x86/include/asm/pgtable.h       |  3 +++
-> arch/x86/include/asm/text-patching.h |  2 ++
-> arch/x86/kernel/alternative.c        |  3 +++
-> arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
-> init/main.c                          |  3 +++
-> 5 files changed, 47 insertions(+)
->=20
-> diff --git a/arch/x86/include/asm/pgtable.h =
-b/arch/x86/include/asm/pgtable.h
-> index 40616e805292..e8f630d9a2ed 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1021,6 +1021,9 @@ static inline void __meminit =
-init_trampoline_default(void)
-> 	/* Default trampoline pgd value */
-> 	trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
-> }
-> +
-> +void __init poking_init(void);
-> +
-> # ifdef CONFIG_RANDOMIZE_MEMORY
-> void __meminit init_trampoline(void);
-> # else
-> diff --git a/arch/x86/include/asm/text-patching.h =
-b/arch/x86/include/asm/text-patching.h
-> index f8fc8e86cf01..a75eed841eed 100644
-> --- a/arch/x86/include/asm/text-patching.h
-> +++ b/arch/x86/include/asm/text-patching.h
-> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
-*opcode, size_t len);
-> extern int poke_int3_handler(struct pt_regs *regs);
-> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, =
-void *handler);
-> extern int after_bootmem;
-> +extern __ro_after_init struct mm_struct *poking_mm;
-> +extern __ro_after_init unsigned long poking_addr;
->=20
-> #endif /* _ASM_X86_TEXT_PATCHING_H */
-> diff --git a/arch/x86/kernel/alternative.c =
-b/arch/x86/kernel/alternative.c
-> index 12fddbc8c55b..ae05fbb50171 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, =
-const void *opcode,
-> 	return addr;
-> }
->=20
-> +__ro_after_init struct mm_struct *poking_mm;
-> +__ro_after_init unsigned long poking_addr;
-> +
-> static void *__text_poke(void *addr, const void *opcode, size_t len)
-> {
-> 	unsigned long flags;
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index bccff68e3267..125c8c48aa24 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -53,6 +53,7 @@
-> #include <asm/init.h>
-> #include <asm/uv/uv.h>
-> #include <asm/setup.h>
-> +#include <asm/text-patching.h>
->=20
-> #include "mm_internal.h"
->=20
-> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
-> 	return memory_block_size_probed;
-> }
->=20
-> +/*
-> + * Initialize an mm_struct to be used during poking and a pointer to =
-be used
-> + * during patching.
-> + */
-> +void __init poking_init(void)
-> +{
-> +	spinlock_t *ptl;
-> +	pte_t *ptep;
-> +
-> +	poking_mm =3D copy_init_mm();
-> +	BUG_ON(!poking_mm);
-> +
-> +	/*
-> +	 * Randomize the poking address, but make sure that the =
-following page
-> +	 * will be mapped at the same PMD. We need 2 pages, so find =
-space for 3,
-> +	 * and adjust the address if the PMD ends after the first one.
-> +	 */
-> +	poking_addr =3D TASK_UNMAPPED_BASE;
-> +	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
-> +		poking_addr +=3D (kaslr_get_random_long("Poking") & =
-PAGE_MASK) %
-> +			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * =
-PAGE_SIZE);
-> +
-> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
-> +		poking_addr +=3D PAGE_SIZE;
+Hi, Bjorn,
 
-Further thinking about it, I think that allocating the virtual address =
-for
-poking from user address-range is problematic. The user can set =
-watchpoints
-on different addresses, cause some static-keys to be enabled/disabled, =
-and
-monitor the signals to derandomize the poking address.
+Thank you for reminding me. I will check with our IC team for these
+design issues.
+Sorry for the delay as I was taking Chinese New Year holiday.
 
-Andy, I think you were pushing this change. Can I go back to use a =
-vmalloc=E2=80=99d
-address instead, or do you have a better solution? I prefer not to
-save/restore DR7, of course.
+Shunyong.
+
+On 2019/2/2 7:19, Bjorn Helgaas wrote:
+> On Wed, Nov 07, 2018 at 03:24:12PM +0800, Shunyong Yang wrote:
+>> Add the HXT vendor ID to pci_ids.h and use it in quirks. As the
+>> design of HXT SD4800 ACS feature is the same as QCOM QDF2xxx,
+>> pci_quirk_qcom_rp_acs() is reused for SD4800 quirk.
+>>
+>> cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>> Reviewed-by: Sinan Kaya <okaya@kernel.org>
+>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> 
+> I applied both of these to pci/misc for v5.1, thanks!
+> 
+> As I'm sure you know, both the ACS and the pciehp issues are cases where
+> the part does not conform to the PCIe spec.  Hopefully future parts will
+> change the design so they *do* conform to the spec so we don't have to add
+> quirks for every new part.  Adding quirks works around the problem, but
+> it's a hassle for customers (and developers and distributors) because they
+> need kernel updates when they wouldn't otherwise.
+> 
+> Bjorn
+> 
+>> ---
+>> v2:
+>>   Add Reviewed-by: Sinan Kaya.
+>>
+>> v1:
+>>   Initial version.
+>> ---
+>>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>> index 4700d24e5d55..1e00ef6a88f4 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -4495,6 +4495,8 @@ static int pci_quirk_mf_endpoint_acs(struct pci_dev *dev, u16 acs_flags)
+>>  	/* QCOM QDF2xxx root ports */
+>>  	{ PCI_VENDOR_ID_QCOM, 0x0400, pci_quirk_qcom_rp_acs },
+>>  	{ PCI_VENDOR_ID_QCOM, 0x0401, pci_quirk_qcom_rp_acs },
+>> +	/* HXT SD4800 root ports. The ACS design is same as QCOM QDF2xxx */
+>> +	{ PCI_VENDOR_ID_HXT, 0x0401, pci_quirk_qcom_rp_acs },
+>>  	/* Intel PCH root ports */
+>>  	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_intel_pch_acs },
+>>  	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_intel_spt_pch_acs },
+>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+>> index 69f0abe1ba1a..e60a6bc38298 100644
+>> --- a/include/linux/pci_ids.h
+>> +++ b/include/linux/pci_ids.h
+>> @@ -2565,6 +2565,8 @@
+>>  
+>>  #define PCI_VENDOR_ID_HYGON		0x1d94
+>>  
+>> +#define PCI_VENDOR_ID_HXT		0x1dbf
+>> +
+>>  #define PCI_VENDOR_ID_TEKRAM		0x1de1
+>>  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+>>  
+>> -- 
+>> 1.8.3.1
+>>
+> 
 
