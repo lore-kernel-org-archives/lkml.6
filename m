@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C48DC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F50C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F39121855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A5B21855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899935;
-	bh=TjdZGDSFRA/ujpx3vtaNoIfPDhJo+TFeGBbevVgNp9E=;
+	s=default; t=1549899940;
+	bh=Uo3z+y6enUJIz7L7PHMEKzz0/jdjx+Xyc9eVCqkPwc8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K2uOCi8qtuTWMlQf2fkcQjwjqNcKaoMedqvEf0wZwgoGgKM/7QNaNcv7PKSFLRD7O
-	 mSQu07BMJG3fD0kbLloC0qvB0bEmMH5hF/w5N+2UKmWpdrLe12CS9aCFxWLKWSV8EL
-	 lcomWnJJGVIArN0qPFGTAxlW64O4zaNfhC2Kcad8=
+	b=gkBp24ZAPfVtJ5c/O+/VaXYXHFoYdGrVB3s+mapoDHljCAA67m8WCHzCk3CSK697Z
+	 PF9Rvsj9f3ofc0dlZWm5uID1yCSmnITDcAp9i5GIDLf67Aq8E2UUcnCIZAu7tU5fvG
+	 p9NBPJwnw+RKIM1DF7zttDR24LHIfTcwxZZzKaFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732618AbfBKOnX (ORCPT
+        id S1732604AbfBKOnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:43:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55506 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:43:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732599AbfBKOnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:43:20 -0500
+        id S1732584AbfBKOnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:43:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59D1220700;
-        Mon, 11 Feb 2019 14:43:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E8A821B18;
+        Mon, 11 Feb 2019 14:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896199;
-        bh=TjdZGDSFRA/ujpx3vtaNoIfPDhJo+TFeGBbevVgNp9E=;
+        s=default; t=1549896193;
+        bh=Uo3z+y6enUJIz7L7PHMEKzz0/jdjx+Xyc9eVCqkPwc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kr2JPEXVncRGmMXwZTC+JOE3uUUgwWvU+x56r+3/TfEjPGmH6Wq+dZezjG9eEQon+
-         9prUG7Bu2bepR4uzlf/+As5vJnudV0ddLs5pHlDCBbpKSDTuJIElSoJQVC+n+76mGS
-         +wLUWc6+ubKb1kn1jd8rrM6qk5Rmw/swCuQB5rSc=
+        b=QMeuiUr6Vv3CV/i35xQ0YUxUMt5vw8D+WOaBpRx37r8o0RCMJpgtMLo3GZBVmcWSu
+         NhH7de2F5et8GQMqlgPQwpSKlpUg1ugx8W7VTgynRMkJ8DaxazzjatgAr1PCfW/uK3
+         PBm/4h2FE9gfSYqhsejCFPvuAH+c/SUd+W2Ajd68=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 106/313] IB/hfi1: Unreserve a reserved request when it is completed
-Date:   Mon, 11 Feb 2019 15:16:26 +0100
-Message-Id: <20190211141900.939285097@linuxfoundation.org>
+Subject: [PATCH 4.19 104/313] driver core: Move async_synchronize_full call
+Date:   Mon, 11 Feb 2019 15:16:24 +0100
+Message-Id: <20190211141900.805915141@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,44 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca95f802ef5139722acc8d30aeaab6fe5bbe939e ]
+[ Upstream commit c37d721c68ad88925ba0e72f6e14acb829a8c6bb ]
 
-Currently, When a reserved operation is completed, its entry in the send
-queue will not be unreserved, which leads to the miscalculation of
-qp->s_avail and thus the triggering of a WARN_ON call trace. This patch
-fixes the problem by unreserving the reserved operation when it is
-completed.
+Move the async_synchronize_full call out of __device_release_driver and
+into driver_detach.
 
-Fixes: 856cc4c237ad ("IB/hfi1: Add the capability for reserved operations")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The idea behind this is that the async_synchronize_full call will only
+guarantee that any existing async operations are flushed. This doesn't do
+anything to guarantee that a hotplug event that may occur while we are
+doing the release of the driver will not be asynchronously scheduled.
+
+By moving this into the driver_detach path we can avoid potential deadlocks
+as we aren't holding the device lock at this point and we should not have
+the driver we want to flush loaded so the flush will take care of any
+asynchronous events the driver we are detaching might have scheduled.
+
+Fixes: 765230b5f084 ("driver-core: add asynchronous probing support for drivers")
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/rc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/base/dd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
-index 9bd63abb2dfe..6f013a565353 100644
---- a/drivers/infiniband/hw/hfi1/rc.c
-+++ b/drivers/infiniband/hw/hfi1/rc.c
-@@ -1157,6 +1157,7 @@ void hfi1_rc_send_complete(struct rvt_qp *qp, struct hfi1_opa_header *opah)
- 		if (cmp_psn(wqe->lpsn, qp->s_sending_psn) >= 0 &&
- 		    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
- 			break;
-+		rvt_qp_wqe_unreserve(qp, wqe);
- 		s_last = qp->s_last;
- 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
- 		if (++s_last >= qp->s_size)
-@@ -1209,6 +1210,7 @@ static struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
- 		u32 s_last;
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 2607f859881a..7caa1adaf62a 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -926,9 +926,6 @@ static void __device_release_driver(struct device *dev, struct device *parent)
  
- 		rvt_put_swqe(wqe);
-+		rvt_qp_wqe_unreserve(qp, wqe);
- 		s_last = qp->s_last;
- 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
- 		if (++s_last >= qp->s_size)
+ 	drv = dev->driver;
+ 	if (drv) {
+-		if (driver_allows_async_probing(drv))
+-			async_synchronize_full();
+-
+ 		while (device_links_busy(dev)) {
+ 			device_unlock(dev);
+ 			if (parent && dev->bus->need_parent_lock)
+@@ -1034,6 +1031,9 @@ void driver_detach(struct device_driver *drv)
+ 	struct device_private *dev_prv;
+ 	struct device *dev;
+ 
++	if (driver_allows_async_probing(drv))
++		async_synchronize_full();
++
+ 	for (;;) {
+ 		spin_lock(&drv->p->klist_devices.k_lock);
+ 		if (list_empty(&drv->p->klist_devices.k_list)) {
 -- 
 2.19.1
 
