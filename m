@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2831EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8B4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC45D2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42B8C20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896110;
-	bh=bLQkxQSCY8vq+4vjwcatb8YQCUnKnJ1FRhNPgxWKA68=;
+	s=default; t=1549896115;
+	bh=YiESLhKyGix7XyxsNK7HwbMq5o5xkQYZ9KeovHwm4hM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nvETay5NTAyhCOe2WZ7nVeqjnxWfoO/N6vHe9OOAuNH/6rDdOA5lON42Ss9N9f2ja
-	 IHkz96Bg+5kF1MnC9QVggp8+WY1l7SklxXbv99HgSKgGHgzqKuOqaGT87f5Dq6tdd2
-	 FNYpB3xeSrPqnPoeIG7rAIeYXKWYsCNEt7Rkt+nk=
+	b=CQLDDqGPq4sOMu0/mXJBIpgvz7CitYH3cpGZkh3CJ0goF9FbAgfwkqLRfGBBsu/pI
+	 AEl3WSvLZbNPS8GYezG6E/aDVH6aoafzigY3iGptrTtb5sdxw2gYwyaDqv7FHJRrdX
+	 6nn0WZApVym6vbEKLZQvAlNjREF/F6G7r/CAF4AI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732299AbfBKOls (ORCPT
+        id S1732317AbfBKOly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53208 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:41:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731214AbfBKOlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:41:45 -0500
+        id S1731816AbfBKOlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:41:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91C8421B18;
-        Mon, 11 Feb 2019 14:41:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D46482081B;
+        Mon, 11 Feb 2019 14:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896105;
-        bh=bLQkxQSCY8vq+4vjwcatb8YQCUnKnJ1FRhNPgxWKA68=;
+        s=default; t=1549896111;
+        bh=YiESLhKyGix7XyxsNK7HwbMq5o5xkQYZ9KeovHwm4hM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Cdyc/lzihZvCw8HR0nRmlKnBwb8Wg280TIqtyPmmpQ70fZaIFg7HJj5LjNG5qwNh
-         +ITvbVi56bQULe2yriyqlljKh7QqLo5dBKjDKq0839+JEajnZp/EJAyNzfpHCngriq
-         ToLgMckR8g3zcopMZ3bN0yqOUaR/zuAnW7wAuGZQ=
+        b=aPzZhgb5R5yygkJZYti7dDVkoJwe3N5OFcqm9rUtOdOmzCx/chI4YXBcUhXisfl0O
+         o3CBNQ6KA6O5IEwP99aUp1AB4/VFrgQ5SZrN6OdUqfiLp0WZqcfkI15mZrpbKOMUp6
+         bxz5iQXy7ko9Vl+BBc2Ir0dkdQHkrhykey7gpcO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 074/313] sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN
-Date:   Mon, 11 Feb 2019 15:15:54 +0100
-Message-Id: <20190211141858.839269480@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 076/313] nfsd4: fix crash on writing v4_end_grace before nfsd startup
+Date:   Mon, 11 Feb 2019 15:15:56 +0100
+Message-Id: <20190211141858.952421765@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -65,51 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a11f6ca9aef989b56cd31ff4ee2af4fb31a172ec ]
+[ Upstream commit 62a063b8e7d1db684db3f207261a466fa3194e72 ]
 
-__vdc_tx_trigger should only loop on EAGAIN a finite
-number of times.
+Anatoly Trosinenko reports that this:
 
-See commit adddc32d6fde ("sunvnet: Do not spin in an
-infinite loop when vio_ldc_send() returns EAGAIN") for detail.
+1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
+2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
+3) From `kvm-xfstests shell`:
 
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+results in NULL dereference in locks_end_grace.
+
+Check that nfsd has been started before trying to end the grace period.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/sunvdc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ fs/nfsd/nfsctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
-index f68e9baffad7..5d7024057540 100644
---- a/drivers/block/sunvdc.c
-+++ b/drivers/block/sunvdc.c
-@@ -45,6 +45,8 @@ MODULE_VERSION(DRV_MODULE_VERSION);
- #define WAITING_FOR_GEN_CMD	0x04
- #define WAITING_FOR_ANY		-1
- 
-+#define	VDC_MAX_RETRIES	10
-+
- static struct workqueue_struct *sunvdc_wq;
- 
- struct vdc_req_entry {
-@@ -431,6 +433,7 @@ static int __vdc_tx_trigger(struct vdc_port *port)
- 		.end_idx		= dr->prod,
- 	};
- 	int err, delay;
-+	int retries = 0;
- 
- 	hdr.seq = dr->snd_nxt;
- 	delay = 1;
-@@ -443,6 +446,8 @@ static int __vdc_tx_trigger(struct vdc_port *port)
- 		udelay(delay);
- 		if ((delay <<= 1) > 128)
- 			delay = 128;
-+		if (retries++ > VDC_MAX_RETRIES)
-+			break;
- 	} while (err == -EAGAIN);
- 
- 	if (err == -ENOTCONN)
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 7fb9f7c667b1..899174c7a8ae 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1126,6 +1126,8 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
+ 		case 'Y':
+ 		case 'y':
+ 		case '1':
++			if (nn->nfsd_serv)
++				return -EBUSY;
+ 			nfsd4_end_grace(nn);
+ 			break;
+ 		default:
 -- 
 2.19.1
 
