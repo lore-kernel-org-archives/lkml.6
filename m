@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8746C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880FBC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB2A222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55EF92229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897000;
-	bh=NbvDV21sUjvgGSqyz98zIZ/vew5igTVlPA0iJzPK/KI=;
+	s=default; t=1549897003;
+	bh=3w6D4m0X+K4/fL4y6VR3YYk1bSbJedq4zW+8ml9hS0U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h6P5vLBSAQWe3VHcwZVXvsxxzmLvkqxyboZmfW7RJCcmd1wA6ET5kpyXden6HRFoQ
-	 +F4Ft6DCNIhx/rWZt6xUg50CXesi8+Nc0v1ayM7pLUGQfrTHIlUGA3xxXZN5N/0syr
-	 rw0nub9zYCZE1C1uHD/QJ2Yf2yyWyBh1Bf3yyB0M=
+	b=E/jQ68xTk+RU/Lkud92VrlaEwwBRixJwZJUX+JpWxWJlY0kZ8z7RzJP/fmpO8F1ti
+	 aJxL7pTi6YvwYwPUJZCSa/GiBbKP6Ngs5SSjBlb9KVp1uv9oXZEb4EPVROjsuWjWUs
+	 yXz/ZDMkIwoGqeDyuit5IrcV+pUgiHUKR1FOVzOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389209AbfBKO4j (ORCPT
+        id S2389218AbfBKO4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:56:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43812 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:56:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388780AbfBKO4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:56:36 -0500
+        id S2389192AbfBKO4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:56:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5358F222A1;
-        Mon, 11 Feb 2019 14:56:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BD4C2229E;
+        Mon, 11 Feb 2019 14:56:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896995;
-        bh=NbvDV21sUjvgGSqyz98zIZ/vew5igTVlPA0iJzPK/KI=;
+        s=default; t=1549896992;
+        bh=3w6D4m0X+K4/fL4y6VR3YYk1bSbJedq4zW+8ml9hS0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoHxzvl9etgGTZ/gaAEc896b0eY6Bp9fcSw0Bmz13/uxOGwm/c8vz5esKuOrGuyhS
-         blEIa8/zX7gwVj9j5hLPdC7vvOUC4V+tTGMer13MOsfQKEMok6jmUayxd5iLjokXVJ
-         yh8WAnNLBoFWqvAwnPRSBlYO/2C54mOdIXTyoe0I=
+        b=NAs0cMjhyWG9ZG2dSAmPuwMZWUPejh1/f0qUy/G0vxc5gDzg18FUEeK07bR0Idul0
+         UkCjgDEUax2ixLowi1ysowe3FKrjr/TKsIFprkZ8m0hqRlzxXlxhyn10t60q8ZntG/
+         isj0Nbn7xqqeFJLrTs5tMnN4zQgtuFVQmyxsfAIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Renato Lui Geh <renatogeh@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 026/205] usbnet: smsc95xx: fix rx packet alignment
-Date:   Mon, 11 Feb 2019 15:17:04 +0100
-Message-Id: <20190211141829.419580083@linuxfoundation.org>
+Subject: [PATCH 4.14 025/205] staging: iio: ad7780: update voltage on read
+Date:   Mon, 11 Feb 2019 15:17:03 +0100
+Message-Id: <20190211141828.951245698@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,37 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 810eeb1f41a9a272eedc94ca18c072e75678ede4 ]
+[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
 
-The smsc95xx driver already takes into account the NET_IP_ALIGN
-parameter when setting up the receive packet data, which means
-we do not need to worry about aligning the packets in the usbnet
-driver.
+The ad7780 driver previously did not read the correct device output, as
+it read an outdated value set at initialization. It now updates its
+voltage on read.
 
-Adding the EVENT_NO_IP_ALIGN means that the IPv4 header is now
-passed to the ip_rcv() routine with the start on an aligned address.
-
-Tested on Raspberry Pi B3.
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc95xx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/iio/adc/ad7780.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 2f65975a121f..fc48da1c702d 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1295,6 +1295,7 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
- 		dev->net->features |= NETIF_F_RXCSUM;
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index dec3ba6eba8a..52613f6a9dd8 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad7780_state *st = iio_priv(indio_dev);
++	int voltage_uv;
  
- 	dev->net->hw_features = NETIF_F_IP_CSUM | NETIF_F_RXCSUM;
-+	set_bit(EVENT_NO_IP_ALIGN, &dev->flags);
- 
- 	smsc95xx_init_mac_address(dev);
- 
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+ 	case IIO_CHAN_INFO_SCALE:
+-		*val = st->int_vref_mv * st->gain;
++		voltage_uv = regulator_get_voltage(st->reg);
++		if (voltage_uv < 0)
++			return voltage_uv;
++		*val = (voltage_uv / 1000) * st->gain;
+ 		*val2 = chan->scan_type.realbits - 1;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	case IIO_CHAN_INFO_OFFSET:
 -- 
 2.19.1
 
