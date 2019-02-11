@@ -4,55 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA48C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC30C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DBBE222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7404222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899682;
-	bh=vw0ZQh+JiywZJ/En+mGCliwSfDgNxziM9MS6qsW8rWo=;
+	s=default; t=1549899703;
+	bh=tXxdCTB47wZ669npn2kEuklA0V72KR/QtoYvt7/z6Xg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JLzSrxFS+EbulXHTtpybyY20Lnxd3BS7mQVeaFjH72LOejIbDrmFVuuXGvIUQssdz
-	 8eJweNLo1YHXpntkB0+fsckL84Y5DFEk44BavXBYQr3M3Lm//w2loBOGDnpPl+fV96
-	 VmuiLyhA3KRdCYfuSxDtk8KLbCF3ypdPUY22KTJA=
+	b=hv+C2zGjCfk/FiFXAZBU1hV0leVcBdn7Gc+ZlAI0kw8TPzLp5mVXWo3TVBSPRY/oQ
+	 fFnrre/BWRjQfwMPhdZhm+GKvmBQdvv2LdmB472okeogN+Vi8kh0dPYQ4YH4Pe3+1D
+	 SDnEQpXJikX7yM7sHoYWzXY4RVSmGuK9TItcnJfc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388174AbfBKPlV (ORCPT
+        id S2387523AbfBKOre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:41:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387599AbfBKOr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:56 -0500
+        id S2387506AbfBKOr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:47:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FA1C20700;
-        Mon, 11 Feb 2019 14:47:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 799A72081B;
+        Mon, 11 Feb 2019 14:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896475;
-        bh=vw0ZQh+JiywZJ/En+mGCliwSfDgNxziM9MS6qsW8rWo=;
+        s=default; t=1549896449;
+        bh=tXxdCTB47wZ669npn2kEuklA0V72KR/QtoYvt7/z6Xg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x/DqgstYV7KRb3ZBaFYnJm9ecd9uAQHy7I/oSpZoNGpo8TBwYm/IYUgisDnzFs8+a
-         YnU9grzSREuMIXuNfflF6nnRtW1FzS/+ZIwcw0cNowHExSLlMstoqu3mJcaHq3/Wa9
-         gtvOVtOUyYRQzWmi+LVoJf8QZjjHCIoCFAu4p1/E=
+        b=bxT0Hge9kAyDLEf0uRV0zQLsI1fdqol1fNq0rktIks1mOt6xemEUMMSL51usktOYv
+         JQKPVi4CtbTBbk8IJJXZMOcF16Iy4m5ijHa1T04SdwSsUgZSIUF1sKcTnz24/47Ddw
+         6Od+/fNaykcUkFm6gyPCNE/c1Vle6pvTQ7KJzNxI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Fabian Frederick <ffrederick@users.sourceforge.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geoff Levand <geoff@infradead.org>,
-        James Simmons <jsimmons@users.sf.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Beomho Seo <beomho.seo@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 197/313] fbdev: fbmem: behave better with small rotated displays and many CPUs
-Date:   Mon, 11 Feb 2019 15:17:57 +0100
-Message-Id: <20190211141906.380388388@linuxfoundation.org>
+Subject: [PATCH 4.19 156/313] tty: serial: samsung: Properly set flags in autoCTS mode
+Date:   Mon, 11 Feb 2019 15:17:16 +0100
+Message-Id: <20190211141903.930108364@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -71,60 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
+[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
 
-Blitting an image with "negative" offsets is not working since there
-is no clipping. It hopefully just crashes. For the bootup logo, there
-is protection so that blitting does not happen as the image is drawn
-further and further to the right (ROTATE_UR) or further and further
-down (ROTATE_CW). There is however no protection when drawing in the
-opposite directions (ROTATE_UD and ROTATE_CCW).
+Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
+has changed the way the autoCTS mode is handled.
 
-Add back this protection.
+According to that change, serial drivers which enable H/W autoCTS mode must
+set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
+TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
 
-The regression is 20-odd years old but the mindless warning-killing
-mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
-positive test on unsigned values") is also to blame, methinks.
-
-Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-cc: Geoff Levand <geoff@infradead.org>
-Cc: James Simmons <jsimmons@users.sf.net>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+[mszyprow: rephrased commit message]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/core/fbmem.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/tty/serial/samsung.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index 20405421a5ed..77cee99fc36c 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -435,7 +435,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- 			image->dx += image->width + 8;
- 		}
- 	} else if (rotate == FB_ROTATE_UD) {
--		for (x = 0; x < num; x++) {
-+		u32 dx = image->dx;
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 2f8fa184aafa..c6058b52d5d5 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1365,11 +1365,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
+ 
++	port->status &= ~UPSTAT_AUTOCTS;
 +
-+		for (x = 0; x < num && image->dx <= dx; x++) {
- 			info->fbops->fb_imageblit(info, image);
- 			image->dx -= image->width + 8;
- 		}
-@@ -447,7 +449,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- 			image->dy += image->height + 8;
- 		}
- 	} else if (rotate == FB_ROTATE_CCW) {
--		for (x = 0; x < num; x++) {
-+		u32 dy = image->dy;
-+
-+		for (x = 0; x < num && image->dy <= dy; x++) {
- 			info->fbops->fb_imageblit(info, image);
- 			image->dy -= image->height + 8;
- 		}
+ 	umcon = rd_regl(port, S3C2410_UMCON);
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		umcon |= S3C2410_UMCOM_AFC;
+ 		/* Disable RTS when RX FIFO contains 63 bytes */
+ 		umcon &= ~S3C2412_UMCON_AFC_8;
++		port->status = UPSTAT_AUTOCTS;
+ 	} else {
+ 		umcon &= ~S3C2410_UMCOM_AFC;
+ 	}
 -- 
 2.19.1
 
