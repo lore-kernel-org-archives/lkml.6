@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B811AC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E48C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896AB2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 899B1214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896251;
-	bh=X/+vfLyYPTa/hpi9OiIX2rTY88OA1tCce8mmXSHe7Jw=;
+	s=default; t=1549896254;
+	bh=6lualU6MgeppKQHecDUsdUpB0v5ob+AjhlMhPIiu/pQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wZeB8wPbs90r4hGwd50/snmwWeSqjradctzbXxt3Ohh82T6CuYdc8sGANBsoZB3sc
-	 Y0viQkrAgjkj3K5DfkteuWPREjAm+ccyisMTGOIDCFG8TIolGWsSM3dHjOvkFf+62/
-	 QiM3/xwX5t9IdCfeS1Bh3BMgeqwoGpzEamynFtJ4=
+	b=GH22WVmGP0z0FRStYdLE9Z4xCSrTgvH8JeeYxGxTFU+1EsHk1isr70efeBpcJSfp0
+	 /wt9VBzS7NGsBO3deFWlTi85yzdGJckUhvuSZwiAWKTLnIegJ3AHZtmS2Qip9HhALd
+	 Ulig8AMrBK/ygQRTNVToUhqG5hs3JdUEw61pfT3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732778AbfBKOoK (ORCPT
+        id S1732790AbfBKOoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56690 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:44:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731910AbfBKOoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:06 -0500
+        id S1731777AbfBKOoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0371214DA;
-        Mon, 11 Feb 2019 14:44:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 833E220700;
+        Mon, 11 Feb 2019 14:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896245;
-        bh=X/+vfLyYPTa/hpi9OiIX2rTY88OA1tCce8mmXSHe7Jw=;
+        s=default; t=1549896252;
+        bh=6lualU6MgeppKQHecDUsdUpB0v5ob+AjhlMhPIiu/pQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUlnQmRztOdXpZOejiQj8a81GBQliaG3jjr8UHrOL6jECzMgdWE3T0Z1GW9H2bpR9
-         tQvVpJFRKT7cOEbCniwuUwewodpBG+7aKxiNboHAChfyqSEnGBsv2JjdM1aYA/5cJk
-         v6ZZMjM02aWvPy+VM3/7sZQLBA0bkdaQLQVvMXYk=
+        b=of0V9+1a+NSyVTpAwNW3WYBeWe4p5o+2ZDLNx113LmkUd4J4WAfsFBro4oI8xaXhM
+         nJoZmMe4hYtL1RZfvobThqbIw6wLgRV9jJ2DdDVdBRBFpjFD9N7PhV/0j4v7aupXSr
+         MBb+1ZNSP3ElSPducUzGvYzBi096fZXjgQQJY/MA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejas Joglekar <joglekar@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 119/313] usb: dwc3: gadget: Disable CSP for stream OUT ep
-Date:   Mon, 11 Feb 2019 15:16:39 +0100
-Message-Id: <20190211141901.777414179@linuxfoundation.org>
+Subject: [PATCH 4.19 092/313] media: DaVinci-VPBE: fix error handling in vpbe_initialize()
+Date:   Mon, 11 Feb 2019 15:16:12 +0100
+Message-Id: <20190211141859.995933738@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,48 +67,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 244add8ebfb231c39db9e33b204bd0ce8f24f782 ]
+[ Upstream commit aa35dc3c71950e3fec3e230c06c27c0fbd0067f8 ]
 
-In stream mode, when fast-forwarding TRBs, the stream number
-is not cleared causing the new stream to not get assigned. So
-we don't want controller to carry on transfers when short packet
-is received. So disable the CSP for stream capable endpoint.
+If vpbe_set_default_output() or vpbe_set_default_mode() fails,
+vpbe_initialize() returns error code without releasing resources.
 
-This is based on the 3.30a Programming guide, where table 3-1
-device descriptor structure field definitions says for CSP bit
-If this bit is 0, the controller generates an XferComplete event
-and remove the stream. So if we keep CSP as 1 then switching between
-streams would not happen as in stream mode, when fast-forwarding
-TRBs, the stream number is not cleared causing the new stream to not get
-assigned.
+The patch adds error handling for that case.
 
-Signed-off-by: Tejas Joglekar <joglekar@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/platform/davinci/vpbe.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 74d29159f3b9..105278ccf487 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -981,9 +981,13 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 				usb_endpoint_type(dep->endpoint.desc));
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 18c035ef84cf..df1ae6b5c854 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -740,7 +740,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default output %s",
+ 			 def_output);
+-		return ret;
++		goto fail_kfree_amp;
  	}
  
--	/* always enable Continue on Short Packet */
-+	/*
-+	 * Enable Continue on Short Packet
-+	 * when endpoint is not a stream capable
-+	 */
- 	if (usb_endpoint_dir_out(dep->endpoint.desc)) {
--		trb->ctrl |= DWC3_TRB_CTRL_CSP;
-+		if (!dep->stream_capable)
-+			trb->ctrl |= DWC3_TRB_CTRL_CSP;
+ 	printk(KERN_NOTICE "Setting default mode to %s\n", def_mode);
+@@ -748,12 +748,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default mode %s",
+ 			 def_mode);
+-		return ret;
++		goto fail_kfree_amp;
+ 	}
+ 	vpbe_dev->initialized = 1;
+ 	/* TBD handling of bootargs for default output and mode */
+ 	return 0;
  
- 		if (short_not_ok)
- 			trb->ctrl |= DWC3_TRB_CTRL_ISP_IMI;
++fail_kfree_amp:
++	mutex_lock(&vpbe_dev->lock);
++	kfree(vpbe_dev->amp);
+ fail_kfree_encoders:
+ 	kfree(vpbe_dev->encoders);
+ fail_dev_unregister:
 -- 
 2.19.1
 
