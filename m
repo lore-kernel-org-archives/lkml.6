@@ -4,54 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52CEC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF6FC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5FB4222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E1192229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897078;
-	bh=U7LR63ZSzI2Xjdt2CfgNmaf5ND3CcBHgQOeG0QerLro=;
+	s=default; t=1549897083;
+	bh=iaYF0DbVgdycSaXEYR2PGMIStuX2Rj1veFuuAA/BKyk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BLtXRz0eq+J1R5izbLnqdn9DrODwBQbMLM/Z39Zp+EDAGxJbq5dwNiMAOQPVzwTV0
-	 kyWzzCmhWonSWphqUSe0hs50DQyzOBAwTw2C80Hn+Lu9IZ0wgAWSQVpYScEw7NEaPW
-	 E8OBFIWQH/6HmQVdQRQ6O+QdcUcJcnDD3nUOo3S8=
+	b=qdBV4J/Uj2A8V0oNnVNYpJIvjCAFcUZT/AnBYJsHtOuYMFeUxA1lYeEqGkKmLAoyv
+	 wI1bqVjwZLetRHUs8yT2heotrfPzc5wOTEL5TcTt9iQ++mP1bvcaZmNEu4w/UeHch8
+	 fAeylKQHU59qfNKWXWIGyr69BKPGGyGo4c9hiufE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389449AbfBKO55 (ORCPT
+        id S2389458AbfBKO6B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:57:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45390 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:58:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389434AbfBKO5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:57:52 -0500
+        id S2389046AbfBKO56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:57:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23926222A6;
-        Mon, 11 Feb 2019 14:57:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3058E2229E;
+        Mon, 11 Feb 2019 14:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897071;
-        bh=U7LR63ZSzI2Xjdt2CfgNmaf5ND3CcBHgQOeG0QerLro=;
+        s=default; t=1549897077;
+        bh=iaYF0DbVgdycSaXEYR2PGMIStuX2Rj1veFuuAA/BKyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s+m/xwBvp2LslsEg9PzCn0vp5GI++JWUAkTbqnmKRK1oVhnZVINPS17QS3vAj/COV
-         zE1swZ+DNoXzEkhYqQdUBO1n3wnv25Mp2yZz/HiHvHPkFdtLVHN2kJu6N8kBJwbNA+
-         r/Hync5EAvhP5GXXXwher+JxfRYdaTsWXHEj01Ag=
+        b=Mb1iG1pC7FhCGpEQ/N1lhicJnvj7jPbpdSL8I2vw0Wh5PkNXme+aGeZo+KR7rWZbw
+         AZP91yX291kpkQEWywhZ2nDwu4ceHBylgMrdwOX4OMKZmbBNYGnKzF2dl+yGnsLpLY
+         1Nt/IzIzGOwJ4/DLLmNKm2+zcL5x6JvaZTnphIBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 080/205] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date:   Mon, 11 Feb 2019 15:17:58 +0100
-Message-Id: <20190211141833.929504633@linuxfoundation.org>
+        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 082/205] sata_rcar: fix deferred probing
+Date:   Mon, 11 Feb 2019 15:18:00 +0100
+Message-Id: <20190211141834.056632944@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -70,53 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 89cddc563743cb1e0068867ac97013b2a5bf86aa ]
+[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements.
-On msm8996, multiple cores, viz. mdss, video, etc. use this
-smmu. On sdm845, this smmu is used with gpu.
-Add bindings for the same.
+The driver overrides the error codes returned by platform_get_irq() to
+-EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
+permanently instead of the deferred probing. Switch to propagating the
+error code upstream, still checking/overriding IRQ0 as libata regards it
+as "no IRQ" (thus polling) anyway...
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/ata/sata_rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 15b5856475fc..01a6a0ea2a4f 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -117,6 +117,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 537d11869069..3e82a4ac239e 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -880,7 +880,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	int ret = 0;
  
- /* Until ACPICA headers cover IORT rev. C */
-@@ -1910,6 +1911,7 @@ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
-+ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0)
++	if (irq < 0)
++		return irq;
++	if (!irq)
+ 		return -EINVAL;
  
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
-@@ -1918,6 +1920,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
 -- 
 2.19.1
 
