@@ -2,135 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5201C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BC0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B334A21A49
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B130B218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:53:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfBKLxD (ORCPT
+        id S1726207AbfBKLxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 06:53:03 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46256 "EHLO
+        Mon, 11 Feb 2019 06:53:09 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46268 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfBKLxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 06:53:02 -0500
+        id S1726852AbfBKLxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 06:53:08 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDBE380D;
-        Mon, 11 Feb 2019 03:53:01 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7B8C3F557;
-        Mon, 11 Feb 2019 03:52:59 -0800 (PST)
-Subject: Re: [PATCH] arm64/io: Don't use WZR in writel
-To:     Will Deacon <will.deacon@arm.com>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B0EF80D;
+        Mon, 11 Feb 2019 03:53:08 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00C5D3F557;
+        Mon, 11 Feb 2019 03:53:05 -0800 (PST)
+Date:   Mon, 11 Feb 2019 11:53:01 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
-References: <68b71c15f32341468a868f6418e4fcb375bc49ba.camel@gmail.com>
- <20190211105755.GB30880@fuggles.cambridge.arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <38d8965a-cd41-17cf-1b95-8dd58c079be4@arm.com>
-Date:   Mon, 11 Feb 2019 11:52:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v8 1/5] arm64: replace -pg with CC_FLAGS_FTRACE in arm64
+ Makefiles
+Message-ID: <20190211115300.GA10501@lakrids.cambridge.arm.com>
+References: <20190208150826.44EBC68DD2@newverein.lst.de>
+ <20190208151007.276E968DD2@newverein.lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190211105755.GB30880@fuggles.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208151007.276E968DD2@newverein.lst.de>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2019 10:57, Will Deacon wrote:
-> On Sat, Feb 09, 2019 at 07:34:53PM +0100, AngeloGioacchino Del Regno wrote:
->> From 33fb6d036de273bb71ac1c67d7a91b7a5148e659 Mon Sep 17 00:00:00 2001
->> From: "Angelo G. Del Regno" <kholk11@gmail.com>
->> Date: Sat, 9 Feb 2019 18:56:46 +0100
->> Subject: [PATCH] arm64/io: Don't use WZR in writel
->>
->> This is a partial revert of commit ee5e41b5f21a
->> ("arm64/io: Allow I/O writes to use {W,X}ZR")
->>
->> When we try to use the zero register directly on some SoCs,
->> their security will make them freeze due to a firmware bug.>> This behavior is seen with the arm-smmu driver freezing on
->> TLBI and TLBSYNC on MSM8996, MSM8998, SDM630, SDM660.
+On Fri, Feb 08, 2019 at 04:10:07PM +0100, Torsten Duwe wrote:
+>   In preparation for arm64 supporting ftrace built on other compiler
+>   options, let's have the arm64 makefiles remove the $(CC_FLAGS_FTRACE)
+>   flags, whatever these may be, rather than assuming '-pg'.
+> 
+>   There should be no functional change as a result of this patch.
+> 
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
 
-This looks similar to the issue these SoCs have with GICv3, worked
-around in 9c8114c20d18.
+Thanks for splitting this out.
 
-> Hmm, this sounds very fragile. I hope they're not trapping and emulating
-> MMIO accesses and treating the zero register as the stack pointer...
+With the indentation removed from the commit text:
 
-I bet this is the case. The same bug was there in both KVM and Xen. The
-only difference is that we fixed it back in December 2015 (at least for
-KVM), while some of these SoCs were announced in 2017, and are still
-shipping. Great stuff.
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Thanks,
+Mark.
 
 > 
-> Wouldn't this also be triggerable from userspace by mmap()ing either
-> /dev/mem or e.g. a PCI bar via sysfs?
-> 
->> Allocating a temporary register to store the zero for the
->> write actually solves the issue on these SoCs.
-> 
-> I don't think this catches all MMIO accesses, so I think we need to
-> understand more about the actual issue here. For example, is it only the
-> SMMU that causes this problem? Also, any workaround should be specific to
-> the broken SoCs.
-
-Also, nothing would prevent a compiler from generating these accesses.
-
-	M.
-
-Jazz is not dead. It just smells funny...
+> ---
+>  arch/arm64/kernel/Makefile |    6 +++---
+>  arch/arm64/lib/Makefile    |    2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -7,9 +7,9 @@ CPPFLAGS_vmlinux.lds	:= -DTEXT_OFFSET=$(
+>  AFLAGS_head.o		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
+>  CFLAGS_armv8_deprecated.o := -I$(src)
+>  
+> -CFLAGS_REMOVE_ftrace.o = -pg
+> -CFLAGS_REMOVE_insn.o = -pg
+> -CFLAGS_REMOVE_return_address.o = -pg
+> +CFLAGS_REMOVE_ftrace.o = $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_insn.o = $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_return_address.o = $(CC_FLAGS_FTRACE)
+>  
+>  # Object file lists.
+>  obj-y			:= debug-monitors.o entry.o irq.o fpsimd.o		\
+> --- a/arch/arm64/lib/Makefile
+> +++ b/arch/arm64/lib/Makefile
+> @@ -24,7 +24,7 @@ CFLAGS_atomic_ll_sc.o	:= -ffixed-x1 -ffi
+>  		   -fcall-saved-x10 -fcall-saved-x11 -fcall-saved-x12	\
+>  		   -fcall-saved-x13 -fcall-saved-x14 -fcall-saved-x15	\
+>  		   -fcall-saved-x18 -fomit-frame-pointer
+> -CFLAGS_REMOVE_atomic_ll_sc.o := -pg
+> +CFLAGS_REMOVE_atomic_ll_sc.o := $(CC_FLAGS_FTRACE)
+>  GCOV_PROFILE_atomic_ll_sc.o	:= n
+>  KASAN_SANITIZE_atomic_ll_sc.o	:= n
+>  KCOV_INSTRUMENT_atomic_ll_sc.o	:= n
