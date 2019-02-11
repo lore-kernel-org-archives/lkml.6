@@ -2,148 +2,99 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A695FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79424C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782ED21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46D4C20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:57:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="XmomXnVb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0U7b+TSC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBKK5e (ORCPT
+        id S1727063AbfBKK5y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:57:34 -0500
-Received: from rcdn-iport-9.cisco.com ([173.37.86.80]:62795 "EHLO
-        rcdn-iport-9.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfBKK5e (ORCPT
+        Mon, 11 Feb 2019 05:57:54 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39280 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfBKK5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:57:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2101; q=dns/txt; s=iport;
-  t=1549882653; x=1551092253;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=PKp+vBW5YhtnRUcOkZqPKgkvgwkJlZrR50D/cnSJiJ0=;
-  b=XmomXnVbF84BfbscScuWFZJF0PvF83pmZxloEQUA/Sajm9wepWy51EYL
-   t7HP3J4vGpiK8X/k/8Qrpz/Z6QPf5dTG9tFvEzoMlVciAzKbyCyKeYWk+
-   99UkxVkOBiicTVT9TLbzqe8gc1ynKHzR2P33suwUw9G7RlZB5by8ow6rM
-   A=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AEAAA8VGFc/5pdJa1jGgEBAQEBAgE?=
- =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCA4FqJwqMFIttgg2CYYZJjmmBewsBAYRsgz0?=
- =?us-ascii?q?iNAkNAQMBAQIBAQJtKIVKAQEBAQIBJxM0CxACAQgOCh4QMiUCBAENBQiFBgM?=
- =?us-ascii?q?NCKofM4onjEMXgUA/hCOCV4IqhWACiW2YfzMJAo8UgzIhgW2FS4soijOGaYp?=
- =?us-ascii?q?5AhEUgScfOIFWcBU7gmyCKBeOHkExi0OBHwEB?=
-X-IronPort-AV: E=Sophos;i="5.58,358,1544486400"; 
-   d="scan'208";a="431355291"
-Received: from rcdn-core-3.cisco.com ([173.37.93.154])
-  by rcdn-iport-9.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:57:32 +0000
-Received: from XCH-ALN-012.cisco.com (xch-aln-012.cisco.com [173.36.7.22])
-        by rcdn-core-3.cisco.com (8.15.2/8.15.2) with ESMTPS id x1BAvWCJ028142
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 10:57:32 GMT
-Received: from xch-aln-012.cisco.com (173.36.7.22) by XCH-ALN-012.cisco.com
- (173.36.7.22) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 04:57:31 -0600
-Received: from xch-aln-012.cisco.com ([173.36.7.22]) by XCH-ALN-012.cisco.com
- ([173.36.7.22]) with mapi id 15.00.1395.000; Mon, 11 Feb 2019 04:57:31 -0600
-From:   "Hans Verkuil (hansverk)" <hansverk@cisco.com>
-To:     Wen Yang <yellowriver2010@hotmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] media: cec-notifier: fix possible object reference
- leak
-Thread-Topic: [PATCH 1/4] media: cec-notifier: fix possible object reference
- leak
-Thread-Index: AQHUwCH951ryS7AxYU2IkMLJINPqbQ==
-Date:   Mon, 11 Feb 2019 10:57:31 +0000
-Message-ID: <6b7fc837599e4069b876b32473b31746@XCH-ALN-012.cisco.com>
-References: <HK0PR02MB363461179B3A702DB9CAEC55B26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
- <3ed515b78a404ec4a22b5f69ed9d6e28@XCH-ALN-012.cisco.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.61.175.13]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 11 Feb 2019 05:57:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=H4FKzYfPZLq064fpvMaxRyPbo6mwWdcW0fXgF0VWycY=; b=0U7b+TSCrog3RuwY+5aIN+sYF
+        hv/X24vYbiLjaTad2ObIWMdW7Cp2r/5OoaUpAoXctxc/VYvLlvd8Jg876MzN8pgTjMW8CZ3P1r/K0
+        V/l2fLFDfV1pgkRUFU9xzkmvMbliuyWhgYyM+5CQxhzMD875i3oOU3bLFnwzd6Z1n69EGanR7kB8K
+        jwNrR1x25pUNYuM1WWMfiO/CFWtHodA2Mmztx2gmUubEivvDlwHAS5qsyCdKdk3uPgvtfWI5OmsKO
+        4D+eGwN6yN1S/MmNn/tvUdF/HvrjMc60lzn96bluUcUP+BS/cOvXQ1En41wBhdBg2BY4eZU6c4md3
+        EkSdmP65w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gt9HI-0007Ng-0y; Mon, 11 Feb 2019 10:57:32 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 535FA20D0E3CF; Mon, 11 Feb 2019 11:57:29 +0100 (CET)
+Date:   Mon, 11 Feb 2019 11:57:29 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH] locking/rwsem: Remove arch specific rwsem files
+Message-ID: <20190211105729.GH32534@hirez.programming.kicks-ass.net>
+References: <1549850450-10171-1-git-send-email-longman@redhat.com>
+ <20190211093601.GT32511@hirez.programming.kicks-ass.net>
+ <20190211094044.GG32534@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-Outbound-SMTP-Client: 173.36.7.22, xch-aln-012.cisco.com
-X-Outbound-Node: rcdn-core-3.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211094044.GG32534@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2019 11:38, Hans Verkuil (hansverk) wrote:=0A=
-> On 09/02/2019 03:48, Wen Yang wrote:=0A=
->> put_device() should be called in cec_notifier_release(),=0A=
->> since the dev is being passed down to cec_notifier_get_conn(),=0A=
->> which holds reference. On cec_notifier destruction, it=0A=
->> should drop the reference to the device.=0A=
->>=0A=
->> Fixes: 6917a7b77413 ("[media] media: add CEC notifier support")=0A=
->> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>=0A=
->> ---=0A=
->>  drivers/media/cec/cec-notifier.c | 1 +=0A=
->>  1 file changed, 1 insertion(+)=0A=
->>=0A=
->> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-no=
-tifier.c=0A=
->> index dd2078b..621d4ae 100644=0A=
->> --- a/drivers/media/cec/cec-notifier.c=0A=
->> +++ b/drivers/media/cec/cec-notifier.c=0A=
->> @@ -66,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)=0A=
->>  		container_of(kref, struct cec_notifier, kref);=0A=
->>  =0A=
->>  	list_del(&n->head);=0A=
->> +	put_device(n->dev);=0A=
->>  	kfree(n->conn);=0A=
->>  	kfree(n);=0A=
->>  }=0A=
->>=0A=
-> =0A=
-> Sorry, no. The dev pointer is just a search key that the notifier code lo=
-oks=0A=
-> for. It is not the notifier's responsibility to take a reference, that wo=
-uld=0A=
-> be the responsibility of the hdmi and cec drivers.=0A=
-=0A=
-Correction: the cec driver should never take a reference of the hdmi device=
-.=0A=
-It never accesses the HDMI device, it only needs the HDMI device pointer as=
-=0A=
-a key in the notifier list.=0A=
-=0A=
-The real problem is that several CEC drivers take a reference of the HDMI d=
-evice=0A=
-and never release it. So those drivers need to be fixed.=0A=
-=0A=
-Regards,=0A=
-=0A=
-	Hans=0A=
-=0A=
-> =0A=
-> If you can demonstrate that there is an object reference leak, then pleas=
-e=0A=
-> provide the details: it is likely a bug elsewhere and not in the notifier=
-=0A=
-> code.=0A=
-> =0A=
-> BTW, your patch series didn't arrive on the linux-media mailinglist for=
-=0A=
-> some reason.=0A=
-> =0A=
-> Regards,=0A=
-> =0A=
-> 	Hans=0A=
-> =0A=
-=0A=
+On Mon, Feb 11, 2019 at 10:40:44AM +0100, Peter Zijlstra wrote:
+> On Mon, Feb 11, 2019 at 10:36:01AM +0100, Peter Zijlstra wrote:
+> > On Sun, Feb 10, 2019 at 09:00:50PM -0500, Waiman Long wrote:
+> > > +static inline int __down_read_trylock(struct rw_semaphore *sem)
+> > > +{
+> > > +	long tmp;
+> > > +
+> > > +	while ((tmp = atomic_long_read(&sem->count)) >= 0) {
+> > > +		if (tmp == atomic_long_cmpxchg_acquire(&sem->count, tmp,
+> > > +				   tmp + RWSEM_ACTIVE_READ_BIAS)) {
+> > > +			return 1;
+> > 
+> > That really wants to be:
+> > 
+> > 		if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
+> > 						    tmp + RWSEM_ACTIVE_READ_BIAS))
+> > 
+> > > +		}
+> > > +	}
+> > > +	return 0;
+> > > +}
+> 
+> Also, the is the one case where LL/SC can actually do 'better'. Do you
+> have benchmarks for say PowerPC or ARM64 ?
+
+Ah, I see they already used asm-generic/rwsem.h which has similar code
+to the above.
