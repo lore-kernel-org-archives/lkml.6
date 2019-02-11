@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B894C169C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B82C4151A
 	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC91218E2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 176E2218FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KNkhOp+F"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNtKfSU0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbfBKWAF (ORCPT
+        id S1726977AbfBKWAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:00:05 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33506 "EHLO
+        Mon, 11 Feb 2019 17:00:08 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44152 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfBKWAC (ORCPT
+        with ESMTP id S1726815AbfBKWAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:00:02 -0500
-Received: by mail-wr1-f67.google.com with SMTP id i12so515601wrw.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:01 -0800 (PST)
+        Mon, 11 Feb 2019 17:00:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v16so443525wrn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9CMPZjRzPxA9yWJGkQniQIkHzZh/Nj3CjJ78bKTFu6c=;
-        b=KNkhOp+FwwqqWNp0rVoktr8lfQk/kt4OYWfZh0XzvAGg0XcRsG1vZ9foQ6V5/GjZQS
-         ZtJd4pn78QAAV9XHc7Hx7Po325azOyAcAntab5T7pxquIxMo4L5vhod2HvO4oM0JS1sJ
-         5wW/NCzntc/d2udqR3ieGxAD/HSjnEhECEe9Jtfv+F4yBFFMKB35cnTfuEvhVsSWOeVu
-         +GBkc+Dm/3w7rbgZQAzXnDfuP3Nz8Rm1s91ixQQMVwwZfyBKL+2PEnZWizwZGxiicisf
-         k+fqqLG5MgEygXacHs7JJeAcrMzplL/EfvnKRModlnR+xpLr0M1favDp3jNGs1v8W9MD
-         FtMQ==
+        bh=F0+Fcs0MkZYX4znEMfQAn1VdtYpI07PvV8ScTPU9zPg=;
+        b=uNtKfSU0+K7DQuJSpKocOX08Ends+VIaoncwv193IfyXRrFVBQloeekrKLHBO18zJ+
+         zgxP0BRQ7dybUbH+vvlFhWtPeIkxhDeFGx8FBjvlB1pP+wWRqrGLu2HYEJOpRkV7GgjH
+         BV2TCh/BIeC6nu5Qwb5AAvBUgtIeZ1UmePHyqs0aczpO/b5xxwOtVzf2zPECxG+vAXtI
+         USdX46+1WMxKTGo+3PTXad80sHiFx42Ok1No2ZWmb3msF+2NZovofxW8GFu72nSWw2a8
+         a4vWaXFgyVh2aXX5PLs6hV9WY5xx9ThkNZJd+fyIYLSzO1/eNL4iNZoyP4biKgrNKM+H
+         +Kvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9CMPZjRzPxA9yWJGkQniQIkHzZh/Nj3CjJ78bKTFu6c=;
-        b=UTAmigGM38x4+C+0msaEiFyLfzYFhbV3zKUNRcCkPGVrPJQJKqrJ7mGGrSwEi0phLR
-         UEEhkizfrqqS2B0EaZD15Fi4yNpqoOyH0gRN+KBenTQX2PNY5OU0wPpyHAqwvCCfMkyR
-         LrqOH2OE5HlLmeROljAt/TW5vGI0mwAzr5mVn4w+/gECm2x3D+6FrpNWfpXEDkvFq9Ye
-         MDETsU8zWbZpZAiSAvE4D12pYPbAMFs/nFR1ILpDu1ew+Fm+4YAQE78CWy6deJOANt6A
-         wmJQDRW7HxTA7QRE874S7T8H68CPwPXUyAf7NuiPyE31t2b53L/CXvSYP8MhWwsivSMc
-         Gofg==
-X-Gm-Message-State: AHQUAuZBqKg/SCDWy3Wz3b3C1J7/hhstIP57H8d6C17NuzMDf30sLRcF
-        1O4PpFuekiEx43AJ4YS0cvZD/w==
-X-Google-Smtp-Source: AHgI3Ia32u1Rwu6dEWF9OS009TTKjKG2ZLzjUiuLH7ytuQiqzKENoj77khlFOGtz0NDNmqx4HNgfdg==
-X-Received: by 2002:adf:dfca:: with SMTP id q10mr284447wrn.45.1549922400500;
-        Mon, 11 Feb 2019 14:00:00 -0800 (PST)
+        bh=F0+Fcs0MkZYX4znEMfQAn1VdtYpI07PvV8ScTPU9zPg=;
+        b=Y2zF+CVMAdO5GHcS8sx4Eq007BYwYM0E/6soEQXXk9rkPbggrsgYvre+/wn9WFQxGE
+         yeBnbo5N3VuPaejPwOUTWyV9LYN6kUMQdPfwp5UPGACoopX9OIs2ZaP18h2U1yHheXAs
+         phsVXmZWK4AcXMd58B7HN7rIOn2s/NAfK1iPFYYgh772whrNY6MPH60Vz0XxdfVo61l1
+         1TzVNFYPycZjVeDAeuaJsRqoJHLZ4ld5/i4Hs2n1G01TScVMERjltoMjrhjCFwXhJ76H
+         1Fk0TmEaqULk4GvZ+kxMe3NQb4a9Tsc8LMM6ewEDMVbRvua9bSh/TrLfVTonRGG+BiAn
+         sD2Q==
+X-Gm-Message-State: AHQUAubKVEhlzwGIbizYWOzGCFzQuxJsMvBGunsOeTmGWtviZLLWcGyP
+        oMEDlqsUf23PluyB9eeMS8WCdQ==
+X-Google-Smtp-Source: AHgI3Ib27D4nBRNkQKP/Nr0Yz3dEkA16v3GKdYr81WW50n3+gRxUrezwoWqu+5gij6CSI/XqL3XXBg==
+X-Received: by 2002:adf:efc8:: with SMTP id i8mr307497wrp.164.1549922404424;
+        Mon, 11 Feb 2019 14:00:04 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.13.59.58
+        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.14.00.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 13:59:59 -0800 (PST)
+        Mon, 11 Feb 2019 14:00:03 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -73,9 +73,9 @@ Cc:     Qian Cai <cai@lca.pw>,
         Kostya Serebryany <kcc@google.com>,
         Evgeniy Stepanov <eugenis@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 1/5] kasan: fix assigning tags twice
-Date:   Mon, 11 Feb 2019 22:59:50 +0100
-Message-Id: <ce8c6431da735aa7ec051fd6497153df690eb021.1549921721.git.andreyknvl@google.com>
+Subject: [PATCH 3/5] kmemleak: account for tagged pointers when calculating pointer range
+Date:   Mon, 11 Feb 2019 22:59:52 +0100
+Message-Id: <df99854703d906040a7a898ac892167e3ffe90d9.1549921721.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 In-Reply-To: <cover.1549921721.git.andreyknvl@google.com>
 References: <cover.1549921721.git.andreyknvl@google.com>
@@ -86,87 +86,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When an object is kmalloc()'ed, two hooks are called: kasan_slab_alloc()
-and kasan_kmalloc(). Right now we assign a tag twice, once in each of
-the hooks. Fix it by assigning a tag only in the former hook.
+kmemleak keeps two global variables, min_addr and max_addr, which store
+the range of valid (encountered by kmemleak) pointer values, which it
+later uses to speed up pointer lookup when scanning blocks.
+
+With tagged pointers this range will get bigger than it needs to be.
+This patch makes kmemleak untag pointers before saving them to min_addr
+and max_addr and when performing a lookup.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/kasan/common.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ mm/kmemleak.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 73c9cbfdedf4..09b534fbba17 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -361,10 +361,15 @@ void kasan_poison_object_data(struct kmem_cache *cache, void *object)
-  *    get different tags.
-  */
- static u8 assign_tag(struct kmem_cache *cache, const void *object,
--			bool init, bool krealloc)
-+			bool init, bool keep_tag)
- {
--	/* Reuse the same tag for krealloc'ed objects. */
--	if (krealloc)
-+	/*
-+	 * 1. When an object is kmalloc()'ed, two hooks are called:
-+	 *    kasan_slab_alloc() and kasan_kmalloc(). We assign the
-+	 *    tag only in the first one.
-+	 * 2. We reuse the same tag for krealloc'ed objects.
-+	 */
-+	if (keep_tag)
- 		return get_tag(object);
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index f9d9dc250428..707fa5579f66 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -574,6 +574,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	unsigned long flags;
+ 	struct kmemleak_object *object, *parent;
+ 	struct rb_node **link, *rb_parent;
++	unsigned long untagged_ptr;
  
- 	/*
-@@ -405,12 +410,6 @@ void * __must_check kasan_init_slab_obj(struct kmem_cache *cache,
- 	return (void *)object;
- }
+ 	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
+ 	if (!object) {
+@@ -619,8 +620,9 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
  
--void * __must_check kasan_slab_alloc(struct kmem_cache *cache, void *object,
--					gfp_t flags)
--{
--	return kasan_kmalloc(cache, object, cache->object_size, flags);
--}
--
- static inline bool shadow_invalid(u8 tag, s8 shadow_byte)
- {
- 	if (IS_ENABLED(CONFIG_KASAN_GENERIC))
-@@ -467,7 +466,7 @@ bool kasan_slab_free(struct kmem_cache *cache, void *object, unsigned long ip)
- }
+ 	write_lock_irqsave(&kmemleak_lock, flags);
  
- static void *__kasan_kmalloc(struct kmem_cache *cache, const void *object,
--				size_t size, gfp_t flags, bool krealloc)
-+				size_t size, gfp_t flags, bool keep_tag)
- {
- 	unsigned long redzone_start;
- 	unsigned long redzone_end;
-@@ -485,7 +484,7 @@ static void *__kasan_kmalloc(struct kmem_cache *cache, const void *object,
- 				KASAN_SHADOW_SCALE_SIZE);
+-	min_addr = min(min_addr, ptr);
+-	max_addr = max(max_addr, ptr + size);
++	untagged_ptr = (unsigned long)kasan_reset_tag((void *)ptr);
++	min_addr = min(min_addr, untagged_ptr);
++	max_addr = max(max_addr, untagged_ptr + size);
+ 	link = &object_tree_root.rb_node;
+ 	rb_parent = NULL;
+ 	while (*link) {
+@@ -1333,6 +1335,7 @@ static void scan_block(void *_start, void *_end,
+ 	unsigned long *start = PTR_ALIGN(_start, BYTES_PER_POINTER);
+ 	unsigned long *end = _end - (BYTES_PER_POINTER - 1);
+ 	unsigned long flags;
++	unsigned long untagged_ptr;
  
- 	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS))
--		tag = assign_tag(cache, object, false, krealloc);
-+		tag = assign_tag(cache, object, false, keep_tag);
+ 	read_lock_irqsave(&kmemleak_lock, flags);
+ 	for (ptr = start; ptr < end; ptr++) {
+@@ -1347,7 +1350,8 @@ static void scan_block(void *_start, void *_end,
+ 		pointer = *ptr;
+ 		kasan_enable_current();
  
- 	/* Tag is ignored in set_tag without CONFIG_KASAN_SW_TAGS */
- 	kasan_unpoison_shadow(set_tag(object, tag), size);
-@@ -498,10 +497,16 @@ static void *__kasan_kmalloc(struct kmem_cache *cache, const void *object,
- 	return set_tag(object, tag);
- }
+-		if (pointer < min_addr || pointer >= max_addr)
++		untagged_ptr = (unsigned long)kasan_reset_tag((void *)pointer);
++		if (untagged_ptr < min_addr || untagged_ptr >= max_addr)
+ 			continue;
  
-+void * __must_check kasan_slab_alloc(struct kmem_cache *cache, void *object,
-+					gfp_t flags)
-+{
-+	return __kasan_kmalloc(cache, object, cache->object_size, flags, false);
-+}
-+
- void * __must_check kasan_kmalloc(struct kmem_cache *cache, const void *object,
- 				size_t size, gfp_t flags)
- {
--	return __kasan_kmalloc(cache, object, size, flags, false);
-+	return __kasan_kmalloc(cache, object, size, flags, true);
- }
- EXPORT_SYMBOL(kasan_kmalloc);
- 
+ 		/*
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
