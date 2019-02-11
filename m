@@ -2,170 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD19FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6074CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E562146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C80420863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:26:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="UImav6xj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbfBKGQE (ORCPT
+        id S1726177AbfBKG0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 01:16:04 -0500
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:36967 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKGQE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 01:16:04 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 4C1BD100D942C;
-        Mon, 11 Feb 2019 07:16:01 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id E78EE10875; Mon, 11 Feb 2019 07:16:00 +0100 (CET)
-Date:   Mon, 11 Feb 2019 07:16:00 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2 13/28] thunderbolt: Add helper function to iterate
- from one port to another
-Message-ID: <20190211061600.6ty733qfagk7f6fp@wunner.de>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
- <20190206131738.43696-14-mika.westerberg@linux.intel.com>
+        Mon, 11 Feb 2019 01:26:53 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:55663 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbfBKG0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 01:26:53 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43ybR94nTDz9tyv7;
+        Mon, 11 Feb 2019 07:26:45 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=UImav6xj; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id F0Uehg3cyFmr; Mon, 11 Feb 2019 07:26:45 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43ybR93m3Dz9tyv6;
+        Mon, 11 Feb 2019 07:26:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549866405; bh=pP+qBsacOc7BX7HqUMyCGXaWaf0LuL8H6j/y+Qb/DfE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UImav6xj6WD5+YiGnMf9PKlhmQmGaSW/NOp2WOAyj/o6DenNrA1ZCb7uzh68UNLi3
+         nsJhA3fjmmi+WsNS1TxBdxtCXwwtpOFKos3SjcfOnASGkjuZw6BaWHDYDFl34M0VXF
+         oO3yLP/LXlBIW3OTMYvKhSkkWqwWVo5oz3E8ouKg=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B300C8B791;
+        Mon, 11 Feb 2019 07:26:51 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id mQFX59vvXYKb; Mon, 11 Feb 2019 07:26:51 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 848E58B74C;
+        Mon, 11 Feb 2019 07:26:51 +0100 (CET)
+Subject: Re: [PATCH v1 03/16] powerpc/32: move LOAD_MSR_KERNEL() into
+ head_32.h and use it
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1549630193.git.christophe.leroy@c-s.fr>
+ <1946d8ed86a92a9a6827ec260d0d9c99e0d88184.1549630193.git.christophe.leroy@c-s.fr>
+ <749f719a0881531cad2071a7011dc5e894812d3d.camel@kernel.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <b074648b-8896-5591-16fe-3ecaf5c7553a@c-s.fr>
+Date:   Mon, 11 Feb 2019 07:26:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206131738.43696-14-mika.westerberg@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <749f719a0881531cad2071a7011dc5e894812d3d.camel@kernel.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:17:23PM +0300, Mika Westerberg wrote:
-> We need to be able to walk from one port to another when we are creating
-> paths where there are multiple switches between two ports. For this
-> reason introduce a new function tb_port_get_next() and a new macro
-> tb_for_each_port().
-
-These names seem fairly generic, they might as well refer to the next port
-on a switch or iterate over the ports on a switch.  E.g. I've proposed a
-tb_sw_for_each_port() macro in this patch:
-
-https://lore.kernel.org/patchwork/patch/983863/
-
-I'd suggest renaming tb_port_get_next() to something like
-tb_next_port_on_path() or tb_path_next_port() or tb_path_walk().
-
-And I'd suggest dropping tb_for_each_port() because there are only
-two occurrences where it's used, one calculates the path length,
-and I think that's simply the route string length plus 2, and the
-other one in patch 17 isn't even interested in the ports along a path,
-but rather in the switches between the root switch and the end of a path.
-It seems simpler to just iterate from the switch at the end upwards to
-the root switch by following the parent pointer in the switch's
-struct device, or alternatively by bytewise iterating over the route
-string and calling get_switch_at_route() each time.
 
 
-> +/**
-> + * tb_port_get_next() - Return next port for given port
-> + * @start: Start port of the walk
-> + * @end: End port of the walk
-> + * @prev: Previous port (%NULL if this is the first)
-> + *
-> + * This function can be used to walk from one port to another if they
-> + * are connected through zero or more switches. If the @prev is dual
-> + * link port, the function follows that link and returns another end on
-> + * that same link.
-> + *
-> + * If the walk cannot be continued, returns %NULL.
+Le 11/02/2019 à 01:21, Benjamin Herrenschmidt a écrit :
+> On Fri, 2019-02-08 at 12:52 +0000, Christophe Leroy wrote:
+>>   /*
+>> + * MSR_KERNEL is > 0x8000 on 4xx/Book-E since it include MSR_CE.
+>> + */
+>> +.macro __LOAD_MSR_KERNEL r, x
+>> +.if \x >= 0x8000
+>> +       lis \r, (\x)@h
+>> +       ori \r, \r, (\x)@l
+>> +.else
+>> +       li \r, (\x)
+>> +.endif
+>> +.endm
+>> +#define LOAD_MSR_KERNEL(r, x) __LOAD_MSR_KERNEL r, x
+>> +
+> 
+> You changed the limit from >= 0x10000 to >= 0x8000 without a
+> corresponding explanation as to why...
 
-This sounds as if NULL is returned if an error occurs but that doesn't
-seem to be what the function does.  I'd suggest:
+Yes, the existing LOAD_MSR_KERNEL() was buggy because 'li' takes a 
+signed u16, ie between -0x8000 and 0x7999.
 
-"If the @end port has been reached, return %NULL."
+By chance it was working because until now nobody was trying to set 
+MSR_KERNEL | MSR_EE.
 
-
-> +struct tb_port *tb_port_get_next(struct tb_port *start, struct tb_port *end,
-> +				 struct tb_port *prev)
-> +{
-> +	struct tb_port *port, *next;
-> +
-> +	if (!prev)
-> +		return start;
-> +
-> +	if (prev->sw == end->sw) {
-> +		if (prev != end)
-> +			return end;
-> +		return NULL;
-> +	}
-> +
-> +	/* Switch back to use primary links for walking */
-
-"Switch back" requires that you switched to something else before,
-which you didn't.  I'd suggest something like:
-
-"use primary link to discover next port"
-
-Why is it necessary to use the primary link anyway?  Is the
-->remote member not set on the secondary link port?  The reason
-should probably be spelled out in the code comment.
-
-
-> +	if (prev->dual_link_port && prev->link_nr)
-> +		port = prev->dual_link_port;
-> +	else
-> +		port = prev;
-> +
-> +	if (start->sw->config.depth < end->sw->config.depth) {
-> +		if (port->remote &&
-> +		    port->remote->sw->config.depth > port->sw->config.depth)
-
-Can we use "if (!tb_is_upstream_port(port))" for consistency with the
-if-clause below?
-
-
-> +			next = port->remote;
-> +		else
-> +			next = tb_port_at(tb_route(end->sw), port->sw);
-> +	} else if (start->sw->config.depth > end->sw->config.depth) {
-> +		if (tb_is_upstream_port(port))
-> +			next = port->remote;
-> +		else
-> +			next = tb_upstream_port(port->sw);
-> +	} else {
-> +		/* Must be the same switch then */
-> +		if (start->sw != end->sw)
-> +			return NULL;
-> +		return end;
-> +	}
-
-The else-clause here appears to be dead code, you've already checked
-further up whether prev and end are on the same switch.
-
-
-> +
-> +	/* If prev was dual link return another end of that link then */
-
-*Here* a "switch back" comment would be appropriate.  Nit: Please either
-end code comments with a period or don't start them with an upper case
-letter.
-
-> +	if (next->dual_link_port && next->link_nr != prev->link_nr)
-> +		return next->dual_link_port;
-> +
-> +	return next;
-> +}
-
-Thanks,
-
-Lukas
+Christophe
