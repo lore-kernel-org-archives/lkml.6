@@ -2,87 +2,96 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C64C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F391521B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:11:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P2U8JPxp"
+	by mail.kernel.org (Postfix) with ESMTP id 701DA2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:11:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549905095;
+	bh=ErKWt0KHUNUfeZ7+bpoLEWio5pL4SoqDtrH6zt0hoAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EO8VY+u++/KZYI3Hws7FjuT2I4b8tT6jW+BbBSPSqORZB7NjjuTLAejYm45UJCbA8
+	 cHyR1rbG/GMgvksS60dVas08M1MzP4qcU9FCaz4X8oU9lcvtOrj+Sfnu8uADaQdT4L
+	 FqG8hyXTSEb0wl40DciHT/icZRpJ7f69xofnLucg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbfBKRL2 (ORCPT
+        id S1730282AbfBKRLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:11:28 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33099 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfBKRL1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:11:27 -0500
-Received: by mail-lf1-f68.google.com with SMTP id q12so8389872lfm.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 09:11:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s0Ke2D+YQhyUTnHYmCz/UEaq2bJ6aXQCp0Q6/PcRnJc=;
-        b=P2U8JPxpfd1ZC1nnCAC7878wfYW5iOSdJ7BZrPQlgP1hmfq9YCb/OQhCjqze+rZ25R
-         +PReXxR/RT7BXDLgu2+qyY6oqvA9NK5NQuR/tac2OVjYDMDpiRlaiCuHmkHI6w4eSmQ9
-         PXxuoLuXsBXuot/ECFNQF9pZdrrw+0zYXrtZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s0Ke2D+YQhyUTnHYmCz/UEaq2bJ6aXQCp0Q6/PcRnJc=;
-        b=iuEoCbuyNucHhuDJyQCK3zhx4Y6SfKYCOYZzxXyBmLPF3VGs0nS3PP9kgPN13y7eJu
-         P8COLbj/cdKdfBTj5rarXk41tK+AH91/LaipLlf62ZpcW6kXz1zwmvDQyfN5DkeJUeH0
-         dSZQqCrXWOp5jbfFVUQvm5Lqh6Uv1gLFq6nKxn8GeEV/fWheeotAdSm8iv/EzK0tFox4
-         gYHxFyALJj3OC0oeMLdDClqeWw65KdPLXj0XFQMkblfymJT5294rF/Msz9DSd9eTpNRa
-         61uQ3+difYZLYn8pA+NevhW8avIYKm067Nk6JT1b0fne2axJ70Si4mH9uXWoI2Kfc5Ly
-         MQUw==
-X-Gm-Message-State: AHQUAub13jvUyZIWpdOG1slfR3llzKWReDdrcOM8LtcMnioNzzYgvJAB
-        eYm0JbyMa1xdsGppvPlHJ5/k/N+GNYs=
-X-Google-Smtp-Source: AHgI3IYMb4HEnNWmq/pUBVFgnI2E6cbQp0WeZR6CuPmO0DQi/3sD3/km9VceSH4g3luHN0B5CYRhjA==
-X-Received: by 2002:ac2:5230:: with SMTP id i16mr8984309lfl.63.1549905085349;
-        Mon, 11 Feb 2019 09:11:25 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id g67-v6sm1623832lje.62.2019.02.11.09.11.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 09:11:24 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id n23so8362095lfl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 09:11:24 -0800 (PST)
-X-Received: by 2002:a19:9813:: with SMTP id a19mr22653642lfe.103.1549905083849;
- Mon, 11 Feb 2019 09:11:23 -0800 (PST)
+        Mon, 11 Feb 2019 12:11:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbfBKRLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:11:33 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AEF22082F;
+        Mon, 11 Feb 2019 17:11:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549905092;
+        bh=ErKWt0KHUNUfeZ7+bpoLEWio5pL4SoqDtrH6zt0hoAE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CsxKV/i7T9vtLcIWEa2tG7tgyku9yP8c7f19f7n23n3BMc14Jg1x/WevcpgvcQsPa
+         j/WypSQaThcZ9biadz7gDKMi87jw4I048x17vdi/O9NED8utMA/tU12viM4gntdi8g
+         HHJf1roCfVGV80eDU6lzKYEfpMYT1nGD9KmEmlLQ=
+Date:   Mon, 11 Feb 2019 18:11:30 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     devel@driverdev.osuosl.org, tkjos@android.com,
+        linux-kernel@vger.kernel.org, arve@android.com, maco@android.com,
+        christian@brauner.io
+Subject: Re: [PATCH] staging: android: vsoc: Remove
+ VSOC_WAIT_FOR_INCOMING_INTERRUPT
+Message-ID: <20190211171130.GA13294@kroah.com>
+References: <20190211152602.GA5591@jordon-HP-15-Notebook-PC>
+ <20190211154044.GA16105@kroah.com>
+ <CAFqt6zYh2qxBKyOCH3xZmS_Jq5nU+nZyLhbmGOey4Y-VAk+ZoQ@mail.gmail.com>
+ <20190211155734.GA18078@kroah.com>
+ <CAFqt6zYTkUwU144+pzoLz7kcjQz=j9vQ-H2NLthA_3hOzCBfdw@mail.gmail.com>
 MIME-Version: 1.0
-References: <1549570542-2471-1-git-send-email-longman@redhat.com> <20190211083911.22f64578@lwn.net>
-In-Reply-To: <20190211083911.22f64578@lwn.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 11 Feb 2019 09:11:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgvHhe+3HSpLSZEQm5ToJW4AFiynMvYBiqu=2zBVZnt-A@mail.gmail.com>
-Message-ID: <CAHk-=wgvHhe+3HSpLSZEQm5ToJW4AFiynMvYBiqu=2zBVZnt-A@mail.gmail.com>
-Subject: Re: [PATCH v2] Documentation: Fix grammatical error in sysctl/fs.txt
- & clarify negative dentry
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Waiman Long <longman@redhat.com>, linux-doc@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zYTkUwU144+pzoLz7kcjQz=j9vQ-H2NLthA_3hOzCBfdw@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 7:39 AM Jonathan Corbet <corbet@lwn.net> wrote:
->
-> Linus, perhaps you'd like to take this one directly?
+On Mon, Feb 11, 2019 at 10:15:18PM +0530, Souptick Joarder wrote:
+> On Mon, Feb 11, 2019 at 9:27 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Feb 11, 2019 at 09:21:19PM +0530, Souptick Joarder wrote:
+> > > On Mon, Feb 11, 2019 at 9:10 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Mon, Feb 11, 2019 at 08:56:02PM +0530, Souptick Joarder wrote:
+> > > > > As mentioned in TODO list, Removed VSOC_WAIT_FOR_INCOMING_INTERRUPT
+> > > > > ioctl. This functionality has been superseded by the futex and is
+> > > > > there for legacy reasons.
+> > > > >
+> > > > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > > > ---
+> > > > >  drivers/staging/android/uapi/vsoc_shm.h | 7 -------
+> > > > >  drivers/staging/android/vsoc.c          | 5 -----
+> > > > >  2 files changed, 12 deletions(-)
+> > > >
+> > > > So userspace is all fixed up now and this ioctl can be dropped?  Any
+> > > > pointers to the userspace commit that did this?
+> > >
+> > > I am not sure about user space part.
+> >
+> > Then we can not just delete the ioctl :)
+> 
+> Agree, but where to verify the user space commit ?
+> Any pointer to the source code path ?
 
-Done.
+Please work with the android developers to solve this.  It should be in
+AOSP "somewhere" :(
 
-               Linus
+good luck,
+
+greg k-h
