@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94B8C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CAAC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E1020844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67BC0214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896618;
-	bh=mv/6vTgKDFrEt8HguQrdU77ikE13cOBfjLS1xmb09mw=;
+	s=default; t=1549896621;
+	bh=MvkvOAxkb9kz+j96JW32j7bOJG54hVi/c23BSyxELsQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ASXwUbXhfsxX2JrV+q1y3rBjFXJp0nXd1bnfP/TH5XRy3wj6dD5B+6hwgp3pp42xu
-	 /qOdr1/sUZ4VNwtfb2TqqECL5Iy9jDrx+42kY4EnS6ZLyrIbVCnRgOM5B6rXJgSCib
-	 2hxYqpekkC0rLBA6VsOR/Kx2LvDBfiOHLcRxDfJM=
+	b=zZc4WBf/ZoPkU/EzB3gxpq4gkLFO0eySjwjPtzJWuEF0xrym5RyO1CdJVVJNz5KYY
+	 /7KFpRCr3IIvxdpec3Yg/Kvr4UZDSBh7w9bnKFEfy6jBiq7HB59SEPCyfdvm/Ojxgf
+	 WWYGLyM/6+OGXJWhqqNF0kPKCijvP7rHDTK5LJSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388053AbfBKOuR (ORCPT
+        id S2388067AbfBKOuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35990 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388040AbfBKOuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:14 -0500
+        id S2388050AbfBKOuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 797E520844;
-        Mon, 11 Feb 2019 14:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EBED20855;
+        Mon, 11 Feb 2019 14:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896613;
-        bh=mv/6vTgKDFrEt8HguQrdU77ikE13cOBfjLS1xmb09mw=;
+        s=default; t=1549896615;
+        bh=MvkvOAxkb9kz+j96JW32j7bOJG54hVi/c23BSyxELsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ud1iCqLvomJL5DpZQXaJalndtSsjeaORI68kvNVOAL0BgyWXwMEtOB2HUZxPei2bA
-         sEi2QVZcYuTFFCf281XQBK0G2x+oWJiUcSE/PhuiaOSUFEUzjnKYyy4TxjDYvs3tOX
-         34zizyVOmsPHBs+Xrguv2YkvDcA3dBrDuQqe+hbw=
+        b=ZZI5fPFuyA2hAAAlQRzpbO3X7ffk7AqpO8MWl1PaTfOrLbhtbzq+gKCFp89qbxlz3
+         llB02D6v0kvP6ZKaoylI8Noz6YWuZ/ZjNkprHW1hhxU2PRaOQT044gf7ITPO8JWOk/
+         g2wT5RbebNaSfrMx3/5G8xl6Wc3b3UWdyiXqOs8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cheng Lin <cheng.lin130@zte.com.cn>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        stable@vger.kernel.org, Chuansheng Liu <chuansheng.liu@intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 242/313] proc/sysctl: fix return error for proc_doulongvec_minmax()
-Date:   Mon, 11 Feb 2019 15:18:42 +0100
-Message-Id: <20190211141909.586611262@linuxfoundation.org>
+Subject: [PATCH 4.19 243/313] kernel/hung_task.c: force console verbose before panic
+Date:   Mon, 11 Feb 2019 15:18:43 +0100
+Message-Id: <20190211141909.637942206@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -70,102 +70,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
+[ Upstream commit 168e06f7937d96c7222037d8a05565e8a6eb00fe ]
 
-If the number of input parameters is less than the total parameters, an
-EINVAL error will be returned.
+Based on commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks
+before panic"), we could get the call stack of hung task.
 
-For example, we use proc_doulongvec_minmax to pass up to two parameters
-with kern_table:
+However, if the console loglevel is not high, we still can not see the
+useful panic information in practice, and in most cases users don't set
+console loglevel to high level.
 
-{
-	.procname       = "monitor_signals",
-	.data           = &monitor_sigs,
-	.maxlen         = 2*sizeof(unsigned long),
-	.mode           = 0644,
-	.proc_handler   = proc_doulongvec_minmax,
-},
+This patch is to force console verbose before system panic, so that the
+real useful information can be seen in the console, instead of being
+like the following, which doesn't have hung task information.
 
-Reproduce:
+  INFO: task init:1 blocked for more than 120 seconds.
+        Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  Kernel panic - not syncing: hung_task: blocked tasks
+  CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  Call Trace:
+   dump_stack+0x4f/0x65
+   panic+0xde/0x231
+   watchdog+0x290/0x410
+   kthread+0x12c/0x150
+   ret_from_fork+0x35/0x40
+  reboot: panic mode set: p,w
+  Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
-When passing two parameters, it's work normal.  But passing only one
-parameter, an error "Invalid argument"(EINVAL) is returned.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  -bash: echo: write error: Invalid argument
-  [root@cl150 ~]# echo $?
-  1
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-The following is the result after apply this patch.  No error is
-returned when the number of input parameters is less than the total
-parameters.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# echo $?
-  0
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-There are three processing functions dealing with digital parameters,
-__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-
-This patch deals with __do_proc_doulongvec_minmax, just as
-__do_proc_dointvec does, adding a check for parameters 'left'.  In
-__do_proc_douintvec, its code implementation explicitly does not support
-multiple inputs.
-
-static int __do_proc_douintvec(...){
-         ...
-         /*
-          * Arrays are not supported, keep this simple. *Do not* add
-          * support for them.
-          */
-         if (vleft != 1) {
-                 *lenp = 0;
-                 return -EINVAL;
-         }
-         ...
-}
-
-So, just __do_proc_doulongvec_minmax has the problem.  And most use of
-proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-parameter.
-
-Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Link: http://lkml.kernel.org/r/27240C0AC20F114CBF8149A2696CBE4A6015B675@SHSMSX101.ccr.corp.intel.com
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sysctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/hung_task.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cc02050fd0c4..32dea29d05a0 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2767,6 +2767,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			bool neg;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index aa3c51f300aa..9eca2371f189 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -111,8 +111,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
  
- 			left -= proc_skip_spaces(&p);
-+			if (!left)
-+				break;
+ 	trace_sched_process_hang(t);
  
- 			err = proc_get_long(&p, &left, &val, &neg,
- 					     proc_wspace_sep,
+-	if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
+-		return;
++	if (sysctl_hung_task_panic) {
++		console_verbose();
++		hung_task_show_lock = true;
++		hung_task_call_panic = true;
++	}
+ 
+ 	/*
+ 	 * Ok, the task did not get scheduled for more than 2 minutes,
+@@ -134,11 +137,6 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	}
+ 
+ 	touch_nmi_watchdog();
+-
+-	if (sysctl_hung_task_panic) {
+-		hung_task_show_lock = true;
+-		hung_task_call_panic = true;
+-	}
+ }
+ 
+ /*
 -- 
 2.19.1
 
