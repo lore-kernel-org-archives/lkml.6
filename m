@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB62C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0D0C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9DED222B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311CC222B0
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897802;
-	bh=2EeXccDA+bjQbM4FqGCRclXSpL3YK3lm+dOVcBccs58=;
+	s=default; t=1549897805;
+	bh=hX/RIscfDwmbz+sACVC6E6Xz5vIqRnHzyCWIf7AgjNA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dZOwX7Rmi01GfN/YKPEHwYgqo3jhOWvxq3ikPKFTJKxv82j64KxWFCpwAzMXnn4/x
-	 5YC80whNqTAuupK7p0j+kucOprh5H9qg2VFg2QBaLIDrN3j3S2I5x1QhvokTdyzPfZ
-	 SWq2pAh/VBirhT50i+E0vPLbesbTfYYD6nMFF7Ik=
+	b=t0vX/Y8nMTOxRYB/4KUTBgfDNlSkv+adAFuxwfEIiKLQwHglo9/g+V1fsxX4yozMB
+	 lLjD+xCcgthvGAf2bJza3cIxMZfAbAowNAfaWYurL12YGdymbeAIMKKpYD8NRYZcxq
+	 KXab6Ws2XNANMAm9iSh0bq2yad1NxYWgNzV1W99Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403928AbfBKPKA (ORCPT
+        id S2403948AbfBKPKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403805AbfBKPJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:09:57 -0500
+        id S2403805AbfBKPKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F25B8222BA;
-        Mon, 11 Feb 2019 15:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C76F222A7;
+        Mon, 11 Feb 2019 15:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897797;
-        bh=2EeXccDA+bjQbM4FqGCRclXSpL3YK3lm+dOVcBccs58=;
+        s=default; t=1549897800;
+        bh=hX/RIscfDwmbz+sACVC6E6Xz5vIqRnHzyCWIf7AgjNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ypBDjPuUiwJhlQ7ifHcqaj7gUcFX8umAVFBcFy/rPhC4kWAlqWAArEuOChxDLgLmz
-         7nmpROszEd806PTXOLKGAyaYUoMxHRnukhI6bQ0WvPSiXu+LvxVIvw5M4ZLniwv/uj
-         9UeNLXUXKTilEtXsnFHoETIQ7gmT6fRKWJ2SnO/U=
+        b=IuM78x4bfQpuHIt3yWVrTla0ofvfZKbrb6rwAm9TdoRkDRmG806/HqhEJlvA2KBU3
+         4NIuhIo/axYu+6UmpLMTQVjW4qhnJLNlcV2nSwcSNV7TgDG8wrvv5DtfDTS9d2RF9y
+         EC0tcL88IPXdeITDMNjFRVH+4sSupS2l38RSfg2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 088/137] um: Avoid marking pages with "changed protection"
-Date:   Mon, 11 Feb 2019 15:19:29 +0100
-Message-Id: <20190211141820.196104764@linuxfoundation.org>
+Subject: [PATCH 4.9 079/137] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
+Date:   Mon, 11 Feb 2019 15:19:20 +0100
+Message-Id: <20190211141819.324932607@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,54 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
+[ Upstream commit e87555e550cef4941579cd879759a7c0dee24e68 ]
 
-Changing protection is a very high cost operation in UML
-because in addition to an extra syscall it also interrupts
-mmap merge sequences generated by the tlb.
+AMD doesn't seem to implement MSR_IA32_MCG_EXT_CTL and svm code in kvm
+knows nothing about it, however, this MSR is among emulated_msrs and
+thus returned with KVM_GET_MSR_INDEX_LIST. The consequent KVM_GET_MSRS,
+of course, fails.
 
-While the condition is not particularly common it is worth
-avoiding.
+Report the MSR as unsupported to not confuse userspace.
 
-Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/include/asm/pgtable.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
-index 7485398d0737..9c04562310b3 100644
---- a/arch/um/include/asm/pgtable.h
-+++ b/arch/um/include/asm/pgtable.h
-@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index fa1b0e3c8a06..c8efacf2e65f 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5223,6 +5223,13 @@ static bool svm_cpu_has_accelerated_tpr(void)
  
- static inline pte_t pte_wrprotect(pte_t pte)
- { 
--	pte_clear_bits(pte, _PAGE_RW);
-+	if (likely(pte_get_bits(pte, _PAGE_RW)))
-+		pte_clear_bits(pte, _PAGE_RW);
-+	else
-+		return pte;
- 	return(pte_mknewprot(pte)); 
- }
- 
- static inline pte_t pte_mkread(pte_t pte)
- { 
-+	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
-+		return pte;
- 	pte_set_bits(pte, _PAGE_USER);
- 	return(pte_mknewprot(pte)); 
- }
-@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
- 
- static inline pte_t pte_mkwrite(pte_t pte)	
+ static bool svm_has_emulated_msr(int index)
  {
-+	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
-+		return pte;
- 	pte_set_bits(pte, _PAGE_RW);
- 	return(pte_mknewprot(pte)); 
++	switch (index) {
++	case MSR_IA32_MCG_EXT_CTL:
++		return false;
++	default:
++		break;
++	}
++
+ 	return true;
  }
+ 
 -- 
 2.19.1
 
