@@ -2,134 +2,286 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548C5C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C34C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F0CB21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:09:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="epj4N+1v"
+	by mail.kernel.org (Postfix) with ESMTP id 791A621B69
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbfBKSJa (ORCPT
+        id S1731615AbfBKSJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:09:30 -0500
-Received: from mail-eopbgr1310099.outbound.protection.outlook.com ([40.107.131.99]:24123
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727007AbfBKSJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:09:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ez/0OYxRn7GpMjevm6Eno1VnfKSnvNq8jg5Tscd8Qmg=;
- b=epj4N+1vwpmnpa5V+v+grGhE/mAGIGsKvfINEzxn+/ffiKnWxVDXAiJvk/NQEtin2ahtu+6OskO330AYpLnA6Q9XyzbMCIdLElWkF3sdlVcYLfczvkEMElAPmU+HA0f/7JljB3WLsEc65kjcaGxuSTmraxvHqzxhRoUr7Klsjv4=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0155.APCP153.PROD.OUTLOOK.COM (10.170.189.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.1; Mon, 11 Feb 2019 18:09:09 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1643.004; Mon, 11 Feb 2019
- 18:09:09 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Sasha Levin <sashal@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] PCI: hv: Add hv_pci_remove_slots() when we unload the
- driver
-Thread-Topic: [PATCH] PCI: hv: Add hv_pci_remove_slots() when we unload the
- driver
-Thread-Index: AdS/JKy4gHBOTZqYQrqpJy5ySOaIggDCjMYAAAE5viA=
-Date:   Mon, 11 Feb 2019 18:09:08 +0000
-Message-ID: <PU1P153MB0169377DB326432229381E95BF640@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <PU1P153MB0169F06340FC519C2802C5CFBF680@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190211172608.E873D2229F@mail.kernel.org>
-In-Reply-To: <20190211172608.E873D2229F@mail.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-11T18:09:06.9374675Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=ee53a6f0-00f3-4af0-ba31-31c50060a84f;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [2601:600:a280:1760:5896:cf8a:cefe:fd7]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0155;6:9gREU8nn65fygcmZBPbZx9FR0PxUWmZupLFdsiZMxcQebCUvPnY4YQsuaN1GgqB0/eAknyTboxdRnmPJ4JawjzSPd22gctsYDNEENmvH1n3V7N+76FBjYUrrl/KtQqSChIQFasxHyKrwDK6IBlAzQS2r9GMxwsoNMS1y3BuZgA41vUGIqP93mEmFEV71MS0sOR9LhNwir1pgtuFKUZCctWSTr43wNer/xxQFEMlVYrgXboVQ+iwVE5/VM8YrhcYLquvYWvstkLwWLZ4XKc4txVk+swoVsX/GLBaU4P8xQYn+eVEOp61FnB+wZtVEG/nsVkFmxeRZuItb8qo/4cMrHVBtzxIXhtrdhB7euVp78UXwDwLsKbHH1Cekqd+RAHt7Tje4uBUV/FO7CU1xiUO8Fg0sUPwD7QBt7zpkIShOxcHgBredaq4LCPiOMWx68STU0zaKblAHEqIp90JwBQSZbg==;5:+bQ17ddgd0Lp8OMrJ4StleLUly0eGvVryb6Qx7d/eLZ+G+EysamWX+0AgFCrK1PawWRxV0+8zHQTOFYV2RoKQ2jva6uzcu5s8B7sFNo5a+nBPsGo6Q4WDaM80/AWcNOUmYuARnASKP+IWskLpvYyqIBAYrEt87mz5mxFDdL7CE4t6FvryzO36rj35MyDSrgWbNaFMQm9D+GvtMIc9zxNfg==;7:5zDgm7b3j8VlJsin4nnWr6QZm+EMqvvxp2SxTazwe+LO9ZB9VdU/oul+ZJWJ+HqrUesizOk1RSR67P3bBrIxsQgdVyFT+G5a2SVOQSe86JieKT6ihz4+fuqR8/nLmtpUx803MdhgLOWgrnfG2aukgw==
-x-ms-office365-filtering-correlation-id: 0fa626cd-69dc-4c5b-5348-08d6904c04b1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:PU1P153MB0155;
-x-ms-traffictypediagnostic: PU1P153MB0155:
-x-microsoft-antispam-prvs: <PU1P153MB0155F05E52F24E3CB2E8568BBF640@PU1P153MB0155.APCP153.PROD.OUTLOOK.COM>
-x-forefront-prvs: 0945B0CC72
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39860400002)(136003)(366004)(396003)(199004)(189003)(40224003)(305945005)(7736002)(8936002)(86362001)(76176011)(106356001)(105586002)(2906002)(33656002)(6116002)(110136005)(4744005)(86612001)(53936002)(71190400001)(71200400001)(10090500001)(316002)(229853002)(14454004)(8990500004)(97736004)(99286004)(6436002)(7696005)(6246003)(478600001)(4326008)(186003)(68736007)(6346003)(11346002)(74316002)(486006)(54906003)(25786009)(53546011)(81156014)(81166006)(55016002)(8676002)(9686003)(102836004)(22452003)(46003)(256004)(6506007)(446003)(476003)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0155;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NYsQSKjKIGb7YYAJMX7JKn/uzjb96rb7+p/vZnmuwj/YqqwE5tu+AwRPkR/NHvZNNyfwqntdMY+0IO23ZfbFH6IWt6ZePtFymvAKIP+YC0Q81NqAOtJsJ0X9LqK2xrWKWfCo2XcuL1GYXLS/ZASktrSgGUT1Y9zqoAHqTwuUWJ27peVbJMaIYb5TCOqwNrjP1vICwF95jN1eg2cwCkTfkeRD5YB5EsNopEMTv7Xr633Yv7OjhETyyRtSnSFy+a7jfNm7xn3d82kT/3Ue4Std9D0O/dgXtrxhGDwwI+S0/CNoCTqd+gIbe8vcVWEbbhyNOmG9l7soSvzXfgeodgb9TSDOkPMSOo3B4fHDI5A2/arpvt9bQNnwzdPHNTNeuwborsXhH+hFoPzE3g9q2z8qluI4aiPbBi3JVQQC7MQKDVA=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 11 Feb 2019 13:09:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48350 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727007AbfBKSJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:09:49 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 74A21A82C;
+        Mon, 11 Feb 2019 18:09:48 +0000 (UTC)
+Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF3D560C6B;
+        Mon, 11 Feb 2019 18:09:42 +0000 (UTC)
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
+        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+ <20190204181558.12095.83484.stgit@localhost.localdomain>
+ <20190209195325-mutt-send-email-mst@kernel.org>
+ <7fcb61d6-64f0-f3ae-5e32-0e9f587fdd49@redhat.com>
+ <20190211091623-mutt-send-email-mst@kernel.org>
+ <ac61d035-7c7b-bfec-c78b-b9387c40d3ea@redhat.com>
+ <20190211123815-mutt-send-email-mst@kernel.org>
+Organization: Red Hat Inc,
+Message-ID: <ea3ab38d-36e7-d2fa-6ebf-df6c048e17e0@redhat.com>
+Date:   Mon, 11 Feb 2019 13:09:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fa626cd-69dc-4c5b-5348-08d6904c04b1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 18:09:08.6780
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0155
+In-Reply-To: <20190211123815-mutt-send-email-mst@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="c5ocnaYNnPDVZBKYZaAjEHZbi4GrRb2Dg"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 11 Feb 2019 18:09:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Sasha Levin <sashal@kernel.org>
-> Sent: Monday, February 11, 2019 9:26 AM
-> To: Sasha Levin <sashal@kernel.org>; Dexuan Cui <decui@microsoft.com>;
-> Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: linux-kernel@vger.kernel.org; stable@vger.kernel.org; Stephen Hemming=
-er
-> <sthemmin@microsoft.com>; stable@vger.kernel.org
-> Subject: Re: [PATCH] PCI: hv: Add hv_pci_remove_slots() when we unload th=
-e
-> driver
->=20
-> Hi,
->=20
-> [This is an automated email]
->=20
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: a15f2c08c708 PCI: hv: support reporting serial number as s=
-lot
-> information.
->=20
-> The bot has tested the following trees: v4.20.7, v4.19.20, v4.14.98.
->=20
-> v4.20.7: Build OK!
-> v4.19.20: Build OK!
-> v4.14.98: Failed to apply! Possible dependencies:
->     Unable to calculate
-> How should we proceed with this patch?
-> Sasha
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--c5ocnaYNnPDVZBKYZaAjEHZbi4GrRb2Dg
+Content-Type: multipart/mixed; boundary="d7qNngcBe97AVwp8UkiKrXYgbgVRREpbY";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, rkrcmar@redhat.com,
+ alexander.h.duyck@linux.intel.com, x86@kernel.org, mingo@redhat.com,
+ bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
+ akpm@linux-foundation.org
+Message-ID: <ea3ab38d-36e7-d2fa-6ebf-df6c048e17e0@redhat.com>
+Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
 
-In v4.14.y, the file name is drivers/pci/host/pci-hyperv.c rather than
-drivers/pci/controller/pci-hyperv.c. After I changed the folder name in the=
- patch,
-I could "git am" it cleanly on v4.14.98.
+--d7qNngcBe97AVwp8UkiKrXYgbgVRREpbY
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
--- Dexuan
+On 2/11/19 12:41 PM, Michael S. Tsirkin wrote:
+> On Mon, Feb 11, 2019 at 11:24:02AM -0500, Nitesh Narayan Lal wrote:
+>> On 2/11/19 9:17 AM, Michael S. Tsirkin wrote:
+>>> On Mon, Feb 11, 2019 at 08:30:03AM -0500, Nitesh Narayan Lal wrote:
+>>>> On 2/9/19 7:57 PM, Michael S. Tsirkin wrote:
+>>>>> On Mon, Feb 04, 2019 at 10:15:58AM -0800, Alexander Duyck wrote:
+>>>>>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>>>>>
+>>>>>> Because the implementation was limiting itself to only providing h=
+ints on
+>>>>>> pages huge TLB order sized or larger we introduced the possibility=
+ for free
+>>>>>> pages to slip past us because they are freed as something less the=
+n
+>>>>>> huge TLB in size and aggregated with buddies later.
+>>>>>>
+>>>>>> To address that I am adding a new call arch_merge_page which is ca=
+lled
+>>>>>> after __free_one_page has merged a pair of pages to create a highe=
+r order
+>>>>>> page. By doing this I am able to fill the gap and provide full cov=
+erage for
+>>>>>> all of the pages huge TLB order or larger.
+>>>>>>
+>>>>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>=
+
+>>>>> Looks like this will be helpful whenever active free page
+>>>>> hints are added. So I think it's a good idea to
+>>>>> add a hook.
+>>>>>
+>>>>> However, could you split adding the hook to a separate
+>>>>> patch from the KVM hypercall based implementation?
+>>>>>
+>>>>> Then e.g. Nilal's patches could reuse it too.
+>>>> With the current design of my patch-set, if I use this hook to repor=
+t
+>>>> free pages. I will end up making redundant hints for the same pfns.
+>>>>
+>>>> This is because the pages once freed by the host, are returned back =
+to
+>>>> the buddy.
+>>> Suggestions on how you'd like to fix this? You do need this if
+>>> you introduce a size cut-off right?
+>> I do, there are two ways to go about it.
+>>
+>> One is to=C2=A0 use this and have a flag in the page structure indicat=
+ing
+>> whether that page has been freed/used or not.
+> Not sure what do you mean. The refcount does this right?
+I meant a flag using which I could determine whether a PFN has been
+already freed by the host or not. This is to avoid repetitive free.
+>
+>> Though I am not sure if
+>> this will be acceptable upstream.
+>> Second is to find another place to invoke guest_free_page() post buddy=
+
+>> merging.
+> Might be easier.
+>
+>>>>>> ---
+>>>>>>  arch/x86/include/asm/page.h |   12 ++++++++++++
+>>>>>>  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
+>>>>>>  include/linux/gfp.h         |    4 ++++
+>>>>>>  mm/page_alloc.c             |    2 ++
+>>>>>>  4 files changed, 46 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/pa=
+ge.h
+>>>>>> index 4487ad7a3385..9540a97c9997 100644
+>>>>>> --- a/arch/x86/include/asm/page.h
+>>>>>> +++ b/arch/x86/include/asm/page.h
+>>>>>> @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *=
+page, unsigned int order)
+>>>>>>  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+>>>>>>  		__arch_free_page(page, order);
+>>>>>>  }
+>>>>>> +
+>>>>>> +struct zone;
+>>>>>> +
+>>>>>> +#define HAVE_ARCH_MERGE_PAGE
+>>>>>> +void __arch_merge_page(struct zone *zone, struct page *page,
+>>>>>> +		       unsigned int order);
+>>>>>> +static inline void arch_merge_page(struct zone *zone, struct page=
+ *page,
+>>>>>> +				   unsigned int order)
+>>>>>> +{
+>>>>>> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+>>>>>> +		__arch_merge_page(zone, page, order);
+>>>>>> +}
+>>>>>>  #endif
+>>>>>> =20
+>>>>>>  #include <linux/range.h>
+>>>>>> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+>>>>>> index 09c91641c36c..957bb4f427bb 100644
+>>>>>> --- a/arch/x86/kernel/kvm.c
+>>>>>> +++ b/arch/x86/kernel/kvm.c
+>>>>>> @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsi=
+gned int order)
+>>>>>>  		       PAGE_SIZE << order);
+>>>>>>  }
+>>>>>> =20
+>>>>>> +void __arch_merge_page(struct zone *zone, struct page *page,
+>>>>>> +		       unsigned int order)
+>>>>>> +{
+>>>>>> +	/*
+>>>>>> +	 * The merging logic has merged a set of buddies up to the
+>>>>>> +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, ta=
+ke
+>>>>>> +	 * advantage of this moment to notify the hypervisor of the free=
+
+>>>>>> +	 * memory.
+>>>>>> +	 */
+>>>>>> +	if (order !=3D KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
+>>>>>> +		return;
+>>>>>> +
+>>>>>> +	/*
+>>>>>> +	 * Drop zone lock while processing the hypercall. This
+>>>>>> +	 * should be safe as the page has not yet been added
+>>>>>> +	 * to the buddy list as of yet and all the pages that
+>>>>>> +	 * were merged have had their buddy/guard flags cleared
+>>>>>> +	 * and their order reset to 0.
+>>>>>> +	 */
+>>>>>> +	spin_unlock(&zone->lock);
+>>>>>> +
+>>>>>> +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
+>>>>>> +		       PAGE_SIZE << order);
+>>>>>> +
+>>>>>> +	/* reacquire lock and resume freeing memory */
+>>>>>> +	spin_lock(&zone->lock);
+>>>>>> +}
+>>>>>> +
+>>>>>>  #ifdef CONFIG_PARAVIRT_SPINLOCKS
+>>>>>> =20
+>>>>>>  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
+>>>>>> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+>>>>>> index fdab7de7490d..4746d5560193 100644
+>>>>>> --- a/include/linux/gfp.h
+>>>>>> +++ b/include/linux/gfp.h
+>>>>>> @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(=
+int nid, gfp_t flags)
+>>>>>>  #ifndef HAVE_ARCH_FREE_PAGE
+>>>>>>  static inline void arch_free_page(struct page *page, int order) {=
+ }
+>>>>>>  #endif
+>>>>>> +#ifndef HAVE_ARCH_MERGE_PAGE
+>>>>>> +static inline void
+>>>>>> +arch_merge_page(struct zone *zone, struct page *page, int order) =
+{ }
+>>>>>> +#endif
+>>>>>>  #ifndef HAVE_ARCH_ALLOC_PAGE
+>>>>>>  static inline void arch_alloc_page(struct page *page, int order) =
+{ }
+>>>>>>  #endif
+>>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>>>> index c954f8c1fbc4..7a1309b0b7c5 100644
+>>>>>> --- a/mm/page_alloc.c
+>>>>>> +++ b/mm/page_alloc.c
+>>>>>> @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page=
+ *page,
+>>>>>>  		page =3D page + (combined_pfn - pfn);
+>>>>>>  		pfn =3D combined_pfn;
+>>>>>>  		order++;
+>>>>>> +
+>>>>>> +		arch_merge_page(zone, page, order);
+>>>>>>  	}
+>>>>>>  	if (max_order < MAX_ORDER) {
+>>>>>>  		/* If we are here, it means order is >=3D pageblock_order.
+>>>> --=20
+>>>> Regards
+>>>> Nitesh
+>>>>
+>>>
+>> --=20
+>> Regards
+>> Nitesh
+>>
+>
+>
+--=20
+Regards
+Nitesh
+
+
+--d7qNngcBe97AVwp8UkiKrXYgbgVRREpbY--
+
+--c5ocnaYNnPDVZBKYZaAjEHZbi4GrRb2Dg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxhumQACgkQo4ZA3AYy
+oznUwQ/+Kqi1R0b3vCG91aTEPof4m7+/hWZAKTAtsmxfAFcIF51vEft0suA8xKZZ
+qBfrn4KmUlCDMEEdkwuY1G2HwuKvo4KMxXVnmIWfl6PicT3S3Hi3sjItPB08a4ou
+bINoBIjG3tawHsuEhKGWcLr0wc6uD3gcZhJWTwqLktFRbxLW95uUGe8pJTJibLIF
+zFZcRczMONVkhScgJZ5oUnmvUr8nRPlCVPlRJPNu3rkzP8ks55Af5jQdhxWvhFeS
+xf6DdsOzLcqjUAX7FMt5sUeiSv7pdl+8+8z91qDfYjAC3B/xLuQ6Q8SoMO2CR2AY
+hiE31mJMq0WLnsJqPHPhT6hBSYd/EuyhMGu0NYFjjGTuvI/CgfJ2wOYkQpb/dBX6
+wsY/O/OnRb6fPt3rNW3KhT4ASV/+TPVIu70UK1EAVJER72e7pIZAcyg6R5BiMOqH
+T+X8d4WJBpN9Kp5KQBpo3I4iTdSSGqpwWxhOMpmGveZpb7cpZXVykECYHpDKQdAE
+PCnJfBi/q53LV4emdQOWeGZcjJwp8SE6ZfkSw7T1cnVZ1HcfDwxMHVgGeE5085ZT
+JbDgkJI82pGJ778gOKryt0vraR07xgXdgtJv9jJDCPfOVm7oyT5Oh8iWwSWVeHPI
+Li7uZYIYRIDpdUrIVQ8vitiq0YYNAmPBpU/1uinRE+gm2jLhogQ=
+=3dJa
+-----END PGP SIGNATURE-----
+
+--c5ocnaYNnPDVZBKYZaAjEHZbi4GrRb2Dg--
