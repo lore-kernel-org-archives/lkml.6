@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D74C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A870C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 160C42081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B0592081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896370;
-	bh=l834Psl9nZOCjPUyC6DZ1YnQQzDj4egt9fCRUFEOrjM=;
+	s=default; t=1549896376;
+	bh=aBzi7S06w8ZeQXwM2L9PCS/POdxfCPZw/GkibACfN7g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Qu+ilDoAFMpYNOFhKjxc/sYmMia6vDS+0dnV4T+xsfiwUCDF+LlmaBgJN+MVRTQkx
-	 2Wyjg/cWkaus5olnTxm4//URO/5ZQ8EN8BDz/qwZiodo7e1jFGgLJ3SZ9LuBjlpWar
-	 BDo5MNdwOfJ6iXOzBHX5D5M9SfJDgqTLhFx0ewig=
+	b=X5Gg0Ut8ItwMjGCyKDn2wq7pD/1Qtri0DgkSGPGGx7t7vfrfNV+H9ltcRRAT5DUIi
+	 OqQuqvBznuUfwA5a0KruuPRQNdoeBPqSg3OyD2DaojZmdA763Yg4krNs2nsvaPpbXg
+	 zIJwY+2twAVFXOPuvuuwiPHvdNlcaK15xcNipMus=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733174AbfBKOqI (ORCPT
+        id S1733191AbfBKOqO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:46:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59212 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:46:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733165AbfBKOqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:46:04 -0500
+        id S1733170AbfBKOqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:46:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C853206BA;
-        Mon, 11 Feb 2019 14:46:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE4E820700;
+        Mon, 11 Feb 2019 14:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896363;
-        bh=l834Psl9nZOCjPUyC6DZ1YnQQzDj4egt9fCRUFEOrjM=;
+        s=default; t=1549896366;
+        bh=aBzi7S06w8ZeQXwM2L9PCS/POdxfCPZw/GkibACfN7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pSi9jT7hvDJRM9Nnja3PTz2uFHXGY+P5ceCRwIQX9hMwNNE4rH9/ih+Zb9iJriK2v
-         Mnask1NLWoxSdDebza4XBuHQzGg4spn+96Lktz104C23pH+29VvZi2uZaXK5MDgGEH
-         nNB8I4YvrbWyUzOJBKwF3bDaGoFyPfxTtDtW5Q1Y=
+        b=YvDWBEk9qFpAl1lvwMeyt0k9urBsR8ArXx6Kw2sjAi8V2x/o9lTmbSgMyFTgga3Bc
+         elZ/0LxYTXsc5KC463eNjLuK9GJTPjCRj4UsuXbKeiedlJyl9F8KAg5AyPZwNfNOso
+         +vzLlAgQJ620DttvM8nnT5MwnCZfJ0cmFnIu7d8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Zhen Lei <thunder.leizhen@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 120/313] iommu/arm-smmu-v3: Avoid memory corruption from Hisilicon MSI payloads
-Date:   Mon, 11 Feb 2019 15:16:40 +0100
-Message-Id: <20190211141901.833693497@linuxfoundation.org>
+Subject: [PATCH 4.19 153/313] btrfs: reada: reorder dev-replace locks before radix tree preload
+Date:   Mon, 11 Feb 2019 15:17:13 +0100
+Message-Id: <20190211141903.761515995@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,52 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 84a9a75774961612d0c7dd34a1777e8f98a65abd ]
+[ Upstream commit ceb21a8db48559fd0809e03c4df9eb37743d9170 ]
 
-The GITS_TRANSLATER MMIO doorbell register in the ITS hardware is
-architected to be 4 bytes in size, yet on hi1620 and earlier, Hisilicon
-have allocated the adjacent 4 bytes to carry some IMPDEF sideband
-information which results in an 8-byte MSI payload being delivered when
-signalling an interrupt:
+The device-replace read lock is going to use rw semaphore in followup
+commits. The semaphore might sleep which is not possible in the radix
+tree preload section. The lock nesting is now:
 
-MSIAddr:
-	 |----4bytes----|----4bytes----|
-	 |    MSIData   |    IMPDEF    |
+* device replace
+  * radix tree preload
+    * readahead spinlock
 
-This poses no problem for the ITS hardware because the adjacent 4 bytes
-are reserved in the memory map. However, when delivering MSIs to memory,
-as we do in the SMMUv3 driver for signalling the completion of a SYNC
-command, the extended payload will corrupt the 4 bytes adjacent to the
-"sync_count" member in struct arm_smmu_device. Fortunately, the current
-layout allocates these bytes to padding, but this is fragile and we
-should make this explicit.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-[will: Rewrote commit message and comment]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/btrfs/reada.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 3e02aace38b1..4afb9cb99ea3 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -586,7 +586,11 @@ struct arm_smmu_device {
+diff --git a/fs/btrfs/reada.c b/fs/btrfs/reada.c
+index dec14b739b10..6f81f3e88b6d 100644
+--- a/fs/btrfs/reada.c
++++ b/fs/btrfs/reada.c
+@@ -376,26 +376,28 @@ static struct reada_extent *reada_find_extent(struct btrfs_fs_info *fs_info,
+ 		goto error;
+ 	}
  
- 	struct arm_smmu_strtab_cfg	strtab_cfg;
++	/* Insert extent in reada tree + all per-device trees, all or nothing */
++	btrfs_dev_replace_read_lock(&fs_info->dev_replace);
+ 	ret = radix_tree_preload(GFP_KERNEL);
+-	if (ret)
++	if (ret) {
++		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
+ 		goto error;
++	}
  
--	u32				sync_count;
-+	/* Hi16xx adds an extra 32 bits of goodness to its MSI payload */
-+	union {
-+		u32			sync_count;
-+		u64			padding;
-+	};
- 
- 	/* IOMMU core code handle */
- 	struct iommu_device		iommu;
+-	/* insert extent in reada_tree + all per-device trees, all or nothing */
+-	btrfs_dev_replace_read_lock(&fs_info->dev_replace);
+ 	spin_lock(&fs_info->reada_lock);
+ 	ret = radix_tree_insert(&fs_info->reada_tree, index, re);
+ 	if (ret == -EEXIST) {
+ 		re_exist = radix_tree_lookup(&fs_info->reada_tree, index);
+ 		re_exist->refcnt++;
+ 		spin_unlock(&fs_info->reada_lock);
+-		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
+ 		radix_tree_preload_end();
++		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
+ 		goto error;
+ 	}
+ 	if (ret) {
+ 		spin_unlock(&fs_info->reada_lock);
+-		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
+ 		radix_tree_preload_end();
++		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
+ 		goto error;
+ 	}
+ 	radix_tree_preload_end();
 -- 
 2.19.1
 
