@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9C9C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC7AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4FA20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ECF0222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894964;
-	bh=kfx7zmtPJCmPyN/tCf5TJdPo1pBtC/LoCzcRNNT83xI=;
+	s=default; t=1549894970;
+	bh=mKXOuhyOWV/gQ49PzzIUsRuW6alb92Gq6f2fIqI79m0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lvTbbeti3+GKTpyfgngymK55LexkauUEN11QP3+QDISvlPHdSsfBS6KOTu8EkrpJ/
-	 VxfzqN7OT8jNtIJZc5a6mhJ9LDnvwT4vJohz6ZOHwllrx3dmYkH1W9fxHbjMHbVEtU
-	 t/Hp9QA3bB3C2s7gakSRxJSpNWFwox07vNQzOgsk=
+	b=co2uUiLNfNSnwPvEmg6L21iiiLfuKNMzRd4pJNjngC35IamWiou50h+zS8f78T2Hd
+	 xZddJLVijQvQqmE/oJX17tvWb0flT6MLCfK5QtehG2F1CtZuBJoDVTOem/RrkeewLl
+	 P9GubDLpcr3gqe8UEW+Mm2V9LfSOhddDgT+x/xZ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfBKOWn (ORCPT
+        id S1728861AbfBKOWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:22:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55638 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:22:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbfBKOWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:22:39 -0500
+        id S1728818AbfBKOWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:22:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D139E20838;
-        Mon, 11 Feb 2019 14:22:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B97E2222A1;
+        Mon, 11 Feb 2019 14:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894959;
-        bh=kfx7zmtPJCmPyN/tCf5TJdPo1pBtC/LoCzcRNNT83xI=;
+        s=default; t=1549894965;
+        bh=mKXOuhyOWV/gQ49PzzIUsRuW6alb92Gq6f2fIqI79m0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bkC65y1d8y0f2KVTehqVJ1qjm39TRqMvAMzFU0LbTEbzJvH/c2NZO7KXXrXtIbVLb
-         T8N9Y3RKIDQnSyz7ln7EZ9YGyq+FEkrwUWn90hzrQNgUHoN9eckQ79WtL4Pxm6arFp
-         Hes1SpDtkc7zVGYs1TqwImsH02l0bVudyBSNV+N8=
+        b=zGavbFGEhMQH3hwCQGnsRQp7OFmbPPEwqjjjxY9bT48NDNfA+5E7swzgsV7rx/z57
+         3AXd4RpfQwolT7MT/n4pjJO5LKiGge3aczH9PrtFYwKc2HWmTq4fJds36qKHTbq2ci
+         u8ANI3IzgjTl03Dq3/+Ln95bGt+AC14xozmgql88=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexei Avshalom Lazar <ailizaro@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
+        stable@vger.kernel.org, Rakesh Pillai <pillair@qti.qualcomm.com>,
+        Govind Singh <govinds@qti.qualcomm.com>,
+        Brian Norris <briannorris@chromium.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 015/352] wil6210: fix reset flow for Talyn-mb
-Date:   Mon, 11 Feb 2019 15:14:02 +0100
-Message-Id: <20190211141847.365632431@linuxfoundation.org>
+Subject: [PATCH 4.20 017/352] ath10k: assign n_cipher_suites for WCN3990
+Date:   Mon, 11 Feb 2019 15:14:04 +0100
+Message-Id: <20190211141847.474232906@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,46 +68,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d083b2e2b7db5cca1791643d036e6597af27f49b ]
+[ Upstream commit 2bd345cd2bfc0bd44528896313c0b45f087bdf67 ]
 
-With current reset flow, Talyn sometimes get stuck causing PCIe
-enumeration to fail. Fix this by removing some reset flow operations
-that are not relevant for Talyn.
-Setting bit 15 in RGF_HP_CTRL is WBE specific and is not in use for
-all wil6210 devices.
-For Sparrow, BIT_HPAL_PERST_FROM_PAD and BIT_CAR_PERST_RST were set
-as a WA an HW issue.
+Commit 2ea9f12cefe4 ("ath10k: add new cipher suite support") added a new
+n_cipher_suites HW param with a fallback value and a warning log. Commit
+03a72288c546 ("ath10k: wmi: add hw params entry for wcn3990") later
+added WCN3990 HW entries, but it missed the n_cipher_suites.
 
-Signed-off-by: Alexei Avshalom Lazar <ailizaro@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
+Rather than seeing this warning every boot
+
+  ath10k_snoc 18800000.wifi: invalid hw_params.n_cipher_suites 0
+
+let's provide the appropriate value.
+
+Cc: Rakesh Pillai <pillair@qti.qualcomm.com>
+Cc: Govind Singh <govinds@qti.qualcomm.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/main.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
-index 398900a1c29e..c54b008996ee 100644
---- a/drivers/net/wireless/ath/wil6210/main.c
-+++ b/drivers/net/wireless/ath/wil6210/main.c
-@@ -998,10 +998,13 @@ static int wil_target_reset(struct wil6210_priv *wil, int no_flash)
- 
- 	wil_dbg_misc(wil, "Resetting \"%s\"...\n", wil->hw_name);
- 
--	/* Clear MAC link up */
--	wil_s(wil, RGF_HP_CTRL, BIT(15));
--	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_HPAL_PERST_FROM_PAD);
--	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
-+	if (wil->hw_version < HW_VER_TALYN) {
-+		/* Clear MAC link up */
-+		wil_s(wil, RGF_HP_CTRL, BIT(15));
-+		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0,
-+		      BIT_HPAL_PERST_FROM_PAD);
-+		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
-+	}
- 
- 	wil_halt_cpu(wil);
- 
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index d210b0ed59be..59fdda67f89f 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -561,6 +561,7 @@ static const struct ath10k_hw_params ath10k_hw_params_list[] = {
+ 		.hw_ops = &wcn3990_ops,
+ 		.decap_align_bytes = 1,
+ 		.num_peers = TARGET_HL_10_TLV_NUM_PEERS,
++		.n_cipher_suites = 8,
+ 		.ast_skid_limit = TARGET_HL_10_TLV_AST_SKID_LIMIT,
+ 		.num_wds_entries = TARGET_HL_10_TLV_NUM_WDS_ENTRIES,
+ 		.target_64bit = true,
 -- 
 2.19.1
 
