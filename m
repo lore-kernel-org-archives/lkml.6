@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF96C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A6EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0214320838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFB7021855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895219;
-	bh=Q12YCwGIfeS5gemNCB97bulDWB7sfDaZY0zamEHVeAI=;
+	s=default; t=1549895224;
+	bh=LvFom4aUZURAW5OByWQFjPjv9PMk0b5Oo66qnMAY+hM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1oyMCYskZ670+nUPniG1aBOSxv/rcoSabURB6FVqwZNpaL5NflDO+nqgnRU2UREHV
-	 XDz2TQyNC4vFkupCJ7j4eV1yZnpNrt83VCgmRyRS56ICiV9l1m/Pld5SB+jauKy9/X
-	 SD4xiSHV+9Ns7TeEGQRFpUFiFA2yNccYaaONPnSI=
+	b=lYlAG0h0i8/mlQHVWczDpC5X3Ajpx98JdRjrL7sTd3xnTUzEziDEOaHOK1JRSt8fM
+	 MXmSjSra8+vF9F4BszijuEnZB1Bgqpm8maqHORMEhtoAsA0vI/W5BWmVNzyZdyyGYx
+	 RjJy3dNM3vBjqMDRTxed92BpXZj77DUWuB6EwKC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729641AbfBKO04 (ORCPT
+        id S1729647AbfBKO1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:26:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60844 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:27:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727247AbfBKO0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:26:55 -0500
+        id S1727247AbfBKO06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:26:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED49D20821;
-        Mon, 11 Feb 2019 14:26:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27F4321855;
+        Mon, 11 Feb 2019 14:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895214;
-        bh=Q12YCwGIfeS5gemNCB97bulDWB7sfDaZY0zamEHVeAI=;
+        s=default; t=1549895217;
+        bh=LvFom4aUZURAW5OByWQFjPjv9PMk0b5Oo66qnMAY+hM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0zIA8D2JqVunKTyKoG8EcncPL11L3z0po9wRkceFYqXLun/ebgf0vOwHsm/B5TCdW
-         30dykSdOFUSp5Dx2hAR2rpRSZTXSOZHCzCe4Ohb/nCXELB+RJTePnWMnxOfEqIUSAq
-         GPnZ3iVYu0yZ+5fnE3FYH6lGOcihCMtEgHcOQ7cY=
+        b=Ih40jaoyZwwbW5du2pmb9OQy5Z3Cj5InLbJhFm1Bqq4UsoTFM4l9Xu03qtXeAQJJx
+         14jxNNEI5HdPRs24WHRpmn4W/6IQkbGHLYErmYXLzqqI6gZxZS1oDfkbh+Sp1HQLGw
+         uhkXD+tCwwLQ0/BcumPL3Kx0k4rsscJfNklFM1pU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 131/352] media: v4l2-device: Link subdevices to their parent devices if available
-Date:   Mon, 11 Feb 2019 15:15:58 +0100
-Message-Id: <20190211141854.809725511@linuxfoundation.org>
+Subject: [PATCH 4.20 132/352] ARM: OMAP1: ams-delta: Fix audio permanently muted
+Date:   Mon, 11 Feb 2019 15:15:59 +0100
+Message-Id: <20190211141854.897960207@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,44 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ee494cf377e142f65f202fadf0d859f8e12119fb ]
+[ Upstream commit 2afdb4c41d7876e430b9bc6e2d7e2fe28609fd6a ]
 
-Currently v4l2_device_register_subdev_nodes() does not initialize the
-dev_parent field of the video_device structs it creates for subdevices
-being registered. This leads to __video_register_device() falling back
-to the parent device of associated v4l2_device struct, which often does
-not match the physical device the subdevice is registered for.
+Since commit 1137ceee76ba ("ARM: OMAP1: ams-delta: Don't request unused
+GPIOs"), on-board audio has appeared muted.  Believed to be unused GPIO
+pin "hookflash1", apparently set high regardless of the corresponding
+bit of "latch2" port attempted to be set low during .init_machine(),
+has been identified as the reason.
 
-Due to the problem above, the links between real devices and v4l-subdev
-nodes cannot be obtained from sysfs, which might be confusing for the
-userspace trying to identify the hardware.
+According to Amstrad E3 wiki, the purpose of the pin hasn't been
+clearly identified.  Original Amstrad software used to produce a high
+pulse on it when the phone was taken off hook or recall was pressed.
+With the current finding, we can assume the pin provides a kind of
+audio mute function.
 
-Fix this by initializing the dev_parent field of the video_device struct
-with the value of dev field of the v4l2_subdev struct. In case of
-subdevices without a parent struct device, the field will be NULL and the
-old behavior will be preserved by the semantics of
-__video_register_device().
+Proper resolution of the issue should be done in two steps:
+- resolution of an issue with the pin state not reflecting the value
+  the corresponding bit of the port was attempted to be initialized
+  with,
+- extension of on-board audio driver with a new control.
 
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+For now, rename the pin to "audio_mute" to reflect its function and,
+as a quick fix, hogg it as output low so on-board audio can produce
+audible sound again.
+
+Fixes: 1137ceee76ba ("ARM: OMAP1: ams-delta: Don't request unused GPIOs")
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/v4l2-core/v4l2-device.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-omap1/board-ams-delta.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
-index df0ac38c4050..e0ddb9a52bd1 100644
---- a/drivers/media/v4l2-core/v4l2-device.c
-+++ b/drivers/media/v4l2-core/v4l2-device.c
-@@ -247,6 +247,7 @@ int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index 17886744dbe6..55bf73710a59 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -247,8 +247,8 @@ static struct platform_device latch2_gpio_device = {
+ #define LATCH2_PIN_SCARD_CMDVCC		11
+ #define LATCH2_PIN_MODEM_NRESET		12
+ #define LATCH2_PIN_MODEM_CODEC		13
+-#define LATCH2_PIN_HOOKFLASH1		14
+-#define LATCH2_PIN_HOOKFLASH2		15
++#define LATCH2_PIN_AUDIO_MUTE		14
++#define LATCH2_PIN_HOOKFLASH		15
  
- 		video_set_drvdata(vdev, sd);
- 		strscpy(vdev->name, sd->name, sizeof(vdev->name));
-+		vdev->dev_parent = sd->dev;
- 		vdev->v4l2_dev = v4l2_dev;
- 		vdev->fops = &v4l2_subdev_fops;
- 		vdev->release = v4l2_device_release_subdev_node;
+ static struct regulator_consumer_supply modem_nreset_consumers[] = {
+ 	REGULATOR_SUPPLY("RESET#", "serial8250.1"),
+@@ -588,6 +588,8 @@ static int gpiochip_match_by_label(struct gpio_chip *chip, void *data)
+ static struct gpiod_hog ams_delta_gpio_hogs[] = {
+ 	GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT, "keybrd_dataout",
+ 		 GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
++	GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_AUDIO_MUTE, "audio_mute",
++		 GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
+ 	{},
+ };
+ 
 -- 
 2.19.1
 
