@@ -2,96 +2,221 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB72EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4C2C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922C921B69
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A20621B25
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732167AbfBKSbf (ORCPT
+        id S1732251AbfBKSbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:31:35 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.156]:44556 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727968AbfBKSbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:31:34 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 79BE9E00C
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:31:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tGMggNfPT2PzOtGMggshCc; Mon, 11 Feb 2019 12:31:34 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.49.191] (port=42244 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gtGMf-0027zH-MN; Mon, 11 Feb 2019 12:31:33 -0600
-Date:   Mon, 11 Feb 2019 12:31:31 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] crypto: ccree - fix missing break in switch statement
-Message-ID: <20190211183131.GA19193@embeddedor>
+        Mon, 11 Feb 2019 13:31:46 -0500
+Received: from mga14.intel.com ([192.55.52.115]:8905 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727968AbfBKSbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:31:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:31:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="125620190"
+Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.67.4]) ([10.252.67.4])
+  by orsmga003.jf.intel.com with ESMTP; 11 Feb 2019 10:31:39 -0800
+Subject: Re: [PATCH 09/10] platform/x86: intel_pmc_core: Add Package cstates
+ residency info
+To:     Anshuman Gupta <anshuman.gupta@intel.com>
+Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
+        andy@infradead.org, linux-kernel@vger.kernel.org,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        "David E. Box" <david.e.box@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
+ <20190201073234.13280-10-rajneesh.bhardwaj@linux.intel.com>
+ <20190211164118.GA23796@genxfsim-desktop>
+From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Message-ID: <78e5e6b3-5712-6ef5-283c-83b0f6d3dcc7@linux.intel.com>
+Date:   Tue, 12 Feb 2019 00:01:38 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.49.191
-X-Source-L: No
-X-Exim-ID: 1gtGMf-0027zH-MN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.49.191]:42244
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 28
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190211164118.GA23796@genxfsim-desktop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing break statement in order to prevent the code from falling
-through to case S_DIN_to_DES.
+On 11-Feb-19 10:11 PM, Anshuman Gupta wrote:
+> On Fri, Feb 01, 2019 at 01:02:33PM +0530, Rajneesh Bhardwaj wrote:
+>> This patch introduces a new debugfs entry to read current Package
+>> cstate residency counters. A similar variant of this patch was discussed
+>> earlier "https://patchwork.kernel.org/patch/9908563/" but didn't make it
+>> into mainline for various reasons. Current version only adds debugfs
+>> entry which is quite useful for S0ix debug but excludes the exported API
+>> that was there in initial version. Though there are tools like turbostat
+>> and socwatch which can also show this info but sometimes its more
+>> practical to have it here as it's hard to switch between various tools for
+>> S0ix debug when pmc_core driver is the primary debug tool. Internal and
+>> external customers have requested for this patch to be included in the
+>> PMC driver on many occasions and Google Chrome OS team has already included
+>> it in their builds. This becomes handy when requesting logs from external
+>> customers who may not always have above mentioned tools in their integrated
+>> kernel builds.
+>>
+>> Package cstate residency MSRs provide useful debug information about
+>> system idle states. In idle states system must enter deeper Package
+>> cstates. Package cstates depend not only on Core cstates but also on
+>> various IP block's power gating status and LTR values.
+>>
+>> For Intel Core SoCs Package C10 entry is a must for deeper sleep states
+>> such as S0ix. "Suspend-to-idle"  should ideally take this path:
+>> PC0 -> PC10 -> S0ix. For S0ix debug, its logical to check for
+>> Package C10 residency first if for some reason system fails to enter S0ix.
+>>
+>> Please refer to this link for MSR details:
+>> https://software.intel.com/sites/default/files/managed/22/0d/335592-sdm-vol-4.pdf
+>>
+>> Usage:
+>> cat /sys/kernel/debug/pmc_core/package_cstate_show
+>> Package C2       : 0xec2e21735f
+>> Package C3       : 0xc30113ba4
+>> Package C6       : 0x9ef4be15c5
+>> Package C7       : 0x1e011904
+>> Package C8       : 0x3c5653cfe5a
+>> Package C9       : 0x0
+>> Package C10      : 0x16fff4289
+>>
+>> Cc: Arjan van de Ven <arjan@linux.intel.com>
+>> Cc: "David E. Box" <david.e.box@intel.com>
+>> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+>> Cc: Anshuman Gupta <anshuman.gupta@intel.com>
+>> Cc: Len Brown <len.brown@intel.com>
+>> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+>    Tested-by: Anshuman Gupta <anshuman.gupta@intel.com> 	
+>    Acked-by: Anshuman Gupta <anshuman.gupta@intel.com> 	
 
-This bug was found thanks to the ongoing efforts to enable
--Wimplicit-fallthrough.
+Thanks Anshuman.
 
-Fixes: 63ee04c8b491 ("crypto: ccree - add skcipher support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/crypto/ccree/cc_cipher.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi Andy, Darren - Can i used Acked-and-tested-by instead of these two?
 
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index 5e3361a363b5..d9c17078517b 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -80,6 +80,7 @@ static int validate_keys_sizes(struct cc_cipher_ctx *ctx_p, u32 size)
- 		default:
- 			break;
- 		}
-+		break;
- 	case S_DIN_to_DES:
- 		if (size == DES3_EDE_KEY_SIZE || size == DES_KEY_SIZE)
- 			return 0;
--- 
-2.20.1
 
+>> ---
+>>   drivers/platform/x86/intel_pmc_core.c | 38 +++++++++++++++++++++++++++
+>>   drivers/platform/x86/intel_pmc_core.h |  1 +
+>>   2 files changed, 39 insertions(+)
+>>
+>> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+>> index 400946b7a3b5..4e7aa1711148 100644
+>> --- a/drivers/platform/x86/intel_pmc_core.c
+>> +++ b/drivers/platform/x86/intel_pmc_core.c
+>> @@ -22,11 +22,24 @@
+>>   
+>>   #include <asm/cpu_device_id.h>
+>>   #include <asm/intel-family.h>
+>> +#include <asm/msr.h>
+>>   
+>>   #include "intel_pmc_core.h"
+>>   
+>>   static struct pmc_dev pmc;
+>>   
+>> +/* PKGC MSRs are common across Intel Core SoCs */
+>> +static const struct pmc_bit_map msr_map[] = {
+>> +	{"Package C2",                  MSR_PKG_C2_RESIDENCY},
+>> +	{"Package C3",                  MSR_PKG_C3_RESIDENCY},
+>> +	{"Package C6",                  MSR_PKG_C6_RESIDENCY},
+>> +	{"Package C7",                  MSR_PKG_C7_RESIDENCY},
+>> +	{"Package C8",                  MSR_PKG_C8_RESIDENCY},
+>> +	{"Package C9",                  MSR_PKG_C9_RESIDENCY},
+>> +	{"Package C10",                 MSR_PKG_C10_RESIDENCY},
+>> +	{}
+>> +};
+>> +
+>>   static const struct pmc_bit_map spt_pll_map[] = {
+>>   	{"MIPI PLL",			SPT_PMC_BIT_MPHY_CMN_LANE0},
+>>   	{"GEN2 USB2PCIE2 PLL",		SPT_PMC_BIT_MPHY_CMN_LANE1},
+>> @@ -129,6 +142,7 @@ static const struct pmc_reg_map spt_reg_map = {
+>>   	.mphy_sts = spt_mphy_map,
+>>   	.pll_sts = spt_pll_map,
+>>   	.ltr_show_sts = spt_ltr_show_map,
+>> +	.msr_sts = msr_map,
+>>   	.slp_s0_offset = SPT_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>>   	.ltr_ignore_offset = SPT_PMC_LTR_IGNORE_OFFSET,
+>>   	.regmap_length = SPT_PMC_MMIO_REG_LEN,
+>> @@ -318,6 +332,7 @@ static const struct pmc_reg_map cnp_reg_map = {
+>>   	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>>   	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+>>   	.ltr_show_sts = cnp_ltr_show_map,
+>> +	.msr_sts = msr_map,
+>>   	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+>>   	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+>>   	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+>> @@ -333,6 +348,7 @@ static const struct pmc_reg_map icl_reg_map = {
+>>   	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+>>   	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+>>   	.ltr_show_sts = cnp_ltr_show_map,
+>> +	.msr_sts = msr_map,
+>>   	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+>>   	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+>>   	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+>> @@ -709,6 +725,25 @@ static int pmc_core_ltr_show(struct seq_file *s, void *unused)
+>>   }
+>>   DEFINE_SHOW_ATTRIBUTE(pmc_core_ltr);
+>>   
+>> +static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
+>> +{
+>> +	struct pmc_dev *pmcdev = s->private;
+>> +	const struct pmc_bit_map *map = pmcdev->map->msr_sts;
+>> +	u64 pcstate_count;
+>> +	int index;
+>> +
+>> +	for (index = 0; map[index].name ; index++) {
+>> +		if (rdmsrl_safe(map[index].bit_mask, &pcstate_count))
+>> +			continue;
+>> +
+>> +		seq_printf(s, "%-8s : 0x%llx\n", map[index].name,
+>> +			   pcstate_count);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +DEFINE_SHOW_ATTRIBUTE(pmc_core_pkgc);
+>> +
+>>   static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+>>   {
+>>   	debugfs_remove_recursive(pmcdev->dbgfs_dir);
+>> @@ -735,6 +770,9 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+>>   
+>>   	debugfs_create_file("ltr_show", 0444, dir, pmcdev, &pmc_core_ltr_fops);
+>>   
+>> +	debugfs_create_file("package_cstate_show", 0444, dir, pmcdev,
+>> +			    &pmc_core_pkgc_fops);
+>> +
+>>   	if (pmcdev->map->pll_sts)
+>>   		debugfs_create_file("pll_status", 0444, dir, pmcdev,
+>>   				    &pmc_core_pll_fops);
+>> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+>> index 78dd4229489d..6f1b64808075 100644
+>> --- a/drivers/platform/x86/intel_pmc_core.h
+>> +++ b/drivers/platform/x86/intel_pmc_core.h
+>> @@ -214,6 +214,7 @@ struct pmc_reg_map {
+>>   	const struct pmc_bit_map *pll_sts;
+>>   	const struct pmc_bit_map **slps0_dbg_maps;
+>>   	const struct pmc_bit_map *ltr_show_sts;
+>> +	const struct pmc_bit_map *msr_sts;
+>>   	const u32 slp_s0_offset;
+>>   	const u32 ltr_ignore_offset;
+>>   	const int regmap_length;
+>> -- 
+>> 2.17.1
+>>
