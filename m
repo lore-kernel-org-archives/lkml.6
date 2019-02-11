@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68191C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD377C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39AB320700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F85C206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896259;
-	bh=VmxItKjQfVT4pBcoAftjd5Me0eV2aKGPQIviNaBXnk4=;
+	s=default; t=1549896261;
+	bh=2HI0L3DG+FezB0qBgQGRI8p7Swv81jWQn2NrgX8V1yQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c6S0njR567AJlP/gdv9YmaHujFNyliVr312TBkOsbJVySviqjqIXYicf4BGQOh0NK
-	 MX68Y0EJOg95xgCR2xK9CQ8mdbX6ko8blOXA1CzViWv0br3OYXKnnEGKzm1/9bVYvD
-	 aabQTjnIy0KopzdZepLWvKNgPZJwsE7hEt9Hr9A0=
+	b=1CMj8dnWXV2iNVTTHvn3eLn9lIadUEdrrPSjPfjZXveENJTGXr3WZzCkmd8Q8EhAg
+	 ALHlg7PentSJ88zbkMHQrcNk/Eiamkr0tAHpSo5z9aQkFYPs0f6APHfs6o27Oq4MsO
+	 kWWv2KnZAqgZToNsJn1F3mNqQhLg4pkYCAZz3j3w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbfBKOoR (ORCPT
+        id S1732813AbfBKOoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56944 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:44:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731777AbfBKOoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:15 -0500
+        id S1731777AbfBKOoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 697E82081B;
-        Mon, 11 Feb 2019 14:44:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2989720700;
+        Mon, 11 Feb 2019 14:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896254;
-        bh=VmxItKjQfVT4pBcoAftjd5Me0eV2aKGPQIviNaBXnk4=;
+        s=default; t=1549896257;
+        bh=2HI0L3DG+FezB0qBgQGRI8p7Swv81jWQn2NrgX8V1yQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DD1x4CZeQksZ6fBcROUIEZIpSDkAVc3Zi/8TbVCX5wWzV5MZfw04yJIfCwpZq1DIi
-         nKbl/atK42j++HmEpXFwg9TVSuSQEZLbMH6OhW41SkI+MkzToMZB4XOQyqpxE1Dfq1
-         EPSuwLGzvk7NnuDmU5VROzm1ko9eVkiGtjPTDRTA=
+        b=BZp7Q4gQIgaMabcUXo0fXZfwc+/+wtxUBpcAHAOggUNgZ4RYjXC3vBjgEMABvdqOG
+         RMWCPkQxiMysBHoSBmGV/jQjmWfjo9UpgJ8YRvqGR2YUHKf3bxlUPGNuWh9aA7tLup
+         Xb5bl6XWKR/5xOBkFR8gq3N2L/SM4YlptWQpTJyI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Zoran Markovic <zmarkovic@sierrawireless.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/313] smack: fix access permissions for keyring
-Date:   Mon, 11 Feb 2019 15:16:13 +0100
-Message-Id: <20190211141900.066578506@linuxfoundation.org>
+Subject: [PATCH 4.19 094/313] xtensa: xtfpga.dtsi: fix dtc warnings about SPI
+Date:   Mon, 11 Feb 2019 15:16:14 +0100
+Message-Id: <20190211141900.142553598@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,64 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
+[ Upstream commit f37598be4e3896359e87c824be57ddddc280cc3f ]
 
-Function smack_key_permission() only issues smack requests for the
-following operations:
- - KEY_NEED_READ (issues MAY_READ)
- - KEY_NEED_WRITE (issues MAY_WRITE)
- - KEY_NEED_LINK (issues MAY_WRITE)
- - KEY_NEED_SETATTR (issues MAY_WRITE)
-A blank smack request is issued in all other cases, resulting in
-smack access being granted if there is any rule defined between
-subject and object, or denied with -EACCES otherwise.
+Rename SPI controller node in the XTFPGA DTS to spi@...
+This fixes the following build warnings:
 
-Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
-Fix the logic in the unlikely case when both MAY_READ and
-MAY_WRITE are needed. Validate access permission field for valid
-contents.
+arch/xtensa/boot/dts/kc705_nommu.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/kc705_nommu.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/lx200mx.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/lx200mx.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/kc705.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/kc705.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/ml605.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/ml605.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
+arch/xtensa/boot/dts/lx60.dtb: Warning (spi_bus_bridge):
+ /soc/spi-master@0d0a0000: node name for SPI buses should be 'spi'
+arch/xtensa/boot/dts/lx60.dtb: Warning (spi_bus_reg):
+ Failed prerequisite 'spi_bus_bridge'
 
-Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smack_lsm.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/xtensa/boot/dts/xtfpga.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 70d3066e69fe..017c47eb795e 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4333,6 +4333,12 @@ static int smack_key_permission(key_ref_t key_ref,
- 	int request = 0;
- 	int rc;
+diff --git a/arch/xtensa/boot/dts/xtfpga.dtsi b/arch/xtensa/boot/dts/xtfpga.dtsi
+index 1090528825ec..e46ae07bab05 100644
+--- a/arch/xtensa/boot/dts/xtfpga.dtsi
++++ b/arch/xtensa/boot/dts/xtfpga.dtsi
+@@ -103,7 +103,7 @@
+ 			};
+ 		};
  
-+	/*
-+	 * Validate requested permissions
-+	 */
-+	if (perm & ~KEY_NEED_ALL)
-+		return -EINVAL;
-+
- 	keyp = key_ref_to_ptr(key_ref);
- 	if (keyp == NULL)
- 		return -EINVAL;
-@@ -4356,10 +4362,10 @@ static int smack_key_permission(key_ref_t key_ref,
- 	ad.a.u.key_struct.key = keyp->serial;
- 	ad.a.u.key_struct.key_desc = keyp->description;
- #endif
--	if (perm & KEY_NEED_READ)
--		request = MAY_READ;
-+	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
-+		request |= MAY_READ;
- 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
--		request = MAY_WRITE;
-+		request |= MAY_WRITE;
- 	rc = smk_access(tkp, keyp->security, request, &ad);
- 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
- 	return rc;
+-		spi0: spi-master@0d0a0000 {
++		spi0: spi@0d0a0000 {
+ 			compatible = "cdns,xtfpga-spi";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.19.1
 
