@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5D6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF56C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D5202081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B4B1206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896269;
-	bh=6t/ZT7AdSq0kM1tVsuLDAVA8lal2ZzCOKl8GRf9F6ZA=;
+	s=default; t=1549896272;
+	bh=4Le2FhkgFzKakR2mvMOi/WMm6Az2V7429MXzNoly06c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t5qZdOEgjidUxixbVMEmyQnK0qrK3hvgmDjZEMkaTwZiV1zd1Zy+/tWeSGptiYjgj
-	 r2E67HnDQ6pV2DBJR5JHTtnroTC1kbZIwHlLji9G4yFdzw4uVT4o2p6nv2wQHVNOr3
-	 1r4AwRJyiOFD1cSjmFve+ukDfiXYpbq1Q7PB3nmE=
+	b=qtnffag3M75STreDaaZfZ8SA3/QIKa6NjxzHgYo0qZTYPtvnp5zlM+CquGglOgky5
+	 sQbVH2pskaVKLekUdFyhx8m+4yIN4lwZ/w125/Jma87RCz8olbwFks5vmAKMCquyPB
+	 y/9zz2CX+76IyV2xBIQT9YDnBgiz1LeCLzkrKVpw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732833AbfBKOo1 (ORCPT
+        id S1732848AbfBKOoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57144 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:44:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732818AbfBKOoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:24 -0500
+        id S1732835AbfBKOo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDE32206BA;
-        Mon, 11 Feb 2019 14:44:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C6D2206BA;
+        Mon, 11 Feb 2019 14:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896263;
-        bh=6t/ZT7AdSq0kM1tVsuLDAVA8lal2ZzCOKl8GRf9F6ZA=;
+        s=default; t=1549896266;
+        bh=4Le2FhkgFzKakR2mvMOi/WMm6Az2V7429MXzNoly06c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eIAXqQLdppYrKci0uf0EDb8sGRUvrldv5b1lYd3uXTSl/fuFugQBYicqQ6iElDi3I
-         mcLuomIuMplyERtcBKO5CBcZNOldVLqCO+0K0Zb/PUR+RDiM67li31zABizun4yFD7
-         QtTxKXc8QKddZLzfUY+ghexZyS40XdmZgBgWDHHw=
+        b=Xm+lu2RqH1eNimgzQDJ+5G82dl2U5T/NpD6w6uzrtcbJPpo5sAhY7jKs5WLichgxt
+         8d3JNXMlIjRa2pxZW8cu3y2VXI8h/3/4QpevO113fiefqCNQ4l1QVoFNWi8X6KeEdL
+         1A2ibj95pmHQhnin5+l3l4ST6FTUHzBLaJLMK3ik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 096/313] usb: dwc2: Disable power down feature on Samsung SoCs
-Date:   Mon, 11 Feb 2019 15:16:16 +0100
-Message-Id: <20190211141900.281467676@linuxfoundation.org>
+Subject: [PATCH 4.19 087/313] ARM: dts: mmp2: fix TWSI2
+Date:   Mon, 11 Feb 2019 15:16:07 +0100
+Message-Id: <20190211141859.663034498@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,51 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 35a6054132286a4ab92b536595093b82e6bdfcbc ]
+[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
 
-Power down feature of DWC2 module integrated in Samsung SoCs doesn't work
-properly or needs some additional handling in PHY or SoC glue layer, so
-disable it for now. Without disabling power down, DWC2 causes random memory
-trashes and fails enumeration if there is no USB link to host on driver
-probe.
+Marvell keeps their MMP2 datasheet secret, but there are good clues
+that TWSI2 is not on 0xd4025000 on that platform, not does it use
+IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
 
-Fixes: 03ea6d6e9e1ff1 ("usb: dwc2: Enable power down")
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
+
+I'm taking a somewhat educated guess that is probably a copy & paste
+error from PXA168 or PXA910 and that the real controller in fact hides
+at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
+
+I'm also copying some properties from TWSI1 that were missing or
+incorrect.
+
+Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc2/params.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
-index ef2c199e6059..dff2c6e8d797 100644
---- a/drivers/usb/dwc2/params.c
-+++ b/drivers/usb/dwc2/params.c
-@@ -71,6 +71,13 @@ static void dwc2_set_his_params(struct dwc2_hsotg *hsotg)
- 	p->power_down = false;
- }
+diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
+index 766bbb8495b6..47e5b63339d1 100644
+--- a/arch/arm/boot/dts/mmp2.dtsi
++++ b/arch/arm/boot/dts/mmp2.dtsi
+@@ -220,12 +220,15 @@
+ 				status = "disabled";
+ 			};
  
-+static void dwc2_set_s3c6400_params(struct dwc2_hsotg *hsotg)
-+{
-+	struct dwc2_core_params *p = &hsotg->params;
-+
-+	p->power_down = 0;
-+}
-+
- static void dwc2_set_rk_params(struct dwc2_hsotg *hsotg)
- {
- 	struct dwc2_core_params *p = &hsotg->params;
-@@ -151,7 +158,8 @@ const struct of_device_id dwc2_of_match_table[] = {
- 	{ .compatible = "lantiq,arx100-usb", .data = dwc2_set_ltq_params },
- 	{ .compatible = "lantiq,xrx200-usb", .data = dwc2_set_ltq_params },
- 	{ .compatible = "snps,dwc2" },
--	{ .compatible = "samsung,s3c6400-hsotg" },
-+	{ .compatible = "samsung,s3c6400-hsotg",
-+	  .data = dwc2_set_s3c6400_params },
- 	{ .compatible = "amlogic,meson8-usb",
- 	  .data = dwc2_set_amlogic_params },
- 	{ .compatible = "amlogic,meson8b-usb",
+-			twsi2: i2c@d4025000 {
++			twsi2: i2c@d4031000 {
+ 				compatible = "mrvl,mmp-twsi";
+-				reg = <0xd4025000 0x1000>;
+-				interrupts = <58>;
++				reg = <0xd4031000 0x1000>;
++				interrupt-parent = <&intcmux17>;
++				interrupts = <0>;
+ 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
+ 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
++				#address-cells = <1>;
++				#size-cells = <0>;
+ 				status = "disabled";
+ 			};
+ 
 -- 
 2.19.1
 
