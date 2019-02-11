@@ -2,147 +2,87 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC78C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8CBC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493C320863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuPgxwqI"
+	by mail.kernel.org (Postfix) with ESMTP id 1B27020873
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfBKKqa (ORCPT
+        id S1727140AbfBKKqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:46:30 -0500
-Received: from mail-it1-f176.google.com ([209.85.166.176]:56245 "EHLO
-        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbfBKKqa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:46:30 -0500
-Received: by mail-it1-f176.google.com with SMTP id f18so14096302itb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 02:46:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/0SCk7wts1poY0owXc+0Q+x4dSOuXa2jqfsnZFbObJ4=;
-        b=LuPgxwqI2IPxvhjGWRNzCjvam+FLu3Gjkgo6kop8HPd9oyJ3dfqp4UefYJ2vYlR7CF
-         K3Vu1r1e11eZCNcF7a5W4RWEBWnstHB1OogWcm8mfqGUkcSLqaKCyg7AGt/U+Md18JfQ
-         gMdhYTMVcjPruH3Eq/PHmCtuHkD0y+fNa5TUOL9p4pF8GHdB0oykahLY9koWo0S08+Zk
-         GbT81cZcf1dK0rhNs0WYywPftDPIMBEJw2sXWxtVLbvpLs/iJvBpoiS0mPOBXrNxau58
-         p9wHLpYzyQk75P6wSUfAUBM3o1OZBRui1huuuRUcUwkkrY9FqjgXdSP6aVRrrCU62RQB
-         LiZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/0SCk7wts1poY0owXc+0Q+x4dSOuXa2jqfsnZFbObJ4=;
-        b=iQsyYJ60bT/qSHFaogvD4rOVQb5p4rR4oJMsd+eNypTzGtyEL6nJCE/JQRkvUYigzS
-         1BCtEXkdvv4KO+viisvyx7cb1bxlk1Oc3Fn9zDfwzoInTwlTe4OGNla9I/ulc68BjSbd
-         3drcE79jRyZMkSLJiq+kqcpS+vW5zDvrhd31KBK82yx+S0jbvDndU90meYpryRKRrFUk
-         vjcGj/4mrKyX7vo3SKYNOVcSXQF40BqAj3HtJqvhopbezjg3+nm7smTC8GgeNhHsV1ex
-         iCjKWHlyt3eIViDfSychJI+XEM9eXwWAjIq0e+oI3AWhyrIosjYce79DK092rPT9HVbY
-         42rg==
-X-Gm-Message-State: AHQUAuZ1pYr5TKjlZEGPKxBnqHlQF7XoQaM0W9chKwGqgJRnawWMAHKM
-        PCCBUdaHSed7+2/lwBktqXOvSL3gLAOVQvAgkHBmaw==
-X-Google-Smtp-Source: AHgI3IYVqfT0cMYyNysVp//9YVxL9IS6oRo6Bhp/QHrgZo25UDKAR3pwRmw2LR99g9Wkb/FyCyUicuT//deQLHOi7+c=
-X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr3920149itk.71.1549881988975;
- Mon, 11 Feb 2019 02:46:28 -0800 (PST)
+        Mon, 11 Feb 2019 05:46:35 -0500
+Received: from mga04.intel.com ([192.55.52.120]:37142 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfBKKqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:46:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 02:46:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="145846864"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 11 Feb 2019 02:46:30 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 11 Feb 2019 12:46:29 +0200
+Date:   Mon, 11 Feb 2019 12:46:29 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Jun Li <jun.li@nxp.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
+ against the device node
+Message-ID: <20190211104629.GE16987@kuha.fi.intel.com>
+References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
+ <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
+ <VI1PR04MB4558283CA9D752D5452FA09989640@VI1PR04MB4558.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190208191024.GL674@zn.tnic> <20190208204451.GA14024@roeck-us.net>
- <20190208215322.GO674@zn.tnic> <20190211002220.GD14948@zn.tnic>
- <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
- <20190211095547.GB1651@localhost.localdomain> <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
- <20190211101011.GA5333@localhost.localdomain> <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
- <20190211102426.GA19618@zn.tnic> <20190211104254.GB19618@zn.tnic>
-In-Reply-To: <20190211104254.GB19618@zn.tnic>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 11 Feb 2019 10:46:18 +0000
-Message-ID: <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
-Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in boot_params
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        caoj.fnst@cn.fujitsu.com, Juergen Gross <jgross@suse.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-tip-commits@vger.kernel.org,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB4558283CA9D752D5452FA09989640@VI1PR04MB4558.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019 at 11:43, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Mon, Feb 11, 2019 at 11:24:26AM +0100, Borislav Petkov wrote:
-> > It is only an observation for now though...
->
-> Ok, now I did this:
->
->         for (i = 0; i < systab->nr_tables; i++) {
->                 acpi_physical_address table;
->                 void *config_tables;
->                 efi_guid_t guid;
->
->                 if ((unsigned long)systab->tables >> 32)                        <---
->                         asm volatile("1:\n jmp 1b");
->
->                 config_tables = (void *)(systab->tables + size * i);
->
-> It did stop at the endless loop there which would mean that
-> systab->tables is simply pointing somewhere into the weeds.
->
+On Mon, Feb 11, 2019 at 09:58:04AM +0000, Jun Li wrote:
+> Hi Heikki,
+> 
+> > @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct
+> > usb_role_switch *sw)  }  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+> > 
+> > -static int __switch_match(struct device *dev, const void *name)
+> > +static int switch_fwnode_match(struct device *dev, const void *fwnode)
+> > +{
+> > +	return dev_fwnode(dev) == fwnode;
+> 
+> You missed the comment
+> https://lkml.org/lkml/2019/1/22/437
+> 
+> return dev_fwnode(dev->parent) == fwnode;
+
+That's actually not the case. struct usb_role_switch_desc has a member
+for fwnode, and that's what we use with the actual mux device. Check
+usb_role_switch_register():
+
+        ...
+        sw->dev.fwnode = desc->fwnode;
+        ...
+
+Sorry for not realizing it before.
 
 
-As I pointed out in my previous reply, systab will be the wrong type
-on 32-bit firmware, it needs to be efi_system_table_32_t
+thanks,
 
-
-> Asm is:
->
-> ---
-> # arch/x86/boot/compressed/acpi.c:96:                   asm volatile("1:\n jmp 1b");
-> #APP
-> # 96 "arch/x86/boot/compressed/acpi.c" 1
->         1:
->  jmp 1b
-> # 0 "" 2
-> #NO_APP
->         movq    112(%rcx), %rdi # systab_147->tables, _31
-> .L29:
-> # arch/x86/boot/compressed/acpi.c:98:           config_tables = (void *)(systab->tables + size * i);
->         addq    %r9, %rdi       # ivtmp.64, config_tables
-> # arch/x86/boot/compressed/acpi.c:104:                  guid = tmp_table->guid;
-> ---
->
-> and RDI is
->
-> rdi            0x630646870
->
-> in gdb.
->
-> systab itself gets computed to something low: 0x3fedb010.
->
-> Hmmm. Could it be that that EDK BIOS image is buggy?
->
-> [    0.000000] efi: EFI v2.70 by EDK II
-> [    0.000000] efi:  SMBIOS=0x3feb9000  ACPI=0x3fee7000  ACPI 2.0=0x3fee7014  MEMATTR=0x3f524110
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+-- 
+heikki
