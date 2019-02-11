@@ -2,190 +2,182 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EDEC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2012BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E89DE2075C
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:02:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dycem5Iy"
+	by mail.kernel.org (Postfix) with ESMTP id DCDCB2075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:02:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728524AbfBKRCJ (ORCPT
+        id S1728693AbfBKRCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:02:09 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44091 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfBKRCI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:02:08 -0500
-Received: by mail-lf1-f66.google.com with SMTP id g2so3041110lfh.11;
-        Mon, 11 Feb 2019 09:02:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UhMN5gACQr1+W4A8Ag5wPDh62RaNjK/ZgHm434PrC78=;
-        b=Dycem5Iy15XhBFQsCdrlyR70cVYi8iEHdjbiM68ElBqd2AuRvAsNQVBPszRVGhzOes
-         4ghWIEDaZJqjwIvPAoy9X2DP7JqHWi80tnUpOlPWlpZ1uM1s61kbY33b7oQI39GLLDGn
-         E61Ey9sXAEhgkUTxWs3YjJn/cr2UtlFvIsMQptsivCA4qcu2lBVw1mBwHXi14ZhLqfZT
-         llfzt7bn5yuGTsb/KDKH+rY6A+TOjuCAl9E0Djzyw3HMlvO3y65at592q5FsX1KdRYDL
-         KORq40gRwIB8Akjia616vJ//3AM1qSrbGnqfQtj9Zf7Jn60umhLieOoHQwDpAo7mMfoP
-         LsLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UhMN5gACQr1+W4A8Ag5wPDh62RaNjK/ZgHm434PrC78=;
-        b=otaoBI5wxF8HAarKjPoudnYKco5KDIpo5O2aUlXzN+iZLrU4sdA+csJAauoTSM9o49
-         HcdTZtn828YhwMPETdJv1xaTPZ5Q9Dov8JXelru6CbZHSB1JFocwXBpUgPiAZRfLwp8g
-         2gMtoA376bANKqV4FqD5SKpYIVkwzejAbeWVicRkGZfMdMoxCbl6LN7ucLKUVlYKbvC9
-         GraBu1fnJ+bCXPm9drh5649hn8yHepe6QqlpEq9gu+r5FnGgCLNGzHvwRnQThRL5xV8H
-         D9s8MEcFj1Ezjo8QW7F4deRZGA6xHBwdO30r68k+lnQ+xgsW2Iq6Z0T5HRxb9YLJDeMz
-         55xg==
-X-Gm-Message-State: AHQUAuaGlpia1gFDZ0NEgopHekh93ghGJjp0dySHtm9bZ17PcqXFHCls
-        rPDrkbsDz0YH3Bzb8G3LBE77eqwNrSWLUOTxrRw=
-X-Google-Smtp-Source: AHgI3IalfbXEC0ubkiPvBEKZp244GmIb+2indUy8ujEZOIJyFGOHcxcPXDTtIiBWV4qDRv6rjSWWM0OTaxXYOKcGqoU=
-X-Received: by 2002:ac2:4318:: with SMTP id l24mr631387lfh.75.1549904525499;
- Mon, 11 Feb 2019 09:02:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
- <20190131083842.GE28876@rapoport-lnx> <CAFqt6za9xA_8OKiaaHXcO9go+RtPdjLY5Bz_fgQL+DZbermNhA@mail.gmail.com>
- <20190207164739.GX21860@bombadil.infradead.org> <CAFqt6zawBP5Yyy7nfoKz_6ugw8e4MVopvBaeKvaKoXcS-_oSNg@mail.gmail.com>
-In-Reply-To: <CAFqt6zawBP5Yyy7nfoKz_6ugw8e4MVopvBaeKvaKoXcS-_oSNg@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 11 Feb 2019 22:36:15 +0530
-Message-ID: <CAFqt6zYGSn1dA8tdiH16Mq0bzkx5DmpUo+2RUZ0nTPm+nvZS7Q@mail.gmail.com>
-Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and
- vm_insert_range_buggy API
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Mon, 11 Feb 2019 12:02:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54058 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727117AbfBKRCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:02:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBEC780D;
+        Mon, 11 Feb 2019 09:02:22 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABF053F675;
+        Mon, 11 Feb 2019 09:02:18 -0800 (PST)
+Date:   Mon, 11 Feb 2019 17:02:16 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch@vger.kernel.org, Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
         Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
         linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Kostya Serebryany <kcc@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: Re: [PATCH v9 0/8] arm64: untag user pointers passed to the kernel
+Message-ID: <20190211170212.GH3567@e103592.cambridge.arm.com>
+References: <cover.1544445454.git.andreyknvl@google.com>
+ <20181212170108.GZ3505@e103592.cambridge.arm.com>
+ <20190211113511.GA165128@arrakis.emea.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211113511.GA165128@arrakis.emea.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 10:52 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Thu, Feb 7, 2019 at 10:17 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Thu, Feb 07, 2019 at 09:19:47PM +0530, Souptick Joarder wrote:
-> > > Just thought to take opinion for documentation before placing it in v3.
-> > > Does it looks fine ?
-> > >
-> > > +/**
-> > > + * __vm_insert_range - insert range of kernel pages into user vma
-> > > + * @vma: user vma to map to
-> > > + * @pages: pointer to array of source kernel pages
-> > > + * @num: number of pages in page array
-> > > + * @offset: user's requested vm_pgoff
-> > > + *
-> > > + * This allow drivers to insert range of kernel pages into a user vma.
-> > > + *
-> > > + * Return: 0 on success and error code otherwise.
-> > > + */
-> > > +static int __vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> > > +                               unsigned long num, unsigned long offset)
-> >
-> > For static functions, I prefer to leave off the second '*', ie make it
-> > formatted like a docbook comment, but not be processed like a docbook
-> > comment.  That avoids cluttering the html with descriptions of internal
-> > functions that people can't actually call.
-> >
-> > > +/**
-> > > + * vm_insert_range - insert range of kernel pages starts with non zero offset
-> > > + * @vma: user vma to map to
-> > > + * @pages: pointer to array of source kernel pages
-> > > + * @num: number of pages in page array
-> > > + *
-> > > + * Maps an object consisting of `num' `pages', catering for the user's
-> >
-> > Rather than using `num', you should use @num.
-> >
-> > > + * requested vm_pgoff
-> > > + *
-> > > + * If we fail to insert any page into the vma, the function will return
-> > > + * immediately leaving any previously inserted pages present.  Callers
-> > > + * from the mmap handler may immediately return the error as their caller
-> > > + * will destroy the vma, removing any successfully inserted pages. Other
-> > > + * callers should make their own arrangements for calling unmap_region().
-> > > + *
-> > > + * Context: Process context. Called by mmap handlers.
-> > > + * Return: 0 on success and error code otherwise.
-> > > + */
-> > > +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> > > +                               unsigned long num)
-> > >
-> > >
-> > > +/**
-> > > + * vm_insert_range_buggy - insert range of kernel pages starts with zero offset
-> > > + * @vma: user vma to map to
-> > > + * @pages: pointer to array of source kernel pages
-> > > + * @num: number of pages in page array
-> > > + *
-> > > + * Similar to vm_insert_range(), except that it explicitly sets @vm_pgoff to
-> >
-> > But vm_pgoff isn't a parameter, so it's misleading to format it as such.
-> >
-> > > + * 0. This function is intended for the drivers that did not consider
-> > > + * @vm_pgoff.
-> > > + *
-> > > + * Context: Process context. Called by mmap handlers.
-> > > + * Return: 0 on success and error code otherwise.
-> > > + */
-> > > +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> > > +                               unsigned long num)
-> >
-> > I don't think we should call it 'buggy'.  'zero' would make more sense
-> > as a suffix.
->
-> suffix can be *zero or zero_offset* whichever suits better.
->
-> >
-> > Given how this interface has evolved, I'm no longer sure than
-> > 'vm_insert_range' makes sense as the name for it.  Is it perhaps
-> > 'vm_map_object' or 'vm_map_pages'?
-> >
->
-> I prefer vm_map_pages. Considering it, both the interface name can be changed
-> to *vm_insert_range -> vm_map_pages* and *vm_insert_range_buggy ->
-> vm_map_pages_{zero/zero_offset}.
->
-> As this is only change in interface name and rest of code remain same
-> shall I post it in v3 ( with additional change log mentioned about interface
-> name changed) ?
->
-> or,
->
-> It will be a new patch series ( with carry forward all the Reviewed-by
-> / Tested-by on
-> vm_insert_range/ vm_insert_range_buggy ) ?
+On Mon, Feb 11, 2019 at 11:35:12AM +0000, Catalin Marinas wrote:
+> Hi Dave,
+> 
+> On Wed, Dec 12, 2018 at 05:01:12PM +0000, Dave P Martin wrote:
+> > On Mon, Dec 10, 2018 at 01:50:57PM +0100, Andrey Konovalov wrote:
+> > > arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+> > > tags into the top byte of each pointer. Userspace programs (such as
+> > > HWASan, a memory debugging tool [1]) might use this feature and pass
+> > > tagged user pointers to the kernel through syscalls or other interfaces.
+> [...]
+> > It looks like there's been a lot of progress made here towards smoking
+> > out most of the sites in the kernel where pointers need to be untagged.
+> 
+> In summary, based on last summer's analysis, there are two main (and
+> rather broad) scenarios of __user pointers use in the kernel: (a)
+> uaccess macros, together with access_ok() checks and (b) identifying
+> of user address ranges (find_vma() and related, some ioctls). The
+> patches here handle the former by allowing sign-extension in access_ok()
+> and subsequent uaccess routines work fine with tagged pointers.
+> Identifying the latter is a bit more problematic and the approach we
+> took was tracking down pointer to long conversion which seems to cover
+> the majority of cases. However, this approach doesn't scale as, for
+> example, we'd rather change get_user_pages() to sign-extend the address
+> rather than all the callers. In lots of other cases we don't even need
+> untagging as we don't expect user space to tag such pointers (i.e.
+> mmap() of device memory).
+> 
+> We might be able to improve the static analysis by introducing a
+> virt_addr_t but that's significant effort and we still won't cover all
+> cases (e.g. it doesn't necessarily catch tcp_zerocopy_receive() which
+> wouldn't use a pointer, just a u64 for address).
+> 
+> > However, I do think that we need a clear policy for how existing kernel
+> > interfaces are to be interpreted in the presence of tagged pointers.
+> > Unless we have that nailed down, we are likely to be able to make only
+> > vague guarantees to userspace about what works, and the ongoing risk
+> > of ABI regressions and inconsistencies seems high.
+> 
+> I agree.
+> 
+> > Can we define an opt-in for tagged-pointer userspace, that rejects all
+> > syscalls that we haven't checked and whitelisted (or that are
+> > uncheckable like ioctl)? 
+> 
+> Defining an opt-in is not a problem, however, rejecting all syscalls
+> that we haven't whitelisted is not feasible. We can have an opt-in per
+> process (that's what we were going to do with MTE) but the only thing
+> we can reasonably do is change the behaviour of access_ok(). That's too
+> big a knob and a new syscall that we haven't got around to whitelist may
+> just work. This eventually leads to de-facto ABI and our whitelist would
+> simply be ignored.
+> 
+> I'm not really keen on a big syscall shim in the arm64 kernel which
+> checks syscall arguments, including in-struct values. If we are to do
+> this, I'd rather keep it in user space as part of the C library.
+> 
+> > In the meantime, I think we really need to nail down the kernel's
+> > policies on
+> > 
+> >  * in the default configuration (without opt-in), is the presence of
+> > non-address bits in pointers exchanged with the kernel simply
+> > considered broken?  (Even with this series, the de factor answer
+> > generally seems to be "yes", although many specific things will now
+> > work fine)
+> 
+> Without these patches, passing non-address bits in pointers is
+> considered broken. I couldn't find a case where it would still work with
+> non-zero tag but maybe I haven't looked hard enough.
+> 
+> >  * if not, how do we tighten syscall / interface specifications to
+> > describe what happens with pointers containing non-address bits, while
+> > keeping the existing behaviour for untagged pointers?
+> > 
+> > We would want a general recipe that gives clear guidance on what
+> > userspace should expect an arbitrarily chosen syscall to do with its
+> > pointers, without having to enumerate each and every case.
+> 
+> That's what we are aiming with the pointer origins, to move away from a
+> syscall whitelist to a generic definition. That said, the two approaches
+> are orthogonal, we can use the pointer origins as the base rule for
+> which syscalls can be whitelisted.
+> 
+> If we step back a bit to look at the use-case for TBI (and MTE), the
+> normal application programmer shouldn't really care about this ABI
+> (well, most of the time). The app gets a tagged pointer from the C
+> library as a result of a malloc()/realloc() (possibly alloca()) call and
+> it expects to be able to pass it back into the kernel (usually via the C
+> library) without any awareness of the non-address bits. Now, we can't
+> define a user/kernel ABI based on the provenance of the pointer in user
+> space (i.e. we only support tags for heap and stack), so we are trying
+> to generalise this based where the pointer originated from in the kernel
+> (e.g. anonymous mmap()).
 
-Any suggestion on this minor query ?
+This sounds generally reasonable.
+
+It is not adequate for describing changing the tag on already-tagged
+memory (which a memory allocator will definitely do), but we may be able
+to come up with some weasel words to cover that.
+
+It is also not adequete for describing tagging (and retagging) regions
+of the stack -- but as you say, we can rule that use-case out for now
+in the interest of simplicity, since we know we wouldn't be able to
+deploy it widely for now anyway due to the incompability with non-MTE-
+capable hardware.
+
+
+Ideally we would clarify user/kernel interface semantics in terms of
+object and pointer lifetimes and accessibility, but that's a larger
+project that should be pursued separately (if at all).
+
+I could also quibble about whether "anonymous mmap" is the right thing
+here -- we should still give specific examples of things that do / don't
+qualify, to make it clear what we mean.
+
+Cheers
+---Dave
