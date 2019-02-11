@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0B8C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46CF720844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3441020700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895852;
-	bh=+6X3NTbqlSpjZME1/xm6n/Ck4+VDlGa8gAD4BEsUMc8=;
+	s=default; t=1549895856;
+	bh=jRUwISIauTvwSHxdK4s5y0CaoC8URZ5leSdqrQACeh8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=unb1mRi8rn36BI41JqlCTnN0nzmkg/7jiTZ+XdswaPjj5hgMSqcL2NSKoUmW4NDZD
-	 Vt2hY3czwTL6QcNjTeqUizs7MV74LulD+bxc3FcTgYtFHbPwkPwuiAEMsZMjI8rS8v
-	 ACLo+9Crh69mM3GgokThWqmzj8D8A3k+doKgP/wo=
+	b=sDRIW6rQLmm1Rm9eHyM7O7N+n8W7IUGNdzNQoTcW3pTNvq50horSNv/r0dnaVrPI7
+	 p/wywrqyFB7mTl+0V3w6Y+ZVD1Fw7GKQw3tx9LeO6rR02N302cy3ZgqtJ+yQhjrIQQ
+	 bTGaMFPntP9IpzyLfCXc5GOzAe+3IMCRAQyxdPFQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbfBKOha (ORCPT
+        id S1731478AbfBKOhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731445AbfBKOh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:27 -0500
+        id S1731455AbfBKOh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D441B20700;
-        Mon, 11 Feb 2019 14:37:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73CFB2081B;
+        Mon, 11 Feb 2019 14:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895846;
-        bh=+6X3NTbqlSpjZME1/xm6n/Ck4+VDlGa8gAD4BEsUMc8=;
+        s=default; t=1549895848;
+        bh=jRUwISIauTvwSHxdK4s5y0CaoC8URZ5leSdqrQACeh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ggiDpG1p3Bgs9rJIru9G/JjTGlCLaqSRjGJvrBx+Rm5VsTvvrwAcWcXNEdNJ0y7O7
-         kGBLfMyiLNzPtP5PO6x4sFB/CF4PJ+cU+IWcIur4osq2ID8MGDLpzDOFZ2FKeayJUa
-         31YsNTw5q6eRWB/oHtIluqAg4PHU8BcADGW2V59w=
+        b=YlTHtwMs8WDHWmqeW2v98qoF+IaP60uKCIv8caspV/sJWTzbtIXtGdc+DFjv8E5L3
+         XG1vIKQLYhuhCTO4tZohhpUfMFjaz1jvi/MdpsS2g+gZkpGKK5WHnwIzmLpeocIihM
+         y+NbkO6jYmhgOzoTk1mcZ0zrBiO/NvjjFkLrqVXo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guy Shattah <sguy@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.20 311/352] net/mlx5e: Use the inner headers to determine tc/pedit offload limitation on decap flows
-Date:   Mon, 11 Feb 2019 15:18:58 +0100
-Message-Id: <20190211141906.620299354@linuxfoundation.org>
+Subject: [PATCH 4.20 312/352] net/mlx5e: Force CHECKSUM_UNNECESSARY for short ethernet frames
+Date:   Mon, 11 Feb 2019 15:18:59 +0100
+Message-Id: <20190211141906.684824003@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,53 +67,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guy Shattah <sguy@mellanox.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 1651925d403e077e3fc86f961905e27c6810e132 ]
+[ Upstream commit e8c8b53ccaff568fef4c13a6ccaf08bf241aa01a ]
 
-In packets that need to be decaped the internal headers
-have to be checked, not the external ones.
+When an ethernet frame is padded to meet the minimum ethernet frame
+size, the padding octets are not covered by the hardware checksum.
+Fortunately the padding octets are usually zero's, which don't affect
+checksum. However, we have a switch which pads non-zero octets, this
+causes kernel hardware checksum fault repeatedly.
 
-Fixes: bdd66ac0aeed ("net/mlx5e: Disallow TC offloading of unsupported match/action combinations")
-Signed-off-by: Guy Shattah <sguy@mellanox.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Prior to:
+commit '88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE ...")'
+skb checksum was forced to be CHECKSUM_NONE when padding is detected.
+After it, we need to keep skb->csum updated, like what we do for RXFCS.
+However, fixing up CHECKSUM_COMPLETE requires to verify and parse IP
+headers, it is not worthy the effort as the packets are so small that
+CHECKSUM_COMPLETE can't save anything.
+
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"),
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Tariq Toukan <tariqt@mellanox.com>
+Cc: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-@@ -2133,6 +2133,7 @@ static bool csum_offload_supported(struc
- 
- static bool modify_header_match_supported(struct mlx5_flow_spec *spec,
- 					  struct tcf_exts *exts,
-+					  u32 match_actions,
- 					  struct netlink_ext_ack *extack)
- {
- 	const struct tc_action *a;
-@@ -2143,7 +2144,11 @@ static bool modify_header_match_supporte
- 	u16 ethertype;
- 	int nkeys, i;
- 
--	headers_v = MLX5_ADDR_OF(fte_match_param, spec->match_value, outer_headers);
-+	if (match_actions & MLX5_FLOW_CONTEXT_ACTION_DECAP)
-+		headers_v = MLX5_ADDR_OF(fte_match_param, spec->match_value, inner_headers);
-+	else
-+		headers_v = MLX5_ADDR_OF(fte_match_param, spec->match_value, outer_headers);
-+
- 	ethertype = MLX5_GET(fte_match_set_lyr_2_4, headers_v, ethertype);
- 
- 	/* for non-IP we only re-write MACs, so we're okay */
-@@ -2200,7 +2205,7 @@ static bool actions_match_supported(stru
- 
- 	if (actions & MLX5_FLOW_CONTEXT_ACTION_MOD_HDR)
- 		return modify_header_match_supported(&parse_attr->spec, exts,
--						     extack);
-+						     actions, extack);
- 
- 	return true;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -732,6 +732,8 @@ static u8 get_ip_proto(struct sk_buff *s
+ 					    ((struct ipv6hdr *)ip_p)->nexthdr;
  }
+ 
++#define short_frame(size) ((size) <= ETH_ZLEN + ETH_FCS_LEN)
++
+ static inline void mlx5e_handle_csum(struct net_device *netdev,
+ 				     struct mlx5_cqe64 *cqe,
+ 				     struct mlx5e_rq *rq,
+@@ -754,6 +756,17 @@ static inline void mlx5e_handle_csum(str
+ 	if (unlikely(test_bit(MLX5E_RQ_STATE_NO_CSUM_COMPLETE, &rq->state)))
+ 		goto csum_unnecessary;
+ 
++	/* CQE csum doesn't cover padding octets in short ethernet
++	 * frames. And the pad field is appended prior to calculating
++	 * and appending the FCS field.
++	 *
++	 * Detecting these padded frames requires to verify and parse
++	 * IP headers, so we simply force all those small frames to be
++	 * CHECKSUM_UNNECESSARY even if they are not padded.
++	 */
++	if (short_frame(skb->len))
++		goto csum_unnecessary;
++
+ 	if (likely(is_last_ethertype_ip(skb, &network_depth, &proto))) {
+ 		if (unlikely(get_ip_proto(skb, network_depth, proto) == IPPROTO_SCTP))
+ 			goto csum_unnecessary;
 
 
