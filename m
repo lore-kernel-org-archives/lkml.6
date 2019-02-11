@@ -2,77 +2,136 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D8CC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA972C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C53D218FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78705218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 20:49:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Eu9dS9Qi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfBKUtd (ORCPT
+        id S1727194AbfBKUtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 15:49:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726860AbfBKUtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 15:49:31 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF543218D8;
-        Mon, 11 Feb 2019 20:49:30 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 15:49:28 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andreas Ziegler <andreas.ziegler@fau.de>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 RESEND] tracing: probeevent: Correctly update
- remaining space in dynamic area
-Message-ID: <20190211154928.6c99e4f2@gandalf.local.home>
-In-Reply-To: <20190206190013.16405-1-andreas.ziegler@fau.de>
-References: <20190122152634.18957-1-andreas.ziegler@fau.de>
-        <20190206190013.16405-1-andreas.ziegler@fau.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 11 Feb 2019 15:49:49 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41066 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfBKUts (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 15:49:48 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m1so112430pgq.8
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 12:49:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PlofGPK1avjEsw/QmRNa8WCLcUE+7hBOnwTBt8jUCMw=;
+        b=Eu9dS9QiH1mXijZ57nvyRLxXafPNQSUpE7A0KIWhVaD+0nVWDSJ5cRh6pntdBS25Mn
+         ncuoRg637h9CDi94ozsiHQTU3r2IVpRskYTkXUtdRRAzvRo9CbKBEFSl5cUQSdM25YMk
+         z414PObGbCTzSJ4dSf84jTlmJm1Q/G66C75pVMaYT5vaP+q8dESUpzF61VuzYS6W1df6
+         /tyH9w4OTKPOT1k3H1QlCPSY/dqCdhMfM0NAvUEeMiwYiHNOS2fjwRGQKaRYzIm07Jdy
+         6TXET+YjOF0a9uCkaWCLEG3rJJjq/W9jlQvqf1HpVn5iToEh+W3Zxwr31YZwiwu2CAnq
+         vo7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PlofGPK1avjEsw/QmRNa8WCLcUE+7hBOnwTBt8jUCMw=;
+        b=YaqG3/ZcD0a24ROi8o2zFvpFgGqyUvjvXB8//sESs79jEMo22xDzyoG1gZFLFGLPJu
+         z2ExANjgdnhJCd06bBSdXiRnlNG4qaSnxxvce6/zx9+2GtfzK/oQUe7hGjIKflZE/uwM
+         Dd/giaiczZuevLnSkJARokhIr27QkX/WVxB3GH7mVMH8F7u1w0aP6cvZO9C5g+ZGeT3X
+         HTIlmtDqyUU/o090rHUmigKosWACjznQztzE/cC4Dlq6pNqepe1PlErA5x+mtO29dlLk
+         Cw3fy/Lb+ctZU6+jbqyrC16OzTgsv4mOHVEqEnFhXHiOl+t1OuPcpFTAW5Z4Cty2O2nI
+         y0lg==
+X-Gm-Message-State: AHQUAuYPy7zmrmQWV/Rbb6BNatLmYo5L9spFXu/IJ0cL8z4K7gs/byUX
+        pPC1M23tjqMhJjrdnAmt2t5EHSDFGxg=
+X-Google-Smtp-Source: AHgI3IYfH06fT0ipXPMLWvSPQM928HXuTRSOXaSVyTRK0UlGdqpTooa3WUDvBDPtleSKIBtF+3HNfA==
+X-Received: by 2002:a62:2a4b:: with SMTP id q72mr139735pfq.61.1549918187431;
+        Mon, 11 Feb 2019 12:49:47 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id t12sm11124722pgq.68.2019.02.11.12.49.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 12:49:46 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gtIWP-0000or-RX; Mon, 11 Feb 2019 13:49:45 -0700
+Date:   Mon, 11 Feb 2019 13:49:45 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190211204945.GF24692@ziepe.ca>
+References: <20190208044302.GA20493@dastard>
+ <20190208111028.GD6353@quack2.suse.cz>
+ <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
+ <20190211102402.GF19029@quack2.suse.cz>
+ <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
+ <20190211180654.GB24692@ziepe.ca>
+ <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
+ <20190211182649.GD24692@ziepe.ca>
+ <20190211184040.GF12668@bombadil.infradead.org>
+ <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  6 Feb 2019 20:00:13 +0100
-Andreas Ziegler <andreas.ziegler@fau.de> wrote:
-
-> Commit 9178412ddf5a ("tracing: probeevent: Return consumed
-> bytes of dynamic area") improved the string fetching
-> mechanism by returning the number of required bytes after
-> copying the argument to the dynamic area. However, this
-> return value is now only used to increment the pointer
-> inside the dynamic area but misses updating the 'maxlen'
-> variable which indicates the remaining space in the dynamic
-> area.
+On Mon, Feb 11, 2019 at 11:58:47AM -0800, Dan Williams wrote:
+> On Mon, Feb 11, 2019 at 10:40 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Mon, Feb 11, 2019 at 11:26:49AM -0700, Jason Gunthorpe wrote:
+> > > On Mon, Feb 11, 2019 at 10:19:22AM -0800, Ira Weiny wrote:
+> > > > What if user space then writes to the end of the file with a regular write?
+> > > > Does that write end up at the point they truncated to or off the end of the
+> > > > mmaped area (old length)?
+> > >
+> > > IIRC it depends how the user does the write..
+> > >
+> > > pwrite() with a given offset will write to that offset, re-extending
+> > > the file if needed
+> > >
+> > > A file opened with O_APPEND and a write done with write() should
+> > > append to the new end
+> > >
+> > > A normal file with a normal write should write to the FD's current
+> > > seek pointer.
+> > >
+> > > I'm not sure what happens if you write via mmap/msync.
+> > >
+> > > RDMA is similar to pwrite() and mmap.
+> >
+> > A pertinent point that you didn't mention is that ftruncate() does not change
+> > the file offset.  So there's no user-visible change in behaviour.
 > 
-> This means that fetch_store_string() always reads the *total*
-> size of the dynamic area from the data_loc pointer instead of
-> the *remaining* size (and passes it along to
-> strncpy_from_{user,unsafe}) even if we're already about to
-> copy data into the middle of the dynamic area.
-> 
-> Fixes: 9178412ddf5a ("tracing: probeevent: Return consumed bytes of dynamic area")
-> Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->
+> ...but there is. The blocks you thought you freed, especially if the
+> system was under -ENOSPC pressure, won't actually be free after the
+> successful ftruncate().
 
-I applied it and will start testing it. But just an FYI, please send
-new versions of a patch as a separate thread. Sending it as a reply to
-is likely to have it get missed, as maintainers usually search their
-inboxes threaded, and only look at patches that are the start of a
-thread. I just happened to have this one marked to look at.
+They won't be free after something dirties the existing mmap either.
 
--- Steve
+Blocks also won't be free if you unlink a file that is currently still
+open.
+
+This isn't really new behavior for a FS.
+
+Jason
