@@ -7,55 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F4FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C7DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F06204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58E9222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898033;
-	bh=zW2R6vP9FArZXHmGp2jqhSgM+XIdeMqqscHIxKxmiWo=;
+	s=default; t=1549898039;
+	bh=CoOmR7NqHxcaQvOe0gQejhG6FyI+loYebLGpmf4bffw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hsNrQD41CcJ9Nel3e8+QB1ftL+eY6S0k+ncPsLeYTVx3dAssv5SIZHFubvcGKRx5q
-	 epz5lLxNXhjigvG2+nE8vjlOuI8tZpwLFjHNmOy2rJHfArEcEGxlisivuxYBgimtqk
-	 ZLBSVy2HMqMg98xDrPuLYQ4ExUYMQqwik4QenBuQ=
+	b=GFvbdWtMR9dVZ9Vc3j4bmrEhpPnPVgAjLRXQn8gUZFprbm2suDFVRJWNaCMp7jtwv
+	 UH0ImjYzjAM5uqaoruTxu4HafaLi1WkEsnYPdIT0TpcTCE+wnzhL1Dl1fdh4ngQIS3
+	 U/93RcpPvDU6hk280VML+RcyIS7cRsq5W9vuVV5I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391584AbfBKPJJ (ORCPT
+        id S1730120AbfBKPIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:09:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58918 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391555AbfBKPJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:09:03 -0500
+        id S2391536AbfBKPIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B871E222B2;
-        Mon, 11 Feb 2019 15:09:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DFFD217D9;
+        Mon, 11 Feb 2019 15:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897742;
-        bh=zW2R6vP9FArZXHmGp2jqhSgM+XIdeMqqscHIxKxmiWo=;
+        s=default; t=1549897727;
+        bh=CoOmR7NqHxcaQvOe0gQejhG6FyI+loYebLGpmf4bffw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zvPllGSpRbhZs7JbFY/jCKLBZix5k/86ibYZ7hzbZy3XDtpU7aRTZg49qSePQHNdA
-         3uue8+psZtYoOsoKjKBNZyD61xlbH+61qoscweufLV1Dtu/I7EjhUbkpwT4kPuHiIG
-         12hXvT0xVKEKLIclMjYAfKAdh1f7Ay+3zbBhW0ys=
+        b=iUZAaV6WZWiOn1hpcY4bJcGdkX2eZwJ3IiitqFnnh99BjAGY96fiGN0iS8VIugllF
+         LzQrLpFn0KtpMyAaoqMgTejy+yuThEYTSD/XzPaIEVcw2Qdi3f3N1/t2vY7G2ZanQi
+         JyxENNBNvl93Nc35yZaaMiVg8YuGKihltgZVRVuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 100/137] kernel/hung_task.c: break RCU locks based on jiffies
-Date:   Mon, 11 Feb 2019 15:19:41 +0100
-Message-Id: <20190211141821.325457866@linuxfoundation.org>
+        stable@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        Stan Johnson <userm57@yahoo.com>
+Subject: [PATCH 4.9 096/137] block/swim3: Fix -EBUSY error when re-opening device after unmount
+Date:   Mon, 11 Feb 2019 15:19:37 +0100
+Message-Id: <20190211141820.936429686@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -74,67 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
+[ Upstream commit 296dcc40f2f2e402facf7cd26cf3f2c8f4b17d47 ]
 
-check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
-for every 1024 threads.  But check_hung_task() is very slow if printk()
-was called, and is very fast otherwise.
+When the block device is opened with FMODE_EXCL, ref_count is set to -1.
+This value doesn't get reset when the device is closed which means the
+device cannot be opened again. Fix this by checking for refcount <= 0
+in the release method.
 
-If many threads within some 1024 threads called printk(), the RCU grace
-period might be extended enough to trigger RCU stall warnings.
-Therefore, calling rcu_lock_break() for every some fixed jiffies will be
-safer.
-
-Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/hung_task.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/block/swim3.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 2b59c82cc3e1..fd781a468f32 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -30,7 +30,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
-  * is disabled during the critical section. It also controls the size of
-  * the RCU grace period. So it needs to be upper-bound.
-  */
--#define HUNG_TASK_BATCHING 1024
-+#define HUNG_TASK_LOCK_BREAK (HZ / 10)
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index c264f2d284a7..2e0a9e2531cb 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1027,7 +1027,11 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
+ 	struct swim3 __iomem *sw = fs->swim3;
  
- /*
-  * Zero means infinite timeout - no checking done:
-@@ -158,7 +158,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
- static void check_hung_uninterruptible_tasks(unsigned long timeout)
- {
- 	int max_count = sysctl_hung_task_check_count;
--	int batch_count = HUNG_TASK_BATCHING;
-+	unsigned long last_break = jiffies;
- 	struct task_struct *g, *t;
- 
- 	/*
-@@ -172,10 +172,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	for_each_process_thread(g, t) {
- 		if (!max_count--)
- 			goto unlock;
--		if (!--batch_count) {
--			batch_count = HUNG_TASK_BATCHING;
-+		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
- 			if (!rcu_lock_break(g, t))
- 				goto unlock;
-+			last_break = jiffies;
- 		}
- 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
- 		if (t->state == TASK_UNINTERRUPTIBLE)
+ 	mutex_lock(&swim3_mutex);
+-	if (fs->ref_count > 0 && --fs->ref_count == 0) {
++	if (fs->ref_count > 0)
++		--fs->ref_count;
++	else if (fs->ref_count == -1)
++		fs->ref_count = 0;
++	if (fs->ref_count == 0) {
+ 		swim3_action(fs, MOTOR_OFF);
+ 		out_8(&sw->control_bic, 0xff);
+ 		swim3_select(fs, RELAX);
 -- 
 2.19.1
 
