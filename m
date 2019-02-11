@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0509C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A29D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EBFA214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E6F421B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895597;
-	bh=dJ3lfC9OhfehczZFP5NjJLcAhCLUd4EWZixlyG2oAQk=;
+	s=default; t=1549895601;
+	bh=0Hbv8y3jXssBHkC2LFIKj7kdQF8Ty88VXIN7SUvIA0I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F5lY352aMt+cSQJLoLqW9+WXPnU7/cB3jMGO7lWzJOvzJsyu4bRkZnRVDpJNV/kZo
-	 1WlaztybTzSd0KReflilan+/RRo4swbthIk7BKey9+CPU7X2+0QzamOJ3ejVndn3A+
-	 kqAZ7I6gHOIEoxZQsQoN+FjQhRXhtmaf5etyE2m0=
+	b=WK9bHzIqaZnBHQS3p/ROhCF8bdjL0gJNgD/gKLcqMPh9ThsWee8AOFHzJIUpHnWEG
+	 5rOq6MtM1cKRfbvRif5GR0v95sODFmrB8jolomiaNm2I4PSRvnibEgSyBSBTkT9Ct4
+	 Y10/AmCp0eGiGQi+WOmcDFO/ZzFhwyV59excxpKo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbfBKOdP (ORCPT
+        id S1730627AbfBKOdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:33:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40802 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:33:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730578AbfBKOdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:09 -0500
+        id S1730611AbfBKOdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:33:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8088C214DA;
-        Mon, 11 Feb 2019 14:33:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 543EC218A3;
+        Mon, 11 Feb 2019 14:33:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895589;
-        bh=dJ3lfC9OhfehczZFP5NjJLcAhCLUd4EWZixlyG2oAQk=;
+        s=default; t=1549895594;
+        bh=0Hbv8y3jXssBHkC2LFIKj7kdQF8Ty88VXIN7SUvIA0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hebwc0BliNq2MPCKAzIm2sQm/5kSOS2IFE+9fOJ+H1in1xfRdCNFL0GllJhWITBny
-         eukA36YVnYUGF94fBcRHLzQBtvrc5nEtSwA9qWNKHrLVg/3BGf12iXRx4tPeoZpleB
-         RqsYkkM7ni0nIh9PCMXqkgWtRghj2LPk4DvlkEqs=
+        b=FNrhCUQxO9tZEEhvxpLclmA+jAyoLcQa6sInTxR1Hm2c+WIC+gA3sdCckkbRCby+R
+         M+t6y84Ld3Vfd+Eb5r93yKHtcNNTp35Drzrl0Zv6M8sqjI9xyh6rrFuHFQPNwj7W82
+         781dR1qbl+qLtuW9hqRRngGlIvgJp2yRYhd/C4Rg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Roese <sr@denx.de>,
-        Paul Burton <paul.burton@mips.com>,
-        John Crispin <blogic@openwrt.org>,
-        Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 256/352] MIPS: ralink: Select CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8
-Date:   Mon, 11 Feb 2019 15:18:03 +0100
-Message-Id: <20190211141903.372203898@linuxfoundation.org>
+Subject: [PATCH 4.20 258/352] f2fs: fix use-after-free issue when accessing sbi->stat_info
+Date:   Mon, 11 Feb 2019 15:18:05 +0100
+Message-Id: <20190211141903.494985465@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -69,52 +66,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0b15394475e3bcaf35ca4bf22fc55d56df67224e ]
+[ Upstream commit 60aa4d5536ab7fe32433ca1173bd9d6633851f27 ]
 
-Testing has shown, that when using mainline U-Boot on MT7688 based
-boards, the system may hang or crash while mounting the root-fs. The
-main issue here is that mainline U-Boot configures EBase to a value
-near the end of system memory. And with CONFIG_CPU_MIPSR2_IRQ_VI
-disabled, trap_init() will not allocate a new area to place the
-exception handler. The original value will be used and the handler
-will be copied to this location, which might already be used by some
-userspace application.
+iput() on sbi->node_inode can update sbi->stat_info
+in the below context, if the f2fs_write_checkpoint()
+has failed with error.
 
-The MT7688 supports VI - its config3 register is 0x00002420, so VInt
-(Bit 5) is set. But without setting CONFIG_CPU_MIPSR2_IRQ_VI this
-bit will not be evaluated to result in "cpu_has_vi" being set. This
-patch now selects CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8 which results
-trap_init() to allocate some memory for the exception handler.
+f2fs_balance_fs_bg+0x1ac/0x1ec
+f2fs_write_node_pages+0x4c/0x260
+do_writepages+0x80/0xbc
+__writeback_single_inode+0xdc/0x4ac
+writeback_single_inode+0x9c/0x144
+write_inode_now+0xc4/0xec
+iput+0x194/0x22c
+f2fs_put_super+0x11c/0x1e8
+generic_shutdown_super+0x70/0xf4
+kill_block_super+0x2c/0x5c
+kill_f2fs_super+0x44/0x50
+deactivate_locked_super+0x60/0x8c
+deactivate_super+0x68/0x74
+cleanup_mnt+0x40/0x78
 
-Please note that this issue was not seen with the Mediatek U-Boot
-version, as it does not touch EBase (stays at default of 0x8000.0000).
-This is strictly also not correct as the kernel (_text) resides
-here.
+Fix this by moving f2fs_destroy_stats() further below iput() in
+both f2fs_put_super() and f2fs_fill_super() paths.
 
-Signed-off-by: Stefan Roese <sr@denx.de>
-[paul.burton@mips.com: s/beeing/being/]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: John Crispin <blogic@openwrt.org>
-Cc: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/ralink/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/super.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/arch/mips/ralink/Kconfig b/arch/mips/ralink/Kconfig
-index 1f9cb0e3c79a..613d61763433 100644
---- a/arch/mips/ralink/Kconfig
-+++ b/arch/mips/ralink/Kconfig
-@@ -38,6 +38,7 @@ choice
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 855a622fb052..a239472f405a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 		f2fs_write_checkpoint(sbi, &cpc);
+ 	}
  
- 	config SOC_MT7620
- 		bool "MT7620/8"
-+		select CPU_MIPSR2_IRQ_VI
- 		select HW_HAS_PCI
+-	/* f2fs_write_checkpoint can update stat informaion */
+-	f2fs_destroy_stats(sbi);
+-
+ 	/*
+ 	 * normally superblock is clean, so we need to release this.
+ 	 * In addition, EIO will skip do checkpoint, we need this as well.
+@@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
+ 	iput(sbi->node_inode);
+ 	iput(sbi->meta_inode);
  
- 	config SOC_MT7621
++	/*
++	 * iput() can update stat information, if f2fs_write_checkpoint()
++	 * above failed with error.
++	 */
++	f2fs_destroy_stats(sbi);
++
+ 	/* destroy f2fs internal modules */
+ 	f2fs_destroy_node_manager(sbi);
+ 	f2fs_destroy_segment_manager(sbi);
+@@ -3256,30 +3259,30 @@ try_onemore:
+ 
+ 	f2fs_build_gc_manager(sbi);
+ 
++	err = f2fs_build_stats(sbi);
++	if (err)
++		goto free_nm;
++
+ 	/* get an inode for node space */
+ 	sbi->node_inode = f2fs_iget(sb, F2FS_NODE_INO(sbi));
+ 	if (IS_ERR(sbi->node_inode)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read node inode");
+ 		err = PTR_ERR(sbi->node_inode);
+-		goto free_nm;
++		goto free_stats;
+ 	}
+ 
+-	err = f2fs_build_stats(sbi);
+-	if (err)
+-		goto free_node_inode;
+-
+ 	/* read root inode and dentry */
+ 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
+ 	if (IS_ERR(root)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read root inode");
+ 		err = PTR_ERR(root);
+-		goto free_stats;
++		goto free_node_inode;
+ 	}
+ 	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
+ 			!root->i_size || !root->i_nlink) {
+ 		iput(root);
+ 		err = -EINVAL;
+-		goto free_stats;
++		goto free_node_inode;
+ 	}
+ 
+ 	sb->s_root = d_make_root(root); /* allocate root dentry */
+@@ -3403,12 +3406,12 @@ free_meta:
+ free_root_inode:
+ 	dput(sb->s_root);
+ 	sb->s_root = NULL;
+-free_stats:
+-	f2fs_destroy_stats(sbi);
+ free_node_inode:
+ 	f2fs_release_ino_entry(sbi, true);
+ 	truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 	iput(sbi->node_inode);
++free_stats:
++	f2fs_destroy_stats(sbi);
+ free_nm:
+ 	f2fs_destroy_node_manager(sbi);
+ free_sm:
 -- 
 2.19.1
 
