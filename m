@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E01C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9265AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C982F222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6076F2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895901;
-	bh=1ilPmTGcTLD9FvivOlIe+ycuAiaRCVd7TJ7Ozhw5+EQ=;
+	s=default; t=1549895905;
+	bh=YDOL7bNZ5gzlTYR1zB3MeFJwNbUHJ3VUBEJPYBUHONI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NqXuPSu44qzzkYtcSOpGO0P8M+kXqnlfFuy5B6ybdU89gE9NZObVkMcLvagDk/Mp+
-	 RhGE2dpkAPs68uh5E2D3SeZYfXDakG9u3WfoRT9Y2dTbDRxNl4u96kfuPO7mCB18nj
-	 vICsFoRUrJ+a6brMeVtSfNP5BqC2CAKtFGZ99aJY=
+	b=tK7ibGgvUk0x+iCLh5X+Gv1COB6RAx8u3DW7jB2O3mBw4itDcc/Jsqj52v4tBZ9A3
+	 LWuiUdmqP7NycxVfJo/SSH4P8hR87BYMIJHGhUahYTWyFJfHqym1sDQkR3v5BHVeHJ
+	 1ncbCcCZAwsqdRMAqtNNK7idYyRnjNR17xb8LTIc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfBKOiU (ORCPT
+        id S1731105AbfBKOiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:38:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731641AbfBKOiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:19 -0500
+        id S1730875AbfBKOiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D60B20844;
-        Mon, 11 Feb 2019 14:38:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89D072081B;
+        Mon, 11 Feb 2019 14:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895897;
-        bh=1ilPmTGcTLD9FvivOlIe+ycuAiaRCVd7TJ7Ozhw5+EQ=;
+        s=default; t=1549895901;
+        bh=YDOL7bNZ5gzlTYR1zB3MeFJwNbUHJ3VUBEJPYBUHONI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxz1r5atRpFZ4Ypa0WfAleiuUoaqgYdG5lkqjoRxeUi0IcviCFTU/qo12KfFRJ0/Y
-         5TcMrLCy7LUwCiXz5RkzwpIbu652+bCpWUVjcfqdvXPIQnIzytb7IrF+U4LIlNyl1z
-         BYxQlpcW7QvnfEarrSAIWfVa5fTc6lyDcJo+ZYbE=
+        b=SyRYKULHI91q8WRHIjjjxaKGXQ8+ouUvZJ7mOAZNdruGSmmuevIxwPaZtSN+3vfqW
+         meQv3FdH7MOQL7AJgR/tmwKcsKxNqECsMzovzhPKwtfmtDRFQ+wA7iCd25bBiBQBfx
+         WpQhqHFHTKiVOspkKBPVW4SJVhf7ru3WcbpeeGms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        Wang Li <wangli39@baidu.com>, Zhang Yu <zhangyu31@baidu.com>
-Subject: [PATCH 4.20 348/352] serial: fix race between flush_to_ldisc and tty_open
-Date:   Mon, 11 Feb 2019 15:19:35 +0100
-Message-Id: <20190211141909.329117127@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
+        stable@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.20 339/352] KVM: x86: work around leak of uninitialized stack contents (CVE-2019-7222)
+Date:   Mon, 11 Feb 2019 15:19:26 +0100
+Message-Id: <20190211141908.744528005@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -64,84 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit fedb5760648a291e949f2380d383b5b2d2749b5e upstream.
+commit 353c0956a618a07ba4bbe7ad00ff29fe70e8412a upstream.
 
-There still is a race window after the commit b027e2298bd588
-("tty: fix data race between tty_init_dev and flush of buf"),
-and we encountered this crash issue if receive_buf call comes
-before tty initialization completes in tty_open and
-tty->driver_data may be NULL.
+Bugzilla: 1671930
 
-CPU0                                    CPU1
-----                                    ----
-                                  tty_open
-                                   tty_init_dev
-                                     tty_ldisc_unlock
-                                       schedule
-flush_to_ldisc
- receive_buf
-  tty_port_default_receive_buf
-   tty_ldisc_receive_buf
-    n_tty_receive_buf_common
-      __receive_buf
-       uart_flush_chars
-        uart_start
-        /*tty->driver_data is NULL*/
-                                   tty->ops->open
-                                   /*init tty->driver_data*/
+Emulation of certain instructions (VMXON, VMCLEAR, VMPTRLD, VMWRITE with
+memory operand, INVEPT, INVVPID) can incorrectly inject a page fault
+when passed an operand that points to an MMIO address.  The page fault
+will use uninitialized kernel stack memory as the CR2 and error code.
 
-it can be fixed by extending ldisc semaphore lock in tty_init_dev
-to driver_data initialized completely after tty->ops->open(), but
-this will lead to get lock on one function and unlock in some other
-function, and hard to maintain, so fix this race only by checking
-tty->driver_data when receiving, and return if tty->driver_data
-is NULL, and n_tty_receive_buf_common maybe calls uart_unthrottle,
-so add the same check.
+The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
+exit to userspace; however, it is not an easy fix, so for now just
+ensure that the error code and CR2 are zero.
 
-Because the tty layer knows nothing about the driver associated with the
-device, the tty layer can not do anything here, it is up to the tty
-driver itself to check for this type of race.  Fix up the serial driver
-to correctly check to see if it is finished binding with the device when
-being called, and if not, abort the tty calls.
+Embargoed until Feb 7th 2019.
 
-[Description and problem report and testing from Li RongQing, I rewrote
-the patch to be in the serial layer, not in the tty core - gregkh]
-
-Reported-by: Li RongQing <lirongqing@baidu.com>
-Tested-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Wang Li <wangli39@baidu.com>
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Cc: stable <stable@vger.kernel.org>
+Reported-by: Felix Wilhelm <fwilhelm@google.com>
+Cc: stable@kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/serial_core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/kvm/x86.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -130,6 +130,9 @@ static void uart_start(struct tty_struct
- 	struct uart_port *port;
- 	unsigned long flags;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5041,6 +5041,13 @@ int kvm_read_guest_virt(struct kvm_vcpu
+ {
+ 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
  
-+	if (!state)
-+		return;
-+
- 	port = uart_port_lock(state, flags);
- 	__uart_start(tty);
- 	uart_port_unlock(port, flags);
-@@ -727,6 +730,9 @@ static void uart_unthrottle(struct tty_s
- 	upstat_t mask = UPSTAT_SYNC_FIFO;
- 	struct uart_port *port;
- 
-+	if (!state)
-+		return;
-+
- 	port = uart_port_ref(state);
- 	if (!port)
- 		return;
++	/*
++	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
++	 * is returned, but our callers are not ready for that and they blindly
++	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
++	 * uninitialized kernel stack memory into cr2 and error code.
++	 */
++	memset(exception, 0, sizeof(*exception));
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
+ 					  exception);
+ }
 
 
