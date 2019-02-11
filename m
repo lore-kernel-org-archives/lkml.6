@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D1EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2C5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4639B20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A5520855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:54:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896876;
-	bh=RT0q7TJ67SBYtK/DRkzvKZbak8V4RUl5TiyWCKXRptg=;
+	s=default; t=1549896879;
+	bh=p6HJD3Gf68SEDgv5n+wX+xSZNYElih4m6kMn6YMU0fQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jxmv8iHw3RUWddGEjKrDJgH4CwpYCKk4W1m4xFJK779ql5MNe4VXgxxVwYbUK2nTG
-	 gDvlH8IrY0HpJcRhidCaNybdOzwJZRwSgvn0Tj2gF0S6LD5KK+Wu6ZaeIwW4vL9zkX
-	 INkPs3U0vIUrrFoAhmfgc9sZqy73VBuRmDm8xm8c=
+	b=aunvu3i9wNfdDo1T9AY6qn2BMN87ifNuQcv4XzLaiahId2DRmWVbymYdOGruc721z
+	 8ww4L4wZe3L+9p1/ogC82gTAkvU5bdEFnXk5hY+RG2Iv+cCVTH/IW8k7gbD1ZkyHu9
+	 fY3RirMonOXzey8TZ5aZM0R8Xjc+S2T73zD6F8fo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388847AbfBKOye (ORCPT
+        id S2388857AbfBKOyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:54:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41262 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:54:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731431AbfBKOyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:54:32 -0500
+        id S2388844AbfBKOyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:54:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5F8620855;
-        Mon, 11 Feb 2019 14:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E64CC2229E;
+        Mon, 11 Feb 2019 14:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896871;
-        bh=RT0q7TJ67SBYtK/DRkzvKZbak8V4RUl5TiyWCKXRptg=;
+        s=default; t=1549896874;
+        bh=p6HJD3Gf68SEDgv5n+wX+xSZNYElih4m6kMn6YMU0fQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mUnHYB93rT68NZh7oG6+xEmUePD5Kr9tmIvn4CQfdgif//cFDdUGUvDt1TA+1a2oQ
-         yCahU6soav0WJDnmAhf06ZTwxd6b3zCdQSUBvJsdgeoul8lyQtL7kOKsOWLV1w4SjF
-         uiOMDIjWS+ilhs/FFAGBUDkhJxiRDTGnIHRVGIAw=
+        b=bF+n/DliiS+Je1QpN4cLRh58zxPia1r0rm9bjr27TTr3zAUmf/yAbCJX2V6ZOMbV1
+         EvknsJh9iY18a48PJ2YaX61tDfEBQvF46mEV9ePEP0nW1sb802HnOWTeetW+79AA9d
+         CowEAaUKvNCcvLMxiXWDbayeEettmnxi6N/VoJWE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Slawomir Stepien <sst@poczta.fm>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 016/205] crypto: aes_ti - disable interrupts while accessing S-box
-Date:   Mon, 11 Feb 2019 15:16:54 +0100
-Message-Id: <20190211141828.215276093@linuxfoundation.org>
+Subject: [PATCH 4.14 002/205] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
+Date:   Mon, 11 Feb 2019 15:16:40 +0100
+Message-Id: <20190211141827.343874802@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -67,111 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0a6a40c2a8c184a2fb467efacfb1cd338d719e0b ]
+[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
 
-In the "aes-fixed-time" AES implementation, disable interrupts while
-accessing the S-box, in order to make cache-timing attacks more
-difficult.  Previously it was possible for the CPU to be interrupted
-while the S-box was loaded into L1 cache, potentially evicting the
-cachelines and causing later table lookups to be time-variant.
+Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
+error code. This change will ensure that this error is being passed up
+in the call stack, so it can be handled.
 
-In tests I did on x86 and ARM, this doesn't affect performance
-significantly.  Responsiveness is potentially a concern, but interrupts
-are only disabled for a single AES block.
-
-Note that even after this change, the implementation still isn't
-necessarily guaranteed to be constant-time; see
-https://cr.yp.to/antiforgery/cachetiming-20050414.pdf for a discussion
-of the many difficulties involved in writing truly constant-time AES
-software.  But it's valuable to make such attacks more difficult.
-
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/Kconfig  |  3 ++-
- crypto/aes_ti.c | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 5579eb88d460..84f99f8eca4b 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -930,7 +930,8 @@ config CRYPTO_AES_TI
- 	  8 for decryption), this implementation only uses just two S-boxes of
- 	  256 bytes each, and attempts to eliminate data dependent latencies by
- 	  prefetching the entire table into the cache at the start of each
--	  block.
-+	  block. Interrupts are also disabled to avoid races where cachelines
-+	  are evicted when the CPU is interrupted to do something else.
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+index f85dde9805e0..f17f700ea04f 100644
+--- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
+ 	if (ret)
+ 		return ret;
  
- config CRYPTO_AES_586
- 	tristate "AES cipher algorithms (i586)"
-diff --git a/crypto/aes_ti.c b/crypto/aes_ti.c
-index 03023b2290e8..1ff9785b30f5 100644
---- a/crypto/aes_ti.c
-+++ b/crypto/aes_ti.c
-@@ -269,6 +269,7 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	const u32 *rkp = ctx->key_enc + 4;
- 	int rounds = 6 + ctx->key_length / 4;
- 	u32 st0[4], st1[4];
-+	unsigned long flags;
- 	int round;
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
  
- 	st0[0] = ctx->key_enc[0] ^ get_unaligned_le32(in);
-@@ -276,6 +277,12 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	st0[2] = ctx->key_enc[2] ^ get_unaligned_le32(in + 8);
- 	st0[3] = ctx->key_enc[3] ^ get_unaligned_le32(in + 12);
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
  
-+	/*
-+	 * Temporarily disable interrupts to avoid races where cachelines are
-+	 * evicted when the CPU is interrupted to do something else.
-+	 */
-+	local_irq_save(flags);
+ 	ad7280_delay(st);
+ 
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
+ 	ad7280_delay(st);
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		__ad7280_read32(st, &tmp);
++		ret = __ad7280_read32(st, &tmp);
++		if (ret)
++			return ret;
+ 
+ 		if (ad7280_check_crc(st, tmp))
+ 			return -EIO;
+@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
+ 		return ret;
+ 
+ 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
+-		__ad7280_read32(st, &val);
++		ret = __ad7280_read32(st, &val);
++		if (ret)
++			return ret;
 +
- 	st0[0] ^= __aesti_sbox[ 0] ^ __aesti_sbox[128];
- 	st0[1] ^= __aesti_sbox[32] ^ __aesti_sbox[160];
- 	st0[2] ^= __aesti_sbox[64] ^ __aesti_sbox[192];
-@@ -300,6 +307,8 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	put_unaligned_le32(subshift(st1, 1) ^ rkp[5], out + 4);
- 	put_unaligned_le32(subshift(st1, 2) ^ rkp[6], out + 8);
- 	put_unaligned_le32(subshift(st1, 3) ^ rkp[7], out + 12);
-+
-+	local_irq_restore(flags);
- }
+ 		if (val == 0)
+ 			return n - 1;
  
- static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
-@@ -308,6 +317,7 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	const u32 *rkp = ctx->key_dec + 4;
- 	int rounds = 6 + ctx->key_length / 4;
- 	u32 st0[4], st1[4];
-+	unsigned long flags;
- 	int round;
- 
- 	st0[0] = ctx->key_dec[0] ^ get_unaligned_le32(in);
-@@ -315,6 +325,12 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	st0[2] = ctx->key_dec[2] ^ get_unaligned_le32(in + 8);
- 	st0[3] = ctx->key_dec[3] ^ get_unaligned_le32(in + 12);
- 
-+	/*
-+	 * Temporarily disable interrupts to avoid races where cachelines are
-+	 * evicted when the CPU is interrupted to do something else.
-+	 */
-+	local_irq_save(flags);
-+
- 	st0[0] ^= __aesti_inv_sbox[ 0] ^ __aesti_inv_sbox[128];
- 	st0[1] ^= __aesti_inv_sbox[32] ^ __aesti_inv_sbox[160];
- 	st0[2] ^= __aesti_inv_sbox[64] ^ __aesti_inv_sbox[192];
-@@ -339,6 +355,8 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	put_unaligned_le32(inv_subshift(st1, 1) ^ rkp[5], out + 4);
- 	put_unaligned_le32(inv_subshift(st1, 2) ^ rkp[6], out + 8);
- 	put_unaligned_le32(inv_subshift(st1, 3) ^ rkp[7], out + 12);
-+
-+	local_irq_restore(flags);
- }
- 
- static struct crypto_alg aes_alg = {
 -- 
 2.19.1
 
