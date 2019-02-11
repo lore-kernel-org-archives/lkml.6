@@ -4,56 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3676BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E3AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED9D320700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F5F62081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896448;
-	bh=iS2Kw93r9w3d1IGSElH9qaIDAsIycvRg1HO6YfL7MEw=;
+	s=default; t=1549896451;
+	bh=TT9vBmSCIF1ZZiT94lhAWpLDeUp8Rt1zq6fmkgxeMw0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rBCcqzdKgK8I6JkKQjlksre7poTfb8lopURhwonAW9KorkZoE8O6YGM8m3zumsKWy
-	 o71IVQopsdrbwe/CocKztlqC+qbrKfAtW780FGeDAI4BPFYN30xVXgWI/cYj3W3HCT
-	 5nzDiCuV791lMW0HQt+b4n/ViP3elmfba+VqH6cU=
+	b=Kd9Se4mx8EK5PMhOpDQdGL+VcpeWQH3+nMpVKgXHL5dQ8bc5jhSVYf5u/4Hs3XHg7
+	 OgNs4YjGJUBpo9G2t2njx2DOAA/pEfHwqOoCNStMrlhnDElKgaf7hfbYukyFGotHcx
+	 t1I5BGVEfjkKP6Zh2Sc3/3B57lEvGa4S0X7qqPMg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387502AbfBKOr0 (ORCPT
+        id S2387513AbfBKOra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:47:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60612 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:47:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732712AbfBKOrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:47:19 -0500
+        id S1732990AbfBKOrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:47:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 807C12081B;
-        Mon, 11 Feb 2019 14:47:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29EC9206BA;
+        Mon, 11 Feb 2019 14:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896439;
-        bh=iS2Kw93r9w3d1IGSElH9qaIDAsIycvRg1HO6YfL7MEw=;
+        s=default; t=1549896442;
+        bh=TT9vBmSCIF1ZZiT94lhAWpLDeUp8Rt1zq6fmkgxeMw0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=az0ahPoxTj21bToPU6g2Lz7NBNUOMu/FGmiLyeO6D+TA2VUnKr34MkW/8HvAZ3/VE
-         G4zYjFcX8LqJA43EQv+JtThesCQjzVP8xpDrO0hrbx5Z5/kLcFKbBJbiFNH95JlhY8
-         Mpl+iiKTh41yGyPxWC1b+YuB+NpwdWsu4XNhCYlo=
+        b=hFghSL7GNvTtAxUv/5KZO3yGRmiRkH1FpOZnUv6/xJlvHuEOzNvQ3CS2YdLNFs2qR
+         bkxNyrd9VqMBdZQM5XyfKym+1qA/Z4AK1/Swis3DleXZWeXd2MFxKu0YO0x4AEImdu
+         jDsJM4lknMp1kZ9+lhnz4BFLusycOhtatn1FBU4A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Feng Li <lifeng1519@gmail.com>,
-        Ajish Koshy <ajish.koshy@microsemi.com>,
-        Murthy Bhat <Murthy.Bhat@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 183/313] scsi: smartpqi: increase fw status register read timeout
-Date:   Mon, 11 Feb 2019 15:17:43 +0100
-Message-Id: <20190211141905.551775481@linuxfoundation.org>
+Subject: [PATCH 4.19 184/313] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 11 Feb 2019 15:17:44 +0100
+Message-Id: <20190211141905.599580032@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -72,44 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 65111785acccb836ec75263b03b0e33f21e74f47 ]
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
-Problem:
- - during the driver initialization, driver will poll fw
-   for KERNEL_UP in a 30 seconds timeout.
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
- - if the firmware is not ready after 30 seconds,
-   driver will not be loaded.
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
 
-Fix:
- - change timeout from 30 seconds to 3 minutes.
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
 
-Reported-by: Feng Li <lifeng1519@gmail.com>
-Reviewed-by: Ajish Koshy <ajish.koshy@microsemi.com>
-Reviewed-by: Murthy Bhat <Murthy.Bhat@microsemi.com>
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_sis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_sis.c b/drivers/scsi/smartpqi/smartpqi_sis.c
-index 5141bd4c9f06..ca7dfb3a520f 100644
---- a/drivers/scsi/smartpqi/smartpqi_sis.c
-+++ b/drivers/scsi/smartpqi/smartpqi_sis.c
-@@ -59,7 +59,7 @@
+diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
+index 67213f11acbd..0a9eac93dd01 100644
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
  
- #define SIS_CTRL_KERNEL_UP			0x80
- #define SIS_CTRL_KERNEL_PANIC			0x100
--#define SIS_CTRL_READY_TIMEOUT_SECS		30
-+#define SIS_CTRL_READY_TIMEOUT_SECS		180
- #define SIS_CTRL_READY_RESUME_TIMEOUT_SECS	90
- #define SIS_CTRL_READY_POLL_INTERVAL_MSECS	10
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
++
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		skb_put_data(frame.skb, req->ie, req->ie_len);
  
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
+ 	}
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
+ 	}
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
+ }
 -- 
 2.19.1
 
