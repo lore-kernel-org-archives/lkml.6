@@ -2,129 +2,160 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB6BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA2DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 689AD20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:46:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA23520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:47:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zVaCHRjC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfBKIq2 convert rfc822-to-8bit (ORCPT
+        id S1727117AbfBKIrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:46:28 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53012 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725931AbfBKIq1 (ORCPT
+        Mon, 11 Feb 2019 03:47:18 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43861 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbfBKIrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:46:27 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1B8fraO018517;
-        Mon, 11 Feb 2019 09:46:22 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qjfy5w1m6-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 11 Feb 2019 09:46:22 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7137031;
-        Mon, 11 Feb 2019 08:46:21 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1C06B2452;
-        Mon, 11 Feb 2019 08:46:21 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 11 Feb
- 2019 09:46:20 +0100
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Mon, 11 Feb 2019 09:46:20 +0100
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regulator: stpmic1: Remove regul_id and *regmap from
- struct stpmic1_regulator
-Thread-Topic: [PATCH] regulator: stpmic1: Remove regul_id and *regmap from
- struct stpmic1_regulator
-Thread-Index: AQHUweZCcYMyvoWnsU+q1IYB39nl4w==
-Date:   Mon, 11 Feb 2019 08:46:20 +0000
-Message-ID: <5C61365C.8050709@st.com>
-References: <20190209043935.24637-1-axel.lin@ingics.com>
-In-Reply-To: <20190209043935.24637-1-axel.lin@ingics.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <BDCE56A8FB73FC4AA3F63AC219DF9952@st.com>
-Content-Transfer-Encoding: 8BIT
+        Mon, 11 Feb 2019 03:47:17 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f90so4756718plb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:47:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lKJkfvRf9vZMrT9r23qvKmpAYOOgMVXkF3jA/6qcIEw=;
+        b=zVaCHRjC3u5C92M1H48msWf5zOPUu7RuXY/ZnbtPCNUTSLGn4Ec5Zl1UknqpPLTf+B
+         NvrlLk9M/U/kWwV/bbN6C21fiGpvZLGPowGXrNO1h647Txd/VRZ1+Zdx6u+cOJPH8adf
+         8tz1qphN8ucv7hl5LebdH1sUZ5PxxD71eJKHlRQFmWmiRI32NuqBjntB7eK0XRa7HDZz
+         YGn+kzEutvULGlv/e61yQAHAIXsKTbshACVVqsRfvRRtvpK+nUVzxRjAaiRGx6qi+NdH
+         UiaQy+Kft0pGOS9mnszHsdtV3VNmI+jdozogJoFwv8HDRt0RmLFojJnN3uQhCrK5wOxb
+         NjXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lKJkfvRf9vZMrT9r23qvKmpAYOOgMVXkF3jA/6qcIEw=;
+        b=NTd0dAAVOg29tP6QhIT+lo265iZj4FgCn50hwG6VxXD7GLCaRBMg+13fTTyzdIW/z0
+         2E8rnk1dNoH8L6N9NzbrBAJ4vhrmsYxLsKFPG31HKf3fE9dUWE+vbYfMJDx1eUYggOJ5
+         o3kjt8jm/TsOdpnzJ72i2eOGtOKgW59lZDPmQDFiruCWBp8O+6VWqfqUwhF4ci47Slsh
+         zfFNGQphv9yPfFtfs4msCkNPUXKvCkNXdC8GEJWeZLrvOJPm7Ih+lTdsbon6rvzjRXSl
+         ZcQvUKmRtgnvD98illoctIX6lw0yQoQIO5R3pTqan7f+9RVqpgr+uRXREFoffjuBxj1n
+         xleg==
+X-Gm-Message-State: AHQUAuamxbvI7UY4BGYwiGWlXynQGt9iCnLcD5r3YBRLETno+ZUAw3Zf
+        l3nIn8awTPXLkKiVVA7HG/dJyQ==
+X-Google-Smtp-Source: AHgI3IaMOxV/idnC+E8HMaF7+P4uXWLkgRt4wl754lIvM9Eu8gYl9OZYVZtF6IKQq1As6U3krHX3dA==
+X-Received: by 2002:a17:902:c05:: with SMTP id 5mr36554098pls.155.1549874836898;
+        Mon, 11 Feb 2019 00:47:16 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id f6sm16689612pfc.88.2019.02.11.00.47.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 00:47:16 -0800 (PST)
+Date:   Mon, 11 Feb 2019 14:17:14 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dave Gerlach <d-gerlach@ti.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 0/2] cpufreq/opp: rework regulator initialization
+Message-ID: <20190211084714.nq3wqxk66dbrfqvy@vireshk-i7>
+References: <CGME20190207122255eucas1p1cdebed838c799eca46cce6a654a26187@eucas1p1.samsung.com>
+ <20190207122227.19873-1-m.szyprowski@samsung.com>
+ <20190208110053.GA7913@e107155-lin>
+ <87302853-74cc-8eeb-6bd4-6338746e0738@samsung.com>
+ <20190208115122.GA13043@e107155-lin>
+ <66b33c07-4970-b60a-d924-d4baba79c836@samsung.com>
+ <20190208174131.GB22401@e107155-lin>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_06:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190208174131.GB22401@e107155-lin>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Axel,
+On 08-02-19, 17:41, Sudeep Holla wrote:
+> Based on Rafael's suggestion, I cooked up something. See if this helps ?
+> The policy to cpu dance can be removed and we can just run through the
+> online cpumask I think.
+> 
+> Regards,
+> Sudeep
+> 
+> -->8
+> 
+> diff --git i/drivers/cpufreq/cpufreq.c w/drivers/cpufreq/cpufreq.c
+> index e35a886e00bc..03d65a02a542 100644
+> --- i/drivers/cpufreq/cpufreq.c
+> +++ w/drivers/cpufreq/cpufreq.c
+> @@ -1640,6 +1640,7 @@ EXPORT_SYMBOL(cpufreq_generic_suspend);
+>  void cpufreq_suspend(void)
+>  {
+>  	struct cpufreq_policy *policy;
+> +	int cpu;
+>  
+>  	if (!cpufreq_driver)
+>  		return;
+> @@ -1662,6 +1663,11 @@ void cpufreq_suspend(void)
+>  	}
+>  
+>  suspend:
+> +	if (cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME)
+> +		for_each_active_policy(policy)
+> +			for_each_cpu(cpu, policy->cpus)
+> +				cpufreq_offline(cpu);
 
-Le 02/09/2019 05:39 AM, Axel Lin a écrit :
-> At the context with *rdev available, there is no problem to get regulator
-> id and *regmap, so no need to store them in struct stpmic1_regulator.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
->   drivers/regulator/stpmic1_regulator.c | 10 ++--------
->   1 file changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/regulator/stpmic1_regulator.c b/drivers/regulator/stpmic1_regulator.c
-> index 963e67fa9ca6..dd5c8fb1ff86 100644
-> --- a/drivers/regulator/stpmic1_regulator.c
-> +++ b/drivers/regulator/stpmic1_regulator.c
-> @@ -30,20 +30,16 @@ struct stpmic1_regulator_cfg {
->   
->   /**
->    * stpmic1 regulator data: this structure is used as driver data
-> - * @regul_id: regulator id
->    * @reg_node: DT node of regulator (unused on non-DT platforms)
->    * @cfg: stpmic specific regulator description
->    * @mask_reset: mask_reset bit value
->    * @irq_curlim: current limit interrupt number
-> - * @regmap: point to parent regmap structure
->    */
->   struct stpmic1_regulator {
-> -	unsigned int regul_id;
->   	struct device_node *reg_node;
->   	const struct stpmic1_regulator_cfg *cfg;
->   	u8 mask_reset;
->   	int irq_curlim;
-> -	struct regmap *regmap;
->   };
->   
->   static int stpmic1_set_mode(struct regulator_dev *rdev, unsigned int mode);
-> @@ -477,7 +473,7 @@ static int stpmic1_set_icc(struct regulator_dev *rdev)
->   	struct stpmic1_regulator *regul = rdev_get_drvdata(rdev);
->   
->   	/* enable switch off in case of over current */
-> -	return regmap_update_bits(regul->regmap, regul->cfg->icc_reg,
-> +	return regmap_update_bits(rdev->regmap, regul->cfg->icc_reg,
->   				  regul->cfg->icc_mask, regul->cfg->icc_mask);
-Maybe this is not compatible with a recommandation from
-include/linux/regulator/driver.h:438:
-  * This should *not* be used directly by anything except the regulator
-  * core and notification injection (which should take the mutex and do
-  * no other direct access).
+You will offline boot-cpu as well :)
 
->   }
->
-...
+> +
+>  	cpufreq_suspended = true;
+>  }
+>  
+> @@ -1674,7 +1680,7 @@ void cpufreq_suspend(void)
+>  void cpufreq_resume(void)
+>  {
+>  	struct cpufreq_policy *policy;
+> -	int ret;
+> +	int ret, cpu;
+>  
+>  	if (!cpufreq_driver)
+>  		return;
+> @@ -1682,6 +1688,11 @@ void cpufreq_resume(void)
+>  	if (unlikely(!cpufreq_suspended))
+>  		return;
+>  
+> +	if (cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME)
+> +		for_each_active_policy(policy)
+> +			for_each_cpu(cpu, policy->cpus)
+> +				cpufreq_online(cpu);
+> +
+>  	cpufreq_suspended = false;
+>  
+>  	if (!has_target() && !cpufreq_driver->resume)
+> @@ -2444,14 +2455,16 @@ static enum cpuhp_state hp_online;
+>  
+>  static int cpuhp_cpufreq_online(unsigned int cpu)
+>  {
+> -	cpufreq_online(cpu);
+> +	if (!(cpufreq_driver->flags & CPUFREQ_DEFER_INIT_DURING_RESUME))
+> +		cpufreq_online(cpu);
 
+This isn't correct as we can offline the CPUs without suspend as well
+and cpufreq_online/offline should always be called in such cases.
 
-thank you,
-pascal
+Anyways, I have cc'd you on another series which may end up fixing
+this problem as well.
+
+-- 
+viresh
