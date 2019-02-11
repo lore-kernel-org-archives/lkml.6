@@ -2,149 +2,114 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C246C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB328218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DC16218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:02:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549890129;
+	bh=rrNFtBlNJNUJkT8yM6Dz01tGCHsAHN8Ue9pLoJM+yKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=o+DCGrjhuki+sLRvCZyr++KK//y2A+k4iTSV8/gBrw0+cMhKpwNk3vlOLKj3LfbMl
+	 YkNRq3iFfsUvY1NMCTmFw7g6iyHIB2Cyy1xrgf5/d/LPpIDUv7LYDOxrFqijeb55gK
+	 lVmK3tk1lvqw3q4DP60NEHCN+2OokAH52homaNfU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfBKNB3 (ORCPT
+        id S1727735AbfBKNCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:01:29 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:32559 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727106AbfBKNB3 (ORCPT
+        Mon, 11 Feb 2019 08:02:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45508 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727106AbfBKNCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:01:29 -0500
-X-UUID: 49f011a418914b5192e845bbbea1c649-20190211
-X-UUID: 49f011a418914b5192e845bbbea1c649-20190211
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <seiya.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1535236211; Mon, 11 Feb 2019 21:01:21 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 11 Feb 2019 21:01:20 +0800
-Received: from [172.21.84.99] (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 11 Feb 2019 21:01:20 +0800
-Message-ID: <1549890080.22817.24.camel@mtksdccf07>
-Subject: Re: [PATCH v6 1/6] irqchip/mtk-sysirq: support 4 interrupt
- parameters for sysirq
-From:   Seiya Wang <seiya.wang@mediatek.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Erin Lo <erin.lo@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Mon, 11 Feb 2019 08:02:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/6/LV1g/4PvANDpUzkKHrGOV+A+8ltW5SRahKEBI2rA=; b=NxIGDC4DkXNJGhLi65zkcWEOM
+        aLHRgAJDYqKlL0Gyql0W997GGnHt6g1AdEg8Y05wITqM0C36yiBPDtAjPobNek/7stQo1CiaZDSi/
+        PnUpPs4u1F77zGEqwgvkHWq69n7GA7F1iGzZMRoGAKrVXw/PwWNYR7DxZq2V49oW5uyzk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtBDm-00039F-Ol; Mon, 11 Feb 2019 13:02:02 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 1055911280BD; Mon, 11 Feb 2019 13:02:02 +0000 (GMT)
+Date:   Mon, 11 Feb 2019 13:02:02 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <mars.cheng@mediatek.com>,
-        <eddie.huang@mediatek.com>, <linux-clk@vger.kernel.org>
-Date:   Mon, 11 Feb 2019 21:01:20 +0800
-In-Reply-To: <868symu2ss.wl-marc.zyngier@arm.com>
-References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
-         <1548317240-44682-2-git-send-email-erin.lo@mediatek.com>
-         <898ca3d9-002b-e28e-fc97-86bc2538e9de@gmail.com>
-         <626b5b46-aac7-1532-386e-2fed85bf4ad9@arm.com>
-         <c0187acf-bd8c-2d41-d84d-d35fc63b2beb@arm.com>
-         <1549866929.22817.20.camel@mtksdccf07> <868symu2ss.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftests/x86/fsgsbase: Indirect output through a
+ wrapper function
+Message-ID: <20190211130202.GB22391@sirena.org.uk>
+References: <20190203134017.9375-1-broonie@kernel.org>
+ <20190203134017.9375-2-broonie@kernel.org>
+ <20190211084543.GA62722@gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Y7xTucakfITjPcLV"
+Content-Disposition: inline
+In-Reply-To: <20190211084543.GA62722@gmail.com>
+X-Cookie: Tell me what to think!!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-11 at 08:50 +0000, Marc Zyngier wrote:
-> On Mon, 11 Feb 2019 06:35:29 +0000,
-> Seiya Wang <seiya.wang@mediatek.com> wrote:
-> > 
-> > On Thu, 2019-02-07 at 15:52 +0000, Marc Zyngier wrote:
-> > > On 07/02/2019 15:47, Marc Zyngier wrote:
-> > > > On 07/02/2019 15:20, Matthias Brugger wrote:
-> > > >>
-> > > >>
-> > > >> On 24/01/2019 09:07, Erin Lo wrote:
-> > > >>> From: Seiya Wang <seiya.wang@mediatek.com>
-> > > >>>
-> > > >>> To support partitioned PPIs, 4 interrupt parameters should be valid
-> > > >>> for sysirq.
-> > > >>>
-> > > >>> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
-> > > >>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > >>> ---
-> > > >>>  drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
-> > > >>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >>>
-> > > >>> diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
-> > > >>> index 90aaf19..282736a 100644
-> > > >>> --- a/drivers/irqchip/irq-mtk-sysirq.c
-> > > >>> +++ b/drivers/irqchip/irq-mtk-sysirq.c
-> > > >>> @@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
-> > > >>>  				       unsigned int *type)
-> > > >>>  {
-> > > >>>  	if (is_of_node(fwspec->fwnode)) {
-> > > >>> -		if (fwspec->param_count != 3)
-> > > >>> +		if (fwspec->param_count != 3 && fwspec->param_count != 4)
-> > > >>
-> > > >> Where is this 4th parameter used?
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.txt#n14
-> > > Sorry, I fired Send way too early.
-> > > 
-> > > What I wanted to add is that it is not clear to me why this change would
-> > > be required here, as this driver only supports SPIs. It could be fixed
-> > > by just relaxing the binding itself.
-> > > 
-> > > Thanks,
-> > > 
-> > > 	M.
-> > 
-> > Do you mean that we should change #interrupt-cells back to 3 for sysirq
-> > and remove the 4th parameters of every spi interrupts in mt8183.dtsi
-> > (i.e. 3 parameters for spi, 4 for ppi) such that we can discard this
-> > patch?
-> 
-> It is more subtle than that:
-> 
-> - PPIs must have the affinity parameter in their int-spec (since you
->   need that for the PMU)
-> 
-> - SPIs that are directly routed to the GIC must also have the affinity
->   parameter (although set to zero).
-> 
-> - SPIs that are routed via the sysirq block (or any other) can use the
->   3 parameter variant, as they are not resolved in the context of the
->   GIC, but in that of the sysirq.
-> 
-> But in short, yes. You should be able to drop this patch altogether.
-> 
-> > If yes, we may need some time to verify the change before resending the
-> > patch.
-> 
-> That's absolutely fine.
-> 
-> Thanks,
-> 
-> 	M.
-> 
-Thanks for the detailed descriptions.
-We will remove this patch and resend again.
 
+--Y7xTucakfITjPcLV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Feb 11, 2019 at 09:45:43AM +0100, Ingo Molnar wrote:
+> * Mark Brown <broonie@kernel.org> wrote:
+
+> > In preparation for a change to make this test run repeatedly which
+> > would generate huge amounts of output as is indirect all the printf()
+> > calls in the program through a wrapper and add a quiet flag which can
+> > be used to suppress the output.  This is fairly quick and dirty, I'm not
+> > 100% sure what would be idiomatic here.
+
+> So this really loses useful output when there is a failure. After this=20
+> patch I get:
+
+>   dagon:~/tip/tools/testing/selftests/x86> ./fsgsbase_64 -vv
+>   [FAIL] 24 errors detected in 1 tries
+
+> Not very helpful, and no real command-line way to see the failures.
+
+For clarity it's the second patch that breaks this, though you're right
+this isn't helpful and this patch needs a log level adding to really fix
+that.
+
+--Y7xTucakfITjPcLV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxhckkACgkQJNaLcl1U
+h9AVggf9HTPsj2bt0CiUxdUGSsC4Y1qHC9wmO9yPS+Rd7nlaDX9LKzStBhaYDGvE
+7OWjEWrRmdz+8gJSx1n3D0CqkdIx+4Ab4QpD2z1hxJ881s8ZSzhgaRYUAa0krqfo
+bsCGj65/WNUnx0igulioWp1kMhptb9roJerKZcQbZ1mACbypFXld0rtqJLycTotu
+tzlcP5UfaayOrjUlQmcRAvngRPj691Ao5BtW+BmBWmOd6YScGemRcLMw1YvUhJno
+ThjA+8765SadI27nUormfrNb4Up/hFI1lncH2JVT8xiEwhiCkmdmYxTRpRRv14IO
+CyO663YVmGYyPalGJwTipgmpvhRQJA==
+=kzGX
+-----END PGP SIGNATURE-----
+
+--Y7xTucakfITjPcLV--
