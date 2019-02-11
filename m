@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B4BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22BDC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC154222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3CB3222BF
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897458;
-	bh=PgJ0NIXdBHDgY2kD0hLp5gMNWzTDwWEaS18RGNwr45E=;
+	s=default; t=1549897461;
+	bh=IoJfbleuqX7emJ+16Td9msXUctHxndTl6HIVHYpn3fE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g5lrPnmF3tVNuDjG3DguPIeF63IFU8c/D4iIo8HqZw76vTeJ32tIxpkAaMase1wja
-	 chO/uUZIGpzs/SVMVDnJ2Z7qygwuFb2qH8DyKNpYJWISrbNWMH3wf+zeK7m+XEsp00
-	 FLNtCuYa0WtAVjrz6UjE1uP3terAGwhBfjc3/Cyc=
+	b=YejAWMY4jtI/hFBdgDYa+aNPvy8JerV2hHLI6NLE6a5qlppzgKQEKYzV6o1r+Zv8Z
+	 pXxlbWiSTh05w8E23brdgohWawKCzSwSo+B1COseT1/SeAqe+mhzbLdKcbNJBwILCB
+	 69lYLeSI+MTZKevmDd68Z0JajwcIAJy9eiUhGTvY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390745AbfBKPER (ORCPT
+        id S2390756AbfBKPET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:04:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53158 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:04:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389995AbfBKPEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:14 -0500
+        id S2390743AbfBKPEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0615222A7;
-        Mon, 11 Feb 2019 15:04:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 785DA222B1;
+        Mon, 11 Feb 2019 15:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897453;
-        bh=PgJ0NIXdBHDgY2kD0hLp5gMNWzTDwWEaS18RGNwr45E=;
+        s=default; t=1549897456;
+        bh=IoJfbleuqX7emJ+16Td9msXUctHxndTl6HIVHYpn3fE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zNVwNvjikWN6frV1UFWYi9ZR4q0WWqR+70vXWQpp51zaww6Zy42iMuYKCqTsUMXVP
-         XT2tu6FODJI1H3/hnjA7Ge01UxZULbenpOKxtRB/4jttNLAyTrL8JDVcpO6gUE75pB
-         WlbOJXH/sguTIw2EjL7DmZ/GCjKx03BAinZWNlaY=
+        b=bNrjbFukbhX1XxcGMWKH7qjSBdv/pjJLUa4FakbwJhqOZWtVJKL0V2UZCgOCtStEV
+         wvlSig9VpkRKzxw+1uRz1rTmMZAs5XvHjrv9GbA9y77k0/FsfkCZxAkmnDUAFqmRt1
+         rnK8D25ee0HpHQkfhewTaoIXw4HLKhGhXqSWn510=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 187/205] usb: gadget: udc: net2272: Fix bitwise and boolean operations
-Date:   Mon, 11 Feb 2019 15:19:45 +0100
-Message-Id: <20190211141840.636244713@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Elder <paul.elder@ideasonboard.com>,
+        Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.14 188/205] usb: gadget: musb: fix short isoc packets with inventra dma
+Date:   Mon, 11 Feb 2019 15:19:46 +0100
+Message-Id: <20190211141840.700280636@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,43 +65,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Paul Elder <paul.elder@ideasonboard.com>
 
-commit 07c69f1148da7de3978686d3af9263325d9d60bd upstream.
+commit c418fd6c01fbc5516a2cd1eaf1df1ec86869028a upstream.
 
-(!x & y) strikes again.
+Handling short packets (length < max packet size) in the Inventra DMA
+engine in the MUSB driver causes the MUSB DMA controller to hang. An
+example of a problem that is caused by this problem is when streaming
+video out of a UVC gadget, only the first video frame is transferred.
 
-Fix bitwise and boolean operations by enclosing the expression:
+For short packets (mode-0 or mode-1 DMA), MUSB_TXCSR_TXPKTRDY must be
+set manually by the driver. This was previously done in musb_g_tx
+(musb_gadget.c), but incorrectly (all csr flags were cleared, and only
+MUSB_TXCSR_MODE and MUSB_TXCSR_TXPKTRDY were set). Fixing that problem
+allows some requests to be transferred correctly, but multiple requests
+were often put together in one USB packet, and caused problems if the
+packet size was not a multiple of 4. Instead, set MUSB_TXCSR_TXPKTRDY
+in dma_controller_irq (musbhsdma.c), just like host mode transfers.
 
-	intcsr & (1 << NET2272_PCI_IRQ)
+This topic was originally tackled by Nicolas Boichat [0] [1] and is
+discussed further at [2] as part of his GSoC project [3].
 
-in parentheses, before applying the boolean operator '!'.
+[0] https://groups.google.com/forum/?hl=en#!topic/beagleboard-gsoc/k8Azwfp75CU
+[1] https://gitorious.org/beagleboard-usbsniffer/beagleboard-usbsniffer-kernel/commit/b0be3b6cc195ba732189b04f1d43ec843c3e54c9?p=beagleboard-usbsniffer:beagleboard-usbsniffer-kernel.git;a=patch;h=b0be3b6cc195ba732189b04f1d43ec843c3e54c9
+[2] http://beagleboard-usbsniffer.blogspot.com/2010/07/musb-isochronous-transfers-fixed.html
+[3] http://elinux.org/BeagleBoard/GSoC/USBSniffer
 
-Notice that this code has been there since 2011. So, it would
-be helpful if someone can double-check this.
-
-This issue was detected with the help of Coccinelle.
-
-Fixes: ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device controller")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 550a7375fe72 ("USB: Add MUSB and TUSB support")
+Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/net2272.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/musb/musb_gadget.c |   13 +------------
+ drivers/usb/musb/musbhsdma.c   |   21 +++++++++++----------
+ 2 files changed, 12 insertions(+), 22 deletions(-)
 
---- a/drivers/usb/gadget/udc/net2272.c
-+++ b/drivers/usb/gadget/udc/net2272.c
-@@ -2096,7 +2096,7 @@ static irqreturn_t net2272_irq(int irq,
- #if defined(PLX_PCI_RDK2)
- 	/* see if PCI int for us by checking irqstat */
- 	intcsr = readl(dev->rdk2.fpga_base_addr + RDK2_IRQSTAT);
--	if (!intcsr & (1 << NET2272_PCI_IRQ)) {
-+	if (!(intcsr & (1 << NET2272_PCI_IRQ))) {
- 		spin_unlock(&dev->lock);
- 		return IRQ_NONE;
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -477,13 +477,10 @@ void musb_g_tx(struct musb *musb, u8 epn
  	}
+ 
+ 	if (request) {
+-		u8	is_dma = 0;
+-		bool	short_packet = false;
+ 
+ 		trace_musb_req_tx(req);
+ 
+ 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
+-			is_dma = 1;
+ 			csr |= MUSB_TXCSR_P_WZC_BITS;
+ 			csr &= ~(MUSB_TXCSR_DMAENAB | MUSB_TXCSR_P_UNDERRUN |
+ 				 MUSB_TXCSR_TXPKTRDY | MUSB_TXCSR_AUTOSET);
+@@ -501,16 +498,8 @@ void musb_g_tx(struct musb *musb, u8 epn
+ 		 */
+ 		if ((request->zero && request->length)
+ 			&& (request->length % musb_ep->packet_sz == 0)
+-			&& (request->actual == request->length))
+-				short_packet = true;
++			&& (request->actual == request->length)) {
+ 
+-		if ((musb_dma_inventra(musb) || musb_dma_ux500(musb)) &&
+-			(is_dma && (!dma->desired_mode ||
+-				(request->actual &
+-					(musb_ep->packet_sz - 1)))))
+-				short_packet = true;
+-
+-		if (short_packet) {
+ 			/*
+ 			 * On DMA completion, FIFO may not be
+ 			 * available yet...
+--- a/drivers/usb/musb/musbhsdma.c
++++ b/drivers/usb/musb/musbhsdma.c
+@@ -320,12 +320,10 @@ static irqreturn_t dma_controller_irq(in
+ 				channel->status = MUSB_DMA_STATUS_FREE;
+ 
+ 				/* completed */
+-				if ((devctl & MUSB_DEVCTL_HM)
+-					&& (musb_channel->transmit)
+-					&& ((channel->desired_mode == 0)
+-					    || (channel->actual_len &
+-					    (musb_channel->max_packet_sz - 1)))
+-				    ) {
++				if (musb_channel->transmit &&
++					(!channel->desired_mode ||
++					(channel->actual_len %
++					    musb_channel->max_packet_sz))) {
+ 					u8  epnum  = musb_channel->epnum;
+ 					int offset = musb->io.ep_offset(epnum,
+ 								    MUSB_TXCSR);
+@@ -337,11 +335,14 @@ static irqreturn_t dma_controller_irq(in
+ 					 */
+ 					musb_ep_select(mbase, epnum);
+ 					txcsr = musb_readw(mbase, offset);
+-					txcsr &= ~(MUSB_TXCSR_DMAENAB
++					if (channel->desired_mode == 1) {
++						txcsr &= ~(MUSB_TXCSR_DMAENAB
+ 							| MUSB_TXCSR_AUTOSET);
+-					musb_writew(mbase, offset, txcsr);
+-					/* Send out the packet */
+-					txcsr &= ~MUSB_TXCSR_DMAMODE;
++						musb_writew(mbase, offset, txcsr);
++						/* Send out the packet */
++						txcsr &= ~MUSB_TXCSR_DMAMODE;
++						txcsr |= MUSB_TXCSR_DMAENAB;
++					}
+ 					txcsr |=  MUSB_TXCSR_TXPKTRDY;
+ 					musb_writew(mbase, offset, txcsr);
+ 				}
 
 
