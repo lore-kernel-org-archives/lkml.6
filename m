@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B862FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629E4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781E021B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350C520844
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895874;
-	bh=5Wz7R4jYFXzViboDSCx3FTdkCQNdbNhUfM7JYZoTQ2s=;
+	s=default; t=1549895877;
+	bh=rTZyOjF9oNR4eKI2T/jpdjn7bgB3Jr+t9HIM2qEBaYE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v8tXL6cu/Xa0DRlc0akGG60EVG/BavSbYLH3J4pNDNyXaSm2rNA5K8ywY+DvZJ0Wh
-	 V22S7NGNlV+7kY+gB+4bxJ5EyS+YCwg3nT/khljrBDfa+t+EyppgzWsOcOMaogxAae
-	 yvHWxwdzBIm3YuDMRYnMQ2M1i4FZ9GXGfnLBkwgY=
+	b=hXcdI+WVBHrP4Nuo0hoMOck8847tKTw5jm9q8ADSNhI2tL8zIqFLL1Rf6Tea5MhtB
+	 8h4dSx6DMzcpGRiKoVlwVQrk3CFfFOlwf8Htnx1sTfy38Ke4T4lv7crx8Oz/cFgmdr
+	 SugBvIS7MpRcPISXfpnUxFfc4PdeWd1e6rzCZiHc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731551AbfBKOhx (ORCPT
+        id S1730908AbfBKOhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47304 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731524AbfBKOhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:48 -0500
+        id S1731538AbfBKOhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA36720844;
-        Mon, 11 Feb 2019 14:37:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 325D62081B;
+        Mon, 11 Feb 2019 14:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895867;
-        bh=5Wz7R4jYFXzViboDSCx3FTdkCQNdbNhUfM7JYZoTQ2s=;
+        s=default; t=1549895870;
+        bh=rTZyOjF9oNR4eKI2T/jpdjn7bgB3Jr+t9HIM2qEBaYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dXtD+vYHcOwmQwJqtj/pUSYHtUlm1p1/mcM1XwlWvTd0w+YxaglA38pwH2DjYewlS
-         NOkcmXpP5Fu2u4yYwqFoTRwvyZIHm5IoDHu6Ei5c1rpkAjdu5MVQkMyDXsJYqffVdi
-         eIyakOrKaiM40cFeXUcbjmDdBKhcc+hy54jkZTaE=
+        b=udYAv77/MJebCdLxJWBYFRerYpgM2F9U1iLP7EKlkDuV6Gb/MQSy5WzC4DGL7SMe3
+         E86vIhOL5+h7shHU3aRi8Qy00xRiunjTrsgE3Z5MTaaLuR9ApcXZHIgBPZn/BeGMEl
+         3rK52lRdvDS0KNbmc/31f/ivDEJ7bbfqUIA4OTkg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 4.20 350/352] serial: sh-sci: Do not free irqs that have already been freed
-Date:   Mon, 11 Feb 2019 15:19:37 +0100
-Message-Id: <20190211141909.445654543@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH 4.20 351/352] cacheinfo: Keep the old value if of_property_read_u32 fails
+Date:   Mon, 11 Feb 2019 15:19:38 +0100
+Message-Id: <20190211141909.503574592@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -64,47 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 4d95987a32db53f3beca76f8c4c8309ef6a5f192 upstream.
+commit 3a34c986324c07dde32903f7bb262e6138e77c2a upstream.
 
-Since IRQs might be muxed on some parts, we need to pay attention when we
-are freeing them.
-Otherwise we get the ugly WARNING "Trying to free already-free IRQ 20".
+Commit 448a5a552f336bd7b847b1951 ("drivers: base: cacheinfo: use OF
+property_read_u32 instead of get_property,read_number") makes cache
+size and number_of_sets be 0 if DT doesn't provide there values. I
+think this is unreasonable so make them keep the old values, which is
+the same as old kernels.
 
-Fixes: 628c534ae735 ("serial: sh-sci: Improve support for separate TEI and DRI interrupts")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Fixes: 448a5a552f33 ("drivers: base: cacheinfo: use OF property_read_u32 instead of get_property,read_number")
+Cc: stable@vger.kernel.org
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/sh-sci.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/base/cacheinfo.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1921,7 +1921,7 @@ out_nomem:
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -79,8 +79,7 @@ static void cache_size(struct cacheinfo
+ 	ct_idx = get_cacheinfo_idx(this_leaf->type);
+ 	propname = cache_type_info[ct_idx].size_prop;
  
- static void sci_free_irq(struct sci_port *port)
- {
--	int i;
-+	int i, j;
+-	if (of_property_read_u32(np, propname, &this_leaf->size))
+-		this_leaf->size = 0;
++	of_property_read_u32(np, propname, &this_leaf->size);
+ }
  
- 	/*
- 	 * Intentionally in reverse order so we iterate over the muxed
-@@ -1937,6 +1937,13 @@ static void sci_free_irq(struct sci_port
- 		if (unlikely(irq < 0))
- 			continue;
+ /* not cache_line_size() because that's a macro in include/linux/cache.h */
+@@ -114,8 +113,7 @@ static void cache_nr_sets(struct cachein
+ 	ct_idx = get_cacheinfo_idx(this_leaf->type);
+ 	propname = cache_type_info[ct_idx].nr_sets_prop;
  
-+		/* Check if already freed (irq was muxed) */
-+		for (j = 0; j < i; j++)
-+			if (port->irqs[j] == irq)
-+				j = i + 1;
-+		if (j > i)
-+			continue;
-+
- 		free_irq(port->irqs[i], port);
- 		kfree(port->irqstr[i]);
+-	if (of_property_read_u32(np, propname, &this_leaf->number_of_sets))
+-		this_leaf->number_of_sets = 0;
++	of_property_read_u32(np, propname, &this_leaf->number_of_sets);
+ }
  
+ static void cache_associativity(struct cacheinfo *this_leaf)
 
 
