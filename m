@@ -7,47 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E290C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B3EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1531720844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65D3E214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895557;
-	bh=xuuzD71YPxiHxw7eQoS1mHaU3ehuv8O/LOwqZGM97+I=;
+	s=default; t=1549895561;
+	bh=UN9tpgvh6MxqFeaitpgnASkdsam5da5U/icbsbP4DrA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qYaHxYozc3iFmyWGz/AQQJ+pquwmOSOgHDRmCvk7bOqxxs6/yVfGZaWlpX9TCCnFS
-	 X7/gyXzjRDlQ1OTx8GS8vMxFlNDQIUh5TQd+Fe2cAkCU0m9A47hib7QlLQaZTo7V5B
-	 tSg13+9j9zGNrV2SmHOmyrE0JAY3CkczvfqixEjw=
+	b=MJW60gZyfq9YNGoQcfFWHywXENhuXeMiGkfbGJC2LiJSysB+/2+KLJOwZV2qgNLLg
+	 lGAKvBaesm0u7nSmkgiRywDMul9yXG1ilwtefelGHztIYgGtO6OdOUpPWYGPwfTxyl
+	 uWUHo6tnvULjqrm17/O3LHSTmeBmM7g4D8F5oc5w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730498AbfBKOcf (ORCPT
+        id S1730231AbfBKOcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:32:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39894 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:32:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730481AbfBKOc3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:32:29 -0500
+        id S1730229AbfBKOcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:32:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8842F20675;
-        Mon, 11 Feb 2019 14:32:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62CB3214DA;
+        Mon, 11 Feb 2019 14:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895549;
-        bh=xuuzD71YPxiHxw7eQoS1mHaU3ehuv8O/LOwqZGM97+I=;
+        s=default; t=1549895554;
+        bh=UN9tpgvh6MxqFeaitpgnASkdsam5da5U/icbsbP4DrA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwr1N55qG8J9u91QwSIDeJ/cCnMciVJyv5w7qhns/sSh4QvcmY3/NSzDBKbldfrbf
-         jAgLevZQMSK0JeOLfPJFi6Azd27Z6UKH+lG/H0ut/uVuHm/QlSyW8xGeM93Su7jTT0
-         MaiSAvEVkT6XXrrxnxW+3SJtLf4rO84mHsK14e1M=
+        b=l/DNcqyncHsgeKdOrR4nDRBOH9kBfcNmgGIPzDtDUDfZAPRFtzSuRbN60w+ONKQas
+         KDZ+yH8Px/GGdnQlh9ioYdsjwunShRWSlmHAeRqEx19jjPThqiYkFmEqZw31fBKBXh
+         nSGymOXkcRCrrlBgXRJ/cOFMRXIJcdoZVt3/MXFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Scott Benesh <scott.benesh@microsemi.com>,
+        Ajish Koshy <ajish.koshy@microsemi.com>,
+        Murthy Bhat <murthy.bhat@microsemi.com>,
+        Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
+        Dave Carroll <david.carroll@microsemi.com>,
+        Scott Teel <scott.teel@microsemi.com>,
+        Kevin Barnett <kevin.barnett@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 240/352] bpf: sk_msg, zap ingress queue on psock down
-Date:   Mon, 11 Feb 2019 15:17:47 +0100
-Message-Id: <20190211141902.437732082@linuxfoundation.org>
+Subject: [PATCH 4.20 214/352] scsi: smartpqi: correct host serial num for ssa
+Date:   Mon, 11 Feb 2019 15:17:21 +0100
+Message-Id: <20190211141900.821788967@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,40 +73,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a136678c0bdbb650daff5df5eec1dab960e074a7 ]
+[ Upstream commit b2346b5030cf9458f30a84028d9fe904b8c942a7 ]
 
-In addition to releasing any cork'ed data on a psock when the psock
-is removed we should also release any skb's in the ingress work queue.
-Otherwise the skb's eventually get free'd but late in the tear
-down process so we see the WARNING due to non-zero sk_forward_alloc.
-
-  void sk_stream_kill_queues(struct sock *sk)
-  {
-	...
-	WARN_ON(sk->sk_forward_alloc);
-	...
-  }
-
-Fixes: 604326b41a6f ("bpf, sockmap: convert to generic sk_msg interface")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Reviewed-by: Scott Benesh <scott.benesh@microsemi.com>
+Reviewed-by: Ajish Koshy <ajish.koshy@microsemi.com>
+Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
+Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
+Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/skmsg.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/core/skmsg.c b/net/core/skmsg.c
-index b7dbb3c976cd..fc7d59f1c57c 100644
---- a/net/core/skmsg.c
-+++ b/net/core/skmsg.c
-@@ -575,6 +575,7 @@ void sk_psock_drop(struct sock *sk, struct sk_psock *psock)
- {
- 	rcu_assign_sk_user_data(sk, NULL);
- 	sk_psock_cork_free(psock);
-+	sk_psock_zap_ingress(psock);
- 	sk_psock_restore_proto(sk, psock);
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index 6f4cb3be97aa..5a86dddbd8ba 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -640,6 +640,7 @@ struct bmic_host_wellness_driver_version {
+ 	u8	driver_version_tag[2];
+ 	__le16	driver_version_length;
+ 	char	driver_version[32];
++	u8	dont_write_tag[2];
+ 	u8	end_tag[2];
+ };
  
- 	write_lock_bh(&sk->sk_callback_lock);
+@@ -669,6 +670,8 @@ static int pqi_write_driver_version_to_host_wellness(
+ 	strncpy(buffer->driver_version, "Linux " DRIVER_VERSION,
+ 		sizeof(buffer->driver_version) - 1);
+ 	buffer->driver_version[sizeof(buffer->driver_version) - 1] = '\0';
++	buffer->dont_write_tag[0] = 'D';
++	buffer->dont_write_tag[1] = 'W';
+ 	buffer->end_tag[0] = 'Z';
+ 	buffer->end_tag[1] = 'Z';
+ 
 -- 
 2.19.1
 
