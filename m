@@ -2,119 +2,107 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9130DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA571C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5960A21B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1E8E2229F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:15:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="GDbniqTc"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="EtoIsmNk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731832AbfBKSO0 (ORCPT
+        id S1731062AbfBKSPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:14:26 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:12433 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfBKSOZ (ORCPT
+        Mon, 11 Feb 2019 13:15:46 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46654 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfBKSPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:14:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549908860;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=WwMHh9+IvrYI0LpPcien93u8h/U0Z53iVl6fzumYbvg=;
-        b=GDbniqTc1eccMSsvh9IVKmzL5QRu/zci/IrIH0d50JS0PmuZXacZ5I//nWUoov7Fo6
-        rcsPo5J3kCFTbfAO2IdhXxss1J/mTIYh1WEQMP0EvVIwCl0rtcd5wWXL5AWVTMBPzWPg
-        6brDSI5oU5OB2tjTaQZ5pVNvIv+NXWnGi1afl6vhrBmr6j/wpGLfOJqG0Oa2hfFPjnZY
-        p4WLPh2cj8lis9XxYfoK34QkGA6fmmZq/vvpUa09qHN8gJ6apvCOVTComHs2jZEy5svB
-        QcoD0J804FCxm4TVv9JqYJfDqowbDpGiQu88m6L3/RZ8utb/wJ9QSDhm6mllLbPd/1Gh
-        0X7w==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/vrwDeo4w=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v1BIECTFs
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 11 Feb 2019 19:14:12 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Letux-kernel] [PATCH] ARM: dts: omap3-gta04: declare backlight in lcd node
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190211162007.15626-1-andreas@kemnade.info>
-Date:   Mon, 11 Feb 2019 19:14:12 +0100
-Cc:     Benoit Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E556C766-1B1D-4352-9D64-D18B631ADB7D@goldelico.com>
-References: <20190211162007.15626-1-andreas@kemnade.info>
-To:     Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3124)
+        Mon, 11 Feb 2019 13:15:45 -0500
+Received: by mail-ot1-f66.google.com with SMTP id w25so19044694otm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:15:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ul5thXc6++/JQFU35y5jSqKTerpNjS/zr14LWC0b/Yo=;
+        b=EtoIsmNkDKQpRH9ypOI5wOHAdlLYheZn+QoXMnH9j3ESgJ+H9ofHEeQ2+z0WgQiKEr
+         x9nF4ZYK4if03fgMSHrIocO7JgQkq8nUlENbhQkgchPEbtsIq8nWqKuoL+Jovt6l77PC
+         N7xGDCZnhMddxom8jz7HGzV8UCnt66iV8NXbA1KODSySGADwC0E5Y6CoZ4HYts0xJDyd
+         4crFfr0dStfGbzratLctbDnEN4KBjQvGMpQEabs0lF0hrPbIYi4QZy7IEaBYhZer3x73
+         HknObt5JsH4ENZsCqWCBSk5ZIQ9H6iR5krsJEj/meW/V3iGfAGNFHjvjw7Qs3eii4g1d
+         XMYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ul5thXc6++/JQFU35y5jSqKTerpNjS/zr14LWC0b/Yo=;
+        b=QrPd+SIbX4a6wkEENaoI9/ivrZanQ609uhbkNi3Drf55vK0/XnUCzlJYGdyIYABzDp
+         tf4YDJEBoobZQS6jc3WjdPHkHDlbA8G87ECPoQ48B63AGu2vg1+c428zi/pkY+31wBBa
+         eQ39+uPIMIt53A7NTpejAo0WxFPPJ0ct57nSLRTXkIST07sCy/6KL0FfmfN3b3oTMnBS
+         ODJtLHuAF4RaGE3TbIJvhq6wfD+r5p4Ne5sM10+PZ+fgaqHf9aie+J29LVUrKpUhE0Ij
+         VQnIrfwY5XvyDfOVl46TBoaZ5gLjolmu9gclUXgPriQP6o0Q0/XsJnbFlPnr8bCcisUp
+         BPLw==
+X-Gm-Message-State: AHQUAuZhxuQTPtF1eTKuQNnJtPIy5iV8rxob+Y7DRXWwK+4fJadlAsRt
+        GSkzxoHYz63kyjQN1BgWIzAcS4fwvwhQuo8VLe6KZA==
+X-Google-Smtp-Source: AHgI3Ib8Tv/GTd/LyyhnRUStQh32TJGMr1mf9h0L5JluLyTEcL0lx7jgHtIyGdtYh7vMLGodX085tmaC6phK3LYN9V4=
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr14708887otn.95.1549908944982;
+ Mon, 11 Feb 2019 10:15:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20190206220828.GJ12227@ziepe.ca> <0c868bc615a60c44d618fb0183fcbe0c418c7c83.camel@redhat.com>
+ <CAPcyv4hqya1iKCfHJRXQJRD4qXZa3VjkoKGw6tEvtWNkKVbP+A@mail.gmail.com>
+ <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
+ <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
+ <20190208044302.GA20493@dastard> <20190208111028.GD6353@quack2.suse.cz>
+ <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
+ <20190211102402.GF19029@quack2.suse.cz> <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
+ <20190211180654.GB24692@ziepe.ca>
+In-Reply-To: <20190211180654.GB24692@ziepe.ca>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 11 Feb 2019 10:15:33 -0800
+Message-ID: <CAPcyv4hdVwn0L8060_wxqDV0XBOwiUojSYjF+u+ugzLoQpcHzw@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 11, 2019 at 10:07 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Mon, Feb 11, 2019 at 09:22:58AM -0800, Dan Williams wrote:
+>
+> > I honestly don't like the idea that random subsystems can pin down
+> > file blocks as a side effect of gup on the result of mmap. Recall that
+> > it's not just RDMA that wants this guarantee. It seems safer to have
+> > the file be in an explicit block-allocation-immutable-mode so that the
+> > fallocate man page can describe this error case. Otherwise how would
+> > you describe the scenarios under which FALLOC_FL_PUNCH_HOLE fails?
+>
+> I rather liked CL's version of this - ftruncate/etc is simply racing
+> with a parallel pwrite - and it doesn't fail.
+>
+> But it also doesnt' trucate/create a hole. Another thread wrote to it
+> right away and the 'hole' was essentially instantly reallocated. This
+> is an inherent, pre-existing, race in the ftrucate/etc APIs.
 
-> Am 11.02.2019 um 17:20 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
-> The lcd display of the gta04 has a backlight but the backlight
-> was not referenced in the lcd node, so screen blanking did
-> not turn off the backlight. Fix that.
->=20
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-
-Works fine.
-
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
-
-> ---
-> the backlight property for the driver was accepted here:
-> =
-https://lore.kernel.org/lkml/a54e7427-ff84-d105-aab7-c5eab42e6df9@ti.com/
->=20
-> arch/arm/boot/dts/omap3-gta04.dtsi | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi =
-b/arch/arm/boot/dts/omap3-gta04.dtsi
-> index 8c55d33ff694..3b88eb5f1a72 100644
-> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
-> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-> @@ -142,6 +142,7 @@
-> 			spi-cpol;
-> 			spi-cpha;
->=20
-> +			backlight=3D <&backlight>;
-> 			label =3D "lcd";
-> 			port {
-> 				lcd_in: endpoint {
-> @@ -151,7 +152,7 @@
-> 		};
-> 	};
->=20
-> -	backlight {
-> +	backlight: backlight {
-> 		compatible =3D "pwm-backlight";
-> 		pwms =3D <&pwm11 0 12000000 0>;
-> 		pwm-names =3D "backlight";
-> --=20
-> 2.11.0
->=20
-> _______________________________________________
-> http://projects.goldelico.com/p/gta04-kernel/
-> Letux-kernel mailing list
-> Letux-kernel@openphoenux.org
-> http://lists.goldelico.com/mailman/listinfo.cgi/letux-kernel
-
+If options are telling the truth with a potentially unexpected error,
+or lying that operation succeeded when it will be immediately undone,
+I'd choose the former.
