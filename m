@@ -2,150 +2,111 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7717BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AADC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C23B2186A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D76612075D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:00:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549926013;
+	bh=RdARy0D2d2IImaaPeK+pm12Sk+zLe4PWvJ4Rp1UMq8o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=obUw8hgSPidWi/OqiNf+hJxPoRydBIxWvHD5txUnBG933tbGi/ASEKg2MPv/Chscp
+	 D7U0qWozycwW4YnDenj8jpiisGV3554xEIGH6L5YGIkLT1HxcodGc5ul5z97ce2hrO
+	 iYqA+S9OfqqPU7s2qYrTDcZZTcXOPPFNmwR1WLIs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfBKW62 (ORCPT
+        id S1727572AbfBKXAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:58:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37878 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 18:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfBKW62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:58:28 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726994AbfBKXAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 18:00:12 -0500
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 221EE80F82;
-        Mon, 11 Feb 2019 22:58:27 +0000 (UTC)
-Received: from [10.36.116.21] (ovpn-116-21.ams2.redhat.com [10.36.116.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B02B51992A;
-        Mon, 11 Feb 2019 22:58:16 +0000 (UTC)
-Subject: Re: [Qemu-devel] security implications of caching with virtio pmem
- (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
-To:     Dave Chinner <david@fromorbit.com>,
-        Pankaj Gupta <pagupta@redhat.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>, dchinner@redhat.com,
-        jack@suse.cz, kvm@vger.kernel.org, linux-nvdimm@ml01.01.org,
-        jasowang@redhat.com, qemu-devel@nongnu.org,
-        virtualization@lists.linux-foundation.org,
-        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        dave jiang <dave.jiang@intel.com>,
-        darrick wong <darrick.wong@oracle.com>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, imammedo@redhat.com,
-        dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com,
-        linux-ext4@vger.kernel.org, tytso@mit.edu,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        pbonzini@redhat.com
-References: <20190109144736.17452-1-pagupta@redhat.com>
- <20190204170515-mutt-send-email-mst@kernel.org>
- <888328358.132676.1549870186945.JavaMail.zimbra@redhat.com>
- <20190211222907.GR14116@dastard>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <b2be7796-9dee-b9fd-87e5-1ae570aa7db6@redhat.com>
-Date:   Mon, 11 Feb 2019 23:58:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 57C992083B
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 23:00:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549926011;
+        bh=RdARy0D2d2IImaaPeK+pm12Sk+zLe4PWvJ4Rp1UMq8o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1U/t75gPlPzV0GunWAAj580UQ0M8IQO7b/0ocVXPNelID0RVlkdhMj4hsKGasjksD
+         EVjIa8/xD1Gua910hLYZzaNPVVqqmjn0XIr7KSRz+zjA74djGWCRG2PhI6a6hymlpQ
+         09sU7CdhUpL1YU0IzM5ExJ2bmf1i/5n92jcXqhYA=
+Received: by mail-wm1-f52.google.com with SMTP id q21so958942wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 15:00:11 -0800 (PST)
+X-Gm-Message-State: AHQUAubAbxtQK5grsZsyPpptr835FbwPGuwF7nhqONoDBH2PEpdkVrk/
+        X+b1lzQ8Hxet/Ysv+KmdnDWDdOUlIJaFYXMCdIgPIw==
+X-Google-Smtp-Source: AHgI3IY9/CMTozIoxXmaMd4k3IPzExCkXpyQ6EENDNglBFNRGElm4CwGZ5tQ0Jfoffwkks/clk12CUflqqHCBROQbIk=
+X-Received: by 2002:a7b:cc13:: with SMTP id f19mr377508wmh.83.1549926009812;
+ Mon, 11 Feb 2019 15:00:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211222907.GR14116@dastard>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 11 Feb 2019 22:58:27 +0000 (UTC)
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-14-rick.p.edgecombe@intel.com> <20190211190925.GQ19618@zn.tnic>
+In-Reply-To: <20190211190925.GQ19618@zn.tnic>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 11 Feb 2019 14:59:55 -0800
+X-Gmail-Original-Message-ID: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
+Message-ID: <CALCETrX2AOTTZOQafZgOFxiQsFgdYHVaLonXTqTa3RUs5MPVUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 13/20] Add set_alias_ function and x86 implementation
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.02.19 23:29, Dave Chinner wrote:
-> On Mon, Feb 11, 2019 at 02:29:46AM -0500, Pankaj Gupta wrote:
->> Hello Dave,
->> Are we okay with this?
-> 
-> Sure.
-> 
-> I'm not sure I agree with all the analysis presented, but, well, I
-> haven't looked any deeper because I'm tired of being shouted at and
-> being called argumentative for daring to ask hard questions about
-> this topic....
+On Mon, Feb 11, 2019 at 11:09 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Mon, Jan 28, 2019 at 04:34:15PM -0800, Rick Edgecombe wrote:
+> > This adds two new functions set_alias_default_noflush and
+>
+> s/This adds/Add/
+>
+> > set_alias_nv_noflush for setting the alias mapping for the page to its
+>
+> Please end function names with parentheses, below too.
+>
+> > default valid permissions and to an invalid state that cannot be cached in
+> > a TLB, respectively. These functions to not flush the TLB.
+>
+> s/to/do/
+>
+> Also, pls put that description as comments over the functions in the
+> code. Otherwise that "nv" as part of the name doesn't really explain
+> what it does.
+>
+> Actually, you could just as well call the function
+>
+> set_alias_invalid_noflush()
+>
+> All the other words are written in full, no need to have "nv" there.
 
-I think if you have concerns, they should definitely be discussed.
-Making people frustrated that review code is not what we want. Not at all.
+Why are you calling this an "alias"?  You're modifying the direct map.
+Your patches are thinking of the direct map as an alias of the vmap
+mapping, but that does seem a bit backwards.  How about
+set_direct_map_invalid_noflush(), etc?
 
-I suggest that Pankaj properly documents what we found out so far about
-security concerns and properly describes intended use cases and answers
-other questions you had in the cover letter / documentation of the
-follow up series.
-
-Thanks Dave!
-
-> 
-> Cheers,
-> 
-> Dave.
-> 
-
-
--- 
-
-Thanks,
-
-David / dhildenb
+--Andy
