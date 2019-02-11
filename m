@@ -1,107 +1,84 @@
 Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F66C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 04:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753C9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 04:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6519121479
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 04:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FE6D2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 04:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBKEJ0 (ORCPT
+        id S1726821AbfBKELt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 23:09:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbfBKEJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 23:09:26 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD9BA7F6A8;
-        Mon, 11 Feb 2019 04:09:25 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E4D8F60A9D;
-        Mon, 11 Feb 2019 04:09:17 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 12:09:12 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 4/5] nvme-pci: simplify nvme_setup_irqs() via
- .setup_affinity callback
-Message-ID: <20190211040911.GC8638@ming.t460p>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
- <20190125095347.17950-5-ming.lei@redhat.com>
- <alpine.DEB.2.21.1902101815260.8784@nanos.tec.linutronix.de>
+        Sun, 10 Feb 2019 23:11:49 -0500
+Received: from mx22.baidu.com ([220.181.50.185]:45091 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726157AbfBKELt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 23:11:49 -0500
+X-Greylist: delayed 950 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Feb 2019 23:11:47 EST
+Received: from M1-MAIL-EX15.internal.baidu.com (unknown [10.44.89.55])
+        by Forcepoint Email with ESMTPS id 513E0BE7A2C55;
+        Mon, 11 Feb 2019 11:55:53 +0800 (CST)
+Received: from BC-Mail-Ex13.internal.baidu.com (172.31.40.49) by
+ M1-MAIL-EX15.internal.baidu.com (10.44.89.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1531.3; Mon, 11 Feb 2019 11:55:53 +0800
+Received: from BC-Mail-Ex13.internal.baidu.com ([172.31.40.49]) by
+ Bc-Mail-Ex13.internal.baidu.com ([172.31.40.49]) with mapi id 15.01.1531.010;
+ Mon, 11 Feb 2019 11:55:53 +0800
+From:   "Li,Rongqing" <lirongqing@baidu.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBYQXJyYXkgdGVzdHM6IGFsbG9jYXRpb24gaGFzIHRv?=
+ =?gb2312?B?IGJlIEdGUF9BVE9NSUMgdW5kZXIgcmN1X3JlYWRfbG9jaw==?=
+Thread-Topic: [PATCH] XArray tests: allocation has to be GFP_ATOMIC under
+ rcu_read_lock
+Thread-Index: AQHUu03La+ynpw9zA0OEKWhqTSnm6aXaA/Vw
+Date:   Mon, 11 Feb 2019 03:55:53 +0000
+Message-ID: <0626e4dd96a345b6bf5b12c7e7b1319d@baidu.com>
+References: <1548760122-13000-1-git-send-email-lirongqing@baidu.com>
+ <20190202231944.GB13285@bombadil.infradead.org>
+In-Reply-To: <20190202231944.GB13285@bombadil.infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.24.150.71]
+x-baidu-bdmsfe-datecheck: 1_M1-MAIL-EX15_2019-02-11 11:55:54:106
+x-baidu-bdmsfe-viruscheck: M1-MAIL-EX15_GRAY_Inside_WithoutAtta_2019-02-11
+ 11:55:54:091
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1902101815260.8784@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 11 Feb 2019 04:09:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 10, 2019 at 07:49:12PM +0100, Thomas Gleixner wrote:
-> On Fri, 25 Jan 2019, Ming Lei wrote:
-> > +static int nvme_setup_affinity(const struct irq_affinity *affd,
-> > +			       struct irq_affinity_desc *masks,
-> > +			       unsigned int nmasks)
-> > +{
-> > +	struct nvme_dev *dev = affd->priv;
-> > +	int affvecs = nmasks - affd->pre_vectors - affd->post_vectors;
-> > +	int curvec, usedvecs;
-> > +	int i;
-> > +
-> > +	nvme_calc_io_queues(dev, nmasks);
-> 
-> So this is the only NVME specific information. Everything else can be done
-> in generic code. So what you really want is:
-> 
-> 	struct affd {
-> 		...
-> +		calc_sets(struct affd *, unsigned int nvecs);
-> 		...
-> 	}
-> 
-> And sets want to be actually inside of the affinity descriptor structure:
-> 
->         unsigned int num_sets;
-> 	unsigned int set_vectors[MAX_SETS];
-> 
-> We surely can define a sensible maximum of sets for now. If that ever turns
-> out to be insufficient, then struct affd might become to large for the
-> stack, but for now, using e.g. 8, there is no need to do so.
-> 
-> So then the logic in the generic code becomes exactly the same as what you
-> added to nvme_setup_affinity():
-> 
-> 	if (affd->calc_sets) {
-> 		affd->calc_sets(affd, nvecs);
-> 	} else if (!affd->num_sets) {
-> 		affd->num_sets = 1;
-> 		affd->set_vectors[0] = affvecs;
-> 	}
-> 
-> 	for (i = 0; i < affd->num_sets; i++) {
-> 	    ....
-> 	}
-> 
-> See?
-
-OK, will do this way in V2, then we can avoid drivers to abuse
-the callback.
-
-Thanks,
-Ming
+DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogTWF0dGhldyBXaWxjb3ggW21haWx0
+bzp3aWxseUBpbmZyYWRlYWQub3JnXQ0KPiC3osvNyrG85DogMjAxOcTqMtTCM8jVIDc6MjANCj4g
+ytW8/sjLOiBMaSxSb25ncWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ILOty806IGxpbnV4
+LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g1vfM4jogUmU6IFtQQVRDSF0gWEFycmF5IHRlc3Rz
+OiBhbGxvY2F0aW9uIGhhcyB0byBiZSBHRlBfQVRPTUlDIHVuZGVyDQo+IHJjdV9yZWFkX2xvY2sN
+Cj4gDQo+IE9uIFR1ZSwgSmFuIDI5LCAyMDE5IGF0IDA3OjA4OjQyUE0gKzA4MDAsIExpIFJvbmdR
+aW5nIHdyb3RlOg0KPiA+IC0JWEFfQlVHX09OKHhhLCB4YV9zdG9yZV9pbmRleCh4YSwgMSwgR0ZQ
+X0tFUk5FTCkgIT0gTlVMTCk7DQo+ID4gKwlYQV9CVUdfT04oeGEsIHhhX3N0b3JlX2luZGV4KHhh
+LCAxLCBHRlBfQVRPTUlDKSAhPSBOVUxMKTsNCj4gDQo+IERpZCB5b3UgdHJ5IHJ1bm5pbmcgdGhp
+cyBjaGFuZ2UgaW4gdXNlcnNwYWNlIHRvbz8gIEkgZG9uJ3QgdGhpbmsgaXQnbGwgd29yay4NCj4g
+DQo+IEkgdGhpbmsgdGhlIHJpZ2h0IGNoYW5nZSB3b3VsZCBiZToNCj4gDQoNCkNvdWxkIHlvdSBz
+ZW5kIHRoaXMgcGF0Y2g/DQoNClRoYW5rcw0KDQotTGkgUm9uZ1FpbmcgDQoNCg0KPiArKysgYi9s
+aWIvdGVzdF94YXJyYXkuYw0KPiBAQCAtMTA3LDggKzEwNywxMSBAQCBzdGF0aWMgbm9pbmxpbmUg
+dm9pZCBjaGVja194YXNfcmV0cnkoc3RydWN0IHhhcnJheQ0KPiAqeGEpDQo+ICAgICAgICAgWEFf
+QlVHX09OKHhhLCB4YXMueGFfbm9kZSAhPSBYQVNfUkVTVEFSVCk7DQo+ICAgICAgICAgWEFfQlVH
+X09OKHhhLCB4YXNfbmV4dF9lbnRyeSgmeGFzLCBVTE9OR19NQVgpICE9DQo+IHhhX21rX3ZhbHVl
+KDApKTsNCj4gICAgICAgICBYQV9CVUdfT04oeGEsIHhhcy54YV9ub2RlICE9IE5VTEwpOw0KPiAr
+ICAgICAgIHJjdV9yZWFkX3VubG9jaygpOw0KPiANCj4gICAgICAgICBYQV9CVUdfT04oeGEsIHhh
+X3N0b3JlX2luZGV4KHhhLCAxLCBHRlBfS0VSTkVMKSAhPSBOVUxMKTsNCj4gKw0KPiArICAgICAg
+IHJjdV9yZWFkX2xvY2soKTsNCj4gICAgICAgICBYQV9CVUdfT04oeGEsICF4YV9pc19pbnRlcm5h
+bCh4YXNfcmVsb2FkKCZ4YXMpKSk7DQo+ICAgICAgICAgeGFzLnhhX25vZGUgPSBYQVNfUkVTVEFS
+VDsNCj4gICAgICAgICBYQV9CVUdfT04oeGEsIHhhc19uZXh0X2VudHJ5KCZ4YXMsIFVMT05HX01B
+WCkgIT0NCj4geGFfbWtfdmFsdWUoMCkpOw0KDQo=
