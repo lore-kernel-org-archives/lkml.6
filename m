@@ -7,62 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF3EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2A4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC6B20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DB6A20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896611;
-	bh=n6S1hpzcezJSRZDPSXdItOB3/W4X91OZZ8V/hck5Sq4=;
+	s=default; t=1549896614;
+	bh=QTBfGjJGMZDZy+8rkTHYMov5P2WwHJvDUFBs0wNk2zM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MeALzYusjkDjPR7PD8YRf1ebgSNxG1nUGPAY9fdUGJTBGE5xPwg5asX9G05cmyAwl
-	 fwYwEz29vEpK4DFCk9IwQ3J2XhRwePgpFRmHhWuvv79aAFFtRvIimzFO3FKo8Kjm8R
-	 2dL0vW7HLw8fUkdSvUbXFGFCynO3Nh6eYLVOBaFI=
+	b=ee1uG8v4xiVljyVZOflA+YvqEOvb2mrO7V9DZ3T/FHgVgz8JT7J6u0ZQtnK79Shkn
+	 1+AmcxXxnfbi/2pTjxg9IIGNsx8ehtH50eilmlvLAyqTKGR9MrCyPOcOgD6DEmA6nr
+	 QYBQ73fVmkaZCGFZdb9Yw9pjRSKePDVNcw/1SUEw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388033AbfBKOuK (ORCPT
+        id S2388042AbfBKOuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35846 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733283AbfBKOuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:08 -0500
+        id S2387495AbfBKOuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 785B82081B;
-        Mon, 11 Feb 2019 14:50:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1800B20700;
+        Mon, 11 Feb 2019 14:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896607;
-        bh=n6S1hpzcezJSRZDPSXdItOB3/W4X91OZZ8V/hck5Sq4=;
+        s=default; t=1549896609;
+        bh=QTBfGjJGMZDZy+8rkTHYMov5P2WwHJvDUFBs0wNk2zM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lbbd6Lb17cIzTBDICDAhrRSFCvEd/YusJypgcmEK+iO+j1fFBjutnQCShjC6sGlEo
-         Rizd9PfAQo8PjINuc/XW1J/FNHtiOAiz+BfF5vDhv2CTQmsJ0Vtj38pzR2YcLj7Woq
-         MkZJgnzX8FXcOrFT8lvfbMS6j7SWyMkAJPBE4Eio=
+        b=jxeObn4eg3j7NA/v+yprO1HqfM7h/fZw/YgK30LRgJcH+fUE6jSJ9q9xS+miGC3bM
+         h6/p9tn/nwWyB37JzDUGp6nuzT98FvMrtX0JzYWSSvNqPYpqKMS5vwGiflSHwajiCB
+         dyozc/BLUhc+x+lki0YOcoT+wHypMO3vl2Y9ynE4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Gordon <bmgordon@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Oren Laadan <orenl@cellrox.com>,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Rom Lemarchand <romlem@android.com>,
-        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 240/313] fs/proc/base.c: use ns_capable instead of capable for timerslack_ns
-Date:   Mon, 11 Feb 2019 15:18:40 +0100
-Message-Id: <20190211141909.457022324@linuxfoundation.org>
+Subject: [PATCH 4.19 241/313] kernel/hung_task.c: break RCU locks based on jiffies
+Date:   Mon, 11 Feb 2019 15:18:41 +0100
+Message-Id: <20190211141909.506561369@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -81,75 +74,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8da0b4f692c6d90b09c91f271517db746a22ff67 ]
+[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
 
-Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
-in its effective capability set, but the current check looks in the root
-namespace instead of the process' user namespace.  Since a process is
-allowed to do other activities controlled by CAP_SYS_NICE inside a
-namespace, it should also be able to adjust timerslack_ns.
+check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
+for every 1024 threads.  But check_hung_task() is very slow if printk()
+was called, and is very fast otherwise.
 
-Link: http://lkml.kernel.org/r/20181030180012.232896-1-bmgordon@google.com
-Signed-off-by: Benjamin Gordon <bmgordon@google.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Oren Laadan <orenl@cellrox.com>
-Cc: Ruchi Kandoi <kandoiruchi@google.com>
-Cc: Rom Lemarchand <romlem@android.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Colin Cross <ccross@android.com>
-Cc: Nick Kralevich <nnk@google.com>
-Cc: Dmitry Shmidt <dimitrysh@google.com>
-Cc: Elliott Hughes <enh@google.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+If many threads within some 1024 threads called printk(), the RCU grace
+period might be extended enough to trigger RCU stall warnings.
+Therefore, calling rcu_lock_break() for every some fixed jiffies will be
+safer.
+
+Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/proc/base.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ kernel/hung_task.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 7e9f07bf260d..5bdcf2159ff0 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2356,10 +2356,13 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
- 		return -ESRCH;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index b9132d1269ef..aa3c51f300aa 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -33,7 +33,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+  * is disabled during the critical section. It also controls the size of
+  * the RCU grace period. So it needs to be upper-bound.
+  */
+-#define HUNG_TASK_BATCHING 1024
++#define HUNG_TASK_LOCK_BREAK (HZ / 10)
  
- 	if (p != current) {
--		if (!capable(CAP_SYS_NICE)) {
-+		rcu_read_lock();
-+		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-+			rcu_read_unlock();
- 			count = -EPERM;
- 			goto out;
+ /*
+  * Zero means infinite timeout - no checking done:
+@@ -172,7 +172,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
+ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ {
+ 	int max_count = sysctl_hung_task_check_count;
+-	int batch_count = HUNG_TASK_BATCHING;
++	unsigned long last_break = jiffies;
+ 	struct task_struct *g, *t;
+ 
+ 	/*
+@@ -187,10 +187,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	for_each_process_thread(g, t) {
+ 		if (!max_count--)
+ 			goto unlock;
+-		if (!--batch_count) {
+-			batch_count = HUNG_TASK_BATCHING;
++		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
+ 			if (!rcu_lock_break(g, t))
+ 				goto unlock;
++			last_break = jiffies;
  		}
-+		rcu_read_unlock();
- 
- 		err = security_task_setscheduler(p);
- 		if (err) {
-@@ -2392,11 +2395,14 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
- 		return -ESRCH;
- 
- 	if (p != current) {
--
--		if (!capable(CAP_SYS_NICE)) {
-+		rcu_read_lock();
-+		if (!ns_capable(__task_cred(p)->user_ns, CAP_SYS_NICE)) {
-+			rcu_read_unlock();
- 			err = -EPERM;
- 			goto out;
- 		}
-+		rcu_read_unlock();
-+
- 		err = security_task_getscheduler(p);
- 		if (err)
- 			goto out;
+ 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+ 		if (t->state == TASK_UNINTERRUPTIBLE)
 -- 
 2.19.1
 
