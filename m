@@ -2,132 +2,88 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D0BC282DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C14E5C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42C3214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:41:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nQPLUdQ8"
+	by mail.kernel.org (Postfix) with ESMTP id 9B3EE20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfBKIl5 (ORCPT
+        id S1727224AbfBKIm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:41:57 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39418 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727153AbfBKIlx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:41:53 -0500
-Received: by mail-pl1-f194.google.com with SMTP id 101so4985780pld.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 00:41:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=y3+EyDegbUZpN+/R1MgR55TgRo8j8NBTJTSndSQPWD0=;
-        b=nQPLUdQ88SR8I618ybEF8PhcK/8OnkEyxsMH/TdZxs7qW3iSyHn7lUcaTr8GQ07QWH
-         iP8FXv5dSYeLNQ0lCSXM/MvC73lxeaWP0nVpsNe3lQNpbsuhWzrSMT7pBof4smocsBTv
-         0EFbGSxTAYh11BQc9kFDi2RgQXbMy4FK2V1k7PvPEiFEh9PV9h55in5F+Ec/wZdcarzQ
-         Dui1JyeqHyKrv6xU5PtT/ztO0z6rR6lLmaqtwCuVhLjcuih/x62+TvrlRHYvUQX9umqp
-         nIdG9qsZC5arJT66/GjlQcog2UhnNUaFYYKg3f6EU+PnezQFBUdn23SvQVqRdUHOxYt0
-         fcSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=y3+EyDegbUZpN+/R1MgR55TgRo8j8NBTJTSndSQPWD0=;
-        b=Fen8zVYvkETPPPFfGrfcAxsuL/PpIpFHUMFlAtU8UtZ+bI4SScbvrX6xknsktRbKqD
-         kfD6mk8AVk3qfGdXigfCw/cSjr1fOw+GbafbPxim4ggajOxAlPceU1lSr1XshleBWPP/
-         Ofh21ExRV9Qq0/gNBSQypPHNA0f40zJUPzqlvaTRfupRthBRoR5ztRK4mEl7hE5SoPPH
-         x5rcpNPR60BsERHTNh3sznDdTgHAOAnvagP1dczx7XhIF35mtuNSHoZvGHG8WcUq3hN3
-         1yh4BKE4U4NQXvRZ1wXZmtDzJcttv3USzbzCMJGz6GWh9UVmJ0zSQH1u2fE8q6TXD/4x
-         LneQ==
-X-Gm-Message-State: AHQUAuZVkvNH6r0pjxL+fukkA1buIDe+a8/eOwrCWCfSo2hRDiOYtaX2
-        30InHYQgp3AdJGh7Q6vsbNA1xw==
-X-Google-Smtp-Source: AHgI3IZ7b5gWH4z0Fbn6KmUML8IyAYZ8dPzxF0dYqE9ATazTuoXrXzwyxYo2J/qghKJo3d6HDJtuqQ==
-X-Received: by 2002:a17:902:a411:: with SMTP id p17mr36083302plq.292.1549874512588;
-        Mon, 11 Feb 2019 00:41:52 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id m68sm3134173pfj.89.2019.02.11.00.41.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 00:41:51 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cpufreq: dt: Implement light_weight_exit() callback
-Date:   Mon, 11 Feb 2019 14:11:36 +0530
-Message-Id: <742f4f42ae944a3ad13216f96fb0d03d394c395e.1549874368.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce00
-In-Reply-To: <cover.1549874368.git.viresh.kumar@linaro.org>
-References: <cover.1549874368.git.viresh.kumar@linaro.org>
+        Mon, 11 Feb 2019 03:42:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42834 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727074AbfBKIm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:42:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C83D6ACB8;
+        Mon, 11 Feb 2019 08:42:25 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6A6211E09A8; Mon, 11 Feb 2019 09:42:25 +0100 (CET)
+Date:   Mon, 11 Feb 2019 09:42:25 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Steve Magnani <steve.magnani@digidescorp.com>
+Cc:     jack@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] udf: Fix corrupt on-disk integrity descriptor
+ following sync()
+Message-ID: <20190211084225.GB19029@quack2.suse.cz>
+References: <20190208173455.20151-1-steve@digidescorp.com>
+ <7ce9c657-efba-5dbb-441d-acb00a13044b@digidescorp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ce9c657-efba-5dbb-441d-acb00a13044b@digidescorp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the light-weight tear down helper to reduce the amount of work
-to do on CPU offline/online operation.
+On Fri 08-02-19 22:06:59, Steve Magnani wrote:
+> On 2/8/19 11:34 AM, Steve Magnani wrote:
+> > In cases where the next unique ID or file/directory count of the
+> > in-core Logical Volume Integrity Descriptor have been updated,
+> > a sync() causes a (corrupt) LVID with a stale CRC to be written to disk.
+> > 
+> > Ordinarily, this is corrected by an update of the on-disk LVID that occurs
+> > when the filesystem is unmounted. However, if power is lost or the
+> > filesystem resides on a device that is surprise-removed, the corrupt LVID
+> > remains and can complicate later remounting or fsck/chkdsk.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/cpufreq-dt.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Thanks for the patches! I've added them to my tree. Just they seem to be
+based on some relatively old kernel which required me to fixup some patch
+conflicts. Please try to base your patches on current upstream kernel if
+possible. Thanks!
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 7ba392911cd0..69309a8121f0 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -160,6 +160,15 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	const char *name;
- 	int ret;
- 
-+	/*
-+	 * We did light-weight shutdown earlier, nothing else to initialize here
-+	 * apart from policy->cpus.
-+	 */
-+	if (policy->driver_data) {
-+		cpumask_copy(policy->cpus, policy->related_cpus);
-+		return 0;
-+	}
-+
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
- 		pr_err("failed to get cpu%d device\n", policy->cpu);
-@@ -295,6 +304,15 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
-+static int cpufreq_light_weight_exit(struct cpufreq_policy *policy)
-+{
-+	/*
-+	 * Preserve policy->driver_data and don't free resources on light-weight
-+	 * tear down.
-+	 */
-+	return 0;
-+}
-+
- static int cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct private_data *priv = policy->driver_data;
-@@ -319,6 +337,7 @@ static struct cpufreq_driver dt_cpufreq_driver = {
- 	.get = cpufreq_generic_get,
- 	.init = cpufreq_init,
- 	.exit = cpufreq_exit,
-+	.light_weight_exit = cpufreq_light_weight_exit,
- 	.name = "cpufreq-dt",
- 	.attr = cpufreq_dt_attr,
- 	.suspend = cpufreq_generic_suspend,
+> "Complicate later remounting" turns out to be an understatement.
+> Actually it seems that this one event can trigger more silent corruption
+> of the filesystem on future remounts.
+> 
+> The driver will mount without complaint a filesystem that lacks a valid LVID.
+> But in this scenario, every time lvid_get_unique_id() is called to generate
+> an ID for a new inode or link, it returns zero. It appears that callers
+> happily assign this zero to all new inodes or links, with no indication to
+> the user or in the syslog that a problem is brewing.
+> 
+> I lost the entire contents of a flash disk to what was probably an
+> instance of this kind of corruption, when I told Windows chkdsk to
+> repair it.
+
+Ah, I'm sorry to hear that.
+
+> I'll try to solve that in a separate followon patchset.
+> The simplest solution I can think of is to force read-only mount when
+> no LVID is available.
+
+Agreed. OSTA UDF standard requires LVID to be present so forcing read-only
+mount is perfectly fine.
+
+								Honza
 -- 
-2.20.1.321.g9e740568ce00
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
