@@ -2,126 +2,85 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9BAC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9142C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BFB2075C
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:44:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8401F2075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549892674;
+	bh=LhPunQKnFzPArevg/Zqs99DsanjNR2sLG88+ce284Yw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=oaxGA9+kDtyt/DKNooDtefEVQS5EdZ9WrYnSOpSVG+j1zjC3qN/lL8yC1kNWjzgi+
+	 Gx1wDKrM/dWTzT86YY/XB+YUcw598FoLgtigvanCwQxT11v42P4V1N+3idEc64mCbt
+	 L/FgSh5MA3ktgwc2/sw/63flLVSw/LHu1YhnPRV4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfBKNoA (ORCPT
+        id S1728187AbfBKNod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:44:00 -0500
-Received: from mga12.intel.com ([192.55.52.136]:36596 "EHLO mga12.intel.com"
+        Mon, 11 Feb 2019 08:44:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbfBKNoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:44:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 05:43:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
-   d="scan'208";a="145882060"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Feb 2019 05:43:58 -0800
-Received: from [10.125.252.196] (abudanko-mobl.ccr.corp.intel.com [10.125.252.196])
-        by linux.intel.com (Postfix) with ESMTP id 268525804B4;
-        Mon, 11 Feb 2019 05:43:54 -0800 (PST)
-Subject: [PATCH v3 2/4] perf-security: document collected perf_events/Perf
- data categories
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <784bbe0d-56c1-bd63-1879-b7db988e40c0@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <a44361cf-869d-fc0b-bf34-384a01785c87@linux.intel.com>
-Date:   Mon, 11 Feb 2019 16:43:54 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1727106AbfBKNoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:44:32 -0500
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC1F9222A6;
+        Mon, 11 Feb 2019 13:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549892672;
+        bh=LhPunQKnFzPArevg/Zqs99DsanjNR2sLG88+ce284Yw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BH0qNFglB3BOOjnP5kmM9+yQIxWagk8L83kSqHB8abc4hqUG4r2dLt3WsmFC0+L1Q
+         Ag+J4Pk2XxEQsiPNIn8kf5xPIX5hSC1qP4wKQZEzVUn7vy/feF292w7wf1GLOIrl/h
+         SxLp37XHLXMEi9Ywn4BtUZLcO305snCi0AUiE9ZE=
+Received: by mail-lf1-f46.google.com with SMTP id b20so7751847lfa.12;
+        Mon, 11 Feb 2019 05:44:31 -0800 (PST)
+X-Gm-Message-State: AHQUAuYqq8XObHZZiUim73QD7fWwxRFF0i4i/29ElUgwAYcTxbMNjh8w
+        cm08P10u+FD1QRLcHZKsV41eL7zHyuVKQutrTF4=
+X-Google-Smtp-Source: AHgI3IauRUDjOCfXMPdcxMijCEYlegAtAnNNTAnZjjmjq3rDhKfI6adCDCFgpTdO8NA1IkQRW1a/JJkffJiumK4wszM=
+X-Received: by 2002:a19:c48e:: with SMTP id u136mr15429450lff.167.1549892670118;
+ Mon, 11 Feb 2019 05:44:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <784bbe0d-56c1-bd63-1879-b7db988e40c0@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CGME20190207170116epcas2p1e0768a74062c8af83842ddb59309850f@epcas2p1.samsung.com>
+ <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-10-s.nawrocki@samsung.com>
+In-Reply-To: <20190207170028.720-10-s.nawrocki@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 11 Feb 2019 14:44:18 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdjH8W6O+DyMQYU_aTcj2yTouabcsxh2yViumkYu0XC8A@mail.gmail.com>
+Message-ID: <CAJKOXPdjH8W6O+DyMQYU_aTcj2yTouabcsxh2yViumkYu0XC8A@mail.gmail.com>
+Subject: Re: [PATCH 09/22] ASoC: samsung: i2s: Move core clk to the driver
+ common data structure
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 7 Feb 2019 at 18:01, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> The core clock is also common for both CPU DAIs so move it to
+> the driver's private data structure.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  sound/soc/samsung/i2s.c | 27 ++++++++++++++-------------
+>  1 file changed, 14 insertions(+), 13 deletions(-)
+>
 
-Document and categorize system and performance data into groups that
-can be captured by perf_events/Perf and explicitly indicate the group
-that can contain process sensitive data.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- Documentation/admin-guide/perf-security.rst | 32 +++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-index bac599e3c55f..8772d44a5912 100644
---- a/Documentation/admin-guide/perf-security.rst
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -11,8 +11,34 @@ impose a considerable risk of leaking sensitive data accessed by monitored
- processes. The data leakage is possible both in scenarios of direct usage of
- perf_events system call API [2]_ and over data files generated by Perf tool user
- mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
--perf_events performance monitoring units (PMU) [2]_ collect and expose for
--performance analysis. Having that said perf_events/Perf performance monitoring
-+perf_events performance monitoring units (PMU) [2]_ and Perf collect and expose
-+for performance analysis. Collected system and performance data may be split into
-+several categories:
-+
-+1. System hardware and software configuration data, for example: a CPU model and
-+   its cache configuration, an amount of available memory and its topology, used
-+   kernel and Perf versions, performance monitoring setup including experiment
-+   time, events configuration, Perf command line parameters, etc.
-+
-+2. User and kernel module paths and their load addresses with sizes, process and
-+   thread names with their PIDs and TIDs, timestamps for captured hardware and
-+   software events.
-+
-+3. Content of kernel software counters (e.g., for context switches, page faults,
-+   CPU migrations), architectural hardware performance counters (PMC) [8]_ and
-+   machine specific registers (MSR) [9]_ that provide execution metrics for
-+   various monitored parts of the system (e.g., memory controller (IMC), interconnect
-+   (QPI/UPI) or peripheral (PCIe) uncore counters) without direct attribution to any
-+   execution context state.
-+
-+4. Content of architectural execution context registers (e.g., RIP, RSP, RBP on
-+   x86_64), process user and kernel space memory addresses and data, content of
-+   various architectural MSRs that capture data from this category.
-+
-+Data that belong to the fourth category can potentially contain sensitive process
-+data. If PMUs in some monitoring modes capture values of execution context registers
-+or data from process memory then access to such monitoring capabilities requires
-+to be ordered and secured properly. So, perf_events/Perf performance monitoring
- is the subject for security access control management [5]_ .
- 
- perf_events/Perf access control
-@@ -134,6 +160,8 @@ Bibliography
- .. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
- .. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
- .. [7] `<http://man7.org/linux/man-pages/man2/ptrace.2.html>`_
-+.. [8] `<https://en.wikipedia.org/wiki/Hardware_performance_counter>`_
-+.. [9] `<https://en.wikipedia.org/wiki/Model-specific_register>`_
- .. [11] `<http://man7.org/linux/man-pages/man2/getrlimit.2.html>`_
- .. [12] `<http://man7.org/linux/man-pages/man5/limits.conf.5.html>`_
+Best regards,
+Krzysztof
