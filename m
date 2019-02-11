@@ -4,58 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE3AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5C8C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1DBD222A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E9FC222A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897311;
-	bh=nkfNdReJHxBRHlbPPGv4KGnpaDGoWaMWv6wiqGQzxhs=;
+	s=default; t=1549897315;
+	bh=JCkmsQSdtMeZTZC5r6wo6nn3rqAcGpv5CBUDe/rkjGY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lNdHrSzhTB6eXInQ07w31NCmp7Ue2vwa30LW2uzELa77GfieYZRuWieuhw6H9ntOS
-	 c3ijTOreqam5//ZLqU6zYXI9rQc08aoVL19Cs+5fluPhn+RgJl//IWru7hpnoPSnHS
-	 0T9NHcOemyGP3v/cSUlqFNFYhHqWWiCnQZJ/Bjrg=
+	b=2Ak1dGwOm0ZOiXpvL47clUqF/qq5aUjZonUdRPf3mwIdjpMXEkAhJvQFLdO7Cygv7
+	 GQz1S18avPWXzDhhlZd7xscXUALObAcCP9Dccz8XISE4YQk23LAyGaGYZmUntl/I06
+	 MDOWzpy7Yh7QBjAtjeFDrAfzm4aSMzAWqyN+VCNQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390276AbfBKPBu (ORCPT
+        id S2389825AbfBKPBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:01:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49890 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:01:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389498AbfBKPBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:48 -0500
+        id S2390273AbfBKPBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:01:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FCBA222AB;
-        Mon, 11 Feb 2019 15:01:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83A90222AF;
+        Mon, 11 Feb 2019 15:01:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897307;
-        bh=nkfNdReJHxBRHlbPPGv4KGnpaDGoWaMWv6wiqGQzxhs=;
+        s=default; t=1549897310;
+        bh=JCkmsQSdtMeZTZC5r6wo6nn3rqAcGpv5CBUDe/rkjGY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VZkL1iJIsI0c8UCppddvP5jnL1qf73FKPcFR5+eiSDTL2pXk0XjTwtLwsiHIqHj46
-         sJ7M0VwM012J5hd5JPmZRzp9aoZReBg/gWWCz0dIWgHQYrw8WjCOM4uQBSRQjvIDob
-         vcJwKEnn15VZkvaQEnGV0W0zWr9C3SDFnDz5q4rY=
+        b=RXIFIE3RbObuFAToJ4UITVcA28CcQcZNXB8dyzJG6er1Y+t0OzLS4dC21JIvMA4jK
+         6DsuMy04AkCM3X+ORfTTJH9C0aU10Ox9aBCY96hHTChJzI+q0e/z1li1i5bsJknP2E
+         Ib2TVrK6JF1YGmfwwOtP0lI6vVBHQtG3GGpPUXHI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        stable@vger.kernel.org, Cheng Lin <cheng.lin130@zte.com.cn>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 159/205] kernel/hung_task.c: break RCU locks based on jiffies
-Date:   Mon, 11 Feb 2019 15:19:17 +0100
-Message-Id: <20190211141838.762111773@linuxfoundation.org>
+Subject: [PATCH 4.14 160/205] proc/sysctl: fix return error for proc_doulongvec_minmax()
+Date:   Mon, 11 Feb 2019 15:19:18 +0100
+Message-Id: <20190211141838.828541692@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -74,67 +70,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
+[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
 
-check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
-for every 1024 threads.  But check_hung_task() is very slow if printk()
-was called, and is very fast otherwise.
+If the number of input parameters is less than the total parameters, an
+EINVAL error will be returned.
 
-If many threads within some 1024 threads called printk(), the RCU grace
-period might be extended enough to trigger RCU stall warnings.
-Therefore, calling rcu_lock_break() for every some fixed jiffies will be
-safer.
+For example, we use proc_doulongvec_minmax to pass up to two parameters
+with kern_table:
 
-Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+{
+	.procname       = "monitor_signals",
+	.data           = &monitor_sigs,
+	.maxlen         = 2*sizeof(unsigned long),
+	.mode           = 0644,
+	.proc_handler   = proc_doulongvec_minmax,
+},
+
+Reproduce:
+
+When passing two parameters, it's work normal.  But passing only one
+parameter, an error "Invalid argument"(EINVAL) is returned.
+
+  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  1       2
+  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
+  -bash: echo: write error: Invalid argument
+  [root@cl150 ~]# echo $?
+  1
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  3       2
+  [root@cl150 ~]#
+
+The following is the result after apply this patch.  No error is
+returned when the number of input parameters is less than the total
+parameters.
+
+  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  1       2
+  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
+  [root@cl150 ~]# echo $?
+  0
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  3       2
+  [root@cl150 ~]#
+
+There are three processing functions dealing with digital parameters,
+__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
+
+This patch deals with __do_proc_doulongvec_minmax, just as
+__do_proc_dointvec does, adding a check for parameters 'left'.  In
+__do_proc_douintvec, its code implementation explicitly does not support
+multiple inputs.
+
+static int __do_proc_douintvec(...){
+         ...
+         /*
+          * Arrays are not supported, keep this simple. *Do not* add
+          * support for them.
+          */
+         if (vleft != 1) {
+                 *lenp = 0;
+                 return -EINVAL;
+         }
+         ...
+}
+
+So, just __do_proc_doulongvec_minmax has the problem.  And most use of
+proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
+parameter.
+
+Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
+Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/hung_task.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/sysctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 32b479468e4d..0cec1241e26f 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -33,7 +33,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
-  * is disabled during the critical section. It also controls the size of
-  * the RCU grace period. So it needs to be upper-bound.
-  */
--#define HUNG_TASK_BATCHING 1024
-+#define HUNG_TASK_LOCK_BREAK (HZ / 10)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index d330b1ce3b94..3ad00bf90b3d 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2708,6 +2708,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+ 			bool neg;
  
- /*
-  * Zero means infinite timeout - no checking done:
-@@ -164,7 +164,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
- static void check_hung_uninterruptible_tasks(unsigned long timeout)
- {
- 	int max_count = sysctl_hung_task_check_count;
--	int batch_count = HUNG_TASK_BATCHING;
-+	unsigned long last_break = jiffies;
- 	struct task_struct *g, *t;
+ 			left -= proc_skip_spaces(&p);
++			if (!left)
++				break;
  
- 	/*
-@@ -179,10 +179,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	for_each_process_thread(g, t) {
- 		if (!max_count--)
- 			goto unlock;
--		if (!--batch_count) {
--			batch_count = HUNG_TASK_BATCHING;
-+		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
- 			if (!rcu_lock_break(g, t))
- 				goto unlock;
-+			last_break = jiffies;
- 		}
- 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
- 		if (t->state == TASK_UNINTERRUPTIBLE)
+ 			err = proc_get_long(&p, &left, &val, &neg,
+ 					     proc_wspace_sep,
 -- 
 2.19.1
 
