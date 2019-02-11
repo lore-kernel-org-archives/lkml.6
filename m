@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18819C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FCCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3738222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 572E3222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:14:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898074;
-	bh=6Nq3SdJ6BlFOxXAybQG7EbTP4ps7hom1CTmLor+Dsko=;
+	s=default; t=1549898080;
+	bh=pBnxoF1MfhXXgv2s7NpYzz+jHeA3fkqL38TB/Urps9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uQl9YvwR47O+uKJO0f3caKRjdH2ZWYkaIeII+V0Yu2OJNlQq+5Qe/phO3kmMw7phU
-	 G+5SUaOgiUx2L9OuhS6QoW+OB6L+gMP2VKy0Ixg0dXn5YfsTepKMWoDvICKWUju3zj
-	 GD1V1zZB6pvcPk7aetXxv4PPvJVaAFvudQ6moG+c=
+	b=Z3u65Qo7rbxp+sP0l7RGr6MewoGEXNTRsX/6o15UOzMipMIm1Emy5eflq6Zja1qCx
+	 BDkwEYBeGEFiPT7BXvatiGOzmgLaVZCLwxFrsqF665uTuCMeMyHvLAlS2rH/w7tqzw
+	 DhOSH0USdtJB/Z15ycvNppOQrltPGqP8JVrFxez0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403885AbfBKPIf (ORCPT
+        id S1728350AbfBKPI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58444 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730110AbfBKPIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:08:34 -0500
+        id S2391495AbfBKPI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84AF1222A7;
-        Mon, 11 Feb 2019 15:08:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19EF7222A7;
+        Mon, 11 Feb 2019 15:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897714;
-        bh=6Nq3SdJ6BlFOxXAybQG7EbTP4ps7hom1CTmLor+Dsko=;
+        s=default; t=1549897705;
+        bh=pBnxoF1MfhXXgv2s7NpYzz+jHeA3fkqL38TB/Urps9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1gnFTN7EQKvGEyZoq1HTWAU6q0OEChvP9f6csH9E9oBnYAto9oYhy+77/+eKC5HVz
-         roaZcAk/VCqdMEjvbevYzvLFD85sdfxsgo45haDdyHMhIj1xp9PhoMzMf1F+eAWOjx
-         wM13CeLFRIBjF+0ptID1r3Xq8LmO/W9uelgRPjKw=
+        b=cCscd5xiVu/grJ4B4AnYdZhUGJR+Vd0m/SSr03QCI+XeLFitGUG+p2HdxnSiUVEKH
+         Hxq8OLX05ge1Q7hApgMWCzf1nHs6vZ1/uv663PxJraHdxscOc+c7Uw2qdjfyEYwrdb
+         ez+1WHdDlw5x3NmWzX3oJBW6AF2pUMJGRUNPmDUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Chris Perl <cperl@janestreet.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 091/137] scripts/decode_stacktrace: only strip base path when a prefix of the path
-Date:   Mon, 11 Feb 2019 15:19:32 +0100
-Message-Id: <20190211141820.492761385@linuxfoundation.org>
+Subject: [PATCH 4.9 080/137] NFS: nfs_compare_mount_options always compare auth flavors.
+Date:   Mon, 11 Feb 2019 15:19:21 +0100
+Message-Id: <20190211141819.444919975@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -68,45 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 67a28de47faa83585dd644bd4c31e5a1d9346c50 ]
+[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
 
-Running something like:
+This patch removes the check from nfs_compare_mount_options to see if a
+`sec' option was passed for the current mount before comparing auth
+flavors and instead just always compares auth flavors.
 
-	decodecode vmlinux .
+Consider the following scenario:
 
-leads to interested results where not only the leading "." gets stripped
-from the displayed paths, but also anywhere in the string, displaying
-something like:
+You have a server with the address 192.168.1.1 and two exports /export/a
+and /export/b.  The first export supports `sys' and `krb5' security, the
+second just `sys'.
 
-	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
+Assume you start with no mounts from the server.
 
-which doesn't help further processing.
+The following results in EIOs being returned as the kernel nfs client
+incorrectly thinks it can share the underlying `struct nfs_server's:
 
-Fix it by only stripping the base path if it is a prefix of the path.
+$ mkdir /tmp/{a,b}
+$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
+$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
+$ df >/dev/null
+df: ‘/tmp/b’: Input/output error
 
-Link: http://lkml.kernel.org/r/20181210174659.31054-3-marc.zyngier@arm.com
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Chris Perl <cperl@janestreet.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index c332684e1b5a..edde8250195c 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -77,7 +77,7 @@ parse_symbol() {
- 	fi
- 
- 	# Strip out the base of the path
--	code=${code//$basepath/""}
-+	code=${code//^$basepath/""}
- 
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 2fdb8f5a7b69..35aef192a13f 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2403,8 +2403,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
+ 		goto Ebusy;
+ 	if (a->acdirmax != b->acdirmax)
+ 		goto Ebusy;
+-	if (b->auth_info.flavor_len > 0 &&
+-	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
++	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
+ 		goto Ebusy;
+ 	return 1;
+ Ebusy:
 -- 
 2.19.1
 
