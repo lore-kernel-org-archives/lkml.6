@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8C3C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB56C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0906A21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCFD521B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898415;
-	bh=UF2ahbSaLErvLTQIdoP3B3swzqSnXtAlig1diGyQ39I=;
+	s=default; t=1549898420;
+	bh=MXBCZJUlaLgLnuEiJIM0Ke3cA2GhbR9MaTK17IlgMYk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RZ8gmw63QNOUTrnHHt5uPIsR/6z/lbtT2IlnfnZ/x8/pbVOzbmUFqlL5EK+2GkK77
-	 hrgoiePiu6Cp6ryhjo1XZSgxrSIKZODhzgL+dg5sljA/sd9SRQTZJsfjP8KlTwJT4u
-	 wlpepRg1Q1I5aFuuJcp323ur0FmRVevtz25kAWyo=
+	b=sWRKzfofL5arGreV2ku+3EeNFSEJDqGJEDemMtLKl2oJW4h8zQN0wCMV4aaS/9M3K
+	 /khS2n8rdoo17Xks79kktOpwAFgLrJyzdOxIbHaJJopoLabOByaSr9edde/tGJDGlP
+	 ZIVsz+yqEOjnVoWtKSwonU+j4oeuOvg4ndypPB8I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391176AbfBKPUN (ORCPT
+        id S2390995AbfBKPF2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:20:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:05:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390998AbfBKPF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:05:29 -0500
+        id S2390009AbfBKPFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:05:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A871222B0;
-        Mon, 11 Feb 2019 15:05:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79572222A7;
+        Mon, 11 Feb 2019 15:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897528;
-        bh=UF2ahbSaLErvLTQIdoP3B3swzqSnXtAlig1diGyQ39I=;
+        s=default; t=1549897522;
+        bh=MXBCZJUlaLgLnuEiJIM0Ke3cA2GhbR9MaTK17IlgMYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FuUHm5hqaScx87Cvh1ZYXwBDPAGKQdVhzNMrovjogoqZA5ksTdCkbLZWvsLVUtPZA
-         xflbT3u+1+8HXScH+3Oh5hA5bSDbeb+WkcKk8aW4GIBCNJzCBZ9e+e5UJpv9KkoRxM
-         U9AkIfLAKoWTvMyQ7LSAc92T1CSgmpnsaMK6BZus=
+        b=2tg41F4Q6tyyLP1XO6GMrhJwgYcwGh/8c/cg+jmOqA2CcqDdau79MPNzMjEI/AXEF
+         iht2Du9bzCbuy29A2R9incMBSH5RxuzuvViWurkyjlf8EgHDodwSvlvp6DdAB8+4rf
+         44DotQOm5KrABh9GTKFgEY+Xz4yLcEMFkjcM346Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Tiezhu Yang <kernelpatch@126.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 028/137] soc: bcm: brcmstb: Dont leak device tree node reference
-Date:   Mon, 11 Feb 2019 15:18:29 +0100
-Message-Id: <20190211141814.562090239@linuxfoundation.org>
+Subject: [PATCH 4.9 026/137] f2fs: fix wrong return value of f2fs_acl_create
+Date:   Mon, 11 Feb 2019 15:18:27 +0100
+Message-Id: <20190211141814.375411788@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,45 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1861a7f07e02292830a1ca256328d370deefea30 ]
+[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
 
-of_find_node_by_path() acquires a reference to the node returned by it
-and that reference needs to be dropped by its caller. soc_is_brcmstb()
-doesn't do that, so fix it.
+When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
+should return -EIO instead of -ENOMEM, this patch makes it consistent
+with posix_acl_create() which has been fixed in commit beaf226b863a
+("posix_acl: don't ignore return value of posix_acl_create_masq()").
 
-[treding: slightly rewrite to avoid inline comparison]
-
-Fixes: d52fad262041 ("soc: add stubs for brcmstb SoC's")
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/bcm/brcmstb/common.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/f2fs/acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/soc/bcm/brcmstb/common.c b/drivers/soc/bcm/brcmstb/common.c
-index 94e7335553f4..3f6063b639ac 100644
---- a/drivers/soc/bcm/brcmstb/common.c
-+++ b/drivers/soc/bcm/brcmstb/common.c
-@@ -31,13 +31,17 @@ static const struct of_device_id brcmstb_machine_match[] = {
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 55aa29c0c78d..a9894089d9dc 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -348,12 +348,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 		return PTR_ERR(p);
  
- bool soc_is_brcmstb(void)
- {
-+	const struct of_device_id *match;
- 	struct device_node *root;
+ 	clone = f2fs_acl_clone(p, GFP_NOFS);
+-	if (!clone)
+-		goto no_mem;
++	if (!clone) {
++		ret = -ENOMEM;
++		goto release_acl;
++	}
  
- 	root = of_find_node_by_path("/");
- 	if (!root)
- 		return false;
+ 	ret = f2fs_acl_create_masq(clone, mode);
+ 	if (ret < 0)
+-		goto no_mem_clone;
++		goto release_clone;
  
--	return of_match_node(brcmstb_machine_match, root) != NULL;
-+	match = of_match_node(brcmstb_machine_match, root);
-+	of_node_put(root);
-+
-+	return match != NULL;
+ 	if (ret == 0)
+ 		posix_acl_release(clone);
+@@ -367,11 +369,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 
+ 	return 0;
+ 
+-no_mem_clone:
++release_clone:
+ 	posix_acl_release(clone);
+-no_mem:
++release_acl:
+ 	posix_acl_release(p);
+-	return -ENOMEM;
++	return ret;
  }
  
- static const struct of_device_id sun_top_ctrl_match[] = {
+ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
 
