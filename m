@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B97C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B520C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB64214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C037214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895130;
-	bh=ADxSYNQLJgRPxCAJy5hOugMmWeZ/tFUoXkRt8G8U0n8=;
+	s=default; t=1549895134;
+	bh=nZeJa7iQKGEnQDHyxnV/gZwL4UCQ29Y9Mey6j6FgJNk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AQHhN6D4xaMaIDoF0eHagchlpI7v8c3y6tBFjkUgPZwwDEmZWuSpg4UnG0IxAwZUq
-	 +t8gIIl6+tfSl42S3SX+3FFdTOt36E7dT1xljrE6jdQV0ojIntZ0KfQWWelk0nsE6B
-	 R7LYzXaPsnWfsnI+9yeiGn/fKyIgSCA0lA898Y8Q=
+	b=TmM+gAl+dktdxZmuRwIl53ruOcuLYoFkgm0754n/tqDWfPD6dEdrdLohMpPa++cBp
+	 3Wn/4WMEXkBxRgaqmRyazhWRAzXfkR8JtAm6gxC3aDnhaWDsbM8ShCjLEBVX6OeMDJ
+	 8v+5xT8GDrS9NdbMMXCNc/GbdeivLzSfwNqkmvYA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbfBKOZ2 (ORCPT
+        id S1729389AbfBKOZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:25:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:25:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729376AbfBKOZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:25:25 -0500
+        id S1729380AbfBKOZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 937FE20821;
-        Mon, 11 Feb 2019 14:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C96F20838;
+        Mon, 11 Feb 2019 14:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895125;
-        bh=ADxSYNQLJgRPxCAJy5hOugMmWeZ/tFUoXkRt8G8U0n8=;
+        s=default; t=1549895127;
+        bh=nZeJa7iQKGEnQDHyxnV/gZwL4UCQ29Y9Mey6j6FgJNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pk3wEkzZFVsP+y9/CDFpUFIuXuaUoiusvVjeb731oZ//JdPNQQxvAwm+YMEU8LTiM
-         BknNpNN3rPP44RBhYizJ9espigbOqKBhzboBWT4sXxsGp9ryLRLv+YD6At8g81VlNz
-         x452jHWISQXFPjaKyllN+I7pKB1QEyWlx2zQBJ/Q=
+        b=0GCJqm7TThfIl4zipuyk/lmPG0ONU9HLVCCt7RKA99rZHNDrq+GkejIdXiTxPHKor
+         NSEevtRh7wdS8IDUgITT+jHWLWKJ05sTJGgsXq7vkg90u7mgVtjVRFk+pb9mTpI/6i
+         Bq9ynBxHWwxoUCMfgIJ2drebDaGpK+FySDDOPIoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
         Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 100/352] ARM: dts: mmp2: fix TWSI2
-Date:   Mon, 11 Feb 2019 15:15:27 +0100
-Message-Id: <20190211141852.173128402@linuxfoundation.org>
+Subject: [PATCH 4.20 101/352] ARM: mmp/mmp2: dt: enable the clock
+Date:   Mon, 11 Feb 2019 15:15:28 +0100
+Message-Id: <20190211141852.231093578@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,54 +66,151 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
+[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
 
-Marvell keeps their MMP2 datasheet secret, but there are good clues
-that TWSI2 is not on 0xd4025000 on that platform, not does it use
-IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
+The device-tree booted MMP2 needs to enable the timer clock, otherwise
+it would stop ticking when the boot finishes.
 
-   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
-
-I'm taking a somewhat educated guess that is probably a copy & paste
-error from PXA168 or PXA910 and that the real controller in fact hides
-at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
-
-I'm also copying some properties from TWSI1 that were missing or
-incorrect.
-
-Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
+It can also use the clock rate from the clk, the non-DT boards need to
+keep using the hardcoded rates.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/mach-mmp/common.h |  2 +-
+ arch/arm/mach-mmp/mmp2.c   |  2 +-
+ arch/arm/mach-mmp/pxa168.c |  2 +-
+ arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
+ 4 files changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..47e5b63339d1 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -220,12 +220,15 @@
- 				status = "disabled";
- 			};
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index 7e284d9c429f..5ac2851ef5d3 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -2,7 +2,7 @@
+ #include <linux/reboot.h>
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
  
--			twsi2: i2c@d4025000 {
-+			twsi2: i2c@d4031000 {
- 				compatible = "mrvl,mmp-twsi";
--				reg = <0xd4025000 0x1000>;
--				interrupts = <58>;
-+				reg = <0xd4031000 0x1000>;
-+				interrupt-parent = <&intcmux17>;
-+				interrupts = <0>;
- 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
- 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				status = "disabled";
- 			};
+-extern void timer_init(int irq);
++extern void timer_init(int irq, unsigned long rate);
  
+ extern void __init mmp_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index afba5460cdaf..fb3e7e32c882 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
+ 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
+ 	__raw_writel(clk_rst, APBC_TIMERS);
+ 
+-	timer_init(IRQ_MMP2_TIMER1);
++	timer_init(IRQ_MMP2_TIMER1, 6500000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
+index 0f5f16fb8c66..77a358165a56 100644
+--- a/arch/arm/mach-mmp/pxa168.c
++++ b/arch/arm/mach-mmp/pxa168.c
+@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
+ 	/* 3.25MHz, bus/functional clock enabled, release reset */
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA168_TIMER1);
++	timer_init(IRQ_PXA168_TIMER1, 6500000);
+ }
+ 
+ void pxa168_clear_keypad_wakeup(void)
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 96ad1db0b04b..eab0fd8a7343 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/clockchips.h>
++#include <linux/clk.h>
+ 
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -38,12 +39,6 @@
+ #include "cputype.h"
+ #include "clock.h"
+ 
+-#ifdef CONFIG_CPU_MMP2
+-#define MMP_CLOCK_FREQ		6500000
+-#else
+-#define MMP_CLOCK_FREQ		3250000
+-#endif
+-
+ #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
+ 
+ #define MAX_DELTA		(0xfffffffe)
+@@ -189,19 +184,18 @@ static struct irqaction timer_irq = {
+ 	.dev_id		= &ckevt,
+ };
+ 
+-void __init timer_init(int irq)
++void __init timer_init(int irq, unsigned long rate)
+ {
+ 	timer_config();
+ 
+-	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
++	sched_clock_register(mmp_read_sched_clock, 32, rate);
+ 
+ 	ckevt.cpumask = cpumask_of(0);
+ 
+ 	setup_irq(irq, &timer_irq);
+ 
+-	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
+-	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
+-					MIN_DELTA, MAX_DELTA);
++	clocksource_register_hz(&cksrc, rate);
++	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
+ }
+ 
+ #ifdef CONFIG_OF
+@@ -213,7 +207,9 @@ static const struct of_device_id mmp_timer_dt_ids[] = {
+ void __init mmp_dt_init_timer(void)
+ {
+ 	struct device_node *np;
++	struct clk *clk;
+ 	int irq, ret;
++	unsigned long rate;
+ 
+ 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
+ 	if (!np) {
+@@ -221,6 +217,18 @@ void __init mmp_dt_init_timer(void)
+ 		goto out;
+ 	}
+ 
++	clk = of_clk_get(np, 0);
++	if (!IS_ERR(clk)) {
++		ret = clk_prepare_enable(clk);
++		if (ret)
++			goto out;
++		rate = clk_get_rate(clk) / 2;
++	} else if (cpu_is_pj4()) {
++		rate = 6500000;
++	} else {
++		rate = 3250000;
++	}
++
+ 	irq = irq_of_parse_and_map(np, 0);
+ 	if (!irq) {
+ 		ret = -EINVAL;
+@@ -231,7 +239,7 @@ void __init mmp_dt_init_timer(void)
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	timer_init(irq);
++	timer_init(irq, rate);
+ 	return;
+ out:
+ 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
 2.19.1
 
