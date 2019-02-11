@@ -2,54 +2,54 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B82C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E595C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA804222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E77F8222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897115;
-	bh=6caIUtnU9JP3ilrK7jee1vHIIM4pWvFZSfLqhW3zfgA=;
+	s=default; t=1549897122;
+	bh=Vv0Qy50dyWF8wZWbPKanvHhg2nlJajtFxmEwPVLRykI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZqZQUtRvq1kOcHyk0OuHxJTO/+MpO/dzsSXRaeHL2jC2jkUEMgl76y22aYtIAsjJh
-	 TrCPwNUw/Xxg6VxY1C4AfmwLfkkG187zPQemcGJIiuudPcvCfHsDWvqqDNFlQUe2p3
-	 MTlTsU+VXrb52QW2LUSn7eBEHaaMWQVRLilZ44hg=
+	b=C315TLfcQ9LoYgBjGioNYeXZburd0lo7l1cPtKa4qGzOzykz/1FyQLE3KKJ9uyv8Q
+	 WZ9LxOzCY1RojLumpEVgb2DRYBhv7b4/cbVMBqHqjKpZD0gJY7p3Rgj99uZ48+9NpF
+	 lczH2esSjVN73eQAc84+/gGzgrcm+o8kqDVpuGC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389595AbfBKO6e (ORCPT
+        id S1729829AbfBKO6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:58:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46202 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:58:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389577AbfBKO6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:58:32 -0500
+        id S2389606AbfBKO6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:58:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4891A222A1;
-        Mon, 11 Feb 2019 14:58:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 646372229E;
+        Mon, 11 Feb 2019 14:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897111;
-        bh=6caIUtnU9JP3ilrK7jee1vHIIM4pWvFZSfLqhW3zfgA=;
+        s=default; t=1549897117;
+        bh=Vv0Qy50dyWF8wZWbPKanvHhg2nlJajtFxmEwPVLRykI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0LJqPJxc3ynFFpPya/53ArH0QZETBYbKV+AgoMJql3ZTu/Wm8Jy/uydmleti7JktC
-         oNdOoPUSDMp9SCfOLAwC5teLOLVoCC/Tw+Zb8vIndMcYpCfZz3pXxiAGqDelvRgSE/
-         iRr911+TOxxxlEBeALVj5oSshC4hvc6y3eI9a530=
+        b=mTXxpxZuK/CjOTEOLAPK55z0nwPAJ5BZlTnmMnZ1eRZ6MlmxQk8mx4kod2m1WIMhF
+         t4+oLPF8A+1pPTn877XsY9Tn9rB1xB1L2+PL1lXT91oc3Obxu4JCeQ4c5VH1EVFUoK
+         w8Mxvk90UihEP4FKfrSLFQATtBFMXJlJiA4mjUy0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 095/205] mmc: bcm2835: Recover from MMC_SEND_EXT_CSD
-Date:   Mon, 11 Feb 2019 15:18:13 +0100
-Message-Id: <20190211141834.843065657@linuxfoundation.org>
+Subject: [PATCH 4.14 097/205] memstick: Prevent memstick host from getting runtime suspended during card detection
+Date:   Mon, 11 Feb 2019 15:18:15 +0100
+Message-Id: <20190211141834.964847371@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,54 +68,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 07d405769afea5718529fc9e341f0b13b3189b6f ]
+[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
 
-If the user issues an "mmc extcsd read", the SD controller receives
-what it thinks is a SEND_IF_COND command with an unexpected data block.
-The resulting operations leave the FSM stuck in READWAIT, a state which
-persists until the MMC framework resets the controller, by which point
-the root filesystem is likely to have been unmounted.
+We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
+helpers to let memstick host support runtime pm.
 
-A less heavyweight solution is to detect the condition and nudge the
-FSM by asserting the (self-clearing) FORCE_DATA_MODE bit.
+The rpm count may go down to zero before the memstick host powers on, so
+the host can be runtime suspended.
 
-Link: https://github.com/raspberrypi/linux/issues/2728
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Eric Anholt <eric@anholt.net>
+So before doing card detection, increment the rpm count to avoid the
+host gets runtime suspended. Balance the rpm count after card detection
+is done.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/bcm2835.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/memstick/core/memstick.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index 0d3b7473bc21..abf1f3c8b0c3 100644
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -772,6 +772,8 @@ static void bcm2835_finish_command(struct bcm2835_host *host)
+diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
+index 76382c858c35..1246d69ba187 100644
+--- a/drivers/memstick/core/memstick.c
++++ b/drivers/memstick/core/memstick.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
  
- 		if (!(sdhsts & SDHSTS_CRC7_ERROR) ||
- 		    (host->cmd->opcode != MMC_SEND_OP_COND)) {
-+			u32 edm, fsm;
-+
- 			if (sdhsts & SDHSTS_CMD_TIME_OUT) {
- 				host->cmd->error = -ETIMEDOUT;
- 			} else {
-@@ -780,6 +782,13 @@ static void bcm2835_finish_command(struct bcm2835_host *host)
- 				bcm2835_dumpregs(host);
- 				host->cmd->error = -EILSEQ;
- 			}
-+			edm = readl(host->ioaddr + SDEDM);
-+			fsm = edm & SDEDM_FSM_MASK;
-+			if (fsm == SDEDM_FSM_READWAIT ||
-+			    fsm == SDEDM_FSM_WRITESTART1)
-+				/* Kick the FSM out of its wait */
-+				writel(edm | SDEDM_FORCE_DATA_MODE,
-+				       host->ioaddr + SDEDM);
- 			bcm2835_finish_request(host);
- 			return;
- 		}
+ #define DRIVER_NAME "memstick"
+ 
+@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
+ 	struct memstick_dev *card;
+ 
+ 	dev_dbg(&host->dev, "memstick_check started\n");
++	pm_runtime_get_noresume(host->dev.parent);
+ 	mutex_lock(&host->lock);
+ 	if (!host->card) {
+ 		if (memstick_power_on(host))
+@@ -479,6 +481,7 @@ out_power_off:
+ 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
+ 
+ 	mutex_unlock(&host->lock);
++	pm_runtime_put(host->dev.parent);
+ 	dev_dbg(&host->dev, "memstick_check finished\n");
+ }
+ 
 -- 
 2.19.1
 
