@@ -2,107 +2,131 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087CFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2AEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EFA2080D
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16AC42080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:24:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="b9RqRHHg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfBKKYb (ORCPT
+        id S1727013AbfBKKYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:24:31 -0500
-Received: from sauhun.de ([88.99.104.3]:52922 "EHLO pokefinder.org"
+        Mon, 11 Feb 2019 05:24:35 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51132 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbfBKKYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:24:31 -0500
-Received: from localhost (p54B333B4.dip0.t-ipconnect.de [84.179.51.180])
-        by pokefinder.org (Postfix) with ESMTPSA id 0DA142E3542;
-        Mon, 11 Feb 2019 11:24:28 +0100 (CET)
-Date:   Mon, 11 Feb 2019 11:24:24 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Federico Vaga <federico.vaga@cern.ch>
-Cc:     Peter Korsgaard <peter@korsgaard.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] i2c:ocores: stop transfer on timeout
-Message-ID: <20190211102424.5xnzyxvfd2yhf6ui@ninjato>
-References: <20190211083122.32485-1-federico.vaga@cern.ch>
- <20190211083122.32485-2-federico.vaga@cern.ch>
+        id S1725931AbfBKKYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 05:24:33 -0500
+Received: from zn.tnic (p200300EC2BC7A100B5A7B0033B3D5267.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:b5a7:b003:3b3d:5267])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E2F8E1EC0375;
+        Mon, 11 Feb 2019 11:24:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549880672;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=m9/LoAt94FMqZmVWZD6o6m5wRiZgEpd14L508jUz4QE=;
+        b=b9RqRHHgJxwX6WNnSMHGbiFeD54+OwR7RgJEzFsogZ0dCpIKG3zzsFNHzMQrpLZ+ux3P1v
+        xYuWN0x6SWgbYoYLzOda4k3PGEHkiN3LM/m+VgpkVOprt7XbQXZYh99qSK+eJmaFXzF0BF
+        1tgE3olXUnYSv2zKceVaFznL2nwNtRk=
+Date:   Mon, 11 Feb 2019 11:24:26 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        caoj.fnst@cn.fujitsu.com, Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        linux-tip-commits@vger.kernel.org,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
+ boot_params
+Message-ID: <20190211102426.GA19618@zn.tnic>
+References: <20190208190248.GA10854@roeck-us.net>
+ <20190208191024.GL674@zn.tnic>
+ <20190208204451.GA14024@roeck-us.net>
+ <20190208215322.GO674@zn.tnic>
+ <20190211002220.GD14948@zn.tnic>
+ <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
+ <20190211095547.GB1651@localhost.localdomain>
+ <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
+ <20190211101011.GA5333@localhost.localdomain>
+ <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k34seb4vqcvdmmff"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190211083122.32485-2-federico.vaga@cern.ch>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 11, 2019 at 10:17:36AM +0000, Ard Biesheuvel wrote:
+> That still does not explain how 'table' can assume a value > 4 GB
+> after assigning the contents of a u32 to it.
 
---k34seb4vqcvdmmff
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+See efi_get_rsdp_addr() in tip/master and especially that systable address
+computation:
 
-On Mon, Feb 11, 2019 at 09:31:18AM +0100, Federico Vaga wrote:
-> Detecting a timeout is ok, but we also need to assert a STOP command on
-> the bus in order to prevent it from generating interrupts when there are
-> no on going transfers.
->=20
-> Example: very long transmission.
->=20
-> 1. ocores_xfer: START a transfer
-> 2. ocores_isr : handle byte by byte the transfer
-> 3. ocores_xfer: goes in timeout [[bugfix here]]
-> 4. ocores_xfer: return to I2C subsystem and to the I2C driver
-> 5. I2C driver : it may clean up the i2c_msg memory
-> 6. ocores_isr : receives another interrupt (pending bytes to be
->                 transferred) but the i2c_msg memory is invalid now
->=20
-> So, since the transfer was too long, we have to detect the timeout and
-> STOP the transfer.
->=20
-> Another point is that we have a critical region here. When handling the
-> timeout condition we may have a running IRQ handler. For this reason I
-> introduce a spinlock.
->=20
-> In order to make easier to understan locking I have:
-> - added a new function to handle timeout
-> - modified the current ocores_process() function in order to be protected
->   by the new spinlock
-> Like this it is obvious at first sight that this locking serializes
-> the execution of ocores_process() and ocores_process_timeout()
->=20
-> Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->=20
+#ifdef CONFIG_X86_64
+        systab = (efi_system_table_t *)(ei->efi_systab | ((__u64)ei->efi_systab_hi<<32));
+#else
+        if (ei->efi_systab_hi || ei->efi_memmap_hi) {
+                debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
+                return 0;
+        }
+        systab = (efi_system_table_t *)ei->efi_systab;
+#endif
 
-Applied to for-next, thanks!
+	...
 
+	config_tables = (void *)(systab->tables + size * i);
 
---k34seb4vqcvdmmff
-Content-Type: application/pgp-signature; name="signature.asc"
+It is hard to debug that early but I managed to singlestep it last night
+to this deref:
 
------BEGIN PGP SIGNATURE-----
+              } else {
+                        efi_config_table_32_t *tmp_table;
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxhTVQACgkQFA3kzBSg
-KbbIzBAAk28yIbH11CCG/mU8YLcPZTJRQh7q2VqKZQkxV0pf0CCx+N0pAdlFrzSv
-pzsLLeIpQPUZE37Alfacz+dKZRVimcPGJ4qvR7Gja1onWkSpzOhYPp8LiEBFhgtO
-UTdjqeVLs+/Au35gdZ0vKNKOy62B9azsU11FpY5ygDYrF2KDlE3wIlzEoKrXnG37
-cBhkwFi/xXZL+N9Ew1PIkr4qdPArARHXdvlrsiV48ZHp54byJ0VKTHp80Mvut4IW
-Xs2AFLK+K7u2b6ZGGrbKst6xeRZBQ+lHMxCDzx1jiYMaGoltubOd45uk/Ujdb51r
-de1/6tijFEvvInI1nWucbpLhY79bz7VRYH4rw+NJWwrTlqxGws0uytm3bSD3u6vJ
-2q/5WtPC+vPFl/D42fQcJRwrzg62hls0RRjhO13YscobpCijohVtPLuZerXYAyTq
-FoMcWdFj6H8BCwhB3tobjoDS7VajcN2Yj0H/mhxI8iqUiUSD/03aXYSzeidZzWDd
-z7YYUvv/0fWrhv6MdXpYGZjvzfNoQE8aJVMZ3+ULUWSoeNZ1YfjIogXdYhdxlOBv
-FB9JI0+TeVCgkJBD1AYmuC6GWf1UU7DkpeoLZkpx79ndvXn2XXYdMRs9wHIw242X
-SB5jEQoST38O9F81MOPcGLfpuIFV08kmUcs36jtP1mFQ8ktYZtg=
-=48TV
------END PGP SIGNATURE-----
+                        tmp_table = config_tables;
+                        guid = tmp_table->guid;
+				^^^^^^^^^^^^^^
 
---k34seb4vqcvdmmff--
+                        table = tmp_table->table;
+
+which in asm is:
+
+# arch/x86/boot/compressed/acpi.c:114: 			guid = tmp_table->guid;
+#NO_APP
+	movq	(%rdi), %rax	# MEM[(struct efi_config_table_32_t *)config_tables_37].guid, guid
+	movq	8(%rdi), %rsi	# MEM[(struct efi_config_table_32_t *)config_tables_37].guid, guid
+# arch/x86/boot/compressed/acpi.c:115: 			table = tmp_table->table;
+	movl	16(%rdi), %r10d	# MEM[(struct efi_config_table_32_t *)config_tables_37].table, table
+
+and %rdi has 0x630646870 so either we got the wrong address or qemu
+mapped it above 4G...
+
+It is only an observation for now though...
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
