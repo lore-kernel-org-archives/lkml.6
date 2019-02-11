@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6FAC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E97C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8176821B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3785721B68
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:49:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="CD/+YVab"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="jOAWbGl5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfBKQtm (ORCPT
+        id S1729570AbfBKQtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:49:42 -0500
-Received: from mail-eopbgr50046.outbound.protection.outlook.com ([40.107.5.46]:19492
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        Mon, 11 Feb 2019 11:49:52 -0500
+Received: from mail-eopbgr00082.outbound.protection.outlook.com ([40.107.0.82]:49259
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727521AbfBKQtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:49:36 -0500
+        id S1726105AbfBKQtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 11:49:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
  s=selector1-cern-ch;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QBVm7vn2whs9bYtdJvLQZRIQ/YXQCA5/XUjonZ4b62E=;
- b=CD/+YVabXj007jwBz4Fxn9c/apdkvwaWfLvGSvfKsbeB8CdWGbd8ZnZIz6lxZF/fOnjJgYsIpLw3mDk82+wEYLs89TTXnL+bOzCMWkCTkUe8r5UMqIeZ8iHdHp2QZYNnHdPCgi8CpCpjr44dTKTmpJkEVFc6HnCCvfcLtNPNE4I=
-Received: from AM6PR06CA0019.eurprd06.prod.outlook.com (2603:10a6:20b:14::32)
- by VI1PR0602MB3534.eurprd06.prod.outlook.com (2603:10a6:803:a::31) with
+ bh=02EEmL7KkDY0boFc52AqfVdNRQfQIlh3LJdfe8zrT4s=;
+ b=jOAWbGl5YfSAj2vKFQUoe6f+rguOfX+IyZsWS3Mt0KFh9NL5ocHHN13Oto/u+spvGl2vAMM2PF3jQriechqZi+riTMuvykmBIeCywnTPJpPxl8DTGNxbxFzXKYvn3Ju2WkkHtjp9s8rsCmn6Gzs3e7B9EntJmabrQZ3MoLjySag=
+Received: from AM0PR06CA0025.eurprd06.prod.outlook.com (2603:10a6:208:ab::38)
+ by VI1PR06MB4736.eurprd06.prod.outlook.com (2603:10a6:803:91::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.19; Mon, 11 Feb
- 2019 16:49:29 +0000
-Received: from HE1EUR02FT044.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e05::206) by AM6PR06CA0019.outlook.office365.com
- (2603:10a6:20b:14::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.21; Mon, 11 Feb
+ 2019 16:49:28 +0000
+Received: from AM5EUR02FT049.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::200) by AM0PR06CA0025.outlook.office365.com
+ (2603:10a6:208:ab::38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.19 via Frontend
  Transport; Mon, 11 Feb 2019 16:49:28 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.48)
+Authentication-Results: spf=pass (sender IP is 188.184.36.46)
  smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
  header.d=none;korsgaard.com; dmarc=bestguesspass action=none
  header.from=cern.ch;
 Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
- HE1EUR02FT044.mail.protection.outlook.com (10.152.11.75) with Microsoft SMTP
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT049.mail.protection.outlook.com (10.152.9.233) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Mon, 11 Feb 2019 16:49:28 +0000
+ 15.20.1580.10 via Frontend Transport; Mon, 11 Feb 2019 16:49:27 +0000
 Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
- (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
- 2019 17:49:26 +0100
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
+ 2019 17:49:27 +0100
 Received: from cwe-513-vol689.cern.ch (188.185.69.206) by smtp.cern.ch
  (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 11 Feb
- 2019 17:49:26 +0100
+ 2019 17:49:25 +0100
 From:   Federico Vaga <federico.vaga@cern.ch>
 To:     Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>
 CC:     Peter Rosin <peda@axentia.se>, <linux-i2c@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Federico Vaga <federico.vaga@cern.ch>
-Subject: [PATCH v6 4/5] i2c: ocores: add SPDX tag
-Date:   Mon, 11 Feb 2019 17:49:12 +0100
-Message-ID: <20190211164913.5988-5-federico.vaga@cern.ch>
+Subject: [PATCH v6 3/5] i2c: ocores: add polling interface
+Date:   Mon, 11 Feb 2019 17:49:11 +0100
+Message-ID: <20190211164913.5988-4-federico.vaga@cern.ch>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20190211164913.5988-1-federico.vaga@cern.ch>
 References: <20190211164913.5988-1-federico.vaga@cern.ch>
@@ -70,80 +70,314 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [188.185.69.206]
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(136003)(2980300002)(189003)(199004)(66066001)(4744005)(476003)(36756003)(486006)(86362001)(76176011)(126002)(246002)(356004)(4326008)(6666004)(47776003)(446003)(11346002)(336012)(956004)(1076003)(2616005)(44832011)(426003)(50466002)(7636002)(186003)(16526019)(48376002)(8676002)(2906002)(110136005)(50226002)(6306002)(51416003)(106002)(316002)(74482002)(478600001)(54906003)(7696005)(16586007)(53416004)(107886003)(106466001)(3846002)(6116002)(8936002)(305945005)(786003)(7736002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0602MB3534;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR06MB4736;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 50abbd1e-7018-481c-1ece-08d69040e35a
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:VI1PR0602MB3534;
-X-MS-TrafficTypeDiagnostic: VI1PR0602MB3534:
-X-MS-Exchange-PUrlCount: 1
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0602MB3534;20:BJHNJR9mfLZClaRQ6N2MCFtXge+wX4olAwBUtdTmFrJsAywuxSRyjQvNau4nLE7i+cYIplKX2+y4D9Cl+di27fMwTCTRBYX1kfcS7lZSgYZf/NQuEYu6JX+XupyqweaUgiP0lb7Q+B1qUbCVLOeoPl2OJTetT/IEcaA9u4srlIbCAW2NSQkfJfMnLmQJxtFHI+ljgovH0bhipz7DjSIe6x/+XCDYUcHzZivx5SSteMyBk1B2HzM5fLp+M12hT00mLYdzYKhYoYtIqBj3tnqZswLcaCMDsHNi4hfGrn2Hn9jk7eT0f6GLHpNwdJbsrG0xLu1ZQp+wIJXw0Odjq82qqrXbY9UqCD8taNgfO46wajOS1YUouhuuWh7Vo8GX2SQM3cZDXbGudMZHFqyEl0S7NOZPjPO+za9F82NetmssSJYY0ImP4XDnXH64693IleMXEOM9LzIMGuuDioW32i18CrTE4asaCLH29tK71SBE1Bk5NC1cL0oJfYxxmalKL7ym;4:48VjVhIyDJ0JgKmuYDPi2id968lhrFr70yBKDZRI8tS53UjiPF7Shd0q+9POlCJKgMy9aP125yyT6GgIwogmmOhICWX/FEsQ8K3J0li11pdQedU7+FJ21o3Z32GC7F4Xpq+cBSZo0uyxV6qLPEy6BYoPgPqu6mvFVcoi986VACbZi7F4dH1oybmU416CT8zAdhd/wbNq3IXsPzMaelysSAJBpY7Q4oGbYeOl1j5/ps9OAQTcx3suuxyvr+bdL4jqf0JdC2RapbMr4VRGX4HgQYVaQOeYc4X7K2hbl8FBXTo=
-X-Microsoft-Antispam-PRVS: <VI1PR0602MB35342436672B74B92DEE76BBEF640@VI1PR0602MB3534.eurprd06.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 5c4e7b19-8352-4dd5-e9dd-08d69040e30e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(5565046)(2017052603328)(7153060)(7193020);SRVR:VI1PR06MB4736;
+X-MS-TrafficTypeDiagnostic: VI1PR06MB4736:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR06MB4736;20:oiKvUIM4+0CCa2Z0AVOmaPDjOf3A5/K2l/zFLkWMUqDLuE390IhPGXyeXWW2oC3/N7vfoTTcBtq+mJCDzwrcQUVCKPJXjU/X66ql9EXeyyQUVtns93bzZkWUEzDQpmP92MXy990X+K/jMOKm/wcDRzS0s0dsiq7LOI1hlFaQmD26gIzUkr9vPL/3OgcuLyHuPthLcQi+CY6B9MRBHFnvSNTpfOiOBEmaOiXzINz08aCXX581Mme+UaWju5Jt1ynB/B7gG5XbgDkIhVdN4fqavlieVxCfzrN6nNSEulIFkDnx/Ph7hFfqh/exNaP3wNxgy0QUe4P0KMU+YbVro/ThjSwXL95/Tzi3itervRDx6EEQjQJt3S6WlYGsSImKYv7e1TfLTh2aD6GKvEjSK9svtcmEme4B1mclVNngm4C29YF5Re4qBIcy60Q3hhMngLFxZEoMQdupPTrM2XvAX/zH9y0vTksUqtDw34XI90C6xFL9D/A8UWM/Gs7S2bWBSCbm;4:kTFJyKNui66vFqf56s5oa9iZk3nAu0y5oSDob/5g+dDNx+MnVGklxx1dvnwgmzDJlQXhcRnCQ1it1/hKjLR+cecaOA52Cg2HZ0SWWQiG/iv48gt3FmHDG50JPuTL9Yy/9Aks3dKY5T3tJD2VGURQEmbk8uUsm2dhrvfNfdUnXIibvrTmrA6us13/vr4evvhOdGWASuIlOaYFy6FlnpfC3/JCR4j4WrAjo2cLQrTwN9fKhgDxdHqK2XQmZWFvApCBgPbldeC5nPvYCdMmh7x8WHYfb+5T1Wj7TxxLrc8eLhs=
+X-Microsoft-Antispam-PRVS: <VI1PR06MB4736EA0BF2AB427582B72523EF640@VI1PR06MB4736.eurprd06.prod.outlook.com>
 X-Forefront-PRVS: 0945B0CC72
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0602MB3534;23:jBc1A4bL8tvi7X1y6OEVR6Z2jxRoeRxX5QO0hGl?=
- =?us-ascii?Q?o47RCvx7YZ1eVuB7z3qPoL8C8CXQuf5Lq6GL7U010I/s+M5O0LX9saHuQrUY?=
- =?us-ascii?Q?+HPegzMeUzTrxtSmBz54tIPOX4Fn2FOS60qfjo/ZV+BBvS1d5aGXivRUlw/J?=
- =?us-ascii?Q?65UiqxbPegElPpqgpuiwnOQDt+Tk+3yc4gCKFvKNHn3H6K41Qr8G9Fu3tHoo?=
- =?us-ascii?Q?g3svnQTCOn3JOde/vQKYHNz+6bd91ItAgp4epUHpsOL+gkGdjqEJa3nBJGXx?=
- =?us-ascii?Q?y2jv8FX2+PK6dX8FpufuVNegMnrTMfkuGWl7vfMB2F0Wr/bnABmULfuGLPVv?=
- =?us-ascii?Q?fYVZrInX3FNYuqcgBVdcMtovTRooHtxJIhlVVKyWytdPu2A4wIGBXz9P625L?=
- =?us-ascii?Q?b0GbYUr8Ljmv+FSPOgOYCe/JzYIi2rChyHHitnHgwoHbmmJb9p8TPGRWlecV?=
- =?us-ascii?Q?njGiFPR6Qm6TryLF7i8efl2jOWpqE93/SdIRl1dyJfR6MaIAA+nuuCYv16Fx?=
- =?us-ascii?Q?9R0i2Hl1s2yrFmgM3jG+WBIxx9dj5ex1GujHLfmKgs81QOzHPDNrVfmO2hr/?=
- =?us-ascii?Q?qf6G665JIPogvflthhnItbY9gOh5OV3fATCpLgS4vzzOay6LU7o1Y6aWQgh4?=
- =?us-ascii?Q?aP1he4Ilsn+Pfgw246ri28pnOkd2QhTQEKxZ6rEM9Sx885n7YE838EyKaSVk?=
- =?us-ascii?Q?mSYi/DzM6Kq8f5wCOE4MCMWJTSwzDBaZgqooQWPctXx6gpaK4c8/hJFcfYaM?=
- =?us-ascii?Q?THEnNA+8wKLYJ8avy9Rb96+o2jkly8isV8niAF+M3o/kr3dtsOwmnahKs2KW?=
- =?us-ascii?Q?dVuxSwu5rOj8VI5cKZi5/EAe371/KcmXdn6DeKW5neMpoE4tkcFDUvDRam0A?=
- =?us-ascii?Q?s7Y58vrTzRqAfVSXJnT8z+laxH3+6IRinGwFd2SU05EpZ50rmq+QiUgHrD4W?=
- =?us-ascii?Q?vMmBQq63/SIbmmR+OfgUy1R6wASrZh2GHJyrlK8AxveV3zHd3P3eyjYB0d1c?=
- =?us-ascii?Q?aTUrwQQ8wYvQ5ihUtAYJo1ivi4hVp2nNTWVa+GoiKrtoJ+HYgVr7FcUDjRWM?=
- =?us-ascii?Q?xHyCT8CoubO/LLg6Q5il2c4jmx1qmfylYOiVN7QB1N7gFc8huz9nt9t7vdKB?=
- =?us-ascii?Q?LZa1/dKjUaq3K9MBEh0YxxJ8EBXjjH4eGJ9VGIRO6Ss+hXwCzpjvpw/nEf5/?=
- =?us-ascii?Q?a7iZLB3GornTTRRtGonA090M7Bv33rxYbzZpm93yQpelCA4aGnGRashUx7Q?=
- =?us-ascii?Q?=3D=3D?=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR06MB4736;23:T3+2z9SL3CPPsAIQDSe6JP/E1O/cRjuhx7hx3XPA8lUyPdrOjg7nxK9X4navKIxlmcrk6fNX/c8vnqi2Vd9tad6RO0qSK3H8jkUV/TKlXnNNLXLLOBgH5qRBgdfNzysOtM2rzhja5R4leSNkvNQRutu36zIqEDReiIKWS28E7q846rQqzKrNpIhZb8Y1W5Ho;6:LoraVKsntPG5olAqsiQtXz4sOXrGaLPhHafMOkfA6mNJWbLv0+l+L13gdJMZ5+TrSaiHGQ4pzdKwOEbtmrskZ+ldaI78jvzTWADoMztnZjT7n6Wn16IXCvdtcd5nRf/s7EvUNLlC86xjzcG6YfB4pCWkF6lu/2Y1f3rP9RChsttu4ieyrJqEOH6u19Xo4G25NEXPhGGVh96YCzkwm54qPpD5apX89ZeTBXXiA1C4Z4O4to9pozthyL3ewouNGHn+7H2BxRaIZq7aiR6Ce54ICzssIc1J5j+SP82hfX2qeUCowaFmkEyu44HkmYQQFDouhl+zh1aiyoirCYEqXodIqsq+lQmTNpEiUZ7BpLN0rIjt7aMGMdOQp1FpDXRosO0HbRkj+mo0ft/KIb313eaUML2nOFK0HSXUXMWTCs0SSmDlLuZkZjkDeYeCxB0ZKt4lnf0vp5AX5uAOJadcmGFYrA==;5:783MwAhyNohr0ViVZp2ji3I2hsVrm1ykDznWmV0EoOwXScxtozJwE0kLiBqFSe2WmJHAXAGLeitk3Q92/z12Jjk6nRen3hdedimqvYYZw7/cN0xes0SbHKhIyKljWccTcZdQydThiga4iDZR48lQdTOPPUMc0V6DRyGQP65Fb/bluMCKGKYrvq7VTPBKceJGCovCHrNVIg/pBDebffJK1Q==
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 0eMTGCi4Wf1fv7n9tCEUnetTl4PnuvMxBxoOlQYSTB9TEV9m6NWh65SjgJQdJFxvI21hn2hiIQt5/+ZdtWSDkFxiTgBaSCaZmKtUZ1WkgSmvkcGvl4eBRcQTW7VyxgFslbF5L1iTlM4Fde4fpcwznurRQTTYL3nAUPA5bIDlxsgaDdVgEgxBNJ3rWQkPlJroo+CHdtY9Eyeew1kD+HGRhe2bFpWwOdyiSWlkqWGT20BJZLqE2SkmAMJpB6AZL3YsiHQzMzi5xjXJ122KfySf7I5s+BOatQvZdlybZ7SrbrCwOUwJlpbuoq7LVNtmpHMUG0FUl7v1V5x5lncfAsEhC7b3AMm/fuCwbFxz/n7/0DSDMAjpPsk0rT3occLqfrXxtGDFxNxa36wtck7jnWMdisDlAXebI23bTmXHTwQ6sxc=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0602MB3534;6:kEiJc6aWqyq/5aRBf+B7o16G+rwN1alLbFitDZ7rTYrSNR4KHiZGAHNJJPxShXw0crcN7FdbE6yRnvh98qWLTz9B9NU2uoPKa9XMeb3iqsGh1CfSUF+qTYP4Dh8UFAJkZTIM9ZT0/QHG08tCDAXWQVTyAJQ+gQ4tgOt3Z1we8JwFPLlYqLnjvqdwhoAZ958SBxG5E4C0tBxrGrKuyuldgbMc5/f1muUSuYu21l1NVcMIqXVmqBGb2TtABghDvfhYUD6itX2YUwnPE6Vfy8ETwtrzJ/WUMpnIO8ZtphvD22TRlJ34vEtq6vOYPa0jYC52NIj8e73ucbkH7NyCJZvZ30X/xdLZO8AClyq9cCkgmOiMJej0HL5T4GBO2gyKq8+rpk7PL1FMyTtR5NRjpjO4eku+1t6s5fkxrfL7pgzI+duGu0/bDxwv6v1e42l/S5bucEB6oE6mfUPe5OYyC5TIhg==;5:7zDz0vfrmROue6Mcf3fEUViw1TeN4ty9CiP9BFtnCuBZKLR48Ifg9lxd6VYu4/avndNR3ftOKR8WHXTZCA941eYh+kIUL/GQ/3Pl8PPH+lHfXsWRx//5KoLjKHSzmECFNwMcFSz5v2W7KVvdUtT3W00ofC6RSsmSReFP+hgjQNmWohDYzgNpnzXkSCBNggswwEOngVsBLS/99dLzl9SkaQ==;7:v64IeU9hJxyQvT1UJ7uY7y3v7ny1sqs8SORV0DfkRZDCQyAj2ppCnlfR/get60eHfrwLtSLbqBxDOfdjIHtAYe3ImoDW0POacm4A+o5HafLUODpCEcMsjSLZ+dbtWo9kb5aHwhSJ0CDfDtlk19uIUw==
+X-Microsoft-Antispam-Message-Info: 3m10yrsmhEtqnT1z4efH6hdJd91SMWSWjE83hv21An6OW66S7dtrafYuUAUHKkHf1dZbKsv+IwDxlREipVbPgq+0Isw7eaKxjJps1f9YgIUx3yT0zUcqJX/dFyPofBfgGhppDozJc5NS1utQ64RfdjyKpnyd89efGHV6D7w2mDV87vNRzA3j2SWFtlkmVs0wqCNXiRyXiakx83mXbN1G0FiyvGTMCzcM+94cRpVwWHaVYjdFX6TsmX11+6qB8vkTt9bt7XRCuzUNWOBIHaWOTWnPKDr5E08rq/XCLQ1wIfVtnzDO0lGFx5Pqk7fftak4dsyzoF8jUhv7yalSNwEC+NmQ1ExCWH6ZoCbi6uWlF+p7QHRw4BPdWJECSTRMMMICs49UpH4Btof8CYDopngo1YmhNyugLROAMW32CkRggyH6WOlY95s2Dm6h0IJ/B4VF5w+qS+jlmeafVKr+z4Iroeq7eXCfv1XJanTlxElL7vbRPKH/6qJzPmhNAVWmuoWawhGlmxfsGkRfOheGQll6rkc8OaFb22uIG153rymaNtc=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR06MB4736;7:B3ogtAzVCcBNE5d3/nnaFOkAE2PYivW53YVaYqYbvqrKaHVbYctyrkF/d3HhPwWTc1sWwkcn/FXOg4BZDxsz335tbU1jAW7yWLy6JKYx/BM4mLEdFiYyECMF+AqksymmcEoXXQzzIWUidXiPdxwyYg==
 X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2019 16:49:28.3102
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2019 16:49:27.8733
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50abbd1e-7018-481c-1ece-08d69040e35a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c4e7b19-8352-4dd5-e9dd-08d69040e30e
 X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0602MB3534
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR06MB4736
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It adds the SPDX tag and it removes the old text about the GPLv2.
+This driver assumes that an interrupt line is always available for
+the I2C master. This is not always the case and this patch adds support
+for a polling version.
+
+Report from Andrew Lunn:
+
+  I did some timing tests for this. On my box, we request a udelay of
+  80uS. The kernel actually delays for about 79uS. We then spin in
+  ocores_wait() for an additional 10-11uS, which is 3 to 4 iterations.
+
+  There are actually 9 bits on the wire, not 8, since there is an
+  ACK/NACK bit after the actual data transfer. So i changed the delay to
+  (9 * 1000) / i2c->bus_clock_khz. That resulted in ocores_wait() mostly
+  not looping at all. But for reading an 4K AT24 EEPROM, it increased
+  the read time by 10ms, from 424ms to 434ms. So we should probably keep
+  with 8.
 
 Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+Tested-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/i2c/busses/i2c-ocores.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-ocores.c | 182 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 161 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-index 5dea7b9..78085a8 100644
+index fcc2558..5dea7b9 100644
 --- a/drivers/i2c/busses/i2c-ocores.c
 +++ b/drivers/i2c/busses/i2c-ocores.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * i2c-ocores.c: I2C bus driver for OpenCores I2C controller
-  * (https://opencores.org/project/i2c/overview)
-@@ -6,10 +7,6 @@
-  *
-  * Support for the GRLIB port of the controller by
-  * Andreas Larsson <andreas@gaisler.com>
-- *
-- * This file is licensed under the terms of the GNU General Public License
-- * version 2.  This program is licensed "as is" without any warranty of any
-- * kind, whether express or implied.
+@@ -13,6 +13,7 @@
   */
  
  #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -26,6 +27,9 @@
+ #include <linux/io.h>
+ #include <linux/log2.h>
+ #include <linux/spinlock.h>
++#include <linux/jiffies.h>
++
++#define OCORES_FLAG_POLL BIT(0)
+ 
+ /**
+  * @process_lock: protect I2C transfer process.
+@@ -35,6 +39,7 @@ struct ocores_i2c {
+ 	void __iomem *base;
+ 	u32 reg_shift;
+ 	u32 reg_io_width;
++	unsigned long flags;
+ 	wait_queue_head_t wait;
+ 	struct i2c_adapter adap;
+ 	struct i2c_msg *msg;
+@@ -246,10 +251,116 @@ static void ocores_process_timeout(struct ocores_i2c *i2c)
+ 	spin_unlock_irqrestore(&i2c->process_lock, flags);
+ }
+ 
+-static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
++/**
++ * Wait until something change in a given register
++ * @i2c: ocores I2C device instance
++ * @reg: register to query
++ * @mask: bitmask to apply on register value
++ * @val: expected result
++ * @timeout: timeout in jiffies
++ *
++ * Timeout is necessary to avoid to stay here forever when the chip
++ * does not answer correctly.
++ *
++ * Return: 0 on success, -ETIMEDOUT on timeout
++ */
++static int ocores_wait(struct ocores_i2c *i2c,
++		       int reg, u8 mask, u8 val,
++		       const unsigned long timeout)
++{
++	unsigned long j;
++
++	j = jiffies + timeout;
++	while (1) {
++		u8 status = oc_getreg(i2c, reg);
++
++		if ((status & mask) == val)
++			break;
++
++		if (time_after(jiffies, j))
++			return -ETIMEDOUT;
++	}
++	return 0;
++}
++
++/**
++ * Wait until is possible to process some data
++ * @i2c: ocores I2C device instance
++ *
++ * Used when the device is in polling mode (interrupts disabled).
++ *
++ * Return: 0 on success, -ETIMEDOUT on timeout
++ */
++static int ocores_poll_wait(struct ocores_i2c *i2c)
++{
++	u8 mask;
++	int err;
++
++	if (i2c->state == STATE_DONE || i2c->state == STATE_ERROR) {
++		/* transfer is over */
++		mask = OCI2C_STAT_BUSY;
++	} else {
++		/* on going transfer */
++		mask = OCI2C_STAT_TIP;
++		/*
++		 * We wait for the data to be transferred (8bit),
++		 * then we start polling on the ACK/NACK bit
++		 */
++		udelay((8 * 1000) / i2c->bus_clock_khz);
++	}
++
++	/*
++	 * once we are here we expect to get the expected result immediately
++	 * so if after 1ms we timeout then something is broken.
++	 */
++	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, msecs_to_jiffies(1));
++	if (err)
++		dev_warn(i2c->adap.dev.parent,
++			 "%s: STATUS timeout, bit 0x%x did not clear in 1ms\n",
++			 __func__, mask);
++	return err;
++}
++
++/**
++ * It handles an IRQ-less transfer
++ * @i2c: ocores I2C device instance
++ *
++ * Even if IRQ are disabled, the I2C OpenCore IP behavior is exactly the same
++ * (only that IRQ are not produced). This means that we can re-use entirely
++ * ocores_isr(), we just add our polling code around it.
++ *
++ * It can run in atomic context
++ */
++static void ocores_process_polling(struct ocores_i2c *i2c)
++{
++	while (1) {
++		irqreturn_t ret;
++		int err;
++
++		err = ocores_poll_wait(i2c);
++		if (err) {
++			i2c->state = STATE_ERROR;
++			break; /* timeout */
++		}
++
++		ret = ocores_isr(-1, i2c);
++		if (ret == IRQ_NONE)
++			break; /* all messages have been transferred */
++	}
++}
++
++static int ocores_xfer_core(struct ocores_i2c *i2c,
++			    struct i2c_msg *msgs, int num,
++			    bool polling)
+ {
+-	struct ocores_i2c *i2c = i2c_get_adapdata(adap);
+ 	int ret;
++	u8 ctrl;
++
++	ctrl = oc_getreg(i2c, OCI2C_CONTROL);
++	if (polling)
++		oc_setreg(i2c, OCI2C_CONTROL, ctrl & ~OCI2C_CTRL_IEN);
++	else
++		oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_IEN);
+ 
+ 	i2c->msg = msgs;
+ 	i2c->pos = 0;
+@@ -259,16 +370,37 @@ static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	oc_setreg(i2c, OCI2C_DATA, i2c_8bit_addr_from_msg(i2c->msg));
+ 	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_START);
+ 
+-	ret = wait_event_timeout(i2c->wait, (i2c->state == STATE_ERROR) ||
+-				 (i2c->state == STATE_DONE), HZ);
+-	if (ret == 0) {
+-		ocores_process_timeout(i2c);
+-		return -ETIMEDOUT;
++	if (polling) {
++		ocores_process_polling(i2c);
++	} else {
++		ret = wait_event_timeout(i2c->wait,
++					 (i2c->state == STATE_ERROR) ||
++					 (i2c->state == STATE_DONE), HZ);
++		if (ret == 0) {
++			ocores_process_timeout(i2c);
++			return -ETIMEDOUT;
++		}
+ 	}
+ 
+ 	return (i2c->state == STATE_DONE) ? num : -EIO;
+ }
+ 
++static int ocores_xfer_polling(struct i2c_adapter *adap,
++			       struct i2c_msg *msgs, int num)
++{
++	return ocores_xfer_core(i2c_get_adapdata(adap), msgs, num, true);
++}
++
++static int ocores_xfer(struct i2c_adapter *adap,
++		       struct i2c_msg *msgs, int num)
++{
++	struct ocores_i2c *i2c = i2c_get_adapdata(adap);
++
++	if (i2c->flags & OCORES_FLAG_POLL)
++		return ocores_xfer_polling(adap, msgs, num);
++	return ocores_xfer_core(i2c, msgs, num, false);
++}
++
+ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
+ {
+ 	int prescale;
+@@ -276,7 +408,8 @@ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
+ 	u8 ctrl = oc_getreg(i2c, OCI2C_CONTROL);
+ 
+ 	/* make sure the device is disabled */
+-	oc_setreg(i2c, OCI2C_CONTROL, ctrl & ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN));
++	ctrl &= ~(OCI2C_CTRL_EN | OCI2C_CTRL_IEN);
++	oc_setreg(i2c, OCI2C_CONTROL, ctrl);
+ 
+ 	prescale = (i2c->ip_clock_khz / (5 * i2c->bus_clock_khz)) - 1;
+ 	prescale = clamp(prescale, 0, 0xffff);
+@@ -294,7 +427,7 @@ static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
+ 
+ 	/* Init the device */
+ 	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
+-	oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_IEN | OCI2C_CTRL_EN);
++	oc_setreg(i2c, OCI2C_CONTROL, ctrl | OCI2C_CTRL_EN);
+ 
+ 	return 0;
+ }
+@@ -451,10 +584,6 @@ static int ocores_i2c_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
+-
+ 	i2c = devm_kzalloc(&pdev->dev, sizeof(*i2c), GFP_KERNEL);
+ 	if (!i2c)
+ 		return -ENOMEM;
+@@ -509,18 +638,29 @@ static int ocores_i2c_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	init_waitqueue_head(&i2c->wait);
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq == -ENXIO) {
++		i2c->flags |= OCORES_FLAG_POLL;
++	} else {
++		if (irq < 0)
++			return irq;
++	}
++
++	if (!(i2c->flags & OCORES_FLAG_POLL)) {
++		ret = devm_request_irq(&pdev->dev, irq, ocores_isr, 0,
++				       pdev->name, i2c);
++		if (ret) {
++			dev_err(&pdev->dev, "Cannot claim IRQ\n");
++			goto err_clk;
++		}
++	}
++
+ 	ret = ocores_init(&pdev->dev, i2c);
+ 	if (ret)
+ 		goto err_clk;
+ 
+-	init_waitqueue_head(&i2c->wait);
+-	ret = devm_request_irq(&pdev->dev, irq, ocores_isr, 0,
+-			       pdev->name, i2c);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Cannot claim IRQ\n");
+-		goto err_clk;
+-	}
+-
+ 	/* hook up driver to tree */
+ 	platform_set_drvdata(pdev, i2c);
+ 	i2c->adap = ocores_adapter;
 -- 
 2.15.0
 
