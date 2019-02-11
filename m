@@ -2,53 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB2FC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA53C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F3C20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FAA92081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896661;
-	bh=riK/t8jYSLfxkyuJCCIj0BB8e1xI/crnjLWQ3XqU6BU=;
+	s=default; t=1549896668;
+	bh=xoEs6aHBxpEbckhdCbEIqu8EioJocWbreN5iBdDi/2A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=brXNsANkWitHF0gvVBrV1FHVn+rLg2E4EAssA8yxFVIIRqCoq7BSop5ogIEgQCXa+
-	 3l13mDgurfJ79sMpClPnOgQhVidYwmUmR2fng+c/2VqqkbPyisGDHuU1v/72LFUbql
-	 x5Iu76QC5UNz8SPfZhvAq57lRwIf7rrgupb7kYxQ=
+	b=wMY/dkBfaClmwsWkABsffAT6DC+y+G6j/n08A3dkMt0I1T/DmrFS6cNfPoijguEZL
+	 aVBBXBj3lA9p448/l21AooGSkua2mt4JvE+8Z+GcyIdRljYlhlG1NCS0xcsbsgG9mu
+	 ptb8ByI4m9AXL+8XViqXXPWViaWhX7Ejtc9P3/Qs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388188AbfBKOu7 (ORCPT
+        id S2388211AbfBKOvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36914 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:51:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387765AbfBKOuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:55 -0500
+        id S2388197AbfBKOvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D85CC20700;
-        Mon, 11 Feb 2019 14:50:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E8420700;
+        Mon, 11 Feb 2019 14:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896655;
-        bh=riK/t8jYSLfxkyuJCCIj0BB8e1xI/crnjLWQ3XqU6BU=;
+        s=default; t=1549896664;
+        bh=xoEs6aHBxpEbckhdCbEIqu8EioJocWbreN5iBdDi/2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XIoGl9UAWeKz5n3sGebDNd8DckJ+3fWJIMoODFWZuTHIT2VM2sFuMiFHQjqc6eybx
-         PBkZq1SKBp7Bbsw9kwbuN1lUGGsS6FikhKQf+Mc3+6JWJLANsvSww0YwTlgGlWQrKI
-         5xm1UmUpWS8IDarFmEZVW5V7u2/K/wHwmMAbCr3U=
+        b=NZtOCNhu+JFQxnnJ/HA3CQNHErb5+hemv1k4W0W+xNTDe0u75YTjnfGJ0oWuC73WK
+         cHMRsK7UR51S4KPs1P6vbep8ueAKUzicFeu+NsCO3JTco7gTXXIDImu6GyuqNFnvR0
+         uSs0hdwiDG1W7C32ssu7951o/KsI+c4mRWy63kMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 219/313] um: Avoid marking pages with "changed protection"
-Date:   Mon, 11 Feb 2019 15:18:19 +0100
-Message-Id: <20190211141907.797518104@linuxfoundation.org>
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 260/313] enic: fix checksum validation for IPv6
+Date:   Mon, 11 Feb 2019 15:19:00 +0100
+Message-Id: <20190211141910.678482171@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,56 +66,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-Changing protection is a very high cost operation in UML
-because in addition to an extra syscall it also interrupts
-mmap merge sequences generated by the tlb.
+[ Upstream commit 7596175e99b3d4bce28022193efd954c201a782a ]
 
-While the condition is not particularly common it is worth
-avoiding.
+In case of IPv6 pkts, ipv4_csum_ok is 0. Because of this, driver does
+not set skb->ip_summed. So IPv6 rx checksum is not offloaded.
 
-Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/um/include/asm/pgtable.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
-index 7485398d0737..9c04562310b3 100644
---- a/arch/um/include/asm/pgtable.h
-+++ b/arch/um/include/asm/pgtable.h
-@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
- 
- static inline pte_t pte_wrprotect(pte_t pte)
- { 
--	pte_clear_bits(pte, _PAGE_RW);
-+	if (likely(pte_get_bits(pte, _PAGE_RW)))
-+		pte_clear_bits(pte, _PAGE_RW);
-+	else
-+		return pte;
- 	return(pte_mknewprot(pte)); 
- }
- 
- static inline pte_t pte_mkread(pte_t pte)
- { 
-+	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
-+		return pte;
- 	pte_set_bits(pte, _PAGE_USER);
- 	return(pte_mknewprot(pte)); 
- }
-@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
- 
- static inline pte_t pte_mkwrite(pte_t pte)	
- {
-+	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
-+		return pte;
- 	pte_set_bits(pte, _PAGE_RW);
- 	return(pte_mknewprot(pte)); 
- }
--- 
-2.19.1
-
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1434,7 +1434,8 @@ static void enic_rq_indicate_buf(struct
+ 		 * csum is correct or is zero.
+ 		 */
+ 		if ((netdev->features & NETIF_F_RXCSUM) && !csum_not_calc &&
+-		    tcp_udp_csum_ok && ipv4_csum_ok && outer_csum_ok) {
++		    tcp_udp_csum_ok && outer_csum_ok &&
++		    (ipv4_csum_ok || ipv6)) {
+ 			skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 			skb->csum_level = encap;
+ 		}
 
 
