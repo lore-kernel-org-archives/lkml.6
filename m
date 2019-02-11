@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597A8C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11761C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2803820844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2FE021855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895068;
-	bh=zOuQqGSbfkAR44gqtlWdmwYp7Bd7VszoTmd1XcPXTEM=;
+	s=default; t=1549895073;
+	bh=QVA1vZRMxU56s2OSJtL/LlaOuDeiCH1S7spM/sMeGO0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kJuP6CvTyB9EtW/PzN/gCUl2Hn/YHSYxZDUoCKi573bhqg7QA0bzNTfw03vOyBNEJ
-	 MrK+9nDcXl4lbNlFvC240f4U6Bdl6mV6pS6bghLaPdvYYmJQ5BBjowQTCh1DWQIk0/
-	 k+/XY2ie13A1VM1LCUI76PS6w8Rf8Pc74cezr2rw=
+	b=OB4lU8aFI6vSe0S3KMJb5CV6lFWo8htg9eLuaTRtzh4Y2Nqf4VvJZip/p8FRG7vze
+	 V2iIlVenViIxlpUWmQn9zFsl2x/siZVGL4ltq8cyZeCbWXGI8hkI4vobZyfkHQovP5
+	 E+rDK04cNu6Va3o5XR2WkgO7R6MpOQqfplH3txp8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbfBKOY0 (ORCPT
+        id S1729214AbfBKOYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:24:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57598 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:24:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729155AbfBKOYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:24:22 -0500
+        id S1729201AbfBKOYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:24:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D631218A3;
-        Mon, 11 Feb 2019 14:24:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4326A20821;
+        Mon, 11 Feb 2019 14:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895061;
-        bh=zOuQqGSbfkAR44gqtlWdmwYp7Bd7VszoTmd1XcPXTEM=;
+        s=default; t=1549895069;
+        bh=QVA1vZRMxU56s2OSJtL/LlaOuDeiCH1S7spM/sMeGO0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s56LWt9dbodhYd7oEQqaZBH0m3yiV0IhJ9rmSaMuN9z1DdmvEoe98MbAvzIThzCaS
-         hls8GPDkXzEGJE6ZNL+Crbp0q0Xl+bOLKY4WTAmYKjP8xpVnikUrCk1a928knFCWWZ
-         p6phZMNVrritB3RPCVAM1U/++rtNHYusJp2t0AcU=
+        b=x5kaWWAhon7vXxcoECnT8nHgmeGLe2lm3lQ6bAdjDLGjmvOK9AmrCUixGSRFnpDcC
+         z7Az4ebCsLYhVEdSwrjK30QK7Wm0yynBSKBlu2pqy9IZYa9/MmF6wbFylAailomhD2
+         1lFTxjgqITGdEHM46bO7qtLRQydmjQj5djKXD/40=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 048/352] ARM: OMAP2+: hwmod: Fix some section annotations
-Date:   Mon, 11 Feb 2019 15:14:35 +0100
-Message-Id: <20190211141849.320625139@linuxfoundation.org>
+Subject: [PATCH 4.20 051/352] bpf: libbpf: retry map creation without the name
+Date:   Mon, 11 Feb 2019 15:14:38 +0100
+Message-Id: <20190211141849.476010499@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,74 +66,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c10b26abeb53cabc1e6271a167d3f3d396ce0218 ]
+[ Upstream commit 23499442c319412aa8e54e7a939e2eb531bdd77d ]
 
-When building the kernel with Clang, the following section mismatch
-warnings appears:
+Since commit 88cda1c9da02 ("bpf: libbpf: Provide basic API support
+to specify BPF obj name"), libbpf unconditionally sets bpf_attr->name
+for maps. Pre v4.14 kernels don't know about map names and return an
+error about unexpected non-zero data. Retry sys_bpf without a map
+name to cover older kernels.
 
-WARNING: vmlinux.o(.text+0x2d398): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_iclk_autoidle()
-The function _setup() references
-the function __init _setup_iclk_autoidle().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_iclk_autoidle is wrong.
+v2 changes:
+* check for errno == EINVAL as suggested by Daniel Borkmann
 
-WARNING: vmlinux.o(.text+0x2d3a0): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_reset()
-The function _setup() references
-the function __init _setup_reset().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_reset is wrong.
-
-WARNING: vmlinux.o(.text+0x2d408): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_postsetup()
-The function _setup() references
-the function __init _setup_postsetup().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_postsetup is wrong.
-
-_setup is used in omap_hwmod_allocate_module, which isn't marked __init
-and looks like it shouldn't be, meaning to fix these warnings, those
-functions must be moved out of the init section, which this patch does.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/lib/bpf/bpf.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index 083dcd9942ce..921c9aaee63f 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -2413,7 +2413,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
-  * a stub; implementing this properly requires iclk autoidle usecounting in
-  * the clock code.   No return value.
-  */
--static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-+static void _setup_iclk_autoidle(struct omap_hwmod *oh)
+diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
+index 03f9bcc4ef50..961e1b9fc592 100644
+--- a/tools/lib/bpf/bpf.c
++++ b/tools/lib/bpf/bpf.c
+@@ -69,6 +69,7 @@ int bpf_create_map_xattr(const struct bpf_create_map_attr *create_attr)
  {
- 	struct omap_hwmod_ocp_if *os;
+ 	__u32 name_len = create_attr->name ? strlen(create_attr->name) : 0;
+ 	union bpf_attr attr;
++	int ret;
  
-@@ -2444,7 +2444,7 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-  * reset.  Returns 0 upon success or a negative error code upon
-  * failure.
-  */
--static int __init _setup_reset(struct omap_hwmod *oh)
-+static int _setup_reset(struct omap_hwmod *oh)
- {
- 	int r;
+ 	memset(&attr, '\0', sizeof(attr));
  
-@@ -2505,7 +2505,7 @@ static int __init _setup_reset(struct omap_hwmod *oh)
-  *
-  * No return value.
-  */
--static void __init _setup_postsetup(struct omap_hwmod *oh)
-+static void _setup_postsetup(struct omap_hwmod *oh)
- {
- 	u8 postsetup_state;
+@@ -86,7 +87,15 @@ int bpf_create_map_xattr(const struct bpf_create_map_attr *create_attr)
+ 	attr.map_ifindex = create_attr->map_ifindex;
+ 	attr.inner_map_fd = create_attr->inner_map_fd;
  
+-	return sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
++	ret = sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
++	if (ret < 0 && errno == EINVAL && create_attr->name) {
++		/* Retry the same syscall, but without the name.
++		 * Pre v4.14 kernels don't support map names.
++		 */
++		memset(attr.map_name, 0, sizeof(attr.map_name));
++		return sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
++	}
++	return ret;
+ }
+ 
+ int bpf_create_map_node(enum bpf_map_type map_type, const char *name,
 -- 
 2.19.1
 
