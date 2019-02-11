@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBCCC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61287C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F4DD2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF6B20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896155;
-	bh=QlG9ATRdErIoaDjSeYnLxVWw0mtTt4eFV2YoDeh+1zI=;
+	s=default; t=1549896159;
+	bh=8TjnDRhWHY663AFdMrplk6q0Tl8y++AWmDqGGR3S+Zs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KU7gHvpdrO9mS6miY/tFk5tMr5OLDEundJlci2eeBlOn3A40r3xELPlPHuXimTND6
-	 PpFQbtQWIfWogv4g7YSEhILQPAoM9WUJTiV/xM3LBkq/rAK32Du8qFmCDFju7lOsQ2
-	 taBXgkGaLNYRNM8+95W26X9IKZDXFr1oLlJuVjRI=
+	b=YIAcMgmjNdSY9MnQzNcXodQZWOofj2zzzn20yxd3zTL8rpRwai2f63AlQz86el9LT
+	 q0imLrPtDA8zZXkF2Y/0yLgcgd5h+6X0CkkW+zo5pU1KE2nHfHcCyoUmpIDMxYqNzE
+	 l+6cC0c3wVgMLQQHTqBRbt6PPNVwwykoPbr8ZzhU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732463AbfBKOmd (ORCPT
+        id S1732473AbfBKOmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:42:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732429AbfBKOm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:42:28 -0500
+        id S1732429AbfBKOme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:42:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 899A620700;
-        Mon, 11 Feb 2019 14:42:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76E1F20700;
+        Mon, 11 Feb 2019 14:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896148;
-        bh=QlG9ATRdErIoaDjSeYnLxVWw0mtTt4eFV2YoDeh+1zI=;
+        s=default; t=1549896154;
+        bh=8TjnDRhWHY663AFdMrplk6q0Tl8y++AWmDqGGR3S+Zs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=arUxCiN4Xh+j9ATvjUiDGTHQtOEInmF/8SisA1vHYnFvL/+97igJcHSHYOlgR6g9W
-         rWVz68miP17dW/Grg4sJ00NSxOBgWx8/CJELsAhACmbe8pT9/eqSRLMimNxauZOZl7
-         Dnxh9EJti4JqVZ6nv1+mvO9aML5sfp2103NJnRoQ=
+        b=wCe+E5iziO+Y/h/eeD/+Y1ufdqVqlMX3AuUCzsIa3ES8ztEiWn8Is2muR89wcDHXu
+         FoTg3JZiMVjsmWQgkzrpbHF6qce+g75NjyUV+lUMCJk3p2niyxbxCZKMucNblcy7yC
+         dMnQeamqjUBnPA2hqRfswbiADC65sTeo2hcrPA7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 058/313] ptp: Fix pass zero to ERR_PTR() in ptp_clock_register
-Date:   Mon, 11 Feb 2019 15:15:38 +0100
-Message-Id: <20190211141857.701051606@linuxfoundation.org>
+Subject: [PATCH 4.19 060/313] powerpc/32: Add .data..Lubsan_data*/.data..Lubsan_type* sections explicitly
+Date:   Mon, 11 Feb 2019 15:15:40 +0100
+Message-Id: <20190211141857.840969026@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,49 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aea0a897af9e44c258e8ab9296fad417f1bc063a ]
+[ Upstream commit beba24ac59133cb36ecd03f9af9ccb11971ee20e ]
 
-Fix smatch warning:
+When both `CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y` and `CONFIG_UBSAN=y`
+are set, link step typically produce numberous warnings about orphan
+section:
 
-drivers/ptp/ptp_clock.c:298 ptp_clock_register() warn:
- passing zero to 'ERR_PTR'
+  + powerpc-linux-gnu-ld -EB -m elf32ppc -Bstatic --orphan-handling=warn --build-id --gc-sections -X -o .tmp_vmlinux1 -T ./arch/powerpc/kernel/vmlinux.lds --who
+  le-archive built-in.a --no-whole-archive --start-group lib/lib.a --end-group
+  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_data393' from `init/main.o' being placed in section `.data..Lubsan_data393'.
+  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_data394' from `init/main.o' being placed in section `.data..Lubsan_data394'.
+  ...
+  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_type11' from `init/main.o' being placed in section `.data..Lubsan_type11'.
+  powerpc-linux-gnu-ld: warning: orphan section `.data..Lubsan_type12' from `init/main.o' being placed in section `.data..Lubsan_type12'.
+  ...
 
-'err' should be set while device_create_with_groups and
-pps_register_source fails
+This commit remove those warnings produced at W=1.
 
-Fixes: 85a66e550195 ("ptp: create "pins" together with the rest of attributes")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg135407.html
+Suggested-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ptp/ptp_clock.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/vmlinux.lds.S | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index 7eacc1c4b3b1..c64903a5978f 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -253,8 +253,10 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 	ptp->dev = device_create_with_groups(ptp_class, parent, ptp->devid,
- 					     ptp, ptp->pin_attr_groups,
- 					     "ptp%d", ptp->index);
--	if (IS_ERR(ptp->dev))
-+	if (IS_ERR(ptp->dev)) {
-+		err = PTR_ERR(ptp->dev);
- 		goto no_device;
-+	}
- 
- 	/* Register a new PPS source. */
- 	if (info->pps) {
-@@ -265,6 +267,7 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 		pps.owner = info->owner;
- 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
- 		if (!ptp->pps_source) {
-+			err = -EINVAL;
- 			pr_err("failed to register pps source\n");
- 			goto no_pps;
- 		}
+diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
+index 07ae018e550e..53016c753f3c 100644
+--- a/arch/powerpc/kernel/vmlinux.lds.S
++++ b/arch/powerpc/kernel/vmlinux.lds.S
+@@ -296,6 +296,10 @@ SECTIONS
+ #ifdef CONFIG_PPC32
+ 	.data : AT(ADDR(.data) - LOAD_OFFSET) {
+ 		DATA_DATA
++#ifdef CONFIG_UBSAN
++		*(.data..Lubsan_data*)
++		*(.data..Lubsan_type*)
++#endif
+ 		*(.data.rel*)
+ 		*(SDATA_MAIN)
+ 		*(.sdata2)
 -- 
 2.19.1
 
