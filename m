@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF56C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF71C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4B1206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7782206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896272;
-	bh=4Le2FhkgFzKakR2mvMOi/WMm6Az2V7429MXzNoly06c=;
+	s=default; t=1549896275;
+	bh=sQ2gEQO5P1T+V2YB5xtzCD7ihV7wHzRzt95WwyM90no=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qtnffag3M75STreDaaZfZ8SA3/QIKa6NjxzHgYo0qZTYPtvnp5zlM+CquGglOgky5
-	 sQbVH2pskaVKLekUdFyhx8m+4yIN4lwZ/w125/Jma87RCz8olbwFks5vmAKMCquyPB
-	 y/9zz2CX+76IyV2xBIQT9YDnBgiz1LeCLzkrKVpw=
+	b=cBMw+CT5gHvU8eIDIwrwVzCfMdfOMzxV8xjd1CAbh8AgDRZpQVWjeGU1t7k25kdOt
+	 9w3L+PlcMsxF1idlhIdPXOHBgU1URLdyscZAJGcy/0sJB/mpA+ZadXYzMwssU7hDyo
+	 ZEGnWEdkm6Qk8Lv7g8ya59yBzscCDwMrPXHjR0zM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbfBKOoa (ORCPT
+        id S1732858AbfBKOod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:44:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57230 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:44:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732835AbfBKOo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:44:27 -0500
+        id S1732847AbfBKOoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:44:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C6D2206BA;
-        Mon, 11 Feb 2019 14:44:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16D1520700;
+        Mon, 11 Feb 2019 14:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896266;
-        bh=4Le2FhkgFzKakR2mvMOi/WMm6Az2V7429MXzNoly06c=;
+        s=default; t=1549896269;
+        bh=sQ2gEQO5P1T+V2YB5xtzCD7ihV7wHzRzt95WwyM90no=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xm+lu2RqH1eNimgzQDJ+5G82dl2U5T/NpD6w6uzrtcbJPpo5sAhY7jKs5WLichgxt
-         8d3JNXMlIjRa2pxZW8cu3y2VXI8h/3/4QpevO113fiefqCNQ4l1QVoFNWi8X6KeEdL
-         1A2ibj95pmHQhnin5+l3l4ST6FTUHzBLaJLMK3ik=
+        b=uwUlvOp603bHjoQudaoaJLmYe3n9nyseYSnR+bbRahdiqzz+iR97agXM05Cs4NKym
+         yaVQiX4fUneWoDh26cAsljR/NgaWSiWaRO36lyJjFMKpQRAMhTfHBDAsZQHc7cYllm
+         AWe9pdbG64CWPgDjkWkGUgNcTOlHkrAF+8KS9jS0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>, Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/313] ARM: dts: mmp2: fix TWSI2
-Date:   Mon, 11 Feb 2019 15:16:07 +0100
-Message-Id: <20190211141859.663034498@linuxfoundation.org>
+Subject: [PATCH 4.19 121/313] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+Date:   Mon, 11 Feb 2019 15:16:41 +0100
+Message-Id: <20190211141901.893907130@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,54 +70,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
+[ Upstream commit 89cddc563743cb1e0068867ac97013b2a5bf86aa ]
 
-Marvell keeps their MMP2 datasheet secret, but there are good clues
-that TWSI2 is not on 0xd4025000 on that platform, not does it use
-IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
+qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
+clock and power requirements.
+On msm8996, multiple cores, viz. mdss, video, etc. use this
+smmu. On sdm845, this smmu is used with gpu.
+Add bindings for the same.
 
-   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
-
-I'm taking a somewhat educated guess that is probably a copy & paste
-error from PXA168 or PXA910 and that the real controller in fact hides
-at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
-
-I'm also copying some properties from TWSI1 that were missing or
-incorrect.
-
-Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iommu/arm-smmu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..47e5b63339d1 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -220,12 +220,15 @@
- 				status = "disabled";
- 			};
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index e7cbf4fcf61d..ce119cb279c3 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -118,6 +118,7 @@ enum arm_smmu_implementation {
+ 	GENERIC_SMMU,
+ 	ARM_MMU500,
+ 	CAVIUM_SMMUV2,
++	QCOM_SMMUV2,
+ };
  
--			twsi2: i2c@d4025000 {
-+			twsi2: i2c@d4031000 {
- 				compatible = "mrvl,mmp-twsi";
--				reg = <0xd4025000 0x1000>;
--				interrupts = <58>;
-+				reg = <0xd4031000 0x1000>;
-+				interrupt-parent = <&intcmux17>;
-+				interrupts = <0>;
- 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
- 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				status = "disabled";
- 			};
+ struct arm_smmu_s2cr {
+@@ -1912,6 +1913,7 @@ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
++ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
  
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+@@ -1920,6 +1922,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
+ 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
+ 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
++	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
 -- 
 2.19.1
 
