@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE042C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFF0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78C2D218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AEBD218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900897;
-	bh=KhA8XNN+0BZPSKKdkvs3lalVmwa4Yw8yhba1jyNHsAg=;
+	s=default; t=1549900916;
+	bh=AVjOb0BPEAYeblgLmfRnxNpAq9oHPcIX5BzpRyHYHvY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r99suO91/viXM4Ljnis68Yd2ela4pDMk+Re1gIFN5I/KBGUzNLhdNErodPNyaZhq+
-	 Fjkbw2GAM5X/3dpIwzXl7iDrzbt2RFR9hisgPXu6iH3WsIWY319SJNQxZrlNe3I5UB
-	 I782fU3LDnbdqyo4PdvD6v1HajrtsHjDpzWQUYzU=
+	b=NjrN5LrL0h9z8O7aiFes32fs3e1F++iEIOIqUGfoLjIAc3dfd9byWlO9fxHg+yox4
+	 XQJZxi17F5Be0exR7JpWXwwtNVAfwLAXifwsI4Wv76UEzge/VyXaOX/PXh4zTn+Ctv
+	 tYlHSAu06Twc4j6FDCRxKhWZp+77KBDvqUI7roOg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbfBKQBf (ORCPT
+        id S1730170AbfBKOap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:01:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37674 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:30:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730225AbfBKObB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:01 -0500
+        id S1729012AbfBKOah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:30:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B080820675;
-        Mon, 11 Feb 2019 14:31:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5396420675;
+        Mon, 11 Feb 2019 14:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895461;
-        bh=KhA8XNN+0BZPSKKdkvs3lalVmwa4Yw8yhba1jyNHsAg=;
+        s=default; t=1549895436;
+        bh=AVjOb0BPEAYeblgLmfRnxNpAq9oHPcIX5BzpRyHYHvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OAIAfuiRgS+TH31sd5svIRdeXvg4LTKS02+xWVouNrnL/Hqe4XQefdPve9Je//HZf
-         LBHsiLd131SfBYs/D8y2uGVrNzYq6jADgPRKDTmQTKGFCSHUF1/cD10SPBnOIA8tn2
-         PCZMTVtY5L1UsGTtjqoPKvC9rtGinkxDPCSt5DlI=
+        b=y89LOjLGiIyyvv725c6GYvalAtAjA9dzln4+BVK6gYgQ8/bi6BSDDrAu7SUVhBCJl
+         I6emkJuVSmYfcUDiG8UhbQMDDvK1hq2sOgw9GeDfKnrPlNEAKEfy1R8O4jz0UxDjQY
+         Y1Zm0CUq7EzGb86eFDZLMeQkp8TPHQPf3VXMhQpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 181/352] btrfs: reada: reorder dev-replace locks before radix tree preload
-Date:   Mon, 11 Feb 2019 15:16:48 +0100
-Message-Id: <20190211141858.608391723@linuxfoundation.org>
+Subject: [PATCH 4.20 204/352] net: hns3: fix error handling int the hns3_get_vector_ring_chain
+Date:   Mon, 11 Feb 2019 15:17:11 +0100
+Message-Id: <20190211141900.125445339@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,60 +67,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ceb21a8db48559fd0809e03c4df9eb37743d9170 ]
+[ Upstream commit cda69d244585bc4497d3bb878c22fe2b6ad647c1 ]
 
-The device-replace read lock is going to use rw semaphore in followup
-commits. The semaphore might sleep which is not possible in the radix
-tree preload section. The lock nesting is now:
+When hns3_get_vector_ring_chain() failed in the
+hns3_nic_init_vector_data(), it should do the error handling instead
+of return directly.
 
-* device replace
-  * radix tree preload
-    * readahead spinlock
+Also, cur_chain should be freed instead of chain and head->next should
+be set to NULL in error handling of hns3_get_vector_ring_chain.
 
-Signed-off-by: David Sterba <dsterba@suse.com>
+This patch fixes them.
+
+Fixes: 73b907a083b8 ("net: hns3: bugfix for buffer not free problem during resetting")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/reada.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/reada.c b/fs/btrfs/reada.c
-index dec14b739b10..6f81f3e88b6d 100644
---- a/fs/btrfs/reada.c
-+++ b/fs/btrfs/reada.c
-@@ -376,26 +376,28 @@ static struct reada_extent *reada_find_extent(struct btrfs_fs_info *fs_info,
- 		goto error;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 20fcf0d1c2ce..4aea3f57586e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2783,9 +2783,10 @@ err_free_chain:
+ 	cur_chain = head->next;
+ 	while (cur_chain) {
+ 		chain = cur_chain->next;
+-		devm_kfree(&pdev->dev, chain);
++		devm_kfree(&pdev->dev, cur_chain);
+ 		cur_chain = chain;
  	}
++	head->next = NULL;
  
-+	/* Insert extent in reada tree + all per-device trees, all or nothing */
-+	btrfs_dev_replace_read_lock(&fs_info->dev_replace);
- 	ret = radix_tree_preload(GFP_KERNEL);
--	if (ret)
-+	if (ret) {
-+		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
- 		goto error;
-+	}
+ 	return -ENOMEM;
+ }
+@@ -2876,7 +2877,7 @@ static int hns3_nic_init_vector_data(struct hns3_nic_priv *priv)
+ 		ret = hns3_get_vector_ring_chain(tqp_vector,
+ 						 &vector_ring_chain);
+ 		if (ret)
+-			return ret;
++			goto map_ring_fail;
  
--	/* insert extent in reada_tree + all per-device trees, all or nothing */
--	btrfs_dev_replace_read_lock(&fs_info->dev_replace);
- 	spin_lock(&fs_info->reada_lock);
- 	ret = radix_tree_insert(&fs_info->reada_tree, index, re);
- 	if (ret == -EEXIST) {
- 		re_exist = radix_tree_lookup(&fs_info->reada_tree, index);
- 		re_exist->refcnt++;
- 		spin_unlock(&fs_info->reada_lock);
--		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
- 		radix_tree_preload_end();
-+		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
- 		goto error;
- 	}
- 	if (ret) {
- 		spin_unlock(&fs_info->reada_lock);
--		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
- 		radix_tree_preload_end();
-+		btrfs_dev_replace_read_unlock(&fs_info->dev_replace);
- 		goto error;
- 	}
- 	radix_tree_preload_end();
+ 		ret = h->ae_algo->ops->map_ring_to_vector(h,
+ 			tqp_vector->vector_irq, &vector_ring_chain);
 -- 
 2.19.1
 
