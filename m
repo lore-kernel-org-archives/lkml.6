@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 990BFC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28737C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6889F21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D269021B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898799;
-	bh=XcyQ8FX7UTxIUBcY0ZfcRpbg6DZWjb4V37Y4hykWqMU=;
+	s=default; t=1549898811;
+	bh=aY3mPOz7rwUMM1rc7bt2WBXZSTPxYyGnuIDchRCCNqU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TOXVto2SQwfxCCOGz36TCER4Aak2ucMvD6walbi4REe42hMNtqhQK7NgN9g3QcG6O
-	 FkGwvgH0rI3mxF480ibwk1B+g4/xXbsCKhNiFTX8H5fIGsAPxKZ5YkWc+I+F5wA7Tt
-	 rjaCtDATiT9BSj+LrtULPwHhJuBYfI5YrANvG7XA=
+	b=tkxU1RVx8H/DlZohB6VbymHioa75bZ0xh9TMP5j144y6kLTWmFE3+HnWvS/5Vgkka
+	 prjPHBZqdQzmYEtgjKN6kLjRD6UBM8BHbUGzMqKijpiEnZ6QT4OJYeopHL+wnE4B17
+	 qKyNlUD0o53WBFFIoFD9X/uJgSrlw90wTIO805Xk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389958AbfBKPAM (ORCPT
+        id S2389902AbfBKO75 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:00:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48054 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:59:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389946AbfBKPAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:00:09 -0500
+        id S2389892AbfBKO7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:59:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92B08206BA;
-        Mon, 11 Feb 2019 15:00:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9D1222A6;
+        Mon, 11 Feb 2019 14:59:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897209;
-        bh=XcyQ8FX7UTxIUBcY0ZfcRpbg6DZWjb4V37Y4hykWqMU=;
+        s=default; t=1549897194;
+        bh=aY3mPOz7rwUMM1rc7bt2WBXZSTPxYyGnuIDchRCCNqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b4GX8SeGKASzVau0TCXQS5PioNY2PwnOG956/Iw8hLiks+Gzey9VP/84ppVKaniup
-         TG0d9huKzlidUsj/bEEfdZPDwQUAEiagsXuOJ1NoJ8oPspvrZPfV2sT6D0n8YN+Xnx
-         KFcAK/zFWykSwgkQWJuItvyjMzlXF8G2wJRA/YrQ=
+        b=VwHuVkpd6iha55sNXQ8YVjc/wuedvN0OkGSxtRW+YME+LkMLfSU8IH9+uIfLocoPV
+         rhGXIBPn5Ft+/lnX5863KX/MfglrjIWk7sEjhemmlHxc/hllGrY9hqkDB9JpZUf6Wk
+         otEfrU6bZ+p3ThGe6SaAuNPvC0E9RbIkzqux3pqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lenny Szubowicz <lszubowi@redhat.com>,
-        David Arcari <darcari@redhat.com>,
-        Tyler Baicar <baicar.tyler@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 127/205] ACPI/APEI: Clear GHES block_status before panic()
-Date:   Mon, 11 Feb 2019 15:18:45 +0100
-Message-Id: <20190211141836.763596106@linuxfoundation.org>
+Subject: [PATCH 4.14 092/205] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
+Date:   Mon, 11 Feb 2019 15:18:10 +0100
+Message-Id: <20190211141834.655710805@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -69,40 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 98cff8b23ed1c763a029ee81ea300df0d153d07d ]
+[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
 
-In __ghes_panic() clear the block status in the APEI generic
-error status block for that generic hardware error source before
-calling panic() to prevent a second panic() in the crash kernel
-for exactly the same fatal error.
+eukrea-tlv320.c machine driver runs on non-DT platforms
+and include <asm/mach-types.h> header file in order to be able
+to use some machine_is_eukrea_xxx() macros.
 
-Otherwise ghes_probe(), running in the crash kernel, would see
-an unhandled error in the APEI generic error status block and
-panic again, thereby precluding any crash dump.
+Building it for ARM64 causes the following build error:
 
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-Signed-off-by: David Arcari <darcari@redhat.com>
-Tested-by: Tyler Baicar <baicar.tyler@gmail.com>
-Acked-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
+
+Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
+driver when ARM64 is selected.
+
+This is needed in preparation for the i.MX8M support.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/apei/ghes.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/fsl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index f14695e744d0..5889f6407fea 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -675,6 +675,8 @@ static void __ghes_panic(struct ghes *ghes)
- {
- 	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index 37f9b6201918..4087deeda7cf 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -221,7 +221,7 @@ config SND_SOC_PHYCORE_AC97
  
-+	ghes_clear_estatus(ghes);
-+
- 	/* reboot to log the error! */
- 	if (!panic_timeout)
- 		panic_timeout = ghes_panic_timeout;
+ config SND_SOC_EUKREA_TLV320
+ 	tristate "Eukrea TLV320"
+-	depends on ARCH_MXC && I2C
++	depends on ARCH_MXC && !ARM64 && I2C
+ 	select SND_SOC_TLV320AIC23_I2C
+ 	select SND_SOC_IMX_AUDMUX
+ 	select SND_SOC_IMX_SSI
 -- 
 2.19.1
 
