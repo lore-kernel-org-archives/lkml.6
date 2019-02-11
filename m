@@ -2,85 +2,94 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C037CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B797DC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90855222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:47:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549892868;
-	bh=v5EPjsuzKTm49QfitWviH9ViqUGCji1VSww8+uZ5br4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=nqo+YapOn2qiWK5Tmh090bn9A1a59A5UGjaGR6pH3X++1amcdS2mOkh/AV5Fgit4v
-	 NaV84hxl+eWjWzTDeBRLmqLFBK4aCUpNi8ux/KRPV3wtx/CIMHXGDniuIvNz4wYKGG
-	 rk2jg0GzcjlceOJNTCobwoiUGLJHj2vd/TZX7rao=
+	by mail.kernel.org (Postfix) with ESMTP id 87376222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:47:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WEPt/Rhg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbfBKNrr (ORCPT
+        id S1728298AbfBKNr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:47:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727223AbfBKNrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:47:46 -0500
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04F08222A5;
-        Mon, 11 Feb 2019 13:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549892866;
-        bh=v5EPjsuzKTm49QfitWviH9ViqUGCji1VSww8+uZ5br4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=o05xEzpbR1/9Q+fxEQz34gD5O01dlSKvbFdrmPm8FNL56j6s7/WvguChy1CjnBRAW
-         a8SJLp+GuIUPOZIRRp3YYcV400NXjiLFzWgi/8uj9Sae7u9CvhAeWneCUG0YkEwh5a
-         G7AntANcsGVlA4EtvBaox1XSAGlyJG35uLr+/EKk=
-Received: by mail-lf1-f51.google.com with SMTP id j1so7765323lfb.10;
-        Mon, 11 Feb 2019 05:47:45 -0800 (PST)
-X-Gm-Message-State: AHQUAuYAukio+U27ujxYCm8udQ6NwiRzNlpu1TQXLKnMdDjfEUf5dM++
-        mxciXWEf6ZdsdvK84Lrts3EqO8MWh1m2cdzV280=
-X-Google-Smtp-Source: AHgI3IZPizeOYx3ePfRbmSK3MhBmzNdifN+NUzkX6lyvseyTZwQzcl7Dl9bDaJixcmXbjUiMiByB3a9drc5KECfDbzQ=
-X-Received: by 2002:ac2:4194:: with SMTP id z20mr10844479lfh.74.1549892864211;
- Mon, 11 Feb 2019 05:47:44 -0800 (PST)
+        Mon, 11 Feb 2019 08:47:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45044 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbfBKNr5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:47:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ws/C2hqYk0iRt2PTm35SBSRz42ARtcD8YeknfLTSmcQ=; b=WEPt/RhgKU3FIaV5Ev/81DgzH
+        UQoVtvtDN3m4/VyfHhpBG2fRmCOwkZLeYoyw6v98loraNonK4JcGe8wWuF0qkSPAkT72fS4ZqiPeJ
+        +wxYpM/CM9YxU//P662NsBKqqEjBhuPwyEibVYEa2mV79kYs1HVGfCrCd1vXAW8jbNmIIzbyslflj
+        /mZLMXBW1UexkZPloEUQZdIRzyjsrduPjuqHHiJHTpHQ1zP8DnVdEz7gn1zx56D9x15jpVdEBA4ZI
+        NecWKaQUmolv3P1O+wI6Pz0sTnApZNBgJ8QZlYt4HLbgpQ6vmKNa6R0RWE25A0LpoTpGjFHA8U9aY
+        GCuYa06JQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtBw8-0007aU-5p; Mon, 11 Feb 2019 13:47:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B38F420D0E3CE; Mon, 11 Feb 2019 14:47:50 +0100 (CET)
+Date:   Mon, 11 Feb 2019 14:47:50 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Chintan Pandya <chintan.pandya@oneplus.com>
+Cc:     Linux Upstream <linux.upstream@oneplus.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "mawilcox@microsoft.com" <mawilcox@microsoft.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [RFC 2/2] page-flags: Catch the double setter of page flags
+Message-ID: <20190211134750.GB32511@hirez.programming.kicks-ass.net>
+References: <20190211125337.16099-1-chintan.pandya@oneplus.com>
+ <20190211125337.16099-3-chintan.pandya@oneplus.com>
 MIME-Version: 1.0
-References: <CGME20190207170130epcas1p4809b7a8dc797ced2982dc3b305a0991b@epcas1p4.samsung.com>
- <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-14-s.nawrocki@samsung.com>
-In-Reply-To: <20190207170028.720-14-s.nawrocki@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 11 Feb 2019 14:47:32 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPd8_fA28owNtr6Rabq52dE_P3JF0NBLCrdVYcn_ftHJig@mail.gmail.com>
-Message-ID: <CAJKOXPd8_fA28owNtr6Rabq52dE_P3JF0NBLCrdVYcn_ftHJig@mail.gmail.com>
-Subject: Re: [PATCH 13/22] ASoC: samsung: i2s: Drop spinlock pointer from
- i2s_dai data structure
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211125337.16099-3-chintan.pandya@oneplus.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 7 Feb 2019 at 18:01, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> As we now have the 'priv' pointer in most of the places we can use
-> priv->lock directly, dropping extra indirection in the SFR region
-> spinlock access.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On Mon, Feb 11, 2019 at 12:53:55PM +0000, Chintan Pandya wrote:
+> Some of the page flags, like PG_locked is not supposed to
+> be set twice. Currently, there is no protection around this
+> and many callers directly tries to set this bit. Others
+> follow trylock_page() which is much safer version of the
+> same. But, for performance issues, we may not want to
+> implement wait-until-set. So, at least, find out who is
+> doing double setting and fix them.
+> 
+> Change-Id: I1295fcb8527ce4b54d5d11c11287fc7516006cf0
+> Signed-off-by: Chintan Pandya <chintan.pandya@oneplus.com>
 > ---
->  sound/soc/samsung/i2s.c | 51 +++++++++++++++++++----------------------
->  1 file changed, 24 insertions(+), 27 deletions(-)
+>  include/linux/page-flags.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index a56a9bd4bc6b..e307775c2b4a 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -208,7 +208,7 @@ static __always_inline int Page##uname(struct page *page)		\
+>  
+>  #define SETPAGEFLAG(uname, lname, policy)				\
+>  static __always_inline void SetPage##uname(struct page *page)		\
+> -	{ set_bit(PG_##lname, &policy(page, 1)->flags); }
+> +	{ WARN_ON(test_and_set_bit(PG_##lname, &policy(page, 1)->flags)); }
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+You forgot to make this depend on CONFIG_DEBUG_VM. Also, I'm not
+convinced this is always wrong, inefficient sure, but not wrong in
+general.
