@@ -2,153 +2,182 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DD7C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D28DEC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D98021B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF76222B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549893487;
+	bh=APdrdY/3ASpHFFt5Wc2BeZlw8lAumoJt1K4LzeeFQ/Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NALYsfQlJkRr0jF4ui6UFw4VVDtVxJwpy/azs5NYFYk+5H6eAZqXalJroLaBgaXy5
+	 kXC4TO6WvB53IQRDZxuV9fAlBfYesrT96SCahSVQv4GJZwfhQkFcxPJ0SelpuClOHk
+	 zNEszUS0thNuvsSVGC6xD0cz6tsGFLQVnbyqp9dA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbfBKNwu (ORCPT
+        id S1727794AbfBKN6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:52:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35294 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 08:58:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727223AbfBKNwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:52:49 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726025AbfBKN6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:58:05 -0500
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 12ED03D47A;
-        Mon, 11 Feb 2019 13:52:49 +0000 (UTC)
-Received: from krava (ovpn-204-173.brq.redhat.com [10.40.204.173])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DDFA85C23A;
-        Mon, 11 Feb 2019 13:52:46 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 14:52:45 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/4] perf: enable compression of record mode trace to
- save storage space
-Message-ID: <20190211135245.GB16528@krava>
-References: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 86C9C222B3;
+        Mon, 11 Feb 2019 13:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549893483;
+        bh=APdrdY/3ASpHFFt5Wc2BeZlw8lAumoJt1K4LzeeFQ/Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=W4fgLwr0kQf40biPhmee7VlB4VclNBFVaHtlq8TUA972I7znZrLww7LPOhqYLv0uF
+         oN8xFXjdd/cXYxn/GQe29lHszRoOp+c783rCa51hKJmOmHXsamy/jbmcq5oOKPEGJi
+         8xCj0Gt7QtSQC1Je7NZkEYjAw7w2pplCj3ioxfig=
+Received: by mail-lj1-f170.google.com with SMTP id r10-v6so8838626ljj.4;
+        Mon, 11 Feb 2019 05:58:03 -0800 (PST)
+X-Gm-Message-State: AHQUAuYi5mZ6KcEs2EEIY51PWp2hZnyOG37Gagz78zdZL9dI0j4VxFa9
+        48f33/yBnuxAFEDf+vhcVfllPNSL7m9dqXPjyoA=
+X-Google-Smtp-Source: AHgI3IZ5Gt4XTcW31JjY6S7s+KN93O/LFZbdJGvPmjebc7CbwxwSvsCnoTGkE0NYXtd6K5TCeohf89FA8mCF89RU8V4=
+X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr18866581lja.19.1549893481654;
+ Mon, 11 Feb 2019 05:58:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 11 Feb 2019 13:52:49 +0000 (UTC)
+References: <CGME20190207170145epcas1p465da0715aa629b525c17d263c1b49a68@epcas1p4.samsung.com>
+ <20190207170028.720-1-s.nawrocki@samsung.com> <20190207170028.720-18-s.nawrocki@samsung.com>
+In-Reply-To: <20190207170028.720-18-s.nawrocki@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 11 Feb 2019 14:57:50 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPehfWHW+Mj=xZ_N+LA7nLUnOvHAwqEmBECquzVSx1ppPQ@mail.gmail.com>
+Message-ID: <CAJKOXPehfWHW+Mj=xZ_N+LA7nLUnOvHAwqEmBECquzVSx1ppPQ@mail.gmail.com>
+Subject: Re: [PATCH 17/22] ASoC: samsung: odroid: Add support for secondary
+ CPU DAI
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 10:02:49AM +0300, Alexey Budankov wrote:
-> 
-> The patch set implements runtime trace compression for record mode and 
-> trace file decompression for report mode. Zstandard API [1] is used for 
-> compression/decompression of data that come from perf_events kernel 
-> data buffers.
-> 
-> Realized -z,--compression_level=n option provides ~3-5x avg. trace file 
-> size reduction on variety of tested workloads what saves user storage 
-> space on larger server systems where trace file size can easily reach 
-> several tens or even hundreds of GiBs, especially when profiling with 
-> stacks for later dwarf unwinding and context-switches tracing and etc.
-> 
->   $ tools/perf/perf record -z 1 -e cycles -- matrix.gcc
-> 
-> --mmap-flush option can be used to avoid compressing every single byte 
-> of data and increase compression ratio at the same time lowering tool 
-> runtime overhead.
-> 
-> The compression functionality can be disabled from the command line 
-> using NO_LIBZSTD define and Zstandard sources can be overridden using 
-> value of LIBZSTD_DIR define:
-> 
->   $ make -C tools/perf NO_LIBZSTD=1 clean all
->   $ make -C tools/perf LIBZSTD_DIR=/path/to/zstd-1.3.7 clean all
-> 
-> The patch set is for Arnaldo's perf/core repository.
-
-hi,
-got here late and can't apply this anymore.. which revision
-(commit id) is this based on? perf/core is moving real fast
-these days ;-)
-
-based on errors below I suspect u need to rebase anyway :-\
-
-sry for late response
-
-jirka
-
-
-> 
+On Thu, 7 Feb 2019 at 18:01, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> This patch adds DPCM links in order to support the secondary I2S interface.
+> For the secondary PCM interface to be actually available one more entry
+> should be added to the sound-dai property in sound/cpu node in DT.
+> The changes in driver are done in a way so we are backwards compatible with
+> existing DTS/DTB, i.e. if the cpu sound-dai property contains only one entry
+> only one PCM will be registered.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
-> Alexey Budankov (4):
->   feature: realize libzstd check, LIBZSTD_DIR and NO_LIBZSTD defines
->   perf record: implement -z=<level> and --mmap-flush=<thres> options
+>  sound/soc/samsung/odroid.c | 132 +++++++++++++++++++++++++++----------
+>  1 file changed, 96 insertions(+), 36 deletions(-)
+>
+> diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
+> index e7b371b07230..bab61e8278a0 100644
+> --- a/sound/soc/samsung/odroid.c
+> +++ b/sound/soc/samsung/odroid.c
+> @@ -7,6 +7,7 @@
+>   */
+>
+>  #include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/module.h>
+> @@ -17,21 +18,24 @@
+>
+>  struct odroid_priv {
+>         struct snd_soc_card card;
+> -       struct snd_soc_dai_link dai_link;
+> -
+>         struct clk *clk_i2s_bus;
+>         struct clk *sclk_i2s;
+>  };
+>
+> -static int odroid_card_startup(struct snd_pcm_substream *substream)
+> +static int odroid_card_fe_startup(struct snd_pcm_substream *substream)
+>  {
+>         struct snd_pcm_runtime *runtime = substream->runtime;
+>
+>         snd_pcm_hw_constraint_single(runtime, SNDRV_PCM_HW_PARAM_CHANNELS, 2);
+> +
+>         return 0;
+>  }
+>
+> -static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+> +static const struct snd_soc_ops odroid_card_fe_ops = {
+> +       .startup = odroid_card_fe_startup,
+> +};
+> +
+> +static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
+>                                       struct snd_pcm_hw_params *params)
+>  {
+>         struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> @@ -86,19 +90,56 @@ static int odroid_card_hw_params(struct snd_pcm_substream *substream,
+>         return 0;
+>  }
+>
+> -static const struct snd_soc_ops odroid_card_ops = {
+> -       .startup = odroid_card_startup,
+> -       .hw_params = odroid_card_hw_params,
+> +static const struct snd_soc_ops odroid_card_be_ops = {
+> +       .hw_params = odroid_card_be_hw_params,
+> +};
+> +
+> +static struct snd_soc_dai_link odroid_card_dais[] = {
+> +       {
+> +               /* Primary FE <-> BE link */
+> +               .codec_name = "snd-soc-dummy",
+> +               .codec_dai_name = "snd-soc-dummy-dai",
+> +               .ops = &odroid_card_fe_ops,
+> +               .name = "Primary",
+> +               .stream_name = "Primary",
+> +               .platform_name = "3830000.i2s",
 
-got this one failing when applied:
+Why exposing address as platform_name? I think it is not used so how
+about some friendlier name?
 
-patching file tools/perf/Documentation/perf-record.txt
-Hunk #1 succeeded at 459 with fuzz 2 (offset 19 lines).
-patching file tools/perf/builtin-record.c
-Hunk #1 succeeded at 292 (offset 5 lines).
-Hunk #2 succeeded at 336 (offset 5 lines).
-Hunk #3 FAILED at 565.
-Hunk #4 succeeded at 765 with fuzz 1 (offset 10 lines).
-Hunk #5 FAILED at 778.
-Hunk #6 succeeded at 806 (offset 11 lines).
-Hunk #7 succeeded at 839 (offset 11 lines).
-Hunk #8 succeeded at 873 (offset 11 lines).
-Hunk #9 succeeded at 1185 (offset 11 lines).
-Hunk #10 succeeded at 1218 (offset 11 lines).
-Hunk #11 succeeded at 1354 (offset 11 lines).
-Hunk #12 succeeded at 1455 (offset 11 lines).
-Hunk #13 succeeded at 1866 (offset 26 lines).
-Hunk #14 FAILED at 2006.
-Hunk #15 succeeded at 2230 with fuzz 2 (offset 32 lines).
-3 out of 15 hunks FAILED -- saving rejects to file tools/perf/builtin-record.c.rej
-patching file tools/perf/perf.h
-Hunk #1 FAILED at 84.
-1 out of 1 hunk FAILED -- saving rejects to file tools/perf/perf.h.rej
-patching file tools/perf/util/env.h
-patching file tools/perf/util/event.c
-Hunk #1 succeeded at 68 (offset 2 lines).
-patching file tools/perf/util/event.h
-Hunk #2 succeeded at 627 (offset 1 line).
-Hunk #3 succeeded at 665 (offset 1 line).
-patching file tools/perf/util/evlist.c
-Hunk #1 FAILED at 1022.
-Hunk #2 FAILED at 1032.
-Hunk #3 FAILED at 1064.
-3 out of 3 hunks FAILED -- saving rejects to file tools/perf/util/evlist.c.rej
-patching file tools/perf/util/evlist.h
-Hunk #1 FAILED at 165.
-1 out of 1 hunk FAILED -- saving rejects to file tools/perf/util/evlist.h.rej
-patching file tools/perf/util/header.c
-patching file tools/perf/util/header.h
-patching file tools/perf/util/mmap.c
-Hunk #1 FAILED at 154.
-Hunk #2 succeeded at 282 with fuzz 1 (offset 69 lines).
-Hunk #3 succeeded at 359 (offset 69 lines).
-Hunk #4 succeeded at 434 (offset 97 lines).
-Hunk #5 succeeded at 484 (offset 97 lines).
-1 out of 5 hunks FAILED -- saving rejects to file tools/perf/util/mmap.c.rej
-patching file tools/perf/util/mmap.h
-Hunk #1 FAILED at 30.
-Hunk #2 FAILED at 69.
-2 out of 2 hunks FAILED -- saving rejects to file tools/perf/util/mmap.h.rej
-patching file tools/perf/util/session.h
+> +               .dynamic = 1,
+> +               .dpcm_playback = 1,
+> +       }, {
+> +               /* BE <-> CODECs link */
+> +               .name = "I2S Mixer",
+> +               .cpu_name = "snd-soc-dummy",
+> +               .cpu_dai_name = "snd-soc-dummy-dai",
+> +               .platform_name = "snd-soc-dummy",
+> +               .ops = &odroid_card_be_ops,
+> +               .no_pcm = 1,
+> +               .dpcm_playback = 1,
+> +               .dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+> +                               SND_SOC_DAIFMT_CBS_CFS,
+> +       }, {
+> +               /* Secondary FE <-> BE link */
+> +               .playback_only = 1,
+> +               .codec_name = "snd-soc-dummy",
+> +               .codec_dai_name = "snd-soc-dummy-dai",
+> +               .ops = &odroid_card_fe_ops,
+> +               .name = "Secondary",
+> +               .stream_name = "Secondary",
+> +               .platform_name = "samsung-i2s-sec",
+> +               .dynamic = 1,
+> +               .dpcm_playback = 1,
+> +       }
+>  };
+>
+> +
+
+Unneeded new line.
+
+Best regards,
+Krzysztof
