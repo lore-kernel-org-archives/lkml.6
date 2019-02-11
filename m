@@ -2,58 +2,55 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD83C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D095C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AD5222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C39A222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897405;
-	bh=oM6RimPWdCaN+aTIneenUuPPVTj4mAkGF9j+0ZFPal0=;
+	s=default; t=1549897411;
+	bh=ujrmTL1psGT0NESvHo1Ptdg8RDNSs6BCHgsT0cSmpc0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w/oQ4XImMb6NVrr8ERGBzVQwCviMhEo/SvJyOugh0yjInQ0UNJYIPb6llV1mT/pLV
-	 Th0wNxSRPEJ8OG0uyLI2Eqz7UgkIOar4eHic3XE0kCwAS2chlaHLm53q+HoVVPTxS2
-	 bQGy2NI1OZsETTwDer5TTPS0MGVy8bi8jGPA9ndQ=
+	b=yanGiN2n8ZSz2S9QHBj1ent8CkTDtLrpRVyXiaoI8fSn/o9VesgnUKKjB2mFCJtjv
+	 eYtMeuhRI2bf/tiriIQnrpKPTcqt2mrbpPeRZWy5NVveK6k+09NFAlzwk1Lk77rblX
+	 hAyXk4Gqbv++hGUNG/ELbkVJn3WvVnhnerK96c7g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390617AbfBKPDX (ORCPT
+        id S2390629AbfBKPD3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:03:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51758 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:03:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390589AbfBKPDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:03:19 -0500
+        id S2390604AbfBKPDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FED3222B0;
-        Mon, 11 Feb 2019 15:03:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A01FF222B1;
+        Mon, 11 Feb 2019 15:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897398;
-        bh=oM6RimPWdCaN+aTIneenUuPPVTj4mAkGF9j+0ZFPal0=;
+        s=default; t=1549897401;
+        bh=ujrmTL1psGT0NESvHo1Ptdg8RDNSs6BCHgsT0cSmpc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rdcoYsp84SFHxN7iJwJy9uC2F14RT7Lp7Qvs/TEpg6yn78acAZtxdLgS3ef6zHqfc
-         3jQPcD8fKDYnREtBqQlWSQnvLxlMW1Oz5xnwCg/va+tgmjBIRXcCcOnEJ99VWIcd+y
-         BXv0bn3KAjY7v/xYaPy9SP7JMUWAU83BU81X1Frg=
+        b=KGQKigCOGWM9dAlDjaUOyAhVUDpor8HdrTq0r9LOlWMmC5pKGCNgei7NKRWSok5sz
+         I4IW5t1ZKsjjlveD+A2xCifElPHh8R7PykmA81NuytbYwRmYg1D2x/NRtYpEQNvO75
+         kq4FPTxFIP0e3Y6VLqLc6CcdV1eGQcogcmSVOLns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 149/205] ocfs2: improve ocfs2 Makefile
-Date:   Mon, 11 Feb 2019 15:19:07 +0100
-Message-Id: <20190211141838.087868626@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
+        Sebastian Sewior <bigeasy@linutronix.de>
+Subject: [PATCH 4.14 183/205] futex: Handle early deadlock return correctly
+Date:   Mon, 11 Feb 2019 15:19:41 +0100
+Message-Id: <20190211141840.358126079@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -72,72 +69,226 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9e6aea22802b5684c7e1d69822aeb0844dd01953 ]
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Included file path was hard-wired in the ocfs2 makefile, which might
-causes some confusion when compiling ocfs2 as an external module.
+commit 1a1fb985f2e2b85ec0d3dc2e519ee48389ec2434 upstream.
 
-Say if we compile ocfs2 module as following.
-cp -r /kernel/tree/fs/ocfs2 /other/dir/ocfs2
-cd /other/dir/ocfs2
-make -C /path/to/kernel_source M=`pwd` modules
+commit 56222b212e8e ("futex: Drop hb->lock before enqueueing on the
+rtmutex") changed the locking rules in the futex code so that the hash
+bucket lock is not longer held while the waiter is enqueued into the
+rtmutex wait list. This made the lock and the unlock path symmetric, but
+unfortunately the possible early exit from __rt_mutex_proxy_start() due to
+a detected deadlock was not updated accordingly. That allows a concurrent
+unlocker to observe inconsitent state which triggers the warning in the
+unlock path.
 
-Acutally, the compiler wil try to find included file in
-/kernel/tree/fs/ocfs2, rather than the directory /other/dir/ocfs2.
+futex_lock_pi()                         futex_unlock_pi()
+  lock(hb->lock)
+  queue(hb_waiter)				lock(hb->lock)
+  lock(rtmutex->wait_lock)
+  unlock(hb->lock)
+                                        // acquired hb->lock
+                                        hb_waiter = futex_top_waiter()
+                                        lock(rtmutex->wait_lock)
+  __rt_mutex_proxy_start()
+     ---> fail
+          remove(rtmutex_waiter);
+     ---> returns -EDEADLOCK
+  unlock(rtmutex->wait_lock)
+                                        // acquired wait_lock
+                                        wake_futex_pi()
+                                        rt_mutex_next_owner()
+					  --> returns NULL
+                                          --> WARN
 
-To fix this little bug, we introduce the var $(src) provided by kbuild.
-$(src) means the absolute path of the running kbuild file.
+  lock(hb->lock)
+  unqueue(hb_waiter)
 
-Link: http://lkml.kernel.org/r/20181108085546.15149-1-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The problem is caused by the remove(rtmutex_waiter) in the failure case of
+__rt_mutex_proxy_start() as this lets the unlocker observe a waiter in the
+hash bucket but no waiter on the rtmutex, i.e. inconsistent state.
+
+The original commit handles this correctly for the other early return cases
+(timeout, signal) by delaying the removal of the rtmutex waiter until the
+returning task reacquired the hash bucket lock.
+
+Treat the failure case of __rt_mutex_proxy_start() in the same way and let
+the existing cleanup code handle the eventual handover of the rtmutex
+gracefully. The regular rt_mutex_proxy_start() gains the rtmutex waiter
+removal for the failure case, so that the other callsites are still
+operating correctly.
+
+Add proper comments to the code so all these details are fully documented.
+
+Thanks to Peter for helping with the analysis and writing the really
+valuable code comments.
+
+Fixes: 56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
+Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Co-developed-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-s390@vger.kernel.org
+Cc: Stefan Liebler <stli@linux.ibm.com>
+Cc: Sebastian Sewior <bigeasy@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1901292311410.1950@nanos.tec.linutronix.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/ocfs2/Makefile       | 2 +-
- fs/ocfs2/dlm/Makefile   | 2 +-
- fs/ocfs2/dlmfs/Makefile | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ kernel/futex.c           |   28 ++++++++++++++++++----------
+ kernel/locking/rtmutex.c |   37 ++++++++++++++++++++++++++++++++-----
+ 2 files changed, 50 insertions(+), 15 deletions(-)
 
-diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
-index 99ee093182cb..cc9b32b9db7c 100644
---- a/fs/ocfs2/Makefile
-+++ b/fs/ocfs2/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -2811,35 +2811,39 @@ retry_private:
+ 	 * and BUG when futex_unlock_pi() interleaves with this.
+ 	 *
+ 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
+-	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
+-	 * serializes against futex_unlock_pi() as that does the exact same
+-	 * lock handoff sequence.
++	 * latter before calling __rt_mutex_start_proxy_lock(). This
++	 * interleaves with futex_unlock_pi() -- which does a similar lock
++	 * handoff -- such that the latter can observe the futex_q::pi_state
++	 * before __rt_mutex_start_proxy_lock() is done.
+ 	 */
+ 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
+ 	spin_unlock(q.lock_ptr);
++	/*
++	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
++	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
++	 * it sees the futex_q::pi_state.
++	 */
+ 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
+ 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
  
- obj-$(CONFIG_OCFS2_FS) += 	\
- 	ocfs2.o			\
-diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
-index bd1aab1f49a4..ef2854422a6e 100644
---- a/fs/ocfs2/dlm/Makefile
-+++ b/fs/ocfs2/dlm/Makefile
-@@ -1,4 +1,4 @@
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)/..
+ 	if (ret) {
+ 		if (ret == 1)
+ 			ret = 0;
+-
+-		spin_lock(q.lock_ptr);
+-		goto no_block;
++		goto cleanup;
+ 	}
  
- obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
+-
+ 	if (unlikely(to))
+ 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
  
-diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
-index eed3db8c5b49..33431a0296a3 100644
---- a/fs/ocfs2/dlmfs/Makefile
-+++ b/fs/ocfs2/dlmfs/Makefile
-@@ -1,4 +1,4 @@
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)/..
+ 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
  
- obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
++cleanup:
+ 	spin_lock(q.lock_ptr);
+ 	/*
+-	 * If we failed to acquire the lock (signal/timeout), we must
++	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
+ 	 * first acquire the hb->lock before removing the lock from the
+-	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
+-	 * wait lists consistent.
++	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
++	 * lists consistent.
+ 	 *
+ 	 * In particular; it is important that futex_unlock_pi() can not
+ 	 * observe this inconsistency.
+@@ -2963,6 +2967,10 @@ retry:
+ 		 * there is no point where we hold neither; and therefore
+ 		 * wake_futex_pi() must observe a state consistent with what we
+ 		 * observed.
++		 *
++		 * In particular; this forces __rt_mutex_start_proxy() to
++		 * complete such that we're guaranteed to observe the
++		 * rt_waiter. Also see the WARN in wake_futex_pi().
+ 		 */
+ 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
+ 		spin_unlock(&hb->lock);
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mut
+ 	rt_mutex_set_owner(lock, NULL);
+ }
  
--- 
-2.19.1
-
++/**
++ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
++ * @lock:		the rt_mutex to take
++ * @waiter:		the pre-initialized rt_mutex_waiter
++ * @task:		the task to prepare
++ *
++ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
++ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
++ *
++ * NOTE: does _NOT_ remove the @waiter on failure; must either call
++ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
++ *
++ * Returns:
++ *  0 - task blocked on lock
++ *  1 - acquired the lock for task, caller should wake it up
++ * <0 - error
++ *
++ * Special API call for PI-futex support.
++ */
+ int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 			      struct rt_mutex_waiter *waiter,
+ 			      struct task_struct *task)
+ {
+ 	int ret;
+ 
++	lockdep_assert_held(&lock->wait_lock);
++
+ 	if (try_to_take_rt_mutex(lock, task, NULL))
+ 		return 1;
+ 
+@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct r
+ 		ret = 0;
+ 	}
+ 
+-	if (unlikely(ret))
+-		remove_waiter(lock, waiter);
+-
+ 	debug_rt_mutex_print_deadlock(waiter);
+ 
+ 	return ret;
+@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct r
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  * @task:		the task to prepare
+  *
++ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
++ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
++ *
++ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
++ * on failure.
++ *
+  * Returns:
+  *  0 - task blocked on lock
+  *  1 - acquired the lock for task, caller should wake it up
+  * <0 - error
+  *
+- * Special API call for FUTEX_REQUEUE_PI support.
++ * Special API call for PI-futex support.
+  */
+ int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 			      struct rt_mutex_waiter *waiter,
+@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_
+ 
+ 	raw_spin_lock_irq(&lock->wait_lock);
+ 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
++	if (unlikely(ret))
++		remove_waiter(lock, waiter);
+ 	raw_spin_unlock_irq(&lock->wait_lock);
+ 
+ 	return ret;
+@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_m
+  * @lock:		the rt_mutex we were woken on
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  *
+- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
++ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
++ * rt_mutex_wait_proxy_lock().
+  *
+  * Unless we acquired the lock; we're still enqueued on the wait-list and can
+  * in fact still be granted ownership until we're removed. Therefore we can
 
 
