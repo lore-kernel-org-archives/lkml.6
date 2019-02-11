@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D214C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C95C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655AD21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23CAB21B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898819;
-	bh=NIc8LGoH5F8zK6hU5mL9AlPdAOaDvNdCCpYXmsnhIl0=;
+	s=default; t=1549898823;
+	bh=U99msPssP2y9fGEB+sJXyh1dZwUzFuiYUWoKdttBHYY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XDPIwTCKabzPVrm1CrzXQlC0HuWP7R+vqZax4mXwdQ4g03nj9JXsWMVM5gjYHIk4J
-	 PI6ZNcvD++n8Q7nBoleCEKnRHHhAWmUlFVpP9gzVw8UWu2aqfwsijXdO4b7QzEQ/Cl
-	 HXXD3O5X8+jKjIFJ4AZimgbFnIEjCTChL66DqJ6o=
+	b=hYlevoKKV8MXLem1ahFI+Et6wvEhF98W7ELbGUvB3Lbw5RhQUbMcZH/sX/dVaZ1gH
+	 9+BMEh8ZPy8zlw1vSOoBTWQi6UzuTqPeyHJ5rck7bGVMgiVMr35tphPVaCgyxsm0E2
+	 OyJkkME1PbPHIdJQWqHKAwx8Hsy90Nms1uyxKOog=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389371AbfBKO7p (ORCPT
+        id S2389853AbfBKO7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:59:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47492 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:59:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389833AbfBKO7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:59:40 -0500
+        id S2389124AbfBKO7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:59:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDD9206BA;
-        Mon, 11 Feb 2019 14:59:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1AA7222A4;
+        Mon, 11 Feb 2019 14:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897180;
-        bh=NIc8LGoH5F8zK6hU5mL9AlPdAOaDvNdCCpYXmsnhIl0=;
+        s=default; t=1549897177;
+        bh=U99msPssP2y9fGEB+sJXyh1dZwUzFuiYUWoKdttBHYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UqdCb4hnqxCE3pjTZNJ8sYNFVcXFu9Q1j1JR4I1KnjBOZpKFwYBRSsq0zl5wPyqZb
-         V+wNELyCf4TBGVVphTlHxUG3M+dvnmxymScUGJdCFgIzfN4Xv8m/E6NVCgebXF9D/t
-         7XEeIZeSSVcbMD4+qzw1i7nG0uD5yfO2l4sIKrDs=
+        b=bPsbbztRIWhZpM/rQc62nPgypQ5mE43XbQqkwwJJl0G7ExyGHUiTus5cj0pGLHeSi
+         tx1LH+sn52YL3UcmYhEVtDlFLz7rg1rVDKhZwE0fpR6KHUsZpFN2DfAJwmCCgSVW6f
+         U22o+nSWwFK14b4P2lwwiadDXSCx1oDUFT+dAphU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 088/205] udf: Fix BUG on corrupted inode
-Date:   Mon, 11 Feb 2019 15:18:06 +0100
-Message-Id: <20190211141834.423012453@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 087/205] phy: sun4i-usb: add support for missing USB PHY index
+Date:   Mon, 11 Feb 2019 15:18:05 +0100
+Message-Id: <20190211141834.359668284@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,36 +67,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
+[ Upstream commit 2659392e5c08dff626e6db1d739adff58a94604d ]
 
-When inode is corrupted so that extent type is invalid, some functions
-(such as udf_truncate_extents()) will just BUG. Check that extent type
-is valid when loading the inode to memory.
+The new Allwinner H6 SoC's USB2 PHY has two holes -- USB1 (which is a
+3.0 port with dedicated PHY) and USB2 (which doesn't exist at all).
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Add support for this kind of missing USB PHY index.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/phy/allwinner/phy-sun4i-usb.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 8dacf4f57414..28b9d7cca29b 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1357,6 +1357,12 @@ reread:
+diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+index afedb8cd1990..d1ccff527756 100644
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -125,6 +125,7 @@ struct sun4i_usb_phy_cfg {
+ 	bool dedicated_clocks;
+ 	bool enable_pmu_unk1;
+ 	bool phy0_dual_route;
++	int missing_phys;
+ };
  
- 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
- 							ICBTAG_FLAG_AD_MASK;
-+	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		ret = -EIO;
-+		goto out;
-+	}
- 	iinfo->i_unique = 0;
- 	iinfo->i_lenEAttr = 0;
- 	iinfo->i_lenExtents = 0;
+ struct sun4i_usb_phy_data {
+@@ -645,6 +646,9 @@ static struct phy *sun4i_usb_phy_xlate(struct device *dev,
+ 	if (args->args[0] >= data->cfg->num_phys)
+ 		return ERR_PTR(-ENODEV);
+ 
++	if (data->cfg->missing_phys & BIT(args->args[0]))
++		return ERR_PTR(-ENODEV);
++
+ 	return data->phys[args->args[0]].phy;
+ }
+ 
+@@ -740,6 +744,9 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
+ 		struct sun4i_usb_phy *phy = data->phys + i;
+ 		char name[16];
+ 
++		if (data->cfg->missing_phys & BIT(i))
++			continue;
++
+ 		snprintf(name, sizeof(name), "usb%d_vbus", i);
+ 		phy->vbus = devm_regulator_get_optional(dev, name);
+ 		if (IS_ERR(phy->vbus)) {
 -- 
 2.19.1
 
