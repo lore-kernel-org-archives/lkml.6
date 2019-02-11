@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E21C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0509C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB08218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EBFA214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:33:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895586;
-	bh=mphhYh+4fb8gmY6A0Msp17lFA+dfA8KMqXn4KkC71+U=;
+	s=default; t=1549895597;
+	bh=dJ3lfC9OhfehczZFP5NjJLcAhCLUd4EWZixlyG2oAQk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qynOKkVWlsv3PdLjG37ZCI9VcvSkUcc+BqduA0HQQAfTOW0OfRLwlu+5Cn4ynpr9I
-	 U7hTIcasjsYVbkh4s5vhlpA55BME88XEMqKBptGeZFur9NJMkH9XYrt/7r0ZnbCvTD
-	 /4TsC+tayHsvLwbM8Ct2rUmKOwn9Kjd44AaJe3/g=
+	b=F5lY352aMt+cSQJLoLqW9+WXPnU7/cB3jMGO7lWzJOvzJsyu4bRkZnRVDpJNV/kZo
+	 1WlaztybTzSd0KReflilan+/RRo4swbthIk7BKey9+CPU7X2+0QzamOJ3ejVndn3A+
+	 kqAZ7I6gHOIEoxZQsQoN+FjQhRXhtmaf5etyE2m0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730583AbfBKOdF (ORCPT
+        id S1730616AbfBKOdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:33:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40618 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:33:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730562AbfBKOdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:33:00 -0500
+        id S1730578AbfBKOdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:33:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90D4020844;
-        Mon, 11 Feb 2019 14:32:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8088C214DA;
+        Mon, 11 Feb 2019 14:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895580;
-        bh=mphhYh+4fb8gmY6A0Msp17lFA+dfA8KMqXn4KkC71+U=;
+        s=default; t=1549895589;
+        bh=dJ3lfC9OhfehczZFP5NjJLcAhCLUd4EWZixlyG2oAQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R6cuikU4i1rcEyhGM9NbYrtuRT98GYLLdiXkKNLusLsWp0IDA+m0Ws0AgDpBmfrSn
-         t9QSCwvOxMwOcEXmqfxLDSj7jsStsgXJ+aSWVt6fS+Okz7GRl772k/DVP+6zORBkt5
-         P7lIvdwQ5ll+zIv8lri91Fb3Rn69iZ3qs3L1OaJM=
+        b=Hebwc0BliNq2MPCKAzIm2sQm/5kSOS2IFE+9fOJ+H1in1xfRdCNFL0GllJhWITBny
+         eukA36YVnYUGF94fBcRHLzQBtvrc5nEtSwA9qWNKHrLVg/3BGf12iXRx4tPeoZpleB
+         RqsYkkM7ni0nIh9PCMXqkgWtRghj2LPk4DvlkEqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Stefan Roese <sr@denx.de>,
+        Paul Burton <paul.burton@mips.com>,
+        John Crispin <blogic@openwrt.org>,
+        Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 253/352] seq_buf: Make seq_buf_puts() null-terminate the buffer
-Date:   Mon, 11 Feb 2019 15:18:00 +0100
-Message-Id: <20190211141903.192124949@linuxfoundation.org>
+Subject: [PATCH 4.20 256/352] MIPS: ralink: Select CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8
+Date:   Mon, 11 Feb 2019 15:18:03 +0100
+Message-Id: <20190211141903.372203898@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,64 +69,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
+[ Upstream commit 0b15394475e3bcaf35ca4bf22fc55d56df67224e ]
 
-Currently seq_buf_puts() will happily create a non null-terminated
-string for you in the buffer. This is particularly dangerous if the
-buffer is on the stack.
+Testing has shown, that when using mainline U-Boot on MT7688 based
+boards, the system may hang or crash while mounting the root-fs. The
+main issue here is that mainline U-Boot configures EBase to a value
+near the end of system memory. And with CONFIG_CPU_MIPSR2_IRQ_VI
+disabled, trap_init() will not allocate a new area to place the
+exception handler. The original value will be used and the handler
+will be copied to this location, which might already be used by some
+userspace application.
 
-For example:
+The MT7688 supports VI - its config3 register is 0x00002420, so VInt
+(Bit 5) is set. But without setting CONFIG_CPU_MIPSR2_IRQ_VI this
+bit will not be evaluated to result in "cpu_has_vi" being set. This
+patch now selects CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8 which results
+trap_init() to allocate some memory for the exception handler.
 
-  char buf[8];
-  char secret = "secret";
-  struct seq_buf s;
+Please note that this issue was not seen with the Mediatek U-Boot
+version, as it does not touch EBase (stays at default of 0x8000.0000).
+This is strictly also not correct as the kernel (_text) resides
+here.
 
-  seq_buf_init(&s, buf, sizeof(buf));
-  seq_buf_puts(&s, "foo");
-  printk("Message is %s\n", buf);
-
-Can result in:
-
-  Message is fooªªªªªsecret
-
-We could require all users to memset() their buffer to zero before
-use. But that seems likely to be forgotten and lead to bugs.
-
-Instead we can change seq_buf_puts() to always leave the buffer in a
-null-terminated state.
-
-The only downside is that this makes the buffer 1 character smaller
-for seq_buf_puts(), but that seems like a good trade off.
-
-Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
-
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Stefan Roese <sr@denx.de>
+[paul.burton@mips.com: s/beeing/being/]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: John Crispin <blogic@openwrt.org>
+Cc: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/seq_buf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/mips/ralink/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index 11f2ae0f9099..6aabb609dd87 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
+diff --git a/arch/mips/ralink/Kconfig b/arch/mips/ralink/Kconfig
+index 1f9cb0e3c79a..613d61763433 100644
+--- a/arch/mips/ralink/Kconfig
++++ b/arch/mips/ralink/Kconfig
+@@ -38,6 +38,7 @@ choice
  
- 	WARN_ON(s->size == 0);
+ 	config SOC_MT7620
+ 		bool "MT7620/8"
++		select CPU_MIPSR2_IRQ_VI
+ 		select HW_HAS_PCI
  
-+	/* Add 1 to len for the trailing null byte which must be there */
-+	len += 1;
-+
- 	if (seq_buf_can_fit(s, len)) {
- 		memcpy(s->buffer + s->len, str, len);
--		s->len += len;
-+		/* Don't count the trailing null byte against the capacity */
-+		s->len += len - 1;
- 		return 0;
- 	}
- 	seq_buf_set_overflow(s);
+ 	config SOC_MT7621
 -- 
 2.19.1
 
