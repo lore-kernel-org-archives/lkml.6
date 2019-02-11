@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF8EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBCFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097A2218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:59:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E50121A80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900796;
-	bh=kYaegojv1mYe31QyiQefdE9ThACyYSqoiTsRdzbkuO4=;
+	s=default; t=1549900803;
+	bh=4MV2u4NNN1LlRQur2lIMlsUL7hu5xBSm89axsLO9CSk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0jvOgQ2fT15zz8HbB8sskQW2YoWkQ45ds77YoSQ8FILGBNp5ojpK2df/Wnvvs4/o8
-	 nRPwx3mMwN3TexLGqOr5k/V533vxe1iq5MOWltNW2u3f+Myv8FPrIpSBzMgpR1S/Z3
-	 y2mkfKjmd8VJnTbxTWj2AixOBEi+1q3ydzzuyiBg=
+	b=osYYWSRX/ZcdLqyDFWD1aMtSjKSKnSyB7gJVc6mB67cfMqlhioDdUR+apff1RcDwE
+	 0NHEfIaMhK26R64P2i8cwvIQW2rrh1k0F6Mq+MgqtAasYdT/MmPd1Ng5c10/cbteql
+	 tThyGNg5NqIgmEl0KoTbzjoFFmRGZ+7HV3B6EQBg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730400AbfBKOcA (ORCPT
+        id S1730803AbfBKQAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:32:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39100 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 11:00:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730389AbfBKOb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:31:56 -0500
+        id S1728697AbfBKObw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:31:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40C5A20838;
-        Mon, 11 Feb 2019 14:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9FF320675;
+        Mon, 11 Feb 2019 14:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895515;
-        bh=kYaegojv1mYe31QyiQefdE9ThACyYSqoiTsRdzbkuO4=;
+        s=default; t=1549895512;
+        bh=4MV2u4NNN1LlRQur2lIMlsUL7hu5xBSm89axsLO9CSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jtsRyQ7GrTpUTwyCIxAiRk3naXij2HunZKJNYw/oSo1p5Md/Olc+3uJURpOKPfmVi
-         pKoIRMSdkxTvdLLBWhLooZjff9O819v/S7iFPIin5weqhIBc6xq/LJKYPGjQ98NgSZ
-         vD2nbuc7b7ipIbVwdvL17B6xrhs1SvMMIlDdyr+c=
+        b=nm78Yzzv9UGTjmoyLQTLVAIXwfV3lU/LjGVmng8Rpz7Hs8SmQQWhLBJ7Wb8WKXyY9
+         jphTZGebnl7EQLGevEZClea+bIwI/nCSb0hOYp7qxIO6vM8DSup7bkM5eGgpWYl38q
+         4QC+Ool0kN7NCCdDdaINhSzEcG8TXVyrc0obMfKo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhi Chen <zhichen@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 230/352] ath10k: fix tx_stats memory leak
-Date:   Mon, 11 Feb 2019 15:17:37 +0100
-Message-Id: <20190211141901.859926316@linuxfoundation.org>
+Subject: [PATCH 4.20 212/352] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Mon, 11 Feb 2019 15:17:19 +0100
+Message-Id: <20190211141900.678392014@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,87 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 386f97e3b201d18578abb0e7037b85a1ae50c0a3 ]
+[ Upstream commit fa89a4593b927b3f59c3b69379f31d3b22272e4e ]
 
-Memory of tx_stats was allocated when a STA was added. But it's not freed
-if the STA failed to be added to driver. This issue could be seen in MDK3
-attack case when STA number reached the limit.
+gcc warn this:
 
-Tested: QCA9984 with firmware ver 10.4-3.9.0.1-00005
-Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
+
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ net/ipv6/xfrm6_tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 6436dc229be5..400495858e4e 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6293,15 +6293,6 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 			   ar->num_stations + 1, ar->max_num_stations,
- 			   ar->num_peers + 1, ar->max_num_peers);
- 
--		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
--			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
--						  GFP_KERNEL);
--			if (!arsta->tx_stats) {
--				ret = -ENOMEM;
--				goto exit;
--			}
--		}
--
- 		num_tdls_stations = ath10k_mac_tdls_vif_stations_count(hw, vif);
- 		num_tdls_vifs = ath10k_mac_tdls_vifs_count(hw);
- 
-@@ -6323,12 +6314,22 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 			goto exit;
- 		}
- 
-+		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
-+			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
-+						  GFP_KERNEL);
-+			if (!arsta->tx_stats) {
-+				ret = -ENOMEM;
-+				goto exit;
-+			}
-+		}
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index 4a46df8441c9..f5b4febeaa25 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
 +
- 		ret = ath10k_peer_create(ar, vif, sta, arvif->vdev_id,
- 					 sta->addr, peer_type);
- 		if (ret) {
- 			ath10k_warn(ar, "failed to add peer %pM for vdev %d when adding a new sta: %i\n",
- 				    sta->addr, arvif->vdev_id, ret);
- 			ath10k_mac_dec_num_stations(arvif, sta);
-+			kfree(arsta->tx_stats);
- 			goto exit;
- 		}
- 
-@@ -6341,6 +6342,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 			spin_unlock_bh(&ar->data_lock);
- 			ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
- 			ath10k_mac_dec_num_stations(arvif, sta);
-+			kfree(arsta->tx_stats);
- 			ret = -ENOENT;
- 			goto exit;
- 		}
-@@ -6361,6 +6363,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 			ath10k_peer_delete(ar, arvif->vdev_id,
- 					   sta->addr);
- 			ath10k_mac_dec_num_stations(arvif, sta);
-+			kfree(arsta->tx_stats);
- 			goto exit;
- 		}
- 
-@@ -6372,6 +6375,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 				    sta->addr, arvif->vdev_id, ret);
- 			ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
- 			ath10k_mac_dec_num_stations(arvif, sta);
-+			kfree(arsta->tx_stats);
- 
- 			if (num_tdls_stations != 0)
- 				goto exit;
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
 -- 
 2.19.1
 
