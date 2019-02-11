@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A153C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991EDC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A3D6222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63056204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895927;
-	bh=hSh/Dw+R7P3h2Gql4+iVRa7Q8b2Q72PqCjrqFuk/Xhk=;
+	s=default; t=1549895932;
+	bh=afL6S/P/EC9Gos7LEK64yDNCJfCDQQy1dnhhGnorL1Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RkVNL7VqDIAh9ALiDG0+rt5audM3N9DPoWP0tY0eoZjbcY3qxoTqlrhRc70HLiQEy
-	 KqB4IL7VFaaWfh2DcN+Bk2pwBafF0Ynx02FlqA1Np5TDg+nR7hPBJivh3B0mAkbxEH
-	 K4bWUdUpJNoMD/i8CWbHW5YPezc7ozvRpbBkN4FE=
+	b=NA+FNa/pAhEIdcfcj6Ef5W4rhisdqgb+29T3DDirUJ1S+upfGwhfRBxInI/N1Jyt3
+	 PRtx0NARBntJc4roEfMTRQhL88G+QEhmRopN4pnoFjp3x7t7I3WqZh5jKyDFrMNr1N
+	 d4Mw7LPfAwfu9YIGCvJv2yhZ2VX49QaG24BhTyXM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731742AbfBKOip (ORCPT
+        id S1731797AbfBKOiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:38:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48664 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:38:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731731AbfBKOin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:38:43 -0500
+        id S1731772AbfBKOit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:38:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9586C2081B;
-        Mon, 11 Feb 2019 14:38:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C954921B18;
+        Mon, 11 Feb 2019 14:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895922;
-        bh=hSh/Dw+R7P3h2Gql4+iVRa7Q8b2Q72PqCjrqFuk/Xhk=;
+        s=default; t=1549895928;
+        bh=afL6S/P/EC9Gos7LEK64yDNCJfCDQQy1dnhhGnorL1Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZO2Z6N+ofI9vcJG39iZRcuEkP31qzzGtXJQ059SrDUATov9Dbqf/5JGvanWjj2PwD
-         81+FG7pLN6bEGmmZb8jk7lLoMzNYs/lek37s4Duubt9EOakZa4FTZNuRvV9J2An3Nc
-         ZulnyBNzNFkYvgOXu//mA2qT8V+vKO0zNV266ZXI=
+        b=MwfYS8+zruzDBMuchWiVTFLy1Z/4w/GqaFOfxoO7HMlQs3NmR4YAHmcnxNsEKrPeX
+         xNuknNHiO5G81qsR+XesWmvRs5/5HxrkXvF2RFht64TbBr9DxqC49bB/jCw//Lz48D
+         1usku7qGfztUFn9MywkbEUxqT2RBjWjdIi/2w5sA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 015/313] ath9k: dynack: use authentication messages for late ack
-Date:   Mon, 11 Feb 2019 15:14:55 +0100
-Message-Id: <20190211141854.251569154@linuxfoundation.org>
+Subject: [PATCH 4.19 017/313] scsi: mpt3sas: Call sas_remove_host before removing the target devices
+Date:   Mon, 11 Feb 2019 15:14:57 +0100
+Message-Id: <20190211141854.430711087@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,37 +69,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
+[ Upstream commit dc730212e8a378763cb182b889f90c8101331332 ]
 
-In order to properly support dynack in ad-hoc mode running
-wpa_supplicant, take into account authentication frames for
-'late ack' detection. This patch has been tested on devices
-mounted on offshore high-voltage stations connected through
-~24Km link
+Call sas_remove_host() before removing the target devices in the driver's
+.remove() callback function(i.e. during driver unload time).  So that
+driver can provide a way to allow SYNC CACHE, START STOP unit commands
+etc. (which are issued from SML) to the target drives during driver unload
+time.
 
-Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Once sas_remove_host() is called before removing the target drives then
+driver can just clean up the resources allocated for target devices and no
+need to call sas_port_delete_phy(), sas_port_delete() API's as these API's
+internally called from sas_remove_host().
+
+Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c     | 2 +-
+ drivers/scsi/mpt3sas/mpt3sas_transport.c | 7 +++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
-index 7334c9b09e82..cc0dc966c512 100644
---- a/drivers/net/wireless/ath/ath9k/dynack.c
-+++ b/drivers/net/wireless/ath/ath9k/dynack.c
-@@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
- 	/* late ACK */
- 	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
- 		if (ieee80211_is_assoc_req(hdr->frame_control) ||
--		    ieee80211_is_assoc_resp(hdr->frame_control)) {
-+		    ieee80211_is_assoc_resp(hdr->frame_control) ||
-+		    ieee80211_is_auth(hdr->frame_control)) {
- 			ath_dbg(common, DYNACK, "late ack\n");
- 			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
- 			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index 53133cfd420f..622832e55211 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -9809,6 +9809,7 @@ static void scsih_remove(struct pci_dev *pdev)
+ 
+ 	/* release all the volumes */
+ 	_scsih_ir_shutdown(ioc);
++	sas_remove_host(shost);
+ 	list_for_each_entry_safe(raid_device, next, &ioc->raid_device_list,
+ 	    list) {
+ 		if (raid_device->starget) {
+@@ -9851,7 +9852,6 @@ static void scsih_remove(struct pci_dev *pdev)
+ 		ioc->sas_hba.num_phys = 0;
+ 	}
+ 
+-	sas_remove_host(shost);
+ 	mpt3sas_base_detach(ioc);
+ 	spin_lock(&gioc_lock);
+ 	list_del(&ioc->list);
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+index f8cc2677c1cd..20d36061c217 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+@@ -834,10 +834,13 @@ mpt3sas_transport_port_remove(struct MPT3SAS_ADAPTER *ioc, u64 sas_address,
+ 			    mpt3sas_port->remote_identify.sas_address,
+ 			    mpt3sas_phy->phy_id);
+ 		mpt3sas_phy->phy_belongs_to_port = 0;
+-		sas_port_delete_phy(mpt3sas_port->port, mpt3sas_phy->phy);
++		if (!ioc->remove_host)
++			sas_port_delete_phy(mpt3sas_port->port,
++						mpt3sas_phy->phy);
+ 		list_del(&mpt3sas_phy->port_siblings);
+ 	}
+-	sas_port_delete(mpt3sas_port->port);
++	if (!ioc->remove_host)
++		sas_port_delete(mpt3sas_port->port);
+ 	kfree(mpt3sas_port);
+ }
+ 
 -- 
 2.19.1
 
