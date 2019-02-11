@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE258C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD373C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADC9720838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B6E920838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:30:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895453;
-	bh=6Ib8dn4kizR60ukJmLKNmIoa+NccnR0LjKE6hV9REX0=;
+	s=default; t=1549895455;
+	bh=GAQHXKYCus6kzfE8npf8N/mWqU7J1VcDwLbyFb9HHX4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PE8Az84kfBPofPQ5SEKpzTrKBdGUva9vY41mRyRLLsOfNJSQ5P0h6Al1c0g034E9f
-	 vJTvYgf57Wyil3nyjwgZomN4pwx/l6QaQvaxQx++FXFj9wU2JVazJt/djfI4/1xMl3
-	 VycY51UncWZCCZLJ6zDT3xT6RHsoFDF2m3tKqlD4=
+	b=hl++O3uhRH1vJ70MwRtoVJ9krTz8r4TkH47/lA+Ra+MvO2jtCGMyIjyaxs4O+srQ/
+	 MdYgkptlYdVZrx0C5or+BsTjgGrLebmxw8imm5Pnf3zyGXPALfwrS1O7lz3Zq9QoDi
+	 6frlc2QiaV5sf9cGQ7yDc0tEsFbce23TBq0Q4yys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfBKOaw (ORCPT
+        id S1729548AbfBKOay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:30:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37312 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:30:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729724AbfBKOat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:30:49 -0500
+        id S1730187AbfBKOaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:30:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E85620675;
-        Mon, 11 Feb 2019 14:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27E6120844;
+        Mon, 11 Feb 2019 14:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895449;
-        bh=6Ib8dn4kizR60ukJmLKNmIoa+NccnR0LjKE6hV9REX0=;
+        s=default; t=1549895451;
+        bh=GAQHXKYCus6kzfE8npf8N/mWqU7J1VcDwLbyFb9HHX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a0dMho71oxrPdsAc/HSCsw/EXf4km/+AxLMNRuEhdiiyiQ/HCR9bQj8k/dfmulFND
-         PQRfr5nkLEoBN9aWAJfliNyFt2P17/w+9vI4pNWWAxcPnjzKuUVaZdZJrWZkR0RpUF
-         3aL7CrfUl6s1e8vUEY82xtOyjeutvcV7e9q+YHbY=
+        b=oQfZ4Ma7dcsZWu+SlO+1dZ8uriaT8NHGLrtmpWgKWcDKv6//D57l+NZbcy/aYzAgi
+         mSxWej75F7v/cc8x9hHwTIHBoF1ss9q+dBiji9rHmhtxK3GLH5/XMWIa+zofUamiSC
+         wcCNxUqq9QaQ8mYnJVQsz3VvMv3ZLuNhFRtmQw8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dale Zhao <dale.zhao@amd.com>,
-        Eric Yang <eric.yang2@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Ondrej Jirman <megous@megous.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 207/352] drm/amd/display: Wait edp HPD to high in detect_sink
-Date:   Mon, 11 Feb 2019 15:17:14 +0100
-Message-Id: <20190211141900.331113890@linuxfoundation.org>
+Subject: [PATCH 4.20 208/352] Bluetooth: hci_bcm: Handle deferred probing for the clock supply
+Date:   Mon, 11 Feb 2019 15:17:15 +0100
+Message-Id: <20190211141900.404024176@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,42 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0a6414e75d231ee1bb7ffb2f5eb246b682a884cd ]
+[ Upstream commit 28ac03b9ac3f784c2f048a910c8d0a7a87483b66 ]
 
-[Why]
-In 99% user case, edp will be post by vbios.
-In 1% / current case: Lenovo don't light up edp panel in vbios
-post stage, vbios won't be lit up. Thus in dal when we init DCN
-10 hw, we power up edp, then we start detect_sink, but internal
-time is too short, when we detect it, HPD is still low, so we don't
-detect the edp, and edp shows black.
+On some systems that actually have the bluetooth controller wired up
+with an extra clock signal, it's possible the bluetooth controller
+probes before the clock provider. clk_get would return a defer probe
+error, which was not handled by this driver.
 
-[How]
-When we init hw, we wait edp HPD to high after power up edp.
+Handle this properly, so that these systems can work reliably.
 
-Signed-off-by: Dale Zhao <dale.zhao@amd.com>
-Reviewed-by: Eric Yang <eric.yang2@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/bluetooth/hci_bcm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-index ef1b350a45e0..8b69913b6943 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -208,6 +208,9 @@ bool dc_link_detect_sink(struct dc_link *link, enum dc_connection_type *type)
- 		return true;
- 	}
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index ddbd8c6a0ceb..800132369134 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -907,6 +907,10 @@ static int bcm_get_resources(struct bcm_device *dev)
  
-+	if (link->connector_signal == SIGNAL_TYPE_EDP)
-+		link->dc->hwss.edp_wait_for_hpd_ready(link, true);
+ 	dev->clk = devm_clk_get(dev->dev, NULL);
+ 
++	/* Handle deferred probing */
++	if (dev->clk == ERR_PTR(-EPROBE_DEFER))
++		return PTR_ERR(dev->clk);
 +
- 	/* todo: may need to lock gpio access */
- 	hpd_pin = get_hpd_gpio(link->ctx->dc_bios, link->link_id, link->ctx->gpio_service);
- 	if (hpd_pin == NULL)
+ 	dev->device_wakeup = devm_gpiod_get_optional(dev->dev, "device-wakeup",
+ 						     GPIOD_OUT_LOW);
+ 	if (IS_ERR(dev->device_wakeup))
 -- 
 2.19.1
 
