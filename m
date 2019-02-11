@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5D6C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C98CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A85AE218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0024218A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:00:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AXw7e0VU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LvDpk8rP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfBKWAR (ORCPT
+        id S1727191AbfBKWAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:00:17 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42693 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbfBKWAJ (ORCPT
+        Mon, 11 Feb 2019 17:00:24 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43578 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfBKWAE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:00:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q18so456993wrx.9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:08 -0800 (PST)
+        Mon, 11 Feb 2019 17:00:04 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r2so449704wrv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:00:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/+CAbD8bU+nyd3L0sYTP0WbxN9sT6g9T2UAB46YxuA8=;
-        b=AXw7e0VUVwpxGIBaconhcN6hqrC4WQR4zPt8o0rYjlgynPJ6dGhpuRpD7+aAnAGkqn
-         dKfMliiAoNqHNajceLpH3nZ/VwnE9iP8MwkrBmswHsu7N60/z3wXikIVui2Hf/L3bjVU
-         rmkXHSaBgSZX+zs0yMP1i3+QHzOtBbNKruR1isCq1cYSSGdDyVjYXn4WRlBTvY6W+eIq
-         xKGTI49OWsqkTTjeeWo2X/2xCbVq7p/jp8qnMO0aBqEWhAmXoWNEqSp9t6nbdJC+h9Pt
-         +FTBq6sEkiVZ+9tpWtj5WBaTDMnEMuayhPLfyLBnWLIcikTGHPe4mqcefLqMxHmDkgzS
-         CAtA==
+        bh=xu9/37gH7GsD7XGP+9mY66oknw0IDCzNaIitxBdfe0s=;
+        b=LvDpk8rPB3n4BLRV+GWRak4fy4PQK/nUyEZdQO8ek2m2qmtOvn9x9BaisqKXQk6TIz
+         kI0YBJ3nAdG50wT9X9SbBsBC6H+lZyC9ZV201ioFawASZWLGJ9ZF+JPMsO3kjK/P2lra
+         SqXZnv1ATyfvt0QOyPl/Y6z1F3tocJYTZfc6Eh7eeli7zJ3RKCZRtC2r0YMrVKxi15S9
+         BfIeI5BrOB0Sje8/M66uiaWc+Hy6gQbTgIL7xNVqIvtvPlFYO6wlxPqYcQA8jXC/UbWW
+         xzqt8ab59GILV1YPmno+TCjFrlvUlQe1Y50UYnqEKlrgFrbPy77O/FZSbtd+zXVPxuuF
+         a4mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/+CAbD8bU+nyd3L0sYTP0WbxN9sT6g9T2UAB46YxuA8=;
-        b=COl/c8/C2LuMZVH6dRPbTl5TArKG+EiGFa/fZ/HXuJTq+ZnPTWvDZnP+kKOKZ2nAkS
-         xtLfalLIWxWUsnbiycxO8bZ7WDk09dzEurdVXT65R3CYv/8Ll3sNqo5gQLwKNKhOZm1H
-         zTKKtIGr11623sSTtRqNAWs0fE1+5JlKgOLBB4P0+g517mhRWdnlyTTOXefY2GJwPXnY
-         1bP/kx/9Mqu0MyO4UmfopGBzlVstoKnCvno/1v291/eizomJ1zVES5g9V87D1zrMXU6E
-         iGbkftgQ4/J+C1oyz09w1eqs3x4FL6YFVLSXH0ExqK2v/RfIlqOFjZwCaAd2cTfU4d5U
-         qikg==
-X-Gm-Message-State: AHQUAuZrQC68e7q95btGp3/qzo3R6UjWq+pKDJeGQURTgAL25581XqQ1
-        H9m1uYMRz+KRWxBo5TNyKgEQbw==
-X-Google-Smtp-Source: AHgI3Ibr24Su8y7sxS10natSgYZC4T4Yaa/HmavywUcKbRoFeE8GXeKiZeBTQW0K67qDQuE3IdbBbA==
-X-Received: by 2002:adf:dd43:: with SMTP id u3mr240892wrm.259.1549922408030;
-        Mon, 11 Feb 2019 14:00:08 -0800 (PST)
+        bh=xu9/37gH7GsD7XGP+9mY66oknw0IDCzNaIitxBdfe0s=;
+        b=Yv45TncUPws3ECYfuFkjNXvj1CSges9qY3taR4yQ0q0o+NkSqwer9HRGYMxNYI96g5
+         g74QFJ/yzq0PxEwGTg2V+3225KHj77ehtfyF6GxaAXQHuYz8Fgwu0b+l/NsjXlxBa9ks
+         9ac6B6KaErSm/CfyvCseZXlHxTz8/rfPp2WZwtem5cidws3MJEC9wf1P+u/+13f+NtKN
+         aSIOnXjof/RxmsINjnrawR9sOl9Vygi8lOSEopIJ033F7AxT4+Po+/vx9uzflXf9vHNY
+         VfWTVu64qW3FS+7+w1fhdWLTQzYC6bsDm8I2J12rXvj4LugGmQda5XNd/q1SZFbhuXTZ
+         6+7w==
+X-Gm-Message-State: AHQUAuYzZNhpSShQYSEkSPgBIhU1MDXCvhnWeQwDqWn8uFhiiBYKeQt3
+        KLWHIMdTMNL/n37dkIFltoy9xA==
+X-Google-Smtp-Source: AHgI3IakbUaIb3vF6wxwPHL9o50hSBKxqinOgDtxfHR6KU/+RnrMyAuJM28Z+cs9oXYm/Eh5PEOx7A==
+X-Received: by 2002:adf:e747:: with SMTP id c7mr283433wrn.176.1549922402509;
+        Mon, 11 Feb 2019 14:00:02 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
-        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.14.00.06
+        by smtp.gmail.com with ESMTPSA id c186sm762685wmf.34.2019.02.11.14.00.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 14:00:06 -0800 (PST)
+        Mon, 11 Feb 2019 14:00:01 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -73,9 +73,9 @@ Cc:     Qian Cai <cai@lca.pw>,
         Kostya Serebryany <kcc@google.com>,
         Evgeniy Stepanov <eugenis@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH 5/5] kasan, slub: fix conflicts with CONFIG_SLAB_FREELIST_HARDENED
-Date:   Mon, 11 Feb 2019 22:59:54 +0100
-Message-Id: <3df171559c52201376f246bf7ce3184fe21c1dc7.1549921721.git.andreyknvl@google.com>
+Subject: [PATCH 2/5] kasan, kmemleak: pass tagged pointers to kmemleak
+Date:   Mon, 11 Feb 2019 22:59:51 +0100
+Message-Id: <cd825aa4897b0fc37d3316838993881daccbe9f5.1549921721.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 In-Reply-To: <cover.1549921721.git.andreyknvl@google.com>
 References: <cover.1549921721.git.andreyknvl@google.com>
@@ -86,59 +86,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_SLAB_FREELIST_HARDENED hashes freelist pointer with the address
-of the object where the pointer gets stored. With tag based KASAN we don't
-account for that when building freelist, as we call set_freepointer() with
-the first argument untagged. This patch changes the code to properly
-propagate tags throughout the loop.
+Right now we call kmemleak hooks before assigning tags to pointers in
+KASAN hooks. As a result, when an objects gets allocated, kmemleak sees
+a differently tagged pointer, compared to the one it sees when the object
+gets freed. Fix it by calling KASAN hooks before kmemleak's ones.
 
 Reported-by: Qian Cai <cai@lca.pw>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/slub.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ mm/slab.h        | 6 ++----
+ mm/slab_common.c | 2 +-
+ mm/slub.c        | 3 ++-
+ 3 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index ce874a5c9ee7..0d32f8d30752 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -303,11 +303,6 @@ static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
- 		__p < (__addr) + (__objects) * (__s)->size; \
- 		__p += (__s)->size)
+diff --git a/mm/slab.h b/mm/slab.h
+index 4190c24ef0e9..638ea1b25d39 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -437,11 +437,9 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
  
--#define for_each_object_idx(__p, __idx, __s, __addr, __objects) \
--	for (__p = fixup_red_left(__s, __addr), __idx = 1; \
--		__idx <= __objects; \
--		__p += (__s)->size, __idx++)
+ 	flags &= gfp_allowed_mask;
+ 	for (i = 0; i < size; i++) {
+-		void *object = p[i];
 -
- /* Determine object index from a given position */
- static inline unsigned int slab_index(void *p, struct kmem_cache *s, void *addr)
- {
-@@ -1655,17 +1650,16 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
- 	shuffle = shuffle_freelist(s, page);
- 
- 	if (!shuffle) {
--		for_each_object_idx(p, idx, s, start, page->objects) {
--			if (likely(idx < page->objects)) {
--				next = p + s->size;
--				next = setup_object(s, page, next);
--				set_freepointer(s, p, next);
--			} else
--				set_freepointer(s, p, NULL);
--		}
- 		start = fixup_red_left(s, start);
- 		start = setup_object(s, page, start);
- 		page->freelist = start;
-+		for (idx = 0, p = start; idx < page->objects - 1; idx++) {
-+			next = p + s->size;
-+			next = setup_object(s, page, next);
-+			set_freepointer(s, p, next);
-+			p = next;
-+		}
-+		set_freepointer(s, p, NULL);
+-		kmemleak_alloc_recursive(object, s->object_size, 1,
++		p[i] = kasan_slab_alloc(s, p[i], flags);
++		kmemleak_alloc_recursive(p[i], s->object_size, 1,
+ 					 s->flags, flags);
+-		p[i] = kasan_slab_alloc(s, object, flags);
  	}
  
- 	page->inuse = page->objects;
+ 	if (memcg_kmem_enabled())
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 81732d05e74a..fe524c8d0246 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1228,8 +1228,8 @@ void *kmalloc_order(size_t size, gfp_t flags, unsigned int order)
+ 	flags |= __GFP_COMP;
+ 	page = alloc_pages(flags, order);
+ 	ret = page ? page_address(page) : NULL;
+-	kmemleak_alloc(ret, size, 1, flags);
+ 	ret = kasan_kmalloc_large(ret, size, flags);
++	kmemleak_alloc(ret, size, 1, flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(kmalloc_order);
+diff --git a/mm/slub.c b/mm/slub.c
+index 1e3d0ec4e200..4a3d7686902f 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1374,8 +1374,9 @@ static inline void dec_slabs_node(struct kmem_cache *s, int node,
+  */
+ static inline void *kmalloc_large_node_hook(void *ptr, size_t size, gfp_t flags)
+ {
++	ptr = kasan_kmalloc_large(ptr, size, flags);
+ 	kmemleak_alloc(ptr, size, 1, flags);
+-	return kasan_kmalloc_large(ptr, size, flags);
++	return ptr;
+ }
+ 
+ static __always_inline void kfree_hook(void *x)
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
