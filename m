@@ -2,52 +2,53 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E7DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800CEC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0EFA222A8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5135B2229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896945;
-	bh=2vdOGnzwkyNtQBfSrCwlVoNbVtzjzsuqfDnzgiNW68U=;
+	s=default; t=1549896948;
+	bh=0SqAhyfyfvM+NRJiWx+b9ULPjxCsEweimT/fUGQmFvI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CLkrm2ZZui7Cux73H+mz5/q3dner9A8Tl2l9eDvomWDlXng0AMYggsgwygneF2qYD
-	 SlWinN7+RmjHgHyhJk04pFJV+7RJU/TEOJEDS9w0ECd22JHQ3drxvNaJN8Fzo6jYQM
-	 emDbyKJriypATs6XBxg3uBxs7lfDNPX8G1t2Maas=
+	b=lnzqqlumTxRmQdmEedCzGCHdmZB8eifFI/FkoCfh5b1y9C7KGVhAPZQ8LnjlJGsft
+	 nEIgIwKbvt8VV+Lqce2IwuAqjm0MmRHxJJ9KYGVlfU6PGjibwiMGGTVH9j7PGoLYYm
+	 3+NX5H2OaZE5aNU/mMW9zd7FKRJXt9UNCnZZGtV0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389024AbfBKOzo (ORCPT
+        id S1732743AbfBKOzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:55:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42784 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387676AbfBKOzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:42 -0500
+        id S2389009AbfBKOzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01FD420700;
-        Mon, 11 Feb 2019 14:55:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93A132229E;
+        Mon, 11 Feb 2019 14:55:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896941;
-        bh=2vdOGnzwkyNtQBfSrCwlVoNbVtzjzsuqfDnzgiNW68U=;
+        s=default; t=1549896938;
+        bh=0SqAhyfyfvM+NRJiWx+b9ULPjxCsEweimT/fUGQmFvI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NX9RI4bBYrXnFdgLNOswg2esqjpQTZKoiTv7hSJxw85jyVaQ3YWCpv70mOY60coPv
-         PSU+N23GRM6T3/2FddfZAADtOU0OhWQHoRnYonSTy4qDJ28T+485QwOvlV9Ui0gXUq
-         xQCaagzYMU5FxuGw5zNJP2OeEub9OM5QBtO1Vi5U=
+        b=fB0J35xWTMSK149KtaTnC/aeCoPTrtwffGv9UbGX6E4G62JfnnvlEmyK8uPBHQpZn
+         PXnFpsKEmLC2Ig96Tr/vzMWvJ0cvVDKAO1VdLf0RObC7NvCJOvgnBIeME76UDGPD7B
+         SM4STE8qrPG2+5ufbtGa04XZaU8lM/Dt8jALXKVE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 038/205] iio: accel: kxcjk1013: Add KIOX010A ACPI Hardware-ID
-Date:   Mon, 11 Feb 2019 15:17:16 +0100
-Message-Id: <20190211141830.498630599@linuxfoundation.org>
+Subject: [PATCH 4.14 037/205] iio: adc: meson-saradc: fix internal clock names
+Date:   Mon, 11 Feb 2019 15:17:15 +0100
+Message-Id: <20190211141830.383363087@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -66,36 +67,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7f6232e69539971cf9eaed07a6c14ab4a2361133 ]
+[ Upstream commit 50314f98b0ac468218e7c9af8c99f215a35436df ]
 
-Various 2-in-1's use KIOX010A and KIOX020A as HIDs for 2 KXCJ91008
-accelerometers. The KIOX010A HID is for the one in the base and the
-KIOX020A for the accelerometer in the keyboard.
+Before this patch we are registering the internal clocks (for example on
+Meson8b, where the SAR ADC IP block implements the divider and gate
+clocks) with the following names:
+- /soc/cbus@c1100000/adc@8680#adc_div
+- /soc/cbus@c1100000/adc@8680#adc_en
 
-Since userspace does not have a way yet to deal with (or ignore) the
-accelerometer in the keyboard, this commit just adds the KIOX010A HID
-for now so that display rotation will work.
+This is bad because the common clock framework uses the clock to create
+a directory in <debugfs>/clk. With such name, the directory creation
+(silently) fails and the debugfs entry ends up being created at the
+debugfs root.
 
-Related: https://github.com/hadess/iio-sensor-proxy/issues/166
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+With this change, the new clock names are:
+- c1108680.adc#adc_div
+- c1108680.adc#adc_en
+
+This matches the clock naming scheme used in the PWM, Ethernet and MMC
+drivers. It also fixes the problem with debugfs.
+The idea is shamelessly taken from commit b96e9eb62841c5 ("pwm: meson:
+Fix mux clock names").
+
+Fixes: 3921db46a8c5bc ("iio: Convert to using %pOF instead of full_name")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/accel/kxcjk-1013.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/adc/meson_saradc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-index 3f968c46e667..784636800361 100644
---- a/drivers/iio/accel/kxcjk-1013.c
-+++ b/drivers/iio/accel/kxcjk-1013.c
-@@ -1393,6 +1393,7 @@ static const struct acpi_device_id kx_acpi_match[] = {
- 	{"KXCJ1008", KXCJ91008},
- 	{"KXCJ9000", KXCJ91008},
- 	{"KIOX000A", KXCJ91008},
-+	{"KIOX010A", KXCJ91008}, /* KXCJ91008 inside the display of a 2-in-1 */
- 	{"KXTJ1009", KXTJ21009},
- 	{"SMO8500",  KXCJ91008},
- 	{ },
+diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
+index 9a52a91166d2..2515badf8b28 100644
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -583,8 +583,8 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
+ 	struct clk_init_data init;
+ 	const char *clk_parents[1];
+ 
+-	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_div",
+-				   indio_dev->dev.of_node);
++	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%s#adc_div",
++				   dev_name(indio_dev->dev.parent));
+ 	if (!init.name)
+ 		return -ENOMEM;
+ 
+@@ -605,8 +605,8 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
+ 	if (WARN_ON(IS_ERR(priv->adc_div_clk)))
+ 		return PTR_ERR(priv->adc_div_clk);
+ 
+-	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_en",
+-				   indio_dev->dev.of_node);
++	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%s#adc_en",
++				   dev_name(indio_dev->dev.parent));
+ 	if (!init.name)
+ 		return -ENOMEM;
+ 
 -- 
 2.19.1
 
