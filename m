@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C314C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C28C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D4D222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCA77222AA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895005;
-	bh=GmuY4okhsNaTNHG6EROVwf2zIQ+J1UKxH1Jgi7kqG1M=;
+	s=default; t=1549895007;
+	bh=rXhsxc6fyXU1MtFiHX81q6sMdDVNOF9BYNThxgYJ++M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yb6buRsCAu3+24TNBsiZ+9kS+arkiFKme7efyJgIjo770Q1gbqMZ11/PZlHGfk1ge
-	 /J6OiWXccIKIwvL0qlVaI4rM+RVlnHu77PbXDTF+Ihw3qMHslrkXLWBFFNfQIAuHjh
-	 um+emKBHgSMPEXi+yDzNHY61CyFNgXzj7ElrjD3s=
+	b=sCKlZfEt0iT7tNk2lT43JQAxwcuWNCGiGL3lpRNuoXW6fkQxXeVHHhA72q50hSB4a
+	 nDPY5hrUC1I1N39wTF9MKIca1v/fmZwEaxLJ+8AavlbsIpOMjjrOG8KQrHWvRBfaLO
+	 VDVOCwsAIaf54AFNORvfaN+X6miQBbDVeyQb1jVU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfBKOXX (ORCPT
+        id S1728995AbfBKOX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56330 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728965AbfBKOXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:23:19 -0500
+        id S1728119AbfBKOXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA03620844;
-        Mon, 11 Feb 2019 14:23:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 720B8222A1;
+        Mon, 11 Feb 2019 14:23:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894999;
-        bh=GmuY4okhsNaTNHG6EROVwf2zIQ+J1UKxH1Jgi7kqG1M=;
+        s=default; t=1549895001;
+        bh=rXhsxc6fyXU1MtFiHX81q6sMdDVNOF9BYNThxgYJ++M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OkIIfUcFjGlANkTzLR58Vrm14oq7qGIRBt0p99kBidZAufaiDggPB4CoyP8EEtFm/
-         8x1+6yxQF0QnNdwgMcg+B3v5S0p+bsdVzzzt2iX43am3hPxFtEqZD/nYP8hRLO77h8
-         Bi58Mxf0VfGmJ2cJ1JBPwKjVO2+8APbSOCStQJ24=
+        b=M40A/5tUVICLC6ybCnh4uxuWN8wDnKZuwVKDQajw3b7mh3+u1qMgi9GPvCOHFYPKO
+         K4XIUPvFmu79QlLJ033uZ2vfM0URAsodHb2tbH7Eh9uJASvDADFLMpYZL6v2d6hRq5
+         pHvAzs+NTZCf5QCIO9jun+gBjUcBXz5Pq2pciHVo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Ranostay <matt.ranostay@konsulko.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
         Hans Verkuil <hverkuil@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 058/352] media: video-i2c: avoid accessing released memory area when removing driver
-Date:   Mon, 11 Feb 2019 15:14:45 +0100
-Message-Id: <20190211141849.844230911@linuxfoundation.org>
+Subject: [PATCH 4.20 059/352] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
+Date:   Mon, 11 Feb 2019 15:14:46 +0100
+Message-Id: <20190211141849.897615482@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -69,60 +67,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c764da98a600a4b068d25c77164f092f159cecec ]
+[ Upstream commit 8ea0f2ba0fa3f91ea1b8d823a54b042026ada6b3 ]
 
-The video device release() callback for video-i2c driver frees the whole
-struct video_i2c_data.  If there is no user left for the video device
-when video_unregister_device() is called, the release callback is executed.
+of_parse_phandle() returns the device node with refcount incremented.
+There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
+but their refcounts are not decremented.
 
-However, in video_i2c_remove() some fields (v4l2_dev, lock, and queue_lock)
-in struct video_i2c_data are still accessed after video_unregister_device()
-is called.
+The patch adds one of_node_put() and fixes returning error codes.
 
-This fixes the use after free by moving the code from video_i2c_remove()
-to the release() callback.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Fixes: 5cebaac60974 ("media: video-i2c: add video-i2c driver")
-
-Reviewed-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/video-i2c.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
-index 4d49af86c15e..ec0758dca2fc 100644
---- a/drivers/media/i2c/video-i2c.c
-+++ b/drivers/media/i2c/video-i2c.c
-@@ -510,7 +510,12 @@ static const struct v4l2_ioctl_ops video_i2c_ioctl_ops = {
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+index 3e73e9db781f..7c025045ea90 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pm->larbvenc = &pdev->dev;
  
- static void video_i2c_release(struct video_device *vdev)
- {
--	kfree(video_get_drvdata(vdev));
-+	struct video_i2c_data *data = video_get_drvdata(vdev);
-+
-+	v4l2_device_unregister(&data->v4l2_dev);
-+	mutex_destroy(&data->lock);
-+	mutex_destroy(&data->queue_lock);
-+	kfree(data);
- }
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
  
- static int video_i2c_probe(struct i2c_client *client,
-@@ -608,10 +613,6 @@ static int video_i2c_remove(struct i2c_client *client)
- 	struct video_i2c_data *data = i2c_get_clientdata(client);
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
  
- 	video_unregister_device(&data->vdev);
--	v4l2_device_unregister(&data->v4l2_dev);
--
--	mutex_destroy(&data->lock);
--	mutex_destroy(&data->queue_lock);
- 
- 	return 0;
- }
+ 	pm->larbvenclt = &pdev->dev;
 -- 
 2.19.1
 
