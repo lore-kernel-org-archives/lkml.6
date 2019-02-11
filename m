@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28844C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF9BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED03020863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24B2920863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:22:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k52QZAOH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkX4vG0C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfBKJV6 (ORCPT
+        id S1727250AbfBKJWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 04:21:58 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38062 "EHLO
+        Mon, 11 Feb 2019 04:22:02 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54200 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfBKJVx (ORCPT
+        with ESMTP id S1727212AbfBKJV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 04:21:53 -0500
-Received: by mail-wm1-f68.google.com with SMTP id v26so15695631wmh.3;
-        Mon, 11 Feb 2019 01:21:52 -0800 (PST)
+        Mon, 11 Feb 2019 04:21:58 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so16213795wmb.3;
+        Mon, 11 Feb 2019 01:21:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KFyf8oJ/P80QFng2XmVNIgk4v2NDqyqmu8lE59dkrPM=;
-        b=k52QZAOHo7AbT5OyQPKCHfV3CiKawusbTn4/wKaOfZJrXI3Ta77pz5eH+uuEFgkORE
-         X7ksDFubriatb9JMEif6Id9Ru3m8M1EIlg6QZete8g/VM05dWeFOSK94AwpBBukwDQtS
-         LWQLa1ja/9mZF+Xwg/Zxt3vJbnuIMS3fKgnuNsuGTZqYtc9oDZN2R7Fj2Kzc05hPfWTe
-         L/cs4p0gMH5asDos/5j76egCzuhDBT5dZASqybnEHGlqfAwKEZT2OIBvETVDNxU5wwDI
-         Tm71jdw9/lynt52h5NwWBtuIu/YxmgiViJYIKH9Aq+qkFYpp3wGiQ7whpSMjc8Ps41VU
-         2j7w==
+        bh=lIYeZisgInqCOZpWT0d/hZqmxdLdiRL0RmR52VTtRjA=;
+        b=CkX4vG0Cf9MIFPB0r0biBCJp7uoat+QwA097brWM6ScCKl4BT3GVi8GEuUEaW19elo
+         ndLUpJZ+7IZDWLr1mx4AmIU1LzoEcxn/+b+NUs2tydpQoOc4MTLFyqWJ9QdUn9MVdCgk
+         RXUeW5B3O7Um5IrnlJt9so2xIFHljU72hhUvrW2r5WseWu5+wIDqNsT0nFUv+CkJrqU4
+         jHnq7gugqCTYnyBIdrOwZvYApZsUWqDKaCuuq2huAXgVS3yGuP3r20yAINq4+8B2WZEX
+         K3FFAjYEub/jDQo7UEZ2c1iKdET8pDPxGfw6ZpJKRCTk09Wh8kPHsLSR2q0rBqM6IH7G
+         Vf3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KFyf8oJ/P80QFng2XmVNIgk4v2NDqyqmu8lE59dkrPM=;
-        b=HzQx479eo2Aeg1Ylni4ez0N0ceu8GOLkMrTSi218FCDcpnBZKRqS4ERjIum3boYLf/
-         0BW7FgOXegKOu+/+j+sOIWask+viRWJSF0WMvb9nTzL2hTr53rEf8zWE0uJgq+ZOEaAz
-         RGch1GVAfDE8mpTkYLbvv8IoifG92K5siRG1ZOsIc493H5WLs4tGVwYNzbAf5MUqZ2JK
-         tw4+TQ0Bx1Zim8JrnkmkC2oZMObDLWolDda4cTJfIrhrPmDaJaXn0C0v8u7CCwwBNh/P
-         MkGJV8d1KhsToEDFiFLwzPPp4VWIEOW6GWpJLVrucziuOq07nXs6dCoSxKHjgGp3Ib0S
-         Q/fw==
-X-Gm-Message-State: AHQUAuY963Sx24PO03zquy9bYlCGQcBeCt/o5/+BFX0ei45Qr0kWtWja
-        yrftjxUKl/0ibR1+43DIzN7aOuIep2Q=
-X-Google-Smtp-Source: AHgI3IYrFXglD95oZuKDOSWkev6zVqyCzSWSTFLDga+C4+miAZoaSPPco6eV4UrLhAi8JUApIHEOjw==
-X-Received: by 2002:a7b:c1d7:: with SMTP id a23mr8032175wmj.48.1549876911576;
-        Mon, 11 Feb 2019 01:21:51 -0800 (PST)
+        bh=lIYeZisgInqCOZpWT0d/hZqmxdLdiRL0RmR52VTtRjA=;
+        b=amxmhEnKGu9s52nxROrOqOkSbIzjx1DlXqLo6Fk3+uwnnSJ1XAFfk3CEruqz5kFVCU
+         W0DGIH4KstyN+8zwlFiWkGsOQtkiLCXspTt465b6S+HIojb9cSQAiCa0AdHNeMv9Stmn
+         RrgHwE/H9Iw/Fqv2zf1VoS0QD5Ud98IAiHGtX6UT1HSIYSfBhUNLyr3Udt/u/EkHXmmF
+         tbwUy1mqToYeNd51iBBhs9jMjCqMqjt511pyhRvFuMjz+2VMeSr0ODuSHnr/ESOPafBa
+         mA/dGV+9aEbJ3JzZ65F/BbXtAunQ18Gx13pVNqz6AE0Ikq+6/QKtCWyz1q9ePy2N5Stg
+         RyxQ==
+X-Gm-Message-State: AHQUAuYukkFyTX8lXWAMXvRjZdr3kidKL9kxMz4uoC4ZH12xVCtZvD0n
+        uVk/o7Xg/qkcB7KJb8dkSQkj4iuLEcE=
+X-Google-Smtp-Source: AHgI3IZ3YDqNq/2AQaMYe1kJv8UXjv+MSl9KMteeI+5/4URxr44WhcfQlK15lXqYlYzWYBQFLK1FQQ==
+X-Received: by 2002:adf:de83:: with SMTP id w3mr5951635wrl.56.1549876916755;
+        Mon, 11 Feb 2019 01:21:56 -0800 (PST)
 Received: from ThinkPad.gtu.edu.tr ([193.140.134.118])
-        by smtp.gmail.com with ESMTPSA id o7sm11388979wmc.44.2019.02.11.01.21.50
+        by smtp.gmail.com with ESMTPSA id o7sm11388979wmc.44.2019.02.11.01.21.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 11 Feb 2019 01:21:51 -0800 (PST)
+        Mon, 11 Feb 2019 01:21:56 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -65,9 +65,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH 4/7] dt-bindings: spi: Add Support for Allwinner F1C100s
-Date:   Mon, 11 Feb 2019 12:21:10 +0300
-Message-Id: <8d62291fa2f98d07e08d81fe4f54e4c49744c24e.1549875778.git.mesihkilinc@gmail.com>
+Subject: [PATCH 7/7] ARM: dts: f1c100s: Activate SPI flash on Lichee Pi Nano
+Date:   Mon, 11 Feb 2019 12:21:13 +0300
+Message-Id: <02be41b6187d4d1fe09bff24cb93c2400a166803.1549875778.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1549875778.git.mesihkilinc@gmail.com>
 References: <cover.1549875778.git.mesihkilinc@gmail.com>
@@ -76,30 +76,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner suniv F1C100s has similar SPI controllers as sun8i H3.
-Add compatible string for it.
+The Lichee Pi Nano board has a Winbond W25Q128FVSIQ 128Mbit SPI NOR flash
+connected to the SPI0 controller of F1C100s SoC, via the pinmux group at
+PC bank; so it's bootable.
+
+Enable this SPI flash.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- Documentation/devicetree/bindings/spi/spi-sun6i.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-sun6i.txt b/Documentation/devicetree/bindings/spi/spi-sun6i.txt
-index 435a8e0..33f490f 100644
---- a/Documentation/devicetree/bindings/spi/spi-sun6i.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-sun6i.txt
-@@ -1,7 +1,10 @@
- Allwinner A31/H3 SPI controller
- 
- Required properties:
--- compatible: Should be "allwinner,sun6i-a31-spi" or "allwinner,sun8i-h3-spi".
-+- compatible: should be:
-+	- "allwinner,sun6i-a31-spi"
-+	- "allwinner,sun8i-h3-spi"
-+	- "allwinner,suniv-f1c100s-spi", "allwinner,sun8i-h3-spi"
- - reg: Should contain register location and length.
- - interrupts: Should contain interrupt.
- - clocks: phandle to the clocks feeding the SPI controller. Two are
+diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+index a1154e6..52a29be 100644
+--- a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
++++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+@@ -24,3 +24,16 @@
+ 	pinctrl-0 = <&uart0_pe_pins>;
+ 	status = "okay";
+ };
++
++&spi0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi0_pc_pins>;
++	status = "okay";
++	flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "winbond,w25q128", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++	};
++};
 -- 
 2.7.4
 
