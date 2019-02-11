@@ -7,51 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5315C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19158C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B57AC218A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEEA420700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896807;
-	bh=oHet8ROheHeX2He9j8+BARHMHlmwvauX3Tlb3uGhHxw=;
+	s=default; t=1549896811;
+	bh=38PI0D/cGYK+R0LDQ/bUraObbQn1vDlqIOUHXnP7BJk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WvkXR1ZAwg+ETZ8FAwbmb//DzZqhzpro6iqMVsA8q1UhFKgR0TAK0hcFy/XsO/i5l
-	 f31AvobEHtVPjEuOH281qQvZsIox2B8yVx9ZUSOvOIfGUudEGXyZzx+dMpgeojURf1
-	 MkI1O1OQlh9D0cY/BQAmBiiMSNX1aVB/ZTQC9TlM=
+	b=n0Eo/FZ5emM/0FLST4PfWO3oxYrY3cYGMu5psW/zdfpokucevjdZTTiwxu6WYnDwd
+	 H/OUFvbDyCNiM++BG5kZguNVrpsR/AmE+8nPlZZZmzRQVt3nSvAf2U6gSmUL2qhMFr
+	 vsaxT2ktwjtUKsymbkLy2K4lrcrRD3Mqqb+KilJw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388632AbfBKOx0 (ORCPT
+        id S2388642AbfBKOxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:53:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39832 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:53:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388603AbfBKOxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:53:24 -0500
+        id S2388017AbfBKOx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:53:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55D92214DA;
-        Mon, 11 Feb 2019 14:53:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD0402081B;
+        Mon, 11 Feb 2019 14:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896803;
-        bh=oHet8ROheHeX2He9j8+BARHMHlmwvauX3Tlb3uGhHxw=;
+        s=default; t=1549896807;
+        bh=38PI0D/cGYK+R0LDQ/bUraObbQn1vDlqIOUHXnP7BJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tf1kfDZtIGS2Oluzb3EkHki/DR0QDh5muafW+Dmc9RUDAdn1azIK/GjqZFCdijHDe
-         dZloObiv4nECr+8hY72k/jdoEJLpbpZ4rnKUMF7U2okFGh+/t8aLL5aoU791fipuK9
-         hJw3kTl+NGnHWihsXTeb6NNbwUgy1RMdZrv27+C8=
+        b=yMDDEqVhxZrDE11wMaEkfjyPes334XXARM17oybXA6AWem8Ddrnb0h2grLqloWBxm
+         V5ZEXC2+a3VWEQoZuVTV7R4qOVTp0TPKG2YzKlR01a80ZkkMT01dfeSR97SufniNfL
+         6+IDn9UQBezVou4aRSn1npgu7cU2yi5cTBO97gq8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 307/313] perf tests evsel-tp-sched: Fix bitwise operator
-Date:   Mon, 11 Feb 2019 15:19:47 +0100
-Message-Id: <20190211141913.335275129@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Wang Li <wangli39@baidu.com>, Zhang Yu <zhangyu31@baidu.com>
+Subject: [PATCH 4.19 308/313] serial: fix race between flush_to_ldisc and tty_open
+Date:   Mon, 11 Feb 2019 15:19:48 +0100
+Message-Id: <20190211141913.385429859@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -70,43 +65,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 489338a717a0dfbbd5a3fabccf172b78f0ac9015 upstream.
+commit fedb5760648a291e949f2380d383b5b2d2749b5e upstream.
 
-Notice that the use of the bitwise OR operator '|' always leads to true
-in this particular case, which seems a bit suspicious due to the context
-in which this expression is being used.
+There still is a race window after the commit b027e2298bd588
+("tty: fix data race between tty_init_dev and flush of buf"),
+and we encountered this crash issue if receive_buf call comes
+before tty initialization completes in tty_open and
+tty->driver_data may be NULL.
 
-Fix this by using bitwise AND operator '&' instead.
+CPU0                                    CPU1
+----                                    ----
+                                  tty_open
+                                   tty_init_dev
+                                     tty_ldisc_unlock
+                                       schedule
+flush_to_ldisc
+ receive_buf
+  tty_port_default_receive_buf
+   tty_ldisc_receive_buf
+    n_tty_receive_buf_common
+      __receive_buf
+       uart_flush_chars
+        uart_start
+        /*tty->driver_data is NULL*/
+                                   tty->ops->open
+                                   /*init tty->driver_data*/
 
-This bug was detected with the help of Coccinelle.
+it can be fixed by extending ldisc semaphore lock in tty_init_dev
+to driver_data initialized completely after tty->ops->open(), but
+this will lead to get lock on one function and unlock in some other
+function, and hard to maintain, so fix this race only by checking
+tty->driver_data when receiving, and return if tty->driver_data
+is NULL, and n_tty_receive_buf_common maybe calls uart_unthrottle,
+so add the same check.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
-Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Because the tty layer knows nothing about the driver associated with the
+device, the tty layer can not do anything here, it is up to the tty
+driver itself to check for this type of race.  Fix up the serial driver
+to correctly check to see if it is finished binding with the device when
+being called, and if not, abort the tty calls.
+
+[Description and problem report and testing from Li RongQing, I rewrote
+the patch to be in the serial layer, not in the tty core - gregkh]
+
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Tested-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Wang Li <wangli39@baidu.com>
+Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/tests/evsel-tp-sched.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/tools/perf/tests/evsel-tp-sched.c
-+++ b/tools/perf/tests/evsel-tp-sched.c
-@@ -17,7 +17,7 @@ static int perf_evsel__test_field(struct
- 		return -1;
- 	}
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -130,6 +130,9 @@ static void uart_start(struct tty_struct
+ 	struct uart_port *port;
+ 	unsigned long flags;
  
--	is_signed = !!(field->flags | FIELD_IS_SIGNED);
-+	is_signed = !!(field->flags & FIELD_IS_SIGNED);
- 	if (should_be_signed && !is_signed) {
- 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
- 			 evsel->name, name, is_signed, should_be_signed);
++	if (!state)
++		return;
++
+ 	port = uart_port_lock(state, flags);
+ 	__uart_start(tty);
+ 	uart_port_unlock(port, flags);
+@@ -727,6 +730,9 @@ static void uart_unthrottle(struct tty_s
+ 	upstat_t mask = UPSTAT_SYNC_FIFO;
+ 	struct uart_port *port;
+ 
++	if (!state)
++		return;
++
+ 	port = uart_port_ref(state);
+ 	if (!port)
+ 		return;
 
 
