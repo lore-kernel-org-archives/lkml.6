@@ -2,126 +2,104 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BF2C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A395C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22865205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16F0A20818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:34:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kXNHhFIl"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DnGmLbjq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfBKWdz (ORCPT
+        id S1727560AbfBKWew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:33:55 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11878 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbfBKWdy (ORCPT
+        Mon, 11 Feb 2019 17:34:52 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37364 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfBKWew (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:33:54 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c61f8540000>; Mon, 11 Feb 2019 14:33:56 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 11 Feb 2019 14:33:54 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 11 Feb 2019 14:33:54 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
- 2019 22:33:53 +0000
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        <lsf-pc@lists.linux-foundation.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard> <20190208111028.GD6353@quack2.suse.cz>
- <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
- <20190211102402.GF19029@quack2.suse.cz>
- <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
- <20190211180654.GB24692@ziepe.ca>
- <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
- <fb507b56-7f8f-cf2c-285c-bae3b2d72c4f@nvidia.com>
- <20190211221247.GI24692@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <018c1a05-5fd8-886a-573b-42649949bba8@nvidia.com>
-Date:   Mon, 11 Feb 2019 14:33:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 11 Feb 2019 17:34:52 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r10-v6so479264ljj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:34:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VSJeR1wQHl+/Y6Al2Tu3jSZ2Tpf/taeD5pL7B97K/BQ=;
+        b=DnGmLbjqFtXjQGckwV7pLTn2TyqePjqJeRG1QT7iitWet3l7RmdOWMZyDWuho7CeGD
+         MoxxRoNtu3WF/l0nIaWg+FK48JUmA82Lwy6QD57psIXK31ERY8Va7kLyXZdXUkbEHC3d
+         fv6WriFc2HsnjZ9wPLdDjxYYW04cehfVMm1G0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VSJeR1wQHl+/Y6Al2Tu3jSZ2Tpf/taeD5pL7B97K/BQ=;
+        b=lcB+MFvISFVlo+TmB875Qya3WHHlFfodL0wK1YZXGYaxxhctCMPzcnw//aL58v1lgd
+         gD4XkWpLP0pjjMGWDouR8AY6mrZNKit74u7WUE5quDizP+gb0SlUKi1+PCvUedhailEa
+         7kzr307GgeDLnXhTY6S6F9F3C19COBsNxZ5I/hN86GgU6tqI4Yrqk1icq/VGpVcgvaBz
+         DRTHAp4lKjH76OgVh142Gr4iPO6ssuCFD+DMEBcg7PyXe9HNxywPX6oRYGzlZQbAO2GW
+         M38aFopusPA/V0xZpwe7fYbRYcySWn94szdcZJ5n8Mjnh7KZ+HNdGSrcPOhZRg8y7TPE
+         9PKw==
+X-Gm-Message-State: AHQUAuZqNNbmcYNYwm+351Dqz8DLaRp2SQ9pORpp9zPAqbpi9wsivbze
+        tYAJtjPnGQMx/xllAJyGrd65kIugLcA=
+X-Google-Smtp-Source: AHgI3Ia5Jo8CE3fyC5uV3DFEEyVvUvlhL+bGcdMZPwtfN3uZkzmARu+k0LQg7o7d2JPxi8Vu7WTYmQ==
+X-Received: by 2002:a2e:9944:: with SMTP id r4-v6mr269936ljj.185.1549924489414;
+        Mon, 11 Feb 2019 14:34:49 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm2367755ljj.34.2019.02.11.14.34.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 14:34:48 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id j13-v6so494018ljc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:34:48 -0800 (PST)
+X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr321289ljh.174.1549924487924;
+ Mon, 11 Feb 2019 14:34:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211221247.GI24692@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549924436; bh=YrcCJUXUeBjmMXB4uAD+t8FoXjzbCfi0g/YDioIq2Sw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=kXNHhFIlhXR6pc/L0Z1RTsNAjsVn4a6I560QWLYgQ/t3+67h3c1paRKSx60lQxe0p
-         96BPi5SdqVdeSYR/Z1X7YmtQLd9GURSz4xtlAI2vtr5b82Vwtn+p/pkGq8RDPYigHU
-         ZuuNEPd5AU2TPsX66w/GQLDFVIcd/DMFAN5TLcnqJeSq81JKez3cfR7HeQNyIGDl2w
-         sprTQRrmmTv/AJ9hWUI7vermVLhyEFMgQtS7EjVnt0mN2KXDkHZaw2ZJc6Lb0ut3cG
-         Jxc14gDufMUn/mJsi0Gk/AZWTUFARxEQnKlobPAEnQoxMnFHz0ogmBMiEDrKK9NRgS
-         R4CnKnY1GNrfw==
+References: <20190211172948.3322-1-will.deacon@arm.com>
+In-Reply-To: <20190211172948.3322-1-will.deacon@arm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Feb 2019 14:34:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+Message-ID: <CAHk-=wiP42aqBApAUJbLAB43u5ips9ArgLxXn5L1r74bowxdow@mail.gmail.com>
+Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O BARRIER
+ EFFECTS" section
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/19 2:12 PM, Jason Gunthorpe wrote:
-> On Mon, Feb 11, 2019 at 01:22:11PM -0800, John Hubbard wrote:
-> 
->> The only way that breaks is if longterm pins imply an irreversible action, such
->> as blocking and waiting in a way that you can't back out of or get interrupted
->> out of. And the design doesn't seem to be going in that direction, right?
-> 
-> RDMA, vfio, etc will always have 'long term' pins that are
-> irreversible on demand. It is part of the HW capability.
-> 
+On Mon, Feb 11, 2019 at 9:30 AM Will Deacon <will.deacon@arm.com> wrote:
+>
+> +
+> +     1. All readX() and writeX() accesses to the same peripheral are ordered
+> +        with respect to each other. For example, this ensures that MMIO register
+> +       writes by the CPU to a particular device will arrive in program order.
 
-Yes, I get that about the HW. But I didn't quite phrase it accurately. What I
-meant was, irreversible from the kernel code's point of view; specifically,
-the filesystem while in various writeback paths.
+Hmm. I'd like more people look at strengthening this one wrt across
+CPUs and locking.
 
-But anyway, Jan's proposal a bit earlier today [1] is finally sinking into
-my head--if we actually go that way, and prevent the caller from setting up
-a problematic gup pin in the first place, then that may make this point sort
-of moot.
+Right now we document mmiowb(), but that "documentation" is really
+just a fairy tale. Very *very* few drivers actually do mmiowb() on
+their own.
 
+IOW, we should seriously just consider making the rule be that locking
+will order mmio too. Because that's practically the rule anyway.
 
-> I think the flag is badly named, it is really more of a
-> GUP_LOCK_PHYSICAL_ADDRESSES flag.
-> 
-> ie indicate to the FS that is should not attempt to remap physical
-> memory addresses backing this VMA. If the FS can't do that it must
-> fail.
-> 
+Powerpc already does it. IO within a locked region will serialize with the lock.
 
-Yes. Duration is probably less important than the fact that the page
-is specially treated.
-
-[1] https://lore.kernel.org/r/20190211102402.GF19029@quack2.suse.cz
-thanks,
--- 
-John Hubbard
-NVIDIA
+                Linus
