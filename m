@@ -2,112 +2,120 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0271C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A533EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83D8B20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549861716;
-	bh=XBP0XEbmdzDEtxcs/VJsypaPlzs7Rb2d5EvDFk8j6pM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=oPfhDB9R32t8tCukI4mro96UfUi3UU2434zK/1fz+pa7bQrMnKHYBjkocBInPRRCC
-	 aGu1HmXx/2LDMu6LJbNMKuB1d30Nq8NJ/W9XRgTvb/Ek3UbILR9MxoXS4pFHXFbFmQ
-	 aEtE4/dLMk1LE1aq6t8ZNa0Vm7feF1aYQ1Y62Hm0=
+	by mail.kernel.org (Postfix) with ESMTP id 7113220855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:17:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XFlV56c9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbfBKFIc (ORCPT
+        id S1726699AbfBKFRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 00:08:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34884 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 00:17:36 -0500
+Received: from ozlabs.org ([203.11.71.1]:44181 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfBKFIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 00:08:31 -0500
-Received: from localhost.localdomain (unknown [122.234.59.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726191AbfBKFRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 00:17:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06D5B20873;
-        Mon, 11 Feb 2019 05:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549861711;
-        bh=XBP0XEbmdzDEtxcs/VJsypaPlzs7Rb2d5EvDFk8j6pM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DW+8wL3C/7C1VpfSRK6ejxiWbEjwThEcCFfGmtx5qWyVAyl7NIQSMxAMmJEVAPQhL
-         h13NyQ6DYTE5TBcCFd93aapTV2hL0pc85BB9OAJqk8inYiadGZy2cNDeJ9gu9bhfTC
-         TYVLzhSx6u6r+mwEWnW8q+DgvDZ1Ffbdai3u003U=
-From:   guoren@kernel.org
-To:     torvalds@linux-foundation.org
-Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, ren_guo@c-sky.com
-Subject: [GIT PULL] csky fixes for v5.0-rc6
-Date:   Mon, 11 Feb 2019 13:08:19 +0800
-Message-Id: <1549861699-11875-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        by ozlabs.org (Postfix) with ESMTPSA id 43yYvJ5xKbz9sBZ;
+        Mon, 11 Feb 2019 16:17:32 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549862254;
+        bh=ago03U+E9qpIObAtfb7zAVnyB743HvDTgFvnbdBhQ+4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XFlV56c9lY/Ft6oZ+r9L1g6a7VYELev9W3sAoJhFpyJI7Nt83afOSVINaqP/QjRAv
+         tB9dYkKRsPBakV033IO6vzuoRoEt01FNpUb86pQOYVysrQHD6Xvxzljnk3COgfJ+37
+         1lhZJGu/ejsayqalyCoviRO6mNpmdv9/soOtd7JZFrEFaHCIaE75wRAE2bTWeyIuW3
+         Ldyn4vVD3MNe0fvzxVPDlkjXHo/tsLb+y4iccyvYYYHBf0ZKf9ut4choK+xhAMCHC5
+         5ja04RK1Ep+S2O4LgsCgYNPhw76xBVnHTLco7Ffq7pCs/BI9iXjK/62fIv8iniiAvM
+         unBRsPuMXHY8g==
+Date:   Mon, 11 Feb 2019 16:17:31 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJv?= =?UTF-8?B?c8WCYXc=?= 
+        <mirq-linux@rere.qmqm.pl>
+Subject: linux-next: manual merge of the rtc tree with the clk tree
+Message-ID: <20190211161731.56897159@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ldsDebFNaTF3D0e3jIOOtKD"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
+--Sig_/ldsDebFNaTF3D0e3jIOOtKD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
+Hi all,
 
-are available in the git repository at:
+Today's linux-next merge of the rtc tree got a conflict in:
 
-  git@github.com:c-sky/csky-linux.git tags/csky-for-linus-5.0-rc6
+  drivers/clk/at91/sama5d2.c
 
-for you to fetch changes up to 757dc82a87669b1967faf89c6586c20a9aea2f6b:
+between commit:
 
-  csky: Fixup dead loop in show_stack (2019-02-11 10:47:27 +0800)
+  77977b800451 ("clk: at91: enable AUDIOPLL as source for PCKx on SAMA5D2")
 
-----------------------------------------------------------------
-arch/csky patches for 5.0-rc6
+from the clk tree and commit:
 
-Here is some fixup patches for 5.0-rc6:
+  34d2ff2a6019 ("clk: at91: fix masterck name")
 
-Guo Ren (12):
-      irqchip/csky: Support csky,dh7k SOC intc driver
-      dt-bindings: csky,apb-intc: Add dh7k SOC support
-      csky: Fixup _PAGE_GLOBAL bit for 610 tlb entry
-      irqchip/csky: Optimize remove unnecessary loop irq handle
-      irqchip/irq-csky-mpintc: Add triger type and priority
-      dt-bindings: interrupt-controller: Update csky mpintc
-      csky: Fixup wrong pt_regs size
-      csky: coding convention: Use task_stack_page
-      dt-bindings: csky,apb-intc: Add vector irq mode
-      irqchip/csky: Add support-vector-irq for apb-intc
-      csky: Fixup io-range page attribute for mmap("/dev/mem")
-      csky: Fixup dead loop in show_stack
+from the rtc tree.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-----------------------------------------------------------------
-Guo Ren (12):
-      irqchip/csky: Support csky,dh7k SOC intc driver
-      dt-bindings: csky,apb-intc: Add dh7k SOC support
-      csky: Fixup _PAGE_GLOBAL bit for 610 tlb entry
-      irqchip/csky: Optimize remove unnecessary loop irq handle
-      irqchip/irq-csky-mpintc: Add triger type and priority
-      dt-bindings: interrupt-controller: Update csky mpintc
-      csky: Fixup wrong pt_regs size
-      csky: coding convention: Use task_stack_page
-      dt-bindings: csky,apb-intc: Add vector irq mode
-      irqchip/csky: Add support-vector-irq for apb-intc
-      csky: Fixup io-range page attribute for mmap("/dev/mem")
-      csky: Fixup dead loop in show_stack
+--=20
+Cheers,
+Stephen Rothwell
 
- .../interrupt-controller/csky,apb-intc.txt         |   4 +
- .../bindings/interrupt-controller/csky,mpintc.txt  |  21 ++-
- arch/csky/include/asm/pgtable.h                    |   9 +-
- arch/csky/include/asm/processor.h                  |   4 +-
- arch/csky/kernel/dumpstack.c                       |   4 +
- arch/csky/kernel/ptrace.c                          |   3 +-
- arch/csky/kernel/smp.c                             |   3 +-
- arch/csky/mm/ioremap.c                             |  14 ++
- drivers/irqchip/irq-csky-apb-intc.c                | 151 +++++++++++++++++----
- drivers/irqchip/irq-csky-mpintc.c                  | 113 ++++++++++++++-
- 10 files changed, 279 insertions(+), 47 deletions(-)
+diff --cc drivers/clk/at91/sama5d2.c
+index ade063622531,cd0ef7274fdb..000000000000
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@@ -240,8 -240,7 +240,8 @@@ static void __init sama5d2_pmc_setup(st
+  	parent_names[1] =3D "mainck";
+  	parent_names[2] =3D "plladivck";
+  	parent_names[3] =3D "utmick";
+- 	parent_names[4] =3D "mck";
++ 	parent_names[4] =3D "masterck";
+ +	parent_names[5] =3D "audiopll_pmcck";
+  	for (i =3D 0; i < 3; i++) {
+  		char name[6];
+ =20
+
+--Sig_/ldsDebFNaTF3D0e3jIOOtKD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxhBWsACgkQAVBC80lX
+0GyRCwf/YOZwRJZK39xyxAlkUtNWIr27TxWvgXUKN4UML9nh2KZmD1qTd+1voWul
+ELbXviG2WY0MJxBc2Cgnn8lAvxP0JZpiATTNQayi2PKO5Qn6GoHyw+GJPVlVPNQi
++292lhcUUnigkig8zksUAJaaWdD18icnFtsAOQSm2hXNplkaVnvnMZdIDuds8hOR
+aiUuRyI9GJUMOfBdyT/AU0Ou8bc49OA0bUAehr1lIS0WAQWpGiCqQm7iz/jlAngJ
+lUunnWtBREjzbSuhZjuPVutGTc+t5d+eKjnjSPIIrjshDjmqWvqYIgGXYzxWQuIn
+q7reBZLapWKABSUF+X+cmFq+NxL7cg==
+=S4x3
+-----END PGP SIGNATURE-----
+
+--Sig_/ldsDebFNaTF3D0e3jIOOtKD--
