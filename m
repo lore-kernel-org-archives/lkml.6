@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E87C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C71CBC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC6F20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99CC6222A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896952;
-	bh=8Iki6BDd+uME8ppEftSLuKhGZtMXkag4HPqqlmFY+9c=;
+	s=default; t=1549896957;
+	bh=mARF47O0D5nVTxYJxxD7HT11uHV1Eiq11l3r3ptlChA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iM92YRyQ9cg4skUnS1Lx/NOkrrPEMvROGuZC7H+SeoaVZHxbKy58tFLzu88knxd4C
-	 sNxzaFBeiNmEPjXWThq4ImYKuhT2VJg8HBaV1DbbJVmr298ftRXZXf5AYvwriSMy3y
-	 eMDBzAa+kKkD4Zy/6renuNyLNyfBQUMvDU5RO0nE=
+	b=TUR3ospbYT4C7TqXKvM+t0aolkPotIvNDPZl62+9QZT4FQxjy5RNnL5Yk3Zmujerh
+	 YgxITGf/8CHLy3nBa9SkPvzRpGFH9jmgxAc2Gq1lkYZTWmVcGGv+od4/FDgcZFx2/i
+	 nZWtRHy8j+HUyweoBucy3QCZsOv/0KCjw9l7KW8c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389061AbfBKOzv (ORCPT
+        id S2389073AbfBKOzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:55:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42874 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:55:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389038AbfBKOzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:55:47 -0500
+        id S2388675AbfBKOzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:55:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D636520700;
-        Mon, 11 Feb 2019 14:55:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 160BC2229E;
+        Mon, 11 Feb 2019 14:55:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896947;
-        bh=8Iki6BDd+uME8ppEftSLuKhGZtMXkag4HPqqlmFY+9c=;
+        s=default; t=1549896953;
+        bh=mARF47O0D5nVTxYJxxD7HT11uHV1Eiq11l3r3ptlChA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wMGVk6M6xi6lu5gmU8Rk66HF6DtVenD+Vs2LFD9uMw9bFZvX8lcEG+HjQtg63f+Gi
-         h7nOfLoYioZPiqxbEQ2SU4kgcqD6/s3zaAsqtIoSkSHyl4+0q6zGse85xdZdw1/vCh
-         VFsZaS3+5zxHh14R3bEHBiE6D3+5MmDfl6jujkKY=
+        b=xFLzZ3vNo9BHAUd1qTerx+NVfHxnbriz5mfg83th1UFoCnDE7MBKIK7h6NhTeY4y/
+         q1ExK+wTgBucXNh2EjJnBsQ1Jxy8WOfcWorUsA6zEZ82eQCaS+NhAa5wwRQKaXddUZ
+         oBNMOclirbC0rllARzdPs3hNg8M3Vit8kArEoVxA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 040/205] ACPI: SPCR: Consider baud rate 0 as preconfigured state
-Date:   Mon, 11 Feb 2019 15:17:18 +0100
-Message-Id: <20190211141830.647894436@linuxfoundation.org>
+Subject: [PATCH 4.14 042/205] f2fs: move dir data flush to write checkpoint process
+Date:   Mon, 11 Feb 2019 15:17:20 +0100
+Message-Id: <20190211141831.046406364@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,50 +66,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b413b1abeb21b4a152c0bf8d1379efa30759b6e3 ]
+[ Upstream commit b61ac5b720146c619c7cdf17eff2551b934399e5 ]
 
-Since SPCR 1.04 [1] the baud rate of 0 means a preconfigured state of UART.
-Assume firmware or bootloader configures console correctly.
+This patch move dir data flush to write checkpoint process, by
+doing this, it may reduce some time for dir fsync.
 
-[1]: https://docs.microsoft.com/en-us/windows-hardware/drivers/serports/serial-port-console-redirection-table
+pre:
+	-f2fs_do_sync_file enter
+		-file_write_and_wait_range  <- flush & wait
+		-write_checkpoint
+			-do_checkpoint	    <- wait all
+	-f2fs_do_sync_file exit
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+now:
+	-f2fs_do_sync_file enter
+		-write_checkpoint
+			-block_operations   <- flush dir & no wait
+			-do_checkpoint	    <- wait all
+	-f2fs_do_sync_file exit
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/spcr.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-index 324b35bfe781..f567fa5f0148 100644
---- a/drivers/acpi/spcr.c
-+++ b/drivers/acpi/spcr.c
-@@ -148,6 +148,13 @@ int __init parse_spcr(bool earlycon)
- 	}
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 7d3189f1941c..5f549bc4e097 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -205,6 +205,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
  
- 	switch (table->baud_rate) {
-+	case 0:
-+		/*
-+		 * SPCR 1.04 defines 0 as a preconfigured state of UART.
-+		 * Assume firmware or bootloader configures console correctly.
-+		 */
-+		baud_rate = 0;
-+		break;
- 	case 3:
- 		baud_rate = 9600;
- 		break;
-@@ -196,6 +203,10 @@ int __init parse_spcr(bool earlycon)
- 		 * UART so don't attempt to change to the baud rate state
- 		 * in the table because driver cannot calculate the dividers
- 		 */
-+		baud_rate = 0;
-+	}
+ 	trace_f2fs_sync_file_enter(inode);
+ 
++	if (S_ISDIR(inode->i_mode))
++		goto go_write;
 +
-+	if (!baud_rate) {
- 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, iotype,
- 			 table->serial_port.address);
- 	} else {
+ 	/* if fdatasync is triggered, let's do in-place-update */
+ 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+ 		set_inode_flag(inode, FI_NEED_IPU);
 -- 
 2.19.1
 
