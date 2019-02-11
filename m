@@ -2,169 +2,121 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA08C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C62E3C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA9E21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:20:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F83421773
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 11:23:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="owWJaLOp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HZ68djD0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBKLUR (ORCPT
+        id S1726300AbfBKLXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 06:20:17 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:60598 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfBKLUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 06:20:16 -0500
-Received: from zn.tnic (p200300EC2BC7A100B5A7B0033B3D5267.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:b5a7:b003:3b3d:5267])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1EFBD1EC0375;
-        Mon, 11 Feb 2019 12:20:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549884015;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=tLcQ3QIJX8TAvRHBnXz9f+fZLqLCrP2fHDIUvfqRpyg=;
-        b=owWJaLOpTeBY7AXBsVdb9ymdup2MMQ40sbcZ13uRluymk4uwdvR/HLDkNBzOhJVdEx4ctM
-        rMTyflHKdkJ3Mw+UAfeD9+hC1M49EMjdEoXv8uRWCu3wTcamJAf6ZlGWXucnvKMuirGff+
-        Eo/+PTukkhMkKngIPuwuEyw2z8GDsvc=
-Date:   Mon, 11 Feb 2019 12:20:09 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        Mon, 11 Feb 2019 06:23:25 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40457 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfBKLXY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 06:23:24 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q21so16667642wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 03:23:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=1j8bbri+HycsAw075of8V538dATVxD2rYwR0snuO0hQ=;
+        b=HZ68djD0khJp7NqjFVusFF7uYDgrF1G9z0vyIMxB/DAx4aDZ2JjkywosAfGts5cceW
+         +SVb4+RH58RAoiVt8rznPdRKGDVtoUlWnXgU7mK628VyABLx4bmpQl9yWo4Zd+2bgWgr
+         5zDVR7pSFA7Gk/wJEJzgdagoEmzR5efLefBq/1fCKd/W6RyCYDHXLO98RH4zQemg2uI/
+         oktf8nhGnl61Gq8EIvYlucYmbQH2EpDZmuFXbR6Wr9DSWyQ/sLIMdPwDZq68lZJAitGS
+         tTk47U2e7eihwe8BJzH65uOvOi7YfDdxcQcJuxeXwELHQOsv9ffscw7nssEEpJJUr1Os
+         gHiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1j8bbri+HycsAw075of8V538dATVxD2rYwR0snuO0hQ=;
+        b=AbkgHwYInUly5yRi91rf0hIVryMX4JNlqhyzIPJtooO8pzLvOBu6wICeDartku2hyA
+         PPSa92ELR1I9FUZnnzJRjReXN031MtudXVK5D2K34ZBMtIm+IRkalHWkc7ktSqcWTl6R
+         fVqDgA3nZv05wP8IZE0LxxV461qgoeljKp2ozcrKI0agcubzFc/bGzEQymwZ6oumO3/s
+         jfoJVHTzxZlLqd8soAiZU9utGyhgEW/Zuw+Gj2inv0jyGzkIzqADPT0aao6UwhxfSNpk
+         qJnEuuZ7Mot42B2+HUE/XzJFx4oRoZWT+N5d/jO0J0fto0kWGwPKvQenirETVI+Jre35
+         6D2A==
+X-Gm-Message-State: AHQUAuZl9FQKFi9jXGiMvu21JtvjAN18ldPzUxAxRL6FhcA8oVQb+sAm
+        3Sy+x3EGr2puq0XDBhheLC8iAQ==
+X-Google-Smtp-Source: AHgI3IbRwgJ0aPz+iUuzS5rkHVHBVKHu2InhZwU9uVT2jruPLroczSXeTIObS5eZpH9nbPtUUPPRWQ==
+X-Received: by 2002:a5d:4e8c:: with SMTP id e12mr17846964wru.21.1549884202298;
+        Mon, 11 Feb 2019 03:23:22 -0800 (PST)
+Received: from [192.168.0.41] (13.50.92.92.rev.sfr.net. [92.92.50.13])
+        by smtp.googlemail.com with ESMTPSA id o18sm14814644wrg.40.2019.02.11.03.23.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 03:23:21 -0800 (PST)
+Subject: Re: [PATCH 0/2] Subject: [PATCH 0/2] clocksource: exynos_mct: Clear
+ timer interrupt when shutting down
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stuart Menefy <stuart.menefy@mathembedded.com>,
+        linux-samsung-soc@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        caoj.fnst@cn.fujitsu.com, Juergen Gross <jgross@suse.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-tip-commits@vger.kernel.org,
-        Matt Fleming <matt@codeblueprint.co.uk>
-Subject: Re: [tip:x86/boot] x86/boot: Early parse RSDP and save it in
- boot_params
-Message-ID: <20190211112009.GE19618@zn.tnic>
-References: <20190208215322.GO674@zn.tnic>
- <20190211002220.GD14948@zn.tnic>
- <CAKv+Gu-6bxRrn7Ft4cRYzB1Jgca=L_d1u5OU1nUzLe7SBEd=xQ@mail.gmail.com>
- <20190211095547.GB1651@localhost.localdomain>
- <CAKv+Gu_r4Vz2BRpRyJ=UsM1r-+CbyP6heggL+qsKKhJ_iTWhFg@mail.gmail.com>
- <20190211101011.GA5333@localhost.localdomain>
- <CAKv+Gu-Tv=Wxhp9k_f4q+AZ+Wqc+joXrnpbz7aKD=75ZKp2Xcw@mail.gmail.com>
- <20190211102426.GA19618@zn.tnic>
- <20190211104254.GB19618@zn.tnic>
- <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <CGME20190210225147epcas3p4cedebfc5692274bc6135ceabbcf2642d@epcas3p4.samsung.com>
+ <20190210225114.20110-1-stuart.menefy@mathembedded.com>
+ <e22c175a-d88a-81a7-9faa-42bb4fe09a22@samsung.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e3637f0f-1e72-db3a-f744-ade0e878cfc5@linaro.org>
+Date:   Mon, 11 Feb 2019 12:23:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <e22c175a-d88a-81a7-9faa-42bb4fe09a22@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9mm-w66ZZrd7WhuD3_iELS5vUJ0-1DtRq1GDjSsDNEVg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 10:46:18AM +0000, Ard Biesheuvel wrote:
-> As I pointed out in my previous reply, systab will be the wrong type
-> on 32-bit firmware, it needs to be efi_system_table_32_t
+On 11/02/2019 08:14, Marek Szyprowski wrote:
+> Hi Stuart
+> 
+> On 2019-02-10 23:51, Stuart Menefy wrote:
+>> When debugging suspend problems on Exynos 5260, I had a large number
+>> of debugging prints going to the serial port after interrupts
+>> had been disabled but before the timer interrupt was shutdown. This
+>> was long enough for a timer tick to occur, but as interrupts were
+>> disabled the ISR didn't run, and so the interrupt wasn't cleared.
+>> Later when the timer was shutdown the interrupt was left asserted and
+>> so the wfi at the heart of the suspend code didn't wait, causing
+>> the suspend to fail.
+>>
+>> Currently the code which stops the timer when it is on one-shot mode
+>> and the interrupt occurs is in exynos4_mct_tick_clear(), meaning if we
+>> called this from the shutdown code exynos4_mct_tick_stop() could be
+>> called twice. So first restructure the existing code, so the check for
+>> one-shot mode and stopping the timer is moved to the ISR, leaving
+>> exynos4_mct_tick_clear() just clearing the interrupt flag.
+>>
+>> Once this has been done simply call exynos4_mct_tick_clear() from
+>> set_state_shutdown().
+> 
+> This also fixes mysterious suspend failures on Odroid XU3/XU4/HC1 :)
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-This seems to work. Chao, please run it too.
+Applied. Shall I add the stable@ tag?
 
-Thx.
-
----
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index c5a949335d8b..0d97aa8bd01f 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -50,7 +50,8 @@ static acpi_physical_address efi_get_rsdp_addr(void)
- 	acpi_physical_address rsdp_addr = 0;
- 
- #ifdef CONFIG_EFI
--	efi_system_table_t *systab;
-+	unsigned long systab, systab_tables, config_tables;
-+	unsigned int nr_tables;
- 	struct efi_info *ei;
- 	bool efi_64;
- 	int size, i;
-@@ -70,13 +71,13 @@ static acpi_physical_address efi_get_rsdp_addr(void)
- 
- 	/* Get systab from boot params. */
- #ifdef CONFIG_X86_64
--	systab = (efi_system_table_t *)(ei->efi_systab | ((__u64)ei->efi_systab_hi<<32));
-+	systab = ei->efi_systab | ((__u64)ei->efi_systab_hi << 32);
- #else
- 	if (ei->efi_systab_hi || ei->efi_memmap_hi) {
- 		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
- 		return 0;
- 	}
--	systab = (efi_system_table_t *)ei->efi_systab;
-+	systab = ei->efi_systab;
- #endif
- 	if (!systab)
- 		error("EFI system table not found.");
-@@ -87,16 +88,30 @@ static acpi_physical_address efi_get_rsdp_addr(void)
- 	size = efi_64 ? sizeof(efi_config_table_64_t) :
- 			sizeof(efi_config_table_32_t);
- 
--	for (i = 0; i < systab->nr_tables; i++) {
-+	if (efi_64) {
-+		efi_system_table_64_t *st_tbl = (efi_system_table_64_t *)systab;
-+
-+		config_tables	= st_tbl->tables;
-+		nr_tables	= st_tbl->nr_tables;
-+	} else {
-+		efi_system_table_32_t *st_tbl = (efi_system_table_32_t *)systab;
-+
-+		config_tables	= st_tbl->tables;
-+		nr_tables	= st_tbl->nr_tables;
-+	}
-+
-+	if (!config_tables)
-+		error("EFI config tables not found.");
-+
-+	for (i = 0; i < nr_tables; i++) {
- 		acpi_physical_address table;
--		void *config_tables;
- 		efi_guid_t guid;
- 
--		config_tables = (void *)(systab->tables + size * i);
-+		config_tables += size * i;
-+
- 		if (efi_64) {
--			efi_config_table_64_t *tmp_table;
-+			efi_config_table_64_t *tmp_table = (efi_config_table_64_t *)config_tables;
- 
--			tmp_table = config_tables;
- 			guid = tmp_table->guid;
- 			table = tmp_table->table;
- 
-@@ -105,9 +120,8 @@ static acpi_physical_address efi_get_rsdp_addr(void)
- 				return 0;
- 			}
- 		} else {
--			efi_config_table_32_t *tmp_table;
-+			efi_config_table_32_t *tmp_table = (efi_config_table_32_t *)config_tables;
- 
--			tmp_table = config_tables;
- 			guid = tmp_table->guid;
- 			table = tmp_table->table;
- 		}
 
 -- 
-Regards/Gruss,
-    Boris.
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
