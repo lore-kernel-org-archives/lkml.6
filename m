@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58027C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC1FC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26744222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F10222B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894927;
-	bh=vUYlB/e2QYkBXMJNmPmOB6B9nrFgjZj8OvAhldyjlJU=;
+	s=default; t=1549894931;
+	bh=acPA05ksUwwd+JZIXw0ObUm/pHn8Vx/V8X+9UoydjqM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K34sAHIIYGpTQBG58FkZEWeA3uotF8ouUHCWDgYVLvsq6XW4ToUwIY1uHjZeTG9g0
-	 Lk8ncLVrqhIwN8HXgHSV+Ro4Fsl94N7QqWcRY9gOQkH9lNeCdS3B9b4POwQxckBlHz
-	 b63f1/+7HSNJIXCIpEIA02mDmxJ6rhQkWypdUjck=
+	b=wcRAHelKdpKSECzGB3HENIU9dvotowsn2LtXRaFurLZpXsME4Uu1J1rofLzpjsCov
+	 4fkXLRQ+RorHLEXUadSWqtFGuWrQQyRddvuQq6ocXn9NVjcELvUOqJr6bdzURbBfxa
+	 MfbButZIka1w/bu6HFo85hnaxcWZap/IU6HW132U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbfBKOWF (ORCPT
+        id S1728682AbfBKOWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:22:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:22:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728652AbfBKOWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:22:03 -0500
+        id S1727375AbfBKOWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:22:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 963BF20838;
-        Mon, 11 Feb 2019 14:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0642E20838;
+        Mon, 11 Feb 2019 14:22:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894923;
-        bh=vUYlB/e2QYkBXMJNmPmOB6B9nrFgjZj8OvAhldyjlJU=;
+        s=default; t=1549894926;
+        bh=acPA05ksUwwd+JZIXw0ObUm/pHn8Vx/V8X+9UoydjqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oyMUO+KoPtNVfj/Z0Nl9r/Zr1Bvo0v0uebvVmTKTQieIiFQ1ey07qb/Lxqg2UiB7V
-         qDMgXOnW6Dg/6iZuLnRliWAocQXPbJEuB5RarExqKRvNc+BxlNB+Em+LVGvyLl7G/W
-         BSEAqDAg398955e2gIm/Q3krjMuFMQAo2OPxmsq4=
+        b=IIA45Q03xMqHGZFTg2tdZ3p2eg/gEuJrzo++GDhRSUkspnrF432LrITu6p82iuHum
+         10HCzPCVkMqYmTnvvM9Ge7gRjqBb44l+ZqOjKY1NK/to/ySDCeFXuDCLXjvDcHiPBc
+         vFfNhXjfyOLugSBCmpnKVNiePuOiD3/pLhwd0fhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 032/352] ptp: check gettime64 return code in PTP_SYS_OFFSET ioctl
-Date:   Mon, 11 Feb 2019 15:14:19 +0100
-Message-Id: <20190211141848.388810894@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 033/352] MIPS: Boston: Disable EG20T prefetch
+Date:   Mon, 11 Feb 2019 15:14:20 +0100
+Message-Id: <20190211141848.446543525@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,43 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 83d0bdc7390b890905634186baaa294475cd6a06 ]
+[ Upstream commit 5ec17af7ead09701e23d2065e16db6ce4e137289 ]
 
-If a gettime64 call fails, return the error and avoid copying data back
-to user.
+The Intel EG20T Platform Controller Hub used on the MIPS Boston
+development board supports prefetching memory to optimize DMA transfers.
+Unfortunately for unknown reasons this doesn't work well with some MIPS
+CPUs such as the P6600, particularly when using an I/O Coherence Unit
+(IOCU) to provide cache-coherent DMA. In these systems it is common for
+DMA data to be lost, resulting in broken access to EG20T devices such as
+the MMC or SATA controllers.
 
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Support for a DT property to configure the prefetching was added a while
+back by commit 549ce8f134bd ("misc: pch_phub: Read prefetch value from
+device tree if passed") but we never added the DT snippet to make use of
+it. Add that now in order to disable the prefetching & fix DMA on the
+affected systems.
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21068/
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ptp/ptp_chardev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/mips/boot/dts/img/boston.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
-index 2012551d93e0..796eeffdf93b 100644
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -228,7 +228,9 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 			pct->sec = ts.tv_sec;
- 			pct->nsec = ts.tv_nsec;
- 			pct++;
--			ptp->info->gettime64(ptp->info, &ts);
-+			err = ptp->info->gettime64(ptp->info, &ts);
-+			if (err)
-+				goto out;
- 			pct->sec = ts.tv_sec;
- 			pct->nsec = ts.tv_nsec;
- 			pct++;
-@@ -281,6 +283,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 		break;
- 	}
+diff --git a/arch/mips/boot/dts/img/boston.dts b/arch/mips/boot/dts/img/boston.dts
+index 65af3f6ba81c..84328afa3a55 100644
+--- a/arch/mips/boot/dts/img/boston.dts
++++ b/arch/mips/boot/dts/img/boston.dts
+@@ -141,6 +141,12 @@
+ 				#size-cells = <2>;
+ 				#interrupt-cells = <1>;
  
-+out:
- 	kfree(sysoff);
- 	return err;
- }
++				eg20t_phub@2,0,0 {
++					compatible = "pci8086,8801";
++					reg = <0x00020000 0 0 0 0>;
++					intel,eg20t-prefetch = <0>;
++				};
++
+ 				eg20t_mac@2,0,1 {
+ 					compatible = "pci8086,8802";
+ 					reg = <0x00020100 0 0 0 0>;
 -- 
 2.19.1
 
