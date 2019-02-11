@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91E0C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5817C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7B0218A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C6A21A80
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:21:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sT0E0ArZ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eNHIao06"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfBKNVH (ORCPT
+        id S1727816AbfBKNUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:21:07 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59340 "EHLO
+        Mon, 11 Feb 2019 08:20:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57454 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727997AbfBKNVE (ORCPT
+        with ESMTP id S1727744AbfBKNUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:21:04 -0500
+        Mon, 11 Feb 2019 08:20:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pU0HGVd2mqMY96Sg+NjMcR2p0eV/+Kyy5J3jOlZeRfA=; b=sT0E0ArZOAsRvQ7ZRJWu9F6uI
-        eqPK3aRNbr6vboU0Y9pbw5/jUpqtozY/8Z7dgqGQyz875BniztuwotWC6PWoAGI7Pp1f0Nj+WE4hP
-        ggOy08Rb+ZOQSAw8Kv++ZbOXMadGwC17sWKx6r958dGHo6gthDj8TQ4okoSXWxzeqool+gMLyQug7
-        BGnIWbBOJRSJ2EBDiEXkYQjyirBek2YLAWeA98yl/0lFS4vDj6JjcHJ23mcxCkioZMWigMkOeBMAB
-        neeGxvRZzZq8qNfKOVy937CzftwNd3RNcVmLa2ebmh42SFMnFF2cRMKNtZoVMHemfZQdorBCn9TH5
-        ZOn/VRQJw==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=CxZHu4dBypMzIJdePoRBvzcE17U6xI+P3h/hNk9DnbQ=; b=eNHIao065vy1/wWPYlkwCpM2ka
+        uDbSGO4jXGFfYFnn/URtWVIeUYPcI34DvSS+valacvZ8eW7KkQvokoOrq+rffCrPq5VQM3ny256DB
+        WzgSx49gW24UviwXw0zFB22bURKs3Jkq+hl6+NuRrQQ6Nx8+sDEdWA/dryNeD3NdwxO3/ZQnpN5Mu
+        +Iq+eSC1sBW7Rs0w8Op/zv+/aRzuOZVRbJ6+A1mbh6NyU8g1GXhCEJS4qqWdMfXFd3Dy9mbUMQuZz
+        4NgpwCHCE2A/5bhBxFjSNqtJmsAuzVTRNGxuJztVBBh210rXkkpAiqcxnWKKRx3D8B4M6m4KvjtW9
+        zVN0IaBw==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtBWC-00012k-7f; Mon, 11 Feb 2019 13:21:04 +0000
+        id 1gtBVN-00084F-RO; Mon, 11 Feb 2019 13:20:14 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     sudipm.mukherjee@gmail.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] parport_ip32: pass struct device to DMA API functions
-Date:   Mon, 11 Feb 2019 14:21:00 +0100
-Message-Id: <20190211132100.29221-1-hch@lst.de>
+To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/8] au1000_eth: pass struct device to DMA API functions
+Date:   Mon, 11 Feb 2019 14:19:58 +0100
+Message-Id: <20190211132004.29143-3-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211132004.29143-1-hch@lst.de>
+References: <20190211132004.29143-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
@@ -59,84 +61,40 @@ available struct device from the platform_device to remedy this.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/parport/parport_ip32.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/amd/au1000_eth.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/parport/parport_ip32.c b/drivers/parport/parport_ip32.c
-index 62873070f988..b7a892791c3e 100644
---- a/drivers/parport/parport_ip32.c
-+++ b/drivers/parport/parport_ip32.c
-@@ -568,6 +568,7 @@ static irqreturn_t parport_ip32_merr_interrupt(int irq, void *dev_id)
+diff --git a/drivers/net/ethernet/amd/au1000_eth.c b/drivers/net/ethernet/amd/au1000_eth.c
+index e833d1b3fe18..e5073aeea06a 100644
+--- a/drivers/net/ethernet/amd/au1000_eth.c
++++ b/drivers/net/ethernet/amd/au1000_eth.c
+@@ -1167,7 +1167,7 @@ static int au1000_probe(struct platform_device *pdev)
+ 	/* Allocate the data buffers
+ 	 * Snooping works fine with eth on all au1xxx
+ 	 */
+-	aup->vaddr = (u32)dma_alloc_attrs(NULL, MAX_BUF_SIZE *
++	aup->vaddr = (u32)dma_alloc_attrs(&pdev->dev, MAX_BUF_SIZE *
+ 					  (NUM_TX_BUFFS + NUM_RX_BUFFS),
+ 					  &aup->dma_addr, 0,
+ 					  DMA_ATTR_NON_CONSISTENT);
+@@ -1349,7 +1349,7 @@ static int au1000_probe(struct platform_device *pdev)
+ err_remap2:
+ 	iounmap(aup->mac);
+ err_remap1:
+-	dma_free_attrs(NULL, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
++	dma_free_attrs(&pdev->dev, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
+ 			(void *)aup->vaddr, aup->dma_addr,
+ 			DMA_ATTR_NON_CONSISTENT);
+ err_vaddr:
+@@ -1383,7 +1383,7 @@ static int au1000_remove(struct platform_device *pdev)
+ 		if (aup->tx_db_inuse[i])
+ 			au1000_ReleaseDB(aup, aup->tx_db_inuse[i]);
  
- /**
-  * parport_ip32_dma_start - begins a DMA transfer
-+ * @p:		partport to work on
-  * @dir:	DMA direction: DMA_TO_DEVICE or DMA_FROM_DEVICE
-  * @addr:	pointer to data buffer
-  * @count:	buffer size
-@@ -575,8 +576,8 @@ static irqreturn_t parport_ip32_merr_interrupt(int irq, void *dev_id)
-  * Calls to parport_ip32_dma_start() and parport_ip32_dma_stop() must be
-  * correctly balanced.
-  */
--static int parport_ip32_dma_start(enum dma_data_direction dir,
--				  void *addr, size_t count)
-+static int parport_ip32_dma_start(struct parport *p,
-+		enum dma_data_direction dir, void *addr, size_t count)
- {
- 	unsigned int limit;
- 	u64 ctrl;
-@@ -601,7 +602,7 @@ static int parport_ip32_dma_start(enum dma_data_direction dir,
+-	dma_free_attrs(NULL, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
++	dma_free_attrs(&pdev->dev, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
+ 			(void *)aup->vaddr, aup->dma_addr,
+ 			DMA_ATTR_NON_CONSISTENT);
  
- 	/* Prepare DMA pointers */
- 	parport_ip32_dma.dir = dir;
--	parport_ip32_dma.buf = dma_map_single(NULL, addr, count, dir);
-+	parport_ip32_dma.buf = dma_map_single(&p->bus_dev, addr, count, dir);
- 	parport_ip32_dma.len = count;
- 	parport_ip32_dma.next = parport_ip32_dma.buf;
- 	parport_ip32_dma.left = parport_ip32_dma.len;
-@@ -625,11 +626,12 @@ static int parport_ip32_dma_start(enum dma_data_direction dir,
- 
- /**
-  * parport_ip32_dma_stop - ends a running DMA transfer
-+ * @p:		partport to work on
-  *
-  * Calls to parport_ip32_dma_start() and parport_ip32_dma_stop() must be
-  * correctly balanced.
-  */
--static void parport_ip32_dma_stop(void)
-+static void parport_ip32_dma_stop(struct parport *p)
- {
- 	u64 ctx_a;
- 	u64 ctx_b;
-@@ -685,8 +687,8 @@ static void parport_ip32_dma_stop(void)
- 	enable_irq(MACEISA_PAR_CTXB_IRQ);
- 	parport_ip32_dma.irq_on = 1;
- 
--	dma_unmap_single(NULL, parport_ip32_dma.buf, parport_ip32_dma.len,
--			 parport_ip32_dma.dir);
-+	dma_unmap_single(&p->bus_dev, parport_ip32_dma.buf,
-+			 parport_ip32_dma.len, parport_ip32_dma.dir);
- }
- 
- /**
-@@ -1445,7 +1447,7 @@ static size_t parport_ip32_fifo_write_block_dma(struct parport *p,
- 
- 	priv->irq_mode = PARPORT_IP32_IRQ_HERE;
- 
--	parport_ip32_dma_start(DMA_TO_DEVICE, (void *)buf, len);
-+	parport_ip32_dma_start(p, DMA_TO_DEVICE, (void *)buf, len);
- 	reinit_completion(&priv->irq_complete);
- 	parport_ip32_frob_econtrol(p, ECR_DMAEN | ECR_SERVINTR, ECR_DMAEN);
- 
-@@ -1461,7 +1463,7 @@ static size_t parport_ip32_fifo_write_block_dma(struct parport *p,
- 		if (ecr & ECR_SERVINTR)
- 			break;	/* DMA transfer just finished */
- 	}
--	parport_ip32_dma_stop();
-+	parport_ip32_dma_stop(p);
- 	written = len - parport_ip32_dma_get_residue();
- 
- 	priv->irq_mode = PARPORT_IP32_IRQ_FWD;
 -- 
 2.20.1
 
