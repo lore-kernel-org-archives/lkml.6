@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38472C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B788C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F18A2222A1
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1233E222B5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894910;
-	bh=pYuLR2buWq33QtbBOd2aVBHrF65sym+uQIAbZ4e21N4=;
+	s=default; t=1549894914;
+	bh=2PAryEP6tKHojVcLy3vRribLfeLAENPs4f3gpanAJVM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZixEOnRbyZTflSOblFTiiYgnUubV/usLfRYXuiXsSqv+Q9u0cM96+iHHSkkWv+8Mz
-	 SAZ4V2ushmgtq+P+lIQpy3Rk0LtfMt+D3TOAsqhijxEcTFccYoiJ1FI15apznpYpop
-	 +YUNvkbOw+bI0T4TQDAiXpSOwuMGfR+GsKRHieGo=
+	b=g5UA9A4aZv8rbS3PuMq8XwCw1qsxJIs3cnxmNd65E14FZK5dneZsPsZtYIhh9zjpz
+	 uoFFmSktWCIYlxg/w+JWI4LYfo7XQW7JCFi0uHJRHn2o451R+yhiCXKxTUOpK9EZqO
+	 41aQsBgyi6Pzri5JAhdrZPAppHozFL1gkGx2ITdw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbfBKOVs (ORCPT
+        id S1728616AbfBKOVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:21:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54558 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:21:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728588AbfBKOVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:21:46 -0500
+        id S1728606AbfBKOVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:21:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4352820844;
-        Mon, 11 Feb 2019 14:21:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8BE3222AA;
+        Mon, 11 Feb 2019 14:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894904;
-        bh=pYuLR2buWq33QtbBOd2aVBHrF65sym+uQIAbZ4e21N4=;
+        s=default; t=1549894908;
+        bh=2PAryEP6tKHojVcLy3vRribLfeLAENPs4f3gpanAJVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Grg8SSisZCamrrzdmLmg+Ppo6x60SGwOsMPuPONCezCMwYhFi4gR15ag6wq3SW1Sf
-         gcP3ZrcBnjcqJgnNdBh+HrVSSg4uuHEA+A2HHFgaCdxkmO6jlDJR3C+j4qcBpczpHh
-         Jzcr0RuDxUbpq2Z3CxFRsR2S+Od082CS2flDThJ4=
+        b=bhvTnlL2g67fL3vJ8wDnuWFUhsJ2Rr3DChASoeR3pPBRZr+2Ba76lFvmKTuIkhfrG
+         bSb7OPAiI6Qn+KRiJC7or/3gRZu7M4xE0NWHdhhYUMKyz3QFc62xthWVejkHEETZeb
+         gpcU89ieWOlj162FA9PzQVflgXe3JfMED+GH3M+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 028/352] s390/qeth: utilize virtual MAC for Layer2 OSD devices
-Date:   Mon, 11 Feb 2019 15:14:15 +0100
-Message-Id: <20190211141848.132024995@linuxfoundation.org>
+Subject: [PATCH 4.20 029/352] crypto: aes_ti - disable interrupts while accessing S-box
+Date:   Mon, 11 Feb 2019 15:14:16 +0100
+Message-Id: <20190211141848.192803545@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,146 +67,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b144b99fff69a5bc0d34c8e168bedb88c68ca23d ]
+[ Upstream commit 0a6a40c2a8c184a2fb467efacfb1cd338d719e0b ]
 
-By default, READ MAC on a Layer2 OSD device returns the adapter's
-burnt-in MAC address. Given the default scenario of many virtual devices
-on the same adapter, qeth can't make any use of this address and
-therefore skips the READ MAC call for this device type.
+In the "aes-fixed-time" AES implementation, disable interrupts while
+accessing the S-box, in order to make cache-timing attacks more
+difficult.  Previously it was possible for the CPU to be interrupted
+while the S-box was loaded into L1 cache, potentially evicting the
+cachelines and causing later table lookups to be time-variant.
 
-But in some configurations, the READ MAC command for a Layer2 OSD device
-actually returns a pre-provisioned, virtual MAC address. So enable the
-READ MAC code to detect this situation, and let the L2 subdriver
-call READ MAC for OSD devices.
+In tests I did on x86 and ARM, this doesn't affect performance
+significantly.  Responsiveness is potentially a concern, but interrupts
+are only disabled for a single AES block.
 
-This also removes the QETH_LAYER2_MAC_READ flag, which protects L2
-devices against calling READ MAC multiple times. Instead protect the
-whole call to qeth_l2_request_initial_mac().
+Note that even after this change, the implementation still isn't
+necessarily guaranteed to be constant-time; see
+https://cr.yp.to/antiforgery/cachetiming-20050414.pdf for a discussion
+of the many difficulties involved in writing truly constant-time AES
+software.  But it's valuable to make such attacks more difficult.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_core.h      |  1 -
- drivers/s390/net/qeth_core_main.c | 12 +++++++-----
- drivers/s390/net/qeth_core_mpc.h  | 25 +++++++++++++++----------
- drivers/s390/net/qeth_l2_main.c   | 10 ++++------
- 4 files changed, 26 insertions(+), 22 deletions(-)
+ crypto/Kconfig  |  3 ++-
+ crypto/aes_ti.c | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/s390/net/qeth_core.h b/drivers/s390/net/qeth_core.h
-index 04e294d1d16d..99af1a0a3314 100644
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -665,7 +665,6 @@ struct qeth_card_blkt {
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 05c91eb10ca1..4f24acac3d48 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -1006,7 +1006,8 @@ config CRYPTO_AES_TI
+ 	  8 for decryption), this implementation only uses just two S-boxes of
+ 	  256 bytes each, and attempts to eliminate data dependent latencies by
+ 	  prefetching the entire table into the cache at the start of each
+-	  block.
++	  block. Interrupts are also disabled to avoid races where cachelines
++	  are evicted when the CPU is interrupted to do something else.
  
- #define QETH_BROADCAST_WITH_ECHO    0x01
- #define QETH_BROADCAST_WITHOUT_ECHO 0x02
--#define QETH_LAYER2_MAC_READ	    0x01
- #define QETH_LAYER2_MAC_REGISTERED  0x02
- struct qeth_card_info {
- 	unsigned short unit_addr2;
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index 254065271867..0c9a5250dd93 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -4235,16 +4235,18 @@ static int qeth_setadpparms_change_macaddr_cb(struct qeth_card *card,
- 		struct qeth_reply *reply, unsigned long data)
- {
- 	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
-+	struct qeth_ipacmd_setadpparms *adp_cmd;
+ config CRYPTO_AES_586
+ 	tristate "AES cipher algorithms (i586)"
+diff --git a/crypto/aes_ti.c b/crypto/aes_ti.c
+index 03023b2290e8..1ff9785b30f5 100644
+--- a/crypto/aes_ti.c
++++ b/crypto/aes_ti.c
+@@ -269,6 +269,7 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	const u32 *rkp = ctx->key_enc + 4;
+ 	int rounds = 6 + ctx->key_length / 4;
+ 	u32 st0[4], st1[4];
++	unsigned long flags;
+ 	int round;
  
- 	QETH_CARD_TEXT(card, 4, "chgmaccb");
- 	if (qeth_setadpparms_inspect_rc(cmd))
- 		return 0;
+ 	st0[0] = ctx->key_enc[0] ^ get_unaligned_le32(in);
+@@ -276,6 +277,12 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	st0[2] = ctx->key_enc[2] ^ get_unaligned_le32(in + 8);
+ 	st0[3] = ctx->key_enc[3] ^ get_unaligned_le32(in + 12);
  
--	if (IS_LAYER3(card) || !(card->info.mac_bits & QETH_LAYER2_MAC_READ)) {
--		ether_addr_copy(card->dev->dev_addr,
--				cmd->data.setadapterparms.data.change_addr.addr);
--		card->info.mac_bits |= QETH_LAYER2_MAC_READ;
--	}
-+	adp_cmd = &cmd->data.setadapterparms;
-+	if (IS_LAYER2(card) && IS_OSD(card) && !IS_VM_NIC(card) &&
-+	    !(adp_cmd->hdr.flags & QETH_SETADP_FLAGS_VIRTUAL_MAC))
-+		return 0;
++	/*
++	 * Temporarily disable interrupts to avoid races where cachelines are
++	 * evicted when the CPU is interrupted to do something else.
++	 */
++	local_irq_save(flags);
 +
-+	ether_addr_copy(card->dev->dev_addr, adp_cmd->data.change_addr.addr);
- 	return 0;
+ 	st0[0] ^= __aesti_sbox[ 0] ^ __aesti_sbox[128];
+ 	st0[1] ^= __aesti_sbox[32] ^ __aesti_sbox[160];
+ 	st0[2] ^= __aesti_sbox[64] ^ __aesti_sbox[192];
+@@ -300,6 +307,8 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	put_unaligned_le32(subshift(st1, 1) ^ rkp[5], out + 4);
+ 	put_unaligned_le32(subshift(st1, 2) ^ rkp[6], out + 8);
+ 	put_unaligned_le32(subshift(st1, 3) ^ rkp[7], out + 12);
++
++	local_irq_restore(flags);
  }
  
-diff --git a/drivers/s390/net/qeth_core_mpc.h b/drivers/s390/net/qeth_core_mpc.h
-index 3e54be201b27..10cc487c16d6 100644
---- a/drivers/s390/net/qeth_core_mpc.h
-+++ b/drivers/s390/net/qeth_core_mpc.h
-@@ -80,7 +80,9 @@ enum qeth_card_types {
- };
+ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+@@ -308,6 +317,7 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	const u32 *rkp = ctx->key_dec + 4;
+ 	int rounds = 6 + ctx->key_length / 4;
+ 	u32 st0[4], st1[4];
++	unsigned long flags;
+ 	int round;
  
- #define IS_IQD(card)	((card)->info.type == QETH_CARD_TYPE_IQD)
-+#define IS_OSD(card)	((card)->info.type == QETH_CARD_TYPE_OSD)
- #define IS_OSN(card)	((card)->info.type == QETH_CARD_TYPE_OSN)
-+#define IS_VM_NIC(card)	((card)->info.guestlan)
+ 	st0[0] = ctx->key_dec[0] ^ get_unaligned_le32(in);
+@@ -315,6 +325,12 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	st0[2] = ctx->key_dec[2] ^ get_unaligned_le32(in + 8);
+ 	st0[3] = ctx->key_dec[3] ^ get_unaligned_le32(in + 12);
  
- #define QETH_MPC_DIFINFO_LEN_INDICATES_LINK_TYPE 0x18
- /* only the first two bytes are looked at in qeth_get_cardname_short */
-@@ -529,17 +531,20 @@ struct qeth_query_switch_attributes {
- 	__u8  reserved3[8];
- };
- 
-+#define QETH_SETADP_FLAGS_VIRTUAL_MAC	0x80	/* for CHANGE_ADDR_READ_MAC */
++	/*
++	 * Temporarily disable interrupts to avoid races where cachelines are
++	 * evicted when the CPU is interrupted to do something else.
++	 */
++	local_irq_save(flags);
 +
- struct qeth_ipacmd_setadpparms_hdr {
--	__u32 supp_hw_cmds;
--	__u32 reserved1;
--	__u16 cmdlength;
--	__u16 reserved2;
--	__u32 command_code;
--	__u16 return_code;
--	__u8  used_total;
--	__u8  seq_no;
--	__u32 reserved3;
--} __attribute__ ((packed));
-+	u32 supp_hw_cmds;
-+	u32 reserved1;
-+	u16 cmdlength;
-+	u16 reserved2;
-+	u32 command_code;
-+	u16 return_code;
-+	u8 used_total;
-+	u8 seq_no;
-+	u8 flags;
-+	u8 reserved3[3];
-+};
+ 	st0[0] ^= __aesti_inv_sbox[ 0] ^ __aesti_inv_sbox[128];
+ 	st0[1] ^= __aesti_inv_sbox[32] ^ __aesti_inv_sbox[160];
+ 	st0[2] ^= __aesti_inv_sbox[64] ^ __aesti_inv_sbox[192];
+@@ -339,6 +355,8 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	put_unaligned_le32(inv_subshift(st1, 1) ^ rkp[5], out + 4);
+ 	put_unaligned_le32(inv_subshift(st1, 2) ^ rkp[6], out + 8);
+ 	put_unaligned_le32(inv_subshift(st1, 3) ^ rkp[7], out + 12);
++
++	local_irq_restore(flags);
+ }
  
- struct qeth_ipacmd_setadpparms {
- 	struct qeth_ipacmd_setadpparms_hdr hdr;
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index 2914a1a69f83..8d3601891c62 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -461,12 +461,9 @@ static int qeth_l2_request_initial_mac(struct qeth_card *card)
- 		/* fall back to alternative mechanism: */
- 	}
- 
--	if (card->info.type == QETH_CARD_TYPE_IQD ||
--	    card->info.type == QETH_CARD_TYPE_OSM ||
--	    card->info.type == QETH_CARD_TYPE_OSX ||
--	    card->info.guestlan) {
-+	if (!IS_OSN(card)) {
- 		rc = qeth_setadpparms_change_macaddr(card);
--		if (!rc)
-+		if (!rc && is_valid_ether_addr(card->dev->dev_addr))
- 			goto out;
- 		QETH_DBF_MESSAGE(2, "READ_MAC Assist failed on device %x: %#x\n",
- 				 CARD_DEVID(card), rc);
-@@ -917,7 +914,8 @@ static int qeth_l2_setup_netdev(struct qeth_card *card, bool carrier_ok)
- 				       PAGE_SIZE * (QDIO_MAX_ELEMENTS_PER_BUFFER - 1));
- 	}
- 
--	qeth_l2_request_initial_mac(card);
-+	if (!is_valid_ether_addr(card->dev->dev_addr))
-+		qeth_l2_request_initial_mac(card);
- 	netif_napi_add(card->dev, &card->napi, qeth_poll, QETH_NAPI_WEIGHT);
- 	rc = register_netdev(card->dev);
- 	if (!rc && carrier_ok)
+ static struct crypto_alg aes_alg = {
 -- 
 2.19.1
 
