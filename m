@@ -2,95 +2,156 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73841C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA35C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC6020643
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 776E2218A4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 17:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbfBKRst (ORCPT
+        id S1729643AbfBKRuw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:48:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44364 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729117AbfBKRss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:48:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83649B11E;
-        Mon, 11 Feb 2019 17:48:47 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 857B41E09A8; Mon, 11 Feb 2019 18:48:46 +0100 (CET)
-Date:   Mon, 11 Feb 2019 18:48:46 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Linux Upstream <linux.upstream@oneplus.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Chintan Pandya <chintan.pandya@oneplus.com>,
-        "hughd@google.com" <hughd@google.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "mawilcox@microsoft.com" <mawilcox@microsoft.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [RFC 1/2] page-flags: Make page lock operation atomic
-Message-ID: <20190211174846.GM19029@quack2.suse.cz>
-References: <20190211125337.16099-1-chintan.pandya@oneplus.com>
- <20190211125337.16099-2-chintan.pandya@oneplus.com>
- <20190211134607.GA32511@hirez.programming.kicks-ass.net>
- <364c7595-14f5-7160-d076-35a14c90375a@oneplus.com>
+        Mon, 11 Feb 2019 12:50:52 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54958 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbfBKRuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 12:50:52 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CBD7EBD;
+        Mon, 11 Feb 2019 09:50:51 -0800 (PST)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EA2C33F675;
+        Mon, 11 Feb 2019 09:50:49 -0800 (PST)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        osalvador@suse.de
+Subject: [PATCH v2] mm/memory-hotplug: Add sysfs hot-remove trigger
+Date:   Mon, 11 Feb 2019 17:50:46 +0000
+Message-Id: <49ef5e6c12f5ede189419d4dcced5dc04957c34d.1549906631.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.20.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <364c7595-14f5-7160-d076-35a14c90375a@oneplus.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 11-02-19 13:59:24, Linux Upstream wrote:
-> > 
-> >> Signed-off-by: Chintan Pandya <chintan.pandya@oneplus.com>
-> > 
-> > NAK.
-> > 
-> > This is bound to regress some stuff. Now agreed that using non-atomic
-> > ops is tricky, but many are in places where we 'know' there can't be
-> > concurrency.
-> > 
-> > If you can show any single one is wrong, we can fix that one, but we're
-> > not going to blanket remove all this just because.
-> 
-> Not quite familiar with below stack but from crash dump, found that this
-> was another stack running on some other CPU at the same time which also
-> updates page cache lru and manipulate locks.
-> 
-> [84415.344577] [20190123_21:27:50.786264]@1 preempt_count_add+0xdc/0x184
-> [84415.344588] [20190123_21:27:50.786276]@1 workingset_refault+0xdc/0x268
-> [84415.344600] [20190123_21:27:50.786288]@1 add_to_page_cache_lru+0x84/0x11c
-> [84415.344612] [20190123_21:27:50.786301]@1 ext4_mpage_readpages+0x178/0x714
-> [84415.344625] [20190123_21:27:50.786313]@1 ext4_readpages+0x50/0x60
-> [84415.344636] [20190123_21:27:50.786324]@1 
-> __do_page_cache_readahead+0x16c/0x280
-> [84415.344646] [20190123_21:27:50.786334]@1 filemap_fault+0x41c/0x588
-> [84415.344655] [20190123_21:27:50.786343]@1 ext4_filemap_fault+0x34/0x50
-> [84415.344664] [20190123_21:27:50.786353]@1 __do_fault+0x28/0x88
-> 
-> Not entirely sure if it's racing with the crashing stack or it's simply
-> overrides the the bit set by case 2 (mentioned in 0/2).
+ARCH_MEMORY_PROBE is a useful thing for testing and debugging hotplug,
+but being able to exercise the (arguably trickier) hot-remove path would
+be even more useful. Extend the feature to allow removal of offline
+sections to be triggered manually to aid development.
 
-So this is interesting. Looking at __add_to_page_cache_locked() nothing
-seems to prevent __SetPageLocked(page) in add_to_page_cache_lru() to get
-reordered into __add_to_page_cache_locked() after page is actually added to
-the xarray. So that one particular instance might benefit from atomic
-SetPageLocked or a barrier somewhere between __SetPageLocked() and the
-actual addition of entry into the xarray.
+Since process dictates the new sysfs entry be documented, let's also
+document the existing probe entry to match - better 13-and-a-half years
+late than never, as they say...
 
-								Honza
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+
+v2: Use is_memblock_offlined() helper, write up documentation
+
+ .../ABI/testing/sysfs-devices-memory          | 25 +++++++++++
+ drivers/base/memory.c                         | 42 ++++++++++++++++++-
+ 2 files changed, 66 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
+index deef3b5723cf..02a4250964e0 100644
+--- a/Documentation/ABI/testing/sysfs-devices-memory
++++ b/Documentation/ABI/testing/sysfs-devices-memory
+@@ -91,3 +91,28 @@ Description:
+ 		memory section directory.  For example, the following symbolic
+ 		link is created for memory section 9 on node0.
+ 		/sys/devices/system/node/node0/memory9 -> ../../memory/memory9
++
++What:		/sys/devices/system/memory/probe
++Date:		October 2005
++Contact:	Linux Memory Management list <linux-mm@kvack.org>
++Description:
++		The file /sys/devices/system/memory/probe is write-only, and
++		when written will simulate a physical hot-add of a memory
++		section at the given address. For example, assuming a section
++		of unused memory exists at physical address 0x80000000, it can
++		be introduced to the kernel with the following command:
++		# echo 0x80000000 > /sys/devices/system/memory/probe
++Users:		Memory hotplug testing and development
++
++What:		/sys/devices/system/memory/memoryX/remove
++Date:		February 2019
++Contact:	Linux Memory Management list <linux-mm@kvack.org>
++Description:
++		The file /sys/devices/system/memory/memoryX/remove is
++		write-only, and when written with a boolean 'true' value will
++		simulate a physical hot-remove of that memory section. For
++		example, assuming a 1GB section size, the section added by the
++		above "probe" example could be removed again with the following
++		command:
++		# echo 1 > /sys/devices/system/memory/memory2/remove
++Users:		Memory hotplug testing and development
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index 048cbf7d5233..1ba9d1a6ba5e 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -521,7 +521,44 @@ static ssize_t probe_store(struct device *dev, struct device_attribute *attr,
+ }
+ 
+ static DEVICE_ATTR_WO(probe);
+-#endif
++
++#ifdef CONFIG_MEMORY_HOTREMOVE
++static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
++			    const char *buf, size_t count)
++{
++	struct memory_block *mem = to_memory_block(dev);
++	unsigned long start_pfn = section_nr_to_pfn(mem->start_section_nr);
++	bool remove;
++	int ret;
++
++	ret = kstrtobool(buf, &remove);
++	if (ret)
++		return ret;
++	if (!remove)
++		return count;
++
++	if (!is_memblock_offlined(mem))
++		return -EBUSY;
++
++	ret = lock_device_hotplug_sysfs();
++	if (ret)
++		return ret;
++
++	if (device_remove_file_self(dev, attr)) {
++		__remove_memory(pfn_to_nid(start_pfn), PFN_PHYS(start_pfn),
++				MIN_MEMORY_BLOCK_SIZE * sections_per_block);
++		ret = count;
++	} else {
++		ret = -EBUSY;
++	}
++
++	unlock_device_hotplug();
++	return ret;
++}
++
++static DEVICE_ATTR_WO(remove);
++#endif /* CONFIG_MEMORY_HOTREMOVE */
++#endif /* CONFIG_ARCH_MEMORY_PROBE */
+ 
+ #ifdef CONFIG_MEMORY_FAILURE
+ /*
+@@ -615,6 +652,9 @@ static struct attribute *memory_memblk_attrs[] = {
+ 	&dev_attr_removable.attr,
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+ 	&dev_attr_valid_zones.attr,
++#ifdef CONFIG_ARCH_MEMORY_PROBE
++	&dev_attr_remove.attr,
++#endif
+ #endif
+ 	NULL
+ };
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1.dirty
+
