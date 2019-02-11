@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE28C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3527FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2AC20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDE8020838
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895268;
-	bh=cVWs3dzqpzD0TytiUjV1qj1k8bV8pxkjOb0ykI+ErwA=;
+	s=default; t=1549895274;
+	bh=502a19g9IK9JWaDzl6IvBiOc7o08w2RGXYB//rZEfPU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2io1KV2apQ/AFPEVjDEuiCN3K4qEldZJ5lMkQSoazCuFXgD31/I4KQQwgeqyf1b//
-	 3htTUM2la4kuftZnFBFIvl6AmPwcgK5dkCjHNH36GYdELJMIdD6sbH3w/PlCdBOJdt
-	 U+buAwvp3+9OnwxS9eTKqgZfUA3/M6PSssqO96t4=
+	b=sq1+XQj1Fdc3QiXOX/sCv7I46cYnm4dytglDObs8lYKz75fUSs4rMqIAFRnUSIrER
+	 OpQGIPTCq/7e23sl9PM74UDE+RUhVypNCYDQF34QfeQd8DQ8/pfy1SqaNZA2waPAiY
+	 J6LYCOrS5RN3J1vu/JIWVXCfp4PkI9jk3fvm651I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbfBKO1r (ORCPT
+        id S1729782AbfBKO1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:27:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33598 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:27:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729760AbfBKO1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:27:43 -0500
+        id S1729768AbfBKO1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:27:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4102075C;
-        Mon, 11 Feb 2019 14:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3FB220821;
+        Mon, 11 Feb 2019 14:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895263;
-        bh=cVWs3dzqpzD0TytiUjV1qj1k8bV8pxkjOb0ykI+ErwA=;
+        s=default; t=1549895266;
+        bh=502a19g9IK9JWaDzl6IvBiOc7o08w2RGXYB//rZEfPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vCU4lts1A7J7k80MmC+iuAg/2QBUvIKqKKoD4mj5fo0yV26fuvIHXnWcPfkItgXsT
-         owNTAIa6+U5Nsv0IXM77bWc3/jk9bcwOdfMNMYHvp7EWirBUW/bgc0+kZw2td3RvDn
-         rMWwsdrMZMp03WIrtqeUaU9WBCYRoQqKuqgY8Dqs=
+        b=W5pewPG3jMT3cD1TmQgoI0BiGmsB83VRbpKBNW/Qhd3SbBccKeiaMgJocOp+M2JUU
+         bJlGaLNIcyPBDadMiBgQi5BGK+/4DrlNYivBpDFWNRV9YHV+u09Pe5rf+Px507TZIy
+         UuM7MxYSd6ubjpyJA1RS1XO2B7WsWQ6YQ2NRBFoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 117/352] media: imx274: select REGMAP_I2C
-Date:   Mon, 11 Feb 2019 15:15:44 +0100
-Message-Id: <20190211141853.355163958@linuxfoundation.org>
+Subject: [PATCH 4.20 118/352] mac80211: fix deauth TX when we disconnect
+Date:   Mon, 11 Feb 2019 15:15:45 +0100
+Message-Id: <20190211141853.485867340@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,41 +67,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4f9d7225c70dd9d3f406b79e60f8dbd2cd5ae743 ]
+[ Upstream commit f6c7f03f69f7422bc237bc79599e152d390b74e0 ]
 
-The imx274 driver uses regmap and the build will fail without it.
+The iTXQs stop/wake queue mechanism involves a whole bunch
+of locks and this is probably why the call to
+ieee80211_wake_txqs is deferred to a tasklet when called from
+__ieee80211_wake_queue.
 
-Fixes:
+Another advantage of that is that ieee80211_wake_txqs might
+call the wake_tx_queue() callback and then the driver may
+call mac80211 which will call it back in the same context.
 
-  drivers/media/i2c/imx274.c:142:21: error: variable ‘imx274_regmap_config’ has initializer but incomplete type
-   static const struct regmap_config imx274_regmap_config = {
-                       ^~~~~~~~~~~~~
-  drivers/media/i2c/imx274.c:1869:19: error: implicit declaration of function ‘devm_regmap_init_i2c’ [-Werror=implicit-function-declaration]
-    imx274->regmap = devm_regmap_init_i2c(client, &imx274_regmap_config);
-                     ^~~~~~~~~~~~~~~~~~~~
+The bug I saw is that when we send a deauth frame as a
+station we do:
 
-and others.
+flush(drop=1)
+tx deauth
+flush(drop=0)
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+While we flush we stop the queues and wake them up
+immediately after we finished flushing. The problem here is
+that the tasklet that de-facto enables the queue may not have
+run until we send the deauth. Then the deauth frame is sent
+to the driver (which is surprising by itself), but the driver
+won't get anything useful from ieee80211_tx_dequeue because
+the queue is stopped (or more precisely because
+vif->txqs_stopped[0] is true).
+Then the deauth is not sent. Later on, the tasklet will run,
+but that'll be too late. We'll already have removed all the
+vif etc...
+
+Fix this by calling ieee80211_wake_txqs synchronously if we
+are not waking up the queues from the driver (we check the
+reason to determine that). This makes the code really
+convoluted because we may call ieee80211_wake_txqs from
+__ieee80211_wake_queue. The latter assumes that
+queue_stop_reason_lock has been taken by the caller and
+ieee80211_wake_txqs may release the lock to send the frames.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/util.c | 49 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 35 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index f4714bd6fef0..421e2fd2481d 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -611,6 +611,7 @@ config VIDEO_IMX274
- 	tristate "Sony IMX274 sensor support"
- 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
- 	depends on MEDIA_CAMERA_SUPPORT
-+	select REGMAP_I2C
- 	---help---
- 	  This is a V4L2 sensor driver for the Sony IMX274
- 	  CMOS image sensor.
+diff --git a/net/mac80211/util.c b/net/mac80211/util.c
+index bec424316ea4..dddfff7cf44f 100644
+--- a/net/mac80211/util.c
++++ b/net/mac80211/util.c
+@@ -299,16 +299,16 @@ out:
+ 	spin_unlock_bh(&fq->lock);
+ }
+ 
+-void ieee80211_wake_txqs(unsigned long data)
++static void
++__releases(&local->queue_stop_reason_lock)
++__acquires(&local->queue_stop_reason_lock)
++_ieee80211_wake_txqs(struct ieee80211_local *local, unsigned long *flags)
+ {
+-	struct ieee80211_local *local = (struct ieee80211_local *)data;
+ 	struct ieee80211_sub_if_data *sdata;
+ 	int n_acs = IEEE80211_NUM_ACS;
+-	unsigned long flags;
+ 	int i;
+ 
+ 	rcu_read_lock();
+-	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
+ 
+ 	if (local->hw.queues < IEEE80211_NUM_ACS)
+ 		n_acs = 1;
+@@ -317,7 +317,7 @@ void ieee80211_wake_txqs(unsigned long data)
+ 		if (local->queue_stop_reasons[i])
+ 			continue;
+ 
+-		spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
++		spin_unlock_irqrestore(&local->queue_stop_reason_lock, *flags);
+ 		list_for_each_entry_rcu(sdata, &local->interfaces, list) {
+ 			int ac;
+ 
+@@ -329,13 +329,22 @@ void ieee80211_wake_txqs(unsigned long data)
+ 					__ieee80211_wake_txqs(sdata, ac);
+ 			}
+ 		}
+-		spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
++		spin_lock_irqsave(&local->queue_stop_reason_lock, *flags);
+ 	}
+ 
+-	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ 	rcu_read_unlock();
+ }
+ 
++void ieee80211_wake_txqs(unsigned long data)
++{
++	struct ieee80211_local *local = (struct ieee80211_local *)data;
++	unsigned long flags;
++
++	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
++	_ieee80211_wake_txqs(local, &flags);
++	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
++}
++
+ void ieee80211_propagate_queue_wake(struct ieee80211_local *local, int queue)
+ {
+ 	struct ieee80211_sub_if_data *sdata;
+@@ -371,7 +380,8 @@ void ieee80211_propagate_queue_wake(struct ieee80211_local *local, int queue)
+ 
+ static void __ieee80211_wake_queue(struct ieee80211_hw *hw, int queue,
+ 				   enum queue_stop_reason reason,
+-				   bool refcounted)
++				   bool refcounted,
++				   unsigned long *flags)
+ {
+ 	struct ieee80211_local *local = hw_to_local(hw);
+ 
+@@ -405,8 +415,19 @@ static void __ieee80211_wake_queue(struct ieee80211_hw *hw, int queue,
+ 	} else
+ 		tasklet_schedule(&local->tx_pending_tasklet);
+ 
+-	if (local->ops->wake_tx_queue)
+-		tasklet_schedule(&local->wake_txqs_tasklet);
++	/*
++	 * Calling _ieee80211_wake_txqs here can be a problem because it may
++	 * release queue_stop_reason_lock which has been taken by
++	 * __ieee80211_wake_queue's caller. It is certainly not very nice to
++	 * release someone's lock, but it is fine because all the callers of
++	 * __ieee80211_wake_queue call it right before releasing the lock.
++	 */
++	if (local->ops->wake_tx_queue) {
++		if (reason == IEEE80211_QUEUE_STOP_REASON_DRIVER)
++			tasklet_schedule(&local->wake_txqs_tasklet);
++		else
++			_ieee80211_wake_txqs(local, flags);
++	}
+ }
+ 
+ void ieee80211_wake_queue_by_reason(struct ieee80211_hw *hw, int queue,
+@@ -417,7 +438,7 @@ void ieee80211_wake_queue_by_reason(struct ieee80211_hw *hw, int queue,
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
+-	__ieee80211_wake_queue(hw, queue, reason, refcounted);
++	__ieee80211_wake_queue(hw, queue, reason, refcounted, &flags);
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
+ 
+@@ -514,7 +535,7 @@ void ieee80211_add_pending_skb(struct ieee80211_local *local,
+ 			       false);
+ 	__skb_queue_tail(&local->pending[queue], skb);
+ 	__ieee80211_wake_queue(hw, queue, IEEE80211_QUEUE_STOP_REASON_SKB_ADD,
+-			       false);
++			       false, &flags);
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
+ 
+@@ -547,7 +568,7 @@ void ieee80211_add_pending_skbs(struct ieee80211_local *local,
+ 	for (i = 0; i < hw->queues; i++)
+ 		__ieee80211_wake_queue(hw, i,
+ 			IEEE80211_QUEUE_STOP_REASON_SKB_ADD,
+-			false);
++			false, &flags);
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
+ 
+@@ -605,7 +626,7 @@ void ieee80211_wake_queues_by_reason(struct ieee80211_hw *hw,
+ 	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
+ 
+ 	for_each_set_bit(i, &queues, hw->queues)
+-		__ieee80211_wake_queue(hw, i, reason, refcounted);
++		__ieee80211_wake_queue(hw, i, reason, refcounted, &flags);
+ 
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
 -- 
 2.19.1
 
