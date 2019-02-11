@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2EDC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF59BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE989222B5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96D9F222A1
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894982;
-	bh=/aJYqEK7Ddefz7S1Zp1r9lNu8IT7KlrBIm+E7KCLb0w=;
+	s=default; t=1549894986;
+	bh=bGWQvt2vJHuXOPBWevXYSK3eq8xODly7B/b5Amv0adE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vo0/HwIp3lm0t12K+j4N9bqCqa2ulGyN3cpU0JlyyGd/Sm2qIpOjYSGJcnPXwx03R
-	 xPkpbTPWnKhaA4wnrE64QMG3aK6PQwLWT1TJLPQkRD81d9i1gS3lg59WKFZzNGt8sd
-	 0+Z2jedgXxY7x5t5H3OAECxo3M1RSj31DLUQF7so=
+	b=xtmrVc7VPzcI9UvrBAfWqQVCs84sAUFSF6iPjMao7yb3VuYf2FALZTOBf1Nz70AQ0
+	 dLE0qkzQasvz5k0UEIQdUA6a5x7tJF0tr5sGaMTCXmunnJlShRQXVUs33te8nwYGDB
+	 Dt9VOozSlpFx8w5p+DByy4LFLklTCjy+4uTiaLGE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbfBKOXA (ORCPT
+        id S1728927AbfBKOXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:23:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55902 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:23:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728887AbfBKOW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:22:56 -0500
+        id S1728887AbfBKOXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:23:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32BFE20838;
-        Mon, 11 Feb 2019 14:22:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B92920838;
+        Mon, 11 Feb 2019 14:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894974;
-        bh=/aJYqEK7Ddefz7S1Zp1r9lNu8IT7KlrBIm+E7KCLb0w=;
+        s=default; t=1549894980;
+        bh=bGWQvt2vJHuXOPBWevXYSK3eq8xODly7B/b5Amv0adE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFC7/YCcbexGIx5iK3b9MT46UIsvwsNnROnTVO0onCLdd6rN2ih0MJzBDOhQWbScw
-         yImDgSZzbcqMyU/fTG7TlIfLPSL8STVT86ApVP9sJGiF5mdNbV+HwbIk9p8QuKWQoa
-         frQvqifbZNtUUKq44FOYo3DNFdDAm5RIBRB2tWBg=
+        b=HAjL8bOG4BVPsbFmDTDU4VI9neO8NSbh2U2HN2v44EUZFwStN2fk6ju4P2JVB4QXG
+         ugc4rro1kAP6LBfXkZ6TgNhLZ3e9PXTogieF0OJBrwfsYsrQgPRasUa4Q/aV4IyOwC
+         NRMT7vSfNxEZ88NunDe7a+3phJwur1caM3ee3A2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        stable@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>,
+        John Garry <john.garry@huawei.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 020/352] scsi: mpt3sas: Call sas_remove_host before removing the target devices
-Date:   Mon, 11 Feb 2019 15:14:07 +0100
-Message-Id: <20190211141847.651690005@linuxfoundation.org>
+Subject: [PATCH 4.20 044/352] scsi: hisi_sas: change the time of SAS SSP connection
+Date:   Mon, 11 Feb 2019 15:14:31 +0100
+Message-Id: <20190211141849.105817332@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -69,69 +67,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit dc730212e8a378763cb182b889f90c8101331332 ]
+[ Upstream commit 15bc43f31a074076f114e0b87931e3b220b7bff1 ]
 
-Call sas_remove_host() before removing the target devices in the driver's
-.remove() callback function(i.e. during driver unload time).  So that
-driver can provide a way to allow SYNC CACHE, START STOP unit commands
-etc. (which are issued from SML) to the target drives during driver unload
-time.
+Currently the time of SAS SSP connection is 1ms, which means the link
+connection will fail if no IO response after this period.
 
-Once sas_remove_host() is called before removing the target drives then
-driver can just clean up the resources allocated for target devices and no
-need to call sas_port_delete_phy(), sas_port_delete() API's as these API's
-internally called from sas_remove_host().
+For some disks handling large IO (such as 512k), 1ms is not enough, so
+change it to 5ms.
 
-Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c     | 2 +-
- drivers/scsi/mpt3sas/mpt3sas_transport.c | 7 +++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 03c52847ed07..adac18ba84d4 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -9641,6 +9641,7 @@ static void scsih_remove(struct pci_dev *pdev)
- 
- 	/* release all the volumes */
- 	_scsih_ir_shutdown(ioc);
-+	sas_remove_host(shost);
- 	list_for_each_entry_safe(raid_device, next, &ioc->raid_device_list,
- 	    list) {
- 		if (raid_device->starget) {
-@@ -9682,7 +9683,6 @@ static void scsih_remove(struct pci_dev *pdev)
- 		ioc->sas_hba.num_phys = 0;
- 	}
- 
--	sas_remove_host(shost);
- 	mpt3sas_base_detach(ioc);
- 	spin_lock(&gioc_lock);
- 	list_del(&ioc->list);
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-index 6a8a3c09b4b1..8338b4db0e31 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-@@ -821,10 +821,13 @@ mpt3sas_transport_port_remove(struct MPT3SAS_ADAPTER *ioc, u64 sas_address,
- 			    mpt3sas_port->remote_identify.sas_address,
- 			    mpt3sas_phy->phy_id);
- 		mpt3sas_phy->phy_belongs_to_port = 0;
--		sas_port_delete_phy(mpt3sas_port->port, mpt3sas_phy->phy);
-+		if (!ioc->remove_host)
-+			sas_port_delete_phy(mpt3sas_port->port,
-+						mpt3sas_phy->phy);
- 		list_del(&mpt3sas_phy->port_siblings);
- 	}
--	sas_port_delete(mpt3sas_port->port);
-+	if (!ioc->remove_host)
-+		sas_port_delete(mpt3sas_port->port);
- 	kfree(mpt3sas_port);
- }
- 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index a369450a1fa7..c3e0be90e19f 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -494,7 +494,7 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
+ 		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_OOB_RESTART_MSK, 0x1);
+ 		hisi_sas_phy_write32(hisi_hba, i, STP_LINK_TIMER, 0x7f7a120);
+ 		hisi_sas_phy_write32(hisi_hba, i, CON_CFG_DRIVER, 0x2a0a01);
+-
++		hisi_sas_phy_write32(hisi_hba, i, SAS_SSP_CON_TIMER_CFG, 0x32);
+ 		/* used for 12G negotiate */
+ 		hisi_sas_phy_write32(hisi_hba, i, COARSETUNE_TIME, 0x1e);
+ 		hisi_sas_phy_write32(hisi_hba, i, AIP_LIMIT, 0x2ffff);
 -- 
 2.19.1
 
