@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629E4C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13A9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350C520844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A10EC21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895877;
-	bh=rTZyOjF9oNR4eKI2T/jpdjn7bgB3Jr+t9HIM2qEBaYE=;
+	s=default; t=1549895881;
+	bh=MmmB28XzmAi//vcpfc0fO/vaPpBDyln/sNL+f939Omo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hXcdI+WVBHrP4Nuo0hoMOck8847tKTw5jm9q8ADSNhI2tL8zIqFLL1Rf6Tea5MhtB
-	 8h4dSx6DMzcpGRiKoVlwVQrk3CFfFOlwf8Htnx1sTfy38Ke4T4lv7crx8Oz/cFgmdr
-	 SugBvIS7MpRcPISXfpnUxFfc4PdeWd1e6rzCZiHc=
+	b=GdUEDQvGOm5lrsyPtG4LWMAvIFRKoPFGmyqrjowI7OZHZAZW3B/4cRizeCuK2Cu9/
+	 Ht1fwijllwD3gSG+kOsjMMFsQ6/Yx/dSwN42vydZTmv6GTiLcJtgBRO5PqTTXsSDXP
+	 EfSSey4MKId/WjlPlznqbZYMTb6Mph9zQPBvdXVk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbfBKOhz (ORCPT
+        id S1731575AbfBKOh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47370 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731538AbfBKOhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:51 -0500
+        id S1728985AbfBKOh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 325D62081B;
-        Mon, 11 Feb 2019 14:37:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30EB12081B;
+        Mon, 11 Feb 2019 14:37:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895870;
-        bh=rTZyOjF9oNR4eKI2T/jpdjn7bgB3Jr+t9HIM2qEBaYE=;
+        s=default; t=1549895876;
+        bh=MmmB28XzmAi//vcpfc0fO/vaPpBDyln/sNL+f939Omo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=udYAv77/MJebCdLxJWBYFRerYpgM2F9U1iLP7EKlkDuV6Gb/MQSy5WzC4DGL7SMe3
-         E86vIhOL5+h7shHU3aRi8Qy00xRiunjTrsgE3Z5MTaaLuR9ApcXZHIgBPZn/BeGMEl
-         3rK52lRdvDS0KNbmc/31f/ivDEJ7bbfqUIA4OTkg=
+        b=SRWrT/W2i0XW6c39jgW/8VR/lCBmLqQsRfI1ewL8gogHcdkED6ElJIlnUpyMOZQg1
+         FqY0nsfsOfdsbmTt8Rc2r5O/th48iW+TB+zjQ5CIZpad1M5i95t/whWXJz4Tki1xBa
+         1UN2tsDeZuRIG7GyBVZOt0aQtPORoEy1yvo2OZJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 4.20 351/352] cacheinfo: Keep the old value if of_property_read_u32 fails
-Date:   Mon, 11 Feb 2019 15:19:38 +0100
-Message-Id: <20190211141909.503574592@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Shier <pshier@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Felix Wilhelm <fwilhelm@google.com>, stable@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.20 341/352] KVM: nVMX: unconditionally cancel preemption timer in free_nested (CVE-2019-7221)
+Date:   Mon, 11 Feb 2019 15:19:28 +0100
+Message-Id: <20190211141908.896613740@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -65,47 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Peter Shier <pshier@google.com>
 
-commit 3a34c986324c07dde32903f7bb262e6138e77c2a upstream.
+commit ecec76885bcfe3294685dc363fd1273df0d5d65f upstream.
 
-Commit 448a5a552f336bd7b847b1951 ("drivers: base: cacheinfo: use OF
-property_read_u32 instead of get_property,read_number") makes cache
-size and number_of_sets be 0 if DT doesn't provide there values. I
-think this is unreasonable so make them keep the old values, which is
-the same as old kernels.
+Bugzilla: 1671904
 
-Fixes: 448a5a552f33 ("drivers: base: cacheinfo: use OF property_read_u32 instead of get_property,read_number")
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+There are multiple code paths where an hrtimer may have been started to
+emulate an L1 VMX preemption timer that can result in a call to free_nested
+without an intervening L2 exit where the hrtimer is normally
+cancelled. Unconditionally cancel in free_nested to cover all cases.
+
+Embargoed until Feb 7th 2019.
+
+Signed-off-by: Peter Shier <pshier@google.com>
+Reported-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Reported-by: Felix Wilhelm <fwilhelm@google.com>
+Cc: stable@kernel.org
+Message-Id: <20181011184646.154065-1-pshier@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/cacheinfo.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -79,8 +79,7 @@ static void cache_size(struct cacheinfo
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	propname = cache_type_info[ct_idx].size_prop;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8509,6 +8509,7 @@ static void free_nested(struct kvm_vcpu
+ 	if (!vmx->nested.vmxon && !vmx->nested.smm.vmxon)
+ 		return;
  
--	if (of_property_read_u32(np, propname, &this_leaf->size))
--		this_leaf->size = 0;
-+	of_property_read_u32(np, propname, &this_leaf->size);
- }
- 
- /* not cache_line_size() because that's a macro in include/linux/cache.h */
-@@ -114,8 +113,7 @@ static void cache_nr_sets(struct cachein
- 	ct_idx = get_cacheinfo_idx(this_leaf->type);
- 	propname = cache_type_info[ct_idx].nr_sets_prop;
- 
--	if (of_property_read_u32(np, propname, &this_leaf->number_of_sets))
--		this_leaf->number_of_sets = 0;
-+	of_property_read_u32(np, propname, &this_leaf->number_of_sets);
- }
- 
- static void cache_associativity(struct cacheinfo *this_leaf)
++	hrtimer_cancel(&vmx->nested.preemption_timer);
+ 	vmx->nested.vmxon = false;
+ 	vmx->nested.smm.vmxon = false;
+ 	free_vpid(vmx->nested.vpid02);
 
 
