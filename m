@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C0C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2324C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3441020700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 823C02081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895856;
-	bh=jRUwISIauTvwSHxdK4s5y0CaoC8URZ5leSdqrQACeh8=;
+	s=default; t=1549895858;
+	bh=rp6SeT7cAw2aFGUMNNoH7aaBxC7cm9kDAI+OYoaCCdk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sDRIW6rQLmm1Rm9eHyM7O7N+n8W7IUGNdzNQoTcW3pTNvq50horSNv/r0dnaVrPI7
-	 p/wywrqyFB7mTl+0V3w6Y+ZVD1Fw7GKQw3tx9LeO6rR02N302cy3ZgqtJ+yQhjrIQQ
-	 bTGaMFPntP9IpzyLfCXc5GOzAe+3IMCRAQyxdPFQ=
+	b=RE9UAlLPagpvLbyb9UsWxymF9DmL7Yt5azaQODjQJ2Lg1pc+alXctKvbilirgYiXx
+	 pTm1ITbKYpeXUj4eFOkR/D8LAkkvYDn8GXDCNr3lvUla2gOAv0oQdWmnLmEI48RhM6
+	 VvIdOoDr8I0kkkPTI/upKjfFFU9qjy5t+As3hwXs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731478AbfBKOhe (ORCPT
+        id S1731492AbfBKOhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:37:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46838 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:37:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731455AbfBKOh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:37:29 -0500
+        id S1730864AbfBKOhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:37:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73CFB2081B;
-        Mon, 11 Feb 2019 14:37:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF0B920700;
+        Mon, 11 Feb 2019 14:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895848;
-        bh=jRUwISIauTvwSHxdK4s5y0CaoC8URZ5leSdqrQACeh8=;
+        s=default; t=1549895852;
+        bh=rp6SeT7cAw2aFGUMNNoH7aaBxC7cm9kDAI+OYoaCCdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YlTHtwMs8WDHWmqeW2v98qoF+IaP60uKCIv8caspV/sJWTzbtIXtGdc+DFjv8E5L3
-         XG1vIKQLYhuhCTO4tZohhpUfMFjaz1jvi/MdpsS2g+gZkpGKK5WHnwIzmLpeocIihM
-         y+NbkO6jYmhgOzoTk1mcZ0zrBiO/NvjjFkLrqVXo=
+        b=wNXMknxgy4azwNjx6cLoLGhlryM5++DIh0F6NXrXDTsYusIC61dsWOQXuZZVjsq1R
+         5JBXdcltdRygp0d1I46VSLmKb1DcPeipuuBUMG8OuIFjbiMX/CtT5FKMyhOmcamIs1
+         63tTw9YJaw8xpFf/vP0VgT4V/3aS9ifbqXcF3Meo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.20 312/352] net/mlx5e: Force CHECKSUM_UNNECESSARY for short ethernet frames
-Date:   Mon, 11 Feb 2019 15:18:59 +0100
-Message-Id: <20190211141906.684824003@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        Allison Henderson <allison.henderson@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 4.20 313/352] xfs: eof trim writeback mapping as soon as it is cached
+Date:   Mon, 11 Feb 2019 15:19:00 +0100
+Message-Id: <20190211141906.755066751@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,63 +67,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Brian Foster <bfoster@redhat.com>
 
-[ Upstream commit e8c8b53ccaff568fef4c13a6ccaf08bf241aa01a ]
+commit aa6ee4ab69293969867ab09b57546d226ace3d7a upstream.
 
-When an ethernet frame is padded to meet the minimum ethernet frame
-size, the padding octets are not covered by the hardware checksum.
-Fortunately the padding octets are usually zero's, which don't affect
-checksum. However, we have a switch which pads non-zero octets, this
-causes kernel hardware checksum fault repeatedly.
+The cached writeback mapping is EOF trimmed to try and avoid races
+between post-eof block management and writeback that result in
+sending cached data to a stale location. The cached mapping is
+currently trimmed on the validation check, which leaves a race
+window between the time the mapping is cached and when it is trimmed
+against the current inode size.
 
-Prior to:
-commit '88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE ...")'
-skb checksum was forced to be CHECKSUM_NONE when padding is detected.
-After it, we need to keep skb->csum updated, like what we do for RXFCS.
-However, fixing up CHECKSUM_COMPLETE requires to verify and parse IP
-headers, it is not worthy the effort as the packets are so small that
-CHECKSUM_COMPLETE can't save anything.
+For example, if a new mapping is cached by delalloc conversion on a
+blocksize == page size fs, we could cycle various locks, perform
+memory allocations, etc.  in the writeback codepath before the
+associated mapping is eventually trimmed to i_size. This leaves
+enough time for a post-eof truncate and file append before the
+cached mapping is trimmed. The former event essentially invalidates
+a range of the cached mapping and the latter bumps the inode size
+such the trim on the next writepage event won't trim all of the
+invalid blocks. fstest generic/464 reproduces this scenario
+occasionally and causes a lost writeback and stale delalloc blocks
+warning on inode inactivation.
 
-Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"),
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Cc: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+To work around this problem, trim the cached writeback mapping as
+soon as it is cached in addition to on subsequent validation checks.
+This is a minor tweak to tighten the race window as much as possible
+until a proper invalidation mechanism is available.
+
+Fixes: 40214d128e07 ("xfs: trim writepage mapping to within eof")
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -732,6 +732,8 @@ static u8 get_ip_proto(struct sk_buff *s
- 					    ((struct ipv6hdr *)ip_p)->nexthdr;
+---
+ fs/xfs/xfs_aops.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -449,6 +449,7 @@ xfs_map_blocks(
+ 	}
+ 
+ 	wpc->imap = imap;
++	xfs_trim_extent_eof(&wpc->imap, ip);
+ 	trace_xfs_map_blocks_found(ip, offset, count, wpc->io_type, &imap);
+ 	return 0;
+ allocate_blocks:
+@@ -459,6 +460,7 @@ allocate_blocks:
+ 	ASSERT(whichfork == XFS_COW_FORK || cow_fsb == NULLFILEOFF ||
+ 	       imap.br_startoff + imap.br_blockcount <= cow_fsb);
+ 	wpc->imap = imap;
++	xfs_trim_extent_eof(&wpc->imap, ip);
+ 	trace_xfs_map_blocks_alloc(ip, offset, count, wpc->io_type, &imap);
+ 	return 0;
  }
- 
-+#define short_frame(size) ((size) <= ETH_ZLEN + ETH_FCS_LEN)
-+
- static inline void mlx5e_handle_csum(struct net_device *netdev,
- 				     struct mlx5_cqe64 *cqe,
- 				     struct mlx5e_rq *rq,
-@@ -754,6 +756,17 @@ static inline void mlx5e_handle_csum(str
- 	if (unlikely(test_bit(MLX5E_RQ_STATE_NO_CSUM_COMPLETE, &rq->state)))
- 		goto csum_unnecessary;
- 
-+	/* CQE csum doesn't cover padding octets in short ethernet
-+	 * frames. And the pad field is appended prior to calculating
-+	 * and appending the FCS field.
-+	 *
-+	 * Detecting these padded frames requires to verify and parse
-+	 * IP headers, so we simply force all those small frames to be
-+	 * CHECKSUM_UNNECESSARY even if they are not padded.
-+	 */
-+	if (short_frame(skb->len))
-+		goto csum_unnecessary;
-+
- 	if (likely(is_last_ethertype_ip(skb, &network_depth, &proto))) {
- 		if (unlikely(get_ip_proto(skb, network_depth, proto) == IPPROTO_SCTP))
- 			goto csum_unnecessary;
 
 
