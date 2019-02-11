@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDC2C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AF2C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3A921A80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8D4218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GNBWlpyq"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qXjFd8K0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfBKNUZ (ORCPT
+        id S1727945AbfBKNUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:20:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57638 "EHLO
+        Mon, 11 Feb 2019 08:20:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57694 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbfBKNUW (ORCPT
+        with ESMTP id S1727905AbfBKNUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:20:22 -0500
+        Mon, 11 Feb 2019 08:20:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=O5KJ8GRlbczaBVxGOYcgqpq+hGPfEepfpWMZvixHPpI=; b=GNBWlpyqDZh4WYYyzdnliIiRWx
-        Y/XwAPdjH/WsqFcrTMxEJaXS3hZXteuzwcWCNq5bDOr6ElX1ZyPBcihloe4QADoSKx/FsqON2W82H
-        lrttDoKai5AX3+eGnaXIw2/dac3kkVvmVFOv8ovHd/0Dn2LgoHqp//oOAfV5IeREB3E9PVG26ZDMa
-        H3JwuFwa+9iMLlqvuDh2EHXrsw2YtKTLAnxZJdPP10w2ugSrae0YYrpRFfbYy8CufHqVfGeldzPFJ
-        HSTYxaXfeOZpms4R7jYHVKrMu4ykgkYEqLIYYF0qasN2bPQJ3PYmKP/LPrA8yKI0f7kasMQRoAh4A
-        6FnSRhFw==;
+        bh=ADQN8F5PCXYj+x0CbbvQvw4EJN+59pQQ+mq6k+aKmHg=; b=qXjFd8K0r4US2pdVgQVdDxYF6b
+        77+3Eg1ttL7HMBvVyRM0mgKWBZxRzyPUSZHboHGg9C9cGTVGgkxdF+FHY7oI7xz5iTNa7eF6usbhr
+        p+dHJnyWIhuSXsME1mt0aoMut5wVHIDoGCObKifRPJ/b99aWmsmSJQwYzlZUsFx1eaRzk0Y+CMHWc
+        WgFAgVqQyRL63jcUw4eoGk7a7YmNkSM6bLOd7zPUEeRdJhxDbgZsqZKMkKBWiNn88xyhB0Ra9huXn
+        5ugK5eA/mDrna/8CRhyc8MNKZckglDjVXYnOE5ZllwNAHCBBCAt055hEPzWctI721nAOwqdtLqZjq
+        3yHkbSyQ==;
 Received: from 089144210182.atnat0019.highway.a1.net ([89.144.210.182] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtBVV-0000GT-Mk; Mon, 11 Feb 2019 13:20:22 +0000
+        id 1gtBVd-0000Wp-CC; Mon, 11 Feb 2019 13:20:29 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] pxa168_eth: pass struct device to DMA API functions
-Date:   Mon, 11 Feb 2019 14:20:01 +0100
-Message-Id: <20190211132004.29143-6-hch@lst.de>
+Subject: [PATCH 8/8] smc911x: pass struct device to DMA API functions
+Date:   Mon, 11 Feb 2019 14:20:04 +0100
+Message-Id: <20190211132004.29143-9-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211132004.29143-1-hch@lst.de>
 References: <20190211132004.29143-1-hch@lst.de>
@@ -59,71 +59,38 @@ The DMA API generally relies on a struct device to work properly, and
 only barely works without one for legacy reasons.  Pass the easily
 available struct device from the platform_device to remedy this.
 
-Note that this driver seems to entirely lack dma_map_single error
-handling, but that is left for another time.
+Note that smc911x apparently is a PIO chip with an external DMA
+handshake, and we probably use the wrong device here.  But at least
+it matches the mapping side, which apparently works or at least
+worked in the not too distant past.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/net/ethernet/marvell/pxa168_eth.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/smsc/smc911x.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/pxa168_eth.c b/drivers/net/ethernet/marvell/pxa168_eth.c
-index f8a6d6e3cb7a..35f2142aac5e 100644
---- a/drivers/net/ethernet/marvell/pxa168_eth.c
-+++ b/drivers/net/ethernet/marvell/pxa168_eth.c
-@@ -201,6 +201,7 @@ struct tx_desc {
- };
+diff --git a/drivers/net/ethernet/smsc/smc911x.c b/drivers/net/ethernet/smsc/smc911x.c
+index 8355dfbb8ec3..b550e624500d 100644
+--- a/drivers/net/ethernet/smsc/smc911x.c
++++ b/drivers/net/ethernet/smsc/smc911x.c
+@@ -1188,7 +1188,7 @@ smc911x_tx_dma_irq(void *data)
  
- struct pxa168_eth_private {
-+	struct platform_device *pdev;
- 	int port_num;		/* User Ethernet port number    */
- 	int phy_addr;
- 	int phy_speed;
-@@ -331,7 +332,7 @@ static void rxq_refill(struct net_device *dev)
- 		used_rx_desc = pep->rx_used_desc_q;
- 		p_used_rx_desc = &pep->p_rx_desc_area[used_rx_desc];
- 		size = skb_end_pointer(skb) - skb->data;
--		p_used_rx_desc->buf_ptr = dma_map_single(NULL,
-+		p_used_rx_desc->buf_ptr = dma_map_single(&pep->pdev->dev,
- 							 skb->data,
- 							 size,
- 							 DMA_FROM_DEVICE);
-@@ -743,7 +744,7 @@ static int txq_reclaim(struct net_device *dev, int force)
- 				netdev_err(dev, "Error in TX\n");
- 			dev->stats.tx_errors++;
- 		}
--		dma_unmap_single(NULL, addr, count, DMA_TO_DEVICE);
-+		dma_unmap_single(&pep->pdev->dev, addr, count, DMA_TO_DEVICE);
- 		if (skb)
- 			dev_kfree_skb_irq(skb);
- 		released++;
-@@ -805,7 +806,7 @@ static int rxq_process(struct net_device *dev, int budget)
- 		if (rx_next_curr_desc == rx_used_desc)
- 			pep->rx_resource_err = 1;
- 		pep->rx_desc_count--;
--		dma_unmap_single(NULL, rx_desc->buf_ptr,
-+		dma_unmap_single(&pep->pdev->dev, rx_desc->buf_ptr,
- 				 rx_desc->buf_size,
- 				 DMA_FROM_DEVICE);
- 		received_packets++;
-@@ -1274,7 +1275,8 @@ pxa168_eth_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	length = skb->len;
- 	pep->tx_skb[tx_index] = skb;
- 	desc->byte_cnt = length;
--	desc->buf_ptr = dma_map_single(NULL, skb->data, length, DMA_TO_DEVICE);
-+	desc->buf_ptr = dma_map_single(&pep->pdev->dev, skb->data, length,
-+					DMA_TO_DEVICE);
+ 	DBG(SMC_DEBUG_TX | SMC_DEBUG_DMA, dev, "TX DMA irq handler\n");
+ 	BUG_ON(skb == NULL);
+-	dma_unmap_single(NULL, tx_dmabuf, tx_dmalen, DMA_TO_DEVICE);
++	dma_unmap_single(lp->dev, tx_dmabuf, tx_dmalen, DMA_TO_DEVICE);
+ 	netif_trans_update(dev);
+ 	dev_kfree_skb_irq(skb);
+ 	lp->current_tx_skb = NULL;
+@@ -1219,7 +1219,7 @@ smc911x_rx_dma_irq(void *data)
  
- 	skb_tx_timestamp(skb);
- 
-@@ -1528,6 +1530,7 @@ static int pxa168_eth_probe(struct platform_device *pdev)
- 	if (err)
- 		goto err_free_mdio;
- 
-+	pep->pdev = pdev;
- 	SET_NETDEV_DEV(dev, &pdev->dev);
- 	pxa168_init_hw(pep);
- 	err = register_netdev(dev);
+ 	DBG(SMC_DEBUG_FUNC, dev, "--> %s\n", __func__);
+ 	DBG(SMC_DEBUG_RX | SMC_DEBUG_DMA, dev, "RX DMA irq handler\n");
+-	dma_unmap_single(NULL, rx_dmabuf, rx_dmalen, DMA_FROM_DEVICE);
++	dma_unmap_single(lp->dev, rx_dmabuf, rx_dmalen, DMA_FROM_DEVICE);
+ 	BUG_ON(skb == NULL);
+ 	lp->current_rx_skb = NULL;
+ 	PRINT_PKT(skb->data, skb->len);
 -- 
 2.20.1
 
