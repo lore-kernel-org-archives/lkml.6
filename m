@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E63EC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8890BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECF42229E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B592229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896977;
-	bh=0Cg8m3HF8hJa+hXvfTD1QCZFTmI/PyGXFhhxCNn2KhE=;
+	s=default; t=1549896979;
+	bh=09K1wji6XboLq3nNqJhpm/awcQOGes5OUlcCjfs2ogA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rRStzUgLdtTwqxlyUhKvW9W90IAYhOcxp0ZMvpemOsHVvBlk9PgFEzTZUXIRmm0KJ
-	 53p+5+pup2Cf/LoP38UxkRVU0mal5zMMvMV1kZA7xmmPB54Upa3f35DI4f/7qoJuzR
-	 KokA8zWL4tTbu3P8OoNO/S8w0UbPIkNhGtww5YI4=
+	b=SOHxmgTREiq4FDXjHJMrMFm3D0wOEJrpnzBZi16fj1PECMOX6obzCAfzWKklkrVwy
+	 Gj64E0ml4m3S9XmNVx0bvh7B/KBEu08zb1UKRqkRohpVRf4xDQ08ovAJMibRX+Rer0
+	 ypaddwVlGF9cad/h38honBSXpmI60/zXHy3beVfU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389130AbfBKO4P (ORCPT
+        id S2389141AbfBKO4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:56:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43298 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:56:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387999AbfBKO4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:56:08 -0500
+        id S2388630AbfBKO4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:56:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93DB4222A6;
-        Mon, 11 Feb 2019 14:56:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FFB420700;
+        Mon, 11 Feb 2019 14:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896968;
-        bh=0Cg8m3HF8hJa+hXvfTD1QCZFTmI/PyGXFhhxCNn2KhE=;
+        s=default; t=1549896971;
+        bh=09K1wji6XboLq3nNqJhpm/awcQOGes5OUlcCjfs2ogA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=foe47IsAsVeAWEkBNmNklsWlRRfdyPcM5us8H3MW7dnRfJVzeA2Y/QUPF8UEQLrQc
-         PkBD7reMcPeycmNAdqIZpUYGbLX8QLetTCFI1mmvPVo4hyab+ePsKNHiTqg43C1xUu
-         cGtQkusIbaF8o781mdDlpXJB/73n8RsAaSJ/QrL4=
+        b=YG7gkfa5SZNPaD+XxP0ajMFs+nEsO3QSv+gb+KjfJ3vEAZRHTGsHPUnzsSghXWDRd
+         TivlTdTX27F3WcyG6eH+ObwCQlWFJc5P7lUUXLCBeKYp2tSmw511uwMggzLXFdKOGz
+         cSVvDcJOfDvCt0fOkm9OGRJXb/7wXsG/hZXKAgIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        linux-mips@linux-mips.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 020/205] MIPS: Boston: Disable EG20T prefetch
-Date:   Mon, 11 Feb 2019 15:16:58 +0100
-Message-Id: <20190211141828.462075576@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 047/205] arm64: io: Ensure calls to delay routines are ordered against prior readX()
+Date:   Mon, 11 Feb 2019 15:17:25 +0100
+Message-Id: <20190211141831.958423973@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -65,47 +68,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5ec17af7ead09701e23d2065e16db6ce4e137289 ]
+[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
 
-The Intel EG20T Platform Controller Hub used on the MIPS Boston
-development board supports prefetching memory to optimize DMA transfers.
-Unfortunately for unknown reasons this doesn't work well with some MIPS
-CPUs such as the P6600, particularly when using an I/O Coherence Unit
-(IOCU) to provide cache-coherent DMA. In these systems it is common for
-DMA data to be lost, resulting in broken access to EG20T devices such as
-the MMC or SATA controllers.
+A relatively standard idiom for ensuring that a pair of MMIO writes to a
+device arrive at that device with a specified minimum delay between them
+is as follows:
 
-Support for a DT property to configure the prefetching was added a while
-back by commit 549ce8f134bd ("misc: pch_phub: Read prefetch value from
-device tree if passed") but we never added the DT snippet to make use of
-it. Add that now in order to disable the prefetching & fix DMA on the
-affected systems.
+	writel_relaxed(42, dev_base + CTL1);
+	readl(dev_base + CTL1);
+	udelay(10);
+	writel_relaxed(42, dev_base + CTL2);
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21068/
-Cc: linux-mips@linux-mips.org
+the intention being that the read-back from the device will push the
+prior write to CTL1, and the udelay will hold up the write to CTL1 until
+at least 10us have elapsed.
+
+Unfortunately, on arm64 where the underlying delay loop is implemented
+as a read of the architected counter, the CPU does not guarantee
+ordering from the readl() to the delay loop and therefore the delay loop
+could in theory be speculated and not provide the desired interval
+between the two writes.
+
+Fix this in a similar manner to PowerPC by introducing a dummy control
+dependency on the output of readX() which, combined with the ISB in the
+read of the architected counter, guarantees that a subsequent delay loop
+can not be executed until the readX() has returned its result.
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/boot/dts/img/boston.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/arch/mips/boot/dts/img/boston.dts b/arch/mips/boot/dts/img/boston.dts
-index f7aad80c69ab..bebb0fa21369 100644
---- a/arch/mips/boot/dts/img/boston.dts
-+++ b/arch/mips/boot/dts/img/boston.dts
-@@ -141,6 +141,12 @@
- 				#size-cells = <2>;
- 				#interrupt-cells = <1>;
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 35b2e50f17fb..b2bc7dbc1fa6 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -106,7 +106,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+ }
  
-+				eg20t_phub@2,0,0 {
-+					compatible = "pci8086,8801";
-+					reg = <0x00020000 0 0 0 0>;
-+					intel,eg20t-prefetch = <0>;
-+				};
+ /* IO barriers */
+-#define __iormb()		rmb()
++#define __iormb(v)							\
++({									\
++	unsigned long tmp;						\
++									\
++	rmb();								\
++									\
++	/*								\
++	 * Create a dummy control dependency from the IO read to any	\
++	 * later instructions. This ensures that a subsequent call to	\
++	 * udelay() will be ordered due to the ISB in get_cycles().	\
++	 */								\
++	asm volatile("eor	%0, %1, %1\n"				\
++		     "cbnz	%0, ."					\
++		     : "=r" (tmp) : "r" (v) : "memory");		\
++})
 +
- 				eg20t_mac@2,0,1 {
- 					compatible = "pci8086,8802";
- 					reg = <0x00020100 0 0 0 0>;
+ #define __iowmb()		wmb()
+ 
+ #define mmiowb()		do { } while (0)
+@@ -131,10 +146,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+  * following Normal memory access. Writes are ordered relative to any prior
+  * Normal memory access.
+  */
+-#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+-#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+-#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
+-#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
++#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
++#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
++#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
++#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
+@@ -185,9 +200,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
+ /*
+  * io{read,write}{16,32,64}be() macros
+  */
+-#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
+-#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
+-#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
++#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
++#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
++#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
+ 
+ #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
+ #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
 -- 
 2.19.1
 
