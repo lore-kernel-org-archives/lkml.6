@@ -2,175 +2,126 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 400BCC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D0FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1316121B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549900524;
-	bh=4q8aZ79naB27YUEaCOnlfdVV1H7W5/a1FgtimEj+n+Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oBdXeeOYnxfAYL9AlB/xRSPlBuTJ+exhgbh7k72ol0Bb4q1MBKfAOhUT9eQJ9w39s
-	 D79IGRd2wPd6pcV4zUI2YOJnXyDUqYyRWfL7C+VMwvve6237vK9Xkyctg2mlnTMvUH
-	 FeQpSrx+KVqmWVMAEaNgIGZhZGrlD6ePZvx0q1+Y=
+	by mail.kernel.org (Postfix) with ESMTP id 6419021B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:55:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="2TFXZsd3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731520AbfBKPzW (ORCPT
+        id S1731708AbfBKPzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:55:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbfBKOfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:35:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAC92204EC;
-        Mon, 11 Feb 2019 14:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895708;
-        bh=4q8aZ79naB27YUEaCOnlfdVV1H7W5/a1FgtimEj+n+Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b3kAX3DDcAVv1v9WfJryTLJmNds65lecJOY/RyXu9PE8M9nHQf0FOh+MyH/tlKoLE
-         td3U+4dk2JRtFJ04VjSBGRyXsTSFCoAPs2IOkCqeQetSprQbHLGQ9oMdKmNr2G/n+F
-         dXTqs5GsQr9v3wA60wl7ywpAW6ciVB107TDlQqGg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 296/352] net: dsa: Fix lockdep false positive splat
-Date:   Mon, 11 Feb 2019 15:18:43 +0100
-Message-Id: <20190211141905.721438647@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
-References: <20190211141846.543045703@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 11 Feb 2019 10:55:32 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:37597 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730236AbfBKOfC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:02 -0500
+Received: by mail-yw1-f68.google.com with SMTP id k14so4255228ywe.4
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:35:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hj0MjswvEEpi6GUcA72y7SumBVEoA1u1KmXStbni5s8=;
+        b=2TFXZsd38q8t9ZoeodhurKIh7X92YNULkkeVe3drZ/Zi4m57s0KWI3UMxhmRUEAgef
+         iSKnqIgH5Qz8p4GfMeCUl6O3ApsKvWYIynVbWd570KzP/TlnxxuOHtJTZAvWBXqUMfiq
+         3L7jKBkyHL/4DK0NBa82UZN+unsVLpVQvnrRpdDzDfVbNhAKuanXO6KTU4MumzwI44Uq
+         ab0dQbFVtiIrPpLUGkmB2/s3/EvXOrD9qshNfsYz75jO/iJ0L5afMQPeKkuUfO9pUhxm
+         TBTSzo4pShwy6LJcDzWRBhHeRDeJgg3EGsIYZy0SweDwOuNJvSkp6VgWR0Qs8M9kX42R
+         qbUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hj0MjswvEEpi6GUcA72y7SumBVEoA1u1KmXStbni5s8=;
+        b=hwUa1wq7fzWh6itvidyfZbAgwPbUpnlj9oH2J1IfBPbwSnbmZypo+3YhGSmghUUCuK
+         I4d7EB/hTjYNzgZzzwQnwkGVMpE7dt8WORPCZX7i9PNBLO/S9MIrjLyq+BhVYsafZfed
+         SaC0PGDFG85xeLkEPrzWFm6Q74rfFySbVnNDrwDHF06lDQSs7X0eFLGEMzOYUnPp8lHn
+         IpdY7RFjErPeB8/z8B/0YT3PG4Px7dzrlJieOH5doqHpiXk9rRtc+gSCjxmp11YurKbY
+         zmhzB9BmMG1fq6O5Lfivqmjx7wBLTMPlVBq14qwLDZO6pCEVqWN7rB2PxpegiVRHcIDs
+         cSYg==
+X-Gm-Message-State: AHQUAuanNtOiB6aESXjsL4UyxQtePugZ4vER8nD+XuagSPhvYzg3eXw+
+        JAkfB6u7jXZwVpFvXDzys4pDBQ==
+X-Google-Smtp-Source: AHgI3IbCypHpz0Nss5yaUTXdv6w42taFK7B37pLDjPJ+qbBAZdP0dEFmMDVg5YQ4GTsm07T0oLSfdw==
+X-Received: by 2002:a81:3d96:: with SMTP id k144mr28899978ywa.339.1549895700968;
+        Mon, 11 Feb 2019 06:35:00 -0800 (PST)
+Received: from kudzu.us (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
+        by smtp.gmail.com with ESMTPSA id v9sm4149610ywh.2.2019.02.11.06.35.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Feb 2019 06:35:00 -0800 (PST)
+Date:   Mon, 11 Feb 2019 09:34:58 -0500
+From:   Jon Mason <jdmason@kudzu.us>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Joey Zhang <joey.zhang@microchip.com>, dave.jiang@intel.com,
+        allenbh@gmail.com, linux-ntb@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] NTB: ntb_transport: Free MWs in
+ ntb_transport_link_cleanup()
+Message-ID: <20190211143458.GA13951@kudzu.us>
+References: <1546830776-3138-1-git-send-email-joey.zhang@microchip.com>
+ <2dccf9e6-d9d7-200e-f689-56c962ea5e7e@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2dccf9e6-d9d7-200e-f689-56c962ea5e7e@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Jan 07, 2019 at 06:16:02PM -0700, Logan Gunthorpe wrote:
+> 
+> 
+> On 06/01/19 08:12 PM, Joey Zhang wrote:
+> > If NTB peer host crashes or reboots, the NTB transport link will be
+> > down and the MWs of NTB transport will be invalid. But the
+> > ntb_transport_link_cleanup() does not free these invalid MWs. When
+> > the NTB peer host is recovered later, NTB transport link will be
+> > up and the ntb_set_mw() will not reset up MWs. Because the MWs of
+> > NTB transport are invalid, the NTB transport will not work.
+> > 
+> > We can fix it by freeing MWs when NTB transport link is down, then
+> > the ntb_set_mw() will reset up MWs when NTB transport link is up.
+> > 
+> > Signed-off-by: Joey Zhang <joey.zhang@microchip.com>
+> 
+> Looks ok to me.
 
-------------------
+Added to the ntb branch, thanks!
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+> Reviewed By: Logan Gunthorpe <logang@deltatee.com>
 
-[ Upstream commit c8101f7729daee251f4f6505f9d135ec08e1342f ]
+Looks like your missed the '-' ;-)
+I took the liberity of adding it
 
-Creating a macvtap on a DSA-backed interface results in the following
-splat when lockdep is enabled:
+Thanks,
+Jon
 
-[   19.638080] IPv6: ADDRCONF(NETDEV_CHANGE): lan0: link becomes ready
-[   23.041198] device lan0 entered promiscuous mode
-[   23.043445] device eth0 entered promiscuous mode
-[   23.049255]
-[   23.049557] ============================================
-[   23.055021] WARNING: possible recursive locking detected
-[   23.060490] 5.0.0-rc3-00013-g56c857a1b8d3 #118 Not tainted
-[   23.066132] --------------------------------------------
-[   23.071598] ip/2861 is trying to acquire lock:
-[   23.076171] 00000000f61990cb (_xmit_ETHER){+...}, at: dev_set_rx_mode+0x1c/0x38
-[   23.083693]
-[   23.083693] but task is already holding lock:
-[   23.089696] 00000000ecf0c3b4 (_xmit_ETHER){+...}, at: dev_uc_add+0x24/0x70
-[   23.096774]
-[   23.096774] other info that might help us debug this:
-[   23.103494]  Possible unsafe locking scenario:
-[   23.103494]
-[   23.109584]        CPU0
-[   23.112093]        ----
-[   23.114601]   lock(_xmit_ETHER);
-[   23.117917]   lock(_xmit_ETHER);
-[   23.121233]
-[   23.121233]  *** DEADLOCK ***
-[   23.121233]
-[   23.127325]  May be due to missing lock nesting notation
-[   23.127325]
-[   23.134315] 2 locks held by ip/2861:
-[   23.137987]  #0: 000000003b766c72 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x338/0x4e0
-[   23.146231]  #1: 00000000ecf0c3b4 (_xmit_ETHER){+...}, at: dev_uc_add+0x24/0x70
-[   23.153757]
-[   23.153757] stack backtrace:
-[   23.158243] CPU: 0 PID: 2861 Comm: ip Not tainted 5.0.0-rc3-00013-g56c857a1b8d3 #118
-[   23.166212] Hardware name: Globalscale Marvell ESPRESSOBin Board (DT)
-[   23.172843] Call trace:
-[   23.175358]  dump_backtrace+0x0/0x188
-[   23.179116]  show_stack+0x14/0x20
-[   23.182524]  dump_stack+0xb4/0xec
-[   23.185928]  __lock_acquire+0x123c/0x1860
-[   23.190048]  lock_acquire+0xc8/0x248
-[   23.193724]  _raw_spin_lock_bh+0x40/0x58
-[   23.197755]  dev_set_rx_mode+0x1c/0x38
-[   23.201607]  dev_set_promiscuity+0x3c/0x50
-[   23.205820]  dsa_slave_change_rx_flags+0x5c/0x70
-[   23.210567]  __dev_set_promiscuity+0x148/0x1e0
-[   23.215136]  __dev_set_rx_mode+0x74/0x98
-[   23.219167]  dev_uc_add+0x54/0x70
-[   23.222575]  macvlan_open+0x170/0x1d0
-[   23.226336]  __dev_open+0xe0/0x160
-[   23.229830]  __dev_change_flags+0x16c/0x1b8
-[   23.234132]  dev_change_flags+0x20/0x60
-[   23.238074]  do_setlink+0x2d0/0xc50
-[   23.241658]  __rtnl_newlink+0x5f8/0x6e8
-[   23.245601]  rtnl_newlink+0x50/0x78
-[   23.249184]  rtnetlink_rcv_msg+0x360/0x4e0
-[   23.253397]  netlink_rcv_skb+0xe8/0x130
-[   23.257338]  rtnetlink_rcv+0x14/0x20
-[   23.261012]  netlink_unicast+0x190/0x210
-[   23.265043]  netlink_sendmsg+0x288/0x350
-[   23.269075]  sock_sendmsg+0x18/0x30
-[   23.272659]  ___sys_sendmsg+0x29c/0x2c8
-[   23.276602]  __sys_sendmsg+0x60/0xb8
-[   23.280276]  __arm64_sys_sendmsg+0x1c/0x28
-[   23.284488]  el0_svc_common+0xd8/0x138
-[   23.288340]  el0_svc_handler+0x24/0x80
-[   23.292192]  el0_svc+0x8/0xc
-
-This looks fairly harmless (no actual deadlock occurs), and is
-fixed in a similar way to c6894dec8ea9 ("bridge: fix lockdep
-addr_list_lock false positive splat") by putting the addr_list_lock
-in its own lockdep class.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/master.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/net/dsa/master.c
-+++ b/net/dsa/master.c
-@@ -179,6 +179,8 @@ static const struct attribute_group dsa_
- 	.attrs	= dsa_slave_attrs,
- };
- 
-+static struct lock_class_key dsa_master_addr_list_lock_key;
-+
- int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
- {
- 	int ret;
-@@ -190,6 +192,8 @@ int dsa_master_setup(struct net_device *
- 	wmb();
- 
- 	dev->dsa_ptr = cpu_dp;
-+	lockdep_set_class(&dev->addr_list_lock,
-+			  &dsa_master_addr_list_lock_key);
- 
- 	ret = dsa_master_ethtool_setup(dev);
- 	if (ret)
-
-
+> 
+> > ---
+> >  drivers/ntb/ntb_transport.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+> > index 3bfdb45..6e8902d 100644
+> > --- a/drivers/ntb/ntb_transport.c
+> > +++ b/drivers/ntb/ntb_transport.c
+> > @@ -862,6 +862,9 @@ static void ntb_transport_link_cleanup(struct ntb_transport_ctx *nt)
+> >  	if (!nt->link_is_up)
+> >  		cancel_delayed_work_sync(&nt->link_work);
+> >  
+> > +	for (i = 0; i < nt->mw_count; i++)
+> > +		ntb_free_mw(nt, i);
+> > +
+> >  	/* The scratchpad registers keep the values if the remote side
+> >  	 * goes down, blast them now to give them a sane value the next
+> >  	 * time they are accessed
+> > 
