@@ -2,84 +2,144 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EE3C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7548EC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A259A20818
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DB5D20818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 13:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbfBKNGo (ORCPT
+        id S1727566AbfBKNIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:06:44 -0500
-Received: from sauhun.de ([88.99.104.3]:54430 "EHLO pokefinder.org"
+        Mon, 11 Feb 2019 08:08:05 -0500
+Received: from foss.arm.com ([217.140.101.70]:47920 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727383AbfBKNGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:06:44 -0500
-Received: from localhost (p54B333B4.dip0.t-ipconnect.de [84.179.51.180])
-        by pokefinder.org (Postfix) with ESMTPSA id 67C072E3542;
-        Mon, 11 Feb 2019 14:06:42 +0100 (CET)
-Date:   Mon, 11 Feb 2019 14:06:42 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
-        peda@axentia.se, digetx@gmail.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH V18 1/6] i2c: tegra: sort all the include headers
- alphabetically
-Message-ID: <20190211130641.7yauphtuzqxmlaxr@ninjato>
-References: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
+        id S1726025AbfBKNIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 08:08:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B396E80D;
+        Mon, 11 Feb 2019 05:08:04 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C7503F557;
+        Mon, 11 Feb 2019 05:07:59 -0800 (PST)
+Subject: Re: [RESEND PATCH v2 28/33] ARM: davinci: cp-intc: unify error
+ handling
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190211122606.8662-1-brgl@bgdev.pl>
+ <20190211122606.8662-29-brgl@bgdev.pl>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <7b494951-7b37-3ee5-5ece-f486b7a566fe@arm.com>
+Date:   Mon, 11 Feb 2019 13:07:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6qbno4q5ad255egt"
-Content-Disposition: inline
-In-Reply-To: <1549652382-5476-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190211122606.8662-29-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/02/2019 12:26, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Use WARN_ON() on eny error in cp-intc initialization and drop all
+> custom error messages.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
+> ---
+>  arch/arm/mach-davinci/cp_intc.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
+> index f3787ae4cdbd..c1efb9390655 100644
+> --- a/arch/arm/mach-davinci/cp_intc.c
+> +++ b/arch/arm/mach-davinci/cp_intc.c
+> @@ -200,20 +200,16 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+>  			DAVINCI_CP_INTC_CHAN_MAP(offset));
+>  
+>  	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
+> -	if (irq_base < 0) {
+> -		pr_warn("Couldn't allocate IRQ numbers\n");
+> -		irq_base = 0;
+> -	}
+> +	if (WARN_ON(irq_base < 0))
+> +		return irq_base;
+>  
+>  	/* create a legacy host */
+>  	davinci_cp_intc_irq_domain = irq_domain_add_legacy(
+>  					node, config->num_irqs, irq_base, 0,
+>  					&davinci_cp_intc_irq_domain_ops, NULL);
+>  
+> -	if (!davinci_cp_intc_irq_domain) {
+> -		pr_err("cp_intc: failed to allocate irq host!\n");
+> +	if (WARN_ON(!davinci_cp_intc_irq_domain))
+>  		return -EINVAL;
+> -	}
+>  
+>  	set_handle_irq(davinci_cp_intc_handle_irq);
+>  
+> 
 
---6qbno4q5ad255egt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I'm sorry, but how is turning an explicit message into a long stack
+trace really useful?
 
-Sowjanya,
-
-first of all, thank you for keeping at this series. Also, for Dmitry and
-Thierry for their reviews. Hard work everyone, much appreciated.
-
-I just posted a few comments I had. No real show-stopper in there but
-maybe one or two discussion points.
-
-Thanks and happy hacking,
-
-   Wolfram
-
-
---6qbno4q5ad255egt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxhc2EACgkQFA3kzBSg
-KbbBAg/9Har/3buO+R9QOl7o4k6OoECw4sTxRIbTAVF0kIHg0D71EAdRImNhUdkp
-jNSaDld5yHUhvgC0FYFQ9z4dHpY2idnUe4LPY/Hp3bpvvNcgw+acQG5kROz1swox
-A0uGB00QuWOO6igo2bWQnvys8U62CvHCv3rYctv7E+5Qz2vm4KEU5zvlKQdIHF1b
-+LcEuP4+PPNvRVp23wPzdIkQUcPVAwFvKSlLMA3F8NQHZvQbIPOcqucWIKgCkRtc
-gy9fLHXEIyz7VFn8Ox0wePfWAwg65pT9YdptEY5vrG5T5cOXJaT14f/i1abvdZx7
-Vq26cceoHSmTivjk7F/BhzdpMcSTgk6JzwF/7EjPTxdk5RITluSFlxIfuEstzZSN
-BnhtoW35XoK6pmVkBuTqmMIb6f959hidxb/JTAAYUhu1+AuHGv2ClC+X51H5IwyD
-k6srY3aDSXfAhSTE9AZsUl2MJnI+JygKF565MKfafq2oThzsUxVcUXvhCHiEhzgZ
-YYlz25CPLaDIou3n6OXQZTlP1BDYkf6yh8qhmTFISWoOFUnZp0twDHgXJ1PDddlO
-Kq75ggstrbVzqiLzMrHOGKh419LXBM/s+x6flVF+AEV11J/Vw3M9gKmZDEFpB/2u
-hzRsu0yyJ7tBcv5u85OmHQbtHi/49wB/SLPYP9NBNh7uV3Sd0eI=
-=+Xbu
------END PGP SIGNATURE-----
-
---6qbno4q5ad255egt--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
