@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78619C282D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A454EC282CE
 	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E13B2082F
+	by mail.kernel.org (Postfix) with ESMTP id 73EF420838
 	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1549895970;
-	bh=ywSlGih1xJ1zeJ0aRYg854WIFpWbT+2j4njnGz2CsYA=;
+	bh=zOVSQ8PZ89S8cs0q2VNE6PyEw+f40T5yc4wbtIhbmuw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ysemmgwfOTRQW13vV/R5SubIZEvwXOUQa41m5KGopRNTm5DPpoTEab+M049wfgUse
-	 w7dOmAS+m5UNihfTWSWXjWCRuSDBW2cRobBPHMCaUpyePIQNM2i4jJIOxyhZSZ/ihj
-	 5wsuBX2qv+fTBtslsw/uKnTluR7xtuOFI8Temgck=
+	b=QKRZIDm7YvjFw95b8GmKhlM2d9Kezg3JGVkCxnFtz4Mjuwnt1+rnY0LgY7/XISvBW
+	 X/Nme2eQXbSMsEKMvdV/MTFLFKZnlhYYZt+674KvXhVSiWET3wB96cZqiXE0lRTeme
+	 MeyHCCVsX4Q/pcOKlPhoPi3wJMz789EAH3BX/Oec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731880AbfBKOjY (ORCPT
+        id S1731439AbfBKOj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:39:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49626 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:39:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbfBKOjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:39:22 -0500
+        id S1728002AbfBKOj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:39:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7F3320700;
-        Mon, 11 Feb 2019 14:39:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5D1120700;
+        Mon, 11 Feb 2019 14:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895962;
-        bh=ywSlGih1xJ1zeJ0aRYg854WIFpWbT+2j4njnGz2CsYA=;
+        s=default; t=1549895965;
+        bh=zOVSQ8PZ89S8cs0q2VNE6PyEw+f40T5yc4wbtIhbmuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UfxN61y6kVHL1GNZrHAR9aVkf3wEA/9XmlRc/r72JezH6HKsPcMUd78eeEik6/bje
-         WXI7s6lIRLRbkNZVskYoVIOxDZv4RF+qHm96s79v5vl/9Tbg02opYsshpdF3ftB8TM
-         uOSpaQL6nhJWpCaSjNNgzoJuWnjnqBniAAzxgAKY=
+        b=MeCG1DhiekYMSUE5p/oLyOFDYaZqhJQJyNfdgkZ6SvBhlHcH6OJixoa+sRmjoyjoV
+         pgT++Iwalo7jyqzJBDE+NL4FwmLSxcCl5B4AHKd0z/k8hGBlxhsfzsTU90YdB+Vixl
+         oKphD0Nz2bJpeJrGT/bE0q5MgjMvRhAWefJTwisw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Michael Kelley <mikelley@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 008/313] drm/sun4i: Initialize registers in tcon-top driver
-Date:   Mon, 11 Feb 2019 15:14:48 +0100
-Message-Id: <20190211141853.481248310@linuxfoundation.org>
+Subject: [PATCH 4.19 009/313] genirq/affinity: Spread IRQs to all available NUMA nodes
+Date:   Mon, 11 Feb 2019 15:14:49 +0100
+Message-Id: <20190211141853.580982643@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,40 +68,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c96d62215fb540e2ae61de44cb7caf4db50958e3 ]
+[ Upstream commit b82592199032bf7c778f861b936287e37ebc9f62 ]
 
-It turns out that TCON TOP registers in H6 SoC have non-zero reset
-value. This may cause issues if bits are not changed during
-configuration.
+If the number of NUMA nodes exceeds the number of MSI/MSI-X interrupts
+which are allocated for a device, the interrupt affinity spreading code
+fails to spread them across all nodes.
 
-To prevent that, initialize registers to 0.
+The reason is, that the spreading code starts from node 0 and continues up
+to the number of interrupts requested for allocation. This leaves the nodes
+past the last interrupt unused.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181104182705.18047-24-jernej.skrabec@siol.net
+This results in interrupt concentration on the first nodes which violates
+the assumption of the block layer that all nodes are covered evenly. As a
+consequence the NUMA nodes above the number of interrupts are all assigned
+to hardware queue 0 and therefore NUMA node 0, which results in bad
+performance and has CPU hotplug implications, because queue 0 gets shut
+down when the last CPU of node 0 is offlined.
+
+Go over all NUMA nodes and assign them round-robin to all requested
+interrupts to solve this.
+
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Cc: Michael Kelley <mikelley@microsoft.com>
+Link: https://lkml.kernel.org/r/20181102180248.13583-1-longli@linuxonhyperv.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/irq/affinity.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-index d5240b777a8f..adcdf946c365 100644
---- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -168,6 +168,13 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
- 		goto err_assert_reset;
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index f4f29b9d90ee..e12cdf637c71 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -117,12 +117,11 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
+ 	 */
+ 	if (numvecs <= nodes) {
+ 		for_each_node_mask(n, nodemsk) {
+-			cpumask_copy(masks + curvec, node_to_cpumask[n]);
+-			if (++done == numvecs)
+-				break;
++			cpumask_or(masks + curvec, masks + curvec, node_to_cpumask[n]);
+ 			if (++curvec == last_affv)
+ 				curvec = affd->pre_vectors;
+ 		}
++		done = numvecs;
+ 		goto out;
  	}
  
-+	/*
-+	 * At least on H6, some registers have some bits set by default
-+	 * which may cause issues. Clear them here.
-+	 */
-+	writel(0, regs + TCON_TOP_PORT_SEL_REG);
-+	writel(0, regs + TCON_TOP_GATE_SRC_REG);
-+
- 	/*
- 	 * TCON TOP has two muxes, which select parent clock for each TCON TV
- 	 * channel clock. Parent could be either TCON TV or TVE clock. For now
 -- 
 2.19.1
 
