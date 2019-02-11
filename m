@@ -2,131 +2,417 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DC3C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02639C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1B5420855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10E0120855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 03:54:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Wkcg4NnB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfBKDyN (ORCPT
+        id S1726990AbfBKDyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 22:54:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51396 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfBKDyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 22:54:13 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C442FC0669AC;
-        Mon, 11 Feb 2019 03:54:12 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2803360BE0;
-        Mon, 11 Feb 2019 03:54:04 +0000 (UTC)
-Date:   Mon, 11 Feb 2019 11:54:00 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/5] genirq/affinity: allow driver to setup managed IRQ's
- affinity
-Message-ID: <20190211035358.GA8638@ming.t460p>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
- <20190125095347.17950-3-ming.lei@redhat.com>
- <alpine.DEB.2.21.1902101723400.8784@nanos.tec.linutronix.de>
+        Sun, 10 Feb 2019 22:54:19 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:38897 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfBKDyR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 22:54:17 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D453B8448C;
+        Mon, 11 Feb 2019 16:54:15 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1549857255;
+        bh=LTLlZr0IOPQ76MotQlS9Zzxmo2yN2Z59+cno7wN62gI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Wkcg4NnBC4KX9TRppdNPlLUzDxmWVsMP22bIkDAAtk6QRnLwh6vrLvLknNcCofnMu
+         xdk2NXx1I+vPSBuEyTsu/VWJcdpVPWugU0W8kkfThtNyNRD/0NBprH10EbahqJyuvj
+         xLOSKIWUeC6Mw5DuWqzKQaysXkmTNeob6mVWj74+9YlpLeJVHRbrNK2CTnzKs5JcUC
+         N3B3dYHk5F9xTBuaccUpTvyCCKfredkUuOrw8gP48uXi27IHlozOQl3vEHCPbFNN2l
+         Nq4Mx9E4XQ36mfopssBXXijWTITXl2SzFAkQMuVuOnGB5m+mWfcdtLm/tbzQapsm6i
+         swX3oUeTMLgTw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c60f1e80000>; Mon, 11 Feb 2019 16:54:16 +1300
+Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
+        by smtp (Postfix) with ESMTP id A0DD513EEB6;
+        Mon, 11 Feb 2019 16:54:15 +1300 (NZDT)
+Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
+        id 999793A09E6; Mon, 11 Feb 2019 16:54:15 +1300 (NZDT)
+From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     nicolas.dichtel@6wind.com,
+        Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+Subject: [PATCH net-next v3] ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
+Date:   Mon, 11 Feb 2019 16:54:12 +1300
+Message-Id: <20190211035412.29218-2-callum.sinclair@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211035412.29218-1-callum.sinclair@alliedtelesis.co.nz>
+References: <20190211035412.29218-1-callum.sinclair@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1902101723400.8784@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 11 Feb 2019 03:54:12 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Thomas,
+v1 -> v2:
+Implemented additional flags for static entries
+v2 -> v3:
+Cleaned up flag logic so any combination of routes can be cleared.
+Fixed style errors
+Fixed incorrect flag values
 
-On Sun, Feb 10, 2019 at 05:30:41PM +0100, Thomas Gleixner wrote:
-> Ming,
-> 
-> On Fri, 25 Jan 2019, Ming Lei wrote:
-> 
-> > This patch introduces callback of .setup_affinity into 'struct
-> > irq_affinity', so that:
-> 
-> Please see Documentation/process/submitting-patches.rst. Search for 'This
-> patch' ....
+Currently the only way to clear the forwarding cache was to delete the
+entries one by one using the MRT_DEL_MFC socket option or to destroy and
+recreate the socket.
 
-Sorry for that, because I am not a native English speaker and it looks a bit
-difficult for me to understand the subtle difference.
+Create a new socket option which with the use of optional flags can
+clear any combination of multicast entries (static or not static) and
+multicast vifs (static or not static).
 
-> 
-> > 
-> > 1) allow drivers to customize the affinity for managed IRQ, for
-> > example, now NVMe has special requirement for read queues & poll
-> > queues
-> 
-> That's nothing new and already handled today.
-> 
-> > 2) 6da4b3ab9a6e9 ("genirq/affinity: Add support for allocating interrupt sets")
-> > makes pci_alloc_irq_vectors_affinity() a bit difficult to use for
-> > allocating interrupt sets: 'max_vecs' is required to same with 'min_vecs'.
-> 
-> So it's a bit difficult, but you fail to explain why it's not sufficient.
+Calling the new socket option MRT_FLUSH with the flags MRT_FLUSH_MFC and
+MRT_FLUSH_VIFS will clear all entries and vifs on the socket except for
+static entries.
 
-The introduced limit is that 'max_vecs' has to be same with 'min_vecs' for
-pci_alloc_irq_vectors_affinity() wrt. NVMe's use case since commit
-6da4b3ab9a6e9, then NVMe has to deal with irq vectors allocation failure in
-the awkward way of retrying.
+Signed-off-by: Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+---
+ include/uapi/linux/mroute.h  |  9 ++++-
+ include/uapi/linux/mroute6.h |  9 ++++-
+ net/ipv4/ipmr.c              | 73 ++++++++++++++++++++-------------
+ net/ipv6/ip6mr.c             | 78 +++++++++++++++++++++++-------------
+ 4 files changed, 112 insertions(+), 57 deletions(-)
 
-And the topic has been discussed in the following links:
+diff --git a/include/uapi/linux/mroute.h b/include/uapi/linux/mroute.h
+index 5d37a9ccce63..11c8c1fc1124 100644
+--- a/include/uapi/linux/mroute.h
++++ b/include/uapi/linux/mroute.h
+@@ -28,12 +28,19 @@
+ #define MRT_TABLE	(MRT_BASE+9)	/* Specify mroute table ID		*/
+ #define MRT_ADD_MFC_PROXY	(MRT_BASE+10)	/* Add a (*,*|G) mfc entry	*/
+ #define MRT_DEL_MFC_PROXY	(MRT_BASE+11)	/* Del a (*,*|G) mfc entry	*/
+-#define MRT_MAX		(MRT_BASE+11)
++#define MRT_FLUSH	(MRT_BASE+12)	/* Flush all mfc entries and/or vifs	*/
++#define MRT_MAX		(MRT_BASE+12)
+=20
+ #define SIOCGETVIFCNT	SIOCPROTOPRIVATE	/* IP protocol privates */
+ #define SIOCGETSGCNT	(SIOCPROTOPRIVATE+1)
+ #define SIOCGETRPF	(SIOCPROTOPRIVATE+2)
+=20
++/* MRT_FLUSH optional flags */
++#define MRT_FLUSH_MFC	1	/* Flush multicast entries */
++#define MRT_FLUSH_MFC_STATIC	2	/* Flush static multicast entries */
++#define MRT_FLUSH_VIFS	4	/* Flush multicast vifs */
++#define MRT_FLUSH_VIFS_STATIC	8	/* Flush static multicast vifs */
++
+ #define MAXVIFS		32
+ typedef unsigned long vifbitmap_t;	/* User mode code depends on this lot=
+ */
+ typedef unsigned short vifi_t;
+diff --git a/include/uapi/linux/mroute6.h b/include/uapi/linux/mroute6.h
+index 9999cc006390..ac84ef11b29c 100644
+--- a/include/uapi/linux/mroute6.h
++++ b/include/uapi/linux/mroute6.h
+@@ -31,12 +31,19 @@
+ #define MRT6_TABLE	(MRT6_BASE+9)	/* Specify mroute table ID		*/
+ #define MRT6_ADD_MFC_PROXY	(MRT6_BASE+10)	/* Add a (*,*|G) mfc entry	*/
+ #define MRT6_DEL_MFC_PROXY	(MRT6_BASE+11)	/* Del a (*,*|G) mfc entry	*/
+-#define MRT6_MAX	(MRT6_BASE+11)
++#define MRT6_FLUSH	(MRT6_BASE+12)	/* Flush all mfc entries and/or vifs	*=
+/
++#define MRT6_MAX	(MRT6_BASE+12)
+=20
+ #define SIOCGETMIFCNT_IN6	SIOCPROTOPRIVATE	/* IP protocol privates */
+ #define SIOCGETSGCNT_IN6	(SIOCPROTOPRIVATE+1)
+ #define SIOCGETRPF	(SIOCPROTOPRIVATE+2)
+=20
++/* MRT6_FLUSH optional flags */
++#define MRT6_FLUSH_MFC	1	/* Flush multicast entries */
++#define MRT6_FLUSH_MFC_STATIC	2	/* Flush static multicast entries */
++#define MRT6_FLUSH_VIFS	4	/* Flushing multicast vifs */
++#define MRT6_FLUSH_VIFS_STATIC	8	/* Flush static multicast vifs */
++
+ #define MAXMIFS		32
+ typedef unsigned long mifbitmap_t;	/* User mode code depends on this lot=
+ */
+ typedef unsigned short mifi_t;
+diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
+index e536970557dd..2c95ef8cf224 100644
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -110,7 +110,7 @@ static int ipmr_cache_report(struct mr_table *mrt,
+ static void mroute_netlink_event(struct mr_table *mrt, struct mfc_cache =
+*mfc,
+ 				 int cmd);
+ static void igmpmsg_netlink_event(struct mr_table *mrt, struct sk_buff *=
+pkt);
+-static void mroute_clean_tables(struct mr_table *mrt, bool all);
++static void mroute_clean_tables(struct mr_table *mrt, int flags);
+ static void ipmr_expire_process(struct timer_list *t);
+=20
+ #ifdef CONFIG_IP_MROUTE_MULTIPLE_TABLES
+@@ -415,7 +415,8 @@ static struct mr_table *ipmr_new_table(struct net *ne=
+t, u32 id)
+ static void ipmr_free_table(struct mr_table *mrt)
+ {
+ 	del_timer_sync(&mrt->ipmr_expire_timer);
+-	mroute_clean_tables(mrt, true);
++	mroute_clean_tables(mrt, MRT_FLUSH_VIFS | MRT_FLUSH_VIFS_STATIC |
++						MRT_FLUSH_MFC | MRT_FLUSH_MFC_STATIC);
+ 	rhltable_destroy(&mrt->mfc_hash);
+ 	kfree(mrt);
+ }
+@@ -1296,7 +1297,7 @@ static int ipmr_mfc_add(struct net *net, struct mr_=
+table *mrt,
+ }
+=20
+ /* Close the multicast socket, and clear the vif tables etc */
+-static void mroute_clean_tables(struct mr_table *mrt, bool all)
++static void mroute_clean_tables(struct mr_table *mrt, int flags)
+ {
+ 	struct net *net =3D read_pnet(&mrt->net);
+ 	struct mr_mfc *c, *tmp;
+@@ -1305,35 +1306,42 @@ static void mroute_clean_tables(struct mr_table *=
+mrt, bool all)
+ 	int i;
+=20
+ 	/* Shut down all active vif entries */
+-	for (i =3D 0; i < mrt->maxvif; i++) {
+-		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
+-			continue;
+-		vif_delete(mrt, i, 0, &list);
++	if (flags & (MRT_FLUSH_VIFS | MRT_FLUSH_VIFS_STATIC)) {
++		for (i =3D 0; i < mrt->maxvif; i++) {
++			if (((mrt->vif_table[i].flags & VIFF_STATIC) &&
++			     !(flags & MRT_FLUSH_VIFS_STATIC)) ||
++			    (!(mrt->vif_table[i].flags & VIFF_STATIC) && !(flags & MRT_FLUSH)=
+))
++				continue;
++			vif_delete(mrt, i, 0, &list);
++		}
++		unregister_netdevice_many(&list);
+ 	}
+-	unregister_netdevice_many(&list);
+=20
+ 	/* Wipe the cache */
+-	list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
+-		if (!all && (c->mfc_flags & MFC_STATIC))
+-			continue;
+-		rhltable_remove(&mrt->mfc_hash, &c->mnode, ipmr_rht_params);
+-		list_del_rcu(&c->list);
+-		cache =3D (struct mfc_cache *)c;
+-		call_ipmr_mfc_entry_notifiers(net, FIB_EVENT_ENTRY_DEL, cache,
+-					      mrt->id);
+-		mroute_netlink_event(mrt, cache, RTM_DELROUTE);
+-		mr_cache_put(c);
+-	}
+-
+-	if (atomic_read(&mrt->cache_resolve_queue_len) !=3D 0) {
+-		spin_lock_bh(&mfc_unres_lock);
+-		list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
+-			list_del(&c->list);
++	if (flags & (MRT_FLUSH_MFC | MRT_FLUSH_MFC_STATIC)) {
++		list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
++			if (((c->mfc_flags & MFC_STATIC) && !(flags & MRT_FLUSH_MFC_STATIC)) =
+||
++			    (!(c->mfc_flags & MFC_STATIC) && !(flags & MRT_FLUSH_MFC)))
++				continue;
++			rhltable_remove(&mrt->mfc_hash, &c->mnode, ipmr_rht_params);
++			list_del_rcu(&c->list);
+ 			cache =3D (struct mfc_cache *)c;
++			call_ipmr_mfc_entry_notifiers(net, FIB_EVENT_ENTRY_DEL, cache,
++						      mrt->id);
+ 			mroute_netlink_event(mrt, cache, RTM_DELROUTE);
+-			ipmr_destroy_unres(mrt, cache);
++			mr_cache_put(c);
++		}
++
++		if (atomic_read(&mrt->cache_resolve_queue_len) !=3D 0) {
++			spin_lock_bh(&mfc_unres_lock);
++			list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
++				list_del(&c->list);
++				cache =3D (struct mfc_cache *)c;
++				mroute_netlink_event(mrt, cache, RTM_DELROUTE);
++				ipmr_destroy_unres(mrt, cache);
++			}
++			spin_unlock_bh(&mfc_unres_lock);
+ 		}
+-		spin_unlock_bh(&mfc_unres_lock);
+ 	}
+ }
+=20
+@@ -1354,7 +1362,7 @@ static void mrtsock_destruct(struct sock *sk)
+ 						    NETCONFA_IFINDEX_ALL,
+ 						    net->ipv4.devconf_all);
+ 			RCU_INIT_POINTER(mrt->mroute_sk, NULL);
+-			mroute_clean_tables(mrt, false);
++			mroute_clean_tables(mrt, MRT_FLUSH_VIFS | MRT_FLUSH_MFC);
+ 		}
+ 	}
+ 	rtnl_unlock();
+@@ -1479,6 +1487,17 @@ int ip_mroute_setsockopt(struct sock *sk, int optn=
+ame, char __user *optval,
+ 					   sk =3D=3D rtnl_dereference(mrt->mroute_sk),
+ 					   parent);
+ 		break;
++	case MRT_FLUSH:
++		if (optlen !=3D sizeof(val)) {
++			ret =3D -EINVAL;
++			break;
++		}
++		if (get_user(val, (int __user *)optval)) {
++			ret =3D -EFAULT;
++			break;
++		}
++		mroute_clean_tables(mrt, val);
++		break;
+ 	/* Control PIM assert. */
+ 	case MRT_ASSERT:
+ 		if (optlen !=3D sizeof(val)) {
+diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
+index cc01aa3f2b5e..c6909b5e927c 100644
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -97,7 +97,7 @@ static void mr6_netlink_event(struct mr_table *mrt, str=
+uct mfc6_cache *mfc,
+ static void mrt6msg_netlink_event(struct mr_table *mrt, struct sk_buff *=
+pkt);
+ static int ip6mr_rtm_dumproute(struct sk_buff *skb,
+ 			       struct netlink_callback *cb);
+-static void mroute_clean_tables(struct mr_table *mrt, bool all);
++static void mroute_clean_tables(struct mr_table *mrt, int flags);
+ static void ipmr_expire_process(struct timer_list *t);
+=20
+ #ifdef CONFIG_IPV6_MROUTE_MULTIPLE_TABLES
+@@ -393,7 +393,8 @@ static struct mr_table *ip6mr_new_table(struct net *n=
+et, u32 id)
+ static void ip6mr_free_table(struct mr_table *mrt)
+ {
+ 	del_timer_sync(&mrt->ipmr_expire_timer);
+-	mroute_clean_tables(mrt, true);
++	mroute_clean_tables(mrt, MRT6_FLUSH_VIFS | MRT6_FLUSH_VIFS_STATIC |
++						MRT6_FLUSH_MFC | MRT6_FLUSH_MFC_STATIC);
+ 	rhltable_destroy(&mrt->mfc_hash);
+ 	kfree(mrt);
+ }
+@@ -1496,42 +1497,49 @@ static int ip6mr_mfc_add(struct net *net, struct =
+mr_table *mrt,
+  *	Close the multicast socket, and clear the vif tables etc
+  */
+=20
+-static void mroute_clean_tables(struct mr_table *mrt, bool all)
++static void mroute_clean_tables(struct mr_table *mrt, int flags)
+ {
+ 	struct mr_mfc *c, *tmp;
+ 	LIST_HEAD(list);
+ 	int i;
+=20
+ 	/* Shut down all active vif entries */
+-	for (i =3D 0; i < mrt->maxvif; i++) {
+-		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
+-			continue;
+-		mif6_delete(mrt, i, 0, &list);
++	if (flags & (MRT6_FLUSH_VIFS | MRT6_FLUSH_VIFS_STATIC)) {
++		for (i =3D 0; i < mrt->maxvif; i++) {
++			if (((mrt->vif_table[i].flags & VIFF_STATIC) &&
++			     !(flags & MRT6_FLUSH_VIFS_STATIC)) ||
++			    (!(mrt->vif_table[i].flags & VIFF_STATIC) && !(flags & MRT6_FLUSH=
+_VIFS)))
++				continue;
++			mif6_delete(mrt, i, 0, &list);
++		}
++		unregister_netdevice_many(&list);
+ 	}
+-	unregister_netdevice_many(&list);
+=20
+ 	/* Wipe the cache */
+-	list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
+-		if (!all && (c->mfc_flags & MFC_STATIC))
+-			continue;
+-		rhltable_remove(&mrt->mfc_hash, &c->mnode, ip6mr_rht_params);
+-		list_del_rcu(&c->list);
+-		call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
+-					       FIB_EVENT_ENTRY_DEL,
+-					       (struct mfc6_cache *)c, mrt->id);
+-		mr6_netlink_event(mrt, (struct mfc6_cache *)c, RTM_DELROUTE);
+-		mr_cache_put(c);
+-	}
++	if (flags & (MRT6_FLUSH_MFC | MRT6_FLUSH_MFC_STATIC)) {
++		list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
++			if (((c->mfc_flags & MFC_STATIC) && !(flags & MRT6_FLUSH_MFC_STATIC))=
+ ||
++			    (!(c->mfc_flags & MFC_STATIC) && !(flags & MRT6_FLUSH_MFC)))
++				continue;
++			rhltable_remove(&mrt->mfc_hash, &c->mnode, ip6mr_rht_params);
++			list_del_rcu(&c->list);
++			call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
++						       FIB_EVENT_ENTRY_DEL,
++										   (struct mfc6_cache *)c, mrt->id);
++			mr6_netlink_event(mrt, (struct mfc6_cache *)c, RTM_DELROUTE);
++			mr_cache_put(c);
++		}
+=20
+-	if (atomic_read(&mrt->cache_resolve_queue_len) !=3D 0) {
+-		spin_lock_bh(&mfc_unres_lock);
+-		list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
+-			list_del(&c->list);
+-			mr6_netlink_event(mrt, (struct mfc6_cache *)c,
+-					  RTM_DELROUTE);
+-			ip6mr_destroy_unres(mrt, (struct mfc6_cache *)c);
++		if (atomic_read(&mrt->cache_resolve_queue_len) !=3D 0) {
++			spin_lock_bh(&mfc_unres_lock);
++			list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
++				list_del(&c->list);
++				mr6_netlink_event(mrt, (struct mfc6_cache *)c,
++						  RTM_DELROUTE);
++				ip6mr_destroy_unres(mrt, (struct mfc6_cache *)c);
++			}
++			spin_unlock_bh(&mfc_unres_lock);
+ 		}
+-		spin_unlock_bh(&mfc_unres_lock);
+ 	}
+ }
+=20
+@@ -1587,7 +1595,7 @@ int ip6mr_sk_done(struct sock *sk)
+ 						     NETCONFA_IFINDEX_ALL,
+ 						     net->ipv6.devconf_all);
+=20
+-			mroute_clean_tables(mrt, false);
++			mroute_clean_tables(mrt, MRT6_FLUSH_VIFS | MRT6_FLUSH_MFC);
+ 			err =3D 0;
+ 			break;
+ 		}
+@@ -1703,6 +1711,20 @@ int ip6_mroute_setsockopt(struct sock *sk, int opt=
+name, char __user *optval, uns
+ 		rtnl_unlock();
+ 		return ret;
+=20
++	case MRT6_FLUSH:
++	{
++		int flags;
++
++		if (optlen !=3D sizeof(flags))
++			return -EINVAL;
++		if (get_user(flags, (int __user *)optval))
++			return -EFAULT;
++		rtnl_lock();
++		mroute_clean_tables(mrt, flags);
++		rtnl_unlock();
++		return 0;
++	}
++
+ 	/*
+ 	 *	Control PIM assert (to activate pim will activate assert)
+ 	 */
+--=20
+2.20.1
 
-https://marc.info/?l=linux-pci&m=154655595615575&w=2
-https://marc.info/?l=linux-pci&m=154646930922174&w=2
-
-Bjorn and Keith thought this usage/interface is a bit awkward because the passed
-'min_vecs' should have avoided driver's retrying.
-
-For NVMe, when irq vectors are run out of from pci_alloc_irq_vectors_affinity(),
-the requested number has to be decreased and retry until it succeeds, then the
-allocated irq vectors has to be re-distributed among the whole irq sets. Turns
-out the re-distribution need driver's knowledge, that is why the callback is
-introduced.
-
-> 
-> > With this patch, driver can implement their own .setup_affinity to
-> > customize the affinity, then the above thing can be solved easily.
-> 
-> Well, I don't really understand what is solved easily and you are merily
-> describing the fact that the new callback allows drivers to customize
-> something. What's the rationale? If it's just the 'bit difficult' part,
-> then what is the reason for not making the core functionality easier to use
-> instead of moving stuff into driver space again?
-
-Another solution mentioned in previous discussion is to split building & setting up
-affinities from allocating irq vectors, but one big problem is that allocating
-'irq_desc' needs the affinity mask for figuring out 'node', see alloc_descs().
-
-> 
-> NVME is not special and all this achieves is that all drivers writers will
-
-I mean that NVMe is the only user of irq sets.
-
-> claim that their device is special and needs its own affinity setter
-> routine. The whole point of having the generic code is to exactly avoid
-> that. If it has shortcomings, then they need to be addressed, but not
-> worked around with random driver callbacks.
-
-Understood.
-
-Thanks,
-Ming
