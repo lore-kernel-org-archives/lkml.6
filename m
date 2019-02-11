@@ -2,53 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D758DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A5FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A02A02184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3CE92186A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:46:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HnEn0xS6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dSPA45Xd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfBKWqY (ORCPT
+        id S1727761AbfBKWq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:46:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:50146 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbfBKWqX (ORCPT
+        Mon, 11 Feb 2019 17:46:26 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59982 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfBKWqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 17:46:23 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1BMhgq5079616;
-        Mon, 11 Feb 2019 22:44:54 GMT
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1BMhVEI072777;
+        Mon, 11 Feb 2019 22:44:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=lNNVFPUWTRhNE8iqw8ALNGW4x7tdbqFw7nSGCVoIqbc=;
- b=HnEn0xS6VXXZwacMqdL+G2YTsezKd8bC2zALO+fMvwXK7yNNIdx2SEyBXHAQcWr0hWPH
- xFL1cpGYlZeIGxFVuwVk/blwtPCZ/qitfP3s2/AqwfDM7MldOF34fKElHAoscHbHzDEH
- NODKcW8CH40UlUuWcQ6O74uctfb+VX8qmi4HJA0ssRmRYpS9HjzCYbajNJ6hdrAmp035
- ZRa4K70w/oRxK1O9L9EPCguGCbkC4mB5dk64JhtD56TcT6Ms831Diow9RBQ6Hm4Vw6hH
- BLdOK7jjHdd+EYP7nShsNbLdmOnWIbNMT2dKOItdbfzrRDlPRyguA5RQ35ZnmHE/mJlt jg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2qhredrqvq-1
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=Phi3yo5tGmVy0t3cuMS6IWQIWpdGP9aDbdf7nHYEaVU=;
+ b=dSPA45Xdtxu6Z+Dit8MpYT+2EEXMoS2OYxCbo5qFygIAgtfMhwLWimjbpu6roq5OhjY0
+ 03EpjfiBvqMwMfBMAp57e7VJmclU/as0otGXzAMM9YUcv+18kFe47aLQCFGzYOfJtTsN
+ 2MzrrXcXLndV08bOkKsdZZczHP55rAI/s8yGOF9TsHEBordy7zWJ8ENOV2m4ty+cOmrn
+ 4kJtoz4bF9VbZrTThQvL7M4pxrEoKkxLVAnDpWllM4KoL6/nlkO6zRcQ89Z2niBYKWDZ
+ VxijvUlOImfGrr2tI3Q0cDnpVui5UCSEL4Ha1M8N0cM7IZm9fpGzvzNg5aZRDtxLXgjt 8Q== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2qhrek8q7r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 22:44:54 +0000
+        Mon, 11 Feb 2019 22:44:50 +0000
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1BMim4E030846
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1BMimFO012607
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Mon, 11 Feb 2019 22:44:48 GMT
 Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1BMik3u013837;
-        Mon, 11 Feb 2019 22:44:46 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1BMih6b013811;
+        Mon, 11 Feb 2019 22:44:43 GMT
 Received: from localhost.localdomain (/73.60.114.248)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 11 Feb 2019 14:44:45 -0800
+        with ESMTP ; Mon, 11 Feb 2019 14:44:43 -0800
 From:   Daniel Jordan <daniel.m.jordan@oracle.com>
 To:     jgg@ziepe.ca
 Cc:     akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
@@ -59,17 +58,15 @@ Cc:     akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
         benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
         atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru,
         daniel.m.jordan@oracle.com
-Subject: [PATCH 1/5] vfio/type1: use pinned_vm instead of locked_vm to account pinned pages
-Date:   Mon, 11 Feb 2019 17:44:33 -0500
-Message-Id: <20190211224437.25267-2-daniel.m.jordan@oracle.com>
+Subject: [PATCH 0/5] use pinned_vm instead of locked_vm to account pinned pages
+Date:   Mon, 11 Feb 2019 17:44:32 -0500
+Message-Id: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9164 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1902110162
@@ -78,90 +75,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Beginning with bc3e53f682d9 ("mm: distinguish between mlocked and pinned
-pages"), locked and pinned pages are accounted separately.  Type1
-accounts pinned pages to locked_vm; use pinned_vm instead.
+Hi,
 
-pinned_vm recently became atomic and so no longer relies on mmap_sem
-held as writer: delete.
+This series converts users that account pinned pages with locked_vm to
+account with pinned_vm instead, pinned_vm being the correct counter to
+use.  It's based on a similar patch I posted recently[0].
 
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
----
- drivers/vfio/vfio_iommu_type1.c | 31 ++++++++++++-------------------
- 1 file changed, 12 insertions(+), 19 deletions(-)
+The patches are based on rdma/for-next to build on Davidlohr Bueso's
+recent conversion of pinned_vm to an atomic64_t[1].  Seems to make some
+sense for these to be routed the same way, despite lack of rdma content?
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 73652e21efec..a56cc341813f 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -257,7 +257,8 @@ static int vfio_iova_put_vfio_pfn(struct vfio_dma *dma, struct vfio_pfn *vpfn)
- static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
- {
- 	struct mm_struct *mm;
--	int ret;
-+	s64 pinned_vm;
-+	int ret = 0;
- 
- 	if (!npage)
- 		return 0;
-@@ -266,24 +267,15 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
- 	if (!mm)
- 		return -ESRCH; /* process exited */
- 
--	ret = down_write_killable(&mm->mmap_sem);
--	if (!ret) {
--		if (npage > 0) {
--			if (!dma->lock_cap) {
--				unsigned long limit;
--
--				limit = task_rlimit(dma->task,
--						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
-+	pinned_vm = atomic64_add_return(npage, &mm->pinned_vm);
- 
--				if (mm->locked_vm + npage > limit)
--					ret = -ENOMEM;
--			}
-+	if (npage > 0 && !dma->lock_cap) {
-+		unsigned long limit = task_rlimit(dma->task, RLIMIT_MEMLOCK) >>
-+								   PAGE_SHIFT;
-+		if (pinned_vm > limit) {
-+			atomic64_sub(npage, &mm->pinned_vm);
-+			ret = -ENOMEM;
- 		}
--
--		if (!ret)
--			mm->locked_vm += npage;
--
--		up_write(&mm->mmap_sem);
- 	}
- 
- 	if (async)
-@@ -401,6 +393,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	long ret, pinned = 0, lock_acct = 0;
- 	bool rsvd;
- 	dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
-+	atomic64_t *pinned_vm = &current->mm->pinned_vm;
- 
- 	/* This code path is only user initiated */
- 	if (!current->mm)
-@@ -418,7 +411,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	 * pages are already counted against the user.
- 	 */
- 	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
--		if (!dma->lock_cap && current->mm->locked_vm + 1 > limit) {
-+		if (!dma->lock_cap && atomic64_read(pinned_vm) + 1 > limit) {
- 			put_pfn(*pfn_base, dma->prot);
- 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
- 					limit << PAGE_SHIFT);
-@@ -445,7 +438,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 
- 		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
- 			if (!dma->lock_cap &&
--			    current->mm->locked_vm + lock_acct + 1 > limit) {
-+			    atomic64_read(pinned_vm) + lock_acct + 1 > limit) {
- 				put_pfn(pfn, dma->prot);
- 				pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n",
- 					__func__, limit << PAGE_SHIFT);
+All five of these places, and probably some of Davidlohr's conversions,
+probably want to be collapsed into a common helper in the core mm for
+accounting pinned pages.  I tried, and there are several details that
+likely need discussion, so this can be done as a follow-on.
+
+I'd appreciate a look at patch 5 especially since the accounting is
+unusual no matter whether locked_vm or pinned_vm are used.
+
+On powerpc, this was cross-compile tested only.
+
+[0] http://lkml.kernel.org/r/20181105165558.11698-8-daniel.m.jordan@oracle.com
+[1] http://lkml.kernel.org/r/20190206175920.31082-1-dave@stgolabs.net
+
+Daniel Jordan (5):
+  vfio/type1: use pinned_vm instead of locked_vm to account pinned pages
+  vfio/spapr_tce: use pinned_vm instead of locked_vm to account pinned
+    pages
+  fpga/dlf/afu: use pinned_vm instead of locked_vm to account pinned
+    pages
+  powerpc/mmu: use pinned_vm instead of locked_vm to account pinned
+    pages
+  kvm/book3s: use pinned_vm instead of locked_vm to account pinned pages
+
+ Documentation/vfio.txt              |  6 +--
+ arch/powerpc/kvm/book3s_64_vio.c    | 35 +++++++---------
+ arch/powerpc/mm/mmu_context_iommu.c | 43 ++++++++++---------
+ drivers/fpga/dfl-afu-dma-region.c   | 50 +++++++++++-----------
+ drivers/vfio/vfio_iommu_spapr_tce.c | 64 ++++++++++++++---------------
+ drivers/vfio/vfio_iommu_type1.c     | 31 ++++++--------
+ 6 files changed, 104 insertions(+), 125 deletions(-)
+
 -- 
 2.20.1
 
