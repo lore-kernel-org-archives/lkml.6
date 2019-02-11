@@ -2,111 +2,148 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D8EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A695FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B96E120838
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:56:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549882611;
-	bh=dvdpeWXedN+u8Qtd4MK9Rt5RdeQbRY0v5EiU4W0rjAs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=x+X3YYmEoONq1eYpxHLn8um685/T3GXzWIeDzXmk3S5nslZNSC/DdDQPvjw2TyReh
-	 6dyIvCAgKPX83BWWTXoyOmiKPC8deC/g3iGC+Kw4tse6ayn0wdu1oSWh1PrSDVSN9V
-	 li6EBlx97mecQp4fO1rIITv/YT0JwJqLkJO5m/e0=
+	by mail.kernel.org (Postfix) with ESMTP id 782ED21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 10:57:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="XmomXnVb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfBKK4u (ORCPT
+        id S1726869AbfBKK5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:56:50 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40374 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfBKK4t (ORCPT
+        Mon, 11 Feb 2019 05:57:34 -0500
+Received: from rcdn-iport-9.cisco.com ([173.37.86.80]:62795 "EHLO
+        rcdn-iport-9.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfBKK5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:56:49 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so16673340oth.7;
-        Mon, 11 Feb 2019 02:56:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hLhMU0Cq4xXNQYUiNoUh61NcLGkXG3B/pawhM1x1X9w=;
-        b=VwR+FA83M9reujMAhq6mTUqxgHVTBTKUrBVM10WoT7CC3kFw2ylyK+aBDAcwGndNNK
-         xsfemN9QYgCq7vfaJq9kGHze41aW8g7ic+skC8FFn05SSfLuxROXfCytxS1hWAuz9vcq
-         stYFeScbHSgjrhwPjfKsfjmyGfPCAqB0LpmXPVYWcrBSrftag7GJEsAIhZzZJabQB8Ev
-         XTUYBgnCJuVgXZPUSyNyw3v7kNuomLMSbhp0J3IQ/BJgDkg8OFA0z81dOCqK06OqqV3j
-         ss9L0FC3ertDQGlGcZNJ7LecJoFe4XRRk8nTApb8XVuWSmSzXH7k2uMRRRbGG5yv+YpV
-         +0Nw==
-X-Gm-Message-State: AHQUAubZsIoWap4ZHvQW8MFIIgFPEavzqMJJDmU8+7I4YAuufjNNuQQm
-        Ip5VL8bP/Gs4/Q+iEP/LO0AHbYotRjtVtW+7EMk=
-X-Google-Smtp-Source: AHgI3IZt6qXGIDBGbFluk7qnsht6A/YzPy3zUraXhmJ9eLlqPL4VCMN1DpMhvTna4VCKPvtXNHCulmThKqXbIBD/o/8=
-X-Received: by 2002:a9d:718d:: with SMTP id o13mr7516888otj.119.1549882608827;
- Mon, 11 Feb 2019 02:56:48 -0800 (PST)
+        Mon, 11 Feb 2019 05:57:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=2101; q=dns/txt; s=iport;
+  t=1549882653; x=1551092253;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=PKp+vBW5YhtnRUcOkZqPKgkvgwkJlZrR50D/cnSJiJ0=;
+  b=XmomXnVbF84BfbscScuWFZJF0PvF83pmZxloEQUA/Sajm9wepWy51EYL
+   t7HP3J4vGpiK8X/k/8Qrpz/Z6QPf5dTG9tFvEzoMlVciAzKbyCyKeYWk+
+   99UkxVkOBiicTVT9TLbzqe8gc1ynKHzR2P33suwUw9G7RlZB5by8ow6rM
+   A=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AEAAA8VGFc/5pdJa1jGgEBAQEBAgE?=
+ =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCA4FqJwqMFIttgg2CYYZJjmmBewsBAYRsgz0?=
+ =?us-ascii?q?iNAkNAQMBAQIBAQJtKIVKAQEBAQIBJxM0CxACAQgOCh4QMiUCBAENBQiFBgM?=
+ =?us-ascii?q?NCKofM4onjEMXgUA/hCOCV4IqhWACiW2YfzMJAo8UgzIhgW2FS4soijOGaYp?=
+ =?us-ascii?q?5AhEUgScfOIFWcBU7gmyCKBeOHkExi0OBHwEB?=
+X-IronPort-AV: E=Sophos;i="5.58,358,1544486400"; 
+   d="scan'208";a="431355291"
+Received: from rcdn-core-3.cisco.com ([173.37.93.154])
+  by rcdn-iport-9.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:57:32 +0000
+Received: from XCH-ALN-012.cisco.com (xch-aln-012.cisco.com [173.36.7.22])
+        by rcdn-core-3.cisco.com (8.15.2/8.15.2) with ESMTPS id x1BAvWCJ028142
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
+        Mon, 11 Feb 2019 10:57:32 GMT
+Received: from xch-aln-012.cisco.com (173.36.7.22) by XCH-ALN-012.cisco.com
+ (173.36.7.22) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 11 Feb
+ 2019 04:57:31 -0600
+Received: from xch-aln-012.cisco.com ([173.36.7.22]) by XCH-ALN-012.cisco.com
+ ([173.36.7.22]) with mapi id 15.00.1395.000; Mon, 11 Feb 2019 04:57:31 -0600
+From:   "Hans Verkuil (hansverk)" <hansverk@cisco.com>
+To:     Wen Yang <yellowriver2010@hotmail.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] media: cec-notifier: fix possible object reference
+ leak
+Thread-Topic: [PATCH 1/4] media: cec-notifier: fix possible object reference
+ leak
+Thread-Index: AQHUwCH951ryS7AxYU2IkMLJINPqbQ==
+Date:   Mon, 11 Feb 2019 10:57:31 +0000
+Message-ID: <6b7fc837599e4069b876b32473b31746@XCH-ALN-012.cisco.com>
+References: <HK0PR02MB363461179B3A702DB9CAEC55B26A0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+ <3ed515b78a404ec4a22b5f69ed9d6e28@XCH-ALN-012.cisco.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.61.175.13]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <cover.1549874368.git.viresh.kumar@linaro.org> <03ac36a174f6c28be0b3af9d2db8631d56695f1d.1549874368.git.viresh.kumar@linaro.org>
- <CAJZ5v0hhxUQxf9VbhU_6B29MYspNo0Go+o4_OkxgnBe8+bGTdw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hhxUQxf9VbhU_6B29MYspNo0Go+o4_OkxgnBe8+bGTdw@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 11 Feb 2019 11:56:37 +0100
-Message-ID: <CAJZ5v0jKFaF5JRuwzR=d5Zc9p86m0eBDSmC-+d3LSKgyWuUpYg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cpufreq: Allow light-weight tear down on CPU offline operation
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Outbound-SMTP-Client: 173.36.7.22, xch-aln-012.cisco.com
+X-Outbound-Node: rcdn-core-3.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 11:51 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Mon, Feb 11, 2019 at 9:41 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > The cpufreq core doesn't remove the cpufreq policy anymore on CPU
-> > offline operation, rather that happens when the CPU device gets
-> > unregistered from the kernel. This allows faster recovery when the CPU
-> > comes back online. This is also very useful during system wide
-> > suspend/resume where we offline all non-boot CPUs during suspend and
-> > then bring them back on resume.
-> >
-> > This commit takes the same idea a step ahead to allow drivers to do
-> > light weight tear-down during CPU offline operation.
-> >
-> > A new callback is introduced, light_weight_exit(), which gets called
-> > when all the CPUs of a policy are removed/offlined and the existing
-> > exit() callback gets called when the policy gets freed.
-> >
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-
-[cut]
-
-> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > index 9db074ecbbd7..36ce31516041 100644
-> > --- a/include/linux/cpufreq.h
-> > +++ b/include/linux/cpufreq.h
-> > @@ -325,6 +325,7 @@ struct cpufreq_driver {
-> >         /* optional */
-> >         int             (*bios_limit)(int cpu, unsigned int *limit);
-> >
-> > +       int             (*light_weight_exit)(struct cpufreq_policy *policy);
->
-> Can you call it "offline"?
->
-> >         int             (*exit)(struct cpufreq_policy *policy);
-> >         void            (*stop_cpu)(struct cpufreq_policy *policy);
-> >         int             (*suspend)(struct cpufreq_policy *policy);
-> > --
-
-Also, I would prefer a corresponding "online" callback to be there too
-for symmetry and I'd prefer the core to decide to call "online"
-instead of "init" for the light-weight case instead of ->init() itself
-having to figure out the context.
+On 11/02/2019 11:38, Hans Verkuil (hansverk) wrote:=0A=
+> On 09/02/2019 03:48, Wen Yang wrote:=0A=
+>> put_device() should be called in cec_notifier_release(),=0A=
+>> since the dev is being passed down to cec_notifier_get_conn(),=0A=
+>> which holds reference. On cec_notifier destruction, it=0A=
+>> should drop the reference to the device.=0A=
+>>=0A=
+>> Fixes: 6917a7b77413 ("[media] media: add CEC notifier support")=0A=
+>> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>=0A=
+>> ---=0A=
+>>  drivers/media/cec/cec-notifier.c | 1 +=0A=
+>>  1 file changed, 1 insertion(+)=0A=
+>>=0A=
+>> diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-no=
+tifier.c=0A=
+>> index dd2078b..621d4ae 100644=0A=
+>> --- a/drivers/media/cec/cec-notifier.c=0A=
+>> +++ b/drivers/media/cec/cec-notifier.c=0A=
+>> @@ -66,6 +66,7 @@ static void cec_notifier_release(struct kref *kref)=0A=
+>>  		container_of(kref, struct cec_notifier, kref);=0A=
+>>  =0A=
+>>  	list_del(&n->head);=0A=
+>> +	put_device(n->dev);=0A=
+>>  	kfree(n->conn);=0A=
+>>  	kfree(n);=0A=
+>>  }=0A=
+>>=0A=
+> =0A=
+> Sorry, no. The dev pointer is just a search key that the notifier code lo=
+oks=0A=
+> for. It is not the notifier's responsibility to take a reference, that wo=
+uld=0A=
+> be the responsibility of the hdmi and cec drivers.=0A=
+=0A=
+Correction: the cec driver should never take a reference of the hdmi device=
+.=0A=
+It never accesses the HDMI device, it only needs the HDMI device pointer as=
+=0A=
+a key in the notifier list.=0A=
+=0A=
+The real problem is that several CEC drivers take a reference of the HDMI d=
+evice=0A=
+and never release it. So those drivers need to be fixed.=0A=
+=0A=
+Regards,=0A=
+=0A=
+	Hans=0A=
+=0A=
+> =0A=
+> If you can demonstrate that there is an object reference leak, then pleas=
+e=0A=
+> provide the details: it is likely a bug elsewhere and not in the notifier=
+=0A=
+> code.=0A=
+> =0A=
+> BTW, your patch series didn't arrive on the linux-media mailinglist for=
+=0A=
+> some reason.=0A=
+> =0A=
+> Regards,=0A=
+> =0A=
+> 	Hans=0A=
+> =0A=
+=0A=
