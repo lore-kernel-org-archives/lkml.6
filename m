@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3361BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235C9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051AE222AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E75CF222B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897730;
-	bh=JdZ48uEHWv9mRlMnafrBiOu9nEyx+wdSBRsKV2CIFaI=;
+	s=default; t=1549897740;
+	bh=zNbkRYx69itHWHVh/awik1kc+U3Z6tzdrd3OCYzrNjI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c8kCwexHX/vgP2REVFlB7XGsAoonNWfOrXsUk3JlgBb+0wZo/uiHVV7C9z0i7zjkT
-	 zYje/gunUi28ZVhq45sXVukbqxRW8ufjMmAj4buDIjYdV0iI+8w2pPzGxd+WetQywZ
-	 2Ky4MZccHRlevLFiU1YyC2swQ/2IYDt3Lz2xhmcg=
+	b=GCJLSttfTV0IB7ECbemKE9GPmTJXsiz9tE56X5R4j8jiB9phm1RBLIPyghkio4iC1
+	 C9dmyCQ7boIY3y/V99UxVTFmNS5jOM9vdh8B0YKlkx7hNZnw8I1okNQs4ldwmeaJ0x
+	 PYi6W805+7DGf9JrD/xLPcxlGQ9gyVLsXhJexA04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391530AbfBKPIr (ORCPT
+        id S2391541AbfBKPI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58548 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403901AbfBKPIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:08:40 -0500
+        id S2391077AbfBKPIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B418D222B0;
-        Mon, 11 Feb 2019 15:08:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC154222A7;
+        Mon, 11 Feb 2019 15:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897719;
-        bh=JdZ48uEHWv9mRlMnafrBiOu9nEyx+wdSBRsKV2CIFaI=;
+        s=default; t=1549897730;
+        bh=zNbkRYx69itHWHVh/awik1kc+U3Z6tzdrd3OCYzrNjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tDxlKdFn3NfoLIj3kfKpM16fq1SAuc6FFq39LfvL1kHulyyjBAKoAWeKeKphDBses
-         ZjVwsanNsqjHZ8ryMrd0qmhfFEV4n47DH2ZcECRSxYqsMXCrMjOQbWIoZJ8IXQRfN2
-         zZvFPu6+cqJFpTeVYoFKzo1wMuNuENLi+TxRwsvk=
+        b=T19HbzHDpyzUPNeQDueS07EcHBS2iKmkgbr71NaT4vZRz6eP7L8AqP+hjl0sTcjBf
+         8OB87Jpdp6+K0UEWlKbKjZWaBtCjI8f4PaFes6vr52mWTSd10er+EgpU49VcJA359W
+         9a2V8RE1bZYWHUXNrSdcQE0dhwEq7sC2RJ9YGYqo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 093/137] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
-Date:   Mon, 11 Feb 2019 15:19:34 +0100
-Message-Id: <20190211141820.659457049@linuxfoundation.org>
+Subject: [PATCH 4.9 097/137] thermal: generic-adc: Fix adc to temp interpolation
+Date:   Mon, 11 Feb 2019 15:19:38 +0100
+Message-Id: <20190211141821.048062427@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -66,50 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7418e6520f22a2e35815122fa5a53d5bbfa2c10f ]
+[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
 
-In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
-HFCPCI_l1hw() may be concurrently executed.
+First correct the edge case to return the last element if we're
+outside the range, rather than at the last element, so that
+interpolation is not omitted for points between the two last entries in
+the table.
 
-HFCPCI_l1hw()
-  line 1173: if (!cs->tx_skb)
+Then correct the formula to perform linear interpolation based the two
+points surrounding the read ADC value. The indices for temp are kept as
+"hi" and "lo" to pair with the adc indices, but there's no requirement
+that the temperature is provided in descendent order. mult_frac() is
+used to prevent issues with overflowing the int.
 
-hfcpci_interrupt()
-  line 942: spin_lock_irqsave();
-  line 1066: dev_kfree_skb_irq(cs->tx_skb);
-
-Thus, a possible concurrency use-after-free bug may occur
-in HFCPCI_l1hw().
-
-To fix these bugs, the calls to spin_lock_irqsave() and
-spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
-access to cs->tx_skb.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hisax/hfc_pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index 90449e1e91e5..1b1453d62fed 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1169,11 +1169,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
- 		if (cs->debug & L1_DEB_LAPD)
- 			debugl1(cs, "-> PH_REQUEST_PULL");
- #endif
-+		spin_lock_irqsave(&cs->lock, flags);
- 		if (!cs->tx_skb) {
- 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
- 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
- 		} else
- 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
-+		spin_unlock_irqrestore(&cs->lock, flags);
- 		break;
- 	case (HW_RESET | REQUEST):
- 		spin_lock_irqsave(&cs->lock, flags);
+diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+index 73f55d6a1721..ad601e5b4175 100644
+--- a/drivers/thermal/thermal-generic-adc.c
++++ b/drivers/thermal/thermal-generic-adc.c
+@@ -26,7 +26,7 @@ struct gadc_thermal_info {
+ 
+ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ {
+-	int temp, adc_hi, adc_lo;
++	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
+ 	int i;
+ 
+ 	for (i = 0; i < gti->nlookup_table; i++) {
+@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ 
+ 	if (i == 0) {
+ 		temp = gti->lookup_table[0];
+-	} else if (i >= (gti->nlookup_table - 1)) {
++	} else if (i >= gti->nlookup_table) {
+ 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
+ 	} else {
+ 		adc_hi = gti->lookup_table[2 * i - 1];
+ 		adc_lo = gti->lookup_table[2 * i + 1];
+-		temp = gti->lookup_table[2 * i];
+-		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
++
++		temp_hi = gti->lookup_table[2 * i - 2];
++		temp_lo = gti->lookup_table[2 * i];
++
++		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
++					   adc_lo - adc_hi);
+ 	}
+ 
+ 	return temp;
 -- 
 2.19.1
 
