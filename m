@@ -2,115 +2,138 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCAFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8C7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6E22184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:26:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="H/V0e1/s"
+	by mail.kernel.org (Postfix) with ESMTP id BD01020818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfBKW05 (ORCPT
+        id S1727448AbfBKW2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:26:57 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44964 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbfBKW04 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:26:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p4so223589plq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:26:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+3Vr1+QlQvEHr8M/dHYTsMTtYJsOn13EtxtdSHco0lA=;
-        b=H/V0e1/sxhsB7WFX/N0kZUiV+AmZRdJGGVYYTLTxFdhY5nb1UJe+JMnI+7Wtm5qrVo
-         9DKGdZYrmhxNIzyxCF6KS5CkMVSRIpCYUJRzbot216o0aLp11WfztesC46z2vIVQKZUc
-         ZI9/GNYTxn8zjWtDcd83yG8sCBp8QiYlSEjrgAXp17fsDau2xXn9DrivFvbhxpscbLuC
-         7HVtwNSOpqLOBrEI/PlSCF012t0kMC3O3npmpCtHZ4RfHPEs2KGr9RsCy5xDxzURE5f4
-         mg3unr8OMtjXkEcp7pTHKVDKmny/uxKl/gcCRrqEWwL6yLsQkj/XfeCVr5wIoXrnoYCd
-         OEjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+3Vr1+QlQvEHr8M/dHYTsMTtYJsOn13EtxtdSHco0lA=;
-        b=Vf7VzY1QF4/7FA4Yk7GjPylG+aU2Dc0Cvno8PrqKrbZ7KXop9vlzv3n2t2QM38YodM
-         bQ7rgOTn4SIM0yCZtQjrFS9NoY+7+s3tw9ifaGHVmw+Pj3KxY3OjDeEIMAgTwtj8UIGN
-         Jzg+sTzUEc48wXpqhD83wM8HbnuP+B0xEzb2d/nqq23wsSEHt4dctDO5HkIyFk66ev3M
-         2ZD110Fmlovo2dke9e0DFicw4UhW1s5gBPXJWAzVY6eDwEOSAWZoBOC2CyIa3pP0Kz8O
-         smoSzps0qPIlVkArGkBJIHgE8n0+HQPgZ4tRoKIOHUW+wrfExotgtX6uoiQmjF15IAYj
-         L5Aw==
-X-Gm-Message-State: AHQUAuZ4gTn6q53IAWkb4vK/k+oxPKydlUJNGKV4mMa8ntWdw5wAkN1c
-        tfE47mkr8HODuEwSv9RRNSUfJA==
-X-Google-Smtp-Source: AHgI3IYq1z9EDDskfPJiG3lu2lcPl33yTxNv97aU7OWUwiC1jPilPFYNRxNJjOyeAsLu9VB8ezqHMg==
-X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr556452plb.226.1549924015920;
-        Mon, 11 Feb 2019 14:26:55 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id u6sm12486420pgr.79.2019.02.11.14.26.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 14:26:54 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gtK2Q-00046Q-65; Mon, 11 Feb 2019 15:26:54 -0700
-Date:   Mon, 11 Feb 2019 15:26:54 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Daniel Stone <daniel@fooishbar.org>, "hch@lst.de" <hch@lst.de>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v2] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190211222654.GA15746@ziepe.ca>
-References: <20190207222647.GA30974@ziepe.ca>
+        Mon, 11 Feb 2019 17:28:51 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57856 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726751AbfBKW2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:28:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46E9BEBD;
+        Mon, 11 Feb 2019 14:28:50 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C64E23F675;
+        Mon, 11 Feb 2019 14:28:43 -0800 (PST)
+Date:   Mon, 11 Feb 2019 22:28:39 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 1/9] irq/irq_sim: don't share the irq_chip structure
+ between simulators
+Message-ID: <20190211222839.7a7ad87f@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190129084411.30495-2-brgl@bgdev.pl>
+References: <20190129084411.30495-1-brgl@bgdev.pl>
+        <20190129084411.30495-2-brgl@bgdev.pl>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207222647.GA30974@ziepe.ca>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 10:26:52PM +0000, Jason Gunthorpe wrote:
-> Commit 2db76d7c3c6d ("lib/scatterlist: sg_page_iter: support sg lists w/o
-> backing pages") introduced the sg_page_iter_dma_address() function without
-> providing a way to use it in the general case. If the sg_dma_len() is not
-> equal to the sg length callers cannot safely use the
-> for_each_sg_page/sg_page_iter_dma_address combination.
+On Tue, 29 Jan 2019 09:44:03 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Resolve this API mistake by providing a DMA specific iterator,
-> for_each_sg_dma_page(), that uses the right length so
-> sg_page_iter_dma_address() works as expected with all sglists.
+> We want to support multiple instances of irq_sim. Make struct irq_chip
+> part of the irq_sim structure.
+
+Why? There is nothing dynamic in an irqchip structure. It is all code
+that is set in stone for the lifetime of the irqchip.
+
+I've sure you have a use for such indirection, so why don't you explain
+what you have in mind?
+
+Thanks,
+
+	M.
+
 > 
-> A new iterator type is introduced to provide compile-time safety against
-> wrongly mixing accessors and iterators.
-> 
-> Acked-by: Christoph Hellwig <hch@lst.de> (for scatterlist)
-> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-> Acked-by: Thomas Hellstrom <thellstrom@vmware.com>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
->  .clang-format                              |  1 +
->  drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c |  8 +++-
->  drivers/media/pci/intel/ipu3/ipu3-cio2.c   |  4 +-
->  include/linux/scatterlist.h                | 49 ++++++++++++++++++----
->  lib/scatterlist.c                          | 26 ++++++++++++
->  5 files changed, 76 insertions(+), 12 deletions(-)
+>  include/linux/irq_sim.h |  2 ++
+>  kernel/irq/irq_sim.c    | 12 +++++-------
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+> index 4500d453a63e..eda132c22b57 100644
+> --- a/include/linux/irq_sim.h
+> +++ b/include/linux/irq_sim.h
+> @@ -6,6 +6,7 @@
+>  #ifndef _LINUX_IRQ_SIM_H
+>  #define _LINUX_IRQ_SIM_H
+>  
+> +#include <linux/irq.h>
+>  #include <linux/irq_work.h>
+>  #include <linux/device.h>
+>  
+> @@ -25,6 +26,7 @@ struct irq_sim_irq_ctx {
+>  };
+>  
+>  struct irq_sim {
+> +	struct irq_chip		chip;
+>  	struct irq_sim_work_ctx	work_ctx;
+>  	int			irq_base;
+>  	unsigned int		irq_count;
+> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> index 98a20e1594ce..b732e4e2e45b 100644
+> --- a/kernel/irq/irq_sim.c
+> +++ b/kernel/irq/irq_sim.c
+> @@ -25,12 +25,6 @@ static void irq_sim_irqunmask(struct irq_data *data)
+>  	irq_ctx->enabled = true;
+>  }
+>  
+> -static struct irq_chip irq_sim_irqchip = {
+> -	.name		= "irq_sim",
+> -	.irq_mask	= irq_sim_irqmask,
+> -	.irq_unmask	= irq_sim_irqunmask,
+> -};
+> -
+>  static void irq_sim_handle_irq(struct irq_work *work)
+>  {
+>  	struct irq_sim_work_ctx *work_ctx;
+> @@ -74,6 +68,10 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+>  		return sim->irq_base;
+>  	}
+>  
+> +	sim->chip.name = "irq_sim";
+> +	sim->chip.irq_mask = irq_sim_irqmask;
+> +	sim->chip.irq_unmask = irq_sim_irqunmask;
+> +
+>  	sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
+>  	if (!sim->work_ctx.pending) {
+>  		kfree(sim->irqs);
+> @@ -84,7 +82,7 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+>  	for (i = 0; i < num_irqs; i++) {
+>  		sim->irqs[i].irqnum = sim->irq_base + i;
+>  		sim->irqs[i].enabled = false;
+> -		irq_set_chip(sim->irq_base + i, &irq_sim_irqchip);
+> +		irq_set_chip(sim->irq_base + i, &sim->chip);
+>  		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
+>  		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
+>  		irq_modify_status(sim->irq_base + i,
 
-Applied to rdma.git's for-next, thanks everyone.
 
-Jason
+
+-- 
+Without deviation from the norm, progress is not possible.
