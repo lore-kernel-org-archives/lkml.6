@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F15C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B39C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11533222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8FA5222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897684;
-	bh=oDnCqmaafQ0pHKRBCC3Ygbwcf1fkmP/ENktyTrwndTQ=;
+	s=default; t=1549897693;
+	bh=S6mD5aoUTEsrmzjWfNsAq6D54oLUVPzBRIdqZxJYRaU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cyr6P8iApO05ctZDrmsBPwpwyZURxHNfMWaRWSTx6wvnwsfpaQPZZkExkfz61FwSc
-	 U59YHRRmr5R/Pb8PD7PKvsMusuGMYp2if4ccZYRA8Fx65vnHoRh1gt02ipuBY4gJ3u
-	 e3pt/9AMZ+bMYF4vtEzDlt+h1k7pXjitZOa646ZE=
+	b=zY/kdDG+HGTCLz3/wuRHeEu+4TFGoYMaIV1ks+rDa1PfwYmchCWhGfjKKUeW1U5p6
+	 oeKTWngfDm0hr1NrWWdSu4WV6P+VXamsBtg4kUZfwvMC2Ld2pKJ2LCz7zMAgPjqwRM
+	 rSREWoBkin8AoAGjclfJsHy2EObkNO9+lYXfTHpw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390640AbfBKPIC (ORCPT
+        id S2390785AbfBKPIM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57858 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391043AbfBKPH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:59 -0500
+        id S2390758AbfBKPII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39625222B5;
-        Mon, 11 Feb 2019 15:07:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F249222A7;
+        Mon, 11 Feb 2019 15:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897678;
-        bh=oDnCqmaafQ0pHKRBCC3Ygbwcf1fkmP/ENktyTrwndTQ=;
+        s=default; t=1549897687;
+        bh=S6mD5aoUTEsrmzjWfNsAq6D54oLUVPzBRIdqZxJYRaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aH7/47oipAOL7FoBcpXOJ9Bfi+YyELgUjqZ5c6CJ83JoZNF1kjeZ87gW6kugozJsw
-         bRlCmJvXnT3teajUykPdKSqItVKREaWYjgvbdioAR9Jl0vB3Y50mTtZ2PBxxvIIkyC
-         heG5QCls13TxkqfbFzufsqisp9b9tzFhSAm1pDfo=
+        b=frXtaURefm2N1VRZz/5al6ufZvkMAAbklPHt4pd0T3nUVi+ZGu45a/Kd9cwXawGjr
+         0T2aqAJqufUtTz9iBcCBbMXfIXmV/6d8MYzDTYg7FmUS79a0aqUzQFBGCasaVuau8m
+         GP+8oFtESkzlpF4p0C99eCEGQ8g42BeAW/nM7UWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 077/137] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
-Date:   Mon, 11 Feb 2019 15:19:18 +0100
-Message-Id: <20190211141819.166117172@linuxfoundation.org>
+Subject: [PATCH 4.9 050/137] i2c-axxia: check for error conditions first
+Date:   Mon, 11 Feb 2019 15:18:51 +0100
+Message-Id: <20190211141816.613437203@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,47 +68,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 42f9b48cc5402be11d2364275eb18c257d2a79e8 ]
+[ Upstream commit 4f5c85fe3a60ace555d09898166af372547f97fc ]
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
+It was observed that when using seqentional mode contrary to the
+documentation, the SS bit (which is supposed to only be set if
+automatic/sequence command completed normally), is sometimes set
+together with NA (NAK in address phase) causing transfer to falsely be
+considered successful.
 
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
+My assumption is that this does not happen during manual mode since the
+controller is stopping its work the moment it sets NA/ND bit in status
+register. This is not the case in Automatic/Sequentional mode where it
+is still working to send STOP condition and the actual status we get
+depends on the time when the ISR is run.
 
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This patch changes the order of checking status bits in ISR - error
+conditions are checked first and only if none of them occurred, the
+transfer may be considered successful. This is required to introduce
+using of sequentional mode in next patch.
+
+Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson8.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i2c/busses/i2c-axxia.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 07f1cb21c1b8..0de7fa414beb 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -736,7 +736,9 @@ static const char * const gpio_groups[] = {
- 	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
-+};
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 96a6d5df9b26..b0962897bc45 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -296,22 +296,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 			i2c_int_disable(idev, MST_STATUS_TFL);
+ 	}
  
-+static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
- 	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
- 	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-@@ -908,6 +910,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
- };
+-	if (status & MST_STATUS_SCC) {
+-		/* Stop completed */
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		complete(&idev->msg_complete);
+-	} else if (status & MST_STATUS_SNS) {
+-		/* Transfer done */
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
+-			axxia_i2c_empty_rx_fifo(idev);
+-		complete(&idev->msg_complete);
+-	} else if (status & MST_STATUS_TSS) {
+-		/* Transfer timeout */
+-		idev->msg_err = -ETIMEDOUT;
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		complete(&idev->msg_complete);
+-	} else if (unlikely(status & MST_STATUS_ERR)) {
++	if (unlikely(status & MST_STATUS_ERR)) {
+ 		/* Transfer error */
+ 		i2c_int_disable(idev, ~0);
+ 		if (status & MST_STATUS_AL)
+@@ -328,6 +313,21 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 			readl(idev->base + MST_TX_BYTES_XFRD),
+ 			readl(idev->base + MST_TX_XFER));
+ 		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SCC) {
++		/* Stop completed */
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SNS) {
++		/* Transfer done */
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
++			axxia_i2c_empty_rx_fifo(idev);
++		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_TSS) {
++		/* Transfer timeout */
++		idev->msg_err = -ETIMEDOUT;
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		complete(&idev->msg_complete);
+ 	}
  
- static struct meson_pmx_func meson8_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(remote),
- 	FUNCTION(i2c_slave_ao),
+ out:
 -- 
 2.19.1
 
