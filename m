@@ -2,239 +2,128 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E97C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B887C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E2FF217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18DCF217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 21:02:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="hUIoym1j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbfBKVAz (ORCPT
+        id S1727170AbfBKVCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:00:55 -0500
-Received: from mga03.intel.com ([134.134.136.65]:11721 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbfBKVAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:00:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 13:00:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,360,1544515200"; 
-   d="scan'208";a="133476917"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga002.jf.intel.com with ESMTP; 11 Feb 2019 13:00:53 -0800
-Message-ID: <770615ef2db838775fb68130ca60711c6e593f3d.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
- hints
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
-        akpm@linux-foundation.org
-Date:   Mon, 11 Feb 2019 13:00:53 -0800
-In-Reply-To: <20190211142902-mutt-send-email-mst@kernel.org>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <20190204181552.12095.46287.stgit@localhost.localdomain>
-         <20190209194437-mutt-send-email-mst@kernel.org>
-         <869a170e9232ffbc8ddbcf3d15535e8c6daedbde.camel@linux.intel.com>
-         <20190211122321-mutt-send-email-mst@kernel.org>
-         <44d0848e62f6d5237b60d209265dbcdf58ade1b9.camel@linux.intel.com>
-         <20190211142902-mutt-send-email-mst@kernel.org>
+        Mon, 11 Feb 2019 16:02:50 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33449 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbfBKVCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 16:02:49 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i20so672537otl.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 13:02:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ue3vXSU/Uyn4dHhRrNll0Xk0Xsd0Oc1wTjLcVxg/RVU=;
+        b=hUIoym1jWomz+hQ3cjra7vbu8N5t4Hnlg+PAqHz9/FbJkw5AbL1Sv33KOuBzmBGiuw
+         XFTkiY3/ijZ6462k6DJrU7QYA9Vd5lttHeHLC0g1iQcLlLS7j/vcZPHVAConzOdMRrvy
+         n2QpK6+M5qBuH4QcCR04be/KEWKPeslapu3m3t0isgfrskGI8tLy1kqohwuqEFTvJPE3
+         X1sCVWaUU0De1pZLAqvjBRCwaa7k+YeoI3EnJv4AYoa5NNEY1d7gCQSUmQsO2WEgstLP
+         ac5rNKg/bs0GU3zUFz0Eq9XUOeFF4D8Di2ts/s5d0y6iESwJXdZbWcfvbwU4Nt0K7Oin
+         LCmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ue3vXSU/Uyn4dHhRrNll0Xk0Xsd0Oc1wTjLcVxg/RVU=;
+        b=buoVHzb4MwfonOXT2XLd1wFjPDWpUG/A44BP0e/9YkgqPUSsMjcE0l5n7rbPyQyuAk
+         aOxuz3Mvs3OEixLiDe9YxfEgwT3bOUENS1JXkmDmeyYG8Sw3BEDjhNaReqyQj+bSQjUc
+         f/UTYtUyZFWGeFkMFb1M5hAgdor+tCSYZLYw0LtNBGqKraVbukdsoe1qZwTXNtfAEwDm
+         Z9s70tvSf4zYb6ewoai54/i8G6nNJEGbBc0W9uxn+kJEKas3N7opURTwMy85GKj7byKJ
+         LqBqrohItGi9rQ2jr/+9EloYNnFfnvwOIlxHPFVQVM6tg0iGi9LvQjeqqB6ekd75Vnph
+         eq2g==
+X-Gm-Message-State: AHQUAuburxX6v5OAkipWt9NKHSF5bDEequ6Aiz3mhQRLCPvDlpZooBq6
+        sSkVvZxZVqgmd0SrSUxWY9dhTgwaqqWl+rbxYGBdag==
+X-Google-Smtp-Source: AHgI3IZxeqNTfWgs9o1UN4GAPAtcCJWm5QBYZL8PcXZdv7fUAGZtHzMZB4bxYkGrLKUuX0CWjIpxvAiXIcKohnPhirs=
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr169743otn.95.1549918968592;
+ Mon, 11 Feb 2019 13:02:48 -0800 (PST)
+MIME-Version: 1.0
+References: <20190208044302.GA20493@dastard> <20190208111028.GD6353@quack2.suse.cz>
+ <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
+ <20190211102402.GF19029@quack2.suse.cz> <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
+ <20190211180654.GB24692@ziepe.ca> <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
+ <20190211182649.GD24692@ziepe.ca> <20190211184040.GF12668@bombadil.infradead.org>
+ <CAPcyv4j71WZiXWjMPtDJidAqQiBcHUbcX=+aw11eEQ5C6sA8hQ@mail.gmail.com> <20190211204945.GF24692@ziepe.ca>
+In-Reply-To: <20190211204945.GF24692@ziepe.ca>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 11 Feb 2019 13:02:37 -0800
+Message-ID: <CAPcyv4jHjeJxmHMyrbRhg9oeaLK5WbZm-qu1HywjY7bF2DwiDg@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Christopher Lameter <cl@linux.com>,
+        Doug Ledford <dledford@redhat.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-11 at 14:54 -0500, Michael S. Tsirkin wrote:
-> On Mon, Feb 11, 2019 at 10:10:06AM -0800, Alexander Duyck wrote:
-> > On Mon, 2019-02-11 at 12:36 -0500, Michael S. Tsirkin wrote:
-> > > On Mon, Feb 11, 2019 at 08:31:34AM -0800, Alexander Duyck wrote:
-> > > > On Sat, 2019-02-09 at 19:49 -0500, Michael S. Tsirkin wrote:
-> > > > > On Mon, Feb 04, 2019 at 10:15:52AM -0800, Alexander Duyck wrote:
-> > > > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > > 
-> > > > > > Add guest support for providing free memory hints to the KVM hypervisor for
-> > > > > > freed pages huge TLB size or larger. I am restricting the size to
-> > > > > > huge TLB order and larger because the hypercalls are too expensive to be
-> > > > > > performing one per 4K page.
-> > > > > 
-> > > > > Even 2M pages start to get expensive with a TB guest.
-> > > > 
-> > > > Agreed.
-> > > > 
-> > > > > Really it seems we want a virtio ring so we can pass a batch of these.
-> > > > > E.g. 256 entries, 2M each - that's more like it.
-> > > > 
-> > > > The only issue I see with doing that is that we then have to defer the
-> > > > freeing. Doing that is going to introduce issues in the guest as we are
-> > > > going to have pages going unused for some period of time while we wait
-> > > > for the hint to complete, and we cannot just pull said pages back. I'm
-> > > > not really a fan of the asynchronous nature of Nitesh's patches for
-> > > > this reason.
-> > > 
-> > > Well nothing prevents us from doing an extra exit to the hypervisor if
-> > > we want. The asynchronous nature is there as an optimization
-> > > to allow hypervisor to do its thing on a separate CPU.
-> > > Why not proceed doing other things meanwhile?
-> > > And if the reason is that we are short on memory, then
-> > > maybe we should be less aggressive in hinting?
-> > > 
-> > > E.g. if we just have 2 pages:
-> > > 
-> > > hint page 1
-> > > page 1 hint processed?
-> > > 	yes - proceed to page 2
-> > > 	no - wait for interrupt
-> > > 
-> > > get interrupt that page 1 hint is processed
-> > > hint page 2
-> > > 
-> > > 
-> > > If hypervisor happens to be running on same CPU it
-> > > can process things synchronously and we never enter
-> > > the no branch.
-> > > 
-> > 
-> > Another concern I would have about processing this asynchronously is
-> > that we have the potential for multiple guest CPUs to become
-> > bottlenecked by a single host CPU. I am not sure if that is something
-> > that would be desirable.
-> 
-> Well with a hypercall per page the fix is to block VCPU
-> completely which is also not for everyone.
-> 
-> If you can't push a free page hint to host, then
-> ideally you just won't. That's a nice property of
-> hinting we have upstream right now.
-> Host too busy - hinting is just skipped.
+On Mon, Feb 11, 2019 at 12:49 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Mon, Feb 11, 2019 at 11:58:47AM -0800, Dan Williams wrote:
+> > On Mon, Feb 11, 2019 at 10:40 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Mon, Feb 11, 2019 at 11:26:49AM -0700, Jason Gunthorpe wrote:
+> > > > On Mon, Feb 11, 2019 at 10:19:22AM -0800, Ira Weiny wrote:
+> > > > > What if user space then writes to the end of the file with a regular write?
+> > > > > Does that write end up at the point they truncated to or off the end of the
+> > > > > mmaped area (old length)?
+> > > >
+> > > > IIRC it depends how the user does the write..
+> > > >
+> > > > pwrite() with a given offset will write to that offset, re-extending
+> > > > the file if needed
+> > > >
+> > > > A file opened with O_APPEND and a write done with write() should
+> > > > append to the new end
+> > > >
+> > > > A normal file with a normal write should write to the FD's current
+> > > > seek pointer.
+> > > >
+> > > > I'm not sure what happens if you write via mmap/msync.
+> > > >
+> > > > RDMA is similar to pwrite() and mmap.
+> > >
+> > > A pertinent point that you didn't mention is that ftruncate() does not change
+> > > the file offset.  So there's no user-visible change in behaviour.
+> >
+> > ...but there is. The blocks you thought you freed, especially if the
+> > system was under -ENOSPC pressure, won't actually be free after the
+> > successful ftruncate().
+>
+> They won't be free after something dirties the existing mmap either.
+>
+> Blocks also won't be free if you unlink a file that is currently still
+> open.
+>
+> This isn't really new behavior for a FS.
 
-Right, but if you do that then there is a potential to end up missing
-hints for a large portion of memory. It seems like you would end up
-with even bigger issues since then at that point you have essentially
-leaked memory.
-
-I would think you would need a way to resync the host and the guest
-after something like that. Otherwise you can have memory that will just
-go unused for an extended period if a guest just goes idle.
-
-> > > > > > Using the huge TLB order became the obvious
-> > > > > > choice for the order to use as it allows us to avoid fragmentation of higher
-> > > > > > order memory on the host.
-> > > > > > 
-> > > > > > I have limited the functionality so that it doesn't work when page
-> > > > > > poisoning is enabled. I did this because a write to the page after doing an
-> > > > > > MADV_DONTNEED would effectively negate the hint, so it would be wasting
-> > > > > > cycles to do so.
-> > > > > 
-> > > > > Again that's leaking host implementation detail into guest interface.
-> > > > > 
-> > > > > We are giving guest page hints to host that makes sense,
-> > > > > weird interactions with other features due to host
-> > > > > implementation details should be handled by host.
-> > > > 
-> > > > I don't view this as a host implementation detail, this is guest
-> > > > feature making use of all pages for debugging. If we are placing poison
-> > > > values in the page then I wouldn't consider them an unused page, it is
-> > > > being actively used to store the poison value.
-> > > 
-> > > Well I guess it's a valid point of view for a kernel hacker, but they are
-> > > unused from application's point of view.
-> > > However poisoning is transparent to users and most distro users
-> > > are not aware of it going on. They just know that debug kernels
-> > > are slower.
-> > > User loading a debug kernel and immediately breaking overcommit
-> > > is an unpleasant experience.
-> > 
-> > How would that be any different then a user loading an older kernel
-> > that doesn't have this feature and breaking overcommit as a result?
-> 
-> Well old kernel does not have the feature so nothing to debug.
-> When we have a new feature that goes away in the debug kernel,
-> that's a big support problem since this leads to heisenbugs.
-
-Trying to debug host features from the guest would be a pain anyway as
-a guest shouldn't even really know what the underlying setup of the
-guest is supposed to be.
-
-> > I still think it would be better if we left the poisoning enabled in
-> > such a case and just displayed a warning message if nothing else that
-> > hinting is disabled because of page poisoning.
-> > 
-> > One other thought I had on this is that one side effect of page
-> > poisoning is probably that KSM would be able to merge all of the poison
-> > pages together into a single page since they are all set to the same
-> > values. So even with the poisoned pages it would be possible to reduce
-> > total memory overhead.
-> 
-> Right. And BTW one thing that host can do is pass
-> the hinted area to KSM for merging.
-> That requires an alloc hook to free it though.
-> 
-> Or we could add a per-VMA byte with the poison
-> value and use that on host to populate pages on fault.
-> 
-> 
-> > > > If we can achieve this
-> > > > and free the page back to the host then even better, but until the
-> > > > features can coexist we should not use the page hinting while page
-> > > > poisoning is enabled.
-> > > 
-> > > Existing hinting in balloon allows them to coexist so I think we
-> > > need to set the bar just as high for any new variant.
-> > 
-> > That is what I heard. I will have to look into this.
-> 
-> It's not doing anything smart right now, just checks
-> that poison == 0 and skips freeing if not.
-> But it can be enhanced transparently to guests.
-
-Okay, so it probably should be extended to add something like poison
-page that could replace the zero page for reads to a page that has been
-unmapped.
-
-> > > > This is one of the reasons why I was opposed to just disabling page
-> > > > poisoning when this feature was enabled in Nitesh's patches. If the
-> > > > guest has page poisoning enabled it is doing something with the page.
-> > > > It shouldn't be prevented from doing that because the host wants to
-> > > > have the option to free the pages.
-> > > 
-> > > I agree but I think the decision belongs on the host. I.e.
-> > > hint the page but tell the host it needs to be careful
-> > > about the poison value. It might also mean we
-> > > need to make sure poisoning happens after the hinting, not before.
-> > 
-> > The only issue with poisoning after instead of before is that the hint
-> > is ignored and we end up triggering a page fault and zero as a result.
-> > It might make more sense to have an architecture specific call that can
-> > be paravirtualized to handle the case of poisoning the page for us if
-> > we have the unused page hint enabled. Otherwise the write to the page
-> > is a given to invalidate the hint.
-> 
-> Sounds interesting. So the arch hook will first poison and
-> then pass the page to the host?
-> 
-> Or we can also ask the host to poison for us, problem is this forces
-> host to either always write into page, or call MADV_DONTNEED,
-> without it could do MADV_FREE. Maybe that is not a big issue.
-
-I would think we would ask the host to poison for us. If I am not
-mistaken both solutions right now are using MADV_DONTNEED. I would tend
-to lean that way if we are doing page poisoning since the cost for
-zeroing/poisoning the page on the host could be canceled out by
-dropping the page poisoning on the guest.
-
-Then again since we are doing higher order pages only, and the
-poisoning is supposed to happen before we get into __free_one_page we
-would probably have to do both the poisoning, and the poison on fault.
-
+An mmap write after a fault due to a hole punch is free to trigger
+SIGBUS if the subsequent page allocation fails. So no, I don't see
+them as the same unless you're allowing for the holder of the MR to
+receive a re-fault failure.
