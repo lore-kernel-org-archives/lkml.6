@@ -2,116 +2,144 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B5FC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B5FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E929D21B68
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:12:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gB0ndMav"
+	by mail.kernel.org (Postfix) with ESMTP id 0743F218A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 22:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfBKWMu (ORCPT
+        id S1727253AbfBKWNe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 17:12:50 -0500
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:42246 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbfBKWMt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 17:12:49 -0500
-Received: by mail-pf1-f174.google.com with SMTP id n74so212372pfi.9
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 14:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=83DmjUWQh+S2vLB7v2POyWHbLsByc2zkoGWWNU6YAPM=;
-        b=gB0ndMavIkmtshRqaMuUYA0IV/ApBgqnYbPjyksRq1BBJjKyeq3LdC/xG1McWcTeQX
-         nrlUPXmoL33R57gJEqBcQ4NdMD34w4y3m0yMDrQGlSDTfgbKsfOmEqMasbZ+GUNniIGP
-         iPHtdLQYITnYXmpZcYXwRjZHui/AFax+dob2kX9rjeHUXFLz6ZXwBcUQO/4e5aDvyKV0
-         LwgEtSKK0gNgz29rEg+wZWEfCWyQJznN1+yRyy9VQ/zcmEefHlbtKLk1W98S+MCgHIAS
-         dIvqSYf9XtGOoU5AasRE9cVN+saFPAc8XtMbQ8iNWY8Xe9lZj6ekrIQf/wSl1hBOx1YO
-         0iNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=83DmjUWQh+S2vLB7v2POyWHbLsByc2zkoGWWNU6YAPM=;
-        b=nBTLajKuQtL19bXXEqRkBFjnlLw0hS5j+OvKpU7mZFZduxI3irbjE7ZkBut51XU8v8
-         FD5i88Fr3pdVxabqxvZQwjuxJ8Cdzj2dPE8eaBF7e9RcQ3TNKQL1lIqlLb9CdzWZngOy
-         KBBVgaZEFnh453NAa0l8mXhRotMRlORpZifdkesmBzw6VWibHNpp8RsPO8kD/tdgTnka
-         cZt7S1QUYWZWjS9EZjZewECusqLXSdC+ZnRwgvTomIPHa3JU4FF2PE7WSwm4n3Rurort
-         t3lTvUIJwWBgL/BBeyjYrEfX+ei8RgDzFhca6AMS2rkO1ZGNJFGDTSLWvy4LZMGdC0/S
-         yukQ==
-X-Gm-Message-State: AHQUAuY8mEn/qiBxtbVbijsuEkNkDOh5CKBcTdDnv2IXKFKDIdD8b74L
-        ulIXh7zD7wr6Mp7DbqoVd2S//w==
-X-Google-Smtp-Source: AHgI3IYuL3gkNFhcl4a2Z2bh9sUoL6/TO+kjHmUXHSIyVoNduGP/oKTcakRSgEJRoQjAbch4RqeuxA==
-X-Received: by 2002:a63:1544:: with SMTP id 4mr475924pgv.290.1549923169126;
-        Mon, 11 Feb 2019 14:12:49 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m67sm19284132pfb.25.2019.02.11.14.12.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 14:12:48 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gtJol-0003Sa-Rp; Mon, 11 Feb 2019 15:12:47 -0700
-Date:   Mon, 11 Feb 2019 15:12:47 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Christopher Lameter <cl@linux.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190211221247.GI24692@ziepe.ca>
-References: <bfe0fdd5400d41d223d8d30142f56a9c8efc033d.camel@redhat.com>
- <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com>
- <20190208044302.GA20493@dastard>
- <20190208111028.GD6353@quack2.suse.cz>
- <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com>
- <20190211102402.GF19029@quack2.suse.cz>
- <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
- <20190211180654.GB24692@ziepe.ca>
- <20190211181921.GA5526@iweiny-DESK2.sc.intel.com>
- <fb507b56-7f8f-cf2c-285c-bae3b2d72c4f@nvidia.com>
+        Mon, 11 Feb 2019 17:13:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57704 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbfBKWNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 17:13:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0010EBD;
+        Mon, 11 Feb 2019 14:13:33 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CCA13F675;
+        Mon, 11 Feb 2019 14:13:29 -0800 (PST)
+Date:   Mon, 11 Feb 2019 22:13:25 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        "david.abdurachmanov@gmail.com" <david.abdurachmanov@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "alankao@andestech.com" <alankao@andestech.com>,
+        "dmitriy@oss-tech.org" <dmitriy@oss-tech.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "me@packi.ch" <me@packi.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "schwab@suse.de" <schwab@suse.de>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "zongbox@gmail.com" <zongbox@gmail.com>
+Subject: Re: [v3 PATCH 8/8] RISC-V: Assign hwcap only according to boot cpu.
+Message-ID: <20190211221325.7244b575@why.wild-wind.fr.eu.org>
+In-Reply-To: <83562b9d-e94b-76ce-7240-aac1dce43205@wdc.com>
+References: <mhng-baffacaa-599b-4c89-a5a0-e0c85ddb6d44@palmer-si-x1c4>
+        <83562b9d-e94b-76ce-7240-aac1dce43205@wdc.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb507b56-7f8f-cf2c-285c-bae3b2d72c4f@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 01:22:11PM -0800, John Hubbard wrote:
+On Mon, 11 Feb 2019 12:03:30 -0800
+Atish Patra <atish.patra@wdc.com> wrote:
 
-> The only way that breaks is if longterm pins imply an irreversible action, such
-> as blocking and waiting in a way that you can't back out of or get interrupted
-> out of. And the design doesn't seem to be going in that direction, right?
+> On 2/11/19 11:02 AM, Palmer Dabbelt wrote:
+> > On Fri, 08 Feb 2019 20:26:07 PST (-0800), david.abdurachmanov@gmail.com wrote:  
+> >> On Sat, Feb 9, 2019 at 12:03 AM Atish Patra <atish.patra@wdc.com> wrote:  
+> >>>
+> >>> On 2/8/19 1:11 AM, Christoph Hellwig wrote:  
+> >>>>> +     * We don't support running Linux on hertergenous ISA systems.
+> >>>>> +     * But first "okay" processor might not be the boot cpu.
+> >>>>> +     * Check the ISA of boot cpu.  
+> >>>>
+> >>>> Please use up your available 80 characters per line in comments.
+> >>>>  
+> >>> I will fix it.
+> >>>  
+> >>>>> +            /*
+> >>>>> +             * All "okay" hart should have same isa. We don't know how to
+> >>>>> +             * handle if they don't. Throw a warning for now.
+> >>>>> +             */
+> >>>>> +            if (elf_hwcap && temp_hwcap != elf_hwcap)
+> >>>>> +                    pr_warn("isa mismatch: 0x%lx != 0x%lx\n",
+> >>>>> +                            elf_hwcap, temp_hwcap);
+> >>>>> +
+> >>>>> +            if (hartid == boot_cpu_hartid)
+> >>>>> +                    boot_hwcap = temp_hwcap;
+> >>>>> +            elf_hwcap = temp_hwcap;  
+> >>>>
+> >>>> So we always set elf_hwcap to the capabilities of the previous cpu.
+> >>>>  
+> >>>>> +            temp_hwcap = 0;  
+> >>>>
+> >>>> I think tmp_hwcap should be declared and initialized inside the outer loop
+> >>>> instead having to manually reset it like this.
+> >>>>  
+> >>>>> +    }
+> >>>>>
+> >>>>> +    elf_hwcap = boot_hwcap;  
+> >>>>
+> >>>> And then reset it here to the boot cpu.
+> >>>>
+> >>>> Shoudn't we only report the features supported by all cores?  Otherwise
+> >>>> we'll still have problems if the boot cpu supports a feature, but not
+> >>>> others.
+> >>>>  
+> >>>
+> >>> Hmm. The other side of the argument is boot cpu does have a feature that
+> >>> is not supported by other hart that didn't even boot.
+> >>> The user space may execute something based on boot cpu capability but
+> >>> that won't be enabled.
+> >>>
+> >>> At least, in this way we know that we are compatible completely with
+> >>> boot cpu capabilities. Thoughts ?  
+> >>
+> >> There is one example on the market, e.g., Samsung Exynos 9810.
+> >>
+> >> Mongoose 3 (big cores) only support ARMv8.0, while Cortex-A55
+> >> (little ones) support ARMv8.2 (and that brings atomics support).
+> >> I think, it's the only ARM SOC that supports different ISA extensions
+> >> between cores on the same package.
+> >>
+> >> Kernel scheduler doesn't know that big cores are missing atomics
+> >> support or that applications needs it and moves the thread
+> >> resulting in illegal instruction.
+> >>
+> >> E.g., see Golang issue: https://github.com/golang/go/issues/28431
+> >>
+> >> I also recall Jon Masters (Computer Architect at Red Hat) advocating
+> >> against having cores with mismatched capabilities on the server market.
+> >>
+> >> It just causes more problems down the line.
+> > > IMO the best bet is to only put extensions in HWCAP that are supported by all  
+> > the harts that userspace will be scheduled on.
+> > Fair enough. Instead of setting HWCAP in setup_arch() once, we can set it only for boot cpu. It will be updated after every cpu comes up online.  
+> 
+> Thus, HWCAP will consists all extensions supported by all cpus that are online currently.
 
-RDMA, vfio, etc will always have 'long term' pins that are
-irreversible on demand. It is part of the HW capability.
+You must thus prevent CPUs that have a different set of capabilities
+from coming up late (once userspace has started).
 
-I think the flag is badly named, it is really more of a
-GUP_LOCK_PHYSICAL_ADDRESSES flag.
-
-ie indicate to the FS that is should not attempt to remap physical
-memory addresses backing this VMA. If the FS can't do that it must
-fail.
-
-Short term GUP doesn't need that kind of lock.
-
-Jason
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
