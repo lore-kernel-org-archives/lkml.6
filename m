@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF70C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7D8C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F034B222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C95B222B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897826;
-	bh=199Rd5hM/Yrnj1ki0Ef27k/TX41Jywaun9wFbRYMb3Y=;
+	s=default; t=1549897829;
+	bh=CkSb2XBfZRATmVvikz42d/6fT15YUESRJMtnHTQgcDc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZHkF5guM1zjXvyqYhvTYFkC5CsgV/i3TvmW6Xk3anmbeDBhycM5L+LQiARtkqBbol
-	 c7ZldDwz6KFZ6jyCZQCeHzAtXz9PtyfxNa2U2ZYq2wqas4aBjK6DOSmBp862k18ci6
-	 15l0zQ5kGEGriutEm9Rr5Ijf7GjH6vY4nffKT0nM=
+	b=hWOHjPoVJ8a+6hFdxlhVY7e2m2gHlkd5mB1kWp9jMYDeKwmA8cfD81Wv1gEu01st3
+	 h+63TmrVRtUdFtWxGk8wl+HL9wqw5nGpfbrRQTntP7BzDZ0DUPyLPFzaqx/uMU++Eo
+	 1uPOzDFXoG7melNUN0i96o2OCY12g3UsiFQpECbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403958AbfBKPKY (ORCPT
+        id S2391805AbfBKPK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:10:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60382 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:10:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391789AbfBKPKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:10:22 -0500
+        id S2390502AbfBKPKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:10:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29C37222B0;
-        Mon, 11 Feb 2019 15:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF861222B2;
+        Mon, 11 Feb 2019 15:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897821;
-        bh=199Rd5hM/Yrnj1ki0Ef27k/TX41Jywaun9wFbRYMb3Y=;
+        s=default; t=1549897824;
+        bh=CkSb2XBfZRATmVvikz42d/6fT15YUESRJMtnHTQgcDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XW98bcNISQTOMKpJ3Xctqmjp1R+HHTwPz7k7+jmxRpjgK4lGABsZkIabxuEt2SUzT
-         GBdc3MWPCcK+TwRLPcGqkMOKMLS4jvy1BecZqlL/4YDt++Wn2LjCQeKtHJcISE+FQG
-         p6IBK4pXUo6bNDO+WaP5VZWz/Tt+bbXr1UyvtHdQ=
+        b=iWHZD4S6hZ8S+ezB6CpQzowWHv/MkcOcwuzlFWmz7Oxi1ta4Ld5M3NaoJBPEOR7en
+         UA4SD1gIXgnaU4rU/eOOWo0hiQe685iTiMFDGWecXHms9TgBSmZrGZTHDeIQQmNXYY
+         uMgaE7N0NSGeDdu9tpKxexPfDpu5qvKxSyBdciGk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Jann Horn <jannh@google.com>,
+        stable@vger.kernel.org, Peter Shier <pshier@google.com>,
+        Jim Mattson <jmattson@google.com>,
+        Felix Wilhelm <fwilhelm@google.com>, stable@kernel.org,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 127/137] kvm: fix kvm_ioctl_create_device() reference counting (CVE-2019-6974)
-Date:   Mon, 11 Feb 2019 15:20:08 +0100
-Message-Id: <20190211141823.937781768@linuxfoundation.org>
+Subject: [PATCH 4.9 128/137] KVM: nVMX: unconditionally cancel preemption timer in free_nested (CVE-2019-7221)
+Date:   Mon, 11 Feb 2019 15:20:09 +0100
+Message-Id: <20190211141824.009153426@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -65,57 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Peter Shier <pshier@google.com>
 
-commit cfa39381173d5f969daf43582c95ad679189cbc9 upstream.
+commit ecec76885bcfe3294685dc363fd1273df0d5d65f upstream.
 
-kvm_ioctl_create_device() does the following:
+Bugzilla: 1671904
 
-1. creates a device that holds a reference to the VM object (with a borrowed
-   reference, the VM's refcount has not been bumped yet)
-2. initializes the device
-3. transfers the reference to the device to the caller's file descriptor table
-4. calls kvm_get_kvm() to turn the borrowed reference to the VM into a real
-   reference
+There are multiple code paths where an hrtimer may have been started to
+emulate an L1 VMX preemption timer that can result in a call to free_nested
+without an intervening L2 exit where the hrtimer is normally
+cancelled. Unconditionally cancel in free_nested to cover all cases.
 
-The ownership transfer in step 3 must not happen before the reference to the VM
-becomes a proper, non-borrowed reference, which only happens in step 4.
-After step 3, an attacker can close the file descriptor and drop the borrowed
-reference, which can cause the refcount of the kvm object to drop to zero.
+Embargoed until Feb 7th 2019.
 
-This means that we need to grab a reference for the device before
-anon_inode_getfd(), otherwise the VM can disappear from under us.
-
-Fixes: 852b6d57dc7f ("kvm: add device control API")
+Signed-off-by: Peter Shier <pshier@google.com>
+Reported-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Reported-by: Felix Wilhelm <fwilhelm@google.com>
 Cc: stable@kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
+Message-Id: <20181011184646.154065-1-pshier@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/kvm_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2900,8 +2900,10 @@ static int kvm_ioctl_create_device(struc
- 	if (ops->init)
- 		ops->init(dev);
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -7368,6 +7368,7 @@ static void free_nested(struct vcpu_vmx
+ 	if (!vmx->nested.vmxon)
+ 		return;
  
-+	kvm_get_kvm(kvm);
- 	ret = anon_inode_getfd(ops->name, &kvm_device_fops, dev, O_RDWR | O_CLOEXEC);
- 	if (ret < 0) {
-+		kvm_put_kvm(kvm);
- 		mutex_lock(&kvm->lock);
- 		list_del(&dev->vm_node);
- 		mutex_unlock(&kvm->lock);
-@@ -2909,7 +2911,6 @@ static int kvm_ioctl_create_device(struc
- 		return ret;
- 	}
- 
--	kvm_get_kvm(kvm);
- 	cd->fd = ret;
- 	return 0;
- }
++	hrtimer_cancel(&vmx->nested.preemption_timer);
+ 	vmx->nested.vmxon = false;
+ 	free_vpid(vmx->nested.vpid02);
+ 	nested_release_vmcs12(vmx);
 
 
