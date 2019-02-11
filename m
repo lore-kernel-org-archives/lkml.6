@@ -2,181 +2,103 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EAFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B56C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F2F20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rc5VpAZ5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JjHjZpGc"
+	by mail.kernel.org (Postfix) with ESMTP id E75E820700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549901372;
+	bh=79m+Nk+lf61QRKOswr2Y7pdtJDF06KLqmRAFsEhz8vc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=JwJPjA2kfh6OObVkB0vQeCF5XdoKhh2mWvN2EVRuP2WumPsJkO5ti5BV4Q1xyIrxr
+	 U4tjnXrFXHEg8e/mQecmV9mdO08VDXFZn50fc1YN5JbUi4BnP7Yaxbg7e2L6BTjL5R
+	 Do3vtkxPzJaFcuHsldTbqP1sRapBvlyMK4u2Ry0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729967AbfBKQJI (ORCPT
+        id S1729685AbfBKQJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:09:08 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50544 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729425AbfBKQJG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:09:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5EA6F6109B; Mon, 11 Feb 2019 16:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549901344;
-        bh=BIpqkAFvht1bC6kR8JT6ResgeGOXjjDO504/d3d+Y9Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Rc5VpAZ5rmRDaij4J0hiUgbfnQgrS493Jp/c8CpgBE3Cf17yfHD68n8zMX+TglYCa
-         u/B/18pNbjKAJuZeOpJ+NbTv0fja2u+p4zn26I4OlwZpkwMopWDfoL+xYp7/tR58RD
-         J5KI3kuwhznPQSPY1DYcxeuHmAl73jO+JBSi9XoA=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 11 Feb 2019 11:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729368AbfBKOZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:25:23 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1292610DC;
-        Mon, 11 Feb 2019 16:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549901342;
-        bh=BIpqkAFvht1bC6kR8JT6ResgeGOXjjDO504/d3d+Y9Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JjHjZpGc7A8W2LpaXJkPPILwaZ/xsNx1U22FEPN7FMGOSIY+q+0+Se2Upqd62pT2G
-         xWdcqy/SQx4De+PUW2g6YyA5rAGuN9MSzIAWs4Sa1wsS/JIKxQFSb4vr5iRrqgjKuf
-         BK7ZOPTjD9YlkAgvV7nnwZ21vF6I3CGyp66oWO8s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1292610DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-References: <20190129061021.94775-1-sboyd@kernel.org>
- <20190129061021.94775-3-sboyd@kernel.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
-Date:   Mon, 11 Feb 2019 09:09:00 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id F1AA2214DA;
+        Mon, 11 Feb 2019 14:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895122;
+        bh=79m+Nk+lf61QRKOswr2Y7pdtJDF06KLqmRAFsEhz8vc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oJ1e9/OvMRSqCOaEwVMV3Os/Ldd8anYXgcGr5+1lbyaDEoxrtOA2cMO5RDACpzMoG
+         QFFYxzWAfdNSE81LssYmPK5u0juvEF8nSzLxdTSZFSLV3B6jdYo9B5aY3T/UKRTzdY
+         lbo7mLqkCayPOVazo2XDk0KqaOuVQk8Z3A8++tSY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dave Emett <david.emett@broadcom.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 099/352] drm/v3d: Fix prime imports of buffers from other drivers.
+Date:   Mon, 11 Feb 2019 15:15:26 +0100
+Message-Id: <20190211141852.112153451@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190129061021.94775-3-sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/2019 11:10 PM, Stephen Boyd wrote:
-> The clk_ops::get_parent function is limited in ability to return errors
-> because it returns a u8. A "workaround" to return an error is to return
-> a number >= the number of parents of a clk. This will in turn cause the
-> framework to "orphan" the clk and make the parent of the clk NULL. This
-> isn't really correct, because if an error occurs while reading the
-> parents of a clk we should fail the clk registration, instead of
-> orphaning the clk and waiting for the clk to appear later.
-> 
-> We really need to have three different return values from the get_parent
-> clk op. Something valid for a clk that exists, something invalid for a
-> clk that doesn't exist and never will exist or can't be determined
-> because the register operation to read the parent failed, and something
-> for a clk that doesn't exist because the framework doesn't know about
-> what it is. Introduce a new clk_op that can express all of this by
-> returning a pointer to the clk_hw of the parent. It's expected that clk
-> provider drivers will return a valid pointer when the parent is
-> findable, an error pointer like EPROBE_DEFER if their parent provider
-> hasn't probed yet but is valid, a NULL pointer if they can't find the
-> clk but index is valid, and an error pointer with an appropriate error
-> code otherwise.
-> 
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-<snip>
+------------------
 
-> +static int clk_init_parent(struct clk_core *core)
-> +{
-> +	core->parent = __clk_init_parent(core, true);
-> +	if (IS_ERR(core->parent))
-> +		return PTR_ERR(core->parent);
-> +
-> +	/*
-> +	 * Populate core->parent if parent has already been clk_core_init'd. If
-> +	 * parent has not yet been clk_core_init'd then place clk in the orphan
-> +	 * list.  If clk doesn't have any parents then place it in the root
-> +	 * clk list.
-> +	 *
-> +	 * Every time a new clk is clk_init'd then we walk the list of orphan
-> +	 * clocks and re-parent any that are children of the clock currently
-> +	 * being clk_init'd.
-> +	 */
-> +	if (core->parent) {
-> +		hlist_add_head(&core->child_node,
-> +				&core->parent->children);
-> +		core->orphan = core->parent->orphan;
-> +	} else if (!core->num_parents) {
-> +		hlist_add_head(&core->child_node, &clk_root_list);
-> +		core->orphan = false;
-> +	} else {
-> +		hlist_add_head(&core->child_node, &clk_orphan_list);
+[ Upstream commit 62d1a752874962f072de8a779e960fcd2ab4847b ]
 
-Missing "core->orphan = true;"?
-The snippet below had that line.  Its not clear why it appears to be 
-dropped here.
+v3d_bo_get_pages() checks this to decide to map the imported buffer
+instead of the backing shmem file.  The caller was about to set this
+value anyway, and there's no error path in between.  Ideally we
+wouldn't even allocate the shmem file for our imports, but that's a
+more invasive fix.
 
-> +	}
-> +
-> +	return 0;
-> +}
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+Link: https://patchwork.freedesktop.org/patch/msgid/20181128230927.10951-3-eric@anholt.net
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/v3d/v3d_bo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-<snip>
-
-> @@ -3073,29 +3143,9 @@ static int __clk_core_init(struct clk_core *core)
->   				"%s: invalid NULL in %s's .parent_names\n",
->   				__func__, core->name);
->   
-> -	core->parent = __clk_init_parent(core);
-> -
-> -	/*
-> -	 * Populate core->parent if parent has already been clk_core_init'd. If
-> -	 * parent has not yet been clk_core_init'd then place clk in the orphan
-> -	 * list.  If clk doesn't have any parents then place it in the root
-> -	 * clk list.
-> -	 *
-> -	 * Every time a new clk is clk_init'd then we walk the list of orphan
-> -	 * clocks and re-parent any that are children of the clock currently
-> -	 * being clk_init'd.
-> -	 */
-> -	if (core->parent) {
-> -		hlist_add_head(&core->child_node,
-> -				&core->parent->children);
-> -		core->orphan = core->parent->orphan;
-> -	} else if (!core->num_parents) {
-> -		hlist_add_head(&core->child_node, &clk_root_list);
-> -		core->orphan = false;
-> -	} else {
-> -		hlist_add_head(&core->child_node, &clk_orphan_list);
-> -		core->orphan = true;
-> -	}
-> +	ret = clk_init_parent(core);
-> +	if (ret)
-> +		goto out;
->   
->   	/*
->   	 * optional platform-specific magic
-
-
+diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+index 54d96518a131..a08766d39eab 100644
+--- a/drivers/gpu/drm/v3d/v3d_bo.c
++++ b/drivers/gpu/drm/v3d/v3d_bo.c
+@@ -293,6 +293,7 @@ v3d_prime_import_sg_table(struct drm_device *dev,
+ 	bo->resv = attach->dmabuf->resv;
+ 
+ 	bo->sgt = sgt;
++	obj->import_attach = attach;
+ 	v3d_bo_get_pages(bo);
+ 
+ 	v3d_mmu_insert_ptes(bo);
 -- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.19.1
+
+
+
