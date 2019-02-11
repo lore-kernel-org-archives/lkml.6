@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865FAC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB6DC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555602081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B987720855
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:51:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896714;
-	bh=lOJZ29Cn6s7ySZRYto7E17J7Uz338jh0HsmvNncVLBw=;
+	s=default; t=1549896717;
+	bh=mlcYRMXuiJoY6vaj7gwKg1gD+DSyigFnTvB1g91QWt0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gmZBTvhjdrdGULQG5CNe5DcNI/XXgAesTjIP7dpH/PXfZRATH9d1exYSUak+yUvU4
-	 6uf0I5m+mzicQdnc/PkcVUNkPVIB6MWD9MjaQUTDfWPyjqDihMUCd1q8eciwAbypmT
-	 w/doMFlXpyck10dIspsX9MdDxiy6VJqETrMflwwE=
+	b=sFotrMSwvv42NCJ9YCXyGjtP7gpWX3W90IAt6HF7bSV9CaVxqSH2P9hvjXhAC61Qt
+	 ws9OzdxdAZ4uX6I7f7odX5/qGhAVbGQ58gXjMwEOYY96waZzjk61ckBknEYpLsABYX
+	 5/8J6FPfLp2a9/xpxrcBCmOF3gRg+o7e0KkHKCuM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388341AbfBKOvw (ORCPT
+        id S2388353AbfBKOv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:51:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37996 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:51:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387918AbfBKOvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:51:50 -0500
+        id S1731856AbfBKOvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 987F12081B;
-        Mon, 11 Feb 2019 14:51:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52F7020855;
+        Mon, 11 Feb 2019 14:51:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896710;
-        bh=lOJZ29Cn6s7ySZRYto7E17J7Uz338jh0HsmvNncVLBw=;
+        s=default; t=1549896713;
+        bh=mlcYRMXuiJoY6vaj7gwKg1gD+DSyigFnTvB1g91QWt0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CtzwtjAisIedqHOlSaIchJNxNISICDkLIPLSnYuVhL8iFf64n9syEMk60jj0KwUmw
-         V67fes3FuFlhQiGWHiOMUm6m0vLY7hmw5RXMnAOfGzekcqSIiWS+WPOY0fZd1c8RTy
-         jvU9fVbPAn9C9q9j5E3eJT5CStj034ZnvJePnxlY=
+        b=f/YOjtx3+TD5bZUdO/Xhovqp5RGowSiv3hTFcz1ZeuZjWifQee/MQj6B2vv/e9V9j
+         /jSdpXV/SPyVvDItPmr995QPjc9iTkqEWujgF0ySlmBGwb7+WqLgcjArVgPLuBJIb4
+         oE85/f7acw+2at3Yx/X9/HSTm1eJ+5lmcJryEvLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 275/313] virtio_net: Account for tx bytes and packets on sending xdp_frames
-Date:   Mon, 11 Feb 2019 15:19:15 +0100
-Message-Id: <20190211141911.671054443@linuxfoundation.org>
+        stable@vger.kernel.org, Raed Salem <raeds@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 276/313] net/mlx5e: FPGA, fix Innova IPsec TX offload data path performance
+Date:   Mon, 11 Feb 2019 15:19:16 +0100
+Message-Id: <20190211141911.714086665@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,65 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Raed Salem <raeds@mellanox.com>
 
-[ Upstream commit 546f28974d771b124fb0bf7b551b343888cf0419 ]
+[ Upstream commit 82eaa1fa0448da1852d7b80832e67e80a08dcc27 ]
 
-Previously virtnet_xdp_xmit() did not account for device tx counters,
-which caused confusions.
-To be consistent with SKBs, account them on freeing xdp_frames.
+At Innova IPsec TX offload data path a special software parser metadata
+is used to pass some packet attributes to the hardware, this metadata
+is passed using the Ethernet control segment of a WQE (a HW descriptor)
+header.
 
-Reported-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The cited commit might nullify this header, hence the metadata is lost,
+this caused a significant performance drop during hw offloading
+operation.
+
+Fix by restoring the metadata at the Ethernet control segment in case
+it was nullified.
+
+Fixes: 37fdffb217a4 ("net/mlx5: WQ, fixes for fragmented WQ buffers API")
+Signed-off-by: Raed Salem <raeds@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |   20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tx.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -502,6 +502,8 @@ static int virtnet_xdp_xmit(struct net_d
- 	struct bpf_prog *xdp_prog;
- 	struct send_queue *sq;
- 	unsigned int len;
-+	int packets = 0;
-+	int bytes = 0;
- 	int drops = 0;
- 	int kicks = 0;
- 	int ret, err;
-@@ -525,10 +527,18 @@ static int virtnet_xdp_xmit(struct net_d
- 
- 	/* Free up any pending old buffers before queueing new ones. */
- 	while ((ptr = virtqueue_get_buf(sq->vq, &len)) != NULL) {
--		if (likely(is_xdp_frame(ptr)))
--			xdp_return_frame(ptr_to_xdp(ptr));
--		else
--			napi_consume_skb(ptr, false);
-+		if (likely(is_xdp_frame(ptr))) {
-+			struct xdp_frame *frame = ptr_to_xdp(ptr);
-+
-+			bytes += frame->len;
-+			xdp_return_frame(frame);
-+		} else {
-+			struct sk_buff *skb = ptr;
-+
-+			bytes += skb->len;
-+			napi_consume_skb(skb, false);
-+		}
-+		packets++;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tx.c
+@@ -387,8 +387,14 @@ netdev_tx_t mlx5e_sq_xmit(struct mlx5e_t
+ 	num_wqebbs = DIV_ROUND_UP(ds_cnt, MLX5_SEND_WQEBB_NUM_DS);
+ 	contig_wqebbs_room = mlx5_wq_cyc_get_contig_wqebbs(wq, pi);
+ 	if (unlikely(contig_wqebbs_room < num_wqebbs)) {
++#ifdef CONFIG_MLX5_EN_IPSEC
++		struct mlx5_wqe_eth_seg cur_eth = wqe->eth;
++#endif
+ 		mlx5e_fill_sq_frag_edge(sq, wq, pi, contig_wqebbs_room);
+ 		mlx5e_sq_fetch_wqe(sq, &wqe, &pi);
++#ifdef CONFIG_MLX5_EN_IPSEC
++		wqe->eth = cur_eth;
++#endif
  	}
  
- 	for (i = 0; i < n; i++) {
-@@ -548,6 +558,8 @@ static int virtnet_xdp_xmit(struct net_d
- 	}
- out:
- 	u64_stats_update_begin(&sq->stats.syncp);
-+	sq->stats.bytes += bytes;
-+	sq->stats.packets += packets;
- 	sq->stats.xdp_tx += n;
- 	sq->stats.xdp_tx_drops += drops;
- 	sq->stats.kicks += kicks;
+ 	/* fill wqe */
 
 
