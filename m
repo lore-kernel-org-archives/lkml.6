@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1387C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BDCC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 910FC21B24
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EB8820818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549894851;
-	bh=WYPSYzdLZ5ZsN1ieUok+VanCLX9cEhUwhiLFNcBm6eQ=;
+	s=default; t=1549894855;
+	bh=xI62sbsWMUW17iABDBaWgqegJfZfBz9LMeDbkmHHxGU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j7kQeMUYh3c5Y0lL/A8tRGHyC0fM9RjeFlHaZTQA3Y2svBo5D9XTms3ge4rNMygqd
-	 1o/ShjAz++QxElvrQmUes4oqUare9F5yJRcmKwAbV4xodd8qMMn4osB2G1++axgABn
-	 kmmP74SuKOUkwAwR5jUx20KbEtOWyLkZs064DJmU=
+	b=D425kilJGGqMF16IRkOiYXz6MqCtZE4Lpqd7ohZVqlQb7bOoXCsEFI8oh2lvlugdY
+	 qWWDg+MjfC0O1cHP7hu+xy/SWiV14y6tz1KQ1dLc0g6NIC7XHMqZsoVMt0qcEAZ50x
+	 KMO+yEmqEq5b85kNKa9aC1FLoUCRID6OZfW2IQcQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfBKOUu (ORCPT
+        id S1728404AbfBKOUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:20:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53584 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:20:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726796AbfBKOUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:20:49 -0500
+        id S1726796AbfBKOUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:20:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5374520838;
-        Mon, 11 Feb 2019 14:20:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8B8A2073F;
+        Mon, 11 Feb 2019 14:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549894848;
-        bh=WYPSYzdLZ5ZsN1ieUok+VanCLX9cEhUwhiLFNcBm6eQ=;
+        s=default; t=1549894851;
+        bh=xI62sbsWMUW17iABDBaWgqegJfZfBz9LMeDbkmHHxGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D0y93m75qnZXKcz60jGTt0OAXFAJRzWb3ghE3VWypg7H7Cp167tNezuGqQOTWjLdM
-         EykoV6F9edpzbZjJWo6FS1DL0iWMyLZM/hPabIsmaM5pQ7TVoL49hpNLZWl5V/DFTW
-         Y2nQ3f4776ekXsTpxQAqu+Q0b2No7r3TIm4g0U78=
+        b=gLpGbeEFn2CXQITlP5h0xNSUnndi9BzrXqwFDPsp0zLMSrgMoi5YlpCQJbt6hDMDH
+         h14cMaqqTbBZCYp4Y4VapM9DgrFl/KMet00ff8fedg12mR04ii35DyWP2u5fNSRJs7
+         lh1zLbDu4PL1gWSlrT7K5ltsf4CSCGQVjgHdDIAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 001/352] drm/bufs: Fix Spectre v1 vulnerability
-Date:   Mon, 11 Feb 2019 15:13:48 +0100
-Message-Id: <20190211141846.622069821@linuxfoundation.org>
+Subject: [PATCH 4.20 010/352] ath10k: fixup extended per sta tx statistics
+Date:   Mon, 11 Feb 2019 15:13:57 +0100
+Message-Id: <20190211141847.088980946@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -67,53 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a37805098900a6e73a55b3a43b7d3bcd987bb3f4 ]
+[ Upstream commit 539b44e70c5b4ad82d2c0c97a4dfb37523d891f6 ]
 
-idx can be indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+I had a couple concerns with this code.  First, we definitely need to
+set the error code if the kzalloc() fails.  Secondly, I was worried that
+if we didn't set "arsta->tx_stats" to NULL after freeing it, then it
+looks to me like it might lead to a use after free.  I can't test that,
+but it's harmless to set it to NULL so I did.
 
-This issue was detected with the help of Smatch:
-
-drivers/gpu/drm/drm_bufs.c:1420 drm_legacy_freebufs() warn: potential
-spectre issue 'dma->buflist' [r] (local cap)
-
-Fix this by sanitizing idx before using it to index dma->buflist
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181016095549.GA23586@embeddedor.com
+Fixes: a904417fc876 ("ath10k: add extended per sta tx statistics support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_bufs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/ath/ath10k/mac.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index 7412acaf3cde..d7d10cabb9bb 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -36,6 +36,8 @@
- #include <drm/drmP.h>
- #include "drm_legacy.h"
- 
-+#include <linux/nospec.h>
-+
- static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
- 						  struct drm_local_map *map)
- {
-@@ -1417,6 +1419,7 @@ int drm_legacy_freebufs(struct drm_device *dev, void *data,
- 				  idx, dma->buf_count - 1);
- 			return -EINVAL;
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 7e49342bae38..b4764fee4751 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -6296,8 +6296,10 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
+ 			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
+ 						  GFP_KERNEL);
+-			if (!arsta->tx_stats)
++			if (!arsta->tx_stats) {
++				ret = -ENOMEM;
+ 				goto exit;
++			}
  		}
-+		idx = array_index_nospec(idx, dma->buf_count);
- 		buf = dma->buflist[idx];
- 		if (buf->file_priv != file_priv) {
- 			DRM_ERROR("Process %d freeing buffer not owned\n",
+ 
+ 		num_tdls_stations = ath10k_mac_tdls_vif_stations_count(hw, vif);
+@@ -6385,8 +6387,10 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 			   "mac vdev %d peer delete %pM sta %pK (sta gone)\n",
+ 			   arvif->vdev_id, sta->addr, sta);
+ 
+-		if (ath10k_debug_is_extd_tx_stats_enabled(ar))
++		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
+ 			kfree(arsta->tx_stats);
++			arsta->tx_stats = NULL;
++		}
+ 
+ 		if (sta->tdls) {
+ 			ret = ath10k_mac_tdls_peer_update(ar, arvif->vdev_id,
 -- 
 2.19.1
 
