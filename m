@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88218C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9F7C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58593222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:40:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C46222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899626;
-	bh=HaGKvFBewvbisdZqV3Lu/Vp4YM5XMgij9rwh4pwXTfA=;
+	s=default; t=1549899638;
+	bh=e8986UNJgErYfRJTvl/OMdxIieU8rdQEE6PsLIU6w4U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RDHLOTKtUM8FkFwf7D/6jvXmn5+gee90ixuomIYi6Y0ADcGw7slgcBj3WinDtIZdp
-	 dB/Vb1FjTm1+Sr21ce1tkjlb4xHOW36v5/tIhUdlcggK1VNVD4qVrQKjCxAY4NFORW
-	 ZGEc4AA5w++UqFr1nfk4Hrxub6HnKgsAcEYykiTE=
+	b=hZ3abFhMml6GMxn4+4v5eiw++QJeXBDEOQynrAOQPZVtjrgm8DlHx7bkDITA4Z2al
+	 i/2G5Mwz1BLxRf9GjazFczCy08n0DYO0oUbhNGkhDPtegIyHlMo1jiIMOQZh0q2ycp
+	 ULvzG4O401FPp5h+cYB+my3KQZPJ1KN6kCB7p7k0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387699AbfBKOse (ORCPT
+        id S2388407AbfBKPkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:48:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33780 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:40:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729067AbfBKOsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:48:30 -0500
+        id S1732594AbfBKOsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:48:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06E34206BA;
-        Mon, 11 Feb 2019 14:48:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3529B20700;
+        Mon, 11 Feb 2019 14:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896509;
-        bh=HaGKvFBewvbisdZqV3Lu/Vp4YM5XMgij9rwh4pwXTfA=;
+        s=default; t=1549896499;
+        bh=e8986UNJgErYfRJTvl/OMdxIieU8rdQEE6PsLIU6w4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fa4BNKufIfA1Py3Ltp7KlSmsL9ZF06hEZyv59hsddihB0w94SOfDHtDfTwv5Xn1p6
-         ocHYbuOI2poTQAGtyCove6i/Xmm1HpcJiCCL+VHKyh9eRMBcBZy/zPVLEEG+hAs+2m
-         MGipRO2F7EX+0h2Cw3ihSNHVeZ41+d96Rwkeb9GY=
+        b=ZxN8TGte0HHgLxdfodXWGBKn3k3fa5Sg+SIAOgtRBP743QSlDdcV5iZTLzbBKWHwp
+         O0Sy0bPWnn0s9XBCd2RGm49O2WLHqaPb/TDOko9K/zMXEPl8a6S5Bb24ESu9tXQqCt
+         Fefgu7SvP3WuBqNyH5um1VAdmhFpvtYwhnxjqcGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 207/313] powerpc/fadump: Do not allow hot-remove memory from fadump reserved area.
-Date:   Mon, 11 Feb 2019 15:18:07 +0100
-Message-Id: <20190211141906.982126445@linuxfoundation.org>
+Subject: [PATCH 4.19 205/313] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
+Date:   Mon, 11 Feb 2019 15:18:05 +0100
+Message-Id: <20190211141906.852879625@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -67,86 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0db6896ff6332ba694f1e61b93ae3b2640317633 ]
+[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
 
-For fadump to work successfully there should not be any holes in reserved
-memory ranges where kernel has asked firmware to move the content of old
-kernel memory in event of crash. Now that fadump uses CMA for reserved
-area, this memory area is now not protected from hot-remove operations
-unless it is cma allocated. Hence, fadump service can fail to re-register
-after the hot-remove operation, if hot-removed memory belongs to fadump
-reserved region. To avoid this make sure that memory from fadump reserved
-area is not hot-removable if fadump is registered.
+The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
+only belong to the pin controller in the AO domain. With the current
+definition these pins cannot be referred to in .dts files as group
+(which is possible on GXBB and GXL for example).
 
-However, if user still wants to remove that memory, he can do so by
-manually stopping fadump service before hot-remove operation.
+Add a separate "gpio_aobus" function to fix the mapping between the pin
+controller and the GPIO pins in the AO domain. This is similar to how
+the GXBB and GXL drivers implement this functionality.
 
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/fadump.h               |  2 +-
- arch/powerpc/kernel/fadump.c                    | 10 ++++++++--
- arch/powerpc/platforms/pseries/hotplug-memory.c |  7 +++++--
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/fadump.h b/arch/powerpc/include/asm/fadump.h
-index 1e7a33592e29..15bc07a31c46 100644
---- a/arch/powerpc/include/asm/fadump.h
-+++ b/arch/powerpc/include/asm/fadump.h
-@@ -200,7 +200,7 @@ struct fad_crash_memory_ranges {
- 	unsigned long long	size;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index 647ad15d5c3c..91cffc051055 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -646,16 +646,18 @@ static const char * const gpio_groups[] = {
+ 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
+ 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
+ 
+-	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
+-	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
+-	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
+-	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
+-
+ 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
+ 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
+ 	"DIF_4_P", "DIF_4_N"
  };
  
--extern int is_fadump_boot_memory_area(u64 addr, ulong size);
-+extern int is_fadump_memory_area(u64 addr, ulong size);
- extern int early_init_dt_scan_fw_dump(unsigned long node,
- 		const char *uname, int depth, void *data);
- extern int fadump_reserve_mem(void);
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index a711d22339ea..c02c95287a5f 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -118,13 +118,19 @@ int __init early_init_dt_scan_fw_dump(unsigned long node,
- 
- /*
-  * If fadump is registered, check if the memory provided
-- * falls within boot memory area.
-+ * falls within boot memory area and reserved memory area.
-  */
--int is_fadump_boot_memory_area(u64 addr, ulong size)
-+int is_fadump_memory_area(u64 addr, ulong size)
- {
-+	u64 d_start = fw_dump.reserve_dump_area_start;
-+	u64 d_end = d_start + fw_dump.reserve_dump_area_size;
++static const char * const gpio_aobus_groups[] = {
++	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
++	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
++	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
++	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
++};
 +
- 	if (!fw_dump.dump_registered)
- 		return 0;
+ static const char * const sd_a_groups[] = {
+ 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
+ 	"sd_cmd_a"
+@@ -871,6 +873,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
+ };
  
-+	if (((addr + size) > d_start) && (addr <= d_end))
-+		return 1;
-+
- 	return (addr + size) > RMA_START && addr <= fw_dump.boot_memory_size;
- }
- 
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index c1578f54c626..e4c658cda3a7 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -389,8 +389,11 @@ static bool lmb_is_removable(struct drmem_lmb *lmb)
- 	phys_addr = lmb->base_addr;
- 
- #ifdef CONFIG_FA_DUMP
--	/* Don't hot-remove memory that falls in fadump boot memory area */
--	if (is_fadump_boot_memory_area(phys_addr, block_sz))
-+	/*
-+	 * Don't hot-remove memory that falls in fadump boot memory area
-+	 * and memory that is reserved for capturing old kernel memory.
-+	 */
-+	if (is_fadump_memory_area(phys_addr, block_sz))
- 		return false;
- #endif
- 
+ static struct meson_pmx_func meson8b_aobus_functions[] = {
++	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+ 	FUNCTION(i2c_slave_ao),
 -- 
 2.19.1
 
