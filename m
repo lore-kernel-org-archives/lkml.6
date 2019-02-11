@@ -2,148 +2,151 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4A7C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2682FC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E7620869
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898733;
-	bh=3mCx52JXCu+l7XQ29W7eDYIKFca993Orui2FU4GYNzw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jA7xmJYjzSSwlhYhCzKY9QlU3NLMwUqUS6v5vaRQjR01p6MuZjyfyOOPgxBwjV2eb
-	 eiCwrvusz5GITbNQNVudSJBVQ/dw/JoPjyhOeYfsPvTTqz2dUJz4vmNvy6FuTZ3EsI
-	 6cBOCkKBoIi3R+KcOG8WfWzfAuacn4CZmjwiGUOs=
+	by mail.kernel.org (Postfix) with ESMTP id DC29F20869
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:25:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HeallDHe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390206AbfBKPZb (ORCPT
+        id S2390494AbfBKPZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:25:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390147AbfBKPBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:15 -0500
-Received: from linux-8ccs (ip5f5ade6b.dynamic.kabel-deutschland.de [95.90.222.107])
+        Mon, 11 Feb 2019 10:25:38 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46586 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728374AbfBKPZg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:25:36 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7429C8EE235;
+        Mon, 11 Feb 2019 07:25:36 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id pwZim5CEcDMN; Mon, 11 Feb 2019 07:25:35 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EA3421773;
-        Mon, 11 Feb 2019 15:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897274;
-        bh=3mCx52JXCu+l7XQ29W7eDYIKFca993Orui2FU4GYNzw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=a/f0nnUXNOpKTlr3CJ1EOT4Z8K9F34SNrqPUkCP8vnRwuG+nazPiisjUy8fa/R/QS
-         bAmOjU928sx6DhKEcWlEIdUtjFfkXcgqYk70CBAkvx/RFvcfRBUTol5XLQu2m7nx+6
-         i2OFVPjTFcOey6ckCfi3G/Mt+EUaW2B5uaI+i+Mo=
-Date:   Mon, 11 Feb 2019 16:01:09 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <james.morris@microsoft.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Borislav Petkov <bp@suse.de>,
-        Kees Cook <keescook@chromium.org>,
-        Matt Mullins <mmullins@fb.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        WANG Chao <chao.wang@ucloud.cn>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] include/linux/module.h: copy __init/__exit attrs to
- init/cleanup_module
-Message-ID: <20190211150108.GB20732@linux-8ccs>
-References: <20190209000840.11018-1-miguel.ojeda.sandonis@gmail.com>
- <20190209000840.11018-4-miguel.ojeda.sandonis@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190209000840.11018-4-miguel.ojeda.sandonis@gmail.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4EC6B8EE121;
+        Mon, 11 Feb 2019 07:25:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1549898733;
+        bh=EvOZ1dm1hnbKs88vEcLHjkFAHvxRl/eqFphDis9K2lo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HeallDHeI8RAGp+CUCBKeBTOVuHRU19K4cpxxcG1/FNpV9fXUI74Or9bmFGV7/QkY
+         1f4ZtTuNFV3mO8M0wkqnHhLuMCnv+gEeBrNnNHVzmu7VX0iGWJB2M3ev9Ry/l/c3sH
+         2R9M6/31kMxadnYzvC5G7OvTk5d3SPakA7DbebcM=
+Message-ID: <1549898730.2831.6.camel@HansenPartnership.com>
+Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes
+ 5 minute delay during boot on Sun Blade 2500
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Mikael Pettersson <mikpelinux@gmail.com>
+Cc:     Linux SPARC Kernel Mailing List <sparclinux@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 11 Feb 2019 07:25:30 -0800
+In-Reply-To: <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
+References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
+         <1549736341.2971.7.camel@HansenPartnership.com>
+         <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
+         <1549813472.4142.3.camel@HansenPartnership.com>
+         <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+         <1549815924.4142.8.camel@HansenPartnership.com>
+         <0e6e5d67-d305-dd00-2e42-e2299166c8b2@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Miguel Ojeda [09/02/19 01:08 +0100]:
->The upcoming GCC 9 release extends the -Wmissing-attributes warnings
->(enabled by -Wall) to C and aliases: it warns when particular function
->attributes are missing in the aliases but not in their target.
->
->In particular, it triggers for all the init/cleanup_module
->aliases in the kernel (defined by the module_init/exit macros),
->ending up being very noisy.
->
->These aliases point to the __init/__exit functions of a module,
->which are defined as __cold (among other attributes). However,
->the aliases themselves do not have the __cold attribute.
->
->Since the compiler behaves differently when compiling a __cold
->function as well as when compiling paths leading to calls
->to __cold functions, the warning is trying to point out
->the possibly-forgotten attribute in the alias.
->
->In order to keep the warning enabled, we decided to silence
->this case. Ideally, we would mark the aliases directly
->as __init/__exit. However, there are currently around 132 modules
->in the kernel which are missing __init/__exit in their init/cleanup
->functions (either because they are missing, or for other reasons,
->e.g. the functions being called from somewhere else); and
->a section mismatch is a hard error.
->
->A conservative alternative was to mark the aliases as __cold only.
->However, since we would like to eventually enforce __init/__exit
->to be always marked,  we chose to use the new __copy function
->attribute (introduced by GCC 9 as well to deal with this).
->With it, we copy the attributes used by the target functions
->into the aliases. This way, functions that were not marked
->as __init/__exit won't have their aliases marked either,
->and therefore there won't be a section mismatch.
->
->Note that the warning would go away marking either the extern
->declaration, the definition, or both. However, we only mark
->the definition of the alias, since we do not want callers
->(which only see the declaration) to be compiled as if the function
->was __cold (and therefore the paths leading to those calls
->would be assumed to be unlikely).
->
->Link: https://lore.kernel.org/lkml/20190123173707.GA16603@gmail.com/
->Link: https://lore.kernel.org/lkml/20190206175627.GA20399@gmail.com/
->Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
->Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+On Sun, 2019-02-10 at 09:35 -0700, Jens Axboe wrote:
+> On 2/10/19 9:25 AM, James Bottomley wrote:
+> > On Sun, 2019-02-10 at 09:05 -0700, Jens Axboe wrote:
+> > > On 2/10/19 8:44 AM, James Bottomley wrote:
+> > > > On Sun, 2019-02-10 at 10:17 +0100, Mikael Pettersson wrote:
+> > > > > On Sat, Feb 9, 2019 at 7:19 PM James Bottomley
+> > > > > <James.Bottomley@hansenpartnership.com> wrote:
+> > > > 
+> > > > [...]
+> > > > > > I think the reason for this is that the block mq path
+> > > > > > doesn't feed the kernel entropy pool correctly, hence the
+> > > > > > need to install an entropy gatherer for systems that don't
+> > > > > > have other good random number sources.
+> > > > > 
+> > > > > That does sound plausible, I admit I didn't even consider the
+> > > > > possibility that the old block I/O path also was an entropy
+> > > > > source.
+> > > > 
+> > > > In theory, the new one should be as well since the rotational
+> > > > entropy collector is on the SCSI completion path.   I'd seen
+> > > > the same problem but had assumed it was something someone had
+> > > > done to our internal entropy pool and thus hadn't bisected it.
+> > > 
+> > > The difference is that the old stack included ADD_RANDOM by
+> > > default, so this check:
+> > > 
+> > > 	if (blk_queue_add_random(q))
+> > > 		add_disk_randomness(req->rq_disk);
+> > > 
+> > > in scsi_end_request() would be true, and we'd add the randomness.
+> > > For sd, it seems to set it just fine for non-rotational drives.
+> > > Could this be because other devices don't? Maybe the below makes
+> > > a difference.
+> > 
+> > No, in both we set it per the rotational parameters of the disk in 
+> > 
+> > sd.c:sd_read_block_characteristics()
+> > 
+> > 	rot = get_unaligned_be16(&buffer[4]);
+> > 
+> > 	if (rot == 1) {
+> > 	
+> > 	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
+> > 	
+> > 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+> > 	} else {
+> > 	
+> > 	blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
+> > 	
+> > 	blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
+> > 	}
+> > 
+> > 
+> > That check wasn't changed by the code removal.
+> 
+> As I said above, for sd. This isn't true for non-disks.
 
-Acked-by: Jessica Yu <jeyu@kernel.org>
+Yes, but the behaviour above doesn't change across a switch to MQ, so I
+don't quite understand how it bisects back to that change.  If we're
+not gathering entropy for the device now, we wouldn't have been before
+the switch, so the entropy characteristics shouldn't have changed.
 
-Thanks!
+> > Although I suspect it should be unconditional: even SSDs have what
+> > would appear as seek latencies at least during writes depending on
+> > the time taken to find an erased block or even trigger garbage
+> > collection.  The entropy collector is good at taking something
+> > completely regular and spotting the inconsistencies, so it won't
+> > matter that loads of "seeks" are deterministic.
+> 
+> The reason it isn't is that it's of limited use for SSDs where it's a
+> lot more predictable. And they are also a lot faster, which means the
+> adding randomness is more problematic from an efficiency pov.
 
->---
-> include/linux/module.h | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/include/linux/module.h b/include/linux/module.h
->index 8fa38d3e7538..f5bc4c046461 100644
->--- a/include/linux/module.h
->+++ b/include/linux/module.h
->@@ -129,13 +129,13 @@ extern void cleanup_module(void);
-> #define module_init(initfn)					\
-> 	static inline initcall_t __maybe_unused __inittest(void)		\
-> 	{ return initfn; }					\
->-	int init_module(void) __attribute__((alias(#initfn)));
->+	int init_module(void) __copy(initfn) __attribute__((alias(#initfn)));
->
-> /* This is only required if you want to be unloadable. */
-> #define module_exit(exitfn)					\
-> 	static inline exitcall_t __maybe_unused __exittest(void)		\
-> 	{ return exitfn; }					\
->-	void cleanup_module(void) __attribute__((alias(#exitfn)));
->+	void cleanup_module(void) __copy(exitfn) __attribute__((alias(#exitfn)));
->
-> #endif
->
->-- 
->2.17.1
->
+But that's my point: our entropy extractor is good at weeding out
+predictable signals.  Fine, it won't extract any entropy if the disk
+seek time is entirely regular, but it won't contaminate the entropy
+pool.  The computational delay, I grant ... it takes a while to
+determine if any entropy is present in the signal.
+
+What about feeding it with something like discard timings, which should
+be much less predictable.
+
+James
+
