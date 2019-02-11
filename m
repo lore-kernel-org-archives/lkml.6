@@ -4,53 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620BBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 177A0C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA09222AB
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1BC4222AB
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897319;
-	bh=yByH9VmJcOKeCGujkEECfD6dSLRDhh+lDRv1ldp5P94=;
+	s=default; t=1549897322;
+	bh=c4EZ/8TL20oHt7zCb9VNih/AjHoQpyucw0ZBw6jV0TQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MulzQbJQA7fUkbvT9s/A4aYr64IwQd8q+i77gp+h6gBj0+TRvCxo3IIvzcNM/7at/
-	 1oG6jA01b9cLVDxF/lLQu0PdHmmUI9dIA/mkQSmX9F0+fYSjP7CDtxREPx9bGR7Aw6
-	 JX067hHc+tdBaoMOk5PL4ywPEUFcqJk42i1+esO4=
+	b=ZS08AVPpI2WA0Xz+q61FTRblUyA5oIdASQ5zpm0SF7eBI68o5gm4C81gGHVYwpehs
+	 89CO75u+n2eSy05EdH1g1oBGM1XchJxZeLmwpmdrxPUezxQ4DT/wfNEsD6DKD0d8oQ
+	 fSvg6phZjs0RWgg+c66hzRZZyU7LzSM6M9bY8KCQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390312AbfBKPB6 (ORCPT
+        id S2390323AbfBKPCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:01:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50094 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:02:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389510AbfBKPB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:01:56 -0500
+        id S2387943AbfBKPCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:02:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EDD5222A6;
-        Mon, 11 Feb 2019 15:01:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C165222AE;
+        Mon, 11 Feb 2019 15:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897316;
-        bh=yByH9VmJcOKeCGujkEECfD6dSLRDhh+lDRv1ldp5P94=;
+        s=default; t=1549897319;
+        bh=c4EZ/8TL20oHt7zCb9VNih/AjHoQpyucw0ZBw6jV0TQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FDlS3+anCU0/9aJvPzE6CW0gx33khj9fHMjCnKToBIu6WvlYZge++iXodAkmFxxrL
-         +KySi2GUr5INaEUhuBR2B9qZ+Uz1Uw7jmKdqqCdfniPFwGYKqwQfpKwEVUFDg2356q
-         m2fsU+iFd/aadrLdWGJ1cQHBgw8WzO6naJqnmXeE=
+        b=MQmOSEPXMhuRRQQCx2Utd0s+FdPqgYt/YOIfYMCFeTVS0wSwTWxnStF/BGTxQWAYD
+         dlK5N0HABzBYzZFTiShvRySkbyy1zsuh4JFfBxeZndGvNsJ0hT4LWi1fmIgiHm/nAl
+         XktFotGhuoZE7pXM/DcKh9gH2C1YcborML3P/boE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Ben Woodard <woodard@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jason Baron <jbaron@akamai.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 162/205] fs/epoll: drop ovflist branch prediction
-Date:   Mon, 11 Feb 2019 15:19:20 +0100
-Message-Id: <20190211141838.951381692@linuxfoundation.org>
+Subject: [PATCH 4.14 163/205] exec: load_script: dont blindly truncate shebang string
+Date:   Mon, 11 Feb 2019 15:19:21 +0100
+Message-Id: <20190211141839.018790871@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -69,53 +71,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
+[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
 
-The ep->ovflist is a secondary ready-list to temporarily store events
-that might occur when doing sproc without holding the ep->wq.lock.  This
-accounts for every time we check for ready events and also send events
-back to userspace; both callbacks, particularly the latter because of
-copy_to_user, can account for a non-trivial time.
+load_script() simply truncates bprm->buf and this is very wrong if the
+length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
+truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
+happens to be the valid executable path.
 
-As such, the unlikely() check to see if the pointer is being used, seems
-both misleading and sub-optimal.  In fact, we go to an awful lot of
-trouble to sync both lists, and populating the ovflist is far from an
-uncommon scenario.
+Change load_script() to return ENOEXEC if it can't find '\n' or zero in
+bprm->buf.  Note that '\0' can come from either
+prepare_binprm()->memset() or from kernel_read(), we do not care.
 
-For example, profiling a concurrent epoll_wait(2) benchmark, with
-CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
-incorrect rate was seen; and when incrementally increasing the number of
-epoll instances (which is used, for example for multiple queuing load
-balancing models), up to a 90% incorrect rate was seen.
-
-Similarly, by deleting the prediction, 3% throughput boost was seen
-across incremental threads.
-
-Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jason Baron <jbaron@akamai.com>
+Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Ben Woodard <woodard@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/eventpoll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/binfmt_script.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 2fabd19cdeea..c291bf61afb9 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1167,7 +1167,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
- 	 * semantics). All the events that happen during that period of time are
- 	 * chained in ep->ovflist and requeued later on.
- 	 */
--	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
-+	if (ep->ovflist != EP_UNACTIVE_PTR) {
- 		if (epi->next == EP_UNACTIVE_PTR) {
- 			epi->next = ep->ovflist;
- 			ep->ovflist = epi;
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index 7cde3f46ad26..d0078cbb718b 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -42,10 +42,14 @@ static int load_script(struct linux_binprm *bprm)
+ 	fput(bprm->file);
+ 	bprm->file = NULL;
+ 
+-	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-	if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-		cp = bprm->buf+BINPRM_BUF_SIZE-1;
++	for (cp = bprm->buf+2;; cp++) {
++		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
++			return -ENOEXEC;
++		if (!*cp || (*cp == '\n'))
++			break;
++	}
+ 	*cp = '\0';
++
+ 	while (cp > bprm->buf) {
+ 		cp--;
+ 		if ((*cp == ' ') || (*cp == '\t'))
 -- 
 2.19.1
 
