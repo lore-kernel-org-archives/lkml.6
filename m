@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF0DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE4EC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BBEA21B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B7A221B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:21:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898462;
-	bh=3bJN6QpnGn9cYj7XiRUQJfw1M2zhPIUD740j1H9kFbM=;
+	s=default; t=1549898469;
+	bh=Mc+rxYaqlX3nW+DOTE9RU1DpywvZoaoEj9HB1ELDw0s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2Ss7lsaHfvoEBMJrsx89N68I4fcK9CV6fuGlXYOSQmEi/Mf9IxcEQ5wTbQzMMKMJN
-	 qOem4NdeWJXR8cMhaaxyKKBorYj79ylVcQCOzU+VzJXRFJq0U7Nl2yxeEucwVGrQS6
-	 qiSefBMmIE6YdkKSLMMGdoC0lu+lWaaQKlusG4ew=
+	b=1WbuhceQkS6aSbfJ8b+Yr61CNfYbv9qoaEugRPbvaDfSZ/7tT4Tar3ybBmdVneA4O
+	 gBHrHt8CKWUUWZMOOQwlM7VvlA8tIFa2dmRwbuPa4nkVVm6jE6fd7BJ1oaKZPxiPJU
+	 8dwXgEgDfIf8Ly9T4CdtE8RpigOUPPPzbFcDdwxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404070AbfBKPVA (ORCPT
+        id S2391130AbfBKPVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:21:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53862 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:21:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390865AbfBKPEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:47 -0500
+        id S2390851AbfBKPEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:04:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7825D222AD;
-        Mon, 11 Feb 2019 15:04:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C81EF222A7;
+        Mon, 11 Feb 2019 15:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897487;
-        bh=3bJN6QpnGn9cYj7XiRUQJfw1M2zhPIUD740j1H9kFbM=;
+        s=default; t=1549897484;
+        bh=Mc+rxYaqlX3nW+DOTE9RU1DpywvZoaoEj9HB1ELDw0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1yYuP8nUoQLdPURK/HE1Tc7KfgYtLclvw4i7RsBZiDrnyJDDyRz8jVTsBlSgMWFmI
-         yBHsXs/yHMTt4nIEFwYB8syL8BwVfHv/eQlgnzOZ1PDW3O5+/NL0WclFqWDoQ/8heN
-         ADStxhj7qlD80Iu1J/7Pn8f0j2UkRq9ccKun+UhU=
+        b=w/RuCBCBlsNKq5qLpkoOFzBR3Ta05qPaFu+mD0EIQxbtbD53fX4BFDUzlX1ZQUlOi
+         8MqyD7uAVDdz5AlbHYHHT/jf35qYSYaCrt3dHFbyX41kmM7p/8ZBXQeybwpT1HP7Cl
+         kbinwVn07BydAbZViPoizOpCWD3cDwB0qtTh8nhY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 005/137] ath9k: dynack: use authentication messages for late ack
-Date:   Mon, 11 Feb 2019 15:18:06 +0100
-Message-Id: <20190211141812.442216608@linuxfoundation.org>
+Subject: [PATCH 4.9 004/137] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
+Date:   Mon, 11 Feb 2019 15:18:05 +0100
+Message-Id: <20190211141812.346049749@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -68,37 +66,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
+[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
 
-In order to properly support dynack in ad-hoc mode running
-wpa_supplicant, take into account authentication frames for
-'late ack' detection. This patch has been tested on devices
-mounted on offshore high-voltage stations connected through
-~24Km link
+Prevent possible race by parallel threads between ipu_image_convert_run()
+and ipu_image_convert_unprepare(). This involves setting ctx->aborting
+to true unconditionally so that no new job runs can be queued during
+unprepare, and holding the ctx->aborting flag until the context is freed.
 
-Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Note that the "normal" ipu_image_convert_abort() case (e.g. not during
+context unprepare) should clear the ctx->aborting flag after aborting
+any active run and clearing the context's pending queue. This is because
+it should be possible to continue to use the conversion context and queue
+more runs after an abort.
+
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
-index 7334c9b09e82..cc0dc966c512 100644
---- a/drivers/net/wireless/ath/ath9k/dynack.c
-+++ b/drivers/net/wireless/ath/ath9k/dynack.c
-@@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
- 	/* late ACK */
- 	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
- 		if (ieee80211_is_assoc_req(hdr->frame_control) ||
--		    ieee80211_is_assoc_resp(hdr->frame_control)) {
-+		    ieee80211_is_assoc_resp(hdr->frame_control) ||
-+		    ieee80211_is_auth(hdr->frame_control)) {
- 			ath_dbg(common, DYNACK, "late ack\n");
- 			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
- 			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
+diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
+index 805b6fa7b5f4..50b73f3876fb 100644
+--- a/drivers/gpu/ipu-v3/ipu-image-convert.c
++++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
+@@ -1513,7 +1513,7 @@ unlock:
+ EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
+ 
+ /* Abort any active or pending conversions for this context */
+-void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ {
+ 	struct ipu_image_convert_chan *chan = ctx->chan;
+ 	struct ipu_image_convert_priv *priv = chan->priv;
+@@ -1540,7 +1540,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 
+ 	need_abort = (run_count || active_run);
+ 
+-	ctx->aborting = need_abort;
++	ctx->aborting = true;
+ 
+ 	spin_unlock_irqrestore(&chan->irqlock, flags);
+ 
+@@ -1561,7 +1561,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
+ 		force_abort(ctx);
+ 	}
++}
+ 
++void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++{
++	__ipu_image_convert_abort(ctx);
+ 	ctx->aborting = false;
+ }
+ EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
+@@ -1575,7 +1579,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
+ 	bool put_res;
+ 
+ 	/* make sure no runs are hanging around */
+-	ipu_image_convert_abort(ctx);
++	__ipu_image_convert_abort(ctx);
+ 
+ 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
+ 		chan->ic_task, ctx);
 -- 
 2.19.1
 
