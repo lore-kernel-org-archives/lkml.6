@@ -2,167 +2,108 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE90C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E716C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D4521B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64AEA21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549900469;
+	bh=/1AKaazZBrp7vCjUjcn1mZqGMVItqWxAcv/D3igiKkA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=m2qAPQmxP79N/hMMlSp4ulrUHKp8W6J5S+aXHuEwxh2/9rWe1GK7bTABHjT0/rK1W
+	 PDgDzCIjdBaCbIa7jf53puHQuqilUTwJH7W4y1El5sAOQla3aOAk6osh0/ovgwZ/In
+	 jIbs6ohIx1uxR/Rp0Fv7sru5SDCbRZqQugjUmgxE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbfBKPyQ (ORCPT
+        id S1731668AbfBKPy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:54:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:45575 "EHLO mga12.intel.com"
+        Mon, 11 Feb 2019 10:54:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729778AbfBKPyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:54:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 07:54:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="142467517"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2019 07:54:10 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id C55F5F5; Mon, 11 Feb 2019 17:54:09 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v1] dma-mapping: Move debug configuration options to kernel/dma
-Date:   Mon, 11 Feb 2019 17:54:09 +0200
-Message-Id: <20190211155409.41465-1-andriy.shevchenko@linux.intel.com>
+        id S1731097AbfBKOfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:35:44 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE36E2080F;
+        Mon, 11 Feb 2019 14:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895744;
+        bh=/1AKaazZBrp7vCjUjcn1mZqGMVItqWxAcv/D3igiKkA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ot6wNnzC1A+QRe7JUVwmWlUlLXCmBGSNJgktSHzV2OGRnnSEehBQ62c8VDvUAEMno
+         xBei/R5Anpae9VGDpLpQR2rLuba52BzWL26tNqKgCqiLjJWCndmME+acMUjOeR1V9k
+         EEf9msnk3CQx2mVa7Ix6BxBYNF8gAHSCLh1XPZ5w=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 281/352] arm64/sve: ptrace: Fix SVE_PT_REGS_OFFSET definition
+Date:   Mon, 11 Feb 2019 15:18:28 +0100
+Message-Id: <20190211141904.817811652@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a follow up to the commit cf65a0f6f6ff
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-  ("dma-mapping: move all DMA mapping code to kernel/dma")
+------------------
 
-which moved source code of DMA API to kernel/dma folder. Since there is
-no file left in the lib that require DMA API debugging options move the
-latter to kernel/dma as well.
+[ Upstream commit ee1b465b303591d3a04d403122bbc0d7026520fb ]
 
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+SVE_PT_REGS_OFFSET is supposed to indicate the offset for skipping
+over the ptrace NT_ARM_SVE header (struct user_sve_header) to the
+start of the SVE register data proper.
+
+However, currently SVE_PT_REGS_OFFSET is defined in terms of struct
+sve_context, which is wrong: that structure describes the SVE
+header in the signal frame, not in the ptrace regset.
+
+This patch fixes the definition to use the ptrace header structure
+struct user_sve_header instead.
+
+By good fortune, the two structures are the same size anyway, so
+there is no functional or ABI change.
+
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/dma/Kconfig       |  2 ++
- kernel/dma/Kconfig.debug | 36 ++++++++++++++++++++++++++++++++++++
- lib/Kconfig.debug        | 36 ------------------------------------
- 3 files changed, 38 insertions(+), 36 deletions(-)
- create mode 100644 kernel/dma/Kconfig.debug
+ arch/arm64/include/uapi/asm/ptrace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-index ca88b867e7fe..cba73df57982 100644
---- a/kernel/dma/Kconfig
-+++ b/kernel/dma/Kconfig
-@@ -53,3 +53,5 @@ config DMA_REMAP
- config DMA_DIRECT_REMAP
- 	bool
- 	select DMA_REMAP
-+
-+source "kernel/dma/Kconfig.debug"
-diff --git a/kernel/dma/Kconfig.debug b/kernel/dma/Kconfig.debug
-new file mode 100644
-index 000000000000..2015976cf4ca
---- /dev/null
-+++ b/kernel/dma/Kconfig.debug
-@@ -0,0 +1,36 @@
-+config DMA_API_DEBUG
-+	bool "Enable debugging of DMA-API usage"
-+	select NEED_DMA_MAP_STATE
-+	help
-+	  Enable this option to debug the use of the DMA API by device drivers.
-+	  With this option you will be able to detect common bugs in device
-+	  drivers like double-freeing of DMA mappings or freeing mappings that
-+	  were never allocated.
-+
-+	  This also attempts to catch cases where a page owned by DMA is
-+	  accessed by the cpu in a way that could cause data corruption.  For
-+	  example, this enables cow_user_page() to check that the source page is
-+	  not undergoing DMA.
-+
-+	  This option causes a performance degradation.  Use only if you want to
-+	  debug device drivers and dma interactions.
-+
-+	  If unsure, say N.
-+
-+config DMA_API_DEBUG_SG
-+	bool "Debug DMA scatter-gather usage"
-+	default y
-+	depends on DMA_API_DEBUG
-+	help
-+	  Perform extra checking that callers of dma_map_sg() have respected the
-+	  appropriate segment length/boundary limits for the given device when
-+	  preparing DMA scatterlists.
-+
-+	  This is particularly likely to have been overlooked in cases where the
-+	  dma_map_sg() API is used for general bulk mapping of pages rather than
-+	  preparing literal scatter-gather descriptors, where there is a risk of
-+	  unexpected behaviour from DMA API implementations if the scatterlist
-+	  is technically out-of-spec.
-+
-+	  If unsure, say N.
-+
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index d4df5b24d75e..ef5d7c08e5b9 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1655,42 +1655,6 @@ config PROVIDE_OHCI1394_DMA_INIT
+diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+index a36227fdb084..65ef8b0fdb0e 100644
+--- a/arch/arm64/include/uapi/asm/ptrace.h
++++ b/arch/arm64/include/uapi/asm/ptrace.h
+@@ -131,7 +131,7 @@ struct user_sve_header {
  
- 	  See Documentation/debugging-via-ohci1394.txt for more information.
+ /* Offset from the start of struct user_sve_header to the register data */
+ #define SVE_PT_REGS_OFFSET					\
+-	((sizeof(struct sve_context) + (SVE_VQ_BYTES - 1))	\
++	((sizeof(struct user_sve_header) + (SVE_VQ_BYTES - 1))	\
+ 		/ SVE_VQ_BYTES * SVE_VQ_BYTES)
  
--config DMA_API_DEBUG
--	bool "Enable debugging of DMA-API usage"
--	select NEED_DMA_MAP_STATE
--	help
--	  Enable this option to debug the use of the DMA API by device drivers.
--	  With this option you will be able to detect common bugs in device
--	  drivers like double-freeing of DMA mappings or freeing mappings that
--	  were never allocated.
--
--	  This also attempts to catch cases where a page owned by DMA is
--	  accessed by the cpu in a way that could cause data corruption.  For
--	  example, this enables cow_user_page() to check that the source page is
--	  not undergoing DMA.
--
--	  This option causes a performance degradation.  Use only if you want to
--	  debug device drivers and dma interactions.
--
--	  If unsure, say N.
--
--config DMA_API_DEBUG_SG
--	bool "Debug DMA scatter-gather usage"
--	default y
--	depends on DMA_API_DEBUG
--	help
--	  Perform extra checking that callers of dma_map_sg() have respected the
--	  appropriate segment length/boundary limits for the given device when
--	  preparing DMA scatterlists.
--
--	  This is particularly likely to have been overlooked in cases where the
--	  dma_map_sg() API is used for general bulk mapping of pages rather than
--	  preparing literal scatter-gather descriptors, where there is a risk of
--	  unexpected behaviour from DMA API implementations if the scatterlist
--	  is technically out-of-spec.
--
--	  If unsure, say N.
--
- menuconfig RUNTIME_TESTING_MENU
- 	bool "Runtime Testing"
- 	def_bool y
+ /*
 -- 
-2.20.1
+2.19.1
+
+
 
