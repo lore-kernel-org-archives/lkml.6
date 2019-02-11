@@ -2,123 +2,105 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C86C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1DFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4652220863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4435F20863
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 09:58:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i5vXaPuO"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jaov2wJO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfBKJ5q (ORCPT
+        id S1726860AbfBKJ6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 04:57:46 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:40334 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfBKJ5q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 04:57:46 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1B9s6dE195955;
-        Mon, 11 Feb 2019 09:57:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=tx/hGOLAYb9A20Lmx0DM4rIi+oXEvDwXVwumj9JR+7g=;
- b=i5vXaPuOf83Xzvb6iIkoYfKEtQ3eE+wPAT/y1uhfJdujyGZ36vZk7Il8cftQQvqlqEZK
- 8UqJW0/HyMQfajgn+puz7RY/EXv8SAOUr5tD3wJMZWWhgF6rfMhzNYibVmeROmPPpsob
- nj/4Zloi40BiIKICXs/W+wM5Atc70IG60Cx6IkwI9krzk7ovxrpBl+Em5IrpbYXF6Ww3
- JaWf/KNZQ9nI6eXZ6r/vo5nJZfI0wzQQjlGfEzDsjW5T4+ZxOpOX4qyFhukxbOMeB6fG
- iN5W18XbMQd2MEPAdDJqSKcMFcLAkMz8ZtlGwjRvLvDL+lDWN4pI3ka3MxS1Md3L3PEl vQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2qhredmref-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 09:57:27 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1B9vQIP019058
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Feb 2019 09:57:26 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1B9vPw2018438;
-        Mon, 11 Feb 2019 09:57:25 GMT
-Received: from [10.166.106.34] (/10.166.106.34)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 11 Feb 2019 01:57:25 -0800
-Subject: Re: [PATCH] x86/alternatives: check int3 breakpoint physical
- addresses
-To:     Thomas Gleixner <tglx@linutronix.de>
-References: <1548428249-8258-1-git-send-email-alexandre.chartre@oracle.com>
- <alpine.DEB.2.21.1902102221500.8784@nanos.tec.linutronix.de>
- <8995b3b4-b805-c8c7-95a8-a39ab000f289@oracle.com>
- <alpine.DEB.2.21.1902111012130.1728@nanos.tec.linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexandre Chartre <alexandre.chartre@oracle.com>
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <771b5877-4cb6-203b-fd95-ed63f9736373@oracle.com>
-Date:   Mon, 11 Feb 2019 10:57:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.6.0
+        Mon, 11 Feb 2019 04:58:14 -0500
+Received: from mail-eopbgr150082.outbound.protection.outlook.com ([40.107.15.82]:55296
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726045AbfBKJ6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 04:58:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r3a4oNEomQhGkgXthQKDplQWCz5F0jiy5JARVjuXcUI=;
+ b=jaov2wJO7nC6B05AKJ2mESYa8WDF47DyyQdpPnwKHLQQ0scNz3/i1suMNp8YpJvZagp3ab8RxrrktCw/uuUYY5kHNKGZTLLvE/tZX9+a58cGIKtffeBeFdnuK1GkZ0RXr1CAfQVg+u4D7+iOwagef5BybiDsTU0Ip8OYHphZVAM=
+Received: from VI1PR04MB4558.eurprd04.prod.outlook.com (20.177.55.216) by
+ VI1SPR01MB0363.eurprd04.prod.outlook.com (20.178.120.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Mon, 11 Feb 2019 09:58:04 +0000
+Received: from VI1PR04MB4558.eurprd04.prod.outlook.com
+ ([fe80::b0fe:dee7:b2d3:9355]) by VI1PR04MB4558.eurprd04.prod.outlook.com
+ ([fe80::b0fe:dee7:b2d3:9355%5]) with mapi id 15.20.1601.023; Mon, 11 Feb 2019
+ 09:58:04 +0000
+From:   Jun Li <jun.li@nxp.com>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
+ against the device node
+Thread-Topic: [PATCH v2 6/9] usb: roles: Find the muxes by also matching
+ against the device node
+Thread-Index: AQHUuLVSCFz0E1ZQKUWUh+dd3nT5iqXablHw
+Date:   Mon, 11 Feb 2019 09:58:04 +0000
+Message-ID: <VI1PR04MB4558283CA9D752D5452FA09989640@VI1PR04MB4558.eurprd04.prod.outlook.com>
+References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
+ <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
+In-Reply-To: <20190130160259.46919-7-heikki.krogerus@linux.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=jun.li@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1SPR01MB0363;6:nBAC+ZghSAYqjSoPAu/1FaqygnVc7CFvSOFVsN66ObYh1aHNL9lApAWHRCuC4gRfSnGzDbWCIGWotO53f6mhAfkvBoJ+TFTID3E2qlg6NmfYC7CCTlOO5BkAHoru2Eqkb6MKBWwjOdoZ67g6ouBmnfrOdLbVx9aYADjSmYLUqMS/HWpG7QLSS9+Ph39iqfJSziV3YpSbIxvfP5VYNaV9BTFb7kWjAXsLN3ngj5MQYOnzx4wdoZxdHU/S1lqAa6wL8cSSotnJFFgIZm727sgpN7bDW2N/rY2mQIFlgudppvUUmD37khM4bTFceXMNKzs73UwQMz8SEzlVwLi3crmrBc6Tc8edRbZSVEerwDSFnsAJUzNxcIEdpMwvd3/ijwYIUgQb/91T8uOAYSLqo8vIWS8p+ECDAiZ8pX2zUs2M484sIsb9yEjKniE0c3EkoDL+5B0rwCUE6IHhquem3BHiLw==;5:cbjCRi75EvgmNfCLsblWoHzPS4P1c6VYh+WPeAH6RmLMsDvm94UKo78V1DBeCZqbutsJo5oXgDhUuo3ooeRoIzqDvLaV/VOMGy7VbiTMTI9vnFcga8bAwpIZGVsZMpLXtyzhtnm67uBRRPJP73yPuQAbneQYjcPZUm2CFfewp3llfaf6rYWr7IIutlnFVnDpgllZbtKqcBKNMJha86/i8Q==;7:v8zwsOGY1MxM1Azgfpy25GM94hjA3wpKYk+bUGVj0ep3mP2E0vSUq3rbt5hZovqoe/vkuJWirp4TcdUpeK1VhFA4YObnkg2YE9oKoqAU76n+Pa0ZvszE9zTOF6gNqrxRquJ8hYemozl9t86b9K+rlQ==
+x-ms-office365-filtering-correlation-id: 0e5b0f7b-51e1-45a4-1b5f-08d690076ab7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1SPR01MB0363;
+x-ms-traffictypediagnostic: VI1SPR01MB0363:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VI1SPR01MB036331C4E575691DF522A99689640@VI1SPR01MB0363.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0945B0CC72
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(8676002)(478600001)(81166006)(4326008)(316002)(8936002)(486006)(229853002)(4744005)(186003)(7696005)(74316002)(71190400001)(81156014)(966005)(68736007)(446003)(66066001)(71200400001)(476003)(44832011)(11346002)(54906003)(110136005)(14454004)(55016002)(6306002)(9686003)(6436002)(2906002)(102836004)(305945005)(25786009)(105586002)(106356001)(76176011)(7736002)(6246003)(97736004)(26005)(6116002)(3846002)(33656002)(6506007)(99286004)(86362001)(53936002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1SPR01MB0363;H:VI1PR04MB4558.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: qkugnWVz2rJdTdLRib9efTNS4TzjbEQKsERIAyVwhC/Ato21DtP3dUjularo6/6x6VSQ3/Y4zxLKqz5QojzyPTrAciCXeF2GJwJhhYwEZevkk+/t7wve8iwFP8Gxt9Z3soDaled58hRR0m2FNi/hobGTB0DyoGD/kWQDCZltYeH7P4clSh2Mxon/JpSx8z1YvpvvdjJqa+hCL5oohXbxd7pmfQfSyrcb8E2j/cpvsPotNe6jDC/2Mr8UzoZavDM99DeEPiKc/j+QSxtu7krzYmPeM3PdVKQm5nZXTI30tib84uvVTQIVLU3ZbXK1kejPvZUbsh+lFo+TKliup/w8fJEnztY6pA6ESFgqivyVVXS6ULSCA5JC8RklbfZmZboYhGvrReghpS4fhPz1kUvBjWdghofdBTAjHTTBKsP22IU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902111012130.1728@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9163 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902110078
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e5b0f7b-51e1-45a4-1b5f-08d690076ab7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2019 09:58:04.7688
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1SPR01MB0363
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Heikki,
 
-On 02/11/2019 10:15 AM, Thomas Gleixner wrote:
-> On Mon, 11 Feb 2019, Alexandre Chartre wrote:
->> On 02/10/2019 10:23 PM, Thomas Gleixner wrote:
->>> On Fri, 25 Jan 2019, Alexandre Chartre wrote:
->>>> Note that this issue has been observed and reproduced with a custom kernel
->>>> with some code mapped to different virtual addresses and using jump labels
->>>> As jump labels use text_poke_bp(), crashes were sometimes observed when
->>>> updating jump labels.
->>>
->>> Rightfully so. text_poke_bp() pokes at the kernels text mapping which is
->>> very well defined and unique. Why would you map the same text to different
->>> virtual addresses and then use a randomly chosen one to poke at it?
->>>
->>
->> As an example, we used to have per-CPU SYSCALL entry trampoline [1] where the
->> entry_SYSCALL_64_trampoline function was mapped to a different virtual address
->> for each CPU. So, a syscall would execute entry_SYSCALL_64_trampoline() from a
->> different virtual address depending on the CPU being used. With that code,
->> adding a jump label in entry_SYSCALL_64_trampoline() causes the described
->> issue.
->
-> Right, but we knew that and there was no reason to put a jump label into
-> that. AFAICT we don't have anything like this in the kernel.
+> @@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct
+> usb_role_switch *sw)  }  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+>=20
+> -static int __switch_match(struct device *dev, const void *name)
+> +static int switch_fwnode_match(struct device *dev, const void *fwnode)
+> +{
+> +	return dev_fwnode(dev) =3D=3D fwnode;
 
-In our particular case, we have introduced a jump label in JMP_NOSPEC (which
-is used by entry_SYSCALL_64_trampoline()) to have the option to dynamically
-enable/disable retpoline at runtime. So that's when we faced this issue.
+You missed the comment
+https://lkml.org/lkml/2019/1/22/437
 
-> That said, I'm not opposed to apply the patch as is, I just wanted to get a
-> better understanding about the background.
+return dev_fwnode(dev->parent) =3D=3D fwnode;
 
-Sure. I am aware this is a corner case, and I was precisely looking for feedback
-to check if it is worth fixing that issue. So I appreciate your reply, and I would
-understand if the patch is rejected because that's a case that we are just not
-expecting to happen.
-
-Thanks,
-
-alex.
+Jun
