@@ -2,206 +2,162 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03681C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C37CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3062222B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:17:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B70C222B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:17:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yqJpqGvS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfBKORX (ORCPT
+        id S1728183AbfBKORt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:17:23 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46544 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfBKORW (ORCPT
+        Mon, 11 Feb 2019 09:17:49 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45591 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbfBKORt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:17:22 -0500
-Received: by mail-qk1-f195.google.com with SMTP id i5so1768880qkd.13
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:17:21 -0800 (PST)
+        Mon, 11 Feb 2019 09:17:49 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q15so4849383wro.12
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 06:17:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=puv3gC+Nk3BQy/pOka+RnqNUGH1wGRY9YNG6l/8aQic=;
+        b=yqJpqGvSf5YixOGoEcFDrKq5ChskDq62jsL5L3y5M7thAP0oQTeMKOpDimNZuBVE9E
+         +QMfyTbR0AhLVdlPtWQyYEJWjcZjbaB+K6C/SbGWg8vyGUMHHuvHVVyjz2g51gLEuTUe
+         Pl+Y+t1MIh/zK6U4Bq9tiDqPy4ltj07oAUNZX82Y0HXHCZy88to3r+N1M4C0tYAg+Nav
+         lYWfkD7TFIfWN3akMIYJcbnvFGPuZG/9Tyty2+JDqYfixssDX9OUl+8nmvkugWIiO3wb
+         r2uYYRZ8Smuv/6oCYEqY60HUPvsVfyHr9iiloT/Cry8s6du1lfpU4pN+zGAg0EzcaxuQ
+         gA5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=17mLUiLoUITEf9onrIviV0lzmU8oz0sx09jONf+UW20=;
-        b=dXAH+JBqq0T9Nn0m9XokkFE4dtumDezby/CT+yus+35+5fjg70OUATFEoHJK6HFatP
-         FzYVRDIusag42dBDonusuul+eJ2H1K5wq61FXe0u2ECiLoM7TLCliW9+0csZL6oRlwdO
-         D4ZsnBZDQRAiOK61sxzlbNtWxLI2LYSITwWN42x+xMNk69Ugk9x8d7UhLw7nmVnuHsOS
-         NIs0ymfWw9afIMPMrRFB/2rt/Z60JJZmhQWoBfYCNFlL4jwdOOWedZvRVfKNo2UrSoTN
-         Xz9TUCjoYbN4HsKSQlNZ2U0D5FRnebC0Y03Dbyc+4sFoOIFAzt414BVvNUBi/7fPz+H+
-         N/5Q==
-X-Gm-Message-State: AHQUAuYznrmlWBRp1ZigDzLXeB2GT/MqzKMy18UTzvQ5t9tPNI6U4Grt
-        M9lh2QXqOdt2nAshHOS/h9xDGg==
-X-Google-Smtp-Source: AHgI3IZHNkA+yEICcjctSDV0G+ePVrUCaJsYwvi7jE9zWEXLcAw/EgNpnXrqlt0CsBBF8u+BQUztdQ==
-X-Received: by 2002:a37:c403:: with SMTP id d3mr4543650qki.54.1549894641430;
-        Mon, 11 Feb 2019 06:17:21 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id r20sm5834424qtp.68.2019.02.11.06.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Feb 2019 06:17:20 -0800 (PST)
-Date:   Mon, 11 Feb 2019 09:17:18 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
-        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
-Message-ID: <20190211091623-mutt-send-email-mst@kernel.org>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
- <20190204181558.12095.83484.stgit@localhost.localdomain>
- <20190209195325-mutt-send-email-mst@kernel.org>
- <7fcb61d6-64f0-f3ae-5e32-0e9f587fdd49@redhat.com>
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=puv3gC+Nk3BQy/pOka+RnqNUGH1wGRY9YNG6l/8aQic=;
+        b=ApEgNmqmsKor3v7muTACFQNyOjUitiLlRVxJfTbRk/uxDxKcb2ox1WPCxlM4y11mdk
+         m0j0fB/pHtWtFtg9DgmRqFDWGOBOLxPevDqoJXIXUhJ0utEitjqgweoqWkvZVL8f/MxF
+         0TmiXNfOH3BH8xkdbnaNlz44VghIhiBJONpX0eTMlD9iXdcnlLXrDY9tFswa3d/uiX16
+         C+yNNVSWwAdIBl+68yaXjvFbmp26e2w4UQyQ7LuZzWmrkyZ50URrEF9udpBefWXBbxpj
+         P4w9NKvfMKHs60cBYFXI9V2KH1hr9HV85PzCSMSEfxHa6hRANUc86mDIlKSr9l4DdrkJ
+         Ys4w==
+X-Gm-Message-State: AHQUAuaWLwm4VBocsBRANMu3jzfSpGBU/xOtz8KzkSDE4GJW8g9RVPi4
+        px60CcUFdOeMQs8Vidvv8oyeiQ==
+X-Google-Smtp-Source: AHgI3Ib/CPu+ZVEuPdcvWu+xqlLLULGHwy4ZWV9srPnleOSXHl+Ub8ku+HZuh37LDIVAyXxqsOxi4A==
+X-Received: by 2002:adf:9ecc:: with SMTP id b12mr7013674wrf.83.1549894667289;
+        Mon, 11 Feb 2019 06:17:47 -0800 (PST)
+Received: from localhost ([2620:10d:c092:180::1:7e84])
+        by smtp.gmail.com with ESMTPSA id t199sm55863947wmt.1.2019.02.11.06.17.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 06:17:46 -0800 (PST)
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com> <1547744074-28308-3-git-send-email-lollivier@baylibre.com> <20190125090755.GB3691@localhost> <867eeo7pjm.fsf@baylibre.com> <20190211083349.GU4686@localhost>
+User-agent: mu4e 1.0; emacs 25.3.2
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Loys Ollivier <lollivier@baylibre.com>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
+In-reply-to: <20190211083349.GU4686@localhost>
+Date:   Mon, 11 Feb 2019 15:17:44 +0100
+Message-ID: <86mun2v27r.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7fcb61d6-64f0-f3ae-5e32-0e9f587fdd49@redhat.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 08:30:03AM -0500, Nitesh Narayan Lal wrote:
-> 
-> On 2/9/19 7:57 PM, Michael S. Tsirkin wrote:
-> > On Mon, Feb 04, 2019 at 10:15:58AM -0800, Alexander Duyck wrote:
-> >> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> >>
-> >> Because the implementation was limiting itself to only providing hints on
-> >> pages huge TLB order sized or larger we introduced the possibility for free
-> >> pages to slip past us because they are freed as something less then
-> >> huge TLB in size and aggregated with buddies later.
-> >>
-> >> To address that I am adding a new call arch_merge_page which is called
-> >> after __free_one_page has merged a pair of pages to create a higher order
-> >> page. By doing this I am able to fill the gap and provide full coverage for
-> >> all of the pages huge TLB order or larger.
-> >>
-> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > Looks like this will be helpful whenever active free page
-> > hints are added. So I think it's a good idea to
-> > add a hook.
-> >
-> > However, could you split adding the hook to a separate
-> > patch from the KVM hypercall based implementation?
-> >
-> > Then e.g. Nilal's patches could reuse it too.
-> With the current design of my patch-set, if I use this hook to report
-> free pages. I will end up making redundant hints for the same pfns.
-> 
-> This is because the pages once freed by the host, are returned back to
-> the buddy.
 
-Suggestions on how you'd like to fix this? You do need this if
-you introduce a size cut-off right?
+On Mon 11 Feb 2019 at 08:33, Johan Hovold <johan@kernel.org> wrote:
 
-> >
-> >
-> >> ---
-> >>  arch/x86/include/asm/page.h |   12 ++++++++++++
-> >>  arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
-> >>  include/linux/gfp.h         |    4 ++++
-> >>  mm/page_alloc.c             |    2 ++
-> >>  4 files changed, 46 insertions(+)
-> >>
-> >> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> >> index 4487ad7a3385..9540a97c9997 100644
-> >> --- a/arch/x86/include/asm/page.h
-> >> +++ b/arch/x86/include/asm/page.h
-> >> @@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *page, unsigned int order)
-> >>  	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> >>  		__arch_free_page(page, order);
-> >>  }
-> >> +
-> >> +struct zone;
-> >> +
-> >> +#define HAVE_ARCH_MERGE_PAGE
-> >> +void __arch_merge_page(struct zone *zone, struct page *page,
-> >> +		       unsigned int order);
-> >> +static inline void arch_merge_page(struct zone *zone, struct page *page,
-> >> +				   unsigned int order)
-> >> +{
-> >> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> >> +		__arch_merge_page(zone, page, order);
-> >> +}
-> >>  #endif
-> >>  
-> >>  #include <linux/range.h>
-> >> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> >> index 09c91641c36c..957bb4f427bb 100644
-> >> --- a/arch/x86/kernel/kvm.c
-> >> +++ b/arch/x86/kernel/kvm.c
-> >> @@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsigned int order)
-> >>  		       PAGE_SIZE << order);
-> >>  }
-> >>  
-> >> +void __arch_merge_page(struct zone *zone, struct page *page,
-> >> +		       unsigned int order)
-> >> +{
-> >> +	/*
-> >> +	 * The merging logic has merged a set of buddies up to the
-> >> +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
-> >> +	 * advantage of this moment to notify the hypervisor of the free
-> >> +	 * memory.
-> >> +	 */
-> >> +	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
-> >> +		return;
-> >> +
-> >> +	/*
-> >> +	 * Drop zone lock while processing the hypercall. This
-> >> +	 * should be safe as the page has not yet been added
-> >> +	 * to the buddy list as of yet and all the pages that
-> >> +	 * were merged have had their buddy/guard flags cleared
-> >> +	 * and their order reset to 0.
-> >> +	 */
-> >> +	spin_unlock(&zone->lock);
-> >> +
-> >> +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
-> >> +		       PAGE_SIZE << order);
-> >> +
-> >> +	/* reacquire lock and resume freeing memory */
-> >> +	spin_lock(&zone->lock);
-> >> +}
-> >> +
-> >>  #ifdef CONFIG_PARAVIRT_SPINLOCKS
-> >>  
-> >>  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
-> >> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> >> index fdab7de7490d..4746d5560193 100644
-> >> --- a/include/linux/gfp.h
-> >> +++ b/include/linux/gfp.h
-> >> @@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
-> >>  #ifndef HAVE_ARCH_FREE_PAGE
-> >>  static inline void arch_free_page(struct page *page, int order) { }
-> >>  #endif
-> >> +#ifndef HAVE_ARCH_MERGE_PAGE
-> >> +static inline void
-> >> +arch_merge_page(struct zone *zone, struct page *page, int order) { }
-> >> +#endif
-> >>  #ifndef HAVE_ARCH_ALLOC_PAGE
-> >>  static inline void arch_alloc_page(struct page *page, int order) { }
-> >>  #endif
-> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> >> index c954f8c1fbc4..7a1309b0b7c5 100644
-> >> --- a/mm/page_alloc.c
-> >> +++ b/mm/page_alloc.c
-> >> @@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *page,
-> >>  		page = page + (combined_pfn - pfn);
-> >>  		pfn = combined_pfn;
-> >>  		order++;
-> >> +
-> >> +		arch_merge_page(zone, page, order);
-> >>  	}
-> >>  	if (max_order < MAX_ORDER) {
-> >>  		/* If we are here, it means order is >= pageblock_order.
-> -- 
-> Regards
-> Nitesh
-> 
+> On Mon, Jan 28, 2019 at 04:46:53PM +0100, Loys Ollivier wrote:
+>> 
+>> On Fri 25 Jan 2019 at 09:07, Johan Hovold wrote:
+>> 
+>> > On Thu, Jan 17, 2019 at 05:54:32PM +0100, Loys Ollivier wrote:
+>> >> Add binding for Mediatek-based GNSS receivers.
+>> >> 
+>> >> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+>> >> ---
+>> >> 
+>> >> v2:
+>> >> Renamed bindings from Globaltop/gtop to Mediatek/mtk.
+>> >> Moved current-speed as an optional propertie.
+>> >> Removed the status line in the example.
+>> >> Added "mediatek,mt3339" compatible.
+>
+>> >> +++ b/Documentation/devicetree/bindings/gnss/mediatek.txt
+>> >> @@ -0,0 +1,39 @@
+>> >> +Mediatek-based GNSS Receiver DT binding
+>> >> +
+>> >> +Mediatek chipsets are used in GNSS-receiver modules produced by several
+>> >> +vendors and can use UART, SPI or I2C interfaces.
+>> >> +
+>> >> +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
+>> >> +properties.
+>> >> +
+>> >> +Required properties:
+>> >> +
+>> >> +- compatible	: Must be one of
+>> >> +
+>> >> +			"globaltop,pa6h"
+>> >> +			"mediatek,mt3339"
+>> >
+>> > I'm not sure it makes sense to add the GPS chip itself as it cannot be
+>> > used stand-alone AFAIU, and either not way would require a lot more
+>> > resources to be defined than what you add to this binding.
+>> 
+>> OK, I find it a bit confusing to have Mediatek bindings but no
+>> compatible Mediatek SoCs.
+>> But it is true that it can't be used stand-alone. I will remove this
+>> reference and also remove it from the mtk.c driver code from this patch
+>> serie.
+>
+>> >> +Required properties (I2C):
+>> >> +- reg		: I2C slave address
+>> >> +
+>> >> +Required properties (SPI):
+>> >> +- reg		: SPI chip select address
+>> >
+>> > While the mt3339 appears to support these interfaces, the globaltop one
+>> > does not.
+>> >
+>> > Have you looked around for a small sample of mt3339-based receivers, to
+>> > see whether anyone actually provides these?
+>> 
+>> Again I'm confused by the fact that it is the Mediatek bindings.
+>> Hence why I have added it and why it was not present in the v1 that was
+>> only for Globaltop.
+>
+> This is no different from the sirfstar driver for receivers based on
+> those chipsets but manufactured by various other vendors.
+>
+Indeed.
+
+>> I find it odd mentionning the chipset but not all its interfaces.
+>> I will remove these sections and only list supported interfaces (i.e.
+>> UART). Other interfaces can be added afterward if one finds a board that
+>> provides them.
+>
+> Right, but please do look around for other receivers using this chipset
+> so that we can make the binding generic enough to cover those as well
+> (e.g. by choosing representative resource names).
+>
+OK will have a look.
+
+> Johan
 
 
-
+-- 
+-L
