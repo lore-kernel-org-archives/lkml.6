@@ -2,103 +2,128 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9069BC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26C9C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6728421A80
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9111F218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 16:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549900999;
+	bh=nXi30idkNiVgdCxxhSumpHJehEwuLV3mWqSR+Lc2y/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=zNvqmqG4fCS9KLn+ev9p5MT4Vbj38QCVuPLLKhwaVlSD7853fuwS95WmLAZZv82nw
+	 Ex8iXTOuUiA4nxqSuwUVXOmQoFCIymV6EEzj64mlassw7XKYWI0ufxr28tz85vDEoF
+	 PJ6Yvr7R/oWkqKbUGkMr/aLhaoc0+YgGKBjhEpoo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbfBKQDC (ORCPT
+        id S1730422AbfBKQDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:03:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:10972 "EHLO mx1.redhat.com"
+        Mon, 11 Feb 2019 11:03:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729669AbfBKQC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:02:59 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729979AbfBKO3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:29:36 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AFEDF806A7;
-        Mon, 11 Feb 2019 16:02:58 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D21B85DF4F;
-        Mon, 11 Feb 2019 16:02:56 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 11 Feb 2019 17:02:58 +0100 (CET)
-Date:   Mon, 11 Feb 2019 17:02:56 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Ivan Delalande <colona@arista.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2] exec: don't force_sigsegv processes with a pending
- fatal signal
-Message-ID: <20190211160255.GC21430@redhat.com>
-References: <20190205025308.GA24455@visor>
- <20190205131119.3e388a0a1a69c0a041ed87ef@linux-foundation.org>
- <20190206031029.GB9368@visor>
- <87pns2q2ug.fsf@xmission.com>
- <20190209001638.GA14025@visor>
+        by mail.kernel.org (Postfix) with ESMTPSA id 63DF12075C;
+        Mon, 11 Feb 2019 14:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549895375;
+        bh=nXi30idkNiVgdCxxhSumpHJehEwuLV3mWqSR+Lc2y/8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0gj9JyfCWuYXjpb92QnYiGwRzTbE7PLAZboRnZp+n8vpkkNirHueyijYaBXpOZzVI
+         SPL3A1mEekr0t/eh3eprhk6CIv+e0EXf1UWF0Vs2pNSutdZe6YdO5LStBJAgh6ia2G
+         HTq/BNjkrP/pZR/eeyUKMKH3NPiS1IpLM00vL6/Y=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Zhoujie Wu <zjwu@marvell.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 177/352] mmc: sdhci-xenon: Fix timeout checks
+Date:   Mon, 11 Feb 2019 15:16:44 +0100
+Message-Id: <20190211141858.350541657@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
+References: <20190211141846.543045703@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190209001638.GA14025@visor>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 11 Feb 2019 16:02:58 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/08, Ivan Delalande wrote:
->
-> A difference I've noticed with your tree (unrelated to my issue here but
-> that you may want to look at) is when I run my reproducer under
-> strace -f, I'm now getting quite a lot of "Exit of unknown pid 12345
-> ignored" warnings from strace, which I've never seen with mainline.
-> My reproducer simply fork-exec tail processes in a loop, and tries to
-> sigkill them in the parent with a variable delay.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Hmm... may be because of PTRACE_EVENT_EXIT problem I mentioned in reply
-to this change...
+------------------
 
-> 
-> Thank you,
-> 
-> > diff --git a/kernel/signal.c b/kernel/signal.c
-> > index 9ca8e5278c8e..5424cb0006bc 100644
-> > --- a/kernel/signal.c
-> > +++ b/kernel/signal.c
-> > @@ -2393,6 +2393,11 @@ bool get_signal(struct ksignal *ksig)
-> >                 goto relock;
-> >         }
-> >  
-> > +       /* Has this task already been marked for death? */
-> > +       ksig->info.si_signo = signr = SIGKILL;
-> > +       if (signal_group_exit(signal))
-> > +               goto fatal;
-> > +
-> >         for (;;) {
-> >                 struct k_sigaction *ka;
-> >  
-> > @@ -2488,6 +2493,7 @@ bool get_signal(struct ksignal *ksig)
-> >                         continue;
-> >                 }
-> >  
-> > +       fatal:
-> >                 spin_unlock_irq(&sighand->siglock);
-> >  
-> >    
-> 
-> -- 
-> Ivan Delalande
-> Arista Networks
+[ Upstream commit 0e6e7c2ff397e1bbebc882ca3132148aaaef1ddd ]
+
+Always check the wait condition before returning timeout.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Zhoujie Wu <zjwu@marvell.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/mmc/host/sdhci-xenon-phy.c | 10 +++++++---
+ drivers/mmc/host/sdhci-xenon.c     | 10 +++++++---
+ 2 files changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
+index 5956e90380e8..5b5eb53a63d2 100644
+--- a/drivers/mmc/host/sdhci-xenon-phy.c
++++ b/drivers/mmc/host/sdhci-xenon-phy.c
+@@ -357,9 +357,13 @@ static int xenon_emmc_phy_enable_dll(struct sdhci_host *host)
+ 
+ 	/* Wait max 32 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 32);
+-	while (!(sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
+-		XENON_DLL_LOCK_STATE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		if (sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
++		    XENON_DLL_LOCK_STATE)
++			break;
++		if (timedout) {
+ 			dev_err(mmc_dev(host->mmc), "Wait for DLL Lock time-out\n");
+ 			return -ETIMEDOUT;
+ 		}
+diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+index 4d0791f6ec23..a0b5089b3274 100644
+--- a/drivers/mmc/host/sdhci-xenon.c
++++ b/drivers/mmc/host/sdhci-xenon.c
+@@ -34,9 +34,13 @@ static int xenon_enable_internal_clk(struct sdhci_host *host)
+ 	sdhci_writel(host, reg, SDHCI_CLOCK_CONTROL);
+ 	/* Wait max 20 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 20);
+-	while (!((reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+-			& SDHCI_CLOCK_INT_STABLE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++		if (reg & SDHCI_CLOCK_INT_STABLE)
++			break;
++		if (timedout) {
+ 			dev_err(mmc_dev(host->mmc), "Internal clock never stabilised.\n");
+ 			return -ETIMEDOUT;
+ 		}
+-- 
+2.19.1
+
+
 
