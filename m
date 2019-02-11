@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80221C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F88C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E8FA20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 144CF21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896630;
-	bh=+pRn6tUoqIL/EF1i/ohkLqqVMha4CdqUMwskHJS5UmE=;
+	s=default; t=1549896633;
+	bh=JPft0HWih1AUGe+uCLt+29lF9sR/QII7GK8rrEcDQ64=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XzAR6BskrZ6mUlXdzZX6ptbm9WOYfZJUhMwx/rnjeinlmh8Kl9yau//V1zl2KWygI
-	 F8HrwpQX2cWDtA3Xfhv334/id4ZamNqNJBEDNKvnQOQh0TnG41gJQMmHmiq1wAOzI4
-	 lUdb7yM/XLzfUq1unbVAi1ujnK7g1cpaBepucF3w=
+	b=BN4VTeVq/99HN+JS6cEKDlwGHejHkNcPywG19WGxS1fSfvQ38ht7Z2denfYEJojtb
+	 sxztHS5xot5lIC9pshMjveZGlUg6zQDjfRgXRhLDJ6iIN2bLDyMLIkLznsWKjZOQOu
+	 CaJwwZn0r8gwOIRNS+e8oX/QDm74Co2Jg8+18Bd8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388101AbfBKOu3 (ORCPT
+        id S2388109AbfBKOub (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387629AbfBKOuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:25 -0500
+        id S2388094AbfBKOu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:50:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7487D214DA;
-        Mon, 11 Feb 2019 14:50:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 024DC222A1;
+        Mon, 11 Feb 2019 14:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896624;
-        bh=+pRn6tUoqIL/EF1i/ohkLqqVMha4CdqUMwskHJS5UmE=;
+        s=default; t=1549896627;
+        bh=JPft0HWih1AUGe+uCLt+29lF9sR/QII7GK8rrEcDQ64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U/8uMvsT68OYONiphCe1EjfLHnzeTmG8RZnu0hHMVYm9GBaT1W3X+cLk/C03z6Q9W
-         WFjsWv0/Xl9YlC5Z9DCy7kkRSDn/MKVvwXyNmZnS23np/miw0mEO7iJztxIS6Ylzt9
-         WU7rOb9j31ZGUSJ2sdPZVwHa6M/jMQQlv2R2Z8Qo=
+        b=Al7l7eRMXHdoBY4c31WvuHRbrmbX4gn2sHb1vk6xQVCCaVs5NMzTWqbGEKgNNwRWu
+         TQv4G3yI2sdLeTRRtSqkUpiaPolwHDNYjnYl0otlizD43Ac/o7VaTVEDpzGQ6Q1V06
+         6gecNvwV696Pg0fiILsXXpJlqX5zzl/5d3Z0k8zo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Du Changbin <changbin.du@gmail.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 246/313] kernel/kcov.c: mark write_comp_data() as notrace
-Date:   Mon, 11 Feb 2019 15:18:46 +0100
-Message-Id: <20190211141909.807978153@linuxfoundation.org>
+Subject: [PATCH 4.19 247/313] scripts/gdb: fix lx-version string output
+Date:   Mon, 11 Feb 2019 15:18:47 +0100
+Message-Id: <20190211141909.850312519@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -70,58 +71,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 634724431607f6f46c495dfef801a1c8b44a96d9 ]
+[ Upstream commit b058809bfc8faeb7b7cae047666e23375a060059 ]
 
-Since __sanitizer_cov_trace_const_cmp4 is marked as notrace, the
-function called from __sanitizer_cov_trace_const_cmp4 shouldn't be
-traceable either.  ftrace_graph_caller() gets called every time func
-write_comp_data() gets called if it isn't marked 'notrace'.  This is the
-backtrace from gdb:
+A bug is present in GDB which causes early string termination when
+parsing variables.  This has been reported [0], but we should ensure
+that we can support at least basic printing of the core kernel strings.
 
- #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
- #1  0xffffff8010201920 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
- #2  0xffffff8010439714 in write_comp_data (type=5, arg1=0, arg2=0, ip=18446743524224276596) at ../kernel/kcov.c:116
- #3  0xffffff8010439894 in __sanitizer_cov_trace_const_cmp4 (arg1=<optimized out>, arg2=<optimized out>) at ../kernel/kcov.c:188
- #4  0xffffff8010201874 in prepare_ftrace_return (self_addr=18446743524226602768, parent=0xffffff801014b918, frame_pointer=18446743524223531344) at ./include/generated/atomic-instrumented.h:27
- #5  0xffffff801020194c in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
+For current gdb version (has been tested with 7.3 and 8.1), 'lx-version'
+only prints one character.
 
-Rework so that write_comp_data() that are called from
-__sanitizer_cov_trace_*_cmp*() are marked as 'notrace'.
+  (gdb) lx-version
+  L(gdb)
 
-Commit 903e8ff86753 ("kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace")
-missed to mark write_comp_data() as 'notrace'. When that patch was
-created gcc-7 was used. In lib/Kconfig.debug
-config KCOV_ENABLE_COMPARISONS
-	depends on $(cc-option,-fsanitize-coverage=trace-cmp)
+This can be fixed by casting 'linux_banner' as (char *).
 
-That code path isn't hit with gcc-7. However, it were that with gcc-8.
+  (gdb) lx-version
+  Linux version 4.19.0-rc1+ (changbin@acer) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21 SMP Sat Sep 1 21:43:30 CST 2018
 
-Link: http://lkml.kernel.org/r/20181206143011.23719-1-anders.roxell@linaro.org
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Will Deacon <will.deacon@arm.com>
+[0] https://sourceware.org/bugzilla/show_bug.cgi?id=20077
+
+[kbingham@kernel.org: add detail to commit message]
+Link: http://lkml.kernel.org/r/20181111162035.8356-1-kieran.bingham@ideasonboard.com
+Fixes: 2d061d999424 ("scripts/gdb: add version command")
+Signed-off-by: Du Changbin <changbin.du@gmail.com>
+Signed-off-by: Kieran Bingham <kbingham@kernel.org>
+Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kcov.c | 2 +-
+ scripts/gdb/linux/proc.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index 97959d7b77e2..c2277dbdbfb1 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -112,7 +112,7 @@ void notrace __sanitizer_cov_trace_pc(void)
- EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
+index 086d27223c0c..0aebd7565b03 100644
+--- a/scripts/gdb/linux/proc.py
++++ b/scripts/gdb/linux/proc.py
+@@ -41,7 +41,7 @@ class LxVersion(gdb.Command):
  
- #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
--static void write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
-+static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
- {
- 	struct task_struct *t;
- 	u64 *area;
+     def invoke(self, arg, from_tty):
+         # linux_banner should contain a newline
+-        gdb.write(gdb.parse_and_eval("linux_banner").string())
++        gdb.write(gdb.parse_and_eval("(char *)linux_banner").string())
+ 
+ LxVersion()
+ 
 -- 
 2.19.1
 
