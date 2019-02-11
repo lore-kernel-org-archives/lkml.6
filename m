@@ -6,55 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90088C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B2BC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A0921B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4F0721B1A
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898536;
-	bh=PPOGv8G5XmnASdHNzEbiXmlHqaJsV4lXACNu2bsn5tI=;
+	s=default; t=1549898541;
+	bh=XAn6QfY4GHGELhvwTQwdPdwcPpHQpBBiNdIcLyoq6ns=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Enjlr3MGy21YKh+Hxutfc3bpgDKlT0ypoMpKDXK7pMi7p7V5QqLk+EH6C2N3YlgM5
-	 1qGirwWq/dD6p/16nZBpQhC3VNL5SE7UphI52h2d4B1aGpVlGCKxmj2wCcLQ7uErGJ
-	 gA91CVyJ5jaQXA9xxHJBE0NH3UjfhPettq6b4YIs=
+	b=iIBISDrSucFY5UzHvtFSPdGXuX25NG5xTqIzk7W7bmz71mF78jKQt+6hHSnh6dLrR
+	 S4+illV+VcQ3NHelWlewBR3zELmcOFDwCwhdpM1gvzPZlD44E4dQeveCyHJu96j5vd
+	 jCC4utWN9a34cO4UApiapVL2OqGec4+h03BeO2xc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391711AbfBKPWO (ORCPT
+        id S2403867AbfBKPWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:22:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52930 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:22:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389916AbfBKPEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:04:04 -0500
+        id S2390688AbfBKPD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:03:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42427222B0;
-        Mon, 11 Feb 2019 15:04:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A98C222AD;
+        Mon, 11 Feb 2019 15:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897443;
-        bh=PPOGv8G5XmnASdHNzEbiXmlHqaJsV4lXACNu2bsn5tI=;
+        s=default; t=1549897438;
+        bh=XAn6QfY4GHGELhvwTQwdPdwcPpHQpBBiNdIcLyoq6ns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HxZV8vzjRMOBd7AOzr4SXVr6oul11rZmVbxh9tD/knuwpoUBxVTeATLoKVW5jBAXO
-         1ISJTRXmF/a5dkiOPg0OYLCLDuZ8oxOeolgvM1QNk4JHdfeiGCmLDBz9an5GzX5dHE
-         YmPpixx95gMXOTvWSCB7FYqAoV7fgIHZGQ3Fz2WI=
+        b=IeyIj18gFGeJjZzg95GielJ0S+atWA91XwP4hsBQ9Na4Z9uM26S5O+O9r7s4g+/pe
+         Pib/IZaZOG3dXdGNf8TlIYIssyzXU7x0PoECHUc5g9nb0X0KYKCxFbibkHqav2jxcS
+         Xs3Su+ZqXJOf2x2ORVeRC9Qh+HDQ9rfQchWd1U7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
-        bp@alien8.de, hpa@zytor.com, jolsa@kernel.org,
-        kan.liang@linux.intel.com, namhyung@kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 205/205] perf/x86/intel: Delay memory deallocation until x86_pmu_dead_cpu()
-Date:   Mon, 11 Feb 2019 15:20:03 +0100
-Message-Id: <20190211141841.970354596@linuxfoundation.org>
+        stable@vger.kernel.org, Olga Kornievskaia <aglo@umich.edu>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Donald Buczek <buczek@molgen.mpg.de>
+Subject: [PATCH 4.14 203/205] nfsd4: catch some false session retries
+Date:   Mon, 11 Feb 2019 15:20:01 +0100
+Message-Id: <20190211141841.702237509@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -73,104 +65,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: J. Bruce Fields <bfields@redhat.com>
 
-commit 602cae04c4864bb3487dfe4c2126c8d9e7e1614a upstream.
+commit 53da6a53e1d414e05759fa59b7032ee08f4e22d7 upstream.
 
-intel_pmu_cpu_prepare() allocated memory for ->shared_regs among other
-members of struct cpu_hw_events. This memory is released in
-intel_pmu_cpu_dying() which is wrong. The counterpart of the
-intel_pmu_cpu_prepare() callback is x86_pmu_dead_cpu().
+The spec allows us to return NFS4ERR_SEQ_FALSE_RETRY if we notice that
+the client is making a call that matches a previous (slot, seqid) pair
+but that *isn't* actually a replay, because some detail of the call
+doesn't actually match the previous one.
 
-Otherwise if the CPU fails on the UP path between CPUHP_PERF_X86_PREPARE
-and CPUHP_AP_PERF_X86_STARTING then it won't release the memory but
-allocate new memory on the next attempt to online the CPU (leaking the
-old memory).
-Also, if the CPU down path fails between CPUHP_AP_PERF_X86_STARTING and
-CPUHP_PERF_X86_PREPARE then the CPU will go back online but never
-allocate the memory that was released in x86_pmu_dying_cpu().
+Catching every such case is difficult, but we may as well catch a few
+easy ones.  This also handles the case described in the previous patch,
+in a different way.
 
-Make the memory allocation/free symmetrical in regard to the CPU hotplug
-notifier by moving the deallocation to intel_pmu_cpu_dead().
+The spec does however require us to catch the case where the difference
+is in the rpc credentials.  This prevents somebody from snooping another
+user's replies by fabricating retries.
 
-This started in commit:
+(But the practical value of the attack is limited by the fact that the
+replies with the most sensitive data are READ replies, which are not
+normally cached.)
 
-   a7e3ed1e47011 ("perf: Add support for supplementary event registers").
-
-In principle the bug was introduced in v2.6.39 (!), but it will almost
-certainly not backport cleanly across the big CPU hotplug rewrite between v4.7-v4.15...
-
-[ bigeasy: Added patch description. ]
-[ mingo: Added backporting guidance. ]
-
-Reported-by: He Zhe <zhe.he@windriver.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org> # With developer hat on
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org> # With maintainer hat on
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@kernel.org
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: jolsa@kernel.org
-Cc: kan.liang@linux.intel.com
-Cc: namhyung@kernel.org
-Cc: <stable@vger.kernel.org>
-Fixes: a7e3ed1e47011 ("perf: Add support for supplementary event registers").
-Link: https://lkml.kernel.org/r/20181219165350.6s3jvyxbibpvlhtq@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[ He Zhe: Fixes conflict caused by missing disable_counter_freeze which is
- introduced since v4.20 af3bdb991a5cb. ]
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+Tested-by: Olga Kornievskaia <aglo@umich.edu>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Donald Buczek <buczek@molgen.mpg.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/core.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs4state.c |   37 ++++++++++++++++++++++++++++++++++++-
+ fs/nfsd/state.h     |    1 +
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3420,6 +3420,11 @@ static void free_excl_cntrs(int cpu)
- 
- static void intel_pmu_cpu_dying(int cpu)
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -1472,8 +1472,10 @@ free_session_slots(struct nfsd4_session
  {
-+	fini_debug_store_on_cpu(cpu);
-+}
-+
-+static void intel_pmu_cpu_dead(int cpu)
-+{
- 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
- 	struct intel_shared_regs *pc;
+ 	int i;
  
-@@ -3431,8 +3436,6 @@ static void intel_pmu_cpu_dying(int cpu)
- 	}
- 
- 	free_excl_cntrs(cpu);
--
--	fini_debug_store_on_cpu(cpu);
+-	for (i = 0; i < ses->se_fchannel.maxreqs; i++)
++	for (i = 0; i < ses->se_fchannel.maxreqs; i++) {
++		free_svc_cred(&ses->se_slots[i]->sl_cred);
+ 		kfree(ses->se_slots[i]);
++	}
  }
  
- static void intel_pmu_sched_task(struct perf_event_context *ctx,
-@@ -3521,6 +3524,7 @@ static __initconst const struct x86_pmu
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
- };
+ /*
+@@ -2334,6 +2336,8 @@ nfsd4_store_cache_entry(struct nfsd4_com
+ 	slot->sl_flags |= NFSD4_SLOT_INITIALIZED;
+ 	slot->sl_opcnt = resp->opcnt;
+ 	slot->sl_status = resp->cstate.status;
++	free_svc_cred(&slot->sl_cred);
++	copy_cred(&slot->sl_cred, &resp->rqstp->rq_cred);
  
- static struct attribute *intel_pmu_attrs[];
-@@ -3560,6 +3564,8 @@ static __initconst const struct x86_pmu
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
+ 	if (!nfsd4_cache_this(resp)) {
+ 		slot->sl_flags &= ~NFSD4_SLOT_CACHED;
+@@ -3040,6 +3044,34 @@ static bool nfsd4_request_too_big(struct
+ 	return xb->len > session->se_fchannel.maxreq_sz;
+ }
+ 
++static bool replay_matches_cache(struct svc_rqst *rqstp,
++		 struct nfsd4_sequence *seq, struct nfsd4_slot *slot)
++{
++	struct nfsd4_compoundargs *argp = rqstp->rq_argp;
 +
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
- };
++	if ((bool)(slot->sl_flags & NFSD4_SLOT_CACHETHIS) !=
++	    (bool)seq->cachethis)
++		return false;
++	/*
++	 * If there's an error than the reply can have fewer ops than
++	 * the call.  But if we cached a reply with *more* ops than the
++	 * call you're sending us now, then this new call is clearly not
++	 * really a replay of the old one:
++	 */
++	if (slot->sl_opcnt < argp->opcnt)
++		return false;
++	/* This is the only check explicitly called by spec: */
++	if (!same_creds(&rqstp->rq_cred, &slot->sl_cred))
++		return false;
++	/*
++	 * There may be more comparisons we could actually do, but the
++	 * spec doesn't require us to catch every case where the calls
++	 * don't match (that would require caching the call as well as
++	 * the reply), so we don't bother.
++	 */
++	return true;
++}
++
+ __be32
+ nfsd4_sequence(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 		union nfsd4_op_u *u)
+@@ -3099,6 +3131,9 @@ nfsd4_sequence(struct svc_rqst *rqstp, s
+ 		status = nfserr_seq_misordered;
+ 		if (!(slot->sl_flags & NFSD4_SLOT_INITIALIZED))
+ 			goto out_put_session;
++		status = nfserr_seq_false_retry;
++		if (!replay_matches_cache(rqstp, seq, slot))
++			goto out_put_session;
+ 		cstate->slot = slot;
+ 		cstate->session = session;
+ 		cstate->clp = clp;
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -169,6 +169,7 @@ static inline struct nfs4_delegation *de
+ struct nfsd4_slot {
+ 	u32	sl_seqid;
+ 	__be32	sl_status;
++	struct svc_cred sl_cred;
+ 	u32	sl_datalen;
+ 	u16	sl_opcnt;
+ #define NFSD4_SLOT_INUSE	(1 << 0)
 
 
