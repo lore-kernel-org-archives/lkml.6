@@ -2,70 +2,146 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D87CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6B1C282DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4844321B25
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D7C2229E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dj10XbPz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbfBKS3e (ORCPT
+        id S1731590AbfBKSaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:29:34 -0500
-Received: from mga18.intel.com ([134.134.136.126]:27897 "EHLO mga18.intel.com"
+        Mon, 11 Feb 2019 13:30:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44204 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727968AbfBKS3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:29:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 10:29:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="274205804"
-Received: from unknown (HELO [10.7.153.148]) ([10.7.153.148])
-  by orsmga004.jf.intel.com with ESMTP; 11 Feb 2019 10:29:33 -0800
-Subject: Re: [PATCH] i2c: aspeed: Add multi-master use case support
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20190116193958.6049-1-jae.hyun.yoo@linux.intel.com>
- <20190208214849.GH12451@kunai>
- <d26a95ac-41ab-91eb-bbae-e4143235e531@linux.intel.com>
- <20190211181658.u55ggc2xi4nsxxvy@katana>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <f444a8eb-06cf-4119-da9d-aab1029830e6@linux.intel.com>
-Date:   Mon, 11 Feb 2019 10:29:33 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        id S1727968AbfBKSaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:30:00 -0500
+Received: from zn.tnic (p200300EC2BC7A10074DEFDFE3AD6CF32.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:74de:fdfe:3ad6:cf32])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C0D71EC037B;
+        Mon, 11 Feb 2019 19:29:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549909798;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Yw+RK9f/S+johjl1gYKTeZptuEY0P9nfhJd0XlVQGCo=;
+        b=dj10XbPzFbFnu9Nya4W5OkkNbXxJnnkj4Hr1SOpZ2asDUWMbDzAbKRWRj/tjz/qk4tl7WJ
+        0em21jvddg2A3nLTY/GpXAXUxfmJCaIUKjSFW1JC6HHKlJLE1/k9VIlZrqJLUkJ0JPA/M4
+        LmZjPdIjqu1x0Cyl6ehJazATSPz8JTc=
+Date:   Mon, 11 Feb 2019 19:29:56 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
+ loading
+Message-ID: <20190211182956.GN19618@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-11-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190211181658.u55ggc2xi4nsxxvy@katana>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190129003422.9328-11-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/11/2019 10:16 AM, Wolfram Sang wrote:
-> 
->> Can you please apply above changes on top of this patch? Or I can submit
->> v2 with it.
-> 
-> Please send v2.
-> 
+> Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules loading
 
-Okay, I'll send v2.
+For your next submission, please fix all your subjects:
 
-Thanks,
-Jae
+The tip tree preferred format for patch subject prefixes is
+'subsys/component:', e.g. 'x86/apic:', 'x86/mm/fault:', 'sched/fair:',
+'genirq/core:'. Please do not use file names or complete file paths as
+prefix. 'git log path/to/file' should give you a reasonable hint in most
+cases.
+
+The condensed patch description in the subject line should start with a
+uppercase letter and should be written in imperative tone.
+
+
+On Mon, Jan 28, 2019 at 04:34:12PM -0800, Rick Edgecombe wrote:
+> From: Nadav Amit <namit@vmware.com>
+> 
+> When modules and BPF filters are loaded, there is a time window in
+> which some memory is both writable and executable. An attacker that has
+> already found another vulnerability (e.g., a dangling pointer) might be
+> able to exploit this behavior to overwrite kernel code.
+> 
+> Prevent having writable executable PTEs in this stage. In addition,
+> avoiding having W+X mappings can also slightly simplify the patching of
+> modules code on initialization (e.g., by alternatives and static-key),
+> as would be done in the next patch.
+> 
+> To avoid having W+X mappings, set them initially as RW (NX) and after
+> they are set as RO set them as X as well. Setting them as executable is
+> done as a separate step to avoid one core in which the old PTE is cached
+> (hence writable), and another which sees the updated PTE (executable),
+> which would break the W^X protection.
+> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Suggested-by: Andy Lutomirski <luto@amacapital.net>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
+>  arch/x86/kernel/module.c      |  2 +-
+>  include/linux/filter.h        |  2 +-
+>  kernel/module.c               |  5 +++++
+>  4 files changed, 28 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index 76d482a2b716..69f3e650ada8 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -667,15 +667,29 @@ void __init alternative_instructions(void)
+>   * handlers seeing an inconsistent instruction while you patch.
+>   */
+>  void *__init_or_module text_poke_early(void *addr, const void *opcode,
+> -					      size_t len)
+> +				       size_t len)
+>  {
+>  	unsigned long flags;
+> -	local_irq_save(flags);
+> -	memcpy(addr, opcode, len);
+> -	local_irq_restore(flags);
+> -	sync_core();
+> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+> -	   that causes hangs on some VIA CPUs. */
+> +
+> +	if (static_cpu_has(X86_FEATURE_NX) &&
+
+Not a fast path - boot_cpu_has() is fine here.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
