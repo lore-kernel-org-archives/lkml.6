@@ -2,55 +2,52 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B03C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C30CC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D64D222A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6194F222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899451;
-	bh=hhDSW1lFIIPVssCJeMVCjgY2Dcajb/kRSLhGisWVbtU=;
+	s=default; t=1549899455;
+	bh=FvYRxhIS4P66+a/PojgEstCX8UjbhZeMNqkzdtJE89g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g9xV65x3D4ytRo8C/lPzSbAyZN9/CIvblVLtIIuHGoIJrAQf8Sz0CV9klUsP71How
-	 IKgPYji6sS0Ctu3V8QLTKUV9OLv9AEzgOHTkoquuuttKwpNRNgUUCsLeOl1K3wo+6k
-	 K34bi/zdjaU8qeHKdvFRInFdSnIvnkDeXgTI/Lm0=
+	b=yi4udcvb5Srd7Ygt531uVSlArm7vUJU3489mA66xPP05VX7zxKhQqbhTvs6W/xRWu
+	 69tBcvhXkBcALnbill2jj4bmkAUfEq66O7E3sKAP+rK6+ygtPlGABEoiMRQFZfaKoj
+	 +cj1QpBeyafCqYmAYSCCf3zSjNIFUGdsN0EufLj0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388198AbfBKOvE (ORCPT
+        id S2388495AbfBKPhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:51:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36976 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:37:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387775AbfBKOu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:58 -0500
+        id S1729056AbfBKOvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:51:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DCC22081B;
-        Mon, 11 Feb 2019 14:50:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0076020844;
+        Mon, 11 Feb 2019 14:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896657;
-        bh=hhDSW1lFIIPVssCJeMVCjgY2Dcajb/kRSLhGisWVbtU=;
+        s=default; t=1549896661;
+        bh=FvYRxhIS4P66+a/PojgEstCX8UjbhZeMNqkzdtJE89g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2AU9tIJIQocJetrRMoxSHU+Qh1er2SUkP26P+0boDZSY493uinzipL5BjknsNTtAB
-         DqWsu4krDjDyEf/aI6ZbWBBfCnn+1pTVT97z0JyHWO1FBjxFApTFhJ7tpEnaKqgG3V
-         s5Pawx2RdQvS2YmvcdUW3zDyEFbug0PX4B1O+JyE=
+        b=VozZ75PDbGB0pxSe4okUGw6HiQwxKypgoSvx1hrXpsDD4pSCO/6eHmKMAfH83wNbr
+         rvb9Zf9nIvxb5wknWaXmzffPVwuLDm5xY/7AbQK93gR5GHAhZrW+gWI6PA8DMnOy10
+         vPhDBh+auuLLD3VIksvcnZGRFRY+XwfhVf3y1y0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 250/313] xfs: Fix error code in xfs_ioc_getbmap()
-Date:   Mon, 11 Feb 2019 15:18:50 +0100
-Message-Id: <20190211141910.046563451@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 259/313] dccp: fool proof ccid_hc_[rt]x_parse_options()
+Date:   Mon, 11 Feb 2019 15:18:59 +0100
+Message-Id: <20190211141910.613319352@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -69,43 +66,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 132bf6723749f7219c399831eeb286dbbb985429 upstream.
+From: Eric Dumazet <edumazet@google.com>
 
-In this function, once 'buf' has been allocated, we unconditionally
-return 0.
-However, 'error' is set to some error codes in several error handling
-paths.
-Before commit 232b51948b99 ("xfs: simplify the xfs_getbmap interface")
-this was not an issue because all error paths were returning directly,
-but now that some cleanup at the end may be needed, we must propagate the
-error code.
+[ Upstream commit 9b1f19d810e92d6cdc68455fbc22d9f961a58ce1 ]
 
-Fixes: 232b51948b99 ("xfs: simplify the xfs_getbmap interface")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Similarly to commit 276bdb82dedb ("dccp: check ccid before dereferencing")
+it is wise to test for a NULL ccid.
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 16 Comm: ksoftirqd/1 Not tainted 5.0.0-rc3+ #37
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
+RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
+Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+kobject: 'loop5' (0000000080f78fc1): kobject_uevent_env
+RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
+RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
+RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
+R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0defa33518 CR3: 000000008db5e000 CR4: 00000000001406e0
+kobject: 'loop5' (0000000080f78fc1): fill_kobj_path: path = '/devices/virtual/block/loop5'
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ dccp_rcv_state_process+0x2b6/0x1af6 net/dccp/input.c:654
+ dccp_v4_do_rcv+0x100/0x190 net/dccp/ipv4.c:688
+ sk_backlog_rcv include/net/sock.h:936 [inline]
+ __sk_receive_skb+0x3a9/0xea0 net/core/sock.c:473
+ dccp_v4_rcv+0x10cb/0x1f80 net/dccp/ipv4.c:880
+ ip_protocol_deliver_rcu+0xb6/0xa20 net/ipv4/ip_input.c:208
+ ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ NF_HOOK include/linux/netfilter.h:283 [inline]
+ ip_local_deliver+0x1f0/0x740 net/ipv4/ip_input.c:255
+ dst_input include/net/dst.h:450 [inline]
+ ip_rcv_finish+0x1f4/0x2f0 net/ipv4/ip_input.c:414
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ NF_HOOK include/linux/netfilter.h:283 [inline]
+ ip_rcv+0xed/0x620 net/ipv4/ip_input.c:524
+ __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
+ __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
+ process_backlog+0x206/0x750 net/core/dev.c:5923
+ napi_poll net/core/dev.c:6346 [inline]
+ net_rx_action+0x76d/0x1930 net/core/dev.c:6412
+ __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+ run_ksoftirqd kernel/softirq.c:654 [inline]
+ run_ksoftirqd+0x8e/0x110 kernel/softirq.c:646
+ smpboot_thread_fn+0x6ab/0xa10 kernel/smpboot.c:164
+ kthread+0x357/0x430 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+---[ end trace 58a0ba03bea2c376 ]---
+RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
+RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
+Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
+RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
+RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
+R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0defa33518 CR3: 0000000009871000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/xfs/xfs_ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dccp/ccid.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 0ef5ece5634c..bad90479ade2 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -1616,7 +1616,7 @@ xfs_ioc_getbmap(
- 	error = 0;
- out_free_buf:
- 	kmem_free(buf);
--	return 0;
-+	return error;
+--- a/net/dccp/ccid.h
++++ b/net/dccp/ccid.h
+@@ -202,7 +202,7 @@ static inline void ccid_hc_tx_packet_rec
+ static inline int ccid_hc_tx_parse_options(struct ccid *ccid, struct sock *sk,
+ 					   u8 pkt, u8 opt, u8 *val, u8 len)
+ {
+-	if (ccid->ccid_ops->ccid_hc_tx_parse_options == NULL)
++	if (!ccid || !ccid->ccid_ops->ccid_hc_tx_parse_options)
+ 		return 0;
+ 	return ccid->ccid_ops->ccid_hc_tx_parse_options(sk, pkt, opt, val, len);
  }
- 
- struct getfsmap_info {
--- 
-2.19.1
-
+@@ -214,7 +214,7 @@ static inline int ccid_hc_tx_parse_optio
+ static inline int ccid_hc_rx_parse_options(struct ccid *ccid, struct sock *sk,
+ 					   u8 pkt, u8 opt, u8 *val, u8 len)
+ {
+-	if (ccid->ccid_ops->ccid_hc_rx_parse_options == NULL)
++	if (!ccid || !ccid->ccid_ops->ccid_hc_rx_parse_options)
+ 		return 0;
+ 	return ccid->ccid_ops->ccid_hc_rx_parse_options(sk, pkt, opt, val, len);
+ }
 
 
