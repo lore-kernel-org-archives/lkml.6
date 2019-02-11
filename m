@@ -2,105 +2,84 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6074CC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2501C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C80420863
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:26:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F988214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="UImav6xj"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xeoJryqb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbfBKG0x (ORCPT
+        id S1726530AbfBKG1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 01:26:53 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:55663 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfBKG0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 01:26:53 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43ybR94nTDz9tyv7;
-        Mon, 11 Feb 2019 07:26:45 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=UImav6xj; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id F0Uehg3cyFmr; Mon, 11 Feb 2019 07:26:45 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43ybR93m3Dz9tyv6;
-        Mon, 11 Feb 2019 07:26:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549866405; bh=pP+qBsacOc7BX7HqUMyCGXaWaf0LuL8H6j/y+Qb/DfE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UImav6xj6WD5+YiGnMf9PKlhmQmGaSW/NOp2WOAyj/o6DenNrA1ZCb7uzh68UNLi3
-         nsJhA3fjmmi+WsNS1TxBdxtCXwwtpOFKos3SjcfOnASGkjuZw6BaWHDYDFl34M0VXF
-         oO3yLP/LXlBIW3OTMYvKhSkkWqwWVo5oz3E8ouKg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B300C8B791;
-        Mon, 11 Feb 2019 07:26:51 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mQFX59vvXYKb; Mon, 11 Feb 2019 07:26:51 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 848E58B74C;
-        Mon, 11 Feb 2019 07:26:51 +0100 (CET)
-Subject: Re: [PATCH v1 03/16] powerpc/32: move LOAD_MSR_KERNEL() into
- head_32.h and use it
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1549630193.git.christophe.leroy@c-s.fr>
- <1946d8ed86a92a9a6827ec260d0d9c99e0d88184.1549630193.git.christophe.leroy@c-s.fr>
- <749f719a0881531cad2071a7011dc5e894812d3d.camel@kernel.crashing.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <b074648b-8896-5591-16fe-3ecaf5c7553a@c-s.fr>
-Date:   Mon, 11 Feb 2019 07:26:51 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 11 Feb 2019 01:27:02 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:37316 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfBKG1B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 01:27:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0G35kGmGdrAw2ythI7SC/L5uFccSfEkId1/WdLKFQNE=; b=xeoJryqbY9FlbIDIBG9fx9r15c
+        veXXoN3Z3ED4TlzVmm+4/vMWk+ofs0lFJqIA3M7UNhKaFlYxw7YEXaHEeZFSm9yAdQJCS1xaOh8PB
+        NeR7Ang3RueB+k0QPKq/coh+JWtS8KiVDQzh9MwU+FstYI6rNv3Pm/kBA+pRxRBoiU0lTYv3x/iqg
+        kdgtlFRuFZGgRWIwkSRBosoi1NtVWkSccNxmqAsFuRochMf7ObPq6RV+HvArBrmB47i9KsN4adgUF
+        PNv54PzckDh2Vfb+WUAj8Qp61fxGuCuxtGKrXSGelhTKx5OKE1A1hBRZAkX1V9Ud6gmseqfi2QgBm
+        AlyFWM9A==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gt53R-00046F-Qw; Mon, 11 Feb 2019 06:26:58 +0000
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: driver-api: fix dmatest.rst warning
+Message-ID: <da8b9103-5203-13da-65c5-232233ab0bfb@infradead.org>
+Date:   Sun, 10 Feb 2019 22:26:53 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <749f719a0881531cad2071a7011dc5e894812d3d.camel@kernel.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix markup warning: insert a blank line before the hint.
+
+Documentation/driver-api/dmaengine/dmatest.rst:63: WARNING: Unexpected indentation.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org
+---
+ Documentation/driver-api/dmaengine/dmatest.rst |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- lnx-50-rc6.orig/Documentation/driver-api/dmaengine/dmatest.rst
++++ lnx-50-rc6/Documentation/driver-api/dmaengine/dmatest.rst
+@@ -59,6 +59,7 @@ parameter, that specific channel is requ
+ is created with the existing parameters. This thread is set as pending
+ and will be executed once run is set to 1. Any parameters set after the thread
+ is created are not applied.
++
+ .. hint::
+   available channel list could be extracted by running the following command::
+ 
 
 
-Le 11/02/2019 à 01:21, Benjamin Herrenschmidt a écrit :
-> On Fri, 2019-02-08 at 12:52 +0000, Christophe Leroy wrote:
->>   /*
->> + * MSR_KERNEL is > 0x8000 on 4xx/Book-E since it include MSR_CE.
->> + */
->> +.macro __LOAD_MSR_KERNEL r, x
->> +.if \x >= 0x8000
->> +       lis \r, (\x)@h
->> +       ori \r, \r, (\x)@l
->> +.else
->> +       li \r, (\x)
->> +.endif
->> +.endm
->> +#define LOAD_MSR_KERNEL(r, x) __LOAD_MSR_KERNEL r, x
->> +
-> 
-> You changed the limit from >= 0x10000 to >= 0x8000 without a
-> corresponding explanation as to why...
-
-Yes, the existing LOAD_MSR_KERNEL() was buggy because 'li' takes a 
-signed u16, ie between -0x8000 and 0x7999.
-
-By chance it was working because until now nobody was trying to set 
-MSR_KERNEL | MSR_EE.
-
-Christophe
