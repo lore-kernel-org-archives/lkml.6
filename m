@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF0BC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052BFC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 193FD20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C853820700
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896595;
-	bh=lm3g/eQdgNY/Y7inWrXnfaMh3njV8NNGGklKG/3ZJPQ=;
+	s=default; t=1549896599;
+	bh=L3awooXZvbEU+w+LgzGh6sv/BZRBv9D+wcAQTu7MPqQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tRs5oxxek9/LmHhU/AcaADI471KB9c5I3c4wml45f/zPObZoCkXkjLJ14tFd8r83G
-	 w7MKgamoIKaSO9rJiFke8RNeGN0oLGMcXlw+aNEVzJOXmUIw4+34ImE5LbtgZxJzOQ
-	 Dfp1Civ59uAeDKQ+n2B3eO4vetDm7xhCxhyV9SHI=
+	b=wx/565Z9cJiGLcH6h5A27CUg686Ek4gLZSyzHVYEHr8/sgxqiulrRcI6yXfOhlt5Z
+	 22ZtwGJNUA8wxcJ5RX4VtkVaADC0JxUIHCcqALmz+ZE7n/O6d/WhV8CJF/cCAV5LOH
+	 k/Yt9JCOd/mDjvwnzQ/8kpv7u8oA/QkUnkadrz8U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387969AbfBKOtx (ORCPT
+        id S2387982AbfBKOt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:49:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35452 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:49:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387952AbfBKOtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:49:50 -0500
+        id S2387577AbfBKOtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:49:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62A5920855;
-        Mon, 11 Feb 2019 14:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 436752081B;
+        Mon, 11 Feb 2019 14:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896588;
-        bh=lm3g/eQdgNY/Y7inWrXnfaMh3njV8NNGGklKG/3ZJPQ=;
+        s=default; t=1549896594;
+        bh=L3awooXZvbEU+w+LgzGh6sv/BZRBv9D+wcAQTu7MPqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ub6Fjz8QlrKDmbchE+MZTkrtfTBSneruQNgyCzDYWD6DlWyiA8bWfE8bLXYH2+6L9
-         JYtCYEmF7qHjnDy0xZTiEKGEIybh/EfhrSrjROxMv8FiKvafG/A78h97ROni8mikMC
-         Z1A3QUMn+Xvlslnnp4EvvDQ4K47L0VGeBSPsMjkY=
+        b=YUGeBBdSvjgggCglj6CGb+RNMPh3cfDFGmTiN+LiHTWABeV/Bp6DA38pLBOLKv0SX
+         DxZ0kX+qi2vVgR+1CL80V+dsgHv1Kl/30CYg3Zb3hvmIYGHRWR6u/PQHu7b9im8tyw
+         ktaO2CMWpmw0GNeY9/kxjCf15nDCNJcpbrIegxr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
+        stable@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 235/313] kdb: Dont back trace on a cpu that didnt round up
-Date:   Mon, 11 Feb 2019 15:18:35 +0100
-Message-Id: <20190211141909.127699559@linuxfoundation.org>
+Subject: [PATCH 4.19 237/313] thermal: generic-adc: Fix adc to temp interpolation
+Date:   Mon, 11 Feb 2019 15:18:37 +0100
+Message-Id: <20190211141909.273048912@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -66,86 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 162bc7f5afd75b72acbe3c5f3488ef7e64a3fe36 ]
+[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
 
-If you have a CPU that fails to round up and then run 'btc' you'll end
-up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
-It's wise to also set the task to NULL when leaving the debugger so
-that if we fail to round up on a later entry into the debugger we
-won't backtrace a stale task.
+First correct the edge case to return the last element if we're
+outside the range, rather than at the last element, so that
+interpolation is not omitted for points between the two last entries in
+the table.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Then correct the formula to perform linear interpolation based the two
+points surrounding the read ADC value. The indices for temp are kept as
+"hi" and "lo" to pair with the adc indices, but there's no requirement
+that the temperature is provided in descendent order. mult_frac() is
+used to prevent issues with overflowing the int.
+
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/debug/debug_core.c       |  4 ++++
- kernel/debug/kdb/kdb_bt.c       | 11 ++++++++++-
- kernel/debug/kdb/kdb_debugger.c |  7 -------
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index 65c0f1363788..94aa9ae0007a 100644
---- a/kernel/debug/debug_core.c
-+++ b/kernel/debug/debug_core.c
-@@ -535,6 +535,8 @@ return_normal:
- 				arch_kgdb_ops.correct_hw_break();
- 			if (trace_on)
- 				tracing_on();
-+			kgdb_info[cpu].debuggerinfo = NULL;
-+			kgdb_info[cpu].task = NULL;
- 			kgdb_info[cpu].exception_state &=
- 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
- 			kgdb_info[cpu].enter_kgdb--;
-@@ -667,6 +669,8 @@ kgdb_restore:
- 	if (trace_on)
- 		tracing_on();
+diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+index bf1c628d4a7a..e22fc60ad36d 100644
+--- a/drivers/thermal/thermal-generic-adc.c
++++ b/drivers/thermal/thermal-generic-adc.c
+@@ -26,7 +26,7 @@ struct gadc_thermal_info {
  
-+	kgdb_info[cpu].debuggerinfo = NULL;
-+	kgdb_info[cpu].task = NULL;
- 	kgdb_info[cpu].exception_state &=
- 		~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
- 	kgdb_info[cpu].enter_kgdb--;
-diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
-index 7921ae4fca8d..7e2379aa0a1e 100644
---- a/kernel/debug/kdb/kdb_bt.c
-+++ b/kernel/debug/kdb/kdb_bt.c
-@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
- 		kdb_printf("btc: cpu status: ");
- 		kdb_parse("cpu\n");
- 		for_each_online_cpu(cpu) {
--			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
-+			void *kdb_tsk = KDB_TSK(cpu);
+ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ {
+-	int temp, adc_hi, adc_lo;
++	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
+ 	int i;
+ 
+ 	for (i = 0; i < gti->nlookup_table; i++) {
+@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ 
+ 	if (i == 0) {
+ 		temp = gti->lookup_table[0];
+-	} else if (i >= (gti->nlookup_table - 1)) {
++	} else if (i >= gti->nlookup_table) {
+ 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
+ 	} else {
+ 		adc_hi = gti->lookup_table[2 * i - 1];
+ 		adc_lo = gti->lookup_table[2 * i + 1];
+-		temp = gti->lookup_table[2 * i];
+-		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
 +
-+			/* If a CPU failed to round up we could be here */
-+			if (!kdb_tsk) {
-+				kdb_printf("WARNING: no task for cpu %ld\n",
-+					   cpu);
-+				continue;
-+			}
++		temp_hi = gti->lookup_table[2 * i - 2];
++		temp_lo = gti->lookup_table[2 * i];
 +
-+			sprintf(buf, "btt 0x%px\n", kdb_tsk);
- 			kdb_parse(buf);
- 			touch_nmi_watchdog();
- 		}
-diff --git a/kernel/debug/kdb/kdb_debugger.c b/kernel/debug/kdb/kdb_debugger.c
-index 15e1a7af5dd0..53a0df6e4d92 100644
---- a/kernel/debug/kdb/kdb_debugger.c
-+++ b/kernel/debug/kdb/kdb_debugger.c
-@@ -118,13 +118,6 @@ int kdb_stub(struct kgdb_state *ks)
- 	kdb_bp_remove();
- 	KDB_STATE_CLEAR(DOING_SS);
- 	KDB_STATE_SET(PAGER);
--	/* zero out any offline cpu data */
--	for_each_present_cpu(i) {
--		if (!cpu_online(i)) {
--			kgdb_info[i].debuggerinfo = NULL;
--			kgdb_info[i].task = NULL;
--		}
--	}
- 	if (ks->err_code == DIE_OOPS || reason == KDB_REASON_OOPS) {
- 		ks->pass_exception = 1;
- 		KDB_FLAG_SET(CATASTROPHIC);
++		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
++					   adc_lo - adc_hi);
+ 	}
+ 
+ 	return temp;
 -- 
 2.19.1
 
