@@ -2,157 +2,144 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9522AC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B858AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70D5A21B18
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92C5E21B18
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 18:00:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732352AbfBKR77 (ORCPT
+        id S1732399AbfBKSAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:59:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:55062 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730464AbfBKR7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:59:45 -0500
+        Mon, 11 Feb 2019 13:00:08 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55114 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730464AbfBKSAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 13:00:07 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1ED88EBD;
-        Mon, 11 Feb 2019 09:59:45 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 992703F675;
-        Mon, 11 Feb 2019 09:59:43 -0800 (PST)
-From:   Will Deacon <will.deacon@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B5EBEBD;
+        Mon, 11 Feb 2019 10:00:07 -0800 (PST)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 14FA73F675;
+        Mon, 11 Feb 2019 10:00:05 -0800 (PST)
+From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [RFC PATCH 2/4] mm: Expose user stack pointer checking via prctl()
-Date:   Mon, 11 Feb 2019 17:59:33 +0000
-Message-Id: <20190211175935.4602-3-will.deacon@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190211175935.4602-1-will.deacon@arm.com>
-References: <20190211175935.4602-1-will.deacon@arm.com>
+Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
+        morten.rasmussen@arm.com, Dietmar.Eggemann@arm.com
+Subject: [PATCH v2 0/3] sched/fair: NOHZ cleanups and misfit improvement
+Date:   Mon, 11 Feb 2019 17:59:43 +0000
+Message-Id: <20190211175946.4961-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hook up a prctl() option to control the level of user stack pointer
-checking for the current task. By default, no checking is performed, but
-checks can be independently controlled for system calls and page faults.
+In
 
-The option is inherited across fork() and preserved across exec().
+  commit 5fbdfae5221a ("sched/fair: Kick nohz balance if rq->misfit_task_load")
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- include/linux/mm.h         |  5 +++++
- include/uapi/linux/prctl.h |  5 +++++
- kernel/sys.c               |  5 +++++
- mm/memory.c                | 22 ++++++++++++++++++++++
- 4 files changed, 37 insertions(+)
+was added a trigger for nohz kicks, which is required to offload misfit tasks
+from LITTLE to big CPUs. However, those kicks could be issued a lot more
+frequently than what is strictly needed.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 9fa02d47a270..7a668447c01f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1483,8 +1483,13 @@ int generic_error_remove_page(struct address_space *mapping, struct page *page);
- int invalidate_inode_page(struct page *page);
- 
- #ifdef CONFIG_USER_STACK_POINTER_CHECKS
-+long prctl_sp_check(struct task_struct *tsk, unsigned long flags);
- bool usp_check_syscall(void);
- #else
-+static inline long prctl_sp_check(struct task_struct *tsk, unsigned long flags)
-+{
-+	return -EINVAL;
-+}
- static inline bool usp_check_syscall(void) { return true; }
- #endif
- 
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index b4875a93363a..3c4d93856f2a 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -228,4 +228,9 @@ struct prctl_mm_map {
- # define PR_PAC_APDBKEY			(1UL << 3)
- # define PR_PAC_APGAKEY			(1UL << 4)
- 
-+/* User stack pointer sanity checking */
-+#define PR_SP_CHECK			55
-+# define PR_SP_CHECK_PAGE_FAULT		(1UL << 0)
-+# define PR_SP_CHECK_SYSCALL		(1UL << 1)
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index f7eb62eceb24..bd507eebed54 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2485,6 +2485,11 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			return -EINVAL;
- 		error = PAC_RESET_KEYS(me, arg2);
- 		break;
-+	case PR_SP_CHECK:
-+		if (arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = prctl_sp_check(me, arg2);
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
-diff --git a/mm/memory.c b/mm/memory.c
-index e0b449f520da..700d9fd03c88 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -71,6 +71,7 @@
- #include <linux/userfaultfd_k.h>
- #include <linux/dax.h>
- #include <linux/oom.h>
-+#include <linux/prctl.h>
- 
- #include <asm/io.h>
- #include <asm/mmu_context.h>
-@@ -3949,6 +3950,27 @@ bool usp_check_syscall(void)
- 	up_read(&mm->mmap_sem);
- 	return ret;
- }
-+
-+long prctl_sp_check(struct task_struct *tsk, unsigned long flags)
-+{
-+	if (flags & ~(PR_SP_CHECK_PAGE_FAULT | PR_SP_CHECK_SYSCALL))
-+		return -EINVAL;
-+
-+	if (flags & PR_SP_CHECK_PAGE_FAULT)
-+		tsk->usp_checks |= USP_CHECK_FAULT;
-+	else
-+		tsk->usp_checks &= ~USP_CHECK_FAULT;
-+
-+	if (flags & PR_SP_CHECK_SYSCALL) {
-+		if (!IS_ENABLED(CONFIG_ARCH_HAS_USP_CHECK_SYSCALL))
-+			return -EINVAL;
-+		tsk->usp_checks |= USP_CHECK_SYSCALL;
-+	} else {
-+		tsk->usp_checks &= ~USP_CHECK_SYSCALL;
-+	}
-+
-+	return 0;
-+}
- #else
- static bool usp_check_fault(unsigned int flags) { return true; }
- #endif
--- 
-2.11.0
+This patch-set tunes down unneeded nohz kicks.
+
+- Patch 1 adds some more comments to nohz_balancer_kick()
+- Patches [2-3] tweak the nohz kick conditions for asymmetric systems
+
+* Changes since v1
+
+  - Patches 1-3 from v1 are in tip/sched/core and thus not included
+    tip HEAD is 1b5500d73466 ("sched/fair: Remove unused 'sd' parameter from select_idle_smt()")
+  - Patch 1 from v2 is new (Peter)
+  - Patch 3 from v2 (5 from v1) now shuffles conditions to avoid a goto (Peter)
+
+* nohz_balancer_kick() shuffling impact
+
+  The ASYM_PACKING loop used to be towards the end of nohz_balancer_kick(),
+  and the LLC condition was higher up. Since the LLC condition is very
+  often true, we probably were avoiding the loop most of the time on systems
+  that use ASYM_PACKING. However, I don't have one at hand and I'm not sure
+  hacking up a kernel to enable ASYM_PACKING on a system that doesn't need it
+  would be truly relevant.
+
+  I ran 20 iterations of
+
+    'hackbench -g 1 -l 100000'
+
+  on a 2-sockets Xeon E5 (40 logical cores, no ASYM_PACKING) but the difference
+  (hackbench duration & nohz_balancer_kick() FTrace profiling) lies in the noise.
+
+--------------------------------------------------------------------------------
+* Testing
+** kick_ilb() hits
+  This causes a large reduction in calls to kick_ilb() (and thus subsequent
+  rescheduling interrupts & useless nohz balance calls) in most scenarios.
+
+  The "best case" one is running NR_BIG_CPUS big tasks, which I tested with
+  4 50% periodic tasks running for 5 seconds on my HiKey960 (4x4 big.LITTLE):
+
+  | CPU | hits (baseline) | hits (patchset) |
+  |-----+-----------------+-----------------|
+  |   0 |              31 |              41 |
+  |   1 |              21 |               3 |
+  |   2 |              35 |               2 |
+  |   3 |               9 |               4 |
+  |-----+-----------------+-----------------|
+  |   4 |             170 |               4 |
+  |   5 |             573 |               4 |
+  |   6 |             544 |               4 |
+  |   7 |             579 |               4 |
+
+
+  Something a bit less idealistic with NR_CPUS-1 big tasks still shows some
+  improvements (7 100% tasks running for 5 seconds on my HiKey960):
+
+  | CPU | hits (baseline) | hits (patchset) |
+  |-----+-----------------+-----------------|
+  |   0 |              14 |             122 |
+  |   1 |              47 |             162 |
+  |   2 |              11 |             156 |
+  |   3 |               9 |               3 |
+  |-----+-----------------+-----------------|
+  |   4 |              53 |               6 |
+  |   5 |             276 |              13 |
+  |   6 |             312 |               7 |
+  |   7 |             250 |              11 |
+
+  I was surprised to see such an increase in calls to kick_ilb() from LITTLE
+  CPUs ([0-3]), but after a bit of investigation it turns out that the big
+  CPUs would always run nohz_balancer_kick() a jiffy before the LITTLEs, so
+  the LITTLEs would always bail out because nohz.next_balance had just been
+  updated before they called nohz_balancer_kick(). IOW,
+
+      time_before(now, nohz.next_balance)
+
+  would always be true on CPUs [0-3] during my workload. Quieting the kicks
+  issued by the big CPUs allowed the LITTLEs to execute nohz_balancer_kick()
+  past that condition, explaining the higher number of kicks issued from LITTLE
+  CPUs.
+  
+** misfit behaviour
+  For good measure I also ran the usual misfit tests [1] which showed no
+  particular change.
+
+[1]: https://github.com/ARM-software/lisa/blob/next/lisa/tests/kernel/scheduler/misfit.py
+
+Valentin Schneider (3):
+  sched/fair: Comment some nohz_balancer_kick() kick conditions
+  sched/fair: Tune down misfit nohz kicks
+  sched/fair: Skip LLC nohz logic for asymmetric systems
+
+ kernel/sched/fair.c | 84 +++++++++++++++++++++++++++++++++------------
+ 1 file changed, 63 insertions(+), 21 deletions(-)
+
+--
+2.20.1
 
