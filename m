@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D00C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1DCC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52C1321B1A
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EF6B21B26
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898864;
-	bh=p4Ety/U7j/8+xNeXTgMbczlm6SSSlp05rVJ+Fa1T7Ow=;
+	s=default; t=1549898884;
+	bh=T6nHl2T1XdFOgtJKc0Bri1qA17owfE0huwB5c9lSgZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YpwhwgIoGT/QPO4wIRNPeMMbp6ikw5Po5+0HtFf5CL/bIudR3YyVlBLAxMmy4KvWo
-	 ONLYQa+7nSRDI4yYkr2W0oWNgLEmbIouMun613t9jD2KW6VYWpyM8VsgRaDogZLnHA
-	 +t1HuuFdRc/FKkm6M9kSHmSGN/tmprXdoDT5g1KY=
+	b=ekujEZPw3ZW87DoPm8FsVAxfd23JOUY6JJ7j+bkq/EnSv4EhPARHLtaX9PiLzGCgH
+	 B8R7t/2tExQ742daBN1uo+xGOnETS4j/bY0+yjTq9rLE62qIZuhZJ3M2Q+Y3DAIS54
+	 T7g/StmEzdrZ2KWn9l5KXMMSOnV+C9VFB9CnajNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389733AbfBKO7J (ORCPT
+        id S2389702AbfBKP2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:59:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46844 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:28:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389714AbfBKO7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:59:05 -0500
+        id S2389211AbfBKO6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:58:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A78D206BA;
-        Mon, 11 Feb 2019 14:59:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66EE720700;
+        Mon, 11 Feb 2019 14:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897144;
-        bh=p4Ety/U7j/8+xNeXTgMbczlm6SSSlp05rVJ+Fa1T7Ow=;
+        s=default; t=1549897129;
+        bh=T6nHl2T1XdFOgtJKc0Bri1qA17owfE0huwB5c9lSgZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OizTPr4LtFfv1QwHPrBm+vKwbm6HjBrQmytGqNg2WpsvUYVQ1WmtV0KxJV/s0OJcv
-         Pbo6kBcpQuNlyLsbHbn4fVuSXR3GZbNAhohsuewalh2zeh2+sLDU2s7jKGmkje8P7a
-         XHCp3ov7w0xPfKTDrmaLbVrttbJ1FQduxJ1LIj20=
+        b=1JlEv+JZmtbdkb3TNOsHBEW7QTIkvA+b9d0ZvDfqtcz+jDKbSIdweVaf6pE3EDP7w
+         VDu/0UP6QnsKqmM363eNgRr8thC9vOZldjgP4itFwxPhLweR0nLVY0uwb7egPMKkaE
+         fovv4iHcYEAn5QL70J5L17z2T+AKH6OqqdcBkIf0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Maydell <peter.maydell@linaro.org>,
-        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 105/205] arm64: KVM: Skip MMIO insn after emulation
-Date:   Mon, 11 Feb 2019 15:18:23 +0100
-Message-Id: <20190211141835.430716432@linuxfoundation.org>
+Subject: [PATCH 4.14 101/205] perf test: Fix perf_event_attr test failure
+Date:   Mon, 11 Feb 2019 15:18:19 +0100
+Message-Id: <20190211141835.197143301@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -69,58 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
+[ Upstream commit 741dad88dde296999da30332157ca47f0543747d ]
 
-When we emulate an MMIO instruction, we advance the CPU state within
-decode_hsr(), before emulating the instruction effects.
+Fix inconsistent use of tabs and spaces error:
 
-Having this logic in decode_hsr() is opaque, and advancing the state
-before emulation is problematic. It gets in the way of applying
-consistent single-step logic, and it prevents us from being able to fail
-an MMIO instruction with a synchronous exception.
+  # perf test 16 -v
+  16: Setup struct perf_event_attr                          :
+  --- start ---
+  test child forked, pid 20224
+    File "/usr/libexec/perf-core/tests/attr.py", line 119
+      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+                                                                 ^
+  TabError: inconsistent use of tabs and spaces in indentation
+  test child finished with -1
+  ---- end ----
+  Setup struct perf_event_attr: FAILED!
 
-Clean this up by only advancing the CPU state *after* the effects of the
-instruction are emulated.
-
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/arm/mmio.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ tools/perf/tests/attr.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
-index dac7ceb1a677..08443a15e6be 100644
---- a/virt/kvm/arm/mmio.c
-+++ b/virt/kvm/arm/mmio.c
-@@ -117,6 +117,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
- 	}
+diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
+index ff9b60b99f52..44090a9a19f3 100644
+--- a/tools/perf/tests/attr.py
++++ b/tools/perf/tests/attr.py
+@@ -116,7 +116,7 @@ class Event(dict):
+             if not self.has_key(t) or not other.has_key(t):
+                 continue
+             if not data_equal(self[t], other[t]):
+-		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
++                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
  
-+	/*
-+	 * The MMIO instruction is emulated and should not be re-executed
-+	 * in the guest.
-+	 */
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
-+
- 	return 0;
- }
- 
-@@ -144,11 +150,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
- 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
- 	vcpu->arch.mmio_decode.rt = rt;
- 
--	/*
--	 * The MMIO instruction is emulated and should not be re-executed
--	 * in the guest.
--	 */
--	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 0;
- }
- 
+ # Test file description needs to have following sections:
+ # [config]
 -- 
 2.19.1
 
