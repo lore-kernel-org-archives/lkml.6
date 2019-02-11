@@ -2,163 +2,133 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930C0C282C2
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24621C282C2
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EAEC214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549848200;
-	bh=6uGXGuYWHunbrNkCl2Hyo9TagYE4ZAHmkwsyFIi/SgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GIlrUi/xcxlM9UXx6Wy8PGFP2buCOFGlgMXNHDNp/5MCmfU6Gn+zVfej/k0cSLeV7
-	 8w7aXLUe6NGYTZ3F13D75hRI/vFV/+PYmYuUwcq38HxzMkcF3F/9yqQTpBEi38zJtn
-	 CpArujiJ/XhXt+3phr2XO2YNS3++2qKABdZf9LI0=
+	by mail.kernel.org (Postfix) with ESMTP id DF59F2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 01:27:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="guK0/6QX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfBKBXS (ORCPT
+        id S1726814AbfBKB1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 10 Feb 2019 20:23:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfBKBXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Feb 2019 20:23:18 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B36122084D;
-        Mon, 11 Feb 2019 01:23:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549848196;
-        bh=6uGXGuYWHunbrNkCl2Hyo9TagYE4ZAHmkwsyFIi/SgI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eLwErN+ZM4aEzsO2KPK4FqYL2uLo19bZN8svC/ExM2TVpzEP7ux1RGa2te/DESaQt
-         IQuvlI+8nkaPXm7H/5qnROgE8yaFddv5Q0ENxQdf45Gzm3FuOgj3um3W6iLbF+hcrs
-         GLWLkmTH6E7ZBPoJiDth6tmtimRPfp7zsaUoG7EE=
-Date:   Mon, 11 Feb 2019 09:23:06 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Trent Piepho <tpiepho@impinj.com>
-Cc:     "stefan@agner.ch" <stefan@agner.ch>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH 2/2] ARM: dts: imx7: add DMA properties for ECSPI
-Message-ID: <20190211012305.GA21496@dragon>
-References: <20190107132226.16216-1-stefan@agner.ch>
- <20190107132226.16216-2-stefan@agner.ch>
- <1549573243.3075.72.camel@impinj.com>
+        Sun, 10 Feb 2019 20:27:30 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:59688 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfBKB13 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 10 Feb 2019 20:27:29 -0500
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x1B1RFEK003484
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 10:27:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x1B1RFEK003484
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549848436;
+        bh=Bjymw9ZL2xJrOsBKqziIPpjjf6rQJ1btIsnzSZqEoMA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=guK0/6QXKr7QEDuSC6oClOpIlZkziPPJ2dSS0om4rBcKq6rUbNQdf4UIwAvSu0vj5
+         eM2AIFz6DPm4DQYvJ5w6gZwMfBrQ2jGXNvjLMljA25W3/QgDReXVOxwcgULNiEkhIF
+         4vkkesJQg6qH8/I+jor8PcX4mQDG2Bqd41OCeMqVvXyWSjpdYvYDqIYu2eZ7o+lxVm
+         VYkhFf68HjSnTRb/5LgBtaSeQHz94a4hQcqHEo2qaEH9+kluvKnyqsSoY1cTSOdCPB
+         qLTobuFeB4CQdT+GMXGP5bFFykbfDVyl+XXXlenbN/T6pWzJ4mlLvBYNN0K9JEaomn
+         hfrunUCT9ubwg==
+X-Nifty-SrcIP: [209.85.221.177]
+Received: by mail-vk1-f177.google.com with SMTP id o130so2084774vke.10
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Feb 2019 17:27:16 -0800 (PST)
+X-Gm-Message-State: AHQUAuaYb0wRGNExMPV76EJmtVKzAlSCWBR0aXCV99p0t7Wmpzj5FiX8
+        6xcIPXDo9SMOAqq0hzjrpaXFNiXNM3+YoVoUzuM=
+X-Google-Smtp-Source: AHgI3IarDvwMyJxXOcRy4QcYDk2Iek/zEss62Tawjmjxe/rUD4YkU9Wmbq94+C5udJB1zZmbQ5ONUMZ3Mb6XOROfFq0=
+X-Received: by 2002:a1f:9350:: with SMTP id v77mr13775627vkd.64.1549848435275;
+ Sun, 10 Feb 2019 17:27:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549573243.3075.72.camel@impinj.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <1549613335-30319-1-git-send-email-yamada.masahiro@socionext.com>
+ <1549613335-30319-7-git-send-email-yamada.masahiro@socionext.com> <20190208230511.5ee7c0f1@xps13>
+In-Reply-To: <20190208230511.5ee7c0f1@xps13>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 11 Feb 2019 10:26:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASSX=XTfykvqs3MYYZUbpWAGDrXVWsQQ3S6=RQG5DcbkA@mail.gmail.com>
+Message-ID: <CAK7LNASSX=XTfykvqs3MYYZUbpWAGDrXVWsQQ3S6=RQG5DcbkA@mail.gmail.com>
+Subject: Re: [PATCH 06/11] mtd: rawnand: denali: use more precise timeout for NAND_OP_WAITRDT_INSTR
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 09:00:44PM +0000, Trent Piepho wrote:
-> On Mon, 2019-01-07 at 14:22 +0100, Stefan Agner wrote:
-> > Allow to use DMA for SPI by adding the appropriate DMA properites
-> > to the ecspi nodes.
-> > 
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >  arch/arm/boot/dts/imx7s.dtsi | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> > index a052198f6e96..b9330176c3af 100644
-> > --- a/arch/arm/boot/dts/imx7s.dtsi
-> > +++ b/arch/arm/boot/dts/imx7s.dtsi
-> > @@ -653,6 +653,8 @@
-> >  				clocks = <&clks IMX7D_ECSPI4_ROOT_CLK>,
-> >  					<&clks IMX7D_ECSPI4_ROOT_CLK>;
-> >  				clock-names = "ipg", "per";
-> > +				dmas = <&sdma 6 7 1>, <&sdma 7 7 2>;
-> > +				dma-names = "rx", "tx";
-> >  				status = "disabled";
-> >  			};
-> 
-> After updating my kernel to linux-next on my IMX7d based device, I
-> found that an FPGA, which is programmed via the ECSPI interface, was no
-> longer accepting its image.
-> 
-> I tracked the problem to this change.  If I turn off DMA, it works.
-> 
-> There's an interesting thing that happens when DMA is used.  The SPI
-> clock changes.  Instead of cycling continuously for the entire
-> transfer, it instead clocks out 8 bits, then pauses for 4 bit times,
-> then the next byte, etc.  So it's a net of about 50% slower.  The pause
-> between bytes scales with spi frequency to always be about 4 bits.
-> 
-> Here's a trace with DMA: https://imagebin.ca/v/4WEkEnvsVSkq
-> 
-> Here's what it looks like without DMA:
-> https://imagebin.ca/v/4WEkVfEqpQ12
-> 
-> It seems like there are other problems with DMA too.  Here's an error
-> I'll random get every so often.
-> 
-> [  142.082325] spi_master spi1: I/O Error in DMA RX
-> [  142.085678] spidev spi1.0: SPI transfer failed: -110
-> [  142.089389] spi_master spi1: failed to transfer one message from queue
-> 
-> Not sure if the timeout is overly aggressive or if there is some other failure.
-> 
-> Then sometimes there errors are worse:
-> 
-> Internal error: Oops - undefined instruction: 0 [#1] PREEMPT SMP ARM
-> Modules linked in:
-> CPU: 0 PID: 1006 Comm: fpga-loader Not tainted 5.0.0-rc4-next-20190201 #1
-> Hardware name: Freescale i.MX7 Dual (Device Tree)
-> PC is at sg_last+0x4c/0x68
-> LR is at   (null)
-> pc : [<80494800>]    lr : [<00000000>]    psr: 60010013
-> sp : bf0add5c  ip : bea94598  fp : bf371218
-> r10: bf0949f0  r9 : 00000000  r8 : bf094800
-> r7 : bdc39300  r6 : bf371000  r5 : bdc39300  r4 : bf094b68
-> r3 : 00000000  r2 : 00000001  r1 : 00000001  r0 : bea94580
-> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-> Control: 30c5387d  Table: bea94000  DAC: fffffffd
-> Process fpga-loader (pid: 1006, stack limit = 0x61bc8b73)
-> Stack: (0xbf0add5c to 0xbf0ae000)
-> dd40:                                                                8056cdb0
-> dd60: 8056c9ac 00001000 00000000 bdc39300 bf094800 bf094b68 bf371000 00000000
-> dd80: bf0949f0 8056bc00 bf094800 bdc39300 bf0adeac bf094800 bf094ad0 80569edc
-> ...
-> dfc0: 00217301 00150000 00001000 00000036 00df2010 00000003 00001000 00df1008
-> dfe0: 00022f70 7e9ebb14 000113b8 76f2a7f8 20010030 00000003 00000000 00000000
-> [<80494800>] (sg_last) from [<8056cdb0>] (spi_imx_transfer+0xd8/0x448)
-> [<8056cdb0>] (spi_imx_transfer) from [<8056bc00>] (spi_bitbang_transfer_one+0x50/0xa0)
-> [<8056bc00>] (spi_bitbang_transfer_one) from [<80569edc>] (spi_transfer_one_message+0x18c/0x3e0)
-> [<80569edc>] (spi_transfer_one_message) from [<8056a498>] (__spi_pump_messages+0x368/0x518)
-> [<8056a498>] (__spi_pump_messages) from [<8056a7ec>] (__spi_sync+0x198/0x1a0)
-> [<8056a7ec>] (__spi_sync) from [<8056a818>] (spi_sync+0x24/0x3c)
-> [<8056a818>] (spi_sync) from [<8056ae14>] (spidev_sync+0x38/0x4c)
-> [<8056ae14>] (spidev_sync) from [<8056b6f4>] (spidev_ioctl+0x660/0x704)
-> [<8056b6f4>] (spidev_ioctl) from [<80335f9c>] (do_vfs_ioctl+0xac/0x79c)
-> [<80335f9c>] (do_vfs_ioctl) from [<803366c0>] (ksys_ioctl+0x34/0x58)
-> [<803366c0>] (ksys_ioctl) from [<80201120>] (ret_fast_syscall+0x0/0x4c)
-> Exception stack(0xbf0adfa8 to 0xbf0adff0)
-> dfa0:                   00217301 00150000 00000003 40206b00 7e9ebb80 03938700
-> dfc0: 00217301 00150000 00001000 00000036 00df2010 00000003 00001000 00df1008
-> dfe0: 00022f70 7e9ebb14 000113b8 76f2a7f8
-> Code: e1510002 1afffff3 e3530000 149df004 (e7f001f2)
-> ---[ end trace 1588229fc7541669 ]---
-> 
-> I think DMA on imx not be ready for prime time yet.
+Hi Miquel,
 
-I dropped both patches from my tree.
+On Sat, Feb 9, 2019 at 7:05 AM Miquel Raynal <miquel.raynal@bootlin.com> wr=
+ote:
+>
+> Hi Masahiro,
+>
+> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Fri,  8 Feb
+> 2019 17:08:50 +0900:
+>
+> > Currently, wait_for_completion_timeout() is always passed in the
+> > hard-coded msec_to_jiffies(1000). There is no specific reason for
+> > 1000 msec, but I just chose it long enough.
+> >
+> > With the exec_op() conversion, NAND_OP_WAITRDY_INSTR provides more
+> > precise timeout value, depending on the preceding command. Let's use
+> > it to bail out earlier in error case.
+>
+> I'm not sure using 10ms instead of 1000ms is relevant in the below
+> cases, 10ms is rather short for an IRQ, if your system is under load
+> you might end up with a timeout, not because the right IRQ did not
+> fire, but because the handler was not executed yet (it happened to me
+> in the marvell_nand.c driver recently).
 
-Shawn
+
+Good point.
+Since Linux is not RT-OS, there is no defined worst-case time
+until the handler is invoked.
+
+
+I will add the following to denali_wait_for_irq().
+
+        /* Prolong the IRQ wait time in case the system is under heavy load=
+. */
+        timeout_ms +=3D 100;
+
+
+
+
+
+> Also, would you mind using a define instead of hardcoding '1000'?
+
+
+I do not think this is worth doing.
+
+
+
+
+> >
+> > I am still keeping the hard-coded values for other higher level hooks
+> > such as page_read, page_write, etc. We know the value of tR, tPROG, but
+> > we have unknowledge about the data transfer speed of the DMA engine.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+>
+> Thanks,
+> Miqu=C3=A8l
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
