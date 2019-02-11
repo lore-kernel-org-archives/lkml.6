@@ -4,52 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDFFC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B14AC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0431A222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25A78222AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897361;
-	bh=hfEY1RH1kScw8epRhAsBXY4kzmH6dAv87wYbFk5AcJQ=;
+	s=default; t=1549897366;
+	bh=y+0SqmY9T6bRRi0tBk1BjjKAM/LszRClbDJhj9YOqiE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S2tN+csObbAmhqBjI7nUyzNR/sVrzesyY78di+VxjQB7uSWPgNJTE9pF8D2sERjxU
-	 CzSlJdoGLwdWcBPR1ZbnHfpl1VkWSSbgrCcyJB7c9dcJTNe31Cl8DCTIjvb7MACopW
-	 vLnRZv8sxvuOBDrZ3eC+nwrxMzkw+gPw2KIfdoLQ=
+	b=AUu25sgvQxhCSEk/IcLNyO39mXP9LYYH4QHAhCsY+5YVfE/1IZxQ5NRrEQwQn3MAQ
+	 lNZt1QUJkKxWDF53EODgRzRuD09AAKFhnerfFzHaAD791m7Jpke4oAE1agYXtA7acS
+	 vUgDrflUlUaUuE5zIToIiq2uFkzT/Pnym0IIHmCc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390443AbfBKPCj (ORCPT
+        id S2390470AbfBKPCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:02:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:02:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390425AbfBKPCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:02:32 -0500
+        id S2390445AbfBKPCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:02:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC3EC222A7;
-        Mon, 11 Feb 2019 15:02:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3861222AF;
+        Mon, 11 Feb 2019 15:02:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897351;
-        bh=hfEY1RH1kScw8epRhAsBXY4kzmH6dAv87wYbFk5AcJQ=;
+        s=default; t=1549897359;
+        bh=y+0SqmY9T6bRRi0tBk1BjjKAM/LszRClbDJhj9YOqiE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UwGn64vRuyIo4hdgcBEt/3jdNecxLo0oK7X2aQw0MRqKZZpEKasAr9ztatWOwnlHl
-         hleCqFlRI6DHMu77mMoL8ooYMdA9ZxhmxVur8VfMBLE8+hx8t8v4wX6Qd3DoM71Hu8
-         XRKgSXJtTwmD56/aKcI10cmLe6XYcq0Gh0r+234E=
+        b=2Qe0TOyC1aHGYz/QVoZpSWhwmjb1Oulh5qft1Lo5GCWjzIZo3tVKzXyIWG7JnDfTO
+         a/uaEkm0eAgIlrVHZQ/2zz3lgiI71SjSbQwhX/DGpK5FldxEeUjQd09J+Nb5QqNPAv
+         hKaCgZr1Ba3d/Z65UNE5tYqg1YGd0HieTWCQr2kw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.14 173/205] net/mlx5e: Force CHECKSUM_UNNECESSARY for short ethernet frames
-Date:   Mon, 11 Feb 2019 15:19:31 +0100
-Message-Id: <20190211141839.678919090@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 176/205] ALSA: hda - Serialize codec registrations
+Date:   Mon, 11 Feb 2019 15:19:34 +0100
+Message-Id: <20190211141839.888247360@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141827.214852402@linuxfoundation.org>
 References: <20190211141827.214852402@linuxfoundation.org>
@@ -68,71 +63,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit e8c8b53ccaff568fef4c13a6ccaf08bf241aa01a ]
+commit 305a0ade180981686eec1f92aa6252a7c6ebb1cf upstream.
 
-When an ethernet frame is padded to meet the minimum ethernet frame
-size, the padding octets are not covered by the hardware checksum.
-Fortunately the padding octets are usually zero's, which don't affect
-checksum. However, we have a switch which pads non-zero octets, this
-causes kernel hardware checksum fault repeatedly.
+In the current code, the codec registration may happen both at the
+codec bind time and the end of the controller probe time.  In a rare
+occasion, they race with each other, leading to Oops due to the still
+uninitialized card device.
 
-Prior to:
-commit '88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE ...")'
-skb checksum was forced to be CHECKSUM_NONE when padding is detected.
-After it, we need to keep skb->csum updated, like what we do for RXFCS.
-However, fixing up CHECKSUM_COMPLETE requires to verify and parse IP
-headers, it is not worthy the effort as the packets are so small that
-CHECKSUM_COMPLETE can't save anything.
+This patch introduces a simple flag to prevent the codec registration
+at the codec bind time as long as the controller probe is going on.
+The controller probe invokes snd_card_register() that does the whole
+registration task, and we don't need to register each piece
+beforehand.
 
-Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"),
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Cc: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -646,6 +646,8 @@ static u32 mlx5e_get_fcs(const struct sk
- 	return __get_unaligned_cpu32(fcs_bytes);
+---
+ sound/pci/hda/hda_bind.c  |    3 ++-
+ sound/pci/hda/hda_codec.h |    1 +
+ sound/pci/hda/hda_intel.c |    2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -109,7 +109,8 @@ static int hda_codec_driver_probe(struct
+ 	err = snd_hda_codec_build_controls(codec);
+ 	if (err < 0)
+ 		goto error_module;
+-	if (codec->card->registered) {
++	/* only register after the bus probe finished; otherwise it's racy */
++	if (!codec->bus->bus_probing && codec->card->registered) {
+ 		err = snd_card_register(codec->card);
+ 		if (err < 0)
+ 			goto error_module;
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -68,6 +68,7 @@ struct hda_bus {
+ 	unsigned int response_reset:1;	/* controller was reset */
+ 	unsigned int in_reset:1;	/* during reset operation */
+ 	unsigned int no_response_fallback:1; /* don't fallback at RIRB error */
++	unsigned int bus_probing :1;	/* during probing process */
+ 
+ 	int primary_dig_out_type;	/* primary digital out PCM type */
+ 	unsigned int mixer_assigned;	/* codec addr for mixer name */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2236,6 +2236,7 @@ static int azx_probe_continue(struct azx
+ 	int val;
+ 	int err;
+ 
++	to_hda_bus(bus)->bus_probing = 1;
+ 	hda->probe_continued = 1;
+ 
+ 	/* bind with i915 if needed */
+@@ -2341,6 +2342,7 @@ i915_power_fail:
+ 	if (err < 0)
+ 		hda->init_failed = 1;
+ 	complete_all(&hda->probe_wait);
++	to_hda_bus(bus)->bus_probing = 0;
+ 	return err;
  }
  
-+#define short_frame(size) ((size) <= ETH_ZLEN + ETH_FCS_LEN)
-+
- static inline void mlx5e_handle_csum(struct net_device *netdev,
- 				     struct mlx5_cqe64 *cqe,
- 				     struct mlx5e_rq *rq,
-@@ -661,6 +663,17 @@ static inline void mlx5e_handle_csum(str
- 		return;
- 	}
- 
-+	/* CQE csum doesn't cover padding octets in short ethernet
-+	 * frames. And the pad field is appended prior to calculating
-+	 * and appending the FCS field.
-+	 *
-+	 * Detecting these padded frames requires to verify and parse
-+	 * IP headers, so we simply force all those small frames to be
-+	 * CHECKSUM_UNNECESSARY even if they are not padded.
-+	 */
-+	if (short_frame(skb->len))
-+		goto csum_unnecessary;
-+
- 	if (is_first_ethertype_ip(skb)) {
- 		skb->ip_summed = CHECKSUM_COMPLETE;
- 		skb->csum = csum_unfold((__force __sum16)cqe->check_sum);
-@@ -672,6 +685,7 @@ static inline void mlx5e_handle_csum(str
- 		return;
- 	}
- 
-+csum_unnecessary:
- 	if (likely((cqe->hds_ip_ext & CQE_L3_OK) &&
- 		   (cqe->hds_ip_ext & CQE_L4_OK))) {
- 		skb->ip_summed = CHECKSUM_UNNECESSARY;
 
 
