@@ -6,185 +6,140 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED88EC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55DEC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1EA620818
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92C4320818
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 08:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfBKI5q (ORCPT
+        id S1726811AbfBKI67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 03:57:46 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30480 "EHLO mga04.intel.com"
+        Mon, 11 Feb 2019 03:58:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50024 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfBKI5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 03:57:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 00:57:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
-   d="scan'208";a="115247522"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by orsmga006.jf.intel.com with ESMTP; 11 Feb 2019 00:57:43 -0800
-Subject: Re: [PATCH 1/2] mmc: cqhci: replace NUM_SLOTS with cq_host->num_slots
-To:     Alamy Liu <alamy.liu@gmail.com>,
-        "Asutosh Das (asd)" <asutoshd@codeaurora.org>,
-        Ritesh Harjani <riteshh@codeaurora.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190114191724.29960-1-alamy.liu@gmail.com>
- <ee3dc963-53f0-e362-caa5-069ce0e6eae7@intel.com>
- <CAJ3kudsgJsZ1KFXdD9Vnfx0GypnEf+ba-D8t+Wy1e8GdLF=U0w@mail.gmail.com>
- <362c073b-d795-4431-f1dd-c203cc606a6f@codeaurora.org>
- <dcf57693-3daf-8277-53e9-1c4b094f2449@codeaurora.org>
- <CAJ3kuds-XgrhjiyS8j-5twOHde3NHsGaH5hFqeOm8HLXHi59aA@mail.gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <7614ec08-aac4-a82e-2534-262828aeec19@intel.com>
-Date:   Mon, 11 Feb 2019 10:56:18 +0200
+        id S1725962AbfBKI67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 03:58:59 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 85290356C4;
+        Mon, 11 Feb 2019 08:58:58 +0000 (UTC)
+Received: from [10.36.116.241] (ovpn-116-241.ams2.redhat.com [10.36.116.241])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1975C10E81C0;
+        Mon, 11 Feb 2019 08:58:56 +0000 (UTC)
+Subject: Re: [PATCH] mm,memory_hotplug: Explicitly pass the head to
+ isolate_huge_page
+To:     Oscar Salvador <osalvador@suse.de>, akpm@linux-foundation.org
+Cc:     mhocko@suse.com, anthony.yznaga@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190208090604.975-1-osalvador@suse.de>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <1b36e2a9-daf4-ed39-88da-f95fb0d25171@redhat.com>
+Date:   Mon, 11 Feb 2019 09:58:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAJ3kuds-XgrhjiyS8j-5twOHde3NHsGaH5hFqeOm8HLXHi59aA@mail.gmail.com>
+In-Reply-To: <20190208090604.975-1-osalvador@suse.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 11 Feb 2019 08:58:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/02/19 8:41 PM, Alamy Liu wrote:
-> The IP I'm using has fixed 32 slots for CQ once CQE is enabled in RTL.
-> There is no other RO register to say the slot number & which slot that
-> DCMD would use.
+On 08.02.19 10:06, Oscar Salvador wrote:
+> isolate_huge_page() expects we pass the head of hugetlb page to it:
 > 
-> I agree that most host controller would have 32 slots for CQ, and use
-> the last one for DCMD if enabled (easier design & save gates
-> count/size). (15th for DCMD if there were 16 slots in CQ, ...etc). It
-> also doesn't make sense to use a slot in the middle of slots for DCMD,
-> Both the code (both S.W. & H.W.) would become more complicated.
-> Although I don't see it is defined somewhere, I believe that every
-> designer would follow.
-> (H.W.: increasing gate count -> increasing die size -> increase $;
-> complicated design -> higher chance to have bug/error).
-> (H.W.: SDHC cq_depth: longer cq_depth -> more memory -> more $. The
-> decision would be the trade off between $ & performance. Also, the
-> SDHC is not necessary to be used in Cortex-A/Linux. Thus, 16/8
-> cq_depth is possible, although I don't know if there is one existed
-> out there)
+> bool isolate_huge_page(...)
+> {
+> 	...
+> 	VM_BUG_ON_PAGE(!PageHead(page), page);
+> 	...
+> }
 > 
-> Another thinking: If all cq_depth is fixed to 32, the mmc driver core
-> doesn't even have to detect the cq_depth and eventually choose the
-> small one between HC & eMMC (queue.c::mmc_init_queue)
-
-The cqe_qdepth changes depending on whether DCMD is supported.  That is the
-kind of detail that belongs to the CQHCI driver not the mmc core.  For
-example, theoretically there could be more than one CQE driver
-implementation, but it is also nicer to keep a separation between CQHCI and
-mmc core.
-
+> While I really cannot think of any situation where we end up with a
+> non-head page between hands in do_migrate_range(), let us make sure
+> the code is as sane as possible by explicitly passing the Head.
+> Since we already got the pointer, it does not take us extra effort.
 > 
-> Best Regards
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  mm/memory_hotplug.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> 
-> On Fri, Feb 8, 2019 at 2:34 AM Asutosh Das (asd)
-> <asutoshd@codeaurora.org> wrote:
->>
->> On 2/8/2019 8:07 AM, Ritesh Harjani wrote:
->>> Hi Alamy,
->>>
->>> On 2/8/2019 1:00 AM, Alamy Liu wrote:
->>>> It says in B.2.1 in the JESD84-B51.pdf (I don't have JESD84-B51A.pdf):
->>>>
->>>>     /The TDL is located in a memory location known to the CQE, and is
->>>>     comprised of up to 32 fixed-size slots. Each slot is comprised of
->>>>     one Task Descriptor and one Transfer Descriptor./
->>>>
->>>>
->>>> So if the IP has 16 slots, it should still meet the specification.
->>>> Then the configuration could be moved to DTS, maybe:
->>>>
->>>>     cqhci-slotnum = <16>;
->>>>
->>>>     cqhci-dcmd-slotno = <15>;
->>>>
->>> Does your IP defines this as 16 slots & DCMD slot to be 15?
->>> Because if there is a deviation then IP may also define num_slots by
->>> using some reserved registers.
->>> Also in JESD84-B51.pdf, specific slot no. is used extensively for
->>> defining policies(like in case of DCMD & CQCFG), so in that case
->>> defining via DT may not be that helpful.
->>> Unless there is no other way in your IP to determine the num_slots
->>> except going via DT?
->>>
->>> Let others also provide an opinion here.
->>>
->>> Regards
->>> Ritesh
->>>
->>>
->>>>
->>>> Please comment.
->>>>
->>>> Regards,
->>>> Alamy
->>>>
->>>>
->>>>
->>>> On Thu, Jan 31, 2019 at 1:34 AM Adrian Hunter <adrian.hunter@intel.com
->>>> <mailto:adrian.hunter@intel.com>> wrote:
->>>>
->>>>     On 14/01/19 9:17 PM, Alamy Liu wrote:
->>>>     > Prevent to use fixed value (NUM_SLOTS) after it had been determined
->>>>     > and saved in a variable (cq_host->num_slots).
->>>>
->>>>     num_slots is always 32 (i.e. NUM_SLOTS) so why not go the other
->>>>     way and get
->>>>     rid of num_slots and just use NUM_SLOTS?
->>>>
->>>>     >
->>>>     > Signed-off-by: Alamy Liu <alamy.liu@gmail.com
->>>>     <mailto:alamy.liu@gmail.com>>
->>>>     > ---
->>>>     >  drivers/mmc/host/cqhci.c | 2 +-
->>>>     >  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>     >
->>>>     > diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
->>>>     > index 159270e947..26d63594b7 100644
->>>>     > --- a/drivers/mmc/host/cqhci.c
->>>>     > +++ b/drivers/mmc/host/cqhci.c
->>>>     > @@ -699,7 +699,7 @@ static void cqhci_error_irq(struct mmc_host
->>>>     *mmc, u32 status, int cmd_error,
->>>>     >                * The only way to guarantee forward progress is
->>>>     to mark at
->>>>     >                * least one task in error, so if none is
->>>>     indicated, pick one.
->>>>     >                */
->>>>     > -             for (tag = 0; tag < NUM_SLOTS; tag++) {
->>>>     > +             for (tag = 0; tag < cq_host->num_slots; tag++) {
->>>>     >                       slot = &cq_host->slot[tag];
->>>>     >                       if (!slot->mrq)
->>>>     >                               continue;
->>>>     >
->>>>
->> Is it worth exploring to tie up the TDL memory allocations with the
->> queue-depth? Because the queue-depth may vary with vendor; in most host
->> controllers the slot size is 32. And since memory allocations are done
->> on the basis of host slot size there's unused slots in the case of card
->> advertising less than 32 queue-depth.
->> The tricky part would be the DCMD handling though.
->>
->> In the IP in question, what slot is assigned to DCMD?
->>
->>
->> --
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a
->> Linux Foundation Collaborative Project
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 656ff386ac15..d5f7afda67db 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1378,12 +1378,12 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  
+>  		if (PageHuge(page)) {
+>  			struct page *head = compound_head(page);
+> -			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
+>  			if (compound_order(head) > PFN_SECTION_SHIFT) {
+>  				ret = -EBUSY;
+>  				break;
+>  			}
+> -			isolate_huge_page(page, &source);
+> +			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
+> +			isolate_huge_page(head, &source);
+>  			continue;
+>  		} else if (PageTransHuge(page))
+>  			pfn = page_to_pfn(compound_head(page))
 > 
 
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+
+Thanks,
+
+David / dhildenb
