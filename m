@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5607AC282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3980C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26477222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F077217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549897645;
-	bh=DXxk8XFT6dUuN1UfJ19hGcbY1z4+bfUEQ/OUwpZe8vQ=;
+	s=default; t=1549897658;
+	bh=S1LFC4WpHIC7BmPAQt+y5rz84ctxLOudUejV+1NJ1WY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=affrLW4An8JGMHAwm+jc6wv3EcxQh2h64VVnlC5XWSTiqBTq6h4l4/cTiQFzHby7u
-	 /+S2Y0SafKxLU/Ix+Vo3XAGqmZ2JKnAx4TlQGVq8iuCZhIsGkVENrz4y8KOUhmWIMC
-	 YhrWs/uwnnSw1yi4FqK3poujkIc1nEQsY/gZsKFk=
+	b=AVXt+/l6lnHVviW9uK1grSWqqCgyA5bgL/9iJIl7r+o+fyD8CX4kHhhk/kXIJ3762
+	 /Hi3qzOKCVQprC/YgEYb8pV5VenI4gBuEtqkyRz/F3/dhY6BvrfNzBKlLkmY6T99Ua
+	 S67t5w8Nj6uX4lw26OUlQdeVwVU2jnxA5jX6ykjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391343AbfBKPHX (ORCPT
+        id S2391385AbfBKPHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:07:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57096 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:07:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403803AbfBKPHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:07:19 -0500
+        id S1731524AbfBKPHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:07:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EBA9222AD;
-        Mon, 11 Feb 2019 15:07:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02C46217D9;
+        Mon, 11 Feb 2019 15:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897638;
-        bh=DXxk8XFT6dUuN1UfJ19hGcbY1z4+bfUEQ/OUwpZe8vQ=;
+        s=default; t=1549897650;
+        bh=S1LFC4WpHIC7BmPAQt+y5rz84ctxLOudUejV+1NJ1WY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVRBykWNZO262fCVh0tFfD41lQB1DfBSNAFDrtAWBsl5AOAb4t43fmd6ixXipjGW+
-         HPOGkCH3qQt8WuLm09ohGC2SGwbgrxPNzMzSGqe33nqfenwF2ZBDbadJgtB8NhYXhK
-         3fXhC8tHz6qUJHmnKEizaoeI1RFqgetfRvsqikEo=
+        b=rtzo8cMv1d3UBDEkR8jiXZ4dzjM/0mCxg+6D1WYUZi3wvDZgmATrhbkleCxb78Qkr
+         /J9BrCkWlFcS/n329MAbt/Moy8R/MxRwcAi8Dzg2cj9JQeqEPO8cq/PJKECzO2EKgl
+         6SVreOI3oZkDrv7AiYqIx4COA+pQs8Qlfijr3xVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Roland Kammerer <roland.kammerer@linbit.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 047/137] sata_rcar: fix deferred probing
-Date:   Mon, 11 Feb 2019 15:18:48 +0100
-Message-Id: <20190211141816.366189905@linuxfoundation.org>
+Subject: [PATCH 4.9 068/137] drbd: narrow rcu_read_lock in drbd_sync_handshake
+Date:   Mon, 11 Feb 2019 15:19:09 +0100
+Message-Id: <20190211141818.294979856@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,39 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
+[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
 
-The driver overrides the error codes returned by platform_get_irq() to
--EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
-permanently instead of the deferred probing. Switch to propagating the
-error code upstream, still checking/overriding IRQ0 as libata regards it
-as "no IRQ" (thus polling) anyway...
+So far there was the possibility that we called
+genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
 
-Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This included cases like:
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      drbd_bcast_event
+        genlmsg_new(GFP_NOIO) --> may sleep
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        genlmsg_new(GFP_NOIO) --> may sleep
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        mutex_lock --> may sleep
+
+While using GFP_ATOMIC whould have been possible in the first two cases,
+the real fix is to narrow the rcu_read_lock.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
+Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/sata_rcar.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index e83a3d3421b9..07e146b772ea 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -872,7 +872,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	int ret = 0;
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 942384f34e22..77d0f80f62f9 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3421,7 +3421,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 	enum drbd_conns rv = C_MASK;
+ 	enum drbd_disk_state mydisk;
+ 	struct net_conf *nc;
+-	int hg, rule_nr, rr_conflict, tentative;
++	int hg, rule_nr, rr_conflict, tentative, always_asbp;
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
-+	if (irq < 0)
-+		return irq;
-+	if (!irq)
- 		return -EINVAL;
+ 	mydisk = device->state.disk;
+ 	if (mydisk == D_NEGOTIATING)
+@@ -3472,8 +3472,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
+ 	rcu_read_lock();
+ 	nc = rcu_dereference(peer_device->connection->net_conf);
++	always_asbp = nc->always_asbp;
++	rr_conflict = nc->rr_conflict;
++	tentative = nc->tentative;
++	rcu_read_unlock();
+ 
+-	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
++	if (hg == 100 || (hg == -100 && always_asbp)) {
+ 		int pcount = (device->state.role == R_PRIMARY)
+ 			   + (peer_role == R_PRIMARY);
+ 		int forced = (hg == -100);
+@@ -3512,9 +3516,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 			     "Sync from %s node\n",
+ 			     (hg < 0) ? "peer" : "this");
+ 	}
+-	rr_conflict = nc->rr_conflict;
+-	tentative = nc->tentative;
+-	rcu_read_unlock();
+ 
+ 	if (hg == -100) {
+ 		/* FIXME this log message is not correct if we end up here
 -- 
 2.19.1
 
