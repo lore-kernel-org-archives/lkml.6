@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF64C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE99C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9427D222A7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C941222A7
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549898101;
-	bh=CVgZDCjqcpIQxxO0EeY+u/ejxBpIiruI0av4cMp+xMs=;
+	s=default; t=1549898104;
+	bh=IaoHV18dGEBx8ARebZYFx76s8A3WgxhUEW4rcF1PUa8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oAk3/tT06DBpVVhqOVHjNlHj24uzY3n8oErC5uPC/JlO9oV+sA43HTFllfeaJrRSL
-	 /nNKSFX9aBfq983Eogeirk8iVd35py/wW84n5VtkIPPyfXtQQzdNcxZZkyY95fIp28
-	 nV9jfj9QkGKa7nUNlRRgo7IQHz3HHZ6lO6g2MC0A=
+	b=DDmxi3HN5HHArwfoq45hjE0c4nbEG5BhwDVFEhD/xv1lui6FezggnonX+Y/G4ojHm
+	 g7nAtgbczZYVXB+2w7g5MQl+QohRj7tdPB5oaJhW6QPyLme3ciaDDch1vEGsx/54Iy
+	 Grb29TxGuG9mf2QvzDQybCXh1Xpc9CBsSidEgD/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391440AbfBKPIK (ORCPT
+        id S2391431AbfBKPIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:08:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:08:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391423AbfBKPIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:08:05 -0500
+        id S2391417AbfBKPIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:08:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50186222AD;
-        Mon, 11 Feb 2019 15:08:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0862222A7;
+        Mon, 11 Feb 2019 15:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549897684;
-        bh=CVgZDCjqcpIQxxO0EeY+u/ejxBpIiruI0av4cMp+xMs=;
+        s=default; t=1549897681;
+        bh=IaoHV18dGEBx8ARebZYFx76s8A3WgxhUEW4rcF1PUa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3KfLEkhkJoLE4fOZPAooRXfdb3AqwhjtqzH3RTahLc9lenIAzWPdhWz03w1S/xQe
-         97CWGnOZ3Laya/QcEeXrq1rKoVXzM4sV0itwhthb/ERaCsse02FJDdLvot5AuacfS1
-         i81nBA0Bo+8tThbBx72AsgDQfWfBXFT+XUw0G6yc=
+        b=Zgmgm8xG3ZFXCZsTspYF5RKYaD/S5KF7UELg0ZW2JXfrsy/GYXGUPCafIjHdqivyB
+         R0/P9ADmMY4ldwHUf9Y27yKR87+GlUf0UMM967gPKpNexeLAZYEol3XgDfY4I9wwKk
+         Cfh2vApF4xkc4BsMVbYLk97eD4PZFJfS/C81URHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 049/137] cpuidle: big.LITTLE: fix refcount leak
-Date:   Mon, 11 Feb 2019 15:18:50 +0100
-Message-Id: <20190211141816.542782417@linuxfoundation.org>
+Subject: [PATCH 4.9 078/137] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
+Date:   Mon, 11 Feb 2019 15:19:19 +0100
+Message-Id: <20190211141819.255945744@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141811.964925535@linuxfoundation.org>
 References: <20190211141811.964925535@linuxfoundation.org>
@@ -67,45 +67,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9456823c842f346c74265fcd98d008d87a7eb6f5 ]
+[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-bl_idle_init() doesn't do that, so fix it.
+The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
+only belong to the pin controller in the AO domain. With the current
+definition these pins cannot be referred to in .dts files as group
+(which is possible on GXBB and GXL for example).
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Add a separate "gpio_aobus" function to fix the mapping between the pin
+controller and the GPIO pins in the AO domain. This is similar to how
+the GXBB and GXL drivers implement this functionality.
+
+Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/cpuidle-big_little.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index db2ede565f1a..b44476a1b7ad 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -167,6 +167,7 @@ static int __init bl_idle_init(void)
- {
- 	int ret;
- 	struct device_node *root = of_find_node_by_path("/");
-+	const struct of_device_id *match_id;
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index f87ef5a0ee6c..cbe5f5cbddb8 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -643,16 +643,18 @@ static const char * const gpio_groups[] = {
+ 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
+ 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
  
- 	if (!root)
- 		return -ENODEV;
-@@ -174,7 +175,11 @@ static int __init bl_idle_init(void)
- 	/*
- 	 * Initialize the driver just for a compliant set of machines
- 	 */
--	if (!of_match_node(compatible_machine_match, root))
-+	match_id = of_match_node(compatible_machine_match, root);
-+
-+	of_node_put(root);
-+
-+	if (!match_id)
- 		return -ENODEV;
+-	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
+-	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
+-	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
+-	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
+-
+ 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
+ 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
+ 	"DIF_4_P", "DIF_4_N"
+ };
  
- 	if (!mcpm_is_available())
++static const char * const gpio_aobus_groups[] = {
++	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
++	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
++	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
++	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
++};
++
+ static const char * const sd_a_groups[] = {
+ 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
+ 	"sd_cmd_a"
+@@ -868,6 +870,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
+ };
+ 
+ static struct meson_pmx_func meson8b_aobus_functions[] = {
++	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+ 	FUNCTION(i2c_slave_ao),
 -- 
 2.19.1
 
