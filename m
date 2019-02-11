@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819FCC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03095C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5FD21B26
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C134C2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549896645;
-	bh=dRcPbya7x3bePsOOfBk4rQtTeOmZ76zBBArajT38ONo=;
+	s=default; t=1549896651;
+	bh=S47UbfxCnMZrVjIb3793MTQjZ9Z/+kdp1ePIyc/Jquc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lFWwdAh/MQhY/xCmoS5bQ5LsS4xnRFtoBCCHzw66n6nm6CPt3hkhyDzNUmI8x6pEf
-	 muJxTbTfo7/eg8NeevSHzuP1x/3ROfd0uL7wYwUBIXdnWDhCtQOBAEoSmPL+1GHcof
-	 T/5RkKYTvyxuojz9lsx2XtLOKQilX6BaHr7SbOKE=
+	b=EACnbc/4WCJeNCdJZTmrAtAYhFac+o+eQRiuOGR3/vaCTHGzmcBdcP/5WAzK9zBCW
+	 lv9CJ8c35cvUeASyE8UUsjcjcxlxxagTr5WO1OqIutDWKBS1BQz12bqUAllkTWsVeo
+	 vAxnVy+QkS2N2pbMgGfA7+v7XTtsuK6494bg4h3w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388154AbfBKOun (ORCPT
+        id S2387753AbfBKOuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:50:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:50:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388133AbfBKOuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:50:40 -0500
+        id S2387748AbfBKOss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:48:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69C242081B;
-        Mon, 11 Feb 2019 14:50:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1935920700;
+        Mon, 11 Feb 2019 14:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896639;
-        bh=dRcPbya7x3bePsOOfBk4rQtTeOmZ76zBBArajT38ONo=;
+        s=default; t=1549896527;
+        bh=S47UbfxCnMZrVjIb3793MTQjZ9Z/+kdp1ePIyc/Jquc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vdcQ9hb2MGXv6bT5TedQfwVhvpW4mTndlCS5v25PGndguPS3tQfOiFYhMInGUgBhK
-         /MgTrIGXK9mLiV7JziJH/W05S/NHuKMLM9brU9pIwo5xgGfs4ffzduu6ha99IvPTHM
-         za4v6rbOayjxRElOm8744qcimx1bqEkTrzczMEv4=
+        b=GQyzyVT3ytQs7y/dy66Rv47tBSSIz6KsKjAI8U40+fJiJmonTbz0FH4k6bj2H9qCA
+         KczZmpF/jn74e3NfHc3yq8H8XtcuJl1mrudf/FNIQP0lxZmehZhHAvMP6sDiYNMLl3
+         y9gn+iVr7gAwXx9//tSaLLc8Y59ZpNs+VECtaWY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 224/313] scripts/decode_stacktrace: only strip base path when a prefix of the path
-Date:   Mon, 11 Feb 2019 15:18:24 +0100
-Message-Id: <20190211141908.230227211@linuxfoundation.org>
+Subject: [PATCH 4.19 213/313] seq_buf: Make seq_buf_puts() null-terminate the buffer
+Date:   Mon, 11 Feb 2019 15:18:13 +0100
+Message-Id: <20190211141907.401866869@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
 References: <20190211141852.749630980@linuxfoundation.org>
@@ -68,45 +67,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 67a28de47faa83585dd644bd4c31e5a1d9346c50 ]
+[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
 
-Running something like:
+Currently seq_buf_puts() will happily create a non null-terminated
+string for you in the buffer. This is particularly dangerous if the
+buffer is on the stack.
 
-	decodecode vmlinux .
+For example:
 
-leads to interested results where not only the leading "." gets stripped
-from the displayed paths, but also anywhere in the string, displaying
-something like:
+  char buf[8];
+  char secret = "secret";
+  struct seq_buf s;
 
-	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
+  seq_buf_init(&s, buf, sizeof(buf));
+  seq_buf_puts(&s, "foo");
+  printk("Message is %s\n", buf);
 
-which doesn't help further processing.
+Can result in:
 
-Fix it by only stripping the base path if it is a prefix of the path.
+  Message is fooªªªªªsecret
 
-Link: http://lkml.kernel.org/r/20181210174659.31054-3-marc.zyngier@arm.com
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+We could require all users to memset() their buffer to zero before
+use. But that seems likely to be forgotten and lead to bugs.
+
+Instead we can change seq_buf_puts() to always leave the buffer in a
+null-terminated state.
+
+The only downside is that this makes the buffer 1 character smaller
+for seq_buf_puts(), but that seems like a good trade off.
+
+Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/seq_buf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 64220e36ce3b..98a7d63a723e 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -78,7 +78,7 @@ parse_symbol() {
- 	fi
+diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+index 11f2ae0f9099..6aabb609dd87 100644
+--- a/lib/seq_buf.c
++++ b/lib/seq_buf.c
+@@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
  
- 	# Strip out the base of the path
--	code=${code//$basepath/""}
-+	code=${code//^$basepath/""}
+ 	WARN_ON(s->size == 0);
  
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
++	/* Add 1 to len for the trailing null byte which must be there */
++	len += 1;
++
+ 	if (seq_buf_can_fit(s, len)) {
+ 		memcpy(s->buffer + s->len, str, len);
+-		s->len += len;
++		/* Don't count the trailing null byte against the capacity */
++		s->len += len - 1;
+ 		return 0;
+ 	}
+ 	seq_buf_set_overflow(s);
 -- 
 2.19.1
 
