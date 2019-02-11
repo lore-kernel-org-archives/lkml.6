@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E207C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54A3C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284322075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E2A0214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 12:26:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JGMyOmI+"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="KQzRewPR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfBKM0r (ORCPT
+        id S1727726AbfBKM0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 07:26:47 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44856 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbfBKM0p (ORCPT
+        Mon, 11 Feb 2019 07:26:50 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43168 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbfBKM0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 07:26:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v16so4442009wrn.11
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:43 -0800 (PST)
+        Mon, 11 Feb 2019 07:26:47 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r2so4441856wrv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Feb 2019 04:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZA0+dCtnpeJag/6AySdJ0Fbsz9YfvSi5EoVYD/za/84=;
-        b=JGMyOmI+/InwOSk5q5nEBaKupwyhDJJ4jJRoHKIp07/L+FbNAha/YdkUgjAMdkcklM
-         RQ3IPu9XCMktfmCM9M/xbEN/oBLcbEAFTTtFBx4psnptxEZpBvFbA6BemodUqy590nVF
-         Vn+OZKSu62OqX4QOjPBadBxen0L6OwOpQQlXEv3CT07IJ5l5nSAYem4WoEKGb+7YqcA1
-         dM/BFlmuwd8dVEqJDC72FRj6pCXXQeR4PrVURJYuZAH8Ov7mj0ip85TeunhyTiowHGYl
-         mVlGnl3VIN9IbLD8G0omzBp67mJQqKyCnt0D4f5RLhz/PRVQoSQwk81+WDi+RlmFDQFe
-         w8pA==
+        bh=zzfnSpoOYGpWQS3GaWXG/pkuAlPtf22jbVg1mWp1L8g=;
+        b=KQzRewPRbru8cv4Ws+3GwyVXjf3dPWSZdhi9/fuJQsmLxSsf1Lv+pU4YkWIUb8zJFj
+         MUSMNTTiaK9CnpP1UNzYJUUIWHdzulqEzcJsVrkKlpvaOVAfG9nqXnn6m8z41zBvyxHS
+         LzcA3TX529fVvrGaJ48RNybbOP24YJjQPQ+vGddAj4+bHG+aOZvMB9arL/CnpbuIVUTo
+         YHgUYY4R8okr8BtgauTGRkCbdDbdzR+LwGy4KOFGY2bRdYL9+KP+nZJEFip9SyCBFjN5
+         8IoioQTT6SX22ikSCS15wrEfACyl/wuypxSXbKPc+t77E42dGKD8waM87PmOi2x5Jmac
+         /YJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZA0+dCtnpeJag/6AySdJ0Fbsz9YfvSi5EoVYD/za/84=;
-        b=XIUq5u6ekb7vYQ3tnSb3wQafNJXAMkuX7qF2Uh9LPGlLNVFCUuUtxQz135bKZNut6G
-         iXiMgOtbHxFGvmYZOdkyxJM67e+o7RczkWdqGZ+Vf2Ehx5Yby7gtScQi/bs+oeKtHXei
-         H3cEIJ/opz9dQGvgWeg4Zj160tsDFtPjW//Gou+Gr+wy4Rbc/vIMNIxg6waydyP/H3XE
-         Qjs8NhciIvm9ZUn32S7zj2UAHjVw+PoNeOrZ8Hi721qrhyKF88vzh5nxh5Dkfbflx9M9
-         2nPgdxh7ZP7Inh/Y4bg7RxrqwpA1iRh1SBrUVhw6jgyAxqQ5s8/ZPzd0BTS94JXuTi7/
-         daEw==
-X-Gm-Message-State: AHQUAuaqsaJ0V9hZ2iAPIzEqYTJw3XLqC7Nk+pfJndbyuu4ap/fjD2sG
-        eLrnvCv4fl21O88O6OzQe4Jxjw==
-X-Google-Smtp-Source: AHgI3IaePCQ5RsiECMeeg+tLahbnNB4racX02/cgO67p/uHHccXAgqPn4iGVTQSE1z6E89rRckbTpg==
-X-Received: by 2002:adf:dfca:: with SMTP id q10mr2316754wrn.45.1549888002645;
-        Mon, 11 Feb 2019 04:26:42 -0800 (PST)
+        bh=zzfnSpoOYGpWQS3GaWXG/pkuAlPtf22jbVg1mWp1L8g=;
+        b=oKLOn8wQya6HOe7mtsR4yy+EZflaAQ7SMKuKmnQ1/hhEcZwo+7ZMmpIybmrYHWBgGK
+         9cP+wp2o+A507gY9NW9PWaZUenN0sY44AgWYH88PCvgUkXv3abnBpcb1nedsCxE/AbUo
+         bkCZCqHPT2ttsLIzjIw5fpum7Y9gPoaOfAlvr5JqsiqjgxpFUJixal4+wK/yfZWcfZFk
+         nmCLa2qLo+UmDw/D25yc0k6HZXLK6WdAydMRMBVeChiMNk72Ya6vkyOUBB/f/fvRtw5Y
+         1ztLfU9f6zeulnJg7j0f+FdHiXJziiX894GDSpupA5RSbaXcDpZ+vIzS9sJ7t8uk+aXc
+         hYDA==
+X-Gm-Message-State: AHQUAuaJMERBrcmvwOUi0hi382Ml8/Z+3OUB48z2FxK6n3BmITu9gdyX
+        NZXmiMTcjZjX9hsbU++5qqtwQw==
+X-Google-Smtp-Source: AHgI3Ia1l7zg8ZIJusrt9gs81kbzuuIvlBmZ/zKlgRDBVYi805pFTFd8x2BQ8CpiQaabmrJQyZhFyQ==
+X-Received: by 2002:adf:b6a1:: with SMTP id j33mr26817682wre.55.1549888005145;
+        Mon, 11 Feb 2019 04:26:45 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.41
+        by smtp.gmail.com with ESMTPSA id l20sm19494321wrb.93.2019.02.11.04.26.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 04:26:42 -0800 (PST)
+        Mon, 11 Feb 2019 04:26:44 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v2 24/33] ARM: davinci: cp-intc: use a common prefix for all symbols
-Date:   Mon, 11 Feb 2019 13:25:57 +0100
-Message-Id: <20190211122606.8662-25-brgl@bgdev.pl>
+Subject: [RESEND PATCH v2 26/33] ARM: davinci: cp-intc: use the new-style config structure
+Date:   Mon, 11 Feb 2019 13:25:59 +0100
+Message-Id: <20190211122606.8662-27-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211122606.8662-1-brgl@bgdev.pl>
 References: <20190211122606.8662-1-brgl@bgdev.pl>
@@ -79,339 +79,228 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-In preparation for moving the driver to drivers/irqchip do some
-cleanup: use a common prefix for all symbols.
+Modify the cp-intc driver to take all its configuration from the new
+config structure. Stop referencing davinci_soc_info in any way.
+Move the declaration for davinci_cp_intc_init() to
+irq-davinci-cp-intc.h and make it take the new config structure as
+parameter. Convert all users to the new version.
+
+Also: since the two da8xx SoCs default all irq priorities to 7, just
+drop the priority configuration at all and hardcode the channels to 7.
+
+It will simplify the driver code and make our lives easier when it
+comes to device-tree support.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/cp_intc.c             | 144 ++++++++++----------
- arch/arm/mach-davinci/da830.c               |   2 +-
- arch/arm/mach-davinci/da850.c               |   2 +-
- arch/arm/mach-davinci/include/mach/common.h |   2 +-
- 4 files changed, 77 insertions(+), 73 deletions(-)
+ arch/arm/mach-davinci/cp_intc.c             | 93 +++++++++------------
+ arch/arm/mach-davinci/da830.c               |  2 +-
+ arch/arm/mach-davinci/da850.c               |  2 +-
+ arch/arm/mach-davinci/include/mach/common.h |  1 -
+ include/linux/irqchip/irq-davinci-cp-intc.h |  2 +
+ 5 files changed, 44 insertions(+), 56 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-index 82110d332c82..bf77b6950273 100644
+index dcd43b067a6a..faf3d74d3719 100644
 --- a/arch/arm/mach-davinci/cp_intc.c
 +++ b/arch/arm/mach-davinci/cp_intc.c
-@@ -22,63 +22,67 @@
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
++#include <linux/irqchip/irq-davinci-cp-intc.h>
+ #include <linux/irqdomain.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+@@ -20,7 +21,6 @@
+ #include <linux/of_irq.h>
+ 
  #include <asm/exception.h>
- #include <mach/common.h>
+-#include <mach/common.h>
  
--#define CP_INTC_CTRL			0x04
--#define CP_INTC_HOST_CTRL		0x0C
--#define CP_INTC_GLOBAL_ENABLE		0x10
--#define CP_INTC_SYS_STAT_IDX_CLR	0x24
--#define CP_INTC_SYS_ENABLE_IDX_SET	0x28
--#define CP_INTC_SYS_ENABLE_IDX_CLR	0x2C
--#define CP_INTC_HOST_ENABLE_IDX_SET	0x34
--#define CP_INTC_HOST_ENABLE_IDX_CLR	0x38
--#define CP_INTC_PRIO_IDX		0x80
--#define CP_INTC_SYS_STAT_CLR(n)		(0x0280 + (n << 2))
--#define CP_INTC_SYS_ENABLE_CLR(n)	(0x0380 + (n << 2))
--#define CP_INTC_CHAN_MAP(n)		(0x0400 + (n << 2))
--#define CP_INTC_SYS_POLARITY(n)		(0x0D00 + (n << 2))
--#define CP_INTC_SYS_TYPE(n)		(0x0D80 + (n << 2))
--#define CP_INTC_HOST_ENABLE(n)		(0x1500 + (n << 2))
--
-+#define DAVINCI_CP_INTC_CTRL			0x04
-+#define DAVINCI_CP_INTC_HOST_CTRL		0x0C
-+#define DAVINCI_CP_INTC_GLOBAL_ENABLE		0x10
-+#define DAVINCI_CP_INTC_SYS_STAT_IDX_CLR	0x24
-+#define DAVINCI_CP_INTC_SYS_ENABLE_IDX_SET	0x28
-+#define DAVINCI_CP_INTC_SYS_ENABLE_IDX_CLR	0x2C
-+#define DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET	0x34
-+#define DAVINCI_CP_INTC_HOST_ENABLE_IDX_CLR	0x38
-+#define DAVINCI_CP_INTC_PRIO_IDX		0x80
-+#define DAVINCI_CP_INTC_SYS_STAT_CLR(n)		(0x0280 + (n << 2))
-+#define DAVINCI_CP_INTC_SYS_ENABLE_CLR(n)	(0x0380 + (n << 2))
-+#define DAVINCI_CP_INTC_CHAN_MAP(n)		(0x0400 + (n << 2))
-+#define DAVINCI_CP_INTC_SYS_POLARITY(n)		(0x0D00 + (n << 2))
-+#define DAVINCI_CP_INTC_SYS_TYPE(n)		(0x0D80 + (n << 2))
-+#define DAVINCI_CP_INTC_HOST_ENABLE(n)		(0x1500 + (n << 2))
- #define DAVINCI_CP_INTC_PRI_INDX_MASK		GENMASK(9, 0)
- #define DAVINCI_CP_INTC_GPIR_NONE		BIT(31)
- 
--static void __iomem *davinci_intc_base;
-+static void __iomem *davinci_cp_intc_base;
-+static struct irq_domain *davinci_cp_intc_irq_domain;
- 
--static inline unsigned int cp_intc_read(unsigned offset)
-+static inline unsigned int davinci_cp_intc_read(unsigned int offset)
- {
--	return __raw_readl(davinci_intc_base + offset);
-+	return __raw_readl(davinci_cp_intc_base + offset);
- }
- 
--static inline void cp_intc_write(unsigned long value, unsigned offset)
-+static inline void davinci_cp_intc_write(unsigned long value,
-+					 unsigned int offset)
- {
--	__raw_writel(value, davinci_intc_base + offset);
-+	__raw_writel(value, davinci_cp_intc_base + offset);
- }
- 
--static void cp_intc_ack_irq(struct irq_data *d)
-+static void davinci_cp_intc_ack_irq(struct irq_data *d)
- {
--	cp_intc_write(d->hwirq, CP_INTC_SYS_STAT_IDX_CLR);
-+	davinci_cp_intc_write(d->hwirq, DAVINCI_CP_INTC_SYS_STAT_IDX_CLR);
- }
- 
- /* Disable interrupt */
--static void cp_intc_mask_irq(struct irq_data *d)
-+static void davinci_cp_intc_mask_irq(struct irq_data *d)
- {
- 	/* XXX don't know why we need to disable nIRQ here... */
--	cp_intc_write(1, CP_INTC_HOST_ENABLE_IDX_CLR);
--	cp_intc_write(d->hwirq, CP_INTC_SYS_ENABLE_IDX_CLR);
--	cp_intc_write(1, CP_INTC_HOST_ENABLE_IDX_SET);
-+	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_CLR);
-+	davinci_cp_intc_write(d->hwirq, DAVINCI_CP_INTC_SYS_ENABLE_IDX_CLR);
-+	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET);
- }
- 
- /* Enable interrupt */
--static void cp_intc_unmask_irq(struct irq_data *d)
-+static void davinci_cp_intc_unmask_irq(struct irq_data *d)
- {
--	cp_intc_write(d->hwirq, CP_INTC_SYS_ENABLE_IDX_SET);
-+	davinci_cp_intc_write(d->hwirq, DAVINCI_CP_INTC_SYS_ENABLE_IDX_SET);
- }
- 
--static int cp_intc_set_irq_type(struct irq_data *d, unsigned int flow_type)
-+static int davinci_cp_intc_set_irq_type(struct irq_data *d,
-+					unsigned int flow_type)
- {
- 	unsigned reg		= BIT_WORD(d->hwirq);
- 	unsigned mask		= BIT_MASK(d->hwirq);
--	unsigned polarity	= cp_intc_read(CP_INTC_SYS_POLARITY(reg));
--	unsigned type		= cp_intc_read(CP_INTC_SYS_TYPE(reg));
-+	unsigned polarity	= davinci_cp_intc_read(
-+					DAVINCI_CP_INTC_SYS_POLARITY(reg));
-+	unsigned type		= davinci_cp_intc_read(
-+					DAVINCI_CP_INTC_SYS_TYPE(reg));
- 
- 	switch (flow_type) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -101,25 +105,23 @@ static int cp_intc_set_irq_type(struct irq_data *d, unsigned int flow_type)
- 		return -EINVAL;
- 	}
- 
--	cp_intc_write(polarity, CP_INTC_SYS_POLARITY(reg));
--	cp_intc_write(type, CP_INTC_SYS_TYPE(reg));
-+	davinci_cp_intc_write(polarity, DAVINCI_CP_INTC_SYS_POLARITY(reg));
-+	davinci_cp_intc_write(type, DAVINCI_CP_INTC_SYS_TYPE(reg));
- 
- 	return 0;
- }
- 
--static struct irq_chip cp_intc_irq_chip = {
-+static struct irq_chip davinci_cp_intc_irq_chip = {
- 	.name		= "cp_intc",
--	.irq_ack	= cp_intc_ack_irq,
--	.irq_mask	= cp_intc_mask_irq,
--	.irq_unmask	= cp_intc_unmask_irq,
--	.irq_set_type	= cp_intc_set_irq_type,
-+	.irq_ack	= davinci_cp_intc_ack_irq,
-+	.irq_mask	= davinci_cp_intc_mask_irq,
-+	.irq_unmask	= davinci_cp_intc_unmask_irq,
-+	.irq_set_type	= davinci_cp_intc_set_irq_type,
- 	.flags		= IRQCHIP_SKIP_SET_WAKE,
- };
- 
--static struct irq_domain *cp_intc_domain;
--
- static asmlinkage void __exception_irq_entry
--cp_intc_handle_irq(struct pt_regs *regs)
-+davinci_cp_intc_handle_irq(struct pt_regs *regs)
- {
- 	int gpir, irqnr, none;
- 
-@@ -128,7 +130,7 @@ cp_intc_handle_irq(struct pt_regs *regs)
- 	 * indicates a spurious irq.
- 	 */
- 
--	gpir = cp_intc_read(CP_INTC_PRIO_IDX);
-+	gpir = davinci_cp_intc_read(DAVINCI_CP_INTC_PRIO_IDX);
- 	irqnr = gpir & DAVINCI_CP_INTC_PRI_INDX_MASK;
- 	none = gpir & DAVINCI_CP_INTC_GPIR_NONE;
- 
-@@ -137,27 +139,27 @@ cp_intc_handle_irq(struct pt_regs *regs)
- 		return;
- 	}
- 
--	handle_domain_irq(cp_intc_domain, irqnr, regs);
-+	handle_domain_irq(davinci_cp_intc_irq_domain, irqnr, regs);
- }
- 
--static int cp_intc_host_map(struct irq_domain *h, unsigned int virq,
-+static int davinci_cp_intc_host_map(struct irq_domain *h, unsigned int virq,
- 			  irq_hw_number_t hw)
- {
- 	pr_debug("cp_intc_host_map(%d, 0x%lx)\n", virq, hw);
- 
--	irq_set_chip(virq, &cp_intc_irq_chip);
-+	irq_set_chip(virq, &davinci_cp_intc_irq_chip);
- 	irq_set_probe(virq);
- 	irq_set_handler(virq, handle_edge_irq);
- 	return 0;
- }
- 
--static const struct irq_domain_ops cp_intc_host_ops = {
--	.map = cp_intc_host_map,
-+static const struct irq_domain_ops davinci_cp_intc_irq_domain_ops = {
-+	.map = davinci_cp_intc_host_map,
+ #define DAVINCI_CP_INTC_CTRL			0x04
+ #define DAVINCI_CP_INTC_HOST_CTRL		0x0c
+@@ -158,22 +158,15 @@ static const struct irq_domain_ops davinci_cp_intc_irq_domain_ops = {
  	.xlate = irq_domain_xlate_onetwocell,
  };
  
--static int __init cp_intc_of_init(struct device_node *node,
--				  struct device_node *parent)
-+static int __init davinci_cp_intc_of_init(struct device_node *node,
-+					  struct device_node *parent)
+-static int __init davinci_cp_intc_of_init(struct device_node *node,
+-					  struct device_node *parent)
++static int __init
++davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
++			struct device_node *node)
  {
- 	u32 num_irq		= davinci_soc_info.intc_irq_num;
- 	u8 *irq_prio		= davinci_soc_info.intc_irq_prios;
-@@ -165,35 +167,35 @@ static int __init cp_intc_of_init(struct device_node *node,
- 	int i, irq_base;
- 
- 	if (node) {
--		davinci_intc_base = of_iomap(node, 0);
-+		davinci_cp_intc_base = of_iomap(node, 0);
- 		if (of_property_read_u32(node, "ti,intc-size", &num_irq))
- 			pr_warn("unable to get intc-size, default to %d\n",
- 				num_irq);
- 	} else {
--		davinci_intc_base = ioremap(davinci_soc_info.intc_base, SZ_8K);
-+		davinci_cp_intc_base = ioremap(davinci_soc_info.intc_base, SZ_8K);
- 	}
--	if (WARN_ON(!davinci_intc_base))
-+	if (WARN_ON(!davinci_cp_intc_base))
+-	u32 num_irq		= davinci_soc_info.intc_irq_num;
+-	u8 *irq_prio		= davinci_soc_info.intc_irq_prios;
+-	unsigned num_reg	= BITS_TO_LONGS(num_irq);
+-	int i, irq_base;
+-
+-	if (node) {
+-		davinci_cp_intc_base = of_iomap(node, 0);
+-		if (of_property_read_u32(node, "ti,intc-size", &num_irq))
+-			pr_warn("unable to get intc-size, default to %d\n",
+-				num_irq);
+-	} else {
+-		davinci_cp_intc_base = ioremap(davinci_soc_info.intc_base, SZ_8K);
+-	}
++	unsigned int num_regs = BITS_TO_LONGS(config->num_irqs);
++	int offset, irq_base;
++
++	davinci_cp_intc_base = ioremap(config->reg.start,
++				       resource_size(&config->reg));
+ 	if (WARN_ON(!davinci_cp_intc_base))
  		return -EINVAL;
  
--	cp_intc_write(0, CP_INTC_GLOBAL_ENABLE);
-+	davinci_cp_intc_write(0, DAVINCI_CP_INTC_GLOBAL_ENABLE);
- 
- 	/* Disable all host interrupts */
--	cp_intc_write(0, CP_INTC_HOST_ENABLE(0));
-+	davinci_cp_intc_write(0, DAVINCI_CP_INTC_HOST_ENABLE(0));
+@@ -183,51 +176,29 @@ static int __init davinci_cp_intc_of_init(struct device_node *node,
+ 	davinci_cp_intc_write(0, DAVINCI_CP_INTC_HOST_ENABLE(0));
  
  	/* Disable system interrupts */
- 	for (i = 0; i < num_reg; i++)
--		cp_intc_write(~0, CP_INTC_SYS_ENABLE_CLR(i));
-+		davinci_cp_intc_write(~0, DAVINCI_CP_INTC_SYS_ENABLE_CLR(i));
+-	for (i = 0; i < num_reg; i++)
+-		davinci_cp_intc_write(~0, DAVINCI_CP_INTC_SYS_ENABLE_CLR(i));
++	for (offset = 0; offset < num_regs; offset++)
++		davinci_cp_intc_write(~0,
++			DAVINCI_CP_INTC_SYS_ENABLE_CLR(offset));
  
  	/* Set to normal mode, no nesting, no priority hold */
--	cp_intc_write(0, CP_INTC_CTRL);
--	cp_intc_write(0, CP_INTC_HOST_CTRL);
-+	davinci_cp_intc_write(0, DAVINCI_CP_INTC_CTRL);
-+	davinci_cp_intc_write(0, DAVINCI_CP_INTC_HOST_CTRL);
+ 	davinci_cp_intc_write(0, DAVINCI_CP_INTC_CTRL);
+ 	davinci_cp_intc_write(0, DAVINCI_CP_INTC_HOST_CTRL);
  
  	/* Clear system interrupt status */
- 	for (i = 0; i < num_reg; i++)
--		cp_intc_write(~0, CP_INTC_SYS_STAT_CLR(i));
-+		davinci_cp_intc_write(~0, DAVINCI_CP_INTC_SYS_STAT_CLR(i));
+-	for (i = 0; i < num_reg; i++)
+-		davinci_cp_intc_write(~0, DAVINCI_CP_INTC_SYS_STAT_CLR(i));
++	for (offset = 0; offset < num_regs; offset++)
++		davinci_cp_intc_write(~0,
++			DAVINCI_CP_INTC_SYS_STAT_CLR(offset));
  
  	/* Enable nIRQ (what about nFIQ?) */
--	cp_intc_write(1, CP_INTC_HOST_ENABLE_IDX_SET);
-+	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET);
+ 	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET);
  
- 	/*
- 	 * Priority is determined by host channel: lower channel number has
-@@ -212,7 +214,7 @@ static int __init cp_intc_of_init(struct device_node *node,
- 					val |= irq_prio[k] << 24;
- 			}
+-	/*
+-	 * Priority is determined by host channel: lower channel number has
+-	 * higher priority i.e. channel 0 has highest priority and channel 31
+-	 * had the lowest priority.
+-	 */
+-	num_reg = (num_irq + 3) >> 2;	/* 4 channels per register */
+-	if (irq_prio) {
+-		unsigned j, k;
+-		u32 val;
+-
+-		for (k = i = 0; i < num_reg; i++) {
+-			for (val = j = 0; j < 4; j++, k++) {
+-				val >>= 8;
+-				if (k < num_irq)
+-					val |= irq_prio[k] << 24;
+-			}
+-
+-			davinci_cp_intc_write(val, DAVINCI_CP_INTC_CHAN_MAP(i));
+-		}
+-	} else	{
+-		/*
+-		 * Default everything to channel 15 if priority not specified.
+-		 * Note that channel 0-1 are mapped to nFIQ and channels 2-31
+-		 * are mapped to nIRQ.
+-		 */
+-		for (i = 0; i < num_reg; i++)
+-			davinci_cp_intc_write(0x0f0f0f0f,
+-					      DAVINCI_CP_INTC_CHAN_MAP(i));
+-	}
++	/* Default all priorities to channel 7. */
++	num_regs = (config->num_irqs + 3) >> 2;	/* 4 channels per register */
++	for (offset = 0; offset < num_regs; offset++)
++		davinci_cp_intc_write(0x07070707,
++			DAVINCI_CP_INTC_CHAN_MAP(offset));
  
--			cp_intc_write(val, CP_INTC_CHAN_MAP(i));
-+			davinci_cp_intc_write(val, DAVINCI_CP_INTC_CHAN_MAP(i));
- 		}
- 	} else	{
- 		/*
-@@ -221,7 +223,8 @@ static int __init cp_intc_of_init(struct device_node *node,
- 		 * are mapped to nIRQ.
- 		 */
- 		for (i = 0; i < num_reg; i++)
--			cp_intc_write(0x0f0f0f0f, CP_INTC_CHAN_MAP(i));
-+			davinci_cp_intc_write(0x0f0f0f0f,
-+					      DAVINCI_CP_INTC_CHAN_MAP(i));
- 	}
- 
- 	irq_base = irq_alloc_descs(-1, 0, num_irq, 0);
-@@ -231,25 +234,26 @@ static int __init cp_intc_of_init(struct device_node *node,
- 	}
+-	irq_base = irq_alloc_descs(-1, 0, num_irq, 0);
++	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
+ 	if (irq_base < 0) {
+ 		pr_warn("Couldn't allocate IRQ numbers\n");
+ 		irq_base = 0;
+@@ -235,7 +206,7 @@ static int __init davinci_cp_intc_of_init(struct device_node *node,
  
  	/* create a legacy host */
--	cp_intc_domain = irq_domain_add_legacy(node, num_irq,
--					irq_base, 0, &cp_intc_host_ops, NULL);
-+	davinci_cp_intc_irq_domain = irq_domain_add_legacy(
-+					node, num_irq, irq_base, 0,
-+					&davinci_cp_intc_irq_domain_ops, NULL);
+ 	davinci_cp_intc_irq_domain = irq_domain_add_legacy(
+-					node, num_irq, irq_base, 0,
++					node, config->num_irqs, irq_base, 0,
+ 					&davinci_cp_intc_irq_domain_ops, NULL);
  
--	if (!cp_intc_domain) {
-+	if (!davinci_cp_intc_irq_domain) {
- 		pr_err("cp_intc: failed to allocate irq host!\n");
- 		return -EINVAL;
- 	}
- 
--	set_handle_irq(cp_intc_handle_irq);
-+	set_handle_irq(davinci_cp_intc_handle_irq);
- 
- 	/* Enable global interrupt */
--	cp_intc_write(1, CP_INTC_GLOBAL_ENABLE);
-+	davinci_cp_intc_write(1, DAVINCI_CP_INTC_GLOBAL_ENABLE);
- 
+ 	if (!davinci_cp_intc_irq_domain) {
+@@ -251,9 +222,25 @@ static int __init davinci_cp_intc_of_init(struct device_node *node,
  	return 0;
  }
  
--void __init cp_intc_init(void)
-+void __init davinci_cp_intc_init(void)
+-void __init davinci_cp_intc_init(void)
++int __init davinci_cp_intc_init(const struct davinci_cp_intc_config *config)
  {
--	cp_intc_of_init(NULL, NULL);
-+	davinci_cp_intc_of_init(NULL, NULL);
+-	davinci_cp_intc_of_init(NULL, NULL);
++	return davinci_cp_intc_do_init(config, NULL);
  }
  
--IRQCHIP_DECLARE(cp_intc, "ti,cp-intc", cp_intc_of_init);
-+IRQCHIP_DECLARE(cp_intc, "ti,cp-intc", davinci_cp_intc_of_init);
++static int __init davinci_cp_intc_of_init(struct device_node *node,
++					  struct device_node *parent)
++{
++	struct davinci_cp_intc_config config = { };
++	int ret;
++
++	ret = of_address_to_resource(node, 0, &config.reg);
++	if (WARN_ON(ret))
++		return ret;
++
++	ret = of_property_read_u32(node, "ti,intc-size", &config.num_irqs);
++	if (WARN_ON(ret))
++		return ret;
++
++	return davinci_cp_intc_do_init(&config, node);
++}
+ IRQCHIP_DECLARE(cp_intc, "ti,cp-intc", davinci_cp_intc_of_init);
 diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 38af72be1a85..0eb48ed2d423 100644
+index 0eb48ed2d423..7ce0b5f1200d 100644
 --- a/arch/arm/mach-davinci/da830.c
 +++ b/arch/arm/mach-davinci/da830.c
 @@ -833,7 +833,7 @@ static const struct davinci_cp_intc_config da830_cp_intc_config = {
  
  void __init da830_init_irq(void)
  {
--	cp_intc_init();
-+	davinci_cp_intc_init();
+-	davinci_cp_intc_init();
++	davinci_cp_intc_init(&da830_cp_intc_config);
  }
  
  void __init da830_init_time(void)
 diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 9a3ce68c0de4..fe274ab63fc8 100644
+index fe274ab63fc8..62a00fa94696 100644
 --- a/arch/arm/mach-davinci/da850.c
 +++ b/arch/arm/mach-davinci/da850.c
 @@ -771,7 +771,7 @@ static const struct davinci_cp_intc_config da850_cp_intc_config = {
  
  void __init da850_init_irq(void)
  {
--	cp_intc_init();
-+	davinci_cp_intc_init();
+-	davinci_cp_intc_init();
++	davinci_cp_intc_init(&da850_cp_intc_config);
  }
  
  void __init da850_init_time(void)
 diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index 3f3f1169d47e..7ad79171b4b5 100644
+index 7ad79171b4b5..14e0e1c40611 100644
 --- a/arch/arm/mach-davinci/include/mach/common.h
 +++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -22,7 +22,7 @@
+@@ -22,7 +22,6 @@
  #define DAVINCI_INTC_START		NR_IRQS
  #define DAVINCI_INTC_IRQ(_irqnum)	(DAVINCI_INTC_START + (_irqnum))
  
--void cp_intc_init(void);
-+void davinci_cp_intc_init(void);
+-void davinci_cp_intc_init(void);
  void davinci_timer_init(struct clk *clk);
  
  struct davinci_timer_instance {
+diff --git a/include/linux/irqchip/irq-davinci-cp-intc.h b/include/linux/irqchip/irq-davinci-cp-intc.h
+index 2270a6167b98..8d71ed5b5a61 100644
+--- a/include/linux/irqchip/irq-davinci-cp-intc.h
++++ b/include/linux/irqchip/irq-davinci-cp-intc.h
+@@ -20,4 +20,6 @@ struct davinci_cp_intc_config {
+ 	unsigned int num_irqs;
+ };
+ 
++int davinci_cp_intc_init(const struct davinci_cp_intc_config *config);
++
+ #endif /* _LINUX_IRQ_DAVINCI_CP_INTC_ */
 -- 
 2.20.1
 
