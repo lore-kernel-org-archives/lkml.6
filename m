@@ -2,140 +2,91 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E506C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7796C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F3AC20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 05:49:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BTAFReVx"
+	by mail.kernel.org (Postfix) with ESMTP id AA10D2084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 06:09:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfBKFtP (ORCPT
+        id S1726050AbfBKGJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 00:49:15 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48712 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKFtP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 00:49:15 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1B5n4eg080661;
-        Sun, 10 Feb 2019 23:49:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549864144;
-        bh=qiqXLGy/wp1zD1QJmnuAlOFLiFkxWPZmqOodvt6seNY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=BTAFReVxLuhkfhKAI6KR3HMU2YOElcSiQ4Dzaiaj/jVUc51Z7OdBOX2Kd8HPGW5i8
-         LxUcflnwG7Sy8hRuz/4O8H1cETSPGUxWJqJ84V3J5MlQehh50I5XB/UiXSuV2sCnJp
-         MvMW+zX6zPqQPe4yi6B5dEP0eu5Ej2oX7GjO3eGI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1B5n3xB001406
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 10 Feb 2019 23:49:04 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 10
- Feb 2019 23:49:03 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sun, 10 Feb 2019 23:49:03 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1B5mxBU027901;
-        Sun, 10 Feb 2019 23:49:00 -0600
-Subject: Re: [PATCH v2] PCI: endpoint: functions: Use kmemdup instead of
- duplicating its function
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Wen Yang <wen.yang99@zte.com.cn>
-CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <zhong.weidong@zte.com.cn>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-References: <20181206125225.9497-1-wen.yang99@zte.com.cn>
- <20190208122027.GE13009@e107981-ln.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <aa4280f5-9750-05e9-7737-044d8f127521@ti.com>
-Date:   Mon, 11 Feb 2019 11:18:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190208122027.GE13009@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 11 Feb 2019 01:09:38 -0500
+Received: from mga17.intel.com ([192.55.52.151]:57411 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725931AbfBKGJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 01:09:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2019 22:09:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="115217533"
+Received: from helong-vb.png.intel.com ([10.226.243.17])
+  by orsmga006.jf.intel.com with ESMTP; 10 Feb 2019 22:09:34 -0800
+From:   "Hean-Loong, Ong" <hean.loong.ong@intel.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Rienk de Jong <rienk.dejong@quest-innovations.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, hean.loong.ong@intel.com,
+        yves.vandervennet@intel.com, chin.liang.see@intel.com,
+        Ong@vger.kernel.org
+Subject: [PATCHv12 0/3] Intel FPGA Video and Image Processing Suite
+Date:   Mon, 11 Feb 2019 14:09:23 +0800
+Message-Id: <20190211060926.3433-1-hean.loong.ong@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+From: Ong, Hean Loong <hean.loong.ong@intel.com>
 
-On 08/02/19 5:50 PM, Lorenzo Pieralisi wrote:
-> On Thu, Dec 06, 2018 at 08:52:25PM +0800, Wen Yang wrote:
->> kmemdup has implemented the function that kmalloc() + memcpy().
->> We prefer to kmemdup rather than code opened implementation.
->>
->> This issue was detected with the help of coccinelle.
->>
->> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
->> CC: Kishon Vijay Abraham I <kishon@ti.com>
->> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> CC: Bjorn Helgaas <bhelgaas@google.com>
->> CC: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> CC: Niklas Cassel <niklas.cassel@axis.com>
->> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> CC: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
->> CC: linux-pci@vger.kernel.org (open list:PCI ENDPOINT SUBSYSTEM)
->> CC: linux-kernel@vger.kernel.org (open list)
->> ---
->>  drivers/pci/endpoint/functions/pci-epf-test.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> Kishon,
-> 
-> this looks OK to me, anything I am missing ?
+The FPGA FrameBuffer Soft IP could be seen  as the GPU and the DRM driver patch here is 
+allocating memory for information to be streamed from the ARM/Linux to the display port. 
 
-For the existing code this might seem the right thing to do but ideally the
-memcpy here should be changed to memcpy_fromio/memcpy_toio.
+Basically the driver just wraps the information such as the pixels to be drawn by 
+the Sodt IP FrameBuffer 2.
 
-Also later when we plan to use DMA (on the endpoint) for data transfer, we have
-to use kzalloc and dma_map_single APIs.
+The piece of hardware in discussion is the SoC FPGA where Linux runs on the ARM chip 
+and the FGPA is driven by its NIOS soft core with its own proprietary firmware.
 
-So maybe the right thing would be to just fix it to use memcpy_fromio here.
+For example the application from the ARM Linux would have to write information 
+on the /dev/fb0 with the information stored in the SDRAM to be fetched by the 
+Framebuffer 2 Soft IP and displayed on the Display Port Monitor.
 
-Thanks
-Kishon
-> 
-> Lorenzo
-> 
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index 3e86fa3c7da3..8df6c019f8a2 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -169,14 +169,12 @@ static int pci_epf_test_read(struct pci_epf_test *epf_test)
->>  		goto err_addr;
->>  	}
->>  
->> -	buf = kzalloc(reg->size, GFP_KERNEL);
->> +	buf = kmemdup(src_addr, reg->size, GFP_KERNEL);
->>  	if (!buf) {
->>  		ret = -ENOMEM;
->>  		goto err_map_addr;
->>  	}
->>  
->> -	memcpy(buf, src_addr, reg->size);
->> -
->>  	crc32 = crc32_le(~0, buf, reg->size);
->>  	if (crc32 != reg->checksum)
->>  		ret = -EIO;
->> -- 
->> 2.19.1
->>
+
+Ong Hean Loong (1):
+  ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
+
+Ong, Hean Loong (2):
+  ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
+  ARM:drm ivip Intel FPGA Video and Image Processing Suite
+
+ .../devicetree/bindings/display/altr,vip-fb2.txt   |   63 +++++++
+ arch/arm/configs/socfpga_defconfig                 |    5 +
+ drivers/gpu/drm/Kconfig                            |    2 +
+ drivers/gpu/drm/Makefile                           |    1 +
+ drivers/gpu/drm/ivip/Kconfig                       |   14 ++
+ drivers/gpu/drm/ivip/Makefile                      |    7 +
+ drivers/gpu/drm/ivip/intel_vip_conn.c              |   91 ++++++++++
+ drivers/gpu/drm/ivip/intel_vip_core.c              |  189 ++++++++++++++++++++
+ drivers/gpu/drm/ivip/intel_vip_drv.h               |   73 ++++++++
+ drivers/gpu/drm/ivip/intel_vip_of.c                |  181 +++++++++++++++++++
+ 10 files changed, 626 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
+ create mode 100644 drivers/gpu/drm/ivip/Kconfig
+ create mode 100644 drivers/gpu/drm/ivip/Makefile
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_core.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_of.c
+
