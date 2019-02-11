@@ -2,99 +2,155 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8F7C282CE
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F362BC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01793222A4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549899342;
-	bh=CMj7OnYv5bRVvqyDaE8QqzSu2Aqt2fz/Bh07KMwF0gQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iUvxt9nrZbEutt2/WVD9sIP/Nq2BfEyw3szZ8PRZfjc3eFcqAEM9HP229q0WzYpnt
-	 HtNmMllv3HaVHOF6EfHDVozzK2kMCKK4L9L6fRzEiRM1oJeCBMVAVfQDrCwv97lpWy
-	 TXdma1rA4JOT3Gstn5tPQrfK0xKA5cC4YPI4nDvQ=
+	by mail.kernel.org (Postfix) with ESMTP id CC3F8222A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 15:35:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388768AbfBKPfk (ORCPT
+        id S2388850AbfBKPfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:35:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38648 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 10:35:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:52022 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733153AbfBKOwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:52:23 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97B20214DA;
-        Mon, 11 Feb 2019 14:52:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549896743;
-        bh=CMj7OnYv5bRVvqyDaE8QqzSu2Aqt2fz/Bh07KMwF0gQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a/LIUDRIlpY+aq5QLpX+WwVcmLnPm6JrB1Dc+bBJ+Dqn0IVDe8GQUmyKFzdKRs3Jo
-         9dwdFSlEmNTjd8Czqt487XzkJDuwzZQ8Onx41GCIgO2SByhbMD4gSeewlAxJZjmr4X
-         uaXTbYlcnxLlF5wSqnlLycad4ou7pxVAD8oYTWU4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ye Yin <dbyin@tencent.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 255/313] fs/xfs: fix f_ffree value for statfs when project quota is set
-Date:   Mon, 11 Feb 2019 15:18:55 +0100
-Message-Id: <20190211141910.372677531@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190211141852.749630980@linuxfoundation.org>
-References: <20190211141852.749630980@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1730406AbfBKPfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 10:35:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2B1380D;
+        Mon, 11 Feb 2019 07:35:43 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 27D453F589;
+        Mon, 11 Feb 2019 07:35:42 -0800 (PST)
+Subject: Re: [PATCH V3 1/4] dt-binding: irq: imx-irqsteer: use irq number
+ instead of group number
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+References: <1548921464-28917-1-git-send-email-aisheng.dong@nxp.com>
+ <1548921464-28917-2-git-send-email-aisheng.dong@nxp.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <8db40cd7-7695-0267-c626-26ebe086b2b8@arm.com>
+Date:   Mon, 11 Feb 2019 15:35:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1548921464-28917-2-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On 31/01/2019 08:03, Aisheng Dong wrote:
+> Not all 64 interrupts may be used in one group. e.g. most irqsteer in
+> imx8qxp and imx8qm subsystems supports only 32 interrupts.
+> 
+> As the IP integration parameters are Channel number and interrupts number,
+> let's use fsl,irqs-num to represents how many interrupts supported
+> by this irqsteer channel.
+> 
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+> ChangeLog:
+>  v1->v2:
+>   * change property name fsl,irqs-per-chan to fsl,num-irqs.
+> ---
+>  .../devicetree/bindings/interrupt-controller/fsl,irqsteer.txt       | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> index 45790ce..6d0a41b 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> @@ -16,8 +16,8 @@ Required properties:
+>  - #interrupt-cells: Specifies the number of cells needed to encode an
+>    interrupt source. The value must be 1.
+>  - fsl,channel: The output channel that all input IRQs should be steered into.
+> -- fsl,irq-groups: Number of IRQ groups managed by this controller instance.
+> -  Each group manages 64 input interrupts.
+> +- fsl,num-irqs: Number of input interrupts of this channel.
+> +  Should be multiple of 32 input interrupts and up to 512 interrupts.
+>  
+>  Example:
+>  
+> @@ -28,7 +28,7 @@ Example:
+>  		clocks = <&clk IMX8MQ_CLK_DISP_APB_ROOT>;
+>  		clock-names = "ipg";
+>  		fsl,channel = <0>;
+> -		fsl,irq-groups = <1>;
+> +		fsl,num-irqs = <64>;
+>  		interrupt-controller;
+>  		#interrupt-cells = <1>;
+>  	};
+> 
 
-------------------
+This is a change to an existing binding, so I'd need the Ack from a DT
+maintainer before I can queue this.
 
-commit de7243057e7cefa923fa5f467c0f1ec24eef41d2 upsream.
+Thanks,
 
-When project is set, we should use inode limit minus the used count
-
-Signed-off-by: Ye Yin <dbyin@tencent.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/xfs/xfs_qm_bhv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_qm_bhv.c b/fs/xfs/xfs_qm_bhv.c
-index 73a1d77ec187..3091e4bc04ef 100644
---- a/fs/xfs/xfs_qm_bhv.c
-+++ b/fs/xfs/xfs_qm_bhv.c
-@@ -40,7 +40,7 @@ xfs_fill_statvfs_from_dquot(
- 		statp->f_files = limit;
- 		statp->f_ffree =
- 			(statp->f_files > dqp->q_res_icount) ?
--			 (statp->f_ffree - dqp->q_res_icount) : 0;
-+			 (statp->f_files - dqp->q_res_icount) : 0;
- 	}
- }
- 
+	M.
 -- 
-2.19.1
-
-
-
+Jazz is not dead. It just smells funny...
