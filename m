@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0EBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FE4C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E028C20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEE2E2075C
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895214;
-	bh=57IGTE/o9VT6eHD3lmKZ+r73F4KKa94SOIwc2/ngDBI=;
+	s=default; t=1549895217;
+	bh=1SdnDbIotud4h1uvDmQrJkx7PigJD95SbH2SP2QCJjs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gpc+4K9wFrkGzwZHILte33FF2mqK7M2OaX8D4N1aNboN1tvuz3CydJR/2GzJtCgQh
-	 6tfB+/nB0OgmBxYoE9ihzkJl08unen2iLmdcQd8Y9pGoxawhDb1MKhYH6LM77TuKW9
-	 u8qZpIMebuuca0q1qkWPgx9mEjFTDP48QgtyvUhc=
+	b=w5L+FAi2Tvp6EEQ/hx/YcdhJRtFt9U06FBXiHVQ7n6AoRuXEG3beGm7MFK9h3S0xQ
+	 aNpugFom/QTuNPKnn8Y3kQQhIZjd95g+vMZNWafGDxHirlg83fsKHjf/01VPeo6E3L
+	 OoTKe5aHGAbVbmBzpQRi/rFL1l6hVaex4gZ2DH3o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbfBKO0v (ORCPT
+        id S1728061AbfBKO0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:26:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60720 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729608AbfBKO0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:26:49 -0500
+        id S1729608AbfBKO0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:26:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DEB920821;
-        Mon, 11 Feb 2019 14:26:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 563F92075C;
+        Mon, 11 Feb 2019 14:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895208;
-        bh=57IGTE/o9VT6eHD3lmKZ+r73F4KKa94SOIwc2/ngDBI=;
+        s=default; t=1549895211;
+        bh=1SdnDbIotud4h1uvDmQrJkx7PigJD95SbH2SP2QCJjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HwjTRHM6kt5KxrZwxvPzj55RxoJ2evby4K1wC8vo1uGxb5+hq6MdZDs1zUyMbOM7h
-         KU1pqJkRsI4q645Gsh6VMoR5J5ilL4UO14R4jEewTYxTcr862+dtyGuv7sBBzd43rn
-         WZ/RYdCQmvGCobBMv9PvYKONdl/Yu4k/IPtGNvVw=
+        b=ThAWxSjWLWi6YNJJyN4N5h1dqMMMxTW89+aSfSD248OXfWMDyDBttiRxQfEcP5u7V
+         mVdGrtG+YhNgtuMZrVaBUUZkOKGBmwEyqzIhB8SSqC/ME7ARgzOiLNJgXztbm64ZWW
+         GdIBPgQBkNbEDq6eu0GlhUYG0hHSKV1nq7BnmIk8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 129/352] pinctrl: sx150x: handle failure case of devm_kstrdup
-Date:   Mon, 11 Feb 2019 15:15:56 +0100
-Message-Id: <20190211141854.616086871@linuxfoundation.org>
+        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 130/352] iommu/amd: Fix amd_iommu=force_isolation
+Date:   Mon, 11 Feb 2019 15:15:57 +0100
+Message-Id: <20190211141854.703324382@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -66,62 +65,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a9d9f6b83f1bb05da849b3540e6d1f70ef1c2343 ]
+[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
 
-devm_kstrdup() may return NULL if internal allocation failed.
-Thus using  label, name  is unsafe without checking. Therefor
-in the unlikely case of allocation failure, sx150x_probe() simply
-returns -ENOMEM.
+The parameter is still there but it's ignored. We need to check its
+value before deciding to go into passthrough mode for AMD IOMMU v2
+capable device.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+We occasionally use this parameter to force v2 capable device into
+translation mode to debug memory corruption that we suspect is
+caused by DMA writes.
+
+To address the following comment from Joerg Roedel on the first
+version, v2 capability of device is completely ignored.
+> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
+> devices that support it.
+
+And from Documentation/admin-guide/kernel-parameters.txt:
+  This option does not override iommu=pt
+
+Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/iommu/amd_iommu.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index cbf58a10113d..4d87d75b9c6e 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1166,7 +1166,6 @@ static int sx150x_probe(struct i2c_client *client,
- 	}
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 1167ff0416cf..325f3bad118b 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -438,7 +438,14 @@ static int iommu_init_device(struct device *dev)
  
- 	/* Register GPIO controller */
--	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
- 	pctl->gpio.base = -1;
- 	pctl->gpio.ngpio = pctl->data->npins;
- 	pctl->gpio.get_direction = sx150x_gpio_get_direction;
-@@ -1180,6 +1179,10 @@ static int sx150x_probe(struct i2c_client *client,
- 	pctl->gpio.of_node = dev->of_node;
- #endif
- 	pctl->gpio.can_sleep = true;
-+	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
-+	if (!pctl->gpio.label)
-+		return -ENOMEM;
-+
- 	/*
- 	 * Setting multiple pins is not safe when all pins are not
- 	 * handled by the same regmap register. The oscio pin (present
-@@ -1200,13 +1203,15 @@ static int sx150x_probe(struct i2c_client *client,
+ 	dev_data->alias = get_alias(dev);
  
- 	/* Add Interrupt support if an irq is specified */
- 	if (client->irq > 0) {
--		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
--						   GFP_KERNEL);
- 		pctl->irq_chip.irq_mask = sx150x_irq_mask;
- 		pctl->irq_chip.irq_unmask = sx150x_irq_unmask;
- 		pctl->irq_chip.irq_set_type = sx150x_irq_set_type;
- 		pctl->irq_chip.irq_bus_lock = sx150x_irq_bus_lock;
- 		pctl->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
-+		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
-+						   GFP_KERNEL);
-+		if (!pctl->irq_chip.name)
-+			return -ENOMEM;
+-	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
++	/*
++	 * By default we use passthrough mode for IOMMUv2 capable device.
++	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
++	 * invalid address), we ignore the capability for the device so
++	 * it'll be forced to go into translation mode.
++	 */
++	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
++	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
+ 		struct amd_iommu *iommu;
  
- 		pctl->irq.masked = ~0;
- 		pctl->irq.sense = 0;
+ 		iommu = amd_iommu_rlookup_table[dev_data->devid];
 -- 
 2.19.1
 
