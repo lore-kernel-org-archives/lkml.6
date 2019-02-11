@@ -2,109 +2,315 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBABBC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0972AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 928B42146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:55:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2G2u39h"
+	by mail.kernel.org (Postfix) with ESMTP id CA45221479
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 07:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfBKHz3 (ORCPT
+        id S1726990AbfBKHze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 02:55:29 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41450 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKHz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 02:55:29 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b7so4885837pfi.8;
-        Sun, 10 Feb 2019 23:55:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ygAEYs2cUK0TFmtHBpTd5q1OXKnqXfmKH4w1qi/rkyE=;
-        b=N2G2u39hE7742HJ34qPv5zld3vE71j66atBmbESmuD7la48FpTSssaywppnOm5KUu4
-         Ylr+laAskz9xKmLsh3EPfmVfjTP7kOdiA7r+01vRcxQGNWZPXMXmWqOLtRd4SEa0H0V2
-         bOMTxVNwj/Qai5hZNZvVmdhu6Vgdz7xJ1ay3qKzuONaDiSUfkAWufnv3Sw+GGiYB7SHJ
-         kSSBUgGO18OTpuHilZp1I5/+aDCHVTb1lX+gy07NjAsZb9OfRgi9s5GNPPYbZTaP5sYI
-         OZtRGePYFQF+Ry/87MyrWPjMHWkdRv8AyoLQwFQge/RTYsdfFXQRQ39ThUjDvEm9PjgM
-         0y3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ygAEYs2cUK0TFmtHBpTd5q1OXKnqXfmKH4w1qi/rkyE=;
-        b=AtdB3r+q7vDsALi/5Lyb+vqID9l2amNEfCxe1F7VWNH0Y2g8dlEYNbBYoP4quW4ekd
-         SIirJmNHYuzwtEl+z4jKxkvATuM9wb4dD/Tq535coqG3OmHodSBaDoClQKZuFnblDzVl
-         ecCAhT10JFfyDdIPVJYlBlE95YDedqIX6ies523LTWzqKVHd85jEwi2zaCoPViCCQ3/K
-         PlEI615ELrLBL4GVorVWO71rxS14extocCY2y3YcCnL86nu6dlTfVXvvGQqqgeRLFGLv
-         fshQFWhdH1Ax74jiN6Uj+kIy6d0vQXSPpi4GM2f0UfwvC1O1bjWiYNhXzrUW0YB66vn3
-         nU8w==
-X-Gm-Message-State: AHQUAuYH8E09fVwRcZEy+QYbcZzlyuu+Qf+6C+vGB5jLhYU6i0kvqy6z
-        1sbBEmOv7afd8EsJiBHP5HA=
-X-Google-Smtp-Source: AHgI3IYwJrTZAnuaPYyDWZ08ETuWFKbUPQzGipOaxRvNkL74WbdP2DA2ucnKRH6VIK5oE9Ofh/9nyg==
-X-Received: by 2002:a63:da18:: with SMTP id c24mr16494423pgh.318.1549871728594;
-        Sun, 10 Feb 2019 23:55:28 -0800 (PST)
-Received: from localhost ([175.223.48.87])
-        by smtp.gmail.com with ESMTPSA id y72sm14624151pfa.98.2019.02.10.23.55.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 10 Feb 2019 23:55:27 -0800 (PST)
-Date:   Mon, 11 Feb 2019 16:55:24 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@ozlabs.org,
-        akpm@linux-foundation.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        dyoung@redhat.com, sergey.senozhatsky@gmail.com, pmladek@suse.com
-Subject: Re: [PATCH v3 1/7] dump_stack: Support adding to the dump stack arch
- description
-Message-ID: <20190211075524.GA26690@jagdpanzerIV>
-References: <20190207124635.3885-1-mpe@ellerman.id.au>
- <20190208185515.r6vkrezbd3odhpxt@home.goodmis.org>
+        Mon, 11 Feb 2019 02:55:34 -0500
+Received: from mga03.intel.com ([134.134.136.65]:20504 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbfBKHza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 02:55:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Feb 2019 23:55:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
+   d="scan'208";a="115234951"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by orsmga006.jf.intel.com with ESMTP; 10 Feb 2019 23:55:26 -0800
+Subject: Re: [RFC PATCH] perf, bpf: Retain kernel executable code in memory to
+ aid Intel PT tracing
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20190207111901.2399-1-adrian.hunter@intel.com>
+ <20190208232924.bpdjuaqufndigtd4@ast-mbp>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <85ebb8e5-97a0-801a-8d5f-bc09a72047bb@intel.com>
+Date:   Mon, 11 Feb 2019 09:54:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190208185515.r6vkrezbd3odhpxt@home.goodmis.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190208232924.bpdjuaqufndigtd4@ast-mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (02/08/19 13:55), Steven Rostedt wrote:
-[..]
-> > +	if (len) {
-> > +		/*
-> > +		 * Order the stores above in vsnprintf() vs the store of the
-> > +		 * space below which joins the two strings. Note this doesn't
-> > +		 * make the code truly race free because there is no barrier on
-> > +		 * the read side. ie. Another CPU might load the uninitialised
-> > +		 * tail of the buffer first and then the space below (rather
-> > +		 * than the NULL that was there previously), and so print the
-> > +		 * uninitialised tail. But the whole string lives in BSS so in
-> > +		 * practice it should just see NULLs.
-> > +		 */
-> > +		smp_wmb();
+On 9/02/19 1:29 AM, Alexei Starovoitov wrote:
+> On Thu, Feb 07, 2019 at 01:19:01PM +0200, Adrian Hunter wrote:
+>> Subject to memory pressure and other limits, retain executable code, such
+>> as JIT-compiled bpf, in memory instead of freeing it immediately it is no
+>> longer needed for execution.
+>>
+>> While perf is primarily aimed at statistical analysis, tools like Intel
+>> PT can aim to provide a trace of exactly what happened. As such, corner
+>> cases that can be overlooked statistically need to be addressed. For
+>> example, there is a gap where JIT-compiled bpf can be freed from memory
+>> before a tracer has a chance to read it out through the bpf syscall.
+>> While that can be ignored statistically, it contributes to a death by
+>> 1000 cuts for tracers attempting to assemble exactly what happened. This is
+>> a bit gratuitous given that retaining the executable code is relatively
+>> simple, and the amount of memory involved relatively small. The retained
+>> executable code is then available in memory images such as /proc/kcore.
+>>
+>> This facility could perhaps be extended also to init sections.
+>>
+>> Note that this patch is compile tested only and, at present, is missing
+>> the ability to retain symbols.
+>>
+>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>> ---
+>>  arch/x86/Kconfig.cpu       |   1 +
+>>  include/linux/filter.h     |   4 +
+>>  include/linux/xc_retain.h  |  49 ++++++++++
+>>  init/Kconfig               |   6 ++
+>>  kernel/Makefile            |   1 +
+>>  kernel/bpf/core.c          |  44 ++++++++-
+>>  kernel/xc_retain.c         | 183 +++++++++++++++++++++++++++++++++++++
+>>  net/core/sysctl_net_core.c |  62 +++++++++++++
+>>  8 files changed, 349 insertions(+), 1 deletion(-)
+>>  create mode 100644 include/linux/xc_retain.h
+>>  create mode 100644 kernel/xc_retain.c
+>>
+>> diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+>> index 6adce15268bd..21dcd064c272 100644
+>> --- a/arch/x86/Kconfig.cpu
+>> +++ b/arch/x86/Kconfig.cpu
+>> @@ -389,6 +389,7 @@ menuconfig PROCESSOR_SELECT
+>>  config CPU_SUP_INTEL
+>>  	default y
+>>  	bool "Support Intel processors" if PROCESSOR_SELECT
+>> +	select XC_RETAIN if PERF_EVENTS && BPF_JIT
+>>  	---help---
+>>  	  This enables detection, tunings and quirks for Intel processors
+>>  
+>> diff --git a/include/linux/filter.h b/include/linux/filter.h
+>> index d531d4250bff..40b9f601e18f 100644
+>> --- a/include/linux/filter.h
+>> +++ b/include/linux/filter.h
+>> @@ -851,6 +851,10 @@ extern int bpf_jit_enable;
+>>  extern int bpf_jit_harden;
+>>  extern int bpf_jit_kallsyms;
+>>  extern long bpf_jit_limit;
+>> +extern unsigned int bpf_jit_retain_min;
+>> +extern unsigned int bpf_jit_retain_max;
+>> +
+>> +void bpf_jit_retain_update_sz(void);
+>>  
+>>  typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
+>>  
+>> diff --git a/include/linux/xc_retain.h b/include/linux/xc_retain.h
+>> new file mode 100644
+>> index 000000000000..e79dc138bab8
+>> --- /dev/null
+>> +++ b/include/linux/xc_retain.h
+>> @@ -0,0 +1,49 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2019 Intel Corporation.
+>> + */
+>> +#ifndef _LINUX_XC_RETAIN_H
+>> +#define _LINUX_XC_RETAIN_H
+>> +
+>> +#include <linux/list.h>
+>> +#include <linux/shrinker.h>
+>> +#include <linux/spinlock.h>
+>> +
+>> +struct xc_retain_ops {
+>> +	void (*free)(void *addr);
+>> +};
+>> +
+>> +struct xc_retain {
+>> +	struct list_head list;
+>> +	struct list_head items;
+>> +	const struct xc_retain_ops ops;
+>> +	unsigned int min_pages;
+>> +	unsigned int max_pages;
+>> +	unsigned int current_pages;
+>> +	unsigned int item_cnt;
+>> +	spinlock_t lock;
+>> +	struct shrinker shrinker;
+>> +};
+>> +
+>> +#ifdef CONFIG_XC_RETAIN
+>> +int xc_retain_register(struct xc_retain *xr);
+>> +void xc_retain_binary(struct xc_retain *xr, void *addr, unsigned int pages);
+>> +void xc_retain_set_min_pages(struct xc_retain *xr, unsigned int min_pages);
+>> +void xc_retain_set_max_pages(struct xc_retain *xr, unsigned int max_pages);
+>> +#else
+>> +static inline int xc_retain_register(struct xc_retain *xr)
+>> +{
+>> +	return 0;
+>> +}
+>> +static inline void xc_retain_binary(struct xc_retain *xr, void *addr,
+>> +				    unsigned int pages)
+>> +{
+>> +	xr->ops.free(addr);
+>> +}
+>> +static inline void xc_retain_set_max_pages(struct xc_retain *xr,
+>> +					   unsigned int max_pages)
+>> +{
+>> +}
+>> +#endif
+>> +
+>> +#endif
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index c9386a365eea..954c288cabdc 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -1550,6 +1550,12 @@ config EMBEDDED
+>>  	  an embedded system so certain expert options are available
+>>  	  for configuration.
+>>  
+>> +config XC_RETAIN
+>> +	bool
+>> +	help
+>> +	  Retain kernel executable code (e.g. jitted BPF) in memory after it
+>> +	  would normally be freed.
+>> +
+>>  config HAVE_PERF_EVENTS
+>>  	bool
+>>  	help
+>> diff --git a/kernel/Makefile b/kernel/Makefile
+>> index 6aa7543bcdb2..5df40e2a934e 100644
+>> --- a/kernel/Makefile
+>> +++ b/kernel/Makefile
+>> @@ -98,6 +98,7 @@ obj-$(CONFIG_TRACEPOINTS) += trace/
+>>  obj-$(CONFIG_IRQ_WORK) += irq_work.o
+>>  obj-$(CONFIG_CPU_PM) += cpu_pm.o
+>>  obj-$(CONFIG_BPF) += bpf/
+>> +obj-$(CONFIG_XC_RETAIN) += xc_retain.o
+>>  
+>>  obj-$(CONFIG_PERF_EVENTS) += events/
+>>  
+>> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+>> index 19c49313c709..7fd235d235c2 100644
+>> --- a/kernel/bpf/core.c
+>> +++ b/kernel/bpf/core.c
+>> @@ -34,6 +34,7 @@
+>>  #include <linux/kallsyms.h>
+>>  #include <linux/rcupdate.h>
+>>  #include <linux/perf_event.h>
+>> +#include <linux/xc_retain.h>
+>>  
+>>  #include <asm/unaligned.h>
+>>  
+>> @@ -480,6 +481,10 @@ int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
+>>  int bpf_jit_harden   __read_mostly;
+>>  int bpf_jit_kallsyms __read_mostly;
+>>  long bpf_jit_limit   __read_mostly;
+>> +#define BPF_JIT_RETAIN_MIN 0
+>> +#define BPF_JIT_RETAIN_MAX 16
+>> +unsigned int bpf_jit_retain_min __read_mostly = BPF_JIT_RETAIN_MIN;
+>> +unsigned int bpf_jit_retain_max __read_mostly = BPF_JIT_RETAIN_MAX;
+>>  
+>>  static __always_inline void
+>>  bpf_get_prog_addr_region(const struct bpf_prog *prog,
+>> @@ -795,6 +800,43 @@ void bpf_jit_binary_free(struct bpf_binary_header *hdr)
+>>  	bpf_jit_uncharge_modmem(pages);
+>>  }
+>>  
+>> +#ifdef CONFIG_XC_RETAIN
+>> +static struct xc_retain bpf_jit_retain = {
+>> +	.min_pages = BPF_JIT_RETAIN_MIN,
+>> +	.max_pages = BPF_JIT_RETAIN_MAX,
+>> +	.ops = {
+>> +		.free = module_memfree,
+>> +	},
+>> +};
+>> +
+>> +void bpf_jit_retain_update_sz(void)
+>> +{
+>> +	xc_retain_set_min_pages(&bpf_jit_retain, bpf_jit_retain_min);
+>> +	xc_retain_set_max_pages(&bpf_jit_retain, bpf_jit_retain_max);
+>> +}
+>> +
+>> +static int __init bpf_jit_retain_init(void)
+>> +{
+>> +	return xc_retain_register(&bpf_jit_retain);
+>> +}
+>> +subsys_initcall(bpf_jit_retain_init);
+>> +
+>> +static void bpf_jit_binary_retain(struct bpf_prog *fp,
+>> +				  struct bpf_binary_header *hdr)
+>> +{
+>> +	u32 pages = hdr->pages;
+>> +
+>> +	xc_retain_binary(&bpf_jit_retain, hdr, pages);
+>> +	bpf_jit_uncharge_modmem(pages);
+>> +}
+>> +#else
+>> +static void bpf_jit_binary_retain(struct bpf_prog *fp,
+>> +				  struct bpf_binary_header *hdr)
+>> +{
+>> +	return bpf_jit_binary_free(hdr);
+>> +}
+>> +#endif
 > 
-> This shows me that this can be called at a time when more than one CPU is
-> active. What happens if we have two CPUs calling dump_stack_add_arch_desc() at
-> the same time? Can't that corrupt the dump_stack_arch_desc_str?
+> I'm strongly against this approach.
 
-Can overwrite part of it, I guess (but it seems that Michael
-is OK with this). The string is still NULL terminated.
+Thanks for commenting, but Peter wrote that he prefers this option:
 
-The worst case scenario I can think of is not the one when
-two CPUs call dump_stack_add_arch_desc(), but when CPUA calls
-dump_stack_add_arch_desc() to append some data and at the
-same time CPUB calls dump_stack_set_arch_desc() and simply
-overwrites dump_stack_arch_desc_str. Not sure if this is
-critical (or possible).
+	https://lkml.kernel.org/r/20190109101808.GG1900@hirez.programming.kicks-ass.net
 
-	-ss
+> I understand that it's under CONFIG, but changing kernel
+> into garbage collection nightmare even under config
+> or sysctl is not an option.
+> In many cases bpf progs are loaded/unloaded a lot.
+> Consider CI test system that runs tests 24/7.
+> bpf progs are loaded/unloaded in huge numbers.
+
+Which is not really a real use-case.
+
+For PT, the data recorded is generally too large (e.g. 100MB per cpu per second)
+to record continuously.  But there is a "snapshot" mode that just captures
+the PT data that is currently buffered.  In that case we want to have a
+kernel image that reflects what was running for the last small period of
+time.
+
+> Such system will suffer non deterministic test and
+> performance results due to shrinkers.
+
+The default was 16 pages, after that everything gets freed immediately. 
+That is assuming you don't turn it off for test purposes.  That would
+not have an effect on your tests.
+
+Also, why would copying it out of memory be less intrusive that keeping it
+in memory.  Copying every bpf jit to disk for every load would be much more
+intrusive.
+
+> perf analysis with PT becomes inaccurate and main goal
+> of retaining accurate instruction info is not achieved.
+
+For the majority of real use-cases, yes it is.
+
+> bpf_jit_retain_min/max tunables is not an option either.
+> Please see how perf record is handling bpf prog/unload.
+> What stops you from doing the same for PT?
+
+Opens the door for the bpf program to be unloaded before it is copied out. 
+All the corner cases where it is not possible to get accurate decoding start
+to add up.
