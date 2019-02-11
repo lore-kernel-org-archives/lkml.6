@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5777C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273DAC282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4EE721855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC77C214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 14:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549895251;
-	bh=RS/v4QehnrU5iiy4Zd2DJ5gT3XtONlB/3m2UCNBGyjU=;
+	s=default; t=1549895256;
+	bh=lX+pqsNYJf0VlS5WT0545Q+RKspOI5ifikq2ZEsrI3s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q+siCaIEFVLuTUvCJVDozCli83Geojk5A9x0EXlfQSvI/brWFTgNF8a2ywNUWsb5a
-	 NEqNn/ebxcow1CPxIB9X1CJf6o5Exw84hDol99UWenWDGRmbN1N1Dhlu9CpWqwX880
-	 Wit0XCetTvVPRtDFYC8hulqQeT3HZ7gTtBsY2pgQ=
+	b=Y7c2R4tTEzczzOYDhIUUCp/CybwHRkK4UH71pfw/mTnyir2bPSPwEBG7JfUhwYAhW
+	 R69as60ggsijEJ8WBsID+UW5g1y7IjDVOOVwZiqWnMrucu847pNBw+lt0j5sZxnYXk
+	 A4u8D439v46rOpZKoN41PabvhDVB9dCkQVI/bw6w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbfBKO1a (ORCPT
+        id S1729740AbfBKO1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Feb 2019 09:27:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33238 "EHLO mail.kernel.org"
+        Mon, 11 Feb 2019 09:27:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729718AbfBKO1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 09:27:25 -0500
+        id S1729718AbfBKO1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Feb 2019 09:27:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41E85214DA;
-        Mon, 11 Feb 2019 14:27:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 540A320821;
+        Mon, 11 Feb 2019 14:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549895244;
-        bh=RS/v4QehnrU5iiy4Zd2DJ5gT3XtONlB/3m2UCNBGyjU=;
+        s=default; t=1549895250;
+        bh=lX+pqsNYJf0VlS5WT0545Q+RKspOI5ifikq2ZEsrI3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Usfx7U6kx2yxCzOpeFM5jV8usTE+1FeYrvTyvL8R9TgH57mfdIoKVt4XjbW362B7S
-         U992r2342xLF+y40jMlo9reI2PcK3pXBG2GIlvEtebTt561RjWY/bjrl+nca0Ou2Ku
-         Edir3ZX9yxxT9AwDaiJK92vYNQ0ZXoRLIIjfoxpk=
+        b=IrIqrRS4zjtGy9B2fhkPjdhaoDRQe+W00jGGZue6e2te3bXfkSBTzn8EjwA7iR342
+         +P/A7vRixqyWkNd5oLP1Z9iMiRjLeGn8b9YCMxvPoOQyjWyqoM2gbBeBFC6wheqMM+
+         5ZnP0hKjHaKX7Hopijw8kexK5+spI4j6SctVSsi0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 140/352] ARM: dts: imx51-zii-rdu1: Do not specify "power-gpio" for hpa1
-Date:   Mon, 11 Feb 2019 15:16:07 +0100
-Message-Id: <20190211141855.429570478@linuxfoundation.org>
+Subject: [PATCH 4.20 113/352] usb: hub: delay hub autosuspend if USB3 port is still link training
+Date:   Mon, 11 Feb 2019 15:15:40 +0100
+Message-Id: <20190211141853.016181458@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190211141846.543045703@linuxfoundation.org>
 References: <20190211141846.543045703@linuxfoundation.org>
@@ -68,64 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 79da07dec740a42c70963ebacbd2bf8866af9e20 ]
+[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
 
-TPA6130A2 SD pin on RDU1 is not really controlled by SoC and instead
-is only meant to notify the system that audio was "muted" by external
-actors. To accommodate that, drop "power-gpio" property of hpa1 node as
-well as specify a name for that GPIO so that userspace can access it.
+When initializing a hub we want to give a USB3 port in link training
+the same debounce delay time before autosuspening the hub as already
+trained, connected enabled ports.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Tested-by: Chris Healy <cphealy@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+USB3 ports won't reach the enabled state with "current connect status" and
+"connect status change" bits set until the USB3 link training finishes.
+
+Catching the port in link training (polling) and adding the debounce delay
+prevents unnecessary failed attempts to autosuspend the hub.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx51-zii-rdu1.dts | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/usb/core/hub.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-index 69d753cac89a..44985f61c0ba 100644
---- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-+++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-@@ -477,6 +477,15 @@
- };
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index f76b2e0aba9d..1d1e61e980f3 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1112,6 +1112,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+ 						   USB_PORT_FEAT_ENABLE);
+ 		}
  
- &gpio1 {
-+	gpio-line-names = "", "", "", "",
-+			  "", "", "", "",
-+			  "", "hp-amp-shutdown-b", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "",
-+			  "", "", "", "";
++		/*
++		 * Add debounce if USB3 link is in polling/link training state.
++		 * Link will automatically transition to Enabled state after
++		 * link training completes.
++		 */
++		if (hub_is_superspeed(hdev) &&
++		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
++						USB_SS_PORT_LS_POLLING))
++			need_debounce_delay = true;
 +
- 	unused-sd3-wp-gpio {
- 		/*
- 		 * See pinctrl_esdhc1 below for more details on this
-@@ -495,9 +504,6 @@
- 	hpa1: amp@60 {
- 		compatible = "ti,tpa6130a2";
- 		reg = <0x60>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinctrl_ampgpio>;
--		power-gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
- 		Vdd-supply = <&reg_3p3v>;
- 	};
- 
-@@ -671,7 +677,10 @@
- };
- 
- &iomuxc {
--	pinctrl_ampgpio: ampgpiogrp {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_hog: hoggrp {
- 		fsl,pins = <
- 			MX51_PAD_GPIO1_9__GPIO1_9		0x5e
- 		>;
+ 		/* Clear status-change flags; we'll debounce later */
+ 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
+ 			need_debounce_delay = true;
 -- 
 2.19.1
 
