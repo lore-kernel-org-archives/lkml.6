@@ -2,238 +2,99 @@ Return-Path: <SRS0=Yeso=QS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E9AC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D77D1C282CE
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D182F21855
-	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7BAA2184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="dgvsZFf3"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mg4M3c4c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfBKXK0 (ORCPT
+        id S1727854AbfBKXK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Feb 2019 18:10:29 -0500
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:34630
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727674AbfBKXK0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 11 Feb 2019 18:10:26 -0500
-Received: from cock.li ([185.100.85.212]:33306 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbfBKXKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:10:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549926625; bh=RbZTTlJJHZ2TKiMRzWETCDAlGSq36U+ITQSW5SleAAs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mg4M3c4cVaBlH0H6VHSN07pfRZJGZ5OAv0KTFuU91yRxvpw7+EF9IFEYe6Rh/O77ftMH0WHkQ/t0wxNP31PfFVhwT+sQ3zuhH8DSVu0oK5hI3CsCyCqAK5tMI8i/CxQp0vdQzL62wGw3X4h+GrK80K6lQrU+fyVCLqllRsI/MJbJtclxNyZjBI73ndjN5IXGauiLVbxhg/j471pgQcjrYWrfDQ5v4zcn6KNDfgAx3NPDWpkyMrxl5TG+rcq56FWKQ6tpeBzUzsIpI4vyik/USDfPnoREq0/Y+t50pHJm85CEIloNLMCk6dawZHA4etro96YvHWzXjNUUP9+x5FTWDg==
+X-YMail-OSG: _aeHQR8VM1mobTPDy6VKNXFh_R3OTUa7G7UQ19RnEjUlkpG7S9xBklEf2.kqQhq
+ ndCxBXN2A48nkRlBB6XLwyr7FPY8whEc4ZkTf4.HjMzBWyJ4qmjPEtoTSvze8B5jwV02wMAnm6JT
+ gw1hn8yxPTvHq4BmArUwLSqXiY0LFW17qkQuly2gPphoqs8RknNaAUs9W4MlvPcFWOYmOrMAMnSB
+ 2dZbDPt5FEgN1jDdje6IW1puVto2TF5WUDOC.RUQNMALUPXKKtEotyyHhYiyxPWfKxv71xllqUIx
+ K4lBHnY5liqa.wr651haDlq7m0Cno3XhByY2HZuuXYW8dDdkiv8MnCxfr0aLA7lFHpvEUhrh8DJp
+ tkBOkH7TIzp5qeEL4H_pt4urlGh0yDCarq7dZVeAbWNzVK0Lf_LkhnuvOi5MWxcC0yqmirN1NjhE
+ JDdh8ANGoOIP8u45zswR8f.drMd07FnccV46yBheTmRevH6AltCOuDdDc5sXOoF.w9DjqLaTbb9n
+ 3up6TKcNL620lIwnaWchP0i0Pia.3SgI9Vhi4CtVfV_1fsnZ0g7qWyYosnNz25g1T_fJb03H0VK4
+ hS35sVKMJsRxpp5bgfx6DNVcWemXPlhALlp1BZ.idjXCOjxpVXyCHHBkH0GCrP3eh94zIKoljHzw
+ 1f.0C_WPstylum3ZKoiaWxe9o0lfN3W8mRhkZuwBf1Qg8XDodeUYB_MDyulmXrNN0.QuZb1u.iB0
+ 1g9QVPMzugQGD9fLE6v57BqGSOTOrNiO55gXNA9datCPKqmy94FfH971py3LyDjupw8ZmOnjroab
+ 1RzHSnfeouigOcUxqNZNT4Jj9.0YYSwfGa6k_zS55xy1hnIow2kGi.mYrAW4AEjHjGFl7UMIuJug
+ oNHi5iOcJ4O1tO_hgGzCQpQoRt61JKt8ZkUp0uV3N0iTt6b9Q67b3wqldTp0BeLVxa50A_9V6D97
+ Gfkx9xDi4BRsV13xbggUto7oZ3d1r7OwqQO9pitTJAtXm1w6edO1Axy_G430fS1agnaw738C2HUl
+ Bnpgkl33KxvRParVvpvo2R1A99xA6mycRIodie06_mIsUkc7cKypKpXqL.Gdmv5NQdD561PNmOAc
+ tlyyM8wnRxS_LAo5.aa__IE9ObhqVX1ElaA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Mon, 11 Feb 2019 23:10:25 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp414.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 26a66dbf95c268d7b84dc9a6f21c5cef;
+          Mon, 11 Feb 2019 23:10:23 +0000 (UTC)
+Subject: Re: [PATCH] LSM: Ignore "security=" when "lsm=" is specified
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-kernel@vger.kernel.org
+References: <20190211225403.GA7769@beast>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <74310e83-a258-e9c0-7d98-8b2cc5ced3a4@schaufler-ca.com>
+Date:   Mon, 11 Feb 2019 15:10:20 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1549926618; bh=cyUyNAeBaCYHSmS5Er3Eqs/EPYZ9Sv9SHOGwB/6j7e8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dgvsZFf3RjGhg7LY2r9NfksLmNAbQqT37dBTukdm6C5CZkf8/lQComL30JGbH+9sM
-         uxxSfJ8260THL4nL+985a2vfZtsy/FZfUAeCSp7/czKBExq3NIYfG3t7uOFs+0deWr
-         C40jmOKkfjDo/QczHQ7kriSXSFCrErkync6IWqDkeuJ/vWVHCUUT6p4mthOlmCgcT0
-         CZ9BVvegojwbWD8A11HZmO8/AYanVV+x25YQ2GQMWnDqfQhgOITP8BHU3oDgodsJXT
-         sSp8x4yh58A24Ja7gI7soeORiTpcQDK9nWX3VrL5z9O1jzWtaD8DO9ZgrKLJXMXyAk
-         rKSwXUlY8TFwA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20190211225403.GA7769@beast>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 11 Feb 2019 23:10:18 +0000
-From:   mikeeusa@redchan.it
-To:     linux-kernel@vger.kernel.org
-Cc:     freebsd-chat@freebsd.org, misc@openbsd.org, editor@lulz.com,
-        news@theregister.co.uk, esr@thyrsus.com, torvalds@osdl.org,
-        rms@gnu.org
-Subject: Re: DMCA takedown notice
-In-Reply-To: <discussions/31b6c69e24b211e98081e6b282f84ff2/comments/5812163@github.com>
-References: <5c51daed7c023_2fcf3fe7576d45c417207b@github-lowworker-89d05ac.cp1-iad.github.net.mail>
- <5c51ee838b18f_74e53fd6ff0d45c41780e2@github-lowworker-5909e27.cp1-iad.github.net.mail>
- <5c522f5b6cb8a_60733fc5256d45b412831@github-lowworker-39ccb07.cp1-iad.github.net.mail>
- <5c534f0336ca6_19ae3fcbf5cd45b4186161@github-lowworker-e55e3e3.cp1-iad.github.net.mail>
- <5c535110f0f30_3aa13fafe46d45c4222962@github-lowworker-dcc078e.cp1-iad.github.net.mail>
- <061a28afa26cf5ad7d11f8074353a9cf@redchan.it>
- <5c5489478eb20_56f33fd9e9ad45b43146ec@github-lowworker-4f62d42.cp1-iad.github.net.mail>
- <5c55ecdcb298_3a283fd6dfcd45c4309246@github-lowworker-63e61ec.cp1-iad.github.net.mail>
- <5c563190ae6cc_18c33fcb464d45bc1523b0@github-lowworker-39ccb07.cp1-iad.github.net.mail>
- <5c586b095281b_4c6d3ffba28d45b8120450@github-lowworker-e51511d.cp1-iad.github.net.mail>
- <5c58a56f8ded7_36e93f9cb4ad45b8932e7@github-lowworker-e55e3e3.cp1-iad.github.net.mail>
- <312c3d91f6c4a71c34b96728a2efb385@redchan.it>
- <5c5b1609a1561_1ac23fbe2d6d45b88762d0@github-lowworker-dcc078e.cp1-iad.github.net.mail>
- <discussions/31b6c69e24b211e98081e6b282f84ff2/comments/5812163@github.com>
-Message-ID: <2ba97dc3492f9c2eac75f118782c04f3@redchan.it>
-X-Sender: mikeeusa@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You take it down or I sue you, simple as that.
+On 2/11/2019 2:54 PM, Kees Cook wrote:
+> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> used on the command line, and report that it is happening.
+>
+> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  security/security.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/security.c b/security/security.c
+> index 3147785e20d7..e6153ed54361 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
+>  	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+>  				GFP_KERNEL);
+>  
+> -	if (chosen_lsm_order)
+> +	if (chosen_lsm_order) {
+> +		if (chosen_major_lsm) {
+> +			pr_info("security= is ignored because of lsm=\n");
 
-I have revoked the license from a number of people, including the John 
-Doe who has chosen to violate my copyright thence-forth.
+This is a little awkward. How about "lsm= supersedes security=".
 
-I have signed using my 2 decades long held pen-name.
-
-The U.S. Code defines an electronic signature for the purpose of US law 
-as "an electronic sound, symbol, or process, attached to or logically 
-associated with a contract or other record and executed or adopted by a 
-person with the intent to sign the record."
-
-My signing with my pen-name suffices for this purpose. What is important 
-is my intent to sign the record, which I have evinced.
-
-I have also posted the information on my long-held project page, so that 
-you may know that I am me:
-https://sourceforge.net/projects/gpcslots2/files/notes/
-
-https://sourceforge.net/projects/gpcslots2/files/notes/tkdnreq_github.txt/download
-https://sourceforge.net/projects/gpcslots2/files/notes/takedownreq_vs_johndoe-of-8ch.txt/download
-
-(I have also uploaded this response to said /notes/ directory)
-
-In addition to many other places.
-Your contention that I must do anything greater at this point is legally 
-inefficacious.
-
-I _DEMAND_ that you take the offending material down immediately.
-
---MikeeUSA--
-(Author of GPC-Slots 2)
-(electronic signature)
-
-On 2019-02-06 21:20, GitHub Staff wrote:
-> Hi MikeeUSA,
-> 
-> Thank you for your notices, the most recent of which is included below
-> for reference.
-> 
-> This DMCA notice is incomplete. It lacks "A physical or electronic
-> signature of a person authorized to act on behalf of the owner of an
-> exclusive right that is allegedly infringed" and "Information
-> reasonably sufficient to permit the service provider to contact the
-> complaining party."
-> 
-> Unfortunately, an electronic signature must be a legal name, not a
-> monicker or username, and we cannot accept disposable or temporary
-> email addresses as reliable contact information for a DMCA notice.
-> 
-> Once you've revised your notice to include the required details,
-> please send back the entire revised notice, and not only the corrected
-> sections. Once we've received a complete and actionable notice, we'll
-> process it expeditiously.
-> 
-> Thanks,
-> 
-> GitHub Staff
-> -------------------------
-> 
-> I have a good faith belief that use of the copyrighted materials
-> described above on the infringing web pages is not authorized by the
-> copyright owner, or its agent, or the law. I have taken fair use into
-> consideration.
-> 
-> I swear, under penalty of perjury, that the information in this
-> notification is accurate and that I am the copyright owner, or am
-> authorized to act on behalf of the owner, of an exclusive right that
-> is allegedly infringed.
-> :
-> 
-> As you may know, In the United States; a license, absent an attached
-> interest, is revocable.
-> 
-> A "John Doe" had his non-exclusive license regarding the game
-> "GPC-Slots2" terminated by the copyright owner (me: MikeeUSA).
-> The copyright owner may do this as-of-right, unless there is an
-> attached interest (ie: unless the licensee paid good consideration for
-> the license).
-> 
-> The "John Doe" then proceeded to belligerently upload a copy of
-> "GPC-Slots2" to your host, GitHub.
-> This violated Author's (my) copyright, since "John Doe"'s gratuitous
-> bare license had been terminated by the copyright holder (me).
-> 
-> The "John Doe" then proceeded to modify my work, which again violated
-> my copyright since I had previously revoked his license.
-> The license flows from me, the copyright owner, not any text. It is
-> permission to use, redistribute, modify, etc. Instructions on how to
-> use my property.
-> When such permission is not supported by any consideration, it may be
-> rescinded by the owner, at his will.
-> (/Regardless/ of the "terms". "Terms" are only enforceable against the
-> grantor if the licensee has paid consideration for them, essentially,
-> under US law.)
-> 
-> I have done so.
-> 
-> I reiterated to the "John Doe" that his license had been terminated.
-> 
-> "John Doe" then informed me that I "can't do that". I tried to explain
-> to him US law.
-> "John Doe" declared that he did not care and would keep the violating
-> work up, in defiance of me.
-> (IE: he would "pirate" it)
-> 
-> He then cited works from a discredited paralegal while I cited
-> published works by lawyers studied in their field.
-> 
-> (Note: I make no claim to PERL, the color ansi library, any supporting
-> libraries, or the -2 split screen function. My copyright covers the
-> game code of GPC-Slots2. I (MikeeUSA) am the original author of the
-> work and never signed over copyright to the work.)
-> (Note: "obeying the terms" (obeying the copyright holders instructions
-> regarding the use of his property) is not consideration: it is a
-> preexisting legal duty: outside of the "terms" there is no right for
-> the licensee to copy, modify, make derivative works, distribute,
-> distribute derivative works)
-> 
-> [Additionally "John Doe" registered a fraudulent account under my
-> long-held non-de-gurre, adding a Code of Conduct ("CoC"), something I
-> would never do (being opposed to "CoC" for gratis projects on
-> principal)]
-> 
-> I now have no choice but to issue a DMCA take-down request, to you,
-> GitHub.
-> 
-> Regrettably;
-> --MikeeUSA--
-> (electronic signature)
-> Jan 29, 2019
-> 
-> (Addendum: "John Doe" then uploaded the modified work to gitlab.com
-> and bitbucket.org
-> 
-> Contact information:
-> email: mikeeusa@redchan.it
-> 
-> infringing content: github.com/MikeeUSA/GPC-Slots-2
-> gitlab.com/MikeeUSA/GPC-Slots-2
-> bitbucket.org/MikeeUSA/gpc-slots-2
-> The material is not authorized by me, the copyright owner of the
-> GPC-Slots2 game code, as I explicitly rescinded the license from the
-> "John Doe", and he acknowledged that I had informed him of such and
-> communicated that he would defy my will regarding my property and
-> copyright.
-> Everything stated within this above communication is accurate to the
-> best of my knowledge and ability.
-> 
-> Some notices to you, github (and now gitlab and bitbucket):
-> 1) Yes I viewed your page at:
-> https://help.github.com/articles/guide-to-submitting-a-dmca-takedown-notice/
-> 2) Yes this is "opensource" code.
-> 3) No that does not matter:
-> The GPL(any version), being a bare license, is revocable
-> ("retroactively").
-> Just as any bare license, not supported by an interest, in the US.
-> The "John Doe" is not in privity of contract with me and has paid me
-> no consideration.
-> He cannot "bind" me (the grantor) to the terms.
-> It is his duty to abide by my instructions regarding my property.
-> I did not transfer my property away, the license is just that: a
-> license (temporary permission, that can be rescinded unless a "term"
-> was indeed "purchased")
-> It is also his duty to cease all use, modification, distribution of my
-> property at my demand.
-> I have made such a demand.
-> 4) Yes I will consider taking legal action against you if you do not
-> heed my request.
-> Cite the paralegal from groklaw, ZDnet, the FSF, and the SFConservancy
-> all you want.
-> They are wrong on the law and have been wrong for 10 years.
+> +			chosen_major_lsm = NULL;
+> +		}
+>  		ordered_lsm_parse(chosen_lsm_order, "cmdline");
+> -	else
+> +	} else
+>  		ordered_lsm_parse(builtin_lsm_order, "builtin");
+>  
+>  	for (lsm = ordered_lsms; *lsm; lsm++)
